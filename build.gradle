@@ -1,0 +1,247 @@
+evaluationOrder 'skif-service-common'
+evaluationOrder 'skif-service-server'
+evaluationOrder 'skif-service-test:skif-service-test-api'
+evaluationOrder 'skif-service-test:skif-service-test-server'
+evaluationOrder 'skif-service-test:skif-service-test-wsschema'
+evaluationOrder 'skif-service-test:skif-service-test-wsmapping'
+evaluationOrder 'skif-service-test:skif-service-test-wswar'
+evaluationOrder 'skif-service-test:skif-service-test-ear'
+
+apply plugin: 'idea'
+
+allprojects {
+    defaultTasks 'build'
+
+    version = '2.0-SNAPSHOT'
+    group = 'no.statkart.skif'
+
+    repositories {
+        mavenCentral()
+        add(new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
+            name = 'localRepo'
+            addIvyPattern "${rootDir}/../local-repo/[organisation]/[module]-ivy-[revision].xml"
+            addArtifactPattern "${rootDir}/../local-repo/[organisation]/[module]-[revision](-[classifier]).[ext]"
+        }
+    }
+}
+
+// build a map of the dependency artifacts to use. Allows centralized definition of the version of artifacts to
+// use. In that respect it serves a role similar to <dependencyManagement> in Maven
+slf4jVersion = '1.6.1'
+logbackVersion = '0.9.28'
+guiceVersion = '3.0'
+libraries = [
+        // Logging 
+        slf4j_api: "org.slf4j:slf4j-api:${slf4jVersion}@jar",
+        jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${slf4jVersion}@jar",
+        jul_to_slf4j: "org.slf4j:jul-to-slf4j:${slf4jVersion}@jar",
+        log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${slf4jVersion}@jar",
+        logback_classic: "ch.qos.logback:logback-classic:${logbackVersion}@jar",
+        logback_core: "ch.qos.logback:logback-core:${logbackVersion}@jar",
+
+        // Guice med extensions
+        guice: "com.google.inject:guice:3.0",
+        guice_multibindings: "com.google.inject.extensions:guice-multibindings:${guiceVersion}",
+        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${guiceVersion}",
+        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${guiceVersion}",
+        guice_grapher: "com.google.inject.extensions:guice-grapher:${guiceVersion}",
+        // guice-servlet depends on servlet-api som her er provided via weblogic og derfor ikke skal være med her
+        guice_servlet: "com.google.inject.extensions:guice-servlet:${guiceVersion}@jar",
+
+        jsr330: "javax.inject:javax.inject:1",
+
+        // Utility libraries
+        guava: "com.google.guava:guava:r09",
+        jsr305: "com.google.code.findbugs:jsr305:1.3.9",
+
+        // Testing
+        testng: 'org.testng:testng:6.0.1',
+        mockito: 'org.mockito:mockito-all:1.8.5',
+
+        // JAXB
+        jaxb_impl: 'com.sun.xml.bind:jaxb-impl:2.1.13',
+        jaxb_xjc: 'com.sun.xml.bind:jaxb-xjc:2.1.13',
+        build_utils: files("${FILEREPO}/build-utils.jar"),
+]
+
+// JAX-WS runtime for weblogic
+libraries.jaxws_rt = files(
+        files("${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.0.0.0_2-1-4.jar"),
+)
+
+// Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
+libraries.weblogic = files(
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
+        "${WEBLOGIC_HOME}/modules/javax.annotation_1.1.jar/",
+        "${WEBLOGIC_HOME}/modules/javax.ejb_3.0.1.jar",
+        "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
+        "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
+        libraries.jaxws_rt,
+)
+
+libraries.guice_with_used_deps = [
+        libraries.guice,
+        libraries.guice_multibindings,
+        libraries.guice_throwingproviders,
+        libraries.guice_assistedinject,
+        libraries.guice_servlet,
+        libraries.jsr330,
+]
+
+// TODO: bør legges inni local maven repo
+libraries.reportng = files(
+        "${FILEREPO}/reportng-1.1.3/reportng-1.1.3.jar",
+        "${FILEREPO}/reportng-1.1.3/velocity-dep-1.4.jar",
+)
+
+def boolean isJavaProject(Project project) {
+    return project.subprojects.size() == 0 && !project.name.endsWith('-ear')
+}
+
+subprojects { Project project ->
+    apply plugin: 'idea'
+    apply plugin: 'project-report'
+    apply plugin: 'base'
+
+    configurations {
+        jaxb {
+            description = 'Dependencies for running ant xjc (jaxb class generation)'
+        }
+
+        weblogic {
+            description = 'Weblogic dependencies'
+        }
+
+        provided {
+            description = 'Provided dependencies not to be included ear'
+            extendsFrom jaxb, weblogic
+        }
+    }
+
+    dependencies {
+        jaxb libraries.jaxb_impl
+        jaxb libraries.jaxb_xjc
+        jaxb libraries.build_utils
+
+        weblogic libraries.weblogic
+    }
+
+    if (isJavaProject(project)) {
+        apply plugin: 'java'
+
+        sourceCompatibility = '1.6'
+        targetCompatibility = '1.6'
+
+        uploadArchives {
+            repositories {
+                add project.repositories.localRepo
+            }
+            // uploadDescriptor = false
+        }
+
+        // appropriately inject the common dependencies into each sub-project
+        dependencies {
+            compile libraries.slf4j_api
+            compile libraries.jsr305
+
+            testCompile libraries.testng
+            testCompile libraries.reportng
+            testCompile libraries.mockito
+            testRuntime libraries.jcl_to_slf4j
+            testRuntime libraries.jul_to_slf4j
+            testRuntime libraries.log4j_to_slf4j
+            testRuntime libraries.logback_classic
+            testRuntime libraries.logback_core
+
+        }
+
+        sourceSets {
+            main {
+                //compileClasspath += configurations.provided
+            }
+        }
+        //sourceSets.main.java.srcDirs = ['src/main/java', 'src/main/java-generated']
+
+        test {
+            useTestNG()
+            systemProperties "org.uncommons.reportng.stylesheet": "${FILEREPO}\reportng-1.1.3/stylesheets/hudsonesque.css"
+            systemProperties "org.uncommons.reportng.title": "${project.name} Report"
+
+            options {
+                listeners << 'org.uncommons.reportng.HTMLReporter'
+                listeners << 'org.uncommons.reportng.JUnitXMLReporter'
+            }
+            useDefaultListeners = false
+        }
+
+        task "create-dirs" << {
+            sourceSets.all*.java.srcDirs*.each { it.mkdirs() }
+            sourceSets.all*.resources.srcDirs*.each { it.mkdirs() }
+        }
+
+
+        ideaModule {
+            // Virker først i milestone-4
+            inheritOutputDirs = false
+            outputDir = sourceSets.main.classesDir
+            testOutputDir = sourceSets.test.classesDir
+
+            beforeConfigured { module ->
+                module.sourceFolders = [] as Set
+            }
+        }
+    }
+}
+
+/**
+ * Project evaluation ordering must be defined in a separate step after plugins and other generic injection has been performed
+ * on each subproject. Otherwise these injections done by this build file will not have been performed before the build file
+ * of the subproject is evaluated.
+ */
+subprojects { Project project ->
+    setEvaluationOrder(project)
+}
+
+
+ideaProject {
+    javaVersion = "1.6"
+}
+
+dependsOnChildren()
+
+
+/**
+ * This method is designed to be called in sequence for each project that needs to be evaluated in a specific order
+ * during project initialization. The method stores in a global map the link between the current project and the
+ * previous project the method was called with. The global map is later used by method {@link #setEvaluationOrder} for setting up a
+ * evaluationDependency between the project and the previous project.
+ * <p/>
+ * The evaluationDependsOn method is not called directly in this method because more of the definitions in this build
+ * file needs to be executed before each subproject is created. Better to do it in a subproject closure.
+ * @param projectPath
+ */
+void evaluationOrder(String subProject) {
+    String projectPath = ":" + subProject
+    if (!hasProperty('projectEvaluationOrder')) {
+        projectEvaluationOrder = [:]; // define a Groovy a binding variable (i.e no def/type is used)
+    } else {
+        projectEvaluationOrder.put(projectPath, prevProjectPath)
+    }
+    prevProjectPath = projectPath
+}
+
+/**
+ * Sets the evaluation order for the project to depend on the previous project as defined by the order of calls to
+ * evaluationOrder()
+ * @param project
+ */
+void setEvaluationOrder(Project project) {
+    String prevProjectPath = projectEvaluationOrder.get(project.path);
+    if (prevProjectPath != null) {
+        //println "Defining evaluation order: " + project.path + "-->" + prevProjectPath
+        project.evaluationDependsOn(prevProjectPath)
+    }
+}
+
