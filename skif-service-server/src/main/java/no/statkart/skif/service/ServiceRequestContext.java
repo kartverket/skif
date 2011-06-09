@@ -1,0 +1,120 @@
+package no.statkart.skif.service;
+
+import java.io.Serializable;
+import java.security.Principal;
+
+/**
+ * Denne klasseninneholder infomasjon om inneværende kall som vedlikeholdes av servicerammeverket.
+ * @author Henrik Fredholm
+ * @since 1.1
+ */
+public class ServiceRequestContext implements Serializable {
+    private java.security.Principal callerPrincipal;
+    private String servicename;
+    private long parentCallId;
+    private long callId;
+    private int nestedLevel;
+    private TxMode txMode;
+
+    public ServiceRequestContext() {
+        this(TxMode.NOT_IN_EJB);
+    }
+
+    public ServiceRequestContext(TxMode txMode) {
+        this.txMode = txMode;
+    }
+
+    public ServiceRequestContext(ServiceRequestContext context, TxMode txMode) {
+        this.callerPrincipal = context.callerPrincipal;
+        this.servicename = context.servicename;
+        this.parentCallId = context.parentCallId;
+        this.callId = context.callId;
+        this.nestedLevel = context.nestedLevel;
+        this.txMode = txMode;
+    }
+
+    public TxMode getTxMode() {
+        return txMode;
+    }
+
+    public void setTxMode(TxMode txMode) {
+        this.txMode = txMode;
+    }
+
+    public boolean isNewTx() {
+        return txMode== TxMode.TX;
+    }
+
+    public boolean isContinuedTx() {
+        return txMode== TxMode.TX_CONTINUATION;
+    }
+
+    public boolean inTx() {
+        return txMode != TxMode.NO_TX;
+    }
+
+    public Principal getCallerPrincipal() {
+        return callerPrincipal;
+    }
+
+    public void setCallerPrincipal(Principal callerPrincipal) {
+        this.callerPrincipal = callerPrincipal;
+    }
+
+    public int getNestedLevel() {
+        return nestedLevel;
+    }
+
+    public void setNestedLevel(int nestedLevel) {
+        this.nestedLevel = nestedLevel;
+    }
+
+    public String getUserName() {
+        return callerPrincipal.getName();
+    }
+
+    public void setCallId(long callId) {
+        this.callId = callId;
+    }
+
+    public long getCallId() {
+        return callId;
+    }
+
+    public long getParentCallId() {
+        return parentCallId;
+    }
+
+    public void setParentCallId(long parentCallId) {
+        this.parentCallId = parentCallId;
+    }
+
+    public void setServicename(String servicename) {
+        this.servicename = servicename;
+    }
+
+    public String getServicename() {
+        return servicename;
+    }
+
+    public void incNestedLevel() {
+        nestedLevel++;
+    }
+
+    public void setFrom(ServiceRequestContext context) {
+        this.callerPrincipal = context.callerPrincipal;
+        this.callId = context.callId;
+        this.nestedLevel= context.nestedLevel;
+        this.parentCallId = context.parentCallId;
+        this.servicename = context.servicename;
+        this.txMode = context.txMode;
+    }
+
+    public boolean isContinuation() {
+        return txMode==TxMode.NO_TX_CONTINUATION || txMode == TxMode.TX_CONTINUATION;
+    }
+
+    public boolean isTransactional() {
+        return txMode==TxMode.TX|| txMode == TxMode.TX_CONTINUATION;
+    }
+}

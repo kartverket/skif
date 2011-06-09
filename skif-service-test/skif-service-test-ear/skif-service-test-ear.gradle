@@ -1,0 +1,153 @@
+/**
+ * This project produces an ear module from a list of ear modules (ejb and war). All dependencies for the ear modules
+ * are copied to the APP-INF lib of the ear, except for those dependencies already provided by the jee server.
+ *
+ * The application.xml file is auto generated from the list of modules. War projects are expected to have a variable
+ * called 'contextRoot' which is used for defining the context-root tag in application.xml
+ */
+
+import groovy.xml.XmlUtil
+import groovy.xml.StreamingMarkupBuilder
+import groovy.util.slurpersupport.GPathResult
+import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
+
+earModules = [
+        project(':skif-service-test:skif-service-test-server'),
+        project(':skif-service-test:skif-service-test-wswar')
+]
+
+configurations {
+    modules {
+        description = 'files to deployed as ear modules'
+    }
+
+    earlib {
+        description = 'files to deploy in earlib'
+    }
+}
+
+dependencies {
+    // TODO: Error. archives is empty. To be fixed in Gradle 1.0
+    //jeeModule.each { project ->  modules project.configurations.archives}
+
+    earModules.each { project -> modules project.configurations.archives.allArtifactFiles}
+    earModules.each { project -> earlib project.configurations.default - configurations.modules - configurations.provided }
+}
+
+
+task earlib(type: Sync) {
+    from configurations.earlib
+    into "${buildDir}/tempEar/APP-INF/lib"
+}
+
+task metainf {
+    doLast {
+        copy {
+            from 'src/main/config/META-INF'
+            into "${buildDir}/tempEar/META-INF"
+            exclude 'application.xml'
+        }
+        addEarModulesToApplicationXml("${projectDir}/src/main/config/META-INF/application.xml", "${buildDir}/tempEar/META-INF/application.xml")
+    }
+}
+
+task modules(type: Sync, dependsOn: earModules.collect {Project p -> p.assemble}) {
+    from configurations.modules
+    into "${buildDir}/tempEarModules"
+}
+
+
+task ear(type: Jar, dependsOn: [earlib, metainf, modules]) {
+    extension = "ear"
+    from("${buildDir}/tempEar")
+    from("${buildDir}/tempEarModules")
+
+}
+
+artifacts {
+    archives ear
+}
+
+uploadArchives {
+    repositories {
+        add project.repositories.localRepo
+    }
+    // uploadDescriptor = false
+}
+
+
+task deploy {
+
+    doLast {
+        ant.taskdef(name: 'wldeploy', classname: 'weblogic.ant.taskdefs.management.WLDeploy', classpath: configurations.weblogic.asPath)
+
+        wlsDeployProtocol = 'http'
+        wlsDeployIp = 'localhost'
+        wlsDeployPort = '7001'
+        wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
+
+
+        ant.wldeploy(action: 'deploy', source: "${buildDir}/libs/skif-service-test-ear-2.0-SNAPSHOT.ear", name: project.name, user: 'admmatr', password: 'matrikkeladm1',
+                adminurl: wlsAdminUrl, targets: 'AdminServer', upload: true, timeout: 18000, verbose: true, failonerror: true)
+    }
+}
+
+task undeploy {
+
+
+    doLast {
+        ant.taskdef(name: 'wldeploy', classname: 'weblogic.ant.taskdefs.management.WLDeploy', classpath: configurations.weblogic.asPath)
+
+        wlsDeployProtocol = 'http'
+        wlsDeployIp = 'localhost'
+        wlsDeployPort = '7001'
+        wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
+
+        ant.wldeploy(action: 'undeploy', name: project.name, user: 'admmatr', password: 'matrikkeladm1',
+                adminurl: wlsAdminUrl, targets: 'AdminServer', graceful: true, verbose: true, failonerror: true)
+    }
+}
+
+def void addEarModulesToApplicationXml(String srcApplicationXmlFilename, String targetApplicationXmlFilename) {
+    File file = new File(srcApplicationXmlFilename)
+    GPathResult xml = readApplicationXml(file)
+    earModules.each {project ->
+        ArchivePublishArtifact artifact = project.configurations.archives.allArtifacts.iterator().next();
+            switch (artifact.extension) {
+            case 'jar':
+                xml.appendNode {
+                    module("") {
+                        ejb("${artifact.archiveTask.archiveName}")
+                    }
+                }
+                break;
+            case 'war':
+                xml.appendNode {
+                    module("") {
+                        web("") {
+                            'web-uri'("${artifact.archiveTask.archiveName}")
+                            'context-root'(project.contextRoot)
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    def targetFile = new FileWriter(targetApplicationXmlFilename);
+    targetFile.write(serializeApplicationXml(xml))
+    targetFile.close()
+}
+
+def GPathResult readApplicationXml(File file) {
+    return new XmlSlurper().parse(file).declareNamespace([jee: "http://java.sun.com/xml/ns/javaee", xsi: "http://www.w3.org/2001/XMLSchema-instance"])
+}
+
+def String serializeApplicationXml(GPathResult xml) {
+    XmlUtil.serialize(new StreamingMarkupBuilder().bind {
+        mkp.declareNamespace(["": "http://java.sun.com/xml/ns/javaee"])
+        mkp.yield xml
+    })
+}
+

@@ -1,0 +1,73 @@
+/**
+ * This subproject produces a Web Service war file by using Weblogics jwcs ant task. This
+ * task produces an ear with an exploded war file which needs to be jar'ed into a war file.
+ *
+ * Since the war file is produced in a non-standard fashion this project uses Gradles java plugin instead of the
+ * war Plugin. The java plugin compiles sources and produces resources to classes in the standard way. The
+ * jar task has been altered completely such that it  produces a war file by jar'ing the contents of the exploded war
+ * in the ear produced by jwcs. Into this war file the jar task also copies all resources from classes.
+ *
+ * The projects archive artifact has been modified to indicate that the produced artifact is of type 'war' and has
+ * extension 'war.
+ *                                                                                .
+ */
+
+import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact;
+
+wsschemaProject = project(':skif-service-test:skif-service-test-wsschema')
+wsmappingProject = project(':skif-service-test:skif-service-test-wsmapping')
+
+earBuildDir = file("${buildDir}/ear")
+contextRoot = "skiftest/wsapi"
+wsModuleName = "${name}-${version}"
+
+// Changing project archive artifact to be a war instead of jar. Would have been nice if Gradle could derive this automatically from the properties of the jar task
+project.getConfigurations().getByName(Dependency.ARCHIVES_CONFIGURATION).allArtifacts.each {
+    ArchivePublishArtifact a ->
+    if (a.name == project.name) {
+        a.extension = "war"
+        a.type = "war"
+        a.archiveTask.archiveName -= '.jar'
+        a.archiveTask.archiveName += '.war'
+    }
+}
+
+dependencies {
+    compile project(':skif-service-test:skif-service-test-server')
+    compile wsmappingProject
+}
+
+task wsgen {
+    //schemaProject.sourceSets.main.allSource.srcDirs.each { inputs.dir it}
+    inputs.dir file('src/main/java')
+    inputs.dir file(wsschemaProject.sourceSets.main.classesDir)
+    outputs.dir earBuildDir
+
+    doLast {
+        ant.taskdef(name: 'jwsc', classname: 'weblogic.wsee.tools.anttasks.JwscTask', classpath: configurations.weblogic.asPath)
+        ant.taskdef(name: 'clientgen', classname: 'weblogic.wsee.tools.anttasks.ClientGenTask', classpath: configurations.weblogic.asPath)
+        earBuildDir.mkdirs()
+
+        ant.jwsc(srcdir: 'src/main/java', destdir: earBuildDir, classpath: configurations.compile.asPath, verbose: 'false', debug: 'true', includeantruntime: 'false') {
+            module(name: wsModuleName, contextpath: contextRoot, explode: 'true') {
+                jws(file: 'no/statkart/skif/skiftest/wsapi/service/test1/Test1ServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'Test1ServiceWS')
+                }
+            }
+        }
+    }
+}
+
+wsgen.dependsOn(wsschemaProject.classes)
+wsgen.dependsOn(classes)
+
+task jar(type: Jar, dependsOn: wsgen, overwrite: true) {
+    extension = "war"
+    type = "war"
+
+    from "${earBuildDir}/${wsModuleName}"
+    into("WEB-INF/classes") {
+        from sourceSets.main.classesDir
+        exclude '**/*.class'
+    }
+}

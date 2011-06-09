@@ -1,0 +1,24 @@
+include 'skif-service-common'
+include 'skif-service-server'
+include 'skif-service-test:skif-service-test-api'
+include 'skif-service-test:skif-service-test-server'
+include 'skif-service-test:skif-service-test-wsschema'
+include 'skif-service-test:skif-service-test-wsmapping'
+include 'skif-service-test:skif-service-test-wswar'
+include 'skif-service-test:skif-service-test-ear'
+
+rootProject.name = 'gSkif'
+
+rootProject.children.each { project -> configureProject(project)}
+
+
+void configureProject(ProjectDescriptor project) {
+    project.buildFileName = "${project.name}.gradle"
+    assert project.projectDir.isDirectory()
+
+    if (project.children.size()!=0) {
+        project.children.each{configureProject(it)}
+    }
+}
+
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/skiftest/wsapi/domain"
+        xmlns:corens="http://skif.statkart.no/skiftest/wsapi/domain"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:complexType name="SkifTestContext">
+        <xs:sequence>
+            <xs:element name="systemVersion" type="xs:string"/>
+            <xs:element name="locale" type="xs:string"/>
+            <xs:element name="locale4" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

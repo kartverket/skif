@@ -1,0 +1,32 @@
+jaxbTargetDir = file('src/main/java-generated')
+jaxbSourceDir = file('src/main/schema')
+
+sourceSets.main.java.srcDirs = ['src/main/java', "${jaxbTargetDir}"]
+
+task jaxb {
+    inputs.dir jaxbSourceDir
+    outputs.dir jaxbTargetDir
+
+    doLast {
+        jaxbTargetDir.mkdirs()
+        ant.taskdef(name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.jaxb.asPath)
+        ant.xjc(destdir: "${jaxbTargetDir}", extension: 'true') {
+            arg(line: '-grunnbokDoc no.statkart.skif.skiftest.wsapi.domain no.statkart.skif.skiftest.domain')
+            schema(dir: "${jaxbSourceDir}", includes: '**/*.xsd')
+        }
+    }
+}
+
+clean << {
+    ant.delete(dir: "${jaxbTargetDir}")
+    jaxbTargetDir.mkdirs()
+}
+
+compileJava.dependsOn jaxb
+
+
+ideaModule {
+    beforeConfigured { module ->
+        module.sourceFolders = [] as Set
+    }
+}
