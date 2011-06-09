@@ -2,29 +2,3 @@ dependencies {
     compile project(':skif-service-common')
     compile libraries.weblogic
 }
-
-
-
-Project(C) {
-
-    s = "s"
-
-    dependencies {
-        compile "XXX"
-    }
-
-}
-
-Project(D) {
-    x = "x" + C.s
-
-    dependencies {
-        compile project(C).dependencise.compile
-    }
-
-    println x
-}
-
-
-x+null
-
