@@ -48,7 +48,7 @@ task wsgen {
         ant.taskdef(name: 'clientgen', classname: 'weblogic.wsee.tools.anttasks.ClientGenTask', classpath: configurations.weblogic.asPath)
         earBuildDir.mkdirs()
 
-        ant.jwsc(srcdir: 'src/main/java', destdir: earBuildDir, classpath: configurations.compile.asPath, verbose: 'false', debug: 'true', includeantruntime: 'false') {
+        ant.jwsc(srcdir: 'src/main/java', destdir: earBuildDir, keepGenerated: 'true', classpath: configurations.compile.asPath, verbose: 'false', debug: 'true',  includeantruntime: 'false') {
             module(name: wsModuleName, contextpath: contextRoot, explode: 'true') {
                 jws(file: 'no/statkart/skif/skiftest/wsapi/service/test1/Test1ServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
                     wlhttptransport(serviceuri: 'Test1ServiceWS')
@@ -61,13 +61,15 @@ task wsgen {
 wsgen.dependsOn(wsschemaProject.classes)
 wsgen.dependsOn(classes)
 
-task jar(type: Jar, dependsOn: wsgen, overwrite: true) {
+jar {
+    // Clear original settings
+    getMainSpec().getMainSpec().getSourcePaths().clear()
+
     extension = "war"
     type = "war"
-
     from "${earBuildDir}/${wsModuleName}"
-    into("WEB-INF/classes") {
-        from sourceSets.main.classesDir
-        exclude '**/*.class'
-    }
-}
+ }
+
+jar.dependsOn(wsgen)
+
+

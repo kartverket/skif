@@ -30,7 +30,7 @@ dependencies {
     // TODO: Error. archives is empty. To be fixed in Gradle 1.0
     //jeeModule.each { project ->  modules project.configurations.archives}
 
-    earModules.each { project -> modules project.configurations.archives.allArtifactFiles}
+    earModules.each { project -> modules project.configurations.archives.allArtifactFiles; println "XXXX" + project.configurations.archives.allArtifactFiles.iterator().next() }
     earModules.each { project -> earlib project.configurations.default - configurations.modules - configurations.provided }
 }
 
@@ -51,7 +51,7 @@ task metainf {
     }
 }
 
-task modules(type: Sync, dependsOn: earModules.collect {Project p -> p.assemble}) {
+task modules(type: Sync) {
     from configurations.modules
     into "${buildDir}/tempEarModules"
 }
