@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
  * @since 1.1
  */
 public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceModuleStrategy> {
+    protected final ClassLoader classLoader;
     protected final Set<Class<? extends Object>> services = new HashSet<Class<? extends Object>>();
     protected final Mapping mapping;
     protected ExceptionMapping exceptionMapping;
@@ -39,16 +40,33 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
 
     public WSServerServiceModule(Configuration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
         super(WSServerServiceModuleStrategy.class, configuration);
-        Preconditions.checkNotNull(mapping, "mapping2");
+        Preconditions.checkNotNull(mapping, "mapping");
         this.services.addAll(services);
         this.mapping = mapping;
+        this.classLoader = getClass().getClassLoader();
     }
 
+    public WSServerServiceModule(Configuration configuration, Collection<Class<? extends Object>> services, Mapping mapping, ClassLoader classLoader) {
+        super(WSServerServiceModuleStrategy.class, configuration);
+        Preconditions.checkNotNull(mapping, "mapping");
+        this.services.addAll(services);
+        this.mapping = mapping;
+        this.classLoader =classLoader;
+    }
     public WSServerServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
         super(WSServerServiceModuleStrategy.class, configuration);
         Preconditions.checkNotNull(mapping, "mapping2");
         this.services.addAll(services);
         this.mapping = mapping;
+        this.classLoader =getClass().getClassLoader();
+    }
+
+    public WSServerServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping, ClassLoader classLoader) {
+        super(WSServerServiceModuleStrategy.class, configuration);
+        Preconditions.checkNotNull(mapping, "mapping2");
+        this.services.addAll(services);
+        this.mapping = mapping;
+        this.classLoader = classLoader;
     }
 
     public ExceptionMapping getExceptionMapping() {
@@ -140,7 +158,7 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
             final String toPackage = mapping[1];
             String webServiceClassname = Pattern.compile(Matcher.quoteReplacement(fromPackage)).matcher(serviceClassname).replaceFirst(toPackage) + "WSI";
             try {
-                webServiceClass = (Class<? extends ServiceWSI>) Class.forName(webServiceClassname);
+                webServiceClass = (Class<? extends ServiceWSI>) Class.forName(webServiceClassname, true, classLoader);
                 break; // found class
             } catch (ClassNotFoundException e) {
                 mapingsTried.add(classPackageMapping);

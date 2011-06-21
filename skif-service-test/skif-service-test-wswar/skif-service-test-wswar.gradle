@@ -48,10 +48,31 @@ task wsgen {
         ant.taskdef(name: 'clientgen', classname: 'weblogic.wsee.tools.anttasks.ClientGenTask', classpath: configurations.weblogic.asPath)
         earBuildDir.mkdirs()
 
-        ant.jwsc(srcdir: 'src/main/java', destdir: earBuildDir, keepGenerated: 'true', classpath: configurations.compile.asPath, verbose: 'false', debug: 'true',  includeantruntime: 'false') {
+        ant.jwsc(srcdir: 'src/main/java', destdir: earBuildDir, keepGenerated: 'true', classpath: configurations.compile.asPath, verbose: 'false', debug: 'true', includeantruntime: 'false') {
             module(name: wsModuleName, contextpath: contextRoot, explode: 'true') {
                 jws(file: 'no/statkart/skif/skiftest/wsapi/service/test1/Test1ServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
                     wlhttptransport(serviceuri: 'Test1ServiceWS')
+                }
+                jws(file: 'no/statkart/skif/skiftest/wsapi/service/test2/Test2ServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'Test2ServiceWS')
+                }
+                jws(file: 'no/statkart/skif/skiftest/wsapi/service/test3/Test3ServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'Test3ServiceWS')
+                }
+                jws(file: 'no/statkart/skif/skiftest/wsapi/service/testa/AServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'AServiceWS')
+                }
+                jws(file: 'no/statkart/skif/skiftest/wsapi/service/testb/BServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'BServiceWS')
+                }
+                jws(file: 'no/statkart/skif/skiftest/wsapi/service/testc/CServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'CServiceWS')
+                }
+                jws(file: 'no/statkart/skif/skiftest/wsapi/service/testd/DServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'DServiceWS')
+                }
+                jws(file: 'no/statkart/skif/skiftest/wsapi/service/testex/TestExServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'TestExServiceWS')
                 }
             }
         }
@@ -67,8 +88,9 @@ jar {
 
     extension = "war"
     type = "war"
-    from "${earBuildDir}/${wsModuleName}"
- }
+    from("${earBuildDir}/${wsModuleName}") { exclude 'WEB-INF/web.xml'}
+    from "src/main/webapp"
+}
 
 jar.dependsOn(wsgen)
 

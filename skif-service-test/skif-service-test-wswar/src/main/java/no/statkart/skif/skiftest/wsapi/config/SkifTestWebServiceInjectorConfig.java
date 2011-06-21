@@ -28,21 +28,24 @@ public class SkifTestWebServiceInjectorConfig implements ServletContextListener 
     }
 
 
-    public static void createInjector() {
+    public void createInjector() {
         final Mapping mapping = new SkifTestMapper().getMapping();
+
+
+        ClassLoader classLoader = getClass().getClassLoader();
 
         Injector ejbServiceInjector = SkifTestServerInjector.getInjector();
         ModuleConfiguration  configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
         injector = ejbServiceInjector.createChildInjector(
                 new ServletModule(),
-                new WSServerModule(configuration),
-                new WSServerServiceModule(configuration, new SkifTestGroup1Services().getServices(), mapping),
-                new WSServerServiceModule(configuration, new SkifTestGroup2Services().getServices(), mapping)
+                new WSServerModule(configuration, classLoader),
+                new WSServerServiceModule(configuration, new SkifTestGroup1Services().getServices(), mapping,classLoader ),
+                new WSServerServiceModule(configuration, new SkifTestGroup2Services().getServices(), mapping, classLoader)
                     .setServiceContextMapperClass(SkifTestServiceContextMapper.class),
-                new WSServerServiceModule(configuration, new SkifTestGroupABCDServices().getServices(), mapping)
+                new WSServerServiceModule(configuration, new SkifTestGroupABCDServices().getServices(), mapping, classLoader)
                         .setExceptionMapping(new SkifTestExceptionMapper().getMapping()),
-                new WSServerServiceModule(configuration, new SkifTestGroupExServices().getServices(), mapping).
+                new WSServerServiceModule(configuration, new SkifTestGroupExServices().getServices(), mapping, classLoader).
                         setExceptionMapping(new SkifTestExceptionMapper2().getMapping())
 
         );

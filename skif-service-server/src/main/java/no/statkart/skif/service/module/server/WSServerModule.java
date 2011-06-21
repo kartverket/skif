@@ -11,12 +11,26 @@ import no.statkart.skif.module.ModuleConfiguration;
  * @since 1.1
  */
 public class WSServerModule extends SkifModule {
+    private ClassLoader classLoader = getClass().getClassLoader();
+
+    public WSServerModule(ModuleConfiguration moduleConfiguration, ClassLoader classLoader) {
+        super(moduleConfiguration);
+        this.classLoader = classLoader;
+    }
+
     public WSServerModule(ModuleConfiguration moduleConfiguration) {
         super(moduleConfiguration);
+        this.classLoader = getClass().getClassLoader();
+    }
+
+    public WSServerModule(Configuration configuration, ClassLoader classLoader) {
+        super(configuration);
+        this.classLoader = classLoader;
     }
 
     public WSServerModule(Configuration configuration) {
         super(configuration);
+        this.classLoader = getClass().getClassLoader();
     }
     @Override
     protected void configure() {
