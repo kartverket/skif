@@ -183,14 +183,16 @@ subprojects { Project project ->
         }
 
 
-        ideaModule {
+        idea.module {
             // Virker først i milestone-4
             inheritOutputDirs = false
             outputDir = sourceSets.main.classesDir
             testOutputDir = sourceSets.test.classesDir
 
-            beforeConfigured { module ->
-                module.sourceFolders = [] as Set
+            iml {
+                beforeMerged { module ->
+                    module.sourceFolders = [] as Set
+                }
             }
         }
     }
@@ -206,12 +208,11 @@ subprojects { Project project ->
 }
 
 
-ideaProject {
+idea.project {
     javaVersion = "1.6"
 }
 
 dependsOnChildren()
-
 
 /**
  * This method is designed to be called in sequence for each project that needs to be evaluated in a specific order
