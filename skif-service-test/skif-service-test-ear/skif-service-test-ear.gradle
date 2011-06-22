@@ -70,7 +70,7 @@ artifacts {
 
 uploadArchives {
     repositories {
-        add project.repositories.localRepo
+        add project.repositories.releases
     }
     // uploadDescriptor = false
 }

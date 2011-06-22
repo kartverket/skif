@@ -16,12 +16,9 @@ allprojects {
     group = 'no.statkart.skif'
 
     repositories {
-        mavenCentral()
-        add(new org.apache.ivy.plugins.resolver.FileSystemResolver()) {
-            name = 'localRepo'
-            addIvyPattern "${rootDir}/../local-repo/[organisation]/[module]-ivy-[revision].xml"
-            addArtifactPattern "${rootDir}/../local-repo/[organisation]/[module]-[revision](-[classifier]).[ext]"
-        }
+        mavenRepo name: "central", urls: "http://skrivap92:8001/nexus/content/repositories/central/"
+        mavenRepo name: "thirdparty", urls: "http://skrivap92:8001/nexus/content/repositories/thirdparty/"
+        mavenRepo name: "releases", urls: "http://skrivap92:8001/nexus/content/repositories/releases/"
     }
 }
 
@@ -61,7 +58,10 @@ libraries = [
         // JAXB
         jaxb_impl: 'com.sun.xml.bind:jaxb-impl:2.1.13',
         jaxb_xjc: 'com.sun.xml.bind:jaxb-xjc:2.1.13',
-        build_utils: files("${FILEREPO}/build-utils.jar"),
+        build_utils: 'no.statkart.grunnbok:build-utils:1.0',
+
+        reportng: 'org.uncommons.reportng:reportng:1.1.3-unpublished',
+        velocityDep: 'velocity:velocity-dep:1.4'
 ]
 
 // JAX-WS runtime for weblogic
@@ -136,7 +136,7 @@ subprojects { Project project ->
 
         uploadArchives {
             repositories {
-                add project.repositories.localRepo
+                add project.repositories.releases
             }
             // uploadDescriptor = false
         }
@@ -148,6 +148,7 @@ subprojects { Project project ->
 
             testCompile libraries.testng
             testCompile libraries.reportng
+            testCompile libraries.velocityDep
             testCompile libraries.mockito
             testRuntime libraries.jcl_to_slf4j
             testRuntime libraries.jul_to_slf4j
