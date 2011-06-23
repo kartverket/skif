@@ -58,10 +58,7 @@ libraries = [
         // JAXB
         jaxb_impl: 'com.sun.xml.bind:jaxb-impl:2.1.13',
         jaxb_xjc: 'com.sun.xml.bind:jaxb-xjc:2.1.13',
-        build_utils: 'no.statkart.grunnbok:build-utils:1.0',
-
-        reportng: 'org.uncommons.reportng:reportng:1.1.3-unpublished',
-        velocityDep: 'velocity:velocity-dep:1.4'
+        build_utils: 'no.statkart.grunnbok:build-utils:1.0'
 ]
 
 // JAX-WS runtime for weblogic
@@ -89,12 +86,6 @@ libraries.guice_with_used_deps = [
         libraries.guice_servlet,
         libraries.jsr330,
 ]
-
-// TODO: bør legges inni local maven repo
-libraries.reportng = files(
-        "${FILEREPO}/reportng-1.1.3/reportng-1.1.3.jar",
-        "${FILEREPO}/reportng-1.1.3/velocity-dep-1.4.jar",
-)
 
 def boolean isJavaProject(Project project) {
     return project.subprojects.size() == 0 && !project.name.endsWith('-ear')
@@ -147,15 +138,15 @@ subprojects { Project project ->
             compile libraries.jsr305
 
             testCompile libraries.testng
-            testCompile libraries.reportng
-            testCompile libraries.velocityDep
             testCompile libraries.mockito
+
             testRuntime libraries.jcl_to_slf4j
             testRuntime libraries.jul_to_slf4j
             testRuntime libraries.log4j_to_slf4j
             testRuntime libraries.logback_classic
             testRuntime libraries.logback_core
-
+            testRuntime 'org.uncommons.reportng:reportng:1.1.3-unpublished'
+            testRuntime 'velocity:velocity-dep:1.4'
         }
 
         sourceSets {
