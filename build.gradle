@@ -166,6 +166,8 @@ subprojects { Project project ->
             outputDir = sourceSets.main.classesDir
             testOutputDir = sourceSets.test.classesDir
 
+            scopes.PROVIDED.plus += configurations.provided
+
             iml {
                 beforeMerged { module ->
                     module.sourceFolders = [] as Set
