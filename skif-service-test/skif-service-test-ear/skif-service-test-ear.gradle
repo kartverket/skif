@@ -31,7 +31,7 @@ dependencies {
     //jeeModule.each { project ->  modules project.configurations.archives}
 
     earModules.each { project -> modules project.configurations.archives.allArtifactFiles }
-    earModules.each { project -> earlib project.configurations.default - configurations.modules - configurations.provided }
+    earModules.each { project -> earlib project.configurations.default - configurations.modules}
 }
 
 

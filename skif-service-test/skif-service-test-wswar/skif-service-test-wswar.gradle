@@ -35,6 +35,8 @@ project.getConfigurations().getByName(Dependency.ARCHIVES_CONFIGURATION).allArti
 dependencies {
     compile project(':skif-service-test:skif-service-test-server')
     compile wsmappingProject
+
+    provided libraries.weblogic
 }
 
 task wsgen {
@@ -44,11 +46,11 @@ task wsgen {
     outputs.dir earBuildDir
 
     doLast {
-        ant.taskdef(name: 'jwsc', classname: 'weblogic.wsee.tools.anttasks.JwscTask', classpath: configurations.weblogic.asPath)
-        ant.taskdef(name: 'clientgen', classname: 'weblogic.wsee.tools.anttasks.ClientGenTask', classpath: configurations.weblogic.asPath)
+        ant.taskdef(name: 'jwsc', classname: 'weblogic.wsee.tools.anttasks.JwscTask', classpath: libraries.weblogic.asPath)
+        ant.taskdef(name: 'clientgen', classname: 'weblogic.wsee.tools.anttasks.ClientGenTask', classpath: libraries.weblogic.asPath)
         earBuildDir.mkdirs()
 
-        ant.jwsc(srcdir: 'src/main/java', destdir: earBuildDir, keepGenerated: 'true', classpath: configurations.compile.asPath, verbose: 'false', debug: 'true', includeantruntime: 'false') {
+        ant.jwsc(srcdir: 'src/main/java', destdir: earBuildDir, keepGenerated: 'true', classpath: (configurations.compile + configurations.provided).asPath, verbose: 'false', debug: 'true', includeantruntime: 'false') {
             module(name: wsModuleName, contextpath: contextRoot, explode: 'true') {
                 jws(file: 'no/statkart/skif/skiftest/wsapi/service/test1/Test1ServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
                     wlhttptransport(serviceuri: 'Test1ServiceWS')

@@ -97,26 +97,9 @@ subprojects { Project project ->
     apply plugin: 'base'
 
     configurations {
-        jaxb {
-            description = 'Dependencies for running ant xjc (jaxb class generation)'
-        }
-
-        weblogic {
-            description = 'Weblogic dependencies'
-        }
-
         provided {
-            description = 'Provided dependencies not to be included ear'
-            extendsFrom jaxb, weblogic
+            description = 'Provided dependencies not to be included in dependencies'
         }
-    }
-
-    dependencies {
-        jaxb libraries.jaxb_impl
-        jaxb libraries.jaxb_xjc
-        jaxb libraries.build_utils
-
-        weblogic libraries.weblogic
     }
 
     if (isJavaProject(project)) {
@@ -151,7 +134,7 @@ subprojects { Project project ->
 
         sourceSets {
             main {
-                //compileClasspath += configurations.provided
+                compileClasspath += configurations.provided
             }
         }
         //sourceSets.main.java.srcDirs = ['src/main/java', 'src/main/java-generated']

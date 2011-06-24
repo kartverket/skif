@@ -5,10 +5,8 @@ configurations {
 dependencies {
     compile project(':skif-service-server')
     compile project(':skif-service-test:skif-service-test-api')
+    provided libraries.weblogic
 }
-
-
-
 
 task clientJar(type: Jar) {
     appendix = 'client'
@@ -17,14 +15,4 @@ task clientJar(type: Jar) {
 
 artifacts {
 //   archives clientJar
-}
-
-task xx << {
-    configurations.provided.allDependencies {
-            println "name"
-            println it.getClass()
-            println it.getName()
-            return true
-        }.each {println it}
-
 }

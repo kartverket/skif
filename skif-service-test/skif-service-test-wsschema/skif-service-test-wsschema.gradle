@@ -3,6 +3,15 @@ jaxbSourceDir = file('src/main/schema')
 
 sourceSets.main.java.srcDirs = ['src/main/java', "${jaxbTargetDir}"]
 
+configurations {
+    jaxb
+}
+
+dependencies {
+    jaxb libraries.jaxb_xjc
+    jaxb libraries.build_utils
+}
+
 task jaxb {
     inputs.dir jaxbSourceDir
     outputs.dir jaxbTargetDir

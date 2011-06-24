@@ -1,0 +1,15 @@
+apply plugin: 'ear'
+
+dependencies {
+    deploy project(':skif-service-test:skif-service-test-wswar')
+    deploy project(':skif-service-test:skif-service-test-server')
+    earlib project(':skif-service-test:skif-service-test-wswar')
+    earlib project(':skif-service-test:skif-service-test-server')
+}
+
+ear {
+    libDirName 'APP-INF/lib'
+    deploymentDescriptor {
+        version = "5"
+    }
+}

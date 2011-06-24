@@ -1,5 +1,5 @@
 dependencies {
     compile libraries.guice_with_used_deps
-    compile libraries.jaxws_rt
+    provided libraries.jaxws_rt
 }
 
