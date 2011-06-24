@@ -1,8 +1,9 @@
 wsProject = project(':skif-service-test:skif-service-test-wswar')
 
-wsTargetDir = file('src/main/java-generated')
-sourceSets.main.java.srcDirs = ['src/main/java', 'src/main/java-generated']
-
+wsTargetDir = file('build/generated/main/java')
+wsResourcesDir = file('build/generated/main/resources')
+sourceSets.main.java.srcDirs = [wsTargetDir]
+sourceSets.main.resources.srcDirs = [wsResourcesDir]
 
 dependencies {
     compile project(':skif-service-test:skif-service-test-wsmapping')
@@ -15,7 +16,6 @@ task genWsclient(dependsOn: ':skif-service-test:skif-service-test-wswar:jar') {
     doLast {
         ant.taskdef(name: 'clientgen', classname: 'weblogic.wsee.tools.anttasks.ClientGenTask', classpath: libraries.weblogic.asPath)
         ant.importBuild 'skif-service-test-wsclient-build.xml'
-
 
         ant.delete(dir: "${wsTargetDir}")
         wsTargetDir.mkdirs()
@@ -31,13 +31,13 @@ task genWsclient(dependsOn: ':skif-service-test:skif-service-test-wswar:jar') {
 
         // clientgen compiles automatically files into destdir, but we need to fix source an compile again to another location
         ant.delete(dir: wsTargetDir) {include(name: '**/*.class')}
+        ant.copy(todir: wsResourcesDir) {
+            fileset(dir: wsTargetDir, includes: '**/*.wsdl,**/*.xsd')
+        }
 
+        ant.properties['wsTargetDir'] = wsTargetDir
         wsClientFixExceptions.execute()
     }
-}
-
-clean << {
-    ant.delete(dir: "${wsTargetDir}")
 }
 
 compileJava.dependsOn(genWsclient)

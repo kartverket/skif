@@ -3,7 +3,7 @@
         <_ws-client-fix-exceptions
                 name="skif-service-test"
                 exception.package.import="import no.statkart.skif.skiftest.wsapi.exception.*;"
-                exception.package.dir="src/main/java-generated/no/statkart/skif/skiftest/wsapi/exception"
+                exception.package.dir="${wsTargetDir}/no/statkart/skif/skiftest/wsapi/exception"
                 exception.file.pattern="**/wsapi/service/**/*Exception.java"
                 regexp.match="package no\.statkart\.skif\.skiftest\.wsapi\.service(\..+)*;"
                 regexp.replace="package no\.statkart\.skif\.skiftest\.wsapi\.exception;"
@@ -26,7 +26,7 @@
             <!-- Move exceptions -->
             <mkdir dir="@{exception.package.dir}"/>
             <move todir="@{exception.package.dir}" overwrite="true" flatten="true" failonerror="true" verbose="true">
-                <fileset dir="src/main/java-generated">
+                <fileset dir="${wsTargetDir}">
                     <include name="@{exception.file.pattern}"/>
                 </fileset>
             </move>
