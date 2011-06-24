@@ -3,3 +3,15 @@ dependencies {
     provided libraries.jaxws_rt
 }
 
+task testJar(type: Jar) {
+    classifier = 'tests'
+    from sourceSets.test.classes
+}
+
+configurations {
+    testApi
+}
+
+artifacts {
+    testApi testJar
+}

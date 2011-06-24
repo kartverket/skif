@@ -1,10 +1,13 @@
 evaluationOrder 'skif-service-common'
+evaluationOrder 'skif-testsupport-common'
 evaluationOrder 'skif-service-server'
 evaluationOrder 'skif-service-test:skif-service-test-api'
 evaluationOrder 'skif-service-test:skif-service-test-server'
 evaluationOrder 'skif-service-test:skif-service-test-wsschema'
 evaluationOrder 'skif-service-test:skif-service-test-wsmapping'
 evaluationOrder 'skif-service-test:skif-service-test-wswar'
+evaluationOrder 'skif-service-test:skif-service-test-wsclient'
+evaluationOrder 'skif-service-test:skif-service-test-test'
 evaluationOrder 'skif-service-test:skif-service-test-ear'
 
 apply plugin: 'idea'
@@ -133,9 +136,9 @@ subprojects { Project project ->
         }
 
         sourceSets {
-            main {
-                compileClasspath += configurations.provided
-            }
+            main.compileClasspath += configurations.provided
+            test.compileClasspath += configurations.provided
+            test.runtimeClasspath += configurations.provided
         }
         //sourceSets.main.java.srcDirs = ['src/main/java', 'src/main/java-generated']
 

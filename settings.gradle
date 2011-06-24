@@ -1,10 +1,13 @@
 include 'skif-service-common'
+include 'skif-testsupport-common'
 include 'skif-service-server'
 include 'skif-service-test:skif-service-test-api'
 include 'skif-service-test:skif-service-test-server'
 include 'skif-service-test:skif-service-test-wsschema'
 include 'skif-service-test:skif-service-test-wsmapping'
 include 'skif-service-test:skif-service-test-wswar'
+include 'skif-service-test:skif-service-test-wsclient'
+include 'skif-service-test:skif-service-test-test'
 include 'skif-service-test:skif-service-test-ear'
 
 rootProject.name = 'gSkif'

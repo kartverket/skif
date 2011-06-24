@@ -1,0 +1,43 @@
+wsProject = project(':skif-service-test:skif-service-test-wswar')
+
+wsTargetDir = file('src/main/java-generated')
+sourceSets.main.java.srcDirs = ['src/main/java', 'src/main/java-generated']
+
+
+dependencies {
+    compile project(':skif-service-test:skif-service-test-wsmapping')
+}
+
+task genWsclient(dependsOn: ':skif-service-test:skif-service-test-wswar:jar') {
+    inputs.dir file(wsProject.jar.archivePath)
+    outputs.dir wsTargetDir
+
+    doLast {
+        ant.taskdef(name: 'clientgen', classname: 'weblogic.wsee.tools.anttasks.ClientGenTask', classpath: libraries.weblogic.asPath)
+        ant.importBuild 'skif-service-test-wsclient-build.xml'
+
+
+        ant.delete(dir: "${wsTargetDir}")
+        wsTargetDir.mkdirs()
+
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/Test1ServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/Test2ServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/Test3ServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/AServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/BServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/CServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/DServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/TestExServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+
+        // clientgen compiles automatically files into destdir, but we need to fix source an compile again to another location
+        ant.delete(dir: wsTargetDir) {include(name: '**/*.class')}
+
+        wsClientFixExceptions.execute()
+    }
+}
+
+clean << {
+    ant.delete(dir: "${wsTargetDir}")
+}
+
+compileJava.dependsOn(genWsclient)

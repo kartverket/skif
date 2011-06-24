@@ -5,7 +5,9 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Henrik Fredholm
@@ -13,8 +15,6 @@ import static org.testng.Assert.*;
  */
 @Test
 public class ConfigurationTest {
-
-//    public void testFail() { fail();}
 
     public void testLoadAndChange() {
         Configuration cfg = new PropertiesConfiguration(getClass().getResource("configuration-test.properties"));

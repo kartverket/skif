@@ -12,7 +12,7 @@ import no.statkart.skif.skiftest.wsapi.exception.ApplicationFaultInfo;
 public class ApplicationExceptionTypeMapper<WsapiT extends ApplicationException, WsapiTInfo extends ApplicationFaultInfo, DomainT extends no.statkart.skif.exception.ApplicationException> extends ServiceExceptionTypeMapper<WsapiT, WsapiTInfo, DomainT> {
 
     public ApplicationExceptionTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass, Class<WsapiTInfo> wsapiFaultInfoClass) {
-        super(wsapiClass, domainClass, wsapiFaultInfoClass);
+        super(wsapiClass, wsapiFaultInfoClass, domainClass);
     }
 
     @Override

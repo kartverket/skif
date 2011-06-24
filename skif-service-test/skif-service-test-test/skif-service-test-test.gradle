@@ -1,0 +1,10 @@
+dependencies {
+    compile project(':skif-service-test:skif-service-test-api')
+    compile project(':skif-service-test:skif-service-test-wsmapping')
+    compile project(':skif-service-test:skif-service-test-wsclient')
+
+    provided libraries.jaxws_rt
+
+    testCompile project(':skif-service-test:skif-service-test-server')
+    testCompile project(path: ':skif-service-common', configuration: "testApi")
+}

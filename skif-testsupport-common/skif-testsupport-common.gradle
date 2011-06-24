@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':skif-service-common')
+    compile libraries.testng
+}

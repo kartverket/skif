@@ -25,7 +25,7 @@ public class ServiceExceptionTypeMapper<WsapiT extends ServiceException, WsapiTI
 
     private Class<WsapiTInfo> wsapiFaultInfoClass;
 
-    public ServiceExceptionTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass, Class<WsapiTInfo> wsapiFaultInfoClass) {
+    public ServiceExceptionTypeMapper(Class<WsapiT> wsapiClass, Class<WsapiTInfo> wsapiFaultInfoClass, Class<DomainT> domainClass) {
         super(wsapiClass, domainClass);
         this.wsapiFaultInfoClass = wsapiFaultInfoClass;
     }

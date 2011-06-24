@@ -40,14 +40,13 @@ dependencies {
 }
 
 task wsgen {
-    //schemaProject.sourceSets.main.allSource.srcDirs.each { inputs.dir it}
+    wsschemaProject.sourceSets.main.allSource.srcDirs.each { inputs.dir it}
     inputs.dir file('src/main/java')
     inputs.dir file(wsschemaProject.sourceSets.main.classesDir)
     outputs.dir earBuildDir
 
     doLast {
         ant.taskdef(name: 'jwsc', classname: 'weblogic.wsee.tools.anttasks.JwscTask', classpath: libraries.weblogic.asPath)
-        ant.taskdef(name: 'clientgen', classname: 'weblogic.wsee.tools.anttasks.ClientGenTask', classpath: libraries.weblogic.asPath)
         earBuildDir.mkdirs()
 
         ant.jwsc(srcdir: 'src/main/java', destdir: earBuildDir, keepGenerated: 'true', classpath: (configurations.compile + configurations.provided).asPath, verbose: 'false', debug: 'true', includeantruntime: 'false') {

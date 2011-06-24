@@ -1,8 +1,15 @@
 package no.statkart.skif.skiftest.wsapi.exception.mapping;
 
+import no.statkart.skif.exception.*;
 import no.statkart.skif.mapper.*;
 import no.statkart.skif.mapper.ObjectFactory;
 import no.statkart.skif.skiftest.wsapi.exception.*;
+import no.statkart.skif.skiftest.wsapi.exception.ApplicationException;
+import no.statkart.skif.skiftest.wsapi.exception.FinderException;
+import no.statkart.skif.skiftest.wsapi.exception.ImplementationException;
+import no.statkart.skif.skiftest.wsapi.exception.OperationalException;
+import no.statkart.skif.skiftest.wsapi.exception.SystemException;
+import no.statkart.skif.skiftest.wsapi.exception.ValidationException;
 
 /**
  * Exception mapper for SkifTest som mapper skifs standard exception hierarki over JAX-WS. Mapperen marshaller
@@ -30,15 +37,15 @@ public class SkifTestExceptionMapper extends AbstractExceptionMapper {
     }
 
     private void addMapptersForExceptionTypes() {
-        addMapper(new ServiceExceptionTypeMapper(ServiceException.class, no.statkart.skif.exception.SkifException.class, ServiceFaultInfo.class));
+        addMapper(new ServiceExceptionTypeMapper(ServiceException.class,ServiceFaultInfo.class, no.statkart.skif.exception.SkifException.class));
 
-        addMapper(new SystemExceptionTypeMapper(SystemException.class, no.statkart.skif.exception.SystemException.class, SystemFaultInfo.class));
-        addMapper(new SystemExceptionTypeMapper(ImplementationException.class, no.statkart.skif.exception.ImplementationException.class, ImplementationFaultInfo.class));
-        addMapper(new SystemExceptionTypeMapper(OperationalException.class, no.statkart.skif.exception.OperationalException.class, OperationalFaultInfo.class));
+        addMapper(new SystemExceptionTypeMapper(SystemException.class, SystemFaultInfo.class, no.statkart.skif.exception.SystemException.class));
+        addMapper(new SystemExceptionTypeMapper(ImplementationException.class, ImplementationFaultInfo.class, no.statkart.skif.exception.ImplementationException.class));
+        addMapper(new SystemExceptionTypeMapper(OperationalException.class, OperationalFaultInfo.class, no.statkart.skif.exception.OperationalException.class));
 
-        addMapper(new ApplicationExceptionTypeMapper(ApplicationException.class, no.statkart.skif.exception.ApplicationException.class, ApplicationFaultInfo.class));
-        addMapper(new ApplicationExceptionTypeMapper(FinderException.class, no.statkart.skif.exception.FinderException.class, FinderFaultInfo.class));
-        addMapper(new ApplicationExceptionTypeMapper(ValidationException.class, no.statkart.skif.exception.ValidationException.class, ValidationFaultInfo.class));
+        addMapper(new ApplicationExceptionTypeMapper(ApplicationException.class, ApplicationFaultInfo.class, no.statkart.skif.exception.ApplicationException.class));
+        addMapper(new ApplicationExceptionTypeMapper(FinderException.class,  FinderFaultInfo.class, no.statkart.skif.exception.FinderException.class));
+        addMapper(new ApplicationExceptionTypeMapper(ValidationException.class, ValidationFaultInfo.class, no.statkart.skif.exception.ValidationException.class));
         addMapperW2D(new IdentityExceptionTypeMapper(Error.class));
         addMapperW2D(new IdentityExceptionTypeMapper(RuntimeException.class));
 
