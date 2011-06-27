@@ -19,8 +19,7 @@ import java.util.List;
 import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
 
-// TODO eldtho disabled this
-@Test(enabled = false)
+@Test
 public class ModuleBuilderTest {
     private HashMap builderConfig;
     private SystemConfiguration systemConfiguration;

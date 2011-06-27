@@ -80,7 +80,7 @@ uploadArchives {
 task deploy {
 
     doLast {
-        ant.taskdef(name: 'wldeploy', classname: 'weblogic.ant.taskdefs.management.WLDeploy', classpath: configurations.weblogic.asPath)
+        ant.taskdef(name: 'wldeploy', classname: 'weblogic.ant.taskdefs.management.WLDeploy', classpath: libraries.weblogic.asPath)
 
         wlsDeployProtocol = 'http'
         wlsDeployIp = 'localhost'
