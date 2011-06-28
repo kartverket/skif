@@ -47,5 +47,5 @@ task genWsclient(dependsOn: ':skif-service-test:skif-service-test-wswar:jar') {
     }
 }
 
-compileJava.dependsOn(genWsclient)
-ideaModule.dependsOn(genWsclient)
+compileJava.dependsOn genWsclient
+ideaModule.dependsOn genWsclient

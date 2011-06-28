@@ -1,7 +1,14 @@
-jaxbTargetDir = file('src/main/java-generated')
 jaxbSourceDir = file('src/main/schema')
+jaxbTargetDir = file('build/generated/main/java')
 
 sourceSets.main.java.srcDirs = ['src/main/java', "${jaxbTargetDir}"]
+
+// Source is in the build directory so we need to unexclude it
+idea.module.iml {
+    whenMerged {
+        it.excludeFolders = it.excludeFolders.findAll{!it.url.contains("build")}
+    }
+}
 
 configurations {
     jaxb
@@ -32,10 +39,4 @@ clean << {
 }
 
 compileJava.dependsOn jaxb
-
-
-idea.module.iml {
-    beforeMerged { module ->
-        module.sourceFolders = [] as Set
-    }
-}
+ideaModule.dependsOn jaxb
