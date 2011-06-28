@@ -5,6 +5,13 @@ wsResourcesDir = file('build/generated/main/resources')
 sourceSets.main.java.srcDirs = [wsTargetDir]
 sourceSets.main.resources.srcDirs = [wsResourcesDir]
 
+// Source is in the build directory so we need to unexclude it
+idea.module.iml {
+    whenMerged {
+        it.excludeFolders = it.excludeFolders.findAll{!it.url.contains("build")}
+    }
+}
+
 dependencies {
     compile project(':skif-service-test:skif-service-test-wsmapping')
 }
@@ -41,3 +48,4 @@ task genWsclient(dependsOn: ':skif-service-test:skif-service-test-wswar:jar') {
 }
 
 compileJava.dependsOn(genWsclient)
+ideaModule.dependsOn(genWsclient)
