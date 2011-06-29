@@ -12,6 +12,13 @@ evaluationOrder 'skif-service-test:skif-service-test-ear'
 
 apply plugin: 'idea'
 
+// Variables to grab from environment
+["WEBLOGIC_HOME"].each { val ->
+    if (!project.hasProperty(val)) {
+        project.setProperty(val, System.getenv(val))
+    }
+}
+
 allprojects {
     defaultTasks 'build'
 
@@ -144,7 +151,7 @@ subprojects { Project project ->
 
         test {
             useTestNG()
-            systemProperties "org.uncommons.reportng.stylesheet": "${FILEREPO}\reportng-1.1.3/stylesheets/hudsonesque.css"
+            systemProperties "org.uncommons.reportng.stylesheet": "${FILEREPO}/reportng-1.1.3/stylesheets/hudsonesque.css"
             systemProperties "org.uncommons.reportng.title": "${project.name} Report"
 
             options {
@@ -185,7 +192,6 @@ subprojects { Project project ->
 subprojects { Project project ->
     setEvaluationOrder(project)
 }
-
 
 idea.project {
     javaVersion = "1.6"
