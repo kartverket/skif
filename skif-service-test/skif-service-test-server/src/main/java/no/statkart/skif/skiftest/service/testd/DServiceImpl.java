@@ -5,8 +5,6 @@ import com.google.inject.Provider;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.skiftest.service.ServiceSelector;
-import no.statkart.skif.skiftest.service.testc.CService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -90,9 +88,9 @@ public class DServiceImpl implements DService {
         message = message.isEmpty() ? methodName : message + " " + methodName;
         Class<?> cl = SkifUtil.classForName(exceptionClass);
         if (cl == ImplementationException.class) {
-            return new  ImplementationException(message).setFeilkode("feilkode").setFeilkodebeskrivelse("feilkodebeskrivelse");
+            return new ImplementationException(message).setFeilkode("feilkode").setFeilkodebeskrivelse("feilkodebeskrivelse");
         } else if (cl == FinderException.class) {
-            final FinderException finderException = new FinderException("feilkode", "feilkodebeskrivelse", message);
+            final FinderException finderException = new FinderException(message).setFeilkode("feilkode").setFeilkodebeskrivelse("feilkodebeskrivelse");
             return finderException;
         } else {
             try {
@@ -123,7 +121,7 @@ public class DServiceImpl implements DService {
         if (cl == ImplementationException.class) {
             return new ImplementationException(message, cause);
         } else if (cl == FinderException.class) {
-            return new FinderException("feilkode", "feilkodeBeskrivelse", message, cause);
+            return new FinderException(message).setFeilkode("feilkode").setFeilkodebeskrivelse("feilkodebeskrivelse");
         } else {
             try {
                 Throwable t = (Throwable) cl.getConstructor(String.class, Throwable.class).newInstance(message.isEmpty() ? methodName : message + " " + methodName, cause);

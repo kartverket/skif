@@ -10,6 +10,24 @@ import org.slf4j.Logger;
  */
 public class OperationalException extends SystemException {
 
+    protected OperationalException(String message, Throwable cause, Logger logger) {
+        super(message, cause, logger);
+
+        //setter standard feilkode og beskrivelse
+        setFeilkode("OE000");
+        setFeilkodebeskrivelse("Operasjonell feil");
+    }
+
+    /**
+     * Conventional constructor
+     */
+    public OperationalException(String message, Throwable cause) {
+        this(message, cause, null);
+    }
+
+
+
+
     public OperationalException(String message) {
         this(message, null, null);
     }
@@ -22,15 +40,7 @@ public class OperationalException extends SystemException {
         this(null, throwable, null);
     }
 
-    public OperationalException(String message, Throwable cause) {
-        this(message, cause, null);
-    }
 
-    public OperationalException(String message, Throwable cause, Logger logger) {
-        super(message, cause, logger);
-        setFeilkode("O_1");
-        setFeilkodebeskrivelse("Operasjonell feil");
-    }
 
 
 }

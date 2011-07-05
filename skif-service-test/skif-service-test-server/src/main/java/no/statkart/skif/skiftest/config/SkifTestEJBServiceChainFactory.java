@@ -1,6 +1,6 @@
 package no.statkart.skif.skiftest.config;
 
-import no.statkart.skif.exception.ConfigurationException;
+import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.RuntimeExceptionProxyHandler;
@@ -18,7 +18,7 @@ public class SkifTestEJBServiceChainFactory<S> implements EJBServiceChainFactory
 
     @Override
     public ProxyHandler<S> createChain() {
-        throw new ConfigurationException();
+        throw new NotImplementedException();
     }
 
     @Override

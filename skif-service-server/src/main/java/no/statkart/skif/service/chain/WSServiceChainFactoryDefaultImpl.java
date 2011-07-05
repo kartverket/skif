@@ -2,8 +2,7 @@ package no.statkart.skif.service.chain;
 
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
-import no.statkart.skif.exception.ConfigurationException;
-import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.service.annotation.WSServiceChain;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
@@ -36,6 +35,6 @@ public class WSServiceChainFactoryDefaultImpl<S> implements WSServiceChainFactor
 
     @Override
     public ProxyHandler<S> extendChain(@Nullable ProxyHandler<S> firstInChain) {
-        throw new ImplementationException();
+        throw new NotImplementedException();
     }
 }

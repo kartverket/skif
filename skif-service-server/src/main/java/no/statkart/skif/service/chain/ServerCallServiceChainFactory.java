@@ -1,7 +1,7 @@
 package no.statkart.skif.service.chain;
 
 import com.google.inject.*;
-import no.statkart.skif.exception.ConfigurationException;
+import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.service.ejb.EJBAttributesLookup;
 import no.statkart.skif.service.ejb.EJBCallTypeChooserProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
@@ -44,6 +44,6 @@ public class ServerCallServiceChainFactory<S> implements CallServiceChainFactory
 
     @Override
     public ProxyHandler<S> extendChain(@Nullable ProxyHandler<S> firstInChain) {
-        throw new ConfigurationException();
+        throw new NotImplementedException();
     }
 }

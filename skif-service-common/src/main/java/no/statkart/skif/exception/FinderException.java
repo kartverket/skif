@@ -1,5 +1,7 @@
 package no.statkart.skif.exception;
 
+import org.slf4j.Logger;
+
 /**
  * Felles exception for feil ved oppslag der datagrunnlag ikke er i henhold til kriterier.
  *
@@ -8,20 +10,22 @@ package no.statkart.skif.exception;
  */
 public class FinderException extends ApplicationException {
 
-    //påkrevd constructor som er forventet ved reflection
-    protected FinderException(String message, Throwable cause) {
-        super(message, cause);
+    protected FinderException(String message, Throwable cause, Logger logger) {
+        super(message, cause, logger);
+
+        //setter standard feilkode og beskrivelse
+        setFeilkode("FE000");
+        setFeilkodebeskrivelse("Objekt ikke funnet");
     }
 
-    public FinderException(String feilkode, String feilkodeBeskrivelse) {
-        this(feilkode, feilkodeBeskrivelse, null);
+    /**
+     * Conventional constructor
+     */
+    public FinderException(String message, Throwable cause) {
+        this(message, cause, null);
     }
 
-    public FinderException(String feilkode, String feilkodeBeskrivelse, String message) {
-        this(feilkode, feilkodeBeskrivelse, message, null);
-    }
-
-    public FinderException(String feilkode, String feilkodeBeskrivelse, String message, Throwable cause) {
-        super(feilkode, feilkodeBeskrivelse, message, cause);
+    public FinderException(String message) {
+        this(message, null);
     }
 }

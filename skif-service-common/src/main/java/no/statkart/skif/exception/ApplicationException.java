@@ -1,5 +1,7 @@
 package no.statkart.skif.exception;
 
+import org.slf4j.Logger;
+
 /**
  * Felles klasse for alle typer applikasjonsfeil.
  *
@@ -8,20 +10,18 @@ package no.statkart.skif.exception;
  */
 public class ApplicationException extends SkifException {
 
-    //påkrevd constructor som er forventet ved reflection
-    protected ApplicationException(String message, Throwable cause) {
-        super(message, cause);
+    protected ApplicationException(String message, Throwable cause, Logger logger) {
+        super(message, cause, logger);
     }
 
-    public ApplicationException(String feilkode, String feilkodebeskrivelse) {
-        this(feilkode, feilkodebeskrivelse, null, null);
+    /**
+     * Conventional constructor
+     */
+    public ApplicationException(String message, Throwable cause) {
+        this(message, cause, null);
     }
 
-    public ApplicationException(String feilkode, String feilkodebeskrivelse, String message, Throwable cause) {
-        super(message, cause);
-        setFeilkode(feilkode);
-        setFeilkodebeskrivelse(feilkodebeskrivelse);
+    public ApplicationException(String message) {
+        super(message);
     }
-
-
 }

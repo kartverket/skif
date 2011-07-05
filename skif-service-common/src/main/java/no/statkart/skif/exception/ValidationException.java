@@ -1,25 +1,29 @@
 package no.statkart.skif.exception;
 
+import org.slf4j.Logger;
+
 /**
  * @author Oddbjørn Kvalsund
  * @since 0.6
  */
 public class ValidationException extends ApplicationException {
 
-    //påkrevd constructor som er forventet ved reflection
-    protected ValidationException(String message, Throwable cause) {
-        super(message, cause);
+    protected ValidationException(String message, Throwable cause, Logger logger) {
+        super(message, cause, logger);
+
+        //setter standard feilkode og beskrivelse
+        setFeilkode("VE000");
+        setFeilkodebeskrivelse("Valideringsfeil");
     }
 
-    public ValidationException(String feilkode, String feilkodeBeskrivelse) {
-        this(feilkode, feilkodeBeskrivelse, null);
+    /**
+     * Conventional constructor
+     */
+    public ValidationException(String message, Throwable cause) {
+        this(message, cause, null);
     }
 
-    public ValidationException(String feilkode, String feilkodeBeskrivelse, String message) {
-        this(feilkode, feilkodeBeskrivelse, message, null);
-    }
-
-    public ValidationException(String feilkode, String feilkodeBeskrivelse, String message, Throwable cause) {
-        super(feilkode, feilkodeBeskrivelse, message, cause);
+    public ValidationException(String message) {
+        this(message, null);
     }
 }

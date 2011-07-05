@@ -7,18 +7,20 @@ import no.statkart.skif.exception.ConfigurationException;
  * @since 1.1
  */
 public class PropertyConverterException extends ConfigurationException {
-    public PropertyConverterException() {
-    }
 
-    public PropertyConverterException(String message) {
-        super(message);
-    }
 
+    /**
+     * Conventional constructor
+     */
     public PropertyConverterException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    public PropertyConverterException(String message) {
+        this(message, null);
+    }
+
     public PropertyConverterException(Throwable cause) {
-        super(cause);
+        this(null, cause);
     }
 }

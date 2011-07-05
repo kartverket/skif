@@ -1,18 +1,25 @@
 package no.statkart.skif.exception;
 
 /**
- * Exception som kan kastes for ikke (ennå) implementert funksjonalitet
+ * Exception som kan kastes der funksjonalitet ikke er implementert.
  *
  * @author Leif Lislegård
  * @since 0.6
  */
 public class NotImplementedException extends ImplementationException {
 
-    public NotImplementedException() {
-        this("Funksjonalitet ikke ferdig implementert!");
+    /**
+     * Conventional constructor
+     */
+    public NotImplementedException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public NotImplementedException(String message) {
-        super(message);
+        this(message, null);
+    }
+
+    public NotImplementedException() {
+        this("Funksjonalitet ikke implementert!");
     }
 }
