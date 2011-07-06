@@ -10,6 +10,12 @@ evaluationOrder 'skif-service-test:skif-service-test-wsclient'
 evaluationOrder 'skif-service-test:skif-service-test-test'
 evaluationOrder 'skif-service-test:skif-service-test-ear'
 
+evaluationOrder 'skif-store-common'
+evaluationOrder 'skif-store-server'
+evaluationOrder 'skif-store-test:skif-store-test-api'
+evaluationOrder 'skif-store-test:skif-store-test-server'
+evaluationOrder 'skif-store-test:skif-store-test-test'
+
 apply plugin: 'idea'
 
 // Variables to grab from environment
@@ -69,6 +75,7 @@ libraries = [
         jaxb_impl: 'com.sun.xml.bind:jaxb-impl:2.1.13',
         jaxb_xjc: 'com.sun.xml.bind:jaxb-xjc:2.1.13',
         build_utils: 'no.statkart.grunnbok:build-utils:1.0'
+
 ]
 
 // JAX-WS runtime for weblogic
@@ -96,6 +103,19 @@ libraries.guice_with_used_deps = [
         libraries.guice_servlet,
         libraries.jsr330,
 ]
+
+libraries.hibernate = files(
+        "${FILEREPO}/hibernate/jars/antlr-2.7.6.jar",
+        "${FILEREPO}/hibernate/jars/cglib-nodep-2.2.jar",
+        "${FILEREPO}/hibernate/jars/dom4j-1.4.jar",
+        "${FILEREPO}/hibernate/jars/ehcache-1.2.3.jar",
+        "${FILEREPO}/hibernate/jars/hibernate-3.2.6.ga-bubbleref-v2.jar",
+        "${FILEREPO}/hibernate/jars/odmg-3.0.jar",
+        "${FILEREPO}/oracle/jars/ojdbc6-11.2.0.2.0.jar",
+)
+libraries.hibernate_tools = files(
+        "${FILEREPO}/hibernate/jars/hibernate-tools-3.2.6.ga.jar",
+)
 
 def boolean isJavaProject(Project project) {
     return project.subprojects.size() == 0 && !project.name.endsWith('-ear')

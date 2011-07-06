@@ -12,6 +12,7 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 
 /**
+ *
  * @author Henrik Fredholm
  */
 public abstract class AbstractMapper implements InvocationHandler, BaseMapping {

@@ -10,6 +10,13 @@ include 'skif-service-test:skif-service-test-wsclient'
 include 'skif-service-test:skif-service-test-test'
 include 'skif-service-test:skif-service-test-ear'
 
+include 'skif-store-common'
+include 'skif-store-server'
+include 'skif-store-test:skif-store-test-api'
+include 'skif-store-test:skif-store-test-server'
+include 'skif-store-test:skif-store-test-test'
+
+
 rootProject.name = 'gSkif'
 
 rootProject.children.each { project -> configureProject(project)}
