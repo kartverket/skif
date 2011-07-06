@@ -1,0 +1,96 @@
+package no.statkart.skif.persistence.hibernate;
+
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.ReplicaVersion;
+import org.hibernate.SessionFactory;
+import org.hibernate.HibernateException;
+import org.hibernate.MappingException;
+import org.hibernate.event.DeleteEventListener;
+import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+/**
+ * Builder som opprette standard Hibernate SessionFactory
+ *
+ * @author Henrik Fredholm
+ */
+public class HibernateSessionFactoryBuilder {
+    private static final Logger logger = LoggerFactory.getLogger(HibernateSessionFactoryBuilder.class);
+    protected final List<String> hbmResource = new ArrayList<String>();
+    protected final String mappingFilesDirectory;
+    protected final Properties hibernateProperties;
+
+    public HibernateSessionFactoryBuilder(Properties hibernateProperties, String mappingFilesDirectory) {
+        this.hibernateProperties = hibernateProperties;
+        if (!mappingFilesDirectory.endsWith("/")) {
+            mappingFilesDirectory += "/";
+        }
+        this.mappingFilesDirectory = mappingFilesDirectory;
+    }
+
+    public HibernateSessionFactoryBuilder addResource(Class clazz) {
+        addResourceUsingAbsolutePath(clazz, mappingFilesDirectory + clazz.getSimpleName() + ".hbm.xml");
+        return this;
+    }
+
+    public HibernateSessionFactoryBuilder addResourceUsingRelativePath(String relativePath, Class clazz) {
+        addResourceUsingAbsolutePath(clazz, mappingFilesDirectory + relativePath + "/" + clazz.getSimpleName() + ".hbm.xml");
+        return this;
+    }
+
+    public HibernateSessionFactoryBuilder addResourceWithSubclasses(Class baseclass, Class... subclasses) {
+        hbmResource.add(mappingFilesDirectory + baseclass.getSimpleName() + ".hbm.xml");
+        return this;
+    }
+
+    public HibernateSessionFactoryBuilder addResourceWithSubclassesUsingRelativePath(String relativePath, Class baseclass, Class... subclasses) {
+        hbmResource.add(mappingFilesDirectory + relativePath + "/" + baseclass.getSimpleName() + ".hbm.xml");
+        return this;
+    }
+
+    public HibernateSessionFactoryBuilder addResourceUsingAbsolutePath(Class clazz, String hbmFilename) {
+        hbmResource.add(hbmFilename);
+        return this;
+    }
+
+    public SessionFactory build(ReplicaVersion key) {
+        SessionFactory sessionFactory = null;
+        logger.debug("creating session factory");
+        try {
+            Configuration cfg = createConfiguration(hibernateProperties);
+            sessionFactory = cfg.buildSessionFactory();
+        } catch (HibernateException e) {
+            throw new ImplementationException("Feil ved initialisering av hibernate", e, logger);
+        }
+        return sessionFactory;
+
+    }
+
+    protected Configuration createConfiguration(Properties props) {
+        // Log databaseparametre. I singlevm mode brukes JDBCTransactionFactory (dvs url, bruker/password).
+        // I servermode brukes JTATransactionFactory (dvs datasource)
+        if (props.get("hibernate.transaction.factory_class").equals("org.hibernate.transaction.JDBCTransactionFactory")) {
+            logger.info("Hibernatekonfigurasjon: " + props.get("hibernate.connection.url") + " - " + props.get("hibernate.connection.username"));
+        } else {
+            logger.info("Hibernatekonfigurasjon: " + props.get("hibernate.connection.datasource"));
+        }
+        ClassLoader cl = HibernateSessionFactoryBuilder.class.getClassLoader();
+        Configuration cfg = null;
+        try {
+            cfg = new Configuration().setProperties(props);
+            for (String hbm : hbmResource) {
+                cfg.addResource(hbm, cl);
+            }
+            // Legg in patch for Hibernate 3.2.6
+            DeleteEventListener[] deleteEventStack = {new BugFixDeleteEventListener()};
+            cfg.getEventListeners().setDeleteEventListeners(deleteEventStack);
+        } catch (MappingException e) {
+            throw new ImplementationException("Feil i hibernate mapping-filer: " + e.getMessage(), e, logger);
+        }
+        return cfg;
+    }
+}
+                

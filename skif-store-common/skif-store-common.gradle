@@ -1,0 +1,16 @@
+dependencies {
+     compile project(':skif-service-common')
+}
+
+task testJar(type: Jar) {
+    classifier = 'tests'
+    from sourceSets.test.classes
+}
+
+configurations {
+    testApi
+}
+
+artifacts {
+    testApi testJar
+}

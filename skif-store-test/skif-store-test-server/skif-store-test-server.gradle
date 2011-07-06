@@ -1,0 +1,18 @@
+configurations {
+    client
+}
+
+dependencies {
+    compile project(':skif-store-server')
+    compile project(':skif-store-test:skif-store-test-api')
+    provided libraries.weblogic
+}
+
+task clientJar(type: Jar) {
+    appendix = 'client'
+    from sourceSets.main.classes
+}
+
+artifacts {
+//   archives clientJar
+}

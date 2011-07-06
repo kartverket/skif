@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+   <class name="no.statkart.skif.storetest.domain.TestEntity">
+      <id name="id" column="id" type="long">
+          <generator class="assigned"/>
+      </id>
+
+      <property name="text"/>
+   </class>
+
+</hibernate-mapping>

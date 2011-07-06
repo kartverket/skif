@@ -1,0 +1,10 @@
+dependencies {
+    compile project(':skif-store-common')
+    compile project(':skif-service-server')
+    compile libraries.hibernate
+
+    provided libraries.weblogic
+
+    testCompile project(path: ':skif-store-common', configuration: "testApi")
+    testCompile project(':skif-testsupport-common')
+}

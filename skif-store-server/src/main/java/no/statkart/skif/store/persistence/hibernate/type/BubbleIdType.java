@@ -1,0 +1,191 @@
+package no.statkart.skif.store.persistence.hibernate.type;
+
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.ReplicaVersion;
+import org.hibernate.HibernateException;
+import org.hibernate.usertype.UserType;
+import org.hibernate.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+
+
+/**
+ * Hibernate UserType for BubbleId
+ *
+ * @author Henrik Fredholm
+ * @since 0.6
+ */
+public abstract class BubbleIdType implements UserType {
+    /* Logging is implemented as in org.hibernate.type.NullableType in order to get similar logging performance and output as for standard hibernate types */
+    private static final boolean IS_VALUE_TRACING_ENABLED = LoggerFactory.getLogger(StringHelper.qualifier(BubbleIdType.class.getName())).isTraceEnabled();
+    private transient Logger log;
+
+
+    private Logger log() {
+        if (log == null) {
+            log = LoggerFactory.getLogger(getClass());
+        }
+        return log;
+    }
+
+    private static final int[] SQL_TYPES = new int[]{Types.BIGINT};
+
+    /* Controls the value of {@link #replicaVersion} for newly created BubbleIdTypes */
+    private static ReplicaVersion replicaVersionSeed = ReplicaVersion.CURRENT;
+
+    /* The ReplicaVersion that BubbleIds read by this instance will have */
+    private ReplicaVersion replicaVersion = ReplicaVersion.CURRENT;
+
+    public BubbleIdType() {
+        replicaVersion = replicaVersionSeed;
+    }
+
+    public static ReplicaVersion getReplicaVersionSeed() {
+        return replicaVersionSeed;
+    }
+
+    public static void setReplicaVersionSeed(ReplicaVersion replicaVersionSeed) {
+        BubbleIdType.replicaVersionSeed = replicaVersionSeed;
+    }
+
+    public int[] sqlTypes() {
+        return SQL_TYPES;
+    }
+
+    public abstract Class returnedClass();
+
+    public boolean isMutable() {
+        return false;
+    }
+
+    public Serializable disassemble(Object value) throws HibernateException {
+        return (Serializable) value;
+    }
+
+    public Object assemble(Serializable cached, Object owner) throws HibernateException {
+        return cached;
+    }
+
+    public Object replace(Object original, Object target, Object owner) throws HibernateException {
+        return original;
+    }
+
+    public boolean equals(Object x, Object y) {
+        return (x == y) || (x != null && y != null && x.equals(y));
+    }
+
+    public final int hashCode(Object x) throws HibernateException {
+        return ((BubbleId<?>) x).hashCode();
+    }
+
+    public Object deepCopy(Object value) {
+        return value;
+    }
+
+
+    public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
+            throws HibernateException, SQLException {
+
+        String name = names[0];
+        try {
+            long value = rs.getLong(name);
+            if (rs.wasNull()) {
+                if (IS_VALUE_TRACING_ENABLED) {
+                    log().trace("returning null as column: " + name);
+                }
+                return null;
+            } else {
+                BubbleId id = (BubbleId) createId(value);
+                if (IS_VALUE_TRACING_ENABLED) {
+                    log().trace("returning '" + id + "' as column: " + name);
+                }
+                return id;
+            }
+        } catch (RuntimeException re) {
+            log().info("could not read column value from result set: " + name + "; " + re.getMessage());
+            throw re;
+        } catch (SQLException se) {
+            log().info("could not read column value from result set: " + name + "; " + se.getMessage());
+            throw se;
+        }
+
+    }
+
+    public void nullSafeSet(PreparedStatement st, Object value, int index)
+            throws HibernateException, SQLException {
+        try {
+            if (value == null) {
+                if (IS_VALUE_TRACING_ENABLED) {
+                    log().trace("binding null to parameter: " + index);
+                }
+                st.setNull(index, Types.BIGINT);
+            } else {
+                if (IS_VALUE_TRACING_ENABLED) {
+                    log().trace("binding '" + value + "' to parameter: " + index);
+                }
+                BubbleId bubbleId = (BubbleId) value;
+                st.setLong(index, (Long) bubbleId.getValue());
+            }
+        } catch (ClassCastException ce) {
+            log().info("could not bind value '" + value + "' to parameter: " + index + "; ClassCastException: expected parameter of class " + getClass() + " got " + ce.getMessage());
+            throw ce;
+        } catch (RuntimeException re) {
+            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + re.getMessage());
+            throw re;
+        } catch (SQLException se) {
+            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + se.getMessage());
+            throw se;
+        }
+    }
+
+    /**
+     * Oppretter id med den spesifisert verdi. Id classen må være av den type metoden {@link
+     * #returnedClass()} spesifisere. Replicaversion kan ha defalut verdi siden den overskrive
+     * automatisk av {@link #createId(Long) } metoden.
+     *
+     * @param value id value for bubbleid'en
+     */
+    protected abstract Object createPrototypeId(Long value, ReplicaVersion replicaVersion);
+
+    /**
+     * Oppretter BubbleId av riktig type og setter idvalue og replicaversion
+     *
+     * @param value id value for bubbleid'en
+     */
+    public Object createId(Long value) {
+        BubbleId id = (BubbleId) createPrototypeId(value, replicaVersion);
+        return id;
+    }
+
+    /**
+     * Oppretter id med den spesifisert verdi. Id classen blir av den type metoden {@link
+     * #returnedClass()} spesifisere
+     *
+     * @param value
+     */
+    private Object createIdOld(Long value) {
+        try {
+            //Opprett id av riktig type
+            Constructor ctor = returnedClass().getConstructor(new Class[]{Long.class, ReplicaVersion.class});
+            BubbleId id = (BubbleId) ctor.newInstance(new Object[]{value, replicaVersion});
+            return id;
+        } catch (NoSuchMethodException e) {
+            throw new ImplementationException(e);
+        } catch (InstantiationException e) {
+            throw new ImplementationException(e);
+        } catch (IllegalAccessException e) {
+            throw new ImplementationException(e);
+        } catch (InvocationTargetException e) {
+            throw new ImplementationException(e);
+        }
+    }
+}
