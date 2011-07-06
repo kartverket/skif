@@ -25,6 +25,7 @@ import java.util.*;
  * Builder klasse for opprettelse av Hibernate SessionFactories som har støtte for bobler og multiversjons støtte.
  *
  * @author Henrik Fredholm
+ * @since 2.0
  */
 public class StoreHibernateSessionFactoryBuilder extends HibernateSessionFactoryBuilder {
     private static final Logger logger = LoggerFactory.getLogger(StoreHibernateSessionFactoryBuilder.class);
