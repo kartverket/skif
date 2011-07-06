@@ -21,15 +21,15 @@ public class TestBubbleId<T extends TestBubble> extends AbstractBubbleId<T> {
         super();
     }
 
-    public TestBubbleId(Object object) {
-        super(object);
+    public TestBubbleId(int idValue) {
+        super(new Long(idValue));
     }
 
-    public TestBubbleId(Object value, ReplicaVersion version) {
+    public TestBubbleId(Long idValue) {
+        super(idValue);
+    }
+
+    public TestBubbleId(Long value, ReplicaVersion version) {
         super(value, version);
-    }
-
-    public TestBubbleId(String value) {
-        super(value);
     }
 }
