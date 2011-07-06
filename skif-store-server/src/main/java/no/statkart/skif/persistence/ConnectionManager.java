@@ -23,6 +23,6 @@ import java.sql.Connection;
 public interface ConnectionManager {
     Connection getConnection(Object key);
     boolean isConnectionAllocated(Object key);
-    void releaseConnection(Object key);
-    void releaseAllAllocatedConnections();
+    void closeConnection(Object key);
+    void closeAllAllocatedConnections();
 }

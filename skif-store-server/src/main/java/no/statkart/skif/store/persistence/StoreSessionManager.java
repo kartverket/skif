@@ -8,9 +8,9 @@ import no.statkart.skif.store.ReplicaVersion;
  */
 public interface StoreSessionManager {
     StoreSession getSession(ReplicaVersion replicaVersion);
-    boolean isSessionAllocated(ReplicaVersion replicaVersion);
+    boolean hasActiveSession(ReplicaVersion replicaVersion);
     void flushSession(ReplicaVersion replicaVersion);
     void flushAllSessions();
-    void releaseSession(ReplicaVersion replicaVersion);
-    void releaseAllSessions();
+    void closeSession(ReplicaVersion replicaVersion);
+    void closeAllSessions();
 }
