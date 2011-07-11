@@ -10,8 +10,6 @@ import org.slf4j.Logger;
  * To change this template use File | Settings | File Templates.
  */
 public class ReflectionException extends ImplementationException {
-    public ReflectionException() {
-    }
 
     public ReflectionException(String message) {
         super(message);

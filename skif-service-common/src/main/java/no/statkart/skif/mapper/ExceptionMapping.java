@@ -1,7 +1,5 @@
 package no.statkart.skif.mapper;
 
-import no.statkart.skif.exception.SkifException;
-
 /**
  * Definerer mapping2 mellom Domain Exceptions og Web Service API Exceptions.
  *
@@ -10,8 +8,17 @@ import no.statkart.skif.exception.SkifException;
  */
 public interface ExceptionMapping extends Mapping {
 
-    public <T extends Exception, S extends SkifException> T d2w(S source, Class<T> targetClass);
-    public <S extends Exception, T extends SkifException> T w2d(S source, Class<T> targetClass);
+    /**
+     * Fra internt til API ...
+     * @return API object
+     */
+    public <T extends Throwable, S extends Throwable> T d2w(S source);
+
+    /**
+     * Fra API til internt ...
+     * @return domain object
+     */
+    public <S extends Throwable, T extends Throwable> T w2d(S source);
 
 }
 

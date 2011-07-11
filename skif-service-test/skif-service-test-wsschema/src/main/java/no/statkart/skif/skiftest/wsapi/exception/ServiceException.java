@@ -1,15 +1,16 @@
 package no.statkart.skif.skiftest.wsapi.exception;
 
 import javax.xml.ws.WebFault;
+import no.statkart.skif.skiftest.wsapi.exception.impl.*;
 
 /**
  * Se dokumentasjon i {@link ServiceFaultInfo}
  *
  * @author Leif Lislegård
- * @since 0.6
+ * @since 1.1
  */
-@WebFault(name = "ServiceException", targetNamespace = "http://grunnbok.statkart.no/fast/info/wsapi/exception")
-public class ServiceException extends java.lang.Exception {
+@WebFault(name = "ServiceException", targetNamespace = "http://grunnbok.statkart.no/borett/info/wsapi/exception")
+public class ServiceException extends Exception {
 
     /**
      * Java type that goes as soapenv:Fault detail element.
@@ -18,7 +19,7 @@ public class ServiceException extends java.lang.Exception {
 
 
     /**
-     * Empty bean constructor, used by mapping2 system
+     * Empty bean constructor, used by mapping system
      */
     public ServiceException() {
     }

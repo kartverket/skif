@@ -6,6 +6,7 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ServerException;
+import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.mapper.MappingException;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -22,8 +23,8 @@ import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.exception.SimpleNonMappedException;
 import no.statkart.skif.skiftest.service.testd.DService;
-import no.statkart.skif.skiftest.wsapi.exception.mapping.SkifTestExceptionMapper;
-import no.statkart.skif.skiftest.wsapi.exception.mapping2.SkifTestExceptionMapper2;
+import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
+import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestExceptionMapper2;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -144,11 +145,18 @@ public class StdSkifExceptionMappingTest {
      * <p/>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
      */
-    @Test(dataProvider = "serverModesJEE", expectedExceptions = MappingException.class, expectedExceptionsMessageRegExp = "TypeMapper\\[no\\.statkart\\.skif\\.skiftest\\.wsapi\\.exception\\.mapping.\\SkifTestExceptionMapper\\] has no mapper for for class: no\\.statkart\\.skif\\.skiftest\\.wsapi\\.exception\\.SimpleNonMappedException")
+    @Test(dataProvider = "serverModesJEE")
     public void testThrowNonMappedCheckedExceptionNonMappedWSCall(ServiceMode mode) throws SimpleException, SimpleNonMappedException {
         final DService service = setUpService(mode);
 
-        service.nonMappedWSCall(no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException.class.getName(), "abc");
+        try {
+            service.nonMappedWSCall("simple.SimpleNonMappedException", "abc");
+        } catch (Throwable t) {
+            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper.class.getName(), no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException.class.getName());
+
+            assertEquals(t.getClass(), MappingException.class, "Forventet exception type");
+            assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
+        }
     }
 
     /**
@@ -163,9 +171,12 @@ public class StdSkifExceptionMappingTest {
         final DService service = setUpService(mode);
 
         try {
-            service.nonMappedWSCall(no.statkart.skif.skiftest.wsapi.exception.ImplementationException.class.getName(), "abc");
-        } catch (ImplementationException e) {
+            service.nonMappedWSCall("impl.ImplementationException", "abc");
+        } catch (SkifException e) {
+            assertInstanceOf(e, ImplementationException.class, "mapped exception class");
             assertEquals(e.getMessage(), "abc");
+        } catch (Throwable t) {
+            fail("Ikke forventet feil: ", t);
         }
     }
 
@@ -195,10 +206,11 @@ public class StdSkifExceptionMappingTest {
 
         try {
             service.nonMappedEJBCall(RuntimeException.class.getName(), "abc");
-        } catch (ImplementationException e) {
+        } catch (SkifException e) {
+            assertInstanceOf(e, ImplementationException.class, "mapped exception class");
             assertEquals(e.getMessage(), "abc");
             assertTrue(e.getCause().getClass()==RuntimeException.class || e.getCause().getClass()==ServerException.class);
-            assertEquals(e.getFeilkode(), "I_1");
+            assertEquals(e.getFeilkode(), "IE000");
             assertEquals(e.getFeilkodebeskrivelse(), "Implementasjonsfeil");
 
             final StackTraceElement stackTraceElement = e.getStackTrace()[0];
@@ -215,6 +227,8 @@ public class StdSkifExceptionMappingTest {
             assertEquals(causeStackTraceElement.getMethodName(), "nonMappedEJBCall");
             assertTrue(causeStackTraceElement.getLineNumber() > 0);
 
+        } catch (Throwable t) {
+            fail("Ikke forventet feil: ", t);
         }
     }
 
@@ -230,9 +244,12 @@ public class StdSkifExceptionMappingTest {
         final DService service = setUpService(mode);
 
         try {
-            service.nonMappedEJBCall(no.statkart.skif.skiftest.wsapi.exception.ImplementationException.class.getName(), "abc");
-        } catch (ImplementationException e) {
+            service.nonMappedEJBCall("ikke vesentlig", "abc");
+        } catch (SkifException e) {
+            assertInstanceOf(e, ImplementationException.class, "mapped exception class");
             assertEquals(e.getMessage(), "abc");
+        } catch (Throwable t) {
+            fail("Ikke forventet feil: ", t);
         }
     }
 
@@ -257,10 +274,10 @@ public class StdSkifExceptionMappingTest {
     public void testThrowMappedImplementationExceptionNoTx(ServiceMode mode) throws SimpleException, SimpleNonMappedException {
         final DService service = setUpService(mode);
 
-        // TODO: Får feil feilkode i JEE mode.
         try {
             service.noTx(ImplementationException.class.getName(), "abc");
-        } catch (ImplementationException e) {
+        } catch (SkifException e) {
+            assertInstanceOf(e, ImplementationException.class, "mapped exception class");
             assertEquals(e.getMessage(), "abc noTx");
             assertNull(e.getCause());
             assertEquals(e.getFeilkode(), "feilkode");
@@ -270,6 +287,8 @@ public class StdSkifExceptionMappingTest {
             assertEquals(stackTraceElement.getFileName(), "DServiceImpl.java");
             assertEquals(stackTraceElement.getMethodName(), "createException");
             assertTrue(stackTraceElement.getLineNumber() > 0);
+        } catch (Throwable t) {
+            fail("Ikke forventet feil: ", t);
         }
     }
 
@@ -282,11 +301,11 @@ public class StdSkifExceptionMappingTest {
     public void testThrowMappedFinderExceptionNoTx(ServiceMode mode) throws SimpleException, SimpleNonMappedException {
         final DService service = setUpService(mode);
 
-        // TODO: Får ikke riktig exception i JEE mode. Får SkifException istedet for FinderException
         try {
 
             service.noTx(FinderException.class.getName(), "abc");
-        } catch (FinderException e) {
+        } catch (SkifException e) {
+            assertInstanceOf(e, FinderException.class, "mapped exception class");
             assertEquals(e.getMessage(), "abc noTx");
 //            assertNull(e.getCause());
 //            assertEquals(e.getFeilkode(), "feilkode");
@@ -296,6 +315,8 @@ public class StdSkifExceptionMappingTest {
 //            assertEquals(stackTraceElement.getFileName(), "DServiceImpl.java");
 //            assertEquals(stackTraceElement.getMethodName(), "createException");
 //            assertTrue(stackTraceElement.getLineNumber() > 0);
+        } catch (Throwable t) {
+            fail("Ikke forventet feil: ", t);
         }
     }
 
@@ -311,10 +332,11 @@ public class StdSkifExceptionMappingTest {
 
         try {
             service.noTx(RuntimeException.class.getName(), "abc");
-        } catch (ImplementationException e) {
+        } catch (SkifException e) {
+            assertInstanceOf(e, ImplementationException.class, "mapped exception class");
             assertEquals(e.getMessage(), "abc noTx");
             assertTrue(e.getCause().getClass()==RuntimeException.class || e.getCause().getClass()==ServerException.class);
-            assertEquals(e.getFeilkode(), "I_1");
+            assertEquals(e.getFeilkode(), "IE000");
             assertEquals(e.getFeilkodebeskrivelse(), "Implementasjonsfeil");
 
             final StackTraceElement stackTraceElement = e.getStackTrace()[0];
@@ -330,6 +352,15 @@ public class StdSkifExceptionMappingTest {
             assertEquals(causeStackTraceElement.getFileName(), "DServiceImpl.java");
             assertEquals(causeStackTraceElement.getMethodName(), "createException");
             assertTrue(causeStackTraceElement.getLineNumber() > 0);
+        } catch (Throwable t) {
+            fail("Ikke forventet feil: ", t);
         }
     }
+
+    static void assertInstanceOf(Throwable e, Class<? extends Throwable> aClass, String message) {
+        if (!aClass.isAssignableFrom(e.getClass())) {
+            fail(String.format("%s is not assignable to %s: %s", e.getClass().getName(), aClass.getName(), message));
+        }
+    }
+
 }

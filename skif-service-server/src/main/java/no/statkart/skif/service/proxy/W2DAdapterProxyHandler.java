@@ -15,8 +15,7 @@ import java.lang.reflect.Method;
  * argumentene og resultatet vha et mapping2 objekt
  * <p/>
  * Adapteren har også exception håndtering dersom denne er tildelt og satt (ikke null).
- * Alle @{Exception}s annotert med {@WebFault} blir mappet over til korresponderende exceptions ihht til mapper. All andre exceptions blir fanget og wrappet til
- * {@link no.statkart.skif.exception.ImplementationException}.
+ * Mapperen får som rolle å holde styr på evt wrapping av exceptions. Et eksempel kan være å wrappe alle ikke skif exceptions i en {@link no.statkart.skif.exception.ImplementationException}.
  *
  * @author Henrik Fredholm
  * @NotTheadSafe
@@ -67,11 +66,10 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
             return map.d2w(result, method.getReturnType());
         } catch (Throwable t) {
             if (exceptionMapping != null) {
-                Throwable mappedException = exceptionMapping.d2w(t);
+                Throwable mappedException = exceptionMapping.d2w((Throwable)t);
                 throw mappedException;
-            } else {
-                throw t;
             }
+            throw t;
         }
     }
 

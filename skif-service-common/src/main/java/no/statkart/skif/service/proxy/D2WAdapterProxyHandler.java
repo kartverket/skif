@@ -4,8 +4,12 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.mapper.MappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import javax.xml.ws.WebFault;
 import java.lang.reflect.Method;
 
 /**
@@ -65,12 +69,13 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
         } catch (Throwable t) {
             if (exceptionMapping != null) {
-                Throwable mappedException = exceptionMapping.w2d(t);
-                throw mappedException;
-            } else {
-                throw t;
+                //forventer kun exceptions definert for webservice api. Disse er da annotert med @WebFault
+                if (t.getClass().getAnnotation(WebFault.class) != null) {
+                    Throwable mappedException = exceptionMapping.w2d((Throwable)t);
+                    throw mappedException;
+                }
             }
-
+            throw t;
         }
     }
 

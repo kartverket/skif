@@ -2,9 +2,10 @@ package no.statkart.skif.skiftest.wsapi.exception;
 
 
 import javax.xml.ws.WebFault;
+import no.statkart.skif.skiftest.wsapi.exception.simple.*;
 
 /**
- * Se dokumentasjon i {@link no.statkart.skif.skiftest.wsapi.exception.SimpleFaultInfo}
+ * Se dokumentasjon i {@link SimpleFaultInfo}
  *
  * @author Henrik Fredholm
  * @since 1.1

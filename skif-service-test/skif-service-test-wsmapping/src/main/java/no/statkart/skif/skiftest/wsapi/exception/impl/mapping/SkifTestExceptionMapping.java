@@ -1,4 +1,4 @@
-package no.statkart.skif.skiftest.wsapi.exception.mapping;
+package no.statkart.skif.skiftest.wsapi.exception.impl.mapping;
 
 import no.statkart.skif.mapper.ExceptionMapping;
 
@@ -6,9 +6,10 @@ import no.statkart.skif.mapper.ExceptionMapping;
  * Interface that defines implemented cababilities of the mapper.
  *
  * @author Leif Lislegård
- * @since 0.6
- * @see SkifTestExceptionMapper ExceptionMapper for implementation
+ * @since 1.1
+ * @see SkifTestExceptionMapper impl for details
  */
 public interface SkifTestExceptionMapping extends ExceptionMapping {
 
 }
+

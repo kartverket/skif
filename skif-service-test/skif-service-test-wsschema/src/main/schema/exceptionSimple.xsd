@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xs:schema
         version="1.0"
-        targetNamespace="http://skif.statkart.no/skiftest/wsapi/exception"
-        xmlns:excns="http://skif.statkart.no/skiftest/wsapi/exception"
+        targetNamespace="http://skif.statkart.no/skiftest/wsapi/exception/simple"
+        xmlns:excns="http://skif.statkart.no/skiftest/wsapi/exception/simple"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 

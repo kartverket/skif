@@ -10,7 +10,7 @@ import org.slf4j.Logger;
  */
 public class ImplementationException extends SystemException {
 
-    protected ImplementationException(String message, Throwable cause, Logger logger) {
+    public ImplementationException(String message, Throwable cause, Logger logger) {
         super(message, cause, logger);
 
         //setter standard feilkode og beskrivelse

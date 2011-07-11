@@ -18,8 +18,9 @@ import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.exception.SimpleNonMappedException;
 import no.statkart.skif.skiftest.service.testex.TestExService;
-import no.statkart.skif.skiftest.wsapi.exception.mapping2.SkifTestExceptionMapper2;
+import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestExceptionMapper2;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -121,11 +122,17 @@ public class BasicExceptionMappingTest {
      * <p/>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og bruker ikke rammeverket
      */
-    @Test(dataProvider = "serverModesJEE", expectedExceptions = SOAPFaultException.class, expectedExceptionsMessageRegExp = "abc")
+    @Test(dataProvider = "serverModesJEE")
     public void testThrowNonMappedRuntimeExceptionNonMappedCall(ServiceMode mode) throws SimpleException, SimpleNonMappedException {
         final TestExService service = setUpService(mode);
 
-        service.nonMappedCall(RuntimeException.class.getName(), "abc");
+        try {
+            service.nonMappedCall(RuntimeException.class.getName(), "abc");
+        } catch (Throwable t) {
+
+            assertEquals(t.getClass(), javax.xml.ws.soap.SOAPFaultException.class, "Forventet exception type");
+            assertEquals(t.getLocalizedMessage(), "abc", "Excepted exception message");
+        }
     }
 
     /**
@@ -134,15 +141,17 @@ public class BasicExceptionMappingTest {
      * <p/>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og bruker ikke rammeverket
      */
-    @Test(dataProvider = "serverModesJEE", expectedExceptions = MappingException.class, expectedExceptionsMessageRegExp = "TypeMapper\\[no\\.statkart\\.skif\\.skiftest\\.wsapi\\.exception\\.mapping2.\\SkifTestExceptionMapper2\\] has no mapper for for class: no\\.statkart\\.skif\\.skiftest\\.wsapi\\.exception\\.SimpleNonMappedException")
-    public void testThrowNonMappedCheckedExceptionNonMappedCall(ServiceMode mode) throws SimpleException, SimpleNonMappedException {
+    @Test(dataProvider = "serverModesJEE")
+    public void testThrowNonMappedCheckedExceptionNonMappedCall(ServiceMode mode) throws Exception {
         final TestExService service = setUpService(mode);
 
         try {
             service.nonMappedCall(no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException.class.getName(), "abc");
-        } catch (SimpleException e) {
-            assertEquals(e.getMessage(), "abc");
-            assertEquals(e.getInfoField(), "infoFieldMessage");
+        } catch (Throwable t) {
+            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper2.class.getName(), no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException.class.getName());
+
+            assertEquals(t.getClass(), MappingException.class, "Forventet exception type");
+            assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
         }
     }
 
@@ -228,11 +237,18 @@ public class BasicExceptionMappingTest {
      * NoTx service kaster checked exception som ikke kan mappes av server. Exceptionen gjøres derfor om på server
      * til en MappedException som JAX-WS gjør om til en SOAPFaultException.
      */
-    @Test(dataProvider = "serverModesJEE", expectedExceptions = javax.xml.ws.soap.SOAPFaultException.class, expectedExceptionsMessageRegExp = "TypeMapper\\[no\\.statkart\\.skif\\.skiftest\\.wsapi\\.exception\\.mapping2\\.SkifTestExceptionMapper2\\] has no mapper for for class: no\\.statkart\\.skif\\.skiftest\\.exception\\.SimpleNonMappedException")
+    @Test(dataProvider = "serverModesJEE")
     public void testThrowNonMappedExceptionNoTxJEE(ServiceMode mode) throws SimpleException, SimpleNonMappedException {
         final TestExService service = setUpService(mode);
 
-        service.noTx(SimpleNonMappedException.class.getName(), "abc");
+        try {
+            service.noTx(SimpleNonMappedException.class.getName(), "abc");
+        } catch (Throwable t) {
+            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper2.class.getName(), SimpleNonMappedException.class.getName());
+
+            assertEquals(t.getClass(), javax.xml.ws.soap.SOAPFaultException.class, "Forventet exception type");
+            assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
+        }
     }
 
     /**
@@ -250,11 +266,19 @@ public class BasicExceptionMappingTest {
      * RequiredTx service kaster checked exception som ikke kan mappes av server. Exceptionen gjøres derfor om på server
      * til en MappedException som JAX-WS gjør om til en SOAPFaultException.
      */
-    @Test(dataProvider = "serverModesJEE", expectedExceptions = javax.xml.ws.soap.SOAPFaultException.class, expectedExceptionsMessageRegExp = "TypeMapper\\[no\\.statkart\\.skif\\.skiftest\\.wsapi\\.exception\\.mapping2\\.SkifTestExceptionMapper2\\] has no mapper for for class: no\\.statkart\\.skif\\.skiftest\\.exception\\.SimpleNonMappedException")
+    @Test(dataProvider = "serverModesJEE")
     public void testThrowNonMappedExceptionRequiresTx(ServiceMode mode) throws SimpleException, SimpleNonMappedException {
         final TestExService service = setUpService(mode);
 
-        service.requiresTx(SimpleNonMappedException.class.getName(), "abc");
+        try {
+            service.requiresTx(SimpleNonMappedException.class.getName(), "abc");
+        } catch (Throwable t) {
+            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper2.class.getName(), SimpleNonMappedException.class.getName());
+
+            assertEquals(t.getClass(), javax.xml.ws.soap.SOAPFaultException.class, "Forventet exception type");
+            assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
+        }
+
     }
 
 
@@ -262,11 +286,18 @@ public class BasicExceptionMappingTest {
      * NewTx service kaster checked exception som ikke kan mappes av server. Exceptionen gjøres derfor om på server
      * til en MappedException som JAX-WS gjør om til en SOAPFaultException.
      */
-    @Test(dataProvider = "serverModesJEE", expectedExceptions = javax.xml.ws.soap.SOAPFaultException.class, expectedExceptionsMessageRegExp = "TypeMapper\\[no\\.statkart\\.skif\\.skiftest\\.wsapi\\.exception\\.mapping2\\.SkifTestExceptionMapper2\\] has no mapper for for class: no\\.statkart\\.skif\\.skiftest\\.exception\\.SimpleNonMappedException")
+    @Test(dataProvider = "serverModesJEE")
     public void testThrowNonMappedExceptionNewTx(ServiceMode mode) throws SimpleException, SimpleNonMappedException {
         final TestExService service = setUpService(mode);
 
-        service.newTx(SimpleNonMappedException.class.getName(), "abc");
+        try {
+            service.newTx(SimpleNonMappedException.class.getName(), "abc");
+        } catch (Throwable t) {
+            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper2.class.getName(), SimpleNonMappedException.class.getName());
+
+            assertEquals(t.getClass(), javax.xml.ws.soap.SOAPFaultException.class, "Forventet exception type");
+            assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
+        }
     }
 
     /**
@@ -292,7 +323,7 @@ public class BasicExceptionMappingTest {
         assertEquals(service.indirectNewTx(Arrays.asList("newTx"), "", ""), "indirectNewTx newTx");
     }
 
-    /*
+    /**
      * Test kall til metode som kalder andre metoder. Kall indirectNoTx->noTx
      */
     @Test(dataProvider = "serverModes")
@@ -308,7 +339,7 @@ public class BasicExceptionMappingTest {
 
     }
 
-    /*
+    /**
      * Test kall til metode som kalder andre metoder. Kall indirectNoTx->requiresTx
      */
     @Test(dataProvider = "serverModes")
@@ -324,7 +355,7 @@ public class BasicExceptionMappingTest {
 
     }
 
-    /*
+    /**
      * Test kall til metode som kalder andre metoder. Kall indirectNoTx->newTx
      */
     @Test(dataProvider = "serverModes")
@@ -341,7 +372,7 @@ public class BasicExceptionMappingTest {
     }
 
 
-    /*
+    /**
     * Test kall til metode som kalder andre metoder. Kall indirectNoTx->noTx
     */
     @Test(dataProvider = "serverModes")
@@ -357,7 +388,7 @@ public class BasicExceptionMappingTest {
 
     }
 
-    /*
+    /**
      * Test kall til metode som kalder andre metoder. Kall indirectRequiresTx->requiresTx
      */
     @Test(dataProvider = "serverModes")
@@ -373,7 +404,7 @@ public class BasicExceptionMappingTest {
 
     }
 
-    /*
+    /**
      * Test kall til metode som kalder andre metoder. Kall indirectRequiresTx->newTx
      */
     @Test(dataProvider = "serverModes")
@@ -390,13 +421,21 @@ public class BasicExceptionMappingTest {
     }
 
 
-    /*
+    /**
     * Test kall til metode som kalder andre metoder. Kall indirectRequiresTx->newTx
     */
-    @Test(dataProvider = "serverModesJEE", expectedExceptions = javax.xml.ws.soap.SOAPFaultException.class, expectedExceptionsMessageRegExp = "TypeMapper\\[no\\.statkart\\.skif\\.skiftest\\.wsapi\\.exception\\.mapping2\\.SkifTestExceptionMapper2\\] has no mapper for for class: no\\.statkart\\.skif\\.skiftest\\.exception\\.SimpleNonMappedException")
+    @Test(dataProvider = "serverModesJEE")
     public void testThrowNonMappedExceptionIndirectRequiresTxDirectNewTx(ServiceMode mode) throws SimpleNonMappedException, SimpleException {
         final TestExService service = setUpService(mode);
-        service.indirectRequiresTx(Arrays.asList("newTx"), SimpleNonMappedException.class.getName(), "");
+
+        try {
+            service.indirectRequiresTx(Arrays.asList("newTx"), SimpleNonMappedException.class.getName(), "");
+        } catch (Throwable t) {
+            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper2.class.getName(), SimpleNonMappedException.class.getName());
+
+            assertEquals(t.getClass(), javax.xml.ws.soap.SOAPFaultException.class, "Forventet exception type");
+            assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
+        }
     }
 
 }

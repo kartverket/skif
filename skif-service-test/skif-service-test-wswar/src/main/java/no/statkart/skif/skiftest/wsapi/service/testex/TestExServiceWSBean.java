@@ -4,12 +4,11 @@ import com.google.inject.Injector;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ws.SkifWebService;
+import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
 import no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
 import no.statkart.skif.skiftest.wsapi.domain.StringList;
-import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
-import no.statkart.skif.skiftest.wsapi.exception.SimpleFaultInfo;
-import no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedFaultInfo;
+import no.statkart.skif.skiftest.wsapi.exception.simple.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

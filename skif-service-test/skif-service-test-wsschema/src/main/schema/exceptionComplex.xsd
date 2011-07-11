@@ -2,13 +2,13 @@
 <xs:schema
         version="1.0"
         elementFormDefault="qualified"
-        targetNamespace="http://skif.statkart.no/skiftest/wsapi/exception"
-        xmlns:excns="http://skif.statkart.no/skiftest/wsapi/exception"
+        targetNamespace="http://skif.statkart.no/skiftest/wsapi/exception/impl"
+        xmlns="http://skif.statkart.no/skiftest/wsapi/exception/impl"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:gdoc="http://grunnbok.statkart.no/tools/gdoc"
         xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
         jaxb:extensionBindingPrefixes="gdoc"
-        jaxb:version="2.0"
+        jaxb:version="2.1"
         >
 
     <xs:annotation>
@@ -24,16 +24,8 @@
     </xs:annotation>
 
     <!-- .NET fix -->
-    <!-- Elements definition must be hand written and placed here in order for .NET datacontract generating to work... -->
-        <xs:element name="ServiceException" nillable="true" type="excns:ServiceFaultInfo"/>
-
-        <xs:element name="SystemException" nillable="true" type="excns:SystemFaultInfo"/>
-        <xs:element name="OperationalException" nillable="true" type="excns:OperationalFaultInfo"/>
-        <xs:element name="ImplementationException" nillable="true" type="excns:ImplementationFaultInfo"/>
-
-        <xs:element name="ApplicationException" nillable="true" type="excns:ApplicationFaultInfo"/>
-        <xs:element name="FinderException" nillable="true" type="excns:FinderFaultInfo"/>
-        <xs:element name="ValidationException" nillable="true" type="excns:ValidationFaultInfo"/>
+    <!-- Elements definition must be hand written and introduced here in order for .NET datacontract generating to work... -->
+        <xs:element name="ServiceException" nillable="true" type="ServiceFaultInfo"/>
     <!-- .NET end -->
 
 
@@ -41,9 +33,11 @@
         <xs:annotation>
             <xs:appinfo>
                 <gdoc:doc><![CDATA[
-                    Abstrakt fellestype for alle service feil som kan oppstå.
-                    <p/>
-                    Feiltyper deles strengt inn i {@link ApplicationFaultInfo applikasjonsfeil} og {@link SystemFaultInfo systemfeil}.
+                        Generell feilmelding for alle hånterte feil ifra systemet.
+
+                        Alle feil har en utfyllt feilkode og feilkodebeskrivelse.
+
+                        For klassifisering av feil, se {@link #category} feltet.
                     ]]>
                 </gdoc:doc>
             </xs:appinfo>
@@ -67,6 +61,87 @@
                     </xs:appinfo>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="category" type="xs:string">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <jaxb:property>
+                            <jaxb:javadoc>
+                                <![CDATA[
+                                Kategorisering av feil. Her blir hver supertype av exceptionklasser lagt til i en kolon sepparert liste.
+                                Det siste leddet annoterer da konkret subtype av exception.
+
+                                <br>
+                                En eksempelimplementasjon kan ønske å skille systemfeil ifra applikasjonsfeil. Dette gjøres enkelt ved å matche {@link #category}-streng mot ":SystemException:" osv..
+
+                                <p>
+                                Kategorisering av feil skjer etter følgende struktur:
+                                <ul>
+                                  <li type="circle">
+                                    <h3>ServiceException</h5>
+                                    verdi = {@code ":ServiceException:"}
+                                    <ul>
+                                      <li type="circle">
+                                        <h3>SystemException</h5>
+                                        verdi = {@code ":ServiceException:SystemException:"}
+                                        <br>
+                                            Felles klasse for alle typer systemfeil. <br />
+                                            Systemfeil skiller seg ifra applikasjonsfeil på den måte da dette er feil som oppstår i og ved kjøring av miljøet som applikasjonen kjører i.
+                                            Eksempler er implementasjonsfeil og feil som kan oppstå når deler av det fysiske miljøet rundt ikke er tigjengelig.
+                                        <ul>
+                                          <li type="circle">
+                                            <h3>ImplementationException</h5>
+                                            verdi = {@code ":ServiceException:SystemException:ImplementationException:"}
+                                            <br>
+                                                Feil som oppstår i kode enten på server, eller på bagrunn av feil i kall fra klient.
+                                          </li>
+                                          <li type="circle">
+                                            <h3>OperationalException</h5>
+                                            verdi = {@code ":ServiceException:SystemException:OperationalException:"}
+                                            <br>
+                                                Operasjonelle feil har feilkilder som stammer utelukkende ifra det utenpåliggende miljøet systemet kjører i.
+                                                Typiske eksempler er at serveren går tom for diskplass, eller at forbindelsen med databasen blir borte.
+                                          </li>
+                                        </ul>
+                                      </li>
+                                      <li type="circle">
+                                        <h3>ApplicationException</h5>
+                                        verdi = {@code ":ServiceException:ApplicationException:"}
+                                        <br>
+                                            Felles type for alle applikasjonsfeil.
+                                            Applikasjonsfeil skiller seg ifra systemfeil på den måte da dette er feil som direkte skyldes applikasjons-spesifik logikk og validering.
+                                            Med dette forstås brukerfeil så vel som domeneregler applikasjonen definerer.
+                                        <ul>
+                                          <li type="circle">
+                                            <h3>FinderException</h5>
+                                            verdi = {@code ":ServiceException:ApplicationException:FinderException:"}
+                                            <br>
+                                                Felles klasse for feil ved oppslag der datagrunnlag ikke finnes i henhold til gitte kriterier.
+                                          </li>
+                                          <li type="circle">
+                                            <h3>ValidationException</h5>
+                                            verdi = {@code ":ServiceException:ApplicationException:ValidationException:"}
+                                            <br>
+                                                Felles klasse for feil ved validering der datagrunnlag ikke er i henhold til spesifiserte regler.
+                                          </li>
+                                        </ul>
+                                      </li>
+                                    </ul>
+                                  </li>
+                                </ul>
+                            ]]></jaxb:javadoc>
+                        </jaxb:property>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="properties" type="ExceptionProperties">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <jaxb:property>
+                            <jaxb:javadoc><![CDATA[Eventuelle utvidede properties kan komme her..]]></jaxb:javadoc>
+                        </jaxb:property>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="stackTraceText" type="xs:string">
                 <xs:annotation>
                     <xs:appinfo>
@@ -76,7 +151,7 @@
                     </xs:appinfo>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="exceptionDetail" type="excns:ExceptionDetail">
+            <xs:element name="exceptionDetail" type="ExceptionDetail">
                 <xs:annotation>
                     <xs:appinfo>
                         <jaxb:property>
@@ -85,137 +160,6 @@
                     </xs:appinfo>
                 </xs:annotation>
             </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-
-
-    <xs:complexType name="ApplicationFaultInfo">
-        <xs:annotation>
-            <xs:appinfo>
-                <gdoc:doc><![CDATA[
-                    Felles klasse for alle typer av applikasjonsfeil.
-                    Applikasjonsfeil skiller seg ifra {@link SystemFaultInfo systemfeil} på den måte da dette er feil som direkte skyldes applikasjons-spesifik logikk.
-                    Med dette forstås brukerfeil så vel som logiske domene beskrenkninger applikasjonen definerer.
-                    ]]>
-                </gdoc:doc>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="excns:ServiceFaultInfo">
-                <xs:sequence>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="FinderFaultInfo">
-        <xs:annotation>
-            <xs:appinfo>
-                <gdoc:doc><![CDATA[
-                    Felles klasse for feil ved oppslag der datagrunnlag ikke er i henhold til kriterier.
-                    ]]>
-                </gdoc:doc>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="excns:ApplicationFaultInfo">
-                <xs:sequence>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="ValidationFaultInfo">
-        <xs:annotation>
-            <xs:appinfo>
-                <gdoc:doc><![CDATA[
-                    Felles klasse for feil ved validering der datagrunnlag ikke er i henhold til kriterier.
-                    ]]>
-                </gdoc:doc>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="excns:ApplicationFaultInfo">
-                <xs:sequence>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="SystemFaultInfo">
-        <xs:annotation>
-            <xs:appinfo>
-                <gdoc:doc><![CDATA[
-                    Felles klasse for alle typer systemfeil. <br />
-                    Systemfeil skiller seg ifra {@link ApplicationFaultInfo applikasjonsfeil} på den måte da
-                    dette er feil som oppstår i og på grunn av systemet. Eksempler er implementasjonsfeil og feil som kan oppstå når deler av det fysiske miljøet rundt ikke er tigjengelig.
-                    <p>
-                    Feil skilles grovt inn i
-                        {@link OperationalFaultInfo operasjonelle feil} og
-                        {@link ImplementationFaultInfo implementasjonsfeil}.
-                     ]]>
-                </gdoc:doc>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="excns:ServiceFaultInfo">
-                <xs:sequence>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="OperationalFaultInfo">
-        <xs:annotation>
-            <xs:appinfo>
-                <gdoc:doc><![CDATA[
-                        Operasjonelle feil har feilkilder som stammer utelukkende ifra det utenpåliggende miljøet systemet kjører i.
-                        Typiske eksempler er at serveren går tom for diskplass, eller at forbindelsen med databasen blir borte.
-                     ]]>
-                </gdoc:doc>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="excns:SystemFaultInfo">
-                <xs:sequence>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="ImplementationFaultInfo">
-        <xs:annotation>
-            <xs:appinfo>
-                <gdoc:doc><![CDATA[
-                        Feil som oppstår i kode enten på server, eller på bagrunn av feil i kall fra klient.
-                     ]]>
-                </gdoc:doc>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="excns:SystemFaultInfo">
-                <xs:sequence>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-
-
-
-
-    <xs:complexType name="StackTraceElement">
-        <xs:sequence>
-            <xs:element name="declaringClass" type="xs:string"/>
-            <xs:element name="methodName" type="xs:string"/>
-            <xs:element name="fileName" type="xs:string" nillable="true"/>
-            <xs:element name="lineNumber" type="xs:int"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="StackTraceElementList">
-        <xs:sequence>
-            <xs:element name="item" type="excns:StackTraceElement" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -247,7 +191,16 @@
                     </xs:appinfo>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="stackTraceElements" type="excns:StackTraceElementList" >
+            <xs:element name="cause" type="ExceptionDetail" nillable="true">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <jaxb:property>
+                            <jaxb:javadoc><![CDATA[Evt nøstet exception kan komme her.]]></jaxb:javadoc>
+                        </jaxb:property>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="stackTraceElements" type="StackTraceElementList" >
                 <xs:annotation>
                     <xs:appinfo>
                         <jaxb:property>
@@ -256,14 +209,52 @@
                     </xs:appinfo>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="cause" type="excns:ExceptionDetail" nillable="true">
-                <xs:annotation>
-                    <xs:appinfo>
-                        <jaxb:property>
-                            <jaxb:javadoc><![CDATA[Evt nøstet exception kan komme her.]]></jaxb:javadoc>
-                        </jaxb:property>
-                    </xs:appinfo>
-                </xs:annotation>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="StackTraceElementList">
+        <xs:annotation>
+            <xs:appinfo>
+                <gdoc:doc><![CDATA[  ]]></gdoc:doc>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="item" type="StackTraceElement" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="StackTraceElement">
+        <xs:annotation>
+            <xs:appinfo>
+                <gdoc:doc><![CDATA[  ]]></gdoc:doc>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="declaringClass" type="xs:string"/>
+            <xs:element name="methodName" type="xs:string"/>
+            <xs:element name="fileName" type="xs:string" nillable="true"/>
+            <xs:element name="lineNumber" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ExceptionProperties">
+        <xs:annotation>
+            <xs:appinfo>
+                <gdoc:doc><![CDATA[  ]]></gdoc:doc>
+                <IsDictionary
+                        xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                    true
+                </IsDictionary>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="key" type="xs:string"/>
+                        <xs:element name="value" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
             </xs:element>
         </xs:sequence>
     </xs:complexType>

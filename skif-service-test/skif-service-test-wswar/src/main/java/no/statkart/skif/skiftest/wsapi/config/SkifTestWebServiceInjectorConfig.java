@@ -8,8 +8,8 @@ import no.statkart.skif.service.module.server.WSServerModule;
 import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.skiftest.config.*;
 import no.statkart.skif.skiftest.wsapi.SkifTestServiceContextMapper;
-import no.statkart.skif.skiftest.wsapi.exception.mapping.SkifTestExceptionMapper;
-import no.statkart.skif.skiftest.wsapi.exception.mapping2.SkifTestExceptionMapper2;
+import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
+import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestExceptionMapper2;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 
 import javax.servlet.ServletContextEvent;
