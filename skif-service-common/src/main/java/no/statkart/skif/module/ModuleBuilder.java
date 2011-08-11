@@ -12,10 +12,12 @@ import static no.statkart.skif.config.ConfigurationConstants.*;
 import no.statkart.skif.config.ConfigurationConstants;
 import no.statkart.skif.config.*;
 import no.statkart.skif.config.internal.ConfigurationUtils;
+import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -47,7 +49,7 @@ public class ModuleBuilder {
     /**
      * Configration som inneholder properties for moduler som builderen skal produsere.
      * Dersom builderen brukes til å produsere flere moduler vil configuration-instansen deles av alle moduler som blir produsert
-     * inntil en ny configuration settes. Configuration-instansen bruke ikke for singleVmServer moduler
+     * inntil en ny configuration settes. Denne instansen brukes ikke for singleVmServer-moduler
      */
     private Configuration configuration;
 
@@ -70,16 +72,14 @@ public class ModuleBuilder {
     private ModuleStrategyFactory singleVmServerModuleStrategyFactory;
 
     /**
-     * Angir om moduler skal bruke samme singleVmServer instans når modulenes singlevmServer konfigurasjon er uendret
-     */
-    private boolean useSharedServer = true;
-
-    /**
      * Delt singleVmServer instans som anvendes dersom useSharedServer er true
      */
     private Injector singleVmServerInjector;
 
 
+    /**
+     * Configuration som kombinerer alle de andre configurations. Initialiseres lazy.
+     */
     private CompositeConfiguration compositeConfiguration;
 
     public ModuleBuilder() {
@@ -143,7 +143,6 @@ public class ModuleBuilder {
         }
     }
 
-
     public ModuleBuilder setConfiguration(Configuration configuration) {
         this.configuration = configuration;
         compositeConfiguration = null;
@@ -187,13 +186,16 @@ public class ModuleBuilder {
         return this;
     }
 
-
+    /**
+     * Angir om moduler skal bruke samme singleVmServer instans når modulenes singlevmServer konfigurasjon er uendret
+     */
     public boolean isUseSharedServer() {
-        return useSharedServer;
+        return getCompositeConfiguration().getBoolean(USE_SHARED_SERVER, true);
     }
 
-    public void setUseSharedServer(boolean useSharedServer) {
-        this.useSharedServer = useSharedServer;
+    public ModuleBuilder setUseSharedServer(boolean useSharedServer) {
+        builderConfiguration.setProperty(USE_SHARED_SERVER, useSharedServer);
+        return this;
     }
 
     public ModuleStrategyFactory getSingleVmServerModuleStrategyFactory() {
@@ -395,7 +397,7 @@ public class ModuleBuilder {
     }
 
     public Injector getSingleVmServerInjector() {
-        if (!useSharedServer) singleVmServerInjector = null;
+        if (!isUseSharedServer()) singleVmServerInjector = null;
         if (singleVmServerInjector == null) {
             SystemConfiguration singleVmServerSystemConfiguration = (SystemConfiguration) ConfigurationUtils.cloneConfiguration(systemConfiguration);
             if (singleVmServerSystemConfiguration != null) {
