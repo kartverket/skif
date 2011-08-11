@@ -143,7 +143,7 @@ subprojects { Project project ->
         uploadArchives {
             repositories {
                 // TODO: fix
-//                add project.repositories.releases
+                //                add project.repositories.releases
             }
             // uploadDescriptor = false
         }
@@ -178,7 +178,7 @@ subprojects { Project project ->
                 String filteredResourcesDir = project.file("build/generated/${scope}/resources")
                 task "filterResources$scope"(type: Copy) {
                     def userProperties = loadJavaProps()
-                    inputs.properties( loadJavaProps())
+                    inputs.properties(userProperties)
                     from(unfilteredPropertiesDir)
                     into(filteredResourcesDir)
                     filter(ReplaceTokens, tokens: userProperties)
@@ -203,24 +203,23 @@ subprojects { Project project ->
         }
 
         test {
-            useTestNG()
+            boolean singleVm = Boolean.valueOf(rootProject.loadJavaProps()['skif.single_vm'])
+            useTestNG() {
+                excludeGroups('broken')
+                if (singleVm) {
+                    excludeGroups('server-required')
+                }
+            }
             systemProperties "org.uncommons.reportng.stylesheet": "${FILEREPO}/reportng-1.1.3/stylesheets/hudsonesque.css"
             systemProperties "org.uncommons.reportng.title": "${project.name} Report"
 
             options {
-                excludeGroups['broken']
                 listeners << 'org.uncommons.reportng.HTMLReporter'
                 listeners << 'org.uncommons.reportng.JUnitXMLReporter'
             }
-            useDefaultListeners = false
-
+            jvmArgs '-Xmx1024m'
+            //useDefaultListeners = false
         }
-
-        task "create-dirs" << {
-            sourceSets.all*.java.srcDirs*.each { it.mkdirs() }
-            sourceSets.all*.resources.srcDirs*.each { it.mkdirs() }
-        }
-
 
         idea.module {
             // Virker først i milestone-4
