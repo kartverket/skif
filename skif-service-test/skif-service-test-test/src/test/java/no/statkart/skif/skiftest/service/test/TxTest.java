@@ -17,6 +17,7 @@ import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.service.testa.AService;
 import no.statkart.skif.skiftest.service.testb.BService;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
+import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -30,73 +31,18 @@ import static org.testng.Assert.assertEquals;
  * @since 1.1
  */
 @Test(groups = "server-required")
-public class TxTest {
-    private Injector injector = null;
-    //private ServiceMode mode = ServiceMode.JEE;
+public class TxTest extends SkifTestCase {
 
-
-    @DataProvider(name = "serverModes")
-    public Object[][] createServerModes() {
-        return new Object[][]{
-                {ServiceMode.JEE},
-                {ServiceMode.SINGLE_VM},
-        };
-    }
-
-    @DataProvider(name = "serverModesJEE")
-    public Object[][] createServerModesJEE() {
-        return new Object[][]{
-                {ServiceMode.JEE},
-        };
-    }
-
-    @DataProvider(name = "serverModesSVM")
-    public Object[][] createServerModesSVM() {
-        return new Object[][]{
-                {ServiceMode.SINGLE_VM},
-        };
-    }
-    private void setlogin() {
-        final LoginUserHolder loginUserHolder = injector.getInstance(LoginUserHolder.class);
-        loginUserHolder.set(new LoginUser("frehen", "matrikkel2"));
-        final ServerUrlHolder serverUrlHolder = injector.getInstance(ServerUrlHolder.class);
-        serverUrlHolder.set("https://localhost:7002");
-    }
-
-    public Injector createClientInjector(ServiceMode mode) {
-        ModuleConfiguration cfg = null;
-        return new ModuleBuilder()
-                .setModuleClass(ClientModule.class)
-                .setSingleVmServerModuleClass(SkifTestServerModule.class)
-                .setServiceMode(mode)
-                .buildInjector();
-    }
-
-    public static class ClientModule extends SkifModule {
-
-        public ClientModule(ModuleConfiguration moduleConfiguration) {
-            super(moduleConfiguration);
-        }
-
-        @Override
-        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
-            return new ClientModuleStrategyFactory();
-        }
-
-        @Override
-        protected void configure() {
-            install(new RemoteServerModule(moduleConfiguration));
-            install(new RemoteServiceModule(moduleConfiguration, new SkifTestGroupABCDServices().getServices(), new SkifTestMapper().getMapping()));
-        }
+    public TxTest() {
+        setModuleClass(SkifTestClientModule.class);
+        setSingleVmServerModuleClass(SkifTestServerModule.class);
     }
 
     /**
      * Test kall til metode som kalder andre metoder. Ingen metoder krever tx
      */
-    @Test(dataProvider = "serverModes")
-    public void testCrossCallSingleVmWireing_NoEJBCallOnServer(ServiceMode mode) {
-        injector = createClientInjector(mode);
-        setlogin();
+    @Test
+    public void testCrossCall_NoEJBCallOnServer() {
         final AService serviceA = injector.getInstance(AService.class);
 
         // Startende kall er ikke transaksjonelt
@@ -109,11 +55,8 @@ public class TxTest {
     /**
      * Test kall til metode som ikke selv krever tx men som kaller andre metoder som krever det
      */
-    @Test(dataProvider = "serverModes")
-    public void testCrossCallSingleVmWireing_StartingCallHasNoTxOnMethodFollowingCallsMayHave(ServiceMode mode) {
-        injector = createClientInjector(mode);
-        setlogin();
-
+    @Test
+    public void testCrossCall_StartingCallHasNoTxOnMethodFollowingCallsMayHave() {
         final AService serviceA = injector.getInstance(AService.class);
 
         assertEquals(serviceA.m1(Arrays.asList("BService.m2")), "[NoTx:AService.m1 [Tx:BService.m2]]");
@@ -133,11 +76,8 @@ public class TxTest {
      * Test kall til metoder hvor startende kall har REQUIRES eller
      * REQUIRES_NEW transaction. Videre kall på server krever ikke transaksjoner
      */
-    @Test(dataProvider = "serverModes")
-    public void testCrossCallSingleVmWireing_StartingCallHasTxOnMethod(ServiceMode mode) {
-        injector = createClientInjector(mode);
-        setlogin();
-
+    @Test
+    public void testCrossCall_StartingCallHasTxOnMethod() {
         final BService serviceB = injector.getInstance(BService.class);
 
         // Startende kall har REQUIRES tx
@@ -156,11 +96,8 @@ public class TxTest {
      * Test kall til metoder hvor startende kall har REQUIRES eller
      * REQUIRES_NEW transaction. Videre kall på serveren krever også tx
      */
-    @Test(dataProvider = "serverModes")
-    public void testCrossCallSingleVmWireing_StartingCallHasNoTxOnMethodFollowingCallHas(ServiceMode mode) {
-        injector = createClientInjector(mode);
-        setlogin();
-
+    @Test
+    public void testCrossCall_StartingCallHasNoTxOnMethodFollowingCallHas() {
         final BService bService = injector.getInstance(BService.class);
 
         assertEquals(bService.m2(Arrays.asList("BService.m2")), "[Tx:BService.m2 BService.m2]");

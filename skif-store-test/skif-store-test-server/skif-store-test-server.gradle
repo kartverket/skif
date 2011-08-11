@@ -6,6 +6,10 @@ dependencies {
     compile project(':skif-store-server')
     compile project(':skif-store-test:skif-store-test-api')
     provided libraries.weblogic
+
+    testCompile project(':skif-config')
+    testCompile project(':skif-testsupport-common')
+
 }
 
 task clientJar(type: Jar) {

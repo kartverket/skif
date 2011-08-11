@@ -1,0 +1,36 @@
+package no.statkart.skif.util.testsupport;
+
+import com.google.inject.Module;
+import no.statkart.skif.ServiceMode;
+import no.statkart.skif.module.ModuleConfiguration;
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+/**
+ * @author Henrik Fredholm
+ * @since 2.0
+ */
+@Test
+public class SkifTestCaseConfigFileTest extends SkifTestCase {
+
+    @Override
+    protected String getConfigurationFilename() {
+        return "no/statkart/skif/util/testsupport/test-skif-singlevm-true.properties";
+    }
+
+    @Override
+    protected Class<? extends Module> getModuleClass() {
+        return no.statkart.skif.module.TestModule.class;
+    }
+
+    @Override
+    protected void resetLogin() {
+        // Støtter ikke login for denne test
+    }
+
+    public void testServiceMode() {
+        assertEquals(injector.getInstance(ModuleConfiguration.class).getServiceMode(), ServiceMode.SINGLE_VM);
+    }
+}

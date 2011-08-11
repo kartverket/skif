@@ -1,18 +1,9 @@
-configurations {
-    client
-}
-
 dependencies {
     compile project(':skif-service-server')
     compile project(':skif-service-test:skif-service-test-api')
     provided libraries.weblogic
+
+    testCompile project(':skif-config')
+    testCompile project(':skif-testsupport-common')
 }
 
-task clientJar(type: Jar) {
-    appendix = 'client'
-    from sourceSets.main.classes
-}
-
-artifacts {
-//   archives clientJar
-}

@@ -1,3 +1,4 @@
+include 'skif-config'
 include 'skif-service-common'
 include 'skif-testsupport-common'
 include 'skif-service-server'

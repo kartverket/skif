@@ -1,3 +1,4 @@
+evaluationOrder 'skif-config'
 evaluationOrder 'skif-service-common'
 evaluationOrder 'skif-testsupport-common'
 evaluationOrder 'skif-service-server'
@@ -16,11 +17,13 @@ evaluationOrder 'skif-store-test:skif-store-test-api'
 evaluationOrder 'skif-store-test:skif-store-test-server'
 evaluationOrder 'skif-store-test:skif-store-test-test'
 
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply plugin: 'idea'
 
 // Variables to grab from environment
-["WEBLOGIC_HOME"].each { val ->
-    if (!project.hasProperty(val)) {
+["WEBLOGIC_HOME", 'COMPUTERNAME', 'PUBLIC_REPO'].each { val ->
+    if (!project.hasProperty(val) && System.getenv(val) != null) {
         project.setProperty(val, System.getenv(val))
     }
 }
@@ -32,9 +35,8 @@ allprojects {
     group = 'no.statkart.skif'
 
     repositories {
-        mavenRepo name: "central", urls: "http://skrivap92:8001/nexus/content/repositories/central/"
-        mavenRepo name: "thirdparty", urls: "http://skrivap92:8001/nexus/content/repositories/thirdparty/"
-        mavenRepo name: "releases", urls: "http://skrivap92:8001/nexus/content/repositories/releases/"
+        String publicRepo = rootProject.properties.get('PUBLIC_REPO', 'http://skrivap92:8001/nexus/content/groups/public/')
+        mavenRepo name: 'public', urls: publicRepo
     }
 }
 
@@ -140,7 +142,8 @@ subprojects { Project project ->
 
         uploadArchives {
             repositories {
-                add project.repositories.releases
+                // TODO: fix
+//                add project.repositories.releases
             }
             // uploadDescriptor = false
         }
@@ -167,7 +170,37 @@ subprojects { Project project ->
             test.compileClasspath += configurations.provided
             test.runtimeClasspath += configurations.provided
         }
-        //sourceSets.main.java.srcDirs = ['src/main/java', 'src/main/java-generated']
+
+
+        ['main', 'test'].each { String scope ->
+            def unfilteredPropertiesDir = project.file("src/${scope}/resources.filtered")
+            if (unfilteredPropertiesDir.isDirectory()) {
+                String filteredResourcesDir = project.file("build/generated/${scope}/resources")
+                task "filterResources$scope"(type: Copy) {
+                    def userProperties = loadJavaProps()
+                    inputs.properties( loadJavaProps())
+                    from(unfilteredPropertiesDir)
+                    into(filteredResourcesDir)
+                    filter(ReplaceTokens, tokens: userProperties)
+                }
+                project.sourceSets."$scope".resources.srcDir filteredResourcesDir
+                project.processResources.dependsOn "filterResources$scope"
+
+                //Source is in the build directory so we need to unexclude it
+                project.idea.module.iml {
+                    whenMerged {
+                        it.excludeFolders = it.excludeFolders.findAll {!it.url.contains("build")}
+                    }
+                }
+            }
+        }
+
+        idea.module {
+            inheritOutputDirs = false
+            outputDir = sourceSets.main.classesDir
+            testOutputDir = sourceSets.test.classesDir
+            scopes.PROVIDED.plus += configurations.provided
+        }
 
         test {
             useTestNG()
@@ -175,7 +208,7 @@ subprojects { Project project ->
             systemProperties "org.uncommons.reportng.title": "${project.name} Report"
 
             options {
-                excludeGroups ['broken']
+                excludeGroups['broken']
                 listeners << 'org.uncommons.reportng.HTMLReporter'
                 listeners << 'org.uncommons.reportng.JUnitXMLReporter'
             }
@@ -254,3 +287,66 @@ void setEvaluationOrder(Project project) {
     }
 }
 
+Map loadJavaProps() {
+    loadJavaProps([file('build.properties')], false)
+}
+
+println(loadJavaProps())
+
+// TODO: Hack until http://issues.gradle.org/browse/GRADLE-1477
+File getTools() {
+    String javaHome = System.properties['java.home']
+    if (System.properties['os.name'].toLowerCase().contains('mac os'))
+        new File(javaHome, '../classes/classes.jar')
+    else
+        new File(javaHome, '../lib/tools.jar')
+}
+
+// See http://issues.gradle.org/browse/GRADLE-1419
+Map loadJavaProps(List files, boolean strict) {
+    Map map = new HashMap();
+    Properties props = new Properties();
+    files.each { file ->
+        file.withInputStream { props.load(it) }
+        logger.debug('Loaded ' + props.size() + ' from ' + file)
+    }
+    ['wls.hostname': "${COMPUTERNAME}.statkart.no"].each {
+        if (props.get(it.key) == null)
+            props.put(it.key, it.value)
+    }
+    String newVal;
+    boolean haveNewVal;
+    int prevCount = props.size();
+    def unresolveds = []
+    while (prevCount > 0) {
+        unresolveds.clear()
+        new HashMap(props).each() { pk, pv ->
+            haveNewVal = true;
+            newVal = pv.replaceAll(/\$\{([^}]+)\}/, {
+                if (project.hasProperty(it[1])) return project.property(it[1])
+                if (map.get(it[1]) != null) return map.get(it[1])
+                if (System.properties.containsKey(it[1]))
+                    return System.properties[it[1]]
+                unresolveds << it[1]
+                haveNewVal = false;
+                return it[0]
+            })
+            if (haveNewVal) {
+                map.put(pk, newVal)
+                props.remove(pk)
+            }
+        }
+        if (prevCount == props.size()) {
+            if (strict)
+                throw new GradleException(
+                        'Unable to resolve top-level properties: ' + props.keySet()
+                                + '\ndue to unresolved references to: ' + unresolveds)
+            logger.error(
+                    'Unable to resolve top-level properties: ' + props.keySet()
+                            + '\ndue to unresolved references to: ' + unresolveds)
+            break
+        }
+        prevCount = props.size()
+    }
+    map
+}

@@ -4,15 +4,15 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
+import no.statkart.skif.module.TestModule;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
 /**
- * Tester at injector gjenbrukes på tvers av testmetoder når {@link #resuseInjector()} returnerer true og at {@link
+ * Tester at injector gjenbrukes på tvers av testmetoder når {@link #isReuseInjector()} returnerer true og at {@link
  * #resetLogin()} blir kallt for hver testmetode.
  *
  * @author Henrik Fredholm
@@ -31,6 +31,10 @@ public class SkifTestCaseStandAloneModuleReuseTest extends SkifTestCase {
     @Override
     protected void resetLogin() {
         loginCount++;
+    }
+
+    public void testDefaultServiceMode() {
+        assertNull(isSingleVm());
     }
 
     public void test1() {

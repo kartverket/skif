@@ -2,12 +2,14 @@ package no.statkart.skif.util.testsupport;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import no.statkart.skif.SkifModule;
+import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.ConfigurationConstants;
 import no.statkart.skif.config.SystemConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
+import no.statkart.skif.service.ServerUrlHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -25,52 +27,53 @@ import java.util.Collection;
  * gjøre det mulig å få tester til å kjøre raskt ved at tung initialisering fortrinsvis skjer en gang per testsuite
  * eller testklasse og ikke for hver testmetode. Samtidig skal det være enkelt å skifte mellom å kjøre testene i
  * JEE og SINGLE_VM mode ved f.eks å endre en parameter i en ekstern konfigurasjonsfil. Endring av en slik ekstern
- * parameter skal kun påvirke de tester som der designet til valgfritt å kunne kjøres i begge modes. Tester som krever
+ * parameter skal kun påvirke de tester som er designet til valgfritt å kunne kjøres i begge modes. Tester som krever
  * bestemt mode eller eksplisitt tester alle modes skal ikke påvirkes av en slik ekstern parameter. Det skal være mulig
- * selektivt å gjøre tester som kun tilhører en bestemt grupper eller ekskluderer tester som tilhører en bestemt gruppe.
+ * selektivt å kjøre tester som tilhører en bestemt testgruppe eller ekskluderer tester som tilhører en bestemt testgruppe.
  * <p/>
- * Videre skal støtte i denne klassen være slik at der er enkelt å kjøre testene fra både fra byggeverktøy (Ant og Maaven)
+ * Videre skal støtte i denne klassen være slik at der er enkelt å kjøre testene fra både fra byggeverktøy (f.eks Gradle)
  * og fra IntelliJ. Spesielt skal det være mulig å velge en enkelt testmetode eller testklasse i IntelliJ, høyre-klikke
- * og kjøre denne. TestNG støtten i IntelliJ (9 og 10) er slik at ikke alle TestNG annotasjoner gir ønsket oppførsel i IntelliJ.
- * Spesielt bør man unngå å bruke dependsOnGroups i stor stil (i noen få tilfeller kan det men hensikt anvendes mellom
- * testklasser i samme pakke). Annotasjonen dependsOnMethods bør kun brukes innenfor samme testklasse og gjør at man
- * ikke lengere kan kjøre metodene i testen enkeltvis fra IntelliJ - hvilket er uheldig i de fleste tilfeller.
+ * på metoden og kjøre denne. TestNG støtten i IntelliJ (versjon 10) er slik at ikke alle TestNG annotasjoner umiddelbart
+ * gir ønsket oppførsel i IntelliJ. Spesielt bør man unngå å bruke dependsOnGroups i stor stil (i noen få tilfeller kan
+ * det med hensikt anvendes mellom testklasser i samme pakke). Annotasjonen dependsOnMethods bør kun brukes innenfor
+ * samme testklasse og gjør at man ikke lengere kan kjøre metodene enkeltvis fra IntelliJ og bør derfor ikke brukes
+ * i stor utstrekning.
  * <p/>
- * Tanken var opprindelig å bruke  {@code @BeforeSuite} til å gjøre all nødvendig tung initialisering, men det virket dårlig fordi
- * {@code @BeforeSuite} ikke blir kjørt når man bruker grupper ( {@code @BeforeSuite} blir ikke med i grupper som
- * subklassen tilhører) og dermed blir  {@code @BeforeSuite} ikke alltid kjørt når man bruke grupper. Hvis man bruker
- *  {@code alwaysRun} kan det også fører til at denne koden  bli kjørt flere ganger. Det vi ønsker er at
- *  "BeforeSuite-metoden" alltid blir kjørt nettopp en gang hvis en av testene i en av subklassene kjøres.
- *  Dette skal skje uavhengig av hvordan testene blir utvalgt. Det er ikke mulig å få til med {@code @BeforeSuite} annotasjonen.
- * Derfor blir {@code @BeforeClass} og {@code alwaysRun} brukt i stedet. Man må da teste på en statisk variable
- * eller lignende slik at initialiseringen ikke skjer flere ganger.
+ * Tanken bak designet av testklassen var opprindelig å bruke  {@code @BeforeSuite} til å gjøre all nødvendig tung
+ * initialisering, men det virket dårlig fordi {@code @BeforeSuite} ikke blir kjørt når man bruker grupper
+ * ( {@code @BeforeSuite} blir ikke med i grupper som subklassen tilhører) og dermed blir  {@code @BeforeSuite} ikke
+ * alltid kjørt når man bruke grupper. Hvis man bruker {@code alwaysRun} kan det også fører til at denne koden  bli
+ * kjørt flere ganger. Det vi ønsker er at "BeforeSuite-metoden" alltid blir kjørt nettopp en gang hvis en av testene
+ * i en av subklassene kjøres. Dette skal skje uavhengig av hvordan testene blir utvalgt. Det er ikke mulig å få til
+ * med {@code @BeforeSuite} annotasjonen. Derfor blir {@code @BeforeClass} og {@code alwaysRun} brukt i stedet. Man må
+ * da teste på en statisk variable eller lignende slik at initialiseringen ikke skjer flere ganger.
  * <p/>
- * Det er ønskelig å kunne skjeldne mellom release- og unit-tester da disse går mot forskjellige typer databaser. Unit-
- * tester ikke må få lov å ødelegge releasetestdatabasen da denne kan ta lang tid å gjenetablere.
+ * Det er ønskelig å kunne skjeldne mellom release- og unit-tester da disse vil gå mot forskjellige typer databaser. Unit-
+ * tester må ikke få lov å ødelegge releasetestdatabasen da denne kan ta lang tid å gjenetablere.
  * For release-tester er det også ønskelig å kunne skjeldne mellom read- og write-tester siden write-tester krever at
- * man gjøre en database-flashback for rask tilbakestilling mellom hver kjøring. Enkleste løsning her er å ha
- * forskjellige brukere for hver database type og evt en liten sjekk som får unit tester til å stoppe hvis de
- * forsøker å skrive data til en releasetest database.  Denne basisklassen har ikke noen eksplisitt støtte for dette
- * konseptet. Det kan legges på i en subklasse.
+ * man måre gjøre en database-flashback for rask tilbakestilling mellom hver kjøring. Den enkleste løsning her er å ha
+ * forskjellige brukere for hver database type og evt en liten sjekk som får unit tester til å feile hvis de
+ * forsøker å skrive data til en releasetest database.  Denne basisklassen har dog ikke noen eksplisitt støtte for dette
+ * konseptet. Dette kan implementeres i en subklasse.
  * <p/>
  * Klassen har avansert støtte for å gjenbruke konfigurasjon på tvers av testcaser og testmetoder slik at initialisering
  * av tunge ressurser kan reduseres. Default er følgende:
  * <ul>
- * <li>Injector gjenbrukes på tvers av testmetoder innenfor samme klasse
- * <li>SingleVm client-server oppsett gjenbruker serverinjectoren på tvers av alle testcases
- * <li>Testcaser som bruker forskjellige konfigurasjoner gjenbruker ikke hverandres injector
- * <li>Testcaser som anvender standard innstilling kan konfigureres til enten å kjøre i SingleVm mode eller mot remote server
+ * <li>Testklassens injector gjenbrukes på tvers av testmetoder innenfor samme klasse
+ * <li>I SingleVm oppsett gjenbrukes samme underliggen serverinjectoren på tvers av alle testcases
+ * <li>Tester som bruker samme konfigurasonsoppsett vil normalt dele injector-instans, men kan ha sin egen hvis ønskelig
+ * <li>Tester som bruker forskjellig konfigurasjonsoppsett vil aldrig dele injector</li>
  * </ul>
- * Det er mulig å endre oppførslen slik at tester alltid kjører med SingleVm=true eller false. Det er også mulig å angi
+ * Det er mulig å endre oppførslen for en test slik at den alltid kjører i SingleVm eller JEE mode. Det er også mulig å angi
  * at hver enkelt testmetode skal ha sin egen injector eller at testcasen ikke skal dele konfigurasjon med andre testcases.
  * <p/>
  * Klassen støtter automatisk member injection av via @Inject slik testcasens membervariable er satt før test metoden
  * kalles. Member variablene sette hvergang klasse skifter injector.
  * <p/>
- * Klassen har en tom {@link #resetLogin()}-metode som kalles før hver testmetode.
+ * Klassen har en tom {@link #resetLogin()}-metode som kalles automatisk før hver testmetode.
  *
  * @author Henrik Fredholm
- * @since 0.5
+ * @since 2.0
  */
 @Test
 public class SkifTestCase {
@@ -78,17 +81,36 @@ public class SkifTestCase {
     protected ModuleBuilder moduleBuilder;
     protected Injector injector;
 
-
     /**
      * Angir om injector skal gjenanvendes på tvers av testmetoder innenfor samme testcase.
      * Default er true.
      */
-    protected boolean resuseInjector() {
-        return true;
+    protected boolean reuseInjector = true;
+
+    private Class<? extends Module> moduleClass;
+
+    private Class<? extends Module> singleVmServerModuleClass;
+
+    private String configurationFilename = "skif.properties";
+
+    private String singleVmServerConfigurationFilename;
+
+    private Boolean singleVm;
+
+    protected boolean isReuseInjector() {
+        return reuseInjector;
+    }
+
+    protected void setReuseInjector(boolean reuseInjector) {
+        this.reuseInjector = reuseInjector;
     }
 
     protected Class<? extends Module> getModuleClass() {
-        return null;
+        return moduleClass;
+    }
+
+    protected void setModuleClass(Class<? extends Module> moduleClass) {
+        this.moduleClass = moduleClass;
     }
 
     protected String getModuleClassname() {
@@ -100,13 +122,30 @@ public class SkifTestCase {
         }
     }
 
+    protected void setModuleClassname(String moduleClassname) {
+        setModuleClass((Class<? extends Module>) SkifUtil.classForName(moduleClassname));
+    }
 
+    /**
+     * Angir filnavn på properties for konfigurasjonen. Default er "skif.properties". Hvis filen ikke
+     * finnes eller metoden returnerer null brukes et tomt properties sett.
+     *
+     * @return
+     */
     protected String getConfigurationFilename() {
-        return null;
+        return configurationFilename;
+    }
+
+    protected void setConfigurationFilename(String configurationFilename) {
+        this.configurationFilename = configurationFilename;
     }
 
     protected Class<? extends Module> getSingleVmServerModuleClass() {
-        return null;
+        return singleVmServerModuleClass;
+    }
+
+    protected void setSingleVmServerModuleClass(Class<? extends Module> singleVmServerModuleClass) {
+        this.singleVmServerModuleClass = singleVmServerModuleClass;
     }
 
     protected String getSingleVmServerModuleClassname() {
@@ -118,12 +157,21 @@ public class SkifTestCase {
         }
     }
 
+    protected void setSingleVmServerModuleClassname(String singleVmModuleClassname) {
+        setSingleVmServerModuleClass((Class<? extends Module>) SkifUtil.classForName(singleVmModuleClassname));
+    }
+
     /**
-     * Angir SingleVm ServerConfigurasjonsklasse. Tester som ikke setter denne kjører alltid med SingleVm=false
+     * Angir SingleVm ServerConfigurasjonsklasse. Denne må være satt, enten direkte eller indirekte, for at
+     * en SingleVm server skal kunne opprettes
      */
     protected String getSingleVmServerConfigurationFilename() {
-        return null;
+        return singleVmServerConfigurationFilename;
 
+    }
+
+    protected void setSingleVmServerConfigurationFilename(String singleVmServerConfigurationFilename) {
+        this.singleVmServerConfigurationFilename = singleVmServerConfigurationFilename;
     }
 
     /**
@@ -132,28 +180,22 @@ public class SkifTestCase {
      * <ul>
      * <li>true: Testen avvikles alltid i SingleVm mode.
      * <li>false: Testen avvikles aldri i Singlevm mode.
-     * <li>null (default): Verdien styres fra konfigurasjonsfil eller system properties.
+     * <li>null (default): Verdien styres fra konfigurasjonsfil eller system properties. Hvis ikke satt brukes false.
      * </ul>
-     * Dersom SingleVm mode er satt men ingen SingleVmServerModul eller configurasjon er spesifisert har SingleVm settingen
-     * ingen betydning. Dvs moduler som ikke bruker SingelVm berøres ikke
+     * Dersom SingleVm mode er satt men ingen SingleVmServerModule er spesifisert har SingleVm settingen
+     * ingen betydning. Dvs moduler som ikke bruker SingelVm berøres ikke av hva verdien er satt til.
      */
-    protected Boolean singleVm() {
-        return null;
+    protected Boolean isSingleVm() {
+        return singleVm;
+    }
+
+    protected void setSingleVm(Boolean singleVm) {
+        this.singleVm = singleVm;
     }
 
     /**
-     * Angir filnavn på properties for konfigurasjonen. Default er "skif.properties". Hvis filen ikke
-     * finne brukes et tomt properties sett.
-     *
-     * @return
-     */
-    protected String getSkifPropertiesFilename() {
-        return "skif.properties";
-    }
-
-    /**
-     * Angir om en custom SkifConfigurationBuilder som ikke kan gjenanvendes på tvers av testcases skal brukes.
-     * Default implementatsjonen returnerer null, hvilket angir at testcasen kan bruke en reusable configuration
+     * Angir om en custom ModuleBuilder skal brukes. Custom ModuleBuilders ikke gjenbrukes på tvers av testcaser.
+     * Default implementatsjonen returnerer null, hvilket angir at testcasen skal bruke en reusable ModuleBuilder
      *
      * @return SkifConfigurationBuilder dersom non reusable configuration skal brukes
      */
@@ -221,8 +263,8 @@ public class SkifTestCase {
         }
 
 
-        if (singleVm() != null) {
-            builder.setSingleVm(singleVm());
+        if (isSingleVm() != null) {
+            builder.setSingleVm(isSingleVm());
         }
         return builder;
     }
@@ -232,18 +274,18 @@ public class SkifTestCase {
      * Beregner konfigurasjonsnøkkel for testcase på basis av hvilke konfigurasjonsklasser testcasen bruker.
      */
     protected final String calcConfigurationKey() {
-        return getModuleClassname() + ":" + ":" + getConfigurationFilename() + ":" + getSingleVmServerModuleClassname() + ":" +  getSingleVmServerConfigurationFilename()+ ":" +singleVm();
+        return getModuleClassname() + ":" + getConfigurationFilename() + ":" + getSingleVmServerModuleClassname() + ":" +  getSingleVmServerConfigurationFilename()+ ":" + isSingleVm();
     }
 
     /**
-     * Setter injector for første testmetode kalles, og før hver testmetode hvis {@link #resuseInjector()} returnerer
+     * Setter injector for første testmetode kalles, og før hver testmetode hvis {@link #isReuseInjector()} returnerer
      * false. TestNG krever at den ikke er private.
      *
      * @param context leveres at TestNG rammeverket og holder state på tvers av testcases
      */
     @BeforeMethod(alwaysRun = true)
     protected final void beforeMethod(ITestContext context) {
-        if (injector == null || !resuseInjector()) {
+        if (injector == null || !isReuseInjector()) {
             injector = moduleBuilder.buildInjector();
             injector.injectMembers(this);
         }
@@ -251,15 +293,21 @@ public class SkifTestCase {
     }
 
     /**
-     * Kalles før hver testmetode og bør brukes til å nullstille pålogget bruker
+     * Kalles før hver testmetode og bør brukes til å nullstille pålogget bruker. Overskriv denne metode hvis
+     * modulen ikke krever login eller krever annen form for login.
      */
     protected void resetLogin() {
         Configuration configuration = injector.getInstance(Configuration.class);
+
+        String serverUrl = configuration.getString(ConfigurationConstants.SERVER_URL);
+        final ServerUrlHolder serverUrlHolder = injector.getInstance(ServerUrlHolder.class);
+        serverUrlHolder.set(serverUrl);
+
         LoginUserHolder userHolder = injector.getInstance(LoginUserHolder.class);
-        String username = configuration.getString("username");
-        String password = configuration.getString("password");
-        LoginUser user = new LoginUser(username, password);
-        userHolder.set(user);
+        String username = configuration.getString(ConfigurationConstants.SERVER_USERNAME);
+        String password = configuration.getString(ConfigurationConstants.SERVER_PASSWORD);
+        userHolder.set(new LoginUser(username, password));
+
     }
 
     /**

@@ -71,7 +71,8 @@ artifacts {
 
 uploadArchives {
     repositories {
-        add project.repositories.releases
+// TODO: Fix
+//        add project.repositories.releases
     }
     // uploadDescriptor = false
 }

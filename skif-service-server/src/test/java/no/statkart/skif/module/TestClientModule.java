@@ -25,6 +25,7 @@ public class TestClientModule extends TestModule {
         install(new RemoteServerModule(moduleConfiguration));
     }
 
+    @Override
     protected void configureModulename() {
         bind(String.class).annotatedWith(Names.named("modulename")).toInstance("TestClientModule");
     }

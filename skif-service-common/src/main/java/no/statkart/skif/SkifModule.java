@@ -1,10 +1,16 @@
 package no.statkart.skif;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.Singleton;
+import com.google.inject.name.Names;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -38,5 +44,10 @@ public abstract class SkifModule extends AbstractModule {
 
     protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
         return null;
+    }
+
+    protected void bindConfiguration() {
+        bind(ModuleConfiguration.class).toInstance(moduleConfiguration);
+        bind(Configuration.class).toInstance(moduleConfiguration.getConfiguration());
     }
 }

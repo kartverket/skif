@@ -1,8 +1,8 @@
 dependencies {
     compile project(':skif-service-common')
-
     provided libraries.weblogic
 
-    testCompile project(path: ':skif-service-common', configuration: "testApi")
+    testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
+    testCompile project(path: ':skif-service-common', configuration: "testApi")
 }

@@ -6,6 +6,9 @@ dependencies {
     provided libraries.jaxws_rt
     provided libraries.weblogic
 
+    testCompile project(':skif-config')
+    testCompile project(':skif-testsupport-common')
     testCompile project(':skif-store-test:skif-store-test-server')
     testCompile project(path: ':skif-store-common', configuration: "testApi")
+
 }

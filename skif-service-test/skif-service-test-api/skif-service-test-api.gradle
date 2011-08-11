@@ -1,3 +1,6 @@
 dependencies {
     compile project(':skif-service-common')
+
+    testCompile project(':skif-config')
+    testCompile project(':skif-testsupport-common')
 }

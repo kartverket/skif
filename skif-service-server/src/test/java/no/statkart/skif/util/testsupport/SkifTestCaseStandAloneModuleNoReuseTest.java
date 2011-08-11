@@ -4,7 +4,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
-import org.testng.annotations.AfterClass;
+import no.statkart.skif.module.TestModule;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -12,7 +12,7 @@ import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertSame;
 
 /**
- * Tester at injector ikke gjenbrukes på tvers av testmetoder når {@link #resuseInjector()} returnerer false
+ * Tester at injector ikke gjenbrukes på tvers av testmetoder når {@link #isReuseInjector()} returnerer false
  * @author Henrik Fredholm
  * @since 1.1
  */
@@ -26,7 +26,7 @@ public class SkifTestCaseStandAloneModuleNoReuseTest extends SkifTestCase {
     }
 
     @Override
-    protected boolean resuseInjector() {
+    protected boolean isReuseInjector() {
         return false;
     }
 
