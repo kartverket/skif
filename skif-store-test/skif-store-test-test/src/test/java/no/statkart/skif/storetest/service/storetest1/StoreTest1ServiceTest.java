@@ -28,6 +28,7 @@ import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.storetest.config.StoreTestGroup1Services;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.util.NullHostnameVerifier;
+import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -41,55 +42,13 @@ import static org.testng.Assert.assertEquals;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
-@Test(groups = "server-required")
-public class StoreTest1ServiceTest {
-    private Injector injector = null;
+public class StoreTest1ServiceTest extends SkifTestCase {
 
-    @DataProvider(name = "serverModes")
-    public Object[][] createServerModes() {
-//        return createServerModesAll();
-//        return createServerModesJEE();
-        return createServerModesSVM();
-    }
-
-    @DataProvider(name = "serverModesAll")
-    public Object[][] createServerModesAll() {
-        return new Object[][]{
-                {ServiceMode.JEE},
-                {ServiceMode.SINGLE_VM},
-        };
-    }
-
-    @DataProvider(name = "serverModesJEE")
-    public Object[][] createServerModesJEE() {
-        return new Object[][]{
-                {ServiceMode.JEE},
-        };
-    }
-
-    @DataProvider(name = "serverModesSVM")
-    public Object[][] createServerModesSVM() {
-        return new Object[][]{
-                {ServiceMode.SINGLE_VM},
-        };
-    }
-
-    private void setlogin() {
-        final LoginUserHolder loginUserHolder = injector.getInstance(LoginUserHolder.class);
-        loginUserHolder.set(new LoginUser("frehen", "matrikkel2"));
-        final ServerUrlHolder serverUrlHolder = injector.getInstance(ServerUrlHolder.class);
-        serverUrlHolder.set("https://localhost:7002");
-    }
-
-    public Injector createClientInjector(ServiceMode mode) {
-        ModuleConfiguration cfg = null;
-        return new ModuleBuilder()
-                .setModuleClass(ClientModule.class)
-                .setSingleVmServerModuleClass(StoreTestServerModule.class)
-                .setServiceMode(mode)
-                .buildInjector();
+    public StoreTest1ServiceTest() {
+        setModuleClass(ClientModule.class);
+        setSingleVmServerModuleClass(StoreTestServerModule.class);
     }
 
     public static class ClientModule extends SkifModule {
@@ -113,10 +72,8 @@ public class StoreTest1ServiceTest {
     /**
      * Test kall til metode som kalder andre metoder. Ingen metoder krever tx
      */
-    @Test(dataProvider = "serverModes")
-    public void testStoreTest1Service(ServiceMode mode) {
-        injector = createClientInjector(mode);
-        setlogin();
+    @Test
+    public void testStoreTest1Service() {
         final StoreTest1Service storeTest1Service = injector.getInstance(StoreTest1Service.class);
 
         storeTest1Service.clear();

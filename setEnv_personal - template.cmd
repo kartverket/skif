@@ -21,7 +21,7 @@ set MS_SDK_HOME=C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin
 set NUNIT_HOME=C:\Program Files\NUnit 2.5.2
 
 @rem Setup Perforce windows integrasjon
-p4 set P4CLIENT=frehen-WSFREHEN1
+p4 set P4CLIENT=frehen-WSFREHEN2
 p4 set P4PORT=skrivap42:1666
 p4 set P4USER=frehen
 

@@ -43,7 +43,7 @@ public class StoreTestServerModule extends SkifModule {
 
 
     private StoreHibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
-        Configuration cfg = new PropertiesConfiguration(getClass().getResource("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties"));
+        Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
         Properties properties = ConfigurationConverter.getProperties(cfg);
         return new StoreHibernateSessionFactoryBuilder(properties, "no/statkart/skif/storetest/persistence/hibernate");
     }
