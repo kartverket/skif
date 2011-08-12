@@ -175,13 +175,21 @@ subprojects { Project project ->
         ['main', 'test'].each { String scope ->
             def unfilteredPropertiesDir = project.file("src/${scope}/resources.filtered")
             if (unfilteredPropertiesDir.isDirectory()) {
-                String filteredResourcesDir = project.file("build/generated/${scope}/resources")
-                task "filterResources$scope"(type: Copy) {
-                    def userProperties = loadJavaProps()
-                    inputs.properties(userProperties)
-                    from(unfilteredPropertiesDir)
-                    into(filteredResourcesDir)
-                    filter(ReplaceTokens, tokens: userProperties)
+                def filteredResourcesDir = project.file("build/generated/${scope}/resources")
+                def userProperties = loadJavaProps()
+                task "filterResources$scope" {
+                   inputs.dir(unfilteredPropertiesDir)
+                   inputs.properties(userProperties)
+                   outputs.dir(filteredResourcesDir)
+                    doLast {
+                        delete(filteredResourcesDir);
+                        copy {
+                            from(unfilteredPropertiesDir)
+                            into(filteredResourcesDir)
+                            filter(ReplaceTokens, tokens: userProperties)
+                        }
+                        ant.touch() { fileset(dir: filteredResourcesDir)}
+                    }
                 }
                 project.sourceSets."$scope".resources.srcDir filteredResourcesDir
                 project.processResources.dependsOn "filterResources$scope"

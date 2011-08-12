@@ -6,17 +6,11 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.storetest.domain.TestBubble;
-import no.statkart.skif.storetest.domain.TestEntity;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Properties;
 
