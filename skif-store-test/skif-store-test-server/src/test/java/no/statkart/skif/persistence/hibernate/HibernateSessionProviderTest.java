@@ -17,11 +17,14 @@ import org.testng.annotations.Test;
 
 import java.util.Properties;
 
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
+
 /**
  * @author Henrik Fredholm
  */
 @Test
-public class HibernateSessionProviderTest extends TestCase {
+public class HibernateSessionProviderTest {
 
     private StoreHibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
         Configuration cfg = new PropertiesConfiguration(getClass().getResource("/no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties"));
