@@ -1,0 +1,44 @@
+wsProject = project(':skif-store-test:skif-store-test-wswar')
+
+wsTargetDir = file('build/generated/main/java')
+wsResourcesDir = file('build/generated/main/resources')
+sourceSets.main.java.srcDirs = [wsTargetDir]
+sourceSets.main.resources.srcDirs = [wsResourcesDir]
+
+// Source is in the build directory so we need to unexclude it
+idea.module.iml {
+    whenMerged {
+        it.excludeFolders = it.excludeFolders.findAll{!it.url.contains("build")}
+    }
+}
+
+dependencies {
+    compile project(':skif-store-test:skif-store-test-wsmapping')
+}
+
+task genWsclient(dependsOn: ':skif-store-test:skif-store-test-wswar:jar') {
+    inputs.dir file(wsProject.jar.archivePath)
+    outputs.dir wsTargetDir
+
+    doLast {
+        ant.taskdef(name: 'clientgen', classname: 'weblogic.wsee.tools.anttasks.ClientGenTask', classpath: libraries.weblogic.asPath)
+        ant.importBuild 'skif-store-test-wsclient-build.xml'
+
+        ant.delete(dir: "${wsTargetDir}")
+        wsTargetDir.mkdirs()
+
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/StoreTest1ServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+
+        // clientgen compiles automatically files into destdir, but we need to fix source an compile again to another location
+        ant.delete(dir: wsTargetDir) {include(name: '**/*.class')}
+        ant.copy(todir: wsResourcesDir) {
+            fileset(dir: wsTargetDir, includes: '**/*.wsdl,**/*.xsd')
+        }
+
+        ant.properties['wsTargetDir'] = wsTargetDir
+        wsClientFixExceptions.execute()
+    }
+}
+
+compileJava.dependsOn genWsclient
+ideaModule.dependsOn genWsclient

@@ -13,12 +13,12 @@ import javax.annotation.Nullable;
  * @author Henrik Fredholm
  * @since 1.1
  */
-public class WSServiceChainFactoryDefaultImpl<S> implements WSServiceChainFactory<S> {
+public class WSServiceChainFactoryBase<S> implements WSServiceChainFactory<S> {
     protected final TypeLiteral<S> type;
     protected final TerminatingProxyHandler<S> proxyHandler;
 
     @Inject
-    public WSServiceChainFactoryDefaultImpl(TypeLiteral<S> type, @WSServiceChain TerminatingProxyHandler<S> proxyHandler) {
+    public WSServiceChainFactoryBase(TypeLiteral<S> type, @WSServiceChain TerminatingProxyHandler<S> proxyHandler) {
         this.type = type;
         this.proxyHandler = proxyHandler;
     }

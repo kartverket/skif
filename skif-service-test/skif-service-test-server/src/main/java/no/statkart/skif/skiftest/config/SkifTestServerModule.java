@@ -1,5 +1,6 @@
 package no.statkart.skif.skiftest.config;
 
+import com.google.inject.Binder;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.ServiceMode;
@@ -9,6 +10,7 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
+import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
@@ -40,11 +42,23 @@ public class SkifTestServerModule extends SkifModule {
         install(new ServerServiceModule(moduleConfiguration, new SkifTestGroup2Services().getServices()));
 
         final ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, new SkifTestGroupABCDServices().getServices());
-        serverServiceModule.getStrategy(ServiceMode.JEE).setEjbServiceChainFactoryClass(AnnotatingEjbServiceChainFactory.class);
-        serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactoryClass(AnnotatingEjbServiceChainFactory.class);
+        serverServiceModule.getStrategy(ServiceMode.JEE).setEjbServiceChainFactorySpecification(new AnnotatingEjbServiceChainFactorySpecification());
+        serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new AnnotatingEjbServiceChainFactorySpecification());
         install(serverServiceModule);
 
         install(new ServerServiceModule(moduleConfiguration, new SkifTestGroupExServices().getServices()));
+    }
+}
+
+class  AnnotatingEjbServiceChainFactorySpecification extends EJBServiceChainFactorySpecification {
+
+    public AnnotatingEjbServiceChainFactorySpecification() {
+        super(AnnotatingEjbServiceChainFactory.class);
+    }
+
+    @Override
+    public <S> void bindProxyHandlersForService(Binder binder, Class<S> service) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
 

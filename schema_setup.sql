@@ -1,5 +1,5 @@
 drop table TestEntity;
-drom table TestBubble;
+drop table TestBubble;
 
 create table TestEntity (
 id number(19,0) not null,

@@ -1,7 +1,7 @@
 dependencies {
     compile project(':skif-store-test:skif-store-test-api')
-//    compile project(':skif-store-test:skif-store-test-wsmapping')
-//    compile project(':skif-store-test:skif-store-test-wsclient')
+    compile project(':skif-store-test:skif-store-test-wsmapping')
+    compile project(':skif-store-test:skif-store-test-wsclient')
 
     provided libraries.jaxws_rt
     provided libraries.weblogic

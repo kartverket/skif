@@ -3,9 +3,9 @@ package no.statkart.skif.service.module;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
+import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ClientCallServiceChainFactoryJEE;
 import no.statkart.skif.service.chain.ClientCallServiceChainFactorySingleVm;
-import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.module.common.RemoteServiceModuleStrategy;
@@ -25,14 +25,13 @@ public class ClientModuleStrategyFactoryTest  {
         final StrategyTuple<RemoteServiceModuleStrategy> remoteServiceStrategy = factory.getPrototype(RemoteServiceModule.class);
         assertNotNull(remoteServiceStrategy);
 
-        final Class<? extends CallServiceChainFactory> callServiceChainFactoryClassSingleVm =
-                remoteServiceStrategy.getStrategy(ServiceMode.SINGLE_VM).getCallServiceChainFactoryClass();
-        assertSame(callServiceChainFactoryClassSingleVm, ClientCallServiceChainFactorySingleVm.class);
+        final CallServiceChainFactorySpecification callServiceChainFactorySpecificationSingleVm =
+                remoteServiceStrategy.getStrategy(ServiceMode.SINGLE_VM).getCallServiceChainFactorySpecification() ;
+        assertSame(callServiceChainFactorySpecificationSingleVm.getFactoryClass(), ClientCallServiceChainFactorySingleVm.class);
 
-        final Class<? extends CallServiceChainFactory> callServiceChainFactoryClassJEE =
-                remoteServiceStrategy.getStrategy(ServiceMode.JEE).getCallServiceChainFactoryClass();
-        assertSame(callServiceChainFactoryClassJEE, ClientCallServiceChainFactoryJEE.class);
-
+        final CallServiceChainFactorySpecification callServiceChainFactorySpecificationJEE =
+                remoteServiceStrategy.getStrategy(ServiceMode.JEE).getCallServiceChainFactorySpecification() ;
+        assertSame(callServiceChainFactorySpecificationJEE.getFactoryClass(), ClientCallServiceChainFactoryJEE.class);
 
         assertNotNull(factory.getPrototype(RemoteServerModule.class));
 

@@ -16,6 +16,13 @@ evaluationOrder 'skif-store-server'
 evaluationOrder 'skif-store-test:skif-store-test-api'
 evaluationOrder 'skif-store-test:skif-store-test-server'
 evaluationOrder 'skif-store-test:skif-store-test-test'
+evaluationOrder 'skif-store-test:skif-store-test-wsschema'
+evaluationOrder 'skif-store-test:skif-store-test-wsmapping'
+evaluationOrder 'skif-store-test:skif-store-test-wswar'
+evaluationOrder 'skif-store-test:skif-store-test-wsclient'
+evaluationOrder 'skif-store-test:skif-store-test-test'
+evaluationOrder 'skif-store-test:skif-store-test-ear'
+
 
 import org.apache.tools.ant.filters.ReplaceTokens
 
@@ -27,6 +34,7 @@ apply plugin: 'idea'
         project.setProperty(val, System.getenv(val))
     }
 }
+def userProperties = loadJavaProps()
 
 allprojects {
     defaultTasks 'build'
@@ -176,11 +184,10 @@ subprojects { Project project ->
             def unfilteredPropertiesDir = project.file("src/${scope}/resources.filtered")
             if (unfilteredPropertiesDir.isDirectory()) {
                 def filteredResourcesDir = project.file("build/generated/${scope}/resources")
-                def userProperties = loadJavaProps()
                 task "filterResources$scope" {
-                   inputs.dir(unfilteredPropertiesDir)
-                   inputs.properties(userProperties)
-                   outputs.dir(filteredResourcesDir)
+                    inputs.dir(unfilteredPropertiesDir)
+                    inputs.properties(userProperties)
+                    outputs.dir(filteredResourcesDir)
                     doLast {
                         delete(filteredResourcesDir);
                         copy {

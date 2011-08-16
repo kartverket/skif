@@ -5,11 +5,9 @@ import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.annotation.Implementation;
-import no.statkart.skif.service.chain.CallServiceChainFactory;
-import no.statkart.skif.service.chain.EJBServiceChainFactory;
-import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
-import no.statkart.skif.service.chain.ServiceChainFactories;
+import no.statkart.skif.service.chain.*;
 import no.statkart.skif.module.ModuleStrategy;
+import no.statkart.skif.service.ejb.EJBResourceManager;
 import no.statkart.skif.service.provider.EJBServiceChainProvider;
 import no.statkart.skif.service.provider.ServiceProvider;
 
@@ -18,42 +16,52 @@ import no.statkart.skif.service.provider.ServiceProvider;
  * @since 1.1
  */
 public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
-    private Class<? extends EJBServiceChainFactory> ejbServiceChainFactoryClass;
-    private Class<? extends ImplementationServiceChainFactory> implementationServiceChainFactoryClass;
-    private Class<? extends CallServiceChainFactory> callServiceChainFactoryClass;
+    private EJBServiceChainFactorySpecification ejbServiceChainFactorySpecification;
+    private ImplementationServiceChainFactorySpecification implementationServiceChainFactorySpecification;
+    private CallServiceChainFactorySpecification callServiceChainFactorySpecification;
 
-    public Class<? extends EJBServiceChainFactory> getEjbServiceChainFactoryClass() {
-        return ejbServiceChainFactoryClass;
+    // Denne skal ikke være her
+    private Class<? extends EJBResourceManager> ejbResourceManagerClass = null; //EJBResourceManagerEmptyImpl.class;
+
+    public EJBServiceChainFactorySpecification getEjbServiceChainFactorySpecification() {
+        return ejbServiceChainFactorySpecification;
     }
 
-    public ServerServiceModuleStrategy setEjbServiceChainFactoryClass(Class<? extends EJBServiceChainFactory> ejbServiceChainFactoryClass) {
-        this.ejbServiceChainFactoryClass = ejbServiceChainFactoryClass;
+    public ServerServiceModuleStrategy setEjbServiceChainFactorySpecification(EJBServiceChainFactorySpecification ejbServiceChainFactorySpecification) {
+        this.ejbServiceChainFactorySpecification = ejbServiceChainFactorySpecification;
         return this;
     }
 
-    public Class<? extends ImplementationServiceChainFactory> getImplementationServiceChainFactoryClass() {
-        return implementationServiceChainFactoryClass;
+    public ImplementationServiceChainFactorySpecification getImplementationServiceChainFactorySpecification() {
+        return implementationServiceChainFactorySpecification;
     }
 
-    public ServerServiceModuleStrategy setImplementationServiceChainFactoryClass(Class<? extends ImplementationServiceChainFactory> implementationServiceChainFactoryClass) {
-        this.implementationServiceChainFactoryClass = implementationServiceChainFactoryClass;
-        return this;
+    public void setImplementationServiceChainFactorySpecification(ImplementationServiceChainFactorySpecification implementationServiceChainFactorySpecification) {
+        this.implementationServiceChainFactorySpecification = implementationServiceChainFactorySpecification;
     }
 
-    public Class<? extends CallServiceChainFactory> getCallServiceChainFactoryClass() {
-        return callServiceChainFactoryClass;
+    public CallServiceChainFactorySpecification getCallServiceChainFactorySpecification() {
+        return callServiceChainFactorySpecification;
     }
 
-    public ServerServiceModuleStrategy setCallServiceChainFactoryClass(Class<? extends CallServiceChainFactory> callServiceChainFactoryClass) {
-        this.callServiceChainFactoryClass = callServiceChainFactoryClass;
-        return this;
+    public void setCallServiceChainFactorySpecification(CallServiceChainFactorySpecification callServiceChainFactorySpecification) {
+        this.callServiceChainFactorySpecification = callServiceChainFactorySpecification;
     }
 
     public <S> void bindServiceChainFactoriesForService(Binder binder, Class<S> service) {
-        ServiceChainFactories.bindFactory(binder, EJBServiceChainFactory.class, service, ejbServiceChainFactoryClass);
-        ServiceChainFactories.bindFactory(binder, ImplementationServiceChainFactory.class, service, implementationServiceChainFactoryClass);
-        ServiceChainFactories.multibindFactory(binder, CallServiceChainFactory.class, service, callServiceChainFactoryClass);
-     }
+        // TODO: Kan ikke stå her. Vil få multiple bindinger siden den bindes for hver service klasse. Må bindes på tvers av alle moduler
+//        if (ejbResourceManagerClass == null) {
+//            binder.bind(EJBResourceManager.class).toProvider(Providers.<EJBResourceManager>of(null));
+//        } else {
+//            binder.bind(EJBResourceManager.class).to(ejbResourceManagerClass);
+//        }
+
+        ServiceChainFactories.bindFactory(binder, EJBServiceChainFactory.class, service, ejbServiceChainFactorySpecification.getFactoryClass());
+        ejbServiceChainFactorySpecification.bindProxyHandlersForService(binder, service);
+
+        ServiceChainFactories.bindFactory(binder, ImplementationServiceChainFactory.class, service, implementationServiceChainFactorySpecification.getFactoryClass());
+        ServiceChainFactories.multibindFactory(binder, CallServiceChainFactory.class, service, callServiceChainFactorySpecification.getFactoryClass());
+    }
 
     protected abstract <S> void bindEJBCallProxyHandler(Binder binder, Class<S> service);
 
@@ -71,7 +79,7 @@ public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
     }
 
     protected <S> void bindEJBServiceChainProxy(Binder binder, Class<S> service) {
-        TypeLiteral<EJBServiceChainProvider<S>>ejbServiceChainProviderType = SkifUtil.typeLiteral(EJBServiceChainProvider.class, service);
+        TypeLiteral<EJBServiceChainProvider<S>> ejbServiceChainProviderType = SkifUtil.typeLiteral(EJBServiceChainProvider.class, service);
         binder.bind(service).annotatedWith(EJBServiceChain.class).toProvider(ejbServiceChainProviderType);
     }
 
@@ -82,7 +90,7 @@ public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
 
     private <S> Class<S> getServiceImplementationClass(Class<S> service) {
         try {
-            return (Class<S>) Class.forName(service.getName()+"Impl");
+            return (Class<S>) Class.forName(service.getName() + "Impl");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

@@ -22,8 +22,8 @@ import static no.statkart.skif.SkifUtil.typeLiteral;
  * @since 1.1
  */
 public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
-    private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForWSI = WSServiceChainFactoryDefaultImpl.class;
-    private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForService = WSServiceChainFactoryDefaultImpl.class;
+    private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForWSI = WSServiceChainFactoryBase.class;
+    private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForService = WSServiceChainFactoryBase.class;
 
     public Class<? extends WSServiceChainFactory> getWsServiceChainFactoryClassForWSI() {
         return wsServiceChainFactoryClassForWSI;

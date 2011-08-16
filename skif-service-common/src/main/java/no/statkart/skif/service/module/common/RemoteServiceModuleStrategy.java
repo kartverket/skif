@@ -4,6 +4,7 @@ import com.google.inject.Binder;
 import com.google.inject.PrivateBinder;
 import no.statkart.skif.module.ModuleStrategy;
 import no.statkart.skif.service.chain.CallServiceChainFactory;
+import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ServiceChainFactories;
 
 /**
@@ -11,17 +12,18 @@ import no.statkart.skif.service.chain.ServiceChainFactories;
  * @since 1.1
  */
 public abstract class RemoteServiceModuleStrategy extends ModuleStrategy {
-    protected Class<? extends CallServiceChainFactory> callServiceChainFactoryClass;
+    private CallServiceChainFactorySpecification callServiceChainFactorySpecification;
     protected String[]classWSPackageMappings ={"api:wsapi", "service:wsapi.service"};
 
-    public Class<? extends CallServiceChainFactory> getCallServiceChainFactoryClass() {
-        return callServiceChainFactoryClass;
+    public CallServiceChainFactorySpecification getCallServiceChainFactorySpecification() {
+        return callServiceChainFactorySpecification;
     }
 
-    public RemoteServiceModuleStrategy setCallServiceChainFactoryClass(Class<? extends CallServiceChainFactory> callServiceChainFactoryClass) {
-        this.callServiceChainFactoryClass = callServiceChainFactoryClass;
+    public RemoteServiceModuleStrategy setCallServiceChainFactorySpecification(CallServiceChainFactorySpecification callServiceChainFactorySpecification) {
+        this.callServiceChainFactorySpecification = callServiceChainFactorySpecification;
         return this;
     }
+
 
     public String[] getClassWSPackageMappings() {
         return classWSPackageMappings;
@@ -38,7 +40,7 @@ public abstract class RemoteServiceModuleStrategy extends ModuleStrategy {
 
 
     public <S> void bindCallServiceChainFactoryForService(Binder outerBinder, PrivateBinder innerBinder,  Class<S> service) {
-        ServiceChainFactories.multibindFactory(outerBinder, CallServiceChainFactory.class, service, callServiceChainFactoryClass);
+        ServiceChainFactories.multibindFactory(outerBinder, CallServiceChainFactory.class, service, callServiceChainFactorySpecification.getFactoryClass());
     }
 
     public abstract <S> void bindService(Binder outerBinder, PrivateBinder innerBinder, Class<S> service);

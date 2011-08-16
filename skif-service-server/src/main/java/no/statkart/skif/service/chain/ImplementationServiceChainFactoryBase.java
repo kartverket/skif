@@ -12,11 +12,11 @@ import javax.annotation.Nullable;
  * @author Henrik Fredholm
  * @since 1.1
  */
-public class ImplementationServiceChainFactoryDefaultImpl<S> implements ImplementationServiceChainFactory<S> {
+public class ImplementationServiceChainFactoryBase<S> implements ImplementationServiceChainFactory<S> {
     protected final Provider<S> implementationProvider;
 
     @Inject
-    public ImplementationServiceChainFactoryDefaultImpl(@Implementation Provider<S> implementationProvider) {
+    public ImplementationServiceChainFactoryBase(@Implementation Provider<S> implementationProvider) {
         this.implementationProvider = implementationProvider;
     }
 

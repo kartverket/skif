@@ -9,8 +9,8 @@ import static org.testng.Assert.assertEquals;
 
 /**
  * Tester design pattern for håndtering av multiple moduler (subsystemer) som binner de samme klassene til
- * forskjellige instanser eller implementasjonsklasser. Her kan enten være snakke om at den samme modulen
- * brukes flere ganger i forskjelling konfigurasjon eller om forskjellige moduler som tilfeldigvis bruker
+ * forskjellige instanser eller implementasjonsklasser. Her kan enten være snakk om at den samme modulen
+ * brukes flere ganger i forskjelige konfigurasjon eller om forskjellige moduler som tilfeldigvis bruker
  * de samme klassene.
  * <p/>
  * Standard løsningen for problemet er i utgangspunktet å bruke en {@code PrivateModule} for hvert subsystem og

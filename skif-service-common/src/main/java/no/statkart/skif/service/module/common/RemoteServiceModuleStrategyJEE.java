@@ -5,6 +5,7 @@ import com.google.inject.PrivateBinder;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ConfigurationException;
+import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ClientCallServiceChainFactoryJEE;
 import no.statkart.skif.service.provider.ServiceProvider;
 import no.statkart.skif.service.proxy.D2WAdapterProxyHandler;
@@ -24,7 +25,7 @@ import java.util.regex.Pattern;
  */
 public class RemoteServiceModuleStrategyJEE extends RemoteServiceModuleStrategy {
     public RemoteServiceModuleStrategyJEE() {
-        setCallServiceChainFactoryClass(ClientCallServiceChainFactoryJEE.class);
+        setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ClientCallServiceChainFactoryJEE.class));
     }
 
     @Override

@@ -11,6 +11,7 @@ import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;
+import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ClientCallServiceChainFactoryJEE;
 import no.statkart.skif.service.module.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
@@ -86,7 +87,7 @@ public class Test2And3ServiceTestJEE {
         final RemoteServiceModule remoteServiceModule = new RemoteServiceModule(clientCfg, services2, new SkifTestMapper2().getMapping())
                 .setServiceContextMapperClass(SkifTestServiceContextMapper.class);
 
-        remoteServiceModule.getStrategy(ServiceMode.JEE).setCallServiceChainFactoryClass(CallChainFactory.class);
+        remoteServiceModule.getStrategy(ServiceMode.JEE).setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(CallChainFactory.class));
 
         injector = Guice.createInjector(
                 new RemoteServerModule(clientCfg)

@@ -5,6 +5,7 @@ import com.google.inject.PrivateBinder;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.service.SingleVmServer;
+import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ClientCallServiceChainFactorySingleVm;
 import no.statkart.skif.service.provider.ServiceProvider;
 import no.statkart.skif.service.proxy.SingleVmNoWSWithApiContextRemoteCallProxyHandler;
@@ -17,7 +18,7 @@ import no.statkart.skif.service.proxy.SingleVmRemoteCallProxyHandler;
 public class RemoteServiceModuleStrategySingleVm extends RemoteServiceModuleStrategy {
 
     public RemoteServiceModuleStrategySingleVm() {
-        setCallServiceChainFactoryClass(ClientCallServiceChainFactorySingleVm.class);
+        setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ClientCallServiceChainFactorySingleVm.class));
     }
 
     @Override

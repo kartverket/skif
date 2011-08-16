@@ -1,0 +1,8 @@
+dependencies {
+    compile project(':skif-store-test:skif-store-test-api')
+    compile project(':skif-store-test:skif-store-test-wsschema')
+
+    testCompile project(':skif-config')
+    testCompile project(':skif-testsupport-common')
+
+}

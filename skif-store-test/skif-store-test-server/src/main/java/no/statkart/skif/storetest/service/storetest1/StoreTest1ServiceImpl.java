@@ -25,12 +25,12 @@ public class StoreTest1ServiceImpl implements StoreTest1Service {
 
     @Override
     public String get(String key) {
-        Session s = sessionProvider.get();
+/*        Session s = sessionProvider.get();
         TestBubble e = (TestBubble) s.get(TestBubble.class, new TestBubbleId(1));
         if (e == null) {
             throw new RuntimeException("Skal ikke kommer her");
         }
-
+*/
         return map.get(key);
     }
 

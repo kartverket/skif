@@ -12,6 +12,7 @@ import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
+import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
@@ -86,7 +87,7 @@ public class SingleVmModuleTest {
 
     private Injector createServerInjectorWithTxAnnotation(List<Class<? extends Object>> services) {
         final ServerServiceModule serverServiceModule = new ServerServiceModule(serverCfg, services);
-        serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactoryClass(AnnotatingEjbServiceChainFactory.class);
+        serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactorySpecification(AnnotatingEjbServiceChainFactory.class));
 
 
         return Guice.createInjector(

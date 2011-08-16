@@ -4,7 +4,7 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ejb.EJBInterceptorJEE;
 
 /**
- * GrunnbokFast EJB Interceptor som definere hvilken injector EJB'ene skal bruke
+ * EJB Interceptor som definere hvilken injector EJB'ene i skif-test-severen skal bruke
  * @author Henrik Fredholm
  */
 public class SkifTestEJBInterceptorJEE extends EJBInterceptorJEE {

@@ -183,10 +183,6 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
             }
             load(url);
         }
-        catch (ConfigurationException e)
-        {
-            throw e;
-        }
         catch (Exception e)
         {
             throw new ConfigurationException("Unable to load the configuration file " + fileName, e);

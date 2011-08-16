@@ -41,7 +41,12 @@ public class EJBCallProxyHandlerJEE<S> extends EJBCallProxyHandler<S> {
             Throwable targetException = e.getTargetException();
             if (targetException instanceof EJBException) {
                 final Throwable cause = ((EJBException) targetException).getCause();
-                throw cause;
+                // TODO: Hva hvis cause==null? Har sett det forekomme.
+                if (cause !=null) {
+                    throw cause;
+                } else {
+                    throw targetException;
+                }
             }
             throw targetException;
         }

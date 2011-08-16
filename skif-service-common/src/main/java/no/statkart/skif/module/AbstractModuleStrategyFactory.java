@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * Abstract {@code ModuleStrategyFactory} implementasjon som legger alle prototyper i en map og som bruker
- * superklassen til modulens klasse ikke selv har en prototype.
+ * superklassen hvis  modulklassen ikke selv har en prototype.
  *
  * @author Henrik Fredholm
  * @since 1.1
