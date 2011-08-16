@@ -1,3 +1,5 @@
+include 'database'
+
 include 'skif-config'
 include 'skif-service-common'
 include 'skif-testsupport-common'

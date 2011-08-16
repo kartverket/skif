@@ -1,0 +1,36 @@
+apply plugin: no.statkart.matrikkel.build.utils.gradle.plugins.database.DatabasePlugin
+
+//eksponerer alle properties i build.properties som project-properties
+loadJavaProps().each {
+    setProperty(it.key, it.value)
+}
+
+configureDatabasePlugin {
+
+    setProperty 'db_username', properties['skif.db_username']
+    setProperty 'db_password', properties['skif.db_password']
+    setProperty 'db_host', properties['skif.db_hostname']
+    setProperty 'db_port', properties['skif.db_port']
+    setProperty 'db_sid', properties['skif.db_sid']
+
+    useDrivers libraries.ojdbc
+
+    useToolset('oracle', '', 'main/sql/oracle') {
+        url = "jdbc:oracle:thin:@${project.property('skif.db_hostname')}:${project.property('skif.db_port')}:${project.property('skif.db_sid')}"
+    }
+
+}
+
+task db_init {
+
+    description = 'Purger schema, oppretter schema og fyller inn testdata'
+    def tasks = [tasks.Purge, tasks.CreateSchema, tasks.LoadTestdata]
+
+    doLast {
+        tasks.each {
+            println "${name} -> ${it.path}"
+            it.execute()
+        }
+    }
+
+}

@@ -54,6 +54,10 @@ slf4jVersion = '1.6.1'
 logbackVersion = '0.9.28'
 guiceVersion = '3.0'
 libraries = [
+
+        // Database
+        ojdbc: files("${FILEREPO}/oracle/jars/ojdbc6-11.2.0.2.0.jar",),
+
         // Logging 
         slf4j_api: "org.slf4j:slf4j-api:${slf4jVersion}@jar",
         jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${slf4jVersion}@jar",
@@ -121,7 +125,7 @@ libraries.hibernate = files(
         "${FILEREPO}/hibernate/jars/ehcache-1.2.3.jar",
         "${FILEREPO}/hibernate/jars/hibernate-3.2.6.ga-bubbleref-v2.jar",
         "${FILEREPO}/hibernate/jars/odmg-3.0.jar",
-        "${FILEREPO}/oracle/jars/ojdbc6-11.2.0.2.0.jar",
+        libraries.ojdbc,
 )
 libraries.hibernate_tools = files(
         "${FILEREPO}/hibernate/jars/hibernate-tools-3.2.6.ga.jar",
@@ -185,9 +189,9 @@ subprojects { Project project ->
             if (unfilteredPropertiesDir.isDirectory()) {
                 def filteredResourcesDir = project.file("build/generated/${scope}/resources")
                 task "filterResources$scope" {
-                    inputs.dir(unfilteredPropertiesDir)
-                    inputs.properties(userProperties)
-                    outputs.dir(filteredResourcesDir)
+                   inputs.dir(unfilteredPropertiesDir)
+                   inputs.properties(userProperties)
+                   outputs.dir(filteredResourcesDir)
                     doLast {
                         delete(filteredResourcesDir);
                         copy {
