@@ -12,7 +12,6 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 
 /**
- *
  * @author Henrik Fredholm
  */
 public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
@@ -23,14 +22,21 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
      */
     private boolean mergeMapping = false;
 
+    //Felles typemapper - hanste
+    private TypeMapper defaultMapper = null;
+
     public boolean isMergeMapping() {
         return mergeMapping;
     }
 
     enum DIRECTION {
-        /** mapping2 from domain to webserivce classes */
+        /**
+         * mapping2 from domain to webserivce classes
+         */
         D2W,
-        /** mapping2 from webservice to domain classes */
+        /**
+         * mapping2 from webservice to domain classes
+         */
         W2D
     }
 
@@ -49,7 +55,6 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
     }
 
     /**
-     *
      * @param mergeMapping bestemmer om en skal søke seg frem til nermeste registrerte mapper for evt supertype eller ikke
      */
     @SuppressWarnings("unchecked")
@@ -69,6 +74,15 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
         mappersByDomainClass.put(typeMapper.getDomainClass(), typeMapper);
         mappersByWsapiClass.put(typeMapper.getWsapiClass(), typeMapper);
     }
+
+    //Forsøk på å lage en felles typemapper - hanste
+    protected void setDefaultMapper(TypeMapper typeMapper) {
+        typeMapper.setDomainObjectFactory(domainObjectFactory);
+        typeMapper.setWsapiObjectFactory(wsapiObjectFactory);
+        typeMapper.setMapping(thisMapping);
+        defaultMapper = typeMapper;
+    }
+
 
     protected void addMapperW2D(TypeMapper<?, ?> typeMapper) {
         typeMapper.setDomainObjectFactory(domainObjectFactory);
@@ -233,12 +247,53 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 if (typeMapper instanceof WsapiListTypeMapper) {
                     target = getCollection(args);
                     typeMapper.mapWsapiObject(source, target);
+                } else if (typeMapper instanceof DefaultTypeMapper) {
+                    target = getTargetForGenericTypeMapper(args);
+                    if (target==null) {
+                        target = typeMapper.mapWsapiObject(source);
+                    } else {
+                        typeMapper.mapWsapiObject(source, target);
+                    }
                 } else {
                     target = typeMapper.mapWsapiObject(source);
                 }
             }
         }
         return target;
+    }
+
+    protected Object getTargetForGenericTypeMapper(Object[] args) {
+        Object result = null;
+        switch (args.length) {
+            case 1:
+                result = null;
+                break;
+            case 2:
+                if (args[1] instanceof Collection) {
+                    result = (Collection) args[1];
+                } else if (args[1] instanceof Class) {
+                    try {
+                        Class t = (Class) args[1];
+                        if (t.isAssignableFrom(Collection.class)) {
+
+                            result = createNewInstance((Class) args[1]);
+                        } else {
+                            result = null;
+                        }
+
+                    } catch (InstantiationException e) {
+                        throw new MappingException(e);
+                    } catch (IllegalAccessException e) {
+                        throw new MappingException(e);
+                    }
+                }
+                break;
+            default:
+                throw new MappingException("Expected a second parameter in mapping2 class " + args[0].getClass()
+                        .getName());
+        }
+        return result;
+
     }
 
     private Collection getCollection(Object[] args) {
@@ -278,14 +333,14 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
         if (mapOfMappers.containsKey(mappableClass)) {
             return mapOfMappers.get(mappableClass);
         }
-        final Collection<TypeMapper<?, ?>> candidates = new HashSet<TypeMapper<?,?>>();
+        final Collection<TypeMapper<?, ?>> candidates = new HashSet<TypeMapper<?, ?>>();
         for (TypeMapper<?, ?> candidate : mapOfMappers.values()) {
-            final Class<?> candidateClass ;
+            final Class<?> candidateClass;
 
             if (DIRECTION.D2W == direction) {
                 candidateClass = candidate.getDomainClass();
             } else if (DIRECTION.W2D == direction) {
-                candidateClass = candidate.getWsapiClass(); 
+                candidateClass = candidate.getWsapiClass();
             } else {
                 throw new ImplementationException("Unknows direction: " + direction);
             }
@@ -295,22 +350,29 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
             }
 
         }
-        if (candidates.size() == 0) {
-            throw new MappingException("TypeMapper[" + getClass().getName() +"] has no mapper for for class: " + mappableClass.getName());
-        } else if (candidates.size() > 1) {
+//        if (candidates.size() == 0) {
+//            throw new MappingException("TypeMapper[" + getClass().getName() +"] has no mapper for for class: " + mappableClass.getName());
+//        } else
+        if (candidates.size() > 1) {
             if (!isMergeMapping()) {
-                throw new MappingException("TypeMapper[" + getClass().getName() +"] found " + candidates.size() + " mapper candidates for class " + mappableClass.getName());
+                throw new MappingException("TypeMapper[" + getClass().getName() + "] found " + candidates.size() + " mapper candidates for class " + mappableClass.getName());
             }
         }
         if (candidates.size() == 1 || isMergeMapping()) {
             final TypeMapper<?, ?> candidate = findClosestTypeMapper(candidates, mappableClass, direction);
             if (logger.isDebugEnabled()) {
-                logger.debug("TypeMapper[" + getClass().getName() +"] has assigned mapping of class " + mappableClass + " to " + candidate);
+                logger.debug("TypeMapper[" + getClass().getName() + "] has assigned mapping of class " + mappableClass + " to " + candidate);
             }
             mapOfMappers.put(mappableClass, candidate);
             return candidate;
         }
-        throw new MappingException("TypeMapper[" + getClass().getName() +"] has no mapper for for class: " + mappableClass.getName());
+
+        //Felles typemapper - hanste
+        if (defaultMapper != null) {
+            return defaultMapper;
+        } else {
+            throw new MappingException("TypeMapper[" + getClass().getName() + "] has no mapper for for class: " + mappableClass.getName());
+        }
     }
 
     private TypeMapper<?, ?> findClosestTypeMapper(Collection<TypeMapper<?, ?>> candidates, Class mappableClass, DIRECTION direction) {
@@ -320,7 +382,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
         }
 
         //map with natural ordering of keys
-        TreeMap<Integer, TypeMapper<?, ?>> signedCandidates = new TreeMap<Integer, TypeMapper<?,?>>();
+        TreeMap<Integer, TypeMapper<?, ?>> signedCandidates = new TreeMap<Integer, TypeMapper<?, ?>>();
 
         for (TypeMapper<?, ?> candidate : candidates) {
             final Class<?> mapperClass;

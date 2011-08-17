@@ -15,7 +15,7 @@ import java.util.Set;
  * @since 0.3
  */
 @Test
-public class SkifTestMappingW2DTest extends TestCase {
+public class SkifTestMappingDefaultTypeMapperW2DTest extends TestCase {
     SkifTestMapper mapper = new SkifTestMapper();
     SkifTestMapping map = mapper.getMapping();
 
@@ -69,6 +69,6 @@ public class SkifTestMappingW2DTest extends TestCase {
         source.getItem().add(a2);
         target = map.w2d(source, target);
         assertEquals(2, target.size());
-        assertEquals(target.iterator().next().getClass(), no.statkart.skif.skiftest.domain.A.class);
+        assertEquals(target.iterator().next().getClass(), A.class);
     }
 }
