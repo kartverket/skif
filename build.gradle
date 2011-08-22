@@ -36,17 +36,43 @@ apply plugin: 'idea'
 }
 def userProperties = loadJavaProps()
 
+// version kan settes via properties (feks kommandolinje -P )
+if (project.hasProperty('version')) { version = getProperty('version') }
+
+// standard kode-versjon for branch
+if (version == 'unspecified') { version = '2.0-SNAPSHOT' }
+
 allprojects {
     defaultTasks 'build'
-
-    version = '2.0-SNAPSHOT'
+    version = rootProject.version
     group = 'no.statkart.skif'
 
     repositories {
         String publicRepo = rootProject.properties.get('PUBLIC_REPO', 'http://skrivap92:8001/nexus/content/groups/public/')
         mavenRepo name: 'public', urls: publicRepo
+        mavenLocal()
     }
+
+    plugins.whenPluginAdded() {
+        if (it instanceof org.gradle.api.plugins.MavenPlugin) {
+            uploadArchives.repositories.mavenDeployer {
+                if (!version.contains("SNAPSHOT")) {
+                    repository(url: uri('http://skrivap92:8001/nexus/content/repositories/releases/')) {
+                        authentication(userName: "admin", password: "admin123")
+                    }
+                } else {
+                    repository(url: uri('http://skrivap92:8001/nexus/content/repositories/snapshots/')) {
+                        authentication(userName: "admin", password: "admin123")
+                    }
+                }
+            }
+        }
+    }
+
+
 }
+
+
 
 // build a map of the dependency artifacts to use. Allows centralized definition of the version of artifacts to
 // use. In that respect it serves a role similar to <dependencyManagement> in Maven

@@ -1,3 +1,5 @@
+apply plugin: 'maven'
+
 dependencies {
     compile libraries.guice_with_used_deps
     provided libraries.jaxws_rt
