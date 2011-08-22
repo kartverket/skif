@@ -2,15 +2,7 @@ package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Singleton;
-import no.statkart.skif.service.ServiceRequestContext;
-import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
-import no.statkart.skif.service.proxy.ProxyHandler;
-import no.statkart.skif.service.proxy.TerminatingProxyHandler;
-import sun.net.ResourceManager;
-
-import javax.ejb.TransactionAttributeType;
 import java.lang.reflect.Method;
 
 /**
