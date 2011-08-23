@@ -161,6 +161,9 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                 //Hvis kildeklassen har et felt som heter 'item' så er dette en collection-klasse.
                 if (checkHasField(sourceClass, "item")) {
                     return Class.forName("java.util.ArrayList");
+                //Eller hvis kildeklassen har et felt som heter 'liste' så er dette en collection-klasse.
+                }else if (checkHasField(sourceClass, "liste")) {
+                    return Class.forName("java.util.ArrayList");
                 } else {
                     return Class.forName(targetPackage + sourceClass.getSimpleName());
                 }
@@ -256,8 +259,17 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                     }
                     targetField.setAccessible(true);
                     targetField.set(target, value);
-                } else {
-                    throw new MappingException("Antar at det alltid er en felt med navn 'item' på andre siden av en Collection. Det var visst feil...");
+                } else if (checkHasField(target.getClass(), "liste")) {
+                    Field targetField = target.getClass().getDeclaredField("liste");
+                    ArrayList value = new ArrayList();
+                    for (Iterator iterator = ((Collection) source).iterator(); iterator.hasNext();) {
+                        Object next = iterator.next();
+                        value.add(mapping.d2w(next));
+                    }
+                    targetField.setAccessible(true);
+                    targetField.set(target, value);
+                }else {
+                    throw new MappingException("Antar at det alltid er en felt med navn 'item' eller 'liste' på andre siden av en Collection. Det var visst feil...");
                 }
             } else {
                 List<Field> sourceFields = new ArrayList<Field>();
@@ -311,6 +323,20 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                     }
                 } else {
                     throw new MappingException("Antar at det alltid er en List på den andre siden av en wsapi klasse som har et felt med navn 'item'. Det var visst feil...");
+                }
+            }else if (checkHasField(source.getClass(), "liste")) {
+                if (target instanceof Collection) {
+                    Collection targetCollection = (Collection) target;
+
+                    Field item = source.getClass().getDeclaredField("liste");
+                    item.setAccessible(true);
+                    Iterator iterator = ((Iterable) item.get(source)).iterator();
+                    while (iterator.hasNext()) {
+                        Object next = iterator.next();
+                        targetCollection.add(mapping.w2d(next));
+                    }
+                } else {
+                    throw new MappingException("Antar at det alltid er en List på den andre siden av en wsapi klasse som har et felt med navn 'liste'. Det var visst feil...");
                 }
             } else {
                 List<Field> sourceFields = new ArrayList<Field>();
