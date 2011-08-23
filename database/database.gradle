@@ -5,6 +5,16 @@ loadJavaProps().each {
     setProperty(it.key, it.value)
 }
 
+configurations {
+    drivers
+}
+
+dependencies {
+    drivers libraries.ojdbc
+}
+
+
+
 configureDatabasePlugin {
 
     setProperty 'db_username', properties['skif.db_username']
@@ -13,7 +23,7 @@ configureDatabasePlugin {
     setProperty 'db_port', properties['skif.db_port']
     setProperty 'db_sid', properties['skif.db_sid']
 
-    useDrivers libraries.ojdbc
+    useDrivers configurations.drivers
 
     useToolset('oracle', '', 'main/sql/oracle') {
         url = "jdbc:oracle:thin:@${project.property('skif.db_hostname')}:${project.property('skif.db_port')}:${project.property('skif.db_sid')}"
@@ -21,10 +31,14 @@ configureDatabasePlugin {
 
 }
 
-task db_init {
+task dbSetup {
 
     description = 'Purger schema, oppretter schema og fyller inn testdata'
     def tasks = [tasks.Purge, tasks.CreateSchema, tasks.LoadTestdata]
+
+    tasks.each {
+        dependsOn = it.dependsOn
+    }
 
     doLast {
         tasks.each {
