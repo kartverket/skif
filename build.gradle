@@ -48,7 +48,7 @@ allprojects {
     group = 'no.statkart.skif'
 
     repositories {
-        String publicRepo = rootProject.properties.get('PUBLIC_REPO', 'http://skrivap92:8001/nexus/content/groups/public/')
+        String publicRepo = rootProject.properties.get('PUBLIC_REPO', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
         mavenRepo name: 'public', urls: publicRepo
         mavenLocal()
     }
@@ -57,11 +57,11 @@ allprojects {
         if (it instanceof org.gradle.api.plugins.MavenPlugin) {
             uploadArchives.repositories.mavenDeployer {
                 if (!version.contains("SNAPSHOT")) {
-                    repository(url: uri('http://skrivap92:8001/nexus/content/repositories/releases/')) {
+                    repository(url: uri('http://skrivap92.statkart.no:8001/nexus/content/repositories/releases/')) {
                         authentication(userName: "admin", password: "admin123")
                     }
                 } else {
-                    repository(url: uri('http://skrivap92:8001/nexus/content/repositories/snapshots/')) {
+                    repository(url: uri('http://skrivap92.statkart.no:8001/nexus/content/repositories/snapshots/')) {
                         authentication(userName: "admin", password: "admin123")
                     }
                 }
@@ -82,7 +82,7 @@ guiceVersion = '3.0'
 libraries = [
 
         // Database
-        ojdbc: files("${FILEREPO}/oracle/jars/ojdbc6-11.2.0.2.0.jar",),
+        ojdbc: "com.oracle:ojdbc6:11.2.0.2.0@jar",
 
         // Logging 
         slf4j_api: "org.slf4j:slf4j-api:${slf4jVersion}@jar",
@@ -144,18 +144,20 @@ libraries.guice_with_used_deps = [
         libraries.jsr330,
 ]
 
-libraries.hibernate = files(
-        "${FILEREPO}/hibernate/jars/antlr-2.7.6.jar",
-        "${FILEREPO}/hibernate/jars/cglib-nodep-2.2.jar",
-        "${FILEREPO}/hibernate/jars/dom4j-1.4.jar",
-        "${FILEREPO}/hibernate/jars/ehcache-1.2.3.jar",
-        "${FILEREPO}/hibernate/jars/hibernate-3.2.6.ga-bubbleref-v2.jar",
-        "${FILEREPO}/hibernate/jars/odmg-3.0.jar",
+libraries.hibernate = [
+        'antlr:antlr:2.7.6@jar',
+        'cglib:cglib-nodep:2.2@jar',
+        'dom4j:dom4j:1.4@jar',
+        'net.sf.ehcache:ehcache:1.2.3@jar',
+        'odmg:odmg:3.0@jar',
+        'org.hibernate:hibernate:3.2.6.GA-bubbleref-v2@jar',
         libraries.ojdbc,
-)
-libraries.hibernate_tools = files(
-        "${FILEREPO}/hibernate/jars/hibernate-tools-3.2.6.ga.jar",
-)
+]
+
+libraries.hibernate_tools = [
+        'org.hibernate:hibernate-tools:3.2.6.GA@jar',
+        ]
+
 
 def boolean isJavaProject(Project project) {
     return project.subprojects.size() == 0 && !project.name.endsWith('-ear')
@@ -255,7 +257,7 @@ subprojects { Project project ->
                     excludeGroups('server-required')
                 }
             }
-            systemProperties "org.uncommons.reportng.stylesheet": "${FILEREPO}/reportng-1.1.3/stylesheets/hudsonesque.css"
+            systemProperties "org.uncommons.reportng.stylesheet": "${project.rootProject.file('all/test/report/reportng-1.1.3/stylesheets/hudsonesque.css')}"
             systemProperties "org.uncommons.reportng.title": "${project.name} Report"
 
             options {
