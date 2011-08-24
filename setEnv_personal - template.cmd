@@ -13,7 +13,7 @@ set GRADLE_HOME=c:\apps\gradle-1.0-milestone-4
 set WEBLOGIC_HOME=C:\Oracle\Middleware
 
 @rem Definer lokal nexus repo for offline utvikling (optional)
-@rem set PUBLIC_REPO=http://localhost:8081/nexus/content/repositories/statkart/
+@rem set REPO_PUBLIC=http://localhost:8081/nexus/content/repositories/statkart/
 
 @rem Setup Perforce windows integrasjon (optional)
 @rem p4 set P4CLIENT=frehen-WSFREHEN2

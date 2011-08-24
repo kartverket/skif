@@ -29,7 +29,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 apply plugin: 'idea'
 
 // Variables to grab from environment
-["WEBLOGIC_HOME", 'COMPUTERNAME', 'PUBLIC_REPO'].each { val ->
+["WEBLOGIC_HOME", 'COMPUTERNAME', 'REPO_PUBLIC'].each { val ->
     if (!project.hasProperty(val) && System.getenv(val) != null) {
         project.setProperty(val, System.getenv(val))
     }
@@ -48,7 +48,7 @@ allprojects {
     group = 'no.statkart.skif'
 
     repositories {
-        String publicRepo = rootProject.properties.get('PUBLIC_REPO', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
+        String publicRepo = properties.get('REPO_PUBLIC', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
         mavenRepo name: 'public', urls: publicRepo
         mavenLocal()
     }
@@ -57,11 +57,11 @@ allprojects {
         if (it instanceof org.gradle.api.plugins.MavenPlugin) {
             uploadArchives.repositories.mavenDeployer {
                 if (!version.contains("SNAPSHOT")) {
-                    repository(url: uri('http://skrivap92.statkart.no:8001/nexus/content/repositories/releases/')) {
+                    repository(url: uri(properties.get('REPO_UPLOAD_RELEASES', 'http://skrivap92.statkart.no:8001/nexus/content/repositories/releases/'))) {
                         authentication(userName: "admin", password: "admin123")
                     }
                 } else {
-                    repository(url: uri('http://skrivap92.statkart.no:8001/nexus/content/repositories/snapshots/')) {
+                    repository(url: uri(properties.get('REPO_UPLOAD_SNAPSHOTS', 'http://skrivap92.statkart.no:8001/nexus/content/repositories/snapshots/'))) {
                         authentication(userName: "admin", password: "admin123")
                     }
                 }
@@ -74,32 +74,42 @@ allprojects {
 
 
 
+// library versions to use.
+// todo: add option to override values as custion project.properties ...
+version = [
+        BUILD_UTILS : '1.0',
+
+        oracle : '11.2.0.2.0',
+        hibernate: '3.2.6.GA',
+        slf4j : '1.6.1',
+        logback : '0.9.28',
+        guice : '3.0',
+        jaxb : '2.1.13',
+]
+
 // build a map of the dependency artifacts to use. Allows centralized definition of the version of artifacts to
 // use. In that respect it serves a role similar to <dependencyManagement> in Maven
-slf4jVersion = '1.6.1'
-logbackVersion = '0.9.28'
-guiceVersion = '3.0'
 libraries = [
 
         // Database
-        ojdbc: "com.oracle:ojdbc6:11.2.0.2.0@jar",
+        ojdbc: "com.oracle:ojdbc6:${version.oracle}@jar",
 
         // Logging 
-        slf4j_api: "org.slf4j:slf4j-api:${slf4jVersion}@jar",
-        jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${slf4jVersion}@jar",
-        jul_to_slf4j: "org.slf4j:jul-to-slf4j:${slf4jVersion}@jar",
-        log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${slf4jVersion}@jar",
-        logback_classic: "ch.qos.logback:logback-classic:${logbackVersion}@jar",
-        logback_core: "ch.qos.logback:logback-core:${logbackVersion}@jar",
+        slf4j_api: "org.slf4j:slf4j-api:${version.slf4j}@jar",
+        jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${version.slf4j}@jar",
+        jul_to_slf4j: "org.slf4j:jul-to-slf4j:${version.slf4j}@jar",
+        log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${version.slf4j}@jar",
+        logback_classic: "ch.qos.logback:logback-classic:${version.logback}@jar",
+        logback_core: "ch.qos.logback:logback-core:${version.logback}@jar",
 
         // Guice med extensions
-        guice: "com.google.inject:guice:3.0",
-        guice_multibindings: "com.google.inject.extensions:guice-multibindings:${guiceVersion}",
-        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${guiceVersion}",
-        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${guiceVersion}",
-        guice_grapher: "com.google.inject.extensions:guice-grapher:${guiceVersion}",
+        guice: "com.google.inject:guice:${version.guice}",
+        guice_multibindings: "com.google.inject.extensions:guice-multibindings:${version.guice}",
+        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${version.guice}",
+        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${version.guice}",
+        guice_grapher: "com.google.inject.extensions:guice-grapher:${version.guice}",
         // guice-servlet depends on servlet-api som her er provided via weblogic og derfor ikke skal være med her
-        guice_servlet: "com.google.inject.extensions:guice-servlet:${guiceVersion}@jar",
+        guice_servlet: "com.google.inject.extensions:guice-servlet:${version.guice}@jar",
 
         jsr330: "javax.inject:javax.inject:1",
 
@@ -112,9 +122,9 @@ libraries = [
         mockito: 'org.mockito:mockito-all:1.8.5',
 
         // JAXB
-        jaxb_impl: 'com.sun.xml.bind:jaxb-impl:2.1.13',
-        jaxb_xjc: 'com.sun.xml.bind:jaxb-xjc:2.1.13',
-        build_utils: 'no.statkart.grunnbok:build-utils:1.0'
+        jaxb_impl: "com.sun.xml.bind:jaxb-impl:${version.jaxb}",
+        jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${version.jaxb}",
+        build_utils: "no.statkart.grunnbok:build-utils:${version.BUILD_UTILS}"
 
 ]
 
@@ -150,12 +160,12 @@ libraries.hibernate = [
         'dom4j:dom4j:1.4@jar',
         'net.sf.ehcache:ehcache:1.2.3@jar',
         'odmg:odmg:3.0@jar',
-        'org.hibernate:hibernate:3.2.6.GA-bubbleref-v2@jar',
+        "org.hibernate:hibernate:${version.hibernate}-bubbleref-v2@jar",
         libraries.ojdbc,
 ]
 
 libraries.hibernate_tools = [
-        'org.hibernate:hibernate-tools:3.2.6.GA@jar',
+        "org.hibernate:hibernate-tools:${version.hibernate}@jar",
         ]
 
 
