@@ -211,7 +211,7 @@ subprojects { Project project ->
             testRuntime libraries.log4j_to_slf4j
             testRuntime libraries.logback_classic
             testRuntime libraries.logback_core
-            testRuntime 'org.uncommons.reportng:reportng:1.1.3-unpublished'
+            testRuntime 'org.uncommons:reportng:1.1.3'
             testRuntime 'velocity:velocity-dep:1.4'
         }
 
@@ -363,8 +363,12 @@ Map loadJavaProps(List files, boolean strict) {
     Map map = new HashMap();
     Properties props = new Properties();
     files.each { file ->
-        file.withInputStream { props.load(it) }
-        logger.debug('Loaded ' + props.size() + ' from ' + file)
+        if (file.canRead()) {
+            file.withInputStream { props.load(it) }
+            logger.debug('Loaded ' + props.size() + ' from ' + file)
+        } else {
+            logger.debug("No props read from ${file} as file not accessible")
+        }
     }
     ['wls.hostname': "${COMPUTERNAME}.statkart.no"].each {
         if (props.get(it.key) == null)
