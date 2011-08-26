@@ -260,7 +260,7 @@ subprojects { Project project ->
         }
 
         test {
-            boolean singleVm = Boolean.valueOf(rootProject.loadJavaProps()['skif.single_vm'])
+            boolean singleVm = Boolean.valueOf(rootProject.loadJavaProps()['skif.single_vm'] || rootProject.properties['singlevm'])
             useTestNG() {
                 excludeGroups('broken')
                 if (singleVm) {
