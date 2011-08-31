@@ -16,7 +16,7 @@ import java.util.Set;
  */
 @Test
 public class SkifTestMappingDefaultTypeMapperW2DTest extends TestCase {
-    SkifTestMapper mapper = new SkifTestMapper();
+    SkifDefaultTypeMapperTestMapper mapper = new SkifDefaultTypeMapperTestMapper();
     SkifTestMapping map = mapper.getMapping();
 
     public void testMapString() {
