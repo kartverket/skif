@@ -27,6 +27,7 @@ public class BServiceEJBBean extends EJBTimedService implements BService {
 
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String m1(List<String> callSpec) {
         return serviceChain.m1(callSpec);
     }

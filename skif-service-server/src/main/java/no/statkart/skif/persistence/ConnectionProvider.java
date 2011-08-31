@@ -2,9 +2,11 @@ package no.statkart.skif.persistence;
 
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import no.statkart.skif.exception.ImplementationException;
 
 import javax.inject.Inject;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * Guice provider for å få tak i en Connection. Hver provider må opprettes med en key som angir
@@ -31,6 +33,10 @@ public class ConnectionProvider implements Provider<Connection> {
 
     @Override
     public Connection get() {
-        return connectionManagerProvider.get().getConnection(key);
+        try {
+            return connectionManagerProvider.get().getConnection(key);
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
+        }
     }
 }

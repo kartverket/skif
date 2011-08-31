@@ -1,6 +1,6 @@
 package no.statkart.skif.persistence;
-
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * Interface for manager som kan gi ut connections og som har til oppgave å holde styr på hvilke connections som
@@ -20,9 +20,6 @@ import java.sql.Connection;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public interface ConnectionManager {
-    Connection getConnection(Object key);
-    boolean isConnectionAllocated(Object key);
-    void closeConnection(Object key);
-    void closeAllAllocatedConnections();
+public interface ConnectionFactory {
+    Connection createConnection() throws SQLException;
 }

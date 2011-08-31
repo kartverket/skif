@@ -24,7 +24,7 @@ public class ClientCallServiceChainFactoryJEE<S> implements CallServiceChainFact
 
     @Override
     public float getChainPosition() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;  // Denne factory må være sist siden den avslutter kjeden.
     }
 
     @Override

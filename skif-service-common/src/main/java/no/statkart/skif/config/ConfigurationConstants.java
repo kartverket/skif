@@ -30,4 +30,9 @@ public class ConfigurationConstants {
     public static final String DB_HOSTNAME = "skif.db_hostname";
     public static final String DB_PORT = "skif.db_port";
     public static final String DB_SID = "skif.db_sid";
+
+
+    public static final String HIBERNATE_MAPPRING_FILE_ROOT = "skif.hibernate_mapping_file_root";
+
+
 }
