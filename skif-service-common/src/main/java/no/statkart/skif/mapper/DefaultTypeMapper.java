@@ -284,7 +284,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                         Object source1 = sourceField.get(source);
                         if (source1 instanceof Collection) {
                             //Må bruke accessor-metode for å få sortering riktig.
-                            Method method = source.getClass().getMethod("get"+sourceField.getName().substring(0,1).toUpperCase()+sourceField.getName().substring(1,sourceField.getName().length()), null);
+                            Method method = source.getClass().getMethod("get"+sourceField.getName().substring(0,1).toUpperCase()+sourceField.getName().substring(1,sourceField.getName().length()), (Class<?>[])null);
                             Object sortedSource = method.invoke(source);
                             targetField.set(target, mapping.d2w(sortedSource, targetField.getType()));
                         } else {

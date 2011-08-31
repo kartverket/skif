@@ -11,16 +11,25 @@ import org.hibernate.Session;
  * @since 2.0
  */
 public class HibernateSessionProvider implements Provider<Session> {
-    private final StoreHibernateSessionManager sessionManager ;
-    private final ReplicaVersion replicaVersion;
+    private final Object key;
+    private HibernateSessionManager hibernateSessionManager;
 
     @Inject
-    public HibernateSessionProvider(StoreHibernateSessionManager sessionManager, ReplicaVersion replicaVersion) {
-        this.sessionManager = sessionManager;
-        this.replicaVersion = replicaVersion;
+    public HibernateSessionProvider(Object key) {
+        this.key = key;
+    }
+
+    public HibernateSessionProvider(HibernateSessionManager hibernateSessionManager, Object key) {
+        this.key = key;
+        this.hibernateSessionManager = hibernateSessionManager;
+    }
+
+    @Inject
+    public void setHibernateSessionManager(HibernateSessionManager hibernateSessionManager) {
+        this.hibernateSessionManager = hibernateSessionManager;
     }
 
     public Session get() {
-        return sessionManager.getSession(replicaVersion).getHibernateSession();
+        return hibernateSessionManager.getHibernateSession(key);
     }
 }

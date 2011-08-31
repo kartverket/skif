@@ -4,6 +4,7 @@ package no.statkart.skif.service.ejb;
  * @author Henrik Fredholm
  */
 public interface EJBResourceManager {
-    void complete();
-    void abort();
+    void beginService();
+    void completeService() throws Throwable;
+    void abortService() throws Throwable;
 }

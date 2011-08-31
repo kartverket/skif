@@ -11,7 +11,7 @@ COMMIT;
 
 PROMPT purging tables for user @db_username@
 BEGIN
-  FOR i IN (SELECT table_name FROM all_tables where owner = '@db_username@' and table_name not like '%\$%')
+  FOR i IN (SELECT table_name FROM all_tables where owner = '@db_username@' and table_name not like '%$%')
     LOOP
         EXECUTE IMMEDIATE('DROP TABLE @db_schema@.' || i.table_name || ' CASCADE CONSTRAINTS PURGE');
     END LOOP;

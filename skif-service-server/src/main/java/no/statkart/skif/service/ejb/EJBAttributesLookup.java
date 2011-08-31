@@ -6,9 +6,8 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.service.annotation.Implementation;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
+import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +19,11 @@ import java.util.Set;
  */
 @Singleton
 public class EJBAttributesLookup<S> {
+    /**
+     * Default transaction attribute for metoder hvor det ikke er spesifisert. I Weblogic 10.x er dette REQUIRED. I tidligere versojner var det SUPPORTS
+     */
+    private static TransactionAttributeType DEFAULT_TRANSACTION_ATTRIBUTE = TransactionAttributeType.REQUIRED;
+    private boolean beanManagedTransaction = false;
     protected final Injector injector;
     protected final TypeLiteral<S> type;
     protected final ServiceMode serviceMode;
@@ -39,6 +43,10 @@ public class EJBAttributesLookup<S> {
         return methodToTxTypeMap.get(m.getName());
     }
 
+    public boolean isBeanManagedTransaction() {
+        return beanManagedTransaction;
+    }
+
     public boolean isEjbCallsNotRequired() {
         return ejbCallsNotRequired;
     }
@@ -56,13 +64,22 @@ public class EJBAttributesLookup<S> {
 
 
     private void analyseClass(Class<? extends S> classToAnalyse) {
-        TransactionAttributeType classDefaultTxType = getType(classToAnalyse.getAnnotation(TransactionAttribute.class), TransactionAttributeType.SUPPORTS);
+        TransactionManagement transactionManagement = classToAnalyse.getAnnotation(TransactionManagement.class);
+        beanManagedTransaction = (transactionManagement != null) && (transactionManagement.value() == TransactionManagementType.BEAN);
+        if (beanManagedTransaction){
+            for (Method m : classToAnalyse.getDeclaredMethods()) {
+                TransactionAttributeType txType = TransactionAttributeType.REQUIRES_NEW;
+                methodToTxTypeMap.put(m.getName(), txType);
+                ejbCallsNotRequired &= txType == TransactionAttributeType.SUPPORTS;
+            }
+        } else {
+            TransactionAttributeType classDefaultTxType = getType(classToAnalyse.getAnnotation(TransactionAttribute.class), DEFAULT_TRANSACTION_ATTRIBUTE);
 
-        for (Method m : classToAnalyse.getDeclaredMethods()) {
-            TransactionAttributeType txType = getType(m.getAnnotation(TransactionAttribute.class), classDefaultTxType);
-            final Class<?> declaringClass = m.getDeclaringClass();
-            methodToTxTypeMap.put(m.getName(), txType);
-            ejbCallsNotRequired &= txType == TransactionAttributeType.SUPPORTS;
+            for (Method m : classToAnalyse.getDeclaredMethods()) {
+                TransactionAttributeType txType = getType(m.getAnnotation(TransactionAttribute.class), classDefaultTxType);
+                methodToTxTypeMap.put(m.getName(), txType);
+                ejbCallsNotRequired &= txType == TransactionAttributeType.SUPPORTS;
+            }
         }
     }
 
@@ -75,7 +92,7 @@ public class EJBAttributesLookup<S> {
     }
 
     private Class<? extends S> getEJBClass(TypeLiteral<S> type) {
-        if (type.getRawType().getAnnotation(Stateless.class)!=null) return (Class<? extends S>) type.getRawType();
+        if (type.getRawType().getAnnotation(Stateless.class) != null) return (Class<? extends S>) type.getRawType();
 
         try {
             return (Class<? extends S>) SkifUtil.classForName(type.getRawType().getName() + "EJBBean");

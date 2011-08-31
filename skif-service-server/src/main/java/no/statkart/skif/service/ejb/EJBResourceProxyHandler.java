@@ -3,6 +3,7 @@ package no.statkart.skif.service.ejb;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
+
 import java.lang.reflect.Method;
 
 /**
@@ -23,14 +24,17 @@ public class EJBResourceProxyHandler<S> extends ChainedProxyHandler<S> {
     public Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         EJBResourceManager ejbResourceManager = ejbResourceManagerProvider.get();
         try {
+            if (ejbResourceManager != null) {
+                ejbResourceManager.beginService();
+            }
             Object result = chained.invoke(proxy, method, args);
             if (ejbResourceManager != null) {
-                ejbResourceManager.complete();
+                ejbResourceManager.completeService();
             }
             return result;
         } catch (Throwable e) {
             if (ejbResourceManager != null) {
-                ejbResourceManager.abort();
+                ejbResourceManager.abortService();
             }
             throw e;
         }

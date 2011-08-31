@@ -57,29 +57,29 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
     protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         final ServiceRequestContext originalServiceRequestContext = serviceRequestContextProvider.get();
         final TxMode origTxMode = originalServiceRequestContext.getTxMode();
-        TransactionAttributeType txType = ejbAttributesLookup.lookupAttribute(method) ;
+        TransactionAttributeType txType = ejbAttributesLookup.lookupAttribute(method);
 
         if (isNewContextRequired(origTxMode, txType)) {
-            return executeInNewContext(origTxMode, txType, method, args);
+            return executeInNewContext(origTxMode, txType, ejbAttributesLookup.isBeanManagedTransaction(),method, args);
         } else {
-            return executeInExistingContext(origTxMode, txType, method,args);
+            return executeInExistingContext(origTxMode, txType, method, args);
         }
     }
 
-    private Object executeInNewContext(TxMode origTxMode, TransactionAttributeType txType, Method method, Object[] args) throws Throwable {
+    private Object executeInNewContext(TxMode origTxMode, TransactionAttributeType txType, boolean beanManagedTransaction, Method method, Object[] args) throws Throwable {
         final TxMode txMode = (txType == TransactionAttributeType.REQUIRED || txType == TransactionAttributeType.REQUIRES_NEW) ? TxMode.TX : TxMode.NO_TX;
         final SingleVmRemoteCallContext singleVmRemoteCallContext = singleVmRemoteCallContextProvider.get();
         final Map<String, Object> contextData = singleVmRemoteCallContext.getContextData();
-        ServiceContext serviceContext=null;
+        ServiceContext serviceContext = null;
         ServiceRequestContext serviceRequestContext;
         if (isRemoteCall(contextData)) {
             serviceContext = (ServiceContext) contextData.get("serviceContext");
-            serviceRequestContext = new ServiceRequestContext(txMode);
+            serviceRequestContext = new ServiceRequestContext(txMode, beanManagedTransaction, txType);
             LoginUser loginUser = (LoginUser) contextData.get("credentials");
             serviceRequestContext.setCallerPrincipal(new PrincipalImpl(loginUser.getUsername()));
             serviceRequestContext.setServicename(method.getName());
         } else {
-            serviceRequestContext = new ServiceRequestContext(serviceRequestContextProvider.get(), txMode);
+            serviceRequestContext = new ServiceRequestContext(serviceRequestContextProvider.get(), txMode, false, txType);
             serviceContext = CopyHelper.copy(serviceContextProvider.get());
         }
 
@@ -101,7 +101,7 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
     private Object executeInExistingContext(TxMode origTxMode, TransactionAttributeType txType, Method method, Object[] args) throws Throwable {
         final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
         final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
-        final ServiceRequestContext originalServiceRequestContext = new ServiceRequestContext(serviceRequestContext, origTxMode);
+        final ServiceRequestContext originalServiceRequestContext = new ServiceRequestContext(serviceRequestContext, origTxMode, false, txType);
         try {
             serviceRequestContext.setTxMode(txMode);
             return invokeInContext(method, args);
@@ -125,7 +125,7 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
     private boolean isNewContextRequired(TxMode origTxMode, TransactionAttributeType txType) {
         return origTxMode == TxMode.NOT_IN_EJB
                 || txType == TransactionAttributeType.REQUIRES_NEW
-                || (txType == TransactionAttributeType.REQUIRED && (origTxMode == TxMode.NO_TX || origTxMode==TxMode.NO_TX_CONTINUATION));
+                || (txType == TransactionAttributeType.REQUIRED && (origTxMode == TxMode.NO_TX || origTxMode == TxMode.NO_TX_CONTINUATION));
     }
 
     private boolean isRemoteCall(Map<String, Object> contextData) {

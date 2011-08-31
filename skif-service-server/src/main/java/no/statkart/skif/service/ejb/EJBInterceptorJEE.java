@@ -11,6 +11,7 @@ import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.util.CopyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import weblogic.transaction.BeginNotificationListener;
 
 import javax.annotation.Resource;
 import javax.ejb.NoSuchObjectLocalException;
@@ -34,19 +35,27 @@ public abstract class EJBInterceptorJEE {
     public Object aroundService(InvocationContext invocationContext) throws Exception {
         Injector injector = getInjector();
 
+         TxMode origTxMode=null;
         try {
-            TransactionAttributeType txType = getTransactionAttributeType(invocationContext, injector);
+            TypeLiteral<EJBAttributesLookup<?>> type = SkifUtil.typeLiteral(EJBAttributesLookup.class, invocationContext.getMethod().getDeclaringClass());
+            EJBAttributesLookup<?> ejbAttributesLookup = injector.getInstance(Key.get(type));
+            TransactionAttributeType txType = ejbAttributesLookup.lookupAttribute(invocationContext.getMethod());
             ServiceRequestContext serviceRequestContext = injector.getInstance(ServiceRequestContext.class);
-            final TxMode origTxMode = serviceRequestContext.getTxMode();
+            origTxMode = serviceRequestContext.getTxMode();
+
+            System.out.println("BEG - " + origTxMode + "-->" + txType + " " + invocationContext.getMethod());
 
             if (isNewContextRequired(origTxMode, txType)) {
-                return executeInNewContext(injector, invocationContext, serviceRequestContext , txType);
+                return executeInNewContext(injector, invocationContext, serviceRequestContext , txType, ejbAttributesLookup.isBeanManagedTransaction());
             } else {
                 return executeInExistingContext(injector, invocationContext, serviceRequestContext, origTxMode, txType);
             }
         } catch (Exception t) {
             logger.debug("Exception i EJBInterceptor", t);
             throw t;
+        } finally {
+            System.out.println("END - " + invocationContext.getMethod());
+            if (origTxMode == TxMode.NOT_IN_EJB) System.out.println();
         }
     }
 
@@ -56,9 +65,9 @@ public abstract class EJBInterceptorJEE {
         return ejbAttributesLookup.lookupAttribute(invocationContext.getMethod());
     }
 
-    private Object executeInNewContext(Injector injector, InvocationContext invocationContext, ServiceRequestContext serviceRequestContext,  TransactionAttributeType txType) throws Exception {
+    private Object executeInNewContext(Injector injector, InvocationContext invocationContext, ServiceRequestContext serviceRequestContext,  TransactionAttributeType txType, boolean isBeanManagedTransaction) throws Exception {
         final TxMode txMode = (txType == TransactionAttributeType.REQUIRED || txType == TransactionAttributeType.REQUIRES_NEW) ? TxMode.TX : TxMode.NO_TX;
-        ServiceRequestContext newServiceRequestContext = new ServiceRequestContext(serviceRequestContext, txMode);
+        ServiceRequestContext newServiceRequestContext = new ServiceRequestContext(serviceRequestContext, txMode,isBeanManagedTransaction, txType);
         ServiceContext serviceContext = CopyHelper.copy(injector.getInstance(ServiceContext.class));
         newServiceRequestContext.setCallerPrincipal(sessionContext.getCallerPrincipal());
         newServiceRequestContext.incNestedLevel();
@@ -81,7 +90,7 @@ public abstract class EJBInterceptorJEE {
 
     private Object executeInExistingContext(Injector injector, InvocationContext invocationContext, ServiceRequestContext serviceRequestContext, TxMode origTxMode, TransactionAttributeType txType) throws Exception {
         final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
-        final ServiceRequestContext originalServiceRequestContext = new ServiceRequestContext(serviceRequestContext, origTxMode);
+        final ServiceRequestContext originalServiceRequestContext = new ServiceRequestContext(serviceRequestContext, origTxMode, false, txType);
         try {
             serviceRequestContext.setTxMode(txMode);
             return invokeInContext(injector, invocationContext);
@@ -93,7 +102,8 @@ public abstract class EJBInterceptorJEE {
 
     private Object invokeInContext(Injector injector, InvocationContext invocationContext) throws Exception {
         injector.injectMembers(invocationContext.getTarget());
-        return invokeWithTimer(invocationContext);
+//        return invokeWithTimer(invocationContext);
+        return invocationContext.proceed();
     }
 
     private boolean isNewContextRequired(TxMode origTxMode, TransactionAttributeType txType) {

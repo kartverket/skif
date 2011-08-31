@@ -29,11 +29,13 @@ public class DServiceEJBBean extends EJBTimedService implements DService {
     DService serviceChain;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String noTx(String exceptionClass, String message) throws SkifException {
         return serviceChain.noTx(exceptionClass, message);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String noTxNested(String exceptionClass, String message) throws SkifException {
         return serviceChain.noTxNested(exceptionClass, message);
     }
@@ -45,11 +47,13 @@ public class DServiceEJBBean extends EJBTimedService implements DService {
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String nonMappedWSCall(String exceptionClass, String message) throws SkifException {
         return  serviceChain.nonMappedWSCall(exceptionClass, message);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String nonMappedEJBCall(String exceptionClass, String message) throws SkifException {
         if (exceptionClass.equals(RuntimeException.class.getName())) {
             throw new RuntimeException(message);
@@ -64,6 +68,7 @@ public class DServiceEJBBean extends EJBTimedService implements DService {
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String indirectNoTx(List<String> callSpec, String exceptionClass, String message) throws SkifException {
         return serviceChain.indirectNoTx(callSpec, exceptionClass, message);
     }
@@ -81,6 +86,7 @@ public class DServiceEJBBean extends EJBTimedService implements DService {
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String indirectNoEx(List<String> callSpec, String exceptionClass, String message) {
         return serviceChain.indirectNoEx(callSpec, exceptionClass, message);
     }

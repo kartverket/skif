@@ -1,12 +1,10 @@
 package no.statkart.skif.test.guice.patterns.privatemodule;
 
-import com.google.inject.*;
-import com.google.inject.name.Named;
-import com.google.inject.name.Names;
-import com.sun.corba.se.impl.protocol.giopmsgheaders.Message_1_2;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertSame;
 
 /**
