@@ -93,7 +93,7 @@ public class SkifTestCase {
 
     private String configurationFilename = "skif.properties";
 
-    private String singleVmServerConfigurationFilename;
+    private String singleVmServerConfigurationFilename = "skif.properties";
 
     private Boolean singleVm;
 

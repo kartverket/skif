@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.wsapi.service.storetest1;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
+import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.annotation.Resource;
 import javax.annotation.PostConstruct;
@@ -37,27 +38,41 @@ public class StoreTest1ServiceWSBean extends SkifWebService<StoreTest1ServiceWSI
 
     @Override
     @WebMethod
-    public String put(@WebParam(name = "key")String key, @WebParam(name = "value")String value) {
+    public String put(@WebParam(name = "key")String key, @WebParam(name = "value")String value)  throws ServiceException {
         return wsServiceChain.put(key, value);
     }
 
     @Override
     @WebMethod
-    public String get(@WebParam(name = "key")String key) {
+    public String get(@WebParam(name = "key")String key) throws ServiceException {
         return wsServiceChain.get(key);
 
     }
 
     @Override
     @WebMethod
-    public String remove(@WebParam(name = "key") String key) {
+    public String remove(@WebParam(name = "key") String key) throws ServiceException {
         return wsServiceChain.remove(key);
     }
 
     @Override
     @WebMethod
-    public void clear() {
+    public void clear() throws ServiceException {
         wsServiceChain.clear();
 
     }
+
+    @Override
+    @WebMethod
+    public String putThatFails(@WebParam(name = "key")String key, @WebParam(name = "value")String value) throws ServiceException {
+        return wsServiceChain.putThatFails(key, value);
+    }
+
+    @Override
+    @WebMethod
+    public String putViaJDBCConnection(@WebParam(name = "key")String key, @WebParam(name = "value")String value) throws ServiceException {
+        return wsServiceChain.putViaJDBCConnection(key, value);
+    }
+
 }
+

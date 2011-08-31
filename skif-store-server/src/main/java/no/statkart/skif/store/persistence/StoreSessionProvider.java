@@ -31,6 +31,6 @@ public class StoreSessionProvider implements Provider<StoreSession> {
 
     @Override
     public StoreSession get() {
-        return storeSessionManagerProvider.get().getSession(replicaVersion);
+        return null; //storeSessionManagerProvider.get().getSession(replicaVersion);
     }
 }

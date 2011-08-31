@@ -31,6 +31,7 @@ set CLASSPATH=%JAVA_HOME%\lib\tools.jar;
 rem Setup Gradle:
 @echo GRADLE_HOME=%GRADLE_HOME%
 set PATH=%GRADLE_HOME%\bin;%PATH%
+set GRADLE_OPTS=-XX:MaxPermSize=256m
 
 rem Setup Groovy (Optional)
 if  not "%GROOVY_HOME%"=="" set PATH=%PATH%;%GROOVY_HOME%\bin

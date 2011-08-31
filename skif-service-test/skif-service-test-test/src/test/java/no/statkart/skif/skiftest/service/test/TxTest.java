@@ -15,7 +15,6 @@ import static org.testng.Assert.assertEquals;
  * @author Henrik Fredholm
  * @since 1.1
  */
-@Test(groups = "server-required")
 public class TxTest extends SkifTestCase {
 
     public TxTest() {

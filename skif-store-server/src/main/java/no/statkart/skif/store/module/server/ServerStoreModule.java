@@ -1,20 +1,85 @@
 package no.statkart.skif.store.module.server;
 
+import com.google.inject.Singleton;
+import no.statkart.skif.ConfigurationConverter;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.PropertiesConfiguration;
+import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
+import no.statkart.skif.service.scope.ServiceRequestScoped;
+import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.persistence.hibernate.*;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Properties;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class ServerStoreModule extends ModuleWithStrategy<ServerStoreModuleStrategy> {
+public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreModuleStrategy> {
+    private static Logger logger = LoggerFactory.getLogger(ServerStoreModule.class);
 
-    public ServerStoreModule(Class<ServerStoreModuleStrategy> strategyClass, ModuleConfiguration moduleConfiguration) {
-        super(strategyClass, moduleConfiguration);
+    private final String mappingFileDirectoryRootDefault;
+
+    public ServerStoreModule(ModuleConfiguration moduleConfiguration, String mappingFileDirectoryRootDefault) {
+        super(ServerStoreModuleStrategy.class, moduleConfiguration);
+        this.mappingFileDirectoryRootDefault = mappingFileDirectoryRootDefault;
     }
+
+    protected Properties getHibernateProperties() {
+        setStrategyInstance();
+        Configuration hibernateConfiguration = strategy.getHiberanteConfiguration();
+        if (hibernateConfiguration != null) {
+            logger.debug("Configuring hibernate from configuration object specified programatically");
+        } else if (strategy.getHibernateConfigurationFilename() != null) {
+            String propertyfile = strategy.getHibernateConfigurationFilename();
+            logger.debug("Configuring hibernate from property file: '{}'", propertyfile);
+            hibernateConfiguration = new PropertiesConfiguration(propertyfile);
+        }
+
+        if (hibernateConfiguration == null) {
+            throw new ConfigurationException(String.format("No hibernate configuration has been specified for  service mode: '%s'", moduleConfiguration.getServiceMode()));
+        }
+        return ConfigurationConverter.getProperties(hibernateConfiguration);
+    }
+
+    protected HibernateStoreSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
+        Properties properties = getHibernateProperties();
+        logger.trace("Properties used for configuring hibernate: '{}'", properties);
+        String mappingFileDirectoryRoot = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.HIBERNATE_MAPPRING_FILE_ROOT, mappingFileDirectoryRootDefault);
+        return new HibernateStoreSessionFactoryBuilder(properties, mappingFileDirectoryRoot);
+    }
+
+    protected abstract void configureHibernate(HibernateStoreSessionFactoryBuilder facotryBuilderStore);
 
     @Override
     protected void configure() {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+        HibernateStoreSessionFactoryBuilder hibernateStoreSessionFactoryBuilder = createHibernateSessionFactoryBuilder();
+        // Alle requester skal dele samme factory builder og factory manager. Derfor brukes en singleton her
+        configureHibernate(hibernateStoreSessionFactoryBuilder);
+        bind(HibernateStoreSessionFactoryBuilder.class).toInstance(hibernateStoreSessionFactoryBuilder);
+        bind(HibernateStoreSessionFactoryManager.class).in(Singleton.class);
+
+        // Session managers kun skal deles per service request
+        bind(HibernateStoreSessionManager.class).in(ServiceRequestScoped.class);
+        bind(HibernateStoreSession.class).toProvider(HibernateStoreSessionProvider.class).in(ServiceRequestScoped.class);
+        bind(Session.class).toProvider(HibernateSessionProvider.class).in(ServiceRequestScoped.class);
+
+        // TODO ReplicaVersion skal erstattes med TimePoint som har tilsvarende funksjonalitet
+
+        // TODO Kanskje vi ikke trenger denne bindingen
+        bind(ReplicaVersion.class).toInstance(ReplicaVersion.CURRENT);
+
+
+
     }
+
+
+
 }

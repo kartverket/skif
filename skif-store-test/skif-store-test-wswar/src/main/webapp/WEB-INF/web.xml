@@ -7,7 +7,15 @@
     <listener>
         <listener-class>no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig</listener-class>
     </listener>
-        
+
+    <listener>
+        <listener-class>no.statkart.skif.storetest.config.StoreTestTxManagementServicesEJBs</listener-class>
+    </listener>
+    <listener>
+        <listener-class>no.statkart.skif.storetest.wsapi.config.StoreTestTxManagementWebServiceInjectorConfig</listener-class>
+    </listener>
+
+
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>WebServices</web-resource-name>

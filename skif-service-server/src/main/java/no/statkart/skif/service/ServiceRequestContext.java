@@ -1,5 +1,7 @@
 package no.statkart.skif.service;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.io.Serializable;
 import java.security.Principal;
 
@@ -15,22 +17,29 @@ public class ServiceRequestContext implements Serializable {
     private long callId;
     private int nestedLevel;
     private TxMode txMode;
+    private final boolean beanManagedTransaction;
+    private final TransactionAttributeType transactionAttributeType;
+    private boolean rollbackOnly;
 
     public ServiceRequestContext() {
-        this(TxMode.NOT_IN_EJB);
+        this(TxMode.NOT_IN_EJB, false, null);
     }
 
-    public ServiceRequestContext(TxMode txMode) {
+    public ServiceRequestContext(TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
         this.txMode = txMode;
+        this.beanManagedTransaction = beanManagedTransaction;
+        this.transactionAttributeType = transactionAttributeType;
     }
 
-    public ServiceRequestContext(ServiceRequestContext context, TxMode txMode) {
+    public ServiceRequestContext(ServiceRequestContext context, TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
         this.callerPrincipal = context.callerPrincipal;
         this.servicename = context.servicename;
         this.parentCallId = context.parentCallId;
         this.callId = context.callId;
         this.nestedLevel = context.nestedLevel;
         this.txMode = txMode;
+        this.beanManagedTransaction = beanManagedTransaction;
+        this.transactionAttributeType = transactionAttributeType;
     }
 
     public TxMode getTxMode() {
@@ -39,6 +48,18 @@ public class ServiceRequestContext implements Serializable {
 
     public void setTxMode(TxMode txMode) {
         this.txMode = txMode;
+    }
+
+    public TransactionAttributeType getTransactionAttributeType() {
+        return transactionAttributeType;
+    }
+
+    public boolean isBeanManagedTransaction() {
+        return beanManagedTransaction;
+    }
+
+    public boolean isContainerManagedTransaction() {
+        return !beanManagedTransaction;
     }
 
     public boolean isNewTx() {
@@ -116,5 +137,13 @@ public class ServiceRequestContext implements Serializable {
 
     public boolean isTransactional() {
         return txMode==TxMode.TX|| txMode == TxMode.TX_CONTINUATION;
+    }
+
+    public boolean isRollbackOnly() {
+        return rollbackOnly;
+    }
+
+    public void setRollbackOnly() {
+        this.rollbackOnly = true;
     }
 }

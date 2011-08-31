@@ -54,6 +54,17 @@ task wsgen {
                 jws(file: 'no/statkart/skif/storetest/wsapi/service/storetest1/StoreTest1ServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
                     wlhttptransport(serviceuri: 'StoreTest1ServiceWS')
                 }
+
+                jws(file: 'no/statkart/skif/storetest/wsapi/service/txmanagement/BeanManagedTxAServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'BeanManagedTxAServiceWS')
+                }
+                jws(file: 'no/statkart/skif/storetest/wsapi/service/txmanagement/ContainerManagedTxAServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'ContainerManagedTxAServiceWS')
+                }
+                jws(file: 'no/statkart/skif/storetest/wsapi/service/txmanagement/ContainerManagedTxCMTCascadeServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'ContainerManagedTxCMTCascadeServiceWS')
+                }
+
             }
         }
     }

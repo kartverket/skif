@@ -16,7 +16,14 @@
     <listener>
         <listener-class>no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig</listener-class>
     </listener>
-        
+
+    <listener>
+        <listener-class>no.statkart.skif.skiftest.config.SkifTestTxManagementServicesEJBs</listener-class>
+    </listener>
+    <listener>
+        <listener-class>no.statkart.skif.skiftest.wsapi.config.SkifTestTxManagementWebServiceInjectorConfig</listener-class>
+    </listener>
+
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>WebServices</web-resource-name>

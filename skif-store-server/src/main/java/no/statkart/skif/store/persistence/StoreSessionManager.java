@@ -1,16 +1,14 @@
 package no.statkart.skif.store.persistence;
 
+import no.statkart.skif.persistence.ConnectionManager;
 import no.statkart.skif.store.ReplicaVersion;
+
+import java.sql.Connection;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public interface StoreSessionManager {
-    StoreSession getSession(ReplicaVersion replicaVersion);
-    boolean hasActiveSession(ReplicaVersion replicaVersion);
-    void flushSession(ReplicaVersion replicaVersion);
-    void flushAllSessions();
-    void closeSession(ReplicaVersion replicaVersion);
-    void closeAllSessions();
+public interface StoreSessionManager extends ConnectionManager {
+    StoreSession getStoreSession(Object key);
 }

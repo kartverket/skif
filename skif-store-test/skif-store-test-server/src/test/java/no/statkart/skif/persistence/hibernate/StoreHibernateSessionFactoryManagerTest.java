@@ -4,8 +4,8 @@ import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.ReplicaVersion;
-import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
-import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryManager;
+import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionFactoryManager;
 import no.statkart.skif.storetest.domain.TestBubble;
 import no.statkart.skif.storetest.domain.TestBubbleId;
 import org.hibernate.Session;
@@ -22,18 +22,18 @@ import static org.testng.Assert.*;
  */
 @Test
 public class StoreHibernateSessionFactoryManagerTest {
-    private StoreHibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
+    private HibernateStoreSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
         Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
         Properties properties = ConfigurationConverter.getProperties(cfg);
-        return new StoreHibernateSessionFactoryBuilder(properties, "no/statkart/skif/storetest/persistence/hibernate");
+        return new HibernateStoreSessionFactoryBuilder(properties, "no/statkart/skif/storetest/persistence/hibernate");
     }
 
     public void test() {
-        StoreHibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
+        HibernateStoreSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestBubble.class);
-        StoreHibernateSessionFactoryManager hibernateSessionFactoryManager = new StoreHibernateSessionFactoryManager(sfbuilder);
+        HibernateStoreSessionFactoryManager hibernateStoreSessionFactoryManager = new HibernateStoreSessionFactoryManager(sfbuilder);
 
-        SessionFactory sf = hibernateSessionFactoryManager.getFactory(ReplicaVersion.CURRENT);
+        SessionFactory sf = hibernateStoreSessionFactoryManager.getFactory(ReplicaVersion.CURRENT);
         assertNotNull(sf);
         Session s = sf.openSession();
 
@@ -42,12 +42,12 @@ public class StoreHibernateSessionFactoryManagerTest {
     }
 
     public void testOldReplicaVersion() {
-        StoreHibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
+        HibernateStoreSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestBubble.class);
-        StoreHibernateSessionFactoryManager hibernateSessionFactoryManager = new StoreHibernateSessionFactoryManager(sfbuilder);
+        HibernateStoreSessionFactoryManager hibernateStoreSessionFactoryManager = new HibernateStoreSessionFactoryManager(sfbuilder);
 
         // Opprett objekt
-        SessionFactory sf = hibernateSessionFactoryManager.getFactory(ReplicaVersion.CURRENT);
+        SessionFactory sf = hibernateStoreSessionFactoryManager.getFactory(ReplicaVersion.CURRENT);
         assertNotNull(sf);
         Session s = sf.openSession();
         Transaction t = s.beginTransaction();
@@ -63,7 +63,7 @@ public class StoreHibernateSessionFactoryManagerTest {
 
         // Hent ut endret objekt via ReplicaVersion.OLD. Siden det er en annen session vil ikke uncommittet verdier
         // ble lest.
-        SessionFactory sfOld = hibernateSessionFactoryManager.getFactory(ReplicaVersion.OLD);
+        SessionFactory sfOld = hibernateStoreSessionFactoryManager.getFactory(ReplicaVersion.OLD);
         assertNotNull(sfOld);
         Session sOld = sfOld.openSession();
         TestBubble eOld = (TestBubble) sOld.get(TestBubble.class, new TestBubbleId(1));

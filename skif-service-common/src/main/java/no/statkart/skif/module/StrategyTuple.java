@@ -47,8 +47,8 @@ public class StrategyTuple<T extends ModuleStrategy> implements Cloneable {
     }
 
     public StrategyTuple(@Nullable Class<? extends T> strategyJEEClass, @Nullable Class<? extends T> strategySingleVmClass) {
-        String strategyJEEClassName = strategyJEEClass==null ? null : strategyJEEClass.getClass().getName();
-        String strategySingleVmClassName = strategySingleVmClass==null ? null : strategySingleVmClass.getClass().getName();
+        String strategyJEEClassName = strategyJEEClass==null ? null : strategyJEEClass.getName();
+        String strategySingleVmClassName = strategySingleVmClass==null ? null : strategySingleVmClass.getName();
         setStrategySingleVmClassName(strategySingleVmClassName);
         setStrategyJEEClassName(strategyJEEClassName);
     }

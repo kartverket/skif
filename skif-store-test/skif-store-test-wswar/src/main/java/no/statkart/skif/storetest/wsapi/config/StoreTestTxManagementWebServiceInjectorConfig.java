@@ -2,15 +2,14 @@ package no.statkart.skif.storetest.wsapi.config;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
+import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
 import no.statkart.skif.service.module.server.WSServerServiceModule;
-import no.statkart.skif.storetest.config.*;
-import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
+import no.statkart.skif.storetest.config.StoreTestTxManagementServerInjector;
+import no.statkart.skif.storetest.config.StoreTestTxManagementServices;
 import no.statkart.skif.storetest.wsapi.exception.impl.mapping.StoreTestExceptionMapper;
-import no.statkart.skif.storetest.wsapi.exception.simple.mapping.StoreTestExceptionMapper2;
-import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -20,7 +19,7 @@ import javax.servlet.ServletContextListener;
  *
  * @author Henrik Fredholm
  */
-public class StoreTestWebServiceInjectorConfig implements ServletContextListener {
+public class StoreTestTxManagementWebServiceInjectorConfig implements ServletContextListener {
     private static volatile Injector injector;
 
     public static Injector getWebServiceInjector() {
@@ -29,18 +28,19 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
 
 
     public void createInjector() {
-        final Mapping mapping = new StoreTestMapper().getMapping();
+        final Mapping mapping = new IdentityMapper().getMapping();
 
 
         ClassLoader classLoader = getClass().getClassLoader();
 
-        Injector ejbServiceInjector = StoreTestServerInjector.getInjector();
+        Injector ejbServiceInjector = StoreTestTxManagementServerInjector.getInjector();
         ModuleConfiguration  configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
         injector = ejbServiceInjector.createChildInjector(
                 new ServletModule(),
                 new WSServerModule(configuration, classLoader),
-                new WSServerServiceModule(configuration, new StoreTestGroup1Services().getServices(), mapping,classLoader ).setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                new WSServerServiceModule(configuration, new StoreTestTxManagementServices().getServices(), mapping, classLoader)
+                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
         );
     }
 
