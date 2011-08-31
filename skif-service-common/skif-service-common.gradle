@@ -1,5 +1,9 @@
 apply plugin: 'maven'
 
+configurations {
+    testApi
+}
+
 dependencies {
     compile libraries.guice_with_used_deps
     provided libraries.jaxws_rt
@@ -10,10 +14,20 @@ task testJar(type: Jar) {
     from sourceSets.test.classes
 }
 
-configurations {
-    testApi
+
+task javadocJar(type: Jar, dependsOn:javadoc) {
+     classifier = 'javadoc'
+     from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar, dependsOn:classes) {
+     classifier = 'sources'
+     from sourceSets.main.allSource
 }
 
 artifacts {
     testApi testJar
+    archives sourcesJar
+    archives javadocJar
 }
+

@@ -1,11 +1,14 @@
 apply plugin: 'maven'
 
+configurations {
+    testApi
+}
+
 dependencies {
-     compile project(':skif-service-common')
+    compile project(':skif-service-common')
 
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
-
 }
 
 task testJar(type: Jar) {
@@ -13,10 +16,12 @@ task testJar(type: Jar) {
     from sourceSets.test.classes
 }
 
-configurations {
-    testApi
+task sourcesJar(type: Jar, dependsOn:classes) {
+     classifier = 'sources'
+     from sourceSets.main.allSource
 }
 
 artifacts {
     testApi testJar
+    archives sourcesJar
 }

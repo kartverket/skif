@@ -8,3 +8,12 @@ dependencies {
     testCompile project(':skif-testsupport-common')
     testCompile project(path: ':skif-service-common', configuration: "testApi")
 }
+
+task sourcesJar(type: Jar, dependsOn:classes) {
+     classifier = 'sources'
+     from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
