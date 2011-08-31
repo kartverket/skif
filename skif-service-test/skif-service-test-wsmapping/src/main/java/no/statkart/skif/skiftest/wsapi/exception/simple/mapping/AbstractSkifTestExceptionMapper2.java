@@ -1,6 +1,5 @@
 package no.statkart.skif.skiftest.wsapi.exception.simple.mapping;
 
-import com.sun.jndi.cosnaming.ExceptionMapper;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.ObjectFactory;

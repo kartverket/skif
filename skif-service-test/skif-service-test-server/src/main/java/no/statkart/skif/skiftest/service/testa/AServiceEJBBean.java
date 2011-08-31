@@ -8,6 +8,8 @@ import no.statkart.skif.skiftest.service.test1.Test1Service;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import java.util.List;
 
@@ -25,16 +27,19 @@ public class AServiceEJBBean extends EJBTimedService implements AService {
 
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String m1(List<String> callSpec) {
         return serviceChain.m1(callSpec);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String m2(List<String> callSpec) {
         return serviceChain.m2(callSpec);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String m3(List<String> callSpec) {
         return serviceChain.m3(callSpec);
     }

@@ -179,13 +179,13 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
 
             if (url == null)
             {
-                throw new ConfigurationException("Cannot locate configuration source " + fileName);
+                throw new ConfigurationException(String.format("Cannot locate configuration source: '%s' ", fileName));
             }
             load(url);
         }
         catch (Exception e)
         {
-            throw new ConfigurationException("Unable to load the configuration file " + fileName, e);
+            throw new ConfigurationException(String.format("Unable to load the configuration file: '%s' ",fileName), e);
         }
     }
 

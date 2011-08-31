@@ -3,12 +3,18 @@ package no.statkart.skif.service.test.service;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Transaction attribute annotasjon ligger på implementasjosklassen siden det i dette tilfelle ikke finnes noen EJBBean
+ * klasse, dvs implementasjonen kan kun brukes i SingleVm mode (dersom det hadde vært en EJBBean klasse hentes annotasjonene
+ * derfra alltid - også i SingleVm mode)
+ *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class AServiceImpl implements AService {
     private final Provider<ServiceSelector> serviceSelector;
@@ -19,16 +25,19 @@ public class AServiceImpl implements AService {
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String m1(List<String> callSpec) {
         return "AService.m1" + serviceSelector.get().callService(callSpec);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String m2(List<String> callSpec) {
         return "AService.m2" + serviceSelector.get().callService(callSpec);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String m3(List<String> callSpec) {
         return "AService.m3" + serviceSelector.get().callService(callSpec);
     }

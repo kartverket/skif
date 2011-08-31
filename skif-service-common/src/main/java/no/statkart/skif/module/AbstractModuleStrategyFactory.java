@@ -52,7 +52,7 @@ public abstract class AbstractModuleStrategyFactory implements ModuleStrategyFac
             }
         }
         if (prototype==null) {
-            throw new RuntimeException("Fant ingen ModuleStrategy-prototype for modul: " + moduleClass.getName());
+            throw new RuntimeException("Fant ingen ModuleStrategy-prototype for module: " + moduleClass.getName());
         }
 
         return prototype.clone();
