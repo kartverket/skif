@@ -10,12 +10,9 @@ import org.hibernate.engine.SessionImplementor;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.EntityMode;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.tuple.entity.EntityTuplizer;
 import org.hibernate.cache.CacheConcurrencyStrategy;
 
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * This persister exists with the sole purpose of making bubble references pass Hibernate

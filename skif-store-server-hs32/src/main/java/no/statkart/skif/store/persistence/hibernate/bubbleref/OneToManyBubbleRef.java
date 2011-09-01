@@ -1,10 +1,8 @@
 package no.statkart.skif.store.persistence.hibernate.bubbleref;
 
-import org.hibernate.mapping.Value;
 import org.hibernate.mapping.OneToMany;
 import org.hibernate.MappingException;
 import org.hibernate.type.Type;
-import org.hibernate.type.ManyToOneType;
 
 /**
  * A one-to-many association mapping that references an entity via a bubble reference. That is,

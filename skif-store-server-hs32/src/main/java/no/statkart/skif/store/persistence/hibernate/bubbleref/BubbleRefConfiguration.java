@@ -1,7 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate.bubbleref;
 
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreInterceptor;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
@@ -120,7 +119,7 @@ public class BubbleRefConfiguration extends Configuration {
 
     public SessionFactory buildSessionFactory() throws HibernateException {
         configureManyToOneBubbleMappings();
-        setInterceptor(new HibernateStoreInterceptor());
+//        setInterceptor(new HibernateStoreInterceptor()); // TODO: Må fiksast
         return super.buildSessionFactory();
     }
 

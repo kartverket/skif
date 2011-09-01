@@ -10,13 +10,3 @@ dependencies {
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
 }
-
-task sourcesJar(type: Jar, dependsOn:classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-    onlyIf { gradle.taskGraph.hasTask(install) || gradle.taskGraph.hasTask(uploadArchives) } //only when published..
-}
-
-artifacts {
-    archives sourcesJar
-}

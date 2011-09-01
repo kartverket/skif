@@ -3,7 +3,6 @@ package no.statkart.skif.store.persistence.hibernate.bubbleref;
 import no.statkart.matrikkel.persistens.hibernate.bubbleref.BubbleRefIdPersister;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.RootClass;
-import org.hibernate.mapping.SimpleValue;
 
 /**
  * Hibernate persistence class for a bubble reference Id.

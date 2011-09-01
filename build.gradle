@@ -13,6 +13,8 @@ evaluationOrder 'skif-service-test:skif-service-test-ear'
 
 evaluationOrder 'skif-store-common'
 evaluationOrder 'skif-store-server'
+evaluationOrder 'skif-store-server-hs32'
+evaluationOrder 'skif-store-server-hs36'
 evaluationOrder 'skif-store-test:skif-store-test-api'
 evaluationOrder 'skif-store-test:skif-store-test-server'
 evaluationOrder 'skif-store-test:skif-store-test-test'
@@ -166,7 +168,7 @@ libraries.guice_with_used_deps = [
         libraries.jsr330,
 ]
 
-libraries.hibernate = [
+libraries.hibernate_3_2 = [
         'antlr:antlr:2.7.6@jar',
         'cglib:cglib-nodep:2.2@jar',
         'dom4j:dom4j:1.4@jar',
@@ -176,8 +178,8 @@ libraries.hibernate = [
         libraries.ojdbc,
 ]
 
-libraries.hibernate_tools = [
-        "org.hibernate:hibernate-tools:${versions.hibernate}@jar",
+libraries.hibernate_tools_3_2 = [
+        "org.hibernate:hibernate-tools:${version.hibernate}@jar",
         ]
 
 
