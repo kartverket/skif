@@ -1,4 +1,4 @@
-apply plugin: no.statkart.matrikkel.build.utils.gradle.plugins.database.DatabasePlugin
+apply plugin: 'statkart-dbutils-plugin'
 
 //eksponerer alle properties i build.properties som project-properties
 loadJavaProps().each {

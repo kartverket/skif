@@ -69,14 +69,24 @@ allprojects {
         }
     }
 
-
 }
 
+
+buildscript {
+    repositories {
+        String publicRepo = properties.get('REPO_PUBLIC', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
+        mavenRepo name: 'public', urls: publicRepo
+        mavenLocal()  //må ha denne for å kunne hente ned lokalt installerte dev-versjoner...
+    }
+    dependencies {
+        classpath "no.statkart:statkart-gradle-plugins:${'3-SNAPSHOT'}"
+    }
+}
 
 
 // library versions to use.
 // todo: add option to override values as custion project.properties ...
-version = [
+versions = [
         BUILD_UTILS : '1.0',
 
         oracle : '11.2.0.2.0',
@@ -92,24 +102,24 @@ version = [
 libraries = [
 
         // Database
-        ojdbc: "com.oracle:ojdbc6:${version.oracle}@jar",
+        ojdbc: "com.oracle:ojdbc6:${versions.oracle}@jar",
 
         // Logging 
-        slf4j_api: "org.slf4j:slf4j-api:${version.slf4j}@jar",
-        jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${version.slf4j}@jar",
-        jul_to_slf4j: "org.slf4j:jul-to-slf4j:${version.slf4j}@jar",
-        log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${version.slf4j}@jar",
-        logback_classic: "ch.qos.logback:logback-classic:${version.logback}@jar",
-        logback_core: "ch.qos.logback:logback-core:${version.logback}@jar",
+        slf4j_api: "org.slf4j:slf4j-api:${versions.slf4j}@jar",
+        jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${versions.slf4j}@jar",
+        jul_to_slf4j: "org.slf4j:jul-to-slf4j:${versions.slf4j}@jar",
+        log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${versions.slf4j}@jar",
+        logback_classic: "ch.qos.logback:logback-classic:${versions.logback}@jar",
+        logback_core: "ch.qos.logback:logback-core:${versions.logback}@jar",
 
         // Guice med extensions
-        guice: "com.google.inject:guice:${version.guice}",
-        guice_multibindings: "com.google.inject.extensions:guice-multibindings:${version.guice}",
-        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${version.guice}",
-        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${version.guice}",
-        guice_grapher: "com.google.inject.extensions:guice-grapher:${version.guice}",
+        guice: "com.google.inject:guice:${versions.guice}",
+        guice_multibindings: "com.google.inject.extensions:guice-multibindings:${versions.guice}",
+        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${versions.guice}",
+        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${versions.guice}",
+        guice_grapher: "com.google.inject.extensions:guice-grapher:${versions.guice}",
         // guice-servlet depends on servlet-api som her er provided via weblogic og derfor ikke skal være med her
-        guice_servlet: "com.google.inject.extensions:guice-servlet:${version.guice}@jar",
+        guice_servlet: "com.google.inject.extensions:guice-servlet:${versions.guice}@jar",
 
         jsr330: "javax.inject:javax.inject:1",
 
@@ -122,9 +132,9 @@ libraries = [
         mockito: 'org.mockito:mockito-all:1.8.5',
 
         // JAXB
-        jaxb_impl: "com.sun.xml.bind:jaxb-impl:${version.jaxb}",
-        jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${version.jaxb}",
-        build_utils: "no.statkart.grunnbok:build-utils:${version.BUILD_UTILS}"
+        jaxb_impl: "com.sun.xml.bind:jaxb-impl:${versions.jaxb}",
+        jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${versions.jaxb}",
+        build_utils: "no.statkart.grunnbok:build-utils:${versions.BUILD_UTILS}"
 
 ]
 
@@ -162,12 +172,12 @@ libraries.hibernate = [
         'dom4j:dom4j:1.4@jar',
         'net.sf.ehcache:ehcache:1.2.3@jar',
         'odmg:odmg:3.0@jar',
-        "org.hibernate:hibernate:${version.hibernate}-bubbleref-v2@jar",
+        "org.hibernate:hibernate:${versions.hibernate}-bubbleref-v2@jar",
         libraries.ojdbc,
 ]
 
 libraries.hibernate_tools = [
-        "org.hibernate:hibernate-tools:${version.hibernate}@jar",
+        "org.hibernate:hibernate-tools:${versions.hibernate}@jar",
         ]
 
 
