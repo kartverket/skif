@@ -9,7 +9,7 @@ import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Test
 public class StoreTestTxManagementTest extends SkifTestCase {
@@ -18,7 +18,6 @@ public class StoreTestTxManagementTest extends SkifTestCase {
         setModuleClass(StoreTestTxManagementClientModule.class);
         setSingleVmServerModuleClass(StoreTestTxManagementServerModule.class);
     }
-
 
     /**
      * Test bean managed transactions. Klient kalder BMT ejb som ikke kaller videre
@@ -47,7 +46,6 @@ public class StoreTestTxManagementTest extends SkifTestCase {
         final ContainerManagedTxCMTCascadeService cascadeService = injector.getInstance(ContainerManagedTxCMTCascadeService.class);
         for (int i = 0; i < 100; i++) {
             try {
-//                bmtServiceA.put("key1", "value1");
                 cascadeService.containerTest3("key1", "multiValue1", null, "multiValue2");
             } catch (ValidationException e) {
             }

@@ -2,8 +2,11 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.ReplicaVersion;
 import org.hibernate.Session;
+
+import java.sql.SQLException;
 
 /**
  *
@@ -30,6 +33,10 @@ public class HibernateSessionProvider implements Provider<Session> {
     }
 
     public Session get() {
-        return hibernateSessionManager.getHibernateSession(key);
+        try {
+            return hibernateSessionManager.getHibernateSession(key);
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
+        }
     }
 }

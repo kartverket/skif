@@ -30,6 +30,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 apply plugin: 'idea'
 
+
 // Variables to grab from environment
 ["WEBLOGIC_HOME", 'COMPUTERNAME', 'REPO_PUBLIC'].each { val ->
     if (!project.hasProperty(val) && System.getenv(val) != null) {
@@ -50,7 +51,7 @@ allprojects {
     group = 'no.statkart.skif'
 
     repositories {
-        String publicRepo = properties.get('REPO_PUBLIC', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
+        String publicRepo = rootProject.properties.get('REPO_PUBLIC', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
         mavenRepo name: 'public', urls: publicRepo
         mavenLocal()
     }
@@ -179,7 +180,7 @@ libraries.hibernate_3_2 = [
 ]
 
 libraries.hibernate_tools_3_2 = [
-        "org.hibernate:hibernate-tools:${version.hibernate}@jar",
+        "org.hibernate:hibernate-tools:${versions.hibernate}@jar",
         ]
 
 

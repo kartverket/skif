@@ -2,15 +2,13 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.store.persistence.StoreSession;
-import org.hibernate.classic.Session;
-
-import java.io.ObjectOutput;
+import org.hibernate.Session;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class HibernateStoreSession implements StoreSession {
+public class HibernateStoreSession implements StoreSession<Session> {
     final Session session;
     final ReplicaVersion replicaVersion;
 
@@ -19,7 +17,8 @@ public class HibernateStoreSession implements StoreSession {
         this.replicaVersion = replicaVersion;
     }
 
-    public Session getHibernateSession() {
+    @Override
+    public Session getWrappedSession() {
         return session;
     }
 }

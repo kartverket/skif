@@ -34,7 +34,7 @@ public class HibernateSessionProviderTest {
     public void testManuelBinding() {
         HibernateStoreSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestBubble.class);
-        final HibernateStoreSessionManager storeSessionManager = new HibernateStoreSessionManager(new HibernateStoreSessionFactoryManager(sfbuilder));
+        final HibernateStoreSessionManagerOld storeSessionManager = new HibernateStoreSessionManagerOld(new HibernateStoreSessionFactoryManager(sfbuilder));
 
         Provider<Session> sessionProvider = new HibernateSessionProvider(null /* compilefix: storeSessionManager*/, ReplicaVersion.CURRENT);
 
@@ -62,7 +62,7 @@ public class HibernateSessionProviderTest {
                 // Alle requester skal dele samme factory manager, mens session managers kun skal deles per request
                 bind(HibernateStoreSessionFactoryBuilder.class).toInstance(sfbuilder);
                 bind(HibernateStoreSessionFactoryManager.class).in(Singleton.class);
-                bind(HibernateStoreSessionManager.class).in(ServiceRequestScoped.class);
+                bind(HibernateStoreSessionManagerOld.class).in(ServiceRequestScoped.class);
                 bind(ReplicaVersion.class).toInstance(ReplicaVersion.CURRENT);
                 bind(HibernateStoreSession.class).toProvider(HibernateStoreSessionProvider.class).in(ServiceRequestScoped.class);
                 bind(Session.class).toProvider(HibernateSessionProvider.class).in(ServiceRequestScoped.class);

@@ -3,11 +3,10 @@ package no.statkart.skif.service.module.server;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
+import no.statkart.skif.module.ModuleStrategy;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.service.chain.*;
-import no.statkart.skif.module.ModuleStrategy;
-import no.statkart.skif.service.ejb.EJBResourceManager;
 import no.statkart.skif.service.provider.EJBServiceChainProvider;
 import no.statkart.skif.service.provider.ServiceProvider;
 
@@ -19,9 +18,6 @@ public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
     private EJBServiceChainFactorySpecification ejbServiceChainFactorySpecification;
     private ImplementationServiceChainFactorySpecification implementationServiceChainFactorySpecification;
     private CallServiceChainFactorySpecification callServiceChainFactorySpecification;
-
-    // Denne skal ikke være her
-    private Class<? extends EJBResourceManager> ejbResourceManagerClass = null; //EJBResourceManagerEmptyImpl.class;
 
     public EJBServiceChainFactorySpecification getEjbServiceChainFactorySpecification() {
         return ejbServiceChainFactorySpecification;
@@ -49,13 +45,6 @@ public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
     }
 
     public <S> void bindServiceChainFactoriesForService(Binder binder, Class<S> service) {
-        // TODO: Kan ikke stå her. Vil få multiple bindinger siden den bindes for hver service klasse. Må bindes på tvers av alle moduler
-//        if (ejbResourceManagerClass == null) {
-//            binder.bind(EJBResourceManager.class).toProvider(Providers.<EJBResourceManager>of(null));
-//        } else {
-//            binder.bind(EJBResourceManager.class).to(ejbResourceManagerClass);
-//        }
-
         ServiceChainFactories.bindFactory(binder, EJBServiceChainFactory.class, service, ejbServiceChainFactorySpecification.getFactoryClass());
         ejbServiceChainFactorySpecification.bindProxyHandlersForService(binder, service);
 

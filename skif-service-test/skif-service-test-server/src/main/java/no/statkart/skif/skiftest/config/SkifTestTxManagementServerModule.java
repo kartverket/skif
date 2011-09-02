@@ -8,8 +8,7 @@ import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
-import no.statkart.skif.service.ejb.EJBResourceManager;
-import no.statkart.skif.service.ejb.EJBResourceManagerDefaultImpl;
+import no.statkart.skif.service.ejb.EJBResourceProxyHandlerForConnection;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
@@ -32,8 +31,8 @@ public class SkifTestTxManagementServerModule extends SkifModule {
         // Konfigurer EJBServiceChain til å bruke en factory som har en ProxyHandler for transaksjonshåndtering
         ModuleStrategyFactory factory = new ServerModuleStrategyFactory();
         StrategyTuple<ServerServiceModuleStrategy> prototype = factory.getPrototype(ServerServiceModule.class);
-        prototype.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification());
-        prototype.getStrategy(ServiceMode.JEE).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification());
+        prototype.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification(EJBResourceProxyHandlerForConnection.class));
+        prototype.getStrategy(ServiceMode.JEE).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification(EJBResourceProxyHandlerForConnection.class));
         return factory;
     }
 
@@ -55,8 +54,6 @@ public class SkifTestTxManagementServerModule extends SkifModule {
             bind(ConnectionManager.class).to(ConnectionManagerJEE.class).in(ServiceRequestScoped.class);
             bind(Connection.class).toProvider(new ConnectionProvider(null)).in(ServiceRequestScoped.class);
         }
-
-        bind(EJBResourceManager.class).to(EJBResourceManagerDefaultImpl.class);
 
         install(new ServerServiceModule(moduleConfiguration, new SkifTestTxManagementServices().getServices()));
     }

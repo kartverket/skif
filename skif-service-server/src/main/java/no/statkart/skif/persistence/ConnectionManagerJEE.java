@@ -19,8 +19,6 @@ public class ConnectionManagerJEE implements ConnectionManager {
     private final ServiceRequestContext serviceRequestContext;
     private Connection connection;
     private boolean originalAutoCommit;
-    private boolean autoCommit;
-
 
     @Inject
     public ConnectionManagerJEE(ConnectionFactory facotry, ServiceRequestContext serviceRequestContext) {
@@ -28,25 +26,13 @@ public class ConnectionManagerJEE implements ConnectionManager {
         this.serviceRequestContext = serviceRequestContext;
     }
 
-    public boolean getAutoCommit() {
-        return autoCommit;
-    }
-
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-        this.autoCommit = autoCommit;
-//        if (connection!= null) {
-//            connection.setAutoCommit(autoCommit);
-//        }
-    }
-
-
 
     protected void openConnection() throws SQLException {
         logger.debug("Open Connection");
         connection = facotry.createConnection();
         originalAutoCommit = connection.getAutoCommit();
-        if (originalAutoCommit !=autoCommit) {
-            throw new ImplementationException("Mismatch in expected autocommit mode. Expected: " + autoCommit + " Found: " + originalAutoCommit);
+        if (originalAutoCommit) {
+            connection.setAutoCommit(false);
         }
     }
 
@@ -84,6 +70,7 @@ public class ConnectionManagerJEE implements ConnectionManager {
 
     @Override
     public void beginTransaction() {
+        // Ikke nødvendig å gjøre noe her
     }
 
     @Override

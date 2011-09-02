@@ -67,7 +67,7 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         bind(HibernateStoreSessionFactoryManager.class).in(Singleton.class);
 
         // Session managers kun skal deles per service request
-        bind(HibernateStoreSessionManager.class).in(ServiceRequestScoped.class);
+        bind(HibernateStoreSessionManagerOld.class).in(ServiceRequestScoped.class);
         bind(HibernateStoreSession.class).toProvider(HibernateStoreSessionProvider.class).in(ServiceRequestScoped.class);
         bind(Session.class).toProvider(HibernateSessionProvider.class).in(ServiceRequestScoped.class);
 

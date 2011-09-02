@@ -13,7 +13,6 @@ public class ConnectionManagerSingleVm implements ConnectionManager {
     private final ConnectionFactory facotry;
     private final ServiceRequestContext serviceRequestContext;
     private Connection connection;
-    private boolean autoCommit = false;
     private boolean originalAutoCommit;
 
 
@@ -23,21 +22,12 @@ public class ConnectionManagerSingleVm implements ConnectionManager {
         this.serviceRequestContext = serviceRequestContext;
     }
 
-    public boolean getAutoCommit() {
-        return autoCommit;
-    }
-
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-        this.autoCommit = autoCommit;
-        if (connection != null) {
-            connection.setAutoCommit(autoCommit);
-        }
-    }
-
     protected void openConnection() throws SQLException {
         connection = facotry.createConnection();
         originalAutoCommit = connection.getAutoCommit();
-        connection.setAutoCommit(autoCommit);
+        if (originalAutoCommit) {
+            connection.setAutoCommit(false);
+        }
     }
 
     protected void closeConnection() throws SQLException {

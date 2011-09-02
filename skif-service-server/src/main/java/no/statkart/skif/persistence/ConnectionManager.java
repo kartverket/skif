@@ -23,10 +23,7 @@ public interface ConnectionManager {
     boolean isActive(Object key);
     void close(Object key) throws SQLException;
     void close() throws SQLException;
-    @Deprecated
     void beginTransaction();
     void commit() throws SQLException;
     void rollback() throws SQLException;
-    boolean getAutoCommit();
-    void setAutoCommit(boolean autoCommit) throws SQLException;
 }

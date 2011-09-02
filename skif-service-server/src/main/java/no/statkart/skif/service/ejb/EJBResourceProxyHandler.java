@@ -12,30 +12,21 @@ import java.lang.reflect.Method;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class EJBResourceProxyHandler<S> extends ChainedProxyHandler<S> {
-    private final Provider<EJBResourceManager> ejbResourceManagerProvider;
+public abstract class EJBResourceProxyHandler<S> extends ChainedProxyHandler<S> {
 
-    @Inject
-    public EJBResourceProxyHandler(Provider<EJBResourceManager> ejbResourceManagerProvider) {
-        this.ejbResourceManagerProvider = ejbResourceManagerProvider;
-    }
+    protected abstract void beginService();
+    protected abstract void completeService();
+    protected abstract void abortService();
 
     @Override
     public Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
-        EJBResourceManager ejbResourceManager = ejbResourceManagerProvider.get();
         try {
-            if (ejbResourceManager != null) {
-                ejbResourceManager.beginService();
-            }
+            beginService();
             Object result = chained.invoke(proxy, method, args);
-            if (ejbResourceManager != null) {
-                ejbResourceManager.completeService();
-            }
+            completeService();
             return result;
         } catch (Throwable e) {
-            if (ejbResourceManager != null) {
-                ejbResourceManager.abortService();
-            }
+            abortService();
             throw e;
         }
     }

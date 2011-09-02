@@ -17,8 +17,8 @@ import java.sql.SQLException;
  *
  * @author Henrik Fredholm
  */
-public class HibernateSessionManagerImpl extends AbstractHibernateSessionManager<HibernateSessionManagerEntry> {
-    private static Logger logger = LoggerFactory.getLogger(HibernateSessionManagerImpl.class);
+public class HibernateSessionManagerWithVersionSupport extends AbstractHibernateSessionManager {
+    private static Logger logger = LoggerFactory.getLogger(HibernateSessionManagerWithVersionSupport.class);
     private final ConnectionFactory connectionFacotry;
     private final SessionFactory hibernateSessionFactory;
     private final ServiceRequestContext serviceRequestContext;
@@ -29,7 +29,7 @@ public class HibernateSessionManagerImpl extends AbstractHibernateSessionManager
 
 
     @Inject
-    public HibernateSessionManagerImpl(ConnectionFactory connectionFacotry, SessionFactory hibernateSessionFactory, ServiceRequestContext serviceRequestContext) {
+    public HibernateSessionManagerWithVersionSupport(ConnectionFactory connectionFacotry, SessionFactory hibernateSessionFactory, ServiceRequestContext serviceRequestContext) {
         this.connectionFacotry = connectionFacotry;
         this.hibernateSessionFactory = hibernateSessionFactory;
         this.serviceRequestContext = serviceRequestContext;

@@ -3,7 +3,7 @@ package no.statkart.skif.service.chain;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.service.ejb.EJBResourceManager;
+import no.statkart.skif.persistence.ConnectionManager;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 
 /**
@@ -21,20 +21,24 @@ import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
  * @author Henrik Fredholm
  */
 public class EJBServiceChainFactoryWithTxSpecification extends EJBServiceChainFactorySpecification {
-    public EJBServiceChainFactoryWithTxSpecification() {
-        super(EJBServiceChainFactoryWithTx.class);
+    private final Class<? extends EJBResourceProxyHandler> ejbResourceProxyHandlerImplentationClass;
+
+    public EJBServiceChainFactoryWithTxSpecification(Class<? extends EJBResourceProxyHandler> ejbResourceProxyHandlerImplentationClass) {
+        this(EJBServiceChainFactoryWithTx.class, ejbResourceProxyHandlerImplentationClass);
     }
 
-    public EJBServiceChainFactoryWithTxSpecification(Class<? extends EJBServiceChainFactory> factoryClass) {
+    public EJBServiceChainFactoryWithTxSpecification(Class<? extends EJBServiceChainFactory> factoryClass, Class<? extends EJBResourceProxyHandler> ejbResourceProxyHandlerImplentationClass) {
         super(factoryClass);
+        this.ejbResourceProxyHandlerImplentationClass = ejbResourceProxyHandlerImplentationClass;
     }
 
     @Override
     public <S> void bindProxyHandlersForService(Binder binder, Class<S> service) {
         super.bindProxyHandlersForService(binder, service);
         TypeLiteral<EJBResourceProxyHandler<S>> ejbResourceProxyHandlerType = SkifUtil.typeLiteral(EJBResourceProxyHandler.class, service);
-        binder.bind(ejbResourceProxyHandlerType);
-        requireBinding(binder, EJBResourceManager.class);
+        TypeLiteral<? extends EJBResourceProxyHandler<S>>  ejbResourceProxyHandlerImplType = SkifUtil.typeLiteral(ejbResourceProxyHandlerImplentationClass, service);
+        binder.bind(ejbResourceProxyHandlerType).to(ejbResourceProxyHandlerImplType);
+        requireBinding(binder, ConnectionManager.class);
     }
 
     /**

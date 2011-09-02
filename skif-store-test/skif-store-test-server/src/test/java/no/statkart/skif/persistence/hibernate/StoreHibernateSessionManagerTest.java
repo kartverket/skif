@@ -8,7 +8,7 @@ import no.statkart.skif.store.persistence.StoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionFactoryManager;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManager;
+import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManagerOld;
 import no.statkart.skif.storetest.domain.TestBubble;
 import no.statkart.skif.storetest.domain.TestBubbleId;
 import org.hibernate.Session;
@@ -25,7 +25,7 @@ import static org.testng.AssertJUnit.*;
  */
 @Test
 public class StoreHibernateSessionManagerTest {
-    HibernateStoreSessionManager storeSessionManager;
+    HibernateStoreSessionManagerOld storeSessionManager;
     HibernateStoreSessionFactoryManager hibernateStoreSessionFactoryManager;
 
     private HibernateStoreSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
@@ -40,7 +40,7 @@ public class StoreHibernateSessionManagerTest {
         sfbuilder.addResource(TestBubble.class);
 
         hibernateStoreSessionFactoryManager = new HibernateStoreSessionFactoryManager(sfbuilder);
-        storeSessionManager = new HibernateStoreSessionManager(hibernateStoreSessionFactoryManager);
+        storeSessionManager = new HibernateStoreSessionManagerOld(hibernateStoreSessionFactoryManager);
 
     }
 
@@ -49,7 +49,7 @@ public class StoreHibernateSessionManagerTest {
      */
     public void testUthentingOgLukking() {
         HibernateStoreSession storeSession = storeSessionManager.getSession(ReplicaVersion.CURRENT);
-        Session s = storeSession.getHibernateSession();
+        Session s = storeSession.getWrappedSession();
 
         TestBubble e = (TestBubble) s.get(TestBubble.class, new TestBubbleId(1));
         assertNotNull(e);
@@ -85,7 +85,7 @@ public class StoreHibernateSessionManagerTest {
      * Session instanser fra forskjellige managers skal være forskjellige
      */
     public void testInstancesFraForskejlligeMannagers() {
-        HibernateStoreSessionManager storeSessionManager2 = new HibernateStoreSessionManager(hibernateStoreSessionFactoryManager);
+        HibernateStoreSessionManagerOld storeSessionManager2 = new HibernateStoreSessionManagerOld(hibernateStoreSessionFactoryManager);
         StoreSession wrapper = storeSessionManager.getSession(ReplicaVersion.CURRENT);
         StoreSession wrapper2 = storeSessionManager2.getSession(ReplicaVersion.CURRENT);
         assertNotSame(wrapper, wrapper2);

@@ -12,12 +12,13 @@ import no.statkart.skif.store.ReplicaVersion;
  * @author Henrik Fredholm
  * @since 0.2
  */
+@Deprecated
 public class HibernateStoreSessionProvider implements Provider<HibernateStoreSession> {
-    private final HibernateStoreSessionManager storeSessionManager;
+    private final HibernateStoreSessionManagerOld storeSessionManager;
     private final ReplicaVersion replicaVersion;
 
     @Inject
-    public HibernateStoreSessionProvider(HibernateStoreSessionManager storeSessionManager, ReplicaVersion replicaVersion) {
+    public HibernateStoreSessionProvider(HibernateStoreSessionManagerOld storeSessionManager, ReplicaVersion replicaVersion) {
         this.storeSessionManager = storeSessionManager;
         this.replicaVersion = replicaVersion;
     }
