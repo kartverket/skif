@@ -1,6 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.sql.Connection;
 
@@ -12,4 +13,6 @@ class HibernateSessionManagerEntry {
     boolean originalAutoCommit;
     Connection connection;
     Session session;
+    Transaction hibernateTransaction;
+    boolean useLocalTransaction;
 }

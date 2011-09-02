@@ -1,12 +1,12 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 
+import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.persistence.ConnectionFactory;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
-import no.statkart.skif.store.ReplicaVersion;
-import no.statkart.skif.store.persistence.StoreSession;
-import no.statkart.skif.store.persistence.StoreSessionManager;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,29 +14,25 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 
 /**
+ * Implementasjon som støtter en hibernate og connection factory, dvs ikke håndtere versjonert lesing
+ *
  * @author Henrik Fredholm
  */
-public class HibernateStoreSessionManager extends AbstractHibernateSessionManager<HibernateStoreSessionManagerEntry> implements StoreSessionManager {
+public class HibernateSessionManagerSingleVersionImpl extends AbstractHibernateSessionManager<HibernateSessionManagerEntry> {
     private static Logger logger = LoggerFactory.getLogger(HibernateSessionManagerSingleVersionImpl.class);
     private final ServiceRequestContext serviceRequestContext;
-    private HibernateStoreSessionManagerEntry entry = new HibernateStoreSessionManagerEntry();
+    private HibernateSessionManagerEntry entry = new HibernateSessionManagerEntry();
 
-    public HibernateStoreSessionManager(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManager hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
+
+    @Inject
+    public HibernateSessionManagerSingleVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManager hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
         super(connectionFactoryManager, hibernateSessionFactoryManager);
         this.serviceRequestContext = serviceRequestContext;
-        entry.key = ReplicaVersion.CURRENT;
     }
 
     @Override
-    protected HibernateStoreSessionManagerEntry getEntry(Object key) {
+    protected HibernateSessionManagerEntry getEntry(Object key) {
         return entry;
-    }
-
-
-    @Override
-    public void closeHibernateSession(HibernateStoreSessionManagerEntry entry) throws SQLException {
-        super.closeHibernateSession(entry);
-        entry.storeSession = null;
     }
 
 
@@ -62,23 +58,16 @@ public class HibernateStoreSessionManager extends AbstractHibernateSessionManage
         entry.useLocalTransaction = true;
     }
 
+
     @Override
     public void commit() throws SQLException {
         commitEntry(entry);
 
     }
 
+
     @Override
     public void rollback() throws SQLException {
         rollbackEntry(entry);
-    }
-
-    @Override
-    public StoreSession getStoreSession(Object key) throws SQLException {
-        HibernateStoreSessionManagerEntry entry = getEntry(key);
-        if (entry.storeSession == null) {
-            openHibernateSession(entry);
-        }
-        return entry.storeSession;
     }
 }

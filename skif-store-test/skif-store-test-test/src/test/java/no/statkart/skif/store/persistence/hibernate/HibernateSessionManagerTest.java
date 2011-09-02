@@ -4,12 +4,12 @@ import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.persistence.ConnectionFactory;
+import no.statkart.skif.persistence.ConnectionFactoryManager;
+import no.statkart.skif.persistence.ConnectionFactoryManagerSingleVersionImpl;
 import no.statkart.skif.persistence.JDBCConnectionFactory;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.storetest.domain.TestEntity;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.testng.annotations.Test;
 
 import java.sql.Connection;
@@ -25,8 +25,8 @@ import static org.testng.Assert.*;
 public class HibernateSessionManagerTest {
     static Object NOT_USED = new Object();
 
-    private SessionFactory hibernateSessionFactory;
-    private ConnectionFactory connectionFactory;
+    private HibernateSessionFactoryManager hibernateSessionFactoryManager;
+    private ConnectionFactoryManager connectionFactoryManager;
 
     public HibernateSessionManagerTest() {
         Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
@@ -37,19 +37,19 @@ public class HibernateSessionManagerTest {
                 .setProperties(properties)
                 .addResource("no/statkart/skif/storetest/persistence/hibernate/TestEntity.hbm.xml");
 
-        hibernateSessionFactory = hibernateConfiguration.buildSessionFactory();
+        hibernateSessionFactoryManager = new HibernateSessionFactoryManagerSingleVersionImpl(hibernateConfiguration.buildSessionFactory());
 
         String url = properties.getProperty("hibernate.connection.url");
         String username = properties.getProperty("hibernate.connection.username");
         String password = properties.getProperty("hibernate.connection.password");
-        connectionFactory = new JDBCConnectionFactory(url, username, password);
+        connectionFactoryManager = new ConnectionFactoryManagerSingleVersionImpl(new JDBCConnectionFactory(url, username, password));
 
-        assertNotNull(hibernateSessionFactory);
-        assertNotNull(connectionFactory);
+        assertNotNull(hibernateSessionFactoryManager);
+        assertNotNull(connectionFactoryManager);
     }
 
     public void testGetHibernateSessionGetConnection() throws SQLException {
-        HibernateSessionManager sessionManager = new HibernateSessionManagerImpl(connectionFactory, hibernateSessionFactory, new ServiceRequestContext());
+        HibernateSessionManager sessionManager = new HibernateSessionManagerSingleVersionImpl(connectionFactoryManager, hibernateSessionFactoryManager, new ServiceRequestContext());
 
         Session hibernateSession1 = sessionManager.getHibernateSession(NOT_USED);
         Session hibernateSession2 = sessionManager.getHibernateSession(NOT_USED);
@@ -62,7 +62,7 @@ public class HibernateSessionManagerTest {
     }
 
     public void testMixSeparateHibernateSessionAndConnection_Ok() throws SQLException {
-        HibernateSessionManager sessionManager = new HibernateSessionManagerImpl(connectionFactory, hibernateSessionFactory, new ServiceRequestContext());
+        HibernateSessionManager sessionManager = new HibernateSessionManagerSingleVersionImpl(connectionFactoryManager, hibernateSessionFactoryManager, new ServiceRequestContext());
         sessionManager.getHibernateSession(NOT_USED);
         sessionManager.close();
         sessionManager.getConnection(NOT_USED);
@@ -70,7 +70,7 @@ public class HibernateSessionManagerTest {
     }
 
     public void testMixSharedHibernateSessionAndConnection_Ok() throws SQLException {
-        HibernateSessionManager sessionManager = new HibernateSessionManagerImpl(connectionFactory, hibernateSessionFactory, new ServiceRequestContext());
+        HibernateSessionManager sessionManager = new HibernateSessionManagerSingleVersionImpl(connectionFactoryManager, hibernateSessionFactoryManager, new ServiceRequestContext());
         sessionManager.beingAllocateConnectionsViaHibernateSession();
         Session hibernateSession1 = sessionManager.getHibernateSession(NOT_USED);
         Connection connection1 = sessionManager.getConnection(NOT_USED);
@@ -94,7 +94,7 @@ public class HibernateSessionManagerTest {
     }
 
     public void testMixSharedHibernateSessionAndConnection_NotOk() throws SQLException {
-        HibernateSessionManager sessionManager = new HibernateSessionManagerImpl(connectionFactory, hibernateSessionFactory, new ServiceRequestContext());
+        HibernateSessionManager sessionManager = new HibernateSessionManagerSingleVersionImpl(connectionFactoryManager, hibernateSessionFactoryManager, new ServiceRequestContext());
         sessionManager.getHibernateSession(NOT_USED);
         try {
             sessionManager.getConnection(NOT_USED);
@@ -115,7 +115,7 @@ public class HibernateSessionManagerTest {
     }
 
     public void testIsActive() throws SQLException {
-        HibernateSessionManager sessionManager = new HibernateSessionManagerImpl(connectionFactory, hibernateSessionFactory, new ServiceRequestContext());
+        HibernateSessionManager sessionManager = new HibernateSessionManagerSingleVersionImpl(connectionFactoryManager, hibernateSessionFactoryManager, new ServiceRequestContext());
 
         assertFalse(sessionManager.isActive(NOT_USED));
         Session hibernateSession1 = sessionManager.getHibernateSession(NOT_USED);
@@ -129,7 +129,7 @@ public class HibernateSessionManagerTest {
     }
 
     public void testHibernateSessionCommit() throws SQLException {
-        HibernateSessionManager sessionManager = new HibernateSessionManagerImpl(connectionFactory, hibernateSessionFactory, new ServiceRequestContext());
+        HibernateSessionManager sessionManager = new HibernateSessionManagerSingleVersionImpl(connectionFactoryManager, hibernateSessionFactoryManager, new ServiceRequestContext());
         Session hibernateSession = sessionManager.getHibernateSession(NOT_USED);
         sessionManager.beginTransaction();
         hibernateSession.createQuery("delete from TestEntity").executeUpdate();

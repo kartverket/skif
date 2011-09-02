@@ -1,6 +1,7 @@
-package no.statkart.skif.persistence.hibernate;
+package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.store.ReplicaVersion;
 import org.hibernate.SessionFactory;
 import org.hibernate.HibernateException;

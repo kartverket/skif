@@ -3,7 +3,6 @@ package no.statkart.skif.store.persistence.hibernate;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.storetest.domain.TestBubble;
 import org.hibernate.Session;

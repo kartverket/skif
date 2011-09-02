@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.config;
 
+import com.google.inject.Singleton;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
@@ -10,14 +11,15 @@ import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
-import no.statkart.skif.service.ejb.EJBResourceProxyHandlerForConnection;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManager;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerSingleVersionImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionManager;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionManagerImpl;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionManagerSingleVersionImpl;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate;
 import org.hibernate.SessionFactory;
 
@@ -64,6 +66,7 @@ public class StoreTestTxManagementServerModule extends SkifModule {
 
             hibernateProperties = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
         }
+        bind(ConnectionFactoryManager.class).to(ConnectionFactoryManagerSingleVersionImpl.class).in(Singleton.class);
 
         org.hibernate.cfg.Configuration hibernateConfiguration = new org.hibernate.cfg.Configuration();
         hibernateConfiguration = hibernateConfiguration
@@ -74,9 +77,10 @@ public class StoreTestTxManagementServerModule extends SkifModule {
 
         // Konfigurer Connection management til å bruke en HibernateSession Manager
         bind(SessionFactory.class).toInstance(hibernateSessionFactory);
+        bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerSingleVersionImpl.class);
         bind(Connection.class).toProvider(new ConnectionProvider(null)).in(ServiceRequestScoped.class);
         bind(ConnectionManager.class).to(HibernateSessionManager.class);
-        bind(HibernateSessionManager.class).to(HibernateSessionManagerImpl.class).in(ServiceRequestScoped.class);
+        bind(HibernateSessionManager.class).to(HibernateSessionManagerSingleVersionImpl.class).in(ServiceRequestScoped.class);
 
         install(new ServerServiceModule(moduleConfiguration, new StoreTestTxManagementServices().getServices()));
     }
