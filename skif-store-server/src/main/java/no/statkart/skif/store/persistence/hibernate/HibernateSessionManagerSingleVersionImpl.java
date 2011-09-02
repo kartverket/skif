@@ -30,6 +30,7 @@ public class HibernateSessionManagerSingleVersionImpl extends AbstractHibernateS
         this.serviceRequestContext = serviceRequestContext;
     }
 
+
     @Override
     protected HibernateSessionManagerEntry getEntry(Object key) {
         return entry;

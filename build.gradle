@@ -31,12 +31,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 apply plugin: 'idea'
 
 
-// Variables to grab from environment
-["WEBLOGIC_HOME", 'COMPUTERNAME', 'REPO_PUBLIC'].each { val ->
-    if (!project.hasProperty(val) && System.getenv(val) != null) {
-        project.setProperty(val, System.getenv(val))
-    }
-}
 def userProperties = loadJavaProps()
 
 // version kan settes via properties (feks kommandolinje -P )
@@ -76,8 +70,15 @@ allprojects {
 
 
 buildscript {
+    // Variables to grab from environment
+    ["WEBLOGIC_HOME", 'COMPUTERNAME', 'REPO_PUBLIC'].each { val ->
+        if (!rootProject.hasProperty(val) && System.getenv(val) != null) {
+            rootProject.setProperty(val, System.getenv(val))
+        }
+    }
+
     repositories {
-        String publicRepo = properties.get('REPO_PUBLIC', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
+        String publicRepo = rootProject.properties.get('REPO_PUBLIC', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
         mavenRepo name: 'public', urls: publicRepo
         mavenLocal()  //må ha denne for å kunne hente ned lokalt installerte dev-versjoner...
     }
