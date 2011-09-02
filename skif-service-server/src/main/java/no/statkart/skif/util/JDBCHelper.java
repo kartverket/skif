@@ -2,17 +2,32 @@ package no.statkart.skif.util;
 
 import no.statkart.skif.exception.ImplementationException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * @author Henrik Fredholm
  */
 public class JDBCHelper {
     public static void close(Statement statement) {
-        if (statement!=null) {
+        if (statement != null) {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                throw new ImplementationException(e);
+            }
+        }
+    }
+
+    public static void close(ResultSet resultSet, Statement statement) {
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                throw new ImplementationException(e);
+            }
+        }
+
+        if (statement != null) {
             try {
                 statement.close();
             } catch (SQLException e) {
@@ -31,7 +46,7 @@ public class JDBCHelper {
     }
 
     public static void rollback(Connection connection) {
-        if (connection!=null)  {
+        if (connection != null) {
             try {
                 connection.rollback();
             } catch (SQLException e) {

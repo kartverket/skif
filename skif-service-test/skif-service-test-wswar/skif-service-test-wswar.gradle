@@ -84,6 +84,9 @@ task wsgen {
                 jws(file: 'no/statkart/skif/skiftest/wsapi/service/txmanagement/ContainerManagedTxCMTCascadeServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
                     wlhttptransport(serviceuri: 'ContainerManagedTxCMTCascadeServiceWS')
                 }
+                jws(file: 'no/statkart/skif/skiftest/wsapi/service/id/SequenceBlockAllocatorServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'SequenceBlockAllocatorServiceWS')
+                }
             }
         }
     }

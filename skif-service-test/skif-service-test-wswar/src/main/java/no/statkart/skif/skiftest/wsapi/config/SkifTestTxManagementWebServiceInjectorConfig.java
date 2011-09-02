@@ -12,6 +12,8 @@ import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Konfigurasjon av injector for Web service API. Må kalles fra en ServletContextListener i web.xml.
@@ -33,12 +35,14 @@ public class SkifTestTxManagementWebServiceInjectorConfig implements ServletCont
         ClassLoader classLoader = getClass().getClassLoader();
 
         Injector ejbServiceInjector = SkifTestTxManagementServerInjector.getInjector();
-        ModuleConfiguration  configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
+        ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
+        List<Class<?>> services = new ArrayList<Class<?>>(new SkifTestTxManagementServices().getServices());
+        services.addAll(new SkifTestSequenceBlockAllocatorServices().getServices());
         injector = ejbServiceInjector.createChildInjector(
                 new ServletModule(),
                 new WSServerModule(configuration, classLoader),
-                new WSServerServiceModule(configuration, new SkifTestTxManagementServices().getServices(), mapping, classLoader)
+                new WSServerServiceModule(configuration, services, mapping, classLoader)
                         .setExceptionMapping(new SkifTestExceptionMapper().getMapping())
         );
     }
@@ -50,6 +54,6 @@ public class SkifTestTxManagementWebServiceInjectorConfig implements ServletCont
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        injector=null;
+        injector = null;
     }
 }

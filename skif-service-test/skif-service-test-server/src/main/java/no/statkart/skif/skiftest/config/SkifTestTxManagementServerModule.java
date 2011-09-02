@@ -56,6 +56,7 @@ public class SkifTestTxManagementServerModule extends SkifModule {
         }
 
         install(new ServerServiceModule(moduleConfiguration, new SkifTestTxManagementServices().getServices()));
+        install(new ServerServiceModule(moduleConfiguration, new SkifTestSequenceBlockAllocatorServices().getServices()));
     }
 }
 
