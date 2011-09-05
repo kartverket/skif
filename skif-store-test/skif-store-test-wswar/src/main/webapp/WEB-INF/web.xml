@@ -12,6 +12,9 @@
         <listener-class>no.statkart.skif.storetest.config.StoreTestTxManagementServicesEJBs</listener-class>
     </listener>
     <listener>
+        <listener-class>no.statkart.skif.storetest.config.StoreTestSequenceBlockAllocatorServicesEJBs</listener-class>
+    </listener>
+    <listener>
         <listener-class>no.statkart.skif.storetest.wsapi.config.StoreTestTxManagementWebServiceInjectorConfig</listener-class>
     </listener>
 

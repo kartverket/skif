@@ -83,6 +83,7 @@ public class StoreTestTxManagementServerModule extends SkifModule {
         bind(HibernateSessionManager.class).to(HibernateSessionManagerSingleVersionImpl.class).in(ServiceRequestScoped.class);
 
         install(new ServerServiceModule(moduleConfiguration, new StoreTestTxManagementServices().getServices()));
+        install(new ServerServiceModule(moduleConfiguration, new StoreTestSequenceBlockAllocatorServices().getServices()));
     }
 }
 
