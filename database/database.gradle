@@ -1,9 +1,5 @@
 apply plugin: 'statkart-dbutils-plugin'
 
-//eksponerer alle properties i build.properties som project-properties
-loadJavaProps().each {
-    setProperty(it.key, it.value)
-}
 
 configurations {
     drivers
@@ -17,16 +13,15 @@ dependencies {
 
 configureDatabasePlugin {
 
-    setProperty 'db_username', properties['skif.db_username']
-    setProperty 'db_password', properties['skif.db_password']
-    setProperty 'db_host', properties['skif.db_hostname']
-    setProperty 'db_port', properties['skif.db_port']
-    setProperty 'db_sid', properties['skif.db_sid']
+    //todo: endre navn til db_hostname i plugin?
+    if (hasProperty('db_host')) {
+        setProperty 'db_hostname', properties['db_host']
+    }
 
     useDrivers configurations.drivers
 
     useToolset('oracle', '', 'main/sql/oracle') {
-        url = "jdbc:oracle:thin:@${project.property('skif.db_hostname')}:${project.property('skif.db_port')}:${project.property('skif.db_sid')}"
+        url = "jdbc:oracle:thin:@${project.property('db_hostname')}:${project.property('db_port')}:${project.property('db_sid')}"
     }
 
 }
