@@ -37,34 +37,37 @@ if (project.hasProperty('version')) { version = getProperty('version') }
 // standard kode-versjon for branch
 if (version == 'unspecified') { version = '2.0-SNAPSHOT' }
 
+//MATH-31: adding profile feature. defaults to gradle-user.properties
+if (!rootProject.hasProperty('profile')) {
+    rootProject.setProperty('profile', 'gradle-user.properties')
+    logger.info("Defaulting profile to ${project.profile}")
+    println "a quick brown fox... ${path}"
+} else {
+    println "foxy ${path}"
+    if (!rootProject.file(getProperty('profile')).exists()) {
+        throw new InvalidUserDataException("profile file ${properties.profile} not found!")
+    }
+}
+
+
 allprojects {
     defaultTasks 'build'
     version = rootProject.version
     group = 'no.statkart.skif'
 
-    //MATH-31: adding profile feature. defaults to gradle-user.properties
-        if (!rootProject.hasProperty('profile')) {
-            rootProject.setProperty('profile', 'gradle-user.properties')
-            logger.info("Defaulting profile to ${project.profile}")
-        } else {
-            if (!rootProject.file(getProperty('profile')).exists()) {
-                throw new InvalidUserDataException("profile file ${properties.profile} not found!")
-            }
-        }
-
     //MATH-31: adding custom user properties feature
-        if (rootProject.file(properties.profile).exists()) {
-            def props = new Properties();
-            rootProject.file(properties.profile).withInputStream { props.load(it) }
-            logger.info("Loaded ${props.size()} user properties from ${properties.profile}")
-            props.each() {
-                //command line project properties takes precedence
-                if (!gradle.startParameter.getProjectProperties().containsKey(it.key)) {
-                    setProperty(it.key, it.value)
-                    logger.debug("${it.key} -> ${it.value}")
-                }
+    if (rootProject.file(properties.profile).exists()) {
+        def props = new Properties();
+        rootProject.file(properties.profile).withInputStream { props.load(it) }
+        logger.info("Loaded ${props.size()} user properties from ${properties.profile}")
+        props.each() {
+            //command line project properties takes precedence
+            if (!gradle.startParameter.getProjectProperties().containsKey(it.key)) {
+                setProperty(it.key, it.value)
+                logger.debug("${it.key} -> ${it.value}")
             }
         }
+    }
 
     expandProjectProperties(project, false)
 
