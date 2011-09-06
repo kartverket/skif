@@ -15,3 +15,9 @@ k varchar2(255) not null,
 v Varchar2(255),
 Primary Key (k)
 );
+
+create table TableSequence (
+   tableName varchar2(255) not null,
+   nextFreeNumber number(19,0),
+   primary key (tableName)
+);
