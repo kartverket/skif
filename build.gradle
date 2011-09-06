@@ -41,9 +41,7 @@ if (version == 'unspecified') { version = '2.0-SNAPSHOT' }
 if (!rootProject.hasProperty('profile')) {
     rootProject.setProperty('profile', 'gradle-user.properties')
     logger.info("Defaulting profile to ${project.profile}")
-    println "a quick brown fox... ${path}"
 } else {
-    println "foxy ${path}"
     if (!rootProject.file(getProperty('profile')).exists()) {
         throw new InvalidUserDataException("profile file ${properties.profile} not found!")
     }
