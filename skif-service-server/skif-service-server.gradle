@@ -3,6 +3,7 @@ apply plugin: 'maven'
 dependencies {
     compile project(':skif-service-common')
     provided libraries.weblogic
+    provided libraries.ojdbc
 
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')

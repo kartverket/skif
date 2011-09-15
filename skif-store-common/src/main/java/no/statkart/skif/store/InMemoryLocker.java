@@ -1,5 +1,7 @@
 package no.statkart.skif.store;
 
+import no.statkart.skif.locker.LockInfo;
+import no.statkart.skif.locker.LockKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +63,7 @@ public class InMemoryLocker implements Locker {
          return true;
       } else {
          logger.debug("Cannot lock : " + id + " for user " + key + ". Was locked by user " + entry.getKey());
-         throw new LockedException(key, new BubbleLock(id, key, new Timestamp(entry.getLockTime()),  false));
+         throw new LockedException(key, new LockInfo<Object>(new LockKey<Object>(id.getBaseIdTypeName(), id.getValue()), key, new Timestamp(entry.getLockTime()),  false));
       }
    }
 

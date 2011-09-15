@@ -1,25 +1,25 @@
 package no.statkart.skif.exception;
 
-import no.statkart.skif.store.BubbleLock;
-import org.slf4j.Logger;
+import no.statkart.skif.locker.LockInfo;
+import no.statkart.skif.locker.LockKey;
 
 import java.sql.Timestamp;
 import java.util.*;
 
 /**
- * TODO: Designet av denne klasse bør revurderes. Er det riktig at den bruker Bubblelock eller skal den være mer generell og ikke avhenge av store pakken. Er det noen problemer mht xml mapping. Skal den ligge i pakken store.exception istedet
+ *
  */
 public class LockedException extends OperationalException {
 
     /**
      * Locks that could not be aquired
      */
-    private List locksNotAquired = new ArrayList();
+    private List<LockInfo> locksNotAquired = new ArrayList<LockInfo>();
 
     /**
      * Cached list of ids not aquired. Derived from {@link #locksNotAquired}
      */
-    private transient List idsNotAcquired = null;
+    private transient List<LockKey> idsNotAcquired = null;
 
     /**
      * The principal who has this item locked
@@ -29,54 +29,55 @@ public class LockedException extends OperationalException {
     /**
      * The principal who tries to lock objects
      */
-    private String key;
+    private String owner;
 
     private Timestamp exceptionTime = new Timestamp(System.currentTimeMillis());
 
     /**
-     * Creates a lock exception for a single lock that could not be aquired
+     * Creates a lockInfo exception for a single lockInfo that could not be aquired
      *
-     * @param lock
+     * @param owner Owner of Lock
+     * @param lockInfo LockInfo for lock that caused the exception
      */
-    public LockedException(String key, BubbleLock lock) {
+    public <T> LockedException(String owner, LockInfo<T> lockInfo) {
         super("");
-        this.key = key;
-        this.lockedBy = lock.getKey();
-        this.locksNotAquired.add(lock);
+        this.owner = owner;
+        this.lockedBy = lockInfo.getOwner();
+        this.locksNotAquired.add(lockInfo);
     }
 
     /**
-     * Creates a lock excpetion for a collection of locks that could not be aquired. Sets {@link #lockedBy} to the
-     * locker of the first lock. The locks collection may have other lockers as well.
+     * Creates a lock excpetion for a collection of lockInfos that could not be aquired. Sets {@link #lockedBy} to the
+     * locker of the first lock. The lockInfos collection may have other lockers as well.
      *
-     * @param locks
+     * @param owner Owner of the locks
+     * @param lockInfos Collection of lockinfos that caused the exception
      */
-    public LockedException(String key, Collection locks) {
+    public <T> LockedException(String owner, Collection<LockInfo<T>> lockInfos) {
         super("");
-        if (locks.isEmpty()) {
-            throw new ImplementationException("LockedException cannot have empty collection of locks, key=" + key + " locks=" + locks);
+        if (lockInfos.isEmpty()) {
+            throw new ImplementationException("LockedException cannot have empty collection of lockInfos, owner=" + owner + " lockInfos=" + lockInfos);
         }
-        this.key = key;
-        locksNotAquired.addAll(locks);
-        BubbleLock first = (BubbleLock) locks.iterator().next();
-        this.lockedBy = first.getKey();
+        this.owner = owner;
+        locksNotAquired.addAll(lockInfos);
+        LockInfo first = lockInfos.iterator().next();
+        this.lockedBy = first.getOwner();
     }
 
     /**
-     * Returns all BubbleLocks that could not be acquired
+     * Returns all IdLocks that could not be acquired
      *
-     * @return unmodifiable list of BubbleLock
+     * @return unmodifiable list of LockInfo
      */
-    public List getLocksNotAquired() {
+    public List<LockInfo> getLocksNotAquired() {
         return Collections.unmodifiableList(locksNotAquired);
     }
 
-    public List getIdsNotAquired() {
+    public List<LockKey> getIdsNotAquired() {
         if (idsNotAcquired == null) {
-            idsNotAcquired = new ArrayList(locksNotAquired.size());
-            for (Iterator iterator = locksNotAquired.iterator(); iterator.hasNext();) {
-                BubbleLock bubbleLock = (BubbleLock) iterator.next();
-                idsNotAcquired.add(bubbleLock.getId());
+            idsNotAcquired = new ArrayList<LockKey>(locksNotAquired.size());
+            for (LockInfo lockInfo : locksNotAquired) {
+                idsNotAcquired.add(lockInfo.getLockKey());
             }
         }
         return Collections.unmodifiableList(idsNotAcquired);
@@ -91,7 +92,7 @@ public class LockedException extends OperationalException {
     }
 
     public String getMessage() {
-        return "User " + key + " cannot take/renew lock at " + exceptionTime + " :" + getLocksNotAquiredListString(10);
+        return "User " + owner + " cannot take/renew lock at " + exceptionTime + " :" + getLocksNotAquiredListString(10);
     }
 
     /**
@@ -106,7 +107,7 @@ public class LockedException extends OperationalException {
         buf.append("[");
         int max = Math.min(maxLocks, locksNotAquired.size());
         for (int i = 0; i < max; i++) {
-            BubbleLock bubbleLock = (BubbleLock) locksNotAquired.get(i);
+            LockInfo lockInfo = locksNotAquired.get(i);
             if (i != 0) buf.append(", ");
             buf.append(locksNotAquired.get(i));
         }

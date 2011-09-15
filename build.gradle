@@ -184,6 +184,7 @@ libraries.weblogic = files(
         "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
         "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
         "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.5.1.0.jar",
+        "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.6.0.0.jar",
         libraries.jaxws_rt,
 )
 
@@ -291,6 +292,8 @@ subprojects { Project project ->
                 excludeGroups('broken')
                 if (singleVm) {
                     excludeGroups('server-required')
+                } else {
+                    excludeGroups('singlevm-required')
                 }
             }
             systemProperties "org.uncommons.reportng.stylesheet": "${project.rootProject.file('all/test/report/reportng-1.1.3/stylesheets/hudsonesque.css')}"
