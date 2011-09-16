@@ -44,9 +44,15 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
     protected void completeService() {
         log.debug("complete");
         try {
-            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
-                connectionManager.commit();
+            if (serviceRequestContext.isContainerManagedTransaction()) {
+                if (serviceRequestContext.inTx()) {
+                    connectionManager.flush();
+                }
+                if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
+                    connectionManager.commit();
+                }
             }
+
             connectionManager.close();
             connectionManager.endAllocateConnectionsViaHibernateSession();
         } catch (SQLException e) {

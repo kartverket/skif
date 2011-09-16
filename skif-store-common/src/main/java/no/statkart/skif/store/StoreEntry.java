@@ -5,8 +5,8 @@ import no.statkart.skif.exception.ImplementationException;
 /**
  * @author Henrik Fredholm
  */
-public class StoreEntry<T extends AbstractBubbleObject> {
-    AbstractBubbleId<?> id;
+public class StoreEntry<T extends BubbleObject> {
+    BubbleId<?> id;
     protected T bubbleObject;
     protected StoreEntryState state;
     private boolean locked;
@@ -20,12 +20,12 @@ public class StoreEntry<T extends AbstractBubbleObject> {
         this.bubbleObject = bubbleObject;
         this.state = state;
     }
-    public StoreEntry(AbstractBubbleId<?> id) {
+    public StoreEntry(BubbleId<?> id) {
         this.id = id;
     }
 
-    public AbstractBubbleId<T> getId() {
-        return (AbstractBubbleId<T>) id;
+    public BubbleId<T> getId() {
+        return (BubbleId<T>) id;
     }
 
     public T getBubbleObject() {

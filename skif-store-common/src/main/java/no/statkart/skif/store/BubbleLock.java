@@ -8,7 +8,7 @@ import java.sql.Timestamp;
  */
 public class BubbleLock implements Serializable {
    /** Id of locked object */
-   private AbstractBubbleId id;
+   private BubbleId id;
    /** Owner of the lock */
    private String key;
    /** When the lock expires and may be taken by other users*/
@@ -20,11 +20,11 @@ public class BubbleLock implements Serializable {
    /** Ident string for ident hvis den finnes ellers null. */
    private String identString;
 
-   public BubbleLock(AbstractBubbleId id, String key) {
+   public BubbleLock(BubbleId id, String key) {
       this(id, key, null, false);
    }
 
-   public BubbleLock(AbstractBubbleId id, String key, Timestamp expires, boolean isNew) {
+   public BubbleLock(BubbleId id, String key, Timestamp expires, boolean isNew) {
       this.id = id;
       this.key = key;
       this.expires = expires;
@@ -39,11 +39,11 @@ public class BubbleLock implements Serializable {
       this.identString = identString;
    }
 
-   public AbstractBubbleId getId() {
+   public BubbleId getId() {
       return id;
    }
 
-   public void setId(AbstractBubbleId id) {
+   public void setId(BubbleId id) {
       this.id = id;
    }
 

@@ -7,10 +7,10 @@ package no.statkart.skif.store;
  */
 public interface StorePersisterStrategy {
     /**
-     * Returnerer StorePersister instans som skal brukes for gitt AbstractBubbleId. Dersom kun en StorePersister er i bruk
-     * returneres samme instans for alle AbstractBubbleId objketer.
+     * Returnerer StorePersister instans som skal brukes for gitt BubbleId. Dersom kun en StorePersister er i bruk
+     * returneres samme instans for alle BubbleId objketer.
      * @param bubbleId id som skal klassifiseres
      * @return  StorePersister som skal brukes
      */
-    StorePersister getPersister(AbstractBubbleId bubbleId);
+    StorePersister getPersister(BubbleId bubbleId);
 }

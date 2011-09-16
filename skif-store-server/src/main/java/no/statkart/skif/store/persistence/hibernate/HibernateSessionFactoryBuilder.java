@@ -3,6 +3,7 @@ package no.statkart.skif.store.persistence.hibernate;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.store.ReplicaVersion;
+import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -23,6 +24,8 @@ public class HibernateSessionFactoryBuilder {
     protected final List<String> hbmResource = new ArrayList<String>();
     protected final String mappingFilesDirectory;
     protected final Properties hibernateProperties;
+    protected Interceptor interceptor;
+
 
     public HibernateSessionFactoryBuilder(Properties hibernateProperties, String mappingFilesDirectory) {
         this.hibernateProperties = hibernateProperties;
@@ -91,7 +94,10 @@ public class HibernateSessionFactoryBuilder {
         } catch (MappingException e) {
             throw new ImplementationException("Feil i hibernate mapping-filer: " + e.getMessage(), e, logger);
         }
+
+        if (interceptor != null) {
+            cfg.setInterceptor(interceptor);
+        }
         return cfg;
     }
 }
-                

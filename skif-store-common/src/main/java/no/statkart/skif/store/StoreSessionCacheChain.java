@@ -39,14 +39,14 @@ public class StoreSessionCacheChain implements StoreSessionReadChain, StoreSessi
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> StoreEntry<T> get(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> get(I bubbleId) {
         StoreEntry<T> newEntry = nextInReadChain.get(bubbleId);
         StoreEntry<T> cacheEntry = storeCache.register(newEntry);
         return cacheEntry;
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> Collection<StoreEntry<T>> get(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry<T>> get(Collection<I> bubbleIds) {
         Collection<StoreEntry<T>> newEntries = nextInReadChain.get(bubbleIds);
         List<StoreEntry<T>> cacheEntries;
 
@@ -66,14 +66,14 @@ public class StoreSessionCacheChain implements StoreSessionReadChain, StoreSessi
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> StoreEntry<T> lock(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> lock(I bubbleId) {
         StoreEntry<T> newEntry = nextInWriteChain.lock(bubbleId);
         StoreEntry<T> cacheEntry = storeCache.registerLocked(newEntry);
         return cacheEntry;
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> Collection<StoreEntry<T>> lock(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry<T>> lock(Collection<I> bubbleIds) {
         Collection<StoreEntry<T>> newEntries = nextInWriteChain.lock(bubbleIds);
         List<StoreEntry<T>> cacheEntries;
 
@@ -93,7 +93,7 @@ public class StoreSessionCacheChain implements StoreSessionReadChain, StoreSessi
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> boolean isLocked(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId) {
         boolean result;
         StoreEntry<T> storeEntry = storeCache.get(bubbleId);
 
@@ -106,27 +106,27 @@ public class StoreSessionCacheChain implements StoreSessionReadChain, StoreSessi
     }
 
     @Override
-    public <T extends AbstractBubbleObject> StoreEntry<T> register(T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry<T> register(T bubbleObject) {
         return storeCache.register(new StoreEntry<T>(bubbleObject));
     }
 
     @Override
-    public <T extends AbstractBubbleObject> StoreEntry<T> registerLocked(T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry<T> registerLocked(T bubbleObject) {
         return storeCache.registerLocked(new StoreEntry<T>(bubbleObject));
     }
 
     @Override
-    public <T extends AbstractBubbleObject> StoreEntry<T> registerNew(T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry<T> registerNew(T bubbleObject) {
         return storeCache.registerNew(new StoreEntry<T>(bubbleObject));
     }
 
     @Override
-    public <T extends AbstractBubbleObject> StoreEntry<T> registerUpdated(T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry<T> registerUpdated(T bubbleObject) {
         return storeCache.registerUpdated(new StoreEntry<T>(bubbleObject));
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> void registerDeleted(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerDeleted(I bubbleId) {
         storeCache.registerDeleted(new StoreEntry<T>(bubbleId));
     }
 }

@@ -1,6 +1,7 @@
 package no.statkart.skif.store.kodelistesupport;
 
 import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.BubbleObjectInterface;
 
 import java.util.List;
 
@@ -8,7 +9,7 @@ import java.util.List;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public interface BubbleKodeliste extends BubbleObject {
+public interface BubbleKodeliste extends BubbleObjectInterface {
     public BubbleKodelisteId<?> getId();
 
     public Class<? extends BubbleKodeId<?>> getKodeIdClass();

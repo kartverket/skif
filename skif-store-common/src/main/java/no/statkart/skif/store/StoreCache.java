@@ -12,18 +12,18 @@ import static no.statkart.skif.guava.Preconditions.checkState;
  */
 public class StoreCache {
     private Store store;
-    Map<AbstractBubbleId<?>, StoreEntry<?>> cacheMap;
+    Map<BubbleId<?>, StoreEntry<?>> cacheMap;
 
 
     public Store getStore() {
         return store;
     }
 
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> StoreEntry<T> get(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> get(I bubbleId) {
         return (StoreEntry<T>) cacheMap.get(bubbleId);
     }
 
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> StoreEntry<T> remove(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> remove(I bubbleId) {
         StoreEntry<?> storeEntry = cacheMap.remove(bubbleId);
         storeEntry.setBubbleObject(null);
         return (StoreEntry<T>) storeEntry;
@@ -31,7 +31,7 @@ public class StoreCache {
 
     public void init(Store store) {
         this.store = store;
-        cacheMap = new HashMap<AbstractBubbleId<?>, StoreEntry<?>>(1000);
+        cacheMap = new HashMap<BubbleId<?>, StoreEntry<?>>(1000);
 
     }
 
@@ -39,7 +39,7 @@ public class StoreCache {
         cacheMap.clear();
     }
 
-    public <T extends AbstractBubbleObject> StoreEntry<T> register(StoreEntry<T> newEntry) {
+    public <T extends BubbleObject> StoreEntry<T> register(StoreEntry<T> newEntry) {
         StoreEntry<T> entry = (StoreEntry<T>) cacheMap.get(newEntry.getId());
         if (entry == null) {
             entry = newEntry;
@@ -51,7 +51,7 @@ public class StoreCache {
         return entry;
     }
 
-    public <T extends AbstractBubbleObject> StoreEntry<T> registerLocked(StoreEntry<T> newEntry) {
+    public <T extends BubbleObject> StoreEntry<T> registerLocked(StoreEntry<T> newEntry) {
         StoreEntry<T> entry = (StoreEntry<T>) cacheMap.get(newEntry.getId());
         if (entry == null) {
             entry = newEntry;
@@ -64,9 +64,9 @@ public class StoreCache {
         return entry;
     }
 
-    public <T extends AbstractBubbleObject> StoreEntry<T> registerNew(StoreEntry<T> newEntry) {
+    public <T extends BubbleObject> StoreEntry<T> registerNew(StoreEntry<T> newEntry) {
         StoreEntry<T> entry = (StoreEntry<T>) cacheMap.get(newEntry.getId());
-        checkState(entry == null, "AbstractBubbleObject has already been registered. Cannot register object as new", newEntry.getId());
+        checkState(entry == null, "BubbleObject has already been registered. Cannot register object as new", newEntry.getId());
         entry = newEntry;
         entry.getBubbleObject().register(store);
         entry.state = StoreEntryState.NEW;
@@ -74,9 +74,9 @@ public class StoreCache {
         return entry;
     }
 
-    public <T extends AbstractBubbleObject> StoreEntry<T> registerUpdated(StoreEntry<T> newEntry) {
+    public <T extends BubbleObject> StoreEntry<T> registerUpdated(StoreEntry<T> newEntry) {
         StoreEntry<T> entry = (StoreEntry<T>) cacheMap.get(newEntry.getId());
-        checkState(entry == null, "AbstractBubbleObject has already been registered. Cannot register object as updated", newEntry.getId());
+        checkState(entry == null, "BubbleObject has already been registered. Cannot register object as updated", newEntry.getId());
         entry = newEntry;
         entry.getBubbleObject().register(store);
         entry.state = StoreEntryState.UPDATED;
@@ -84,16 +84,16 @@ public class StoreCache {
         return entry;
     }
 
-    public <T extends AbstractBubbleObject> StoreEntry<T> registerDeleted(StoreEntry<T> newEntry) {
+    public <T extends BubbleObject> StoreEntry<T> registerDeleted(StoreEntry<T> newEntry) {
         StoreEntry<T> entry = (StoreEntry<T>) cacheMap.get(newEntry.getId());
-        checkState(entry == null, "AbstractBubbleObject has already been registered. Cannot register object as deleted", newEntry.getId());
+        checkState(entry == null, "BubbleObject has already been registered. Cannot register object as deleted", newEntry.getId());
         entry = newEntry;
         entry.state = StoreEntryState.DELETED;
         cacheMap.put(entry.getId(), entry);
         return entry;
     }
 
-    public Set<Map.Entry<AbstractBubbleId<?>,StoreEntry<?>>> entrySet () {
+    public Set<Map.Entry<BubbleId<?>,StoreEntry<?>>> entrySet () {
         return cacheMap.entrySet();
     }
 }

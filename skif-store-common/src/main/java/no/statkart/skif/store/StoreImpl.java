@@ -137,7 +137,7 @@ public class StoreImpl implements Store {
 
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> T get(@Nullable I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(@Nullable I bubbleId) {
         if (bubbleId == null) {
             return null;
         }
@@ -152,7 +152,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
             bubbleObjects = get((Set<I>) bubbleIds);
@@ -166,7 +166,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> Set<T> get(Set<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
         Set<T> bubbleObjects = new HashSet<T>(bubbleIds.size());
         get(bubbleIds, bubbleObjects);
@@ -174,7 +174,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> List<T> get(List<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
         List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
         get(bubbleIds, bubbleObjects);
@@ -182,7 +182,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
         checkNotNull(bubbleIds, "bubbleIds");
         List<I> missingBubbleIds = null;
 
@@ -213,7 +213,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
         ArrayList<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
         Collections.fill(bubbleObjects, null);
@@ -236,7 +236,7 @@ public class StoreImpl implements Store {
         // Sjekk om alle ble funnet
         if (missingBubbleIds!=null) {
             final Collection<StoreEntry<T>> storeEntries = readChain.get(missingBubbleIds);
-            final Map<AbstractBubbleId<?>, StoreEntry<T>> storeEntryMap = new HashMap<AbstractBubbleId<?>, StoreEntry<T>>(storeEntries.size());
+            final Map<BubbleId<?>, StoreEntry<T>> storeEntryMap = new HashMap<BubbleId<?>, StoreEntry<T>>(storeEntries.size());
             for (StoreEntry<T> storeEntry : storeEntries) {
                 storeEntryMap.put(storeEntry.getId(), storeEntry);
             }
@@ -251,21 +251,21 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
         // TODO;
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> T lock(@Nullable I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(@Nullable I bubbleId) {
        if (bubbleId == null) {
             return null;
         }
-        
+
         StoreEntry<T> storeEntry = storeCache.get(bubbleId);
         if (storeEntry == null || !storeEntry.isLocked()) {
             storeEntry = writeChain.lock(bubbleId);
@@ -275,7 +275,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
             bubbleObjects = lock((Set<I>) bubbleIds);
@@ -289,7 +289,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> Set<T> lock(Set<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
         Set<T> bubbleObjects = new HashSet<T>(bubbleIds.size());
         lock(bubbleIds, bubbleObjects);
@@ -297,7 +297,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> List<T> lock(List<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
         List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
         lock(bubbleIds, bubbleObjects);
@@ -305,7 +305,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
         checkNotNull(bubbleIds, "bubbleIds");
         List<I> missingBubbleIds = null;
 
@@ -336,7 +336,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject> T register(@Nullable T bubbleObject) {
+    public <T extends BubbleObject> T register(@Nullable T bubbleObject) {
         if (bubbleObject==null)  {
             return null;
         }
@@ -345,7 +345,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject> Collection<? extends T> register(Collection<? extends T> bubbleObjects, Collection<? super T> resolvedObjects) {
+    public <T extends BubbleObject> Collection<? extends T> register(Collection<? extends T> bubbleObjects, Collection<? super T> resolvedObjects) {
         for (T bubbleObject : bubbleObjects) {
             resolvedObjects.add(register(bubbleObject));
         }
@@ -353,7 +353,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject> T registerLocked(T bubbleObject) {
+    public <T extends BubbleObject> T registerLocked(T bubbleObject) {
         if (bubbleObject==null)  {
             return null;
         }
@@ -363,29 +363,29 @@ public class StoreImpl implements Store {
 
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> void registerLocked(Collection<T> bubbleObjects, Collection<T> resolvedObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerLocked(Collection<T> bubbleObjects, Collection<T> resolvedObjects) {
         for (T bubbleObject : bubbleObjects) {
             resolvedObjects.add(register(bubbleObject));
         }
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer<T,I> transfer) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer<T,I> transfer) {
         throw new UnsupportedOperationException();  //TODO
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> boolean isLocked(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId) {
         final StoreEntry<T> storeEntry = storeCache.get(bubbleId);
         if (storeEntry!=null) {
-            return storeEntry.state!=StoreEntryState.UNLOCKED;            
+            return storeEntry.state!=StoreEntryState.UNLOCKED;
         } else {
             return writeChain.isLocked(bubbleId);
         }
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> boolean evict(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(I bubbleId) {
         boolean objectEvicted = false;
         final StoreEntry<T> storeEntry = storeCache.get(bubbleId);
         if (storeEntry!=null) {
@@ -402,7 +402,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> boolean evict(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(Collection<I> bubbleIds) {
         boolean objectEvicted = false;
         for (I bubbleId : bubbleIds) {
             objectEvicted |= evict(bubbleId);
@@ -411,10 +411,10 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> boolean evictAll() {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll() {
         boolean objectEvicted = false;
-        for (Iterator<Map.Entry<AbstractBubbleId<?>, StoreEntry<?>>> iterator = storeCache.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry<AbstractBubbleId<?>, StoreEntry<?>> entry = iterator.next();
+        for (Iterator<Map.Entry<BubbleId<?>, StoreEntry<?>>> iterator = storeCache.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<BubbleId<?>, StoreEntry<?>> entry = iterator.next();
             StoreEntry<?> storeEntry = entry.getValue();
             if (storeEntry.getState() == StoreEntryState.UNLOCKED) {
                 iterator.remove();

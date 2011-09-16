@@ -28,6 +28,7 @@ import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.storetest.config.StoreTestGroup1Services;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.storetest.wsapi.exception.impl.mapping.StoreTestExceptionMapper;
 import no.statkart.skif.util.NullHostnameVerifier;
 import no.statkart.skif.util.testsupport.SkifTestCase;
@@ -47,36 +48,13 @@ import static org.testng.Assert.fail;
  * @author Henrik Fredholm
  * @since 2.0
  */
-@Test(enabled = false, groups = "broken") // TODO: virker pt ikke
-public class StoreTest1ServiceTest extends SkifTestCase {
+@Test
+public class StoreTest1ServiceTest extends StoreTestTestCase {
 
-    public StoreTest1ServiceTest() {
-        setModuleClass(ClientModule.class);
-        setSingleVmServerModuleClass(StoreTestServerModule.class);
-    }
-
-    public static class ClientModule extends SkifModule {
-
-        public ClientModule(ModuleConfiguration moduleConfiguration) {
-            super(moduleConfiguration);
-        }
-
-        @Override
-        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
-            return new ClientModuleStrategyFactory();
-        }
-
-        @Override
-        protected void configure() {
-            install(new RemoteServerModule(moduleConfiguration));
-            install(new RemoteServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices(), new IdentityMapper().getMapping()).setExceptionMapping(new StoreTestExceptionMapper().getMapping()));
-        }
-    }
 
     /**
      * Test kall til metode som kalder andre metoder. Ingen metoder krever tx
      */
-    @Test
     public void testStoreTest1Service() {
         final StoreTest1Service storeTest1Service = injector.getInstance(StoreTest1Service.class);
 
@@ -92,6 +70,13 @@ public class StoreTest1ServiceTest extends SkifTestCase {
         assertEquals(storeTest1Service.get("key1"), "value1", "Forrige metode skulle ikke ha endret 'key1'");
         assertEquals(storeTest1Service.remove("key1"), "value1");
         assertEquals(storeTest1Service.get("key1"), null);
+        System.out.println("Done");
+    }
+
+
+     @Test(invocationCount = 1 /*200*/)
+    public void testStoreTest1ServiceMultipleThreads() {
+         testStoreTest1Service();
     }
 
 

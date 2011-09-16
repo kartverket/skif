@@ -6,6 +6,7 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.storetest.domain.TestEntity;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.testng.annotations.Test;
@@ -31,8 +32,9 @@ public class HibernateSessionFactoryBuilderTest {
         return new HibernateSessionFactoryBuilder(properties, "no/statkart/skif/storetest/persistence/hibernate");
     }
 
-    public void testCreateFactorySessionAndConnection() throws SQLException {
+    public void testCreateFactorySessionAndConnection() throws SQLException, InterruptedException {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
+        sfbuilder.addResource(TestEntity.class);
         SessionFactory sf = sfbuilder.build(ReplicaVersion.CURRENT);
         assertNotNull(sf);
         Session s = sf.openSession();
@@ -41,8 +43,16 @@ public class HibernateSessionFactoryBuilderTest {
         ResultSet rs = statement.executeQuery("select 1 from dual");
         rs.next();
         assertEquals(rs.getInt(1), 1);
+        statement.close();
+        c.close();
+        s.close();
+        sf.close();
     }
 
+    @Test(invocationCount = 1/*200*/)
+    public void testCreateFactorySessionAndConnectionMulti() throws SQLException, InterruptedException {
+        testCreateFactorySessionAndConnection();
+    }
 
     public void testCreateFactoryWithEntity() throws SQLException {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
@@ -50,8 +60,16 @@ public class HibernateSessionFactoryBuilderTest {
         SessionFactory sf = sfbuilder.build(ReplicaVersion.CURRENT);
         assertNotNull(sf);
         Session s = sf.openSession();
-        List list = s.createQuery("from TestEntity").list();
+        Query query = s.createQuery("from TestEntity");
+        List list = query.list();
         assertNotNull(list);
+        s.close();
+        sf.close();
+    }
+
+    @Test(invocationCount = 1/*200*/)
+    public void testCreateFactoryWithEntityMulti() throws SQLException {
+        testCreateFactoryWithEntity();
     }
 
 }

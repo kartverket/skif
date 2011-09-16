@@ -15,5 +15,5 @@ public interface StoreSessionAuthorizerChain extends StoreSessionReadChain {
      * @param storeEntry innehold objekt som evt skal maskeres
      * @param <T>
      */
-    <T extends AbstractBubbleObject> void maskFields(StoreEntry<T> storeEntry);
+    <T extends BubbleObject> void maskFields(StoreEntry<T> storeEntry);
 }

@@ -25,6 +25,8 @@ public class HibernateSessionManagerMultiVersionImpl extends AbstractHibernateSe
     @Inject
     public HibernateSessionManagerMultiVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManager hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
         super(connectionFactoryManager, hibernateSessionFactoryManager);
+        entries[ReplicaVersion.CURRENT.ordinal()] =  new HibernateSessionManagerEntry(ReplicaVersion.CURRENT);
+        entries[ReplicaVersion.OLD.ordinal()] =  new HibernateSessionManagerEntry(ReplicaVersion.OLD);
         this.serviceRequestContext = serviceRequestContext;
     }
 

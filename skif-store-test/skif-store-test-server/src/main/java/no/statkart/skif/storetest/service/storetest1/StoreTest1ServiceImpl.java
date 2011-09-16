@@ -16,25 +16,17 @@ import java.sql.SQLException;
  * @since 2.0
  */
 public class StoreTest1ServiceImpl implements StoreTest1Service {
-    /*
-        // Alternativ via provider
-        @Inject
-        Provider<Session> sessionProvider;
-
-        private Session getSession() {
-            return sessionProvider.get();
-        }
-    */
-//    @Inject
+    // Alternativ via provider
+    @Inject
+    Provider<Session> sessionProvider;
 //    Session session;
 
-//    @Inject
-//    Provider<Connection> jdbcConnectionProvider;
-
     private Session getSession() {
-        return null;
+        return sessionProvider.get();
 //        return session;
     }
+
+    Provider<Connection>  connectionProvider;
 
     @Override
     public String put(String key, String value) {
@@ -82,14 +74,9 @@ public class StoreTest1ServiceImpl implements StoreTest1Service {
         throw new ImplementationException("putThatFails - denne metode skal feil. Endringer committes ikke");
     }
 
-    public String putViaJDBCConnection(String key, String value) {
-        return null;
-    }
-
-/*
     @Override
     public String putViaJDBCConnection(String key, String value) {
-        Connection connection = jdbcConnectionProvider.get();
+        Connection connection = connectionProvider.get();
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement("update TestMap set v=? where k=?");
@@ -114,5 +101,4 @@ public class StoreTest1ServiceImpl implements StoreTest1Service {
         }
         return null;
     }
-*/
 }

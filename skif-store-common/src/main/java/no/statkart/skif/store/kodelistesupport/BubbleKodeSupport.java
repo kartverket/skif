@@ -1,7 +1,7 @@
 package no.statkart.skif.store.kodelistesupport;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.AbstractBubbleId;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.util.CopyHelper;
 
@@ -74,7 +74,7 @@ public abstract class BubbleKodeSupport<T extends BubbleKodelisteId<?>> {
     public <I extends BubbleKodeId<? extends BubbleKode>> I createInstance(Class<? extends I> idClass, long idValue, ReplicaVersion replicaVersion) {
         I id = (I) getInstance(idValue, replicaVersion);
         if (id == null) {
-            id = AbstractBubbleId.createInstance(idClass, idValue, replicaVersion);
+            id = BubbleId.createInstance(idClass, idValue, replicaVersion);
         }
         return id;
     }

@@ -14,6 +14,7 @@ import no.statkart.skif.config.*;
 import no.statkart.skif.config.internal.ConfigurationUtils;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.guava.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -353,7 +354,9 @@ public class ModuleBuilder {
     }
 
     public <T extends SkifModule> Constructor<T> getModuleConstructor() {
-        Class<T> moduleClass = (Class<T>) SkifUtil.classForName(getModuleClassname());
+        String moduleClassname = getModuleClassname();
+        Preconditions.checkNotNull(getModuleClassname(), "ModuleClassname");
+        Class<T> moduleClass = (Class<T>) SkifUtil.classForName(moduleClassname);
         Constructor<T> constructor;
         try {
             constructor = moduleClass.getConstructor(ModuleConfiguration.class);

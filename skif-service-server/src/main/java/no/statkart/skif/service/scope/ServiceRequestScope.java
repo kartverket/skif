@@ -66,6 +66,11 @@ public class ServiceRequestScope implements Scope {
 
     public void exit() {
         checkState(values.get() != null, "No scoping block in progress");
+        for (Object o : values.get().values()) {
+            if (o instanceof Closeable) {
+                ((Closeable) o).close();
+            }
+        }
         values.remove();
     }
 

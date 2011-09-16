@@ -1,10 +1,13 @@
 package no.statkart.skif.store.kodelistesupport;
 
-import no.statkart.skif.store.AbstractBubbleId;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.ReplicaVersion;
-
 import java.util.Locale;
 
+/**
+ * @author Henrik Fredholm
+ * @since 0.6
+ */
 /**
  * @author Henrik Fredholm
  * @since 0.6
@@ -20,7 +23,7 @@ public class DbBubbleKodeSupport<KL extends DbBubbleKodeliste, KLId extends DbBu
     }
 
     public <I extends DbBubbleKodeId<? extends DbBubbleKode>> I define(Class<I> idClass, long idValue) {
-        I id = AbstractBubbleId.createInstance(idClass, idValue, ReplicaVersion.CURRENT);
+        I id = BubbleId.createInstance(idClass, idValue, ReplicaVersion.CURRENT);
         return id;
     }
 

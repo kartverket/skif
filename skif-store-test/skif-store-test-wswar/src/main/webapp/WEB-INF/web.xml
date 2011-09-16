@@ -5,6 +5,9 @@
         <listener-class>no.statkart.skif.storetest.config.StoreTestGroup1ServicesEJBs</listener-class>
     </listener>
     <listener>
+        <listener-class>no.statkart.skif.storetest.config.StoreTestStoreServicesEJBs</listener-class>
+    </listener>
+    <listener>
         <listener-class>no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig</listener-class>
     </listener>
 

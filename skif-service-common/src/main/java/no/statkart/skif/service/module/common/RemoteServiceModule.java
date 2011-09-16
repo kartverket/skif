@@ -30,7 +30,7 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
 
     public RemoteServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
         super(RemoteServiceModuleStrategy.class, configuration);
-        Preconditions.checkNotNull(mapping, "mapping2");
+        Preconditions.checkNotNull(mapping, "mapping");
         this.services.addAll(services);
         this.mapping = mapping;
     }

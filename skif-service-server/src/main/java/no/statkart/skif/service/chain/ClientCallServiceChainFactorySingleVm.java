@@ -2,6 +2,8 @@ package no.statkart.skif.service.chain;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.ProvisionException;
+import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.SingleVmRemoteCallProxyHandler;
 
@@ -27,7 +29,11 @@ public class ClientCallServiceChainFactorySingleVm<S> implements CallServiceChai
 
     @Override
     public ProxyHandler<S> createChain() {
-        return singleVmRemoteCallProxyHandlerProvider.get();
+        try {
+            return singleVmRemoteCallProxyHandlerProvider.get();
+        } catch (ProvisionException e) {
+            throw new ConfigurationException("Service not bound in ServerModule", e);
+        }
     }
 
     @Override

@@ -8,8 +8,10 @@ import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.persistence.ConnectionFactoryManagerSingleVersionImpl;
 import no.statkart.skif.persistence.JDBCConnectionFactory;
 import no.statkart.skif.service.ServiceRequestContext;
+import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.TestEntity;
 import org.hibernate.Session;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import java.sql.Connection;
@@ -39,13 +41,15 @@ public class HibernateSessionManagerTest {
 
         hibernateSessionFactoryManager = new HibernateSessionFactoryManagerSingleVersionImpl(hibernateConfiguration.buildSessionFactory());
 
-        String url = properties.getProperty("hibernate.connection.url");
-        String username = properties.getProperty("hibernate.connection.username");
-        String password = properties.getProperty("hibernate.connection.password");
-        connectionFactoryManager = new ConnectionFactoryManagerSingleVersionImpl(new JDBCConnectionFactory(url, username, password));
+         connectionFactoryManager = new ConnectionFactoryManagerSingleVersionImpl(TestHelper.createJDBCConnectionFactory());
 
         assertNotNull(hibernateSessionFactoryManager);
         assertNotNull(connectionFactoryManager);
+    }
+
+    @AfterClass
+    protected void close() {
+        hibernateSessionFactoryManager.close();
     }
 
     public void testGetHibernateSessionGetConnection() throws SQLException {
@@ -59,6 +63,7 @@ public class HibernateSessionManagerTest {
         Session hibernateSession3 = sessionManager.getHibernateSession(NOT_USED);
         assertNotSame(hibernateSession1, hibernateSession3);
         sessionManager.close();
+
     }
 
     public void testMixSeparateHibernateSessionAndConnection_Ok() throws SQLException {

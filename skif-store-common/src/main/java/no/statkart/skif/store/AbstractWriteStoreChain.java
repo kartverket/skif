@@ -13,7 +13,7 @@ public abstract class AbstractWriteStoreChain extends AbstractStoreSessionChain 
     }
 
    @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> boolean isLocked(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId) {
         return nextInWriteChain.isLocked(bubbleId);
     }
     

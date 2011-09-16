@@ -7,5 +7,9 @@ import org.hibernate.Session;
  * @author Henrik Fredholm
  */
 class HibernateStoreSessionManagerEntry extends HibernateSessionManagerEntry {
-    StoreSession<Session> storeSession;
+    HibernateStoreSession storeSession;
+
+    HibernateStoreSessionManagerEntry(Object key) {
+        super(key);
+    }
 }

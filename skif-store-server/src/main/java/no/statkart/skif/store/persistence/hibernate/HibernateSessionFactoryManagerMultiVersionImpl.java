@@ -12,7 +12,7 @@ public class HibernateSessionFactoryManagerMultiVersionImpl implements  Hibernat
     private final HibernateSessionFactoryBuilder factoryBuilder;
 
     @Inject
-    public HibernateSessionFactoryManagerMultiVersionImpl(SessionFactory factory, HibernateSessionFactoryBuilder factoryBuilder) {
+    public  HibernateSessionFactoryManagerMultiVersionImpl(HibernateSessionFactoryBuilder factoryBuilder) {
         this.factoryBuilder = factoryBuilder;
     }
 
@@ -24,5 +24,16 @@ public class HibernateSessionFactoryManagerMultiVersionImpl implements  Hibernat
             factories[replicaVersion.ordinal()] = factory = factoryBuilder.build(replicaVersion);
         }
         return factory;
+    }
+
+    @Override
+    public synchronized void close() {
+        for (int i = 0; i < factories.length; i++) {
+            SessionFactory factory = factories[i];
+            if (factory!=null) {
+                factory.close();
+                factories[i] = null;
+            }
+        }
     }
 }

@@ -13,7 +13,7 @@ import no.statkart.skif.exception.ObjectNotFoundException;
  * HashMap basert Store som ikke er trådsikker.
  * @author Henrik Fredholm
  */
-public class HashStorePersister<T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> implements StorePersister<T, I> {
+public class HashStorePersister<T extends BubbleObject, I extends BubbleId<? extends T>> implements StorePersister<T, I> {
     final private Map<I, T> storeMap;
 
     @Inject
@@ -40,7 +40,7 @@ public class HashStorePersister<T extends AbstractBubbleObject, I extends Abstra
         return result;
     }
 
-    public void evict(AbstractBubbleId bubbleId) {
+    public void evict(BubbleId bubbleId) {
         // No-op
     }
 

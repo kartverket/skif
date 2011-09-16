@@ -35,12 +35,15 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
         ClassLoader classLoader = getClass().getClassLoader();
 
         Injector ejbServiceInjector = StoreTestServerInjector.getInjector();
-        ModuleConfiguration  configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
+        ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
         injector = ejbServiceInjector.createChildInjector(
                 new ServletModule(),
                 new WSServerModule(configuration, classLoader),
-                new WSServerServiceModule(configuration, new StoreTestGroup1Services().getServices(), mapping,classLoader ).setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                new WSServerServiceModule(configuration, new StoreTestGroup1Services().getServices(), mapping, classLoader).setExceptionMapping(new StoreTestExceptionMapper().getMapping()),
+                new WSServerServiceModule(configuration, new StoreTestStoreServices().getServices(), mapping, classLoader)
+                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                        .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
         );
     }
 
@@ -51,6 +54,6 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        injector=null;
+        injector = null;
     }
 }

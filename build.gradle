@@ -160,11 +160,13 @@ libraries = [
         // Testing
         testng: 'org.testng:testng:6.0.1',
         mockito: 'org.mockito:mockito-all:1.8.5',
+        dbunit: 'org.dbunit:dbunit:2.4.8@jar',
 
         // JAXB
         jaxb_impl: "com.sun.xml.bind:jaxb-impl:${versions.jaxb}",
         jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${versions.jaxb}",
         build_utils: "no.statkart.grunnbok:build-utils:${versions.BUILD_UTILS}"
+
 
 ]
 

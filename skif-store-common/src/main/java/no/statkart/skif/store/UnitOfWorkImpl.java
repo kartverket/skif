@@ -18,47 +18,47 @@ public class UnitOfWorkImpl extends AbstractStoreSessionReadChain implements Sto
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> StoreEntry<T> get(I id) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> get(I id) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> Collection<StoreEntry<T>> get(Collection<I> id) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry<T>> get(Collection<I> id) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> StoreEntry<T> lock(I id) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> lock(I id) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> Collection<StoreEntry<T>> lock(Collection<I> id) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry<T>> lock(Collection<I> id) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> boolean isLocked(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId) {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends AbstractBubbleObject> StoreEntry<T> registerLocked(T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry<T> registerLocked(T bubbleObject) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends AbstractBubbleObject> StoreEntry<T> registerNew(T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry<T> registerNew(T bubbleObject) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends AbstractBubbleObject> StoreEntry<T> registerUpdated(T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry<T> registerUpdated(T bubbleObject) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> void registerDeleted(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerDeleted(I bubbleId) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

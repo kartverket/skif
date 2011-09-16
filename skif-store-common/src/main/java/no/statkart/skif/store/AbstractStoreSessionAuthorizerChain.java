@@ -14,14 +14,14 @@ public abstract class AbstractStoreSessionAuthorizerChain extends AbstractStoreS
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> StoreEntry<T> get(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> get(I bubbleId) {
         StoreEntry<T> entry= nextInReadChain.get(bubbleId);
         maskFields(entry);
         return entry;
     }
 
     @Override
-    public <T extends AbstractBubbleObject, I extends AbstractBubbleId<? extends T>> Collection<StoreEntry<T>> get(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry<T>> get(Collection<I> bubbleIds) {
         Collection<StoreEntry<T>> entries = nextInReadChain.get(bubbleIds);
         for (StoreEntry<T> entry : entries) {
             maskFields(entry);
@@ -30,7 +30,7 @@ public abstract class AbstractStoreSessionAuthorizerChain extends AbstractStoreS
     }
 
     @Override
-    public <T extends AbstractBubbleObject> StoreEntry<T> register(T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry<T> register(T bubbleObject) {
         StoreEntry<T> entry= nextInReadChain.register(bubbleObject);
         if (bubbleObject == entry.bubbleObject) {
             // Objektet er nytt eller har erstattet opprindelig objekt i cachen. Masker felter om nødvendig.

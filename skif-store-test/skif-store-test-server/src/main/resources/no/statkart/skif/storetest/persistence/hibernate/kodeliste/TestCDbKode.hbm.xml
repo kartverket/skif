@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.kodeliste.TestCDbKode" table="TestCKode">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.DbSubclassedKodeIdType">
+            <generator class="assigned"/>
+        </id>
+        <discriminator column="class" type="string"/>
+
+        <property name="kodeverdi"/>
+
+        <map name="lokalisertBeskrivelse" table="TestCKodeLoc">
+            <key column="id"/>
+            <map-key type="string" column="lokale"/>
+            <element column="beskrivelse" type="string"/>
+        </map>
+
+        <subclass name="no.statkart.skif.storetest.domain.kodeliste.TestC1DbKode"
+                  discriminator-value="TestC1DbKode" lazy="true">
+        </subclass>
+        <subclass name="no.statkart.skif.storetest.domain.kodeliste.TestC2DbKode"
+                  discriminator-value="TestC2DbKode" lazy="true">
+        </subclass>
+
+    </class>
+
+</hibernate-mapping>

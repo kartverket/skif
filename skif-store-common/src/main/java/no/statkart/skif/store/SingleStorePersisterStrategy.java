@@ -16,7 +16,7 @@ public class SingleStorePersisterStrategy implements StorePersisterStrategy {
     }
 
     @Override
-    public StorePersister getPersister(AbstractBubbleId bubbleId) {
+    public StorePersister getPersister(BubbleId bubbleId) {
         return persister;
     }
 }

@@ -15,4 +15,8 @@ class HibernateSessionManagerEntry {
     Session session;
     Transaction hibernateTransaction;
     boolean useLocalTransaction;
+
+    HibernateSessionManagerEntry(Object key) {
+        this.key = key;
+    }
 }

@@ -1,20 +1,28 @@
 package no.statkart.skif.store.module.server;
 
+import com.google.inject.Injector;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.ConfigurationConverter;
+import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.ConfigurationConstants;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
+import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.hibernate.*;
+import no.statkart.skif.storetest.TestHelper;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -48,28 +56,48 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         return ConfigurationConverter.getProperties(hibernateConfiguration);
     }
 
-    protected HibernateStoreSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
+    protected Map<Object, ConnectionFactory> createConnectionFactoryMap() {
+        Map<Object, ConnectionFactory> connectionFactoryMap = new HashMap<Object, ConnectionFactory>();
+        if  (moduleConfiguration.getServiceMode()== ServiceMode.SINGLE_VM) {
+            JDBCConnectionFactory connectionFactory = TestHelper.createJDBCConnectionFactory(moduleConfiguration.getConfiguration());
+            connectionFactoryMap.put(ReplicaVersion.CURRENT, connectionFactory);
+            connectionFactoryMap.put(ReplicaVersion.OLD, connectionFactory);
+        }  else {
+            connectionFactoryMap.put(ReplicaVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelBok_DS"));
+            connectionFactoryMap.put(ReplicaVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelOld_DS"));
+        }
+        return connectionFactoryMap;
+    }
+
+    protected StoreHibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
         Properties properties = getHibernateProperties();
         logger.trace("Properties used for configuring hibernate: '{}'", properties);
         String mappingFileDirectoryRoot = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.HIBERNATE_MAPPRING_FILE_ROOT, mappingFileDirectoryRootDefault);
-        return new HibernateStoreSessionFactoryBuilder(properties, mappingFileDirectoryRoot);
+        return new StoreHibernateSessionFactoryBuilder(properties, mappingFileDirectoryRoot);
     }
 
-    protected abstract void configureHibernate(HibernateStoreSessionFactoryBuilder facotryBuilderStore);
+    protected abstract void configureHibernate(StoreHibernateSessionFactoryBuilder facotryBuilderStore);
 
     @Override
     protected void configure() {
 
-        HibernateStoreSessionFactoryBuilder hibernateStoreSessionFactoryBuilder = createHibernateSessionFactoryBuilder();
+        StoreHibernateSessionFactoryBuilder hibernateStoreSessionFactoryBuilder = createHibernateSessionFactoryBuilder();
         // Alle requester skal dele samme factory builder og factory manager. Derfor brukes en singleton her
         configureHibernate(hibernateStoreSessionFactoryBuilder);
-        bind(HibernateStoreSessionFactoryBuilder.class).toInstance(hibernateStoreSessionFactoryBuilder);
-        bind(HibernateStoreSessionFactoryManager.class).in(Singleton.class);
+        bind(HibernateSessionFactoryBuilder.class).to(StoreHibernateSessionFactoryBuilder.class);
+        bind(StoreHibernateSessionFactoryBuilder.class).toInstance(hibernateStoreSessionFactoryBuilder);
 
         // Session managers kun skal deles per service request
-        bind(HibernateStoreSessionManagerOld.class).in(ServiceRequestScoped.class);
+        bind(new TypeLiteral<Map<Object, ConnectionFactory>>(){}).toInstance(createConnectionFactoryMap());
+        bind(ConnectionFactoryManager.class).to(ConnectionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
+        bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
+        bind(ConnectionManager.class).to(HibernateSessionManager.class);
+        bind(HibernateSessionManager.class).to(HibernateStoreSessionManager.class);
+
+        bind(HibernateStoreSessionManager.class).to(HibernateStoreSessionManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
         bind(HibernateStoreSession.class).toProvider(HibernateStoreSessionProvider.class).in(ServiceRequestScoped.class);
-        bind(Session.class).toProvider(HibernateSessionProvider.class).in(ServiceRequestScoped.class);
+
+        bind(Session.class).toProvider(HibernateSessionProviderCurrent.class).in(ServiceRequestScoped.class);
 
         // TODO ReplicaVersion skal erstattes med TimePoint som har tilsvarende funksjonalitet
 
@@ -77,9 +105,6 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         bind(ReplicaVersion.class).toInstance(ReplicaVersion.CURRENT);
 
 
-
     }
-
-
 
 }

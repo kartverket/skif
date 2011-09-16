@@ -29,7 +29,7 @@ public class DefaultStorePersisterStrategy implements StorePersisterStrategy {
      * Default behaviour is to return the firstly added persistor that is compatible with the parameterized id.
      */
     @Override
-    public StorePersister getPersister(AbstractBubbleId bubbleId) {
+    public StorePersister getPersister(BubbleId bubbleId) {
         Class persistorBaseClass = null;
         for (Class key : persisters.keySet()) {
             if (key != null && key.isAssignableFrom(bubbleId.getClass())) {

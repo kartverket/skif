@@ -107,6 +107,13 @@ public abstract class AbstractHibernateSessionManager<E extends HibernateSession
         return entry.connection;
     }
 
+
+    protected void getHibernateSessionEntry(E entry) throws SQLException {
+        if (entry.session == null) {
+            openHibernateSession(entry);
+        }
+    }
+
     @Override
     public Session getHibernateSession(Object key) throws SQLException {
         E entry = getEntry(key);

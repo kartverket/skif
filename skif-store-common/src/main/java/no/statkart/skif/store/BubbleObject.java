@@ -2,12 +2,76 @@ package no.statkart.skif.store;
 
 import java.io.Serializable;
 
+import static no.statkart.skif.guava.Preconditions.checkState;
+
 /**
  * @author Henrik Fredholm
  * @since 0.6
  */
-public interface BubbleObject extends Serializable {
-    public BubbleId<?> getId();
-    public void setId(BubbleId<?> id);
-    public Store store();
+public class BubbleObject implements BubbleObjectInterface, Serializable{
+    protected transient Store store;
+    protected BubbleId<?> id;
+    private long version = 0;
+
+    public BubbleObject(BubbleId<?> id) {
+        this.id = id;
+    }
+
+    public BubbleObject() {
+    }
+
+    public BubbleId<?> getId() {
+        return id;
+    }
+
+    public void setId(BubbleId<?> id ) {
+        this.id = id;
+    }
+
+    public void setId(BubbleIdInterface<?> id ) {
+        this.id = (BubbleId<?>) id;
+    }
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
+    public void incremetVersion() {
+        version++;
+    }
+
+
+    public void register(Store store) {
+        checkState(store!=null, "BubbleObject already registered with a session: {0}", this);
+        this.store = store;
+    }
+
+    public Store store() {
+        return store;
+    }
+
+
+    public final boolean equals(Object object) {
+       if( this == object ) return true;
+       if( object == null || !(object instanceof BubbleObject) ) return false;
+       if( !this.getClass().equals(object.getClass()) ) return false;
+       final BubbleObject bubbleObject = (BubbleObject) object;
+       if( this.getId() == null || bubbleObject.getId() == null ) return false;
+       return this.getId().equals(bubbleObject.getId());
+    }
+
+    public final int hashCode() {
+       return (getId() != null ? getId().hashCode() : 0);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() +"{" +
+                "id=" + id +
+                ", version=" + version +
+                '}';
+    }
 }
