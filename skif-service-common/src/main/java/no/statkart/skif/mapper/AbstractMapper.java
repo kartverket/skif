@@ -358,7 +358,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 throw new MappingException("TypeMapper[" + getClass().getName() + "] found " + candidates.size() + " mapper candidates for class " + mappableClass.getName());
             }
         }
-        if (candidates.size() == 1 || isMergeMapping()) {
+        if (candidates.size() == 1 || (isMergeMapping() && candidates.size() > 1)) {
             final TypeMapper<?, ?> candidate = findClosestTypeMapper(candidates, mappableClass, direction);
             if (logger.isDebugEnabled()) {
                 logger.debug("TypeMapper[" + getClass().getName() + "] has assigned mapping of class " + mappableClass + " to " + candidate);

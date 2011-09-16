@@ -42,4 +42,4 @@ insert into KodelisteLoc values(10002, 'n', 'Kodelistebeskrivelse for TestBKode 
 insert into KodelisteLoc values(10003, 'b', 'Kodelistebeskrivelse for TestC1Kode bokmål');
 insert into KodelisteLoc values(10003, 'n', 'Kodelistebeskrivelse for TestC1Kode nynorks');
 insert into KodelisteLoc values(10004, 'b', 'Kodelistebeskrivelse for TestC2Kode bokmål');
-insert into KodelisteLoc values(10005, 'n', 'Kodelistebeskrivelse for TestC2Kode nynorks');
+insert into KodelisteLoc values(10004, 'n', 'Kodelistebeskrivelse for TestC2Kode nynorks');
