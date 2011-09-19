@@ -1,8 +1,5 @@
 package no.statkart.skif.store.persistence;
 
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-
 import java.util.Collection;
 
 /**
@@ -13,7 +10,7 @@ import java.util.Collection;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public interface StoreSession<S, T extends BubbleObject, I extends BubbleId<? extends T>> {
+public interface StoreSession<S,T,I> {
     S getWrappedSession();
     T get(I bubbleId);
     Collection<? extends T> get(Collection <? extends I> bubbleIds);
