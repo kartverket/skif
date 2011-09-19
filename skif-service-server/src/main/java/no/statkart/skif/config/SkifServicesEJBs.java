@@ -8,7 +8,7 @@ import javax.ejb.EJBs;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 @EJBs({
         @EJB(name = "ejb/DBLockerServiceEJBBean", beanInterface = DBLockerService.class)
