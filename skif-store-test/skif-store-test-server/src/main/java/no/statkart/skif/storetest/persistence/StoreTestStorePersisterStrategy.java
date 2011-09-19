@@ -34,7 +34,7 @@ public class StoreTestStorePersisterStrategy implements StorePersisterStrategy {
         } else if(bubbleId instanceof BubbleKodelisteId) {
             return kodelistePersister;
         } else {
-            return persister2;
+            return persister1;
         }
     }
 }

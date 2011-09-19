@@ -5,6 +5,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.StorePersister;
 import no.statkart.skif.store.persistence.StoreSession;
 import org.hibernate.*;
 import org.hibernate.collection.PersistentCollection;
@@ -26,7 +27,7 @@ import java.util.*;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? extends T>> implements StoreSession<Session, T, I> {
+public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? extends T>> implements StoreSession<Session, T, I>, StorePersister<T, I> {
     private static int CRITERIA_BATCH_POWER = 9;
     private static final String ID_KOLONNE_NAVN = "id";
 
