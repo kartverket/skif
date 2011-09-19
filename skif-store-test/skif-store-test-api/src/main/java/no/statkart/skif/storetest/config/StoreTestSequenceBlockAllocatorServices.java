@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class StoreTestSequenceBlockAllocatorServices implements ServicesListing {
     private static final List<Class<?>> services;
