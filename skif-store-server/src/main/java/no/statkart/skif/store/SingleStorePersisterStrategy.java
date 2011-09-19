@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
 import com.google.inject.Inject;
+import no.statkart.skif.store.persistence.StoreSession;
 
 /**
  * Strategi som mapper alle bobleobjekter til samme persister
@@ -8,15 +9,15 @@ import com.google.inject.Inject;
  * @since 0.3
  */
 public class SingleStorePersisterStrategy implements StorePersisterStrategy {
-    final StorePersister persister;
+    final StoreSession persister;
 
     @Inject
-    public SingleStorePersisterStrategy(StorePersister persister) {
+    public SingleStorePersisterStrategy(StoreSession persister) {
         this.persister = persister;
     }
 
     @Override
-    public StorePersister getPersister(BubbleId bubbleId) {
+    public StoreSession getPersister(BubbleId bubbleId) {
         return persister;
     }
 }

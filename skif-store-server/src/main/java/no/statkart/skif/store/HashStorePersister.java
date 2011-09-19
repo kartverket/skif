@@ -8,17 +8,23 @@ import java.util.List;
 import java.util.ArrayList;
 
 import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.store.persistence.StoreSession;
 
 /**
  * HashMap basert Store som ikke er trådsikker.
  * @author Henrik Fredholm
  */
-public class HashStorePersister<T extends BubbleObject, I extends BubbleId<? extends T>> implements StorePersister<T, I> {
+public class HashStorePersister<T extends BubbleObject, I extends BubbleId<? extends T>> implements StoreSession<Map, T, I> {
     final private Map<I, T> storeMap;
 
     @Inject
     public HashStorePersister(Map<I, T> store) {
         this.storeMap = store;
+    }
+
+    @Override
+    public Map getWrappedSession() {
+        return storeMap;
     }
 
     public T get(I bubbleId) {

@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleKodelisteTransfer;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.StorePersister;
 import no.statkart.skif.store.kodelistesupport.*;
+import no.statkart.skif.store.persistence.StoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 
 import java.util.Collection;
@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public class BubbleKodelistePersister<T extends BubbleObject, I extends BubbleId<? extends T>> implements StorePersister<T, I> {
+public class BubbleKodelistePersister<T extends BubbleObject, I extends BubbleId<? extends T>> implements StoreSession<HibernateStoreSession, T, I> {
     private final HibernateStoreSession hibernateSessionWrapper;
     private final BubbleKodelisteManager kodelisteManager;
     private final DbBubbleKodelisteLoader dbKodelisteLoader;
@@ -34,6 +34,11 @@ public class BubbleKodelistePersister<T extends BubbleObject, I extends BubbleId
         this.hibernateSessionWrapper = hibernateSessionWrapper;
         this.kodelisteManager = kodelisteManager;
         this.dbKodelisteLoader = dbKodelisteLoader;
+    }
+
+    @Override
+    public HibernateStoreSession getWrappedSession() {
+        return hibernateSessionWrapper;
     }
 
     public T get(I bubbleId) {

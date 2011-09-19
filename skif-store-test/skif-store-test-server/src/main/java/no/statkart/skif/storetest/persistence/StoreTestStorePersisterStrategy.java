@@ -3,10 +3,10 @@ package no.statkart.skif.storetest.persistence;
 
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.HashStorePersister;
-import no.statkart.skif.store.StorePersister;
 import no.statkart.skif.store.StorePersisterStrategy;
 import no.statkart.skif.store.kodelistesupport.BubbleKodeId;
 import no.statkart.skif.store.kodelistesupport.BubbleKodelisteId;
+import no.statkart.skif.store.persistence.StoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 import no.statkart.skif.store.persistence.kodeliste.BubbleKodelistePersister;
 
@@ -28,7 +28,7 @@ public class StoreTestStorePersisterStrategy implements StorePersisterStrategy {
     }
 
     @Override
-    public StorePersister getPersister(BubbleId bubbleId) {
+    public StoreSession getPersister(BubbleId bubbleId) {
         if (bubbleId instanceof BubbleKodeId) {
             return kodelistePersister;
         } else if(bubbleId instanceof BubbleKodelisteId) {

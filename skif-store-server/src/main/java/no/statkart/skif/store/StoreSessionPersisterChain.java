@@ -1,12 +1,14 @@
 package no.statkart.skif.store;
 
 
+import no.statkart.skif.store.persistence.StoreSession;
+
 import java.util.*;
 
 /**
- * Avsluttende StoreSession-kjedeledd på server som henter og skriver objekter til underleggende {@link StorePersister}.
- * StoreSessionPersisterChain anvender et StorePersisterStrategy objekt til å velge hvilken StorePersister som skal brukes
- * for hver AbstractBubbleId. På den måte er det mulig å bruke flere StorePersister objekter samtidig.
+ * Avsluttende StoreSession-kjedeledd på server som henter og skriver objekter til underleggende {@link StoreSession}.
+ * StoreSessionPersisterChain anvender et StorePersisterStrategy objekt til å velge hvilken StoreSession som skal brukes
+ * for hver AbstractBubbleId. På den måte er det mulig å bruke flere StoreSession objekter samtidig.
  *
  * @author Henrik Fredholm
  * @since 0.3
@@ -44,17 +46,17 @@ public class StoreSessionPersisterChain implements StoreReadChain, StoreUpdateCh
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> get(I bubbleId) {
-        StorePersister<T, I> persister = persisterStrategy.getPersister(bubbleId);
+        StoreSession<?, T, I> persister = persisterStrategy.getPersister(bubbleId);
         T bubble = persister.get(bubbleId);
         return new StoreEntry<T>(bubble);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry<T>> get(Collection<I> bubbleIds) {
-        Map<StorePersister, List<BubbleId>> map = classifyIds(bubbleIds);
+        Map<StoreSession, List<BubbleId>> map = classifyIds(bubbleIds);
         List<StoreEntry<T>> result =  new ArrayList<StoreEntry<T>>(bubbleIds.size());
-        for (Map.Entry<StorePersister, List<BubbleId>> entry : map.entrySet()) {
-            StorePersister persister = entry.getKey();
+        for (Map.Entry<StoreSession, List<BubbleId>> entry : map.entrySet()) {
+            StoreSession persister = entry.getKey();
             Collection<T> objects = persister.get(entry.getValue());
             for (T object : objects) {
                 result.add(new StoreEntry<T>(object));
@@ -63,12 +65,12 @@ public class StoreSessionPersisterChain implements StoreReadChain, StoreUpdateCh
         return result;
     }
 
-    private Map<StorePersister, List<BubbleId>> classifyIds(Collection<? extends BubbleId> bubbleIds) {
+    private Map<StoreSession, List<BubbleId>> classifyIds(Collection<? extends BubbleId> bubbleIds) {
         Object lastClassifier = null;
         List<BubbleId> lastList = null;
-        Map<StorePersister, List<BubbleId>> map = new HashMap<StorePersister, List<BubbleId>>();
+        Map<StoreSession, List<BubbleId>> map = new HashMap<StoreSession, List<BubbleId>>();
         for (BubbleId bubbleId : bubbleIds) {
-            StorePersister persister = persisterStrategy.getPersister(bubbleId);
+            StoreSession persister = persisterStrategy.getPersister(bubbleId);
             if (lastClassifier != persister) {
                 lastClassifier = persister;
                 lastList = map.get(persister);
