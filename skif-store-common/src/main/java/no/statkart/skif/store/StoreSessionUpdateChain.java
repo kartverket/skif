@@ -5,7 +5,7 @@ import java.util.Collection;
 /**
  * @author Henrik Fredholm
  */
-public interface StoreSessionUpdateChain extends StoreSessionChain {
+public interface StoreSessionUpdateChain extends StoreChain {
     public StoreSessionUpdateChain setNextInWriteChain(StoreSessionUpdateChain next);
 
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> lock(I bubbleId);

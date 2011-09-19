@@ -3,20 +3,19 @@ package no.statkart.skif.storetest.service.store;
 import com.google.inject.Inject;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.StoreReadChain;
+import no.statkart.skif.store.StoreReadService;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.domain.TestBubbleId;
 
 import java.util.List;
 
 /**
  * @author Henrik Fredholm
  */
-public class StoreReadChainClient implements StoreReadChain {
+public class StoreReadServiceClient implements StoreReadService {
     final private StoreService storeService;
 
     @Inject
-    public StoreReadChainClient(StoreService storeService) {
+    public StoreReadServiceClient(StoreService storeService) {
         this.storeService = storeService;
     }
 

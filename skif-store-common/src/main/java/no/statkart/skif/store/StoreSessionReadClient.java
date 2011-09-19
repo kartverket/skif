@@ -8,11 +8,11 @@ import java.util.*;
  * @author Henrik Fredholm
  */
 public class StoreSessionReadClient implements StoreSessionReadChain {
-    final private StoreReadChain storeService;
+    final private StoreReadService storeService;
     private StoreCache storeCache;
 
     @Inject
-    public StoreSessionReadClient(StoreReadChain storeService) {
+    public StoreSessionReadClient(StoreReadService storeService) {
         this.storeService = storeService;
     }
 

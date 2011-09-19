@@ -3,7 +3,7 @@ package no.statkart.skif.store;
 /**
  * @author Henrik Fredholm
  */
-public interface UnitOfWorkChain extends StoreSessionChain {
+public interface UnitOfWorkChain extends StoreChain {
     public void startUnitOfWork();
 
     public UnitOfWorkTransfer getUnitOfWorkTransfer();

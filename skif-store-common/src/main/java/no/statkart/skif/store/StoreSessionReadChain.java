@@ -5,7 +5,7 @@ import java.util.Collection;
 /**
  * @author Henrik Fredholm
  */
-public interface StoreSessionReadChain extends StoreSessionChain {
+public interface StoreSessionReadChain extends StoreChain {
     public StoreSessionReadChain setNextInReadChain(StoreSessionReadChain next);
 
 

@@ -5,7 +5,7 @@ import java.util.Collection;
 /**
  * @author Henrik Fredholm
  */
-public abstract class AbstractStoreSessionReadChain extends AbstractStoreSessionChain implements StoreSessionReadChain {
+public abstract class AbstractStoreSessionReadChain extends AbstractStoreChain implements StoreSessionReadChain {
     protected StoreSessionReadChain nextInReadChain;
 
     @Override

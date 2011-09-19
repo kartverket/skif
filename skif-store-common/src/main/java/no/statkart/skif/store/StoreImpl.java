@@ -15,7 +15,7 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
  */
 public class StoreImpl implements Store {
     final protected StoreCache storeCache;
-    final protected StoreSessionChain[] storeChain;
+    final protected StoreChain[] storeChain;
     final protected StoreSessionReadChain readChain;
     final protected StoreSessionUpdateChain writeChain;
     final protected UnitOfWorkChain uowChain;
@@ -23,7 +23,7 @@ public class StoreImpl implements Store {
     @Inject
     private Injector injector;
 
-    public StoreImpl(StoreCache storeCache, StoreSessionChain... storeChain) {
+    public StoreImpl(StoreCache storeCache, StoreChain... storeChain) {
         this.storeCache = storeCache;
         this.storeChain = storeChain;
 
@@ -32,10 +32,10 @@ public class StoreImpl implements Store {
         this.uowChain = initUnitOfWorkChain(storeChain);
     }
 
-    private StoreSessionReadChain initReadChain(StoreSessionChain[] storeChainList) {
+    private StoreSessionReadChain initReadChain(StoreChain[] storeChainList) {
         StoreSessionReadChain root = null;
         StoreSessionReadChain currentRead = null;
-        for (StoreSessionChain chain : storeChainList) {
+        for (StoreChain chain : storeChainList) {
             if (chain instanceof StoreSessionReadChain) {
                 if (currentRead == null) {
                     currentRead = (StoreSessionReadChain) chain;
@@ -48,10 +48,10 @@ public class StoreImpl implements Store {
         return root;
     }
 
-    private StoreSessionUpdateChain initWriteChain(StoreSessionChain[] storeChainList) {
+    private StoreSessionUpdateChain initWriteChain(StoreChain[] storeChainList) {
         StoreSessionUpdateChain root = null;
         StoreSessionUpdateChain currentWrite = null;
-        for (StoreSessionChain chain : storeChainList) {
+        for (StoreChain chain : storeChainList) {
             if (chain instanceof StoreSessionUpdateChain) {
                 if (currentWrite == null) {
                     currentWrite = (StoreSessionUpdateChain) chain;
@@ -64,10 +64,10 @@ public class StoreImpl implements Store {
         return root;
     }
 
-    private UnitOfWorkChain initUnitOfWorkChain(StoreSessionChain[] storeChainList) {
+    private UnitOfWorkChain initUnitOfWorkChain(StoreChain[] storeChainList) {
         UnitOfWorkChain root = createNoUnitOfWorkConfiguredChain();
         UnitOfWorkChain currentRead = null;
-        for (StoreSessionChain chain : storeChainList) {
+        for (StoreChain chain : storeChainList) {
             if (chain instanceof UnitOfWorkChain) {
                 if (currentRead == null) {
                     currentRead = (UnitOfWorkChain) chain;
@@ -123,13 +123,13 @@ public class StoreImpl implements Store {
 
     public void init() {
         storeCache.init(this);
-        for (StoreSessionChain chain : storeChain) {
+        for (StoreChain chain : storeChain) {
             chain.init(storeCache);
         }
     }
 
     public void clear() {
-        for (StoreSessionChain chain : storeChain) {
+        for (StoreChain chain : storeChain) {
             chain.clear();
         }
         storeCache.clear();

@@ -13,7 +13,7 @@ import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.config.StoreTestGroup1Services;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.config.StoreTestStoreServices;
-import no.statkart.skif.storetest.service.store.StoreReadChainClient;
+import no.statkart.skif.storetest.service.store.StoreReadServiceClient;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.impl.mapping.StoreTestExceptionMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
@@ -47,16 +47,16 @@ public class StoreTestTestCase extends SkifTestCase {
                     .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
                     .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
             );
-            bind(StoreReadChain.class).to(StoreReadChainClient.class);
+            bind(StoreReadService.class).to(StoreReadServiceClient.class);
 
 
         }
 
         @Provides
         @Singleton
-        Store storeProvider(StoreReadChain storeReadChain, Injector injector) {
+        Store storeProvider(StoreReadService storeReadChain, Injector injector) {
             StoreCache storeCache = new StoreCache();
-            StoreSessionChain[] storeChainList = {
+            StoreChain[] storeChainList = {
                     new StoreSessionReadClient(storeReadChain)
             };
             StoreClient store = new StoreClient(storeCache, storeChainList);

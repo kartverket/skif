@@ -9,14 +9,14 @@ import java.util.ArrayList;
 public class StoreServer extends StoreImpl{
     final protected ServiceLifecycleStoreChain[] serviceLifecycleChain;
 
-    public StoreServer(StoreCache storeCache, StoreSessionChain... storeChainList) {
+    public StoreServer(StoreCache storeCache, StoreChain... storeChainList) {
         super( storeCache, storeChainList);
         this.serviceLifecycleChain = initServicelifecycleChain(storeChainList);
     }
 
-    private ServiceLifecycleStoreChain[] initServicelifecycleChain(StoreSessionChain[] storeChainList) {
+    private ServiceLifecycleStoreChain[] initServicelifecycleChain(StoreChain[] storeChainList) {
         List<ServiceLifecycleStoreChain> result = new ArrayList<ServiceLifecycleStoreChain>(storeChainList.length);
-        for (StoreSessionChain chain : storeChainList) {
+        for (StoreChain chain : storeChainList) {
             if (chain instanceof ServiceLifecycleStoreChain) {
                 result.add((ServiceLifecycleStoreChain)chain);
             }

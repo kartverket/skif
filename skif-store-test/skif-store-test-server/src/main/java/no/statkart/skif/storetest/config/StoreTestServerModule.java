@@ -107,7 +107,7 @@ public class StoreTestServerModule extends SkifModule {
         };
 
         StoreCache storeCache = new StoreCache();
-        StoreSessionChain[] storeChainList = {
+        StoreChain[] storeChainList = {
                 authorizerChain,
                 new StoreSessionCacheChain(),
                 new StoreSessionPersisterChain(storePersisterStrategy, null)
