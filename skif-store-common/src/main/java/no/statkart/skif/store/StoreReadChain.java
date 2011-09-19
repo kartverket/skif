@@ -5,8 +5,8 @@ import java.util.Collection;
 /**
  * @author Henrik Fredholm
  */
-public interface StoreSessionReadChain extends StoreChain {
-    public StoreSessionReadChain setNextInReadChain(StoreSessionReadChain next);
+public interface StoreReadChain extends StoreChain {
+    public StoreReadChain setNextInReadChain(StoreReadChain next);
 
 
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> get(I bubbleId);

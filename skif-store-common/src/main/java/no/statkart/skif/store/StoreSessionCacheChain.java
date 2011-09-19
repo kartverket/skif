@@ -10,10 +10,10 @@ import java.util.Collections;
  *
  * @author Henrik Fredholm
  */
-public class StoreSessionCacheChain implements StoreSessionReadChain, StoreSessionUpdateChain {
+public class StoreSessionCacheChain implements StoreReadChain, StoreUpdateChain {
     protected StoreCache storeCache;
-    protected StoreSessionReadChain nextInReadChain;
-    protected StoreSessionUpdateChain nextInWriteChain;
+    protected StoreReadChain nextInReadChain;
+    protected StoreUpdateChain nextInWriteChain;
     private Store store;
     @Override
     public void clear() {
@@ -27,13 +27,13 @@ public class StoreSessionCacheChain implements StoreSessionReadChain, StoreSessi
     }
 
     @Override
-    public StoreSessionReadChain setNextInReadChain(StoreSessionReadChain next) {
+    public StoreReadChain setNextInReadChain(StoreReadChain next) {
         this.nextInReadChain = next;
         return next;
     }
 
     @Override
-    public StoreSessionUpdateChain setNextInWriteChain(StoreSessionUpdateChain next) {
+    public StoreUpdateChain setNextInWriteChain(StoreUpdateChain next) {
         this.nextInWriteChain = next;
         return next;
     }

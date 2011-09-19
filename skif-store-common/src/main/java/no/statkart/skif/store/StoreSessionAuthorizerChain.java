@@ -6,7 +6,7 @@ package no.statkart.skif.store;
  * @author Henrik Fredholm
  * @since 0.3
  */
-public interface StoreSessionAuthorizerChain extends StoreSessionReadChain {
+public interface StoreSessionAuthorizerChain extends StoreReadChain {
     /**
      * Gjør felter som brukeren ikke har adgang til å se uleselige ved å fjerne deler eller hele feltet. Dersom
      * det er nødvendig å maskere et fellt må metoden lage en kopi av bobleobjektet først, endre dette og sette

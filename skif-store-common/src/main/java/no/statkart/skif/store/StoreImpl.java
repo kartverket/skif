@@ -16,8 +16,8 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
 public class StoreImpl implements Store {
     final protected StoreCache storeCache;
     final protected StoreChain[] storeChain;
-    final protected StoreSessionReadChain readChain;
-    final protected StoreSessionUpdateChain writeChain;
+    final protected StoreReadChain readChain;
+    final protected StoreUpdateChain writeChain;
     final protected UnitOfWorkChain uowChain;
 
     @Inject
@@ -32,32 +32,32 @@ public class StoreImpl implements Store {
         this.uowChain = initUnitOfWorkChain(storeChain);
     }
 
-    private StoreSessionReadChain initReadChain(StoreChain[] storeChainList) {
-        StoreSessionReadChain root = null;
-        StoreSessionReadChain currentRead = null;
+    private StoreReadChain initReadChain(StoreChain[] storeChainList) {
+        StoreReadChain root = null;
+        StoreReadChain currentRead = null;
         for (StoreChain chain : storeChainList) {
-            if (chain instanceof StoreSessionReadChain) {
+            if (chain instanceof StoreReadChain) {
                 if (currentRead == null) {
-                    currentRead = (StoreSessionReadChain) chain;
+                    currentRead = (StoreReadChain) chain;
                     root = currentRead;
                 } else {
-                    currentRead = currentRead.setNextInReadChain((StoreSessionReadChain) chain);
+                    currentRead = currentRead.setNextInReadChain((StoreReadChain) chain);
                 }
             }
         }
         return root;
     }
 
-    private StoreSessionUpdateChain initWriteChain(StoreChain[] storeChainList) {
-        StoreSessionUpdateChain root = null;
-        StoreSessionUpdateChain currentWrite = null;
+    private StoreUpdateChain initWriteChain(StoreChain[] storeChainList) {
+        StoreUpdateChain root = null;
+        StoreUpdateChain currentWrite = null;
         for (StoreChain chain : storeChainList) {
-            if (chain instanceof StoreSessionUpdateChain) {
+            if (chain instanceof StoreUpdateChain) {
                 if (currentWrite == null) {
-                    currentWrite = (StoreSessionUpdateChain) chain;
+                    currentWrite = (StoreUpdateChain) chain;
                     root = currentWrite;
                 } else {
-                    currentWrite = currentWrite.setNextInWriteChain((StoreSessionUpdateChain) chain);
+                    currentWrite = currentWrite.setNextInWriteChain((StoreUpdateChain) chain);
                 }
             }
         }

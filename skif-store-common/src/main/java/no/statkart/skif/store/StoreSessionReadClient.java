@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * @author Henrik Fredholm
  */
-public class StoreSessionReadClient implements StoreSessionReadChain {
+public class StoreSessionReadClient implements StoreReadChain {
     final private StoreReadService storeService;
     private StoreCache storeCache;
 
@@ -26,7 +26,7 @@ public class StoreSessionReadClient implements StoreSessionReadChain {
     }
 
     @Override
-    public StoreSessionReadChain setNextInReadChain(StoreSessionReadChain next) {
+    public StoreReadChain setNextInReadChain(StoreReadChain next) {
         throw new UnsupportedOperationException();
     }
 
