@@ -26,8 +26,6 @@ evaluationOrder 'skif-store-test:skif-store-test-test'
 evaluationOrder 'skif-store-test:skif-store-test-ear'
 
 
-import org.apache.tools.ant.filters.ReplaceTokens
-
 apply plugin: 'idea'
 
 
@@ -270,7 +268,7 @@ subprojects { Project project ->
                         copy {
                             from(unfilteredPropertiesDir)
                             into(filteredResourcesDir)
-                            filter(ReplaceTokens, tokens: filterProperties)
+                            filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: filterProperties)
                         }
                         ant.touch() { fileset(dir: filteredResourcesDir)}
                     }
@@ -278,13 +276,17 @@ subprojects { Project project ->
                 project.sourceSets."$scope".resources.srcDir filteredResourcesDir
                 project.processResources.dependsOn "filterResources$scope"
 
-                //Source is in the build directory so we need to unexclude it
-                project.idea.module.iml {
-                    whenMerged {
-                        it.excludeFolders = it.excludeFolders.findAll {!it.url.contains("build")}
-                    }
-                }
+
+		//Source is in the build directory so we need to unexclude it
+		idea.module {
+		    iml {
+			whenMerged {
+			    it.excludeFolders = it.excludeFolders.findAll {println it; !it.url.contains("build")}
+			}
+		    }
+		}
             }
+            
         }
 
         test {
