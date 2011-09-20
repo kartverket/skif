@@ -214,6 +214,12 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         }
     }
 
+    @Override
+    public LockInfo<Long> getLock(LockKey<Long> lockKey) {
+        Connection con = connectionProvider.get();
+        return getLock(con, lockKey);
+    }
+
     /**
      * Beregner utløpstidspunkt for lås. Tar hensyn til tidsforskjell mellom server og database slik at lockTimeout
      * justeres dersom appserveren har en klokke som er tidligere enn databasens. Motsatt vei gjøres ingen justering.

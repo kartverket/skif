@@ -54,8 +54,8 @@ public class LockInfo<T> {
         this.owner = owner;
     }
 
-    public boolean isOwnedBy(String key) {
-        return this.owner.equals(key);
+    public boolean isOwnedBy(String owner) {
+        return this.owner.equals(owner);
     }
 
     public boolean expired() {

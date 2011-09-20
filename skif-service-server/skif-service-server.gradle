@@ -1,5 +1,9 @@
 apply plugin: 'maven'
 
+configurations {
+    tests
+}
+
 dependencies {
     compile project(':skif-service-common')
     provided libraries.weblogic
@@ -16,6 +20,13 @@ task sourcesJar(type: Jar, dependsOn:classes) {
     onlyIf { gradle.taskGraph.hasTask(install) || gradle.taskGraph.hasTask(uploadArchives) } //only when published..
 }
 
+task testJar(type: Jar) {
+    classifier = 'tests'
+    from sourceSets.test.classes
+}
+
+
 artifacts {
+    tests testJar
     archives sourcesJar
 }

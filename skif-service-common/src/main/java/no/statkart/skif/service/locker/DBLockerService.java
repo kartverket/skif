@@ -11,7 +11,7 @@ import java.util.Set;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public interface DBLockerService<Long> {
+public interface DBLockerService<T> {
 
     /**
      * Låser boble hørende til angitt bobleid med utløp etter lockTimeout millisekunder. Hvis boblen allerede er låst av
@@ -25,7 +25,7 @@ public interface DBLockerService<Long> {
      * @return LockInfo for låsen
      * @throws LockedException hvis boblen er låst av anden bruker
      */
-    LockInfo<Long> lock(LockKey<Long> lockKey, String owner, long lockTimeout) throws LockedException;
+    LockInfo<T> lock(LockKey<T> lockKey, String owner, long lockTimeout) throws LockedException;
 
     /**
      * Låser alle bobler hørende til angitte bobleider med utløp etter lockTimeout millisekunder. Låser enten alle bobler
@@ -36,7 +36,7 @@ public interface DBLockerService<Long> {
      * @param lockTimeout utløpstid i millisekunder  @return informasjon om låsene, bl.a om kalder hadde låsen fra før
      * @throws LockedException hvis en eller flere bobler er låst av anden bruker
      */
-    Set<LockInfo<Long>> lockAll(Set<LockKey<Long>> lockKeys, String owner, long lockTimeout) throws LockedException;
+    Set<LockInfo<T>> lockAll(Set<LockKey<T>> lockKeys, String owner, long lockTimeout) throws LockedException;
 
     /**
      * Låse opp boble med angitt lockKey. Har ingen effekt hvis kalder ikke har låsen (låsen kunne være løpet ut på tid)
@@ -44,7 +44,7 @@ public interface DBLockerService<Long> {
      * @param lockKey lockKey for boble som skal låses
      * @param owner
      */
-    void unlock(LockKey<Long> lockKey, String owner);
+    void unlock(LockKey<T> lockKey, String owner);
 
     /**
      * Låse opp alle bobler med angitt ider. Har ingen effekt hvis kalder ikke har låsen (låsen kunne være løpet ut på
@@ -53,14 +53,14 @@ public interface DBLockerService<Long> {
      * @param unLockKeys
      * @param owner
      */
-    void unlockAll(Set<LockKey<Long>> unLockKeys, String owner);
+    void unlockAll(Set<LockKey<T>> unLockKeys, String owner);
 
     /**
      * Returnere alle låsene for kalder
      *
      * @param owner@return alle låsene for kalder
      */
-    Collection<LockInfo<Long>> getLocksBy(String owner);
+    Collection<LockInfo<T>> getLocksBy(String owner);
 
     /**
      * Frigir alle låse for kalder
@@ -77,5 +77,12 @@ public interface DBLockerService<Long> {
      * @param lockTimeout utløpstid i millisekunder
      * @return informasjon om alle lås for kalder
      */
-    Collection<LockInfo<Long>> renewAllLocks(String owner, long lockTimeout);
+    Collection<LockInfo<T>> renewAllLocks(String owner, long lockTimeout);
+
+    /**
+     * Finner lås for lockKey dersom elementet er låst.
+     * @param lockKey LockKey for element vi ønsker å søke på
+     * @return LockInfo<T> for lockKey dersom denne finnes, null ellers
+     */
+    LockInfo<T> getLock(LockKey<T> lockKey);
 }
