@@ -6,6 +6,7 @@ import no.statkart.skif.store2.BubbleObject2;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 /**
+ * Alle bobler (inkl koder) i StoreTest applikasjonen implementerer dette interfacet
  * @author Henrik Fredholm
  * @since 2.0
  */

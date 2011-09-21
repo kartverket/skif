@@ -6,6 +6,7 @@ import no.statkart.skif.store2.BubbleId2;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 /**
+ * Alle bobleid'er (inkl kodeid'er implementerer dette interfacet
  * @author Henrik Fredholm
  * @since 2.0
  */

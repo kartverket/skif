@@ -79,7 +79,7 @@ public abstract class AbstractBubbleId2<T extends BubbleObject2> implements Bubb
         }
     }
 
-    public AbstractBubbleId2<T> resolveInstance() {
+    public BubbleId2<T> resolveInstance() {
         return this;
     }
 
@@ -243,10 +243,26 @@ public abstract class AbstractBubbleId2<T extends BubbleObject2> implements Bubb
         String className = null;
         try {
             className = clazz.getName();
+            // TODO: temp fix XIdImpl2 -> XImpl2, i stedet for XId -> X
+            if (className.endsWith("IdImpl2")) {
+                int cutIndex = className.length() - 7;
+                int dollarIndex = className.lastIndexOf("$"); // For inner classes
+                if (dollarIndex > 0) cutIndex = dollarIndex;
+                className = className.substring(0, cutIndex) + "Impl2";
+
+            } else {
+                int cutIndex = className.length() - 3;
+                int dollarIndex = className.lastIndexOf("$"); // For inner classes
+                if (dollarIndex > 0) cutIndex = dollarIndex;
+                className = className.substring(0, cutIndex) + "2";
+            }
+
+/*
             int cutIndex = className.length() - 2;
             int dollarIndex = className.lastIndexOf("$"); // For inner classes
             if (dollarIndex > 0) cutIndex = dollarIndex;
             className = className.substring(0, cutIndex);
+*/
             type = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
             return type;
         } catch (ClassNotFoundException e) {
@@ -312,11 +328,26 @@ public abstract class AbstractBubbleId2<T extends BubbleObject2> implements Bubb
         String className = null;
         try {
             className = c.getName();
+
+            // TODO: temp fix XIdImpl2 -> XImpl2, i stedet for XId -> X
+            if (className.endsWith("IdImpl2")) {
+                int cutIndex = className.length() - 7;
+                int dollarIndex = className.lastIndexOf("$"); // For inner classes
+                if (dollarIndex > 0) cutIndex = dollarIndex;
+                className = className.substring(0, cutIndex) + "Impl2";
+
+            } else {
+                int cutIndex = className.length() - 3;
+                int dollarIndex = className.lastIndexOf("$"); // For inner classes
+                if (dollarIndex > 0) cutIndex = dollarIndex;
+                className = className.substring(0, cutIndex) + "2";
+            }
+/*
             int cutIndex = className.length() - 2;
             int dollarIndex = className.lastIndexOf("$"); // For inner classes
             if (dollarIndex > 0) cutIndex = dollarIndex;
             className = className.substring(0, cutIndex);
-
+  */
             baseType = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
         } catch (ClassNotFoundException e) {
             throw new ConfigurationException("Could not load base class " + className + " derived from " + this, e);
