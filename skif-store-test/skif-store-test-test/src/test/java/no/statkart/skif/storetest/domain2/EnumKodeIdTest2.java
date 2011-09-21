@@ -2,8 +2,8 @@ package no.statkart.skif.storetest.domain2;
 
 
 import no.statkart.skif.store2.BubbleIds2;
-import no.statkart.skif.store2.kodelistesupport2.EnumKodeId2;
-import no.statkart.skif.store2.kodelistesupport2.KodeId2;
+import no.statkart.skif.store2.kodelistesupport2.EnumKodeIdImpl2;
+import no.statkart.skif.store2.kodelistesupport2.KodeIdImpl2;
 import no.statkart.skif.storetest.domain.kodeliste.KodeId;
 import no.statkart.skif.storetest.domain.kodeliste.TestAEnumKodeId;
 import no.statkart.skif.util.CopyHelper;
@@ -30,10 +30,10 @@ public class EnumKodeIdTest2 {
         TestAEnumKodeId2 id = TestAEnumKodeId2.createInstance(kodeAId.getValue());
         assertSame(kodeAId, id);
 
-        TestAEnumKodeId2 id1 = EnumKodeId2.createInstance(TestAEnumKodeId2.class, kodeAId.getValue());
+        TestAEnumKodeId2 id1 = EnumKodeIdImpl2.createInstance(TestAEnumKodeId2.class, kodeAId.getValue());
         assertSame(kodeAId, id1);
 
-        TestAEnumKodeId2 id2 = KodeId2.createInstance(TestAEnumKodeId2.class, kodeAId.getValue());
+        TestAEnumKodeId2 id2 = KodeIdImpl2.createInstance(TestAEnumKodeId2.class, kodeAId.getValue());
         assertSame(kodeAId, id2);
 
         TestAEnumKodeId2 id3 = BubbleIds2.createInstance(TestAEnumKodeId2.class, kodeAId.getValue());

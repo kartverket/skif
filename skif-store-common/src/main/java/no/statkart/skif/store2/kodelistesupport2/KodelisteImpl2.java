@@ -13,7 +13,7 @@ public class KodelisteImpl2 extends AbstractBubbleObject2 implements Kodeliste2 
     private Class<? extends BubbleKodeId2<?>> kodeIdClass;
     private String navn;
     private String beskrivelse;
-    private List<KodeId2<?>> kodeIds = new ArrayList<KodeId2<?>>();
+    private List<KodeIdImpl2<?>> kodeIds = new ArrayList<KodeIdImpl2<?>>();
 
     public String getNavn() {
         return navn;
@@ -39,7 +39,7 @@ public class KodelisteImpl2 extends AbstractBubbleObject2 implements Kodeliste2 
     }
 
     @Override
-    public List<KodeId2<?>> getKodeIds() {
+    public List<KodeIdImpl2<?>> getKodeIds() {
         return kodeIds;
     }
 
@@ -49,7 +49,7 @@ public class KodelisteImpl2 extends AbstractBubbleObject2 implements Kodeliste2 
     }
 
     @Override
-    public List<? extends Kode2> getKoder() {
+    public List<? extends KodeImpl2> getKoder() {
         return null; //store.get(kodeIds);
     }
 

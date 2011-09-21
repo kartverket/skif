@@ -4,12 +4,12 @@ package no.statkart.skif.store2.kodelistesupport2;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class EnumKode2 extends Kode2 implements BubbleEnumKode2 {
+public abstract class EnumKodeImpl2 extends KodeImpl2 implements BubbleEnumKode2 {
     private String beskrivelsesKey;
 
     @Override
-    public EnumKodeId2<?> getId() {
-        return (EnumKodeId2<?>) super.getId();
+    public EnumKodeIdImpl2<?> getId() {
+        return (EnumKodeIdImpl2<?>) super.getId();
     }
 
     @Override

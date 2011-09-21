@@ -10,17 +10,17 @@ import java.lang.reflect.Field;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public abstract class KodeId2<T extends Kode2> extends AbstractBubbleId2<T> implements BubbleKodeId2<T> {
+public abstract class KodeIdImpl2<T extends KodeImpl2> extends AbstractBubbleId2<T> implements BubbleKodeId2<T> {
 
-    public static <I extends KodeId2<?>> I createInstance(Class<I> idClass, long idValue) {
+    public static <I extends KodeIdImpl2<?>> I createInstance(Class<I> idClass, long idValue) {
         return (I) getKodeSupport(idClass).createInstance(idClass, idValue, ReplicaVersion.CURRENT);
     }
 
-    public static <I extends KodeId2<?>> KodelisteIdImpl2 getKodelisteId(Class<I> idClass) {
+    public static <I extends KodeIdImpl2<?>> KodelisteIdImpl2 getKodelisteId(Class<I> idClass) {
         return (KodelisteIdImpl2) getKodeSupport(idClass).getKodelisteId();
     }
 
-    protected static <I extends KodeId2<?>> BubbleKodeSupport2 getKodeSupport(Class<I> idClass) {
+    protected static <I extends KodeIdImpl2<?>> BubbleKodeSupport2 getKodeSupport(Class<I> idClass) {
         try {
             Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
             kodeSupportField.setAccessible(true);
@@ -34,7 +34,7 @@ public abstract class KodeId2<T extends Kode2> extends AbstractBubbleId2<T> impl
     }
 
 
-    protected KodeId2(Long value, ReplicaVersion replicaVersion) {
+    protected KodeIdImpl2(Long value, ReplicaVersion replicaVersion) {
         super(value, replicaVersion);
     }
 
