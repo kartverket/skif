@@ -34,7 +34,7 @@ public class KodeSupportTest2 {
         }
     }
 
-    public static class TestKodeSupport2 extends KodeSupport2 {
+    public static class TestKodeSupport2 extends KodeSupportHelper2 {
         public TestKodeSupport2(Class<? extends KodeIdImpl2<?>> idClass, KodelisteIdImpl2 kodelisteId) {
             super(idClass, kodelisteId);
         }
@@ -49,14 +49,14 @@ public class KodeSupportTest2 {
         }
     }
     public void testKodeListeid() {
-        KodeSupport2 kodeSupport = new TestKodeSupport2(null, new KodelisteIdImpl2(5));
+        KodeSupportHelper2 kodeSupport = new TestKodeSupport2(null, new KodelisteIdImpl2(5));
         KodelisteId2 id = kodeSupport.getKodelisteId();
         assertNotNull(id);
         assertEquals(id.getValue(), new Long(5));
     }
 
     public void testCreateKodeId() {
-        KodeSupport2 kodeSupport = new TestKodeSupport2(null, new KodelisteIdImpl2(5));
+        KodeSupportHelper2 kodeSupport = new TestKodeSupport2(null, new KodelisteIdImpl2(5));
         KodeIdImpl2<KodeImpl2> id = kodeSupport.getInstance(new Long(1), ReplicaVersion.CURRENT);
         assertNull(id);
 
@@ -70,7 +70,7 @@ public class KodeSupportTest2 {
     }
 
     public void testNewKodeNotAllowed() {
-        KodeSupport2 kodeSupport = new TestKodeSupport2(null, new KodelisteIdImpl2(5));
+        KodeSupportHelper2 kodeSupport = new TestKodeSupport2(null, new KodelisteIdImpl2(5));
         TestEnumKodeId2 id1 = new TestEnumKodeId2(1, ReplicaVersion.CURRENT);
 
         KodeIdImpl2<EnumKodeImpl2> kodeId1 = kodeSupport.getOrCreateInstance(id1);
@@ -105,5 +105,12 @@ public class KodeSupportTest2 {
             fail("Expected exception");
         } catch (ImplementationException e) {
         }
+    }
+}
+
+
+abstract class KodeSupportHelper2 extends BubbleKodeSupport2<Kodeliste2, KodelisteId2<Kodeliste2>> {
+    public KodeSupportHelper2(Class<? extends KodeIdImpl2<?>> idClass, KodelisteIdImpl2 kodelisteId) {
+        super(idClass, kodelisteId);
     }
 }
