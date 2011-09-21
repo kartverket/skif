@@ -7,7 +7,7 @@ import no.statkart.skif.store2.BubbleId2;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public interface BubbleKodeId2<T extends BubbleKode2> extends BubbleId2<T> {
+public interface KodeId2<T extends Kode2> extends BubbleId2<T> {
     public Object getValue();
     public ReplicaVersion getReplicaVersion();
     public KodelisteId2 getKodelisteId();

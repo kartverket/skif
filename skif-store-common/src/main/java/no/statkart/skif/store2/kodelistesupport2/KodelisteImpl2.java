@@ -10,7 +10,7 @@ import java.util.List;
  * @since 0.6
  */
 public class KodelisteImpl2 extends AbstractBubbleObject2 implements Kodeliste2 {
-    private Class<? extends BubbleKodeId2<?>> kodeIdClass;
+    private Class<? extends KodeId2<?>> kodeIdClass;
     private String navn;
     private String beskrivelse;
     private List<KodeIdImpl2<?>> kodeIds = new ArrayList<KodeIdImpl2<?>>();
@@ -29,12 +29,12 @@ public class KodelisteImpl2 extends AbstractBubbleObject2 implements Kodeliste2 
     }
 
     @Override
-    public Class<? extends BubbleKodeId2<?>> getKodeIdClass() {
+    public Class<? extends KodeId2<?>> getKodeIdClass() {
         return kodeIdClass;
     }
 
     @Override
-    public void setKodeIdClass(Class<? extends BubbleKodeId2<?>> kodeIdClass) {
+    public void setKodeIdClass(Class<? extends KodeId2<?>> kodeIdClass) {
         this.kodeIdClass = kodeIdClass;
     }
 
@@ -44,7 +44,7 @@ public class KodelisteImpl2 extends AbstractBubbleObject2 implements Kodeliste2 
     }
 
     @Override
-    public void setKodeIds(List<? extends BubbleKodeId2<?>> kodeIds) {
+    public void setKodeIds(List<? extends KodeId2<?>> kodeIds) {
         this.kodeIds = (List)kodeIds;
     }
 

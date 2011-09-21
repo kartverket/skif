@@ -29,7 +29,7 @@ public class KodeSupportTest2 {
         }
 
         @Override
-        protected EnumKodeSupport2 getKodeSupport() {
+        protected EnumKodeSupportHelper2 getKodeSupport() {
             return null;
         }
     }
@@ -40,7 +40,7 @@ public class KodeSupportTest2 {
         }
 
         @Override
-        protected <T extends BubbleKode2> String getBeskrivelse(T kode, Locale locale) {
+        protected <T extends Kode2> String getBeskrivelse(T kode, Locale locale) {
             return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
         @Override

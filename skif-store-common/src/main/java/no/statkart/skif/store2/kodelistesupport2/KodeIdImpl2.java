@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public abstract class KodeIdImpl2<T extends KodeImpl2> extends AbstractBubbleId2<T> implements BubbleKodeId2<T> {
+public abstract class KodeIdImpl2<T extends KodeImpl2> extends AbstractBubbleId2<T> implements KodeId2<T> {
 
     public static <I extends KodeIdImpl2<?>> I createInstance(Class<I> idClass, long idValue) {
         return (I) getKodeSupport(idClass).createInstance(idClass, idValue, ReplicaVersion.CURRENT);
@@ -55,7 +55,7 @@ public abstract class KodeIdImpl2<T extends KodeImpl2> extends AbstractBubbleId2
     }
 
     @Override
-    public BubbleKodeId2<T> resolveInstance() {
+    public KodeId2<T> resolveInstance() {
         return getKodeSupport().getOrCreateInstance(this);
     }
 

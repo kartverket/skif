@@ -14,7 +14,7 @@ import static org.testng.Assert.assertNotNull;
 public class EnumKodeSupportTest2 {
 
     public void testCreate() {
-        EnumKodeSupport2 kodeSupport = new EnumKodeSupport2(null, 5, "Test");
+        EnumKodeSupportHelper2 kodeSupport = new EnumKodeSupportHelper2(null, 5, "Test");
         KodelisteId2 id = kodeSupport.getKodelisteId();
         assertNotNull(id);
         assertEquals(id.getValue(), new Long(5));
@@ -25,7 +25,7 @@ public class EnumKodeSupportTest2 {
     }
 
     public void testAdd() {
-        EnumKodeSupport2 kodeSupport = new EnumKodeSupport2(null, 5, "Test");
+        EnumKodeSupportHelper2 kodeSupport = new EnumKodeSupportHelper2(null, 5, "Test");
         KodelisteId2 id = kodeSupport.getKodelisteId();
         assertNotNull(id);
         assertEquals(id.getValue(), new Long(5));
@@ -35,4 +35,11 @@ public class EnumKodeSupportTest2 {
         assertEquals(kodeliste.getNavn(), "Test");
     }
 
+}
+
+// Hjelperklasse for ikke å skulle skrive så mye
+final class EnumKodeSupportHelper2 extends BubbleEnumKodeSupport2<EnumKodeliste2, EnumKodelisteId2<EnumKodeliste2>> {
+    public EnumKodeSupportHelper2(Class<? extends EnumKodeIdImpl2<?>> idClass, long kodelisteIdValue, String kodelisteNavn) {
+        super(idClass, new EnumKodelisteIdImpl2(kodelisteIdValue), kodelisteNavn);
+    }
 }

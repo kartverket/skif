@@ -14,13 +14,13 @@ import java.util.Locale;
  */
 public abstract class BubbleKodeSupport2<KL extends Kodeliste2, KLID extends KodelisteId2<KL>> {
     private final KLID kodelisteId;
-    private final Class<? extends BubbleKodeId2<?>> kodeIdClass;
+    private final Class<? extends KodeId2<?>> kodeIdClass;
 
-    public Class<? extends BubbleKodeId2<?>> getKodeIdClass() {
+    public Class<? extends KodeId2<?>> getKodeIdClass() {
         return kodeIdClass;
     }
 
-    public static <I extends BubbleKodeId2<?>> BubbleKodeSupport2 getKodeSupport(Class<I> idClass) {
+    public static <I extends KodeId2<?>> BubbleKodeSupport2 getKodeSupport(Class<I> idClass) {
         try {
             Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
             kodeSupportField.setAccessible(true);
@@ -36,7 +36,7 @@ public abstract class BubbleKodeSupport2<KL extends Kodeliste2, KLID extends Kod
 
     private final BubbleKodeIdResolver2 kodeIdResolver = new BubbleKodeIdResolver2();
 
-    public BubbleKodeSupport2(Class<? extends BubbleKodeId2<?>> idClass, KLID kodelisteId) {
+    public BubbleKodeSupport2(Class<? extends KodeId2<?>> idClass, KLID kodelisteId) {
         this.kodelisteId = kodelisteId;
         this.kodeIdClass = idClass;
         if (idClass != null) {
@@ -45,7 +45,7 @@ public abstract class BubbleKodeSupport2<KL extends Kodeliste2, KLID extends Kod
         }
     }
 
-    private void checkForKodeSupportStaticFiledDeclaration(Class<? extends BubbleKodeId2<?>> idClass) {
+    private void checkForKodeSupportStaticFiledDeclaration(Class<? extends KodeId2<?>> idClass) {
         try {
             idClass.getDeclaredField("kodeSupport");
         } catch (NoSuchFieldException e) {
@@ -53,7 +53,7 @@ public abstract class BubbleKodeSupport2<KL extends Kodeliste2, KLID extends Kod
         }
     }
 
-    private void checkForResolveObjectMethodDeclaration(Class<? extends BubbleKodeId2<?>> idClass) {
+    private void checkForResolveObjectMethodDeclaration(Class<? extends KodeId2<?>> idClass) {
         try {
             idClass.getDeclaredMethod("readResolve");
         } catch (NoSuchMethodException e) {
@@ -65,12 +65,12 @@ public abstract class BubbleKodeSupport2<KL extends Kodeliste2, KLID extends Kod
         return kodelisteId;
     }
 
-    public <I extends BubbleKodeId2<? extends BubbleKode2>> I getOrCreateInstance(I newInstance) {
+    public <I extends KodeId2<? extends Kode2>> I getOrCreateInstance(I newInstance) {
         return (I) kodeIdResolver.getOrCreate(newInstance);
     }
 
 
-    public <I extends BubbleKodeId2<? extends BubbleKode2>> I createInstance(Class<? extends I> idClass, long idValue, ReplicaVersion replicaVersion) {
+    public <I extends KodeId2<? extends Kode2>> I createInstance(Class<? extends I> idClass, long idValue, ReplicaVersion replicaVersion) {
         I id = (I) getInstance(idValue, replicaVersion);
         if (id == null) {
             id = BubbleIds2.createInstance(idClass, idValue, replicaVersion);
@@ -78,7 +78,7 @@ public abstract class BubbleKodeSupport2<KL extends Kodeliste2, KLID extends Kod
         return id;
     }
 
-    public <I extends BubbleKodeId2<? extends BubbleKode2>> I getInstance(Long idValue, ReplicaVersion replicaVersion) {
+    public <I extends KodeId2<? extends Kode2>> I getInstance(Long idValue, ReplicaVersion replicaVersion) {
         return (I) kodeIdResolver.get(idValue, replicaVersion);
     }
 
@@ -99,12 +99,12 @@ public abstract class BubbleKodeSupport2<KL extends Kodeliste2, KLID extends Kod
 
     protected abstract <T extends Kodeliste2> String getBeskrivelse(T kodeliste, Locale locale);
 
-    public final <T extends BubbleKode2, I extends BubbleKodeId2<? extends T>> T localize(T kode, Locale locale) {
+    public final <T extends Kode2, I extends KodeId2<? extends T>> T localize(T kode, Locale locale) {
         String beskrivelse = getBeskrivelse(kode, locale);
         T copy = CopyHelper.copy(kode);
         copy.setBeskrivelse(beskrivelse);
         return copy;
     }
 
-    protected abstract <T extends BubbleKode2> String getBeskrivelse(T kode, Locale locale);
+    protected abstract <T extends Kode2> String getBeskrivelse(T kode, Locale locale);
 }

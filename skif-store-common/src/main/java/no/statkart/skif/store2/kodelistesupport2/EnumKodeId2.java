@@ -4,5 +4,5 @@ package no.statkart.skif.store2.kodelistesupport2;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public interface BubbleEnumKodeId2<T extends BubbleEnumKode2> extends BubbleKodeId2<T> {
+public interface EnumKodeId2<T extends EnumKode2> extends KodeId2<T> {
 }

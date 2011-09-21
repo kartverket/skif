@@ -6,7 +6,7 @@ import no.statkart.skif.store2.AbstractBubbleObject2;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public abstract class KodeImpl2 extends AbstractBubbleObject2 implements BubbleKode2 {
+public abstract class KodeImpl2 extends AbstractBubbleObject2 implements Kode2 {
     private String kodeverdi;
     private String beskrivelse;
 

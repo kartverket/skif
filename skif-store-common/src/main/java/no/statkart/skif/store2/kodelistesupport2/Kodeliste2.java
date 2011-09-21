@@ -11,19 +11,19 @@ import java.util.List;
 public interface Kodeliste2 extends BubbleObject2 {
     public KodelisteId2<?> getId();
 
-    public Class<? extends BubbleKodeId2<?>> getKodeIdClass();
+    public Class<? extends KodeId2<?>> getKodeIdClass();
 
-    public void setKodeIdClass(Class<? extends BubbleKodeId2<?>> kodeIdClass);
+    public void setKodeIdClass(Class<? extends KodeId2<?>> kodeIdClass);
     
     public String getNavn();
 
     public void setNavn(String navn);
 
-    public List<? extends BubbleKodeId2<?>> getKodeIds();
+    public List<? extends KodeId2<?>> getKodeIds();
 
-    public void setKodeIds(List<? extends BubbleKodeId2<?>> kodeIds);
+    public void setKodeIds(List<? extends KodeId2<?>> kodeIds);
 
-    public List<? extends BubbleKode2> getKoder();
+    public List<? extends Kode2> getKoder();
 
     public String getBeskrivelse();
 
