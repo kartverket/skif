@@ -337,6 +337,16 @@ subprojects { Project project ->
 
 idea.project {
     javaVersion = "1.6"
+
+    ipr {
+        //adding Perforce as default vcs by tinkering with the output *.ipr file before it's written out
+        withXml {
+            def node = it.asNode()
+            def component = node.appendNode('component', ['name':'VcsDirectoryMappings'])
+            def mapping = component.appendNode('mapping', ['directory':'', 'vcs':'Perforce'])
+
+        }
+    }
 }
 
 dependsOnChildren()
