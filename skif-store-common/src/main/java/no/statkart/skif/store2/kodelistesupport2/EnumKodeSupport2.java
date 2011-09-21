@@ -10,15 +10,15 @@ import java.util.*;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class BubbleEnumKodeSupport2<KL extends EnumKodeliste2, KLID extends EnumKodelisteId2<KL>> extends BubbleKodeSupport2<KL, KLID> {
+public class EnumKodeSupport2<KL extends EnumKodeliste2, KLID extends EnumKodelisteId2<KL>> extends KodeSupport2<KL, KLID> {
     private Map<KodeId2<?>, EnumKode2> koder = new HashMap<KodeId2<?>, EnumKode2>();
     private KL nonLocalizedKodeliste;
 
-    public static <I extends EnumKodeId2<?>> BubbleEnumKodeSupport2 getKodeSupport(Class<I> idClass) {
-        return (BubbleEnumKodeSupport2) BubbleKodeSupport2.getKodeSupport(idClass);
+    public static <I extends EnumKodeId2<?>> EnumKodeSupport2 getKodeSupport(Class<I> idClass) {
+        return (EnumKodeSupport2) KodeSupport2.getKodeSupport(idClass);
     }
 
-    public BubbleEnumKodeSupport2(Class<? extends EnumKodeId2<?>> idClass, KLID kodelisteId, String kodelisteNavn) {
+    public EnumKodeSupport2(Class<? extends EnumKodeId2<?>> idClass, KLID kodelisteId, String kodelisteNavn) {
         super(idClass, kodelisteId);
         nonLocalizedKodeliste =  kodelisteId.createTypeInstance();
         nonLocalizedKodeliste.setId(getKodelisteId());

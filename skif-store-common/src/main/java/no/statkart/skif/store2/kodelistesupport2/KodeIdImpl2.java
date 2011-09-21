@@ -20,11 +20,11 @@ public abstract class KodeIdImpl2<T extends KodeImpl2> extends AbstractBubbleId2
         return (KodelisteIdImpl2) getKodeSupport(idClass).getKodelisteId();
     }
 
-    protected static <I extends KodeIdImpl2<?>> BubbleKodeSupport2 getKodeSupport(Class<I> idClass) {
+    protected static <I extends KodeIdImpl2<?>> KodeSupport2 getKodeSupport(Class<I> idClass) {
         try {
             Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
             kodeSupportField.setAccessible(true);
-            BubbleKodeSupport2 kodeSupport = (BubbleKodeSupport2) kodeSupportField.get(null);
+            KodeSupport2 kodeSupport = (KodeSupport2) kodeSupportField.get(null);
             return kodeSupport;
         } catch (NoSuchFieldException e) {
             throw new ImplementationException("KodeId klasse mangler static field 'kodeSupport': " + idClass);
@@ -47,7 +47,7 @@ public abstract class KodeIdImpl2<T extends KodeImpl2> extends AbstractBubbleId2
         return (Long) super.getValue();
     }
 
-    protected abstract BubbleKodeSupport2 getKodeSupport();
+    protected abstract KodeSupport2 getKodeSupport();
     
     @Override
     public boolean equals(Object id) {

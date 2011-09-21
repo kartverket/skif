@@ -38,7 +38,7 @@ public class EnumKodeSupportTest2 {
 }
 
 // Hjelperklasse for ikke å skulle skrive så mye
-final class EnumKodeSupportHelper2 extends BubbleEnumKodeSupport2<EnumKodeliste2, EnumKodelisteId2<EnumKodeliste2>> {
+final class EnumKodeSupportHelper2 extends EnumKodeSupport2<EnumKodeliste2, EnumKodelisteId2<EnumKodeliste2>> {
     public EnumKodeSupportHelper2(Class<? extends EnumKodeIdImpl2<?>> idClass, long kodelisteIdValue, String kodelisteNavn) {
         super(idClass, new EnumKodelisteIdImpl2(kodelisteIdValue), kodelisteNavn);
     }

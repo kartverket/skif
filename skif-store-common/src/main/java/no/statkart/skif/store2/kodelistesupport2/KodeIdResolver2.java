@@ -9,14 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class BubbleKodeIdResolver2 {
+public class KodeIdResolver2 {
     private static final int SIZE = 2;
     private static final int MAX_SIZE = 256;
     private final KodeId2<?>[][] fastLookupIdsArray = new KodeId2<?>[2][];
     private final ConcurrentHashMap<Long, KodeId2<?>>[] ids = new ConcurrentHashMap[2];
     private boolean newKoderAllowed = true;
 
-    public BubbleKodeIdResolver2() {
+    public KodeIdResolver2() {
         fastLookupIdsArray[0] = new KodeId2[SIZE];
         fastLookupIdsArray[1] = new KodeId2[SIZE];
         this.ids[0] = new ConcurrentHashMap<Long, KodeId2<?>>();

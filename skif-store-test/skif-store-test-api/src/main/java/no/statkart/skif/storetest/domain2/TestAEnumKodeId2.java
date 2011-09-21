@@ -8,7 +8,7 @@ import no.statkart.skif.store2.kodelistesupport2.*;
  * @since 2.0
  */
 public class TestAEnumKodeId2 extends EnumKodeIdImpl2<TestAEnumKode2> implements TestEnumKodeId2<TestAEnumKode2> {
-    private static BubbleEnumKodeSupport2<TestEnumKodeliste2, TestEnumKodelisteId2<TestEnumKodeliste2>> kodeSupport = new BubbleEnumKodeSupport2<TestEnumKodeliste2, TestEnumKodelisteId2<TestEnumKodeliste2>>(TestAEnumKodeId2.class,new TestEnumKodelisteIdImpl2(1), "TestAEnumKodeliste");
+    private static EnumKodeSupport2<TestEnumKodeliste2, TestEnumKodelisteId2<TestEnumKodeliste2>> kodeSupport = new EnumKodeSupport2<TestEnumKodeliste2, TestEnumKodelisteId2<TestEnumKodeliste2>>(TestAEnumKodeId2.class,new TestEnumKodelisteIdImpl2(1), "TestAEnumKodeliste");
 
     public static TestEnumKodelisteId2<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static TestAEnumKodeId2 IkkeOppgittId = define(0, "-", "IkkeOppgitt");
@@ -20,7 +20,7 @@ public class TestAEnumKodeId2 extends EnumKodeIdImpl2<TestAEnumKode2> implements
     }
 
     @Override
-    protected BubbleEnumKodeSupport2 getKodeSupport() {
+    protected EnumKodeSupport2 getKodeSupport() {
         return kodeSupport;
     }
 

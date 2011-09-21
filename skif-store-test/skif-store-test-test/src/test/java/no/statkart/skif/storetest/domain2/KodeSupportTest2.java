@@ -109,7 +109,7 @@ public class KodeSupportTest2 {
 }
 
 
-abstract class KodeSupportHelper2 extends BubbleKodeSupport2<Kodeliste2, KodelisteId2<Kodeliste2>> {
+abstract class KodeSupportHelper2 extends KodeSupport2<Kodeliste2, KodelisteId2<Kodeliste2>> {
     public KodeSupportHelper2(Class<? extends KodeIdImpl2<?>> idClass, KodelisteIdImpl2 kodelisteId) {
         super(idClass, kodelisteId);
     }

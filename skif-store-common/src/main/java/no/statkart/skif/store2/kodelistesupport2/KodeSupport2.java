@@ -12,7 +12,7 @@ import java.util.Locale;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class BubbleKodeSupport2<KL extends Kodeliste2, KLID extends KodelisteId2<KL>> {
+public abstract class KodeSupport2<KL extends Kodeliste2, KLID extends KodelisteId2<KL>> {
     private final KLID kodelisteId;
     private final Class<? extends KodeId2<?>> kodeIdClass;
 
@@ -20,11 +20,11 @@ public abstract class BubbleKodeSupport2<KL extends Kodeliste2, KLID extends Kod
         return kodeIdClass;
     }
 
-    public static <I extends KodeId2<?>> BubbleKodeSupport2 getKodeSupport(Class<I> idClass) {
+    public static <I extends KodeId2<?>> KodeSupport2 getKodeSupport(Class<I> idClass) {
         try {
             Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
             kodeSupportField.setAccessible(true);
-            BubbleKodeSupport2 kodeSupport = (BubbleKodeSupport2) kodeSupportField.get(null);
+            KodeSupport2 kodeSupport = (KodeSupport2) kodeSupportField.get(null);
             return kodeSupport;
         } catch (NoSuchFieldException e) {
             throw new ImplementationException("BubbleKodeId klasse mangler static field 'kodeSupport': " + idClass);
@@ -34,9 +34,9 @@ public abstract class BubbleKodeSupport2<KL extends Kodeliste2, KLID extends Kod
     }
 
 
-    private final BubbleKodeIdResolver2 kodeIdResolver = new BubbleKodeIdResolver2();
+    private final KodeIdResolver2 kodeIdResolver = new KodeIdResolver2();
 
-    public BubbleKodeSupport2(Class<? extends KodeId2<?>> idClass, KLID kodelisteId) {
+    public KodeSupport2(Class<? extends KodeId2<?>> idClass, KLID kodelisteId) {
         this.kodelisteId = kodelisteId;
         this.kodeIdClass = idClass;
         if (idClass != null) {
