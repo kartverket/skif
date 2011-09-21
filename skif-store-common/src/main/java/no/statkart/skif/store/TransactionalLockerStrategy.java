@@ -102,13 +102,8 @@ public class TransactionalLockerStrategy implements LockerStrategy {
 
     @Override
     public boolean isLockedByOther(BubbleId id, String owner) {
-        ensureLockMapInitializedForOwner(owner);
-        if (lockMap.containsKey(id)) {
-            return lockMap.get(id).getOwner().equals(owner);
-        } else {
-            LockInfo<Long> lock = lockerService.getLock(createLockKey(id));
-            return lock != null;
-        }
+        LockInfo<Long> lock = lockerService.getLock(createLockKey(id));
+        return lock != null && !lock.isOwnedBy(owner);
     }
 
     @Override
@@ -162,7 +157,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
 
     @Override
     public void registerRemoved(BubbleId id, String owner) {
-        if(!insertedIds.contains(id)) {
+        if (!insertedIds.contains(id)) {
             ensureLockedByCaller(id, owner);
             modifiedIds.add(id);
         }
@@ -268,7 +263,6 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     }
 
     /**
-     *
      * @param owner
      */
     private void renewAllLocks(String owner) {

@@ -28,6 +28,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
         Assert.assertTrue(strategy.isLockedBy(testId, "ingroa"));
         Assert.assertFalse(strategy.isLockedBy(testId, "ingroa2"));
+        Assert.assertTrue(strategy.isLockedByOther(testId, "ingroa2"));
 
         strategy.releaseAllLocks("ingroa");
 
@@ -50,6 +51,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
         Assert.assertTrue(strategy.isLockedBy(testId, "ingroa"));
         Assert.assertFalse(strategy.isLockedBy(testId, "ingroa2"));
+        Assert.assertTrue(strategy.isLockedByOther(testId, "ingroa2"));
 
         strategy.releaseAllLocksOnCommit("ingroa");
     }
@@ -71,6 +73,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
         Assert.assertTrue(strategy.isLockedBy(testId, "ingroa"));
         Assert.assertFalse(strategy.isLockedBy(testId, "ingroa2"));
+        Assert.assertTrue(strategy.isLockedByOther(testId, "ingroa2"));
 
         strategy.releaseAllLocksOnCommit("ingroa");
     }
