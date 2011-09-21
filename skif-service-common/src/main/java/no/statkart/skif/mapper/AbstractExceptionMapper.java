@@ -30,6 +30,7 @@ public abstract class AbstractExceptionMapper extends AbstractMapper {
         if (args.length==1 && !(args[0] instanceof SkifException)) {
             Throwable t = (Throwable) args[0];
             ImplementationException e = new ImplementationException(t.getMessage(), t);
+            e.setStackTrace(t.getStackTrace());
             return super.d2w(new Object[]{e});
         } else {
             return super.d2w(args);    //To change body of overridden methods use File | Settings | File Templates.
