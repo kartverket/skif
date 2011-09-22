@@ -1,0 +1,27 @@
+package no.statkart.skif.store2.module;
+
+import no.statkart.skif.ServiceMode;
+import no.statkart.skif.module.StrategyTuple;
+import no.statkart.skif.service.module.ServerModuleStrategyFactory;
+import no.statkart.skif.store.module.server.ServerStoreModule;
+import no.statkart.skif.store.module.server.ServerStoreModuleStrategy;
+
+/**
+ * @author Henrik Fredholm
+ */
+public class StoreServerModuleStrategyFactory2 extends ServerModuleStrategyFactory {
+    public StoreServerModuleStrategyFactory2() {
+        addStrategyForServerStoreModule();
+    }
+
+    protected void addStrategyForServerStoreModule() {
+        // ServerStoreModuleStrategy bruker samme klass for JEE og SingleVM mode.
+        final StrategyTuple<ServerStoreModuleStrategy> strategyTuple = addPrototype(
+                ServerStoreModule.class,
+                new StrategyTuple<ServerStoreModuleStrategy>(ServerStoreModuleStrategy.class, ServerStoreModuleStrategy.class));
+        strategyTuple.getStrategy(ServiceMode.JEE).setHibernateConfigurationFilename("hibernate-server.properties");
+        strategyTuple.getStrategy(ServiceMode.SINGLE_VM).setHibernateConfigurationFilename("hibernate-singlevm.properties");
+        addPrototype(ServerStoreModule.class, strategyTuple);
+    }
+}
+

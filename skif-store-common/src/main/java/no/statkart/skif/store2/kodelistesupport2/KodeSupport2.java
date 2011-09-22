@@ -1,8 +1,8 @@
 package no.statkart.skif.store2.kodelistesupport2;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.store2.BubbleIds2;
+import no.statkart.skif.store2.ReplicaVersion2;
 import no.statkart.skif.util.CopyHelper;
 
 import java.lang.reflect.Field;
@@ -70,7 +70,7 @@ public abstract class KodeSupport2<KL extends Kodeliste2, KLID extends Kodeliste
     }
 
 
-    public <I extends KodeId2<? extends Kode2>> I createInstance(Class<? extends I> idClass, long idValue, ReplicaVersion replicaVersion) {
+    public <I extends KodeId2<? extends Kode2>> I createInstance(Class<? extends I> idClass, long idValue, ReplicaVersion2 replicaVersion) {
         I id = (I) getInstance(idValue, replicaVersion);
         if (id == null) {
             id = BubbleIds2.createInstance(idClass, idValue, replicaVersion);
@@ -78,7 +78,7 @@ public abstract class KodeSupport2<KL extends Kodeliste2, KLID extends Kodeliste
         return id;
     }
 
-    public <I extends KodeId2<? extends Kode2>> I getInstance(Long idValue, ReplicaVersion replicaVersion) {
+    public <I extends KodeId2<? extends Kode2>> I getInstance(Long idValue, ReplicaVersion2 replicaVersion) {
         return (I) kodeIdResolver.get(idValue, replicaVersion);
     }
 

@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain2;
 
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store2.ReplicaVersion2;
 import no.statkart.skif.store2.kodelistesupport2.EnumKodelisteIdImpl2;
 
 /**
@@ -15,7 +15,7 @@ public class TestEnumKodelisteIdImpl2<T extends TestEnumKodelisteImpl2> extends 
         super(value);
     }
 
-    public TestEnumKodelisteIdImpl2(Long value, ReplicaVersion replicaVersion) {
+    public TestEnumKodelisteIdImpl2(Long value, ReplicaVersion2 replicaVersion) {
         super(value, replicaVersion);
     }
 }

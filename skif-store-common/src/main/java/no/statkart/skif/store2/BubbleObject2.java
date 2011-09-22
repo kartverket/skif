@@ -9,5 +9,7 @@ import no.statkart.skif.store.Store;
 public interface BubbleObject2 {
     public BubbleId2<?> getId();
     public void setId(BubbleId2<?> id);
-    public Store store();
+    public Store2 store();
+    public void register(Store2 store);
+    public long getVersion();
 }

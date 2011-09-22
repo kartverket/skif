@@ -11,7 +11,7 @@ import static no.statkart.skif.guava.Preconditions.checkState;
  * @since 2.0
  */
 public class AbstractBubbleObject2 implements BubbleObject2, Serializable{
-    protected transient Store store;
+    protected transient Store2 store;
     protected BubbleId2<?> id;
     private long version = 0;
 
@@ -44,12 +44,12 @@ public class AbstractBubbleObject2 implements BubbleObject2, Serializable{
     }
 
 
-    public void register(Store store) {
+    public void register(Store2 store) {
         checkState(store!=null, "BubbleObject already registered with a session: {0}", this);
         this.store = store;
     }
 
-    public Store store() {
+    public Store2 store() {
         return store;
     }
 

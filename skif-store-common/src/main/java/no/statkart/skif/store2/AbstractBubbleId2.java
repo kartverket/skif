@@ -4,7 +4,6 @@ import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ReflectionException;
 import no.statkart.skif.store.BubbleIdInterface;
-import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.util.Reflection;
 
 import java.io.Serializable;
@@ -24,7 +23,7 @@ public abstract class AbstractBubbleId2<T extends BubbleObject2> implements Bubb
     /**
      * Allows the object to exist in multiple versions in Store.
      */
-    private ReplicaVersion replicaVersion = ReplicaVersion.CURRENT;
+    private ReplicaVersion2 replicaVersion = ReplicaVersion2.CURRENT;
 
     /**
      * Helper class that holds meta info for each subtype of this class. The meta info takes
@@ -54,17 +53,17 @@ public abstract class AbstractBubbleId2<T extends BubbleObject2> implements Bubb
     protected Class clazz = getClass();
 
     public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, long idValue) {
-        return createInstance(idClass, new Long(idValue), ReplicaVersion.CURRENT);
+        return createInstance(idClass, new Long(idValue), ReplicaVersion2.CURRENT);
     }
 
-    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, long idValue, ReplicaVersion replicaVersion) {
+    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, long idValue, ReplicaVersion2 replicaVersion) {
         return createInstance(idClass, new Long(idValue), replicaVersion);
     }
 
-    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, Object idValue, ReplicaVersion replicaVersion) {
+    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, Object idValue, ReplicaVersion2 replicaVersion) {
          I id = null;
         try {
-            Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), ReplicaVersion.class);
+            Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), ReplicaVersion2.class);
             ctor.setAccessible(true);
             id = ctor.newInstance(idValue, replicaVersion);
             return (I) id.resolveInstance();
@@ -90,7 +89,7 @@ public abstract class AbstractBubbleId2<T extends BubbleObject2> implements Bubb
         this.value = value;
     }
 
-    protected AbstractBubbleId2(Object value, ReplicaVersion version) {
+    protected AbstractBubbleId2(Object value, ReplicaVersion2 version) {
         this.value = value;
         this.replicaVersion = version;
     }
@@ -104,11 +103,11 @@ public abstract class AbstractBubbleId2<T extends BubbleObject2> implements Bubb
         return value;
     }
 
-    public ReplicaVersion getReplicaVersion() {
+    public ReplicaVersion2 getReplicaVersion() {
         return replicaVersion;
     }
 
-    public AbstractBubbleId2<T> fromIdValue(Object value, ReplicaVersion replicaVersion) {
+    public AbstractBubbleId2<T> fromIdValue(Object value, ReplicaVersion2 replicaVersion) {
         try {
             AbstractBubbleId2 newId = getClass().newInstance();
             newId.value = value;
@@ -121,17 +120,17 @@ public abstract class AbstractBubbleId2<T extends BubbleObject2> implements Bubb
         }
     }
 
-    public AbstractBubbleId2<T> asReplicaVersion(ReplicaVersion replicaVersion) {
+    public AbstractBubbleId2<T> asReplicaVersion(ReplicaVersion2 replicaVersion) {
         if (this.replicaVersion == replicaVersion) return this;
         return fromIdValue(getValue(), replicaVersion);
     }
 
     public AbstractBubbleId2<T> asReplicaVersionOld() {
-        return asReplicaVersion(ReplicaVersion.OLD);
+        return asReplicaVersion(ReplicaVersion2.OLD);
     }
 
     public AbstractBubbleId2<T> asReplicaVersionCurrent() {
-        return asReplicaVersion(ReplicaVersion.CURRENT);
+        return asReplicaVersion(ReplicaVersion2.CURRENT);
     }
 
 

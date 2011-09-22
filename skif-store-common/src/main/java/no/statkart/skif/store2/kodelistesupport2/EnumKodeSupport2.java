@@ -1,8 +1,8 @@
 package no.statkart.skif.store2.kodelistesupport2;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.store2.BubbleIds2;
+import no.statkart.skif.store2.ReplicaVersion2;
 
 import java.util.*;
 
@@ -46,7 +46,7 @@ public class EnumKodeSupport2<KL extends EnumKodeliste2, KLID extends EnumKodeli
     }
 
     public <T extends EnumKode2, I extends EnumKodeId2<? extends T>> I define(Class<I> idClass, long idValue, String kodeverdi, String beskrivelesesKey) {
-        I id = BubbleIds2.createInstance(idClass, idValue, ReplicaVersion.CURRENT);
+        I id = BubbleIds2.createInstance(idClass, idValue, ReplicaVersion2.CURRENT);
         T kode = id.createTypeInstance();
         kode.setId(id);
         kode.setKodeverdi(kodeverdi);

@@ -1,7 +1,7 @@
 package no.statkart.skif.store2.kodelistesupport2;
 
-import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.store2.BubbleId2;
+import no.statkart.skif.store2.ReplicaVersion2;
 
 /**
  * @author Henrik Fredholm
@@ -9,6 +9,6 @@ import no.statkart.skif.store2.BubbleId2;
  */
 public interface KodeId2<T extends Kode2> extends BubbleId2<T> {
     public Object getValue();
-    public ReplicaVersion getReplicaVersion();
+    public ReplicaVersion2 getReplicaVersion();
     public KodelisteId2 getKodelisteId();
 }

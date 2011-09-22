@@ -1,7 +1,7 @@
 package no.statkart.skif.store2.kodelistesupport2;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store2.ReplicaVersion2;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -54,7 +54,7 @@ public class KodeIdResolver2 {
             id = idMap.get(idValue);
             if (id == null) {
                 // sjekk for OLD om det finnes en CURRENT. Da er det ok å opprette. Ellers er det ikke
-                if (replicaIndex == ReplicaVersion.CURRENT.ordinal() || !ids[ReplicaVersion.CURRENT.ordinal()].containsKey(idValue)) {
+                if (replicaIndex == ReplicaVersion2.CURRENT.ordinal() || !ids[ReplicaVersion2.CURRENT.ordinal()].containsKey(idValue)) {
                     throw new ImplementationException("Forsøk på å opprette ny BubbleKodeId i ferdig definert kodeliste: " + newInstance);
                 }
             } else {
@@ -96,7 +96,7 @@ public class KodeIdResolver2 {
      * @param replicaVersion
      * @return null hvis ingen BubbleKodeId er definert for idValue
      */
-    public <I extends KodeId2<? extends Kode2>> I  get(Long idValue, ReplicaVersion replicaVersion) {
+    public <I extends KodeId2<? extends Kode2>> I  get(Long idValue, ReplicaVersion2 replicaVersion) {
         int replicaIndex = replicaVersion.ordinal();
         long longValue = idValue.longValue();
 
