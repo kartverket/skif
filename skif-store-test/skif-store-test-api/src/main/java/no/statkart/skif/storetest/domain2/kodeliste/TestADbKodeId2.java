@@ -12,7 +12,7 @@ import no.statkart.skif.storetest.domain2.TestDbKodelisteIdImpl2;
  * @since 0.6
  */
 public class TestADbKodeId2 extends DbKodeIdImpl2<TestADbKode2> implements TestDbKodeId2<TestADbKode2> {
-    private static DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>> kodeSupport = new DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>>(TestADbKodeId2.class,new TestDbKodelisteIdImpl2(1L, ReplicaVersion2.CURRENT));
+    private static DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>> kodeSupport = new DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>>(TestADbKodeId2.class,new TestDbKodelisteIdImpl2(10001L, ReplicaVersion2.CURRENT));
 
     protected TestADbKodeId2(Long value, ReplicaVersion2 replicaVersion) {
         super(value, replicaVersion);
