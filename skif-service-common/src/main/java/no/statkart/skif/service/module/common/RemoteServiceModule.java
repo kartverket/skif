@@ -27,6 +27,11 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
     protected final Mapping mapping;
     protected Class<? extends ServiceContextMapper<?>> serviceContextMapperClass;
     protected ExceptionMapping exceptionMapping;
+    /**
+     * Package name mapping for strategi.
+     * @see RemoteServiceModuleStrategy#classWSPackageMappings
+     */
+    protected String[] classWSPackageMappings = null;
 
     public RemoteServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
         super(RemoteServiceModuleStrategy.class, configuration);
@@ -57,9 +62,28 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
         return this;
     }
 
+    /**
+     * @return {@link #classWSPackageMappings}
+     */
+    public String[] getClassWSPackageMappings() {
+        return classWSPackageMappings;
+    }
+
+    /**
+     * @see #classWSPackageMappings
+     */
+    public RemoteServiceModule setClassWSPackageMappings(String... classWSPackageMappings) {
+        this.classWSPackageMappings = classWSPackageMappings;
+        return this;
+    }
+
+
     @Override
     protected void configure() {
         requireBindings();
+        if (classWSPackageMappings != null) {
+            getStrategy().setClassWSPackageMappings(classWSPackageMappings);
+        }
         install(new PrivateModule() {
             @Override
             protected void configure() {

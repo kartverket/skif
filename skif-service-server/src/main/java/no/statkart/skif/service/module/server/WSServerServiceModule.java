@@ -33,7 +33,11 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
     protected final Mapping mapping;
     protected ExceptionMapping exceptionMapping;
     protected Class<? extends ServiceContextMapper<?>> serviceContextMapperClass;
-    protected String[] classWSIPackageMappings = {"api:wsapi", "service:wsapi.service"};
+    /**
+     * Package name mapping for strategi.
+     * @see WSServerServiceModuleStrategy#classWSIPackageMappings
+     */
+    protected String[] classWSIPackageMappings = null;
 
     private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForWSI = WSServiceChainFactoryBase.class;
     private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForService = WSServiceChainFactoryBase.class;
@@ -55,7 +59,7 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
     }
     public WSServerServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
         super(WSServerServiceModuleStrategy.class, configuration);
-        Preconditions.checkNotNull(mapping, "mapping2");
+        Preconditions.checkNotNull(mapping, "mapping");
         this.services.addAll(services);
         this.mapping = mapping;
         this.classLoader =getClass().getClassLoader();
@@ -63,7 +67,7 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
 
     public WSServerServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping, ClassLoader classLoader) {
         super(WSServerServiceModuleStrategy.class, configuration);
-        Preconditions.checkNotNull(mapping, "mapping2");
+        Preconditions.checkNotNull(mapping, "mapping");
         this.services.addAll(services);
         this.mapping = mapping;
         this.classLoader = classLoader;
@@ -87,17 +91,28 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
         return this;
     }
 
+    /**
+     * @return {@link #classWSIPackageMappings}
+     */
+
     public String[] getClassWSIPackageMappings() {
         return classWSIPackageMappings;
     }
 
-    public void setClassWSIPackageMappings(String[] classWSIPackageMappings) {
+    /**
+     * @see #classWSIPackageMappings
+     */
+    public WSServerServiceModule setClassWSIPackageMappings(String... classWSIPackageMappings) {
         this.classWSIPackageMappings = classWSIPackageMappings;
+        return this;
     }
 
     @Override
     protected void configure() {
         setStrategyInstance();
+        if (classWSIPackageMappings != null) {
+            getStrategy().setClassWSIPackageMappings(classWSIPackageMappings);
+        }
         Preconditions.checkArgument(moduleConfiguration.getServiceMode() == ServiceMode.JEE, "Kun ServiceMode.JEE er støttet");
         requireBindings();
         install(new PrivateModule() {
@@ -134,42 +149,11 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
 
     protected void configureServices(Binder outerBinder, PrivateBinder innerBinder) {
         for (Class<? extends Object> serviceClass : services) {
-            Class<? extends ServiceWSI> serviceWSIClass = findWSIClass(serviceClass);
+            Class<? extends ServiceWSI> serviceWSIClass = strategy.findWSIClass(serviceClass, classLoader);
             strategy.bindSkifWSInterceptorForService(outerBinder, innerBinder, serviceClass, serviceWSIClass);
             strategy.bindWSServiceChainFactoryForService(outerBinder, innerBinder, serviceClass, serviceWSIClass);
             strategy.bindService(outerBinder, innerBinder, serviceClass, serviceWSIClass) ;
         }
-    }
-
-    protected <S> Class<? extends ServiceWSI> findWSIClass(Class<S> serviceClass) {
-        String[] classPackageMappings = {"api:wsapi", "service:wsapi.service"};
-        Class<? extends ServiceWSI> webServiceClass = null;
-        String serviceClassname = serviceClass.getName();
-
-        List<String> mapingsTried = new ArrayList<String>();
-        List<String> classNamesTried = new ArrayList<String>();
-
-        for (String classPackageMapping : classPackageMappings) {
-            final String[] mapping = classPackageMapping.split(":");
-            if (mapping.length != 2) {
-                throw new ConfigurationException("Error in Web Service classmapping. Expected format \"fromPackage:toPackage\":" + classPackageMapping);
-            }
-            final String fromPackage = mapping[0];
-            final String toPackage = mapping[1];
-            String webServiceClassname = Pattern.compile(Matcher.quoteReplacement(fromPackage)).matcher(serviceClassname).replaceFirst(toPackage) + "WSI";
-            try {
-                webServiceClass = (Class<? extends ServiceWSI>) Class.forName(webServiceClassname, true, classLoader);
-                break; // found class
-            } catch (ClassNotFoundException e) {
-                mapingsTried.add(classPackageMapping);
-                classNamesTried.add(webServiceClassname);
-                // Ignore
-            }
-        }
-        if (webServiceClass == null) {
-            throw new ConfigurationException("Could not find Web Service class for service: " + serviceClass.getName() + " using packagemappings: " + mapingsTried + ". The following Web Service classes where tried: " + classNamesTried);
-        }
-        return webServiceClass;
     }
 
 }
