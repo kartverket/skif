@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain2"
+        xmlns:corens="http://skif.statkart.no/storetest/wsapi/domain2"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <!-- ================================================= -->
+    <!-- Basisklasser                                      -->
+    <!-- ================================================= -->
+
+    <xs:complexType name="StoreTestBubbleId2">
+        <xs:sequence>
+            <xs:element name="value" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="StoreTestBubbleId2List">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:StoreTestBubbleId2"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="StoreTestBubble2">
+        <xs:sequence>
+            <xs:element name="id" type="corens:StoreTestBubbleId2"/>
+            <xs:element name="version" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="StoreTestBubble2List">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:StoreTestBubble2"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="StoreTestContext2">
+        <xs:sequence>
+            <xs:element name="systemVersion" type="xs:string"/>
+            <xs:element name="locale" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

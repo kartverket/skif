@@ -50,7 +50,7 @@ public class KodelisteImpl2 extends AbstractBubbleObject2 implements Kodeliste2 
 
     @Override
     public List<? extends KodeImpl2> getKoder() {
-        return null; //store.get(kodeIds);
+        return store.get(kodeIds);
     }
 
 

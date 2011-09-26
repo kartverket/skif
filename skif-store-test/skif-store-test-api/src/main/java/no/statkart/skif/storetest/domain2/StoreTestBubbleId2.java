@@ -11,4 +11,5 @@ import no.statkart.skif.storetest.domain.StoreTestBubble;
  * @since 2.0
  */
 public interface StoreTestBubbleId2<T extends StoreTestBubble2> extends BubbleId2<T> {
+    public String getStringValue();
 }
