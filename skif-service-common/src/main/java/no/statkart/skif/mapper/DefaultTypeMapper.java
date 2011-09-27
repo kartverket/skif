@@ -161,8 +161,8 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                 //Hvis kildeklassen har et felt som heter 'item' så er dette en collection-klasse.
                 if (checkHasField(sourceClass, "item")) {
                     return Class.forName("java.util.ArrayList");
-                //Eller hvis kildeklassen har et felt som heter 'liste' så er dette en collection-klasse.
-                }else if (checkHasField(sourceClass, "liste")) {
+                    //Eller hvis kildeklassen har et felt som heter 'liste' så er dette en collection-klasse.
+                } else if (checkHasField(sourceClass, "liste")) {
                     return Class.forName("java.util.ArrayList");
                 } else {
                     return Class.forName(targetPackage + sourceClass.getSimpleName());
@@ -182,7 +182,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
         try {
             target = getInitialWsapiObject(source);
         } catch (Exception e) {
-            logger.error("Feilet under oppretting av target objekt med kildetype: "+source.getClass().getName(), e);
+            logger.error("Feilet under oppretting av target objekt med kildetype: " + source.getClass().getName(), e);
             throw new MappingException(e);
         }
         mapDomainObject(source, target);
@@ -196,7 +196,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
         try {
             target = getInitialDomainObject(source);
         } catch (Exception e) {
-            logger.error("Feilet under oppretting av target objekt med kildetype: "+source.getClass().getName(), e);
+            logger.error("Feilet under oppretting av target objekt med kildetype: " + source.getClass().getName(), e);
             throw new MappingException(e);
         }
         mapWsapiObject(source, target);
@@ -252,23 +252,37 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
             if (source instanceof Collection) {
                 if (checkHasField(target.getClass(), "item")) {
                     Field targetField = target.getClass().getDeclaredField("item");
-                    ArrayList value = new ArrayList();
-                    for (Iterator iterator = ((Collection) source).iterator(); iterator.hasNext();) {
-                        Object next = iterator.next();
-                        value.add(mapping.d2w(next));
+                    ArrayList value = null;
+                    if (source != null) {
+                        for (Iterator iterator = ((Collection) source).iterator(); iterator.hasNext(); ) {
+                            if(value == null){
+                                value = new ArrayList();
+                            }
+                            Object next = iterator.next();
+                            value.add(mapping.d2w(next));
+                        }
+                        targetField.setAccessible(true);
+                        targetField.set(target, value);
+                    }else{
+                        targetField.set(target, null);
                     }
-                    targetField.setAccessible(true);
-                    targetField.set(target, value);
                 } else if (checkHasField(target.getClass(), "liste")) {
                     Field targetField = target.getClass().getDeclaredField("liste");
-                    ArrayList value = new ArrayList();
-                    for (Iterator iterator = ((Collection) source).iterator(); iterator.hasNext();) {
-                        Object next = iterator.next();
-                        value.add(mapping.d2w(next));
+                    ArrayList value = null;
+                    if (source != null) {
+                        for (Iterator iterator = ((Collection) source).iterator(); iterator.hasNext(); ) {
+                            if(value == null){
+                                value = new ArrayList();
+                            }
+                            Object next = iterator.next();
+                            value.add(mapping.d2w(next));
+                        }
+                        targetField.setAccessible(true);
+                        targetField.set(target, value);
+                    }else{
+                        targetField.set(target, null);
                     }
-                    targetField.setAccessible(true);
-                    targetField.set(target, value);
-                }else {
+                } else {
                     throw new MappingException("Antar at det alltid er en felt med navn 'item' eller 'liste' på andre siden av en Collection. Det var visst feil...");
                 }
             } else {
@@ -284,7 +298,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                         Object source1 = sourceField.get(source);
                         if (source1 instanceof Collection) {
                             //Må bruke accessor-metode for å få sortering riktig.
-                            Method method = source.getClass().getMethod("get"+sourceField.getName().substring(0,1).toUpperCase()+sourceField.getName().substring(1,sourceField.getName().length()), (Class<?>[])null);
+                            Method method = source.getClass().getMethod("get" + sourceField.getName().substring(0, 1).toUpperCase() + sourceField.getName().substring(1, sourceField.getName().length()), (Class<?>[]) null);
                             Object sortedSource = method.invoke(source);
                             targetField.set(target, mapping.d2w(sortedSource, targetField.getType()));
                         } else {
@@ -292,7 +306,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                         }
                     } else {
                         //Kan ikke feile dersom vi ikke finner et felt, da vil ikke subklasser kunne fungere.
-                        if(logger.isDebugEnabled())
+                        if (logger.isDebugEnabled())
                             logger.debug("Ignorer feltet: " + sourceField.getName() + ", siden jeg ikke fant et tilsvarende felt i target-klasse");
                     }
                 }
@@ -316,24 +330,30 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
 
                     Field item = source.getClass().getDeclaredField("item");
                     item.setAccessible(true);
-                    Iterator iterator = ((Iterable) item.get(source)).iterator();
-                    while (iterator.hasNext()) {
-                        Object next = iterator.next();
-                        targetCollection.add(mapping.w2d(next));
+                    Object o = item.get(source);
+                    if (o != null) {
+                        Iterator iterator = ((Iterable) o).iterator();
+                        while (iterator.hasNext()) {
+                            Object next = iterator.next();
+                            targetCollection.add(mapping.w2d(next));
+                        }
                     }
                 } else {
                     throw new MappingException("Antar at det alltid er en List på den andre siden av en wsapi klasse som har et felt med navn 'item'. Det var visst feil...");
                 }
-            }else if (checkHasField(source.getClass(), "liste")) {
+            } else if (checkHasField(source.getClass(), "liste")) {
                 if (target instanceof Collection) {
                     Collection targetCollection = (Collection) target;
 
                     Field item = source.getClass().getDeclaredField("liste");
                     item.setAccessible(true);
-                    Iterator iterator = ((Iterable) item.get(source)).iterator();
-                    while (iterator.hasNext()) {
-                        Object next = iterator.next();
-                        targetCollection.add(mapping.w2d(next));
+                    Object o = item.get(source);
+                    if (o != null) {
+                        Iterator iterator = ((Iterable) o).iterator();
+                        while (iterator.hasNext()) {
+                            Object next = iterator.next();
+                            targetCollection.add(mapping.w2d(next));
+                        }
                     }
                 } else {
                     throw new MappingException("Antar at det alltid er en List på den andre siden av en wsapi klasse som har et felt med navn 'liste'. Det var visst feil...");
@@ -348,14 +368,14 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                         targetField.setAccessible(true);
                         sourceField.setAccessible(true);
                         Object source1 = sourceField.get(source);
-                        if (source1 instanceof Collection) {
+                        if (target instanceof Collection) {
                             targetField.set(target, mapping.w2d(source1, targetField.getType()));
                         } else {
                             targetField.set(target, mapping.w2d(source1));
                         }
                     } else {
                         //Kan ikke feile dersom vi ikke finner et felt, da vil ikke subklasser kunne fungere.
-                        if(logger.isDebugEnabled())
+                        if (logger.isDebugEnabled())
                             logger.debug("Ignorer feltet: " + sourceField.getName() + ", siden jeg ikke fant et tilsvarende felt i target-klasse");
                     }
                 }
@@ -376,7 +396,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
     private Field getFieldWithInheritedFields(Class<?> c, String fieldname) {
         Collection<Field> fields = new ArrayList<Field>();
         addDeclaredAndInheritedFields(c, fields);
-        for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext();) {
+        for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext(); ) {
             Field next = iterator.next();
             if (next.getName().equals(fieldname)) {
                 return next;
@@ -385,7 +405,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
         return null;
     }
 
-    private boolean checkHasField(Class clazz, String fieldname){
+    private boolean checkHasField(Class clazz, String fieldname) {
         try {
             clazz.getDeclaredField(fieldname);
             return true;

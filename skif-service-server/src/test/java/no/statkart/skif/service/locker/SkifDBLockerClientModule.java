@@ -10,7 +10,7 @@ import no.statkart.skif.service.module.common.RemoteServiceModule;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class SkifDBLockerClientModule extends SkifModule {
 

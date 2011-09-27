@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain2/kodeliste"
+        xmlns:kodelistens="http://skif.statkart.no/storetest/wsapi/domain2/kodeliste"
+        xmlns:corens="http://skif.statkart.no/storetest/wsapi/domain2"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:import schemaLocation="core2.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain2"/>
+
+    <xs:complexType name="KodeId2">
+        <xs:complexContent>
+            <xs:extension base="corens:StoreTestBubbleId2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Kode2">
+        <xs:complexContent>
+            <xs:extension base="corens:StoreTestBubble2">
+                <xs:sequence>
+                    <xs:element name="kodeverdi" type="xs:string"/>
+                    <xs:element name="beskrivelse" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Kode2List">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="kodelistens:Kode2"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="KodeId2List">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="kodelistens:KodeId2"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="KodelisteId2">
+        <xs:complexContent>
+            <xs:extension base="corens:StoreTestBubbleId2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="KodelisteId2List">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="kodelistens:KodelisteId2"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Kodeliste2">
+        <xs:complexContent>
+            <xs:extension base="corens:StoreTestBubble2">
+                <xs:sequence>
+                    <xs:element name="kodeIdClass" type="xs:string"/>
+                    <xs:element name="navn" type="xs:string"/>
+                    <xs:element name="beskrivelse" type="xs:string"/>
+                    <xs:element name="kodeIds" type="kodelistens:KodeId2List"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Kodeliste2List">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="kodelistens:Kodeliste2"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="KodelisteTransfer2">
+        <xs:sequence>
+            <xs:element name="KodelisteIds" type="kodelistens:KodelisteId2List"/>
+            <xs:element name="kodeIds" type="kodelistens:KodeId2List"/>
+            <xs:element name="objects" type="corens:StoreTestBubble2List"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="TestAEnumKodeId2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodeId2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestAEnumKode2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kode2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="TestBEnumKodeId2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodeId2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestBEnumKode2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kode2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestCEnumKodeId2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodeId2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestCEnumKode2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kode2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestADbKodeId2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodeId2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestADbKode2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kode2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestBDbKodeId2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodeId2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestBDbKode2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kode2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestC1DbKodeId2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodeId2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestC1DbKode2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kode2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="TestC2DbKodeId2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodeId2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestC2DbKode2">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kode2">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

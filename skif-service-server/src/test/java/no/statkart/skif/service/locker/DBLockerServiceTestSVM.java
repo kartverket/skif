@@ -267,4 +267,29 @@ public class DBLockerServiceTestSVM extends SkifTestCase {
         service.releaseAllLocks("ingroa");
     }
 
+
+    @Test
+    public void testGetLock(){
+        final DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+
+        service.releaseAllLocks("ingroa");
+
+        service.lock(new LockKey<Long>("Test1", new Long(10)), "ingroa", 30000);
+        service.lock(new LockKey<Long>("Test1", new Long(12)), "ingroa", 30000);
+        service.lock(new LockKey<Long>("Test1", new Long(13)), "ingroa", 30000);
+        service.lock(new LockKey<Long>("Test1", new Long(14)), "ingroa", 30000);
+
+        LockInfo<Long> lock = service.getLock(new LockKey<Long>("Test1", new Long(10)));
+        Assert.assertEquals(lock.getOwner(), "ingroa");
+
+        lock = service.getLock(new LockKey<Long>("Test1", new Long(11)));
+        Assert.assertNull(lock);
+
+        service.releaseAllLocks("ingroa");
+
+
+
+
+    }
+
 }

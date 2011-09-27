@@ -9,10 +9,12 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.ConfigurationConstants;
 import no.statkart.skif.config.PropertiesConfiguration;
+import no.statkart.skif.config.SkifServices;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.persistence.*;
+import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.hibernate.*;
@@ -21,6 +23,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -94,6 +97,8 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         bind(ConnectionManager.class).to(HibernateSessionManager.class);
         bind(HibernateSessionManager.class).to(HibernateStoreSessionManager.class);
 
+        bind(Connection.class).toProvider(new ConnectionProvider(SnapshotVersion.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig å angi replicaversion her?
+
         bind(HibernateStoreSessionManager.class).to(HibernateStoreSessionManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
         bind(HibernateStoreSession.class).toProvider(HibernateStoreSessionProvider.class).in(ServiceRequestScoped.class);
 
@@ -104,6 +109,8 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         // TODO Kanskje vi ikke trenger denne bindingen
         bind(SnapshotVersion.class).toInstance(SnapshotVersion.CURRENT);
 
+        //For LockerStrategy
+        install(new ServerServiceModule(moduleConfiguration, new SkifServices().getServices()));
 
     }
 

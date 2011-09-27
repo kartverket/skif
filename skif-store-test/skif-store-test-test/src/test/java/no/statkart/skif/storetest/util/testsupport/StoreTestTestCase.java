@@ -3,9 +3,13 @@ package no.statkart.skif.storetest.util.testsupport;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifModule;
+import no.statkart.skif.config.SkifServices;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
+import no.statkart.skif.service.locker.DBLockerService;
+import no.statkart.skif.service.locker.SkifMapper;
 import no.statkart.skif.service.module.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
@@ -47,7 +51,9 @@ public class StoreTestTestCase extends SkifTestCase {
                     .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
                     .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
             );
+            install(new RemoteServiceModule(moduleConfiguration, new SkifServices().getServices(), new SkifMapper().getMapping()));
             bind(StoreReadService.class).to(StoreReadServiceClient.class);
+
 
 
         }

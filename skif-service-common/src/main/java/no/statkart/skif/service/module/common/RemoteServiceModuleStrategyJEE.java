@@ -40,6 +40,11 @@ public class RemoteServiceModuleStrategyJEE extends RemoteServiceModuleStrategy 
         bindService(outerBinder, innerBinder, service, webServiceClass);
     }
 
+    /**
+     * Finner riktig webservice service-klasse basert på navnekonvensjon. Konvensjon er at intern service navn og webservice navn er det samme ({@link Class#getSimpleName()}).
+     *
+     * Transformerer java pakkenavn basert på {@link #classWSPackageMappings}
+     */
     protected <S> Class<?> findWebServicePortClass(Class<S> serviceClass) {
         Class<?> webServiceClass = null;
         String serviceClassname = serviceClass.getName();

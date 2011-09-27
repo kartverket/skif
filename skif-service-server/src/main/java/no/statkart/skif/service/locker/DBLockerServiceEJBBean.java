@@ -63,4 +63,9 @@ public class DBLockerServiceEJBBean extends EJBTimedService implements DBLockerS
     public Collection<LockInfo<Long>> renewAllLocks(String owner, long lockTimeout) {
         return serviceChain.renewAllLocks(owner, lockTimeout);
     }
+
+    @Override
+    public LockInfo<Long> getLock(LockKey<Long> lockKey) {
+        return serviceChain.getLock(lockKey);
+    }
 }

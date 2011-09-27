@@ -13,7 +13,13 @@ import no.statkart.skif.service.chain.ServiceChainFactories;
  */
 public abstract class RemoteServiceModuleStrategy extends ModuleStrategy {
     private CallServiceChainFactorySpecification callServiceChainFactorySpecification;
-    protected String[]classWSPackageMappings ={"api:wsapi", "service:wsapi.service"};
+
+    /**
+     * Definerer mapping mellom intern og webservice service-klasser.
+     * <br />
+     * Skal være på formen {@code <intern>:<extern>}
+     */
+    protected String[] classWSPackageMappings = {"api:wsapi", "service:wsapi.service"};
 
     public CallServiceChainFactorySpecification getCallServiceChainFactorySpecification() {
         return callServiceChainFactorySpecification;
@@ -25,11 +31,17 @@ public abstract class RemoteServiceModuleStrategy extends ModuleStrategy {
     }
 
 
+    /**
+     * @return {@link #classWSPackageMappings}
+     */
     public String[] getClassWSPackageMappings() {
         return classWSPackageMappings;
     }
 
-    public RemoteServiceModuleStrategy setClassWSPackageMappings(String[] classWSPackageMappings) {
+    /**
+     * @see #classWSPackageMappings
+     */
+    public RemoteServiceModuleStrategy setClassWSPackageMappings(String... classWSPackageMappings) {
         this.classWSPackageMappings = classWSPackageMappings;
         return this;
     }

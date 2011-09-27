@@ -6,9 +6,13 @@ import com.google.inject.Singleton;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.SkifServices;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
+import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
+import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
@@ -30,6 +34,7 @@ import no.statkart.skif.storetest.domain.kodeliste.TestCEnumKodeId;
 import no.statkart.skif.storetest.persistence.StoreTestKodelisteLoader;
 import no.statkart.skif.storetest.persistence.StoreTestStorePersisterStrategy;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
