@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.kodeliste.impl.EnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.impl.EnumKodeSupport;
 
@@ -16,8 +16,8 @@ public class TestCEnumKodeId extends EnumKodeId<TestCEnumKode> {
     public static TestCEnumKodeId KodeAId = define(1, "A", "Kode A");
     public static TestCEnumKodeId KodeBId = define(2, "B", "Kode B");
 
-    protected TestCEnumKodeId(Long value, ReplicaVersion replicaVersion) {
-        super(value, replicaVersion);
+    protected TestCEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class TestCEnumKodeId extends EnumKodeId<TestCEnumKode> {
     }
 
     public static TestCEnumKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(TestCEnumKodeId.class, idValue, ReplicaVersion.CURRENT);
+        return kodeSupport.createInstance(TestCEnumKodeId.class, idValue, SnapshotVersion.CURRENT);
     }
 
     private Object readResolve() {

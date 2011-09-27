@@ -60,11 +60,11 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         Map<Object, ConnectionFactory> connectionFactoryMap = new HashMap<Object, ConnectionFactory>();
         if  (moduleConfiguration.getServiceMode()== ServiceMode.SINGLE_VM) {
             JDBCConnectionFactory connectionFactory = TestHelper.createJDBCConnectionFactory(moduleConfiguration.getConfiguration());
-            connectionFactoryMap.put(ReplicaVersion.CURRENT, connectionFactory);
-            connectionFactoryMap.put(ReplicaVersion.OLD, connectionFactory);
+            connectionFactoryMap.put(SnapshotVersion.CURRENT, connectionFactory);
+            connectionFactoryMap.put(SnapshotVersion.OLD, connectionFactory);
         }  else {
-            connectionFactoryMap.put(ReplicaVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelBok_DS"));
-            connectionFactoryMap.put(ReplicaVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelOld_DS"));
+            connectionFactoryMap.put(SnapshotVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelBok_DS"));
+            connectionFactoryMap.put(SnapshotVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelOld_DS"));
         }
         return connectionFactoryMap;
     }
@@ -99,10 +99,10 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
 
         bind(Session.class).toProvider(HibernateSessionProviderCurrent.class).in(ServiceRequestScoped.class);
 
-        // TODO ReplicaVersion skal erstattes med TimePoint som har tilsvarende funksjonalitet
+        // TODO SnapshotVersion skal erstattes med TimePoint som har tilsvarende funksjonalitet
 
         // TODO Kanskje vi ikke trenger denne bindingen
-        bind(ReplicaVersion.class).toInstance(ReplicaVersion.CURRENT);
+        bind(SnapshotVersion.class).toInstance(SnapshotVersion.CURRENT);
 
 
     }

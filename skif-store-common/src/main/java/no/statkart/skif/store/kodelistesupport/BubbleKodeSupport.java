@@ -2,7 +2,7 @@ package no.statkart.skif.store.kodelistesupport;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.util.CopyHelper;
 
 import java.lang.reflect.Field;
@@ -71,16 +71,16 @@ public abstract class BubbleKodeSupport<T extends BubbleKodelisteId<?>> {
     }
 
 
-    public <I extends BubbleKodeId<? extends BubbleKode>> I createInstance(Class<? extends I> idClass, long idValue, ReplicaVersion replicaVersion) {
-        I id = (I) getInstance(idValue, replicaVersion);
+    public <I extends BubbleKodeId<? extends BubbleKode>> I createInstance(Class<? extends I> idClass, long idValue, SnapshotVersion snapshotVersion) {
+        I id = (I) getInstance(idValue, snapshotVersion);
         if (id == null) {
-            id = BubbleId.createInstance(idClass, idValue, replicaVersion);
+            id = BubbleId.createInstance(idClass, idValue, snapshotVersion);
         }
         return id;
     }
 
-    public <I extends BubbleKodeId<? extends BubbleKode>> I getInstance(Long idValue, ReplicaVersion replicaVersion) {
-        return (I) kodeIdResolver.get(idValue, replicaVersion);
+    public <I extends BubbleKodeId<? extends BubbleKode>> I getInstance(Long idValue, SnapshotVersion snapshotVersion) {
+        return (I) kodeIdResolver.get(idValue, snapshotVersion);
     }
 
     public boolean isNewKoderAllowed() {

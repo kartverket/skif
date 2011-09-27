@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.domain;
 
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.BubbleKode;
 import no.statkart.skif.store.kodelistesupport.BubbleKodeliste;
 import no.statkart.skif.storetest.domain.kodeliste.Kode;
@@ -32,8 +32,8 @@ public class KodeSupportTest {
      * denne klassen med samme idvalue slik at det er mulig å teste at KodeSupport gjør jobben sin.
      */
     public static class TestEnumKodeId extends EnumKodeId<EnumKode> {
-        public TestEnumKodeId(long value, ReplicaVersion replicaVersion) {
-            super(new Long(value), replicaVersion);
+        public TestEnumKodeId(long value, SnapshotVersion snapshotVersion) {
+            super(new Long(value), snapshotVersion);
         }
 
         @Override
@@ -65,49 +65,49 @@ public class KodeSupportTest {
 
     public void testCreateKodeId() {
         KodeSupport kodeSupport = new TestKodeSupport(null, new KodelisteId(5));
-        KodeId<Kode> id = kodeSupport.getInstance(new Long(1), ReplicaVersion.CURRENT);
+        KodeId<Kode> id = kodeSupport.getInstance(new Long(1), SnapshotVersion.CURRENT);
         assertNull(id);
 
-        TestEnumKodeId id1 = new TestEnumKodeId(1, ReplicaVersion.CURRENT);
+        TestEnumKodeId id1 = new TestEnumKodeId(1, SnapshotVersion.CURRENT);
         KodeId<EnumKode> kodeId1 = kodeSupport.getOrCreateInstance(id1);
         assertSame(id1, kodeId1);
 
-        TestEnumKodeId id1a = new TestEnumKodeId(1, ReplicaVersion.CURRENT);
+        TestEnumKodeId id1a = new TestEnumKodeId(1, SnapshotVersion.CURRENT);
         KodeId<EnumKode> kodeId1a = kodeSupport.getOrCreateInstance(id1a);
         assertSame(id1, kodeId1a);
     }
 
     public void testNewKodeNotAllowed() {
         KodeSupport kodeSupport = new TestKodeSupport(null, new KodelisteId(5));
-        TestEnumKodeId id1 = new TestEnumKodeId(1, ReplicaVersion.CURRENT);
+        TestEnumKodeId id1 = new TestEnumKodeId(1, SnapshotVersion.CURRENT);
 
         KodeId<EnumKode> kodeId1 = kodeSupport.getOrCreateInstance(id1);
         kodeSupport.setNewKoderAllowed(false);
 
         // Test ok to get existing codes
-        TestEnumKodeId id1a = new TestEnumKodeId(1, ReplicaVersion.CURRENT);
+        TestEnumKodeId id1a = new TestEnumKodeId(1, SnapshotVersion.CURRENT);
         KodeId<EnumKode> kodeId1a = kodeSupport.getOrCreateInstance(id1a);
 
         // Test ok to sjekk for new code
-        KodeId<Kode> kodeId2 = kodeSupport.getInstance(new Long(2), ReplicaVersion.CURRENT);
+        KodeId<Kode> kodeId2 = kodeSupport.getInstance(new Long(2), SnapshotVersion.CURRENT);
         assertNull(kodeId2);
 
         // Not ok to create new codes
-        TestEnumKodeId id2 = new TestEnumKodeId(2, ReplicaVersion.CURRENT);
+        TestEnumKodeId id2 = new TestEnumKodeId(2, SnapshotVersion.CURRENT);
         try {
             KodeId<EnumKode> kodeId2a = kodeSupport.getOrCreateInstance(id2);
             fail("Expected exception");
         } catch (ImplementationException e) {
         }
 
-        // Ok to create old ReplicaVersions of existing codes
-        TestEnumKodeId id1_old = new TestEnumKodeId(1, ReplicaVersion.OLD);
+        // Ok to create old SnapshotVersions of existing codes
+        TestEnumKodeId id1_old = new TestEnumKodeId(1, SnapshotVersion.OLD);
         KodeId<EnumKode> kodeId1a_old = kodeSupport.getOrCreateInstance(id1_old);
         assertSame(id1_old, kodeId1a_old);
 
 
-        // Not ok to create old ReplicaVersions of new codes
-        TestEnumKodeId id2_old = new TestEnumKodeId(2, ReplicaVersion.OLD);
+        // Not ok to create old SnapshotVersions of new codes
+        TestEnumKodeId id2_old = new TestEnumKodeId(2, SnapshotVersion.OLD);
         try {
             KodeId<EnumKode> kodeId2a_old = kodeSupport.getOrCreateInstance(id2_old);
             fail("Expected exception");

@@ -4,7 +4,8 @@ import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.ConfigurationConstants;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.kodeliste.TestADbKode;
@@ -66,7 +67,7 @@ public class DbUtilKodeTest {
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestADbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestBDbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", DbKodeliste.class);
-        SessionFactory sf = sfbuilder.build(ReplicaVersion.CURRENT);
+        SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         return sf;
     }

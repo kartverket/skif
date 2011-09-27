@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.StorePersister;
 import no.statkart.skif.store.persistence.StoreSession;
 import org.hibernate.*;
@@ -37,8 +37,8 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
     /* Holder referanse til hibernate sesjonen */
     protected final Session session;
 
-    /* Angi replicaversjon for objekter lest av denne sesjon. */
-    protected final ReplicaVersion replicaVersion;
+    /* Angi SnapshotVersion for objekter lest av denne sesjon. */
+    protected final SnapshotVersion snapshotVersion;
 
     /**
      * Bestemmer om Bubbler kan ha lazyloaded assosiasjoner som ikke er initialisert i det bubblen
@@ -47,9 +47,9 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
     private boolean lazyLoadedBubblesAllowed;
 
     @Inject
-    public HibernateStoreSession(Session session, ReplicaVersion replicaVersion) {
+    public HibernateStoreSession(Session session, SnapshotVersion snapshotVersion) {
         this.session = session;
-        this.replicaVersion = replicaVersion;
+        this.snapshotVersion = snapshotVersion;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
     public T get(I bubbleId) {
         T bubble;
 
-        checkReplicaVersion(bubbleId);
+        checkSnapshotVersion(bubbleId);
         try {
             bubble = getFromHibernateSessionOrLoad(bubbleId);
             if (bubble == null)
@@ -93,7 +93,7 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
         Set<I> idsToLoad = new HashSet<I>(bubbleIds.size());
 
         for (I bubbleId : bubbleIds) {
-            checkReplicaVersion(bubbleId);
+            checkSnapshotVersion(bubbleId);
             T bubble = lookupInHibernateCache(bubbleId);
             if (bubble != null) {
                 alreadyLoaded.add(bubble);
@@ -132,9 +132,9 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
         throw new UnsupportedOperationException();
     }
 
-    protected final <T extends BubbleObject, I extends BubbleId<? extends T>> void checkReplicaVersion(I bubbleId) {
-        if (bubbleId.getReplicaVersion() != replicaVersion) {
-            throw new ImplementationException("Id har feil replicaversion for session:" + bubbleId);
+    protected final <T extends BubbleObject, I extends BubbleId<? extends T>> void checkSnapshotVersion(I bubbleId) {
+        if (bubbleId.getSnapshotVersion() != snapshotVersion) {
+            throw new ImplementationException("Id har feil SnapshotVersion for session:" + bubbleId);
         }
     }
 

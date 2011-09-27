@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain;
 
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 
 /**
  * @author Henrik Fredholm
@@ -25,7 +25,7 @@ public class StoreTestBubbleId<T extends StoreTestBubble> extends BubbleId<T> {
         super(idValue);
     }
 
-    public StoreTestBubbleId(Long value, ReplicaVersion version) {
+    public StoreTestBubbleId(Long value, SnapshotVersion version) {
         super(value, version);
     }
 }

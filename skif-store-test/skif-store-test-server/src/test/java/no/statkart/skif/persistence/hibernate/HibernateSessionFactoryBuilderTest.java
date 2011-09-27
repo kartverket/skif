@@ -3,7 +3,8 @@ package no.statkart.skif.persistence.hibernate;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.storetest.domain.TestEntity;
 import org.hibernate.Query;
@@ -35,7 +36,7 @@ public class HibernateSessionFactoryBuilderTest {
     public void testCreateFactorySessionAndConnection() throws SQLException, InterruptedException {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestEntity.class);
-        SessionFactory sf = sfbuilder.build(ReplicaVersion.CURRENT);
+        SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         Session s = sf.openSession();
         Connection c = s.connection();
@@ -57,7 +58,7 @@ public class HibernateSessionFactoryBuilderTest {
     public void testCreateFactoryWithEntity() throws SQLException {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestEntity.class);
-        SessionFactory sf = sfbuilder.build(ReplicaVersion.CURRENT);
+        SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         Session s = sf.openSession();
         Query query = s.createQuery("from TestEntity");

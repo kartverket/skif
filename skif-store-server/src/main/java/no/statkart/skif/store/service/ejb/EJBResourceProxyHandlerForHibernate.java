@@ -43,7 +43,6 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
     @Override
     protected void completeService() {
         log.debug("complete");
-        try {
             if (serviceRequestContext.isContainerManagedTransaction()) {
                 if (serviceRequestContext.inTx()) {
                     connectionManager.flush();
@@ -55,15 +54,11 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
 
             connectionManager.close();
             connectionManager.endAllocateConnectionsViaHibernateSession();
-        } catch (SQLException e) {
-            throw new ImplementationException(e);
-        }
     }
 
     @Override
     protected void abortService() {
         log.debug("abortService");
-        try {
             serviceRequestContext.setRollbackOnly();
             if (serviceRequestContext.isNewTx()) {
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
@@ -72,8 +67,5 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
                 connectionManager.close();
             }
             connectionManager.endAllocateConnectionsViaHibernateSession();
-        } catch (SQLException e) {
-            throw new ImplementationException(e);
-        }
     }
 }

@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.domain.kodeliste.impl;
 
 import no.statkart.skif.store.kodelistesupport.EnumBubbleKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.KodeId;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 
 /**
  * @author Henrik Fredholm
@@ -18,7 +18,7 @@ public abstract class EnumKodeId<T extends EnumKode> extends KodeId<T> implement
     @Override
     protected abstract EnumKodeSupport getKodeSupport();
 
-    protected EnumKodeId(Long value, ReplicaVersion replicaVersion) {
-        super(value, replicaVersion);
+    protected EnumKodeId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
     }
 }

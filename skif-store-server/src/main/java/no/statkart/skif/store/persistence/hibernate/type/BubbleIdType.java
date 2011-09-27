@@ -1,8 +1,12 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.inject.Holder;
+import no.statkart.skif.inject.HolderImpl;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
 import org.hibernate.util.StringHelper;
@@ -39,22 +43,21 @@ public abstract class BubbleIdType implements UserType {
 
     private static final int[] SQL_TYPES = new int[]{Types.BIGINT};
 
-    /* Controls the value of {@link #replicaVersion} for newly created BubbleIdTypes */
-    private static ReplicaVersion replicaVersionSeed = ReplicaVersion.CURRENT;
+    /* Controls the value of {@link #snapshotVersionHolder} for newly created BubbleIdTypes */
+    private static SnapshotVersionHolder snapshotVersionHolderSeed = new SnapshotVersionHolder(SnapshotVersion.CURRENT);
 
-    /* The ReplicaVersion that BubbleIds read by this instance will have */
-    private ReplicaVersion replicaVersion = ReplicaVersion.CURRENT;
+    /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
+    private SnapshotVersionHolder snapshotVersionHolder = snapshotVersionHolderSeed;
 
     public BubbleIdType() {
-        replicaVersion = replicaVersionSeed;
     }
 
-    public static ReplicaVersion getReplicaVersionSeed() {
-        return replicaVersionSeed;
+    public static SnapshotVersionHolder getSnapshotVersionHolderSeed() {
+        return snapshotVersionHolderSeed;
     }
 
-    public static void setReplicaVersionSeed(ReplicaVersion replicaVersionSeed) {
-        BubbleIdType.replicaVersionSeed = replicaVersionSeed;
+    public static void setSnapshotVersionHolderSeed(SnapshotVersionHolder snapshotTimeHolderSeed) {
+        BubbleIdType.snapshotVersionHolderSeed = snapshotTimeHolderSeed;
     }
 
     public int[] sqlTypes() {
@@ -149,20 +152,20 @@ public abstract class BubbleIdType implements UserType {
 
     /**
      * Oppretter id med den spesifisert verdi. Id classen må være av den type metoden {@link
-     * #returnedClass()} spesifisere. Replicaversion kan ha defalut verdi siden den overskrive
+     * #returnedClass()} spesifisere. SnapshotVersion kan ha defalut verdi siden den overskrive
      * automatisk av {@link #createId(Long) } metoden.
      *
      * @param value id value for bubbleid'en
      */
-    protected abstract Object createPrototypeId(Long value, ReplicaVersion replicaVersion);
+    protected abstract Object createPrototypeId(Long value, SnapshotVersion snapshotTime);
 
     /**
-     * Oppretter BubbleId av riktig type og setter idvalue og replicaversion
+     * Oppretter BubbleId av riktig type og setter idvalue og SnapshotVersion
      *
      * @param value id value for bubbleid'en
      */
     public Object createId(Long value) {
-        BubbleId id = (BubbleId) createPrototypeId(value, replicaVersion);
+        BubbleId id = (BubbleId) createPrototypeId(value, snapshotVersionHolder.get());
         return id;
     }
 
@@ -175,8 +178,8 @@ public abstract class BubbleIdType implements UserType {
     private Object createIdOld(Long value) {
         try {
             //Opprett id av riktig type
-            Constructor ctor = returnedClass().getConstructor(new Class[]{Long.class, ReplicaVersion.class});
-            BubbleId id = (BubbleId) ctor.newInstance(new Object[]{value, replicaVersion});
+            Constructor ctor = returnedClass().getConstructor(new Class[]{Long.class, SnapshotVersion.class});
+            BubbleId id = (BubbleId) ctor.newInstance(new Object[]{value, snapshotVersionHolder.get()});
             return id;
         } catch (NoSuchMethodException e) {
             throw new ImplementationException(e);

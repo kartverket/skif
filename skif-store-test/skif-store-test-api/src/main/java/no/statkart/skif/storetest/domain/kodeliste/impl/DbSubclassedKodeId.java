@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.kodeliste.impl;
 
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.DbSubclassedBubbleKodeId;
 
 /**
@@ -9,14 +9,14 @@ import no.statkart.skif.store.kodelistesupport.DbSubclassedBubbleKodeId;
  */
 public class DbSubclassedKodeId<T extends DbSubclassedKode> extends DbKodeId<T> implements DbSubclassedBubbleKodeId<T> {
 
-    protected DbSubclassedKodeId(Long value, ReplicaVersion replicaVersion) {
-        super(value, replicaVersion);
+    protected DbSubclassedKodeId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
     }
 
     @Override
     public boolean equals(Object id) {
         if (this==id) return true;
-        return (id!=null && id instanceof DbSubclassedKodeId && ((DbSubclassedKodeId) id).getValue().equals((((DbSubclassedKodeId) id).getValue())) && this.getReplicaVersion()==((DbSubclassedKodeId) id).getReplicaVersion());
+        return (id!=null && id instanceof DbSubclassedKodeId && ((DbSubclassedKodeId) id).getValue().equals((((DbSubclassedKodeId) id).getValue())) && this.getSnapshotVersion()==((DbSubclassedKodeId) id).getSnapshotVersion());
     }
 
     /**

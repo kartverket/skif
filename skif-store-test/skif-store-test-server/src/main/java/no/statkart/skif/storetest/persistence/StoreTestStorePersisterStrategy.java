@@ -8,6 +8,8 @@ import no.statkart.skif.store.StorePersisterStrategy;
 import no.statkart.skif.store.kodelistesupport.BubbleKodeId;
 import no.statkart.skif.store.kodelistesupport.BubbleKodelisteId;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
+import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManager;
+import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionPersister;
 import no.statkart.skif.store.persistence.kodeliste.BubbleKodelistePersister;
 
 /**
@@ -17,11 +19,11 @@ import no.statkart.skif.store.persistence.kodeliste.BubbleKodelistePersister;
  *
  */
 public class StoreTestStorePersisterStrategy implements StorePersisterStrategy {
-    final HibernateStoreSession persister1;
+    final HibernateStoreSessionPersister persister1;
     final HashStorePersister persister2;
     final BubbleKodelistePersister kodelistePersister;
 
-    public StoreTestStorePersisterStrategy(HibernateStoreSession persister1, HashStorePersister persister2, BubbleKodelistePersister kodelistePersister) {
+    public StoreTestStorePersisterStrategy(HibernateStoreSessionPersister persister1, HashStorePersister persister2, BubbleKodelistePersister kodelistePersister) {
         this.persister1 = persister1;
         this.persister2 = persister2;
         this.kodelistePersister = kodelistePersister;

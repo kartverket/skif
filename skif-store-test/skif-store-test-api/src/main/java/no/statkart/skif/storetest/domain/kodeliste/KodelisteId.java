@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.BubbleKodelisteId;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
@@ -22,8 +22,8 @@ public class KodelisteId<T extends Kodeliste> extends StoreTestBubbleId<T> imple
         super(Long.parseLong(value));
     }
 
-    public KodelisteId(Long value, ReplicaVersion replicaVersion) {
-        super(value, replicaVersion);
+    public KodelisteId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
     }
 
     @Override

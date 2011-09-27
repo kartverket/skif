@@ -3,7 +3,8 @@ package no.statkart.skif.store.persistence.hibernate;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
 import no.statkart.skif.storetest.domain.TestBubble;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -31,40 +32,26 @@ public class StoreHibernateSessionFactoryBuilderTest {
     public void testCreateFactoryWithEntity() throws SQLException {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestBubble.class);
-        SessionFactory sf = sfbuilder.build(ReplicaVersion.CURRENT);
+        SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         Session s = sf.openSession();
         List list = s.createQuery("from TestBubble").list();
         assertNotNull(list);
         assertTrue(list.size()>0);
         TestBubble b = (TestBubble) list.get(0);
-        assertEquals(b.getId().getReplicaVersion(), ReplicaVersion.CURRENT);
+        assertEquals(b.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
     }
 
     public void testCreateFactoryWithEntity_OLD() throws SQLException {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestBubble.class);
-        SessionFactory sf = sfbuilder.build(ReplicaVersion.OLD);
+        SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.OLD));
         assertNotNull(sf);
         Session s = sf.openSession();
         List list = s.createQuery("from TestBubble").list();
         assertNotNull(list);
         assertTrue(list.size()>0);
         TestBubble b = (TestBubble) list.get(0);
-        assertEquals(b.getId().getReplicaVersion(), ReplicaVersion.OLD);
+        assertEquals(b.getId().getSnapshotVersion(), SnapshotVersion.OLD);
     }
-
-    public void testCreateFactoryWithEntity_HISTORIC() throws SQLException {
-        HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
-        sfbuilder.addResource(TestBubble.class);
-        SessionFactory sf = sfbuilder.build(ReplicaVersion.HISTORIC);
-        assertNotNull(sf);
-        Session s = sf.openSession();
-        List list = s.createQuery("from TestBubble").list();
-        assertNotNull(list);
-        assertTrue(list.size()>0);
-        TestBubble b = (TestBubble) list.get(0);
-        assertEquals(b.getId().getReplicaVersion(), ReplicaVersion.HISTORIC);
-    }
-
 }

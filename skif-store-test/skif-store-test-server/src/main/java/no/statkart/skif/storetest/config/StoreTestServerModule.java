@@ -89,8 +89,10 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    StoreServer storeProvider(HibernateStoreSession hibernatePersister, HashStorePersister hashStorePersister, BubbleKodelistePersister kodelistePersister, Injector injector) {
-        StorePersisterStrategy storePersisterStrategy = new StoreTestStorePersisterStrategy(hibernatePersister, hashStorePersister,kodelistePersister) ;
+    StoreServer storeProvider(HibernateStoreSessionManager hibernateStoreSessionManager, HashStorePersister hashStorePersister, BubbleKodelistePersister kodelistePersister, Injector injector) {
+        HibernateStoreSessionPersister hibernateStoreSessionPersister = new HibernateStoreSessionPersister(hibernateStoreSessionManager);
+
+        StorePersisterStrategy storePersisterStrategy = new StoreTestStorePersisterStrategy(hibernateStoreSessionPersister, hashStorePersister,kodelistePersister) ;
 
         AbstractStoreSessionAuthorizerChain authorizerChain = new AbstractStoreSessionAuthorizerChain() {
             @Override

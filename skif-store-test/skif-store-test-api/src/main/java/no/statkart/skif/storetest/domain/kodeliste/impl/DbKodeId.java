@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.kodeliste.impl;
 
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.DbBubbleKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.KodeId;
 
@@ -14,8 +14,8 @@ public abstract class DbKodeId<T extends DbKode> extends KodeId<T> implements Db
         return (DbKodeSupport) KodeId.getKodeSupport(idClass);
     }
 
-    protected DbKodeId(Long value, ReplicaVersion replicaVersion) {
-        super(value, replicaVersion);
+    protected DbKodeId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
     }
 
     @Override

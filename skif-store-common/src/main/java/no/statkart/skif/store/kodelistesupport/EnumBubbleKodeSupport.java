@@ -2,7 +2,7 @@ package no.statkart.skif.store.kodelistesupport;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 
 import java.util.*;
 
@@ -44,7 +44,7 @@ public class EnumBubbleKodeSupport<KL extends EnumBubbleKodeliste, KLId extends 
     }
 
     public <T extends EnumBubbleKode, I extends EnumBubbleKodeId<? extends T>> I define(Class<I> idClass, long idValue, String kodeverdi, String beskrivelesesKey) {
-        I id = BubbleId.createInstance(idClass, idValue, ReplicaVersion.CURRENT);
+        I id = BubbleId.createInstance(idClass, idValue, SnapshotVersion.CURRENT);
         T kode = id.createTypeInstance();
         kode.setId(id);
         kode.setKodeverdi(kodeverdi);

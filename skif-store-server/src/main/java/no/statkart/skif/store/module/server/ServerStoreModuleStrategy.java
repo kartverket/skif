@@ -5,7 +5,7 @@ import no.statkart.skif.module.ModuleStrategy;
 import no.statkart.skif.persistence.ConnectionFactory;
 import no.statkart.skif.persistence.DataSourceConnectionFactory;
 import no.statkart.skif.persistence.JDBCConnectionFactory;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 
 import java.util.HashMap;
 import java.util.Map;

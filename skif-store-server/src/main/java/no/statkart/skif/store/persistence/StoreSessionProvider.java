@@ -3,27 +3,26 @@ package no.statkart.skif.store.persistence;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionManager;
 import org.hibernate.Session;
 
 import java.sql.SQLException;
 
 /**
- *
  * @author Henrik Fredholm
  * @since 2.0
  */
 public class StoreSessionProvider implements Provider<StoreSession> {
-    private final ReplicaVersion key;
+    private final SnapshotVersion key;
     private StoreSessionManager storeSessionManager;
 
     @Inject
-    public StoreSessionProvider(ReplicaVersion key) {
+    public StoreSessionProvider(SnapshotVersion key) {
         this.key = key;
     }
 
-    public StoreSessionProvider(StoreSessionManager storeSessionManager, ReplicaVersion key) {
+    public StoreSessionProvider(StoreSessionManager storeSessionManager, SnapshotVersion key) {
         this.key = key;
         this.storeSessionManager = storeSessionManager;
     }
@@ -34,10 +33,6 @@ public class StoreSessionProvider implements Provider<StoreSession> {
     }
 
     public StoreSession get() {
-        try {
-            return storeSessionManager.getStoreSession(key);
-        } catch (SQLException e) {
-            throw new ImplementationException(e);
-        }
+        return storeSessionManager.getStoreSession(key);
     }
 }

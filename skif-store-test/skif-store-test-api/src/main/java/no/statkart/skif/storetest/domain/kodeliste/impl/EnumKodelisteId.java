@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.kodeliste.impl;
 
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.EnumBubbleKodelisteId;
 import no.statkart.skif.storetest.domain.kodeliste.KodelisteId;
 
@@ -21,8 +21,8 @@ public class EnumKodelisteId extends KodelisteId<EnumKodeliste> implements EnumB
         super(Long.parseLong(value));
     }
     
-    public EnumKodelisteId(Long value, ReplicaVersion replicaVersion) {
-        super(value, replicaVersion);
+    public EnumKodelisteId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
     }
 
     @Override

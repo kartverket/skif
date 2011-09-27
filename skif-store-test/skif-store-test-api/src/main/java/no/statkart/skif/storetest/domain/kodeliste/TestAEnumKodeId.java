@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.kodeliste.impl.EnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.impl.EnumKodeSupport;
 
@@ -16,8 +16,8 @@ public class TestAEnumKodeId extends EnumKodeId<TestAEnumKode> {
     public static TestAEnumKodeId KodeAId = define(1, "A", "Kode A");
     public static TestAEnumKodeId KodeBId = define(2, "B", "Kode B");
 
-    protected TestAEnumKodeId(Long value, ReplicaVersion replicaVersion) {
-        super(value, replicaVersion);
+    protected TestAEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class TestAEnumKodeId extends EnumKodeId<TestAEnumKode> {
     }
 
     public static TestAEnumKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(TestAEnumKodeId.class, idValue, ReplicaVersion.CURRENT);
+        return kodeSupport.createInstance(TestAEnumKodeId.class, idValue, SnapshotVersion.CURRENT);
     }
 
     private Object readResolve() {

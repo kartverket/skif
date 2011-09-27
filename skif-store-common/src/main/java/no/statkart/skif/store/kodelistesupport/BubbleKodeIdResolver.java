@@ -1,7 +1,7 @@
 package no.statkart.skif.store.kodelistesupport;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,6 +31,22 @@ public class BubbleKodeIdResolver {
         this.newKoderAllowed = newKoderAllowed;
     }
 
+    // TODO fjern
+    private final int CURRENT = getIndex(SnapshotVersion.CURRENT);
+    private final int OLD = getIndex(SnapshotVersion.OLD);
+
+    private static int getIndex(Object key) {
+        if (SnapshotVersion.CURRENT == key || key==SnapshotVersion.NOT_VERSIONED) {
+            return 1;
+        } else if (SnapshotVersion.OLD == key) {
+            return 0;
+        } else {
+            throw new ImplementationException("Historic SnapshotVersions not supported");
+        }
+    }
+
+
+
     /**
      * Henter ut eksisterende BubbleKodeId hvis den finnes; ellers brukes newInstance
      *
@@ -38,23 +54,23 @@ public class BubbleKodeIdResolver {
      * @return
      */
     public <I extends BubbleKodeId<? extends BubbleKode>> I  getOrCreate(I newInstance) {
-        int replicaIndex = newInstance.getReplicaVersion().ordinal();
+        final int index =getIndex(newInstance.getSnapshotVersion());
+
         Long idValue = (Long) newInstance.getValue();
         long longValue = idValue.longValue();
-
         BubbleKodeId<?> id;
-        if (longValue < fastLookupIdsArray[replicaIndex].length) {
-            id = fastLookupIdsArray[replicaIndex][(int) longValue];
+        if (longValue < fastLookupIdsArray[index].length) {
+            id = fastLookupIdsArray[index][(int) longValue];
             if (id != null) return (I) id;
         }
 
         // Ikke optimalisert oppslag
-        ConcurrentHashMap<Long, BubbleKodeId<?>> idMap = ids[replicaIndex];
+        ConcurrentHashMap<Long, BubbleKodeId<?>> idMap = ids[index];
         if (!newKoderAllowed) {
             id = idMap.get(idValue);
             if (id == null) {
                 // sjekk for OLD om det finnes en CURRENT. Da er det ok å opprette. Ellers er det ikke
-                if (replicaIndex == ReplicaVersion.CURRENT.ordinal() || !ids[ReplicaVersion.CURRENT.ordinal()].containsKey(idValue)) {
+                if (SnapshotVersion.CURRENT==newInstance.getSnapshotVersion()|| !ids[CURRENT].containsKey(idValue)) {
                     throw new ImplementationException("Forsøk på å opprette ny BubbleKodeId i ferdig definert kodeliste: " + newInstance);
                 }
             } else {
@@ -68,7 +84,7 @@ public class BubbleKodeIdResolver {
             // Ny instans har blitt opprettet
             id =  newInstance;
             synchronized (this) {
-                BubbleKodeId[] fastLookupIds = fastLookupIdsArray[replicaIndex];
+                BubbleKodeId[] fastLookupIds = fastLookupIdsArray[index];
                 if (longValue < fastLookupIds.length) {
                     // Cache i array for rask lookup
                     fastLookupIds[(int) longValue] = id;
@@ -80,7 +96,7 @@ public class BubbleKodeIdResolver {
                     BubbleKodeId[] newFastIds = new BubbleKodeId[newLength];
                     System.arraycopy(fastLookupIds, 0, newFastIds, 0, fastLookupIds.length);
                     newFastIds[intValue] = newInstance;
-                    fastLookupIdsArray[replicaIndex] = newFastIds;
+                    fastLookupIdsArray[index] = newFastIds;
                 } else {
                     // Ordinal er for stor til å bli cachet i index array, må gjøre lookup via map hvergang
                 }
@@ -93,11 +109,11 @@ public class BubbleKodeIdResolver {
      * Henter ut eksisterende BubbleKodeId uten å opprette instans først og er dermed raskere enn {@link #getOrCreate(BubbleKodeId)}
      *
      * @param idValue
-     * @param replicaVersion
+     * @param snapshotVersion
      * @return null hvis ingen BubbleKodeId er definert for idValue
      */
-    public <I extends BubbleKodeId<? extends BubbleKode>> I  get(Long idValue, ReplicaVersion replicaVersion) {
-        int replicaIndex = replicaVersion.ordinal();
+    public <I extends BubbleKodeId<? extends BubbleKode>> I  get(Long idValue, SnapshotVersion snapshotVersion) {
+        int replicaIndex = 0; // snapshotVersion.ordinal();
         long longValue = idValue.longValue();
 
         BubbleKodeId<?> id;

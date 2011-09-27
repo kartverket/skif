@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.kodeliste.impl;
 
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.DbBubbleKodelisteId;
 import no.statkart.skif.storetest.domain.kodeliste.KodelisteId;
 
@@ -21,8 +21,8 @@ public class DbKodelisteId extends KodelisteId<DbKodeliste> implements DbBubbleK
         super(Long.parseLong(value));
     }
 
-    public DbKodelisteId(Long value, ReplicaVersion replicaVersion) {
-        super(value, replicaVersion);
+    public DbKodelisteId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
     }
 
     @Override

@@ -6,7 +6,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ConnectionFactory;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ import java.sql.SQLException;
 public class HibernateSessionManagerSingleVersionImpl extends AbstractHibernateSessionManager<HibernateSessionManagerEntry> {
     private static Logger logger = LoggerFactory.getLogger(HibernateSessionManagerSingleVersionImpl.class);
     private final ServiceRequestContext serviceRequestContext;
-    private HibernateSessionManagerEntry entry = new HibernateSessionManagerEntry(ReplicaVersion.CURRENT);
+    private HibernateSessionManagerEntry entry = new HibernateSessionManagerEntry(SnapshotVersion.CURRENT);
 
 
     @Inject
@@ -44,7 +44,7 @@ public class HibernateSessionManagerSingleVersionImpl extends AbstractHibernateS
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close()  {
         closeEntry(entry);
 
     }
@@ -62,14 +62,14 @@ public class HibernateSessionManagerSingleVersionImpl extends AbstractHibernateS
 
 
     @Override
-    public void commit() throws SQLException {
+    public void commit()  {
         commitEntry(entry);
 
     }
 
 
     @Override
-    public void rollback() throws SQLException {
+    public void rollback()  {
         rollbackEntry(entry);
     }
 }

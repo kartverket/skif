@@ -12,6 +12,7 @@ import java.sql.SQLException;
  * Guice provider for å få tak i en Connection. Hver provider må opprettes med en key som angir
  * hvilken connection instans som er ønsket. Klassen bruker en ConnectionManager som hentes ut via
  * en provider slik at ConnectionManager kan ha ServiceRequestScope.
+ *
  * @author Henrik Fredholm
  * @since 2.0
  */
@@ -33,10 +34,6 @@ public class ConnectionProvider implements Provider<Connection> {
 
     @Override
     public Connection get() {
-        try {
-            return connectionManagerProvider.get().getConnection(key);
-        } catch (SQLException e) {
-            throw new ImplementationException(e);
-        }
+        return connectionManagerProvider.get().getConnection(key);
     }
 }

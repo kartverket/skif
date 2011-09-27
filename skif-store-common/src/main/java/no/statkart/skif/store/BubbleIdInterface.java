@@ -5,7 +5,7 @@ package no.statkart.skif.store;
  */
 public interface BubbleIdInterface<T extends BubbleObjectInterface> {
     public Object getValue();
-    public ReplicaVersion getReplicaVersion();
+    public SnapshotVersion getSnapshotVersion();
     public BubbleIdInterface<T> resolveInstance();
     public T createTypeInstance();
 }

@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.persistence.hibernate.type.kodeliste;
 
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodelisteId;
 
 /**
@@ -15,8 +15,8 @@ public class DbKodelisteIdType extends BubbleIdType {
     }
 
     @Override
-    protected Object createPrototypeId(Long value, ReplicaVersion replicaVersion) {
-        return new DbKodelisteId(value, replicaVersion);
+    protected Object createPrototypeId(Long value, SnapshotVersion snapshotVersion) {
+        return new DbKodelisteId(value, snapshotVersion);
     }        
 }
 

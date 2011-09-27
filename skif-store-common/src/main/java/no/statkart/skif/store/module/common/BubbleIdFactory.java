@@ -2,7 +2,7 @@ package no.statkart.skif.store.module.common;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -12,16 +12,16 @@ import java.lang.reflect.InvocationTargetException;
  * @since 2.0
  */
 public class BubbleIdFactory {
-    public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, long idValue, ReplicaVersion replicaVersion) {
-        return createInstance(idClass, new Long(idValue), replicaVersion);
+    public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, long idValue, SnapshotVersion snapshotVersion) {
+        return createInstance(idClass, new Long(idValue), snapshotVersion);
     }
 
-    public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, Object idValue, ReplicaVersion replicaVersion) {
+    public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, Object idValue, SnapshotVersion snapshotVersion) {
          I id = null;
         try {
-            Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), ReplicaVersion.class);
+            Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), SnapshotVersion.class);
             ctor.setAccessible(true);
-            id = ctor.newInstance(idValue, replicaVersion);
+            id = ctor.newInstance(idValue, snapshotVersion);
             return (I) id.resolveInstance();
         } catch (InstantiationException e) {
             throw new ImplementationException(e);

@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain;
 
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +28,7 @@ public class TestBubbleId<T extends TestBubble> extends StoreTestBubbleId<T> {
         super(idValue);
     }
 
-    public TestBubbleId(Long value, ReplicaVersion version) {
+    public TestBubbleId(Long value, SnapshotVersion version) {
         super(value, version);
     }
 }

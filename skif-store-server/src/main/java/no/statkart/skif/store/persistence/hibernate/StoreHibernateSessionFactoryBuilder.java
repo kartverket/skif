@@ -1,11 +1,14 @@
 package no.statkart.skif.store.persistence.hibernate;
 
+import no.statkart.skif.inject.Holder;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizer;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -66,23 +69,24 @@ public class StoreHibernateSessionFactoryBuilder extends HibernateSessionFactory
     }
 
 
-    public SessionFactory build(ReplicaVersion replicaVersion) {
-        // Denne metoden bruker synkronisering på {@code LOCK} fordi BubbleIdType.ReplicaVersionSeed ikke må endres mens
-        // SessionFactory blir opprettet. Det er kun denne metoden som bruker {@code BubbleIdType.ReplicaVersionSeed}.
-        // Alle BubbleIdTypes som opprettes i SessionFactory får satt deres replicaVersion til
-        // {@code BubbleIdType.ReplicaVersionSeed}. Å bruke synkronisering her er enklere enn å løpen igjennom
-        // datastrukturerene i SessionFactory og sette replicaVersion for alle BubbleIdTypes manuellt.
+    public SessionFactory build(SnapshotVersionHolder snapshotVersionHolder) {
+        // Denne metoden bruker synkronisering på {@code LOCK} fordi BubbleIdType.SnapshotVersionHolderSeed ikke må endres mens
+        // SessionFactory blir opprettet. Det er kun denne metoden som bruker {@code BubbleIdType.SnapshotVersionHolderSeed}.
+        // Alle BubbleIdTypes som opprettes i SessionFactory får satt deres snapshotVersionHolder til
+        // {@code BubbleIdType.SnapshotVersionHolderSeed}. Å bruke synkronisering her er enklere enn å løpe igjennom
+        // datastrukturerene i SessionFactory og sette snapshotVersionHolder for alle BubbleIdTypes manuellt.
         //
-        // NB: Current og Old storeSessions bruker hver sin factory. Kan ikke bruke samme siden det er factoryen som styrer
-        // hvilken ReplicaVersion som blir satt ved innlesing av objektet.
+        // NB: HibernateSessions som skal jobbe med forskjellige snapshotVersions uavhengig avhverander innenfor samme tråd (f.eks Current og Old sessions)
+        // må bruke hver sin factory. De kan ikke bruke samme factory siden det er factoryen som styrer
+        // hvilken snapshotVersionHolder instans som vil bli brukt ved materalisering av BubbleId'en.
         
         SessionFactory sessionFactory = null;
         logger.debug("creating session factory");
         synchronized (LOCK) {
             try {
-                BubbleIdType.setReplicaVersionSeed(replicaVersion);
+                BubbleIdType.setSnapshotVersionHolderSeed(snapshotVersionHolder);
                 Configuration cfg = createConfiguration(hibernateProperties);
-                if (replicaVersion != ReplicaVersion.CURRENT ) {
+                if (!SnapshotVersion.CURRENT.equals(snapshotVersionHolder.get()) ) {
                     // Denne kan være satt ifm testing for current session factory, men den skal aldig være satt for
                     // old eller historic session factory. Det ville føre til at auto operasjonen ville bli utført 2 ganger
                     cfg.setProperty("hibernate.hbm2ddl.auto", "");
@@ -92,7 +96,8 @@ public class StoreHibernateSessionFactoryBuilder extends HibernateSessionFactory
             } catch (HibernateException e) {
                 throw new ImplementationException("Feil ved initialisering av hibernate", e, logger);
             } finally {
-                BubbleIdType.setReplicaVersionSeed(ReplicaVersion.CURRENT);
+                // Set ny SnapshotVersionHolderSeed slik at to factory instanser ikke ved et uheld blir satt opp med samme seed.
+                BubbleIdType.setSnapshotVersionHolderSeed(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
             }
         }
         return sessionFactory;
@@ -105,7 +110,7 @@ public class StoreHibernateSessionFactoryBuilder extends HibernateSessionFactory
         if (props.get("hibernate.transaction.factory_class").equals("org.hibernate.transaction.JDBCTransactionFactory")) {
             logger.info("GBAPI hibernatekonfigurasjon: " + props.get("hibernate.connection.url") + " - " + props.get("hibernate.connection.username"));
         } else {
-            // TODO: Dette blir feil for replicaVersion.OLD. Må bruke old datasource
+            // TODO: Dette blir feil for SnapshotVersion.OLD. Må bruke old datasource
             logger.info("GBAPI hibernatekonfigurasjon: " + props.get("hibernate.connection.datasource"));
         }
         ClassLoader cl = StoreHibernateSessionFactoryBuilder.class.getClassLoader();
@@ -132,7 +137,7 @@ public class StoreHibernateSessionFactoryBuilder extends HibernateSessionFactory
 
             // Nedenstående gjøres nå via en StoreSessionListener og trens derfor ikke lengre her.
             // Old session skal aldrig forsøke å oppdatere emptycollectionsflagget. Derfor legges listeneren kun på Current session
-//          if( replicaVersion == ReplicaVersion.CURRENT ) {
+//          if( SnapshotVersion == SnapshotVersion.CURRENT ) {
 //              FlushEntityEventListener[] flushEntityStack = {new EmptyCollectionOptimizerFlushEntityEventListener(optimizers), new DefaultFlushEntityEventListener()};
 //              cfg.getEventListeners().setFlushEntityEventListeners(flushEntityStack);
 //          }

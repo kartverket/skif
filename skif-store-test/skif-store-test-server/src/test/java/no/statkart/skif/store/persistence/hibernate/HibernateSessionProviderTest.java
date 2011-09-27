@@ -7,7 +7,7 @@ import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.TestBubble;
@@ -34,7 +34,7 @@ public class HibernateSessionProviderTest {
 
         final HibernateSessionManager hibernateSessionManager = new HibernateSessionManagerMultiVersionImpl(connectionFactoryManager, hibernateSessionFactoryManager, null);
 
-        Provider<Session> sessionProvider = new HibernateSessionProvider(hibernateSessionManager, ReplicaVersion.CURRENT);
+        Provider<Session> sessionProvider = new HibernateSessionProvider(hibernateSessionManager, SnapshotVersion.CURRENT);
 
         Session s = sessionProvider.get();
 
@@ -80,7 +80,7 @@ public class HibernateSessionProviderTest {
                 bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerMultiVersionImpl.class).in(Singleton.class);
                 bind(HibernateSessionManager.class).to(HibernateSessionManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
 
-                bind(ReplicaVersion.class).toInstance(ReplicaVersion.CURRENT);
+                bind(SnapshotVersion.class).toInstance(SnapshotVersion.CURRENT);
                 bind(Session.class).toProvider(HibernateSessionProviderCurrent.class).in(ServiceRequestScoped.class);
             }
         });

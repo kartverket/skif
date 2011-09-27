@@ -2,7 +2,7 @@ package no.statkart.skif.store.kodelistesupport;
 
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIdInterface;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 
 /**
  * @author Henrik Fredholm
@@ -10,6 +10,6 @@ import no.statkart.skif.store.ReplicaVersion;
  */
 public interface BubbleKodeId<T extends BubbleKode> extends BubbleIdInterface<T> {
     public Object getValue();
-    public ReplicaVersion getReplicaVersion();
+    public SnapshotVersion getSnapshotVersion();
     public BubbleKodelisteId getKodelisteId();
 }

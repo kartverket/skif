@@ -3,7 +3,8 @@ package no.statkart.skif.storetest.domain;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
 import no.statkart.skif.store.kodelistesupport.*;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
@@ -39,7 +40,7 @@ public class DbKodeHibernateTest {
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestBDbKode.class);
         sfbuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", TestCDbKode.class, TestC1DbKode.class, TestC2DbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", DbKodeliste.class);
-        SessionFactory sf = sfbuilder.build(ReplicaVersion.CURRENT);
+        SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         return sf;
     }
@@ -127,7 +128,7 @@ public class DbKodeHibernateTest {
 
     public void testKodelisteManager() {
         SessionFactory sf = setupHibernate();
-        HibernateStoreSession wrapper = new HibernateStoreSession(sf.openSession(), ReplicaVersion.CURRENT);
+        HibernateStoreSession wrapper = new HibernateStoreSession(sf.openSession(), SnapshotVersion.CURRENT);
         BubbleKodelisteManager kodelisteManager = new BubbleKodelisteManager();
 
         DbBubbleKodelisteLoader kodelisteLoader = new DbBubbleKodelisteLoader() {

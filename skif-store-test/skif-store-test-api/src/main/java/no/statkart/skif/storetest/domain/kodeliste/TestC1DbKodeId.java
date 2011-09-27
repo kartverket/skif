@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodeSupport;
 
 /**
@@ -14,8 +14,8 @@ public class TestC1DbKodeId extends TestCDbKodeId<TestC1DbKode> {
     public static TestC1DbKodeId C1AId = define(1);
     public static TestC1DbKodeId C1BId = define(2);
 
-    protected TestC1DbKodeId(Long value, ReplicaVersion replicaVersion) {
-        super(value, replicaVersion);
+    protected TestC1DbKodeId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class TestC1DbKodeId extends TestCDbKodeId<TestC1DbKode> {
     }
 
     public static TestC1DbKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(TestC1DbKodeId.class, idValue, ReplicaVersion.CURRENT);
+        return kodeSupport.createInstance(TestC1DbKodeId.class, idValue, SnapshotVersion.CURRENT);
     }
 
     private Object readResolve() {

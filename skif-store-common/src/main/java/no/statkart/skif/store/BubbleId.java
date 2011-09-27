@@ -22,7 +22,7 @@ public abstract class BubbleId<T extends BubbleObject> implements BubbleIdInterf
     /**
      * Allows the object to exist in multiple versions in Store.
      */
-    private ReplicaVersion replicaVersion = ReplicaVersion.CURRENT;
+    private SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
 
     /**
      * Helper class that holds meta info for each subtype of this class. The meta info takes
@@ -52,19 +52,19 @@ public abstract class BubbleId<T extends BubbleObject> implements BubbleIdInterf
     protected Class clazz = getClass();
 
     public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, long idValue) {
-        return createInstance(idClass, new Long(idValue), ReplicaVersion.CURRENT);
+        return createInstance(idClass, new Long(idValue), SnapshotVersion.CURRENT);
     }
 
-    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, long idValue, ReplicaVersion replicaVersion) {
-        return createInstance(idClass, new Long(idValue), replicaVersion);
+    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, long idValue, SnapshotVersion snapshotVersion) {
+        return createInstance(idClass, new Long(idValue), snapshotVersion);
     }
 
-    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, Object idValue, ReplicaVersion replicaVersion) {
-         I id = null;
+    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, Object idValue, SnapshotVersion snapshotVersion) {
+        I id = null;
         try {
-            Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), ReplicaVersion.class);
+            Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), SnapshotVersion.class);
             ctor.setAccessible(true);
-            id = ctor.newInstance(idValue, replicaVersion);
+            id = ctor.newInstance(idValue, snapshotVersion);
             return (I) id.resolveInstance();
         } catch (InstantiationException e) {
             throw new ImplementationException(e);
@@ -88,9 +88,9 @@ public abstract class BubbleId<T extends BubbleObject> implements BubbleIdInterf
         this.value = value;
     }
 
-    protected BubbleId(Object value, ReplicaVersion version) {
+    protected BubbleId(Object value, SnapshotVersion version) {
         this.value = value;
-        this.replicaVersion = version;
+        this.snapshotVersion = version;
     }
 
 
@@ -102,15 +102,15 @@ public abstract class BubbleId<T extends BubbleObject> implements BubbleIdInterf
         return value;
     }
 
-    public ReplicaVersion getReplicaVersion() {
-        return replicaVersion;
+    public SnapshotVersion getSnapshotVersion() {
+        return snapshotVersion;
     }
 
-    public BubbleId<T> fromIdValue(Object value, ReplicaVersion replicaVersion) {
+    public BubbleId<T> fromIdValue(Object value, SnapshotVersion snapshotVersion) {
         try {
             BubbleId newId = getClass().newInstance();
             newId.value = value;
-            newId.replicaVersion=replicaVersion;
+            newId.snapshotVersion = snapshotVersion;
             return newId;
         } catch (InstantiationException e) {
             throw new ImplementationException(e);
@@ -119,17 +119,17 @@ public abstract class BubbleId<T extends BubbleObject> implements BubbleIdInterf
         }
     }
 
-    public BubbleId<T> asReplicaVersion(ReplicaVersion replicaVersion) {
-        if (this.replicaVersion == replicaVersion) return this;
-        return fromIdValue(getValue(), replicaVersion);
+    public BubbleId<T> asSnapshotVersion(SnapshotVersion snapshotVersion) {
+        if (this.snapshotVersion == snapshotVersion) return this;
+        return fromIdValue(getValue(), snapshotVersion);
     }
 
-    public BubbleId<T> asReplicaVersionOld() {
-        return asReplicaVersion(ReplicaVersion.OLD);
+    public BubbleId<T> asSnapshotVersionOld() {
+        return asSnapshotVersion(SnapshotVersion.OLD);
     }
 
-    public BubbleId<T> asReplicaVersionCurrent() {
-        return asReplicaVersion(ReplicaVersion.CURRENT);
+    public BubbleId<T> asSnapshotVersionCurrent() {
+        return asSnapshotVersion(SnapshotVersion.CURRENT);
     }
 
 
@@ -168,15 +168,15 @@ public abstract class BubbleId<T extends BubbleObject> implements BubbleIdInterf
      */
     protected boolean equals(BubbleId id) {
         // Denne implementason håndter subtyper: eg. AdresseId er lik GateAdresseId og MatrikkelAdresseId dersom
-        // value og replicaVersion er lik, men en GateAdresseId kan aldrig være lik MatrikkeladresseId
+        // value og SnapshotVersion er lik, men en GateAdresseId kan aldrig være lik MatrikkeladresseId
         if (id == null) return false;
-        return value.equals(id.value) && replicaVersion == id.replicaVersion && compatible(id);
+        return value.equals(id.value) && snapshotVersion == id.snapshotVersion && compatible(id);
     }
 
 
-    final public boolean equalsIgnoreReplicaVersion(BubbleId id) {
+    final public boolean equalsIgnoreSnapshotVersion(BubbleId id) {
         // Denne implementason håndter subtyper: eg. AdresseId er lik GateAdresseId og MatrikkelAdresseId dersom
-        // value og replicaVersion er lik, men en GateAdresseId kan aldrig være lik MatrikkeladresseId
+        // value og SnapshotVersion er lik, men en GateAdresseId kan aldrig være lik MatrikkeladresseId
         if (id == null) return false;
         return value.equals(id.value) && compatible(id);
     }
@@ -345,7 +345,7 @@ public abstract class BubbleId<T extends BubbleObject> implements BubbleIdInterf
     public String toString() {
         return getClass().getSimpleName() + "{" +
                 "value=" + value +
-                ", replicaVersion=" + replicaVersion +
+                ", SnapshotVersion=" + snapshotVersion +
                 '}';
     }
 }

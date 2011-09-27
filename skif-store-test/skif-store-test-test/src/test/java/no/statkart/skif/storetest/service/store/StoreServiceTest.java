@@ -10,6 +10,7 @@ import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.module.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestGroup1Services;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
@@ -32,8 +33,6 @@ import static org.testng.AssertJUnit.assertEquals;
 @Test
 public class StoreServiceTest extends StoreTestTestCase {
 
-
-
     @Inject
     private StoreService storeService;
 
@@ -49,5 +48,15 @@ public class StoreServiceTest extends StoreTestTestCase {
         List<TestBubble> bubbles = store.getObjects(ids);
         assertEquals(1, bubbles.size());
         assertEquals(a1Id, bubbles.get(0).getId());
+    }
+
+    public void testStoreGetOld() {
+        StoreService store = injector.getInstance(Key.get(StoreService.class));
+        TestBubbleId<?> a1Id = new TestBubbleId<TestBubble>(1L, SnapshotVersion.OLD);
+
+        TestBubble bubble = store.getObject(a1Id);
+        assertEquals(a1Id, bubble.getId());
+        assertEquals(bubble.getId().getSnapshotVersion(), SnapshotVersion.OLD);
+
     }
 }
