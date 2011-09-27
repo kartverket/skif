@@ -1,0 +1,47 @@
+package no.statkart.skif.storetest.service.storetest12;
+
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.storetest.service2.storetest12.StoreTest1Service2;
+import no.statkart.skif.storetest.util.testsupport2.StoreTestTestCase2;
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
+
+/**
+ * @author Henrik Fredholm
+ * @since 2.0
+ */
+@Test
+public class StoreTest1ServiceTest2 extends StoreTestTestCase2 {
+
+
+    /**
+     * Test kall til metode som kalder andre metoder. Ingen metoder krever tx
+     */
+    public void testStoreTest1Service() {
+        final StoreTest1Service2 storeTest1Service = injector.getInstance(StoreTest1Service2.class);
+
+        storeTest1Service.clear();
+        assertEquals(storeTest1Service.put("key1", "value1"), null);
+        assertEquals(storeTest1Service.get("key1"), "value1");
+        try {
+            storeTest1Service.putThatFails("key1", "value2");
+            fail("Forventet exception");
+        } catch (ImplementationException t) {
+            System.out.println(t);
+        }
+        assertEquals(storeTest1Service.get("key1"), "value1", "Forrige metode skulle ikke ha endret 'key1'");
+        assertEquals(storeTest1Service.remove("key1"), "value1");
+        assertEquals(storeTest1Service.get("key1"), null);
+        System.out.println("Done");
+    }
+
+
+     @Test(invocationCount = 1 /*200*/)
+    public void testStoreTest1ServiceMultipleThreads() {
+         testStoreTest1Service();
+    }
+
+
+}

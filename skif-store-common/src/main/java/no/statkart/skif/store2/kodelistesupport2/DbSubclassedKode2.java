@@ -7,4 +7,5 @@ import no.statkart.skif.store.kodelistesupport.DbBubbleKode;
  * @since 0.6
  */
 public interface DbSubclassedKode2 extends DbKode2 {
+
 }

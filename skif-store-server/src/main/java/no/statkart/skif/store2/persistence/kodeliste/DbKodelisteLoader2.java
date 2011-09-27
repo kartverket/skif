@@ -28,7 +28,8 @@ public abstract class DbKodelisteLoader2 {
     private void loadKoderAndInitialiseKodelister(Session session, List<DbKodeliste2> kodelisteList, Map<DbKodeId2<?>, DbKode2> kodeMap) {
         for (DbKodeliste2 kodeliste : kodelisteList) {
             Class<? extends DbKode2> kodeClass = kodeliste.getKodeClass();
-            Class<? extends DbKode2> kodeIdClass = getClass(kodeClass.getName() + "Id");
+            String name = kodeClass.getName();
+            Class<? extends DbKode2> kodeIdClass = getClass(name.substring(0, name.length() - 1) + "Id2"); //Fjerner 2-tall fra klassenavn
             kodeliste.setKodeIdClass((Class<? extends KodeId2<?>>) kodeIdClass);
             KodeSupport2 bubbleKodeSupport = KodeSupport2.getKodeSupport(kodeliste.getKodeIdClass());
             if (!bubbleKodeSupport.getKodeIdClass().equals(kodeIdClass)) {

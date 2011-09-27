@@ -38,7 +38,15 @@ public class HibernateStoreInterceptor2 extends EmptyInterceptor {
             String classname = bubbleEntity.getClass().getName();
             BubbleId2 bubbleId = (BubbleId2) bubbleEntity.getId();
             try {
-                Class classid = Class.forName(classname + "Id");
+                String idString;
+                if(classname.contains("Impl")) {
+                    idString = classname.substring(0, classname.indexOf("Impl")) + "IdImpl2";
+                } else if(classname.endsWith("2")) {
+                    idString = classname.substring(0, classname.length() - 1) + "Id2";
+                } else {
+                    idString = classname + "Id2";
+                }
+                Class classid = Class.forName(idString);
                 if (classid != bubbleId.getClass()) {
                     Object value = bubbleId.getValue();
                     BubbleId2<?> newBubbleId = (BubbleId2<?>) BubbleIdFactory2.createInstance(classid, value, bubbleId.getReplicaVersion());

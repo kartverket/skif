@@ -3,8 +3,8 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-   <class name="no.statkart.skif.storetest.domain2.TestBubble2">
-      <id name="id" column="id" type="no.statkart.skif.storetest.persistence2.hibernate.type.TestBubbleIdType2">
+   <class name="no.statkart.skif.storetest.domain2.TestEntity2">
+      <id name="id" column="id" type="long">
           <generator class="assigned"/>
       </id>
 

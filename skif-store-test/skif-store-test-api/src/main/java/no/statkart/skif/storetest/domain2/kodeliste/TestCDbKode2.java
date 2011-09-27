@@ -10,5 +10,5 @@ import no.statkart.skif.storetest.domain2.TestDbKode2;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public abstract class TestCDbKode2 extends DbKodeImpl2 implements DbSubclassedKode2, TestDbKode2 {
+public abstract class TestCDbKode2 extends TestDbSubclassedKodeImpl2 implements DbSubclassedKode2, TestDbKode2 {
 }

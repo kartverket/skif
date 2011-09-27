@@ -27,13 +27,13 @@ public class TestHelper2 {
     public static HibernateSessionFactoryBuilder2 createHibernateSessionFactoryBuilder() {
         Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
         Properties properties = ConfigurationConverter.getProperties(cfg);
-        return new HibernateSessionFactoryBuilder2(properties, "no/statkart/skif/storetest/persistence/hibernate");
+        return new HibernateSessionFactoryBuilder2(properties, "no/statkart/skif/storetest/persistence2/hibernate");
     }
 
     public static StoreHibernateSessionFactoryBuilder2 createStoreHibernateSessionFactoryBuilder() {
         Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
         Properties properties = ConfigurationConverter.getProperties(cfg);
-        return new StoreHibernateSessionFactoryBuilder2(properties, "no/statkart/skif/storetest/persistence/hibernate");
+        return new StoreHibernateSessionFactoryBuilder2(properties, "no/statkart/skif/storetest/persistence2/hibernate");
     }
 
     public static JDBCConnectionFactory createJDBCConnectionFactory() {

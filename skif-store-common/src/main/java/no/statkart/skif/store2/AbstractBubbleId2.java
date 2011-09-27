@@ -3,7 +3,6 @@ package no.statkart.skif.store2;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ReflectionException;
-import no.statkart.skif.store.BubbleIdInterface;
 import no.statkart.skif.util.Reflection;
 
 import java.io.Serializable;
@@ -52,15 +51,15 @@ public abstract class AbstractBubbleId2<T extends BubbleObject2> implements Bubb
     // Cache the class for faster access. This actually matters
     protected Class clazz = getClass();
 
-    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, long idValue) {
+    public static <I extends BubbleId2<?>> I createInstance(Class<I> idClass, long idValue) {
         return createInstance(idClass, new Long(idValue), ReplicaVersion2.CURRENT);
     }
 
-    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, long idValue, ReplicaVersion2 replicaVersion) {
+    public static <I extends BubbleId2<?>> I createInstance(Class<I> idClass, long idValue, ReplicaVersion2 replicaVersion) {
         return createInstance(idClass, new Long(idValue), replicaVersion);
     }
 
-    public static <I extends BubbleIdInterface<?>> I createInstance(Class<I> idClass, Object idValue, ReplicaVersion2 replicaVersion) {
+    public static <I extends BubbleId2<?>> I createInstance(Class<I> idClass, Object idValue, ReplicaVersion2 replicaVersion) {
          I id = null;
         try {
             Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), ReplicaVersion2.class);

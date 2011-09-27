@@ -11,10 +11,9 @@ import java.util.Map;
  * @author Roar Ingebrigtsen
  * @since 2.5
  */
-public abstract class TestDbKodelisteImpl2 extends DbKodelisteImpl2 implements TestDbKodeliste2 {
+public class TestDbKodelisteImpl2 extends DbKodelisteImpl2 implements TestDbKodeliste2 {
     @Override
     public TestDbKodelisteIdImpl2 getId() {
         return (TestDbKodelisteIdImpl2) super.getId();    //To change body of overridden methods use File | Settings | File Templates.
     }
-
 }

@@ -3,18 +3,18 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest.domain2.kodeliste.TestADbKode2" table="TestAKode">
-        <id name="id" column="id" type="no.statkart.skif.storetest.persistence2.hibernate.type.kodeliste.TestADbKodeIdType2">
+    <class name="no.statkart.skif.storetest.domain2.kodeliste.TestBDbKode2" table="TestBKode2" >
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence2.hibernate.type.kodeliste.TestBDbKodeIdType2">
             <generator class="assigned"/>
         </id>
 
         <property name="kodeverdi"/>
 
-        <map name="lokalisertBeskrivelse" table="TestAKodeLoc">
+        <map name="lokalisertBeskrivelse" table="TestBKode2Loc">
             <key column="id"/>
             <map-key type="string" column="lokale"/>
             <element column="beskrivelse" type="string"/>
-        </map>
+        </map> 
 
     </class>
 

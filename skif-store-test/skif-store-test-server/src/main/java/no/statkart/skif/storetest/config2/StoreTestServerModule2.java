@@ -57,7 +57,7 @@ public class StoreTestServerModule2 extends SkifModule {
             @Override
             protected void configureHibernate(StoreHibernateSessionFactoryBuilder2 facotryBuilder) {
                 facotryBuilder.addResource(TestBubble2.class);
-//                facotryBuilder.addResource(TestMap2.class);
+                facotryBuilder.addResource(TestMap2.class);
             }
         };
         serverStoreModule.getStrategy(ServiceMode.JEE).setHibernateConfigurationFilename("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties");

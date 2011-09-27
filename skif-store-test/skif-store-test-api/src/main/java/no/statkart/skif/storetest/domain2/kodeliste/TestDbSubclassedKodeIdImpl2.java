@@ -9,16 +9,16 @@ import no.statkart.skif.store2.kodelistesupport2.DbSubclassedKodeId2;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public class TestDbSubclassedKodeId2<T extends TestDbSubclassedKode2> extends DbKodeIdImpl2<T> implements DbSubclassedKodeId2<T> {
+public class TestDbSubclassedKodeIdImpl2<T extends TestDbSubclassedKodeImpl2> extends DbKodeIdImpl2<T> implements DbSubclassedKodeId2<T> {
 
-    protected TestDbSubclassedKodeId2(Long value, ReplicaVersion2 replicaVersion) {
+    protected TestDbSubclassedKodeIdImpl2(Long value, ReplicaVersion2 replicaVersion) {
         super(value, replicaVersion);
     }
 
     @Override
     public boolean equals(Object id) {
         if (this==id) return true;
-        return (id!=null && id instanceof TestDbSubclassedKodeId2 && ((TestDbSubclassedKodeId2) id).getValue().equals((((TestDbSubclassedKodeId2) id).getValue())) && this.getReplicaVersion()==((TestDbSubclassedKodeId2) id).getReplicaVersion());
+        return (id!=null && id instanceof TestDbSubclassedKodeIdImpl2 && ((TestDbSubclassedKodeIdImpl2) id).getValue().equals((((TestDbSubclassedKodeIdImpl2) id).getValue())) && this.getReplicaVersion()==((TestDbSubclassedKodeIdImpl2) id).getReplicaVersion());
     }
 
     /**
@@ -28,12 +28,12 @@ public class TestDbSubclassedKodeId2<T extends TestDbSubclassedKode2> extends Db
      * @return
      */
     @Override
-    public final TestDbSubclassedKodeId2<T> resolveInstance() {
+    public final TestDbSubclassedKodeIdImpl2<T> resolveInstance() {
         DbKodeSupport2 kodeSupport = getKodeSupport();
         if (kodeSupport==null) {
             return this;
         } else {
-            return (TestDbSubclassedKodeId2<T>) getKodeSupport().getOrCreateInstance(this);
+            return (TestDbSubclassedKodeIdImpl2<T>) getKodeSupport().getOrCreateInstance(this);
         }
     }
 

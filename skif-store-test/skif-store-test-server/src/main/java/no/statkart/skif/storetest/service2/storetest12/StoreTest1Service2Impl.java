@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.service2.storetest12;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.storetest.domain.TestMap;
+import no.statkart.skif.storetest.domain2.TestMap2;
 import org.hibernate.Session;
 
 import java.sql.Connection;
@@ -31,9 +31,9 @@ public class StoreTest1Service2Impl implements StoreTest1Service2 {
     public String put(String key, String value) {
         String result = null;
         Session s = getSession();
-        TestMap entry = (TestMap) s.get(TestMap.class, key);
+        TestMap2 entry = (TestMap2) s.get(TestMap2.class, key);
         if (entry == null) {
-            s.save(new TestMap(key, value));
+            s.save(new TestMap2(key, value));
         } else {
             result = entry.getV();
             entry.setV(value);
@@ -44,7 +44,7 @@ public class StoreTest1Service2Impl implements StoreTest1Service2 {
     @Override
     public String get(String key) {
         Session s = getSession();
-        TestMap entry = (TestMap) s.get(TestMap.class, key);
+        TestMap2 entry = (TestMap2) s.get(TestMap2.class, key);
         if (entry == null) {
             return null;
         } else {
@@ -55,7 +55,7 @@ public class StoreTest1Service2Impl implements StoreTest1Service2 {
     @Override
     public String remove(String key) {
         Session s = getSession();
-        TestMap entry = (TestMap) s.get(TestMap.class, key);
+        TestMap2 entry = (TestMap2) s.get(TestMap2.class, key);
         s.delete(entry);
         return entry.getV();
     }
@@ -63,7 +63,7 @@ public class StoreTest1Service2Impl implements StoreTest1Service2 {
     @Override
     public void clear() {
         Session session = getSession();
-        session.createSQLQuery("delete from TestMap").executeUpdate();
+        session.createSQLQuery("delete from TestMap2").executeUpdate();
     }
 
     @Override
@@ -78,13 +78,13 @@ public class StoreTest1Service2Impl implements StoreTest1Service2 {
         Connection connection = connectionProvider.get();
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("update TestMap set v=? where k=?");
+            statement = connection.prepareStatement("update TestMap2 set v=? where k=?");
             statement.setString(1, value);
             statement.setString(2, key);
             int result = statement.executeUpdate();
             if (result==0) {
                 statement.close();
-                statement = connection.prepareStatement("insert into TestMap values(?,?)");
+                statement = connection.prepareStatement("insert into TestMap2 values(?,?)");
                 statement.setString(1, key);
                 statement.setString(2, value);
                 statement.executeUpdate();

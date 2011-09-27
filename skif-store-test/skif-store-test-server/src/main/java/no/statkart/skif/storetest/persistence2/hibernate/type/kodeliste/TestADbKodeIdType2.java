@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.persistence2.hibernate.type.kodeliste;
 
-import no.statkart.skif.storetest.domain.kodeliste.TestADbKodeId;
-import no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.KodeIdType;
+import no.statkart.skif.storetest.domain2.kodeliste.TestADbKodeId2;
 
 /**
  * @author Henrik Fredholm
@@ -10,7 +9,7 @@ import no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.KodeIdTyp
 public class TestADbKodeIdType2 extends KodeIdType2 {
     @Override
     public Class returnedClass() {
-        return TestADbKodeId.class;
+        return TestADbKodeId2.class;
     }
 }
 
