@@ -35,7 +35,7 @@ public class HibernateStoreSessionManagerMultiVersionImpl2 extends AbstractHiber
     }
 
     @Override
-    public void closeHibernateSession(HibernateStoreSessionManagerEntry2 entry) throws SQLException {
+    public void closeHibernateSession(HibernateStoreSessionManagerEntry2 entry) {
         super.closeHibernateSession(entry);
         entry.storeSession = null;
     }
@@ -48,7 +48,7 @@ public class HibernateStoreSessionManagerMultiVersionImpl2 extends AbstractHiber
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close() {
         closeEntry(entries[ReplicaVersion2.CURRENT.ordinal()]);
         closeEntry(entries[ReplicaVersion2.OLD.ordinal()]);
 
@@ -67,13 +67,13 @@ public class HibernateStoreSessionManagerMultiVersionImpl2 extends AbstractHiber
     }
 
     @Override
-    public void commit() throws SQLException {
+    public void commit()  {
         HibernateStoreSessionManagerEntry2 entry = entries[ReplicaVersion2.CURRENT.ordinal()];
         commitEntry(entry);
     }
 
     @Override
-    public void rollback() throws SQLException {
+    public void rollback() {
         HibernateStoreSessionManagerEntry2 entry = entries[ReplicaVersion2.CURRENT.ordinal()];
         rollbackEntry(entry);
     }

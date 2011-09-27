@@ -1,14 +1,9 @@
 package no.statkart.skif.storetest.domain2;
 
-import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.store2.ReplicaVersion2;
 import no.statkart.skif.store2.kodelistesupport2.EnumKodeIdImpl2;
 import no.statkart.skif.store2.kodelistesupport2.EnumKodeSupport2;
 import no.statkart.skif.store2.kodelistesupport2.KodelisteId2;
-import no.statkart.skif.storetest.domain.kodeliste.KodelisteId;
-import no.statkart.skif.storetest.domain.kodeliste.TestCEnumKode;
-import no.statkart.skif.storetest.domain.kodeliste.impl.EnumKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.impl.EnumKodeSupport;
 
 /**
  * @author Henrik Fredholm

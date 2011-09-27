@@ -36,24 +36,28 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
 
     protected abstract E getEntry(Object key);
 
-    protected void openConnection(E entry) throws SQLException {
-        if (allocateConnectionsViaHibernate) {
-            logger.debug("Open Connection (via hibernate)");
-            if (entry.session == null) {
-                openHibernateSession(entry);
-            }
-            entry.connection = entry.session.connection();
-        } else {
-            logger.debug("Open Connection");
-            if (entry.session != null) {
-                throw new ImplementationException("Cannot allocate independent jdbc connection since hibernate session has already been allocated");
+    protected void openConnection(E entry)  {
+        try {
+            if (allocateConnectionsViaHibernate) {
+                logger.debug("Open Connection (via hibernate)");
+                if (entry.session == null) {
+                    openHibernateSession(entry);
+                }
+                entry.connection = entry.session.connection();
             } else {
-                entry.connection = connectionFactoryManager.getFactory(entry.key).createConnection();
-                entry.originalAutoCommit = entry.connection.getAutoCommit();
-                if (entry.originalAutoCommit != false) {
-                    entry.connection.setAutoCommit(false);
+                logger.debug("Open Connection");
+                if (entry.session != null) {
+                    throw new ImplementationException("Cannot allocate independent jdbc connection since hibernate session has already been allocated");
+                } else {
+                    entry.connection = connectionFactoryManager.getFactory(entry.key).createConnection();
+                    entry.originalAutoCommit = entry.connection.getAutoCommit();
+                    if (entry.originalAutoCommit != false) {
+                        entry.connection.setAutoCommit(false);
+                    }
                 }
             }
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
         }
     }
 
@@ -72,24 +76,32 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
         }
     }
 
-    public void closeHibernateSession(E entry) throws SQLException {
-        if (entry.connection != null) {
-            logger.debug("Close connection (via session)");
-            entry.connection = null;
+    public void closeHibernateSession(E entry) {
+        try {
+            if (entry.connection != null) {
+                logger.debug("Close connection (via session)");
+                entry.connection = null;
+            }
+            logger.debug("Close session");
+            entry.session.connection().setAutoCommit(entry.originalAutoCommit);
+            entry.session.close();
+            entry.session = null;
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
         }
-        logger.debug("Close session");
-        entry.session.connection().setAutoCommit(entry.originalAutoCommit);
-        entry.session.close();
-        entry.session = null;
     }
 
-    protected void closeConnection(E entry) throws SQLException {
-        if (entry.session != null) {
-            throw new ImplementationException("Hibenate session is open. Call closeHibernateConnection instead");
+    protected void closeConnection(E entry) {
+        try {
+            if (entry.session != null) {
+                throw new ImplementationException("Hibenate session is open. Call closeHibernateConnection instead");
+            }
+            entry.connection.setAutoCommit(entry.originalAutoCommit);
+            entry.connection.close();
+            entry.connection = null;
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
         }
-        entry.connection.setAutoCommit(entry.originalAutoCommit);
-        entry.connection.close();
-        entry.connection = null;
     }
 
     @Override
@@ -99,7 +111,7 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
     }
 
     @Override
-    public Connection getConnection(Object key) throws SQLException {
+    public Connection getConnection(Object key)  {
         E entry = getEntry(key);
         if (entry.connection == null) {
             openConnection(entry);
@@ -124,7 +136,7 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
     }
 
 
-    protected void closeEntry(E entry) throws SQLException {
+    protected void closeEntry(E entry)  {
         if (entry.session != null) {
             closeHibernateSession(entry);
         } else if (entry.connection != null) {
@@ -134,7 +146,7 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
 
 
     @Override
-    public void close(Object key) throws SQLException {
+    public void close(Object key) {
         E entry = getEntry(key);
         closeEntry(entry);
     }
@@ -151,23 +163,31 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
         flushEntry(entry);
     }
 
-    protected void commitEntry(HibernateSessionManagerEntry2 entry) throws SQLException {
-        if (entry.session != null) {
-            entry.hibernateTransaction.commit();
-            entry.hibernateTransaction = null;
-            entry.useLocalTransaction = false;
-        } else if (entry.connection != null) {
-            entry.connection.commit();
+    protected void commitEntry(HibernateSessionManagerEntry2 entry) {
+        try {
+            if (entry.session != null) {
+                entry.hibernateTransaction.commit();
+                entry.hibernateTransaction = null;
+                entry.useLocalTransaction = false;
+            } else if (entry.connection != null) {
+                entry.connection.commit();
+            }
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
         }
     }
 
-    protected void rollbackEntry(HibernateSessionManagerEntry2 entry) throws SQLException {
+    protected void rollbackEntry(HibernateSessionManagerEntry2 entry) {
         if (entry.session != null) {
             entry.hibernateTransaction.rollback();
             entry.hibernateTransaction = null;
             entry.useLocalTransaction = false;
         } else if (entry.connection != null) {
-            entry.connection.rollback();
+            try {
+                entry.connection.rollback();
+            } catch (SQLException e) {
+                throw new ImplementationException(e);
+            }
         }
     }
 

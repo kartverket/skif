@@ -6,7 +6,6 @@ import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.storetest.domain.TestBubbleId;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -23,7 +22,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
     public void testIsLockedBy() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
-        TestBubbleId testId = new TestBubbleId(new Long(10), ReplicaVersion.CURRENT);
+        TestBubbleId testId = new TestBubbleId(new Long(10), SnapshotVersion.CURRENT);
         strategy.lock(testId, "ingroa");
 
         Assert.assertTrue(strategy.isLockedBy(testId, "ingroa"));
@@ -38,7 +37,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
     public void testUpdate() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
-        TestBubbleId testId = new TestBubbleId(new Long(11), ReplicaVersion.CURRENT);
+        TestBubbleId testId = new TestBubbleId(new Long(11), SnapshotVersion.CURRENT);
 
         try {
             strategy.registerUpdated(testId, "ingroa");
@@ -60,7 +59,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
     public void testRemove() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
-        TestBubbleId testId = new TestBubbleId(new Long(12), ReplicaVersion.CURRENT);
+        TestBubbleId testId = new TestBubbleId(new Long(12), SnapshotVersion.CURRENT);
 
         try {
             strategy.registerRemoved(testId, "ingroa");
@@ -82,7 +81,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
     public void testInsert() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
-        TestBubbleId testId = new TestBubbleId(new Long(13), ReplicaVersion.CURRENT);
+        TestBubbleId testId = new TestBubbleId(new Long(13), SnapshotVersion.CURRENT);
 
         strategy.registerInserted(testId);
 
@@ -95,7 +94,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
     public void testUnlock() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
-        TestBubbleId testId = new TestBubbleId(new Long(14), ReplicaVersion.CURRENT);
+        TestBubbleId testId = new TestBubbleId(new Long(14), SnapshotVersion.CURRENT);
 
         strategy.lock(testId, "ingroa");
         Assert.assertTrue(strategy.isLockedBy(testId, "ingroa"));
@@ -115,7 +114,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
         DBLockerService<Long> db = injector.getInstance(DBLockerService.class);
 
-        TestBubbleId testId = new TestBubbleId(new Long(14), ReplicaVersion.CURRENT);
+        TestBubbleId testId = new TestBubbleId(new Long(14), SnapshotVersion.CURRENT);
         long l = System.currentTimeMillis();
         db.lock(new LockKey<Long>(testId.getClass().getName(), (Long) testId.getValue()), "ingroa", 200);
 

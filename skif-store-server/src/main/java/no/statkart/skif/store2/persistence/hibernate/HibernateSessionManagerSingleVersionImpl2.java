@@ -41,7 +41,7 @@ public class HibernateSessionManagerSingleVersionImpl2 extends AbstractHibernate
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close() {
         closeEntry(entry);
 
     }
@@ -59,14 +59,14 @@ public class HibernateSessionManagerSingleVersionImpl2 extends AbstractHibernate
 
 
     @Override
-    public void commit() throws SQLException {
+    public void commit() {
         commitEntry(entry);
 
     }
 
 
     @Override
-    public void rollback() throws SQLException {
+    public void rollback() {
         rollbackEntry(entry);
     }
 }

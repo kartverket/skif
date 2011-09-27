@@ -1,12 +1,7 @@
 package no.statkart.skif.storetest.domain2.kodeliste;
 
-import no.statkart.skif.store.ReplicaVersion;
 import no.statkart.skif.store2.ReplicaVersion2;
 import no.statkart.skif.store2.kodelistesupport2.DbKodeSupport2;
-import no.statkart.skif.storetest.domain.kodeliste.KodelisteId;
-import no.statkart.skif.storetest.domain.kodeliste.TestCDbKode;
-import no.statkart.skif.storetest.domain.kodeliste.TestCDbKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodeSupport;
 import no.statkart.skif.storetest.domain2.TestDbKodeliste2;
 import no.statkart.skif.storetest.domain2.TestDbKodelisteId2;
 import no.statkart.skif.storetest.domain2.TestDbKodelisteIdImpl2;

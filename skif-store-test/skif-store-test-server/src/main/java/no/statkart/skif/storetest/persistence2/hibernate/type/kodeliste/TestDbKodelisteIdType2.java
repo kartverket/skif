@@ -1,12 +1,7 @@
 package no.statkart.skif.storetest.persistence2.hibernate.type.kodeliste;
 
-import no.statkart.skif.store.ReplicaVersion;
-import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import no.statkart.skif.store2.ReplicaVersion2;
-import no.statkart.skif.store2.kodelistesupport2.DbKodelisteId2;
-import no.statkart.skif.store2.kodelistesupport2.DbKodelisteIdImpl2;
 import no.statkart.skif.store2.persistence.hibernate.type.BubbleIdType2;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodelisteId;
 import no.statkart.skif.storetest.domain2.TestDbKodelisteIdImpl2;
 
 /**
