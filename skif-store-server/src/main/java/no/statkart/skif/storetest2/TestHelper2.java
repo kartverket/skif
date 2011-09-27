@@ -8,6 +8,7 @@ import no.statkart.skif.persistence.ConnectionFactory;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.persistence.ConnectionFactoryManagerMultiVersionImpl;
 import no.statkart.skif.persistence.JDBCConnectionFactory;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.ReplicaVersion2;
 import no.statkart.skif.store2.persistence.hibernate.HibernateSessionFactoryBuilder2;
 import no.statkart.skif.store2.persistence.hibernate.StoreHibernateSessionFactoryBuilder2;
@@ -52,8 +53,8 @@ public class TestHelper2 {
     public static ConnectionFactoryManager createConnectionFactoryManager() {
         Configuration configuration = getSkifConfiguration();
         Map<Object, ConnectionFactory> factoryMap = new HashMap<Object, ConnectionFactory>(2);
-        factoryMap.put(ReplicaVersion2.CURRENT, createJDBCConnectionFactory(configuration));
-        factoryMap.put(ReplicaVersion2.OLD, createJDBCConnectionFactory(configuration));
+        factoryMap.put(SnapshotVersion.CURRENT, createJDBCConnectionFactory(configuration));
+        factoryMap.put(SnapshotVersion.OLD, createJDBCConnectionFactory(configuration));
         return new ConnectionFactoryManagerMultiVersionImpl(factoryMap);
     }
 }

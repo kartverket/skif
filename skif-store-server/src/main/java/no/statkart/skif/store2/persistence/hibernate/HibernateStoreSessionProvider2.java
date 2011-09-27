@@ -3,7 +3,7 @@ package no.statkart.skif.store2.persistence.hibernate;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store2.ReplicaVersion2;
+import no.statkart.skif.store.SnapshotVersion;
 
 import java.sql.SQLException;
 
@@ -15,20 +15,16 @@ import java.sql.SQLException;
  */
 public class HibernateStoreSessionProvider2 implements Provider<HibernateStoreSession2> {
     private final HibernateStoreSessionManager2 storeSessionManager;
-    private final ReplicaVersion2 replicaVersion;
+    private final SnapshotVersion replicaVersion;
 
 
     @Inject
-    public HibernateStoreSessionProvider2(HibernateStoreSessionManager2 storeSessionManager, ReplicaVersion2 replicaVersion) {
+    public HibernateStoreSessionProvider2(HibernateStoreSessionManager2 storeSessionManager, SnapshotVersion replicaVersion) {
         this.storeSessionManager = storeSessionManager;
         this.replicaVersion = replicaVersion;
     }
 
     public HibernateStoreSession2 get() {
-        try {
-            return storeSessionManager.getStoreSession(replicaVersion);
-        } catch (SQLException e) {
-            throw new ImplementationException(e);
-        }
+        return storeSessionManager.getStoreSession(replicaVersion);
     }
 }

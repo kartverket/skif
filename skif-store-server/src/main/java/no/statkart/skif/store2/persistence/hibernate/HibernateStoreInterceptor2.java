@@ -1,6 +1,7 @@
 package no.statkart.skif.store2.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.BubbleId2;
 import no.statkart.skif.store2.BubbleObject2;
 import no.statkart.skif.store2.ReplicaVersion2;
@@ -25,7 +26,7 @@ import java.util.Iterator;
 public class HibernateStoreInterceptor2 extends EmptyInterceptor {
     protected Logger logger = LoggerFactory.getLogger(HibernateStoreInterceptor2.class);
 
-    protected ReplicaVersion2 replicaVersion = ReplicaVersion2.CURRENT;
+    protected SnapshotVersion replicaVersion = SnapshotVersion.CURRENT;
 
     /**
      * Denne metoden retter opp id'en for entiteter hvor hibernate har brukt supertypens idklasse

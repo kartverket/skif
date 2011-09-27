@@ -1,8 +1,9 @@
 package no.statkart.skif.storetest.domain2.kodeliste;
 
-import no.statkart.skif.store2.ReplicaVersion2;
-import no.statkart.skif.store2.kodelistesupport2.*;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodelisteId;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store2.kodelistesupport2.DbKodeIdImpl2;
+import no.statkart.skif.store2.kodelistesupport2.DbKodeSupport2;
+import no.statkart.skif.store2.kodelistesupport2.DbKodelisteId2;
 import no.statkart.skif.storetest.domain2.TestDbKodeId2;
 import no.statkart.skif.storetest.domain2.TestDbKodeliste2;
 import no.statkart.skif.storetest.domain2.TestDbKodelisteId2;
@@ -13,13 +14,13 @@ import no.statkart.skif.storetest.domain2.TestDbKodelisteIdImpl2;
  * @since 0.6
  */
 public class TestADbKodeId2 extends DbKodeIdImpl2<TestADbKode2> implements TestDbKodeId2<TestADbKode2> {
-    private static DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>> kodeSupport = new DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>>(TestADbKodeId2.class,new TestDbKodelisteIdImpl2(10001L, ReplicaVersion2.CURRENT));
+    private static DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>> kodeSupport = new DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>>(TestADbKodeId2.class,new TestDbKodelisteIdImpl2(10001L, SnapshotVersion.CURRENT));
 
     public static DbKodelisteId2 KODELISTE_ID = kodeSupport.getKodelisteId();
     public static TestADbKodeId2 A1Id = define(1);
     public static TestADbKodeId2 A2Id = define(2);
 
-    protected TestADbKodeId2(Long value, ReplicaVersion2 replicaVersion) {
+    protected TestADbKodeId2(Long value, SnapshotVersion replicaVersion) {
         super(value, replicaVersion);
     }
 
@@ -33,7 +34,7 @@ public class TestADbKodeId2 extends DbKodeIdImpl2<TestADbKode2> implements TestD
     }
 
     public static TestADbKodeId2 createInstance(long idValue) {
-        return kodeSupport.createInstance(TestADbKodeId2.class, idValue, ReplicaVersion2.CURRENT);
+        return kodeSupport.createInstance(TestADbKodeId2.class, idValue, SnapshotVersion.CURRENT);
     }
 
     private Object readResolve() {

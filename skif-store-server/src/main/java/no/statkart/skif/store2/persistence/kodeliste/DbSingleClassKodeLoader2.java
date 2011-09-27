@@ -21,8 +21,6 @@ public class DbSingleClassKodeLoader2 implements DbKodeLoader2 {
 
     @Override
     public void loadKoder(Session session, DbKodeliste2 kodeliste, Map<DbKodeId2<?>, DbKode2> kodeMap) {
-//        DbBubbleKodeSupport bubbleKodeSupport = DbBubbleKodeSupport.getKodeSupport(kodeliste.getKodeIdClass());
-//        Class<? extends DbKode2> kodeClass = bubbleKodeSupport.getKodeClass(); 
         Class<? extends DbKode2> kodeClass = kodeliste.getKodeClass();
         List<DbKode2> list = session.createCriteria(kodeClass).list();
         List<KodeId2<?>> kodeIds = new ArrayList<KodeId2<?>>();

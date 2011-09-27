@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain2;
 
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.AbstractBubbleId2;
-import no.statkart.skif.store2.ReplicaVersion2;
 
 /**
  * @author Henrik Fredholm
@@ -25,7 +25,7 @@ public class TestBubbleId2<T extends TestBubble2> extends AbstractBubbleId2<T> i
         super(idValue);
     }
 
-    public TestBubbleId2(Long value, ReplicaVersion2 version) {
+    public TestBubbleId2(Long value, SnapshotVersion version) {
         super(value, version);
     }
 }

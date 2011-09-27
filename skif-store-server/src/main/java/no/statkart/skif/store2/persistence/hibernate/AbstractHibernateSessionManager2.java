@@ -26,17 +26,17 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
 
     @Override
     public void beingAllocateConnectionsViaHibernateSession() {
-        allocateConnectionsViaHibernate=true;
+        allocateConnectionsViaHibernate = true;
     }
 
     @Override
     public void endAllocateConnectionsViaHibernateSession() {
-        allocateConnectionsViaHibernate=false;
+        allocateConnectionsViaHibernate = false;
     }
 
     protected abstract E getEntry(Object key);
 
-    protected void openConnection(E entry)  {
+    protected void openConnection(E entry) {
         try {
             if (allocateConnectionsViaHibernate) {
                 logger.debug("Open Connection (via hibernate)");
@@ -61,18 +61,22 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
         }
     }
 
-    protected void openHibernateSession(E entry) throws SQLException {
-        logger.debug("Open Session");
-        if (entry.connection!=null) {
-            throw new ImplementationException("Cannot allocate hibernate session since independent jdbc connection has already been allocated");
-        }
-        entry.session = hibernateSessionFactoryManager.getFactory(entry.key).openSession();
-        entry.originalAutoCommit = entry.session.connection().getAutoCommit();
-        if (entry.originalAutoCommit) {
-            entry.session.connection().setAutoCommit(false);
-        }
-        if (entry.useLocalTransaction) {
-            entry.hibernateTransaction = entry.session.beginTransaction();
+    protected void openHibernateSession(E entry) {
+        try {
+            logger.debug("Open Session");
+            if (entry.connection != null) {
+                throw new ImplementationException("Cannot allocate hibernate session since independent jdbc connection has already been allocated");
+            }
+            entry.session = hibernateSessionFactoryManager.getFactory(entry.key).openSession();
+            entry.originalAutoCommit = entry.session.connection().getAutoCommit();
+            if (entry.originalAutoCommit) {
+                entry.session.connection().setAutoCommit(false);
+            }
+            if (entry.useLocalTransaction) {
+                entry.hibernateTransaction = entry.session.beginTransaction();
+            }
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
         }
     }
 
@@ -111,7 +115,8 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
     }
 
     @Override
-    public Connection getConnection(Object key)  {
+    public Connection getConnection(Object key) {
+
         E entry = getEntry(key);
         if (entry.connection == null) {
             openConnection(entry);
@@ -120,14 +125,14 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
     }
 
 
-    protected void getHibernateSessionEntry(E entry) throws SQLException {
+    protected void getHibernateSessionEntry(E entry) {
         if (entry.session == null) {
             openHibernateSession(entry);
         }
     }
 
     @Override
-    public Session getHibernateSession(Object key) throws SQLException {
+    public Session getHibernateSession(Object key) {
         E entry = getEntry(key);
         if (entry.session == null) {
             openHibernateSession(entry);
@@ -136,7 +141,7 @@ public abstract class AbstractHibernateSessionManager2<E extends HibernateSessio
     }
 
 
-    protected void closeEntry(E entry)  {
+    protected void closeEntry(E entry) {
         if (entry.session != null) {
             closeHibernateSession(entry);
         } else if (entry.connection != null) {

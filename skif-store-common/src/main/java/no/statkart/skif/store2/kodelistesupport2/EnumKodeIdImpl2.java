@@ -1,7 +1,7 @@
 package no.statkart.skif.store2.kodelistesupport2;
 
 
-import no.statkart.skif.store2.ReplicaVersion2;
+import no.statkart.skif.store.SnapshotVersion;
 
 /**
  * @author Henrik Fredholm
@@ -16,7 +16,7 @@ public abstract class EnumKodeIdImpl2<T extends EnumKodeImpl2> extends KodeIdImp
     @Override
     protected abstract EnumKodeSupport2 getKodeSupport();
 
-    protected EnumKodeIdImpl2(Long value, ReplicaVersion2 replicaVersion) {
+    protected EnumKodeIdImpl2(Long value, SnapshotVersion replicaVersion) {
         super(value, replicaVersion);
     }
 }

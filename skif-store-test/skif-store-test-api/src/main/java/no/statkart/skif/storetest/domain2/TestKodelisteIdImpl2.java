@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain2;
 
-import no.statkart.skif.store2.ReplicaVersion2;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.kodelistesupport2.KodelisteIdImpl2;
 
 /**
@@ -15,7 +15,7 @@ public class TestKodelisteIdImpl2<T extends TestKodelisteImpl2> extends Kodelist
         super(value);
     }
 
-    public TestKodelisteIdImpl2(Long value, ReplicaVersion2 replicaVersion) {
+    public TestKodelisteIdImpl2(Long value, SnapshotVersion replicaVersion) {
         super(value, replicaVersion);
     }
 }

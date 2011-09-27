@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain2.kodeliste;
 
-import no.statkart.skif.store2.ReplicaVersion2;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.kodelistesupport2.DbKodeSupport2;
 import no.statkart.skif.storetest.domain2.TestDbKodeliste2;
 import no.statkart.skif.storetest.domain2.TestDbKodelisteId2;
@@ -11,14 +11,14 @@ import no.statkart.skif.storetest.domain2.TestDbKodelisteIdImpl2;
  * @since 0.6
  */
 public class TestC2DbKodeId2 extends TestCDbKodeId2<TestCDbKode2> {
-    private static DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>> kodeSupport = new DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>>(TestC2DbKodeId2.class,new TestDbKodelisteIdImpl2(10004L, ReplicaVersion2.CURRENT));
+    private static DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>> kodeSupport = new DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>>(TestC2DbKodeId2.class,new TestDbKodelisteIdImpl2(10004L, SnapshotVersion.CURRENT));
 
 
     public static TestDbKodelisteId2<TestDbKodeliste2> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static TestC2DbKodeId2 C2A1Id = define(10);
     public static TestC2DbKodeId2 C2BId = define(11);
 
-    protected TestC2DbKodeId2(Long value, ReplicaVersion2 replicaVersion) {
+    protected TestC2DbKodeId2(Long value, SnapshotVersion replicaVersion) {
         super(value, replicaVersion);
     }
 
@@ -32,7 +32,7 @@ public class TestC2DbKodeId2 extends TestCDbKodeId2<TestCDbKode2> {
     }
 
     public static TestC2DbKodeId2 createInstance(long idValue) {
-        return kodeSupport.createInstance(TestC2DbKodeId2.class, idValue, ReplicaVersion2.CURRENT);
+        return kodeSupport.createInstance(TestC2DbKodeId2.class, idValue, SnapshotVersion.CURRENT);
     }
 
     private Object readResolve() {

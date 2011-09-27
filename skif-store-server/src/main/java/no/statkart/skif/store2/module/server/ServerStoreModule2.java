@@ -13,7 +13,7 @@ import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
-import no.statkart.skif.store2.ReplicaVersion2;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.persistence.hibernate.*;
 import no.statkart.skif.storetest2.TestHelper2;
 import org.hibernate.Session;
@@ -60,11 +60,11 @@ public abstract class ServerStoreModule2 extends ModuleWithStrategy<ServerStoreM
         Map<Object, ConnectionFactory> connectionFactoryMap = new HashMap<Object, ConnectionFactory>();
         if  (moduleConfiguration.getServiceMode()== ServiceMode.SINGLE_VM) {
             JDBCConnectionFactory connectionFactory = TestHelper2.createJDBCConnectionFactory(moduleConfiguration.getConfiguration());
-            connectionFactoryMap.put(ReplicaVersion2.CURRENT, connectionFactory);
-            connectionFactoryMap.put(ReplicaVersion2.OLD, connectionFactory);
+            connectionFactoryMap.put(SnapshotVersion.CURRENT, connectionFactory);
+            connectionFactoryMap.put(SnapshotVersion.OLD, connectionFactory);
         }  else {
-            connectionFactoryMap.put(ReplicaVersion2.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelBok_DS"));
-            connectionFactoryMap.put(ReplicaVersion2.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelOld_DS"));
+            connectionFactoryMap.put(SnapshotVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelBok_DS"));
+            connectionFactoryMap.put(SnapshotVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelOld_DS"));
         }
         return connectionFactoryMap;
     }
@@ -94,7 +94,7 @@ public abstract class ServerStoreModule2 extends ModuleWithStrategy<ServerStoreM
         bind(ConnectionManager.class).to(HibernateSessionManager2.class);
         bind(HibernateSessionManager2.class).to(HibernateStoreSessionManager2.class);
 
-        bind(Connection.class).toProvider(new ConnectionProvider(ReplicaVersion2.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig å angi replicaversion her?
+        bind(Connection.class).toProvider(new ConnectionProvider(SnapshotVersion.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig å angi replicaversion her?
 
         bind(HibernateStoreSessionManager2.class).to(HibernateStoreSessionManagerMultiVersionImpl2.class).in(ServiceRequestScoped.class);
         bind(HibernateStoreSession2.class).toProvider(HibernateStoreSessionProvider2.class).in(ServiceRequestScoped.class);
@@ -104,7 +104,7 @@ public abstract class ServerStoreModule2 extends ModuleWithStrategy<ServerStoreM
         // TODO ReplicaVersion2 skal erstattes med TimePoint som har tilsvarende funksjonalitet
 
         // TODO Kanskje vi ikke trenger denne bindingen
-        bind(ReplicaVersion2.class).toInstance(ReplicaVersion2.CURRENT);
+        bind(SnapshotVersion.class).toInstance(SnapshotVersion.CURRENT);
 
         //For LockerStrategy
         install(new ServerServiceModule(moduleConfiguration, new SkifServices().getServices()));

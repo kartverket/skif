@@ -1,17 +1,22 @@
 package no.statkart.skif.storetest.domain2.kodeliste;
 
-import no.statkart.skif.store2.ReplicaVersion2;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.kodelistesupport2.DbKodeIdImpl2;
 import no.statkart.skif.store2.kodelistesupport2.DbKodeSupport2;
 import no.statkart.skif.store2.kodelistesupport2.DbSubclassedKodeId2;
+import no.statkart.skif.storetest.domain2.TestDbKodeliste2;
+import no.statkart.skif.storetest.domain2.TestDbKodelisteId2;
+import no.statkart.skif.storetest.domain2.TestDbKodelisteIdImpl2;
 
 /**
  * @author Henrik Fredholm
  * @since 0.6
  */
 public class TestDbSubclassedKodeIdImpl2<T extends TestDbSubclassedKodeImpl2> extends DbKodeIdImpl2<T> implements DbSubclassedKodeId2<T> {
+    private static DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>> kodeSupport = new DbKodeSupport2<TestDbKodeliste2, TestDbKodelisteId2<TestDbKodeliste2>>(TestC2DbKodeId2.class,new TestDbKodelisteIdImpl2(10004L, SnapshotVersion.CURRENT));
 
-    protected TestDbSubclassedKodeIdImpl2(Long value, ReplicaVersion2 replicaVersion) {
+
+    protected TestDbSubclassedKodeIdImpl2(Long value, SnapshotVersion replicaVersion) {
         super(value, replicaVersion);
     }
 

@@ -1,8 +1,11 @@
 package no.statkart.skif.storetest.domain2;
 
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
 import no.statkart.skif.store2.BubbleObject2;
-import no.statkart.skif.store2.ReplicaVersion2;
-import no.statkart.skif.store2.kodelistesupport2.*;
+import no.statkart.skif.store2.kodelistesupport2.DbKode2;
+import no.statkart.skif.store2.kodelistesupport2.DbKodeId2;
+import no.statkart.skif.store2.kodelistesupport2.DbKodeliste2;
 import no.statkart.skif.store2.persistence.hibernate.HibernateStoreSession2;
 import no.statkart.skif.store2.persistence.hibernate.StoreHibernateSessionFactoryBuilder2;
 import no.statkart.skif.store2.persistence.kodeliste.DbKodelisteLoader2;
@@ -35,7 +38,7 @@ public class DbKodeHibernateTest2 {
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestBDbKode2.class);
         sfbuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", TestCDbKode2.class, TestC1DbKode2.class, TestC2DbKode2.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestDbKodelisteImpl2.class);
-        SessionFactory sf = sfbuilder.build(ReplicaVersion2.CURRENT);
+        SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         return sf;
     }
@@ -100,7 +103,7 @@ public class DbKodeHibernateTest2 {
     public void testLastKodeliste() {
         SessionFactory sf = setupHibernate();
         Session session = sf.openSession();
-        DbKodeliste2 dbKodeliste = (DbKodeliste2) session.load(TestDbKodelisteImpl2.class, new TestDbKodelisteIdImpl2(10001L, ReplicaVersion2.CURRENT));
+        DbKodeliste2 dbKodeliste = (DbKodeliste2) session.load(TestDbKodelisteImpl2.class, new TestDbKodelisteIdImpl2(10001L, SnapshotVersion.CURRENT));
         Assert.assertNotNull(dbKodeliste);
     }
 
@@ -123,7 +126,7 @@ public class DbKodeHibernateTest2 {
 
     public void testKodelisteManager() {
         SessionFactory sf = setupHibernate();
-        HibernateStoreSession2 wrapper = new HibernateStoreSession2(sf.openSession(), ReplicaVersion2.CURRENT);
+        HibernateStoreSession2 wrapper = new HibernateStoreSession2(sf.openSession(), SnapshotVersion.CURRENT);
         KodelisteManager2 kodelisteManager = new KodelisteManager2();
 
         DbKodelisteLoader2 kodelisteLoader = new DbKodelisteLoader2() {

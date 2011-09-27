@@ -1,6 +1,7 @@
 package no.statkart.skif.store2.kodelistesupport2;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.ReplicaVersion2;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,12 +34,13 @@ public class KodeIdResolver2 {
 
     /**
      * Henter ut eksisterende BubbleKodeId hvis den finnes; ellers brukes newInstance
-     *
+     * TODO: Reimplementer denne med snapshotversion
      * @param newInstance
      * @return
      */
     public <I extends KodeId2<? extends Kode2>> I  getOrCreate(I newInstance) {
-        int replicaIndex = newInstance.getReplicaVersion().ordinal();
+
+        int replicaIndex = newInstance.getReplicaVersion().equals(SnapshotVersion.CURRENT) ? 0 : 1;
         Long idValue = (Long) newInstance.getValue();
         long longValue = idValue.longValue();
 
@@ -54,7 +56,7 @@ public class KodeIdResolver2 {
             id = idMap.get(idValue);
             if (id == null) {
                 // sjekk for OLD om det finnes en CURRENT. Da er det ok å opprette. Ellers er det ikke
-                if (replicaIndex == ReplicaVersion2.CURRENT.ordinal() || !ids[ReplicaVersion2.CURRENT.ordinal()].containsKey(idValue)) {
+                if (newInstance.getReplicaVersion().equals(SnapshotVersion.CURRENT) || !ids[0].containsKey(idValue)) {
                     throw new ImplementationException("Forsøk på å opprette ny BubbleKodeId i ferdig definert kodeliste: " + newInstance);
                 }
             } else {
@@ -96,8 +98,8 @@ public class KodeIdResolver2 {
      * @param replicaVersion
      * @return null hvis ingen BubbleKodeId er definert for idValue
      */
-    public <I extends KodeId2<? extends Kode2>> I  get(Long idValue, ReplicaVersion2 replicaVersion) {
-        int replicaIndex = replicaVersion.ordinal();
+    public <I extends KodeId2<? extends Kode2>> I  get(Long idValue, SnapshotVersion replicaVersion) {
+        int replicaIndex = replicaVersion.equals(SnapshotVersion.CURRENT) ? 0 : 1;
         long longValue = idValue.longValue();
 
         KodeId2<?> id;
@@ -106,7 +108,7 @@ public class KodeIdResolver2 {
             if (id != null) return (I) id;
         }
 
-        // Ikke optimalisert oppslag
+//        Ikke optimalisert oppslag
         ConcurrentHashMap<Long, KodeId2<?>> idMap = ids[replicaIndex];
         id = idMap.get(idValue);
         return (I) id;

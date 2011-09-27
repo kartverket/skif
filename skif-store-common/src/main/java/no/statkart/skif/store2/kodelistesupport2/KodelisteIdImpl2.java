@@ -1,6 +1,6 @@
 package no.statkart.skif.store2.kodelistesupport2;
 
-import no.statkart.skif.store2.ReplicaVersion2;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.AbstractBubbleId2;
 
 /**
@@ -21,7 +21,7 @@ public class KodelisteIdImpl2<T extends KodelisteImpl2> extends AbstractBubbleId
         super(Long.parseLong(value));
     }
 
-    public KodelisteIdImpl2(Long value, ReplicaVersion2 replicaVersion) {
+    public KodelisteIdImpl2(Long value, SnapshotVersion replicaVersion) {
         super(value, replicaVersion);
     }
 

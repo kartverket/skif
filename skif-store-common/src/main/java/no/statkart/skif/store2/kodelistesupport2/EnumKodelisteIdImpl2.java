@@ -1,6 +1,6 @@
 package no.statkart.skif.store2.kodelistesupport2;
 
-import no.statkart.skif.store2.ReplicaVersion2;
+import no.statkart.skif.store.SnapshotVersion;
 
 public class EnumKodelisteIdImpl2<T extends EnumKodelisteImpl2> extends KodelisteIdImpl2<T> implements EnumKodelisteId2<T> {
 
@@ -15,7 +15,7 @@ public class EnumKodelisteIdImpl2<T extends EnumKodelisteImpl2> extends Kodelist
         super(Long.parseLong(value));
     }
 
-    public EnumKodelisteIdImpl2(Long value, ReplicaVersion2 replicaVersion) {
+    public EnumKodelisteIdImpl2(Long value, SnapshotVersion replicaVersion) {
         super(value, replicaVersion);
     }
 

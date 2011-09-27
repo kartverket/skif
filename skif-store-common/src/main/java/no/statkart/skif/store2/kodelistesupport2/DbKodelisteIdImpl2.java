@@ -1,6 +1,6 @@
 package no.statkart.skif.store2.kodelistesupport2;
 
-import no.statkart.skif.store2.ReplicaVersion2;
+import no.statkart.skif.store.SnapshotVersion;
 
 /**
  * @author Roar Ingebrigtsen
@@ -15,7 +15,7 @@ public abstract class DbKodelisteIdImpl2<T extends DbKodelisteImpl2> extends Kod
         super(value);
     }
 
-    public DbKodelisteIdImpl2(Long value, ReplicaVersion2 replicaVersion) {
+    public DbKodelisteIdImpl2(Long value, SnapshotVersion replicaVersion) {
         super(value, replicaVersion);
     }
 

@@ -2,9 +2,9 @@ package no.statkart.skif.store2.persistence.hibernate;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.BubbleId2;
 import no.statkart.skif.store2.BubbleObject2;
-import no.statkart.skif.store2.ReplicaVersion2;
 import no.statkart.skif.store2.StorePersister2;
 import no.statkart.skif.store2.persistence.StoreSession2;
 import org.hibernate.*;
@@ -38,7 +38,7 @@ public class HibernateStoreSession2<T extends BubbleObject2, I extends BubbleId2
     protected final Session session;
 
     /* Angi replicaversjon for objekter lest av denne sesjon. */
-    protected final ReplicaVersion2 replicaVersion;
+    protected final SnapshotVersion replicaVersion;
 
     /**
      * Bestemmer om Bubbler kan ha lazyloaded assosiasjoner som ikke er initialisert i det bubblen
@@ -47,7 +47,7 @@ public class HibernateStoreSession2<T extends BubbleObject2, I extends BubbleId2
     private boolean lazyLoadedBubblesAllowed;
 
     @Inject
-    public HibernateStoreSession2(Session session, ReplicaVersion2 replicaVersion) {
+    public HibernateStoreSession2(Session session, SnapshotVersion replicaVersion) {
         this.session = session;
         this.replicaVersion = replicaVersion;
     }

@@ -1,9 +1,8 @@
 package no.statkart.skif.store2.kodelistesupport2;
 
 
-import no.statkart.skif.store2.BubbleId2;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.BubbleIds2;
-import no.statkart.skif.store2.ReplicaVersion2;
 
 import java.util.Locale;
 
@@ -18,7 +17,7 @@ public class DbKodeSupport2<KL extends DbKodeliste2, KLID extends DbKodelisteId2
     }
 
     public <I extends DbKodeId2<? extends DbKode2>> I define(Class<I> idClass, long idValue) {
-        I id = BubbleIds2.createInstance(idClass, idValue, ReplicaVersion2.CURRENT);
+        I id = BubbleIds2.createInstance(idClass, idValue, SnapshotVersion.CURRENT);
         return id;
     }
 

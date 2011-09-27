@@ -1,6 +1,9 @@
 package no.statkart.skif.store2.persistence.hibernate;
 
 import com.google.inject.Inject;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store2.ReplicaVersion2;
 import org.hibernate.SessionFactory;
 
@@ -8,20 +11,24 @@ import org.hibernate.SessionFactory;
  * @author Henrik Fredholm
  */
 public class HibernateSessionFactoryManagerMultiVersionImpl2 implements  HibernateSessionFactoryManager2 {
-    final private SessionFactory[] factories = new SessionFactory[ReplicaVersion2.values().length];
+    final private SessionFactory[] factories = new SessionFactory[2];
     private final HibernateSessionFactoryBuilder2 factoryBuilder;
 
     @Inject
-    public HibernateSessionFactoryManagerMultiVersionImpl2(HibernateSessionFactoryBuilder2 factoryBuilder) {
+    public  HibernateSessionFactoryManagerMultiVersionImpl2(HibernateSessionFactoryBuilder2 factoryBuilder) {
         this.factoryBuilder = factoryBuilder;
     }
 
+    private final int getIndex(Object key) {
+        return (SnapshotVersion.OLD.equals(key)) ? 0 : 1;
+    }
+
     @Override
-    public synchronized SessionFactory getFactory(Object key) {
-        ReplicaVersion2 replicaVersion = (ReplicaVersion2) key;
-        SessionFactory factory = factories[replicaVersion.ordinal()];
+    public synchronized SessionFactory getFactory(final Object key) {
+        SessionFactory factory = factories[getIndex(key)];
         if (factory ==null) {
-            factories[replicaVersion.ordinal()] = factory = factoryBuilder.build(replicaVersion);
+            SnapshotVersion snapshotVersion = (SnapshotVersion) key;
+            factories[getIndex(key)] = factory = factoryBuilder.build(new SnapshotVersionHolder(snapshotVersion));
         }
         return factory;
     }
