@@ -9,7 +9,6 @@ import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.persistence.ConnectionFactoryManagerMultiVersionImpl;
 import no.statkart.skif.persistence.JDBCConnectionFactory;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store2.ReplicaVersion2;
 import no.statkart.skif.store2.persistence.hibernate.HibernateSessionFactoryBuilder2;
 import no.statkart.skif.store2.persistence.hibernate.StoreHibernateSessionFactoryBuilder2;
 

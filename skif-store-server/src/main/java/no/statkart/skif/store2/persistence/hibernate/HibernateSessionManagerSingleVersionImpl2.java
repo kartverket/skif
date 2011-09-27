@@ -6,11 +6,8 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store2.ReplicaVersion2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
 
 /**
  * Implementasjon som støtter en hibernate og connection factory, dvs ikke håndtere versjonert lesing

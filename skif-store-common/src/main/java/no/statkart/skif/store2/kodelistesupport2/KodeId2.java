@@ -2,7 +2,6 @@ package no.statkart.skif.store2.kodelistesupport2;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.BubbleId2;
-import no.statkart.skif.store2.ReplicaVersion2;
 
 /**
  * @author Henrik Fredholm

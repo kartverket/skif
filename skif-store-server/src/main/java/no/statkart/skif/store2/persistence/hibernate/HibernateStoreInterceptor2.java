@@ -4,7 +4,6 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store2.BubbleId2;
 import no.statkart.skif.store2.BubbleObject2;
-import no.statkart.skif.store2.ReplicaVersion2;
 import no.statkart.skif.store2.module.common.BubbleIdFactory2;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;

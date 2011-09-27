@@ -2,9 +2,7 @@ package no.statkart.skif.store2.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionHolder;
-import no.statkart.skif.store2.ReplicaVersion2;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;

@@ -2,7 +2,6 @@ package no.statkart.skif.store2.kodelistesupport2;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store2.ReplicaVersion2;
 
 import java.util.concurrent.ConcurrentHashMap;
 
