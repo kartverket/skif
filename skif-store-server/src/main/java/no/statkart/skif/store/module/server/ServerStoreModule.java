@@ -15,7 +15,7 @@ import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.*;
-import no.statkart.skif.storetest.TestHelper;
+import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +59,7 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
     protected Map<Object, ConnectionFactory> createConnectionFactoryMap() {
         Map<Object, ConnectionFactory> connectionFactoryMap = new HashMap<Object, ConnectionFactory>();
         if  (moduleConfiguration.getServiceMode()== ServiceMode.SINGLE_VM) {
-            JDBCConnectionFactory connectionFactory = TestHelper.createJDBCConnectionFactory(moduleConfiguration.getConfiguration());
+            JDBCConnectionFactory connectionFactory = JDBCHelper.createJDBCConnectionFactory(moduleConfiguration.getConfiguration());
             connectionFactoryMap.put(SnapshotVersion.CURRENT, connectionFactory);
             connectionFactoryMap.put(SnapshotVersion.OLD, connectionFactory);
         }  else {
@@ -90,10 +90,12 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         // Session managers kun skal deles per service request
         bind(new TypeLiteral<Map<Object, ConnectionFactory>>(){}).toInstance(createConnectionFactoryMap());
         bind(ConnectionFactoryManager.class).to(ConnectionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
-        bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
+        //bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
+        bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerSnapshotVersionImpl.class).in(ServiceRequestScoped.class);
         bind(ConnectionManager.class).to(HibernateSessionManager.class);
         bind(HibernateSessionManager.class).to(HibernateStoreSessionManager.class);
 
+        // TODO: Nok ikke riktig måte å gjøre det på. Må sjekke som det virkelig blir ServiceRequestScoped eller singleton her.
         bind(Connection.class).toProvider(new ConnectionProvider(SnapshotVersion.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig å angi replicaversion her?
 
         bind(HibernateStoreSessionManager.class).to(HibernateStoreSessionManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);

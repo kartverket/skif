@@ -50,6 +50,7 @@ public class StoreServiceTest extends StoreTestTestCase {
         assertEquals(a1Id, bubbles.get(0).getId());
     }
 
+    @Test(groups = "broken")
     public void testStoreGetOld() {
         StoreService store = injector.getInstance(Key.get(StoreService.class));
         TestBubbleId<?> a1Id = new TestBubbleId<TestBubble>(1L, SnapshotVersion.OLD);

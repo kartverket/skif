@@ -21,7 +21,7 @@ public class HibernateSessionManagerSingleVersionImpl extends AbstractHibernateS
 
 
     @Inject
-    public HibernateSessionManagerSingleVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManager hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
+    public HibernateSessionManagerSingleVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManagerSingleVersionImpl hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
         super(connectionFactoryManager, hibernateSessionFactoryManager);
         this.serviceRequestContext = serviceRequestContext;
     }

@@ -14,9 +14,6 @@ dependencies {
 
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
-    testCompile libraries.dbunit
-
-
 }
 
 task clientJar(type: Jar) {

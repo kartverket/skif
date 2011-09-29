@@ -7,16 +7,15 @@ import no.statkart.skif.store.SnapshotVersionHolder;
 import org.hibernate.SessionFactory;
 
 /**
- * TODO: Lagt abstract klasse med felles funksjonalitet
  * @author Henrik Fredholm
  */
-public class HibernateSessionFactoryManagerMultiVersionImpl implements  HibernateSessionFactoryManager {
+public class HibernateSessionFactoryManagerSnapshotVersionImpl implements  HibernateSessionFactoryManager {
     final private SessionFactory[] factories = new SessionFactory[2];
     final private SnapshotVersionHolder[] keys;
     private final HibernateSessionFactoryBuilder factoryBuilder;
 
     @Inject
-    public  HibernateSessionFactoryManagerMultiVersionImpl(HibernateSessionFactoryBuilder factoryBuilder) {
+    public HibernateSessionFactoryManagerSnapshotVersionImpl(HibernateSessionFactoryBuilder factoryBuilder) {
         this.factoryBuilder = factoryBuilder;
         keys = new SnapshotVersionHolder[2];
         keys[0] = new SnapshotVersionHolder(SnapshotVersion.CURRENT);
@@ -46,7 +45,6 @@ public class HibernateSessionFactoryManagerMultiVersionImpl implements  Hibernat
         }
         return factory;
     }
-
 
     @Override
     public synchronized void close() {

@@ -2,47 +2,48 @@ package no.statkart.skif.store.persistence.hibernate;
 
 
 import com.google.inject.Inject;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
 import no.statkart.skif.store.persistence.StoreSession;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * @author Henrik Fredholm
  */
 public class HibernateStoreSessionManagerMultiVersionImpl extends AbstractHibernateSessionManager<HibernateStoreSessionManagerEntry> implements HibernateStoreSessionManager {
-    private static Logger logger = LoggerFactory.getLogger(HibernateStoreSessionManagerMultiVersionImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(HibernateStoreSessionManagerSnapshotVersionImpl.class);
     private final ServiceRequestContext serviceRequestContext;
     private HibernateStoreSessionManagerEntry[] entries = new HibernateStoreSessionManagerEntry[2];
-    
-    private final int CURRENT = getIndex(SnapshotVersion.CURRENT);
-    private final int OLD = getIndex(SnapshotVersion.OLD);
-    
-    private static int getIndex(Object key) {
-        if (SnapshotVersion.CURRENT == key || key==SnapshotVersion.NOT_VERSIONED) {
-            return 1;
-        } else if (SnapshotVersion.OLD == key) {
-            return 0;
-        } else {
-            throw new ImplementationException("Historic SnapshotVersions not supported");
-        }
-    }
+    private final int CURRENT = 0;
+    private final int OLD = 1;
+
 
     @Inject
-    public HibernateStoreSessionManagerMultiVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManager hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
+    public HibernateStoreSessionManagerMultiVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManagerMultiVersionImpl hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
         super(connectionFactoryManager, hibernateSessionFactoryManager);
         this.serviceRequestContext = serviceRequestContext;
-        entries[CURRENT] = new HibernateStoreSessionManagerEntry(SnapshotVersion.CURRENT);
-        entries[OLD] = new HibernateStoreSessionManagerEntry(SnapshotVersion.OLD);
+        Object[] keys = hibernateSessionFactoryManager.getKeys();
+
+        entries[CURRENT] = new HibernateStoreSessionManagerEntry(keys[CURRENT]);
+        entries[OLD] = new HibernateStoreSessionManagerEntry(keys[CURRENT]);
     }
 
     @Override
     protected HibernateStoreSessionManagerEntry getEntry(Object key) {
-        return entries[getIndex(key)];
+        if (SnapshotVersion.CURRENT==key || SnapshotVersion.NOT_VERSIONED==key) {
+            return entries[CURRENT];
+        } if (SnapshotVersion.OLD == key) {
+            return entries[OLD];
+        } else {
+            throw new ImplementationException("Metode getEntry støtter ikke bruk av snapshot= " + key);
+        }
     }
 
     @Override
@@ -51,6 +52,11 @@ public class HibernateStoreSessionManagerMultiVersionImpl extends AbstractHibern
         entry.storeSession = null;
     }
 
+    @Override
+    public void openHibernateSession(HibernateStoreSessionManagerEntry entry) {
+        super.openHibernateSession(entry);
+        entry.storeSession = new HibernateStoreSession(entry.session, (SnapshotVersionHolder) entry.key);
+    }
 
     @Override
     public void flush() {
@@ -100,31 +106,31 @@ public class HibernateStoreSessionManagerMultiVersionImpl extends AbstractHibern
     }
 
     protected HibernateStoreSession createHibernateStoreSession(Session session, Object key) {
-        return new HibernateStoreSession(session, (SnapshotVersion) key);
+        return new HibernateStoreSession(session, (SnapshotVersionHolder) key);
     }
 
     @Override
     public void beginSnapshotScope(SnapshotVersion snapshotVersion) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void endSnapshotScope() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public HibernateStoreSession acquireSnapshotStoreSessionUsingSnapshotScope() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public HibernateStoreSession acquireSnapshotStoreSession(SnapshotVersion snapshotVersion) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void releaseSnapshotStoreSession(StoreSession storeSession) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        throw new UnsupportedOperationException();
     }
 }

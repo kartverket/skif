@@ -126,7 +126,8 @@ public class DbKodeHibernateTest {
 
     public void testKodelisteManager() {
         SessionFactory sf = setupHibernate();
-        HibernateStoreSession wrapper = new HibernateStoreSession(sf.openSession(), SnapshotVersion.CURRENT);
+        // TODO: Fix dette er feil.
+        HibernateStoreSession wrapper = new HibernateStoreSession(sf.openSession(), new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         KodelisteManager kodelisteManager = new KodelisteManager();
 
 

@@ -14,14 +14,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Henrik Fredholm
  */
-public class HibernateSessionManagerMultiVersionImpl extends AbstractHibernateSessionManager<HibernateSessionManagerEntry> {
-    private static Logger logger = LoggerFactory.getLogger(HibernateSessionManagerMultiVersionImpl.class);
+public class HibernateSessionManagerSnapshotVersionImpl extends AbstractHibernateSessionManager<HibernateSessionManagerEntry> {
+    private static Logger logger = LoggerFactory.getLogger(HibernateSessionManagerSnapshotVersionImpl.class);
     private final ServiceRequestContext serviceRequestContext;
     private HibernateSessionManagerEntry[] entries = new HibernateSessionManagerEntry[2];
 
     private final int CURRENT = getIndex(SnapshotVersion.CURRENT);
     private final int OLD = getIndex(SnapshotVersion.OLD);
-    
+
     private static int getIndex(Object key) {
         if (SnapshotVersion.CURRENT == key || key==SnapshotVersion.NOT_VERSIONED) {
             return 0;
@@ -33,7 +33,7 @@ public class HibernateSessionManagerMultiVersionImpl extends AbstractHibernateSe
     }
 
     @Inject
-    public HibernateSessionManagerMultiVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManagerMultiVersionImpl  hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
+    public HibernateSessionManagerSnapshotVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManagerSnapshotVersionImpl hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
         super(connectionFactoryManager, hibernateSessionFactoryManager);
         Object[] keys = hibernateSessionFactoryManager.getKeys();
 

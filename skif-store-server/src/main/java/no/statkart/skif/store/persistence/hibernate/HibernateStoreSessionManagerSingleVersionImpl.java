@@ -6,6 +6,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
 import no.statkart.skif.store.persistence.StoreSession;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public class HibernateStoreSessionManagerSingleVersionImpl extends AbstractHiber
     private long versionedSessionLevel = 0;
 
     @Inject
-    public HibernateStoreSessionManagerSingleVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManager hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
+    public HibernateStoreSessionManagerSingleVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManagerSingleVersionImpl hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
         super(connectionFactoryManager, hibernateSessionFactoryManager);
         this.serviceRequestContext = serviceRequestContext;
         entry.key = SnapshotVersion.CURRENT;
@@ -85,7 +86,7 @@ public class HibernateStoreSessionManagerSingleVersionImpl extends AbstractHiber
     }
 
     protected HibernateStoreSession createHibernateStoreSession(Session session, Object key) {
-        return new HibernateStoreSession(session, (SnapshotVersion) key);
+        return new HibernateStoreSession(session, (SnapshotVersionHolder) key);
     }
 
     @Override

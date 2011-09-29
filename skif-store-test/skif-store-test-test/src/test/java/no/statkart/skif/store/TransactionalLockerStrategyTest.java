@@ -18,7 +18,7 @@ import java.util.Collection;
 @Test(groups = "singlevm-required")
 public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
-    @Test
+    @Test(enabled = false)
     public void testIsLockedBy() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
@@ -33,7 +33,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     }
 
-    @Test
+    @Test(enabled = false)
     public void testUpdate() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
@@ -55,7 +55,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.releaseAllLocksOnCommit("ingroa");
     }
 
-    @Test
+    @Test(enabled = false)
     public void testRemove() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
@@ -77,7 +77,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.releaseAllLocksOnCommit("ingroa");
     }
 
-    @Test
+    @Test(enabled = false)
     public void testInsert() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
@@ -90,7 +90,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.releaseAllLocksOnCommit("ingroa");
     }
 
-    @Test
+    @Test(enabled = false)
     public void testUnlock() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
@@ -109,7 +109,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.releaseAllLocksOnCommit("ingroa");
     }
 
-    @Test
+    @Test (enabled = false)
     public void testRenewLocksViaUpdate(){
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
         DBLockerService<Long> db = injector.getInstance(DBLockerService.class);

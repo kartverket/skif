@@ -27,7 +27,7 @@ import static org.testng.Assert.*;
 public class HibernateSessionManagerTest {
     static Object NOT_USED = new Object();
 
-    private HibernateSessionFactoryManager hibernateSessionFactoryManager;
+    private HibernateSessionFactoryManagerSingleVersionImpl hibernateSessionFactoryManager;
     private ConnectionFactoryManager connectionFactoryManager;
 
     public HibernateSessionManagerTest() {

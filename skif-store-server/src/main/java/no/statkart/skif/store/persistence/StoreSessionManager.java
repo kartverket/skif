@@ -2,6 +2,7 @@ package no.statkart.skif.store.persistence;
 
 import no.statkart.skif.persistence.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionHolder;
 
 /**
  * Interface for håndterer {@code StoreSession} instanser, her under åpning, lukking, flushing, commit, rollback samt

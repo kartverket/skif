@@ -132,4 +132,5 @@ public class ServiceRequestScope implements Scope {
     public static <T> Provider<T> seededKeyProvider() {
         return (Provider<T>) SEEDED_KEY_PROVIDER;
     }
+
 }
