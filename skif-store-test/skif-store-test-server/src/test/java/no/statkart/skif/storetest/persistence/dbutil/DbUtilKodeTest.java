@@ -1,26 +1,19 @@
 package no.statkart.skif.storetest.persistence.dbutil;
 
-import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.ConfigurationConstants;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionHolder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.storetest.TestHelper;
+import no.statkart.skif.storetest.domain.TestDbKodeliste;
+import no.statkart.skif.storetest.domain.TestDbKodelisteIdImpl;
+import no.statkart.skif.storetest.domain.TestDbKodelisteImpl;
 import no.statkart.skif.storetest.domain.kodeliste.TestADbKode;
 import no.statkart.skif.storetest.domain.kodeliste.TestADbKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.TestBDbKode;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodelisteId;
-import no.statkart.skif.util.ResourceUtils;
-import no.statkart.skif.util.testsupport.SkifTestConfigurationAccessor;
 import org.dbunit.IDatabaseTester;
-import org.dbunit.JdbcDatabaseTester;
 import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.operation.DatabaseOperation;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -28,7 +21,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.FileNotFoundException;
-import java.util.Properties;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
@@ -66,7 +58,7 @@ public class DbUtilKodeTest {
         HibernateSessionFactoryBuilder sfbuilder = TestHelper.createHibernateSessionFactoryBuilder();
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestADbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestBDbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", DbKodeliste.class);
+        sfbuilder.addResourceUsingRelativePath("kodeliste", TestDbKodelisteImpl.class);
         SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         return sf;
@@ -97,7 +89,7 @@ public class DbUtilKodeTest {
     public void testLastKodeliste() {
         SessionFactory sf = setupHibernate();
         Session session = sf.openSession();
-        DbKodeliste obj = (DbKodeliste) session.load(DbKodeliste.class, new DbKodelisteId(10001));
+        TestDbKodeliste obj = (TestDbKodeliste) session.load(TestDbKodelisteImpl.class, new TestDbKodelisteIdImpl(10001L, SnapshotVersion.CURRENT));
         assertEquals(obj.getKodeClass(), TestADbKode.class);
     }
 }

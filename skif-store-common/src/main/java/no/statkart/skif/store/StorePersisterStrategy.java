@@ -1,7 +1,8 @@
 package no.statkart.skif.store;
 
+
 /**
- * Interface for å velge hvilken {@link StorePersister} som skal brukes basert på {@link AbstractBubbleId}
+ * Interface for å velge hvilken {@link no.statkart.skif.store.StorePersister} som skal brukes basert på {@link no.statkart.skif.store.AbstractBubbleId}
  * @author Henrik Fredholm
  * @since 0.3
  */

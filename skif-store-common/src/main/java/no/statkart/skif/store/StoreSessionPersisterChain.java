@@ -11,7 +11,7 @@ import java.util.*;
  * @author Henrik Fredholm
  * @since 0.3
  */
-public class StoreSessionPersisterChain implements StoreReadChain, StoreUpdateChain {
+public class StoreSessionPersisterChain implements StoreSessionReadChain, StoreSessionUpdateChain {
     private final StorePersisterStrategy persisterStrategy;
     private final LockerStrategy lockerStrategy;
     private final Map<Class<BubbleId>, List<BubbleId>> idsPerPersister = new HashMap<Class<BubbleId>, List<BubbleId>>();
@@ -23,7 +23,7 @@ public class StoreSessionPersisterChain implements StoreReadChain, StoreUpdateCh
     }
 
     @Override
-    public StoreReadChain setNextInReadChain(StoreReadChain next) {
+    public StoreSessionReadChain setNextInReadChain(StoreSessionReadChain next) {
         throw new UnsupportedOperationException();
     }
 
@@ -83,7 +83,7 @@ public class StoreSessionPersisterChain implements StoreReadChain, StoreUpdateCh
     }
 
     @Override
-    public StoreUpdateChain setNextInWriteChain(StoreUpdateChain next) {
+    public StoreSessionUpdateChain setNextInWriteChain(StoreSessionUpdateChain next) {
         throw new UnsupportedOperationException();
 
     }

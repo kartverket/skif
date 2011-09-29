@@ -1,15 +1,13 @@
 package no.statkart.skif.storetest.domain;
 
 
-import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.storetest.domain.kodeliste.TestC1DbKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.TestC2DbKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbSubclassedKodeId;
+import no.statkart.skif.storetest.domain.kodeliste.TestDbSubclassedKodeIdImpl;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertSame;
+import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
@@ -18,8 +16,8 @@ import static org.testng.Assert.assertSame;
 @Test
 public class DbSubclassedKodeIdTest {
     public void test() {
-        DbSubclassedKodeId id1 = BubbleId.createInstance(DbSubclassedKodeId.class, 27);
-        DbSubclassedKodeId id2 = BubbleId.createInstance(DbSubclassedKodeId.class, 27);
+        TestDbSubclassedKodeIdImpl id1 = BubbleIds.createInstance(TestDbSubclassedKodeIdImpl.class, 27);
+        TestDbSubclassedKodeIdImpl id2 = BubbleIds.createInstance(TestDbSubclassedKodeIdImpl.class, 27);
         TestC1DbKodeId c1DbKodeId1 = TestC1DbKodeId.createInstance(27);
         TestC1DbKodeId c1DbKodeId2 = TestC1DbKodeId.createInstance(27);
         TestC2DbKodeId c2DbKodeId1 = TestC2DbKodeId.createInstance(27);

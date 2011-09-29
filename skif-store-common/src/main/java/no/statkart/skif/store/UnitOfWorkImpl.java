@@ -5,10 +5,10 @@ import java.util.Collection;
 /**
  * @author Henrik Fredholm
  */
-public class UnitOfWorkImpl extends AbstractStoreSessionReadChain implements StoreUpdateChain, UnitOfWorkChain{
-    final protected StoreUpdateChain nextInWriteChain;
+public class UnitOfWorkImpl extends AbstractStoreSessionReadChain implements StoreSessionUpdateChain, UnitOfWorkChain{
+    final protected StoreSessionUpdateChain nextInWriteChain;
 
-    public UnitOfWorkImpl(StoreUpdateChain nextInWriteChain) {
+    public UnitOfWorkImpl(StoreSessionUpdateChain nextInWriteChain) {
         this.nextInWriteChain = nextInWriteChain;
     }
 
@@ -63,7 +63,7 @@ public class UnitOfWorkImpl extends AbstractStoreSessionReadChain implements Sto
     }
 
     @Override
-    public StoreUpdateChain setNextInWriteChain(StoreUpdateChain next) {
+    public StoreSessionUpdateChain setNextInWriteChain(StoreSessionUpdateChain next) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

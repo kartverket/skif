@@ -1,16 +1,13 @@
 package no.statkart.skif.storetest.domain;
 
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import no.statkart.skif.store.AbstractBubbleId;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
-public class TestBubbleId<T extends TestBubble> extends StoreTestBubbleId<T> {
+public class TestBubbleId<T extends TestBubble> extends AbstractBubbleId<T> implements StoreTestBubbleId<T> {
 
     public TestBubbleId<T> resolveInstance() {
         return this;

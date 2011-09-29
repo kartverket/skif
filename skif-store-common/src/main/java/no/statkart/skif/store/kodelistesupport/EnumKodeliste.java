@@ -1,0 +1,13 @@
+package no.statkart.skif.store.kodelistesupport;
+
+/**
+ * @author Henrik Fredholm
+ * @since 0.6
+ */
+public interface EnumKodeliste extends Kodeliste {
+    public EnumKodelisteId<?> getId();
+
+    public String getBeskrivelsesKey();
+
+    public void setBeskrivelsesKey(String beskrivelsesKey);
+}

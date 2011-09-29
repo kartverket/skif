@@ -1,18 +1,21 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodeSupport;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodelisteId;
+import no.statkart.skif.store.kodelistesupport.DbKodeSupport;
+import no.statkart.skif.store.kodelistesupport.DbKodeIdImpl;
+import no.statkart.skif.storetest.domain.TestDbKodeId;
+import no.statkart.skif.storetest.domain.TestDbKodeliste;
+import no.statkart.skif.storetest.domain.TestDbKodelisteId;
+import no.statkart.skif.storetest.domain.TestDbKodelisteIdImpl;
 
 /**
  * @author Henrik Fredholm
  * @since 0.6
  */
-public class TestBDbKodeId extends DbKodeId<TestBDbKode> {
-    private static DbKodeSupport kodeSupport = new DbKodeSupport(TestBDbKodeId.class, 10002);
+public class TestBDbKodeId extends DbKodeIdImpl<TestBDbKode> implements TestDbKodeId<TestBDbKode> {
+    private static DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>> kodeSupport = new DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>>(TestBDbKodeId.class,new TestDbKodelisteIdImpl(10002L, SnapshotVersion.CURRENT));
 
-    public static DbKodelisteId KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static TestDbKodelisteId<TestDbKodeliste> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static TestBDbKodeId B1Id = define(1);
     public static TestBDbKodeId B2Id = define(2);
 

@@ -1,8 +1,5 @@
 package no.statkart.skif.store.module.server;
 
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.ServiceMode;
@@ -16,7 +13,7 @@ import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.storetest.TestHelper;
 import org.hibernate.Session;
@@ -44,7 +41,7 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
 
     protected Properties getHibernateProperties() {
         setStrategyInstance();
-        Configuration hibernateConfiguration = strategy.getHiberanteConfiguration();
+        Configuration hibernateConfiguration = strategy.getHibernateConfiguration();
         if (hibernateConfiguration != null) {
             logger.debug("Configuring hibernate from configuration object specified programatically");
         } else if (strategy.getHibernateConfigurationFilename() != null) {
@@ -79,7 +76,7 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         return new StoreHibernateSessionFactoryBuilder(properties, mappingFileDirectoryRoot);
     }
 
-    protected abstract void configureHibernate(StoreHibernateSessionFactoryBuilder facotryBuilderStore);
+    protected abstract void configureHibernate(StoreHibernateSessionFactoryBuilder factoryBuilderStore);
 
     @Override
     protected void configure() {

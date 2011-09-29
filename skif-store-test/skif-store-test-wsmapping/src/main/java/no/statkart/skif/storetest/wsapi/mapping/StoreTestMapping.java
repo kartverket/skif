@@ -1,12 +1,13 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.mapper.Mapping;
-import no.statkart.skif.storetest.domain.*;
-import no.statkart.skif.storetest.domain.kodeliste.Kode;
-import no.statkart.skif.storetest.domain.kodeliste.KodeId;
+import no.statkart.skif.store.kodelistesupport.Kode;
+import no.statkart.skif.store.kodelistesupport.KodeId;
+import no.statkart.skif.storetest.domain.StoreTestBubble;
+import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.AList;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
 

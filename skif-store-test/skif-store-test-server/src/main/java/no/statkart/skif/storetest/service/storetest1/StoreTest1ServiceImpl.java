@@ -1,6 +1,5 @@
 package no.statkart.skif.storetest.service.storetest1;
 
-import com.asn1c.core.Null;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;

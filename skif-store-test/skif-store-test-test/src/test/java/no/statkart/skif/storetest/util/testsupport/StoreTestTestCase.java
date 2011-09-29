@@ -3,12 +3,10 @@ package no.statkart.skif.storetest.util.testsupport;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.SkifServices;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
-import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.service.locker.SkifMapper;
 import no.statkart.skif.service.module.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
@@ -17,9 +15,9 @@ import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.config.StoreTestGroup1Services;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.config.StoreTestStoreServices;
-import no.statkart.skif.storetest.service.store.StoreReadServiceClient;
+import no.statkart.skif.storetest.service.store.StoreReadChainClient;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
-import no.statkart.skif.storetest.wsapi.exception.impl.mapping.StoreTestExceptionMapper;
+import no.statkart.skif.storetest.wsapi.exception.simple.mapping.StoreTestExceptionMapper2;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 
@@ -46,23 +44,20 @@ public class StoreTestTestCase extends SkifTestCase {
         @Override
         protected void configure() {
             install(new RemoteServerModule(moduleConfiguration));
-            install(new RemoteServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices(), new StoreTestMapper().getMapping()).setExceptionMapping(new StoreTestExceptionMapper().getMapping()));
+            install(new RemoteServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices(), new StoreTestMapper().getMapping()).setExceptionMapping(new StoreTestExceptionMapper2().getMapping()));
             install(new RemoteServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices(), new StoreTestMapper().getMapping())
-                    .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                    .setExceptionMapping(new StoreTestExceptionMapper2().getMapping())
                     .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
             );
             install(new RemoteServiceModule(moduleConfiguration, new SkifServices().getServices(), new SkifMapper().getMapping()));
-            bind(StoreReadService.class).to(StoreReadServiceClient.class);
-
-
-
+            bind(StoreReadChain.class).to(StoreReadChainClient.class);
         }
 
         @Provides
         @Singleton
-        Store storeProvider(StoreReadService storeReadChain, Injector injector) {
+        Store storeProvider(StoreReadChain storeReadChain, Injector injector) {
             StoreCache storeCache = new StoreCache();
-            StoreChain[] storeChainList = {
+            StoreSessionChain[] storeChainList = {
                     new StoreSessionReadClient(storeReadChain)
             };
             StoreClient store = new StoreClient(storeCache, storeChainList);

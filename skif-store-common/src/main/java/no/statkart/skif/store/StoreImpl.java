@@ -1,12 +1,12 @@
 package no.statkart.skif.store;
 
 
+import com.google.inject.Injector;
+import no.statkart.skif.exception.ConfigurationException;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
-
-import com.google.inject.Injector;
-import no.statkart.skif.exception.ConfigurationException;
 
 import static no.statkart.skif.guava.Preconditions.checkNotNull;
 
@@ -15,15 +15,15 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
  */
 public class StoreImpl implements Store {
     final protected StoreCache storeCache;
-    final protected StoreChain[] storeChain;
-    final protected StoreReadChain readChain;
-    final protected StoreUpdateChain writeChain;
+    final protected StoreSessionChain[] storeChain;
+    final protected StoreSessionReadChain readChain;
+    final protected StoreSessionUpdateChain writeChain;
     final protected UnitOfWorkChain uowChain;
 
     @Inject
     private Injector injector;
 
-    public StoreImpl(StoreCache storeCache, StoreChain... storeChain) {
+    public StoreImpl(StoreCache storeCache, StoreSessionChain... storeChain) {
         this.storeCache = storeCache;
         this.storeChain = storeChain;
 
@@ -32,42 +32,42 @@ public class StoreImpl implements Store {
         this.uowChain = initUnitOfWorkChain(storeChain);
     }
 
-    private StoreReadChain initReadChain(StoreChain[] storeChainList) {
-        StoreReadChain root = null;
-        StoreReadChain currentRead = null;
-        for (StoreChain chain : storeChainList) {
-            if (chain instanceof StoreReadChain) {
+    private StoreSessionReadChain initReadChain(StoreSessionChain[] storeChainList) {
+        StoreSessionReadChain root = null;
+        StoreSessionReadChain currentRead = null;
+        for (StoreSessionChain chain : storeChainList) {
+            if (chain instanceof StoreSessionReadChain) {
                 if (currentRead == null) {
-                    currentRead = (StoreReadChain) chain;
+                    currentRead = (StoreSessionReadChain) chain;
                     root = currentRead;
                 } else {
-                    currentRead = currentRead.setNextInReadChain((StoreReadChain) chain);
+                    currentRead = currentRead.setNextInReadChain((StoreSessionReadChain) chain);
                 }
             }
         }
         return root;
     }
 
-    private StoreUpdateChain initWriteChain(StoreChain[] storeChainList) {
-        StoreUpdateChain root = null;
-        StoreUpdateChain currentWrite = null;
-        for (StoreChain chain : storeChainList) {
-            if (chain instanceof StoreUpdateChain) {
+    private StoreSessionUpdateChain initWriteChain(StoreSessionChain[] storeChainList) {
+        StoreSessionUpdateChain root = null;
+        StoreSessionUpdateChain currentWrite = null;
+        for (StoreSessionChain chain : storeChainList) {
+            if (chain instanceof StoreSessionUpdateChain) {
                 if (currentWrite == null) {
-                    currentWrite = (StoreUpdateChain) chain;
+                    currentWrite = (StoreSessionUpdateChain) chain;
                     root = currentWrite;
                 } else {
-                    currentWrite = currentWrite.setNextInWriteChain((StoreUpdateChain) chain);
+                    currentWrite = currentWrite.setNextInWriteChain((StoreSessionUpdateChain) chain);
                 }
             }
         }
         return root;
     }
 
-    private UnitOfWorkChain initUnitOfWorkChain(StoreChain[] storeChainList) {
+    private UnitOfWorkChain initUnitOfWorkChain(StoreSessionChain[] storeChainList) {
         UnitOfWorkChain root = createNoUnitOfWorkConfiguredChain();
         UnitOfWorkChain currentRead = null;
-        for (StoreChain chain : storeChainList) {
+        for (StoreSessionChain chain : storeChainList) {
             if (chain instanceof UnitOfWorkChain) {
                 if (currentRead == null) {
                     currentRead = (UnitOfWorkChain) chain;
@@ -123,13 +123,13 @@ public class StoreImpl implements Store {
 
     public void init() {
         storeCache.init(this);
-        for (StoreChain chain : storeChain) {
+        for (StoreSessionChain chain : storeChain) {
             chain.init(storeCache);
         }
     }
 
     public void clear() {
-        for (StoreChain chain : storeChain) {
+        for (StoreSessionChain chain : storeChain) {
             chain.clear();
         }
         storeCache.clear();

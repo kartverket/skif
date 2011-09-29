@@ -7,7 +7,7 @@ import no.statkart.skif.store.persistence.StoreSessionManager;
 /**
  * @author Henrik Fredholm
  */
-public interface  HibernateStoreSessionManager extends StoreSessionManager, HibernateSessionManager {
+public interface HibernateStoreSessionManager extends StoreSessionManager, HibernateSessionManager {
     @Override
     HibernateStoreSession getStoreSession(SnapshotVersion snapshotVersion);
     @Override
@@ -19,5 +19,4 @@ public interface  HibernateStoreSessionManager extends StoreSessionManager, Hibe
     @Override
     HibernateStoreSession acquireSnapshotStoreSession(SnapshotVersion snapshotVersion);
     @Override
-    void releaseSnapshotStoreSession(StoreSession storeSession);
-}
+    void releaseSnapshotStoreSession(StoreSession storeSession);}

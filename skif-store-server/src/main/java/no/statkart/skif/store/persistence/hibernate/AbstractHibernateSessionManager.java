@@ -1,7 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.SystemException;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import org.hibernate.Session;
 import org.slf4j.Logger;

@@ -1,8 +1,8 @@
 package no.statkart.skif.store;
 
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static no.statkart.skif.guava.Preconditions.checkState;

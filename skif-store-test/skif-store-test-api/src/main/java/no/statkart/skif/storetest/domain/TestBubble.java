@@ -1,13 +1,13 @@
 package no.statkart.skif.storetest.domain;
 
+import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class TestBubble extends StoreTestBubble {
+public class TestBubble extends AbstractBubbleObject implements StoreTestBubble {
     private String text = "";
 
     public TestBubble() {

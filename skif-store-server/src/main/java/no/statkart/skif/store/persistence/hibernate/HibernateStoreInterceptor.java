@@ -38,7 +38,15 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
             String classname = bubbleEntity.getClass().getName();
             BubbleId bubbleId = (BubbleId) bubbleEntity.getId();
             try {
-                Class classid = Class.forName(classname + "Id");
+                String idString;
+                if(classname.contains("Impl")) {
+                    idString = classname.substring(0, classname.indexOf("Impl")) + "IdImpl";
+                } else if(classname.endsWith("2")) {
+                    idString = classname.substring(0, classname.length() - 1) + "Id";
+                } else {
+                    idString = classname + "Id";
+                }
+                Class classid = Class.forName(idString);
                 if (classid != bubbleId.getClass()) {
                     Object value = bubbleId.getValue();
                     BubbleId<?> newBubbleId = (BubbleId<?>) BubbleIdFactory.createInstance(classid, value, bubbleId.getSnapshotVersion());
@@ -117,7 +125,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
 
     private void sjekkSnapshotVersjon(Serializable id) {
         if (id instanceof BubbleId) {
-            if (!((BubbleId) id).getSnapshotVersion().equals(snapshotVersion)) {
+            if (((BubbleId) id).getSnapshotVersion() != snapshotVersion) {
                 throw new ImplementationException("id for instans har feil replicaVersjon", logger);
             }
         }

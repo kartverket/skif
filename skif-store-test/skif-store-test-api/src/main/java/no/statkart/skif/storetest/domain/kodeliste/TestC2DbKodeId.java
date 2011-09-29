@@ -1,16 +1,20 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodeSupport;
+import no.statkart.skif.store.kodelistesupport.DbKodeSupport;
+import no.statkart.skif.storetest.domain.TestDbKodeliste;
+import no.statkart.skif.storetest.domain.TestDbKodelisteId;
+import no.statkart.skif.storetest.domain.TestDbKodelisteIdImpl;
 
 /**
  * @author Henrik Fredholm
  * @since 0.6
  */
 public class TestC2DbKodeId extends TestCDbKodeId<TestCDbKode> {
-    private static DbKodeSupport kodeSupport = new DbKodeSupport(TestC2DbKodeId.class, 10004);
+    private static DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>> kodeSupport = new DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>>(TestC2DbKodeId.class,new TestDbKodelisteIdImpl(10004L, SnapshotVersion.CURRENT));
 
-    public static KodelisteId KODELISTE_ID = kodeSupport.getKodelisteId();
+
+    public static TestDbKodelisteId<TestDbKodeliste> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static TestC2DbKodeId C2A1Id = define(10);
     public static TestC2DbKodeId C2BId = define(11);
 

@@ -1,29 +1,27 @@
 package no.statkart.skif.storetest.domain;
 
-import no.statkart.skif.ConfigurationConverter;
-import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionHolder;
-import no.statkart.skif.store.kodelistesupport.*;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
+import no.statkart.skif.store.kodelistesupport.DbKode;
+import no.statkart.skif.store.kodelistesupport.DbKodeId;
+import no.statkart.skif.store.kodelistesupport.DbKodeliste;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
-import no.statkart.skif.store.persistence.kodeliste.BubbleKodelisteManager;
-import no.statkart.skif.store.persistence.kodeliste.BubbleKodelistePersister;
-import no.statkart.skif.store.persistence.kodeliste.DbBubbleKodelisteLoader;
+import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
+import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
+import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.kodeliste.*;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodelisteId;
-import no.statkart.skif.util.ResourceUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.testng.AssertJUnit.assertNotNull;
 
@@ -35,11 +33,11 @@ import static org.testng.AssertJUnit.assertNotNull;
 public class DbKodeHibernateTest {
 
     private SessionFactory setupHibernate() {
-        HibernateSessionFactoryBuilder sfbuilder = TestHelper.createStoreHibernateSessionFactoryBuilder();
+        StoreHibernateSessionFactoryBuilder sfbuilder = TestHelper.createStoreHibernateSessionFactoryBuilder();
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestADbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestBDbKode.class);
         sfbuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", TestCDbKode.class, TestC1DbKode.class, TestC2DbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", DbKodeliste.class);
+        sfbuilder.addResourceUsingRelativePath("kodeliste", TestDbKodelisteImpl.class);
         SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         return sf;
@@ -105,7 +103,7 @@ public class DbKodeHibernateTest {
     public void testLastKodeliste() {
         SessionFactory sf = setupHibernate();
         Session session = sf.openSession();
-        DbKodeliste dbKodeliste = (DbKodeliste) session.load(DbKodeliste.class, new DbKodelisteId(10001));
+        DbKodeliste dbKodeliste = (DbKodeliste) session.load(TestDbKodelisteImpl.class, new TestDbKodelisteIdImpl(10001L, SnapshotVersion.CURRENT));
         Assert.assertNotNull(dbKodeliste);
     }
 
@@ -113,15 +111,15 @@ public class DbKodeHibernateTest {
         SessionFactory sf = setupHibernate();
         Session session = sf.openSession();
 
-        DbBubbleKodelisteLoader kodelisteLoader = new DbBubbleKodelisteLoader() {
+        DbKodelisteLoader kodelisteLoader = new DbKodelisteLoader() {
             @Override
-            public List<DbBubbleKodeliste> load(Session session, Map<DbBubbleKodeId<?>, DbBubbleKode> kodeMap) {
+            public List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
                 return load(session, DbKodeliste.class, kodeMap);
             }
         };
 
-        Map<DbBubbleKodeId<?>, DbBubbleKode> kodeMap = new HashMap<DbBubbleKodeId<?>, DbBubbleKode>();
-        List<DbBubbleKodeliste> kodelister = kodelisteLoader.load(session, kodeMap);
+        Map<DbKodeId<?>, DbKode> kodeMap = new HashMap<DbKodeId<?>, DbKode>();
+        List<DbKodeliste> kodelister = kodelisteLoader.load(session, kodeMap);
         Assert.assertNotNull(kodelister);
     }
 
@@ -129,16 +127,18 @@ public class DbKodeHibernateTest {
     public void testKodelisteManager() {
         SessionFactory sf = setupHibernate();
         HibernateStoreSession wrapper = new HibernateStoreSession(sf.openSession(), SnapshotVersion.CURRENT);
-        BubbleKodelisteManager kodelisteManager = new BubbleKodelisteManager();
+        KodelisteManager kodelisteManager = new KodelisteManager();
 
-        DbBubbleKodelisteLoader kodelisteLoader = new DbBubbleKodelisteLoader() {
+
+
+        DbKodelisteLoader kodelisteLoader = new DbKodelisteLoader() {
             @Override
-            public List<DbBubbleKodeliste> load(Session session, Map<DbBubbleKodeId<?>, DbBubbleKode> kodeMap) {
+            public List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
                 return load(session, DbKodeliste.class, kodeMap);
             }
         };
 
-        BubbleKodelistePersister kodelistePersister = new BubbleKodelistePersister(wrapper, kodelisteLoader, kodelisteManager);
+        KodelistePersister kodelistePersister = new KodelistePersister(wrapper, kodelisteLoader, kodelisteManager);
         Collection<? extends BubbleObject> list = kodelistePersister.getAllKodelisterAndKoder();
         Collection<? extends BubbleObject> list2 = kodelistePersister.getAllKodelisterAndKoder();
         Assert.assertNotNull(list);

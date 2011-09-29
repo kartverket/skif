@@ -3,7 +3,7 @@ package no.statkart.skif.store;
 /**
  * @author Henrik Fredholm
  */
-public abstract class AbstractStoreChain implements StoreChain {
+public abstract class AbstractStoreChain implements StoreSessionChain {
     protected StoreCache storeCache;
     @Override
     public void init(StoreCache storeCache) {

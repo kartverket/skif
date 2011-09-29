@@ -13,7 +13,7 @@ import java.util.Collection;
 public interface StoreSession<S,T,I> {
     S getWrappedSession();
     T get(I bubbleId);
-    Collection<? extends T> get(Collection <? extends I> bubbleIds);
+    Collection<? extends T> get(Collection<? extends I> bubbleIds);
 
     void evict(I bubbleId);
     void evictAll();

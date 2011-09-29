@@ -3,16 +3,11 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.persistence.ConnectionFactory;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.SnapshotVersion;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
 
 /**
  * Implementasjon som støtter en hibernate og connection factory, dvs ikke håndtere versjonert lesing
@@ -44,7 +39,7 @@ public class HibernateSessionManagerSingleVersionImpl extends AbstractHibernateS
     }
 
     @Override
-    public void close()  {
+    public void close() {
         closeEntry(entry);
 
     }
@@ -62,14 +57,14 @@ public class HibernateSessionManagerSingleVersionImpl extends AbstractHibernateS
 
 
     @Override
-    public void commit()  {
+    public void commit() {
         commitEntry(entry);
 
     }
 
 
     @Override
-    public void rollback()  {
+    public void rollback() {
         rollbackEntry(entry);
     }
 }

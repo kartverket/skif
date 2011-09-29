@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.config;
 
 import no.statkart.skif.service.ejb.EJBRegistration;
-import no.statkart.skif.storetest.service.store.StoreService;
+import no.statkart.skif.storetest.config.StoreTestGroup1Services;
 import no.statkart.skif.storetest.service.storetest1.StoreTest1Service;
 
 import javax.ejb.EJB;

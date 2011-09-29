@@ -31,8 +31,8 @@ public interface Store {
     <T extends BubbleObject> T register(T bubbleObject);
     <T extends BubbleObject> Collection<? extends T> register(Collection<? extends T> bubbleObjects, Collection<? super T> resolvedObjects);
     <T extends BubbleObject> T registerLocked(T bubbleObject);
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void registerLocked(Collection<T> bubbleObjects,Collection<T> resolvedObjects );
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer<T,I> transfer);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void registerLocked(Collection<T> bubbleObjects, Collection<T> resolvedObjects);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer<T, I> transfer);
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId);
 

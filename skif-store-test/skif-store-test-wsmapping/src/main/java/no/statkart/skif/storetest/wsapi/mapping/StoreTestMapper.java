@@ -1,20 +1,23 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.mapper.*;
-import no.statkart.skif.service.annotation.Implementation;
+import no.statkart.skif.mapper.ObjectFactory;
+import no.statkart.skif.store.KodelisteTransfer;
+import no.statkart.skif.store.kodelistesupport.*;
+import no.statkart.skif.store.kodelistesupport.Kodeliste;
+import no.statkart.skif.store.kodelistesupport.KodelisteId;
 import no.statkart.skif.storetest.domain.*;
-import no.statkart.skif.storetest.domain.kodeliste.*;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.impl.DbKodelisteId;
-import no.statkart.skif.storetest.domain.kodeliste.impl.EnumKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.impl.EnumKodelisteId;
+import no.statkart.skif.storetest.domain.TestAEnumKode;
+import no.statkart.skif.storetest.domain.TestAEnumKodeId;
+import no.statkart.skif.storetest.domain.TestBEnumKode;
+import no.statkart.skif.storetest.domain.TestBEnumKodeId;
+import no.statkart.skif.storetest.domain.TestCEnumKode;
+import no.statkart.skif.storetest.domain.TestCEnumKodeId;
+import no.statkart.skif.storetest.domain.kodeliste.TestADbKodeId;
 import no.statkart.skif.storetest.wsapi.domain.AList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
+import no.statkart.skif.storetest.wsapi.domain.kodeliste.*;
 
 import java.util.Collection;
 
@@ -83,7 +86,7 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestADbKodeId.class, TestADbKodeId.class));
         addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestBDbKodeId.class, TestBDbKodeId.class));
         addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestC1DbKodeId.class, TestC1DbKodeId.class));
-        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestC2DbKodeId.class, TestC2DbKodeId.class));
+        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestCDbKodeId.class, TestCDbKodeId.class));
 
         // Kode
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestAEnumKode.class, TestAEnumKode.class));
@@ -92,7 +95,7 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestADbKode.class, TestADbKode.class));
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestBDbKode.class, TestBDbKode.class));
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestC1DbKode.class, TestC1DbKode.class));
-        addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestC2DbKode.class, TestC2DbKode.class));
+        addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestCDbKode.class, TestCDbKode.class));
 
         addMapper(new KodelisteTransferTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer.class, KodelisteTransfer.class));
     }

@@ -6,13 +6,9 @@ import com.google.inject.Singleton;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.ConfigurationConstants;
-import no.statkart.skif.config.SkifServices;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
-import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
-import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
@@ -20,21 +16,17 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
 import no.statkart.skif.store.module.server.ServerStoreModule;
-import no.statkart.skif.store.persistence.hibernate.*;
-import no.statkart.skif.store.persistence.kodeliste.BubbleKodelisteManager;
-import no.statkart.skif.store.persistence.kodeliste.BubbleKodelistePersister;
-import no.statkart.skif.store.persistence.kodeliste.DbBubbleKodelisteLoader;
+import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManager;
+import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionPersister;
+import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
+import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
+import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate;
-import no.statkart.skif.storetest.domain.TestBubble;
-import no.statkart.skif.storetest.domain.TestBubbleId;
-import no.statkart.skif.storetest.domain.TestMap;
-import no.statkart.skif.storetest.domain.kodeliste.TestAEnumKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.TestBEnumKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.TestCEnumKodeId;
+import no.statkart.skif.storetest.domain.*;
 import no.statkart.skif.storetest.persistence.StoreTestKodelisteLoader;
 import no.statkart.skif.storetest.persistence.StoreTestStorePersisterStrategy;
 
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +66,7 @@ public class StoreTestServerModule extends SkifModule {
         install(serverStoreModule);
 
         bind(Store.class).to(StoreServer.class);
-        bind(DbBubbleKodelisteLoader.class).to(StoreTestKodelisteLoader.class);
+        bind(DbKodelisteLoader.class).to(StoreTestKodelisteLoader.class);
 
 
         install(new ServerServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices()));
@@ -83,8 +75,8 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @Singleton
-    BubbleKodelisteManager bubbleKodelisteManagerProvider() {
-        BubbleKodelisteManager kodelisteManager = new BubbleKodelisteManager();
+    KodelisteManager bubbleKodelisteManagerProvider() {
+        KodelisteManager kodelisteManager = new KodelisteManager();
         kodelisteManager.installStatic(TestAEnumKodeId.class);
         kodelisteManager.installStatic(TestBEnumKodeId.class);
         kodelisteManager.installStatic(TestCEnumKodeId.class);
@@ -94,7 +86,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    StoreServer storeProvider(HibernateStoreSessionManager hibernateStoreSessionManager, HashStorePersister hashStorePersister, BubbleKodelistePersister kodelistePersister, Injector injector) {
+    StoreServer storeProvider(HibernateStoreSessionManager hibernateStoreSessionManager, HashStorePersister hashStorePersister, KodelistePersister kodelistePersister, Injector injector) {
         HibernateStoreSessionPersister hibernateStoreSessionPersister = new HibernateStoreSessionPersister(hibernateStoreSessionManager);
 
         StorePersisterStrategy storePersisterStrategy = new StoreTestStorePersisterStrategy(hibernateStoreSessionPersister, hashStorePersister,kodelistePersister) ;
@@ -114,7 +106,7 @@ public class StoreTestServerModule extends SkifModule {
         };
 
         StoreCache storeCache = new StoreCache();
-        StoreChain[] storeChainList = {
+        StoreSessionChain[] storeChainList = {
                 authorizerChain,
                 new StoreSessionCacheChain(),
                 new StoreSessionPersisterChain(storePersisterStrategy, null)

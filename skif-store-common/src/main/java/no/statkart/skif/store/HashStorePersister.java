@@ -1,13 +1,12 @@
 package no.statkart.skif.store;
 
 import com.google.inject.Inject;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-
 import no.statkart.skif.exception.ObjectNotFoundException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * HashMap basert Store som ikke er trådsikker.

@@ -57,6 +57,6 @@ public class StoreServiceTest extends StoreTestTestCase {
         TestBubble bubble = store.getObject(a1Id);
         assertEquals(a1Id, bubble.getId());
         assertEquals(bubble.getId().getSnapshotVersion(), SnapshotVersion.OLD);
-
     }
+
 }

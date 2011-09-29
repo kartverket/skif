@@ -1,31 +1,12 @@
 package no.statkart.skif.storetest.domain;
 
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.SnapshotVersion;
 
 /**
+ * Alle bobleid'er (inkl kodeid'er implementerer dette interfacet
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
-public class StoreTestBubbleId<T extends StoreTestBubble> extends BubbleId<T> {
-
-    public StoreTestBubbleId<T> resolveInstance() {
-        return this;
-    }
-
-    public StoreTestBubbleId() {
-        super();
-    }
-
-    public StoreTestBubbleId(int idValue) {
-        super(new Long(idValue));
-    }
-
-    public StoreTestBubbleId(Long idValue) {
-        super(idValue);
-    }
-
-    public StoreTestBubbleId(Long value, SnapshotVersion version) {
-        super(value, version);
-    }
+public interface StoreTestBubbleId<T extends StoreTestBubble> extends BubbleId<T> {
+    public String getStringValue();
 }

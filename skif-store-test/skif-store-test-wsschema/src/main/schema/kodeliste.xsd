@@ -165,14 +165,14 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="TestC2DbKodeId">
+    <xs:complexType name="TestCDbKodeId">
         <xs:complexContent>
             <xs:extension base="kodelistens:KodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="TestC2DbKode">
+    <xs:complexType name="TestCDbKode">
         <xs:complexContent>
             <xs:extension base="kodelistens:Kode">
             </xs:extension>

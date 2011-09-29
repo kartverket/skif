@@ -2,8 +2,6 @@ package no.statkart.skif.storetest.service.store;
 
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.domain.TestBubble;
-import no.statkart.skif.storetest.domain.TestBubbleId;
 
 import java.util.List;
 

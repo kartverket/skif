@@ -1,5 +1,6 @@
 package no.statkart.skif.exception;
 
+import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.store.BubbleId;
 
 /**

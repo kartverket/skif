@@ -4,7 +4,7 @@
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
     <class name="no.statkart.skif.storetest.domain.kodeliste.TestCDbKode" table="TestCKode">
-        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.DbSubclassedKodeIdType">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.TestDbSubclassedKodeIdType">
             <generator class="assigned"/>
         </id>
         <discriminator column="class" type="string"/>

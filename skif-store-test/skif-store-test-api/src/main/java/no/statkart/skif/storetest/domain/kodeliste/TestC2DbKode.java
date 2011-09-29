@@ -5,5 +5,4 @@ package no.statkart.skif.storetest.domain.kodeliste;
  * @since 0.6
  */
 public class TestC2DbKode extends TestCDbKode {
-    
 }

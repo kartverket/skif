@@ -1,7 +1,7 @@
 package no.statkart.skif.store;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -9,14 +9,14 @@ import java.util.ArrayList;
 public class StoreServer extends StoreImpl{
     final protected ServiceLifecycleStoreChain[] serviceLifecycleChain;
 
-    public StoreServer(StoreCache storeCache, StoreChain... storeChainList) {
+    public StoreServer(StoreCache storeCache, StoreSessionChain... storeChainList) {
         super( storeCache, storeChainList);
         this.serviceLifecycleChain = initServicelifecycleChain(storeChainList);
     }
 
-    private ServiceLifecycleStoreChain[] initServicelifecycleChain(StoreChain[] storeChainList) {
+    private ServiceLifecycleStoreChain[] initServicelifecycleChain(StoreSessionChain[] storeChainList) {
         List<ServiceLifecycleStoreChain> result = new ArrayList<ServiceLifecycleStoreChain>(storeChainList.length);
-        for (StoreChain chain : storeChainList) {
+        for (StoreSessionChain chain : storeChainList) {
             if (chain instanceof ServiceLifecycleStoreChain) {
                 result.add((ServiceLifecycleStoreChain)chain);
             }

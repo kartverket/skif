@@ -1,12 +1,10 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import no.statkart.skif.inject.Holder;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizer;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionHolder;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;

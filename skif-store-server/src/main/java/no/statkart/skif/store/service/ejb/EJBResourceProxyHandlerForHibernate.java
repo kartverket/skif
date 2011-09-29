@@ -2,14 +2,11 @@ package no.statkart.skif.store.service.ejb;
 
 import com.google.inject.Inject;
 import no.statkart.skif.ServiceMode;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
 
 /**
  * @author Henrik Fredholm

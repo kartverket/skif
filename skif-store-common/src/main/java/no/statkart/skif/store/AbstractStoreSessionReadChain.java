@@ -5,11 +5,11 @@ import java.util.Collection;
 /**
  * @author Henrik Fredholm
  */
-public abstract class AbstractStoreSessionReadChain extends AbstractStoreChain implements StoreReadChain {
-    protected StoreReadChain nextInReadChain;
+public abstract class AbstractStoreSessionReadChain extends AbstractStoreSessionChain implements StoreSessionReadChain {
+    protected StoreSessionReadChain nextInReadChain;
 
     @Override
-    public StoreReadChain setNextInReadChain(StoreReadChain next) {
+    public StoreSessionReadChain setNextInReadChain(StoreSessionReadChain next) {
         nextInReadChain = next;
         return next;
     }

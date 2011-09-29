@@ -1,15 +1,13 @@
 package no.statkart.skif.storetest.domain;
 
 
-import no.statkart.skif.store.BubbleKodeIdLookup;
+import no.statkart.skif.store.KodeIdLookup;
+import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.store.kodelistesupport.BubbleKode;
-import no.statkart.skif.store.kodelistesupport.BubbleKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.*;
+import no.statkart.skif.store.kodelistesupport.Kode;
+import no.statkart.skif.store.kodelistesupport.Kodeliste;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.util.testsupport.SkifTestCase;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -28,7 +26,7 @@ public class KodelisteTest extends StoreTestTestCase {
 
     public void testGetKode(){
         Store store = injector.getInstance(Store.class);
-        TestAEnumKode kode = store.get(TestAEnumKodeId.KodeAId);
+            TestAEnumKode kode = store.get(TestAEnumKodeId.KodeAId);
         assertNotNull(kode);
     }
 
@@ -45,13 +43,13 @@ public class KodelisteTest extends StoreTestTestCase {
         assertNotNull(kodelisteTransfer);
     }
 
-    public void testBubbleKodeIdLookup() {
+    public void testKodeIdLookup() {
         KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
         Store store = injector.getInstance(Store.class);
         KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
-        List<BubbleKode> objects = new ArrayList<BubbleKode>();
+        List<Kode> objects = new ArrayList<Kode>();
         store.register(kodelisteTransfer.getObjects(), objects);
-        BubbleKodeIdLookup kodeIdLookup = BubbleKodeIdLookup.buildFromKodeliste((Collection<? extends BubbleKodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
+        KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
         TestBEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(TestBEnumKodeId.class, "B");
         assertSame(bKodeId, TestBEnumKodeId.KodeBId);
     }

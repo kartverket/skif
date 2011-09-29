@@ -5,7 +5,7 @@ package no.statkart.skif.store;
  */
 public class StoreClient extends StoreImpl {
 
-    public StoreClient(StoreCache storeCache, StoreChain... storeChain) {
+    public StoreClient(StoreCache storeCache, StoreSessionChain... storeChain) {
         super(storeCache, storeChain);
     }
 }
