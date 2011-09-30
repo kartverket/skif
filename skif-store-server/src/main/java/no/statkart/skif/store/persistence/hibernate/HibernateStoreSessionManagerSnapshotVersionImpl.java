@@ -103,8 +103,10 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     public HibernateStoreSession getStoreSession(SnapshotVersion snapshotVersion) {
         HibernateStoreSessionManagerSnapshotVersionEntry entry = getEntry(snapshotVersion);
         if (entry.storeSession == null) {
-            getHibernateSessionEntry(entry);
-            entry.storeSession = createHibernateStoreSession(entry.session, entry.key);
+            openHibernateSession(entry);
+// TODO: fjern
+//            getHibernateSessionEntry(entry);
+//            entry.storeSession = createHibernateStoreSession(entry.session, entry.key);
         }
         return entry.storeSession;
     }
@@ -180,6 +182,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
 
 
     private HibernateStoreSession pushExistingSnapshotVersion(HibernateStoreSessionManagerSnapshotVersionEntry entry) {
+        // TODO: utføre sql som tester (i debug mode) at snapshot timestamp på connection er riktig
         entry.snapshotVersionStack.push(entry.snapshotVersionStack.peek());
         return entry.storeSession;
     }
@@ -195,6 +198,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
             entry.storeSession.ensureBubblesFullyLoaded();
             entry.storeSession.evictAll();
         }
+        // TODO: utføre sql som setter nytt snapshot timestamp på connection
         entry.pushSnapshotVersion(entry.getSnapshotVersion());
         entry.setSnapshotVersion(snapshotVersion);
         return entry.storeSession;
@@ -203,8 +207,10 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     private void popSnapshotVersion(HibernateStoreSessionManagerSnapshotVersionEntry entry) {
         SnapshotVersion s = entry.getSnapshotVersion();
         if (!s.equals(entry.snapshotVersionStack.peek())) {
+            // SnapshotVersion er forandret
             entry.storeSession.ensureBubblesFullyLoaded();
             entry.storeSession.evictAll();
+            // TODO: utføre sql som setter
         }
         SnapshotVersion snapshotVersion = entry.snapshotVersionStack.pop();
         entry.setSnapshotVersion(snapshotVersion);

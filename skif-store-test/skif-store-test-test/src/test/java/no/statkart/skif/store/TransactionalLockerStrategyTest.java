@@ -18,7 +18,6 @@ import java.util.Collection;
 @Test(groups = "singlevm-required")
 public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
-    @Test(enabled = false)
     public void testIsLockedBy() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
@@ -33,7 +32,6 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     }
 
-    @Test(enabled = false)
     public void testUpdate() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
@@ -55,7 +53,10 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.releaseAllLocksOnCommit("ingroa");
     }
 
-    @Test(enabled = false)
+    @Test(invocationCount = 200)
+    public void many() {
+       testUpdate();
+    }
     public void testRemove() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
@@ -77,7 +78,6 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.releaseAllLocksOnCommit("ingroa");
     }
 
-    @Test(enabled = false)
     public void testInsert() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
@@ -90,7 +90,6 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.releaseAllLocksOnCommit("ingroa");
     }
 
-    @Test(enabled = false)
     public void testUnlock() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
 
@@ -109,7 +108,6 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.releaseAllLocksOnCommit("ingroa");
     }
 
-    @Test (enabled = false)
     public void testRenewLocksViaUpdate(){
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);
         DBLockerService<Long> db = injector.getInstance(DBLockerService.class);

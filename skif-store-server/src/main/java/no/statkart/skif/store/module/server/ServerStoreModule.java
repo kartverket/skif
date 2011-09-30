@@ -89,16 +89,22 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
 
         // Session managers kun skal deles per service request
         bind(new TypeLiteral<Map<Object, ConnectionFactory>>(){}).toInstance(createConnectionFactoryMap());
-        bind(ConnectionFactoryManager.class).to(ConnectionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
-        //bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
-        bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerSnapshotVersionImpl.class).in(ServiceRequestScoped.class);
+        bind(ConnectionFactoryManager.class).to(ConnectionFactoryManagerMultiVersionImpl.class);
+        bind(ConnectionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
+
+        bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerSnapshotVersionImpl.class);
+        bind(HibernateSessionFactoryManagerSnapshotVersionImpl.class).in(ServiceRequestScoped.class);
+
+
         bind(ConnectionManager.class).to(HibernateSessionManager.class);
         bind(HibernateSessionManager.class).to(HibernateStoreSessionManager.class);
 
         // TODO: Nok ikke riktig måte å gjøre det på. Må sjekke som det virkelig blir ServiceRequestScoped eller singleton her.
         bind(Connection.class).toProvider(new ConnectionProvider(SnapshotVersion.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig å angi replicaversion her?
 
-        bind(HibernateStoreSessionManager.class).to(HibernateStoreSessionManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
+        bind(HibernateStoreSessionManager.class).to(HibernateStoreSessionManagerSnapshotVersionImpl.class);
+        bind(HibernateStoreSessionManagerSnapshotVersionImpl.class).in(ServiceRequestScoped.class);
+
         bind(HibernateStoreSession.class).toProvider(HibernateStoreSessionProvider.class).in(ServiceRequestScoped.class);
 
         bind(Session.class).toProvider(HibernateSessionProviderCurrent.class).in(ServiceRequestScoped.class);
