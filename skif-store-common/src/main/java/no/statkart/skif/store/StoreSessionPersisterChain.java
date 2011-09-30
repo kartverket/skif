@@ -55,7 +55,8 @@ public class StoreSessionPersisterChain implements StoreSessionReadChain, StoreS
         List<StoreEntry<T>> result =  new ArrayList<StoreEntry<T>>(bubbleIds.size());
         for (Map.Entry<StorePersister, List<BubbleId>> entry : map.entrySet()) {
             StorePersister persister = entry.getKey();
-            Collection<T> objects = persister.get(entry.getValue());
+            List<BubbleId> ids = entry.getValue();
+            Collection<T> objects = persister.get(ids);
             for (T object : objects) {
                 result.add(new StoreEntry<T>(object));
             }

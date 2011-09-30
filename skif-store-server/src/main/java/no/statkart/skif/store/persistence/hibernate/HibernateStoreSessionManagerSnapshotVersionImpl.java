@@ -188,7 +188,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     }
 
     private boolean hasSnapshotVersion(HibernateStoreSessionManagerSnapshotVersionEntry entry, SnapshotVersion snapshotVersion) {
-        return entry.session !=null && entry.snapshotVersionStack.peek().equals(snapshotVersion);
+        return entry.session !=null && snapshotVersion.equals(entry.snapshotVersionStack.peek());
     }
 
     private HibernateStoreSession pushSnapshotVersion(HibernateStoreSessionManagerSnapshotVersionEntry entry, SnapshotVersion snapshotVersion) {

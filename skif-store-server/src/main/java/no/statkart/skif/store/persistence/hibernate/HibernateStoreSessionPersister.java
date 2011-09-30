@@ -21,19 +21,25 @@ public class HibernateStoreSessionPersister<T extends BubbleObject, I extends Bu
 
     @Override
     public T get(I bubbleId) {
-        HibernateStoreSession<T, I> session = hibernateStoreSessionManager.getStoreSession(bubbleId.getSnapshotVersion());
-        return session.get(bubbleId);
+        HibernateStoreSession<T, I> session = hibernateStoreSessionManager.acquireSnapshotStoreSession(bubbleId.getSnapshotVersion());
+        T bubble = session.get(bubbleId);
+        hibernateStoreSessionManager.releaseSnapshotStoreSession(session);
+        return bubble;
     }
 
     @Override
     public Collection<? extends T> get(Collection<? extends I> bubbleIds) {
+        // TODO: Dette er ikke helt riktig, hver bubbleId kan ha sin egen snapshotVersion;
         SnapshotVersion snapshotVersion = bubbleIds.iterator().next().getSnapshotVersion();
-        HibernateStoreSession<T, I> session = hibernateStoreSessionManager.getStoreSession(snapshotVersion);
-        return session.get(bubbleIds);
+        HibernateStoreSession<T, I> session = hibernateStoreSessionManager.acquireSnapshotStoreSession(snapshotVersion);
+        Collection<? extends T> bubbles = session.get(bubbleIds);
+        hibernateStoreSessionManager.releaseSnapshotStoreSession(session);
+        return bubbles;
     }
 
     @Override
     public void evict(I bubbleId) {
+        // TODO: Ikke implementert riktig
         HibernateStoreSession<T, I> session = hibernateStoreSessionManager.getStoreSession(bubbleId.getSnapshotVersion());
         session.evict(bubbleId);
     }
