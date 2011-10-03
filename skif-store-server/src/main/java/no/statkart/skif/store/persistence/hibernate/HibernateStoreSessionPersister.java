@@ -1,12 +1,10 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.inject.Inject;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.StorePersister;
+import no.statkart.skif.store.*;
 
-import java.util.Collection;
+import javax.xml.transform.Result;
+import java.util.*;
 
 /**
  * @author Henrik Fredholm
@@ -28,13 +26,17 @@ public class HibernateStoreSessionPersister<T extends BubbleObject, I extends Bu
     }
 
     @Override
-    public Collection<? extends T> get(Collection<? extends I> bubbleIds) {
-        // TODO: Dette er ikke helt riktig, hver bubbleId kan ha sin egen snapshotVersion;
-        SnapshotVersion snapshotVersion = bubbleIds.iterator().next().getSnapshotVersion();
-        HibernateStoreSession<T, I> session = hibernateStoreSessionManager.acquireSnapshotStoreSession(snapshotVersion);
-        Collection<? extends T> bubbles = session.get(bubbleIds);
-        hibernateStoreSessionManager.releaseSnapshotStoreSession(session);
-        return bubbles;
+    public Map<SnapshotVersion, Collection<? extends T>> get(Map<SnapshotVersion, Collection<? extends I>> bubbleIdsForSnapshotMap) {
+        Map<SnapshotVersion, Collection<? extends T>> result=new HashMap<SnapshotVersion, Collection<? extends T>>();
+        for (Map.Entry<SnapshotVersion, Collection<? extends I>> snapshotVersionListEntry : bubbleIdsForSnapshotMap.entrySet()) {
+            SnapshotVersion snapshotVersion = snapshotVersionListEntry.getKey();
+            Collection<? extends I> bubbleIds = snapshotVersionListEntry.getValue();
+            HibernateStoreSession<T, I> session = hibernateStoreSessionManager.acquireSnapshotStoreSession(snapshotVersion);
+            Collection<? extends T> bubbles = session.get(bubbleIds);
+            result.put(snapshotVersion, bubbles);
+            hibernateStoreSessionManager.releaseSnapshotStoreSession(session);
+        }
+        return result;
     }
 
     @Override

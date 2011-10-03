@@ -1,6 +1,9 @@
 package no.statkart.skif.store;
 
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.LocatorEx;
+import sun.org.mozilla.javascript.internal.NativeObject;
+
 import java.util.*;
 
 /**
@@ -51,31 +54,40 @@ public class StoreSessionPersisterChain implements StoreSessionReadChain, StoreS
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry<T>> get(Collection<I> bubbleIds) {
-        Map<StorePersister, List<BubbleId>> map = classifyIds(bubbleIds);
-        List<StoreEntry<T>> result =  new ArrayList<StoreEntry<T>>(bubbleIds.size());
-        for (Map.Entry<StorePersister, List<BubbleId>> entry : map.entrySet()) {
-            StorePersister persister = entry.getKey();
-            List<BubbleId> ids = entry.getValue();
-            Collection<T> objects = persister.get(ids);
-            for (T object : objects) {
-                result.add(new StoreEntry<T>(object));
+        Map<StorePersister, Map<SnapshotVersion, List<BubbleId>>> bubbleIdsForSnapshotMap = classifyIds(bubbleIds);
+        List<StoreEntry<T>> result = new ArrayList<StoreEntry<T>>(bubbleIds.size());
+        for (Map.Entry<StorePersister, Map<SnapshotVersion, List<BubbleId>>> bubbleIdsForSnapshotEntry : bubbleIdsForSnapshotMap.entrySet()) {
+            StorePersister persister = bubbleIdsForSnapshotEntry.getKey();
+            Map<SnapshotVersion, Collection<T>> bubblesForSnapshotMap = persister.get(bubbleIdsForSnapshotEntry.getValue());
+            for (Collection<T> bubblesForSnapshot : bubblesForSnapshotMap.values()) {
+                for (T bubble : bubblesForSnapshot) {
+                    result.add(new StoreEntry<T>(bubble));
+                }
             }
         }
         return result;
     }
 
-    private Map<StorePersister, List<BubbleId>> classifyIds(Collection<? extends BubbleId> bubbleIds) {
+    private Map<StorePersister, Map<SnapshotVersion, List<BubbleId>>> classifyIds(Collection<? extends BubbleId> bubbleIds) {
         Object lastClassifier = null;
         List<BubbleId> lastList = null;
-        Map<StorePersister, List<BubbleId>> map = new HashMap<StorePersister, List<BubbleId>>();
+        SnapshotVersion lastSnapshotVersion = null;
+        Map<StorePersister, Map<SnapshotVersion, List<BubbleId>>> map = new HashMap<StorePersister, Map<SnapshotVersion, List<BubbleId>>>();
         for (BubbleId bubbleId : bubbleIds) {
             StorePersister persister = persisterStrategy.getPersister(bubbleId);
-            if (lastClassifier != persister) {
+            SnapshotVersion snapshotVersion = bubbleId.getSnapshotVersion();
+            if (persister != lastClassifier && !snapshotVersion.equals(lastSnapshotVersion)) {
                 lastClassifier = persister;
-                lastList = map.get(persister);
+                lastSnapshotVersion = snapshotVersion;
+                Map<SnapshotVersion, List<BubbleId>> bubbleIdsForSnapshotVersionMap = map.get(persister);
+                if (bubbleIdsForSnapshotVersionMap == null) {
+                    bubbleIdsForSnapshotVersionMap = new HashMap<SnapshotVersion, List<BubbleId>>();
+                    map.put(persister, bubbleIdsForSnapshotVersionMap);
+                }
+                lastList = bubbleIdsForSnapshotVersionMap.get(snapshotVersion);
                 if (lastList == null) {
                     lastList = new ArrayList<BubbleId>();
-                    map.put(persister, lastList);
+                    bubbleIdsForSnapshotVersionMap.put(bubbleId.getSnapshotVersion(), lastList);
                 }
             }
             lastList.add(bubbleId);

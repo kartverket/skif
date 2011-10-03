@@ -1,17 +1,11 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
 import com.google.inject.Inject;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.KodelisteTransfer;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.StorePersister;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodelistesupport.*;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Persister for Koder og Kodelister. Objekter som hentes ut fra denne vil ikke være samme instanser som
@@ -41,9 +35,17 @@ public class KodelistePersister<T extends BubbleObject, I extends BubbleId<? ext
         return (T) kodelisteManager.get(bubbleId, null);
     }
 
-    public Collection<? extends T> get(Collection<? extends I> bubbleIds) {
+    @Override
+    public Map<SnapshotVersion, Collection<? extends T>> get(Map<SnapshotVersion, Collection<? extends I>> bubbleIdsForSnapshotMap) {
         refreshKodeManagerIfNeeded();
-        return (Collection<T>) kodelisteManager.get(bubbleIds, null);
+        Map<SnapshotVersion, Collection<? extends T>> result = new HashMap<SnapshotVersion, Collection<? extends T>>();
+        for (Map.Entry<SnapshotVersion, Collection<? extends I>> snapshotVersionListEntry : bubbleIdsForSnapshotMap.entrySet()) {
+            SnapshotVersion snapshotVersion = snapshotVersionListEntry.getKey();
+            Collection<? extends I> bubbleIds = snapshotVersionListEntry.getValue();
+            Collection<T> bubbles = (Collection<T>)kodelisteManager.get(bubbleIds, null);
+            result.put(snapshotVersion, bubbles);
+        }
+        return result;
     }
 
     public void evict(I bubbleId) {
