@@ -94,9 +94,6 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getText(), "test");
     }
 
-    /**
-     * TODO: Se på hvorfor det blir match på flere mappere her!
-     */
     @Test(enabled = false)
     public void testMapEnumliste() {
         EnumKodeliste kodeliste = new EnumKodelisteImpl();

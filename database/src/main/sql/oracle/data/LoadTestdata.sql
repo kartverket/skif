@@ -44,3 +44,11 @@ insert into KodelisteLoc values(10003, 'b', 'Kodelistebeskrivelse for TestC1Kode
 insert into KodelisteLoc values(10003, 'n', 'Kodelistebeskrivelse for TestC1Kode nynorsk');
 insert into KodelisteLoc values(10004, 'b', 'Kodelistebeskrivelse for TestC2Kode bokmål');
 insert into KodelisteLoc values(10004, 'n', 'Kodelistebeskrivelse for TestC2Kode nynorsk');
+
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,A,B) values (100,to_timestamp('02.10.2011 08.00.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),to_timestamp('02.10.2011 08.01.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),1,10,'A1');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,A,B) values (100,to_timestamp('02.10.2011 08.01.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),to_timestamp('02.10.2011 08.02.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),2,11,'A1');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,A,B) values (100,to_timestamp('02.10.2011 08.02.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),to_timestamp('02.10.2011 08.03.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),3,12,'A3');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,A,B) values (100,to_timestamp('02.10.2011 08.03.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),to_timestamp('02.10.2011 08.04.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),4,13,'A1');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,A,B) values (100,to_timestamp('02.10.2011 08.04.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),to_timestamp('02.10.2011 08.05.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),5,13,'B52');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,A,B) values (100,to_timestamp('02.10.2011 08.05.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),to_timestamp('02.10.2011 08.06.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),6,17,'17');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,A,B) values (100,to_timestamp('02.10.2011 08.06.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),to_timestamp('01.01.9999 00.00.00,000000000','DD.MM.RRRR HH24.MI.SS,FF'),7,21,'C1');

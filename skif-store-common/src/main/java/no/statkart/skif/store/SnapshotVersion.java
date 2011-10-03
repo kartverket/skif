@@ -52,7 +52,7 @@ public class SnapshotVersion implements Serializable {
                 '}';
     }
 
-    private String getTimestamp() {
+    public String getTimestamp() {
         if (this==CURRENT) return "CURRENT";
         if (this==OLD) return "OLD";
         if (this==NOT_VERSIONED) return "NOT_VERSIONED";

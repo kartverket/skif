@@ -12,7 +12,10 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DecimalFormat;
 import java.util.ArrayDeque;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Deque;
 
 /**
@@ -198,11 +201,12 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
             entry.storeSession.ensureBubblesFullyLoaded();
             entry.storeSession.evictAll();
         }
-        // TODO: utføre sql som setter nytt snapshot timestamp på connection
+        changeSnapshotTime(entry.storeSession, snapshotVersion);
         entry.pushSnapshotVersion(entry.getSnapshotVersion());
         entry.setSnapshotVersion(snapshotVersion);
         return entry.storeSession;
     }
+
 
     private void popSnapshotVersion(HibernateStoreSessionManagerSnapshotVersionEntry entry) {
         SnapshotVersion s = entry.getSnapshotVersion();
@@ -214,5 +218,26 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
         }
         SnapshotVersion snapshotVersion = entry.snapshotVersionStack.pop();
         entry.setSnapshotVersion(snapshotVersion);
+        changeSnapshotTime(entry.storeSession, entry.getSnapshotVersion());
     }
+
+    private void changeSnapshotTime(HibernateStoreSession storeSession, SnapshotVersion snapshotVersion) {
+
+        Calendar calendar = Calendar.getInstance();
+        if(!snapshotVersion.equals(SnapshotVersion.CURRENT) && !snapshotVersion.equals(SnapshotVersion.OLD) && !snapshotVersion.equals(SnapshotVersion.NOT_VERSIONED)) {
+            String timestamp = snapshotVersion.getTimestamp();
+            calendar.setTime(new Date(Long.valueOf(timestamp)));
+        }
+
+        int millis = calendar.get(Calendar.MILLISECOND);
+        int sek = calendar.get(Calendar.SECOND);
+        int min = calendar.get(Calendar.MINUTE);
+        int time = calendar.get(Calendar.HOUR_OF_DAY);
+        int dag = calendar.get(Calendar.DAY_OF_MONTH);
+        int maaned = calendar.get(Calendar.MONTH) + 1;
+        DecimalFormat decimalFormat = new DecimalFormat("000");
+
+        storeSession.session.createSQLQuery("select snapshot_time.set_t(snapshot_time.to_t('2011-" + maaned + "-" + dag + " " + time + ":" + min + ":" + sek + "." + decimalFormat.format(millis) + "')) from dual").executeUpdate();
+    }
+
 }
