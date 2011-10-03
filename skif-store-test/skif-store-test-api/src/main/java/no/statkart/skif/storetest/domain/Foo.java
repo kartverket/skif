@@ -9,27 +9,27 @@ import no.statkart.skif.store.BubbleId;
  */
 public class Foo extends AbstractBubbleObject implements StoreTestBubble {
 
-    private long a;
-    private String b;
+    private long nr;
+    private String navn;
 
     @Override
     public FooId<?> getId() {
         return (FooId<?>) super.getId();
     }
 
-    public long getA() {
-        return a;
+    public String getNavn() {
+        return navn;
     }
 
-    public void setA(long a) {
-        this.a = a;
+    public void setNavn(String navn) {
+        this.navn = navn;
     }
 
-    public String getB() {
-        return b;
+    public long getNr() {
+        return nr;
     }
 
-    public void setB(String b) {
-        this.b = b;
+    public void setNr(long nr) {
+        this.nr = nr;
     }
 }

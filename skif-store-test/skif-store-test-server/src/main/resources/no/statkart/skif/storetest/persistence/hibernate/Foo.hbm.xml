@@ -8,8 +8,8 @@
           <generator class="assigned"/>
       </id>
 
-      <property name="a"/>
-       <property name="b"/>
+      <property name="nr"/>
+       <property name="navn"/>
    </class>
 
 </hibernate-mapping>

@@ -101,11 +101,10 @@ CREATE TABLE FOO_H (
     tBegin               timestamp(6) not null,
     tEnd                 timestamp(6) not null,
     tVersion             number (19,0) not null,
-    a                    number(10,0),
-    b                    VARCHAR2(255 BYTE),
+    nr                   number(10,0),
+    navn                 VARCHAR2(255 BYTE),
     PRIMARY KEY (ID, tEnd)
 );
-
 create view FOO as select * from FOO_H  where snapshot_time.t_between(tBegin, tEnd)=1;
 
 CREATE OR REPLACE TRIGGER FOO_TRIGGER
@@ -113,28 +112,71 @@ INSTEAD OF INSERT OR UPDATE OR DELETE ON FOO
 FOR EACH ROW
 DECLARE
 t_Trans TIMESTAMP := snapshot_time.get_t();
-t_End TIMESTAMP := TO_TIMESTAMP ('9999-01-01 00:00:00.00', 'YYYY-MM-DD HH24:MI:SS.FF');
+t_End TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
 BEGIN
   IF UPDATING THEN
     IF :old.tBegin < t_Trans THEN
         INSERT INTO FOO_H
-        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.a, :old.b);
+        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.nr, :old.navn);
 
         UPDATE FOO_H SET tVersion = :old.tVersion + 1 WHERE id= :new.id and tEnd = t_End;
     END IF;
     UPDATE FOO_H
-    SET id = :new.id, tBegin = t_Trans, a = :new.a, b = :new.b
+    SET id = :new.id, tBegin = t_Trans, nr = :new.nr, navn = :new.navn
     WHERE id = :new.id and tEnd = t_End;
   ELSIF INSERTING THEN
     INSERT INTO FOO_H
-        VALUES (:new.id, t_Trans,t_End, 1, :new.a, :new.b);
+        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.navn);
   ELSIF DELETING THEN
     IF :old.tBegin < t_Trans THEN
         INSERT INTO FOO_H
-        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.a, :old.b);
+        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.nr, :old.navn);
     END IF;
     delete from FOO_H
     WHERE id = :old.id and tEnd = t_End;
   END IF;
 END FOO_TRIGGER;
+/
+
+CREATE TABLE BAR_H (
+    id                   NUMBER(19,0) NOT NULL ENABLE,
+    tBegin               timestamp(6) not null,
+    tEnd                 timestamp(6) not null,
+    tVersion             number (19,0) not null,
+    husnr                number(10,0),
+    bokstav              VARCHAR2(255 BYTE),
+    fooId                number(19,0) not null,
+    PRIMARY KEY (ID, tEnd)
+);
+create view BAR as select * from BAR_H  where snapshot_time.t_between(tBegin, tEnd)=1;
+
+CREATE OR REPLACE TRIGGER BAR_TRIGGER
+INSTEAD OF INSERT OR UPDATE OR DELETE ON BAR
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.get_t();
+t_End TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
+BEGIN
+  IF UPDATING THEN
+    IF :old.tBegin < t_Trans THEN
+        INSERT INTO BAR_H
+        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.husnr, :old.bokstav, :old.fooId);
+
+        UPDATE BAR_H SET tVersion = :old.tVersion + 1 WHERE id= :new.id and tEnd = t_End;
+    END IF;
+    UPDATE BAR_H
+    SET id = :new.id, tBegin = t_Trans, nr = :new.husnr, navn = :new.bokstav, fooId = :new.fooId
+    WHERE id = :new.id and tEnd = t_End;
+  ELSIF INSERTING THEN
+    INSERT INTO BAR_H
+        VALUES (:new.id, t_Trans,t_End, 1, :new.husnr, :new.bokstav, :new.fooId);
+  ELSIF DELETING THEN
+    IF :old.tBegin < t_Trans THEN
+        INSERT INTO BAR_H
+        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.husnr, :old.bokstav, :old.fooId);
+    END IF;
+    delete from BAR_H
+    WHERE id = :old.id and tEnd = t_End;
+  END IF;
+END BAR_TRIGGER;
 /
