@@ -76,7 +76,7 @@ public class StoreSessionPersisterChain implements StoreSessionReadChain, StoreS
         for (BubbleId bubbleId : bubbleIds) {
             StorePersister persister = persisterStrategy.getPersister(bubbleId);
             SnapshotVersion snapshotVersion = bubbleId.getSnapshotVersion();
-            if (persister != lastClassifier && !snapshotVersion.equals(lastSnapshotVersion)) {
+            if (persister != lastClassifier || !snapshotVersion.equals(lastSnapshotVersion)) {
                 lastClassifier = persister;
                 lastSnapshotVersion = snapshotVersion;
                 Map<SnapshotVersion, List<BubbleId>> bubbleIdsForSnapshotVersionMap = map.get(persister);
