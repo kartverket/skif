@@ -86,7 +86,7 @@ public class HibernateStoreSessionManagerSingleVersionImpl extends AbstractHiber
     }
 
     protected HibernateStoreSession createHibernateStoreSession(Session session, Object key) {
-        return new HibernateStoreSession(session, (SnapshotVersionHolder) key);
+        return HibernateVersionFactory.Accessor.get().createHibernateStoreSession(session, (SnapshotVersionHolder) key);
     }
 
     @Override

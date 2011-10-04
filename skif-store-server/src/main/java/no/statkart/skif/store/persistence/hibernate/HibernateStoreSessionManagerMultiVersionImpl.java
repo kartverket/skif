@@ -2,7 +2,6 @@ package no.statkart.skif.store.persistence.hibernate;
 
 
 import com.google.inject.Inject;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
@@ -55,7 +54,8 @@ public class HibernateStoreSessionManagerMultiVersionImpl extends AbstractHibern
     @Override
     public void openHibernateSession(HibernateStoreSessionManagerEntry entry) {
         super.openHibernateSession(entry);
-        entry.storeSession = new HibernateStoreSession(entry.session, (SnapshotVersionHolder) entry.key);
+        entry.storeSession = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(entry.session, (SnapshotVersionHolder) entry.key);
+        entry.storeSession = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(entry.session, (SnapshotVersionHolder) entry.key);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class HibernateStoreSessionManagerMultiVersionImpl extends AbstractHibern
     }
 
     protected HibernateStoreSession createHibernateStoreSession(Session session, Object key) {
-        return new HibernateStoreSession(session, (SnapshotVersionHolder) key);
+        return HibernateVersionFactory.Accessor.get().createHibernateStoreSession(session, (SnapshotVersionHolder) key);
     }
 
     @Override

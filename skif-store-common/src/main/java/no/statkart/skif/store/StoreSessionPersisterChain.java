@@ -1,9 +1,5 @@
 package no.statkart.skif.store;
 
-
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.LocatorEx;
-import sun.org.mozilla.javascript.internal.NativeObject;
-
 import java.util.*;
 
 /**

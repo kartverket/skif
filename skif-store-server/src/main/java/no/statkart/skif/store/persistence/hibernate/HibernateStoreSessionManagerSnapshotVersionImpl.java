@@ -62,7 +62,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     @Override
     public void openHibernateSession(HibernateStoreSessionManagerSnapshotVersionEntry entry) {
         super.openHibernateSession(entry);
-        entry.storeSession = new HibernateStoreSession(entry.session, (SnapshotVersionHolder) entry.key);
+        entry.storeSession = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(entry.session, (SnapshotVersionHolder) entry.key);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     }
 
     protected HibernateStoreSession createHibernateStoreSession(Session session, Object key) {
-        return new HibernateStoreSession(session, (SnapshotVersionHolder) key);
+        return HibernateVersionFactory.Accessor.get().createHibernateStoreSession(session, (SnapshotVersionHolder) key);
     }
 
     @Override

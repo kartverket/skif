@@ -7,6 +7,7 @@ import no.statkart.skif.store.kodelistesupport.DbKode;
 import no.statkart.skif.store.kodelistesupport.DbKodeId;
 import no.statkart.skif.store.kodelistesupport.DbKodeliste;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
+import no.statkart.skif.store.persistence.hibernate.HibernateVersionFactory;
 import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
 import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
@@ -127,7 +128,7 @@ public class DbKodeHibernateTest {
     public void testKodelisteManager() {
         SessionFactory sf = setupHibernate();
         // TODO: Fix dette er feil.
-        HibernateStoreSession wrapper = new HibernateStoreSession(sf.openSession(), new SnapshotVersionHolder(SnapshotVersion.CURRENT));
+        HibernateStoreSession wrapper = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(sf.openSession(), new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         KodelisteManager kodelisteManager = new KodelisteManager();
 
 

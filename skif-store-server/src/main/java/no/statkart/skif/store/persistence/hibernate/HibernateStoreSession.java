@@ -25,7 +25,7 @@ import java.util.*;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? extends T>> implements StoreSession<Session, T, I> {
+public abstract class  HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? extends T>> implements StoreSession<Session, T, I> {
     private static int CRITERIA_BATCH_POWER = 9;
     private static final String ID_KOLONNE_NAVN = "id";
 

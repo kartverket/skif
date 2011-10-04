@@ -27,7 +27,7 @@ import java.util.*;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class StoreHibernateSessionFactoryBuilder extends HibernateSessionFactoryBuilder {
+public abstract class StoreHibernateSessionFactoryBuilder extends HibernateSessionFactoryBuilder {
     private static final Logger logger = LoggerFactory.getLogger(StoreHibernateSessionFactoryBuilder.class);
     private final List<Class<?>> bubbleClassDeleteOrder = new ArrayList<Class<?>>();
     private final static Object LOCK = new Object();
