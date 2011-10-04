@@ -10,7 +10,7 @@ import no.statkart.skif.store.kodelistesupport.KodelisteId;
  * @since 0.6
  */
 public class TestCEnumKodeId extends EnumKodeIdImpl<TestCEnumKode> implements TestEnumKodeId<TestCEnumKode> {
-    private static EnumKodeSupport<TestEnumKodeliste, TestEnumKodelisteId<TestEnumKodeliste>> kodeSupport = new EnumKodeSupport<TestEnumKodeliste, TestEnumKodelisteId<TestEnumKodeliste>>(TestCEnumKodeId.class, new TestEnumKodelisteIdImpl(3), "TestCEnumKodeliste");
+    private static EnumKodeSupport<TestEnumKodeliste, TestEnumKodelisteId<TestEnumKodeliste>> kodeSupport = new EnumKodeSupport<TestEnumKodeliste, TestEnumKodelisteId<TestEnumKodeliste>>(TestCEnumKodeId.class, new TestEnumKodelisteId(3), "TestCEnumKodeliste");
 
     public static KodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static TestCEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");

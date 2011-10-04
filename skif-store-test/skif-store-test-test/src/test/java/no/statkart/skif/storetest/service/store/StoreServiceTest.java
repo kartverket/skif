@@ -11,6 +11,7 @@ import no.statkart.skif.service.module.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.config.StoreTestGroup1Services;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.domain.*;
@@ -25,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author Henrik Fredholm
@@ -61,12 +62,12 @@ public class StoreServiceTest extends StoreTestTestCase {
     }
 
     @Test
-    public void testStoreGetFoo(){
+    public void testStoreGetFoo() {
 
         StoreService store = injector.getInstance(Key.get(StoreService.class));
 
         Foo currentFoo = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.CURRENT));
-        Assert.assertNotNull(currentFoo);
+        assertNotNull(currentFoo);
         Assert.assertEquals(currentFoo.getNr(), 2200);
         Assert.assertEquals(currentFoo.getNavn(), "KARTVEIEN");
 
@@ -74,12 +75,12 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertNotNull(oldestFoo);
         Assert.assertEquals(oldestFoo.getNr(), 2200);
         Assert.assertEquals(oldestFoo.getNavn(), "KARTGATA");
-        
+
         Foo newerFoo = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 1, 30).getTime())));
         Assert.assertNotNull(newerFoo);
         Assert.assertEquals(newerFoo.getNr(), 2200);
         Assert.assertEquals(newerFoo.getNavn(), "KARTVEGEN");
-        
+
         Foo newerFoo2 = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 2, 30).getTime())));
         Assert.assertNotNull(newerFoo2);
         Assert.assertEquals(newerFoo2.getNr(), 2200);
@@ -102,7 +103,7 @@ public class StoreServiceTest extends StoreTestTestCase {
      * Henter ut flere Foo med forskjellige snapshotversions i samme kall
      */
     @Test
-    public void testStoreGetFooFlereSnapshotVersions(){
+    public void testStoreGetFooFlereSnapshotVersions() {
         StoreService store = injector.getInstance(StoreService.class);
 
         ArrayList<FooId<Foo>> ids = new ArrayList<FooId<Foo>>();
@@ -117,7 +118,7 @@ public class StoreServiceTest extends StoreTestTestCase {
     }
 
     @Test
-    public void testStoreGetBar(){
+    public void testStoreGetBar() {
         StoreService store = injector.getInstance(StoreService.class);
         Bar bar = store.getObject(new BarId<Bar>(1001L));
 
@@ -127,6 +128,10 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertEquals(bar.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
         Assert.assertEquals(bar.getFooId().getSnapshotVersion(), SnapshotVersion.CURRENT);
 
+        Foo foo = store.getObject(bar.getFooId());
+        assertEquals(foo.getNavn(), "KARTVEIEN");
+
+
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 3, 15).getTime());
         Bar olderBar = store.getObject(new BarId<Bar>(1001L, snapshotVersion));
         Assert.assertEquals(olderBar.getHusnr(), 105);
@@ -135,6 +140,8 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertEquals(olderBar.getId().getSnapshotVersion(), snapshotVersion);
         Assert.assertEquals(olderBar.getFooId().getSnapshotVersion(), snapshotVersion);
 
+        Foo olderFoo = store.getObject(olderBar.getFooId());
+        assertEquals(olderFoo.getNavn(), "KART-VEIEN");
     }
 
 }

@@ -6,14 +6,13 @@ import no.statkart.skif.store.kodelistesupport.DbKodeIdImpl;
 import no.statkart.skif.storetest.domain.TestDbKodeId;
 import no.statkart.skif.storetest.domain.TestDbKodeliste;
 import no.statkart.skif.storetest.domain.TestDbKodelisteId;
-import no.statkart.skif.storetest.domain.TestDbKodelisteIdImpl;
 
 /**
  * @author Henrik Fredholm
  * @since 0.6
  */
 public class TestBDbKodeId extends DbKodeIdImpl<TestBDbKode> implements TestDbKodeId<TestBDbKode> {
-    private static DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>> kodeSupport = new DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>>(TestBDbKodeId.class,new TestDbKodelisteIdImpl(10002L, SnapshotVersion.CURRENT));
+    private static DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>> kodeSupport = new DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>>(TestBDbKodeId.class,new TestDbKodelisteId(10002L, SnapshotVersion.CURRENT));
 
     public static TestDbKodelisteId<TestDbKodeliste> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static TestBDbKodeId B1Id = define(1);

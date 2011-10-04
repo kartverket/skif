@@ -9,7 +9,7 @@ import no.statkart.skif.store.kodelistesupport.EnumKodeSupport;
  * @since 2.0
  */
 public class TestAEnumKodeId extends EnumKodeIdImpl<TestAEnumKode> implements TestEnumKodeId<TestAEnumKode> {
-    private static EnumKodeSupport<TestEnumKodeliste, TestEnumKodelisteId<TestEnumKodeliste>> kodeSupport = new EnumKodeSupport<TestEnumKodeliste, TestEnumKodelisteId<TestEnumKodeliste>>(TestAEnumKodeId.class,new TestEnumKodelisteIdImpl(1), "TestAEnumKodeliste");
+    private static EnumKodeSupport<TestEnumKodeliste, TestEnumKodelisteId<TestEnumKodeliste>> kodeSupport = new EnumKodeSupport<TestEnumKodeliste, TestEnumKodelisteId<TestEnumKodeliste>>(TestAEnumKodeId.class,new TestEnumKodelisteId(1), "TestAEnumKodeliste");
 
     public static TestEnumKodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static TestAEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");

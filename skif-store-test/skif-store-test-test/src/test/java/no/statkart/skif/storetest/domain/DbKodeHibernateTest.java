@@ -38,7 +38,7 @@ public class DbKodeHibernateTest {
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestADbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestBDbKode.class);
         sfbuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", TestCDbKode.class, TestC1DbKode.class, TestC2DbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", TestDbKodelisteImpl.class);
+        sfbuilder.addResourceUsingRelativePath("kodeliste", TestDbKodeliste.class);
         SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         return sf;
@@ -104,7 +104,7 @@ public class DbKodeHibernateTest {
     public void testLastKodeliste() {
         SessionFactory sf = setupHibernate();
         Session session = sf.openSession();
-        DbKodeliste dbKodeliste = (DbKodeliste) session.load(TestDbKodelisteImpl.class, new TestDbKodelisteIdImpl(10001L, SnapshotVersion.CURRENT));
+        DbKodeliste dbKodeliste = (DbKodeliste) session.load(TestDbKodeliste.class, new TestDbKodelisteId(10001L, SnapshotVersion.CURRENT));
         Assert.assertNotNull(dbKodeliste);
     }
 

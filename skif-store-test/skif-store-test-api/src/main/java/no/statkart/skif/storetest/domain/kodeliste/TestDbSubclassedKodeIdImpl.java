@@ -6,14 +6,13 @@ import no.statkart.skif.store.kodelistesupport.DbKodeSupport;
 import no.statkart.skif.store.kodelistesupport.DbSubclassedKodeId;
 import no.statkart.skif.storetest.domain.TestDbKodeliste;
 import no.statkart.skif.storetest.domain.TestDbKodelisteId;
-import no.statkart.skif.storetest.domain.TestDbKodelisteIdImpl;
 
 /**
  * @author Henrik Fredholm
  * @since 0.6
  */
 public class TestDbSubclassedKodeIdImpl<T extends TestDbSubclassedKodeImpl> extends DbKodeIdImpl<T> implements DbSubclassedKodeId<T> {
-    private static DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>> kodeSupport = new DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>>(TestC2DbKodeId.class,new TestDbKodelisteIdImpl(10004L, SnapshotVersion.CURRENT));
+    private static DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>> kodeSupport = new DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>>(TestC2DbKodeId.class,new TestDbKodelisteId(10004L, SnapshotVersion.CURRENT));
 
 
     protected TestDbSubclassedKodeIdImpl(Long value, SnapshotVersion snapshotVersion) {

@@ -10,7 +10,13 @@
 
         <property name="husnr"/>
         <property name="bokstav"/>
-        <property name="fooId" type="no.statkart.skif.storetest.persistence.hibernate.type.FooIdType"/>
+        <many-to-one
+           name="foo"
+           column="fooId"
+           class="no.statkart.skif.storetest.domain.Foo">
+           <meta attribute="bubble-ref"/>
+        </many-to-one>
+
     </class>
 
 </hibernate-mapping>

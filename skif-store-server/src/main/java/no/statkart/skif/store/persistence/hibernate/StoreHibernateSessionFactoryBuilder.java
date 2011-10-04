@@ -28,7 +28,7 @@ import java.util.*;
  * @since 2.0
  */
 public abstract class StoreHibernateSessionFactoryBuilder extends HibernateSessionFactoryBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(StoreHibernateSessionFactoryBuilder.class);
+    protected static final Logger logger = LoggerFactory.getLogger(StoreHibernateSessionFactoryBuilder.class);
     private final List<Class<?>> bubbleClassDeleteOrder = new ArrayList<Class<?>>();
     private final static Object LOCK = new Object();
 
@@ -102,48 +102,6 @@ public abstract class StoreHibernateSessionFactoryBuilder extends HibernateSessi
 
     }
 
-    protected Configuration createConfiguration(Properties props) {
-        // Log databaseparametre. I singlevm mode brukes JDBCTransactionFactory (dvs url, bruker/password).
-        // I servermode brukes JTATransactionFactory (dvs datasource)
-        if (props.get("hibernate.transaction.factory_class").equals("org.hibernate.transaction.JDBCTransactionFactory")) {
-            logger.info("GBAPI hibernatekonfigurasjon: " + props.get("hibernate.connection.url") + " - " + props.get("hibernate.connection.username"));
-        } else {
-            // TODO: Dette blir feil for SnapshotVersion.OLD. Må bruke old datasource
-            logger.info("GBAPI hibernatekonfigurasjon: " + props.get("hibernate.connection.datasource"));
-        }
-        ClassLoader cl = StoreHibernateSessionFactoryBuilder.class.getClassLoader();
-        Configuration cfg = null;
-        try {
-            // NB: getBubbleClassDeleteOrder() definerer slette rekkefølgen for alle {@code BubbleObject} typer.
-            // Metoden {@link #addResourceUsingAbsolutePath} legger automatisk {@code BubbleObject} klasser inn i listen i den rekkefølge
-            // metoden blir kallt.
-            cfg = new Configuration().setProperties(props);
-            for (String hbm : hbmResource) {
-                cfg.addResource(hbm, cl);
-            }
-            cfg.setInterceptor(interceptor);
-
-
-            // Legg in patch for Hibernate 3.2.6
-            DeleteEventListener[] deleteEventStack = {new BugFixDeleteEventListener()};
-            cfg.getEventListeners().setDeleteEventListeners(deleteEventStack);
-
-            // Configure Listners for fast initialization of empty collections. Listeners are active on load events. The flag is update via a StoreSessionListener
-            Map<EntityPersister, EmptyCollectionsOptimizer> optimizers = new HashMap<EntityPersister, EmptyCollectionsOptimizer>();
-            PreLoadEventListener[] preLoadStack = {new EmptyCollectionOptimizerPreLoadListener(optimizers), new DefaultPreLoadEventListener()};
-            cfg.getEventListeners().setPreLoadEventListeners(preLoadStack);
-
-            // Nedenstående gjøres nå via en StoreSessionListener og trens derfor ikke lengre her.
-            // Old session skal aldrig forsøke å oppdatere emptycollectionsflagget. Derfor legges listeneren kun på Current session
-//          if( SnapshotVersion == SnapshotVersion.CURRENT ) {
-//              FlushEntityEventListener[] flushEntityStack = {new EmptyCollectionOptimizerFlushEntityEventListener(optimizers), new DefaultFlushEntityEventListener()};
-//              cfg.getEventListeners().setFlushEntityEventListeners(flushEntityStack);
-//          }
-        } catch (MappingException e) {
-            throw new ImplementationException("Feil i hibernate mapping-filer: " + e.getMessage(), e, logger);
-        }
-        return cfg;
-    }
 
 
     public List getBubbleClassDeleteOrder() {
