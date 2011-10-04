@@ -2,28 +2,13 @@ package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
 import com.google.inject.Key;
-import no.statkart.skif.SkifModule;
-import no.statkart.skif.mapper.IdentityMapper;
-import no.statkart.skif.mapper.Mapping;
-import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.module.ModuleStrategyFactory;
-import no.statkart.skif.service.module.ClientModuleStrategyFactory;
-import no.statkart.skif.service.module.common.RemoteServerModule;
-import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.config.StoreTestGroup1Services;
-import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.domain.*;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.storetest.wsapi.exception.impl.mapping.StoreTestExceptionMapper;
-import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
-import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
@@ -71,27 +56,27 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertEquals(currentFoo.getNr(), 2200);
         Assert.assertEquals(currentFoo.getNavn(), "KARTVEIEN");
 
-        Foo oldestFoo = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 0, 30).getTime())));
+        Foo oldestFoo = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:00:30.00")));
         Assert.assertNotNull(oldestFoo);
         Assert.assertEquals(oldestFoo.getNr(), 2200);
         Assert.assertEquals(oldestFoo.getNavn(), "KARTGATA");
 
-        Foo newerFoo = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 1, 30).getTime())));
+        Foo newerFoo = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:01:30.00")));
         Assert.assertNotNull(newerFoo);
         Assert.assertEquals(newerFoo.getNr(), 2200);
         Assert.assertEquals(newerFoo.getNavn(), "KARTVEGEN");
 
-        Foo newerFoo2 = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 2, 30).getTime())));
+        Foo newerFoo2 = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:02:30.00")));
         Assert.assertNotNull(newerFoo2);
         Assert.assertEquals(newerFoo2.getNr(), 2200);
         Assert.assertEquals(newerFoo2.getNavn(), "KARTVEIEN");
 
-        Foo newerFoo3 = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 3, 30).getTime())));
+        Foo newerFoo3 = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:03:30.00")));
         Assert.assertNotNull(newerFoo3);
         Assert.assertEquals(newerFoo3.getNr(), 2200);
         Assert.assertEquals(newerFoo3.getNavn(), "KART-VEIEN");
 
-        Foo newerFoo4 = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 4, 30).getTime())));
+        Foo newerFoo4 = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:04:30.00")));
         Assert.assertNotNull(newerFoo4);
         Assert.assertEquals(newerFoo4.getNr(), 2200);
         Assert.assertEquals(newerFoo4.getNavn(), "KARTVEIEN");
@@ -108,9 +93,9 @@ public class StoreServiceTest extends StoreTestTestCase {
 
         ArrayList<FooId<Foo>> ids = new ArrayList<FooId<Foo>>();
         ids.add(new FooId<Foo>(100L, SnapshotVersion.CURRENT));
-        ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 0, 30).getTime())));
-        ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 1, 30).getTime())));
-        ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 6, 30).getTime())));
+        ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:00:30.00")));
+        ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:01:30.00")));
+        ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:06:30.00")));
         List<Foo> foos = store.getObjects(ids);
 
         Assert.assertEquals(foos.size(), 4);
@@ -131,8 +116,7 @@ public class StoreServiceTest extends StoreTestTestCase {
         Foo foo = store.getObject(bar.getFooId());
         assertEquals(foo.getNavn(), "KARTVEIEN");
 
-
-        SnapshotVersion snapshotVersion = SnapshotVersion.createInstance(new Date(2011, 9, 2, 8, 3, 15).getTime());
+        SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:03:15.00");
         Bar olderBar = store.getObject(new BarId<Bar>(1001L, snapshotVersion));
         Assert.assertEquals(olderBar.getHusnr(), 105);
         Assert.assertEquals(olderBar.getBokstav(), null);

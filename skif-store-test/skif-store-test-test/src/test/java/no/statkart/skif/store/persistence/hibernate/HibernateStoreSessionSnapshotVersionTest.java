@@ -19,10 +19,10 @@ import static org.testng.Assert.*;
  */
 @Test
 public class HibernateStoreSessionSnapshotVersionTest {
-    static long T1 = 1;
-    static long T2 = 2;
-    static long T3 = 3;
-    static long T4 = 4;
+    static String T1 = "2011-10-01 08:00:00.00";
+    static String T2 = "2011-10-02 08:00:00.00";
+    static String T3 = "2011-10-03 08:00:00.00";
+    static String T4 = "2011-10-04 08:00:00.00";
 
     public void testHentObjectForSnapshotVersion() throws SQLException {
         Injector injector = TestHelper.createInjectorStoreSnapshotVersionImpl();

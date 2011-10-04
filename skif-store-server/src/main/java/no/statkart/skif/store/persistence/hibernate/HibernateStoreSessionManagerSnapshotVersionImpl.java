@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.Calendar;
@@ -226,7 +227,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
         Calendar calendar = Calendar.getInstance();
         if(!snapshotVersion.equals(SnapshotVersion.CURRENT) && !snapshotVersion.equals(SnapshotVersion.OLD) && !snapshotVersion.equals(SnapshotVersion.NOT_VERSIONED)) {
             String timestamp = snapshotVersion.getTimestamp();
-            calendar.setTime(new Date(Long.valueOf(timestamp)));
+            calendar.setTime(Timestamp.valueOf(timestamp));
         }
 
         int millis = calendar.get(Calendar.MILLISECOND);

@@ -2,25 +2,27 @@ package no.statkart.skif.store;
 
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Map;
 
 /**
  * @author Henrik Fredholm
  */
 public class SnapshotVersion implements Serializable {
-    public final static SnapshotVersion CURRENT = new SnapshotVersion(1000);
-    public final static SnapshotVersion OLD = new SnapshotVersion(999);
-    public final static SnapshotVersion NOT_VERSIONED = new SnapshotVersion(998);
-    final long timestamp;
+    public final static SnapshotVersion CURRENT = new SnapshotVersion("9999-01-01 00:00:00.0");
+    public final static SnapshotVersion OLD = new SnapshotVersion("9998-01-01 00:00:00.0");
+    public final static SnapshotVersion NOT_VERSIONED = new SnapshotVersion("9997-01-01 00:00:00.0");
+    final String timestamp;
 
-    public static SnapshotVersion createInstance(long timestamp) {
-        if (timestamp == CURRENT.timestamp) return CURRENT;
-        if (timestamp == OLD.timestamp) return OLD;
-        if (timestamp == NOT_VERSIONED.timestamp) return NOT_VERSIONED;
+    public static SnapshotVersion createInstance(String timestamp) {
+        if (timestamp.equals(CURRENT.timestamp) ) return CURRENT;
+        if (timestamp.equals(OLD.timestamp)) return OLD;
+        if (timestamp.equals(NOT_VERSIONED.timestamp)) return NOT_VERSIONED;
+
         return new SnapshotVersion(timestamp);
     }
 
-    protected SnapshotVersion(long timestamp) {
+    protected SnapshotVersion(String timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -31,14 +33,14 @@ public class SnapshotVersion implements Serializable {
 
         SnapshotVersion that = (SnapshotVersion) o;
 
-        if (timestamp != that.timestamp) return false;
+        if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return (int) (timestamp ^ (timestamp >>> 32));
+        return timestamp != null ? timestamp.hashCode() : 0;
     }
 
     private Object readResolve() {
@@ -48,14 +50,18 @@ public class SnapshotVersion implements Serializable {
     @Override
     public String toString() {
         return "SnapshotVersion{" +
-                "timestamp=" + timestamp +
+                "timestamp=" + getTimestampString() +
                 '}';
     }
 
     public String getTimestamp() {
-        if (this==CURRENT) return "CURRENT";
-        if (this==OLD) return "OLD";
-        if (this==NOT_VERSIONED) return "NOT_VERSIONED";
-        return Long.toString(timestamp);
+        return timestamp;
+    }
+
+    public String getTimestampString() {
+        if (this == CURRENT) return "CURRENT";
+        if (this == OLD) return "OLD";
+        if (this == NOT_VERSIONED) return "NOT_VERSIONED";
+        return timestamp;
     }
 }
