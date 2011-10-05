@@ -21,7 +21,7 @@ public class HistorikkServiceTest extends StoreTestTestCase {
         HistorikkService service = injector.getInstance(HistorikkService.class);
 
         Collection<FooId<Foo>> ids = service.getVersions(new FooId<Foo>(100L, SnapshotVersion.CURRENT), SnapshotVersion.createInstance("2011-10-02 08:01:01.00"), SnapshotVersion.CURRENT);
-        Assert.assertEquals(ids.size(), 4);
+        Assert.assertEquals(ids.size(), 6);
 
         Timestamp startTime = Timestamp.valueOf("2011-10-02 08:01:01.00");
         for (FooId<Foo> id : ids) {

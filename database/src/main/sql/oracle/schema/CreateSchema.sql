@@ -180,3 +180,83 @@ BEGIN
   END IF;
 END BAR_TRIGGER;
 /
+
+CREATE TABLE BARFOOS_H (
+    id                   NUMBER(19,0) NOT NULL ENABLE,
+    tBegin               timestamp(6) not null,
+    tEnd                 timestamp(6) not null,
+    tVersion             number (19,0) not null,
+    text                 VARCHAR2(255 BYTE),
+    barId                number(19,0) not null,
+    PRIMARY KEY (ID, tEnd)
+);
+create view BARFOOS as select * from BARFOOS_H  where snapshot_time.t_between(tBegin, tEnd)=1;
+
+CREATE OR REPLACE TRIGGER BARFOOS_TRIGGER
+INSTEAD OF INSERT OR UPDATE OR DELETE ON BARFOOS
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.get_t();
+t_End TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
+BEGIN
+  IF UPDATING THEN
+    IF :old.tBegin < t_Trans THEN
+        INSERT INTO BARFOOS_H
+        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.text, :old.barId);
+
+        UPDATE BARFOOS_H SET tVersion = :old.tVersion + 1 WHERE id= :new.id and tEnd = t_End;
+    END IF;
+    UPDATE BARFOOS_H
+    SET id = :new.id, tBegin = t_Trans, text = :new.text, barId = :new.barId
+    WHERE id = :new.id and tEnd = t_End;
+  ELSIF INSERTING THEN
+    INSERT INTO BARFOOS_H
+        VALUES (:new.id, t_Trans,t_End, 1, :new.text, :new.barId);
+  ELSIF DELETING THEN
+    IF :old.tBegin < t_Trans THEN
+        INSERT INTO BARFOOS_H
+        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.text, :old.barId);
+    END IF;
+    delete from BARFOOS_H
+    WHERE id = :old.id and tEnd = t_End;
+  END IF;
+END BARFOOS_TRIGGER;
+/
+
+CREATE TABLE FooForBarFoos_H (
+    barFoosId             NUMBER(19,0) not null,
+    fooId                NUMBER(19,0) not null,
+    tBegin               timestamp(6) not null,
+    tEnd                 timestamp(6) not null,
+    PRIMARY KEY (barFoosId, fooId, tEnd)
+);
+create view FooForBarFoos as select * from FooForBarFoos_H where snapshot_time.t_between(tBegin, tEnd)=1;
+
+CREATE OR REPLACE TRIGGER FooForBarFoos_TRIGGER
+INSTEAD OF INSERT OR UPDATE OR DELETE ON FooForBarFoos
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.get_t();
+t_End TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
+BEGIN
+  IF UPDATING THEN
+    IF :old.tBegin < t_Trans THEN
+        INSERT INTO FooForBarFoos_H
+        VALUES (:old.barFoosId, :old.fooId, :old.tBegin, t_Trans);
+    END IF;
+    UPDATE FooForBarFoos_H
+    SET barFoosId = :new.barFoosId, fooId = :new.fooId and tBegin = t_Trans
+    WHERE barFoosId = :new.barFoosId and fooId = :new.fooId and tEnd = t_End;
+  ELSIF INSERTING THEN
+    INSERT INTO FooForBarFoos_H
+        VALUES (:new.barFoosId, :new.barId, t_Trans,t_End);
+  ELSIF DELETING THEN
+    IF :old.tBegin < t_Trans THEN
+        INSERT INTO FooForBarFoos_H
+        VALUES (:old.barFoosId, :old.barId, :old.tBegin, t_Trans);
+    END IF;
+    delete from FooForBarFoos_H
+    WHERE barFoosId = :old.barFoosId and fooId = :old.fooId and tEnd = t_End;
+  END IF;
+END BARFOOS_TRIGGER;
+/

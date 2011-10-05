@@ -60,6 +60,7 @@ public class StoreTestServerModule extends SkifModule {
                 facotryBuilder.addResource(TestBubble.class);
                 facotryBuilder.addResource(Foo.class);
                 facotryBuilder.addResource(Bar.class);
+                facotryBuilder.addResource(BarFoos.class);
                 facotryBuilder.addResource(TestMap.class);
             }
         };

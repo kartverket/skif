@@ -8,8 +8,7 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -128,4 +127,20 @@ public class StoreServiceTest extends StoreTestTestCase {
         assertEquals(olderFoo.getNavn(), "KART-VEIEN");
     }
 
+    public void testStoreGetBarFoos() {
+        StoreService store = injector.getInstance(StoreService.class);
+        BarFoos barFoos = store.getObject(new BarFoosId<BarFoos>(2001L));
+        Assert.assertEquals(barFoos.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
+        Assert.assertEquals(barFoos.getBarId(), new BarId<Bar>(1001L));
+        Assert.assertEquals(barFoos.getBar().getId(), new BarId<Bar>(1001L));
+        Assert.assertEquals(barFoos.getFooIds(), Arrays.asList(new FooId<Foo>(100L),new FooId<Foo>(101L)));
+
+
+        SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:03:15.00");
+        BarFoos olderBarFoos = store.getObject(new BarFoosId<BarFoos>(2001L, snapshotVersion));
+        Assert.assertEquals(olderBarFoos.getId().getSnapshotVersion(), snapshotVersion);
+        Assert.assertEquals(olderBarFoos.getBarId(), new BarId<Bar>(1001L, snapshotVersion));
+        Assert.assertEquals(olderBarFoos.getFooIds().size(), 0);
+
+    }
 }

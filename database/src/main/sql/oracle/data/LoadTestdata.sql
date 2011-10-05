@@ -51,5 +51,22 @@ insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to
 insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:03:00.00'),snapshot_time.to_t('2011-10-02 08:04:00.00'),4,2200,'KART-VEIEN');
 insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:04:00.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),5,2200,'KARTVEIEN');
 
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (101,snapshot_time.to_t('2011-10-02 08:03:00.00'),snapshot_time.to_t('2011-10-02 08:04:00.00'),1,2201,'GAMMEL-VEIEN');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (101,snapshot_time.to_t('2011-10-02 08:04:00.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,2201,'GAMMELVEIEN');
+
+
 insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID) values (1001,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,105,NULL,100);
-insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID) values (1001,snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),1,106,NULL,100);
+insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID) values (1001,snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,106,NULL,100);
+insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID) values (1002,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,205,NULL,100);
+insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID) values (1002,snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,206,NULL,100);
+
+
+insert into BARFOOS_H (ID,TBEGIN,TEND,TVERSION,TEXT,BARID) values (2001,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,'Text 1',1001);
+insert into BARFOOS_H (ID,TBEGIN,TEND,TVERSION,TEXT,BARID) values (2001,snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,'Text 2',1001);
+insert into BARFOOS_H (ID,TBEGIN,TEND,TVERSION,TEXT,BARID) values (2002,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,'Text 1',1002);
+insert into BARFOOS_H (ID,TBEGIN,TEND,TVERSION,TEXT,BARID) values (2002,snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,'Text 2',1002);
+
+
+insert into FooForBarFoos_H (BarFoosId, fooId, TBEGIN,TEND) values (2001, 100, snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'));
+insert into FooForBarFoos_H (BarFoosId, fooId, TBEGIN,TEND) values (2001, 101, snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'));
+

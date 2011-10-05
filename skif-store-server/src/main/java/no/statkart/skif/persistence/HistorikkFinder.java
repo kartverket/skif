@@ -27,13 +27,15 @@ public class HistorikkFinder {
 
         String tabellnavn = finnTabellnavnForId(bubbleId);
         String sql = "select id, tEnd from " + tabellnavn +
-                " where (tEnd > ? and tEnd <= ?) " +
+                " where id = ? and " +
+                "((tEnd > ? and tEnd <= ?) " +
                 "or (tBegin > ? and tBegin <= ?) " +
-                "or (tBegin < ? and tEnd > ?)";
+                "or (tBegin < ? and tEnd > ?))";
 
 
         Timestamp startValue = getTimestampValue(start);
         Timestamp endValue = getTimestampValue(end);
+        long idValue = (Long)bubbleId.getValue();
 
         Connection connection = connectionProvider.get();
         PreparedStatement preparedStatement = null;
@@ -41,16 +43,17 @@ public class HistorikkFinder {
         try {
             preparedStatement = connection.prepareStatement(sql);
 
-            preparedStatement.setTimestamp(1, startValue);
-            preparedStatement.setTimestamp(2, endValue);
-            preparedStatement.setTimestamp(3, startValue);
-            preparedStatement.setTimestamp(4, endValue);
-            preparedStatement.setTimestamp(5, startValue);
-            preparedStatement.setTimestamp(6, endValue);
+            preparedStatement.setLong(1, idValue);
+            preparedStatement.setTimestamp(2, startValue);
+            preparedStatement.setTimestamp(3, endValue);
+            preparedStatement.setTimestamp(4, startValue);
+            preparedStatement.setTimestamp(5, endValue);
+            preparedStatement.setTimestamp(6, startValue);
+            preparedStatement.setTimestamp(7, endValue);
 
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                long idValue = resultSet.getLong(1);
+                idValue = resultSet.getLong(1);
                 Timestamp timestamp = resultSet.getTimestamp(2);
                 SnapshotVersion snapshotVersion = SnapshotVersion.createInstance(timestamp.toString());
                 //Spesialtilfelle for nåværende objekt. Vi ønsker å hente ut objektet slik det er når bruker spør. Gir da snapshotversion lik end
