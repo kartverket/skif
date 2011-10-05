@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class HistorikkServiceImpl implements HistorikkService{
 

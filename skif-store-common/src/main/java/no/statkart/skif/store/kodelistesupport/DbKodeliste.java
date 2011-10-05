@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public interface DbKodeliste extends Kodeliste {
     public DbKodelisteId<?> getId();

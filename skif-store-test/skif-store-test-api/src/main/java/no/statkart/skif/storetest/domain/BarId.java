@@ -5,7 +5,7 @@ import no.statkart.skif.store.SnapshotVersion;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class BarId<T extends Bar> extends AbstractBubbleId<T> implements StoreTestBubbleId<T> {
 

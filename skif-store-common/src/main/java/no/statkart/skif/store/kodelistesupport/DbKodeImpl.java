@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public abstract class DbKodeImpl extends KodeImpl implements DbKode {
     private Map<String, String> lokalisertBeskrivelse = new HashMap<String,String>();

@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.FooId;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class FooIdType extends BubbleIdType {
     @Override

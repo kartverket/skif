@@ -5,7 +5,7 @@ import no.statkart.skif.store.BubbleId;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class Bar extends AbstractBubbleObject implements StoreTestBubble {
 

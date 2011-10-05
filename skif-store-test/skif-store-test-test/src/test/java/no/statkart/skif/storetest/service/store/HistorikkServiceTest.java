@@ -12,7 +12,7 @@ import java.util.Collection;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 @Test
 public class HistorikkServiceTest extends StoreTestTestCase {

@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 @Stateless(name = "no.statkart.skif.storetest.service.store.HistorikkServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
