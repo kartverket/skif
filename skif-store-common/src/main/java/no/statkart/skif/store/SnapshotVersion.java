@@ -1,9 +1,7 @@
 package no.statkart.skif.store;
 
-
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Map;
 
 /**
  * @author Henrik Fredholm
@@ -12,18 +10,36 @@ public class SnapshotVersion implements Serializable {
     public final static SnapshotVersion CURRENT = new SnapshotVersion("9999-01-01 00:00:00.0");
     public final static SnapshotVersion OLD = new SnapshotVersion("9998-01-01 00:00:00.0");
     public final static SnapshotVersion NOT_VERSIONED = new SnapshotVersion("9997-01-01 00:00:00.0");
-    final String timestamp;
 
-    public static SnapshotVersion createInstance(String timestamp) {
-        if (timestamp.equals(CURRENT.timestamp) ) return CURRENT;
-        if (timestamp.equals(OLD.timestamp)) return OLD;
-        if (timestamp.equals(NOT_VERSIONED.timestamp)) return NOT_VERSIONED;
+    private final long time;
+    private final int nanos;
+
+    public static SnapshotVersion createInstance(String timestampString) {
+        return createInstance(Timestamp.valueOf(timestampString));
+    }
+
+    public static SnapshotVersion createInstance(Timestamp timestamp) {
+        if (CURRENT.equalsTimestamp(timestamp)) return CURRENT;
+        if (OLD.equalsTimestamp(timestamp)) return OLD;
+        if (NOT_VERSIONED.equalsTimestamp(timestamp)) return NOT_VERSIONED;
 
         return new SnapshotVersion(timestamp);
     }
 
-    protected SnapshotVersion(String timestamp) {
-        this.timestamp = timestamp;
+    protected SnapshotVersion(String timestampString) {
+        this(Timestamp.valueOf(timestampString));
+    }
+
+    protected SnapshotVersion(Timestamp timestamp) {
+        time = timestamp.getTime();
+        nanos = timestamp.getNanos();
+    }
+
+    public boolean equalsTimestamp(Timestamp o) {
+        if (o == null) return false;
+        if (time != o.getTime()) return false;
+        if (nanos != o.getNanos()) return false;
+        return true;
     }
 
     @Override
@@ -33,19 +49,24 @@ public class SnapshotVersion implements Serializable {
 
         SnapshotVersion that = (SnapshotVersion) o;
 
-        if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
+        if (nanos != that.nanos) return false;
+        if (time != that.time) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return timestamp != null ? timestamp.hashCode() : 0;
+        int result = (int) (time ^ (time >>> 32));
+        result = 31 * result + nanos;
+        return result;
     }
 
     private Object readResolve() {
+        Timestamp timestamp = getTimestamp();
         return createInstance(timestamp);
     }
+
 
     @Override
     public String toString() {
@@ -54,7 +75,9 @@ public class SnapshotVersion implements Serializable {
                 '}';
     }
 
-    public String getTimestamp() {
+    public Timestamp getTimestamp() {
+        Timestamp timestamp = new Timestamp(time);
+        timestamp.setNanos(nanos);
         return timestamp;
     }
 
@@ -62,6 +85,6 @@ public class SnapshotVersion implements Serializable {
         if (this == CURRENT) return "CURRENT";
         if (this == OLD) return "OLD";
         if (this == NOT_VERSIONED) return "NOT_VERSIONED";
-        return timestamp;
+        return getTimestamp().toString();
     }
 }

@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.service.store;
 
+import com.google.inject.Inject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.Foo;
 import no.statkart.skif.storetest.domain.FooId;
@@ -16,35 +17,41 @@ import java.util.Collection;
  */
 @Test
 public class HistorikkServiceTest extends StoreTestTestCase {
+    @Inject
+    HistorikkService service;
 
-    public void testFindBubbleIdsForInterval() {
-        HistorikkService service = injector.getInstance(HistorikkService.class);
+    SnapshotVersion intervalStart1 = SnapshotVersion.createInstance("2011-10-02 08:00:00.00");
+    SnapshotVersion intervalEnd1 = SnapshotVersion.CURRENT;
+    SnapshotVersion intervalStart2 = SnapshotVersion.createInstance("2011-10-02 08:01:00.00");
+    SnapshotVersion intervalEnd2 = SnapshotVersion.CURRENT;
 
-        Collection<FooId<Foo>> ids = service.getVersions(new FooId<Foo>(100L, SnapshotVersion.CURRENT), SnapshotVersion.createInstance("2011-10-02 08:01:01.00"), SnapshotVersion.CURRENT);
-        Assert.assertEquals(ids.size(), 6);
+    public void testFindBubbleIdsForIntervalSomInneholderAlleHeltTilCurrent() {
 
-        Timestamp startTime = Timestamp.valueOf("2011-10-02 08:01:01.00");
-        for (FooId<Foo> id : ids) {
-            if (!id.getSnapshotVersion().equals(SnapshotVersion.CURRENT)) {
-                Timestamp timestamp = Timestamp.valueOf(id.getSnapshotVersion().getTimestamp());
-                Assert.assertTrue(startTime.before(timestamp));
-            }
-        }
+        Collection<FooId<Foo>> ids1 = service.getVersions(new FooId<Foo>(100L, SnapshotVersion.CURRENT), intervalStart1, intervalEnd1);
+        Assert.assertEquals(ids1.size(), 5);
     }
 
-    /**
-     * Tester at nyeste element får sin verdi på snapshot erstattet med det brukeren ba om. Dette for å sørge for at brukeren
-     * får riktig versjon ut ved senere kall dersom id-en har fått ny versjon i etterkant.
-     */
-    public void testFindBubbleIdsForInterval_Latest() {
-        HistorikkService service = injector.getInstance(HistorikkService.class);
+    public void testFindBubbleIdsForIntervalSomInneholderAkkuratAlle() {
+        SnapshotVersion intervalEnd = SnapshotVersion.createInstance("2011-10-02 08:04:00.01");
+        Collection<FooId<Foo>> ids1 = service.getVersions(new FooId<Foo>(100L, SnapshotVersion.CURRENT), intervalStart1, intervalEnd);
+        Assert.assertEquals(ids1.size(), 5);
+    }
 
-        SnapshotVersion endSnapshotVersion = SnapshotVersion.createInstance("2011-10-02 10:05:01.00");
-        Collection<FooId<Foo>> ids = service.getVersions(new FooId<Foo>(100L, SnapshotVersion.CURRENT), SnapshotVersion.createInstance("2011-10-02 08:05:01.00"), endSnapshotVersion);
-        Assert.assertEquals(ids.size(), 1);
 
-        Assert.assertEquals(ids.iterator().next().getSnapshotVersion(), endSnapshotVersion);
+    public void testFindBubbleIdsForIntervalSomIkkeInneholderFoerste() {
+        Collection<FooId<Foo>> ids2 = service.getVersions(new FooId<Foo>(100L, SnapshotVersion.CURRENT), intervalStart2, intervalEnd2);
+        Assert.assertEquals(ids2.size(), 4);
 
     }
 
+    public void testFindBubbleIdsForIntervalSomBareInneholderFoerste() {
+        Collection<FooId<Foo>> ids3 = service.getVersions(new FooId<Foo>(100L, SnapshotVersion.CURRENT), intervalStart1, intervalStart2);
+        Assert.assertEquals(ids3.size(), 1);
+        Assert.assertEquals(ids3.iterator().next().getSnapshotVersion(), intervalStart1);
+    }
+
+    public void testFindBubbleIdsForIntervalSomErTomt() {
+        Collection<FooId<Foo>> ids4 = service.getVersions(new FooId<Foo>(100L, SnapshotVersion.CURRENT), intervalStart1, intervalStart1);
+        Assert.assertEquals(ids4.size(), 0);
+    }
 }

@@ -58,6 +58,7 @@ END snapshot_time;
 CREATE OR REPLACE PACKAGE BODY snapshot_time
 As
     T Timestamp;
+    t_End TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
     Function Get_T
     RETURN Timestamp
     IS
@@ -85,7 +86,7 @@ As
     Is
     retval NUMBER;
     BEGIN
-                IF (TBEGIN<=T AND T<TEND)
+                IF (TBEGIN<=T AND (T<TEND OR TEND=t_END))
                 THEN
                     retVal := 1;
                 ELSE

@@ -26,15 +26,15 @@ public class HistorikkFinder {
         List<I> retur = new ArrayList<I>();
 
         String tabellnavn = finnTabellnavnForId(bubbleId);
-        String sql = "select id, tEnd from " + tabellnavn +
+        String sql = "select id, tBegin from " + tabellnavn +
                 " where id = ? and " +
-                "((tEnd > ? and tEnd <= ?) " +
-                "or (tBegin > ? and tBegin <= ?) " +
-                "or (tBegin < ? and tEnd > ?))";
+                "((? < tEnd and tEnd <= ?) " +                     // intervalStartValue < tEnd <= endInterval
+                "or (? <= tBegin and tBegin < ?) " +              // intervalStartValue <= tBegin < endInterval
+                "or (tBegin < ? and ? < tEnd))";                  // tBegin < intervalStartValue and intervalEndValue < tEnd
 
 
-        Timestamp startValue = getTimestampValue(start);
-        Timestamp endValue = getTimestampValue(end);
+        Timestamp intervalStartValue = getTimestampValue(start);
+        Timestamp intervalEndValue = getTimestampValue(end);
         long idValue = (Long)bubbleId.getValue();
 
         Connection connection = connectionProvider.get();
@@ -44,26 +44,22 @@ public class HistorikkFinder {
             preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setLong(1, idValue);
-            preparedStatement.setTimestamp(2, startValue);
-            preparedStatement.setTimestamp(3, endValue);
-            preparedStatement.setTimestamp(4, startValue);
-            preparedStatement.setTimestamp(5, endValue);
-            preparedStatement.setTimestamp(6, startValue);
-            preparedStatement.setTimestamp(7, endValue);
+            preparedStatement.setTimestamp(2, intervalStartValue);
+            preparedStatement.setTimestamp(3, intervalEndValue);
+            preparedStatement.setTimestamp(4, intervalStartValue);
+            preparedStatement.setTimestamp(5, intervalEndValue);
+            preparedStatement.setTimestamp(6, intervalStartValue);
+            preparedStatement.setTimestamp(7, intervalEndValue);
 
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 idValue = resultSet.getLong(1);
                 Timestamp timestamp = resultSet.getTimestamp(2);
                 SnapshotVersion snapshotVersion = SnapshotVersion.createInstance(timestamp.toString());
-                //Spesialtilfelle for nåværende objekt. Vi ønsker å hente ut objektet slik det er når bruker spør. Gir da snapshotversion lik end
-                if (snapshotVersion.equals(SnapshotVersion.CURRENT)) {
-                    snapshotVersion = end;
-                }
                 retur.add((I) BubbleIds.createInstance(bubbleId.getClass(), idValue, snapshotVersion));
             }
         } catch (SQLException e) {
-            throw new ImplementationException("Feil oppstod under kjøring av sql: " + sql + " med parametre " + tabellnavn + ", " + startValue + " og " + endValue, e);
+            throw new ImplementationException("Feil oppstod under kjøring av sql: " + sql + " med parametre " + tabellnavn + ", " + intervalStartValue + " og " + intervalEndValue, e);
         } finally {
             JDBCHelper.close(resultSet, preparedStatement);
         }
@@ -76,7 +72,7 @@ public class HistorikkFinder {
             throw new ValidationException("Kan ikke hente historiske versjoner innenfor intervall når et av endepunktene i intervallet er NOT_VERSIONED");
         }
 
-        return Timestamp.valueOf(snapshotVersion.getTimestamp());
+        return snapshotVersion.getTimestamp();
     }
 
     /**

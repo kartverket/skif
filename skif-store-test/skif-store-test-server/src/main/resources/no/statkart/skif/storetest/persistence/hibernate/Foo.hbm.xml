@@ -10,6 +10,8 @@
 
       <property name="nr"/>
        <property name="navn"/>
+       <property name="beginLifespanVersion" column="tBegin" type="timestamp"/>
+       <property name="endLifespanVersion" column="tEnd" type="timestamp"/>
    </class>
 
 </hibernate-mapping>

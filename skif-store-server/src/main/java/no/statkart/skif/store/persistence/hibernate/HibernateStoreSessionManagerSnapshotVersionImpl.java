@@ -39,15 +39,16 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
         this.serviceRequestContext = serviceRequestContext;
         Object[] keys = hibernateSessionFactoryManager.getKeys();
 
-        entries[UPDATABLE] = new HibernateStoreSessionManagerSnapshotVersionEntry((SnapshotVersionHolder)keys[0]);
-        entries[BEFORE_UPDATE] = new HibernateStoreSessionManagerSnapshotVersionEntry((SnapshotVersionHolder)keys[1]);
+        entries[UPDATABLE] = new HibernateStoreSessionManagerSnapshotVersionEntry((SnapshotVersionHolder) keys[0]);
+        entries[BEFORE_UPDATE] = new HibernateStoreSessionManagerSnapshotVersionEntry((SnapshotVersionHolder) keys[1]);
     }
 
     @Override
     protected HibernateStoreSessionManagerSnapshotVersionEntry getEntry(Object key) {
-        if (SnapshotVersion.CURRENT==key || SnapshotVersion.NOT_VERSIONED==key) {
+        if (SnapshotVersion.CURRENT == key || SnapshotVersion.NOT_VERSIONED == key) {
             return entries[UPDATABLE];
-        } if (SnapshotVersion.OLD == key) {
+        }
+        if (SnapshotVersion.OLD == key) {
             return entries[BEFORE_UPDATE];
         } else {
             throw new ImplementationException("Metode getEntry støtter ikke bruk av snapshot= " + key);
@@ -132,7 +133,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     @Override
     public HibernateStoreSession acquireSnapshotStoreSessionUsingSnapshotScope() {
         SnapshotVersion scope = snapshotVersionScope.peek();
-        if (scope==null) {
+        if (scope == null) {
             throw new ImplementationException("SnapshotScope er ikke satt");
         }
         return acquireSnapshotStoreSession(scope);
@@ -153,7 +154,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
                 result = pushSnapshotVersion(entries[UPDATABLE], snapshotVersion);
             } else if (SnapshotVersion.OLD == snapshotVersion) {
                 // Bruk default for OLD
-                result = pushSnapshotVersion(entries[BEFORE_UPDATE],snapshotVersion);
+                result = pushSnapshotVersion(entries[BEFORE_UPDATE], snapshotVersion);
             } else if (entries[UPDATABLE].storeSession == null) {
                 // Bruk ledig
                 result = pushSnapshotVersion(entries[UPDATABLE], snapshotVersion);
@@ -192,11 +193,11 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     }
 
     private boolean hasSnapshotVersion(HibernateStoreSessionManagerSnapshotVersionEntry entry, SnapshotVersion snapshotVersion) {
-        return entry.session !=null && snapshotVersion.equals(entry.snapshotVersionStack.peek());
+        return entry.session != null && snapshotVersion.equals(entry.snapshotVersionStack.peek());
     }
 
     private HibernateStoreSession pushSnapshotVersion(HibernateStoreSessionManagerSnapshotVersionEntry entry, SnapshotVersion snapshotVersion) {
-        if (entry.storeSession==null) {
+        if (entry.storeSession == null) {
             openHibernateSession(entry);
         } else {
             entry.storeSession.ensureBubblesFullyLoaded();
@@ -223,22 +224,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     }
 
     private void changeSnapshotTime(HibernateStoreSession storeSession, SnapshotVersion snapshotVersion) {
-
-        Calendar calendar = Calendar.getInstance();
-        if(!snapshotVersion.equals(SnapshotVersion.CURRENT) && !snapshotVersion.equals(SnapshotVersion.OLD) && !snapshotVersion.equals(SnapshotVersion.NOT_VERSIONED)) {
-            String timestamp = snapshotVersion.getTimestamp();
-            calendar.setTime(Timestamp.valueOf(timestamp));
-        }
-
-        int millis = calendar.get(Calendar.MILLISECOND);
-        int sek = calendar.get(Calendar.SECOND);
-        int min = calendar.get(Calendar.MINUTE);
-        int time = calendar.get(Calendar.HOUR_OF_DAY);
-        int dag = calendar.get(Calendar.DAY_OF_MONTH);
-        int maaned = calendar.get(Calendar.MONTH) + 1;
-        DecimalFormat decimalFormat = new DecimalFormat("000");
-
-        storeSession.session.createSQLQuery("select snapshot_time.set_t(snapshot_time.to_t('2011-" + maaned + "-" + dag + " " + time + ":" + min + ":" + sek + "." + decimalFormat.format(millis) + "')) from dual").executeUpdate();
+        storeSession.session.createSQLQuery("select snapshot_time.set_t(:timestamp) from dual").setTimestamp("timestamp", snapshotVersion.getTimestamp()).executeUpdate();
     }
 
 }
