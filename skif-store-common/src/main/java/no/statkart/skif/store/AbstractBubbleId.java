@@ -1,5 +1,6 @@
 package no.statkart.skif.store;
 
+import com.sun.org.apache.xerces.internal.impl.dv.InvalidDatatypeValueException;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ReflectionException;
@@ -106,6 +107,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         return snapshotVersion;
     }
 
+    /*
     public AbstractBubbleId<T> fromIdValue(Object value, SnapshotVersion snapshotVersion) {
         try {
             AbstractBubbleId newId = getClass().newInstance();
@@ -118,10 +120,12 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
             throw new ImplementationException(e);
         }
     }
+    */
 
     public AbstractBubbleId<T> asReplicaVersion(SnapshotVersion snapshotVersion) {
         if (this.snapshotVersion == snapshotVersion) return this;
-        return fromIdValue(getValue(), snapshotVersion);
+        return createInstance(this.getClass(), (Long)getValue(), snapshotVersion);
+//        return fromIdValue(getValue(), snapshotVersion);
     }
 
     public AbstractBubbleId<T> asReplicaVersionOld() {

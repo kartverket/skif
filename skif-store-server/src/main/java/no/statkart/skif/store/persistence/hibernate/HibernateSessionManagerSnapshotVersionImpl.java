@@ -23,7 +23,7 @@ public class HibernateSessionManagerSnapshotVersionImpl extends AbstractHibernat
     private final int OLD = getIndex(SnapshotVersion.OLD);
 
     private static int getIndex(Object key) {
-        if (SnapshotVersion.CURRENT == key || key==SnapshotVersion.NOT_VERSIONED) {
+        if (SnapshotVersion.CURRENT == key) {
             return 0;
         } else if (SnapshotVersion.OLD == key) {
             return 1;

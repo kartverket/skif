@@ -36,7 +36,7 @@ public class HibernateStoreSessionManagerMultiVersionImpl extends AbstractHibern
 
     @Override
     protected HibernateStoreSessionManagerEntry getEntry(Object key) {
-        if (SnapshotVersion.CURRENT==key || SnapshotVersion.NOT_VERSIONED==key) {
+        if (SnapshotVersion.CURRENT==key) {
             return entries[CURRENT];
         } if (SnapshotVersion.OLD == key) {
             return entries[OLD];

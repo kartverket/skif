@@ -43,11 +43,13 @@ public class KodeSupportTest {
         protected <T extends Kode> String getBeskrivelse(T kode, Locale locale) {
             return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
+
         @Override
         protected <T extends Kodeliste> String getBeskrivelse(T kodeliste, Locale locale) {
             return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }
+
     public void testKodeListeid() {
         KodeSupportHelper kodeSupport = new TestKodeSupport(null, new KodelisteIdImpl(5));
         KodelisteId id = kodeSupport.getKodelisteId();
@@ -96,6 +98,7 @@ public class KodeSupportTest {
         TestEnumKodeId id1_old = new TestEnumKodeId(1, SnapshotVersion.OLD);
         KodeIdImpl<EnumKodeImpl> kodeId1a_old = kodeSupport.getOrCreateInstance(id1_old);
         assertSame(id1_old, kodeId1a_old);
+        assertEquals(kodeId1a_old.getSnapshotVersion(), SnapshotVersion.OLD);
 
 
         // Not ok to create old ReplicaVersions of new codes
@@ -105,6 +108,11 @@ public class KodeSupportTest {
             fail("Expected exception");
         } catch (ImplementationException e) {
         }
+
+        // ok to create old ReplicaVersions of existing codes. Will produce codes that equals current
+        TestEnumKodeId id1_sv = new TestEnumKodeId(1, SnapshotVersion.createInstance("2011-10-02 08:03:15.00"));
+        KodeIdImpl<EnumKodeImpl> kodeId1_sv = kodeSupport.getOrCreateInstance(id1_sv);
+        assertSame(kodeId1, kodeId1_sv);
     }
 }
 

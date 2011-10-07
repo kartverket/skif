@@ -1,12 +1,15 @@
 package no.statkart.skif.storetest.domain;
 
 
+import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.EnumKodeIdImpl;
 import no.statkart.skif.store.kodelistesupport.KodeIdImpl;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertNotSame;
 import static org.testng.AssertJUnit.assertSame;
 
@@ -48,5 +51,11 @@ public class EnumKodeIdTest {
         TestAEnumKodeId kodeAId =TestAEnumKodeId.KodeAId;
         assertSame(kodeAId.getKodelisteId(), TestAEnumKodeId.KODELISTE_ID);
         assertSame(KodeIdImpl.getKodelisteId(TestAEnumKodeId.class), TestAEnumKodeId.KODELISTE_ID);
+    }
+
+    public void testHistorikk() {
+        AbstractBubbleId<TestAEnumKode> enumId = TestAEnumKodeId.createInstance(27);
+        AbstractBubbleId<TestAEnumKode> enumId2 = enumId.asReplicaVersion(SnapshotVersion.createInstance("2011-10-02 08:03:15.00"));
+        assertEquals(enumId2.getSnapshotVersion(), SnapshotVersion.CURRENT);
     }
 }

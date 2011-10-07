@@ -17,6 +17,6 @@ public abstract class EnumKodeIdImpl<T extends EnumKodeImpl> extends KodeIdImpl<
     protected abstract EnumKodeSupport getKodeSupport();
 
     protected EnumKodeIdImpl(Long value, SnapshotVersion snapshotVersion) {
-        super(value, snapshotVersion);
+        super(value, snapshotVersion==SnapshotVersion.OLD ? SnapshotVersion.OLD : SnapshotVersion.CURRENT);
     }
 }

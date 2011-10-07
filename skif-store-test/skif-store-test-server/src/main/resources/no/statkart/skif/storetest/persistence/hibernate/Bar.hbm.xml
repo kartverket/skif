@@ -16,6 +16,12 @@
            class="no.statkart.skif.storetest.domain.Foo">
            <meta attribute="bubble-ref"/>
         </many-to-one>
+        <many-to-one
+           name="baz"
+           column="bazId"
+           class="no.statkart.skif.storetest.domain.Baz">
+           <meta attribute="bubble-ref"/>
+        </many-to-one>
 
     </class>
 

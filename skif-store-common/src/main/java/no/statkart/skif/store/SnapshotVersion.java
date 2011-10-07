@@ -8,8 +8,7 @@ import java.sql.Timestamp;
  */
 public class SnapshotVersion implements Serializable {
     public final static SnapshotVersion CURRENT = new SnapshotVersion("9999-01-01 00:00:00.0");
-    public final static SnapshotVersion OLD = new SnapshotVersion("9998-01-01 00:00:00.0");
-    public final static SnapshotVersion NOT_VERSIONED = new SnapshotVersion("9997-01-01 00:00:00.0");
+    public final static SnapshotVersion OLD = new SnapshotVersion("9997-01-01 00:00:00.0");
 
     private final long time;
     private final int nanos;
@@ -21,7 +20,6 @@ public class SnapshotVersion implements Serializable {
     public static SnapshotVersion createInstance(Timestamp timestamp) {
         if (CURRENT.equalsTimestamp(timestamp)) return CURRENT;
         if (OLD.equalsTimestamp(timestamp)) return OLD;
-        if (NOT_VERSIONED.equalsTimestamp(timestamp)) return NOT_VERSIONED;
 
         return new SnapshotVersion(timestamp);
     }
@@ -84,7 +82,6 @@ public class SnapshotVersion implements Serializable {
     public String getTimestampString() {
         if (this == CURRENT) return "CURRENT";
         if (this == OLD) return "OLD";
-        if (this == NOT_VERSIONED) return "NOT_VERSIONED";
         return getTimestamp().toString();
     }
 }

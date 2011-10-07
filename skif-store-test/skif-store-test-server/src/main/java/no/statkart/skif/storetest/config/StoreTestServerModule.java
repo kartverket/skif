@@ -59,6 +59,7 @@ public class StoreTestServerModule extends SkifModule {
             protected void configureHibernate(StoreHibernateSessionFactoryBuilder facotryBuilder) {
                 facotryBuilder.addResource(TestBubble.class);
                 facotryBuilder.addResource(Foo.class);
+                facotryBuilder.addResource(Baz.class);
                 facotryBuilder.addResource(Bar.class);
                 facotryBuilder.addResource(BarFoos.class);
                 facotryBuilder.addResource(TestMap.class);

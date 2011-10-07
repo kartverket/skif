@@ -45,7 +45,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
 
     @Override
     protected HibernateStoreSessionManagerSnapshotVersionEntry getEntry(Object key) {
-        if (SnapshotVersion.CURRENT == key || SnapshotVersion.NOT_VERSIONED == key) {
+        if (SnapshotVersion.CURRENT == key) {
             return entries[UPDATABLE];
         }
         if (SnapshotVersion.OLD == key) {
@@ -142,6 +142,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     @Override
     public HibernateStoreSession acquireSnapshotStoreSession(SnapshotVersion snapshotVersion) {
         HibernateStoreSession result;
+
         if (hasSnapshotVersion(entries[UPDATABLE], snapshotVersion)) {
             // Bruk eksisterende UPDATABLE
             result = pushExistingSnapshotVersion(entries[UPDATABLE]);
@@ -149,7 +150,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
             // Bruk eksisterende BEFORE_UPDATE
             result = pushExistingSnapshotVersion(entries[BEFORE_UPDATE]);
         } else {
-            if (SnapshotVersion.CURRENT == snapshotVersion || SnapshotVersion.NOT_VERSIONED == snapshotVersion) {
+            if (SnapshotVersion.CURRENT == snapshotVersion) {
                 // Bruk default for CURRENT og NOT_VERSIONED
                 result = pushSnapshotVersion(entries[UPDATABLE], snapshotVersion);
             } else if (SnapshotVersion.OLD == snapshotVersion) {

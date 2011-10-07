@@ -139,6 +139,15 @@ BEGIN
 END FOO_TRIGGER;
 /
 
+-- Denne tabell har ikke historikk
+CREATE TABLE Baz (
+    id                   NUMBER(19,0) NOT NULL ENABLE,
+    text                 VARCHAR2(255 BYTE),
+    fooId                number(19,0) not null,
+    PRIMARY KEY (id)
+);
+
+
 CREATE TABLE BAR_H (
     id                   NUMBER(19,0) NOT NULL ENABLE,
     tBegin               timestamp(6) not null,
@@ -147,6 +156,7 @@ CREATE TABLE BAR_H (
     husnr                number(10,0),
     bokstav              VARCHAR2(255 BYTE),
     fooId                number(19,0) not null,
+    bazId                number(19,0),
     PRIMARY KEY (ID, tEnd)
 );
 create view BAR as select * from BAR_H  where snapshot_time.t_between(tBegin, tEnd)=1;
@@ -161,20 +171,20 @@ BEGIN
   IF UPDATING THEN
     IF :old.tBegin < t_Trans THEN
         INSERT INTO BAR_H
-        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.husnr, :old.bokstav, :old.fooId);
+        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.husnr, :old.bokstav, :old.fooId, :old.bazId);
 
         UPDATE BAR_H SET tVersion = :old.tVersion + 1 WHERE id= :new.id and tEnd = t_End;
     END IF;
     UPDATE BAR_H
-    SET id = :new.id, tBegin = t_Trans, nr = :new.husnr, navn = :new.bokstav, fooId = :new.fooId
+    SET id = :new.id, tBegin = t_Trans, nr = :new.husnr, navn = :new.bokstav, fooId = :new.fooId, bazId = :new.bazId
     WHERE id = :new.id and tEnd = t_End;
   ELSIF INSERTING THEN
     INSERT INTO BAR_H
-        VALUES (:new.id, t_Trans,t_End, 1, :new.husnr, :new.bokstav, :new.fooId);
+        VALUES (:new.id, t_Trans,t_End, 1, :new.husnr, :new.bokstav, :new.fooId, :new.bazId);
   ELSIF DELETING THEN
     IF :old.tBegin < t_Trans THEN
         INSERT INTO BAR_H
-        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.husnr, :old.bokstav, :old.fooId);
+        VALUES (:old.id, :old.tBegin, t_Trans, :old.tversion, :old.husnr, :old.bokstav, :old.fooId, :old.bazId);
     END IF;
     delete from BAR_H
     WHERE id = :old.id and tEnd = t_End;
@@ -261,3 +271,4 @@ BEGIN
   END IF;
 END BARFOOS_TRIGGER;
 /
+

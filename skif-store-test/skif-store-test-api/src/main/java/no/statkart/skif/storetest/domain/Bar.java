@@ -12,6 +12,7 @@ public class Bar extends AbstractBubbleObject implements StoreTestBubble {
     private long husnr;
     private String bokstav;
     private FooId<Foo> fooId;
+    private BazId<Baz> bazId;
 
     @Override
     public BarId<?> getId() {
@@ -32,6 +33,14 @@ public class Bar extends AbstractBubbleObject implements StoreTestBubble {
 
     public void setFooId(FooId<Foo> fooId) {
         this.fooId = fooId;
+    }
+
+    public BazId<Baz> getBazId() {
+        return bazId;
+    }
+
+    public void setBazId(BazId<Baz> bazId) {
+        this.bazId = bazId;
     }
 
     public long getHusnr() {

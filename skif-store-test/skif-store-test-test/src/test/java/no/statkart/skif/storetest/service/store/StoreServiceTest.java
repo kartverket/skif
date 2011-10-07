@@ -111,6 +111,12 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertEquals(bar.getFooId().getValue(), new Long(100));
         Assert.assertEquals(bar.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
         Assert.assertEquals(bar.getFooId().getSnapshotVersion(), SnapshotVersion.CURRENT);
+        Assert.assertEquals(bar.getBazId().getSnapshotVersion(), SnapshotVersion.CURRENT);
+
+        Baz baz = store.getObject(bar.getBazId());
+        Assert.assertEquals(baz.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
+        Assert.assertEquals(baz.getFooId().getSnapshotVersion(), SnapshotVersion.CURRENT);
+
 
         Foo foo = store.getObject(bar.getFooId());
         assertEquals(foo.getNavn(), "KARTVEIEN");
@@ -123,8 +129,31 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertEquals(olderBar.getId().getSnapshotVersion(), snapshotVersion);
         Assert.assertEquals(olderBar.getFooId().getSnapshotVersion(), snapshotVersion);
 
+        baz = store.getObject(olderBar.getBazId());
+        Assert.assertEquals(baz.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
+        Assert.assertEquals(baz.getFooId().getSnapshotVersion(), SnapshotVersion.CURRENT);
+
+
         Foo olderFoo = store.getObject(olderBar.getFooId());
         assertEquals(olderFoo.getNavn(), "KART-VEIEN");
+
+    }
+
+    public void testGetBarOld() {
+        StoreService store = injector.getInstance(StoreService.class);
+        Bar bar = store.getObject(new BarId<Bar>(1001L, SnapshotVersion.OLD));
+
+        Assert.assertEquals(bar.getHusnr(), 106);
+        Assert.assertEquals(bar.getBokstav(), null);
+        Assert.assertEquals(bar.getFooId().getValue(), new Long(100));
+        Assert.assertEquals(bar.getId().getSnapshotVersion(), SnapshotVersion.OLD);
+        Assert.assertEquals(bar.getFooId().getSnapshotVersion(), SnapshotVersion.OLD);
+        Assert.assertEquals(bar.getBazId().getSnapshotVersion(), SnapshotVersion.OLD);
+        Baz baz = store.getObject(bar.getBazId());
+        Assert.assertEquals(baz.getId().getSnapshotVersion(), SnapshotVersion.OLD);
+        Assert.assertEquals(baz.getFooId().getSnapshotVersion(), SnapshotVersion.OLD);
+
+
     }
 
     public void testStoreGetBarFoos() {
@@ -143,4 +172,6 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertEquals(olderBarFoos.getFooIds().size(), 0);
 
     }
+
+    //public void
 }

@@ -8,6 +8,7 @@ import no.statkart.skif.store.persistence.StoreSession;
 import org.hibernate.*;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.criterion.Expression;
+import org.hibernate.dialect.SybaseAnywhereDialect;
 import org.hibernate.engine.CascadeStyle;
 import org.hibernate.engine.CascadingAction;
 import org.hibernate.engine.EntityKey;
@@ -25,7 +26,7 @@ import java.util.*;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class  HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? extends T>> implements StoreSession<Session, T, I> {
+public abstract class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? extends T>> implements StoreSession<Session, T, I> {
     private static int CRITERIA_BATCH_POWER = 9;
     private static final String ID_KOLONNE_NAVN = "id";
 
@@ -99,14 +100,14 @@ public abstract class  HibernateStoreSession<T extends BubbleObject, I extends B
         for (I bubbleId : bubbleIds) {
             checkSnapshotVersion(bubbleId);
             T bubble;
-            if ((bubble = (T)fullyInitializedBubbles.get(bubbleId))!=null) {
+            if ((bubble = (T) fullyInitializedBubbles.get(bubbleId)) != null) {
 
-            } else if ((bubble = (T)exportedLazyLoadedBubbles.get(bubbleId))!=null) {
+            } else if ((bubble = (T) exportedLazyLoadedBubbles.get(bubbleId)) != null) {
                 alreadyLoaded.add(bubble);
-            } else if ((bubble = lookupInHibernateCache(bubbleId))!=null) {
+            } else if ((bubble = lookupInHibernateCache(bubbleId)) != null) {
                 exportedLazyLoadedBubbles.put(bubbleId, bubble);
                 alreadyLoaded.add(bubble);
-            } else if ((bubble = lookupInHibernateCache(bubbleId))!=null) {
+            } else if ((bubble = lookupInHibernateCache(bubbleId)) != null) {
                 alreadyLoaded.add(bubble);
             } else {
                 idsToLoad.add(bubbleId);
@@ -148,7 +149,7 @@ public abstract class  HibernateStoreSession<T extends BubbleObject, I extends B
 
     public void evict(I bubbleId) {
         T bubble = lookupInHibernateCache(bubbleId);
-        if (bubble!=null) {
+        if (bubble != null) {
             session.evict(bubbleId);
             fullyInitializedBubbles.remove(bubbleId);
             exportedLazyLoadedBubbles.remove(bubbleId);
@@ -164,12 +165,15 @@ public abstract class  HibernateStoreSession<T extends BubbleObject, I extends B
     @Override
     public void ensureBubblesFullyLoaded() {
         for (Object bubble : exportedLazyLoadedBubbles.values()) {
-            ensureFullyInitialized((BubbleObject)bubble);
+            ensureFullyInitialized((BubbleObject) bubble);
         }
     }
 
     protected final <T extends BubbleObject, I extends BubbleId<? extends T>> void checkSnapshotVersion(I bubbleId) {
-        if (!snapshotVersionHolder.get().equals(bubbleId.getSnapshotVersion())) {
+        SnapshotVersion snapshotVersionFromHolder = snapshotVersionHolder.get();
+        SnapshotVersion snapshotVersionInId = bubbleId.getSnapshotVersion();
+
+        if (!snapshotVersionFromHolder.equals(snapshotVersionInId)) {
             throw new ImplementationException("Id har feil SnapshotVersion for session:" + bubbleId);
         }
     }

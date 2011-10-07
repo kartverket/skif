@@ -68,10 +68,6 @@ public class HistorikkFinder {
     }
 
     private Timestamp getTimestampValue(SnapshotVersion snapshotVersion) {
-        if (snapshotVersion.equals(SnapshotVersion.NOT_VERSIONED)) {
-            throw new ValidationException("Kan ikke hente historiske versjoner innenfor intervall når et av endepunktene i intervallet er NOT_VERSIONED");
-        }
-
         return snapshotVersion.getTimestamp();
     }
 
