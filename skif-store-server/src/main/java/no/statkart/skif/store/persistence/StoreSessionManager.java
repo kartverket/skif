@@ -24,6 +24,9 @@ public interface StoreSessionManager extends ConnectionManager {
     /**
      * Henter ut StoreSession med gitt {@code snapshotVersion} som kun kan være {@link SnapshotVersion#CURRENT} eller
      * {@link SnapshotVersion#OLD}.
+     *
+     * Usikker på det er lurt å ha en slik metode da den fungerer dårlig med andre snapshotVersioner. Det er jo umulig
+     * å finne ut når man er ferdig med å bruke metoden.
      * @deprecated
      */
     StoreSession getStoreSession(SnapshotVersion snapshotVersion);
@@ -31,17 +34,20 @@ public interface StoreSessionManager extends ConnectionManager {
     /**
      * Starter et nytt SnapshotVersion scope. Default scope er {@link SnapshotVersion#CURRENT}.
      * @param snapshotVersion
+     * @deprecated Usikker på om dette er noe som trengs.
      */
     void beginSnapshotScope(SnapshotVersion snapshotVersion);
 
     /**
      * Avslutter inneværende SnapshotVersion scope.
+     * @deprecated Usikker på om dette er noe som trengs.
      */
     void endSnapshotScope();
 
 
     /**
      * Henter ut en {@code StoreSession} instans med {@code SnapshotVersion} satt til inneværende {@code SnapshotVersion} scope.
+     * @deprecated Usikker på om dette er noe som trengs.
      */
     StoreSession acquireSnapshotStoreSessionUsingSnapshotScope();
 
