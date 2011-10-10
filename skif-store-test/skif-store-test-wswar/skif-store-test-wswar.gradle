@@ -58,7 +58,9 @@ task wsgen {
                 jws(file: 'no/statkart/skif/storetest/wsapi/service/store/StoreServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
                     wlhttptransport(serviceuri: 'StoreServiceWS')
                 }
-
+                jws(file: 'no/statkart/skif/storetest/wsapi/service/store/HistorikkServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'HistorikkServiceWS')
+                }
                 jws(file: 'no/statkart/skif/storetest/wsapi/service/kodeliste/KodelisteServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
                     wlhttptransport(serviceuri: 'KodelisteServiceWS')
                 }
@@ -75,7 +77,9 @@ task wsgen {
                 jws(file: 'no/statkart/skif/storetest/wsapi/service/id/SequenceBlockAllocatorServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
                     wlhttptransport(serviceuri: 'SequenceBlockAllocatorServiceWS')
                 }
-
+                jws(file: 'no/statkart/skif/storetest/wsapi/service/histtest/HistTestServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
+                    wlhttptransport(serviceuri: 'HistTestServiceWS')
+                }
             }
         }
     }

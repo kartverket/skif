@@ -16,10 +16,13 @@ import no.statkart.skif.storetest.domain.TestCEnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.TestADbKodeId;
 import no.statkart.skif.storetest.wsapi.domain.AList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.*;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Henrik Fredholm
@@ -72,6 +75,9 @@ public class StoreTestMapper extends AbstractMapper {
 
         // Boble lister
         addMapper(new WsapiListTypeMapper(AList.class, Collection.class));
+
+        // Boble map
+        addMapper(new WsapiMapTypeMapper(StoreTestBubbleIdListForStoreTestBubbleIdsMap.class, Map.class));
 
         // Non boble objekter
         addMapper(new ATypeMapper(no.statkart.skif.storetest.wsapi.domain.A.class, A.class));

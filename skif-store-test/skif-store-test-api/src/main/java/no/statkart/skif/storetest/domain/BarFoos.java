@@ -6,7 +6,7 @@ import java.util.Set;
 
 /**
  * @author Henrik Fredholm
- * @since 2.5
+ * @since 2.0
  */
 public class BarFoos extends AbstractBubbleObject implements StoreTestBubble {
 
