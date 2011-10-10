@@ -29,11 +29,13 @@ task genWsclient(dependsOn: ':skif-store-test:skif-store-test-wswar:jar') {
 
         ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/StoreTest1ServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
         ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/StoreServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/HistorikkServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
         ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/KodelisteServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
         ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/BeanManagedTxAServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
         ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/ContainerManagedTxAServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
         ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/ContainerManagedTxCMTCascadeServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
         ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/SequenceBlockAllocatorServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/HistTestServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
 
         // clientgen compiles automatically files into destdir, but we need to fix source an compile again to another location
         ant.delete(dir: wsTargetDir) {include(name: '**/*.class')}

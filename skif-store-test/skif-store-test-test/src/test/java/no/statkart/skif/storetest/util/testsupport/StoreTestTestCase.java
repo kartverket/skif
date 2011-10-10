@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.util.testsupport;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.SkifServices;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -49,7 +50,10 @@ public class StoreTestTestCase extends SkifTestCase {
                     .setExceptionMapping(new StoreTestExceptionMapper2().getMapping())
                     .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
             );
-            install(new RemoteServiceModule(moduleConfiguration, new SkifServices().getServices(), new SkifMapper().getMapping()));
+            //Legger til DBLockerService dersom man kjører i singleVm. Denne tjenesten finnes ikke som en webservice, og kan derfor ikke legges til ved kjøring av tester i client/server
+            if(moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
+                install(new RemoteServiceModule(moduleConfiguration, new SkifServices().getServices(), new SkifMapper().getMapping()));
+            }
             bind(StoreReadChain.class).to(StoreReadChainClient.class);
         }
 
