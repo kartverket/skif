@@ -119,7 +119,7 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
      * <p/>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
      */
-    @Test(enabled = false, groups = "server-required")
+    @Test(groups = "server-required")
     public void testThrowNonMappedRuntimeExceptionNonMappedEJBCall() throws SimpleException, SimpleNonMappedException {
         try {
             service.nonMappedEJBCall(RuntimeException.class.getName(), "abc");
