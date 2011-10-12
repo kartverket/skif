@@ -47,6 +47,7 @@ if (!rootProject.hasProperty('profile')) {
 
 
 allprojects {
+
     defaultTasks 'build'
     version = rootProject.version
     group = 'no.statkart.skif'
@@ -159,6 +160,7 @@ libraries = [
         testng: 'org.testng:testng:6.0.1',
         mockito: 'org.mockito:mockito-all:1.8.5',
         dbunit: 'org.dbunit:dbunit:2.4.8@jar',
+        unitils: 'org.unitils:unitils-core:3.1',
 
         // JAXB
         jaxb_impl: "com.sun.xml.bind:jaxb-impl:${versions.jaxb}",
@@ -337,7 +339,6 @@ subprojects { Project project ->
 
 idea.project {
     javaVersion = "1.6"
-
     ipr {
         //adding Perforce as default vcs by tinkering with the output *.ipr file before it's written out
         withXml {
@@ -507,4 +508,5 @@ void expandProjectProperties(Project project, boolean strict) {
         }
     }
 }
+
 
