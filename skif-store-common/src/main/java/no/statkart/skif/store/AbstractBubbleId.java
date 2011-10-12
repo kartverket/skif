@@ -123,7 +123,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     */
 
     public AbstractBubbleId<T> asReplicaVersion(SnapshotVersion snapshotVersion) {
-        if (this.snapshotVersion == snapshotVersion) return this;
+        if (this.snapshotVersion.equals(snapshotVersion)) return this;
         return createInstance(this.getClass(), (Long)getValue(), snapshotVersion);
 //        return fromIdValue(getValue(), snapshotVersion);
     }
@@ -174,7 +174,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         // Denne implementason håndter subtyper: eg. AdresseId er lik GateAdresseId og MatrikkelAdresseId dersom
         // value og snapshotVersion er lik, men en GateAdresseId kan aldrig være lik MatrikkeladresseId
         if (id == null) return false;
-        return value.equals(id.value) && snapshotVersion == id.snapshotVersion && compatible(id);
+        return value.equals(id.value) && snapshotVersion.equals(id.snapshotVersion) && compatible(id);
     }
 
 

@@ -8,4 +8,8 @@
             <principal-name>Innsyn</principal-name>
         </security-role-assignment>
     </security>
+    <prefer-application-packages>
+        <package-name>antlr.*</package-name>
+        <package-name>org.hibernate.*</package-name>
+    </prefer-application-packages>
 </weblogic-application>

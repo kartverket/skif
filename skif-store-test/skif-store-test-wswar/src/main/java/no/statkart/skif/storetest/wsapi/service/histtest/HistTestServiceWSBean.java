@@ -3,15 +3,12 @@ package no.statkart.skif.storetest.wsapi.service.histtest;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
-import no.statkart.skif.storetest.wsapi.domain.BarFoosIdList;
-import no.statkart.skif.storetest.wsapi.domain.BarId;
-import no.statkart.skif.storetest.wsapi.domain.FooIdList;
-import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
-import no.statkart.skif.storetest.wsapi.service.store.HistorikkServiceWSI;
+import no.statkart.skif.storetest.wsapi.domain.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
@@ -41,22 +38,18 @@ public class HistTestServiceWSBean extends SkifWebService<HistTestServiceWSI> im
         wsServiceChain = getServiceImplementation(injector, ctx);
     }
 
-
     @Override
-    @WebMethod
-    public FooIdList findFooIdsForNavn(String navn, SnapshotVersion snapshotVersion) {
-        return wsServiceChain.findFooIdsForNavn(navn, snapshotVersion);
+    public FooIdList findFooIdsForNavn(@WebParam(name = "navn") String navn, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findFooIdsForNavn(navn, snapshotVersion, storeTestContext);
     }
 
     @Override
-    @WebMethod
-    public BarFoosIdList findBarFoosIdsSomInneholderFooMedNavn(String navn, SnapshotVersion snapshotVersion) {
-        return findBarFoosIdsSomInneholderFooMedNavn(navn, snapshotVersion);
+    public BarFoosIdList findBarFoosIdsSomInneholderFooMedNavn(@WebParam(name = "navn") String navn, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findBarFoosIdsSomInneholderFooMedNavn(navn, snapshotVersion, storeTestContext);
     }
 
     @Override
-    @WebMethod
-    public BarFoosIdList findBarFoosIdsMedBarOgFoo(String fooNavn, BarId barId) {
-        return findBarFoosIdsMedBarOgFoo(fooNavn, barId);
+    public BarFoosIdList findBarFoosIdsMedBarOgFoo(@WebParam(name = "fooNavn") String fooNavn, @WebParam(name = "barId") BarId barId, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findBarFoosIdsMedBarOgFoo(fooNavn, barId, storeTestContext);
     }
 }

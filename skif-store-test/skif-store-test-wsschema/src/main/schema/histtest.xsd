@@ -24,8 +24,8 @@
                 <xs:sequence>
                     <xs:element name="nr" type="xs:long" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="navn" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="beginLifespanVersion" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="endLifespanVersion" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="beginLifespanVersion" type="corens:Timestamp" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="endLifespanVersion" type="corens:Timestamp" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -94,7 +94,7 @@
                 <xs:sequence>
                     <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="barId" type="corens:BarId" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="FooIdList" type="corens:FooIdList" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="FooIds" type="corens:FooIdList" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

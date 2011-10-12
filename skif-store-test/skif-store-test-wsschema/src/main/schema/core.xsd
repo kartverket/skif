@@ -13,6 +13,7 @@
     <xs:complexType name="StoreTestBubbleId">
         <xs:sequence>
             <xs:element name="value" type="xs:string"/>
+            <xs:element name="snapshotVersion" type="corens:SnapshotVersion"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -64,6 +65,13 @@
     </xs:complexType>
 
     <xs:complexType name="SnapshotVersion">
+        <xs:sequence>
+            <xs:element name="time" type="xs:long"/>
+            <xs:element name="nanos" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Timestamp">
         <xs:sequence>
             <xs:element name="time" type="xs:long"/>
             <xs:element name="nanos" type="xs:int"/>

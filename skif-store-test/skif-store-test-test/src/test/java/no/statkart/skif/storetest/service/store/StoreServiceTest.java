@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.service.store;
 import com.google.inject.Inject;
 import com.google.inject.Key;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.*;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
@@ -157,16 +158,16 @@ public class StoreServiceTest extends StoreTestTestCase {
     }
 
     public void testStoreGetBarFoos() {
-        StoreService store = injector.getInstance(StoreService.class);
-        BarFoos barFoos = store.getObject(new BarFoosId<BarFoos>(2001L));
+        Store store = injector.getInstance(Store.class); //Må bruke Store her istedenfor StoreService da man bruker intern store på objekter i testen
+        BarFoos barFoos = store.get(new BarFoosId<BarFoos>(2001L));
         Assert.assertEquals(barFoos.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
         Assert.assertEquals(barFoos.getBarId(), new BarId<Bar>(1001L));
-        Assert.assertEquals(barFoos.getBar().getId(), new BarId<Bar>(1001L));
+        Assert.assertEquals(barFoos.getBar().getId(), new BarId<Bar>(1001L)); //Bruker her store internt i objektet
         Assert.assertEquals(barFoos.getFooIds(), Arrays.asList(new FooId<Foo>(100L),new FooId<Foo>(101L)));
 
 
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:03:15.00");
-        BarFoos olderBarFoos = store.getObject(new BarFoosId<BarFoos>(2001L, snapshotVersion));
+        BarFoos olderBarFoos = store.get(new BarFoosId<BarFoos>(2001L, snapshotVersion));
         Assert.assertEquals(olderBarFoos.getId().getSnapshotVersion(), snapshotVersion);
         Assert.assertEquals(olderBarFoos.getBarId(), new BarId<Bar>(1001L, snapshotVersion));
         Assert.assertEquals(olderBarFoos.getFooIds().size(), 0);

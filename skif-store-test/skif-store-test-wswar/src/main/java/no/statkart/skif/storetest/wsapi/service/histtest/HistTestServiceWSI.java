@@ -1,10 +1,9 @@
 package no.statkart.skif.storetest.wsapi.service.histtest;
 
 import no.statkart.skif.service.ws.ServiceWSI;
-import no.statkart.skif.storetest.wsapi.domain.BarFoosIdList;
-import no.statkart.skif.storetest.wsapi.domain.BarId;
-import no.statkart.skif.storetest.wsapi.domain.FooIdList;
-import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
+import no.statkart.skif.storetest.wsapi.domain.*;
+
+import javax.jws.WebParam;
 
 /**
  * @author Roar Ingebrigtsen
@@ -12,8 +11,8 @@ import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
  */
 public interface HistTestServiceWSI extends ServiceWSI {
 
-    public FooIdList findFooIdsForNavn(String navn, SnapshotVersion snapshotVersion);
-    public BarFoosIdList findBarFoosIdsSomInneholderFooMedNavn(String navn, SnapshotVersion snapshotVersion);
-    public BarFoosIdList findBarFoosIdsMedBarOgFoo(String fooNavn, BarId barId);
+    public FooIdList findFooIdsForNavn(@WebParam(name = "navn")String navn,@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion,@WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
+    public BarFoosIdList findBarFoosIdsSomInneholderFooMedNavn(@WebParam(name = "navn")String navn,@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion,@WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
+    public BarFoosIdList findBarFoosIdsMedBarOgFoo(@WebParam(name = "fooNavn")String fooNavn,@WebParam(name = "barId") BarId barId,@WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
 
 }

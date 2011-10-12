@@ -3,10 +3,7 @@ package no.statkart.skif.storetest.wsapi.service.store;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
-import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
+import no.statkart.skif.storetest.wsapi.domain.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -40,13 +37,13 @@ public class HistorikkServiceWSBean extends SkifWebService<HistorikkServiceWSI> 
 
     @Override
     @WebMethod
-    public StoreTestBubbleIdList getVersions(StoreTestBubbleId id, SnapshotVersion start, SnapshotVersion end) {
-        return wsServiceChain.getVersions(id, start, end);
+    public StoreTestBubbleIdList getVersions(StoreTestBubbleId id, SnapshotVersion start, SnapshotVersion end, StoreTestContext storeTestContext) {
+        return wsServiceChain.getVersions(id, start, end, storeTestContext);
     }
 
     @Override
     @WebMethod
-    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForList(StoreTestBubbleIdList ids, SnapshotVersion start, SnapshotVersion end) {
-        return wsServiceChain.getVersionsForList(ids, start, end);
+    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForList(StoreTestBubbleIdList ids, SnapshotVersion start, SnapshotVersion end, StoreTestContext storeTestContext) {
+        return wsServiceChain.getVersionsForList(ids, start, end, storeTestContext);
     }
 }

@@ -3,21 +3,28 @@ package no.statkart.skif.storetest.wsapi.mapping;
 import no.statkart.skif.mapper.*;
 import no.statkart.skif.mapper.ObjectFactory;
 import no.statkart.skif.store.KodelisteTransfer;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.*;
 import no.statkart.skif.store.kodelistesupport.Kodeliste;
 import no.statkart.skif.store.kodelistesupport.KodelisteId;
 import no.statkart.skif.storetest.domain.*;
+import no.statkart.skif.storetest.domain.A;
+import no.statkart.skif.storetest.domain.BarFoosId;
+import no.statkart.skif.storetest.domain.BarId;
+import no.statkart.skif.storetest.domain.BazId;
+import no.statkart.skif.storetest.domain.FooId;
+import no.statkart.skif.storetest.domain.StoreTestBubble;
+import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.domain.TestAEnumKode;
 import no.statkart.skif.storetest.domain.TestAEnumKodeId;
 import no.statkart.skif.storetest.domain.TestBEnumKode;
 import no.statkart.skif.storetest.domain.TestBEnumKodeId;
+import no.statkart.skif.storetest.domain.TestBubble;
+import no.statkart.skif.storetest.domain.TestBubbleId;
 import no.statkart.skif.storetest.domain.TestCEnumKode;
 import no.statkart.skif.storetest.domain.TestCEnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.TestADbKodeId;
-import no.statkart.skif.storetest.wsapi.domain.AList;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
+import no.statkart.skif.storetest.wsapi.domain.*;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.*;
 
 import java.util.Collection;
@@ -44,15 +51,30 @@ public class StoreTestMapper extends AbstractMapper {
     public StoreTestMapper(Class<? extends Mapping> mappingClass, ObjectFactory wsapiObjectFactory, ObjectFactory domainObjectFactory) {
         super(mappingClass, wsapiObjectFactory, domainObjectFactory, false);
 
+        // DefaultTypeMapper. Brukes for objekter som har samme properties i domenene
+        DefaultTypeMapper dtm = new DefaultTypeMapper();
+        dtm.addPackageMapping("no.statkart.skif.storetest.wsapi.domain","no.statkart.skif.storetest.domain");
+        setDefaultMapper(dtm);
+
 
         // Klasser hvor objekter skal mappes til seg selv
         useIdentityMapping(String.class);
         useIdentityMapping(Integer.class);
         useIdentityMapping(Long.class);
 
+        // Timestamp
+        addMapper(new TimestampTypeMapper());
+
+        // SnapshotVersion
+        addMapper(new SnapshotVersionTypeMapper());
+
         // Alle Id'er
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId.class, StoreTestBubbleId.class));
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.TestBubbleId.class, TestBubbleId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.BarId.class, BarId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.FooId.class, FooId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.BarFoosId.class, BarFoosId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.BazId.class, BazId.class));
 
         // TODO: Endre kodemapper til å kunne håndtere multiple mappinger for source, rekkefølgen er viktig her
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, DbKodelisteId.class));
@@ -63,10 +85,15 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new WsapiListTypeMapper(StoreTestBubbleIdList.class, Collection.class));
         addMapper(new WsapiListTypeMapper(KodeIdList.class, Collection.class));
         addMapper(new WsapiListTypeMapper(KodelisteIdList.class, Collection.class));
+        addMapper(new WsapiListTypeMapper(BarIdList.class, Collection.class));
+        addMapper(new WsapiListTypeMapper(BarFoosIdList.class, Collection.class));
+        addMapper(new WsapiListTypeMapper(FooIdList.class, Collection.class));
 
         // Boble Objekter
-        addMapper(new StoreTestBubbleTypeMapper(no.statkart.skif.storetest.wsapi.domain.StoreTestBubble.class, StoreTestBubble.class));
-        addMapper(new TestBubbleTypeMapper(no.statkart.skif.storetest.wsapi.domain.TestBubble.class, TestBubble.class));
+//        addMapper(new StoreTestBubbleTypeMapper(no.statkart.skif.storetest.wsapi.domain.StoreTestBubble.class, StoreTestBubble.class));
+//        addMapper(new TestBubbleTypeMapper(no.statkart.skif.storetest.wsapi.domain.TestBubble.class, TestBubble.class));
+        addMapper(new BarfoosTypeMapper());
+        addMapper(new FooTypeMapper());
 
         // TODO: Endre kodemapper til å kunne håndtere multiple mappinger for source, rekkefølgen er viktig her
         addMapper(new KodelisteTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, DbKodeliste.class));

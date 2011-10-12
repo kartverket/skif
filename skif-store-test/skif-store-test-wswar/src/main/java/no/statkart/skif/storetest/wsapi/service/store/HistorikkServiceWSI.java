@@ -1,10 +1,7 @@
 package no.statkart.skif.storetest.wsapi.service.store;
 
 import no.statkart.skif.service.ws.ServiceWSI;
-import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
+import no.statkart.skif.storetest.wsapi.domain.*;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +12,7 @@ import java.util.Map;
  */
 public interface HistorikkServiceWSI extends ServiceWSI {
 
-    public StoreTestBubbleIdList getVersions(StoreTestBubbleId id, SnapshotVersion start, SnapshotVersion end);
-    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForList(StoreTestBubbleIdList ids, SnapshotVersion start, SnapshotVersion end);
+    public StoreTestBubbleIdList getVersions(StoreTestBubbleId id, SnapshotVersion start, SnapshotVersion end, StoreTestContext storeTestContext);
+    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForList(StoreTestBubbleIdList ids, SnapshotVersion start, SnapshotVersion end, StoreTestContext storeTestContext);
 
 }
