@@ -5,10 +5,10 @@ import no.statkart.skif.inject.Holder;
 /**
  * @author Henrik Fredholm
  */
-public class SnapshotVersionHolder implements Holder<SnapshotVersion> {
+public class SnapshotVersionSeed implements Holder<SnapshotVersion> {
     ThreadLocal<SnapshotVersion> threadLocal;
 
-    public SnapshotVersionHolder(final SnapshotVersion initialValue) {
+    public SnapshotVersionSeed(final SnapshotVersion initialValue) {
         threadLocal = new ThreadLocal<SnapshotVersion>() {
             @Override
             protected SnapshotVersion initialValue() {

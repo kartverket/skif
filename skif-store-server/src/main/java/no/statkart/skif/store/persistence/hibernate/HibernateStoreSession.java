@@ -1,14 +1,11 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import com.asn1c.core.Null;
-import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.StoreSession;
 import org.hibernate.*;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.criterion.Expression;
-import org.hibernate.dialect.SybaseAnywhereDialect;
 import org.hibernate.engine.CascadeStyle;
 import org.hibernate.engine.CascadingAction;
 import org.hibernate.engine.EntityKey;
@@ -38,7 +35,7 @@ public abstract class HibernateStoreSession<T extends BubbleObject, I extends Bu
     protected final Session session;
 
     /* Angi SnapshotVersion for objekter lest av denne sesjon. */
-    protected final SnapshotVersionHolder snapshotVersionHolder;
+    protected final SnapshotVersionSeed snapshotVersionSeed;
 
     /**
      * Bestemmer om Bubbler kan ha lazyloaded assosiasjoner som ikke er initialisert i det bubblen
@@ -46,9 +43,9 @@ public abstract class HibernateStoreSession<T extends BubbleObject, I extends Bu
      */
     private boolean lazyLoadedBubblesAllowed;
 
-    public HibernateStoreSession(Session session, SnapshotVersionHolder snapshotVersionHolder) {
+    public HibernateStoreSession(Session session, SnapshotVersionSeed snapshotVersionSeed) {
         this.session = session;
-        this.snapshotVersionHolder = snapshotVersionHolder;
+        this.snapshotVersionSeed = snapshotVersionSeed;
     }
 
     @Override
@@ -58,7 +55,7 @@ public abstract class HibernateStoreSession<T extends BubbleObject, I extends Bu
 
     @Override
     public SnapshotVersion getSnapshotVersion() {
-        return snapshotVersionHolder.get();
+        return snapshotVersionSeed.get();
     }
 
     /**
@@ -170,7 +167,7 @@ public abstract class HibernateStoreSession<T extends BubbleObject, I extends Bu
     }
 
     protected final <T extends BubbleObject, I extends BubbleId<? extends T>> void checkSnapshotVersion(I bubbleId) {
-        SnapshotVersion snapshotVersionFromHolder = snapshotVersionHolder.get();
+        SnapshotVersion snapshotVersionFromHolder = snapshotVersionSeed.get();
         SnapshotVersion snapshotVersionInId = bubbleId.getSnapshotVersion();
 
         if (!snapshotVersionFromHolder.equals(snapshotVersionInId)) {

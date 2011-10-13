@@ -6,7 +6,6 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.ConfigurationConstants;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.persistence.ConnectionFactory;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
@@ -16,10 +15,9 @@ import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.storetest.domain.TestBubble;
-import no.statkart.skif.storetest.domain.TestBubbleId;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -67,7 +65,7 @@ public class TestHelper {
     public static HibernateSessionFactoryManagerSingleVersionImpl createStoreHibernateSessionFactoryManagerSingleVersionImpl() {
         HibernateSessionFactoryBuilder sfbuilder = TestHelper.createStoreHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestBubble.class);
-        SessionFactory sessionFactory = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
+        SessionFactory sessionFactory = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
         return new HibernateSessionFactoryManagerSingleVersionImpl(sessionFactory);
     }
 

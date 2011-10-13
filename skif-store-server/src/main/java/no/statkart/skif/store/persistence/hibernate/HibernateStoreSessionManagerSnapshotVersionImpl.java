@@ -6,17 +6,13 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.StoreSession;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.util.ArrayDeque;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Deque;
 
 /**
@@ -39,8 +35,8 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
         this.serviceRequestContext = serviceRequestContext;
         Object[] keys = hibernateSessionFactoryManager.getKeys();
 
-        entries[UPDATABLE] = new HibernateStoreSessionManagerSnapshotVersionEntry((SnapshotVersionHolder) keys[0]);
-        entries[BEFORE_UPDATE] = new HibernateStoreSessionManagerSnapshotVersionEntry((SnapshotVersionHolder) keys[1]);
+        entries[UPDATABLE] = new HibernateStoreSessionManagerSnapshotVersionEntry((SnapshotVersionSeed) keys[0]);
+        entries[BEFORE_UPDATE] = new HibernateStoreSessionManagerSnapshotVersionEntry((SnapshotVersionSeed) keys[1]);
     }
 
     @Override
@@ -64,7 +60,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     @Override
     public void openHibernateSession(HibernateStoreSessionManagerSnapshotVersionEntry entry) {
         super.openHibernateSession(entry);
-        entry.storeSession = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(entry.session, (SnapshotVersionHolder) entry.key);
+        entry.storeSession = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(entry.session, (SnapshotVersionSeed) entry.key);
     }
 
     @Override
@@ -117,7 +113,7 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     }
 
     protected HibernateStoreSession createHibernateStoreSession(Session session, Object key) {
-        return HibernateVersionFactory.Accessor.get().createHibernateStoreSession(session, (SnapshotVersionHolder) key);
+        return HibernateVersionFactory.Accessor.get().createHibernateStoreSession(session, (SnapshotVersionSeed) key);
     }
 
     @Override

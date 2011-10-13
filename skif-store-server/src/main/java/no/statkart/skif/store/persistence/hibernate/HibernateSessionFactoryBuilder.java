@@ -2,7 +2,7 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
-import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
@@ -62,7 +62,7 @@ public class HibernateSessionFactoryBuilder {
         return this;
     }
 
-    public SessionFactory build(SnapshotVersionHolder key) {
+    public SessionFactory build(SnapshotVersionSeed key) {
         SessionFactory sessionFactory = null;
         logger.debug("creating session factory");
         try {

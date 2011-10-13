@@ -1,21 +1,13 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
-import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
-import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizer;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import org.hibernate.HibernateException;
-import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.event.DeleteEventListener;
-import org.hibernate.event.PreLoadEventListener;
-import org.hibernate.event.def.DefaultPreLoadEventListener;
-import org.hibernate.persister.entity.EntityPersister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,24 +59,24 @@ public abstract class StoreHibernateSessionFactoryBuilder extends HibernateSessi
     }
 
 
-    public SessionFactory build(SnapshotVersionHolder snapshotVersionHolder) {
-        // Denne metoden bruker synkronisering på {@code LOCK} fordi BubbleIdType.SnapshotVersionHolderSeed ikke må endres mens
-        // SessionFactory blir opprettet. Det er kun denne metoden som bruker {@code BubbleIdType.SnapshotVersionHolderSeed}.
-        // Alle BubbleIdTypes som opprettes i SessionFactory får satt deres snapshotVersionHolder til
-        // {@code BubbleIdType.SnapshotVersionHolderSeed}. Å bruke synkronisering her er enklere enn å løpe igjennom
-        // datastrukturerene i SessionFactory og sette snapshotVersionHolder for alle BubbleIdTypes manuellt.
+    public SessionFactory build(SnapshotVersionSeed snapshotVersionSeed) {
+        // Denne metoden bruker synkronisering på {@code LOCK} fordi BubbleIdType.SnapshotVersionSeedSeed ikke må endres mens
+        // SessionFactory blir opprettet. Det er kun denne metoden som bruker {@code BubbleIdType.SnapshotVersionSeedSeed}.
+        // Alle BubbleIdTypes som opprettes i SessionFactory får satt deres snapshotVersionSeed til
+        // {@code BubbleIdType.SnapshotVersionSeedSeed}. Å bruke synkronisering her er enklere enn å løpe igjennom
+        // datastrukturerene i SessionFactory og sette snapshotVersionSeed for alle BubbleIdTypes manuellt.
         //
         // NB: HibernateSessions som skal jobbe med forskjellige snapshotVersions uavhengig avhverander innenfor samme tråd (f.eks Current og Old sessions)
         // må bruke hver sin factory. De kan ikke bruke samme factory siden det er factoryen som styrer
-        // hvilken snapshotVersionHolder instans som vil bli brukt ved materalisering av BubbleId'en.
+        // hvilken snapshotVersionSeed instans som vil bli brukt ved materalisering av BubbleId'en.
         
         SessionFactory sessionFactory = null;
         logger.debug("creating session factory");
         synchronized (LOCK) {
             try {
-                BubbleIdType.setSnapshotVersionHolderSeed(snapshotVersionHolder);
+                BubbleIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
                 Configuration cfg = createConfiguration(hibernateProperties);
-                if (!SnapshotVersion.CURRENT.equals(snapshotVersionHolder.get()) ) {
+                if (!SnapshotVersion.CURRENT.equals(snapshotVersionSeed.get()) ) {
                     // Denne kan være satt ifm testing for current session factory, men den skal aldig være satt for
                     // old eller historic session factory. Det ville føre til at auto operasjonen ville bli utført 2 ganger
                     cfg.setProperty("hibernate.hbm2ddl.auto", "");
@@ -94,8 +86,8 @@ public abstract class StoreHibernateSessionFactoryBuilder extends HibernateSessi
             } catch (HibernateException e) {
                 throw new ImplementationException("Feil ved initialisering av hibernate", e, logger);
             } finally {
-                // Set ny SnapshotVersionHolderSeed slik at to factory instanser ikke ved et uheld blir satt opp med samme seed.
-                BubbleIdType.setSnapshotVersionHolderSeed(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
+                // Set ny SnapshotVersionSeedSeed slik at to factory instanser ikke ved et uheld blir satt opp med samme seed.
+                BubbleIdType.setSnapshotVersionSeedSeed(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
             }
         }
         return sessionFactory;

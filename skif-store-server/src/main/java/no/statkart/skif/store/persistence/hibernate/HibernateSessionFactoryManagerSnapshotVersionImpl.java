@@ -3,7 +3,7 @@ package no.statkart.skif.store.persistence.hibernate;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.SessionFactory;
 
 /**
@@ -11,15 +11,15 @@ import org.hibernate.SessionFactory;
  */
 public class HibernateSessionFactoryManagerSnapshotVersionImpl implements  HibernateSessionFactoryManager {
     final private SessionFactory[] factories = new SessionFactory[2];
-    final private SnapshotVersionHolder[] keys;
+    final private SnapshotVersionSeed[] keys;
     private final HibernateSessionFactoryBuilder factoryBuilder;
 
     @Inject
     public HibernateSessionFactoryManagerSnapshotVersionImpl(HibernateSessionFactoryBuilder factoryBuilder) {
         this.factoryBuilder = factoryBuilder;
-        keys = new SnapshotVersionHolder[2];
-        keys[0] = new SnapshotVersionHolder(SnapshotVersion.CURRENT);
-        keys[1] = new SnapshotVersionHolder(SnapshotVersion.OLD);
+        keys = new SnapshotVersionSeed[2];
+        keys[0] = new SnapshotVersionSeed(SnapshotVersion.CURRENT);
+        keys[1] = new SnapshotVersionSeed(SnapshotVersion.OLD);
     }
 
     private final int getIndex(Object key) {

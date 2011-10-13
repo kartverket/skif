@@ -1,11 +1,10 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.SnapshotVersionSeed;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Stack;
 
 /**
  * @author Henrik Fredholm
@@ -14,8 +13,8 @@ class HibernateStoreSessionManagerSnapshotVersionEntry extends HibernateSessionM
     HibernateStoreSession storeSession;
     Deque<SnapshotVersion> snapshotVersionStack = new ArrayDeque<SnapshotVersion>();
 
-    HibernateStoreSessionManagerSnapshotVersionEntry(SnapshotVersionHolder snapshotVersionHolder) {
-        super(snapshotVersionHolder);
+    HibernateStoreSessionManagerSnapshotVersionEntry(SnapshotVersionSeed snapshotVersionSeed) {
+        super(snapshotVersionSeed);
     }
 
     public void pushSnapshotVersion(SnapshotVersion snapshotVersion) {
@@ -25,13 +24,13 @@ class HibernateStoreSessionManagerSnapshotVersionEntry extends HibernateSessionM
 
     public void setSnapshotVersion(SnapshotVersion snapshotVersion) {
         SnapshotVersion prev = getSnapshotVersion();
-        ((SnapshotVersionHolder)key).set(snapshotVersion);
+        ((SnapshotVersionSeed)key).set(snapshotVersion);
         if (!snapshotVersion.equals(prev)) {
             // TODO set snapshot on session
         }
     }
 
     public SnapshotVersion getSnapshotVersion() {
-        return ((SnapshotVersionHolder)key).get();
+        return ((SnapshotVersionSeed)key).get();
     }
 }

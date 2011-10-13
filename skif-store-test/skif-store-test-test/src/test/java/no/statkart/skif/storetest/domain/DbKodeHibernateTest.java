@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.domain;
 
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.kodelistesupport.DbKode;
 import no.statkart.skif.store.kodelistesupport.DbKodeId;
 import no.statkart.skif.store.kodelistesupport.DbKodeliste;
@@ -39,7 +39,7 @@ public class DbKodeHibernateTest {
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestBDbKode.class);
         sfbuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", TestCDbKode.class, TestC1DbKode.class, TestC2DbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", TestDbKodeliste.class);
-        SessionFactory sf = sfbuilder.build(new SnapshotVersionHolder(SnapshotVersion.CURRENT));
+        SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         return sf;
     }
@@ -128,7 +128,7 @@ public class DbKodeHibernateTest {
     public void testKodelisteManager() {
         SessionFactory sf = setupHibernate();
         // TODO: Fix dette er feil.
-        HibernateStoreSession wrapper = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(sf.openSession(), new SnapshotVersionHolder(SnapshotVersion.CURRENT));
+        HibernateStoreSession wrapper = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(sf.openSession(), new SnapshotVersionSeed(SnapshotVersion.CURRENT));
         KodelisteManager kodelisteManager = new KodelisteManager();
 
 

@@ -1,7 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.Session;
 
 import java.util.Properties;
@@ -28,6 +28,6 @@ public interface HibernateVersionFactory {
         }
     }
 
-    HibernateStoreSession createHibernateStoreSession(Session session, SnapshotVersionHolder key);
+    HibernateStoreSession createHibernateStoreSession(Session session, SnapshotVersionSeed key);
     StoreHibernateSessionFactoryBuilder createStoreHibernateSessionFactoryBuilder(Properties properties, String mappingFileDirectoryRoot);
 }

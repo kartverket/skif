@@ -1,6 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.Session;
 
 import java.util.Properties;
@@ -11,7 +11,7 @@ import java.util.Properties;
  */
 public class HibernateVersionFactoryImpl implements HibernateVersionFactory {
     @Override
-    public HibernateStoreSession createHibernateStoreSession(Session session, SnapshotVersionHolder key) {
+    public HibernateStoreSession createHibernateStoreSession(Session session, SnapshotVersionSeed key) {
         return new HibernateStoreSessionImpl(session, key);
     }
 

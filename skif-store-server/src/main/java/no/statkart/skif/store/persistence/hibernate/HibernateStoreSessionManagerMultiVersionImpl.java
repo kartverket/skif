@@ -6,7 +6,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionHolder;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.StoreSession;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -54,8 +54,8 @@ public class HibernateStoreSessionManagerMultiVersionImpl extends AbstractHibern
     @Override
     public void openHibernateSession(HibernateStoreSessionManagerEntry entry) {
         super.openHibernateSession(entry);
-        entry.storeSession = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(entry.session, (SnapshotVersionHolder) entry.key);
-        entry.storeSession = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(entry.session, (SnapshotVersionHolder) entry.key);
+        entry.storeSession = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(entry.session, (SnapshotVersionSeed) entry.key);
+        entry.storeSession = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(entry.session, (SnapshotVersionSeed) entry.key);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class HibernateStoreSessionManagerMultiVersionImpl extends AbstractHibern
     }
 
     protected HibernateStoreSession createHibernateStoreSession(Session session, Object key) {
-        return HibernateVersionFactory.Accessor.get().createHibernateStoreSession(session, (SnapshotVersionHolder) key);
+        return HibernateVersionFactory.Accessor.get().createHibernateStoreSession(session, (SnapshotVersionSeed) key);
     }
 
     @Override
