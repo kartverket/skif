@@ -29,4 +29,9 @@ public class KodelisteServiceImpl implements KodelisteService {
         KodelisteTransfer kodelisteTransfer = kodelistePersister.getKodelisteTransfer();
         return new KodelisteTransfer(kodelisteTransfer.getKodeIds(), kodelisteTransfer.getKodelisteIds(), kodelisteTransfer.getObjects());
     }
+
+    @Override
+    public String getKodelisterTest() {
+        return "Hello Impl";
+    }
 }

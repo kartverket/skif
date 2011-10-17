@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/ktest"
+        xmlns:corens="http://skif.statkart.no/storetest/wsapi/domain"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:import schemaLocation="core.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
+
+    <xs:complexType name="MyList4">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="xId2">
+        <xs:complexContent>
+            <xs:extension base="corens:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="KodeIdx">
+        <xs:sequence>
+            <xs:element name="fooId" type="corens:TestBubbleId" />
+        </xs:sequence>
+    </xs:complexType>
+
+
+
+</xs:schema>

@@ -2,7 +2,7 @@ package no.statkart.skif.store.kodelistesupport;
 
 import no.statkart.skif.store.SnapshotVersion;
 
-public class EnumKodelisteIdImpl<T extends EnumKodelisteImpl> extends KodelisteIdImpl<T> implements EnumKodelisteId<T> {
+public abstract class EnumKodelisteIdImpl<T extends EnumKodelisteImpl> extends KodelisteIdImpl<T> implements EnumKodelisteId<T> {
 
     public EnumKodelisteIdImpl(long value) {
         super(new Long(value));

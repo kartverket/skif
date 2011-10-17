@@ -40,7 +40,7 @@ public class SkifTestExceptionMapper extends AbstractExceptionMapper {
 
     public SkifTestExceptionMapper(ObjectFactory wsapiObjectFactory, ObjectFactory domainObjectFactory) {
         super(SkifTestExceptionMapping.class, wsapiObjectFactory, domainObjectFactory, true, true);
-        addMapptersForExceptionTypes();
+        addMappersForExceptionTypes();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class SkifTestExceptionMapper extends AbstractExceptionMapper {
     }
 
 
-    private void addMapptersForExceptionTypes() {
+    private void addMappersForExceptionTypes() {
         addMapper(new ServiceExceptionTypeMapper(exceptionClassMap, ServiceException.class, no.statkart.skif.exception.SkifException.class, ServiceFaultInfo.class));
         addMapperW2D(new IdentityExceptionTypeMapper(Error.class));
         addMapperW2D(new IdentityExceptionTypeMapper(RuntimeException.class));

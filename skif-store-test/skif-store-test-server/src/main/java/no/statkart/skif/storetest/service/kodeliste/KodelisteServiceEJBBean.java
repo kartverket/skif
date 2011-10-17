@@ -30,4 +30,10 @@ public class KodelisteServiceEJBBean extends EJBTimedService implements Kodelist
     public KodelisteTransfer getKodelister() {
         return serviceImpl.getKodelister();
     }
+
+    @Override
+    public String getKodelisterTest() {
+        return "Hello EJB";
+    }
 }
+

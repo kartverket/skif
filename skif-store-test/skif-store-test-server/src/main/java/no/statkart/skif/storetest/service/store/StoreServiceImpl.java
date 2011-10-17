@@ -1,12 +1,18 @@
 package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
+import no.statkart.skif.persistence.HistorikkFinder;
 import no.statkart.skif.service.ServiceRequestContext;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -17,20 +23,35 @@ public class StoreServiceImpl implements StoreService {
     StoreServer store;
 
     @Inject
+    HistorikkFinder versionFinder;
+
+
+    @Inject
     ServiceRequestContext serviceRequestContext;
 
     @Override
-    public <T extends StoreTestBubble, I extends StoreTestBubbleId<? extends T>> T getObject(I id) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I id) {
         return store.get(id);
-    /*
-        T bubble = id.createTypeInstance();
-        bubble.setId(id);
-        return (T)bubble;
-     */
     }
 
     @Override
-    public <T extends StoreTestBubble, I extends StoreTestBubbleId<? extends T>> List<T> getObjects(List<I> ids) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getObjects(List<I> ids) {
         return store.get(ids);
     }
+
+
+    @Override
+    public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
+        return versionFinder.findBubbleIdsForInterval(id, start, end);
+    }
+
+    @Override
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
+        Map<I, List<I>> retur  = new HashMap<I, List<I>>();
+        for (I id : ids) {
+            retur.put(id, versionFinder.findBubbleIdsForInterval(id, start, end));
+        }
+        return retur;
+    }
+
 }

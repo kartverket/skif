@@ -26,6 +26,16 @@ public class KodelisteIdImpl<T extends KodelisteImpl> extends AbstractBubbleId<T
     }
 
     @Override
+    public boolean equals(Object id) {
+        if (id == null) return false;
+        return id instanceof KodelisteIdImpl && equals((KodelisteIdImpl) id);
+    }
+
+    protected boolean equals(AbstractBubbleId id) {
+        return getValue().equals(id.getValue()) && getSnapshotVersion().equals(id.getSnapshotVersion());
+    }
+
+    @Override
     public String toString() {
         return getClass().getSimpleName() +"{" +
                 "value='" + getValue() + '\'' +

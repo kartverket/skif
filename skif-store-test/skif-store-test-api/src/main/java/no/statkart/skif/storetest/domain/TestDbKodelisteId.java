@@ -9,6 +9,14 @@ import no.statkart.skif.store.kodelistesupport.DbKodelisteIdImpl;
  * @since 2.0
  */
 public class TestDbKodelisteId<T extends TestDbKodeliste> extends DbKodelisteIdImpl<T> implements DbKodelisteId<T>, TestKodelisteId<T> {
+
+    public TestDbKodelisteId(long value) {
+        super(value);
+    }
+
+    public TestDbKodelisteId(Long value) {
+        super(value);
+    }
     public TestDbKodelisteId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }

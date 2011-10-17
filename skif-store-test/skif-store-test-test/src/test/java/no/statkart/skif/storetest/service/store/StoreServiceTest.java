@@ -2,10 +2,14 @@ package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
 import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.*;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
+import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -171,6 +175,31 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertEquals(olderBarFoos.getId().getSnapshotVersion(), snapshotVersion);
         Assert.assertEquals(olderBarFoos.getBarId(), new BarId<Bar>(1001L, snapshotVersion));
         Assert.assertEquals(olderBarFoos.getFooIds().size(), 0);
+
+    }
+/*
+    public void testKodeTransfer() throws ServiceException {
+        StoreTestContext storeTestContext = new StoreTestContext();
+        storeTestContext.setLocale("no_NO");
+        storeTestContext.setSystemVersion("1");
+
+        no.statkart.skif.storetest.wsapi.service.store.StoreService storeWS= injector.getInstance(Key.get(new TypeLiteral<no.statkart.skif.storetest.wsapi.service.store.StoreService>() {
+        }));
+        Object kodelisterTest = storeWS.getTransfer(storeTestContext);
+        assertNotNull(kodelisterTest);
+
+    }
+  */
+
+    public void testKodeTransfer() throws ServiceException {
+        StoreTestContext storeTestContext = new StoreTestContext();
+        storeTestContext.setLocale("no_NO");
+        storeTestContext.setSystemVersion("1");
+
+        no.statkart.skif.storetest.wsapi.service.store.StoreService storeWS= injector.getInstance(Key.get(new TypeLiteral<no.statkart.skif.storetest.wsapi.service.store.StoreService>() {
+        }));
+        Object kodelisterTest = storeWS.getMyList(storeTestContext);
+        assertNotNull(kodelisterTest);
 
     }
 

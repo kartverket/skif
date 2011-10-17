@@ -11,7 +11,7 @@ import no.statkart.skif.store.kodelistesupport.EnumKodeSupport;
 public class TestAEnumKodeId extends EnumKodeIdImpl<TestAEnumKode> implements TestEnumKodeId<TestAEnumKode> {
     private static EnumKodeSupport<TestEnumKodeliste, TestEnumKodelisteId<TestEnumKodeliste>> kodeSupport = new EnumKodeSupport<TestEnumKodeliste, TestEnumKodelisteId<TestEnumKodeliste>>(TestAEnumKodeId.class,new TestEnumKodelisteId(1), "TestAEnumKodeliste");
 
-    public static TestEnumKodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static TestKodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static TestAEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");
     public static TestAEnumKodeId KodeAId = define(1, "A", "Kode A");
     public static TestAEnumKodeId KodeBId = define(2, "B", "Kode B");

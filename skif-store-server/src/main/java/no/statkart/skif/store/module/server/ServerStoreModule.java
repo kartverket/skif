@@ -14,6 +14,7 @@ import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.StoreService;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
@@ -33,9 +34,11 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
     private static Logger logger = LoggerFactory.getLogger(ServerStoreModule.class);
 
     private final String mappingFileDirectoryRootDefault;
+    private final Class<? extends StoreService> storeServiceClass;
 
-    public ServerStoreModule(ModuleConfiguration moduleConfiguration, String mappingFileDirectoryRootDefault) {
+    public ServerStoreModule(ModuleConfiguration moduleConfiguration, Class<? extends StoreService> storeServiceClass, String mappingFileDirectoryRootDefault) {
         super(ServerStoreModuleStrategy.class, moduleConfiguration);
+        this.storeServiceClass = storeServiceClass;
         this.mappingFileDirectoryRootDefault = mappingFileDirectoryRootDefault;
     }
 
@@ -116,6 +119,8 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
 
         //For LockerStrategy
         install(new ServerServiceModule(moduleConfiguration, new SkifServices().getServices()));
+
+        bind(StoreService.class).to(storeServiceClass);
 
     }
 

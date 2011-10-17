@@ -2,9 +2,6 @@ package no.statkart.skif.storetest.domain;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 
-import java.security.Identity;
-import java.sql.Timestamp;
-
 /**
  * @author Henrik Fredholm
  * @since 2.0

@@ -59,7 +59,7 @@ public interface StoreTestMapping extends Mapping {
     public no.statkart.skif.storetest.wsapi.domain.kodeliste.Kode d2w(Kode source);
     public Kode w2d(no.statkart.skif.storetest.wsapi.domain.kodeliste.Kode source);
 
-    public BarFoosId<BarFoos> w2d(no.statkart.skif.storetest.wsapi.domain.BarFoosId source);
+/*    public BarFoosId<BarFoos> w2d(no.statkart.skif.storetest.wsapi.domain.BarFoosId source);
     public no.statkart.skif.storetest.wsapi.domain.BarFoosId d2w(BarFoosId<BarFoos> source);
 
     public BarFoosIdList d2w(Collection source, BarFoosIdList target);
@@ -76,5 +76,5 @@ public interface StoreTestMapping extends Mapping {
 
     public FooIdList d2w(Collection source, FooIdList target);
     public <T extends Collection> T w2d(FooIdList source, T target);
-
+  */
 }

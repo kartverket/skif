@@ -2,10 +2,13 @@ package no.statkart.skif.storetest.wsapi.service.store;
 
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.domain.*;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubble;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.jws.WebParam;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Henrik Fredholm
@@ -14,4 +17,6 @@ import java.util.List;
 public interface StoreServiceWSI extends ServiceWSI {
     public StoreTestBubble getObject(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
     public StoreTestBubbleList getObjects(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
+    public StoreTestBubbleIdList getVersionsX(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
+    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForListX(@WebParam(name = "ids")StoreTestBubbleIdList ids,  @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 }

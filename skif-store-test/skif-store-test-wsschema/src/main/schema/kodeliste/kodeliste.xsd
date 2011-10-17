@@ -7,7 +7,7 @@
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
-    <xs:import schemaLocation="core.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
+    <xs:import schemaLocation="../core.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
 
     <xs:complexType name="KodeId">
         <xs:complexContent>
@@ -15,6 +15,27 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="KodeIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="kodelistens:KodeId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="KodeIdTestList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MyList2">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
 
     <xs:complexType name="Kode">
         <xs:complexContent>
@@ -33,11 +54,6 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="KodeIdList">
-        <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="kodelistens:KodeId"/>
-        </xs:sequence>
-    </xs:complexType>
 
     <xs:complexType name="KodelisteId">
         <xs:complexContent>

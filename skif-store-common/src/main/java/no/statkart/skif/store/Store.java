@@ -3,6 +3,7 @@ package no.statkart.skif.store;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -40,6 +41,8 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(Collection<I> bubbleIds);
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll();
 
+    public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end);
 
  /*
     <T extends BubbleObject> Collection<? extends T> get(Collection<? extends BubbleId<? extends T>> bubbleIds, MissingObjectStrategy obj);

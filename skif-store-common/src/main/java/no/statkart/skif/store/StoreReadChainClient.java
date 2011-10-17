@@ -1,8 +1,7 @@
-package no.statkart.skif.storetest.service.store;
+package no.statkart.skif.store;
 
 import com.google.inject.Inject;
 import no.statkart.skif.store.*;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,10 +11,10 @@ import java.util.List;
  * @author Henrik Fredholm
  */
 public class StoreReadChainClient implements StoreReadChain {
-    final private StoreService storeService;
+    final private no.statkart.skif.store.StoreService storeService;
 
     @Inject
-    public StoreReadChainClient(StoreService storeService) {
+    public StoreReadChainClient(no.statkart.skif.store.StoreService storeService) {
         this.storeService = storeService;
     }
 
@@ -26,7 +25,7 @@ public class StoreReadChainClient implements StoreReadChain {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> get(I bubbleId) {
-        T bubbleObject = (T)storeService.getObject((StoreTestBubbleId) bubbleId);
+        T bubbleObject = (T)storeService.getObject(bubbleId);
         return new StoreEntry<T>(bubbleObject);
     }
 

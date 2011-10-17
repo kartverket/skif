@@ -7,6 +7,7 @@ import no.statkart.skif.store.kodelistesupport.DbKodelisteId;
 import no.statkart.skif.storetest.domain.TestDbKodeId;
 import no.statkart.skif.storetest.domain.TestDbKodeliste;
 import no.statkart.skif.storetest.domain.TestDbKodelisteId;
+import no.statkart.skif.storetest.domain.TestKodelisteId;
 
 /**
  * @author Henrik Fredholm
@@ -15,7 +16,7 @@ import no.statkart.skif.storetest.domain.TestDbKodelisteId;
 public class TestADbKodeId extends DbKodeIdImpl<TestADbKode> implements TestDbKodeId<TestADbKode> {
     private static DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>> kodeSupport = new DbKodeSupport<TestDbKodeliste, TestDbKodelisteId<TestDbKodeliste>>(TestADbKodeId.class,new TestDbKodelisteId(10001L, SnapshotVersion.CURRENT));
 
-    public static DbKodelisteId KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static TestKodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static TestADbKodeId A1Id = define(1);
     public static TestADbKodeId A2Id = define(2);
 

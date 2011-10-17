@@ -16,11 +16,12 @@ import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.config.StoreTestGroup1Services;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.config.StoreTestStoreServices;
-import no.statkart.skif.storetest.service.store.StoreReadChainClient;
+import no.statkart.skif.store.StoreReadChainClient;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.simple.mapping.StoreTestExceptionMapper2;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.util.testsupport.SkifTestCase;
+import org.mockito.internal.matchers.Not;
 
 /**
  * @author Henrik Fredholm
@@ -55,6 +56,7 @@ public class StoreTestTestCase extends SkifTestCase {
                 install(new RemoteServiceModule(moduleConfiguration, new SkifServices().getServices(), new SkifMapper().getMapping()));
             }
             bind(StoreReadChain.class).to(StoreReadChainClient.class);
+            bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
         }
 
         @Provides

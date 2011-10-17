@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.domain;
 
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.*;
 import org.testng.annotations.Test;
 
@@ -40,6 +41,6 @@ public class EnumKodeSupportTest {
 // Hjelperklasse for ikke å skulle skrive så mye
 final class EnumKodeSupportHelper extends EnumKodeSupport<EnumKodeliste, EnumKodelisteId<EnumKodeliste>> {
     public EnumKodeSupportHelper(Class<? extends EnumKodeIdImpl<?>> idClass, long kodelisteIdValue, String kodelisteNavn) {
-        super(idClass, new EnumKodelisteIdImpl(kodelisteIdValue), kodelisteNavn);
+        super(idClass, new MyEnumKodelisteId(kodelisteIdValue), kodelisteNavn);
     }
 }

@@ -130,13 +130,15 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
             assertEquals(e.getFeilkode(), "IE000");
             assertEquals(e.getFeilkodebeskrivelse(), "Implementasjonsfeil");
 
+            // Server mapper automatisk ukjendte exception ved å wrapped dem i en  ImplementationException først.
+            // Stacktrace settes til det samme som opprindelig exception slik at det er enklet å se hvor feilen opprindelig forekom
             final StackTraceElement stackTraceElement = e.getStackTrace()[0];
-            assertEquals(stackTraceElement.getClassName(), "no.statkart.skif.mapper.AbstractExceptionMapper");
-            assertEquals(stackTraceElement.getFileName(), "AbstractExceptionMapper.java");
-            assertEquals(stackTraceElement.getMethodName(), "d2w");
+            assertEquals(stackTraceElement.getClassName(), "no.statkart.skif.skiftest.service.testd.DServiceEJBBean");
+            assertEquals(stackTraceElement.getFileName(), "DServiceEJBBean.java");
+            assertEquals(stackTraceElement.getMethodName(), "nonMappedEJBCall");
             assertTrue(stackTraceElement.getLineNumber() > 0);
 
-            // Sjekk exception
+            // Sjekk cause
             assertTrue(e.getCause().getMessage().endsWith("abc"));
             final StackTraceElement causeStackTraceElement = e.getCause().getStackTrace()[0];
             assertEquals(causeStackTraceElement.getClassName(), "no.statkart.skif.skiftest.service.testd.DServiceEJBBean");

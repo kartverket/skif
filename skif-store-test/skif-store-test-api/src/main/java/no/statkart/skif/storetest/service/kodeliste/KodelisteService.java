@@ -14,4 +14,6 @@ public interface KodelisteService {
     public Collection<? extends KodelisteId> getKodelisteIds();
 
     public KodelisteTransfer getKodelister();
+
+    public String getKodelisterTest();
 }

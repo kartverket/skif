@@ -54,7 +54,7 @@ public class StoreTestServerModule extends SkifModule {
     protected void configure() {
         install(new ServerModule(moduleConfiguration));
 
-        ServerStoreModule serverStoreModule = new ServerStoreModule(moduleConfiguration, "no/statkart/skif/storetest/persistence/hibernate") {
+        ServerStoreModule serverStoreModule = new ServerStoreModule(moduleConfiguration, no.statkart.skif.storetest.service.store.StoreService.class, "no/statkart/skif/storetest/persistence/hibernate") {
             @Override
             protected void configureHibernate(StoreHibernateSessionFactoryBuilder facotryBuilder) {
                 facotryBuilder.addResource(TestBubble.class);
@@ -71,6 +71,7 @@ public class StoreTestServerModule extends SkifModule {
 
         bind(Store.class).to(StoreServer.class);
         bind(DbKodelisteLoader.class).to(StoreTestKodelisteLoader.class);
+
 
 
         install(new ServerServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices()));

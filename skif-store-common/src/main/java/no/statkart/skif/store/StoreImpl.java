@@ -23,6 +23,9 @@ public class StoreImpl implements Store {
     @Inject
     private Injector injector;
 
+    @Inject
+    private StoreService storeService;
+
     public StoreImpl(StoreCache storeCache, StoreSessionChain... storeChain) {
         this.storeCache = storeCache;
         this.storeChain = storeChain;
@@ -423,6 +426,16 @@ public class StoreImpl implements Store {
             }
         }
         return objectEvicted;
+    }
+
+    @Override
+    public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
+        return storeService.getVersions(id, start, end);
+    }
+
+    @Override
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
+        return storeService.getVersionsForList(ids, start, end);
     }
 
     @Override

@@ -2,9 +2,11 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 
 import junit.framework.TestCase;
-import no.statkart.skif.storetest.domain.A;
-import no.statkart.skif.storetest.domain.TestBubble;
+import no.statkart.skif.store.kodelistesupport.Kodeliste;
+import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.storetest.domain.*;
 import no.statkart.skif.storetest.wsapi.domain.AList;
+import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -19,7 +19,7 @@ public interface Kodeliste extends BubbleObject {
 
     public void setNavn(String navn);
 
-    public List<? extends KodeId<?>> getKodeIds();
+    public List<KodeId<?>> getKodeIds();
 
     public void setKodeIds(List<? extends KodeId<?>> kodeIds);
 

@@ -1,6 +1,5 @@
 package no.statkart.skif.store;
 
-import com.sun.org.apache.xerces.internal.impl.dv.InvalidDatatypeValueException;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ReflectionException;
