@@ -222,12 +222,12 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="XId">
+    <xs:complexType name="StoreTestBubbleIdx">
         <xs:sequence>
             <xs:element name="value" type="xs:string"/>
-            </xs:sequence>
+            <xs:element name="snapshotVersion" type="corens:SnapshotVersion"/>
+        </xs:sequence>
     </xs:complexType>
-
 
 
 </xs:schema>

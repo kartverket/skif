@@ -14,19 +14,19 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="xId2">
+    <xs:complexType name="FailId">
         <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubbleId">
+            <xs:extension base="corens:StoreTestBubbleIdx">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
 
-    <xs:complexType name="KodeIdx">
+    <!--xs:complexType name="NotFailingIdx">
         <xs:sequence>
-            <xs:element name="fooId" type="corens:TestBubbleId" />
+            <xs:element name="fooId" type="corens:StoreTestBubbleId" />
         </xs:sequence>
-    </xs:complexType>
+    </xs:complexType-->
 
 
 
