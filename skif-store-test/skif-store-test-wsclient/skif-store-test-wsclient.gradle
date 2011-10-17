@@ -38,6 +38,9 @@ task genWsclient(dependsOn: ':skif-store-test:skif-store-test-wswar:jar') {
         ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/SequenceBlockAllocatorServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
         ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/HistTestServiceWS.wsdl", destdir: wsTargetDir, includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
 
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/KodelisteServiceWS.wsdl", destdir: file('build/generated/main/java.Kodeliste'), includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+        ant.clientgen(wsdl: "jar:file:${wsProject.jar.archivePath}!/WEB-INF/HistTestServiceWS.wsdl", destdir: file('build/generated/main/java.HistTest'), includeGlobalTypes: 'true', copywsdl: 'true', type: 'JAXWS')
+
         // clientgen compiles automatically files into destdir, but we need to fix source an compile again to another location
         ant.delete(dir: wsTargetDir) {include(name: '**/*.class')}
         ant.copy(todir: wsResourcesDir) {

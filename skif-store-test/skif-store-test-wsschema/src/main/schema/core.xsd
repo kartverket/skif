@@ -222,12 +222,4 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="StoreTestBubbleIdx">
-        <xs:sequence>
-            <xs:element name="value" type="xs:string"/>
-            <xs:element name="snapshotVersion" type="corens:SnapshotVersion"/>
-        </xs:sequence>
-    </xs:complexType>
-
-
 </xs:schema>

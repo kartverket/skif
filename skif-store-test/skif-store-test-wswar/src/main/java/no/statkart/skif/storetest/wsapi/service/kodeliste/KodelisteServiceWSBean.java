@@ -5,6 +5,7 @@ import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.*;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.*;
+import no.statkart.skif.storetest.wsapi.domain.ktest.FailId;
 import no.statkart.skif.storetest.wsapi.domain.ktest.MyList4;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 import no.statkart.skif.storetest.wsapi.service.store.StoreServiceWSI;
@@ -113,5 +114,6 @@ public class KodelisteServiceWSBean extends SkifWebService<KodelisteServiceWSI> 
         return myList;
     }
 
+    public FailId getFail()  { return null;}
 }
 
