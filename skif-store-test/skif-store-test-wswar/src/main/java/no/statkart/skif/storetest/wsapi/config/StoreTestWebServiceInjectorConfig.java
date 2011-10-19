@@ -9,7 +9,6 @@ import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.storetest.config.*;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.impl.mapping.StoreTestExceptionMapper;
-import no.statkart.skif.storetest.wsapi.exception.simple.mapping.StoreTestExceptionMapper2;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 
 import javax.servlet.ServletContextEvent;

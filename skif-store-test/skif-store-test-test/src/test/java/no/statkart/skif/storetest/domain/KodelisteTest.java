@@ -73,67 +73,14 @@ public class KodelisteTest extends StoreTestTestCase {
         assertNotNull(kodelisteTransfer);
     }
 
-    @Test(enabled = false)
-    public void testKodeIdLookup() throws ServiceException {
-        KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
-
-        StoreTestContext storeTestContext = new StoreTestContext();
-        storeTestContext.setLocale("no_NO");
-        storeTestContext.setSystemVersion("1");
-        no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService kodelisteWS= injector.getInstance(Key.get(new TypeLiteral<no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService>(){}));
-        no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer kodelister = kodelisteWS.getKodelister(storeTestContext);
-        Object kodelisterTest = kodelisteWS.getKodelisterTest(storeTestContext);
-
-        List<Kode> objects = new ArrayList<Kode>();
-        Store store = injector.getInstance(Store.class);
-        KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
-
-
-
-//        store.register(kodelisteTransfer.getObjects(), objects);
-//        KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
-//        TestBEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(TestBEnumKodeId.class, "B");
-//        assertSame(bKodeId, TestBEnumKodeId.KodeBId);
-    }
-
-
-    public void testMyList() throws ServiceException {
-        StoreTestContext storeTestContext = new StoreTestContext();
-        storeTestContext.setLocale("no_NO");
-        storeTestContext.setSystemVersion("1");
-        no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService kodelisteWS= injector.getInstance(Key.get(new TypeLiteral<no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService>() {
-        }));
-        Object kodelisterTest = kodelisteWS.getMyList(storeTestContext);
-        assertNotNull(kodelisterTest);
-
-    }
-
-    public void testMyList2() throws ServiceException {
-        StoreTestContext storeTestContext = new StoreTestContext();
-        storeTestContext.setLocale("no_NO");
-        storeTestContext.setSystemVersion("1");
-        no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService kodelisteWS= injector.getInstance(Key.get(new TypeLiteral<no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService>(){}));
-        Object kodelisterTest = kodelisteWS.getMyList2(storeTestContext);
-        assertNotNull(kodelisterTest);
-
-    }
-    public void testMyList3() throws ServiceException {
-        StoreTestContext storeTestContext = new StoreTestContext();
-        storeTestContext.setLocale("no_NO");
-        storeTestContext.setSystemVersion("1");
-        no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService kodelisteWS= injector.getInstance(Key.get(new TypeLiteral<no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService>(){}));
-        Object kodelisterTest = kodelisteWS.getMyList3(storeTestContext);
-        assertNotNull(kodelisterTest);
-
-    }
-    public void testMyList4() throws ServiceException {
-        StoreTestContext storeTestContext = new StoreTestContext();
-        storeTestContext.setLocale("no_NO");
-        storeTestContext.setSystemVersion("1");
-        no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService kodelisteWS= injector.getInstance(Key.get(new TypeLiteral<no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService>(){}));
-        MyList4 kodelisterTest = kodelisteWS.getMyList4(storeTestContext);
-        assertNotNull(kodelisterTest);
-        assertEquals(kodelisterTest.getItem().size(), 1);
-
-    }
+    public void testKodeIdLookup() {
+         KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
+         Store store = injector.getInstance(Store.class);
+         KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
+         List<Kode> objects = new ArrayList<Kode>();
+         store.register(kodelisteTransfer.getObjects(), objects);
+         KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
+         TestBEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(TestBEnumKodeId.class, "B");
+         assertSame(bKodeId, TestBEnumKodeId.KodeBId);
+     }
 }

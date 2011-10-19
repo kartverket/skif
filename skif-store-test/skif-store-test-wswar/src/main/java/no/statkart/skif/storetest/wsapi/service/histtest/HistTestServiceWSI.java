@@ -11,8 +11,8 @@ import javax.jws.WebParam;
  */
 public interface HistTestServiceWSI extends ServiceWSI {
 
-//    public FooIdList findFooIdsForNavn(@WebParam(name = "navn")String navn,@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion,@WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
-//    public BarFoosIdList findBarFoosIdsSomInneholderFooMedNavn(@WebParam(name = "navn")String navn,@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion,@WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
-//    public BarFoosIdList findBarFoosIdsMedBarOgFoo(@WebParam(name = "fooNavn")String fooNavn,@WebParam(name = "barId") BarId barId,@WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
+    public FooIdList findFooIdsForNavn(@WebParam(name = "navn")String navn,@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion,@WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
+    public BarFoosIdList findBarFoosIdsSomInneholderFooMedNavn(@WebParam(name = "navn")String navn,@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion,@WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
+    public BarFoosIdList findBarFoosIdsMedBarOgFoo(@WebParam(name = "fooNavn")String fooNavn,@WebParam(name = "barId") BarId barId,@WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
 
 }

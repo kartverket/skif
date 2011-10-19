@@ -42,19 +42,19 @@ public class HistTestServiceWSBean extends SkifWebService<HistTestServiceWSI> im
     public String  hello() { return null;}
     public StoreTestBubbleIdx hello1() { return null;}
 
-//    @Override
-//    @WebMethod
-//    public FooIdList findFooIdsForNavn(@WebParam(name = "navn") String navn, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
-//        return wsServiceChain.findFooIdsForNavn(navn, snapshotVersion, storeTestContext);
-//    }
+    @Override
+    @WebMethod
+    public FooIdList findFooIdsForNavn(@WebParam(name = "navn") String navn, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findFooIdsForNavn(navn, snapshotVersion, storeTestContext);
+    }
 
-//    @Override
-//    public BarFoosIdList findBarFoosIdsSomInneholderFooMedNavn(@WebParam(name = "navn") String navn, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
-//        return wsServiceChain.findBarFoosIdsSomInneholderFooMedNavn(navn, snapshotVersion, storeTestContext);
-//    }
-//
-//    @Override
-//    public BarFoosIdList findBarFoosIdsMedBarOgFoo(@WebParam(name = "fooNavn") String fooNavn, @WebParam(name = "barId") BarId barId, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
-//        return wsServiceChain.findBarFoosIdsMedBarOgFoo(fooNavn, barId, storeTestContext);
-//    }
+    @Override
+    public BarFoosIdList findBarFoosIdsSomInneholderFooMedNavn(@WebParam(name = "navn") String navn, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findBarFoosIdsSomInneholderFooMedNavn(navn, snapshotVersion, storeTestContext);
+    }
+
+    @Override
+    public BarFoosIdList findBarFoosIdsMedBarOgFoo(@WebParam(name = "fooNavn") String fooNavn, @WebParam(name = "barId") BarId barId, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findBarFoosIdsMedBarOgFoo(fooNavn, barId, storeTestContext);
+    }
 }

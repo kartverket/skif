@@ -16,12 +16,10 @@ import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.config.StoreTestGroup1Services;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.config.StoreTestStoreServices;
-import no.statkart.skif.store.StoreReadChainClient;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
-import no.statkart.skif.storetest.wsapi.exception.simple.mapping.StoreTestExceptionMapper2;
+import no.statkart.skif.storetest.wsapi.exception.impl.mapping.StoreTestExceptionMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.util.testsupport.SkifTestCase;
-import org.mockito.internal.matchers.Not;
 
 /**
  * @author Henrik Fredholm
@@ -46,9 +44,9 @@ public class StoreTestTestCase extends SkifTestCase {
         @Override
         protected void configure() {
             install(new RemoteServerModule(moduleConfiguration));
-            install(new RemoteServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices(), new StoreTestMapper().getMapping()).setExceptionMapping(new StoreTestExceptionMapper2().getMapping()));
+            install(new RemoteServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices(), new StoreTestMapper().getMapping()).setExceptionMapping(new StoreTestExceptionMapper().getMapping()));
             install(new RemoteServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices(), new StoreTestMapper().getMapping())
-                    .setExceptionMapping(new StoreTestExceptionMapper2().getMapping())
+                    .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
                     .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
             );
             //Legger til DBLockerService dersom man kjører i singleVm. Denne tjenesten finnes ikke som en webservice, og kan derfor ikke legges til ved kjøring av tester i client/server

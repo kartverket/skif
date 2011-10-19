@@ -111,7 +111,7 @@ public class StoreTestMappingD2WTest {
 
         // Map domain->wsapi
         no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste target = map.d2w(kodeliste);
-        assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.domain.TestAEnumKodeId");
+        assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.TestAEnumKodeId");
         assertEquals(target.getId().getValue(), "1" );
         assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class );
         assertEquals(target.getBeskrivelse(), "Test beskrivelse");

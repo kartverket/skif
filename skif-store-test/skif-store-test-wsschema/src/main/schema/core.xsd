@@ -128,7 +128,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!--
     <xs:complexType name="Foo">
         <xs:complexContent>
             <xs:extension base="corens:StoreTestBubble">
@@ -215,7 +214,7 @@
             <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:BarFoosId"/>
         </xs:sequence>
     </xs:complexType>
-    -->
+
     <xs:complexType name="MyList3">
         <xs:sequence>
             <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:string"/>
