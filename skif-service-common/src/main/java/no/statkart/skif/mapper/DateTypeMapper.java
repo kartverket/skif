@@ -4,7 +4,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
