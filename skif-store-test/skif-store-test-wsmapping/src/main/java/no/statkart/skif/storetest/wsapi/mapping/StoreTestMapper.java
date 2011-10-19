@@ -101,16 +101,14 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, TestKodelisteImpl.class));
 
         // Boble lister
-        addMapper(new WsapiListTypeMapper(AList.class, Collection.class));
+        addMapper(new WsapiListTypeMapper(StoreTestBubbleList.class, Collection.class));
 
         // Boble map
         addMapper(new WsapiMapTypeMapper(StoreTestBubbleIdListForStoreTestBubbleIdsMap.class, Map.class));
 
         // Non boble objekter
-        addMapper(new ATypeMapper(no.statkart.skif.storetest.wsapi.domain.A.class, A.class));
 
         // Non boble Lister
-        addMapper(new WsapiListTypeMapper(StoreTestBubbleList.class, Collection.class));
 
         // KodeId
         addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.TestAEnumKodeId.class, TestAEnumKodeId.class));

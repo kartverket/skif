@@ -44,9 +44,6 @@ public interface StoreTestMapping extends Mapping {
     public StoreTestBubbleList d2w(Collection source, StoreTestBubbleList target);
     public <T extends Collection> T w2d(StoreTestBubbleList source, T target);
 
-    public AList d2w(Collection source, AList target);
-    public <T extends Collection> T w2d(AList source, T target);
-
     public no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId d2w(KodeId<?> source);
     public KodeId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId source);
 

@@ -56,36 +56,14 @@ public class StoreServiceWSBean extends SkifWebService<StoreServiceWSI> implemen
 
     @Override
     @WebMethod
-    public StoreTestBubbleIdList getVersionsX(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
-        return wsServiceChain.getVersionsX(id, start, end, context);
+    public StoreTestBubbleIdList getVersions(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        return wsServiceChain.getVersions(id, start, end, context);
     }
 
     @Override
     @WebMethod
-    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForListX(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
-        return wsServiceChain.getVersionsForListX(ids, start, end, context);
+    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForList(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        return wsServiceChain.getVersionsForList(ids, start, end, context);
     }
-
-/*
-    @WebMethod
-    public no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer getTransfer(@WebParam(name = "context") StoreTestContext context) throws ServiceException {
-        KodelisteTransfer transfer = new KodelisteTransfer();
-        KodeIdList kodeIds = new KodeIdList();
-        KodeId kodeId = new KodeId();
-        kodeId.setValue("2");
-        kodeId.setSnapshotVersion(new SnapshotVersion());
-        kodeIds.getItem().add(kodeId);
-        transfer.setKodeIds(kodeIds);
-        return transfer;
-    }
-  */
-    @WebMethod
-    public MyList getMyList(@WebParam(name = "context") StoreTestContext context) throws ServiceException {
-        KodelisteTransfer transfer = new KodelisteTransfer();
-        MyList myList = new MyList();
-        myList.getItem().add("Hello1");
-        return myList;
-    }
-
 }
 

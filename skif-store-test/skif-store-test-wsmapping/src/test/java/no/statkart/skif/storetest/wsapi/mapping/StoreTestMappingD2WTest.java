@@ -52,40 +52,6 @@ public class StoreTestMappingD2WTest {
 
     }
 
-    /**
-     * Tester mapping2 av et API TestBubbleId objekt til Web Service TestBubbelId objekt
-     */
-    public void testMapTestA() {
-        A source = new A();
-        source.setText("10");
-        no.statkart.skif.storetest.wsapi.domain.A target = map.d2w(source);
-        assertNotNull(target);
-        assertEquals(target.getText(), "10");
-
-
-        target = map.d2w(source, no.statkart.skif.storetest.wsapi.domain.A.class);
-        assertNotNull(target);
-        assertEquals(target.getText(), "10");
-    }
-
-    /**
-     * Tester mapping2 av et sett med API TestBubbleId objekter til en liste Web Service TestBubbleId objekter
-     */
-    public void testMapTestASet() {
-        Set<A> source = new HashSet<A>();
-        AList target = new AList();
-        A a1 = new A();
-        A a2 = new A();
-        source.add(a1);
-        source.add(a2);
-        target = map.d2w(source, target);
-        assertEquals(target.getItem().size(), 2);
-        assertEquals(target.getItem().iterator().next().getClass(), no.statkart.skif.storetest.wsapi.domain.A.class);
-
-        target = map.d2w(source, AList.class);
-        assertEquals(target.getItem().size(), 2);
-        assertEquals(target.getItem().iterator().next().getClass(), no.statkart.skif.storetest.wsapi.domain.A.class);
-    }
 
     public void testMapTestBubble() {
         TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(10));

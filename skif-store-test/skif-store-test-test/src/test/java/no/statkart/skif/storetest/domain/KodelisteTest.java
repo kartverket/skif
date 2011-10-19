@@ -1,9 +1,6 @@
 package no.statkart.skif.storetest.domain;
 
 
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.store.KodeIdLookup;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.Store;
@@ -11,10 +8,6 @@ import no.statkart.skif.store.kodelistesupport.Kode;
 import no.statkart.skif.store.kodelistesupport.Kodeliste;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.domain.ktest.MyList4;
-import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-import no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteServiceWS;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;

@@ -177,31 +177,4 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertEquals(olderBarFoos.getFooIds().size(), 0);
 
     }
-/*
-    public void testKodeTransfer() throws ServiceException {
-        StoreTestContext storeTestContext = new StoreTestContext();
-        storeTestContext.setLocale("no_NO");
-        storeTestContext.setSystemVersion("1");
-
-        no.statkart.skif.storetest.wsapi.service.store.StoreService storeWS= injector.getInstance(Key.get(new TypeLiteral<no.statkart.skif.storetest.wsapi.service.store.StoreService>() {
-        }));
-        Object kodelisterTest = storeWS.getTransfer(storeTestContext);
-        assertNotNull(kodelisterTest);
-
-    }
-  */
-
-    public void testKodeTransfer() throws ServiceException {
-        StoreTestContext storeTestContext = new StoreTestContext();
-        storeTestContext.setLocale("no_NO");
-        storeTestContext.setSystemVersion("1");
-
-        no.statkart.skif.storetest.wsapi.service.store.StoreService storeWS= injector.getInstance(Key.get(new TypeLiteral<no.statkart.skif.storetest.wsapi.service.store.StoreService>() {
-        }));
-        Object kodelisterTest = storeWS.getMyList(storeTestContext);
-        assertNotNull(kodelisterTest);
-
-    }
-
-    //public void
-}
+ }

@@ -77,19 +77,6 @@
         </xs:sequence>
     </xs:complexType>
 
-
-    <xs:complexType name="MyList">
-        <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="StoreTestBubbleIdx2">
-        <xs:sequence>
-            <xs:element name="value" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-
     <xs:complexType name="TestBubbleId">
         <xs:complexContent>
             <xs:extension base="corens:StoreTestBubbleId">
@@ -107,19 +94,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- Ikke  bobler -->
-
-    <xs:complexType name="A">
-        <xs:sequence>
-            <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="AList">
-        <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:A"/>
-        </xs:sequence>
-    </xs:complexType>
 
     <xs:complexType name="FooId">
         <xs:complexContent>
@@ -215,10 +189,17 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="MyList3">
+    <!-- Ikke  bobler -->
+
+    <!--xs:complexType name="A">
         <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:string"/>
+            <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="AList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:A"/>
+        </xs:sequence>
+    </xs:complexType-->
 </xs:schema>

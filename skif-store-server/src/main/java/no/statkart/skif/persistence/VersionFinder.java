@@ -17,7 +17,7 @@ import java.util.List;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public class HistorikkFinder {
+public class VersionFinder {
 
     @Inject
     Provider<Connection> connectionProvider;

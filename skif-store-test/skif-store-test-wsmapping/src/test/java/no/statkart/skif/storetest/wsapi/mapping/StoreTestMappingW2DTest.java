@@ -2,14 +2,7 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 
 import junit.framework.TestCase;
-import no.statkart.skif.store.kodelistesupport.Kodeliste;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
-import no.statkart.skif.storetest.domain.*;
-import no.statkart.skif.storetest.wsapi.domain.AList;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
-
-import java.util.HashSet;
-import java.util.Set;
+import no.statkart.skif.storetest.domain.TestBubble;
 
 /**
  * @author Henrik Fredholm
@@ -40,28 +33,6 @@ public class StoreTestMappingW2DTest extends TestCase {
         assertEquals(target, 5);
     }
 
-    public void testMapA() {
-        no.statkart.skif.storetest.wsapi.domain.A source = new no.statkart.skif.storetest.wsapi.domain.A();
-        source.setText("a");
-        A target = map.w2d(source);
-        assertNotNull(target);
-        assertEquals("a", target.getText());
-    }
-
-    public void testMapAList() {
-        AList source = new AList();
-        Set<A> target = new HashSet<A>();
-
-        no.statkart.skif.storetest.wsapi.domain.A a1 = new no.statkart.skif.storetest.wsapi.domain.A();
-        a1.setText("a1");
-        no.statkart.skif.storetest.wsapi.domain.A a2 = new no.statkart.skif.storetest.wsapi.domain.A();
-        a2.setText("a2");
-        source.getItem().add(a1);
-        source.getItem().add(a2);
-        target = map.w2d(source, target);
-        assertEquals(2, target.size());
-        assertEquals(target.iterator().next().getClass(), no.statkart.skif.storetest.domain.A.class);
-    }
 
     public void testMapTestBubble() {
         no.statkart.skif.storetest.wsapi.domain.TestBubble source = new no.statkart.skif.storetest.wsapi.domain.TestBubble();

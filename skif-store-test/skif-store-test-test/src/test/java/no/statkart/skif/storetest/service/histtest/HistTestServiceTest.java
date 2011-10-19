@@ -18,6 +18,7 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
+ * Tester historisk navigering mellom bobler via servicekall og store
  * @author Henrik Fredholm
  */
 @Test

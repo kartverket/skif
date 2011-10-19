@@ -4,7 +4,6 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.*;
-import no.statkart.skif.storetest.wsapi.domain.w.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -38,9 +37,6 @@ public class HistTestServiceWSBean extends SkifWebService<HistTestServiceWSI> im
         Injector injector = StoreTestWebServiceInjectorConfig.getWebServiceInjector();
         wsServiceChain = getServiceImplementation(injector, ctx);
     }
-
-    public String  hello() { return null;}
-    public StoreTestBubbleIdx hello1() { return null;}
 
     @Override
     @WebMethod

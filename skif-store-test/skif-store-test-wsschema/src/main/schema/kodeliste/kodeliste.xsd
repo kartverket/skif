@@ -29,14 +29,6 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="MyList2">
-        <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-
-
-
     <xs:complexType name="Kode">
         <xs:complexContent>
             <xs:extension base="corens:StoreTestBubble">
