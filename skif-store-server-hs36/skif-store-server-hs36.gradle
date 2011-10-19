@@ -3,8 +3,7 @@ apply plugin: 'maven'
 dependencies {
     compile project(':skif-store-common')
     compile project(':skif-service-server')
-
-    // TODO: Sett opp Hibernate 3.6.2 dependencies
+    compile libraries.hibernate_3_6
 
     provided libraries.weblogic
 

@@ -211,8 +211,13 @@ libraries.hibernate_3_2 = [
 
 libraries.hibernate_tools_3_2 = [
         "org.hibernate:hibernate-tools:${versions.hibernate}@jar",
-        ]
+]
 
+libraries.hibernate_3_6 = [
+        'org.hibernate:hibernate-parent:3.6.4.Final',
+        'org.hibernate:hibernate-core:3.6.4.Final',
+        'javassist:javassist:3.12.0.GA'
+]
 
 def boolean isJavaProject(Project project) {
     return project.subprojects.size() == 0 && !project.name.endsWith('-ear')
