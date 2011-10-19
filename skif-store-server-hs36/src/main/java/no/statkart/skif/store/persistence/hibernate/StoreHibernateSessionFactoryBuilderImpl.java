@@ -4,7 +4,6 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizer;
-import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefConfiguration;
 import org.hibernate.MappingException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.event.DeleteEventListener;
@@ -17,7 +16,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @author Henrik Fredholm
+ * @author Roar Ingebrigtsen
+ * @since 2.5
  */
 public class StoreHibernateSessionFactoryBuilderImpl extends StoreHibernateSessionFactoryBuilder {
     public StoreHibernateSessionFactoryBuilderImpl(Properties hibernateProperties, String mappingFilesDirectory) {
@@ -28,10 +28,10 @@ public class StoreHibernateSessionFactoryBuilderImpl extends StoreHibernateSessi
         // Log databaseparametre. I singlevm mode brukes JDBCTransactionFactory (dvs url, bruker/password).
         // I servermode brukes JTATransactionFactory (dvs datasource)
         if (props.get("hibernate.transaction.factory_class").equals("org.hibernate.transaction.JDBCTransactionFactory")) {
-            logger.info("SKIF hibernatekonfigurasjon(3.2): " + props.get("hibernate.connection.url") + " - " + props.get("hibernate.connection.username"));
+            logger.info("SKIF hibernatekonfigurasjon(3.6): " + props.get("hibernate.connection.url") + " - " + props.get("hibernate.connection.username"));
         } else {
             // TODO: Dette blir feil for SnapshotVersion.OLD. Må bruke old datasource
-            logger.info("SKIF hibernatekonfigurasjon(3.2): " + props.get("hibernate.connection.datasource"));
+            logger.info("SKIF hibernatekonfigurasjon(3.6): " + props.get("hibernate.connection.datasource"));
         }
         ClassLoader cl = StoreHibernateSessionFactoryBuilder.class.getClassLoader();
         Configuration cfg = null;
@@ -39,7 +39,7 @@ public class StoreHibernateSessionFactoryBuilderImpl extends StoreHibernateSessi
             // NB: getBubbleClassDeleteOrder() definerer slette rekkefølgen for alle {@code BubbleObject} typer.
             // Metoden {@link #addResourceUsingAbsolutePath} legger automatisk {@code BubbleObject} klasser inn i listen i den rekkefølge
             // metoden blir kallt.
-            cfg = new BubbleRefConfiguration().setProperties(props);
+            cfg = new Configuration().setProperties(props);
             for (String hbm : hbmResource) {
                 cfg.addResource(hbm, cl);
             }
@@ -66,5 +66,4 @@ public class StoreHibernateSessionFactoryBuilderImpl extends StoreHibernateSessi
         }
         return cfg;
     }
-
 }
