@@ -7,7 +7,7 @@
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
-    <xs:import schemaLocation="../core.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
+    <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
 
     <xs:complexType name="KodeId">
         <xs:complexContent>

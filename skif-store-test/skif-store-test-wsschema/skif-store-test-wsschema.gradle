@@ -28,7 +28,6 @@ task jaxb {
         ant.taskdef(name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.jaxb.asPath)
         ant.xjc(destdir: "${jaxbTargetDir}", extension: 'true') {
             arg(line: '-grunnbokDoc no.statkart.skif.storetest.wsapi.domain no.statkart.skif.teststore.domain')
-//            schema(dir: "${jaxbSourceDir}", includes: 'w/abc.xsd,core.xsd,exceptionSimple.xsd,exceptionComplex.xsd,histtest.xsd,ktest.xsd,storetest.xsd,kodeliste/kodeliste.xsd,bcore.xsd')
             schema(dir: "${jaxbSourceDir}", includes: '**/*.xsd')
         }
     }

@@ -92,11 +92,11 @@ public abstract class AbstractSkifTestExceptionMapper2 implements ExceptionMappi
         throw new NotImplementedException("na");
     }
 
-    public <T extends Collection> T d2w(Collection source, T target) {
+    public <T extends Object> T d2w(Object source, T target) {
         throw new NotImplementedException("na");
     }
 
-    public <T extends Collection> T w2d(Collection source, T target) {
+    public <T extends Object> T w2d(Object source, T target) {
         throw new NotImplementedException("na");
     }
 

@@ -1,5 +1,7 @@
 package no.statkart.skif.mapper;
 
+import no.statkart.skif.SkifUtil;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -13,6 +15,7 @@ public class WsapiMapTypeMapper<WsapiT, DomainT extends Map<Object, Collection>>
     private Method getEntryMethod;
     private Class<?> entryClass;
     private Method getValueMethod;
+    private Method setValueMethod;
     private Method setKeyMethod;
     private Method getKeyMethod;
 
@@ -32,6 +35,7 @@ public class WsapiMapTypeMapper<WsapiT, DomainT extends Map<Object, Collection>>
 
         try{
             getValueMethod = entryClass.getMethod("getValue");
+            setValueMethod = entryClass.getMethod("setValue", getValueMethod.getReturnType());
             getKeyMethod = entryClass.getMethod("getKey");
             setKeyMethod = entryClass.getMethod("setKey", getKeyMethod.getReturnType());
         } catch (NoSuchMethodException e) {
@@ -59,10 +63,10 @@ public class WsapiMapTypeMapper<WsapiT, DomainT extends Map<Object, Collection>>
         Set<Map.Entry<Object,Collection>> entrySet = source.entrySet();
         for (Map.Entry<Object, Collection> entry : entrySet) {
             Object wsapiEntry = createEntry();
-            List wsapiValue = getValueForEntry(wsapiEntry);
-
             Object key = map.d2w(entry.getKey());
             setKeyForEntry(wsapiEntry, key);
+            Object wsapiValue = createAndSetValueForEntry(wsapiEntry);
+
             map.d2w(entry.getValue(), wsapiValue);
 
             entryList.add(wsapiEntry);
@@ -120,6 +124,18 @@ public class WsapiMapTypeMapper<WsapiT, DomainT extends Map<Object, Collection>>
             return (List) getValueMethod.invoke(wsapiEntry);
         } catch (IllegalAccessException e) {
             throw new MappingException("Call to method getValue for entryClass failed. Entryclass: " + entryClass.getName(), e);
+        } catch (InvocationTargetException e) {
+            throw new MappingException("Call to method getValue for entryClass failed. Entryclass: " + entryClass.getName(), e);
+        }
+    }
+
+    private Object createAndSetValueForEntry(Object wsapiEntry) {
+        try {
+            Object wsList = SkifUtil.newInstance(getValueMethod.getReturnType());
+            setValueMethod.invoke(wsapiEntry, wsList);
+            return wsList;
+        } catch (IllegalAccessException e) {
+            throw new MappingException("Call to method setValue for entryClass failed. Entryclass: " + entryClass.getName(), e);
         } catch (InvocationTargetException e) {
             throw new MappingException("Call to method getValue for entryClass failed. Entryclass: " + entryClass.getName(), e);
         }
