@@ -5,9 +5,9 @@ import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-import no.statkart.skif.storetest.domain.BarFoosId;
-import no.statkart.skif.storetest.domain.BarId;
-import no.statkart.skif.storetest.domain.FooId;
+import no.statkart.skif.storetest.domain.demo.BarFoosId;
+import no.statkart.skif.storetest.domain.demo.BarId;
+import no.statkart.skif.storetest.domain.demo.FooId;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;

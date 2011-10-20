@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.wsapi.service.kodeliste;
 
 import no.statkart.skif.service.ws.ServiceWSI;
-import no.statkart.skif.storetest.wsapi.domain.*;
+import no.statkart.skif.storetest.wsapi.domain.demo.*;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;

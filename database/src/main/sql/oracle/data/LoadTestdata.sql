@@ -31,10 +31,10 @@ insert into TestCKodeLoc values(10, 'n', 'Kodebeskrivelse for C2A nynorsk');
 insert into TestCKodeLoc values(11, 'b', 'Kodebeskrivelse for C2B bokmål');
 insert into TestCKodeLoc values(11, 'n', 'Kodebeskrivelse for C2B nynorsk');
 
-insert into Kodeliste values(10001, 'TestAKode', 'no.statkart.skif.storetest.domain.kodeliste.TestADbKode');
-insert into Kodeliste values(10002, 'TestBKode', 'no.statkart.skif.storetest.domain.kodeliste.TestBDbKode');
-insert into Kodeliste values(10003, 'TestC1Kode', 'no.statkart.skif.storetest.domain.kodeliste.TestC1DbKode');
-insert into Kodeliste values(10004, 'TestC2Kode', 'no.statkart.skif.storetest.domain.kodeliste.TestC2DbKode');
+insert into Kodeliste values(10001, 'TestAKode', 'no.statkart.skif.storetest.domain.demo.koder.TestADbKode');
+insert into Kodeliste values(10002, 'TestBKode', 'no.statkart.skif.storetest.domain.demo.koder.TestBDbKode');
+insert into Kodeliste values(10003, 'TestC1Kode', 'no.statkart.skif.storetest.domain.demo.koder.TestC1DbKode');
+insert into Kodeliste values(10004, 'TestC2Kode', 'no.statkart.skif.storetest.domain.demo.koder.TestC2DbKode');
 
 insert into KodelisteLoc values(10001, 'b', 'Kodelistebeskrivelse for TestAKode bokmål');
 insert into KodelisteLoc values(10001, 'n', 'Kodelistebeskrivelse for TestAKode nynorsk');

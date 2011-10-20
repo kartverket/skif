@@ -6,7 +6,7 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.storetest.domain.TestEntity;
+import no.statkart.skif.storetest.domain.demo.TestEntity;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

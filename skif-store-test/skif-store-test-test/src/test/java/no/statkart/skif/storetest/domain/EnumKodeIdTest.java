@@ -6,6 +6,8 @@ import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.EnumKodeIdImpl;
 import no.statkart.skif.store.kodelistesupport.KodeIdImpl;
+import no.statkart.skif.storetest.domain.demo.koder.TestAEnumKode;
+import no.statkart.skif.storetest.domain.demo.koder.TestAEnumKodeId;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
@@ -44,7 +46,7 @@ public class EnumKodeIdTest {
 
     public void testCopy() {
         TestAEnumKodeId id = CopyHelper.copy(TestAEnumKodeId.KodeAId);
-        assertSame(id, no.statkart.skif.storetest.domain.TestAEnumKodeId.KodeAId);
+        assertSame(id, TestAEnumKodeId.KodeAId);
     }
 
     public void testGetKodelisteId() {

@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 
 import junit.framework.TestCase;
-import no.statkart.skif.storetest.domain.TestBubble;
+import no.statkart.skif.storetest.domain.demo.TestBubble;
 
 /**
  * @author Henrik Fredholm
@@ -35,8 +35,8 @@ public class StoreTestMappingW2DTest extends TestCase {
 
 
     public void testMapTestBubble() {
-        no.statkart.skif.storetest.wsapi.domain.TestBubble source = new no.statkart.skif.storetest.wsapi.domain.TestBubble();
-        no.statkart.skif.storetest.wsapi.domain.TestBubbleId sourceId = new no.statkart.skif.storetest.wsapi.domain.TestBubbleId();
+        no.statkart.skif.storetest.wsapi.domain.demo.TestBubble source = new no.statkart.skif.storetest.wsapi.domain.demo.TestBubble();
+        no.statkart.skif.storetest.wsapi.domain.demo.TestBubbleId sourceId = new no.statkart.skif.storetest.wsapi.domain.demo.TestBubbleId();
         sourceId.setValue("10");
         source.setId(sourceId);
         source.setText("Test");

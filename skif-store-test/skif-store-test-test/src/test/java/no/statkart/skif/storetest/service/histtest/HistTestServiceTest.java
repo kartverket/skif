@@ -1,16 +1,12 @@
 package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
-import com.google.inject.Key;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.*;
-import no.statkart.skif.storetest.service.store.StoreService;
+import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;

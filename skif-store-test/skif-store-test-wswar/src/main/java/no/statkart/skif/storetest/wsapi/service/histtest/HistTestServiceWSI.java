@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.wsapi.service.histtest;
 
 import no.statkart.skif.service.ws.ServiceWSI;
-import no.statkart.skif.storetest.wsapi.domain.*;
+import no.statkart.skif.storetest.wsapi.domain.demo.*;
 
 import javax.jws.WebParam;
 

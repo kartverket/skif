@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.wsapi.service.histtest;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
-import no.statkart.skif.storetest.wsapi.domain.*;
+import no.statkart.skif.storetest.wsapi.domain.demo.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

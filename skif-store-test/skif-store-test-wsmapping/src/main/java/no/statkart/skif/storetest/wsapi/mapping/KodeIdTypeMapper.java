@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.storetest.domain.TestKodeId;
+import no.statkart.skif.storetest.domain.kode.TestKodeId;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author Henrik Fredholm
  * @since 0.3
  */
-public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId, DomainT extends TestKodeId> extends AbstractStoreTestTypeMapper<WsapiT,DomainT> {
+public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kode.KodeId, DomainT extends TestKodeId> extends AbstractStoreTestTypeMapper<WsapiT,DomainT> {
 
     public KodeIdTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
         super(wsapiClass, domainClass);

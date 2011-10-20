@@ -2,8 +2,8 @@
 <xs:schema
         version="1.0"
         elementFormDefault="qualified"
-        targetNamespace="http://skif.statkart.no/storetest/wsapi/exception/impl"
-        xmlns="http://skif.statkart.no/storetest/wsapi/exception/impl"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/exception"
+        xmlns="http://skif.statkart.no/storetest/wsapi/exception"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:gdoc="http://grunnbok.statkart.no/tools/gdoc"
         xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"

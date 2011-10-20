@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest.domain.BarFoos">
+    <class name="no.statkart.skif.storetest.domain.demo.BarFoos">
         <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.BarFoosIdType">
             <generator class="assigned"/>
         </id>
@@ -12,7 +12,7 @@
         <many-to-one
                 name="bar"
                 column="barId"
-                class="no.statkart.skif.storetest.domain.Bar">
+                class="no.statkart.skif.storetest.domain.demo.Bar">
             <meta attribute="bubble-ref"/>
         </many-to-one>
 
@@ -20,7 +20,7 @@
             <meta attribute="bubble-ref"/>
             <key column="barFoosId"/>
             <many-to-many
-                    class="no.statkart.skif.storetest.domain.Foo"
+                    class="no.statkart.skif.storetest.domain.demo.Foo"
                     column="fooId"/>
         </set>
     </class>

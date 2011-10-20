@@ -2,9 +2,9 @@ package no.statkart.skif.storetest.domain;
 
 
 import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.storetest.domain.kodeliste.TestC1DbKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.TestC2DbKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.TestDbSubclassedKodeIdImpl;
+import no.statkart.skif.storetest.domain.demo.koder.TestC1DbKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.TestC2DbKodeId;
+import no.statkart.skif.storetest.domain.kode.TestDbSubclassedKodeIdImpl;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;

@@ -2,14 +2,10 @@ package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
 import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.*;
+import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-import no.statkart.skif.storetest.wsapi.service.kodeliste.KodelisteService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

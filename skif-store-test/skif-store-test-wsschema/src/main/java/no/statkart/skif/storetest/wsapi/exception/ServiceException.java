@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.wsapi.exception;
 
 import javax.xml.ws.WebFault;
-import no.statkart.skif.storetest.wsapi.exception.impl.*;
 
 /**
  * Se dokumentasjon i {@link ServiceFaultInfo}

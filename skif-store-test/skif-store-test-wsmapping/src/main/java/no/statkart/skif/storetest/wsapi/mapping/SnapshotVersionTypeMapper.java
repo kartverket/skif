@@ -9,14 +9,14 @@ import java.sql.Timestamp;
  * @author Roar Ingebrigtsen
  * @since 2.5
  */
-public class SnapshotVersionTypeMapper extends AbstractStoreTestTypeMapper<no.statkart.skif.storetest.wsapi.domain.SnapshotVersion, SnapshotVersion> {
+public class SnapshotVersionTypeMapper extends AbstractStoreTestTypeMapper<no.statkart.skif.storetest.wsapi.domain.demo.SnapshotVersion, SnapshotVersion> {
 
     protected SnapshotVersionTypeMapper() {
-        super(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion.class, SnapshotVersion.class);
+        super(no.statkart.skif.storetest.wsapi.domain.demo.SnapshotVersion.class, SnapshotVersion.class);
     }
 
     @Override
-    public void mapDomainObject(SnapshotVersion source, no.statkart.skif.storetest.wsapi.domain.SnapshotVersion target) {
+    public void mapDomainObject(SnapshotVersion source, no.statkart.skif.storetest.wsapi.domain.demo.SnapshotVersion target) {
         super.mapDomainObject(source, target);
 
         Timestamp timestamp = source.getTimestamp();
@@ -25,12 +25,12 @@ public class SnapshotVersionTypeMapper extends AbstractStoreTestTypeMapper<no.st
     }
 
     @Override
-    public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion source, SnapshotVersion target) {
+    public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.demo.SnapshotVersion source, SnapshotVersion target) {
         super.mapWsapiObject(source, target);
     }
 
     @Override
-    protected SnapshotVersion getInitialDomainObject(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    protected SnapshotVersion getInitialDomainObject(no.statkart.skif.storetest.wsapi.domain.demo.SnapshotVersion source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Timestamp timestamp = new Timestamp(source.getTime());
         timestamp.setNanos(source.getNanos());
         return SnapshotVersion.createInstance(timestamp);

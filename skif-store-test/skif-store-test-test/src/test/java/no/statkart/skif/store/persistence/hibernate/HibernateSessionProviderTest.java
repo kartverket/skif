@@ -1,21 +1,15 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.inject.*;
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
-import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.scope.ServiceRequestScope;
-import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.storetest.TestHelper;
-import no.statkart.skif.storetest.domain.TestBubble;
-import no.statkart.skif.storetest.domain.TestBubbleId;
+import no.statkart.skif.storetest.domain.demo.TestBubble;
+import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.testng.annotations.Test;
-import weblogic.protocol.ConnectMonitorFactory;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertSame;

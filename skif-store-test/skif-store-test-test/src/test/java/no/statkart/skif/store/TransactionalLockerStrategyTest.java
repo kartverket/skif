@@ -4,7 +4,7 @@ import no.statkart.skif.exception.NotLockedException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.service.locker.DBLockerService;
-import no.statkart.skif.storetest.domain.TestBubbleId;
+import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;

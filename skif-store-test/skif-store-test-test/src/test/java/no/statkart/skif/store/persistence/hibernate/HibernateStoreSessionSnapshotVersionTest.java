@@ -3,11 +3,8 @@ package no.statkart.skif.store.persistence.hibernate;
 import com.google.inject.Injector;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.persistence.StoreSession;
 import no.statkart.skif.storetest.TestHelper;
-import no.statkart.skif.storetest.domain.TestBubble;
-import no.statkart.skif.storetest.domain.TestBubbleId;
-import org.hibernate.Transaction;
+import no.statkart.skif.storetest.domain.demo.TestBubble;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;

@@ -1,19 +1,19 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.storetest.domain.Foo;
+import no.statkart.skif.storetest.domain.demo.Foo;
 
 /**
  * @author Roar Ingebrigtsen
  * @since 2.5
  */
-public class FooTypeMapper extends StoreTestBubbleTypeMapper<no.statkart.skif.storetest.wsapi.domain.Foo, Foo> {
+public class FooTypeMapper extends StoreTestBubbleTypeMapper<no.statkart.skif.storetest.wsapi.domain.demo.Foo, Foo> {
 
     public FooTypeMapper() {
-        super(no.statkart.skif.storetest.wsapi.domain.Foo.class, Foo.class);
+        super(no.statkart.skif.storetest.wsapi.domain.demo.Foo.class, Foo.class);
     }
 
     @Override
-    public void mapDomainObject(Foo source, no.statkart.skif.storetest.wsapi.domain.Foo target) {
+    public void mapDomainObject(Foo source, no.statkart.skif.storetest.wsapi.domain.demo.Foo target) {
         super.mapDomainObject(source, target);
         
         target.setBeginLifespanVersion(map.d2w(source.getBeginLifespanVersion()));
@@ -23,7 +23,7 @@ public class FooTypeMapper extends StoreTestBubbleTypeMapper<no.statkart.skif.st
     }
 
     @Override
-    public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.Foo source, Foo target) {
+    public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.demo.Foo source, Foo target) {
         super.mapWsapiObject(source, target);
 
         target.setBeginLifespanVersion(map.w2d(source.getBeginLifespanVersion()));

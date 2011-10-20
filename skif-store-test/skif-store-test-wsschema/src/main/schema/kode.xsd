@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/kode"
+        xmlns:kodens="http://skif.statkart.no/storetest/wsapi/domain/kode"
+        xmlns:corens="http://skif.statkart.no/storetest/wsapi/domain/demo"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/demo"/>
+
+    <xs:complexType name="KodeId">
+        <xs:complexContent>
+            <xs:extension base="corens:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="KodeIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="kodens:KodeId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="KodeIdTestList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Kode">
+        <xs:complexContent>
+            <xs:extension base="corens:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="kodeverdi" type="xs:string"/>
+                    <xs:element name="beskrivelse" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="KodeList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="kodens:Kode"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

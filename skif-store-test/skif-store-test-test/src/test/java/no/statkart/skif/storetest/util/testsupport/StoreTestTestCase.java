@@ -17,7 +17,7 @@ import no.statkart.skif.storetest.config.StoreTestGroup1Services;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.config.StoreTestStoreServices;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
-import no.statkart.skif.storetest.wsapi.exception.impl.mapping.StoreTestExceptionMapper;
+import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 

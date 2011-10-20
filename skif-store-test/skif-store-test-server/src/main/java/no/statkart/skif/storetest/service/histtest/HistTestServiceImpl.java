@@ -6,14 +6,13 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManager;
-import no.statkart.skif.storetest.domain.*;
+import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Query;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

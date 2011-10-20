@@ -23,7 +23,10 @@ import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
 import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate;
-import no.statkart.skif.storetest.domain.*;
+import no.statkart.skif.storetest.domain.demo.*;
+import no.statkart.skif.storetest.domain.demo.koder.TestAEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.TestBEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.TestCEnumKodeId;
 import no.statkart.skif.storetest.persistence.StoreTestKodelisteLoader;
 import no.statkart.skif.storetest.persistence.StoreTestStorePersisterStrategy;
 

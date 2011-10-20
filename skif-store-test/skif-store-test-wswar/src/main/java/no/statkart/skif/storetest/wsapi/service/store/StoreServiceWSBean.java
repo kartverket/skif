@@ -3,10 +3,7 @@ package no.statkart.skif.storetest.wsapi.service.store;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
-import no.statkart.skif.storetest.wsapi.domain.*;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer;
+import no.statkart.skif.storetest.wsapi.domain.demo.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.annotation.PostConstruct;

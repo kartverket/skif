@@ -1,12 +1,10 @@
 package no.statkart.skif.storetest.service.histtest;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.*;
+import no.statkart.skif.storetest.domain.demo.BarFoosId;
+import no.statkart.skif.storetest.domain.demo.BarId;
+import no.statkart.skif.storetest.domain.demo.FooId;
 
-import javax.naming.Context;
-import javax.swing.text.StyleContext;
-import java.util.List;
 import java.util.Set;
 
 /**

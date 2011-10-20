@@ -5,7 +5,7 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
-import no.statkart.skif.storetest.domain.TestBubble;
+import no.statkart.skif.storetest.domain.demo.TestBubble;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.testng.annotations.Test;

@@ -1,9 +1,7 @@
 package no.statkart.skif.storetest.wsapi.service.store;
 
 import no.statkart.skif.service.ws.ServiceWSI;
-import no.statkart.skif.storetest.wsapi.domain.*;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubble;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
+import no.statkart.skif.storetest.wsapi.domain.demo.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.jws.WebParam;

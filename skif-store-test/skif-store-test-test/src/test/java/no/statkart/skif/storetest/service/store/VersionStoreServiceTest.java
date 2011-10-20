@@ -3,13 +3,12 @@ package no.statkart.skif.storetest.service.store;
 import com.google.inject.Inject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.Foo;
-import no.statkart.skif.storetest.domain.FooId;
+import no.statkart.skif.storetest.domain.demo.Foo;
+import no.statkart.skif.storetest.domain.demo.FooId;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;

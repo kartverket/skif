@@ -2,8 +2,8 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.kodelistesupport.KodeId;
-import no.statkart.skif.storetest.domain.TestKodeliste;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
+import no.statkart.skif.storetest.domain.kodeliste.TestKodeliste;
+import no.statkart.skif.storetest.wsapi.domain.kode.KodeIdList;
 
 /**
  * @author Henrik Fredholm
