@@ -14,4 +14,5 @@ public interface BubbleId<T extends BubbleObject> extends Serializable{
     public T createTypeInstance();
     public Class getBaseType();
     public Class getType();
+    public Class getIdValueType();
 }

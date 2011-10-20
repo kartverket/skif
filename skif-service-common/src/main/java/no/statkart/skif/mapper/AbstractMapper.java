@@ -31,11 +31,11 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
 
     enum DIRECTION {
         /**
-         * mapping2 from domain to webserivce classes
+         * mapping from domain to webserivce classes
          */
         D2W,
         /**
-         * mapping2 from webservice to domain classes
+         * mapping from webservice to domain classes
          */
         W2D
     }
@@ -204,6 +204,8 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 return new ArrayList();
             } else if (clazz.equals(Set.class)) {
                 return new HashSet();
+            } else if (clazz.equals(Map.class)) {
+                return new HashMap();
             } else {
                 throw new MappingException("Mapper har ikke kjenskap til implementerende klasse av den abstrakte typen " + clazz
                         .getName());
@@ -247,6 +249,9 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 if (typeMapper instanceof WsapiListTypeMapper) {
                     target = getCollection(args);
                     typeMapper.mapWsapiObject(source, target);
+                } else if (typeMapper instanceof WsapiMapTypeMapper) {
+                    target = getMap(args);
+                    typeMapper.mapWsapiObject(source, target);
                 } else if (typeMapper instanceof DefaultTypeMapper) {
                     target = getTargetForGenericTypeMapper(args);
                     if (target==null) {
@@ -289,7 +294,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 }
                 break;
             default:
-                throw new MappingException("Expected a second parameter in mapping2 class " + args[0].getClass()
+                throw new MappingException("Expected a second parameter in mapping class " + args[0].getClass()
                         .getName());
         }
         return result;
@@ -311,7 +316,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                         if (target instanceof Collection) {
                             result = (Collection) target;
                         } else {
-                            throw new MappingException("Expected instantiable Collection class as second parameter in mapping2 class " + args[0]
+                            throw new MappingException("Expected instantiable Collection class as second parameter in mapping class " + args[0]
                                     .getClass()
                                     .getName());
                         }
@@ -323,7 +328,41 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 }
                 break;
             default:
-                throw new MappingException("Expected a second parameter in mapping2 class " + args[0].getClass()
+                throw new MappingException("Expected a second parameter in mapping class " + args[0].getClass()
+                        .getName());
+        }
+        return result;
+    }
+
+
+    private Map getMap(Object[] args) {
+        Map result = null;
+        switch (args.length) {
+            case 1:
+                result = new HashMap();
+                break;
+            case 2:
+                if (args[1] instanceof Map) {
+                    result = (Map) args[1];
+                } else if (args[1] instanceof Class) {
+                    try {
+                        Object target = createNewInstance((Class) args[1]);
+                        if (target instanceof Map) {
+                            result = (Map) target;
+                        } else {
+                            throw new MappingException("Expected instantiable Map class as second parameter in mapping class " + args[0]
+                                    .getClass()
+                                    .getName());
+                        }
+                    } catch (InstantiationException e) {
+                        throw new MappingException(e);
+                    } catch (IllegalAccessException e) {
+                        throw new MappingException(e);
+                    }
+                }
+                break;
+            default:
+                throw new MappingException("Expected a second parameter in mapping class " + args[0].getClass()
                         .getName());
         }
         return result;

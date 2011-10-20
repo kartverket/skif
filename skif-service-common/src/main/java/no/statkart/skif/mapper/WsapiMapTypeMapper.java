@@ -119,9 +119,9 @@ public class WsapiMapTypeMapper<WsapiT, DomainT extends Map<Object, Collection>>
         }
     }
 
-    private List getValueForEntry(Object wsapiEntry) {
+    private Object getValueForEntry(Object wsapiEntry) {
         try {
-            return (List) getValueMethod.invoke(wsapiEntry);
+            return getValueMethod.invoke(wsapiEntry);
         } catch (IllegalAccessException e) {
             throw new MappingException("Call to method getValue for entryClass failed. Entryclass: " + entryClass.getName(), e);
         } catch (InvocationTargetException e) {
