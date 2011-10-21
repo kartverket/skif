@@ -34,6 +34,10 @@ public abstract class KodeIdImpl<T extends KodeImpl> extends AbstractBubbleId<T>
     }
 
 
+    public Long getValue() {
+        return (Long) super.getValue();
+    }
+
     protected KodeIdImpl(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
@@ -41,10 +45,6 @@ public abstract class KodeIdImpl<T extends KodeImpl> extends AbstractBubbleId<T>
     @Override
     public KodelisteIdImpl<?> getKodelisteId() {
         return (KodelisteIdImpl<?>) getKodeSupport().getKodelisteId();
-    }
-
-    public Long getValue() {
-        return (Long) super.getValue();
     }
 
     protected abstract KodeSupport getKodeSupport();

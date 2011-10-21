@@ -3,10 +3,10 @@ package no.statkart.skif.persistence;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.ValidationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.util.StoreJDBCHelper;
 import no.statkart.skif.util.JDBCHelper;
 
 import java.sql.*;
@@ -35,7 +35,6 @@ public class VersionFinder {
 
         Timestamp intervalStartValue = getTimestampValue(start);
         Timestamp intervalEndValue = getTimestampValue(end);
-        long idValue = (Long)bubbleId.getValue();
 
         Connection connection = connectionProvider.get();
         PreparedStatement preparedStatement = null;
@@ -43,7 +42,7 @@ public class VersionFinder {
         try {
             preparedStatement = connection.prepareStatement(sql);
 
-            preparedStatement.setLong(1, idValue);
+            StoreJDBCHelper.setBubbleId(preparedStatement, 1, bubbleId);
             preparedStatement.setTimestamp(2, intervalStartValue);
             preparedStatement.setTimestamp(3, intervalEndValue);
             preparedStatement.setTimestamp(4, intervalStartValue);
@@ -53,17 +52,14 @@ public class VersionFinder {
 
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                idValue = resultSet.getLong(1);
-                Timestamp timestamp = resultSet.getTimestamp(2);
-                SnapshotVersion snapshotVersion = SnapshotVersion.createInstance(timestamp.toString());
-                retur.add((I) BubbleIds.createInstance(bubbleId.getClass(), idValue, snapshotVersion));
+                I id = StoreJDBCHelper.getBubbleIdWithSnapshot(resultSet, 1, 2, bubbleId);
+                retur.add(id);
             }
         } catch (SQLException e) {
             throw new ImplementationException("Feil oppstod under kjøring av sql: " + sql + " med parametre " + tabellnavn + ", " + intervalStartValue + " og " + intervalEndValue, e);
         } finally {
             JDBCHelper.close(resultSet, preparedStatement);
         }
-
         return retur;
     }
 
@@ -86,3 +82,4 @@ public class VersionFinder {
         return simpleName.substring(0, simpleName.length() - 2) + "_H";
     }
 }
+

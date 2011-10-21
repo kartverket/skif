@@ -34,16 +34,16 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         String typeName;
         Class type;
         Class baseType;
-        Class idValueType;
+        Class valueType;
 
         public TypeInfo(String typeName, Class type, Class baseType, Class idClass) {
             this.typeName = typeName;
             this.type = type;
             this.baseType = baseType;
-            this.idValueType = calcIdValueType(idClass);
+            this.valueType = calcIdValueType(idClass);
 //            Class<?> t = calcIdValueType(type);
-//            if (idValueType != t) {
-//                throw new ImplementationException(String.format("Id-klasse og base id-klasse har forskjellig idValue type. %s->%s og %s->%s", type.getName(), t.getName(), baseType.getName(), idValueType.getName()));
+//            if (valueType != t) {
+//                throw new ImplementationException(String.format("Id-klasse og base id-klasse har forskjellig idValue type. %s->%s og %s->%s", type.getName(), t.getName(), baseType.getName(), valueType.getName()));
 //            }
         }
 
@@ -146,15 +146,15 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
     @Override
-    public Class getIdValueType() {
+    public Class getValueType() {
         if (typeInfo == null) {
             typeInfo = getTypeInfo(clazz);
         }
-        return typeInfo.idValueType;
+        return typeInfo.valueType;
     }
 
-    public static Class getIdValueType(Class<? extends AbstractBubbleId> type) {
-        return getTypeInfo(type).idValueType;
+    public static Class getValueType(Class<? extends BubbleId> type) {
+        return getTypeInfo(type).valueType;
     }
 
     @Override

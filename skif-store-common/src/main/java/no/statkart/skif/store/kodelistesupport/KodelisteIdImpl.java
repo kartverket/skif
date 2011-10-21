@@ -2,12 +2,18 @@ package no.statkart.skif.store.kodelistesupport;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.AbstractBubbleId;
+import sun.awt.SunHints;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
 public class KodelisteIdImpl<T extends KodelisteImpl> extends AbstractBubbleId<T> implements KodelisteId<T> {
+
+    @Override
+    public Long getValue() {
+        return (Long)super.getValue();
+    }
 
     public KodelisteIdImpl(long value) {
         super(new Long(value));

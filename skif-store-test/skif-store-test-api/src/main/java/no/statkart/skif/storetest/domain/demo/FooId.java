@@ -8,7 +8,13 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
+
 public class FooId <T extends Foo> extends AbstractBubbleId<T> implements StoreTestBubbleId<T> {
+
+    @Override
+    public Long getValue() {
+        return (Long)super.getValue();
+    }
 
     public FooId(Long value) {
         super(value, SnapshotVersion.CURRENT);

@@ -41,7 +41,7 @@ public class StoreTestMappingW2DTest extends TestCase {
         source.setId(sourceId);
         source.setText("Test");
         TestBubble target = map.w2d(source);
-        assertEquals(target.getId().getValue(), 10L);
+        assertEquals(target.getId().getValue(), new Long(10));
         assertEquals(target.getText(), "Test");
     }
 }

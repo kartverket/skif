@@ -10,8 +10,9 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
  */
 public class TestBubbleId<T extends TestBubble> extends AbstractBubbleId<T> implements StoreTestBubbleId<T> {
 
-    public TestBubbleId<T> resolveInstance() {
-        return this;
+    @Override
+    public Long getValue() {
+        return (Long) super.getValue();
     }
 
     public TestBubbleId() {

@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
  * @since 2.0
  */
 public class BubbleIds {
+
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, long idValue) {
         return createInstance(idClass, new Long(idValue), SnapshotVersion.CURRENT);
     }
@@ -34,5 +35,10 @@ public class BubbleIds {
         } catch (InvocationTargetException e) {
             throw new ImplementationException(e);
         }
+    }
+
+    public static Class getValueType(Class<? extends BubbleId> clazz) {
+        // TODO: bruke reflection på clazz istedet for å gå mot direkte AbstractBubbleId
+        return AbstractBubbleId.getValueType(clazz);
     }
 }
