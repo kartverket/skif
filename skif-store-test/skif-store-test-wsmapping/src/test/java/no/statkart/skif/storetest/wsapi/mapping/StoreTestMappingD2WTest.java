@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 import no.statkart.skif.storetest.domain.demo.koder.TestADbKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.TestAEnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.*;
-import no.statkart.skif.storetest.wsapi.domain.demo.StoreTestBubbleId;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import org.testng.annotations.Test;
 
 import java.util.List;

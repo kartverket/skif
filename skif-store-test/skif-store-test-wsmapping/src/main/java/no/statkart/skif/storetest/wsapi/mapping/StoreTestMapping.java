@@ -6,6 +6,8 @@ import no.statkart.skif.store.kodelistesupport.Kode;
 import no.statkart.skif.store.kodelistesupport.KodeId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
 import no.statkart.skif.storetest.wsapi.domain.demo.*;
 import no.statkart.skif.storetest.wsapi.domain.kode.KodeIdList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
@@ -18,20 +20,20 @@ import java.util.Collection;
  * @since 0.3
  */
 public interface StoreTestMapping extends Mapping {
-    public StoreTestBubbleId<? extends StoreTestBubble> w2d(no.statkart.skif.storetest.wsapi.domain.demo.StoreTestBubbleId source);
-    public no.statkart.skif.storetest.wsapi.domain.demo.StoreTestBubbleId d2w(StoreTestBubbleId<? extends StoreTestBubble> source);
+    public StoreTestBubbleId<? extends StoreTestBubble> w2d(no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId source);
+    public no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId d2w(StoreTestBubbleId<? extends StoreTestBubble> source);
 
     public StoreTestBubbleIdList d2w(Collection source, StoreTestBubbleIdList target);
     public <T extends Collection> T w2d(StoreTestBubbleIdList source, T target);
 
-//    public no.statkart.skif.storetest.wsapi.domain.demo.StoreTestBubble d2w(StoreTestBubble source);
-//    public TestBubble w2d(no.statkart.skif.storetest.wsapi.domain.demo.StoreTestBubble source);
+//    public no.statkart.skif.storetest.wsapi.domain.StoreTestBubble d2w(StoreTestBubble source);
+//    public TestBubble w2d(no.statkart.skif.storetest.wsapi.domain.StoreTestBubble source);
 
-    public no.statkart.skif.storetest.wsapi.domain.demo.Timestamp d2w(Timestamp source);
-    public Timestamp w2d(no.statkart.skif.storetest.wsapi.domain.demo.Timestamp source);
+    public no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp d2w(Timestamp source);
+    public Timestamp w2d(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp source);
 
-    public no.statkart.skif.storetest.wsapi.domain.demo.SnapshotVersion d2w(SnapshotVersion source);
-    public SnapshotVersion w2d(no.statkart.skif.storetest.wsapi.domain.demo.SnapshotVersion source);
+    public no.statkart.skif.storetest.wsapi.domain.SnapshotVersion d2w(SnapshotVersion source);
+    public SnapshotVersion w2d(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion source);
 
     public StoreTestBubbleList d2w(Collection source, StoreTestBubbleList target);
     public <T extends Collection> T w2d(StoreTestBubbleList source, T target);

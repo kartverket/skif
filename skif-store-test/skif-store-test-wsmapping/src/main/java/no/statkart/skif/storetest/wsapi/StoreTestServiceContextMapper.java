@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.service.AbstractServiceContextMapper;
 import no.statkart.skif.service.ServiceContext;
-import no.statkart.skif.storetest.wsapi.domain.demo.StoreTestContext;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 
 
 /**

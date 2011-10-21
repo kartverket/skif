@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
+        xmlns:basetypens="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <!-- ================================================= -->
+    <!-- Basisklasser                                      -->
+    <!-- ================================================= -->
+    <xs:complexType name="Timestamp">
+        <xs:sequence>
+            <xs:element name="time" type="xs:long"/>
+            <xs:element name="nanos" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

@@ -1,12 +1,10 @@
 package no.statkart.skif.storetest.wsapi.service.store;
 
 import no.statkart.skif.service.ws.ServiceWSI;
-import no.statkart.skif.storetest.wsapi.domain.demo.*;
+import no.statkart.skif.storetest.wsapi.domain.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.jws.WebParam;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Henrik Fredholm

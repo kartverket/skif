@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xs:schema
         version="1.0"
-        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/demo"
-        xmlns:corens="http://skif.statkart.no/storetest/wsapi/domain/demo"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain"
+        xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
-    <!-- ================================================= -->
-    <!-- Basisklasser                                      -->
-    <!-- ================================================= -->
     <xs:complexType name="SnapshotVersion">
-        <xs:sequence>
-            <xs:element name="time" type="xs:long"/>
-            <xs:element name="nanos" type="xs:int"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="Timestamp">
         <xs:sequence>
             <xs:element name="time" type="xs:long"/>
             <xs:element name="nanos" type="xs:int"/>
@@ -26,13 +16,13 @@
     <xs:complexType name="StoreTestBubbleId">
         <xs:sequence>
             <xs:element name="value" type="xs:string"/>
-            <xs:element name="snapshotVersion" type="corens:SnapshotVersion"/>
+            <xs:element name="snapshotVersion" type="domainns:SnapshotVersion"/>
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="StoreTestBubbleIdList">
         <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:StoreTestBubbleId"/>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="domainns:StoreTestBubbleId"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -49,8 +39,8 @@
             <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="key" nillable="true" type="corens:StoreTestBubbleId"/>
-                        <xs:element name="value" type="corens:StoreTestBubbleIdList"/>
+                        <xs:element name="key" nillable="true" type="domainns:StoreTestBubbleId"/>
+                        <xs:element name="value" type="domainns:StoreTestBubbleIdList"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -59,14 +49,14 @@
 
     <xs:complexType name="StoreTestBubble">
         <xs:sequence>
-            <xs:element name="id" type="corens:StoreTestBubbleId"/>
+            <xs:element name="id" type="domainns:StoreTestBubbleId"/>
             <xs:element name="version" type="xs:long"/>
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="StoreTestBubbleList">
         <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:StoreTestBubble"/>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="domainns:StoreTestBubble"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -77,129 +67,4 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="TestBubbleId">
-        <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubbleId">
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="TestBubble">
-        <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubble">
-                <xs:sequence>
-                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-
-    <xs:complexType name="FooId">
-        <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubbleId">
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="Foo">
-        <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubble">
-                <xs:sequence>
-                    <xs:element name="nr" type="xs:long" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="navn" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="beginLifespanVersion" type="corens:Timestamp" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="endLifespanVersion" type="corens:Timestamp" minOccurs="1" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="FooIdList">
-        <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:FooId"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="BarId">
-        <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubbleId">
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="Bar">
-        <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubble">
-                <xs:sequence>
-                    <xs:element name="husnr" type="xs:long" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="bokstav" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="fooId" type="corens:FooId" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="bazId" type="corens:BazId" minOccurs="1" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="BarIdList">
-        <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:BarId"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="BazId">
-        <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubbleId">
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="Baz">
-        <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubble">
-                <xs:sequence>
-                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="fooId" type="corens:FooId" minOccurs="1" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="BarFoosId">
-        <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubbleId">
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="BarFoos">
-        <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubble">
-                <xs:sequence>
-                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="barId" type="corens:BarId" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="FooIds" type="corens:FooIdList" minOccurs="1" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="BarFoosIdList">
-        <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:BarFoosId"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <!-- Ikke  bobler -->
-
-    <!--xs:complexType name="A">
-        <xs:sequence>
-            <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="AList">
-        <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:A"/>
-        </xs:sequence>
-    </xs:complexType-->
 </xs:schema>

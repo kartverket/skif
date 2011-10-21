@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author Henrik Fredholm
  * @since 0.3
  */
-public class StoreTestBubbleIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.demo.StoreTestBubbleId, DomainT extends StoreTestBubbleId> extends AbstractStoreTestTypeMapper<WsapiT,DomainT> {
+public class StoreTestBubbleIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId, DomainT extends StoreTestBubbleId> extends AbstractStoreTestTypeMapper<WsapiT,DomainT> {
 
     public StoreTestBubbleIdTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
         super(wsapiClass, domainClass);

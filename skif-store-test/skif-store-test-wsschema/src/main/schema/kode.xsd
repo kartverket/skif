@@ -3,15 +3,15 @@
         version="1.0"
         targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/kode"
         xmlns:kodens="http://skif.statkart.no/storetest/wsapi/domain/kode"
-        xmlns:corens="http://skif.statkart.no/storetest/wsapi/domain/demo"
+        xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
-    <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/demo"/>
+    <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
 
     <xs:complexType name="KodeId">
         <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubbleId">
+            <xs:extension base="domainns:StoreTestBubbleId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -31,7 +31,7 @@
 
     <xs:complexType name="Kode">
         <xs:complexContent>
-            <xs:extension base="corens:StoreTestBubble">
+            <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
                     <xs:element name="kodeverdi" type="xs:string"/>
                     <xs:element name="beskrivelse" type="xs:string"/>
