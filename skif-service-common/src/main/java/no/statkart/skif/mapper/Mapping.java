@@ -2,7 +2,7 @@ package no.statkart.skif.mapper;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Collection;
 
 /**
@@ -22,8 +22,8 @@ public interface Mapping extends BaseMapping {
     public <T> T d2w(Object source, Class<T> targetClass);
     public <T> T w2d(Object source, Class<T> targetClass);
 
-    public <T extends Object> T d2w(Object source);
-    public <T extends Object> T w2d(Object source);
+    public <T> T d2w(Object source);
+    public <T> T w2d(Object source);
 
     public Object[] d2w(Object[] source, Class<?>[] webServiceParameterTypes);
     public Object[] w2d(Object[] source, Class<?>[] domainServiceParameterTypes);

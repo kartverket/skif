@@ -1,23 +1,17 @@
 package no.statkart.skif.storetest.wsapi.exception.simple.mapping;
 
-import no.statkart.skif.exception.NotImplementedException;
-import no.statkart.skif.exception.SkifException;
-import no.statkart.skif.mapper.*;
-import no.statkart.skif.mapper.ObjectFactory;
+import no.statkart.skif.mapper.ExceptionMapping;
+import no.statkart.skif.mapper.MappingException;
 import no.statkart.skif.storetest.wsapi.exception.SimpleException;
-import no.statkart.skif.storetest.wsapi.exception.simple.*;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.util.Collection;
+import no.statkart.skif.storetest.wsapi.exception.simple.SimpleFaultInfo;
 
 /**
  * Enkel exception mapper for storetest som bare kan mapper SimpleExcpetion over JAX-WS. I tillegg mappes alle runtime exceptions på
  * klienten via {@link no.statkart.skif.mapper.IdentityExceptionTypeMapper} slik at runtime exception fra JAX-WS kommer igjennom til klient.
  *
  *
- * Her benyttes et eget hirarki av exceptions og ikke skif's stuktur.
+ * Her benyttes et eget hirarki av
+ * exceptions og ikke skif's stuktur.
  *
  * @author Henrik Fredholm
  * @since 1.1
@@ -31,6 +25,7 @@ public class StoreTestExceptionMapper2 extends AbstractStoreTestExceptionMapper2
     @Override
     public <T extends Throwable, S extends Throwable> T d2w(S source) {
         if (source instanceof no.statkart.skif.storetest.exception.SimpleException) {
+            //noinspection unchecked,ThrowableResultOfMethodCallIgnored
             return (T) buildExternalSimpleException((no.statkart.skif.storetest.exception.SimpleException) source);
         }
         if (source instanceof Error) {
@@ -53,6 +48,7 @@ public class StoreTestExceptionMapper2 extends AbstractStoreTestExceptionMapper2
     @Override
     public <S extends Throwable, T extends Throwable> T w2d(S source) {
         if (source instanceof SimpleException) {
+            //noinspection unchecked,ThrowableResultOfMethodCallIgnored
             return (T) buildInternalSimpleException((SimpleException) source);
         }
 
