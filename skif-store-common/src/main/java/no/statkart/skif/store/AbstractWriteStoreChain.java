@@ -3,7 +3,7 @@ package no.statkart.skif.store;
 /**
  * @author Henrik Fredholm
  */
-public abstract class AbstractWriteStoreChain extends AbstractStoreSessionChain implements StoreSessionUpdateChain {
+public abstract class AbstractWriteStoreChain extends AbstractStoreChain implements StoreSessionUpdateChain {
     protected StoreSessionUpdateChain nextInWriteChain;
 
     @Override

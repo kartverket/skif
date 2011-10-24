@@ -4,9 +4,9 @@ configurations {
 
 dependencies {
     compile project(':skif-store-server')
-    if(hibernateVersion == '3.2') {
+    if(hibernateVersion.equals("3.2")) {
       compile project(':skif-store-server-hs32')
-    } else {
+    } else if(hibernateVersion.equals("3.6")){
       compile project(':skif-store-server-hs36')
     }
     compile project(':skif-store-test:skif-store-test-api')
@@ -14,9 +14,6 @@ dependencies {
 
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
-    testCompile libraries.dbunit
-
-
 }
 
 task clientJar(type: Jar) {

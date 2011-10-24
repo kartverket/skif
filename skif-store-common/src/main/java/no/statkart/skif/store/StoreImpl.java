@@ -1,12 +1,12 @@
 package no.statkart.skif.store;
 
 
+import com.google.inject.Injector;
+import no.statkart.skif.exception.ConfigurationException;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
-
-import com.google.inject.Injector;
-import no.statkart.skif.exception.ConfigurationException;
 
 import static no.statkart.skif.guava.Preconditions.checkNotNull;
 
@@ -22,6 +22,9 @@ public class StoreImpl implements Store {
 
     @Inject
     private Injector injector;
+
+    @Inject
+    private StoreService storeService;
 
     public StoreImpl(StoreCache storeCache, StoreSessionChain... storeChain) {
         this.storeCache = storeCache;
@@ -426,6 +429,16 @@ public class StoreImpl implements Store {
     }
 
     @Override
+    public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
+        return storeService.getVersions(id, start, end);
+    }
+
+    @Override
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
+        return storeService.getVersionsForList(ids, start, end);
+    }
+
+    @Override
     public void startUnitOfWork() {
         uowChain.startUnitOfWork();
     }
@@ -451,7 +464,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <S> S getService(Class<S> serviceClass) {
+    public <S> S getInstance(Class<S> serviceClass) {
         return  injector.getInstance((serviceClass));
 
     }

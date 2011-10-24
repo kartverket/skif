@@ -5,13 +5,12 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.service.ServiceRequestContext;
-import no.statkart.skif.store.ReplicaVersion;
-import no.statkart.skif.store.persistence.StoreSessionManager;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionSeed;
+import no.statkart.skif.store.persistence.StoreSession;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
 
 /**
  * @author Henrik Fredholm
@@ -19,13 +18,15 @@ import java.sql.SQLException;
 public class HibernateStoreSessionManagerSingleVersionImpl extends AbstractHibernateSessionManager<HibernateStoreSessionManagerEntry> implements HibernateStoreSessionManager {
     private static Logger logger = LoggerFactory.getLogger(HibernateSessionManagerSingleVersionImpl.class);
     private final ServiceRequestContext serviceRequestContext;
-    private HibernateStoreSessionManagerEntry entry = new HibernateStoreSessionManagerEntry(ReplicaVersion.CURRENT);
+    private HibernateStoreSessionManagerEntry entry = new HibernateStoreSessionManagerEntry(SnapshotVersion.CURRENT);
+    private long versionedContextLevel = 0;
+    private long versionedSessionLevel = 0;
 
     @Inject
-    public HibernateStoreSessionManagerSingleVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManager hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
+    public HibernateStoreSessionManagerSingleVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManagerSingleVersionImpl hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
         super(connectionFactoryManager, hibernateSessionFactoryManager);
         this.serviceRequestContext = serviceRequestContext;
-        entry.key = ReplicaVersion.CURRENT;
+        entry.key = SnapshotVersion.CURRENT;
     }
 
     @Override
@@ -35,7 +36,7 @@ public class HibernateStoreSessionManagerSingleVersionImpl extends AbstractHiber
 
 
     @Override
-    public void closeHibernateSession(HibernateStoreSessionManagerEntry entry) throws SQLException {
+    public void closeHibernateSession(HibernateStoreSessionManagerEntry entry) {
         super.closeHibernateSession(entry);
         entry.storeSession = null;
     }
@@ -47,7 +48,7 @@ public class HibernateStoreSessionManagerSingleVersionImpl extends AbstractHiber
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close() {
         closeEntry(entry);
 
     }
@@ -64,19 +65,19 @@ public class HibernateStoreSessionManagerSingleVersionImpl extends AbstractHiber
     }
 
     @Override
-    public void commit() throws SQLException {
+    public void commit()  {
         commitEntry(entry);
 
     }
 
     @Override
-    public void rollback() throws SQLException {
+    public void rollback()  {
         rollbackEntry(entry);
     }
 
     @Override
-    public HibernateStoreSession getStoreSession(Object key) throws SQLException {
-        HibernateStoreSessionManagerEntry entry = getEntry(key);
+    public HibernateStoreSession getStoreSession(SnapshotVersion snapshotVersion) {
+        HibernateStoreSessionManagerEntry entry = getEntry(snapshotVersion);
         if (entry.storeSession == null) {
             Session hibernateSession = getHibernateSession(entry);
             entry.storeSession = createHibernateStoreSession(entry.session, entry.key);
@@ -85,7 +86,49 @@ public class HibernateStoreSessionManagerSingleVersionImpl extends AbstractHiber
     }
 
     protected HibernateStoreSession createHibernateStoreSession(Session session, Object key) {
-        return new HibernateStoreSession(session, (ReplicaVersion) key);
+        return HibernateVersionFactory.Accessor.get().createHibernateStoreSession(session, (SnapshotVersionSeed) key);
     }
 
+    @Override
+    public void beginSnapshotScope(SnapshotVersion snapshotVersion) {
+        if (snapshotVersion != SnapshotVersion.CURRENT) {
+            throw new UnsupportedOperationException();
+        }
+        versionedContextLevel++;
+
+    }
+
+    @Override
+    public void endSnapshotScope() {
+        if (versionedContextLevel==0) {
+            throw new ImplementationException("Too many endSnapshotScope calls");
+        }
+        versionedContextLevel--;
+    }
+
+    @Override
+    public HibernateStoreSession acquireSnapshotStoreSessionUsingSnapshotScope() {
+        versionedSessionLevel++;
+        return getStoreSession(SnapshotVersion.CURRENT);
+    }
+
+    @Override
+    public HibernateStoreSession acquireSnapshotStoreSession(SnapshotVersion snapshotVersion) {
+        if (snapshotVersion != SnapshotVersion.CURRENT) {
+            throw new UnsupportedOperationException();
+        }
+        versionedSessionLevel++;
+        return getStoreSession(snapshotVersion);
+    }
+
+    @Override
+    public void releaseSnapshotStoreSession(StoreSession storeSession) {
+        if (versionedSessionLevel==0) {
+            throw new ImplementationException("Too many endSnapshotScope calls");
+        }
+        if (entry.storeSession!=storeSession) {
+            throw new ImplementationException("StoreSession being released does not match expected session");
+        }
+        versionedSessionLevel--;
+    }
 }

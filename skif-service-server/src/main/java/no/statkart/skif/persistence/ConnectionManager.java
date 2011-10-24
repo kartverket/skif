@@ -19,11 +19,12 @@ import java.sql.SQLException;
  * @since 2.0
  */
 public interface ConnectionManager {
-    Connection getConnection(Object key) throws SQLException;
+    Connection getConnection(Object key);
     boolean isActive(Object key);
-    void close(Object key) throws SQLException;
-    void close() throws SQLException;
+    void close(Object key);
+    void close();
     void beginTransaction();
-    void commit() throws SQLException;
-    void rollback() throws SQLException;
+    void commit();
+    void rollback();
+
 }

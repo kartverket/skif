@@ -1,14 +1,15 @@
 insert into TestEntity values (1, 'Text 1');
 insert into TestBubble values (1, 'Text 1');
+insert into TestBubble values (2, 'Text 2');
 
 insert into TableSequence (tableName, nextFreeNumber) values ('GLOBAL_SEQUENCE',999999);
 
 insert into TestAKode values(1, 'A1');
-insert into TestAKode values(2, 'A2');
+insert into TestAKode values(2, 'A');
 insert into TestAKodeLoc values(1, 'b', 'Kodebeskrivelse for A1 bokmål');
 insert into TestAKodeLoc values(1, 'n', 'Kodebeskrivelse for A1 nynorsk');
-insert into TestAKodeLoc values(2, 'b', 'Kodebeskrivelse for A2 bokmål');
-insert into TestAKodeLoc values(2, 'n', 'Kodebeskrivelse for A2 nynorsk');
+insert into TestAKodeLoc values(2, 'b', 'Kodebeskrivelse for A bokmål');
+insert into TestAKodeLoc values(2, 'n', 'Kodebeskrivelse for A nynorsk');
 
 insert into TestBKode values(1, 'B1');
 insert into TestBKode values(2, 'B2');
@@ -30,10 +31,10 @@ insert into TestCKodeLoc values(10, 'n', 'Kodebeskrivelse for C2A nynorsk');
 insert into TestCKodeLoc values(11, 'b', 'Kodebeskrivelse for C2B bokmål');
 insert into TestCKodeLoc values(11, 'n', 'Kodebeskrivelse for C2B nynorsk');
 
-insert into Kodeliste values(10001, 'TestAKode', 'no.statkart.skif.storetest.domain.kodeliste.TestADbKode');
-insert into Kodeliste values(10002, 'TestBKode', 'no.statkart.skif.storetest.domain.kodeliste.TestBDbKode');
-insert into Kodeliste values(10003, 'TestC1Kode', 'no.statkart.skif.storetest.domain.kodeliste.TestC1DbKode');
-insert into Kodeliste values(10004, 'TestC2Kode', 'no.statkart.skif.storetest.domain.kodeliste.TestC2DbKode');
+insert into Kodeliste values(10001, 'TestAKode', 'no.statkart.skif.storetest.domain.demo.koder.TestADbKode');
+insert into Kodeliste values(10002, 'TestBKode', 'no.statkart.skif.storetest.domain.demo.koder.TestBDbKode');
+insert into Kodeliste values(10003, 'TestC1Kode', 'no.statkart.skif.storetest.domain.demo.koder.TestC1DbKode');
+insert into Kodeliste values(10004, 'TestC2Kode', 'no.statkart.skif.storetest.domain.demo.koder.TestC2DbKode');
 
 insert into KodelisteLoc values(10001, 'b', 'Kodelistebeskrivelse for TestAKode bokmål');
 insert into KodelisteLoc values(10001, 'n', 'Kodelistebeskrivelse for TestAKode nynorsk');
@@ -44,46 +45,31 @@ insert into KodelisteLoc values(10003, 'n', 'Kodelistebeskrivelse for TestC1Kode
 insert into KodelisteLoc values(10004, 'b', 'Kodelistebeskrivelse for TestC2Kode bokmål');
 insert into KodelisteLoc values(10004, 'n', 'Kodelistebeskrivelse for TestC2Kode nynorsk');
 
-insert into TestEntity2 values (1, 'Text 1');
-insert into TestBubble2 values (1, 'Text 1');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:00:00.00'),snapshot_time.to_t('2011-10-02 08:01:00.00'),1,2200,'KARTGATA');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:01:00.00'),snapshot_time.to_t('2011-10-02 08:02:00.00'),2,2200,'KARTVEGEN');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:02:00.00'),snapshot_time.to_t('2011-10-02 08:03:00.00'),3,2200,'KARTVEIEN');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:03:00.00'),snapshot_time.to_t('2011-10-02 08:04:00.00'),4,2200,'KART-VEIEN');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:04:00.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),5,2200,'KARTVEIEN');
 
-insert into TestAKode2 values(1, 'A1');
-insert into TestAKode2 values(2, 'A2');
-insert into TestAKode2Loc values(1, 'b', 'Kodebeskrivelse for A1 bokmål');
-insert into TestAKode2Loc values(1, 'n', 'Kodebeskrivelse for A1 nynorsk');
-insert into TestAKode2Loc values(2, 'b', 'Kodebeskrivelse for A2 bokmål');
-insert into TestAKode2Loc values(2, 'n', 'Kodebeskrivelse for A2 nynorsk');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (101,snapshot_time.to_t('2011-10-02 08:03:00.00'),snapshot_time.to_t('2011-10-02 08:04:00.00'),1,2201,'GAMMEL-VEIEN');
+insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (101,snapshot_time.to_t('2011-10-02 08:04:00.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,2201,'GAMMELVEIEN');
 
-insert into TestBKode2 values(1, 'B1');
-insert into TestBKode2 values(2, 'B2');
-insert into TestBKode2Loc values(1, 'b', 'Kodebeskrivelse for B1 bokmål');
-insert into TestBKode2Loc values(1, 'n', 'Kodebeskrivelse for B1 nynorsk');
-insert into TestBKode2Loc values(2, 'b', 'Kodebeskrivelse for B2 bokmål');
-insert into TestBKode2Loc values(2, 'n', 'Kodebeskrivelse for B2 nynorsk');
+insert into BAZ (ID, TEXT, FOOID) values (501, 'Baz 1', 100);
+insert into BAZ (ID, TEXT, FOOID) values (502, 'Baz 2', 100);
+insert into BAZ (ID, TEXT, FOOID) values (503, 'Baz 3', 101);
 
-insert into TestCKode2 values(1, 'C1A', 'TestC1DbKode2');
-insert into TestCKode2 values(2, 'C1B', 'TestC1DbKode2');
-insert into TestCKode2 values(10, 'C2A', 'TestC2DbKode2');
-insert into TestCKode2 values(11, 'C2B', 'TestC2DbKode2');
-insert into TestCKode2Loc values(1, 'b', 'Kodebeskrivelse for C1A bokmål');
-insert into TestCKode2Loc values(1, 'n', 'Kodebeskrivelse for C1A nynorsk');
-insert into TestCKode2Loc values(2, 'b', 'Kodebeskrivelse for C1B bokmål');
-insert into TestCKode2Loc values(2, 'n', 'Kodebeskrivelse for C1B nynorsk');
-insert into TestCKode2Loc values(10, 'b', 'Kodebeskrivelse for C2A bokmål');
-insert into TestCKode2Loc values(10, 'n', 'Kodebeskrivelse for C2A nynorsk');
-insert into TestCKode2Loc values(11, 'b', 'Kodebeskrivelse for C2B bokmål');
-insert into TestCKode2Loc values(11, 'n', 'Kodebeskrivelse for C2B nynorsk');
+insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID, BAZID) values (1001,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,105,NULL,100, 501);
+insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID, BAZID) values (1001,snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,106,NULL,100, 502);
+insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID, BAZID) values (1002,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,205,NULL,100, 503);
+insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID, BAZID) values (1002,snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,206,NULL,100, 503);
 
-insert into Kodeliste2 values(10001, 'TestAKode2', 'no.statkart.skif.storetest.domain2.kodeliste.TestADbKode2');
-insert into Kodeliste2 values(10002, 'TestBKode2', 'no.statkart.skif.storetest.domain2.kodeliste.TestBDbKode2');
-insert into Kodeliste2 values(10003, 'TestC1Kode2', 'no.statkart.skif.storetest.domain2.kodeliste.TestC1DbKode2');
-insert into Kodeliste2 values(10004, 'TestC2Kode2', 'no.statkart.skif.storetest.domain2.kodeliste.TestC2DbKode2');
 
-insert into Kodeliste2Loc values(10001, 'b', 'Kodelistebeskrivelse for TestAKode2 bokmål');
-insert into Kodeliste2Loc values(10001, 'n', 'Kodelistebeskrivelse for TestAKode2 nynorsk');
-insert into Kodeliste2Loc values(10002, 'b', 'Kodelistebeskrivelse for TestBKode bokmål');
-insert into Kodeliste2Loc values(10002, 'n', 'Kodelistebeskrivelse for TestBKode nynorsk');
-insert into Kodeliste2Loc values(10003, 'b', 'Kodelistebeskrivelse for TestC1Kode bokmål');
-insert into Kodeliste2Loc values(10003, 'n', 'Kodelistebeskrivelse for TestC1Kode nynorsk');
-insert into Kodeliste2Loc values(10004, 'b', 'Kodelistebeskrivelse for TestC2Kode bokmål');
-insert into Kodeliste2Loc values(10004, 'n', 'Kodelistebeskrivelse for TestC2Kode nynorsk');
+insert into BARFOOS_H (ID,TBEGIN,TEND,TVERSION,TEXT,BARID) values (2001,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,'Text 1',1001);
+insert into BARFOOS_H (ID,TBEGIN,TEND,TVERSION,TEXT,BARID) values (2001,snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,'Text 2',1001);
+insert into BARFOOS_H (ID,TBEGIN,TEND,TVERSION,TEXT,BARID) values (2002,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,'Text 1',1002);
+insert into BARFOOS_H (ID,TBEGIN,TEND,TVERSION,TEXT,BARID) values (2002,snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,'Text 2',1002);
+
+
+insert into FooForBarFoos_H (BarFoosId, fooId, TBEGIN,TEND) values (2001, 100, snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'));
+insert into FooForBarFoos_H (BarFoosId, fooId, TBEGIN,TEND) values (2001, 101, snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'));
+

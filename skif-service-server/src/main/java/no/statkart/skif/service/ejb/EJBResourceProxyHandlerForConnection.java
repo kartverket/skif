@@ -42,29 +42,21 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
     @Override
     protected void completeService() {
         log.debug("complete");
-        try {
-            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
-                connectionManager.commit();
-            }
-            connectionManager.close();
-        } catch (SQLException e) {
-            throw new ImplementationException(e);
+        if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
+            connectionManager.commit();
         }
+        connectionManager.close();
     }
 
     @Override
     protected void abortService() {
         log.debug("abortService");
-        try {
-            serviceRequestContext.setRollbackOnly();
-            if (serviceRequestContext.isNewTx()) {
-                if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
-                    connectionManager.rollback();
-                }
-                connectionManager.close();
+        serviceRequestContext.setRollbackOnly();
+        if (serviceRequestContext.isNewTx()) {
+            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
+                connectionManager.rollback();
             }
-        } catch (SQLException e) {
-            throw new ImplementationException(e);
+            connectionManager.close();
         }
     }
 }

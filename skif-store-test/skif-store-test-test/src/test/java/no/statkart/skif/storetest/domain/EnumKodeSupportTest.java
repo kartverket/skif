@@ -1,8 +1,7 @@
 package no.statkart.skif.storetest.domain;
 
-import no.statkart.skif.storetest.domain.kodeliste.Kodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.KodelisteId;
-import no.statkart.skif.storetest.domain.kodeliste.impl.EnumKodeSupport;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.kodelistesupport.*;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -10,13 +9,13 @@ import static org.testng.Assert.assertNotNull;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 @Test
 public class EnumKodeSupportTest {
 
     public void testCreate() {
-        EnumKodeSupport kodeSupport = new EnumKodeSupport(null, 5, "Test");
+        EnumKodeSupportHelper kodeSupport = new EnumKodeSupportHelper(null, 5, "Test");
         KodelisteId id = kodeSupport.getKodelisteId();
         assertNotNull(id);
         assertEquals(id.getValue(), new Long(5));
@@ -27,7 +26,7 @@ public class EnumKodeSupportTest {
     }
 
     public void testAdd() {
-        EnumKodeSupport kodeSupport = new EnumKodeSupport(null, 5, "Test");
+        EnumKodeSupportHelper kodeSupport = new EnumKodeSupportHelper(null, 5, "Test");
         KodelisteId id = kodeSupport.getKodelisteId();
         assertNotNull(id);
         assertEquals(id.getValue(), new Long(5));
@@ -37,4 +36,11 @@ public class EnumKodeSupportTest {
         assertEquals(kodeliste.getNavn(), "Test");
     }
 
+}
+
+// Hjelperklasse for ikke å skulle skrive så mye
+final class EnumKodeSupportHelper extends EnumKodeSupport<EnumKodeliste, EnumKodelisteId<EnumKodeliste>> {
+    public EnumKodeSupportHelper(Class<? extends EnumKodeIdImpl<?>> idClass, long kodelisteIdValue, String kodelisteNavn) {
+        super(idClass, new MyEnumKodelisteId(kodelisteIdValue), kodelisteNavn);
+    }
 }

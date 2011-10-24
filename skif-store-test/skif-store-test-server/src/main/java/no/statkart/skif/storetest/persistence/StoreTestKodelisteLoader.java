@@ -1,9 +1,9 @@
 package no.statkart.skif.storetest.persistence;
 
-import no.statkart.skif.store.kodelistesupport.DbBubbleKode;
-import no.statkart.skif.store.kodelistesupport.DbBubbleKodeId;
-import no.statkart.skif.store.kodelistesupport.DbBubbleKodeliste;
-import no.statkart.skif.store.persistence.kodeliste.DbBubbleKodelisteLoader;
+import no.statkart.skif.store.kodelistesupport.DbKode;
+import no.statkart.skif.store.kodelistesupport.DbKodeId;
+import no.statkart.skif.store.kodelistesupport.DbKodeliste;
+import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
 import org.hibernate.Session;
 
 import java.util.ArrayList;
@@ -14,9 +14,9 @@ import java.util.Map;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public class StoreTestKodelisteLoader extends DbBubbleKodelisteLoader {
+public class StoreTestKodelisteLoader extends DbKodelisteLoader {
     @Override
-    public List<DbBubbleKodeliste> load(Session session, Map<DbBubbleKodeId<?>, DbBubbleKode> kodeMap) {
-        return  new ArrayList<DbBubbleKodeliste>(0); //load(session, DbKodeliste.class, kodeMap);
+    public List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
+        return  new ArrayList<DbKodeliste>(0); //load(session, DbKodeliste.class, kodeMap);
     }
 }

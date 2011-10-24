@@ -19,6 +19,9 @@ import java.util.Collection;
  */
 public interface Mapping extends BaseMapping {
 
+    public <T> T d2w(Object source, T target);
+    public <T> T w2d(Object source, T target);
+
     public <T> T d2w(Object source, Class<T> targetClass);
     public <T> T w2d(Object source, Class<T> targetClass);
 
@@ -46,6 +49,4 @@ public interface Mapping extends BaseMapping {
     public BigDecimal d2w(BigDecimal source);
     public BigDecimal w2d(BigDecimal source);
 
-    public <T extends Collection> T d2w(Collection source, T target);
-    public <T extends Collection> T w2d(Collection source, T target);
 }

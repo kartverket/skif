@@ -1,11 +1,10 @@
 package no.statkart.skif.storetest.service.kodeliste;
 
 import com.google.inject.Inject;
-import no.statkart.skif.store.persistence.finder.BubbleKodelisteFinder;
-import no.statkart.skif.store.persistence.kodeliste.BubbleKodelistePersister;
-import no.statkart.skif.store.BubbleKodelisteTransfer;
-import no.statkart.skif.storetest.domain.kodeliste.KodelisteId;
-import no.statkart.skif.storetest.domain.kodeliste.KodelisteTransfer;
+import no.statkart.skif.store.KodelisteTransfer;
+import no.statkart.skif.store.persistence.finder.KodelisteFinder;
+import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 
 import java.util.Collection;
 
@@ -15,10 +14,10 @@ import java.util.Collection;
  */
 public class KodelisteServiceImpl implements KodelisteService {
     @Inject
-    private BubbleKodelisteFinder kodelisteFinder;
+    private KodelisteFinder kodelisteFinder;
 
     @Inject
-    private BubbleKodelistePersister kodelistePersister;
+    private KodelistePersister kodelistePersister;
 
     @Override
     public Collection<? extends KodelisteId> getKodelisteIds() {
@@ -27,7 +26,12 @@ public class KodelisteServiceImpl implements KodelisteService {
 
     @Override
     public KodelisteTransfer getKodelister() {
-        BubbleKodelisteTransfer kodelisteTransfer = kodelistePersister.getKodelisteTransfer();
+        KodelisteTransfer kodelisteTransfer = kodelistePersister.getKodelisteTransfer();
         return new KodelisteTransfer(kodelisteTransfer.getKodeIds(), kodelisteTransfer.getKodelisteIds(), kodelisteTransfer.getObjects());
+    }
+
+    @Override
+    public String getKodelisterTest() {
+        return "Hello Impl";
     }
 }

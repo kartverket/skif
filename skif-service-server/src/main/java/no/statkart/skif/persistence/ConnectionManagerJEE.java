@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- *
  * @author Henrik Fredholm
  */
 public class ConnectionManagerJEE implements ConnectionManager {
@@ -27,24 +26,33 @@ public class ConnectionManagerJEE implements ConnectionManager {
     }
 
 
-    protected void openConnection() throws SQLException {
-        logger.debug("Open Connection");
-        connection = facotry.createConnection();
-        originalAutoCommit = connection.getAutoCommit();
-        if (originalAutoCommit) {
-            connection.setAutoCommit(false);
+    protected void openConnection() {
+        try {
+            logger.debug("Open Connection");
+            connection = facotry.createConnection();
+            originalAutoCommit = connection.getAutoCommit();
+            if (originalAutoCommit) {
+                connection.setAutoCommit(false);
+            }
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
         }
     }
 
-    protected void closeConnection() throws SQLException {
-        connection.setAutoCommit(originalAutoCommit);
-        connection.close();
-        connection = null;
-        logger.debug("Close Connection");
+    protected void closeConnection() {
+        try {
+            connection.setAutoCommit(originalAutoCommit);
+            connection.close();
+            connection = null;
+            logger.debug("Close Connection");
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
+        }
+
     }
 
     @Override
-    public Connection getConnection(Object key) throws SQLException {
+    public Connection getConnection(Object key) {
         if (connection == null) {
             openConnection();
         }
@@ -57,14 +65,14 @@ public class ConnectionManagerJEE implements ConnectionManager {
     }
 
     @Override
-    public void close(Object key) throws SQLException {
+    public void close(Object key) {
         if (connection != null) {
             closeConnection();
         }
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close() {
         close(null);
     }
 
@@ -74,12 +82,22 @@ public class ConnectionManagerJEE implements ConnectionManager {
     }
 
     @Override
-    public void commit() throws SQLException {
-        connection.commit();
+    public void commit() {
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
+        }
+
     }
 
     @Override
-    public void rollback() throws SQLException {
-        connection.rollback();
+    public void rollback() {
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
+        }
+
     }
 }

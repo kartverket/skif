@@ -14,7 +14,7 @@ public interface LockerStrategy {
      * @param id    Id som skal låses
      * @param owner Bruker id skal låses for
      * @return true Dersom lås er tatt og er ny, false dersom lås er tatt men er gammel
-     * @throws LockedException Dersom element er låst av annen bruker
+     * @throws no.statkart.skif.exception.LockedException Dersom element er låst av annen bruker
      */
     public boolean lock(BubbleId id, String owner) throws LockedException;
 

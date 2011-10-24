@@ -2,14 +2,11 @@ package no.statkart.skif.store.service.ejb;
 
 import com.google.inject.Inject;
 import no.statkart.skif.ServiceMode;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
 
 /**
  * @author Henrik Fredholm
@@ -43,7 +40,6 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
     @Override
     protected void completeService() {
         log.debug("complete");
-        try {
             if (serviceRequestContext.isContainerManagedTransaction()) {
                 if (serviceRequestContext.inTx()) {
                     connectionManager.flush();
@@ -55,15 +51,11 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
 
             connectionManager.close();
             connectionManager.endAllocateConnectionsViaHibernateSession();
-        } catch (SQLException e) {
-            throw new ImplementationException(e);
-        }
     }
 
     @Override
     protected void abortService() {
         log.debug("abortService");
-        try {
             serviceRequestContext.setRollbackOnly();
             if (serviceRequestContext.isNewTx()) {
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
@@ -72,8 +64,5 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
                 connectionManager.close();
             }
             connectionManager.endAllocateConnectionsViaHibernateSession();
-        } catch (SQLException e) {
-            throw new ImplementationException(e);
-        }
     }
 }

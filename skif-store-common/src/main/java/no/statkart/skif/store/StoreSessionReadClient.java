@@ -2,7 +2,10 @@ package no.statkart.skif.store;
 
 import com.google.inject.Inject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -32,19 +35,19 @@ public class StoreSessionReadClient implements StoreSessionReadChain {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry<T> get(I bubbleId) {
-        T bubbleObject = storeService.get(bubbleId);
-        StoreEntry<T> newEntry = new StoreEntry<T>(bubbleObject);
+        StoreEntry<T> entry = storeService.get(bubbleId);
+        StoreEntry<T> newEntry = new StoreEntry<T>(entry.getBubbleObject());
         StoreEntry<T> cacheEntry = storeCache.register(newEntry);
         return cacheEntry;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry<T>> get(Collection<I> bubbleIds) {
-        List<T> bubbleObjects = storeService.get((List<I>) bubbleIds);
+        Collection<StoreEntry<T>> bubbleObjects = storeService.get(bubbleIds);
         List<StoreEntry<T>> cacheEntries = new ArrayList<StoreEntry<T>>(bubbleObjects.size());
-        for (Iterator<T> bubbleObjectIterator = bubbleObjects.iterator(); bubbleObjectIterator.hasNext();) {
-            T bubbleObject = bubbleObjectIterator.next();
-            StoreEntry<T> newEntry = new StoreEntry<T>(bubbleObject);
+        for (Iterator<StoreEntry<T>> bubbleObjectIterator = bubbleObjects.iterator(); bubbleObjectIterator.hasNext();) {
+            StoreEntry<T> entry = bubbleObjectIterator.next();
+            StoreEntry<T> newEntry = new StoreEntry<T>(entry.getBubbleObject());
             StoreEntry<T> cacheEntry = storeCache.register(newEntry);
             cacheEntries.add(cacheEntry);
         }

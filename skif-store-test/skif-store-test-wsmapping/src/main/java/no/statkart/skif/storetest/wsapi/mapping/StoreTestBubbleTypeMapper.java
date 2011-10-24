@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.TestBubble;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 
 /**
  * @author Henrik Fredholm
@@ -15,7 +15,7 @@ public class StoreTestBubbleTypeMapper<WsapiT extends no.statkart.skif.storetest
     @Override
     public void mapDomainObject(DomainT source, WsapiT target) {
         super.mapDomainObject(source, target);
-        target.setId(map.d2w(source.getId()));
+        target.setId(map.<StoreTestBubbleId>d2w(source.getId()));
         target.setVersion(map.d2w(source.getVersion()));
     }
 

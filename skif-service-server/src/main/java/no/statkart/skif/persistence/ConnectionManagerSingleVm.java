@@ -1,6 +1,7 @@
 package no.statkart.skif.persistence;
 
 import com.google.inject.Inject;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ServiceRequestContext;
 
 import java.sql.Connection;
@@ -22,22 +23,30 @@ public class ConnectionManagerSingleVm implements ConnectionManager {
         this.serviceRequestContext = serviceRequestContext;
     }
 
-    protected void openConnection() throws SQLException {
-        connection = facotry.createConnection();
-        originalAutoCommit = connection.getAutoCommit();
-        if (originalAutoCommit) {
-            connection.setAutoCommit(false);
+    protected void openConnection() {
+        try {
+            connection = facotry.createConnection();
+            originalAutoCommit = connection.getAutoCommit();
+            if (originalAutoCommit) {
+                connection.setAutoCommit(false);
+            }
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
         }
     }
 
-    protected void closeConnection() throws SQLException {
-        connection.setAutoCommit(originalAutoCommit);
-        connection.close();
-        connection = null;
+    protected void closeConnection() {
+        try {
+            connection.setAutoCommit(originalAutoCommit);
+            connection.close();
+            connection = null;
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
+        }
     }
 
     @Override
-    public Connection getConnection(Object key) throws SQLException {
+    public Connection getConnection(Object key) {
         if (connection == null) {
             openConnection();
         }
@@ -50,14 +59,14 @@ public class ConnectionManagerSingleVm implements ConnectionManager {
     }
 
     @Override
-    public void close(Object key) throws SQLException {
+    public void close(Object key) {
         if (connection != null) {
             closeConnection();
         }
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close() {
         close(null);
     }
 
@@ -66,16 +75,24 @@ public class ConnectionManagerSingleVm implements ConnectionManager {
     }
 
     @Override
-    public void commit() throws SQLException {
+    public void commit() {
         if (connection != null) {
-            connection.commit();
+            try {
+                connection.commit();
+            } catch (SQLException e) {
+                throw new ImplementationException(e);
+            }
         }
     }
 
     @Override
-    public void rollback() throws SQLException {
-        if (connection != null) {
-            connection.rollback();
+    public void rollback() {
+        try {
+            if (connection != null) {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
         }
     }
 }

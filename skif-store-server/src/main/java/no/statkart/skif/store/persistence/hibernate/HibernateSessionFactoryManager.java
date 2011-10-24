@@ -8,6 +8,6 @@ import org.hibernate.SessionFactory;
  */
 public interface HibernateSessionFactoryManager extends Closeable {
     public SessionFactory getFactory(Object key);
-
+    public Object[] getKeys();
     public void close();
 }

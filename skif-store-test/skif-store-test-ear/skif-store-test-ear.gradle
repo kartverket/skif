@@ -91,7 +91,7 @@ task deploy {
         wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
 
 
-        ant.wldeploy(action: 'deploy', source: "${buildDir}/libs/skif-store-test-ear-2.0-SNAPSHOT.ear", name: project.name, user: 'admmatr', password: 'matrikkeladm1',
+        ant.wldeploy(action: 'deploy', source: "${buildDir}/libs/skif-store-test-ear-${version}.ear", name: project.name, user: 'admmatr', password: 'matrikkeladm1',
                 adminurl: wlsAdminUrl, targets: 'AdminServer', upload: true, timeout: 18000, verbose: true, failonerror: true)
     }
 }

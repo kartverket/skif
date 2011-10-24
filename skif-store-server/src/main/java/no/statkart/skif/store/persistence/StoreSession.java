@@ -1,5 +1,7 @@
 package no.statkart.skif.store.persistence;
 
+import no.statkart.skif.store.SnapshotVersion;
+
 import java.util.Collection;
 
 /**
@@ -12,10 +14,12 @@ import java.util.Collection;
  */
 public interface StoreSession<S,T,I> {
     S getWrappedSession();
+    SnapshotVersion getSnapshotVersion();
     T get(I bubbleId);
-    Collection<? extends T> get(Collection <? extends I> bubbleIds);
+    Collection<? extends T> get(Collection<? extends I> bubbleIds);
 
     void evict(I bubbleId);
     void evictAll();
+    void ensureBubblesFullyLoaded();
 
 }

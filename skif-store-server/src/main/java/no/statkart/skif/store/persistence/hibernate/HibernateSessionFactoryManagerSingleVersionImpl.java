@@ -15,8 +15,14 @@ public class HibernateSessionFactoryManagerSingleVersionImpl implements  Hiberna
         this.factory = factory;
     }
 
+
     public SessionFactory getFactory(Object key) {
         return factory;
+    }
+
+    @Override
+    public Object[] getKeys() {
+        return new Object[1];
     }
 
     @Override

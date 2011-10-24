@@ -2,13 +2,6 @@ package no.statkart.skif.store.module.server;
 
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleStrategy;
-import no.statkart.skif.persistence.ConnectionFactory;
-import no.statkart.skif.persistence.DataSourceConnectionFactory;
-import no.statkart.skif.persistence.JDBCConnectionFactory;
-import no.statkart.skif.store.ReplicaVersion;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Henrik Fredholm
@@ -17,7 +10,7 @@ import java.util.Map;
 public class ServerStoreModuleStrategy extends ModuleStrategy {
 
     private String hibernateConfigurationFilename = null;
-    private Configuration hiberanteConfiguration = null;
+    private Configuration hibernateConfiguration = null;
 
     public String getHibernateConfigurationFilename() {
         return hibernateConfigurationFilename;
@@ -27,13 +20,13 @@ public class ServerStoreModuleStrategy extends ModuleStrategy {
         this.hibernateConfigurationFilename = hibernateConfigurationFilename;
     }
 
-    public Configuration getHiberanteConfiguration() {
+    public Configuration getHibernateConfiguration() {
 
-        return hiberanteConfiguration;
+        return hibernateConfiguration;
     }
 
-    public void setHiberanteConfiguration(Configuration hiberanteConfiguration) {
-        this.hiberanteConfiguration = hiberanteConfiguration;
+    public void setHibernateConfiguration(Configuration hibernateConfiguration) {
+        this.hibernateConfiguration = hibernateConfiguration;
     }
 
 

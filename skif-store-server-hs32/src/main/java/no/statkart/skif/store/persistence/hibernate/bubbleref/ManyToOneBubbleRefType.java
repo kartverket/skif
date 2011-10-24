@@ -48,7 +48,7 @@ public class ManyToOneBubbleRefType extends ManyToOneType {
         //super.resolveIdentifier(id, session);  // must not call as this would create unwanted proxy for object
 
         BubbleId genericId = (BubbleId) id;
-        BubbleId newId = BubbleIdFactory.createInstance(returnedIdClass, genericId.getValue(), genericId.getReplicaVersion());
+        BubbleId newId = BubbleIdFactory.createInstance(returnedIdClass, genericId.getValue(), genericId.getSnapshotVersion());
         return newId;
     }
 

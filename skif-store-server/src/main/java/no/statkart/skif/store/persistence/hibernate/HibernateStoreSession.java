@@ -1,11 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.ReplicaVersion;
-import no.statkart.skif.store.StorePersister;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.StoreSession;
 import org.hibernate.*;
 import org.hibernate.collection.PersistentCollection;
@@ -27,18 +23,19 @@ import java.util.*;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? extends T>> implements StoreSession<Session, T, I>, StorePersister<T, I> {
+public abstract class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? extends T>> implements StoreSession<Session, T, I> {
     private static int CRITERIA_BATCH_POWER = 9;
     private static final String ID_KOLONNE_NAVN = "id";
 
     /* Holder referanse til alle bobler lastet i denne sesjonen som allerede er fullt initialisert */
     private Map fullyInitializedBubbles = new HashMap();
+    private Map exportedLazyLoadedBubbles = new HashMap();
 
     /* Holder referanse til hibernate sesjonen */
     protected final Session session;
 
-    /* Angi replicaversjon for objekter lest av denne sesjon. */
-    protected final ReplicaVersion replicaVersion;
+    /* Angi SnapshotVersion for objekter lest av denne sesjon. */
+    protected final SnapshotVersionSeed snapshotVersionSeed;
 
     /**
      * Bestemmer om Bubbler kan ha lazyloaded assosiasjoner som ikke er initialisert i det bubblen
@@ -46,10 +43,9 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
      */
     private boolean lazyLoadedBubblesAllowed;
 
-    @Inject
-    public HibernateStoreSession(Session session, ReplicaVersion replicaVersion) {
+    public HibernateStoreSession(Session session, SnapshotVersionSeed snapshotVersionSeed) {
         this.session = session;
-        this.replicaVersion = replicaVersion;
+        this.snapshotVersionSeed = snapshotVersionSeed;
     }
 
     @Override
@@ -57,6 +53,10 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
         return session;
     }
 
+    @Override
+    public SnapshotVersion getSnapshotVersion() {
+        return snapshotVersionSeed.get();
+    }
 
     /**
      * Laster en boble basert på boblens id.
@@ -67,13 +67,15 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
     public T get(I bubbleId) {
         T bubble;
 
-        checkReplicaVersion(bubbleId);
+        checkSnapshotVersion(bubbleId);
         try {
             bubble = getFromHibernateSessionOrLoad(bubbleId);
             if (bubble == null)
                 throw new ObjectNotFoundException(bubbleId, "Objekt finnes ikke: " + bubbleId);
             if (!isLazyLoadedBubblesAllowed()) {
                 ensureFullyInitialized(bubble);
+            } else {
+                exportedLazyLoadedBubbles.put(bubble.getId(), bubble);
             }
             return bubble;
         } catch (HibernateException e) {
@@ -93,9 +95,16 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
         Set<I> idsToLoad = new HashSet<I>(bubbleIds.size());
 
         for (I bubbleId : bubbleIds) {
-            checkReplicaVersion(bubbleId);
-            T bubble = lookupInHibernateCache(bubbleId);
-            if (bubble != null) {
+            checkSnapshotVersion(bubbleId);
+            T bubble;
+            if ((bubble = (T) fullyInitializedBubbles.get(bubbleId)) != null) {
+
+            } else if ((bubble = (T) exportedLazyLoadedBubbles.get(bubbleId)) != null) {
+                alreadyLoaded.add(bubble);
+            } else if ((bubble = lookupInHibernateCache(bubbleId)) != null) {
+                exportedLazyLoadedBubbles.put(bubbleId, bubble);
+                alreadyLoaded.add(bubble);
+            } else if ((bubble = lookupInHibernateCache(bubbleId)) != null) {
                 alreadyLoaded.add(bubble);
             } else {
                 idsToLoad.add(bubbleId);
@@ -109,12 +118,23 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
                 session.setFlushMode(FlushMode.MANUAL);
 
                 result = loadAllFromDatabase(idsToLoad);
+                if (lazyLoadedBubblesAllowed) {
+                    for (T bubble : result) {
+                        exportedLazyLoadedBubbles.put(bubble.getId(), bubble);
+                    }
+                }
                 result.addAll(alreadyLoaded);
             } finally {
                 session.setFlushMode(oldFlushMode);
             }
         } else {
             result = new HashSet<T>(alreadyLoaded);
+        }
+
+        if (!lazyLoadedBubblesAllowed) {
+            for (T bubble : result) {
+                ensureFullyInitialized(bubble);
+            }
         }
         if (bubbleIds.size() != result.size()) {
             //ids.removeAll(Store.convertObjectsToIds(result));
@@ -125,16 +145,33 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
     }
 
     public void evict(I bubbleId) {
-        throw new UnsupportedOperationException();
+        T bubble = lookupInHibernateCache(bubbleId);
+        if (bubble != null) {
+            session.evict(bubbleId);
+            fullyInitializedBubbles.remove(bubbleId);
+            exportedLazyLoadedBubbles.remove(bubbleId);
+        }
     }
 
     public void evictAll() {
-        throw new UnsupportedOperationException();
+        session.clear();
+        fullyInitializedBubbles.clear();
+        exportedLazyLoadedBubbles.clear();
     }
 
-    protected final <T extends BubbleObject, I extends BubbleId<? extends T>> void checkReplicaVersion(I bubbleId) {
-        if (bubbleId.getReplicaVersion() != replicaVersion) {
-            throw new ImplementationException("Id har feil replicaversion for session:" + bubbleId);
+    @Override
+    public void ensureBubblesFullyLoaded() {
+        for (Object bubble : exportedLazyLoadedBubbles.values()) {
+            ensureFullyInitialized((BubbleObject) bubble);
+        }
+    }
+
+    protected final <T extends BubbleObject, I extends BubbleId<? extends T>> void checkSnapshotVersion(I bubbleId) {
+        SnapshotVersion snapshotVersionFromHolder = snapshotVersionSeed.get();
+        SnapshotVersion snapshotVersionInId = bubbleId.getSnapshotVersion();
+
+        if (!snapshotVersionFromHolder.equals(snapshotVersionInId)) {
+            throw new ImplementationException("Id har feil SnapshotVersion for session:" + bubbleId);
         }
     }
 
@@ -149,11 +186,11 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
         Set<T> allEntities = new HashSet<T>(ids.size());
 
         List criterias = buildCriterias(ids);
-        for (Iterator it = criterias.iterator(); it.hasNext();) {
+        for (Iterator it = criterias.iterator(); it.hasNext(); ) {
             Criteria criteria = (Criteria) it.next();
             try {
                 List objects = criteria.list();
-                for (Iterator iterator = objects.iterator(); iterator.hasNext();) {
+                for (Iterator iterator = objects.iterator(); iterator.hasNext(); ) {
                     T bubbleObject = (T) iterator.next();
                     allEntities.add(bubbleObject);
                 }
@@ -215,8 +252,6 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
     }
 
 
-
-
     private <T extends BubbleObject, I extends BubbleId<? extends T>> T getFromHibernateSessionOrLoad(I bubbleId) {
         T bubble;
         final EntityPersister classPersister = getClassPersister(bubbleId.getType());
@@ -242,6 +277,7 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
                 IdentityHashMap initializedObjects = new IdentityHashMap();
                 ensureInitialized(bubble, initializedObjects);
                 fullyInitializedBubbles.put(bubble.getId(), bubble);
+                exportedLazyLoadedBubbles.remove(bubble.getId());
             } catch (HibernateException e) {
                 throw new ImplementationException("Kunne ikke initialisere lazy loaded associasjoner for: " + bubble.getId(), e);
             }
@@ -297,7 +333,7 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
                         Hibernate.initialize(componentProperty);
                         if (componentProperty instanceof PersistentCollection) {
                             // Initialiser hvert element
-                            for (Iterator iterator = ((Collection) componentProperty).iterator(); iterator.hasNext();) {
+                            for (Iterator iterator = ((Collection) componentProperty).iterator(); iterator.hasNext(); ) {
                                 Object o = iterator.next();
                                 ensureInitialized(o, initializedObjects);
                             }
@@ -310,7 +346,7 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
                 Hibernate.initialize(values[i]);
                 if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE)) {
                     Collection col = (Collection) values[i];
-                    for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+                    for (Iterator iterator = col.iterator(); iterator.hasNext(); ) {
                         Object o = (Object) iterator.next();
                         ensureInitialized(o, initializedObjects);
                     }
@@ -373,7 +409,7 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
         return context.getEntity(key);
     }
 
-   /**
+    /**
      * Metode for å sjekke om objektet allerede er lastet av hibernate uten at hibernate forsøker å laste objeket eller lager
      * en proxy.
      * <p/>
@@ -385,7 +421,6 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
     private <T extends BubbleObject, I extends BubbleId<? extends T>> T lookupInHibernateCache(I bubbleId) {
         return (T) lookupInHibernateCache(bubbleId.getType(), bubbleId);
     }
-
 
 
     // Hjelpe variable for opptimalisering
@@ -433,5 +468,4 @@ public class HibernateStoreSession<T extends BubbleObject, I extends BubbleId<? 
     public void setLazyLoadedBubblesAllowed(boolean lazyLoadedBubblesAllowed) {
         this.lazyLoadedBubblesAllowed = lazyLoadedBubblesAllowed;
     }
-
 }

@@ -2,17 +2,19 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
-import no.statkart.skif.store.ReplicaVersion;
-import org.hibernate.Interceptor;
-import org.hibernate.SessionFactory;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.HibernateException;
+import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
-import org.hibernate.event.DeleteEventListener;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.event.DeleteEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Builder som opprette standard Hibernate SessionFactory
@@ -60,7 +62,7 @@ public class HibernateSessionFactoryBuilder {
         return this;
     }
 
-    public SessionFactory build(ReplicaVersion key) {
+    public SessionFactory build(SnapshotVersionSeed key) {
         SessionFactory sessionFactory = null;
         logger.debug("creating session factory");
         try {

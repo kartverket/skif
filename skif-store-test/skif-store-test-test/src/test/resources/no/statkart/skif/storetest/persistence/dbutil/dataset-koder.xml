@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <TestAKode id="1" kodeVerdi="A1"/>
+    <TestAKode id="2" kodeVerdi="A2"/>
+    <TestAkodeLoc id="1" lokale="b" beskrivelse="Kodebeskrivelse for A1 bokmål"/>
+    <TestAkodeLoc id="1" lokale="n" beskrivelse="Kodebeskrivelse for A1 nynorsk"/>
+    <TestAKodeLoc id="2" lokale="b" beskrivelse="Kodebeskrivelse for A2 bokmål"/>
+    <TestAKodeLoc id="2" lokale="n" beskrivelse="Kodebeskrivelse for A2 nynorsk"/>
+
+    <TestBKode id="1" kodeVerdi="B1"/>
+    <TestBKode id="2" kodeVerdi="B2"/>
+    <TestBKodeLoc id="1" lokale="b" beskrivelse="Kodebeskrivelse for B1 bokmål"/>
+    <TestBKodeLoc id="1" lokale="n" beskrivelse="Kodebeskrivelse for B1 nynorsk"/>
+    <TestBKodeLoc id="2" lokale="b" beskrivelse="Kodebeskrivelse for B2 bokmål"/>
+    <TestBKodeLoc id="2" lokale="n" beskrivelse="Kodebeskrivelse for B2 nynorsk"/>
+
+    <TestCKode id="1" kodeVerdi="C1A" class="TestC1DbKode"/>
+    <TestCKode id="2" kodeVerdi="C1B" class="TestC1DbKode"/>
+    <TestCKode id="10" kodeVerdi="C2A" class="TestC2DbKode"/>
+    <TestCKode id="11" kodeVerdi="C2B" class="TestC2DbKode"/>
+    <TestCKodeLoc id="1" lokale="b" beskrivelse="Kodebeskrivelse for C1A bokmål"/>
+    <TestCKodeLoc id="1" lokale="n" beskrivelse="Kodebeskrivelse for C1A nynorsk"/>
+    <TestCKodeLoc id="2" lokale="b" beskrivelse="Kodebeskrivelse for C1B bokmål"/>
+    <TestCKodeLoc id="2" lokale="n" beskrivelse="Kodebeskrivelse for C1B nynorsk"/>
+    <TestCKodeLoc id="10" lokale="b" beskrivelse="Kodebeskrivelse for C2A bokmål"/>
+    <TestCKodeLoc id="10" lokale="n" beskrivelse="Kodebeskrivelse for C2A nynorsk"/>
+    <TestCKodeLoc id="11" lokale="b" beskrivelse="Kodebeskrivelse for C2B bokmål"/>
+    <TestCKodeLoc id="11" lokale="n" beskrivelse="Kodebeskrivelse for C2B nynorsk"/>
+
+    <Kodeliste id="10001" navn="TestAKode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.TestADbKode"/>
+    <Kodeliste id="10002" navn="TestBKode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.TestBDbKode"/>
+    <Kodeliste id="10003" navn="TestC1Kode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.TestC1DbKode"/>
+    <Kodeliste id="10004" navn="TestC2Kode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.TestC2DbKode"/>
+    <KodelisteLoc id="10001" lokale="b" beskrivelse="Kodelistebeskrivelse for TestAKode bokmål"/>
+    <KodelisteLoc id="10001" lokale="n" beskrivelse="Kodelistebeskrivelse for TestAKode nynorsk"/>
+    <KodelisteLoc id="10002" lokale="b" beskrivelse="Kodelistebeskrivelse for TestBKode bokmål"/>
+    <KodelisteLoc id="10002" lokale="n" beskrivelse="Kodelistebeskrivelse for TestBKode nynorsk"/>
+    <KodelisteLoc id="10003" lokale="b" beskrivelse="Kodelistebeskrivelse for TestC1Kode bokmål"/>
+    <KodelisteLoc id="10003" lokale="n" beskrivelse="Kodelistebeskrivelse for TestC1Kode nynorsk"/>
+    <KodelisteLoc id="10004" lokale="b" beskrivelse="Kodelistebeskrivelse for TestC2Kode bokmål"/>
+    <KodelisteLoc id="10004" lokale="n" beskrivelse="Kodelistebeskrivelse for TestC2Kode nynorsk"/>
+
+</dataset>

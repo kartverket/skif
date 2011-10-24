@@ -1,10 +1,9 @@
 package no.statkart.skif.storetest.service.storetest1;
 
-import com.asn1c.core.Null;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.storetest.domain.TestMap;
+import no.statkart.skif.storetest.domain.demo.TestMap;
 import org.hibernate.Session;
 
 import java.sql.Connection;

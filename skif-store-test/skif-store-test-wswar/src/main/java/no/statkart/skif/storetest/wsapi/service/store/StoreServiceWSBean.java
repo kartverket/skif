@@ -12,7 +12,6 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
-import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -50,6 +49,18 @@ public class StoreServiceWSBean extends SkifWebService<StoreServiceWSI> implemen
     @WebMethod
     public StoreTestBubbleList getObjects(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         return wsServiceChain.getObjects(ids, context);
+    }
+
+    @Override
+    @WebMethod
+    public StoreTestBubbleIdList getVersions(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        return wsServiceChain.getVersions(id, start, end, context);
+    }
+
+    @Override
+    @WebMethod
+    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForList(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        return wsServiceChain.getVersionsForList(ids, start, end, context);
     }
 }
 

@@ -3,8 +3,8 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest.domain.kodeliste.TestCDbKode" table="TestCKode">
-        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.DbSubclassedKodeIdType">
+    <class name="no.statkart.skif.storetest.domain.demo.koder.TestCDbKode" table="TestCKode">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.TestDbSubclassedKodeIdType">
             <generator class="assigned"/>
         </id>
         <discriminator column="class" type="string"/>
@@ -17,10 +17,10 @@
             <element column="beskrivelse" type="string"/>
         </map>
 
-        <subclass name="no.statkart.skif.storetest.domain.kodeliste.TestC1DbKode"
+        <subclass name="no.statkart.skif.storetest.domain.demo.koder.TestC1DbKode"
                   discriminator-value="TestC1DbKode" lazy="true">
         </subclass>
-        <subclass name="no.statkart.skif.storetest.domain.kodeliste.TestC2DbKode"
+        <subclass name="no.statkart.skif.storetest.domain.demo.koder.TestC2DbKode"
                   discriminator-value="TestC2DbKode" lazy="true">
         </subclass>
 

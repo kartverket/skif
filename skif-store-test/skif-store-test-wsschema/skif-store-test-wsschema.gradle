@@ -1,5 +1,4 @@
 jaxbSourceDir = file('src/main/schema')
-jaxbSourceDir2 = file('src/main/schema2')
 jaxbTargetDir = file('build/generated/main/java')
 
 sourceSets.main.java.srcDirs = ['src/main/java', "${jaxbTargetDir}"]
@@ -22,7 +21,6 @@ dependencies {
 
 task jaxb {
     inputs.dir jaxbSourceDir
-    inputs.dir jaxbSourceDir2
     outputs.dir jaxbTargetDir
 
     doLast {
@@ -31,10 +29,6 @@ task jaxb {
         ant.xjc(destdir: "${jaxbTargetDir}", extension: 'true') {
             arg(line: '-grunnbokDoc no.statkart.skif.storetest.wsapi.domain no.statkart.skif.teststore.domain')
             schema(dir: "${jaxbSourceDir}", includes: '**/*.xsd')
-        }
-        ant.xjc(destdir: "${jaxbTargetDir}", extension: 'true') {
-            arg(line: '-grunnbokDoc no.statkart.skif.storetest.wsapi.domain2 no.statkart.skif.teststore.domain2')
-            schema(dir: "${jaxbSourceDir2}", includes: '**/*.xsd')
         }
     }
 }

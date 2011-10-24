@@ -5,10 +5,11 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.HashStorePersister;
 import no.statkart.skif.store.StorePersister;
 import no.statkart.skif.store.StorePersisterStrategy;
-import no.statkart.skif.store.kodelistesupport.BubbleKodeId;
-import no.statkart.skif.store.kodelistesupport.BubbleKodelisteId;
+import no.statkart.skif.store.kodelistesupport.KodeId;
+import no.statkart.skif.store.kodelistesupport.KodelisteId;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
-import no.statkart.skif.store.persistence.kodeliste.BubbleKodelistePersister;
+import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionPersister;
+import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 
 /**
  * Strategi som mapper bobleobjekter til hibernate-persister, mens hjelpemodellobjekter blir mappet til egen persister
@@ -17,11 +18,11 @@ import no.statkart.skif.store.persistence.kodeliste.BubbleKodelistePersister;
  *
  */
 public class StoreTestStorePersisterStrategy implements StorePersisterStrategy {
-    final HibernateStoreSession persister1;
+    final HibernateStoreSessionPersister persister1;
     final HashStorePersister persister2;
-    final BubbleKodelistePersister kodelistePersister;
+    final KodelistePersister kodelistePersister;
 
-    public StoreTestStorePersisterStrategy(HibernateStoreSession persister1, HashStorePersister persister2, BubbleKodelistePersister kodelistePersister) {
+    public StoreTestStorePersisterStrategy(HibernateStoreSessionPersister persister1, HashStorePersister persister2, KodelistePersister kodelistePersister) {
         this.persister1 = persister1;
         this.persister2 = persister2;
         this.kodelistePersister = kodelistePersister;
@@ -29,9 +30,9 @@ public class StoreTestStorePersisterStrategy implements StorePersisterStrategy {
 
     @Override
     public StorePersister getPersister(BubbleId bubbleId) {
-        if (bubbleId instanceof BubbleKodeId) {
+        if (bubbleId instanceof KodeId) {
             return kodelistePersister;
-        } else if(bubbleId instanceof BubbleKodelisteId) {
+        } else if(bubbleId instanceof KodelisteId) {
             return kodelistePersister;
         } else {
             return persister1;

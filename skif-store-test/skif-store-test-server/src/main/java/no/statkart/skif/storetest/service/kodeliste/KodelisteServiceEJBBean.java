@@ -1,12 +1,11 @@
 package no.statkart.skif.storetest.service.kodeliste;
 
 import com.google.inject.Inject;
-import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-import no.statkart.skif.storetest.domain.kodeliste.KodelisteId;
-import no.statkart.skif.storetest.domain.kodeliste.KodelisteTransfer;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
-import no.statkart.skif.storetest.service.store.StoreServiceEJBBean;
+import no.statkart.skif.store.KodelisteTransfer;
+import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -31,4 +30,10 @@ public class KodelisteServiceEJBBean extends EJBTimedService implements Kodelist
     public KodelisteTransfer getKodelister() {
         return serviceImpl.getKodelister();
     }
+
+    @Override
+    public String getKodelisterTest() {
+        return "Hello EJB";
+    }
 }
+

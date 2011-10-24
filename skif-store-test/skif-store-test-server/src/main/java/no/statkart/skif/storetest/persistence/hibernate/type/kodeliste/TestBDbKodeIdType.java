@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.persistence.hibernate.type.kodeliste;
 
-import no.statkart.skif.storetest.domain.kodeliste.TestBDbKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.TestBDbKodeId;
 
 
 /**

@@ -1,12 +1,12 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.storetest.domain.kodeliste.Kode;
+import no.statkart.skif.storetest.domain.kode.TestKode;
 
 /**
  * @author Henrik Fredholm
  * @since 0.3
  */
-public class KodeTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kodeliste.Kode, DomainT extends Kode> extends StoreTestBubbleTypeMapper<WsapiT,DomainT> {
+public class KodeTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kode.Kode, DomainT extends TestKode> extends StoreTestBubbleTypeMapper<WsapiT,DomainT> {
     public KodeTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
         super(wsapiClass, domainClass);
     }

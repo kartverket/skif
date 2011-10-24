@@ -3,7 +3,7 @@ package no.statkart.skif.store.persistence.hibernate;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.ReplicaVersion;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.module.common.BubbleIdFactory;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
@@ -25,7 +25,7 @@ import java.util.Iterator;
 public class HibernateStoreInterceptor extends EmptyInterceptor {
     protected Logger logger = LoggerFactory.getLogger(HibernateStoreInterceptor.class);
 
-    protected ReplicaVersion replicaVersion = ReplicaVersion.CURRENT;
+    protected SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
 
     /**
      * Denne metoden retter opp id'en for entiteter hvor hibernate har brukt supertypens idklasse
@@ -38,10 +38,18 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
             String classname = bubbleEntity.getClass().getName();
             BubbleId bubbleId = (BubbleId) bubbleEntity.getId();
             try {
-                Class classid = Class.forName(classname + "Id");
+                String idString;
+                if(classname.contains("Impl")) {
+                    idString = classname.substring(0, classname.indexOf("Impl")) + "IdImpl";
+                } else if(classname.endsWith("2")) {
+                    idString = classname.substring(0, classname.length() - 1) + "Id";
+                } else {
+                    idString = classname + "Id";
+                }
+                Class classid = Class.forName(idString);
                 if (classid != bubbleId.getClass()) {
                     Object value = bubbleId.getValue();
-                    BubbleId<?> newBubbleId = (BubbleId<?>) BubbleIdFactory.createInstance(classid, value, bubbleId.getReplicaVersion());
+                    BubbleId<?> newBubbleId = (BubbleId<?>) BubbleIdFactory.createInstance(classid, value, bubbleId.getSnapshotVersion());
                     bubbleEntity.setId(newBubbleId);
                     if (logger.isDebugEnabled()) {
                         logger.debug("Endret id for " + classname + " fra: " + bubbleId + " til: " + newBubbleId);
@@ -59,7 +67,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      * Gjør ingenting
      */
     public Object instantiate(Class entitetClazz, Serializable id) throws CallbackException {
-        sjekkReplicaVersjon(id);
+        sjekkSnapshotVersjon(id);
         //Retur av null gjør at Hibernate bruker default oppførsel
         return null;
     }
@@ -68,7 +76,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      * Gjør ingenting
      */
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) throws CallbackException {
-        sjekkReplicaVersjon(id);
+        sjekkSnapshotVersjon(id);
         return false;
     }
 
@@ -76,7 +84,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      * Gjør ingenting
      */
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
-        sjekkReplicaVersjon(id);
+        sjekkSnapshotVersjon(id);
         return false;
     }
 
@@ -84,7 +92,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      * Gjør ingenting
      */
     public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
-        sjekkReplicaVersjon(id);
+        sjekkSnapshotVersjon(id);
     }
 
     /**
@@ -115,9 +123,9 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
         return null;
     }
 
-    private void sjekkReplicaVersjon(Serializable id) {
+    private void sjekkSnapshotVersjon(Serializable id) {
         if (id instanceof BubbleId) {
-            if (((BubbleId) id).getReplicaVersion() != replicaVersion) {
+            if (((BubbleId) id).getSnapshotVersion() != snapshotVersion) {
                 throw new ImplementationException("id for instans har feil replicaVersjon", logger);
             }
         }

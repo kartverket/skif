@@ -1,5 +1,6 @@
 package no.statkart.skif.store;
 
+
 /**
  * StoreSessionReadChain ledd som kan maskere felter i et objekt om nødvendig. Maskeringen sker på en kopi slik
  * at original objektet ikke endres.

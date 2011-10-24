@@ -1,9 +1,9 @@
 package no.statkart.skif.store;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Loads BubbleObjects into into the StoreCache
@@ -15,6 +15,7 @@ public class StoreSessionCacheChain implements StoreSessionReadChain, StoreSessi
     protected StoreSessionReadChain nextInReadChain;
     protected StoreSessionUpdateChain nextInWriteChain;
     private Store store;
+
     @Override
     public void clear() {
         // Ignore

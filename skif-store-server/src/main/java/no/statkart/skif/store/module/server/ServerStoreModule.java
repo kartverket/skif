@@ -1,8 +1,5 @@
 package no.statkart.skif.store.module.server;
 
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.ServiceMode;
@@ -16,9 +13,10 @@ import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.StoreService;
 import no.statkart.skif.store.persistence.hibernate.*;
-import no.statkart.skif.storetest.TestHelper;
+import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,15 +34,17 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
     private static Logger logger = LoggerFactory.getLogger(ServerStoreModule.class);
 
     private final String mappingFileDirectoryRootDefault;
+    private final Class<? extends StoreService> storeServiceClass;
 
-    public ServerStoreModule(ModuleConfiguration moduleConfiguration, String mappingFileDirectoryRootDefault) {
+    public ServerStoreModule(ModuleConfiguration moduleConfiguration, Class<? extends StoreService> storeServiceClass, String mappingFileDirectoryRootDefault) {
         super(ServerStoreModuleStrategy.class, moduleConfiguration);
+        this.storeServiceClass = storeServiceClass;
         this.mappingFileDirectoryRootDefault = mappingFileDirectoryRootDefault;
     }
 
     protected Properties getHibernateProperties() {
         setStrategyInstance();
-        Configuration hibernateConfiguration = strategy.getHiberanteConfiguration();
+        Configuration hibernateConfiguration = strategy.getHibernateConfiguration();
         if (hibernateConfiguration != null) {
             logger.debug("Configuring hibernate from configuration object specified programatically");
         } else if (strategy.getHibernateConfigurationFilename() != null) {
@@ -62,12 +62,12 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
     protected Map<Object, ConnectionFactory> createConnectionFactoryMap() {
         Map<Object, ConnectionFactory> connectionFactoryMap = new HashMap<Object, ConnectionFactory>();
         if  (moduleConfiguration.getServiceMode()== ServiceMode.SINGLE_VM) {
-            JDBCConnectionFactory connectionFactory = TestHelper.createJDBCConnectionFactory(moduleConfiguration.getConfiguration());
-            connectionFactoryMap.put(ReplicaVersion.CURRENT, connectionFactory);
-            connectionFactoryMap.put(ReplicaVersion.OLD, connectionFactory);
+            JDBCConnectionFactory connectionFactory = JDBCHelper.createJDBCConnectionFactory(moduleConfiguration.getConfiguration());
+            connectionFactoryMap.put(SnapshotVersion.CURRENT, connectionFactory);
+            connectionFactoryMap.put(SnapshotVersion.OLD, connectionFactory);
         }  else {
-            connectionFactoryMap.put(ReplicaVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelBok_DS"));
-            connectionFactoryMap.put(ReplicaVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelOld_DS"));
+            connectionFactoryMap.put(SnapshotVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelBok_DS"));
+            connectionFactoryMap.put(SnapshotVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelOld_DS"));
         }
         return connectionFactoryMap;
     }
@@ -76,10 +76,10 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         Properties properties = getHibernateProperties();
         logger.trace("Properties used for configuring hibernate: '{}'", properties);
         String mappingFileDirectoryRoot = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.HIBERNATE_MAPPRING_FILE_ROOT, mappingFileDirectoryRootDefault);
-        return new StoreHibernateSessionFactoryBuilder(properties, mappingFileDirectoryRoot);
+        return HibernateVersionFactory.Accessor.get().createStoreHibernateSessionFactoryBuilder(properties, mappingFileDirectoryRoot);
     }
 
-    protected abstract void configureHibernate(StoreHibernateSessionFactoryBuilder facotryBuilderStore);
+    protected abstract void configureHibernate(StoreHibernateSessionFactoryBuilder factoryBuilderStore);
 
     @Override
     protected void configure() {
@@ -92,25 +92,35 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
 
         // Session managers kun skal deles per service request
         bind(new TypeLiteral<Map<Object, ConnectionFactory>>(){}).toInstance(createConnectionFactoryMap());
-        bind(ConnectionFactoryManager.class).to(ConnectionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
-        bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
+        bind(ConnectionFactoryManager.class).to(ConnectionFactoryManagerMultiVersionImpl.class);
+        bind(ConnectionFactoryManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
+
+        bind(HibernateSessionFactoryManager.class).to(HibernateSessionFactoryManagerSnapshotVersionImpl.class);
+        bind(HibernateSessionFactoryManagerSnapshotVersionImpl.class).in(ServiceRequestScoped.class);
+
+
         bind(ConnectionManager.class).to(HibernateSessionManager.class);
         bind(HibernateSessionManager.class).to(HibernateStoreSessionManager.class);
 
-        bind(Connection.class).toProvider(new ConnectionProvider(ReplicaVersion.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig å angi replicaversion her?
+        // TODO: Nok ikke riktig måte å gjøre det på. Må sjekke som det virkelig blir ServiceRequestScoped eller singleton her.
+        bind(Connection.class).toProvider(new ConnectionProvider(SnapshotVersion.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig å angi replicaversion her?
 
-        bind(HibernateStoreSessionManager.class).to(HibernateStoreSessionManagerMultiVersionImpl.class).in(ServiceRequestScoped.class);
+        bind(HibernateStoreSessionManager.class).to(HibernateStoreSessionManagerSnapshotVersionImpl.class);
+        bind(HibernateStoreSessionManagerSnapshotVersionImpl.class).in(ServiceRequestScoped.class);
+
         bind(HibernateStoreSession.class).toProvider(HibernateStoreSessionProvider.class).in(ServiceRequestScoped.class);
 
         bind(Session.class).toProvider(HibernateSessionProviderCurrent.class).in(ServiceRequestScoped.class);
 
-        // TODO ReplicaVersion skal erstattes med TimePoint som har tilsvarende funksjonalitet
+        // TODO SnapshotVersion skal erstattes med TimePoint som har tilsvarende funksjonalitet
 
         // TODO Kanskje vi ikke trenger denne bindingen
-        bind(ReplicaVersion.class).toInstance(ReplicaVersion.CURRENT);
+        bind(SnapshotVersion.class).toInstance(SnapshotVersion.CURRENT);
 
         //For LockerStrategy
         install(new ServerServiceModule(moduleConfiguration, new SkifServices().getServices()));
+
+        bind(StoreService.class).to(storeServiceClass);
 
     }
 

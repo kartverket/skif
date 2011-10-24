@@ -1,12 +1,12 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.storetest.domain.TestBubble;
+import no.statkart.skif.storetest.domain.demo.TestBubble;
 
 /**
  * @author Henrik Fredholm
  * @since 0.3
  */
-public class TestBubbleTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.TestBubble, DomainT extends TestBubble> extends StoreTestBubbleTypeMapper<WsapiT,DomainT> {
+public class TestBubbleTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.demo.TestBubble, DomainT extends TestBubble> extends StoreTestBubbleTypeMapper<WsapiT,DomainT> {
     public TestBubbleTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
         super(wsapiClass, domainClass);
     }

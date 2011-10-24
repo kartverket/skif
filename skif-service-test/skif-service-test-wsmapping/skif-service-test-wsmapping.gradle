@@ -2,6 +2,7 @@ dependencies {
     compile project(':skif-service-test:skif-service-test-api')
     compile project(':skif-service-test:skif-service-test-wsschema')
 
+    testCompile libraries.unitils
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
 

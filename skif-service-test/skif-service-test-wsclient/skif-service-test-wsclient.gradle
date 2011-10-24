@@ -49,6 +49,29 @@ task genWsclient(dependsOn: ':skif-service-test:skif-service-test-wswar:jar') {
 
         ant.properties['wsTargetDir'] = wsTargetDir
         wsClientFixExceptions.execute()
+
+        // SKIF-82: Fix elementFormDefault i package-info.java for domeneklasser dersom den mangler. Pakker som inneholder services skal ikke endres, da disse ikke bruker qualified.
+        // Skriv ut hvilke filer som faktisk endres
+        packageInfoFiles = fileTree {
+            from 'build/generated/main/java'
+            include '**/package-info.java'
+            exclude '**/service/**'
+        }
+        packageInfoFiles.each { File file ->
+            newFile = new File('temp')
+            newFile.withWriter { out ->
+                file.eachLine { line ->
+                    if (line =~ '@javax.xml.bind.annotation.XmlSchema\\(namespace = "(.*)"\\)') {
+                        println 'Adding missing "elementFormDefault = QUALIFIED"  to: ' + file.path;
+                        out.println line.replaceFirst('@javax.xml.bind.annotation.XmlSchema\\(namespace = "(.*)"\\)', '@javax.xml.bind.annotation.XmlSchema(namespace =  "$1",  elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)')
+                    } else {
+                        out.println line
+                    }
+                }
+            }
+            file.delete()
+            newFile.renameTo(file.path)
+        }
     }
 }
 

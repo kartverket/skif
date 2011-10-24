@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"
+        xmlns:kodens="http://skif.statkart.no/storetest/wsapi/domain/kode"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:import schemaLocation="kode.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/kode"/>
+
+    <xs:complexType name="TestAEnumKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestAEnumKode">
+        <xs:complexContent>
+            <xs:extension base="kodens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="TestBEnumKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestBEnumKode">
+        <xs:complexContent>
+            <xs:extension base="kodens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestCEnumKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestCEnumKode">
+        <xs:complexContent>
+            <xs:extension base="kodens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestADbKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestADbKode">
+        <xs:complexContent>
+            <xs:extension base="kodens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestBDbKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestBDbKode">
+        <xs:complexContent>
+            <xs:extension base="kodens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestC1DbKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestC1DbKode">
+        <xs:complexContent>
+            <xs:extension base="kodens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="TestCDbKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestCDbKode">
+        <xs:complexContent>
+            <xs:extension base="kodens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

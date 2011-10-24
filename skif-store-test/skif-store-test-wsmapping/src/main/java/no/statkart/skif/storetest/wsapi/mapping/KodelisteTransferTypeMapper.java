@@ -1,8 +1,8 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.storetest.domain.kodeliste.KodelisteTransfer;
+import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
+import no.statkart.skif.storetest.wsapi.domain.kode.KodeIdList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
 
 import java.lang.reflect.InvocationTargetException;

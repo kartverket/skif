@@ -10,7 +10,7 @@ import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.storetest.config.StoreTestSequenceBlockAllocatorServices;
 import no.statkart.skif.storetest.config.StoreTestTxManagementServerInjector;
 import no.statkart.skif.storetest.config.StoreTestTxManagementServices;
-import no.statkart.skif.storetest.wsapi.exception.impl.mapping.StoreTestExceptionMapper;
+import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

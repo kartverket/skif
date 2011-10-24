@@ -4,7 +4,6 @@ package no.statkart.skif.store.persistence.hibernate;
 import no.statkart.skif.persistence.ConnectionManager;
 import org.hibernate.Session;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 /**

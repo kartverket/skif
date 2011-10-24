@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.wsapi.exception;
 
 import javax.xml.ws.WebFault;
-import no.statkart.skif.storetest.wsapi.exception.impl.*;
 
 /**
  * Se dokumentasjon i {@link ServiceFaultInfo}
@@ -9,7 +8,7 @@ import no.statkart.skif.storetest.wsapi.exception.impl.*;
  * @author Leif Lislegård
  * @since 1.1
  */
-@WebFault(name = "ServiceException", targetNamespace = "http://grunnbok.statkart.no/borett/info/wsapi/exception")
+@WebFault(name = "ServiceException", targetNamespace = "http://skif.statkart.no/storetest/wsapi/exception")
 public class ServiceException extends Exception {
 
     /**

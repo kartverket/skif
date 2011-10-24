@@ -6,10 +6,9 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.persistence.ConnectionFactoryManagerSingleVersionImpl;
-import no.statkart.skif.persistence.JDBCConnectionFactory;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.storetest.TestHelper;
-import no.statkart.skif.storetest.domain.TestEntity;
+import no.statkart.skif.storetest.domain.demo.TestEntity;
 import org.hibernate.Session;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -27,7 +26,7 @@ import static org.testng.Assert.*;
 public class HibernateSessionManagerTest {
     static Object NOT_USED = new Object();
 
-    private HibernateSessionFactoryManager hibernateSessionFactoryManager;
+    private HibernateSessionFactoryManagerSingleVersionImpl hibernateSessionFactoryManager;
     private ConnectionFactoryManager connectionFactoryManager;
 
     public HibernateSessionManagerTest() {
