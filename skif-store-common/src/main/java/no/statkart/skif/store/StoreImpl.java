@@ -464,7 +464,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <S> S getService(Class<S> serviceClass) {
+    public <S> S getInstance(Class<S> serviceClass) {
         return  injector.getInstance((serviceClass));
 
     }

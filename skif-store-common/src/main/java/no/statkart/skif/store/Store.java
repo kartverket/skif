@@ -74,6 +74,6 @@ public interface Store {
     void endUnitOfWork();
     boolean inUnitOfWork();
 
-    <S> S getService(Class<S> serviceClass);
+    <S> S getInstance(Class<S> serviceClass);
 
 }
