@@ -6,8 +6,8 @@ import no.statkart.skif.mapper.ObjectFactory;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Conveniece klasse for test-implementasjon.
@@ -19,11 +19,11 @@ import java.util.Collection;
  */
 public abstract class AbstractSkifTestExceptionMapper2 implements ExceptionMapping {
 
-    public <T extends Object> T d2w(Object source) {
+    public <T> T d2w(Object source) {
         throw new NotImplementedException("na");
     }
 
-    public <T extends Object> T w2d(Object source) {
+    public <T> T w2d(Object source) {
         throw new NotImplementedException("na");
     }
 
