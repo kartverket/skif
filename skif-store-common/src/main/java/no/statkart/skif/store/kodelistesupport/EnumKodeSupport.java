@@ -45,14 +45,14 @@ public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelist
         return koder.values();
     }
 
-    public <T extends EnumKode, I extends EnumKodeId<? extends T>> I define(Class<I> idClass, long idValue, String kodeverdi, String beskrivelesesKey) {
+    public <T extends EnumKode, I extends EnumKodeId<? extends T>> T defineKode(Class<I> idClass, long idValue, String kodeverdi, String beskrivelesesKey) {
         I id = BubbleIds.createInstance(idClass, idValue, SnapshotVersion.CURRENT);
         T kode = id.createTypeInstance();
         kode.setId(id);
         kode.setKodeverdi(kodeverdi);
         kode.setBeskrivelsesKey(beskrivelesesKey);
         addKode(kode);
-        return id;
+        return kode;
     }
 
     @Override

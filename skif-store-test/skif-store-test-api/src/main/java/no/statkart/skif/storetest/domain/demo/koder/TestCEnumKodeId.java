@@ -30,7 +30,7 @@ public class TestCEnumKodeId extends EnumKodeIdImpl<TestCEnumKode> implements Te
     }
 
     protected static TestCEnumKodeId define(long idValue, String kodeVerdi, String beskrivelesesKey) {
-        return kodeSupport.define(TestCEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey);
+        return kodeSupport.defineKode(TestCEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey).getId();
     }
 
     public static TestCEnumKodeId createInstance(long idValue) {

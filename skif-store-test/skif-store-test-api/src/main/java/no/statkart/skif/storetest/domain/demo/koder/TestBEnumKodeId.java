@@ -31,7 +31,7 @@ public class TestBEnumKodeId extends EnumKodeIdImpl<TestBEnumKode> implements Te
     }
 
     protected static TestBEnumKodeId define(long idValue, String kodeVerdi, String beskrivelesesKey) {
-        return kodeSupport.define(TestBEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey);
+        return kodeSupport.defineKode(TestBEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey).getId();
     }
 
     public static TestBEnumKodeId createInstance(long idValue) {
