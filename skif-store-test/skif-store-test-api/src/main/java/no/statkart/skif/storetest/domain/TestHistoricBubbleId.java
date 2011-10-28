@@ -1,0 +1,31 @@
+package no.statkart.skif.storetest.domain;
+
+import no.statkart.skif.store.AbstractBubbleId;
+import no.statkart.skif.store.SnapshotVersion;
+
+/**
+ * @author Henrik Fredholm
+ * @since 2.0
+ */
+public class TestHistoricBubbleId<T extends TestHistoricBubble> extends AbstractBubbleId<T> implements StoreTestBubbleId<T> {
+
+    public TestHistoricBubbleId<T> resolveInstance() {
+        return this;
+    }
+
+    public TestHistoricBubbleId() {
+        super();
+    }
+
+    public TestHistoricBubbleId(int idValue) {
+        super(new Long(idValue));
+    }
+
+    public TestHistoricBubbleId(Long idValue) {
+        super(idValue);
+    }
+
+    public TestHistoricBubbleId(Long value, SnapshotVersion version) {
+        super(value, version);
+    }
+}

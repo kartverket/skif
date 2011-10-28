@@ -17,6 +17,7 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.*;
+import no.statkart.skif.storetest.domain.TestHistoricBubble;
 import no.statkart.skif.storetest.domain.demo.TestBubble;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
@@ -174,6 +175,7 @@ public class TestHelper {
                 // Alle requester skal dele samme factory manager, mens connection og session managers  kun skal deles per request
                 StoreHibernateSessionFactoryBuilder sfbuilder = TestHelper.createStoreHibernateSessionFactoryBuilder();
                 sfbuilder.addResource(TestBubble.class);
+                sfbuilder.addResource(TestHistoricBubble.class);
                 bind(HibernateSessionFactoryBuilder.class).toInstance(sfbuilder);
                 bind(ConnectionFactoryManager.class).toInstance(TestHelper.createConnectionFactoryManager());
 

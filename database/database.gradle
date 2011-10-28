@@ -29,17 +29,49 @@ configureDatabasePlugin {
 task dbInit {
 
     description = 'Purger schema, oppretter schema og fyller inn testdata'
-    def tasks = [tasks.Purge, tasks.CreateSchema, tasks.LoadTestdata]
+    def mySqlTasks = [tasks.Purge, tasks.CreateSchema, tasks.LoadTestdata]
 
-    tasks.each {
+    mySqlTasks.each {
         dependsOn = it.dependsOn
     }
 
     doLast {
-        tasks.each {
+        mySqlTasks.each {
             println "${name} -> ${it.path}"
             it.execute()
         }
     }
 
+}
+
+task dbInitAsSystem {
+    description = 'Fjerner brukere, oppretter brukere på nytt'
+    def mySqlTasks = [tasks.RecreateUser]
+
+    mySqlTasks.each {
+        dependsOn = it.dependsOn
+    }
+
+    doLast {
+        mySqlTasks.each {
+            println "${name} -> ${it.path}"
+            it.execute()
+        }
+    }
+}
+
+task dbInitAsHistUser {
+    description = 'Populerer Hist-skjema, og granter rettigheter'
+    def mySqlTasks = [tasks.PopulateHistSchema]
+
+    mySqlTasks.each {
+        dependsOn = it.dependsOn
+    }
+
+    doLast {
+        mySqlTasks.each {
+            println "${name} -> ${it.path}"
+            it.execute()
+        }
+    }
 }

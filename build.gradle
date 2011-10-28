@@ -107,7 +107,7 @@ buildscript {
         mavenLocal()  //må ha denne for å kunne hente ned lokalt installerte dev-versjoner...
     }
     dependencies {
-        classpath "no.statkart:statkart-gradle-plugins:${'3-SNAPSHOT'}"
+        classpath "no.statkart:statkart-gradle-plugins:${'16-SNAPSHOT'}"
     }
 }
 
