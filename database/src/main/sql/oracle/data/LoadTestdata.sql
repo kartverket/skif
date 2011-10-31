@@ -54,9 +54,9 @@ insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to
 insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (101,snapshot_time.to_t('2011-10-02 08:03:00.00'),snapshot_time.to_t('2011-10-02 08:04:00.00'),1,2201,'GAMMEL-VEIEN');
 insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (101,snapshot_time.to_t('2011-10-02 08:04:00.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,2201,'GAMMELVEIEN');
 
-insert into BAZ (ID, TEXT, FOOID, TESTAENUMKODEID, C2DBKODEID) values (501, 'Baz 1', 100, 0, 10);
-insert into BAZ (ID, TEXT, FOOID, TESTAENUMKODEID, C2DBKODEID) values (502, 'Baz 2', 100, 1, 11);
-insert into BAZ (ID, TEXT, FOOID, TESTAENUMKODEID, C2DBKODEID) values (503, 'Baz 3', 101, 2, 10);
+insert into BAZ (ID, TEXT, FOOID, TESTAENUMKODEID, TESTC2DBKODEID) values (501, 'Baz 1', 100, 0, 10);
+insert into BAZ (ID, TEXT, FOOID, TESTAENUMKODEID, TESTC2DBKODEID) values (502, 'Baz 2', 100, 1, 11);
+insert into BAZ (ID, TEXT, FOOID, TESTAENUMKODEID, TESTC2DBKODEID) values (503, 'Baz 3', 101, 2, 10);
 
 insert into RAZ (ID, TEXT,COMPTEXT, FOOID) values (601, 'Raz 1','CompRaz 1', 100);
 insert into RAZ (ID, TEXT,COMPTEXT, FOOID) values (602, 'Raz 2','CompRaz 2', 100);

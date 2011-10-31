@@ -161,6 +161,7 @@ public class DbKodeHibernateTest {
         Session session = sf.openSession();
         Baz obj = (Baz) session.load(Baz.class, BubbleIds.createInstance(BazId.class, 502));
         Assert.assertEquals(obj.getTestAEnumKodeId(), AEnumKodeId.KodeAId);
+        Assert.assertEquals(obj.getTestC2DbKodeId(), C2DbKodeId.C2BId);
     }
 
 }
