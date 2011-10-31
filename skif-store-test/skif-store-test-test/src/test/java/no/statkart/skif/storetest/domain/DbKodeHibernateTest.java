@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.domain;
 
+import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
@@ -13,9 +14,13 @@ import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
 import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 import no.statkart.skif.storetest.TestHelper;
+import no.statkart.skif.storetest.domain.demo.Baz;
+import no.statkart.skif.storetest.domain.demo.BazId;
+import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeliste;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteId;
+import no.statkart.skif.storetest.persistence.hibernate.type.kode.UserEnumType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.testng.Assert;
@@ -37,10 +42,13 @@ public class DbKodeHibernateTest {
 
     private SessionFactory setupHibernate() {
         StoreHibernateSessionFactoryBuilder sfbuilder = TestHelper.createStoreHibernateSessionFactoryBuilder();
+        sfbuilder.addResourceUsingRelativePath("kode", UserEnumType.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
         sfbuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", CDbKode.class, C1DbKode.class, C2DbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodeliste.class);
+        sfbuilder.addResource(Foo.class);
+        sfbuilder.addResource(Baz.class);
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         return sf;
@@ -147,4 +155,12 @@ public class DbKodeHibernateTest {
         Collection<? extends BubbleObject> list2 = kodelistePersister.getAllKodelisterAndKoder();
         Assert.assertNotNull(list);
     }
+
+    public void testLoadTestBaz() {
+        SessionFactory sf = setupHibernate();
+        Session session = sf.openSession();
+        Baz obj = (Baz) session.load(Baz.class, BubbleIds.createInstance(BazId.class, 502));
+        Assert.assertEquals(obj.getTestAEnumKodeId(), AEnumKodeId.KodeAId);
+    }
+
 }

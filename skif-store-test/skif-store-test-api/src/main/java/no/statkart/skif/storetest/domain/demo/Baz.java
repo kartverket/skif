@@ -2,6 +2,8 @@ package no.statkart.skif.storetest.domain.demo;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 
 /**
  * @author Henrik Fredholm
@@ -11,6 +13,7 @@ public class Baz extends AbstractBubbleObject implements StoreTestBubble {
 
     private String text;
     FooId<Foo> fooId;
+    AEnumKodeId testAEnumKodeId = AEnumKodeId.IkkeOppgittId;
 
     @Override
     public BazId<?> getId() {
@@ -31,5 +34,13 @@ public class Baz extends AbstractBubbleObject implements StoreTestBubble {
 
     public void setFooId(FooId<Foo> fooId) {
         this.fooId = fooId;
+    }
+
+    public AEnumKodeId getTestAEnumKodeId() {
+        return testAEnumKodeId;
+    }
+
+    public void setTestAEnumKodeId(AEnumKodeId testAEnumKodeId) {
+        this.testAEnumKodeId = testAEnumKodeId;
     }
 }

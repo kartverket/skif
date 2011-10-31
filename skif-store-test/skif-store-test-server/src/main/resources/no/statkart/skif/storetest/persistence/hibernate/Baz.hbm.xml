@@ -15,6 +15,11 @@
           class="no.statkart.skif.storetest.domain.demo.Foo">
           <meta attribute="bubble-ref"/>
        </many-to-one>
+
+       <property name="testAEnumKodeId" type="UserEnumType_Demo_AEnumKodeIdType" not-null="true"/>
+
    </class>
+
+
 
 </hibernate-mapping>

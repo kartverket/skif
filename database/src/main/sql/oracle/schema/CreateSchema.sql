@@ -144,6 +144,8 @@ CREATE TABLE Baz (
     id                   NUMBER(19,0) NOT NULL ENABLE,
     text                 VARCHAR2(255 BYTE),
     fooId                number(19,0) not null,
+    testAEnumKodeId      number(10,0) not null,
+    c2DbKodeId           number(19,0) not null,
     PRIMARY KEY (id)
 );
 
