@@ -147,6 +147,15 @@ CREATE TABLE Baz (
     PRIMARY KEY (id)
 );
 
+-- Denne tabell har heller ikke historikk
+CREATE TABLE Raz (
+    id                   NUMBER(19,0) NOT NULL ENABLE,
+    text                 VARCHAR2(255 BYTE),
+    compText             VARCHAR2(255 BYTE),
+    fooId                number(19,0) not null,
+    PRIMARY KEY (id)
+);
+
 
 CREATE TABLE BAR_H (
     id                   NUMBER(19,0) NOT NULL ENABLE,

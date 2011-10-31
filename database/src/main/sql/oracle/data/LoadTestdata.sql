@@ -58,6 +58,11 @@ insert into BAZ (ID, TEXT, FOOID) values (501, 'Baz 1', 100);
 insert into BAZ (ID, TEXT, FOOID) values (502, 'Baz 2', 100);
 insert into BAZ (ID, TEXT, FOOID) values (503, 'Baz 3', 101);
 
+insert into RAZ (ID, TEXT,COMPTEXT, FOOID) values (601, 'Raz 1','CompRaz 1', 100);
+insert into RAZ (ID, TEXT,COMPTEXT, FOOID) values (602, 'Raz 2','CompRaz 2', 100);
+insert into RAZ (ID, TEXT,COMPTEXT, FOOID) values (603, 'Raz 3','CompRaz 3', 101);
+
+
 insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID, BAZID) values (1001,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,105,NULL,100, 501);
 insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID, BAZID) values (1001,snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2,106,NULL,100, 502);
 insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID, BAZID) values (1002,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,205,NULL,100, 503);

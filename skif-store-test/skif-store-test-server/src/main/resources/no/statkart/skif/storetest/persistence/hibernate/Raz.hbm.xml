@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+   <class name="no.statkart.skif.storetest.domain.demo.Raz">
+      <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.RazIdType">
+          <generator class="assigned"/>
+      </id>
+
+      <property name="text"/>
+
+       <component name="razComponent" class="no.statkart.skif.storetest.domain.demo.RazComponent">
+           <many-to-one
+               name="foo"
+               column="fooId"
+               class="no.statkart.skif.storetest.domain.demo.Foo"
+               access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor">
+               <meta attribute="bubble-ref"/>
+            </many-to-one>
+
+           <property name="compText"/>
+       </component>
+
+
+   </class>
+
+</hibernate-mapping>
