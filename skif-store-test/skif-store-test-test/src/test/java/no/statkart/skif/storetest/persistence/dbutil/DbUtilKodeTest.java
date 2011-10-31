@@ -6,11 +6,11 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.storetest.TestHelper;
-import no.statkart.skif.storetest.domain.kodeliste.TestDbKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.TestDbKodelisteId;
-import no.statkart.skif.storetest.domain.demo.koder.TestADbKode;
-import no.statkart.skif.storetest.domain.demo.koder.TestADbKodeId;
-import no.statkart.skif.storetest.domain.demo.koder.TestBDbKode;
+import no.statkart.skif.storetest.domain.demo.koder.ADbKode;
+import no.statkart.skif.storetest.domain.demo.koder.ADbKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.BDbKode;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeliste;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteId;
 import org.dbunit.IDatabaseTester;
 import org.dbunit.dataset.DataSetException;
 import org.hibernate.Session;
@@ -55,9 +55,9 @@ public class DbUtilKodeTest {
 
     private SessionFactory setupHibernate() {
         HibernateSessionFactoryBuilder sfbuilder = TestHelper.createHibernateSessionFactoryBuilder();
-        sfbuilder.addResourceUsingRelativePath("kodeliste", TestADbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", TestBDbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", TestDbKodeliste.class);
+        sfbuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
+        sfbuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
+        sfbuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodeliste.class);
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         return sf;
@@ -66,7 +66,7 @@ public class DbUtilKodeTest {
     public void testHibernate() {
         SessionFactory sf = setupHibernate();
         Session session = sf.openSession();
-        TestADbKode obj = (TestADbKode) session.load(TestADbKode.class, TestADbKodeId.createInstance(1));
+        ADbKode obj = (ADbKode) session.load(ADbKode.class, ADbKodeId.createInstance(1));
         assertEquals(obj.getId().getValue(), new Long(1));
 
     }
@@ -76,11 +76,11 @@ public class DbUtilKodeTest {
         Session session = sf.openSession();
         Transaction transaction = session.beginTransaction();
 
-        TestADbKode obj = (TestADbKode) session.load(TestADbKode.class, TestADbKodeId.createInstance(1));
+        ADbKode obj = (ADbKode) session.load(ADbKode.class, ADbKodeId.createInstance(1));
         obj.getLokalisertBeskrivelse().put("f", "test");
         transaction.commit();
         session.clear();
-        TestADbKode obj1 = (TestADbKode) session.load(TestADbKode.class, TestADbKodeId.createInstance(1));
+        ADbKode obj1 = (ADbKode) session.load(ADbKode.class, ADbKodeId.createInstance(1));
         assertEquals(obj1.getLokalisertBeskrivelse().get("f"), "test");
 
     }
@@ -88,7 +88,7 @@ public class DbUtilKodeTest {
     public void testLastKodeliste() {
         SessionFactory sf = setupHibernate();
         Session session = sf.openSession();
-        TestDbKodeliste obj = (TestDbKodeliste) session.load(TestDbKodeliste.class, new TestDbKodelisteId(10001L, SnapshotVersion.CURRENT));
-        assertEquals(obj.getKodeClass(), TestADbKode.class);
+        StoreTestDbKodeliste obj = (StoreTestDbKodeliste) session.load(StoreTestDbKodeliste.class, new StoreTestDbKodelisteId(10001L, SnapshotVersion.CURRENT));
+        assertEquals(obj.getKodeClass(), ADbKode.class);
     }
 }

@@ -6,9 +6,9 @@ import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.kodelistesupport.Kode;
 import no.statkart.skif.store.kodelistesupport.Kodeliste;
-import no.statkart.skif.storetest.domain.demo.koder.TestAEnumKode;
-import no.statkart.skif.storetest.domain.demo.koder.TestAEnumKodeId;
-import no.statkart.skif.storetest.domain.demo.koder.TestBEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
@@ -28,9 +28,9 @@ import static org.testng.Assert.*;
 public class KodelisteTest extends StoreTestTestCase {
 
     public void testEquals() {
-        TestEnumKodelisteId<TestEnumKodeliste> enumKodelisteId = new TestEnumKodelisteId<TestEnumKodeliste>(1);
-        TestKodelisteId<?> kodelisteId1 = new TestEnumKodelisteId<TestEnumKodeliste>(1);
-        TestKodelisteId<?> kodelisteId2 = new TestKodelisteIdImpl<TestKodelisteImpl>(1);
+        StoreTestEnumKodelisteId<StoreTestEnumKodeliste> enumKodelisteId = new StoreTestEnumKodelisteId<StoreTestEnumKodeliste>(1);
+        StoreTestKodelisteId<?> kodelisteId1 = new StoreTestEnumKodelisteId<StoreTestEnumKodeliste>(1);
+        StoreTestKodelisteId<?> kodelisteId2 = new StoreTestKodelisteIdImpl<StoreTestKodelisteImpl>(1);
 
         assertEquals(enumKodelisteId, kodelisteId1);
         assertEquals(enumKodelisteId, kodelisteId2);
@@ -38,28 +38,28 @@ public class KodelisteTest extends StoreTestTestCase {
     }
 
     public void testNotEquals() {
-        TestKodelisteId<?> kodelisteId1 = new TestEnumKodelisteId<TestEnumKodeliste>(1);
-        TestKodelisteId<?> kodelisteId2 = new TestKodelisteIdImpl<TestKodelisteImpl>(2);
+        StoreTestKodelisteId<?> kodelisteId1 = new StoreTestEnumKodelisteId<StoreTestEnumKodeliste>(1);
+        StoreTestKodelisteId<?> kodelisteId2 = new StoreTestKodelisteIdImpl<StoreTestKodelisteImpl>(2);
 
         assertFalse(kodelisteId1.equals(kodelisteId2));
     }
 
     public void testCreateInstance() {
-        TestKodelisteId<?> kodelisteId1 = new TestEnumKodelisteId<TestEnumKodeliste>(1);
-        TestKodeliste kodeliste = kodelisteId1.createTypeInstance();
+        StoreTestKodelisteId<?> kodelisteId1 = new StoreTestEnumKodelisteId<StoreTestEnumKodeliste>(1);
+        StoreTestKodeliste kodeliste = kodelisteId1.createTypeInstance();
         assertNull(kodeliste.getId());
         assertEquals(kodeliste.getKodeIds().size(), 0);
     }
 
     public void testGetKode() {
         Store store = injector.getInstance(Store.class);
-        TestAEnumKode kode = store.get(TestAEnumKodeId.KodeAId);
+        AEnumKode kode = store.get(AEnumKodeId.KodeAId);
         assertNotNull(kode);
     }
 
     public void testGetKodeliste() {
         Store store = injector.getInstance(Store.class);
-        Kodeliste kodeliste = store.get(TestAEnumKodeId.KODELISTE_ID);
+        Kodeliste kodeliste = store.get(AEnumKodeId.KODELISTE_ID);
         List<Kode> list = store.get(kodeliste.getKodeIds());
         assertNotNull(list);
     }
@@ -77,7 +77,7 @@ public class KodelisteTest extends StoreTestTestCase {
          List<Kode> objects = new ArrayList<Kode>();
          store.register(kodelisteTransfer.getObjects(), objects);
          KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
-         TestBEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(TestBEnumKodeId.class, "B");
-         assertSame(bKodeId, TestBEnumKodeId.KodeBId);
+         BEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(BEnumKodeId.class, "B");
+         assertSame(bKodeId, BEnumKodeId.KodeBId);
      }
 }

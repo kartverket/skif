@@ -24,9 +24,9 @@ import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate;
 import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.domain.demo.koder.TestAEnumKodeId;
-import no.statkart.skif.storetest.domain.demo.koder.TestBEnumKodeId;
-import no.statkart.skif.storetest.domain.demo.koder.TestCEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.CEnumKodeId;
 import no.statkart.skif.storetest.persistence.StoreTestKodelisteLoader;
 import no.statkart.skif.storetest.persistence.StoreTestStorePersisterStrategy;
 
@@ -85,9 +85,9 @@ public class StoreTestServerModule extends SkifModule {
     @Singleton
     KodelisteManager bubbleKodelisteManagerProvider() {
         KodelisteManager kodelisteManager = new KodelisteManager();
-        kodelisteManager.installStatic(TestAEnumKodeId.class);
-        kodelisteManager.installStatic(TestBEnumKodeId.class);
-        kodelisteManager.installStatic(TestCEnumKodeId.class);
+        kodelisteManager.installStatic(AEnumKodeId.class);
+        kodelisteManager.installStatic(BEnumKodeId.class);
+        kodelisteManager.installStatic(CEnumKodeId.class);
         return kodelisteManager;
     }
 

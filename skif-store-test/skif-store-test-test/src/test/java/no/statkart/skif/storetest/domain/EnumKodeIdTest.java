@@ -6,8 +6,8 @@ import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.EnumKodeIdImpl;
 import no.statkart.skif.store.kodelistesupport.KodeIdImpl;
-import no.statkart.skif.storetest.domain.demo.koder.TestAEnumKode;
-import no.statkart.skif.storetest.domain.demo.koder.TestAEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
@@ -23,41 +23,41 @@ import static org.testng.AssertJUnit.assertSame;
 public class EnumKodeIdTest {
 
     public void testIkkeLike() {
-        assertNotSame(TestAEnumKodeId.IkkeOppgittId, TestAEnumKodeId.KodeAId);
-        assertNotSame(TestAEnumKodeId.IkkeOppgittId, TestAEnumKodeId.KodeBId);
+        assertNotSame(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeAId);
+        assertNotSame(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeBId);
     }
     
     public void testLike()  {
-        TestAEnumKodeId kodeAId = TestAEnumKodeId.KodeAId;
+        AEnumKodeId kodeAId = AEnumKodeId.KodeAId;
 
-        TestAEnumKodeId id = TestAEnumKodeId.createInstance(kodeAId.getValue());
+        AEnumKodeId id = AEnumKodeId.createInstance(kodeAId.getValue());
         assertSame(kodeAId, id);
 
-        TestAEnumKodeId id1 = EnumKodeIdImpl.createInstance(TestAEnumKodeId.class, kodeAId.getValue());
+        AEnumKodeId id1 = EnumKodeIdImpl.createInstance(AEnumKodeId.class, kodeAId.getValue());
         assertSame(kodeAId, id1);
 
-        TestAEnumKodeId id2 = KodeIdImpl.createInstance(TestAEnumKodeId.class, kodeAId.getValue());
+        AEnumKodeId id2 = KodeIdImpl.createInstance(AEnumKodeId.class, kodeAId.getValue());
         assertSame(kodeAId, id2);
 
-        TestAEnumKodeId id3 = BubbleIds.createInstance(TestAEnumKodeId.class, kodeAId.getValue());
+        AEnumKodeId id3 = BubbleIds.createInstance(AEnumKodeId.class, kodeAId.getValue());
         assertSame(kodeAId, id3);
 
     }
 
     public void testCopy() {
-        TestAEnumKodeId id = CopyHelper.copy(TestAEnumKodeId.KodeAId);
-        assertSame(id, TestAEnumKodeId.KodeAId);
+        AEnumKodeId id = CopyHelper.copy(AEnumKodeId.KodeAId);
+        assertSame(id, AEnumKodeId.KodeAId);
     }
 
     public void testGetKodelisteId() {
-        TestAEnumKodeId kodeAId =TestAEnumKodeId.KodeAId;
-        assertSame(kodeAId.getKodelisteId(), TestAEnumKodeId.KODELISTE_ID);
-        assertSame(KodeIdImpl.getKodelisteId(TestAEnumKodeId.class), TestAEnumKodeId.KODELISTE_ID);
+        AEnumKodeId kodeAId = AEnumKodeId.KodeAId;
+        assertSame(kodeAId.getKodelisteId(), AEnumKodeId.KODELISTE_ID);
+        assertSame(KodeIdImpl.getKodelisteId(AEnumKodeId.class), AEnumKodeId.KODELISTE_ID);
     }
 
     public void testHistorikk() {
-        AbstractBubbleId<TestAEnumKode> enumId = TestAEnumKodeId.createInstance(27);
-        AbstractBubbleId<TestAEnumKode> enumId2 = enumId.asReplicaVersion(SnapshotVersion.createInstance("2011-10-02 08:03:15.00"));
+        AbstractBubbleId<AEnumKode> enumId = AEnumKodeId.createInstance(27);
+        AbstractBubbleId<AEnumKode> enumId2 = enumId.asReplicaVersion(SnapshotVersion.createInstance("2011-10-02 08:03:15.00"));
         assertEquals(enumId2.getSnapshotVersion(), SnapshotVersion.CURRENT);
     }
 }
