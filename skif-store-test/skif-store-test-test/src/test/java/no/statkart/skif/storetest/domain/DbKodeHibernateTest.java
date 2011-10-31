@@ -10,6 +10,7 @@ import no.statkart.skif.store.kodelistesupport.DbKodeliste;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateVersionFactory;
 import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
 import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
@@ -20,7 +21,6 @@ import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeliste;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteId;
-import no.statkart.skif.storetest.persistence.hibernate.type.kode.UserEnumType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.testng.Assert;
@@ -42,7 +42,7 @@ public class DbKodeHibernateTest {
 
     private SessionFactory setupHibernate() {
         StoreHibernateSessionFactoryBuilder sfbuilder = TestHelper.createStoreHibernateSessionFactoryBuilder();
-        sfbuilder.addResourceUsingRelativePath("kode", UserEnumType.class);
+        sfbuilder.addResourceUsingRelativePath("kode", EnumKodeIdType.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
         sfbuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", CDbKode.class, C1DbKode.class, C2DbKode.class);

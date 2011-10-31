@@ -2,12 +2,12 @@
 <!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <!--  Mapping av koder. Hver enummerert kode må mappes til egen hibernate type.
-      Navnekonvensjon på type navn er UserEnumType_Pakkenavn_KlassenavnForKode.
+      Navnekonvensjon på type navn er Pakkenavn_KlassenavnForEnumKodeType.
    -->
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-   <typedef class="no.statkart.skif.storetest.persistence.hibernate.type.kode.UserEnumType" name="UserEnumType_Demo_AEnumKodeIdType">
+   <typedef class="no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType" name="Demo_AEnumKodeIdType">
       <param name="enumClassName">no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId</param>
    </typedef>
 

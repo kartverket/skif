@@ -16,7 +16,7 @@
           <meta attribute="bubble-ref"/>
        </many-to-one>
 
-       <property name="testAEnumKodeId" type="UserEnumType_Demo_AEnumKodeIdType" not-null="true"/>
+       <property name="testAEnumKodeId" type="Demo_AEnumKodeIdType" not-null="true"/>
 
    </class>
 

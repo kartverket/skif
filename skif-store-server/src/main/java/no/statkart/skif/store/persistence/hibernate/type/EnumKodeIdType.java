@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.persistence.hibernate.type.kode;
+package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.kodelistesupport.EnumKodeId;
@@ -20,11 +20,11 @@ import java.sql.Types;
 import java.util.Properties;
 
 /**
- * Hibernate type for EnumKodeId
+ * Hibernate type for EnumKodeId.
  *
  * @author Henrik Fredholm
  */
-public class UserEnumType implements EnhancedUserType, ParameterizedType {
+public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     /* Logging is implemented as in org.hibernate.type.NullableType in order to get similar logging performance and output as for standard hibernate types */
     private static final boolean IS_VALUE_TRACING_ENABLED = LoggerFactory.getLogger(StringHelper.qualifier(BubbleIdType.class.getName())).isTraceEnabled();
     private transient Logger log;
