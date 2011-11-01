@@ -3,12 +3,12 @@ package no.statkart.skif.storetest.domain.kodeliste;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.EnumKodelisteId;
-import no.statkart.skif.store.kodelistesupport.EnumKodelisteIdImpl;
+import no.statkart.skif.store.kodelistesupport.EnumKodelisteImplId;
 
 /**
  * @author Henrik Fredholm
  */
-public class StoreTestEnumKodelisteId<T extends StoreTestEnumKodeliste> extends EnumKodelisteIdImpl<T> implements EnumKodelisteId<T>, StoreTestKodelisteId<T> {
+public class StoreTestEnumKodelisteId<T extends StoreTestEnumKodeliste> extends EnumKodelisteImplId<T> implements EnumKodelisteId<T>, StoreTestKodelisteId<T> {
     public StoreTestEnumKodelisteId(long value) {
         super(value);
     }

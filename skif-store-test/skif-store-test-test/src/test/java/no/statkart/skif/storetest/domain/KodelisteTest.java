@@ -30,7 +30,7 @@ public class KodelisteTest extends StoreTestTestCase {
     public void testEquals() {
         StoreTestEnumKodelisteId<StoreTestEnumKodeliste> enumKodelisteId = new StoreTestEnumKodelisteId<StoreTestEnumKodeliste>(1);
         StoreTestKodelisteId<?> kodelisteId1 = new StoreTestEnumKodelisteId<StoreTestEnumKodeliste>(1);
-        StoreTestKodelisteId<?> kodelisteId2 = new StoreTestKodelisteIdImpl<StoreTestKodelisteImpl>(1);
+        StoreTestKodelisteId<?> kodelisteId2 = new StoreTestKodelisteImplId<StoreTestKodelisteImpl>(1);
 
         assertEquals(enumKodelisteId, kodelisteId1);
         assertEquals(enumKodelisteId, kodelisteId2);
@@ -39,7 +39,7 @@ public class KodelisteTest extends StoreTestTestCase {
 
     public void testNotEquals() {
         StoreTestKodelisteId<?> kodelisteId1 = new StoreTestEnumKodelisteId<StoreTestEnumKodeliste>(1);
-        StoreTestKodelisteId<?> kodelisteId2 = new StoreTestKodelisteIdImpl<StoreTestKodelisteImpl>(2);
+        StoreTestKodelisteId<?> kodelisteId2 = new StoreTestKodelisteImplId<StoreTestKodelisteImpl>(2);
 
         assertFalse(kodelisteId1.equals(kodelisteId2));
     }

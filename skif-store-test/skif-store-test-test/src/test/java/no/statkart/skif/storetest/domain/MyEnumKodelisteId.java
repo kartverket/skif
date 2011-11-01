@@ -1,12 +1,12 @@
 package no.statkart.skif.storetest.domain;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.EnumKodelisteIdImpl;
+import no.statkart.skif.store.kodelistesupport.EnumKodelisteImplId;
 
 /**
  * @author Henrik Fredholm
  */
-public class MyEnumKodelisteId extends EnumKodelisteIdImpl {
+public class MyEnumKodelisteId extends EnumKodelisteImplId {
 
     public MyEnumKodelisteId(long value) {
         super(value);

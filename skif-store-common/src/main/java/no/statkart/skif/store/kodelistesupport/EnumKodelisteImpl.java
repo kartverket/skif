@@ -8,8 +8,8 @@ public abstract class EnumKodelisteImpl extends KodelisteImpl implements EnumKod
     private String beskrivelsesKey;
 
     @Override
-    public EnumKodelisteIdImpl getId() {
-        return (EnumKodelisteIdImpl) super.getId();
+    public EnumKodelisteImplId getId() {
+        return (EnumKodelisteImplId) super.getId();
     }
 
     public String getBeskrivelsesKey() {

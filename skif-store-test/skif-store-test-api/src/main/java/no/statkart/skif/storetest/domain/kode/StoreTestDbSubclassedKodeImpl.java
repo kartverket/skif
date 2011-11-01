@@ -10,7 +10,7 @@ import no.statkart.skif.store.kodelistesupport.DbSubclassedKode;
 public abstract class StoreTestDbSubclassedKodeImpl extends DbKodeImpl implements DbSubclassedKode {
 
     @Override
-    public StoreTestDbSubclassedKodeIdImpl getId() {
-        return (StoreTestDbSubclassedKodeIdImpl) super.getId();    //To change body of overridden methods use File | Settings | File Templates.
+    public StoreTestDbSubclassedKodeImplId getId() {
+        return (StoreTestDbSubclassedKodeImplId) super.getId();    //To change body of overridden methods use File | Settings | File Templates.
     }
 }

@@ -10,17 +10,17 @@ import java.lang.reflect.Field;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public abstract class KodeIdImpl<T extends KodeImpl> extends AbstractBubbleId<T> implements KodeId<T> {
+public abstract class KodeImplId<T extends KodeImpl> extends AbstractBubbleId<T> implements KodeId<T> {
 
-    public static <I extends KodeIdImpl<?>> I createInstance(Class<I> idClass, long idValue) {
+    public static <I extends KodeImplId<?>> I createInstance(Class<I> idClass, long idValue) {
         return (I) getKodeSupport(idClass).createInstance(idClass, idValue, SnapshotVersion.CURRENT);
     }
 
-    public static <I extends KodeIdImpl<?>> KodelisteIdImpl getKodelisteId(Class<I> idClass) {
-        return (KodelisteIdImpl) getKodeSupport(idClass).getKodelisteId();
+    public static <I extends KodeImplId<?>> KodelisteImplId getKodelisteId(Class<I> idClass) {
+        return (KodelisteImplId) getKodeSupport(idClass).getKodelisteId();
     }
 
-    protected static <I extends KodeIdImpl<?>> KodeSupport getKodeSupport(Class<I> idClass) {
+    protected static <I extends KodeImplId<?>> KodeSupport getKodeSupport(Class<I> idClass) {
         try {
             Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
             kodeSupportField.setAccessible(true);
@@ -38,13 +38,13 @@ public abstract class KodeIdImpl<T extends KodeImpl> extends AbstractBubbleId<T>
         return (Long) super.getValue();
     }
 
-    protected KodeIdImpl(Long value, SnapshotVersion snapshotVersion) {
+    protected KodeImplId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 
     @Override
-    public KodelisteIdImpl<?> getKodelisteId() {
-        return (KodelisteIdImpl<?>) getKodeSupport().getKodelisteId();
+    public KodelisteImplId<?> getKodelisteId() {
+        return (KodelisteImplId<?>) getKodeSupport().getKodelisteId();
     }
 
     protected abstract KodeSupport getKodeSupport();

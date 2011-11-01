@@ -3,20 +3,12 @@ package no.statkart.skif.storetest.wsapi.mapping;
 import no.statkart.skif.mapper.*;
 import no.statkart.skif.mapper.ObjectFactory;
 import no.statkart.skif.store.KodelisteTransfer;
-import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
 import no.statkart.skif.storetest.wsapi.domain.demo.*;
-import no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId;
-import no.statkart.skif.storetest.wsapi.domain.demo.BarId;
-import no.statkart.skif.storetest.wsapi.domain.demo.BazId;
-import no.statkart.skif.storetest.wsapi.domain.demo.FooId;
-import no.statkart.skif.storetest.wsapi.domain.demo.RazId;
-import no.statkart.skif.storetest.wsapi.domain.demo.TestBubble;
-import no.statkart.skif.storetest.wsapi.domain.demo.TestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.kode.KodeIdList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
 
@@ -71,7 +63,7 @@ public class StoreTestMapper extends AbstractMapper {
         // TODO: Endre kodemapper til å kunne håndtere multiple mappinger for source, rekkefølgen er viktig her
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestDbKodelisteId.class));
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestEnumKodelisteId.class));
-        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestKodelisteIdImpl.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestKodelisteImplId.class));
 
         // Id Lister
         addMapper(new WsapiListTypeMapper(StoreTestBubbleIdList.class, Collection.class));

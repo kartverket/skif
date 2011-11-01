@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.EnumKodeIdImpl;
+import no.statkart.skif.store.kodelistesupport.EnumKodeImplId;
 import no.statkart.skif.store.kodelistesupport.EnumKodeSupport;
 import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodeliste;
@@ -12,7 +12,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteId;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class AEnumKodeId extends EnumKodeIdImpl<AEnumKode> implements StoreTestEnumKodeId<AEnumKode> {
+public class AEnumKodeId extends EnumKodeImplId<AEnumKode> implements StoreTestEnumKodeId<AEnumKode> {
     private static EnumKodeSupport<StoreTestEnumKodeliste, StoreTestEnumKodelisteId<StoreTestEnumKodeliste>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodeliste, StoreTestEnumKodelisteId<StoreTestEnumKodeliste>>(AEnumKodeId.class,new StoreTestEnumKodelisteId(1), "TestAEnumKodeliste");
 
     public static StoreTestKodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();

@@ -84,7 +84,7 @@ public class StoreTestMappingD2WTest {
         // Map wsapi->domain
         StoreTestKodeliste domainKodeliste = map.w2d(target);
         assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImpl.class);
-        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteIdImpl.class);
+        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
@@ -119,7 +119,7 @@ public class StoreTestMappingD2WTest {
         // Map wsapi->domain
         StoreTestKodeliste domainKodeliste = map.w2d(target);
         assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImpl.class);
-        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteIdImpl.class);
+        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
@@ -147,7 +147,7 @@ public class StoreTestMappingD2WTest {
         // Map wsapi->domain
         StoreTestKodeliste domainKodeliste = map.w2d(target);
         assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImpl.class);
-        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteIdImpl.class);
+        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
@@ -177,7 +177,7 @@ public class StoreTestMappingD2WTest {
         // Map wsapi->domain
         StoreTestKodeliste domainKodeliste = map.w2d(target);
         assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImpl.class);
-        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteIdImpl.class);
+        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");

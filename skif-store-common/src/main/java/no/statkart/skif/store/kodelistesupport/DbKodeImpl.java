@@ -11,8 +11,8 @@ public abstract class DbKodeImpl extends KodeImpl implements DbKode {
     private Map<String, String> lokalisertBeskrivelse = new HashMap<String,String>();
 
     @Override
-    public DbKodeIdImpl<?> getId() {
-        return (DbKodeIdImpl<?>) super.getId();
+    public DbKodeImplId<?> getId() {
+        return (DbKodeImplId<?>) super.getId();
     }
 
     @Override

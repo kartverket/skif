@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.kode.StoreTestDbKodeId;
-import no.statkart.skif.storetest.domain.kode.StoreTestDbSubclassedKodeIdImpl;
+import no.statkart.skif.storetest.domain.kode.StoreTestDbSubclassedKodeImplId;
 
 /**
  * Id superklasse for alle koder av type CDbKode. Denne klasse kan ikke være abstrakt siden hibernate oppretter
@@ -14,7 +14,7 @@ import no.statkart.skif.storetest.domain.kode.StoreTestDbSubclassedKodeIdImpl;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class CDbKodeId<T extends CDbKode> extends StoreTestDbSubclassedKodeIdImpl<T> implements StoreTestDbKodeId<T> {
+public class CDbKodeId<T extends CDbKode> extends StoreTestDbSubclassedKodeImplId<T> implements StoreTestDbKodeId<T> {
 
     protected CDbKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);

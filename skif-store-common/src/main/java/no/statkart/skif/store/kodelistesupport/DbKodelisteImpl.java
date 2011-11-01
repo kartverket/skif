@@ -16,8 +16,8 @@ public abstract class DbKodelisteImpl extends KodelisteImpl implements DbKodelis
     private String beskrivelsesKey;
 
     @Override
-    public DbKodelisteIdImpl getId() {
-        return (DbKodelisteIdImpl) super.getId();
+    public DbKodelisteImplId getId() {
+        return (DbKodelisteImplId) super.getId();
     }
 
     public String getBeskrivelsesKey() {

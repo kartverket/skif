@@ -2,39 +2,38 @@ package no.statkart.skif.store.kodelistesupport;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.AbstractBubbleId;
-import sun.awt.SunHints;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class KodelisteIdImpl<T extends KodelisteImpl> extends AbstractBubbleId<T> implements KodelisteId<T> {
+public class KodelisteImplId<T extends KodelisteImpl> extends AbstractBubbleId<T> implements KodelisteId<T> {
 
     @Override
     public Long getValue() {
         return (Long)super.getValue();
     }
 
-    public KodelisteIdImpl(long value) {
+    public KodelisteImplId(long value) {
         super(new Long(value));
     }
 
-    public KodelisteIdImpl(Long value) {
+    public KodelisteImplId(Long value) {
         super(value);
     }
 
-    public KodelisteIdImpl(String value) {
+    public KodelisteImplId(String value) {
         super(Long.parseLong(value));
     }
 
-    public KodelisteIdImpl(Long value, SnapshotVersion snapshotVersion) {
+    public KodelisteImplId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 
     @Override
     public boolean equals(Object id) {
         if (id == null) return false;
-        return id instanceof KodelisteIdImpl && equals((KodelisteIdImpl) id);
+        return id instanceof KodelisteImplId && equals((KodelisteImplId) id);
     }
 
     protected boolean equals(AbstractBubbleId id) {

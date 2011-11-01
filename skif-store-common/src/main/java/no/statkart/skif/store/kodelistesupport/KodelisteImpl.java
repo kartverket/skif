@@ -24,8 +24,8 @@ public class KodelisteImpl extends AbstractBubbleObject implements Kodeliste {
     }
 
     @Override
-    public KodelisteIdImpl getId() {
-        return (KodelisteIdImpl) super.getId();
+    public KodelisteImplId getId() {
+        return (KodelisteImplId) super.getId();
     }
 
     @Override

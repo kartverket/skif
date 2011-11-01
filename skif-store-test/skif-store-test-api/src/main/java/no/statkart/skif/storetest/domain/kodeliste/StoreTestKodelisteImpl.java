@@ -7,7 +7,7 @@ import no.statkart.skif.store.kodelistesupport.KodelisteImpl;
  */
 public class StoreTestKodelisteImpl extends KodelisteImpl implements StoreTestKodeliste {
     @Override
-    public StoreTestKodelisteIdImpl<?> getId() {
-        return (StoreTestKodelisteIdImpl<?>) super.getId();
+    public StoreTestKodelisteImplId<?> getId() {
+        return (StoreTestKodelisteImplId<?>) super.getId();
     }
 }

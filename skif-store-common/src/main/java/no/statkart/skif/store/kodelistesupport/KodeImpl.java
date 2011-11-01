@@ -11,8 +11,8 @@ public abstract class KodeImpl extends AbstractBubbleObject implements Kode {
     private String beskrivelse;
 
     @Override
-    public KodeIdImpl<?> getId() {
-        return (KodeIdImpl<?>) super.getId();
+    public KodeImplId<?> getId() {
+        return (KodeImplId<?>) super.getId();
     }
 
     @Override
