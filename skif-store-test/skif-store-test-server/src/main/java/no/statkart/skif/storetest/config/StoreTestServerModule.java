@@ -60,6 +60,12 @@ public class StoreTestServerModule extends SkifModule {
         ServerStoreModule serverStoreModule = new ServerStoreModule(moduleConfiguration, no.statkart.skif.storetest.service.store.StoreService.class, "no/statkart/skif/storetest/persistence/hibernate") {
             @Override
             protected void configureHibernate(StoreHibernateSessionFactoryBuilder facotryBuilder) {
+                // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
+                facotryBuilder.addResourceUsingRelativePath("kode", EnumKodeIdType.class);
+                facotryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
+                facotryBuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
+                facotryBuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", CDbKode.class, C1DbKode.class, C2DbKode.class);
+                facotryBuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodeliste.class);
                 facotryBuilder.addResource(TestBubble.class);
                 facotryBuilder.addResource(Foo.class);
                 facotryBuilder.addResource(Baz.class);
@@ -67,11 +73,6 @@ public class StoreTestServerModule extends SkifModule {
                 facotryBuilder.addResource(Bar.class);
                 facotryBuilder.addResource(BarFoos.class);
                 facotryBuilder.addResource(TestMap.class);
-                facotryBuilder.addResourceUsingRelativePath("kode", EnumKodeIdType.class);
-                facotryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
-                facotryBuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
-                facotryBuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", CDbKode.class, C1DbKode.class, C2DbKode.class);
-                facotryBuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodeliste.class);
             }
         };
         serverStoreModule.getStrategy(ServiceMode.JEE).setHibernateConfigurationFilename("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties");
