@@ -19,14 +19,14 @@ import no.statkart.skif.store.module.server.ServerStoreModule;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionPersister;
 import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
 import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate;
 import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
-import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
-import no.statkart.skif.storetest.domain.demo.koder.CEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.*;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeliste;
 import no.statkart.skif.storetest.persistence.StoreTestKodelisteLoader;
 import no.statkart.skif.storetest.persistence.StoreTestStorePersisterStrategy;
 
@@ -67,6 +67,11 @@ public class StoreTestServerModule extends SkifModule {
                 facotryBuilder.addResource(Bar.class);
                 facotryBuilder.addResource(BarFoos.class);
                 facotryBuilder.addResource(TestMap.class);
+                facotryBuilder.addResourceUsingRelativePath("kode", EnumKodeIdType.class);
+                facotryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
+                facotryBuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
+                facotryBuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", CDbKode.class, C1DbKode.class, C2DbKode.class);
+                facotryBuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodeliste.class);
             }
         };
         serverStoreModule.getStrategy(ServiceMode.JEE).setHibernateConfigurationFilename("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties");
