@@ -4,19 +4,15 @@ import no.statkart.skif.store.SnapshotVersion;
 
 public abstract class EnumKodelisteImplId<T extends EnumKodelisteImpl> extends KodelisteImplId<T> implements EnumKodelisteId<T> {
 
-    public EnumKodelisteImplId(long value) {
-        super(new Long(value));
+    protected EnumKodelisteImplId() {
     }
-    public EnumKodelisteImplId(Long value) {
+
+    protected EnumKodelisteImplId(Object value) {
         super(value);
     }
 
-    public EnumKodelisteImplId(String value) {
-        super(Long.parseLong(value));
-    }
-
-    public EnumKodelisteImplId(Long value, SnapshotVersion snapshotVersion) {
-        super(value, snapshotVersion);
+    protected EnumKodelisteImplId(Object value, SnapshotVersion version) {
+        super(value, version);
     }
 
     @Override

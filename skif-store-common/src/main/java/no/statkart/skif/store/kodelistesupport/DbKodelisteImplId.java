@@ -7,20 +7,15 @@ import no.statkart.skif.store.SnapshotVersion;
  * @since 2.0
  */
 public abstract class DbKodelisteImplId<T extends DbKodelisteImpl> extends KodelisteImplId<T> implements DbKodelisteId<T> {
-    public DbKodelisteImplId(long value) {
+    protected DbKodelisteImplId() {
+    }
+
+    protected DbKodelisteImplId(Object value) {
         super(value);
     }
 
-    public DbKodelisteImplId(Long value) {
-        super(value);
-    }
-
-    public DbKodelisteImplId(Long value, SnapshotVersion snapshotVersion) {
-        super(value, snapshotVersion);
-    }
-
-    public DbKodelisteImplId(String value) {
-        super(value);
+    protected DbKodelisteImplId(Object value, SnapshotVersion version) {
+        super(value, version);
     }
 
     @Override

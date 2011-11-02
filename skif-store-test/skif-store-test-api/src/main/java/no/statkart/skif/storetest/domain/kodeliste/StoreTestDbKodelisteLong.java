@@ -7,5 +7,5 @@ import no.statkart.skif.store.kodelistesupport.DbKodelisteImpl;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public class StoreTestDbKodeliste extends DbKodelisteImpl implements DbKodeliste, StoreTestKodeliste {
+public class StoreTestDbKodelisteLong extends DbKodelisteImpl implements DbKodeliste, StoreTestKodelisteLong {
 }

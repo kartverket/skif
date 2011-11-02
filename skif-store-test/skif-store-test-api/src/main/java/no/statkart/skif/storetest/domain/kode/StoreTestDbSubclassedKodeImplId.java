@@ -4,8 +4,8 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.DbKodeImplId;
 import no.statkart.skif.store.kodelistesupport.DbKodeSupport;
 import no.statkart.skif.store.kodelistesupport.DbSubclassedKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
 import no.statkart.skif.storetest.domain.demo.koder.C2DbKodeId;
 
 /**
@@ -13,7 +13,7 @@ import no.statkart.skif.storetest.domain.demo.koder.C2DbKodeId;
  * @since 0.6
  */
 public class StoreTestDbSubclassedKodeImplId<T extends StoreTestDbSubclassedKodeImpl> extends DbKodeImplId<T> implements DbSubclassedKodeId<T> {
-    private static DbKodeSupport<StoreTestDbKodeliste, StoreTestDbKodelisteId<StoreTestDbKodeliste>> kodeSupport = new DbKodeSupport<StoreTestDbKodeliste, StoreTestDbKodelisteId<StoreTestDbKodeliste>>(C2DbKodeId.class,new StoreTestDbKodelisteId(10004L, SnapshotVersion.CURRENT));
+    private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(C2DbKodeId.class,new StoreTestDbKodelisteLongId(10004L, SnapshotVersion.CURRENT));
 
 
     protected StoreTestDbSubclassedKodeImplId(Long value, SnapshotVersion snapshotVersion) {

@@ -34,6 +34,21 @@ public class KodeSupportTest {
         }
     }
 
+    /**
+     * Hjelper test klasse for å kunne lage en instanse av KodelisteImplId som bruker en long idValue
+     * @param <T>
+     */
+    public static class TestKodelisteImplId<T extends KodelisteImpl> extends KodelisteImplId<T> {
+        @Override
+        public Long getValue() {
+            return (Long)super.getValue();
+        }
+
+        public TestKodelisteImplId(long value) {
+            super(value);
+        }
+    }
+
     public static class TestKodeSupport extends KodeSupportHelper {
         public TestKodeSupport(Class<? extends KodeImplId<?>> idClass, KodelisteImplId kodelisteId) {
             super(idClass, kodelisteId);
@@ -51,14 +66,14 @@ public class KodeSupportTest {
     }
 
     public void testKodeListeid() {
-        KodeSupportHelper kodeSupport = new TestKodeSupport(null, new KodelisteImplId(5));
+        KodeSupportHelper kodeSupport = new TestKodeSupport(null, new TestKodelisteImplId(5));
         KodelisteId id = kodeSupport.getKodelisteId();
         assertNotNull(id);
         assertEquals(id.getValue(), new Long(5));
     }
 
     public void testCreateKodeId() {
-        KodeSupportHelper kodeSupport = new TestKodeSupport(null, new KodelisteImplId(5));
+        KodeSupportHelper kodeSupport = new TestKodeSupport(null, new TestKodelisteImplId(5));
         KodeImplId<KodeImpl> id = kodeSupport.getInstance(new Long(1), SnapshotVersion.CURRENT);
         assertNull(id);
 
@@ -72,7 +87,7 @@ public class KodeSupportTest {
     }
 
     public void testNewKodeNotAllowed() {
-        KodeSupportHelper kodeSupport = new TestKodeSupport(null, new KodelisteImplId(5));
+        KodeSupportHelper kodeSupport = new TestKodeSupport(null, new TestKodelisteImplId(5));
         TestEnumKodeId id1 = new TestEnumKodeId(1, SnapshotVersion.CURRENT);
 
         KodeImplId<EnumKodeImpl> kodeId1 = kodeSupport.getOrCreateInstance(id1);

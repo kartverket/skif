@@ -19,8 +19,8 @@ import no.statkart.skif.storetest.domain.demo.Baz;
 import no.statkart.skif.storetest.domain.demo.BazId;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.koder.*;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.testng.Assert;
@@ -46,7 +46,7 @@ public class DbKodeHibernateTest {
         sfbuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
         sfbuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
         sfbuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", CDbKode.class, C1DbKode.class, C2DbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodeliste.class);
+        sfbuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodelisteLong.class);
         sfbuilder.addResource(Foo.class);
         sfbuilder.addResource(Baz.class);
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
@@ -114,7 +114,7 @@ public class DbKodeHibernateTest {
     public void testLastKodeliste() {
         SessionFactory sf = setupHibernate();
         Session session = sf.openSession();
-        DbKodeliste dbKodeliste = (DbKodeliste) session.load(StoreTestDbKodeliste.class, new StoreTestDbKodelisteId(10001L, SnapshotVersion.CURRENT));
+        DbKodeliste dbKodeliste = (DbKodeliste) session.load(StoreTestDbKodelisteLong.class, new StoreTestDbKodelisteLongId(10001L, SnapshotVersion.CURRENT));
         Assert.assertNotNull(dbKodeliste);
     }
 

@@ -4,18 +4,18 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.DbKodeSupport;
 import no.statkart.skif.store.kodelistesupport.DbKodeImplId;
 import no.statkart.skif.storetest.domain.kode.StoreTestDbKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteIdLong;
 
 /**
  * @author Henrik Fredholm
  * @since 0.6
  */
 public class BDbKodeId extends DbKodeImplId<BDbKode> implements StoreTestDbKodeId<BDbKode> {
-    private static DbKodeSupport<StoreTestDbKodeliste, StoreTestDbKodelisteId<StoreTestDbKodeliste>> kodeSupport = new DbKodeSupport<StoreTestDbKodeliste, StoreTestDbKodelisteId<StoreTestDbKodeliste>>(BDbKodeId.class,new StoreTestDbKodelisteId(10002L, SnapshotVersion.CURRENT));
+    private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(BDbKodeId.class,new StoreTestDbKodelisteLongId(10002L, SnapshotVersion.CURRENT));
 
-    public static StoreTestKodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static StoreTestKodelisteIdLong<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static BDbKodeId B1Id = define(1);
     public static BDbKodeId B2Id = define(2);
 

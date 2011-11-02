@@ -2,19 +2,19 @@ package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.DbKodeSupport;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteIdLong;
 
 /**
  * @author Henrik Fredholm
  * @since 0.6
  */
 public class C2DbKodeId extends CDbKodeId<CDbKode> {
-    private static DbKodeSupport<StoreTestDbKodeliste, StoreTestDbKodelisteId<StoreTestDbKodeliste>> kodeSupport = new DbKodeSupport<StoreTestDbKodeliste, StoreTestDbKodelisteId<StoreTestDbKodeliste>>(C2DbKodeId.class,new StoreTestDbKodelisteId(10004L, SnapshotVersion.CURRENT));
+    private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(C2DbKodeId.class,new StoreTestDbKodelisteLongId(10004L, SnapshotVersion.CURRENT));
 
 
-    public static StoreTestKodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static StoreTestKodelisteIdLong<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static C2DbKodeId C2A1Id = define(10);
     public static C2DbKodeId C2BId = define(11);
 

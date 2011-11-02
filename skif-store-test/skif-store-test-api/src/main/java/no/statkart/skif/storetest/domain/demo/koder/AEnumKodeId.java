@@ -4,18 +4,18 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.EnumKodeImplId;
 import no.statkart.skif.store.kodelistesupport.EnumKodeSupport;
 import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteIdLong;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
 public class AEnumKodeId extends EnumKodeImplId<AEnumKode> implements StoreTestEnumKodeId<AEnumKode> {
-    private static EnumKodeSupport<StoreTestEnumKodeliste, StoreTestEnumKodelisteId<StoreTestEnumKodeliste>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodeliste, StoreTestEnumKodelisteId<StoreTestEnumKodeliste>>(AEnumKodeId.class,new StoreTestEnumKodelisteId(1), "TestAEnumKodeliste");
+    private static EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>>(AEnumKodeId.class,new StoreTestEnumKodelisteLongId(1), "TestAEnumKodeliste");
 
-    public static StoreTestKodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static StoreTestKodelisteIdLong<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static AEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");
     public static AEnumKodeId KodeAId = define(1, "A", "Kode A");
     public static AEnumKodeId KodeBId = define(2, "B", "Kode B");

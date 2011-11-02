@@ -59,15 +59,15 @@ public class StoreTestMappingD2WTest {
     }
 
     public void testMapTestEnumkodelisteId() {
-        StoreTestEnumKodelisteId<StoreTestEnumKodeliste> enumKodelisteId = new StoreTestEnumKodelisteId<StoreTestEnumKodeliste>(1);
+        StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong> enumKodelisteId = new StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>(1);
         StoreTestBubbleId storeTestBubbleId = map.d2w(enumKodelisteId);
         assertSame(storeTestBubbleId.getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class);
         assertEquals(storeTestBubbleId.getValue(), "1");
     }
 
     public void testMapEnumKodelisteUtenKodeIds() {
-        EnumKodeliste kodeliste = new StoreTestEnumKodeliste();
-        kodeliste.setId(new StoreTestEnumKodelisteId(1));
+        EnumKodeliste kodeliste = new StoreTestEnumKodelisteLong();
+        kodeliste.setId(new StoreTestEnumKodelisteLongId(1));
         kodeliste.setKodeIdClass(AEnumKodeId.class);
         kodeliste.setBeskrivelse("Test beskrivelse");
         kodeliste.setNavn("MyTestKodeliste");
@@ -82,9 +82,9 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getKodeIds().getItem().size(), 0);
 
         // Map wsapi->domain
-        StoreTestKodeliste domainKodeliste = map.w2d(target);
-        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImpl.class);
-        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplId.class);
+        StoreTestKodelisteLong domainKodeliste = map.w2d(target);
+        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLongImpl.class);
+        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
@@ -92,8 +92,8 @@ public class StoreTestMappingD2WTest {
     }
 
     public void testMapEnumKodelisteMedKodeIds() {
-        EnumKodeliste kodeliste = new StoreTestEnumKodeliste();
-        kodeliste.setId(new StoreTestEnumKodelisteId(1));
+        EnumKodeliste kodeliste = new StoreTestEnumKodelisteLong();
+        kodeliste.setId(new StoreTestEnumKodelisteLongId(1));
         kodeliste.setKodeIdClass(AEnumKodeId.class);
         kodeliste.setBeskrivelse("Test beskrivelse");
         kodeliste.setNavn("MyTestKodeliste");
@@ -117,9 +117,9 @@ public class StoreTestMappingD2WTest {
         assertEquals(kodeId2.getValue(), "2");
 
         // Map wsapi->domain
-        StoreTestKodeliste domainKodeliste = map.w2d(target);
-        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImpl.class);
-        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplId.class);
+        StoreTestKodelisteLong domainKodeliste = map.w2d(target);
+        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLongImpl.class);
+        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
@@ -129,8 +129,8 @@ public class StoreTestMappingD2WTest {
     }
 
     public void testMapDbKodelisteUtenKodeIds() {
-        DbKodeliste kodeliste = new StoreTestDbKodeliste();
-        kodeliste.setId(new StoreTestDbKodelisteId(1));
+        DbKodeliste kodeliste = new StoreTestDbKodelisteLong();
+        kodeliste.setId(new StoreTestDbKodelisteLongId(1));
         kodeliste.setKodeIdClass(ADbKodeId.class);
         kodeliste.setBeskrivelse("Test beskrivelse");
         kodeliste.setNavn("MyTestKodeliste");
@@ -145,9 +145,9 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getKodeIds().getItem().size(), 0);
 
         // Map wsapi->domain
-        StoreTestKodeliste domainKodeliste = map.w2d(target);
-        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImpl.class);
-        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplId.class);
+        StoreTestKodelisteLong domainKodeliste = map.w2d(target);
+        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLongImpl.class);
+        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
@@ -155,8 +155,8 @@ public class StoreTestMappingD2WTest {
     }
 
     public void testMapDbKodelisteMedKodeIds() {
-        DbKodeliste kodeliste = new StoreTestDbKodeliste();
-        kodeliste.setId(new StoreTestDbKodelisteId(1));
+        DbKodeliste kodeliste = new StoreTestDbKodelisteLong();
+        kodeliste.setId(new StoreTestDbKodelisteLongId(1));
         kodeliste.setKodeIdClass(ADbKodeId.class);
         kodeliste.setBeskrivelse("Test beskrivelse");
         kodeliste.setNavn("MyTestKodeliste");
@@ -175,9 +175,9 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getKodeIds().getItem().size(), 2);
 
         // Map wsapi->domain
-        StoreTestKodeliste domainKodeliste = map.w2d(target);
-        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImpl.class);
-        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplId.class);
+        StoreTestKodelisteLong domainKodeliste = map.w2d(target);
+        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLongImpl.class);
+        assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");

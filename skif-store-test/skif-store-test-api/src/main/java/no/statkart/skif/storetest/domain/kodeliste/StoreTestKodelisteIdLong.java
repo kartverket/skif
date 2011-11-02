@@ -6,5 +6,5 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 /**
  * @author Henrik Fredholm
  */
-public interface StoreTestKodelisteId<T extends StoreTestKodeliste> extends KodelisteId<T>, StoreTestBubbleId<T> {
+public interface StoreTestKodelisteIdLong<T extends StoreTestKodelisteLong> extends KodelisteId<T>, StoreTestBubbleId<T> {
 }

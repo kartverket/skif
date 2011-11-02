@@ -3,7 +3,9 @@ package no.statkart.skif.storetest.domain;
 import no.statkart.skif.store.kodelistesupport.EnumKodelisteImpl;
 
 /**
+ * Test implementasjon som kun brukes i EnumKodeSupportTest
  * @author Henrik Fredholm
+ * @since 2.0
  */
-public class MyEnumKodeliste extends EnumKodelisteImpl {
+public class TestEnumKodeliste extends EnumKodelisteImpl {
 }

@@ -61,9 +61,9 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.RazId.class, no.statkart.skif.storetest.domain.demo.RazId.class));
 
         // TODO: Endre kodemapper til å kunne håndtere multiple mappinger for source, rekkefølgen er viktig her
-        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestDbKodelisteId.class));
-        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestEnumKodelisteId.class));
-        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestKodelisteImplId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestDbKodelisteLongId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestEnumKodelisteLongId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestKodelisteImplLongId.class));
 
         // Id Lister
         addMapper(new WsapiListTypeMapper(StoreTestBubbleIdList.class, Collection.class));
@@ -79,9 +79,9 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new FooTypeMapper());
 
         // TODO: Endre kodemapper til å kunne håndtere multiple mappinger for source bedre, pt er rekkefølgen er viktig her, siste klasse vinner
-        addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestDbKodeliste.class));
-        addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestEnumKodeliste.class));
-        addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestKodelisteImpl.class));
+        addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestDbKodelisteLong.class));
+        addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestEnumKodelisteLong.class));
+        addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestKodelisteLongImpl.class));
 
         // Boble lister
         addMapper(new WsapiListTypeMapper(StoreTestBubbleList.class, Collection.class));

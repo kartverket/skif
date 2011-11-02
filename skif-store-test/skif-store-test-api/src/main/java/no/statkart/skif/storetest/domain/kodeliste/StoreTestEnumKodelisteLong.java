@@ -6,9 +6,9 @@ import no.statkart.skif.store.kodelistesupport.EnumKodelisteImpl;
 /**
  * @author Henrik Fredholm
  */
-public class StoreTestEnumKodeliste extends EnumKodelisteImpl implements EnumKodeliste, StoreTestKodeliste {
+public class StoreTestEnumKodelisteLong extends EnumKodelisteImpl implements EnumKodeliste, StoreTestKodelisteLong {
     @Override
-    public StoreTestEnumKodelisteId<?> getId() {
-        return (StoreTestEnumKodelisteId<?>) super.getId();
+    public StoreTestEnumKodelisteLongId<?> getId() {
+        return (StoreTestEnumKodelisteLongId<?>) super.getId();
     }
 }

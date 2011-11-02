@@ -3,8 +3,8 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeliste" table="Kodeliste">
-        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.TestDbKodelisteIdType">
+    <class name="no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong" table="Kodeliste">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.TestDbKodelisteLongIdType">
             <generator class="assigned"/>
         </id>
 
