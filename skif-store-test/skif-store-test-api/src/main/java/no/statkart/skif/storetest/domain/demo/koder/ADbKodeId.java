@@ -6,7 +6,7 @@ import no.statkart.skif.store.kodelistesupport.DbKodeSupport;
 import no.statkart.skif.storetest.domain.kode.StoreTestDbKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteIdLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
  * @author Henrik Fredholm
@@ -15,7 +15,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteIdLong;
 public class ADbKodeId extends DbKodeImplId<ADbKode> implements StoreTestDbKodeId<ADbKode> {
     private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(ADbKodeId.class,new StoreTestDbKodelisteLongId(10001L, SnapshotVersion.CURRENT));
 
-    public static StoreTestKodelisteIdLong<?> KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static ADbKodeId A1Id = define(1);
     public static ADbKodeId A2Id = define(2);
 

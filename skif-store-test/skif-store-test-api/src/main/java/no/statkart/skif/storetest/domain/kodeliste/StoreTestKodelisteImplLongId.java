@@ -6,7 +6,7 @@ import no.statkart.skif.store.kodelistesupport.KodelisteImplId;
 /**
  * @author Henrik Fredholm
  */
-public class StoreTestKodelisteImplLongId<T extends StoreTestKodelisteLongImpl> extends KodelisteImplId<T> implements StoreTestKodelisteIdLong<T> {
+public class StoreTestKodelisteImplLongId<T extends StoreTestKodelisteLongImpl> extends KodelisteImplId<T> implements StoreTestKodelisteLongId<T> {
     public StoreTestKodelisteImplLongId(long value) {
         super(value);
     }

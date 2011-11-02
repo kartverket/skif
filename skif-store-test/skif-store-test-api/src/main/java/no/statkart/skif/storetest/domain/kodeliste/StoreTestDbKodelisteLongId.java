@@ -8,7 +8,7 @@ import no.statkart.skif.store.kodelistesupport.DbKodelisteImplId;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public class StoreTestDbKodelisteLongId<T extends StoreTestDbKodelisteLong> extends DbKodelisteImplId<T> implements DbKodelisteId<T>, StoreTestKodelisteIdLong<T> {
+public class StoreTestDbKodelisteLongId<T extends StoreTestDbKodelisteLong> extends DbKodelisteImplId<T> implements DbKodelisteId<T>, StoreTestKodelisteLongId<T> {
 
     @Override
     public Long getValue() {

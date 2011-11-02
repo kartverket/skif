@@ -8,7 +8,7 @@ import no.statkart.skif.store.kodelistesupport.EnumKodelisteImplId;
 /**
  * @author Henrik Fredholm
  */
-public class StoreTestEnumKodelisteLongId<T extends StoreTestEnumKodelisteLong> extends EnumKodelisteImplId<T> implements EnumKodelisteId<T>, StoreTestKodelisteIdLong<T> {
+public class StoreTestEnumKodelisteLongId<T extends StoreTestEnumKodelisteLong> extends EnumKodelisteImplId<T> implements EnumKodelisteId<T>, StoreTestKodelisteLongId<T> {
 
     @Override
     public Long getValue() {
