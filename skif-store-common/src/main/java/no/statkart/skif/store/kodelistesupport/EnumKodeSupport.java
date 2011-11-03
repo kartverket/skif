@@ -11,14 +11,28 @@ import java.util.*;
  * @since 2.0
  */
 public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelisteId<KL>> extends KodeSupport<KL, KLID> {
-    private Map<KodeId<?>, EnumKode> koder = new HashMap<KodeId<?>, EnumKode>();
+    private Map<KodeId<?>, EnumKodeImpl> koder = new HashMap<KodeId<?>, EnumKodeImpl>();
     private KL nonLocalizedKodeliste;
 
-    public static <I extends EnumKodeId<?>> EnumKodeSupport getKodeSupport(Class<I> idClass) {
+    public static <I extends EnumKodeImplId<?>> EnumKodeSupport getKodeSupport(Class<I> idClass) {
         return (EnumKodeSupport) KodeSupport.getKodeSupport(idClass);
     }
 
-    public EnumKodeSupport(Class<? extends EnumKodeId<?>> idClass, KLID kodelisteId, String kodelisteNavn) {
+    public KL getNonLocalizedKodeliste() {
+        nonLocalizedKodeliste.setKodeIds(new ArrayList(koder.keySet()));
+        return nonLocalizedKodeliste;
+    }
+
+
+
+    public synchronized void addKode(EnumKodeImpl kode) {
+        if (koder.containsKey(kode.getId())) {
+            throw new ImplementationException("Forsøk på å definere samme kode flere ganger: " + kode );
+        }
+        koder.put(kode.getId(), kode);
+    }
+
+    public EnumKodeSupport(Class<? extends EnumKodeImplId<?>> idClass, KLID kodelisteId, String kodelisteNavn) {
         super(idClass, kodelisteId);
         nonLocalizedKodeliste =  kodelisteId.createTypeInstance();
         nonLocalizedKodeliste.setId(getKodelisteId());
@@ -27,25 +41,7 @@ public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelist
         nonLocalizedKodeliste.setBeskrivelsesKey(kodelisteNavn);
     }
 
-
-
-    public KL getNonLocalizedKodeliste() {
-        nonLocalizedKodeliste.setKodeIds(new ArrayList(koder.keySet()));
-        return nonLocalizedKodeliste;
-    }
-
-    public synchronized void addKode(EnumKode kode) {
-        if (koder.containsKey(kode.getId())) {
-            throw new ImplementationException("Forsøk på å definere samme kode flere ganger: " + kode );
-        }
-        koder.put(kode.getId(), kode);
-    }
-
-    public Collection<EnumKode> getNonLocalizedKoder() {
-        return koder.values();
-    }
-
-    public <T extends EnumKode, I extends EnumKodeId<? extends T>> T defineKode(Class<I> idClass, long idValue, String kodeverdi, String beskrivelesesKey) {
+    public <T extends EnumKodeImpl, I extends EnumKodeImplId<? extends T>> T defineKode(Class<I> idClass, long idValue, String kodeverdi, String beskrivelesesKey) {
         I id = BubbleIds.createInstance(idClass, idValue, SnapshotVersion.CURRENT);
         T kode = id.createTypeInstance();
         kode.setId(id);
@@ -55,15 +51,19 @@ public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelist
         return kode;
     }
 
+    public Collection<EnumKodeImpl> getNonLocalizedKoder() {
+        return koder.values();
+    }
+
     @Override
     protected <T extends Kode> String getBeskrivelse(T kode, Locale locale) {
         // TODO: implementer uthenting fra resourse fil
-        return ((EnumKode)kode).getBeskrivelsesKey() + " lokalister for " + locale;
+        return ((EnumKodeImpl)kode).getBeskrivelsesKey() + " lokalister for " + locale;
     }
 
     @Override
     protected <T extends Kodeliste> String getBeskrivelse(T kodeliste, Locale locale) {
         // TODO: implementer uthenting fra resourse fil
-        return ((EnumKode)kodeliste).getBeskrivelsesKey() + " lokalister for " + locale;
+        return ((EnumKodeliste)kodeliste).getBeskrivelsesKey() + " lokalister for " + locale;
     }
 }

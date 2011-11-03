@@ -1,7 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.kodelistesupport.EnumKodeId;
+import no.statkart.skif.store.kodelistesupport.EnumKodeImplId;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -36,7 +36,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
         return log;
     }
 
-    private Class<? extends EnumKodeId> enumClass;
+    private Class<? extends EnumKodeImplId> enumClass;
     private static final Class[] INTEGER_ARG = new Class[]{int.class};
     private Method method;
     private Object[] values = new Object[125]; // cached Enum values
@@ -45,8 +45,8 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     public void setParameterValues(Properties parameters) {
         String enumClassName = parameters.getProperty("enumClassName");
         try {
-            enumClass = (Class<? extends EnumKodeId>) Class.forName(enumClassName);
-            if (!EnumKodeId.class.isAssignableFrom(enumClass)) {
+            enumClass = (Class<? extends EnumKodeImplId>) Class.forName(enumClassName);
+            if (!EnumKodeImplId.class.isAssignableFrom(enumClass)) {
                 throw new MappingException("Enumklasse implementerer ikke interface EnumKodeId: " + enumClass.getName());
             }
         } catch (ClassNotFoundException cnfe) {
@@ -134,7 +134,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
                 if (IS_VALUE_TRACING_ENABLED) {
                     log().trace("binding '" + value + "' to parameter: " + index);
                 }
-                long idValue = ((EnumKodeId) value).getValue();
+                long idValue = ((EnumKodeImplId) value).getValue();
                 st.setInt(index,(int)idValue);
             }
         } catch (ClassCastException ce) {
@@ -166,10 +166,10 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     public String objectToSQLString(Object value) {
-        return '\'' + Long.toString(((EnumKodeId) value).getValue()) + '\'';
+        return '\'' + Long.toString(((EnumKodeImplId) value).getValue()) + '\'';
     }
 
     public String toXMLString(Object value) {
-        return Long.toString(((EnumKodeId) value).getValue());
+        return Long.toString(((EnumKodeImplId) value).getValue());
     }
 }

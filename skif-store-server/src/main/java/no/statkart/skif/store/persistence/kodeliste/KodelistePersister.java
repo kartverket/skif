@@ -80,7 +80,7 @@ public class KodelistePersister<T extends BubbleObject, I extends BubbleId<? ext
     private void refreshKodeManagerIfNeeded() {
         synchronized (kodelisteManager) {
             if (kodelisteManager.getVersion()==0) {
-                Map<DbKodeId<?>, DbKode> kodeMap = new HashMap<DbKodeId<?>, DbKode>();
+                Map<DbKodeImplId<?>, DbKodeImpl> kodeMap = new HashMap<DbKodeImplId<?>, DbKodeImpl>();
                 List<DbKodeliste> kodelister = dbKodelisteLoader.load(hibernateSessionWrapper.getWrappedSession(), kodeMap) ;
                 kodelisteManager.updateDynamic(kodelister, kodeMap.values());
                 kodelisteManager.setVersion(1);

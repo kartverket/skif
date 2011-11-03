@@ -76,10 +76,10 @@ public class KodelisteManager {
         this.version = version;
     }
 
-    public synchronized void installStatic(Class<? extends EnumKodeId<? extends EnumKode>> enumKodeIdClass) {
+    public synchronized void installStatic(Class<? extends EnumKodeImplId<? extends EnumKodeImpl>> enumKodeIdClass) {
         EnumKodeSupport kodeSupport = EnumKodeSupport.getKodeSupport(enumKodeIdClass);
         EnumKodeliste kodeliste = kodeSupport.getNonLocalizedKodeliste();
-        Collection<EnumKode> koder = kodeSupport.getNonLocalizedKoder();
+        Collection<EnumKodeImpl> koder = kodeSupport.getNonLocalizedKoder();
         installStatic(kodeliste, koder);
     }
 
@@ -202,13 +202,13 @@ public class KodelisteManager {
 
     private BubbleObject localizeObject(Locale lokale, BubbleObject bubbleObject) {
         // TODO: Bruke lokale
-        if (bubbleObject instanceof EnumKode) {
-            EnumKode bubbleKode = (EnumKode) bubbleObject;
+        if (bubbleObject instanceof EnumKodeImpl) {
+            EnumKodeImpl bubbleKode = (EnumKodeImpl) bubbleObject;
             // TODO: Lokaliser!
             String lokalisertBeskrivelse = bubbleKode.getBeskrivelsesKey();
             bubbleKode.setBeskrivelse(lokalisertBeskrivelse);
-        } else if (bubbleObject instanceof DbKode) {
-            DbKode bubbleKode = (DbKode) bubbleObject;
+        } else if (bubbleObject instanceof DbKodeImpl) {
+            DbKodeImpl bubbleKode = (DbKodeImpl) bubbleObject;
             String lokalisertBeskrivelse = bubbleKode.getLokalisertBeskrivelse().get("b");
             bubbleKode.setBeskrivelse(lokalisertBeskrivelse);
         } else if (bubbleObject instanceof EnumKodeliste) {

@@ -4,7 +4,7 @@ package no.statkart.skif.store.kodelistesupport;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class EnumKodeImpl extends KodeImpl implements EnumKode {
+public abstract class EnumKodeImpl extends KodeImpl  {
     private String beskrivelsesKey;
 
     @Override
@@ -12,12 +12,10 @@ public abstract class EnumKodeImpl extends KodeImpl implements EnumKode {
         return (EnumKodeImplId<?>) super.getId();
     }
 
-    @Override
     public String getBeskrivelsesKey() {
         return beskrivelsesKey;
     }
 
-    @Override
     public void setBeskrivelsesKey(String beskrivelsesKey) {
         this.beskrivelsesKey = beskrivelsesKey;
     }

@@ -1,10 +1,11 @@
 package no.statkart.skif.storetest.domain.kode;
 
-import no.statkart.skif.store.kodelistesupport.DbKodeId;
+
+import no.statkart.skif.store.kodelistesupport.DbKodeImplId;
 
 /**
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public interface StoreTestDbKodeId<T extends StoreTestDbKode> extends DbKodeId<T>, StoreTestKodeId<T> {
+public interface StoreTestDbKodeId<T extends StoreTestDbKode> extends  StoreTestKodeId<T> {
 }
