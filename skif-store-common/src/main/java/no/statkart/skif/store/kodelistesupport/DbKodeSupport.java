@@ -12,7 +12,7 @@ import java.util.Locale;
  */
 public class DbKodeSupport<KL extends DbKodeliste, KLID extends DbKodelisteId<KL>> extends KodeSupport<KL, KLID> {
 
-    public DbKodeSupport(Class<? extends KodeId<?>> idClass, KLID kodelisteId) {
+    public DbKodeSupport(Class<? extends KodeImplId<?>> idClass, KLID kodelisteId) {
         super(idClass, kodelisteId);
     }
 
@@ -23,7 +23,7 @@ public class DbKodeSupport<KL extends DbKodeliste, KLID extends DbKodelisteId<KL
 
 
     @Override
-    protected <T extends Kode> String getBeskrivelse(T kode, Locale locale) {
+    protected <T extends KodeImpl> String getBeskrivelse(T kode, Locale locale) {
         // TODO: Bruk lokale
         return ((DbKode)kode).getLokalisertBeskrivelse().get("b");
     }

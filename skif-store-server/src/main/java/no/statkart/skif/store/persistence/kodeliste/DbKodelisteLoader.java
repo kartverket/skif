@@ -29,8 +29,8 @@ public abstract class DbKodelisteLoader {
         for (DbKodeliste kodeliste : kodelisteList) {
             Class<? extends DbKode> kodeClass = kodeliste.getKodeClass();
             String name = kodeClass.getName();
-            Class<? extends DbKode> kodeIdClass = getClass(name + "Id"); //Fjerner 2-tall fra klassenavn
-            kodeliste.setKodeIdClass((Class<? extends KodeId<?>>) kodeIdClass);
+            Class<? extends DbKodeId> kodeIdClass = getClass(name + "Id");
+            kodeliste.setKodeIdClass((Class<? extends KodeImplId<?>>) kodeIdClass);
             KodeSupport bubbleKodeSupport = KodeSupport.getKodeSupport(kodeliste.getKodeIdClass());
             if (!bubbleKodeSupport.getKodeIdClass().equals(kodeIdClass)) {
                 throw new ImplementationException("KodeId klassen (for kodeklasse) angitt i databasen '"+ kodeIdClass +"' stemmer ikke overens med KodeId klassen angitt i Java definisjon '" +bubbleKodeSupport.getKodeIdClass() + "' for kodeliste"  + kodeliste);
@@ -44,9 +44,9 @@ public abstract class DbKodelisteLoader {
     }
 
 
-    private Class<? extends DbKode> getClass(String classname) {
+    private Class<? extends DbKodeId> getClass(String classname) {
         try {
-            return (Class<? extends DbKode>) Class.forName(classname);
+            return (Class<? extends DbKodeId>) Class.forName(classname);
         } catch (ClassNotFoundException e) {
             throw new ImplementationException(e);
         }

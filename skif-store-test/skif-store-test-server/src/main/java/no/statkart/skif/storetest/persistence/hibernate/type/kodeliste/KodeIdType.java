@@ -1,7 +1,8 @@
 package no.statkart.skif.storetest.persistence.hibernate.type.kodeliste;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.KodeId;
+import no.statkart.skif.store.kodelistesupport.KodeImpl;
+import no.statkart.skif.store.kodelistesupport.KodeImplId;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 
@@ -12,7 +13,7 @@ import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 public abstract class KodeIdType extends BubbleIdType {
     @Override
     protected Object createPrototypeId(Long value, SnapshotVersion snapshotVersion) {
-        return TestBubbleId.createInstance((Class<? extends KodeId>) returnedClass(), value, snapshotVersion);
+        return TestBubbleId.createInstance((Class<? extends KodeImplId>) returnedClass(), value, snapshotVersion);
     }
 }
 

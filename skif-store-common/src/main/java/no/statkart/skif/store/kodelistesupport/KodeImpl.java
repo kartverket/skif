@@ -6,7 +6,7 @@ import no.statkart.skif.store.AbstractBubbleObject;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public abstract class KodeImpl extends AbstractBubbleObject implements Kode {
+public abstract class KodeImpl extends AbstractBubbleObject  {
     private String kodeverdi;
     private String beskrivelse;
 
@@ -15,22 +15,18 @@ public abstract class KodeImpl extends AbstractBubbleObject implements Kode {
         return (KodeImplId<?>) super.getId();
     }
 
-    @Override
     public String getKodeverdi() {
         return kodeverdi;
     }
 
-    @Override
     public void setKodeverdi(String kodeverdi) {
         this.kodeverdi = kodeverdi;
     }
 
-    @Override
     public String getBeskrivelse() {
         return beskrivelse;
     }
 
-    @Override
     public void setBeskrivelse(String beskrivelse) {
         this.beskrivelse = beskrivelse;
     }

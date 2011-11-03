@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.kodelistesupport.Kode;
-import no.statkart.skif.store.kodelistesupport.KodeId;
+import no.statkart.skif.store.kodelistesupport.KodeImpl;
+import no.statkart.skif.store.kodelistesupport.KodeImplId;
 import no.statkart.skif.store.kodelistesupport.KodelisteId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
@@ -18,15 +18,15 @@ public interface StoreTestKodeliste extends StoreTestBubble {
 
     public void setNavn(String navn);
 
-    public Class<? extends KodeId<?>> getKodeIdClass();
+    public Class<? extends KodeImplId<?>> getKodeIdClass();
 
-    public void setKodeIdClass(Class<? extends KodeId<?>> kodeIdClass);
+    public void setKodeIdClass(Class<? extends KodeImplId<?>> kodeIdClass);
 
-    public List<KodeId<?>> getKodeIds();
+    public List<KodeImplId<?>> getKodeIds();
 
-    public void setKodeIds(List<? extends KodeId<?>> kodeIds);
+    public void setKodeIds(List<? extends KodeImplId<?>> kodeIds);
 
-    public List<Kode> getKoder();
+    public List<KodeImpl> getKoder();
 
 
     public String getBeskrivelse();

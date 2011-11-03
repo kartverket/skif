@@ -62,7 +62,7 @@ public class KodelistePersister<T extends BubbleObject, I extends BubbleId<? ext
 
     }
 
-    public Collection<? extends KodeId<?>> getKodeIds() {
+    public Collection<? extends KodeImplId<?>> getKodeIds() {
         refreshKodeManagerIfNeeded();
         return kodelisteManager.getKodeIds();
     }

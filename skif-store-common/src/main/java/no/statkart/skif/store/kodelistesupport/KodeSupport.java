@@ -14,13 +14,13 @@ import java.util.Locale;
  */
 public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId<KL>> {
     private final KLID kodelisteId;
-    private final Class<? extends KodeId<?>> kodeIdClass;
+    private final Class<? extends KodeImplId<?>> kodeIdClass;
 
-    public Class<? extends KodeId<?>> getKodeIdClass() {
+    public Class<? extends KodeImplId<?>> getKodeIdClass() {
         return kodeIdClass;
     }
 
-    public static <I extends KodeId<?>> KodeSupport getKodeSupport(Class<I> idClass) {
+    public static <I extends KodeImplId<?>> KodeSupport getKodeSupport(Class<I> idClass) {
         try {
             Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
             kodeSupportField.setAccessible(true);
@@ -36,7 +36,7 @@ public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId
 
     private final KodeIdResolver kodeIdResolver = new KodeIdResolver();
 
-    public KodeSupport(Class<? extends KodeId<?>> idClass, KLID kodelisteId) {
+    public KodeSupport(Class<? extends KodeImplId<?>> idClass, KLID kodelisteId) {
         this.kodelisteId = kodelisteId;
         this.kodeIdClass = idClass;
         if (idClass != null) {
@@ -45,7 +45,7 @@ public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId
         }
     }
 
-    private void checkForKodeSupportStaticFiledDeclaration(Class<? extends KodeId<?>> idClass) {
+    private void checkForKodeSupportStaticFiledDeclaration(Class<? extends KodeImplId<?>> idClass) {
         try {
             idClass.getDeclaredField("kodeSupport");
         } catch (NoSuchFieldException e) {
@@ -53,7 +53,7 @@ public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId
         }
     }
 
-    private void checkForResolveObjectMethodDeclaration(Class<? extends KodeId<?>> idClass) {
+    private void checkForResolveObjectMethodDeclaration(Class<? extends KodeImplId<?>> idClass) {
         try {
             idClass.getDeclaredMethod("readResolve");
         } catch (NoSuchMethodException e) {
@@ -65,12 +65,12 @@ public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId
         return kodelisteId;
     }
 
-    public <I extends KodeId<? extends Kode>> I getOrCreateInstance(I newInstance) {
+    public <I extends KodeImplId<? extends KodeImpl>> I getOrCreateInstance(I newInstance) {
         return (I) kodeIdResolver.getOrCreate(newInstance);
     }
 
 
-    public <I extends KodeId<? extends Kode>> I createInstance(Class<? extends I> idClass, long idValue, SnapshotVersion snapshotVersion) {
+    public <I extends KodeImplId<? extends KodeImpl>> I createInstance(Class<? extends I> idClass, long idValue, SnapshotVersion snapshotVersion) {
         I id = (I) getInstance(idValue, snapshotVersion);
         if (id == null) {
             id = BubbleIds.createInstance(idClass, idValue, snapshotVersion);
@@ -78,7 +78,7 @@ public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId
         return id;
     }
 
-    public <I extends KodeId<? extends Kode>> I getInstance(Long idValue, SnapshotVersion snapshotVersion) {
+    public <I extends KodeImplId<? extends KodeImpl>> I getInstance(Long idValue, SnapshotVersion snapshotVersion) {
         return (I) kodeIdResolver.get(idValue, snapshotVersion);
     }
 
@@ -99,12 +99,12 @@ public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId
 
     protected abstract <T extends Kodeliste> String getBeskrivelse(T kodeliste, Locale locale);
 
-    public final <T extends Kode, I extends KodeId<? extends T>> T localize(T kode, Locale locale) {
+    public final <T extends KodeImpl, I extends KodeImplId<? extends T>> T localize(T kode, Locale locale) {
         String beskrivelse = getBeskrivelse(kode, locale);
         T copy = CopyHelper.copy(kode);
         copy.setBeskrivelse(beskrivelse);
         return copy;
     }
 
-    protected abstract <T extends Kode> String getBeskrivelse(T kode, Locale locale);
+    protected abstract <T extends KodeImpl> String getBeskrivelse(T kode, Locale locale);
 }

@@ -51,7 +51,7 @@ public class KodelisteManager {
 
     private volatile Collection<? extends KodelisteId<?>> kodelisteIds;
 
-    private volatile Collection<? extends KodeId<?>> kodeIds;
+    private volatile Collection<? extends KodeImplId<?>> kodeIds;
 
     /**
      * Alle koder og kodelister (inkl enum koder og kodelister)
@@ -83,12 +83,12 @@ public class KodelisteManager {
         installStatic(kodeliste, koder);
     }
 
-    public synchronized void installStatic(Kodeliste kodeliste, Collection<? extends Kode> koder) {
+    public synchronized void installStatic(Kodeliste kodeliste, Collection<? extends KodeImpl> koder) {
         BubbleObject existingKodeliste = nonLocalizedStaticCache.put(kodeliste.getId(), kodeliste);
         if (existingKodeliste != null) {
             throw new ImplementationException("Kodeliste med samme id allerede installert: eksisterende=" + existingKodeliste + " ny=" + kodeliste);
         }
-        for (Kode kode : koder) {
+        for (KodeImpl kode : koder) {
             BubbleObject existingKode = nonLocalizedStaticCache.put(kode.getId(), kode);
             if (existingKode != null) {
                 throw new ImplementationException("Kode med samme id allerede installert: eksisterende=" + existingKode + " ny=" + kode);
@@ -96,14 +96,14 @@ public class KodelisteManager {
         }
     }
 
-    public synchronized void installStatic(Collection<? extends Kodeliste> kodelister, Collection<? extends Kode> koder) {
+    public synchronized void installStatic(Collection<? extends Kodeliste> kodelister, Collection<? extends KodeImpl> koder) {
         for (Kodeliste kodeliste : kodelister) {
             BubbleObject existingKodeliste = nonLocalizedStaticCache.put(kodeliste.getId(), kodeliste);
             if (existingKodeliste != null) {
                 throw new ImplementationException("Kodeliste med samme id allerede installert: eksisterende=" + existingKodeliste + " ny=" + kodeliste);
             }
         }
-        for (Kode kode : koder) {
+        for (KodeImpl kode : koder) {
             BubbleObject existingKode = nonLocalizedStaticCache.put(kode.getId(), kode);
             if (existingKode != null) {
                 throw new ImplementationException("Kode med samme id allerede installert: eksisterende=" + existingKode + " ny=" + kode);
@@ -111,10 +111,10 @@ public class KodelisteManager {
         }
     }
 
-    public synchronized void updateDynamic(Collection<? extends Kodeliste> kodelister, Collection<? extends Kode> koder) {
+    public synchronized void updateDynamic(Collection<? extends Kodeliste> kodelister, Collection<? extends KodeImpl> koder) {
         int cacheSize = nonLocalizedStaticCache.size() + kodelister.size() + koder.size();
         Map<BubbleId<?>, BubbleObject> cache = new HashMap<BubbleId<?>, BubbleObject>(cacheSize);
-        Collection<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>(koder.size());
+        Collection<KodeImplId<?>> kodeIds = new ArrayList<KodeImplId<?>>(koder.size());
         Collection<KodelisteId<?>> kodelisteIds = new ArrayList<KodelisteId<?>>(kodelister.size());
 
         for (Map.Entry<BubbleId<?>, BubbleObject> entry : nonLocalizedStaticCache.entrySet()) {
@@ -122,7 +122,7 @@ public class KodelisteManager {
             if (entry.getKey() instanceof KodelisteId<?>) {
                 kodelisteIds.add((KodelisteId<?>) entry.getKey());
             } else {
-                kodeIds.add((KodeId<?>) entry.getKey());
+                kodeIds.add((KodeImplId<?>) entry.getKey());
             }
         }
         cache.putAll(nonLocalizedStaticCache);
@@ -132,7 +132,7 @@ public class KodelisteManager {
             kodelisteIds.add(kodeliste.getId());
         }
 
-        for (Kode kode : koder) {
+        for (KodeImpl kode : koder) {
             cache.put(kode.getId(), kode);
             kodeIds.add(kode.getId());
         }
@@ -224,7 +224,7 @@ public class KodelisteManager {
         return bubbleObject;
     }
 
-    public Collection<? extends KodeId<?>> getKodeIds() {
+    public Collection<? extends KodeImplId<?>> getKodeIds() {
         return kodeIds;
     }
 

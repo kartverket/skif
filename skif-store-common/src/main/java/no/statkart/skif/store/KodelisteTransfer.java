@@ -1,7 +1,7 @@
 package no.statkart.skif.store;
 
-import no.statkart.skif.store.kodelistesupport.Kode;
-import no.statkart.skif.store.kodelistesupport.KodeId;
+import no.statkart.skif.store.kodelistesupport.KodeImpl;
+import no.statkart.skif.store.kodelistesupport.KodeImplId;
 import no.statkart.skif.store.kodelistesupport.KodelisteId;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.Collection;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public class KodelisteTransfer<KID extends KodeId, LID extends KodelisteId, K extends Kode> {
+public class KodelisteTransfer<KID extends KodeImplId, LID extends KodelisteId, K extends KodeImpl> {
     private Collection<? extends KID> kodeIds;
     private Collection<? extends LID> kodelisteIds;
     private Collection<? extends K> objects;

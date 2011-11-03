@@ -55,7 +55,7 @@ public class KodeSupportTest {
         }
 
         @Override
-        protected <T extends Kode> String getBeskrivelse(T kode, Locale locale) {
+        protected <T extends KodeImpl> String getBeskrivelse(T kode, Locale locale) {
             return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
 

@@ -2,8 +2,8 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.Kode;
-import no.statkart.skif.store.kodelistesupport.KodeId;
+import no.statkart.skif.store.kodelistesupport.KodeImpl;
+import no.statkart.skif.store.kodelistesupport.KodeImplId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
@@ -38,8 +38,8 @@ public interface StoreTestMapping extends Mapping {
     public StoreTestBubbleList d2w(Collection source, StoreTestBubbleList target);
     public <T extends Collection> T w2d(StoreTestBubbleList source, T target);
 
-    public no.statkart.skif.storetest.wsapi.domain.kode.KodeId d2w(KodeId<?> source);
-    public KodeId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kode.KodeId source);
+    public no.statkart.skif.storetest.wsapi.domain.kode.KodeId d2w(KodeImplId<?> source);
+    public KodeImplId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kode.KodeId source);
 
     public KodeIdList d2w(Collection source, KodeIdList target);
     public <T extends Collection> T w2d(KodeIdList source, T target);
@@ -47,8 +47,8 @@ public interface StoreTestMapping extends Mapping {
     public KodeIdList d2w(Collection source, KodelisteIdList target);
     public <T extends Collection> T w2d(KodelisteIdList source, T target);
 
-    public no.statkart.skif.storetest.wsapi.domain.kode.Kode d2w(Kode source);
-    public Kode w2d(no.statkart.skif.storetest.wsapi.domain.kode.Kode source);
+    public no.statkart.skif.storetest.wsapi.domain.kode.Kode d2w(KodeImpl source);
+    public KodeImpl w2d(no.statkart.skif.storetest.wsapi.domain.kode.Kode source);
 
     public no.statkart.skif.storetest.domain.demo.BarFoosId<no.statkart.skif.storetest.domain.demo.BarFoos> w2d(no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId source);
     public no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId d2w(no.statkart.skif.storetest.domain.demo.BarFoosId<no.statkart.skif.storetest.domain.demo.BarFoos> source);

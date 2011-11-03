@@ -12,15 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class KodeIdResolver {
     private static final int SIZE = 2;
     private static final int MAX_SIZE = 256;
-    private final KodeId<?>[][] fastLookupIdsArray = new KodeId<?>[2][];
-    private final ConcurrentHashMap<Long, KodeId<?>>[] ids = new ConcurrentHashMap[2];
+    private final KodeImplId<?>[][] fastLookupIdsArray = new KodeImplId<?>[2][];
+    private final ConcurrentHashMap<Long, KodeImplId<?>>[] ids = new ConcurrentHashMap[2];
     private boolean newKoderAllowed = true;
 
     public KodeIdResolver() {
-        fastLookupIdsArray[0] = new KodeId[SIZE];
-        fastLookupIdsArray[1] = new KodeId[SIZE];
-        this.ids[0] = new ConcurrentHashMap<Long, KodeId<?>>();
-        this.ids[1] = new ConcurrentHashMap<Long, KodeId<?>>();
+        fastLookupIdsArray[0] = new KodeImplId[SIZE];
+        fastLookupIdsArray[1] = new KodeImplId[SIZE];
+        this.ids[0] = new ConcurrentHashMap<Long, KodeImplId<?>>();
+        this.ids[1] = new ConcurrentHashMap<Long, KodeImplId<?>>();
     }
 
     public boolean isNewKoderAllowed() {
@@ -37,20 +37,20 @@ public class KodeIdResolver {
      * @param newInstance
      * @return
      */
-    public <I extends KodeId<? extends Kode>> I  getOrCreate(I newInstance) {
+    public <I extends KodeImplId<? extends KodeImpl>> I  getOrCreate(I newInstance) {
 
         int replicaIndex = newInstance.getSnapshotVersion().equals(SnapshotVersion.CURRENT) ? 0 : 1;
         Long idValue = (Long) newInstance.getValue();
         long longValue = idValue.longValue();
 
-        KodeId<?> id;
+        KodeImplId<?> id;
         if (longValue < fastLookupIdsArray[replicaIndex].length) {
             id = fastLookupIdsArray[replicaIndex][(int) longValue];
             if (id != null) return (I) id;
         }
 
         // Ikke optimalisert oppslag
-        ConcurrentHashMap<Long, KodeId<?>> idMap = ids[replicaIndex];
+        ConcurrentHashMap<Long, KodeImplId<?>> idMap = ids[replicaIndex];
         if (!newKoderAllowed) {
             id = idMap.get(idValue);
             if (id == null) {
@@ -69,7 +69,7 @@ public class KodeIdResolver {
             // Ny instans har blitt opprettet
             id =  newInstance;
             synchronized (this) {
-                KodeId[] fastLookupIds = fastLookupIdsArray[replicaIndex];
+                KodeImplId[] fastLookupIds = fastLookupIdsArray[replicaIndex];
                 if (longValue < fastLookupIds.length) {
                     // Cache i array for rask lookup
                     fastLookupIds[(int) longValue] = id;
@@ -78,7 +78,7 @@ public class KodeIdResolver {
                     int intValue = (int) longValue;
                     int newLength = fastLookupIds.length;
                     while (newLength <= intValue) newLength *= 2;
-                    KodeId[] newFastIds = new KodeId[newLength];
+                    KodeImplId[] newFastIds = new KodeImplId[newLength];
                     System.arraycopy(fastLookupIds, 0, newFastIds, 0, fastLookupIds.length);
                     newFastIds[intValue] = newInstance;
                     fastLookupIdsArray[replicaIndex] = newFastIds;
@@ -97,18 +97,18 @@ public class KodeIdResolver {
      * @param snapshotVersion
      * @return null hvis ingen KodeId er definert for idValue
      */
-    public <I extends KodeId<? extends Kode>> I  get(Long idValue, SnapshotVersion snapshotVersion) {
+    public <I extends KodeImplId<? extends KodeImpl>> I  get(Long idValue, SnapshotVersion snapshotVersion) {
         int replicaIndex = snapshotVersion.equals(SnapshotVersion.CURRENT) ? 0 : 1;
         long longValue = idValue.longValue();
 
-        KodeId<?> id;
+        KodeImplId<?> id;
         if (longValue < fastLookupIdsArray[replicaIndex].length) {
             id = fastLookupIdsArray[replicaIndex][(int) longValue];
             if (id != null) return (I) id;
         }
 
 //        Ikke optimalisert oppslag
-        ConcurrentHashMap<Long, KodeId<?>> idMap = ids[replicaIndex];
+        ConcurrentHashMap<Long, KodeImplId<?>> idMap = ids[replicaIndex];
         id = idMap.get(idValue);
         return (I) id;
     }
