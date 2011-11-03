@@ -23,7 +23,7 @@ public class KodeSupportTest {
      * I mottsettning til det som normalt skal gjelde for KodeId klasser så er det mulig å opprette flere instanser av
      * denne klassen med samme idvalue slik at det er mulig å teste at KodeSupport gjør jobben sin.
      */
-    public static class TestEnumKodeId extends EnumKodeImplId<EnumKodeImpl> {
+    public static class TestEnumKodeId extends EnumKodeId<EnumKode> {
         public TestEnumKodeId(long value, SnapshotVersion snapshotVersion) {
             super(new Long(value), snapshotVersion);
         }
@@ -78,11 +78,11 @@ public class KodeSupportTest {
         assertNull(id);
 
         TestEnumKodeId id1 = new TestEnumKodeId(1, SnapshotVersion.CURRENT);
-        KodeImplId<EnumKodeImpl> kodeId1 = kodeSupport.getOrCreateInstance(id1);
+        KodeImplId<EnumKode> kodeId1 = kodeSupport.getOrCreateInstance(id1);
         assertSame(id1, kodeId1);
 
         TestEnumKodeId id1a = new TestEnumKodeId(1, SnapshotVersion.CURRENT);
-        KodeImplId<EnumKodeImpl> kodeId1a = kodeSupport.getOrCreateInstance(id1a);
+        KodeImplId<EnumKode> kodeId1a = kodeSupport.getOrCreateInstance(id1a);
         assertSame(id1, kodeId1a);
     }
 
@@ -90,12 +90,12 @@ public class KodeSupportTest {
         KodeSupportHelper kodeSupport = new TestKodeSupport(null, new TestKodelisteImplId(5));
         TestEnumKodeId id1 = new TestEnumKodeId(1, SnapshotVersion.CURRENT);
 
-        KodeImplId<EnumKodeImpl> kodeId1 = kodeSupport.getOrCreateInstance(id1);
+        KodeImplId<EnumKode> kodeId1 = kodeSupport.getOrCreateInstance(id1);
         kodeSupport.setNewKoderAllowed(false);
 
         // Test ok to get existing codes
         TestEnumKodeId id1a = new TestEnumKodeId(1, SnapshotVersion.CURRENT);
-        KodeImplId<EnumKodeImpl> kodeId1a = kodeSupport.getOrCreateInstance(id1a);
+        KodeImplId<EnumKode> kodeId1a = kodeSupport.getOrCreateInstance(id1a);
 
         // Test ok to sjekk for new code
         KodeImplId<KodeImpl> KodeId = kodeSupport.getInstance(new Long(2), SnapshotVersion.CURRENT);
@@ -104,14 +104,14 @@ public class KodeSupportTest {
         // Not ok to create new codes
         TestEnumKodeId id2 = new TestEnumKodeId(2, SnapshotVersion.CURRENT);
         try {
-            KodeImplId<EnumKodeImpl> kodeId2a = kodeSupport.getOrCreateInstance(id2);
+            KodeImplId<EnumKode> kodeId2a = kodeSupport.getOrCreateInstance(id2);
             fail("Expected exception");
         } catch (ImplementationException e) {
         }
 
         // Ok to create old ReplicaVersions of existing codes
         TestEnumKodeId id1_old = new TestEnumKodeId(1, SnapshotVersion.OLD);
-        KodeImplId<EnumKodeImpl> kodeId1a_old = kodeSupport.getOrCreateInstance(id1_old);
+        KodeImplId<EnumKode> kodeId1a_old = kodeSupport.getOrCreateInstance(id1_old);
         assertSame(id1_old, kodeId1a_old);
         assertEquals(kodeId1a_old.getSnapshotVersion(), SnapshotVersion.OLD);
 
@@ -119,14 +119,14 @@ public class KodeSupportTest {
         // Not ok to create old ReplicaVersions of new codes
         TestEnumKodeId id2_old = new TestEnumKodeId(2, SnapshotVersion.OLD);
         try {
-            KodeImplId<EnumKodeImpl> kodeId2a_old = kodeSupport.getOrCreateInstance(id2_old);
+            KodeImplId<EnumKode> kodeId2a_old = kodeSupport.getOrCreateInstance(id2_old);
             fail("Expected exception");
         } catch (ImplementationException e) {
         }
 
         // ok to create old ReplicaVersions of existing codes. Will produce codes that equals current
         TestEnumKodeId id1_sv = new TestEnumKodeId(1, SnapshotVersion.createInstance("2011-10-02 08:03:15.00"));
-        KodeImplId<EnumKodeImpl> kodeId1_sv = kodeSupport.getOrCreateInstance(id1_sv);
+        KodeImplId<EnumKode> kodeId1_sv = kodeSupport.getOrCreateInstance(id1_sv);
         assertSame(kodeId1, kodeId1_sv);
     }
 }

@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain.kode;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.DbKodeImplId;
+import no.statkart.skif.store.kodelistesupport.DbKodeId;
 import no.statkart.skif.store.kodelistesupport.DbKodeSupport;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
@@ -11,7 +11,7 @@ import no.statkart.skif.storetest.domain.demo.koder.C2DbKodeId;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public class StoreTestDbSubclassedKodeImplId<T extends StoreTestDbSubclassedKodeImpl> extends DbKodeImplId<T>  {
+public class StoreTestDbSubclassedKodeImplId<T extends StoreTestDbSubclassedKodeImpl> extends DbKodeId<T> {
     private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(C2DbKodeId.class,new StoreTestDbKodelisteLongId(10004L, SnapshotVersion.CURRENT));
 
 

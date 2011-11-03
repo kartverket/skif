@@ -7,12 +7,12 @@ import java.util.Map;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public abstract class DbKodeImpl extends KodeImpl {
+public abstract class DbKode extends KodeImpl {
     private Map<String, String> lokalisertBeskrivelse = new HashMap<String,String>();
 
     @Override
-    public DbKodeImplId<?> getId() {
-        return (DbKodeImplId<?>) super.getId();
+    public DbKodeId<?> getId() {
+        return (DbKodeId<?>) super.getId();
     }
 
     public Map<String, String> getLokalisertBeskrivelse() {

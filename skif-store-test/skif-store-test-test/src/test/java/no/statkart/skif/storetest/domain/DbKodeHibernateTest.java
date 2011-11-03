@@ -4,8 +4,8 @@ import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
-import no.statkart.skif.store.kodelistesupport.DbKodeImpl;
-import no.statkart.skif.store.kodelistesupport.DbKodeImplId;
+import no.statkart.skif.store.kodelistesupport.DbKode;
+import no.statkart.skif.store.kodelistesupport.DbKodeId;
 import no.statkart.skif.store.kodelistesupport.DbKodeliste;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateVersionFactory;
@@ -124,12 +124,12 @@ public class DbKodeHibernateTest {
 
         DbKodelisteLoader kodelisteLoader = new DbKodelisteLoader() {
             @Override
-            public List<DbKodeliste> load(Session session, Map<DbKodeImplId<?>, DbKodeImpl> kodeMap) {
+            public List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
                 return load(session, DbKodeliste.class, kodeMap);
             }
         };
 
-        Map<DbKodeImplId<?>, DbKodeImpl> kodeMap = new HashMap<DbKodeImplId<?>, DbKodeImpl>();
+        Map<DbKodeId<?>, DbKode> kodeMap = new HashMap<DbKodeId<?>, DbKode>();
         List<DbKodeliste> kodelister = kodelisteLoader.load(session, kodeMap);
         Assert.assertNotNull(kodelister);
     }
@@ -145,7 +145,7 @@ public class DbKodeHibernateTest {
 
         DbKodelisteLoader kodelisteLoader = new DbKodelisteLoader() {
             @Override
-            public List<DbKodeliste> load(Session session, Map<DbKodeImplId<?>, DbKodeImpl> kodeMap) {
+            public List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
                 return load(session, DbKodeliste.class, kodeMap);
             }
         };

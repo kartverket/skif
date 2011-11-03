@@ -1,13 +1,13 @@
 package no.statkart.skif.storetest.domain.demo.koder;
 
-import no.statkart.skif.store.kodelistesupport.DbKodeImpl;
+import no.statkart.skif.store.kodelistesupport.DbKode;
 import no.statkart.skif.storetest.domain.kode.StoreTestDbKode;
 
 /**
  * @author Henrik Fredholm
  * @since 0.6
  */
-public class BDbKode extends DbKodeImpl implements StoreTestDbKode {
+public class BDbKode extends DbKode implements StoreTestDbKode {
 
     @Override
     public BDbKodeId getId() {

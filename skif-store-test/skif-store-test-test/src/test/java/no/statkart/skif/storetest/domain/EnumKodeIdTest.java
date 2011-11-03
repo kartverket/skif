@@ -4,7 +4,7 @@ package no.statkart.skif.storetest.domain;
 import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.EnumKodeImplId;
+import no.statkart.skif.store.kodelistesupport.EnumKodeId;
 import no.statkart.skif.store.kodelistesupport.KodeImplId;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
@@ -33,7 +33,7 @@ public class EnumKodeIdTest {
         AEnumKodeId id = AEnumKodeId.createInstance(kodeAId.getValue());
         assertSame(kodeAId, id);
 
-        AEnumKodeId id1 = EnumKodeImplId.createInstance(AEnumKodeId.class, kodeAId.getValue());
+        AEnumKodeId id1 = EnumKodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
         assertSame(kodeAId, id1);
 
         AEnumKodeId id2 = KodeImplId.createInstance(AEnumKodeId.class, kodeAId.getValue());

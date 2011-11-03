@@ -16,7 +16,7 @@ public class DbKodeSupport<KL extends DbKodeliste, KLID extends DbKodelisteId<KL
         super(idClass, kodelisteId);
     }
 
-    public <I extends DbKodeImplId<? extends DbKodeImpl>> I define(Class<I> idClass, long idValue) {
+    public <I extends DbKodeId<? extends DbKode>> I define(Class<I> idClass, long idValue) {
         I id = BubbleIds.createInstance(idClass, idValue, SnapshotVersion.CURRENT);
         return id;
     }
@@ -25,7 +25,7 @@ public class DbKodeSupport<KL extends DbKodeliste, KLID extends DbKodelisteId<KL
     @Override
     protected <T extends Kode> String getBeskrivelse(T kode, Locale locale) {
         // TODO: Bruk lokale
-        return ((DbKodeImpl)kode).getLokalisertBeskrivelse().get("b");
+        return ((DbKode)kode).getLokalisertBeskrivelse().get("b");
     }
 
     @Override

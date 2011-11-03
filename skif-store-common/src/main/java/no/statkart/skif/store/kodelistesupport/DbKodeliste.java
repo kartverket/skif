@@ -10,7 +10,7 @@ import java.util.Map;
  * @since 2.0
  */
 public abstract class DbKodeliste extends Kodeliste {
-    private Class<? extends DbKodeImpl> kodeClass;
+    private Class<? extends DbKode> kodeClass;
     private Map<String, String> lokalisertBeskrivelse = new HashMap<String,String>();
 
     private String beskrivelsesKey;
@@ -28,11 +28,11 @@ public abstract class DbKodeliste extends Kodeliste {
         this.beskrivelsesKey = beskrivelsesKey;
     }
 
-    public Class<? extends DbKodeImpl> getKodeClass() {
+    public Class<? extends DbKode> getKodeClass() {
         return kodeClass;
     }
 
-    public void setKodeClass(Class<? extends DbKodeImpl> kodeClass) {
+    public void setKodeClass(Class<? extends DbKode> kodeClass) {
         this.kodeClass = kodeClass;
     }
 
@@ -42,7 +42,7 @@ public abstract class DbKodeliste extends Kodeliste {
 
     public void setKodeClassname(String kodeClassname) {
         try {
-            this.kodeClass = (Class<? extends DbKodeImpl>) Class.forName(kodeClassname);
+            this.kodeClass = (Class<? extends DbKode>) Class.forName(kodeClassname);
         } catch (ClassNotFoundException e) {
             throw new ImplementationException(e);
         }

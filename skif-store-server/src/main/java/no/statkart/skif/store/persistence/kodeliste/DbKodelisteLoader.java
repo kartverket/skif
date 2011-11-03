@@ -13,23 +13,23 @@ import java.util.Map;
  */
 public abstract class DbKodelisteLoader {
 
-    public abstract List<DbKodeliste> load(Session session, Map<DbKodeImplId<?>, DbKodeImpl> kodeMap);
+    public abstract List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap);
 
-    protected  DbKodeLoader getKodeLoader(Class<? extends DbKodeImpl> kodeClass) {
+    protected  DbKodeLoader getKodeLoader(Class<? extends DbKode> kodeClass) {
         return new DbSingleClassKodeLoader();
     }
 
-    protected List<DbKodeliste> load(Session session, Class<? extends DbKodeliste> dbKodelisteClass, Map<DbKodeImplId<?>, DbKodeImpl> kodeMap) {
+    protected List<DbKodeliste> load(Session session, Class<? extends DbKodeliste> dbKodelisteClass, Map<DbKodeId<?>, DbKode> kodeMap) {
         List<DbKodeliste> kodelister = session.createCriteria(dbKodelisteClass).list();
         loadKoderAndInitialiseKodelister(session, kodelister, kodeMap);
         return kodelister;
     }
 
-    private void loadKoderAndInitialiseKodelister(Session session, List<DbKodeliste> kodelisteList, Map<DbKodeImplId<?>, DbKodeImpl> kodeMap) {
+    private void loadKoderAndInitialiseKodelister(Session session, List<DbKodeliste> kodelisteList, Map<DbKodeId<?>, DbKode> kodeMap) {
         for (DbKodeliste kodeliste : kodelisteList) {
-            Class<? extends DbKodeImpl> kodeClass = kodeliste.getKodeClass();
+            Class<? extends DbKode> kodeClass = kodeliste.getKodeClass();
             String name = kodeClass.getName();
-            Class<? extends DbKodeImpl> kodeIdClass = getClass(name + "Id"); //Fjerner 2-tall fra klassenavn
+            Class<? extends DbKode> kodeIdClass = getClass(name + "Id"); //Fjerner 2-tall fra klassenavn
             kodeliste.setKodeIdClass((Class<? extends KodeId<?>>) kodeIdClass);
             KodeSupport bubbleKodeSupport = KodeSupport.getKodeSupport(kodeliste.getKodeIdClass());
             if (!bubbleKodeSupport.getKodeIdClass().equals(kodeIdClass)) {
@@ -44,9 +44,9 @@ public abstract class DbKodelisteLoader {
     }
 
 
-    private Class<? extends DbKodeImpl> getClass(String classname) {
+    private Class<? extends DbKode> getClass(String classname) {
         try {
-            return (Class<? extends DbKodeImpl>) Class.forName(classname);
+            return (Class<? extends DbKode>) Class.forName(classname);
         } catch (ClassNotFoundException e) {
             throw new ImplementationException(e);
         }

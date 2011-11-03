@@ -1,8 +1,6 @@
 package no.statkart.skif.storetest.domain.kode;
 
 
-import no.statkart.skif.store.kodelistesupport.DbKodeImplId;
-
 /**
  * @author Roar Ingebrigtsen
  * @since 2.0
