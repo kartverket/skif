@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.KodelisteTransfer;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodelistesupport.KodelisteImplId;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 import javax.ejb.Stateless;
@@ -21,7 +21,7 @@ public class KodelisteServiceEJBBean extends EJBTimedService implements Kodelist
     private KodelisteService serviceImpl;
 
     @Override
-    public Collection<? extends KodelisteId> getKodelisteIds() {
+    public Collection<? extends KodelisteImplId> getKodelisteIds() {
         return serviceImpl.getKodelisteIds();
 
     }

@@ -2,8 +2,8 @@ package no.statkart.skif.storetest.service.kodeliste;
 
 import com.google.inject.Inject;
 import no.statkart.skif.store.KodelisteTransfer;
+import no.statkart.skif.store.kodelistesupport.KodelisteImplId;
 import no.statkart.skif.store.persistence.finder.KodelisteFinder;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 
 import java.util.Collection;
@@ -20,8 +20,8 @@ public class KodelisteServiceImpl implements KodelisteService {
     private KodelistePersister kodelistePersister;
 
     @Override
-    public Collection<? extends KodelisteId> getKodelisteIds() {
-        return (Collection<? extends KodelisteId>) kodelisteFinder.getKodelisteIds();
+    public Collection<? extends KodelisteImplId> getKodelisteIds() {
+        return (Collection<? extends KodelisteImplId>) kodelisteFinder.getKodelisteIds();
     }
 
     @Override

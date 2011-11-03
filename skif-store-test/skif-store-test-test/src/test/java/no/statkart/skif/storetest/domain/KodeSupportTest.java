@@ -60,14 +60,14 @@ public class KodeSupportTest {
         }
 
         @Override
-        protected <T extends Kodeliste> String getBeskrivelse(T kodeliste, Locale locale) {
+        protected <T extends KodelisteImpl> String getBeskrivelse(T kodeliste, Locale locale) {
             return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }
 
     public void testKodeListeid() {
         KodeSupportHelper kodeSupport = new TestKodeSupport(null, new TestKodelisteImplId(5));
-        KodelisteId id = kodeSupport.getKodelisteId();
+        KodelisteImplId id = kodeSupport.getKodelisteId();
         assertNotNull(id);
         assertEquals(id.getValue(), new Long(5));
     }
@@ -132,7 +132,7 @@ public class KodeSupportTest {
 }
 
 
-abstract class KodeSupportHelper extends KodeSupport<Kodeliste, KodelisteId<Kodeliste>> {
+abstract class KodeSupportHelper extends KodeSupport<KodelisteImpl, KodelisteImplId<KodelisteImpl>> {
     public KodeSupportHelper(Class<? extends KodeImplId<?>> idClass, KodelisteImplId kodelisteId) {
         super(idClass, kodelisteId);
     }

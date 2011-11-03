@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.service.kodeliste;
 
 import no.statkart.skif.store.KodelisteTransfer;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodelistesupport.KodelisteImplId;
 
 import java.util.Collection;
 
@@ -11,7 +11,7 @@ import java.util.Collection;
  * @author Henrik Fredholm
  */
 public interface KodelisteService {
-    public Collection<? extends KodelisteId> getKodelisteIds();
+    public Collection<? extends KodelisteImplId> getKodelisteIds();
 
     public KodelisteTransfer getKodelister();
 

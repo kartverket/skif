@@ -7,7 +7,7 @@ import no.statkart.skif.store.AbstractBubbleId;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class KodelisteImplId<T extends KodelisteImpl> extends AbstractBubbleId<T> implements KodelisteId<T> {
+public abstract class KodelisteImplId<T extends KodelisteImpl> extends AbstractBubbleId<T>  {
     protected KodelisteImplId() {
     }
 

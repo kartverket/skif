@@ -56,7 +56,7 @@ public class KodelistePersister<T extends BubbleObject, I extends BubbleId<? ext
         hibernateSessionWrapper.evictAll();
     }
 
-    public Collection<? extends KodelisteId<?>> getKodelisteIds() {
+    public Collection<? extends KodelisteImplId<?>> getKodelisteIds() {
         refreshKodeManagerIfNeeded();
         return kodelisteManager.getKodelisteIds();
 
@@ -81,7 +81,7 @@ public class KodelistePersister<T extends BubbleObject, I extends BubbleId<? ext
         synchronized (kodelisteManager) {
             if (kodelisteManager.getVersion()==0) {
                 Map<DbKodeId<?>, DbKode> kodeMap = new HashMap<DbKodeId<?>, DbKode>();
-                List<DbKodeliste> kodelister = dbKodelisteLoader.load(hibernateSessionWrapper.getWrappedSession(), kodeMap) ;
+                List<DbKodelisteImpl> kodelister = dbKodelisteLoader.load(hibernateSessionWrapper.getWrappedSession(), kodeMap) ;
                 kodelisteManager.updateDynamic(kodelister, kodeMap.values());
                 kodelisteManager.setVersion(1);
             }

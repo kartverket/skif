@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.kodelistesupport.KodeId;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodelistesupport.KodelisteImplId;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class KodelisteFinder {
         this.store = store;
     }
 
-    public Collection<? extends KodelisteId<?>> getKodelisteIds() {
+    public Collection<? extends KodelisteImplId<?>> getKodelisteIds() {
         return kodelistePersister.getKodelisteIds();
     }
 

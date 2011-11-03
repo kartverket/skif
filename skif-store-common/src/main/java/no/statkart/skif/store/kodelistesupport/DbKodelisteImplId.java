@@ -6,7 +6,7 @@ import no.statkart.skif.store.SnapshotVersion;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public abstract class DbKodelisteImplId<T extends DbKodelisteImpl> extends KodelisteImplId<T> implements DbKodelisteId<T> {
+public abstract class DbKodelisteImplId<T extends DbKodelisteImpl> extends KodelisteImplId<T>  {
     protected DbKodelisteImplId() {
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
  * @author Henrik Fredholm
  * @since 0.6
  */
-public class KodelisteImpl extends AbstractBubbleObject implements Kodeliste {
+public abstract class KodelisteImpl extends AbstractBubbleObject  {
     private Class<? extends KodeId<?>> kodeIdClass;
     private String navn;
     private String beskrivelse;
@@ -28,38 +28,31 @@ public class KodelisteImpl extends AbstractBubbleObject implements Kodeliste {
         return (KodelisteImplId) super.getId();
     }
 
-    @Override
     public Class<? extends KodeId<?>> getKodeIdClass() {
         return kodeIdClass;
     }
 
-    @Override
     public void setKodeIdClass(Class<? extends KodeId<?>> kodeIdClass) {
         this.kodeIdClass = kodeIdClass;
     }
 
-    @Override
     public List<KodeId<?>> getKodeIds() {
         return kodeIds;
     }
 
-    @Override
     public void setKodeIds(List<? extends KodeId<?>> kodeIds) {
         this.kodeIds = (List)kodeIds;
     }
 
-    @Override
     public List<Kode> getKoder() {
         return store.get(kodeIds);
     }
 
 
-    @Override
     public String getBeskrivelse() {
         return beskrivelse;
     }
 
-    @Override
     public void setBeskrivelse(String beskrivelse) {
         this.beskrivelse = beskrivelse;
     } 

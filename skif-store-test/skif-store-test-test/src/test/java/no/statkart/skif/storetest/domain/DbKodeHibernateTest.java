@@ -6,7 +6,7 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.kodelistesupport.DbKode;
 import no.statkart.skif.store.kodelistesupport.DbKodeId;
-import no.statkart.skif.store.kodelistesupport.DbKodeliste;
+import no.statkart.skif.store.kodelistesupport.DbKodelisteImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateVersionFactory;
 import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
@@ -114,7 +114,7 @@ public class DbKodeHibernateTest {
     public void testLastKodeliste() {
         SessionFactory sf = setupHibernate();
         Session session = sf.openSession();
-        DbKodeliste dbKodeliste = (DbKodeliste) session.load(StoreTestDbKodelisteLong.class, new StoreTestDbKodelisteLongId(10001L, SnapshotVersion.CURRENT));
+        DbKodelisteImpl dbKodeliste = (DbKodelisteImpl) session.load(StoreTestDbKodelisteLong.class, new StoreTestDbKodelisteLongId(10001L, SnapshotVersion.CURRENT));
         Assert.assertNotNull(dbKodeliste);
     }
 
@@ -124,13 +124,13 @@ public class DbKodeHibernateTest {
 
         DbKodelisteLoader kodelisteLoader = new DbKodelisteLoader() {
             @Override
-            public List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
-                return load(session, DbKodeliste.class, kodeMap);
+            public List<DbKodelisteImpl> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
+                return load(session, DbKodelisteImpl.class, kodeMap);
             }
         };
 
         Map<DbKodeId<?>, DbKode> kodeMap = new HashMap<DbKodeId<?>, DbKode>();
-        List<DbKodeliste> kodelister = kodelisteLoader.load(session, kodeMap);
+        List<DbKodelisteImpl> kodelister = kodelisteLoader.load(session, kodeMap);
         Assert.assertNotNull(kodelister);
     }
 
@@ -145,8 +145,8 @@ public class DbKodeHibernateTest {
 
         DbKodelisteLoader kodelisteLoader = new DbKodelisteLoader() {
             @Override
-            public List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
-                return load(session, DbKodeliste.class, kodeMap);
+            public List<DbKodelisteImpl> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
+                return load(session, DbKodelisteImpl.class, kodeMap);
             }
         };
 

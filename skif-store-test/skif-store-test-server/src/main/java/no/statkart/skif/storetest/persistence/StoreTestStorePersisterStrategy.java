@@ -6,7 +6,7 @@ import no.statkart.skif.store.HashStorePersister;
 import no.statkart.skif.store.StorePersister;
 import no.statkart.skif.store.StorePersisterStrategy;
 import no.statkart.skif.store.kodelistesupport.KodeId;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodelistesupport.KodelisteImplId;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionPersister;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
@@ -32,7 +32,7 @@ public class StoreTestStorePersisterStrategy implements StorePersisterStrategy {
     public StorePersister getPersister(BubbleId bubbleId) {
         if (bubbleId instanceof KodeId) {
             return kodelistePersister;
-        } else if(bubbleId instanceof KodelisteId) {
+        } else if(bubbleId instanceof KodelisteImplId) {
             return kodelistePersister;
         } else {
             return persister1;

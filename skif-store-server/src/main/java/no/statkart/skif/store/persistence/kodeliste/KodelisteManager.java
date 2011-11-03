@@ -49,7 +49,7 @@ public class KodelisteManager {
     private Map<BubbleId<?>, BubbleObject> nonLocalizedStaticCache = new HashMap<BubbleId<?>, BubbleObject>();
 
 
-    private volatile Collection<? extends KodelisteId<?>> kodelisteIds;
+    private volatile Collection<? extends KodelisteImplId<?>> kodelisteIds;
 
     private volatile Collection<? extends KodeId<?>> kodeIds;
 
@@ -78,12 +78,12 @@ public class KodelisteManager {
 
     public synchronized void installStatic(Class<? extends EnumKodeId<? extends EnumKode>> enumKodeIdClass) {
         EnumKodeSupport kodeSupport = EnumKodeSupport.getKodeSupport(enumKodeIdClass);
-        EnumKodeliste kodeliste = kodeSupport.getNonLocalizedKodeliste();
+        EnumKodelisteImpl kodeliste = kodeSupport.getNonLocalizedKodeliste();
         Collection<EnumKode> koder = kodeSupport.getNonLocalizedKoder();
         installStatic(kodeliste, koder);
     }
 
-    public synchronized void installStatic(Kodeliste kodeliste, Collection<? extends Kode> koder) {
+    public synchronized void installStatic(KodelisteImpl kodeliste, Collection<? extends Kode> koder) {
         BubbleObject existingKodeliste = nonLocalizedStaticCache.put(kodeliste.getId(), kodeliste);
         if (existingKodeliste != null) {
             throw new ImplementationException("Kodeliste med samme id allerede installert: eksisterende=" + existingKodeliste + " ny=" + kodeliste);
@@ -96,8 +96,8 @@ public class KodelisteManager {
         }
     }
 
-    public synchronized void installStatic(Collection<? extends Kodeliste> kodelister, Collection<? extends Kode> koder) {
-        for (Kodeliste kodeliste : kodelister) {
+    public synchronized void installStatic(Collection<? extends KodelisteImpl> kodelister, Collection<? extends Kode> koder) {
+        for (KodelisteImpl kodeliste : kodelister) {
             BubbleObject existingKodeliste = nonLocalizedStaticCache.put(kodeliste.getId(), kodeliste);
             if (existingKodeliste != null) {
                 throw new ImplementationException("Kodeliste med samme id allerede installert: eksisterende=" + existingKodeliste + " ny=" + kodeliste);
@@ -111,23 +111,23 @@ public class KodelisteManager {
         }
     }
 
-    public synchronized void updateDynamic(Collection<? extends Kodeliste> kodelister, Collection<? extends Kode> koder) {
+    public synchronized void updateDynamic(Collection<? extends KodelisteImpl> kodelister, Collection<? extends Kode> koder) {
         int cacheSize = nonLocalizedStaticCache.size() + kodelister.size() + koder.size();
         Map<BubbleId<?>, BubbleObject> cache = new HashMap<BubbleId<?>, BubbleObject>(cacheSize);
         Collection<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>(koder.size());
-        Collection<KodelisteId<?>> kodelisteIds = new ArrayList<KodelisteId<?>>(kodelister.size());
+        Collection<KodelisteImplId<?>> kodelisteIds = new ArrayList<KodelisteImplId<?>>(kodelister.size());
 
         for (Map.Entry<BubbleId<?>, BubbleObject> entry : nonLocalizedStaticCache.entrySet()) {
             cache.put(entry.getKey(), entry.getValue());
-            if (entry.getKey() instanceof KodelisteId<?>) {
-                kodelisteIds.add((KodelisteId<?>) entry.getKey());
+            if (entry.getKey() instanceof KodelisteImplId<?>) {
+                kodelisteIds.add((KodelisteImplId<?>) entry.getKey());
             } else {
                 kodeIds.add((KodeId<?>) entry.getKey());
             }
         }
         cache.putAll(nonLocalizedStaticCache);
 
-        for (Kodeliste kodeliste : kodelister) {
+        for (KodelisteImpl kodeliste : kodelister) {
             cache.put(kodeliste.getId(), kodeliste);
             kodelisteIds.add(kodeliste.getId());
         }
@@ -211,13 +211,13 @@ public class KodelisteManager {
             DbKode bubbleKode = (DbKode) bubbleObject;
             String lokalisertBeskrivelse = bubbleKode.getLokalisertBeskrivelse().get("b");
             bubbleKode.setBeskrivelse(lokalisertBeskrivelse);
-        } else if (bubbleObject instanceof EnumKodeliste) {
-            EnumKodeliste kodeliste = (EnumKodeliste) bubbleObject;
+        } else if (bubbleObject instanceof EnumKodelisteImpl) {
+            EnumKodelisteImpl kodeliste = (EnumKodelisteImpl) bubbleObject;
             // TODO: Lokaliser!
             String lokalisertBeskrivelse = kodeliste.getBeskrivelsesKey();
             kodeliste.setBeskrivelse(lokalisertBeskrivelse);
         } else {
-            DbKodeliste kodeliste = (DbKodeliste) bubbleObject;
+            DbKodelisteImpl kodeliste = (DbKodelisteImpl) bubbleObject;
             String lokalisertBeskrivelse = kodeliste.getLokalisertBeskrivelse().get("b");
             kodeliste.setBeskrivelse(lokalisertBeskrivelse);
         }
@@ -228,7 +228,7 @@ public class KodelisteManager {
         return kodeIds;
     }
 
-    public Collection<? extends KodelisteId<?>> getKodelisteIds() {
+    public Collection<? extends KodelisteImplId<?>> getKodelisteIds() {
         return kodelisteIds;
     }
 

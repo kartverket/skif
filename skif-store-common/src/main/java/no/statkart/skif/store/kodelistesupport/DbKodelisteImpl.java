@@ -9,14 +9,14 @@ import java.util.Map;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public abstract class DbKodelisteImpl extends KodelisteImpl implements DbKodeliste {
+public abstract class DbKodelisteImpl extends KodelisteImpl  {
     private Class<? extends DbKode> kodeClass;
     private Map<String, String> lokalisertBeskrivelse = new HashMap<String,String>();
 
     private String beskrivelsesKey;
 
     @Override
-    public DbKodelisteImplId getId() {
+    public DbKodelisteImplId<?> getId() {
         return (DbKodelisteImplId) super.getId();
     }
 
@@ -28,12 +28,10 @@ public abstract class DbKodelisteImpl extends KodelisteImpl implements DbKodelis
         this.beskrivelsesKey = beskrivelsesKey;
     }
 
-    @Override
     public Class<? extends DbKode> getKodeClass() {
         return kodeClass;
     }
 
-    @Override
     public void setKodeClass(Class<? extends DbKode> kodeClass) {
         this.kodeClass = kodeClass;
     }

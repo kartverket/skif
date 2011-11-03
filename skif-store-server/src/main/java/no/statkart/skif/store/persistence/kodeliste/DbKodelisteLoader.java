@@ -13,20 +13,20 @@ import java.util.Map;
  */
 public abstract class DbKodelisteLoader {
 
-    public abstract List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap);
+    public abstract List<DbKodelisteImpl> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap);
 
     protected  DbKodeLoader getKodeLoader(Class<? extends DbKode> kodeClass) {
         return new DbSingleClassKodeLoader();
     }
 
-    protected List<DbKodeliste> load(Session session, Class<? extends DbKodeliste> dbKodelisteClass, Map<DbKodeId<?>, DbKode> kodeMap) {
-        List<DbKodeliste> kodelister = session.createCriteria(dbKodelisteClass).list();
+    protected List<DbKodelisteImpl> load(Session session, Class<? extends DbKodelisteImpl> dbKodelisteClass, Map<DbKodeId<?>, DbKode> kodeMap) {
+        List<DbKodelisteImpl> kodelister = session.createCriteria(dbKodelisteClass).list();
         loadKoderAndInitialiseKodelister(session, kodelister, kodeMap);
         return kodelister;
     }
 
-    private void loadKoderAndInitialiseKodelister(Session session, List<DbKodeliste> kodelisteList, Map<DbKodeId<?>, DbKode> kodeMap) {
-        for (DbKodeliste kodeliste : kodelisteList) {
+    private void loadKoderAndInitialiseKodelister(Session session, List<DbKodelisteImpl> kodelisteList, Map<DbKodeId<?>, DbKode> kodeMap) {
+        for (DbKodelisteImpl kodeliste : kodelisteList) {
             Class<? extends DbKode> kodeClass = kodeliste.getKodeClass();
             String name = kodeClass.getName();
             Class<? extends DbKode> kodeIdClass = getClass(name + "Id"); //Fjerner 2-tall fra klassenavn

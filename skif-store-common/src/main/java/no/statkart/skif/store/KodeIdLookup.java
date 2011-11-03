@@ -3,7 +3,7 @@ package no.statkart.skif.store;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.kodelistesupport.Kode;
 import no.statkart.skif.store.kodelistesupport.KodeId;
-import no.statkart.skif.store.kodelistesupport.Kodeliste;
+import no.statkart.skif.store.kodelistesupport.KodelisteImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,9 +40,9 @@ public class KodeIdLookup {
         }
     }
 
-    public static KodeIdLookup buildFromKodeliste(Collection<? extends Kodeliste> kodelisteCollection) {
+    public static KodeIdLookup buildFromKodeliste(Collection<? extends KodelisteImpl> kodelisteCollection) {
         ArrayList<Kode> kodes = new ArrayList<Kode>();
-        for (Kodeliste kodeliste : kodelisteCollection) {
+        for (KodelisteImpl kodeliste : kodelisteCollection) {
             kodes.addAll(kodeliste.getKoder());
         }
         return buildFromKode(kodes);
