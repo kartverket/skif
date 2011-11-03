@@ -4,7 +4,7 @@ package no.statkart.skif.store.kodelistesupport;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class EnumKode extends KodeImpl  {
+public abstract class EnumKode extends Kode {
     private String beskrivelsesKey;
 
     @Override

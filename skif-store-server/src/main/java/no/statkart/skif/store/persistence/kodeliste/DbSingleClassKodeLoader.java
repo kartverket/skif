@@ -23,7 +23,7 @@ public class DbSingleClassKodeLoader implements DbKodeLoader {
     public void loadKoder(Session session, DbKodeliste kodeliste, Map<DbKodeId<?>, DbKode> kodeMap) {
         Class<? extends DbKode> kodeClass = kodeliste.getKodeClass();
         List<DbKode> list = session.createCriteria(kodeClass).list();
-        List<KodeImplId<?>> kodeIds = new ArrayList<KodeImplId<?>>();
+        List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
         DbKodelisteId kodelisteId = kodeliste.getId();
         for (DbKode t : list) {
             if (!t.getId().getKodelisteId().equals(kodelisteId)) {

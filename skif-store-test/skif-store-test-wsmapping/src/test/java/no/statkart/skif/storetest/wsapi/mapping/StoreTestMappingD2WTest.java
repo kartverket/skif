@@ -97,7 +97,7 @@ public class StoreTestMappingD2WTest {
         kodeliste.setKodeIdClass(AEnumKodeId.class);
         kodeliste.setBeskrivelse("Test beskrivelse");
         kodeliste.setNavn("MyTestKodeliste");
-        List<KodeImplId<?>> kodeIds = kodeliste.getKodeIds();
+        List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
         kodeIds.add(AEnumKodeId.KodeAId);
         kodeIds.add(AEnumKodeId.KodeBId);
 
@@ -161,7 +161,7 @@ public class StoreTestMappingD2WTest {
         kodeliste.setBeskrivelse("Test beskrivelse");
         kodeliste.setNavn("MyTestKodeliste");
 
-        List<KodeImplId<?>> kodeIds = kodeliste.getKodeIds();
+        List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
         kodeIds.add(ADbKodeId.A1Id);
         kodeIds.add(ADbKodeId.A2Id);
 

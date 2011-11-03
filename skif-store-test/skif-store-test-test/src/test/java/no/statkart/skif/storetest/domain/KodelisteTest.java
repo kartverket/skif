@@ -4,7 +4,7 @@ package no.statkart.skif.storetest.domain;
 import no.statkart.skif.store.KodeIdLookup;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.store.kodelistesupport.KodeImpl;
+import no.statkart.skif.store.kodelistesupport.Kode;
 import no.statkart.skif.store.kodelistesupport.Kodeliste;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
@@ -60,7 +60,7 @@ public class KodelisteTest extends StoreTestTestCase {
     public void testGetKodeliste() {
         Store store = injector.getInstance(Store.class);
         Kodeliste kodeliste = store.get(AEnumKodeId.KODELISTE_ID);
-        List<KodeImpl> list = store.get(kodeliste.getKodeIds());
+        List<Kode> list = store.get(kodeliste.getKodeIds());
         assertNotNull(list);
     }
 
@@ -74,7 +74,7 @@ public class KodelisteTest extends StoreTestTestCase {
          KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
          Store store = injector.getInstance(Store.class);
          KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
-         List<KodeImpl> objects = new ArrayList<KodeImpl>();
+         List<Kode> objects = new ArrayList<Kode>();
          store.register(kodelisteTransfer.getObjects(), objects);
          KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
          BEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(BEnumKodeId.class, "B");

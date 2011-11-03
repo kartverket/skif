@@ -1,8 +1,8 @@
 package no.statkart.skif.store;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.kodelistesupport.KodeImpl;
-import no.statkart.skif.store.kodelistesupport.KodeImplId;
+import no.statkart.skif.store.kodelistesupport.Kode;
+import no.statkart.skif.store.kodelistesupport.KodeId;
 import no.statkart.skif.store.kodelistesupport.Kodeliste;
 
 import java.util.ArrayList;
@@ -15,24 +15,24 @@ import java.util.Map;
  * @since 0.6
  */
 public class KodeIdLookup {
-    final Map<Class<? extends KodeImplId>, Map<String, KodeImplId<?>>> idMapMap = new HashMap<Class<? extends KodeImplId>, Map<String, KodeImplId<?>>>();
-    final Map<Class<? extends KodeImplId>, Map<KodeImplId<?>, String>> stringMapMap = new HashMap<Class<? extends KodeImplId>, Map<KodeImplId<?>, String>>();
+    final Map<Class<? extends KodeId>, Map<String, KodeId<?>>> idMapMap = new HashMap<Class<? extends KodeId>, Map<String, KodeId<?>>>();
+    final Map<Class<? extends KodeId>, Map<KodeId<?>, String>> stringMapMap = new HashMap<Class<? extends KodeId>, Map<KodeId<?>, String>>();
 
 
-    private KodeIdLookup(Collection<? extends KodeImpl> koder) {
-        for (KodeImpl kode : koder) {
+    private KodeIdLookup(Collection<? extends Kode> koder) {
+        for (Kode kode : koder) {
             { //verdier for lookup
-                Map<String, KodeImplId<?>> map = idMapMap.get(kode.getId().getClass());
+                Map<String, KodeId<?>> map = idMapMap.get(kode.getId().getClass());
                 if (map == null) {
-                    map = new HashMap<String, KodeImplId<?>>();
+                    map = new HashMap<String, KodeId<?>>();
                     idMapMap.put(kode.getId().getClass(), map);
                 }
                 map.put(kode.getKodeverdi(), kode.getId());
             }
             { //ids for lookup
-                Map<KodeImplId<?>, String> map = stringMapMap.get(kode.getId().getClass());
+                Map<KodeId<?>, String> map = stringMapMap.get(kode.getId().getClass());
                 if (map == null) {
-                    map = new HashMap<KodeImplId<?>, String>();
+                    map = new HashMap<KodeId<?>, String>();
                     stringMapMap.put(kode.getId().getClass(), map);
                 }
                 map.put(kode.getId(), kode.getKodeverdi());
@@ -41,14 +41,14 @@ public class KodeIdLookup {
     }
 
     public static KodeIdLookup buildFromKodeliste(Collection<? extends Kodeliste> kodelisteCollection) {
-        ArrayList<KodeImpl> kodes = new ArrayList<KodeImpl>();
+        ArrayList<Kode> kodes = new ArrayList<Kode>();
         for (Kodeliste kodeliste : kodelisteCollection) {
             kodes.addAll(kodeliste.getKoder());
         }
         return buildFromKode(kodes);
     }
 
-    public static KodeIdLookup buildFromKode(Collection<? extends KodeImpl> kodeCollection) {
+    public static KodeIdLookup buildFromKode(Collection<? extends Kode> kodeCollection) {
         return new KodeIdLookup(kodeCollection);
 
     }
@@ -63,9 +63,9 @@ public class KodeIdLookup {
      *  <li>dersom kodeverdi er gitt og kodeverdi for kode ikke funnet
      * </ul>
      */
-    public <I extends KodeImplId<?>> I fromKodeVerdi(Class<I> kodeIdClass, String kodeVerdi) {
+    public <I extends KodeId<?>> I fromKodeVerdi(Class<I> kodeIdClass, String kodeVerdi) {
         I kodeId = null;
-        Map<String, KodeImplId<?>> bubbleKodeIdMap = idMapMap.get(kodeIdClass);
+        Map<String, KodeId<?>> bubbleKodeIdMap = idMapMap.get(kodeIdClass);
         if (bubbleKodeIdMap != null) {
             kodeId = (I) bubbleKodeIdMap.get(kodeVerdi);
 
@@ -88,9 +88,9 @@ public class KodeIdLookup {
      *  <li>dersom id ikke funnet
      * </ul>
      */
-    public <I extends KodeImplId<?>> String fromKodeId(I kodeId) {
+    public <I extends KodeId<?>> String fromKodeId(I kodeId) {
         String verdi;
-        Map<KodeImplId<?>, String> stringMap = stringMapMap.get(kodeId.getClass());
+        Map<KodeId<?>, String> stringMap = stringMapMap.get(kodeId.getClass());
         if (stringMap != null) {
             return stringMap.get(kodeId);
         } else {

@@ -30,7 +30,7 @@ public abstract class DbKodelisteLoader {
             Class<? extends DbKode> kodeClass = kodeliste.getKodeClass();
             String name = kodeClass.getName();
             Class<? extends DbKodeId> kodeIdClass = getClass(name + "Id");
-            kodeliste.setKodeIdClass((Class<? extends KodeImplId<?>>) kodeIdClass);
+            kodeliste.setKodeIdClass((Class<? extends KodeId<?>>) kodeIdClass);
             KodeSupport bubbleKodeSupport = KodeSupport.getKodeSupport(kodeliste.getKodeIdClass());
             if (!bubbleKodeSupport.getKodeIdClass().equals(kodeIdClass)) {
                 throw new ImplementationException("KodeId klassen (for kodeklasse) angitt i databasen '"+ kodeIdClass +"' stemmer ikke overens med KodeId klassen angitt i Java definisjon '" +bubbleKodeSupport.getKodeIdClass() + "' for kodeliste"  + kodeliste);

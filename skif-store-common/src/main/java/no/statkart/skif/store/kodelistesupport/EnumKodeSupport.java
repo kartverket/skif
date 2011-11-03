@@ -11,7 +11,7 @@ import java.util.*;
  * @since 2.0
  */
 public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelisteId<KL>> extends KodeSupport<KL, KLID> {
-    private Map<KodeImplId<?>, EnumKode> koder = new HashMap<KodeImplId<?>, EnumKode>();
+    private Map<KodeId<?>, EnumKode> koder = new HashMap<KodeId<?>, EnumKode>();
     private KL nonLocalizedKodeliste;
 
     public static <I extends EnumKodeId<?>> EnumKodeSupport getKodeSupport(Class<I> idClass) {
@@ -56,7 +56,7 @@ public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelist
     }
 
     @Override
-    protected <T extends KodeImpl> String getBeskrivelse(T kode, Locale locale) {
+    protected <T extends Kode> String getBeskrivelse(T kode, Locale locale) {
         // TODO: implementer uthenting fra resourse fil
         return ((EnumKode)kode).getBeskrivelsesKey() + " lokalister for " + locale;
     }

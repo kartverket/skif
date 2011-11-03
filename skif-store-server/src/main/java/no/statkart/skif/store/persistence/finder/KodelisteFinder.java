@@ -3,7 +3,7 @@ package no.statkart.skif.store.persistence.finder;
 import com.google.inject.Inject;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.store.kodelistesupport.KodeImplId;
+import no.statkart.skif.store.kodelistesupport.KodeId;
 import no.statkart.skif.store.kodelistesupport.KodelisteId;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 
@@ -28,7 +28,7 @@ public class KodelisteFinder {
         return kodelistePersister.getKodelisteIds();
     }
 
-    public Collection<? extends KodeImplId<?>> getKodeIds() {
+    public Collection<? extends KodeId<?>> getKodeIds() {
         return kodelistePersister.getKodeIds();
     }
 

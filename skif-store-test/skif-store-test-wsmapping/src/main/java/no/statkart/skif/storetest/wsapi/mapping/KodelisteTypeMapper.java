@@ -1,10 +1,8 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.kodelistesupport.KodeImplId;
+import no.statkart.skif.store.kodelistesupport.KodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongImpl;
 import no.statkart.skif.storetest.wsapi.domain.kode.KodeIdList;
 
 /**
@@ -38,16 +36,16 @@ public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi
         map.w2d(source.getKodeIds(), target.getKodeIds());
     }
 
-    private String calcWsapiKodeIdClassname(Class<? extends KodeImplId<?>> domainKodeIdClass) {
+    private String calcWsapiKodeIdClassname(Class<? extends KodeId<?>> domainKodeIdClass) {
         if (domainKodeIdClass==null) return null;
         return  domainKodeIdClass.getName().replace(".domain", wsapiPackagePart);
     }
 
-    private Class<KodeImplId<?>> calcDomainKodeIdClass(String wsapiKodeIdClassname) {
+    private Class<KodeId<?>> calcDomainKodeIdClass(String wsapiKodeIdClassname) {
         try {
             if (wsapiKodeIdClassname==null) return null;
             Class<?> kodeIdClass = Class.forName(wsapiKodeIdClassname.replace(wsapiPackagePart, ".domain"));
-            return (Class<KodeImplId<?>>) kodeIdClass;
+            return (Class<KodeId<?>>) kodeIdClass;
         } catch (ClassNotFoundException e) {
             throw new ImplementationException(e);
         }

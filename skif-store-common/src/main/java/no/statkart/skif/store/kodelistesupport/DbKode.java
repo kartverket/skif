@@ -7,7 +7,7 @@ import java.util.Map;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public abstract class DbKode extends KodeImpl {
+public abstract class DbKode extends Kode {
     private Map<String, String> lokalisertBeskrivelse = new HashMap<String,String>();
 
     @Override

@@ -10,10 +10,10 @@ import java.util.List;
  * @since 0.6
  */
 public abstract class Kodeliste extends AbstractBubbleObject  {
-    private Class<? extends KodeImplId<?>> kodeIdClass;
+    private Class<? extends KodeId<?>> kodeIdClass;
     private String navn;
     private String beskrivelse;
-    private List<KodeImplId<?>> kodeIds = new ArrayList<KodeImplId<?>>();
+    private List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
 
     public String getNavn() {
         return navn;
@@ -28,23 +28,23 @@ public abstract class Kodeliste extends AbstractBubbleObject  {
         return (KodelisteId) super.getId();
     }
 
-    public Class<? extends KodeImplId<?>> getKodeIdClass() {
+    public Class<? extends KodeId<?>> getKodeIdClass() {
         return kodeIdClass;
     }
 
-    public void setKodeIdClass(Class<? extends KodeImplId<?>> kodeIdClass) {
+    public void setKodeIdClass(Class<? extends KodeId<?>> kodeIdClass) {
         this.kodeIdClass = kodeIdClass;
     }
 
-    public List<KodeImplId<?>> getKodeIds() {
+    public List<KodeId<?>> getKodeIds() {
         return kodeIds;
     }
 
-    public void setKodeIds(List<? extends KodeImplId<?>> kodeIds) {
+    public void setKodeIds(List<? extends KodeId<?>> kodeIds) {
         this.kodeIds = (List)kodeIds;
     }
 
-    public List<KodeImpl> getKoder() {
+    public List<Kode> getKoder() {
         return store.get(kodeIds);
     }
 

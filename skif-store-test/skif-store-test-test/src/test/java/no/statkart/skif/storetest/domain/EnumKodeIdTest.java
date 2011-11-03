@@ -5,7 +5,7 @@ import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.EnumKodeId;
-import no.statkart.skif.store.kodelistesupport.KodeImplId;
+import no.statkart.skif.store.kodelistesupport.KodeId;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.util.CopyHelper;
@@ -36,7 +36,7 @@ public class EnumKodeIdTest {
         AEnumKodeId id1 = EnumKodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
         assertSame(kodeAId, id1);
 
-        AEnumKodeId id2 = KodeImplId.createInstance(AEnumKodeId.class, kodeAId.getValue());
+        AEnumKodeId id2 = KodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
         assertSame(kodeAId, id2);
 
         AEnumKodeId id3 = BubbleIds.createInstance(AEnumKodeId.class, kodeAId.getValue());
@@ -52,7 +52,7 @@ public class EnumKodeIdTest {
     public void testGetKodelisteId() {
         AEnumKodeId kodeAId = AEnumKodeId.KodeAId;
         assertSame(kodeAId.getKodelisteId(), AEnumKodeId.KODELISTE_ID);
-        assertSame(KodeImplId.getKodelisteId(AEnumKodeId.class), AEnumKodeId.KODELISTE_ID);
+        assertSame(KodeId.getKodelisteId(AEnumKodeId.class), AEnumKodeId.KODELISTE_ID);
     }
 
     public void testHistorikk() {
