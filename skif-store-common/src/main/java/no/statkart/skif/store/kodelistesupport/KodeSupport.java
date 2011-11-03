@@ -12,7 +12,7 @@ import java.util.Locale;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class KodeSupport<KL extends KodelisteImpl, KLID extends KodelisteImplId<KL>> {
+public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId<KL>> {
     private final KLID kodelisteId;
     private final Class<? extends KodeId<?>> kodeIdClass;
 
@@ -90,14 +90,14 @@ public abstract class KodeSupport<KL extends KodelisteImpl, KLID extends Kodelis
         kodeIdResolver.setNewKoderAllowed(value);
     }
 
-    public final <T extends KodelisteImpl, I extends KodelisteImplId<? extends T>> T localize(T kodeliste, Locale locale) {
+    public final <T extends Kodeliste, I extends KodelisteId<? extends T>> T localize(T kodeliste, Locale locale) {
         String beskrivelse = getBeskrivelse(kodeliste, locale);
         T copy = CopyHelper.copy(kodeliste);
         copy.setBeskrivelse(beskrivelse);
         return copy;
     }
 
-    protected abstract <T extends KodelisteImpl> String getBeskrivelse(T kodeliste, Locale locale);
+    protected abstract <T extends Kodeliste> String getBeskrivelse(T kodeliste, Locale locale);
 
     public final <T extends Kode, I extends KodeId<? extends T>> T localize(T kode, Locale locale) {
         String beskrivelse = getBeskrivelse(kode, locale);

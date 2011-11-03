@@ -7,15 +7,15 @@ import no.statkart.skif.store.AbstractBubbleId;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class KodelisteImplId<T extends KodelisteImpl> extends AbstractBubbleId<T>  {
-    protected KodelisteImplId() {
+public abstract class KodelisteId<T extends Kodeliste> extends AbstractBubbleId<T>  {
+    protected KodelisteId() {
     }
 
-    protected KodelisteImplId(Object value) {
+    protected KodelisteId(Object value) {
         super(value);
     }
 
-    protected KodelisteImplId(Object value, SnapshotVersion version) {
+    protected KodelisteId(Object value, SnapshotVersion version) {
         super(value, version);
     }
 
@@ -23,7 +23,7 @@ public abstract class KodelisteImplId<T extends KodelisteImpl> extends AbstractB
     @Override
     public boolean equals(Object id) {
         if (id == null) return false;
-        return id instanceof KodelisteImplId && equals((KodelisteImplId) id);
+        return id instanceof KodelisteId && equals((KodelisteId) id);
     }
 
     protected boolean equals(AbstractBubbleId id) {

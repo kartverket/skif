@@ -9,8 +9,8 @@ import no.statkart.skif.store.SnapshotVersion;
  */
 public abstract class EnumKodeImplId<T extends EnumKodeImpl> extends KodeImplId<T> implements EnumKodeId<T> {
 
-    public static <I extends EnumKodeImplId<?>> EnumKodeSupport<EnumKodelisteImpl, EnumKodelisteImplId<EnumKodelisteImpl>> getKodeSupport(Class<I> idClass) {
-        return (EnumKodeSupport<EnumKodelisteImpl, EnumKodelisteImplId<EnumKodelisteImpl>>) KodeImplId.getKodeSupport(idClass);
+    public static <I extends EnumKodeImplId<?>> EnumKodeSupport<EnumKodeliste, EnumKodelisteId<EnumKodeliste>> getKodeSupport(Class<I> idClass) {
+        return (EnumKodeSupport<EnumKodeliste, EnumKodelisteId<EnumKodeliste>>) KodeImplId.getKodeSupport(idClass);
     }
     
     @Override

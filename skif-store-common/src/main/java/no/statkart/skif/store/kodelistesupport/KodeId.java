@@ -10,5 +10,5 @@ import no.statkart.skif.store.BubbleId;
 public interface KodeId<T extends Kode> extends BubbleId<T> {
     public Object getValue();
     public SnapshotVersion getSnapshotVersion();
-    public KodelisteImplId getKodelisteId();
+    public KodelisteId getKodelisteId();
 }

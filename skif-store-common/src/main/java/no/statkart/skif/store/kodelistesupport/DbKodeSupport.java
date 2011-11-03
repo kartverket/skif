@@ -10,7 +10,7 @@ import java.util.Locale;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public class DbKodeSupport<KL extends DbKodelisteImpl, KLID extends DbKodelisteImplId<KL>> extends KodeSupport<KL, KLID> {
+public class DbKodeSupport<KL extends DbKodeliste, KLID extends DbKodelisteId<KL>> extends KodeSupport<KL, KLID> {
 
     public DbKodeSupport(Class<? extends KodeId<?>> idClass, KLID kodelisteId) {
         super(idClass, kodelisteId);
@@ -29,9 +29,9 @@ public class DbKodeSupport<KL extends DbKodelisteImpl, KLID extends DbKodelisteI
     }
 
     @Override
-    protected <T extends KodelisteImpl> String getBeskrivelse(T kodeliste, Locale locale) {
+    protected <T extends Kodeliste> String getBeskrivelse(T kodeliste, Locale locale) {
         // TODO: Bruk lokale
-        return ((DbKodelisteImpl)kodeliste).getLokalisertBeskrivelse().get("b");
+        return ((DbKodeliste)kodeliste).getLokalisertBeskrivelse().get("b");
     }
 
 }

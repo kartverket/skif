@@ -35,10 +35,10 @@ public class KodeSupportTest {
     }
 
     /**
-     * Hjelper test klasse for å kunne lage en instanse av KodelisteImplId som bruker en long idValue
+     * Hjelper test klasse for å kunne lage en instanse av KodelisteId som bruker en long idValue
      * @param <T>
      */
-    public static class TestKodelisteImplId<T extends KodelisteImpl> extends KodelisteImplId<T> {
+    public static class TestKodelisteImplId<T extends Kodeliste> extends KodelisteId<T> {
         @Override
         public Long getValue() {
             return (Long)super.getValue();
@@ -50,7 +50,7 @@ public class KodeSupportTest {
     }
 
     public static class TestKodeSupport extends KodeSupportHelper {
-        public TestKodeSupport(Class<? extends KodeImplId<?>> idClass, KodelisteImplId kodelisteId) {
+        public TestKodeSupport(Class<? extends KodeImplId<?>> idClass, KodelisteId kodelisteId) {
             super(idClass, kodelisteId);
         }
 
@@ -60,14 +60,14 @@ public class KodeSupportTest {
         }
 
         @Override
-        protected <T extends KodelisteImpl> String getBeskrivelse(T kodeliste, Locale locale) {
+        protected <T extends Kodeliste> String getBeskrivelse(T kodeliste, Locale locale) {
             return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }
 
     public void testKodeListeid() {
         KodeSupportHelper kodeSupport = new TestKodeSupport(null, new TestKodelisteImplId(5));
-        KodelisteImplId id = kodeSupport.getKodelisteId();
+        KodelisteId id = kodeSupport.getKodelisteId();
         assertNotNull(id);
         assertEquals(id.getValue(), new Long(5));
     }
@@ -132,8 +132,8 @@ public class KodeSupportTest {
 }
 
 
-abstract class KodeSupportHelper extends KodeSupport<KodelisteImpl, KodelisteImplId<KodelisteImpl>> {
-    public KodeSupportHelper(Class<? extends KodeImplId<?>> idClass, KodelisteImplId kodelisteId) {
+abstract class KodeSupportHelper extends KodeSupport<Kodeliste, KodelisteId<Kodeliste>> {
+    public KodeSupportHelper(Class<? extends KodeImplId<?>> idClass, KodelisteId kodelisteId) {
         super(idClass, kodelisteId);
     }
 }

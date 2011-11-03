@@ -1,13 +1,13 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.DbKodelisteImplId;
+import no.statkart.skif.store.kodelistesupport.DbKodelisteId;
 
 /**
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public class StoreTestDbKodelisteLongId<T extends StoreTestDbKodelisteLong> extends DbKodelisteImplId<T> implements StoreTestKodelisteLongId<T> {
+public class StoreTestDbKodelisteLongId<T extends StoreTestDbKodelisteLong> extends DbKodelisteId<T> implements StoreTestKodelisteLongId<T> {
 
     @Override
     public Long getValue() {

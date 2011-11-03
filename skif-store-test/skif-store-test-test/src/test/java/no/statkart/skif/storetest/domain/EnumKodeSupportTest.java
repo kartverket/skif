@@ -15,22 +15,22 @@ public class EnumKodeSupportTest {
 
     public void testCreate() {
         EnumKodeSupportHelper kodeSupport = new EnumKodeSupportHelper(null, 5, "Test");
-        KodelisteImplId id = kodeSupport.getKodelisteId();
+        KodelisteId id = kodeSupport.getKodelisteId();
         assertNotNull(id);
         assertEquals(id.getValue(), new Long(5));
 
-        KodelisteImpl kodeliste = kodeSupport.getNonLocalizedKodeliste();
+        Kodeliste kodeliste = kodeSupport.getNonLocalizedKodeliste();
         assertNotNull(kodeliste);
         assertEquals(kodeliste.getNavn(), "Test");
     }
 
     public void testAdd() {
         EnumKodeSupportHelper kodeSupport = new EnumKodeSupportHelper(null, 5, "Test");
-        KodelisteImplId id = kodeSupport.getKodelisteId();
+        KodelisteId id = kodeSupport.getKodelisteId();
         assertNotNull(id);
         assertEquals(id.getValue(), new Long(5));
 
-        KodelisteImpl kodeliste = kodeSupport.getNonLocalizedKodeliste();
+        Kodeliste kodeliste = kodeSupport.getNonLocalizedKodeliste();
         assertNotNull(kodeliste);
         assertEquals(kodeliste.getNavn(), "Test");
     }
@@ -38,7 +38,7 @@ public class EnumKodeSupportTest {
 }
 
 // Hjelperklasse for ikke å skulle skrive så mye
-final class EnumKodeSupportHelper extends EnumKodeSupport<EnumKodelisteImpl, EnumKodelisteImplId<EnumKodelisteImpl>> {
+final class EnumKodeSupportHelper extends EnumKodeSupport<EnumKodeliste, EnumKodelisteId<EnumKodeliste>> {
     public EnumKodeSupportHelper(Class<? extends EnumKodeImplId<?>> idClass, long kodelisteIdValue, String kodelisteNavn) {
         super(idClass, new TestEnumKodelisteId(kodelisteIdValue), kodelisteNavn);
     }

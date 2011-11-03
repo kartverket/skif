@@ -3,7 +3,8 @@ package no.statkart.skif.storetest.domain.demo.koder;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodelistesupport.EnumKodeImplId;
 import no.statkart.skif.store.kodelistesupport.EnumKodeSupport;
-import no.statkart.skif.store.kodelistesupport.KodelisteImplId;
+import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodelistesupport.KodelisteId;
 import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;
@@ -15,7 +16,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;
 public class BEnumKodeId extends EnumKodeImplId<BEnumKode> implements StoreTestEnumKodeId<BEnumKode> {
     private static EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>>(BEnumKodeId.class, new StoreTestEnumKodelisteLongId(2), "TestBEnumKodeliste");
 
-    public static KodelisteImplId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static KodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static BEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");
     public static BEnumKodeId KodeAId = define(1, "A", "Kode A");
     public static BEnumKodeId KodeBId = define(2, "B", "Kode B");

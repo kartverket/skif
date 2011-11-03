@@ -20,11 +20,11 @@ public class DbSingleClassKodeLoader implements DbKodeLoader {
     }
 
     @Override
-    public void loadKoder(Session session, DbKodelisteImpl kodeliste, Map<DbKodeId<?>, DbKode> kodeMap) {
+    public void loadKoder(Session session, DbKodeliste kodeliste, Map<DbKodeId<?>, DbKode> kodeMap) {
         Class<? extends DbKode> kodeClass = kodeliste.getKodeClass();
         List<DbKode> list = session.createCriteria(kodeClass).list();
         List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
-        DbKodelisteImplId kodelisteId = kodeliste.getId();
+        DbKodelisteId kodelisteId = kodeliste.getId();
         for (DbKode t : list) {
             if (!t.getId().getKodelisteId().equals(kodelisteId)) {
                 throw new ImplementationException("Feil i kodelisteIdValue for kodeliste: " + kodeliste + " DbKode: " + t + " DbKode.getKodelisteId: " + t.getId().getKodelisteId());

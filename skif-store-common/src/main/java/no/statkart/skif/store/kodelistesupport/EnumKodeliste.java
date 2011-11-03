@@ -4,12 +4,12 @@ package no.statkart.skif.store.kodelistesupport;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class EnumKodelisteImpl extends KodelisteImpl {
+public abstract class EnumKodeliste extends Kodeliste {
     private String beskrivelsesKey;
 
     @Override
-    public EnumKodelisteImplId getId() {
-        return (EnumKodelisteImplId) super.getId();
+    public EnumKodelisteId getId() {
+        return (EnumKodelisteId) super.getId();
     }
 
     public String getBeskrivelsesKey() {

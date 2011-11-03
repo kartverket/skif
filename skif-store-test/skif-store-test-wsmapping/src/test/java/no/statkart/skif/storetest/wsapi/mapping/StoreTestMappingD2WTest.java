@@ -66,7 +66,7 @@ public class StoreTestMappingD2WTest {
     }
 
     public void testMapEnumKodelisteUtenKodeIds() {
-        EnumKodelisteImpl kodeliste = new StoreTestEnumKodelisteLong();
+        EnumKodeliste kodeliste = new StoreTestEnumKodelisteLong();
         kodeliste.setId(new StoreTestEnumKodelisteLongId(1));
         kodeliste.setKodeIdClass(AEnumKodeId.class);
         kodeliste.setBeskrivelse("Test beskrivelse");
@@ -92,7 +92,7 @@ public class StoreTestMappingD2WTest {
     }
 
     public void testMapEnumKodelisteMedKodeIds() {
-        EnumKodelisteImpl kodeliste = new StoreTestEnumKodelisteLong();
+        EnumKodeliste kodeliste = new StoreTestEnumKodelisteLong();
         kodeliste.setId(new StoreTestEnumKodelisteLongId(1));
         kodeliste.setKodeIdClass(AEnumKodeId.class);
         kodeliste.setBeskrivelse("Test beskrivelse");
@@ -129,7 +129,7 @@ public class StoreTestMappingD2WTest {
     }
 
     public void testMapDbKodelisteUtenKodeIds() {
-        DbKodelisteImpl kodeliste = new StoreTestDbKodelisteLong();
+        DbKodeliste kodeliste = new StoreTestDbKodelisteLong();
         kodeliste.setId(new StoreTestDbKodelisteLongId(1));
         kodeliste.setKodeIdClass(ADbKodeId.class);
         kodeliste.setBeskrivelse("Test beskrivelse");
@@ -155,7 +155,7 @@ public class StoreTestMappingD2WTest {
     }
 
     public void testMapDbKodelisteMedKodeIds() {
-        DbKodelisteImpl kodeliste = new StoreTestDbKodelisteLong();
+        DbKodeliste kodeliste = new StoreTestDbKodelisteLong();
         kodeliste.setId(new StoreTestDbKodelisteLongId(1));
         kodeliste.setKodeIdClass(ADbKodeId.class);
         kodeliste.setBeskrivelse("Test beskrivelse");

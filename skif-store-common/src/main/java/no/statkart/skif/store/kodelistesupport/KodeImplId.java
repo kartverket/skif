@@ -16,8 +16,8 @@ public abstract class KodeImplId<T extends KodeImpl> extends AbstractBubbleId<T>
         return (I) getKodeSupport(idClass).createInstance(idClass, idValue, SnapshotVersion.CURRENT);
     }
 
-    public static <I extends KodeImplId<?>> KodelisteImplId getKodelisteId(Class<I> idClass) {
-        return (KodelisteImplId) getKodeSupport(idClass).getKodelisteId();
+    public static <I extends KodeImplId<?>> KodelisteId getKodelisteId(Class<I> idClass) {
+        return (KodelisteId) getKodeSupport(idClass).getKodelisteId();
     }
 
     protected static <I extends KodeImplId<?>> KodeSupport getKodeSupport(Class<I> idClass) {
@@ -43,8 +43,8 @@ public abstract class KodeImplId<T extends KodeImpl> extends AbstractBubbleId<T>
     }
 
     @Override
-    public KodelisteImplId<?> getKodelisteId() {
-        return (KodelisteImplId<?>) getKodeSupport().getKodelisteId();
+    public KodelisteId<?> getKodelisteId() {
+        return (KodelisteId<?>) getKodeSupport().getKodelisteId();
     }
 
     protected abstract KodeSupport getKodeSupport();

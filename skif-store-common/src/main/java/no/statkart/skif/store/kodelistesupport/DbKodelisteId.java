@@ -6,15 +6,15 @@ import no.statkart.skif.store.SnapshotVersion;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public abstract class DbKodelisteImplId<T extends DbKodelisteImpl> extends KodelisteImplId<T>  {
-    protected DbKodelisteImplId() {
+public abstract class DbKodelisteId<T extends DbKodeliste> extends KodelisteId<T> {
+    protected DbKodelisteId() {
     }
 
-    protected DbKodelisteImplId(Object value) {
+    protected DbKodelisteId(Object value) {
         super(value);
     }
 
-    protected DbKodelisteImplId(Object value, SnapshotVersion version) {
+    protected DbKodelisteId(Object value, SnapshotVersion version) {
         super(value, version);
     }
 

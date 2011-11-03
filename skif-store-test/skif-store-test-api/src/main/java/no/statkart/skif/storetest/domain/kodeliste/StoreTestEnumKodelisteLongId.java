@@ -2,14 +2,12 @@ package no.statkart.skif.storetest.domain.kodeliste;
 
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.EnumKodelisteImplId;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
+import no.statkart.skif.store.kodelistesupport.EnumKodelisteId;
 
 /**
  * @author Henrik Fredholm
  */
-public class StoreTestEnumKodelisteLongId<T extends StoreTestEnumKodelisteLong> extends EnumKodelisteImplId<T> implements StoreTestKodelisteLongId<T> {
+public class StoreTestEnumKodelisteLongId<T extends StoreTestEnumKodelisteLong> extends EnumKodelisteId<T> implements StoreTestKodelisteLongId<T> {
 
     @Override
     public Long getValue() {
