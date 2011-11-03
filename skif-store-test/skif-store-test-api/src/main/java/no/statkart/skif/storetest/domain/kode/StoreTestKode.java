@@ -7,7 +7,7 @@ import no.statkart.skif.storetest.domain.StoreTestBubble;
  * @author Henrik Fredholm
  */
 public interface StoreTestKode extends StoreTestBubble {
-    public KodeId<?> getId();
+    public StoreTestKodeId<?> getId();
 
     public String getKodeverdi();
 

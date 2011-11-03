@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.domain;
 
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 
 /**
@@ -8,4 +9,6 @@ import no.statkart.skif.store.BubbleObject;
  * @since 2.0
  */
 public interface StoreTestBubble extends BubbleObject {
+    @Override
+    StoreTestBubbleId<?> getId();
 }
