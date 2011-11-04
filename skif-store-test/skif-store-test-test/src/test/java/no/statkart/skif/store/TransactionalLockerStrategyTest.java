@@ -53,7 +53,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.releaseAllLocksOnCommit("ingroa");
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 1 /*200*/)
     public void many() {
        testUpdate();
     }

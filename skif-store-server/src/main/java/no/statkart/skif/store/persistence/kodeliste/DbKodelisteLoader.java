@@ -29,7 +29,7 @@ public abstract class DbKodelisteLoader {
         for (DbKodeliste kodeliste : kodelisteList) {
             Class<? extends DbKode> kodeClass = kodeliste.getKodeClass();
             String name = kodeClass.getName();
-            Class<? extends DbKode> kodeIdClass = getClass(name + "Id"); //Fjerner 2-tall fra klassenavn
+            Class<? extends DbKodeId> kodeIdClass = getClass(name + "Id");
             kodeliste.setKodeIdClass((Class<? extends KodeId<?>>) kodeIdClass);
             KodeSupport bubbleKodeSupport = KodeSupport.getKodeSupport(kodeliste.getKodeIdClass());
             if (!bubbleKodeSupport.getKodeIdClass().equals(kodeIdClass)) {
@@ -44,9 +44,9 @@ public abstract class DbKodelisteLoader {
     }
 
 
-    private Class<? extends DbKode> getClass(String classname) {
+    private Class<? extends DbKodeId> getClass(String classname) {
         try {
-            return (Class<? extends DbKode>) Class.forName(classname);
+            return (Class<? extends DbKodeId>) Class.forName(classname);
         } catch (ClassNotFoundException e) {
             throw new ImplementationException(e);
         }

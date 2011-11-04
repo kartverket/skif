@@ -1,23 +1,59 @@
 package no.statkart.skif.store.kodelistesupport;
 
+import no.statkart.skif.exception.ImplementationException;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public interface DbKodeliste extends Kodeliste {
-    public DbKodelisteId<?> getId();
+public abstract class DbKodeliste extends Kodeliste {
+    private Class<? extends DbKode> kodeClass;
+    private Map<String, String> lokalisertBeskrivelse = new HashMap<String,String>();
 
-    public Class<? extends DbKode> getKodeClass();
+    private String beskrivelsesKey;
 
-    public void setKodeClass(Class<? extends DbKode> kodeClass);
+    @Override
+    public DbKodelisteId<?> getId() {
+        return (DbKodelisteId) super.getId();
+    }
 
-    public String getKodeClassname();
+    public String getBeskrivelsesKey() {
+        return beskrivelsesKey;
+    }
 
-    public void setKodeClassname(String kodeClassname);
+    public void setBeskrivelsesKey(String beskrivelsesKey) {
+        this.beskrivelsesKey = beskrivelsesKey;
+    }
 
-    public Map<String, String> getLokalisertBeskrivelse();
+    public Class<? extends DbKode> getKodeClass() {
+        return kodeClass;
+    }
 
-    public void setLokalisertBeskrivelse(Map<String, String> lokalisertBeskrivelse);
+    public void setKodeClass(Class<? extends DbKode> kodeClass) {
+        this.kodeClass = kodeClass;
+    }
+
+    public String getKodeClassname() {
+        return kodeClass.getName();
+    }
+
+    public void setKodeClassname(String kodeClassname) {
+        try {
+            this.kodeClass = (Class<? extends DbKode>) Class.forName(kodeClassname);
+        } catch (ClassNotFoundException e) {
+            throw new ImplementationException(e);
+        }
+    }
+
+    public Map<String, String> getLokalisertBeskrivelse() {
+        return lokalisertBeskrivelse;
+    }
+
+    public void setLokalisertBeskrivelse(Map<String, String> lokalisertBeskrivelse) {
+        this.lokalisertBeskrivelse = lokalisertBeskrivelse;
+    }
+
 }

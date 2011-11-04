@@ -1,31 +1,59 @@
 package no.statkart.skif.store.kodelistesupport;
 
-import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.AbstractBubbleObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 0.6
  */
-public interface Kodeliste extends BubbleObject {
-    public KodelisteId<?> getId();
+public abstract class Kodeliste extends AbstractBubbleObject  {
+    private Class<? extends KodeId<?>> kodeIdClass;
+    private String navn;
+    private String beskrivelse;
+    private List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
 
-    public Class<? extends KodeId<?>> getKodeIdClass();
+    public String getNavn() {
+        return navn;
+    }
 
-    public void setKodeIdClass(Class<? extends KodeId<?>> kodeIdClass);
-    
-    public String getNavn();
+    public void setNavn(String navn) {
+        this.navn = navn;
+    }
 
-    public void setNavn(String navn);
+    @Override
+    public KodelisteId getId() {
+        return (KodelisteId) super.getId();
+    }
 
-    public List<KodeId<?>> getKodeIds();
+    public Class<? extends KodeId<?>> getKodeIdClass() {
+        return kodeIdClass;
+    }
 
-    public void setKodeIds(List<? extends KodeId<?>> kodeIds);
+    public void setKodeIdClass(Class<? extends KodeId<?>> kodeIdClass) {
+        this.kodeIdClass = kodeIdClass;
+    }
 
-    public List<? extends Kode> getKoder();
+    public List<KodeId<?>> getKodeIds() {
+        return kodeIds;
+    }
 
-    public String getBeskrivelse();
+    public void setKodeIds(List<? extends KodeId<?>> kodeIds) {
+        this.kodeIds = (List)kodeIds;
+    }
 
-    public void setBeskrivelse(String beskrivelse);
+    public List<Kode> getKoder() {
+        return store.get(kodeIds);
+    }
+
+
+    public String getBeskrivelse() {
+        return beskrivelse;
+    }
+
+    public void setBeskrivelse(String beskrivelse) {
+        this.beskrivelse = beskrivelse;
+    } 
 }

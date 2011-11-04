@@ -62,7 +62,7 @@ public class HibernateSessionProviderTest {
         injector.getInstance(HibernateSessionFactoryManager.class).close();
     }
 
-    @Test(invocationCount = 50)
+    @Test(invocationCount = 1 /*50*/)
     public void createSessionMultiVersionImpl_Many() {
         Injector injector = TestHelper.createInjectorMultiVersionImpl();
 
@@ -98,7 +98,7 @@ public class HibernateSessionProviderTest {
         injector.getInstance(HibernateSessionFactoryManager.class).close();
     }
 
-    @Test(invocationCount = 50)
+    @Test(invocationCount = 1 /*50*/)
     public void createSessionSnapshotVersionImpl_Many() {
         Injector injector = TestHelper.createInjectorSnapshotVersionImpl();
 

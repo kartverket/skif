@@ -27,10 +27,10 @@
     <TestCKodeLoc id="11" lokale="b" beskrivelse="Kodebeskrivelse for C2B bokmål"/>
     <TestCKodeLoc id="11" lokale="n" beskrivelse="Kodebeskrivelse for C2B nynorsk"/>
 
-    <Kodeliste id="10001" navn="TestAKode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.TestADbKode"/>
-    <Kodeliste id="10002" navn="TestBKode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.TestBDbKode"/>
-    <Kodeliste id="10003" navn="TestC1Kode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.TestC1DbKode"/>
-    <Kodeliste id="10004" navn="TestC2Kode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.TestC2DbKode"/>
+    <Kodeliste id="10001" navn="TestAKode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.ADbKode"/>
+    <Kodeliste id="10002" navn="TestBKode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.BDbKode"/>
+    <Kodeliste id="10003" navn="TestC1Kode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.C1DbKode"/>
+    <Kodeliste id="10004" navn="TestC2Kode" kodeClassname="no.statkart.skif.storetest.domain.demo.koder.C2DbKode"/>
     <KodelisteLoc id="10001" lokale="b" beskrivelse="Kodelistebeskrivelse for TestAKode bokmål"/>
     <KodelisteLoc id="10001" lokale="n" beskrivelse="Kodelistebeskrivelse for TestAKode nynorsk"/>
     <KodelisteLoc id="10002" lokale="b" beskrivelse="Kodelistebeskrivelse for TestBKode bokmål"/>

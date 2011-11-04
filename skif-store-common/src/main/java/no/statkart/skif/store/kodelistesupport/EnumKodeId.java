@@ -1,8 +1,22 @@
 package no.statkart.skif.store.kodelistesupport;
 
+
+import no.statkart.skif.store.SnapshotVersion;
+
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
-public interface EnumKodeId<T extends EnumKode> extends KodeId<T> {
+public abstract class EnumKodeId<T extends EnumKode> extends KodeId<T> {
+
+    public static <I extends EnumKodeId<?>> EnumKodeSupport<EnumKodeliste, EnumKodelisteId<EnumKodeliste>> getKodeSupport(Class<I> idClass) {
+        return (EnumKodeSupport<EnumKodeliste, EnumKodelisteId<EnumKodeliste>>) KodeId.getKodeSupport(idClass);
+    }
+    
+    @Override
+    protected abstract EnumKodeSupport getKodeSupport();
+
+    protected EnumKodeId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion==SnapshotVersion.OLD ? SnapshotVersion.OLD : SnapshotVersion.CURRENT);
+    }
 }

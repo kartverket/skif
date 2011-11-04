@@ -173,4 +173,12 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertEquals(olderBarFoos.getFooIds().size(), 0);
 
     }
+
+    public void testStoreGetRaz(){
+        StoreService store = injector.getInstance(StoreService.class);
+
+        Raz raz = store.getObject(new RazId<Raz>(601L));
+        raz.getRazComponent().getFooId();
+
+    }
  }

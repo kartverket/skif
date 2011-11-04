@@ -1,18 +1,22 @@
 package no.statkart.skif.store.kodelistesupport;
 
-import java.util.List;
-
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
-public interface EnumKodeliste extends Kodeliste {
-    public EnumKodelisteId<?> getId();
-
-    public String getBeskrivelsesKey();
-
-    public void setBeskrivelsesKey(String beskrivelsesKey);
+public abstract class EnumKodeliste extends Kodeliste {
+    private String beskrivelsesKey;
 
     @Override
-    List<KodeId<?>> getKodeIds();
+    public EnumKodelisteId getId() {
+        return (EnumKodelisteId) super.getId();
+    }
+
+    public String getBeskrivelsesKey() {
+        return beskrivelsesKey;
+    }
+
+    public void setBeskrivelsesKey(String beskrivelsesKey) {
+        this.beskrivelsesKey = beskrivelsesKey;
+    }
 }

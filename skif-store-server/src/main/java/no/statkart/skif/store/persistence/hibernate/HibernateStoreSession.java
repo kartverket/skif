@@ -305,9 +305,7 @@ public abstract class HibernateStoreSession<T extends BubbleObject, I extends Bu
 
         ClassMetadata classMetadata = ((SessionImpl) session).getFactory().getClassMetadata(object.getClass());
 
-        if (!(classMetadata instanceof EntityPersister)) return;
-        // TODO: Implementer BubbleRef
-        //if( classMetadata instanceof BubbleRefIdPersister ) return;
+        if( erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
 
         EntityPersister persister = (EntityPersister) classMetadata;
         Type[] types = persister.getPropertyTypes();
@@ -353,6 +351,10 @@ public abstract class HibernateStoreSession<T extends BubbleObject, I extends Bu
                 }
             }
         }
+    }
+
+    protected boolean erAvTypeSomIkkeSkalInitialiseresVidere(ClassMetadata classMetadata) {
+        return !(classMetadata instanceof EntityPersister);
     }
 
 

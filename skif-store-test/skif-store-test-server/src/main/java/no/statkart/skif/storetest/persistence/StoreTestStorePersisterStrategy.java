@@ -7,7 +7,6 @@ import no.statkart.skif.store.StorePersister;
 import no.statkart.skif.store.StorePersisterStrategy;
 import no.statkart.skif.store.kodelistesupport.KodeId;
 import no.statkart.skif.store.kodelistesupport.KodelisteId;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionPersister;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 

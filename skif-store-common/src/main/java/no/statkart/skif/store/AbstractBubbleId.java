@@ -49,9 +49,9 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 
         private Class calcIdValueType(Class type) {
             try {
-                return type.getMethod("getValue", null).getReturnType();
+                return type.getMethod("getValue", (Class[])null).getReturnType();
             } catch (NoSuchMethodException e) {
-                throw new ImplementationException("Klassen har ingen getValue() metode. Dette burde egentlig ikke kunne skje:" + type);
+                throw new ImplementationException("Klassen har ingen getValue() metode. Dette burde egentlig ikke kunne skje: " + type);
             }
         }
     }

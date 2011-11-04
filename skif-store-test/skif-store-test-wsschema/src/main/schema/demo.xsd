@@ -109,6 +109,31 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="RazId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Raz">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="razComponent" type="demons:RazComponent" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="RazComponent">
+        <xs:sequence>
+            <xs:element name="compText" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="fooId" type="demons:FooId" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="BarFoos">
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">

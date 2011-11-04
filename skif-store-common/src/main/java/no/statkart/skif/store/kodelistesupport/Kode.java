@@ -1,15 +1,34 @@
 package no.statkart.skif.store.kodelistesupport;
 
-import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.AbstractBubbleObject;
 
 /**
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 0.6
  */
-public interface Kode extends BubbleObject {
-    public KodeId<?> getId();
-    public String getKodeverdi();
-    public void setKodeverdi(String kodeVerdi);
-    public String getBeskrivelse();
-    public void setBeskrivelse(String beskrivelse);
+public abstract class Kode extends AbstractBubbleObject  {
+    private String kodeverdi;
+    private String beskrivelse;
+
+    @Override
+    public KodeId<?> getId() {
+        return (KodeId<?>) super.getId();
+    }
+
+    public String getKodeverdi() {
+        return kodeverdi;
+    }
+
+    public void setKodeverdi(String kodeverdi) {
+        this.kodeverdi = kodeverdi;
+    }
+
+    public String getBeskrivelse() {
+        return beskrivelse;
+    }
+
+    public void setBeskrivelse(String beskrivelse) {
+        this.beskrivelse = beskrivelse;
+    }
+
 }

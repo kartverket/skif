@@ -18,6 +18,20 @@ public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelist
         return (EnumKodeSupport) KodeSupport.getKodeSupport(idClass);
     }
 
+    public KL getNonLocalizedKodeliste() {
+        nonLocalizedKodeliste.setKodeIds(new ArrayList(koder.keySet()));
+        return nonLocalizedKodeliste;
+    }
+
+
+
+    public synchronized void addKode(EnumKode kode) {
+        if (koder.containsKey(kode.getId())) {
+            throw new ImplementationException("Forsøk på å definere samme kode flere ganger: " + kode );
+        }
+        koder.put(kode.getId(), kode);
+    }
+
     public EnumKodeSupport(Class<? extends EnumKodeId<?>> idClass, KLID kodelisteId, String kodelisteNavn) {
         super(idClass, kodelisteId);
         nonLocalizedKodeliste =  kodelisteId.createTypeInstance();
@@ -27,32 +41,18 @@ public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelist
         nonLocalizedKodeliste.setBeskrivelsesKey(kodelisteNavn);
     }
 
-
-
-    public KL getNonLocalizedKodeliste() {
-        nonLocalizedKodeliste.setKodeIds(new ArrayList(koder.keySet()));
-        return nonLocalizedKodeliste;
-    }
-
-    public synchronized void addKode(EnumKode kode) {
-        if (koder.containsKey(kode.getId())) {
-            throw new ImplementationException("Forsøk på å definere samme kode flere ganger: " + kode );
-        }
-        koder.put(kode.getId(), kode);
-    }
-
-    public Collection<EnumKode> getNonLocalizedKoder() {
-        return koder.values();
-    }
-
-    public <T extends EnumKode, I extends EnumKodeId<? extends T>> I define(Class<I> idClass, long idValue, String kodeverdi, String beskrivelesesKey) {
+    public <T extends EnumKode, I extends EnumKodeId<? extends T>> T defineKode(Class<I> idClass, long idValue, String kodeverdi, String beskrivelesesKey) {
         I id = BubbleIds.createInstance(idClass, idValue, SnapshotVersion.CURRENT);
         T kode = id.createTypeInstance();
         kode.setId(id);
         kode.setKodeverdi(kodeverdi);
         kode.setBeskrivelsesKey(beskrivelesesKey);
         addKode(kode);
-        return id;
+        return kode;
+    }
+
+    public Collection<EnumKode> getNonLocalizedKoder() {
+        return koder.values();
     }
 
     @Override
@@ -64,6 +64,6 @@ public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelist
     @Override
     protected <T extends Kodeliste> String getBeskrivelse(T kodeliste, Locale locale) {
         // TODO: implementer uthenting fra resourse fil
-        return ((EnumKode)kodeliste).getBeskrivelsesKey() + " lokalister for " + locale;
+        return ((EnumKodeliste)kodeliste).getBeskrivelsesKey() + " lokalister for " + locale;
     }
 }

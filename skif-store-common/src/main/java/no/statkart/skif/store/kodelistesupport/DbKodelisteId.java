@@ -1,8 +1,27 @@
 package no.statkart.skif.store.kodelistesupport;
 
+import no.statkart.skif.store.SnapshotVersion;
+
 /**
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public interface DbKodelisteId<T extends DbKodeliste> extends KodelisteId<T>{
+public abstract class DbKodelisteId<T extends DbKodeliste> extends KodelisteId<T> {
+    protected DbKodelisteId() {
+    }
+
+    protected DbKodelisteId(Object value) {
+        super(value);
+    }
+
+    protected DbKodelisteId(Object value, SnapshotVersion version) {
+        super(value, version);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() +"{" +
+                "value='" + getValue() + '\'' +
+                '}';
+    }
 }

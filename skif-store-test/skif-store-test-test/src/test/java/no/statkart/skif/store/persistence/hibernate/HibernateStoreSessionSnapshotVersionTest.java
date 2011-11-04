@@ -37,7 +37,7 @@ public class HibernateStoreSessionSnapshotVersionTest {
         injector.getInstance(HibernateSessionFactoryManager.class).close();
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 1 /*200*/)
     public void testGetObjectForSnapshotVersion_Many() throws SQLException {
         testHentObjectForSnapshotVersion();
 
@@ -234,7 +234,7 @@ public class HibernateStoreSessionSnapshotVersionTest {
     }
 
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 1 /*200*/)
     public void Many() throws SQLException {
         testGetObjectForMultipleNestedSnapshotVersions();
 
