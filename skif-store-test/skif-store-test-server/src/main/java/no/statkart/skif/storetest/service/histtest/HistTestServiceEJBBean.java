@@ -5,9 +5,7 @@ import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-import no.statkart.skif.storetest.domain.demo.BarFoosId;
-import no.statkart.skif.storetest.domain.demo.BarId;
-import no.statkart.skif.storetest.domain.demo.FooId;
+import no.statkart.skif.storetest.domain.demo.*;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -37,5 +35,10 @@ public class HistTestServiceEJBBean extends EJBTimedService implements HistTestS
     @Override
     public Set<BarFoosId<?>> findBarFoosIdsMedBarOgFoo(String fooNavn, BarId<?> barId) {
         return serviceChain.findBarFoosIdsMedBarOgFoo(fooNavn, barId);
+    }
+
+    @Override
+    public Set<FooId<Foo>> findFooIdsForNr(long nr) {
+        return serviceChain.findFooIdsForNr(nr);
     }
 }

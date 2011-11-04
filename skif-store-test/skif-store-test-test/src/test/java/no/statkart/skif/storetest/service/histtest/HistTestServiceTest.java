@@ -83,4 +83,12 @@ public class HistTestServiceTest extends StoreTestTestCase {
         }
         assertTrue(found, "Fant ikke foo men navn 'KART-VEIEN' som forventet");
     }
+
+    public void testFindFooIdsForNr(){
+
+        Set<FooId<Foo>> fooIds = histTestService.findFooIdsForNr(2200);
+        assertEquals(fooIds.size(), 1);
+
+
+    }
 }
