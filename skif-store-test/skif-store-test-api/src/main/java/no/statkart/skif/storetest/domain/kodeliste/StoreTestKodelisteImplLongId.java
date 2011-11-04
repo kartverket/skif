@@ -1,8 +1,7 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 
 /**
  * @author Henrik Fredholm

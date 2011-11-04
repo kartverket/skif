@@ -3,8 +3,8 @@ package no.statkart.skif.store.persistence.finder;
 import com.google.inject.Inject;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.store.kodelistesupport.KodeId;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodeliste.KodeId;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 
 import java.util.ArrayList;

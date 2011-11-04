@@ -1,8 +1,8 @@
 package no.statkart.skif.store;
 
-import no.statkart.skif.store.kodelistesupport.Kode;
-import no.statkart.skif.store.kodelistesupport.KodeId;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodeliste.Kode;
+import no.statkart.skif.store.kodeliste.KodeId;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 
 import java.util.Collection;
 

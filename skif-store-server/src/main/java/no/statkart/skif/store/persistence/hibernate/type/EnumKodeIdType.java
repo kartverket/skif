@@ -1,7 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.kodelistesupport.EnumKodeId;
+import no.statkart.skif.store.kodeliste.EnumKodeId;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.usertype.EnhancedUserType;

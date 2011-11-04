@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.demo.koder;
 
-import no.statkart.skif.store.kodelistesupport.DbKode;
+import no.statkart.skif.store.kodeliste.DbKode;
 import no.statkart.skif.storetest.domain.kode.StoreTestDbKode;
 
 /**
