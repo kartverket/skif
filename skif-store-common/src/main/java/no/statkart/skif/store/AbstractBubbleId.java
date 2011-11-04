@@ -172,32 +172,42 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * Men hibernate gjør at når vi laster et objekt av klasse <code>Sub</code> som er subklasse av
      * <code>Super</code>, vil objektet kunne få et id-objekt som er av id-typen til 'Super'.
      * <p/>
-     * <p>Eksempel: en grunneiendom får id av type MatrikkelenhetId i stedet for GrunneiendomId. I praksis er en id
-     * av type MatrikkelenhetId lik en med type GrunneiendomId, dersom <code>value</code> er lik. I motsetning til en
-     * GateadresseId og en GrunneiendomId som har samme <code>value</code> (gitt at id-verdier evt. kun er unike
-     * innenfor hver klasse/hierarki).
+     * <p>Eksempel: I matrikkelen vil en grunneiendom få id av type MatrikkelenhetId i stedet for GrunneiendomId. I praksis er en id
+     * av type MatrikkelenhetId lik en med type GrunneiendomId, dersom id'ens <code>value</code> er lik. I motsetning
+     * vil en VegadresseId og en GrunneiendomId være forskjellige selvom id'ene har samme value (gitt at id-verdier evt.
+     * kun er unike innenfor hver klasse/hierarki).
      *
      * @param id en annen Id
      * @return true dersom dette objektet er av samme type og har samme <code>value</code> som parameteren <code>id</code>
      *         Objektene er av samme type også dersom dette objektet er en sub-type av <code>id</code> eller omvendt.
      */
-    protected boolean equals(AbstractBubbleId id) {
-        // Denne implementason håndter subtyper: eg. AdresseId er lik GateAdresseId og MatrikkelAdresseId dersom
-        // value og snapshotVersion er lik, men en GateAdresseId kan aldrig være lik MatrikkeladresseId
+    final public boolean equals(AbstractBubbleId id) {
         if (id == null) return false;
         return value.equals(id.value) && snapshotVersion.equals(id.snapshotVersion) && compatible(id);
     }
 
+    final public boolean equalsIgnoreSnapshotVersion(Object id) {
+        if (id == null) return false;
+        return id instanceof AbstractBubbleId && equalsIgnoreSnapshotVersion((AbstractBubbleId) id);
+    }
 
-    final public boolean equalsIgnoreReplicaVersion(AbstractBubbleId id) {
-        // Denne implementason håndter subtyper: eg. AdresseId er lik GateAdresseId og MatrikkelAdresseId dersom
-        // value og snapshotVersion er lik, men en GateAdresseId kan aldrig være lik MatrikkeladresseId
+    final public boolean equalsIgnoreSnapshotVersion(AbstractBubbleId id) {
         if (id == null) return false;
         return value.equals(id.value) && compatible(id);
     }
 
-    final private boolean compatible(AbstractBubbleId id) {
-        return (clazz == id.clazz || clazz.isAssignableFrom(id.clazz) || id.clazz.isAssignableFrom(clazz));
+    /**
+     * To {@code BubbleId}'er er i utgangspunktet compatible hvis base typen for id'ene er den samme. Det er det samme
+     * som at base typen for id'ens {@code BubbleObject}'er er like.
+     *
+     * I noen tilfeller kan det være nødvendig å overskrive denne metode, se {@link no.statkart.skif.store.kodeliste.Kodeliste}
+     *
+     * @param id
+     * @return
+     */
+    protected boolean compatible(AbstractBubbleId id) {
+        // Bruker getBaseType istedet for getBaseTypeId da denne er mye raskere pga caching.
+        return clazz == id.clazz || this.getBaseType()==id.getBaseType();
     }
 
     /**
@@ -302,6 +312,8 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 
     /**
      * Returns the class of the base id type. The base id type is last non abstract super class of the id class.
+     *
+     * Note: This method is not fast as the result is not cached. Use {@link #getBaseType()} if possible.
      *
      * @return the base type class of the id
      */
