@@ -30,18 +30,14 @@ public class EnumKodeIdTest {
     public void testLike()  {
         AEnumKodeId kodeAId = AEnumKodeId.KodeAId;
 
-        AEnumKodeId id = AEnumKodeId.createInstance(kodeAId.getValue());
+        AEnumKodeId id = EnumKodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
         assertSame(kodeAId, id);
 
-        AEnumKodeId id1 = EnumKodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
+        AEnumKodeId id1 = KodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
         assertSame(kodeAId, id1);
 
-        AEnumKodeId id2 = KodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
+        AEnumKodeId id2 = BubbleIds.createInstance(AEnumKodeId.class, kodeAId.getValue(), SnapshotVersion.CURRENT);
         assertSame(kodeAId, id2);
-
-        AEnumKodeId id3 = BubbleIds.createInstance(AEnumKodeId.class, kodeAId.getValue());
-        assertSame(kodeAId, id3);
-
     }
 
 
@@ -57,8 +53,12 @@ public class EnumKodeIdTest {
     }
 
     public void testHistorikk() {
-        AbstractBubbleId<AEnumKode> enumId = AEnumKodeId.createInstance(27);
+        AbstractBubbleId<AEnumKode> enumId = EnumKodeId.createInstance(AEnumKodeId.class, 27);
         AbstractBubbleId<AEnumKode> enumId2 = enumId.asReplicaVersion(SnapshotVersion.createInstance("2011-10-02 08:03:15.00"));
         assertEquals(enumId2.getSnapshotVersion(), SnapshotVersion.CURRENT);
     }
+
+
 }
+
+

@@ -12,9 +12,6 @@ import java.lang.reflect.Field;
  */
 public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T>  {
 
-    public static <I extends KodeId<?>> I createInstance(Class<I> idClass, long idValue) {
-        return (I) getKodeSupport(idClass).createInstance(idClass, idValue, SnapshotVersion.CURRENT);
-    }
 
     public static <I extends KodeId<?>> KodelisteId getKodelisteId(Class<I> idClass) {
         return (KodelisteId) getKodeSupport(idClass).getKodelisteId();
@@ -47,15 +44,6 @@ public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T>  {
 
     protected abstract KodeSupport getKodeSupport();
     
-    @Override
-    public boolean equals(Object id) {
-        return this == id;
-    }
-
-    @Override
-    public KodeId<T> resolveInstance() {
-        return getKodeSupport().getOrCreateInstance(this);
-    }
 
     @Override
     public String toString() {

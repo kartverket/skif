@@ -32,10 +32,6 @@ public class AEnumKodeId extends EnumKodeId<AEnumKode> implements StoreTestEnumK
         return kodeSupport.defineKode(AEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey).getId();
     }
 
-    public static AEnumKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(AEnumKodeId.class, idValue, SnapshotVersion.CURRENT);
-    }
-
     private Object readResolve() {
         return resolveInstance();
     }

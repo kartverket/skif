@@ -34,10 +34,6 @@ public class BEnumKodeId extends EnumKodeId<BEnumKode> implements StoreTestEnumK
         return kodeSupport.defineKode(BEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey).getId();
     }
 
-    public static BEnumKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(BEnumKodeId.class, idValue, SnapshotVersion.CURRENT);
-    }
-
     private Object readResolve() {
         return resolveInstance();
     }

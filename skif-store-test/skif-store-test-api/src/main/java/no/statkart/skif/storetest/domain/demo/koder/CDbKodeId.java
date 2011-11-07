@@ -31,31 +31,15 @@ public class CDbKodeId<T extends CDbKode> extends DbKodeId<T> implements StoreTe
     @Override
     public boolean equals(Object id) {
         if (this==id) return true;
+        // Todo: Tror ikke denne er helt riktig C1DbKodeId(1) skal ikke være lik C2DbKodeId(1).
         return (id!=null && id instanceof CDbKodeId && ((CDbKodeId) id).getValue().equals((((CDbKodeId) id).getValue())) && this.getSnapshotVersion()==((CDbKodeId) id).getSnapshotVersion());
     }
 
     /**
-     * For endelige subklasser av DbSubclassedKodeId returneres unike instanser per kode verdi. For mellomliggende
-     * subklasser returners det ikke unike instanser per kode verdi. Se {@link {#getKodeSupport}} for videre forklaring.
-     *
-     * @return
-     */
-    @Override
-    public final CDbKodeId<T> resolveInstance() {
-        DbKodeSupport kodeSupport = getKodeSupport();
-        if (kodeSupport==null) {
-            return this;
-        } else {
-            return (CDbKodeId<T>) getKodeSupport().getOrCreateInstance(this);
-        }
-    }
-
-
-    /**
      * Endelige subklasser av DbSubclassedKodeId vil (per design) alltid overskrive denne og dermed ha unike instanser
-     * per id value. Mellomliggende subklasser av DbSubclassedKodeId har ingen kodesupport og deres instanser blir
+     * per id klass. Mellomliggende subklasser av DbKodeId har ingen kodesupport og deres support instanser blir
      * dermed ikke unike per kode verdi. Mellomliggende id subklasser brukes kun internt i Skif rammeverket ifm lasting av
-     * Kode klassen og byttes alltid ut med endlig id subklasse før klassen er ferdig lastet. Dette skjer i
+     * DbKode klassen og byttes alltid ut med endlig id subklasse før klassen er ferdig lastet. Dette skjer i
      * no.statkart.skif.persistence.hibernate.HibernateInterceptor#onLoad
      *
      * @return

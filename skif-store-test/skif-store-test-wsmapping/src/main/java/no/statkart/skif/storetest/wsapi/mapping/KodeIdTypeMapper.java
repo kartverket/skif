@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.kode.StoreTestKodeId;
 
 import java.lang.reflect.InvocationTargetException;
@@ -23,7 +24,7 @@ public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.do
 
     @Override
     protected DomainT getInitialDomainObject(WsapiT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        DomainT target = BubbleIds.createInstance(getDomainClass(), Long.parseLong(source.getValue()));
+        DomainT target = BubbleIds.createInstance(getDomainClass(), Long.valueOf(source.getValue()), SnapshotVersion.CURRENT);
         return target;
     }
 }

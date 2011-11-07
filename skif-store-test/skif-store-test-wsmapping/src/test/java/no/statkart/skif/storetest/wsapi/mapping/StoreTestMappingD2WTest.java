@@ -182,8 +182,8 @@ public class StoreTestMappingD2WTest {
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
         assertEquals(domainKodeliste.getKodeIds().size(), 2);
-        assertSame(domainKodeliste.getKodeIds().get(0), ADbKodeId.A1Id);
-        assertSame(domainKodeliste.getKodeIds().get(1), ADbKodeId.A2Id);
+        assertEquals(domainKodeliste.getKodeIds().get(0), ADbKodeId.A1Id);
+        assertEquals(domainKodeliste.getKodeIds().get(1), ADbKodeId.A2Id);
     }
 
 }

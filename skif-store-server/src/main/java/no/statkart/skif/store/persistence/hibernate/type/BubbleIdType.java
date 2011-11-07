@@ -112,7 +112,7 @@ public abstract class BubbleIdType implements UserType {
 
         String name = names[0];
         try {
-            Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, Long.class);
+            Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, idValueType);
             //long value = rs.getLong(name);
             if (rs.wasNull()) {
                 if (IS_VALUE_TRACING_ENABLED) {
@@ -143,14 +143,14 @@ public abstract class BubbleIdType implements UserType {
                 if (IS_VALUE_TRACING_ENABLED) {
                     log().trace("binding null to parameter: " + index);
                 }
-                StoreJDBCHelper.setBubbleIdValue(st, index, value, Long.class);
+                StoreJDBCHelper.setBubbleIdValue(st, index, null, idValueType);
                 //st.setNull(index, Types.BIGINT);
             } else {
                 if (IS_VALUE_TRACING_ENABLED) {
                     log().trace("binding '" + value + "' to parameter: " + index);
                 }
                 BubbleId bubbleId = (BubbleId) value;
-                StoreJDBCHelper.setBubbleIdValue(st, index, bubbleId.getValue(), Long.class) ;
+                StoreJDBCHelper.setBubbleIdValue(st, index, bubbleId.getValue(), idValueType) ;
                 //st.setLong(index, (Long) bubbleId.getValue());
             }
         } catch (ClassCastException ce) {
@@ -168,7 +168,7 @@ public abstract class BubbleIdType implements UserType {
     /**
      * Oppretter id med den spesifisert verdi. Id classen må være av den type metoden {@link
      * #returnedClass()} spesifisere. SnapshotVersion kan ha defalut verdi siden den overskrive
-     * automatisk av {@link #createId(Long) } metoden.
+     * automatisk av {@link #createId } metoden.
      *
      * @param value id value for bubbleid'en
      */

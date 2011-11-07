@@ -13,17 +13,28 @@ import java.util.*;
 public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelisteId<KL>> extends KodeSupport<KL, KLID> {
     private Map<KodeId<?>, EnumKode> koder = new HashMap<KodeId<?>, EnumKode>();
     private KL nonLocalizedKodeliste;
+    private final KodeIdResolver kodeIdResolver = new KodeIdResolver();
 
     public static <I extends EnumKodeId<?>> EnumKodeSupport getKodeSupport(Class<I> idClass) {
         return (EnumKodeSupport) KodeSupport.getKodeSupport(idClass);
+    }
+
+    public <I extends KodeId<? extends Kode>> I getOrCreate(I kodeId) {
+        return kodeIdResolver.getOrCreate(kodeId);
+    }
+
+    public boolean isNewKoderAllowed() {
+        return kodeIdResolver.isNewKoderAllowed();
+    }
+
+    public void setNewKoderAllowed(boolean value) {
+        kodeIdResolver.setNewKoderAllowed(value);
     }
 
     public KL getNonLocalizedKodeliste() {
         nonLocalizedKodeliste.setKodeIds(new ArrayList(koder.keySet()));
         return nonLocalizedKodeliste;
     }
-
-
 
     public synchronized void addKode(EnumKode kode) {
         if (koder.containsKey(kode.getId())) {
@@ -42,7 +53,7 @@ public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelist
     }
 
     public <T extends EnumKode, I extends EnumKodeId<? extends T>> T defineKode(Class<I> idClass, long idValue, String kodeverdi, String beskrivelesesKey) {
-        I id = BubbleIds.createInstance(idClass, idValue, SnapshotVersion.CURRENT);
+        I id = BubbleIds.createInstance(idClass, new Long(idValue), SnapshotVersion.CURRENT);
         T kode = id.createTypeInstance();
         kode.setId(id);
         kode.setKodeverdi(kodeverdi);

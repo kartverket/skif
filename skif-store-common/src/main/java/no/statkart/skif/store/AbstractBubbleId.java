@@ -70,14 +70,17 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     // Cache the class for faster access. This actually matters
     protected Class clazz = getClass();
 
+    @Deprecated
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, long idValue) {
         return createInstance(idClass, new Long(idValue), SnapshotVersion.CURRENT);
     }
 
+    @Deprecated
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, long idValue, SnapshotVersion snapshotVersion) {
         return createInstance(idClass, new Long(idValue), snapshotVersion);
     }
 
+    @Deprecated
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, Object idValue, SnapshotVersion snapshotVersion) {
         I id = null;
         try {

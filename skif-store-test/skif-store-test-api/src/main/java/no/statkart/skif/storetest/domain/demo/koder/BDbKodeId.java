@@ -24,7 +24,7 @@ public class BDbKodeId extends DbKodeId<BDbKode> implements StoreTestDbKodeId<BD
         return (Long) super.getValue();
     }
 
-    protected BDbKodeId(Long value, SnapshotVersion snapshotVersion) {
+    public  BDbKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 
@@ -35,10 +35,6 @@ public class BDbKodeId extends DbKodeId<BDbKode> implements StoreTestDbKodeId<BD
 
     protected static BDbKodeId define(long idValue) {
         return kodeSupport.define(BDbKodeId.class, idValue);
-    }
-
-    public static BDbKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(BDbKodeId.class, idValue, SnapshotVersion.CURRENT);
     }
 
     private Object readResolve() {

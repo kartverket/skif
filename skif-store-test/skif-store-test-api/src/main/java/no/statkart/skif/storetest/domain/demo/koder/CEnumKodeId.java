@@ -33,10 +33,6 @@ public class CEnumKodeId extends EnumKodeId<CEnumKode> implements StoreTestEnumK
         return kodeSupport.defineKode(CEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey).getId();
     }
 
-    public static CEnumKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(CEnumKodeId.class, idValue, SnapshotVersion.CURRENT);
-    }
-
     private Object readResolve() {
         return resolveInstance();
     }
