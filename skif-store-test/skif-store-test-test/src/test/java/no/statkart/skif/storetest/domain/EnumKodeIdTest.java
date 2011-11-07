@@ -44,6 +44,7 @@ public class EnumKodeIdTest {
 
     }
 
+
     public void testCopy() {
         AEnumKodeId id = CopyHelper.copy(AEnumKodeId.KodeAId);
         assertSame(id, AEnumKodeId.KodeAId);

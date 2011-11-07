@@ -33,13 +33,12 @@ public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T>  {
         }
     }
 
-
-    public Long getValue() {
-        return (Long) super.getValue();
+    protected KodeId(Object value) {
+        super(value);
     }
 
-    protected KodeId(Long value, SnapshotVersion snapshotVersion) {
-        super(value, snapshotVersion);
+    protected KodeId(Object value, SnapshotVersion version) {
+        super(value, version);
     }
 
     public KodelisteId<?> getKodelisteId() {

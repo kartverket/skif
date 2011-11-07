@@ -16,7 +16,7 @@ public class BarFoosIdType extends BubbleIdType {
     }
 
     @Override
-    protected Object createPrototypeId(Long value, SnapshotVersion snapshotTime) {
-        return new BarFoosId<BarFoos>(value, snapshotTime);
+    protected Object createPrototypeId(Object value, SnapshotVersion snapshotTime) {
+        return new BarFoosId<BarFoos>((Long)value, snapshotTime);
     }
 }

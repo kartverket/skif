@@ -35,6 +35,22 @@ public class StoreJDBCHelper extends JDBCHelper {
         setBubbleIdValue(preparedStatement, i, bubbleId, valueType);
     }
 
+    public static void setBubbleIdValue(PreparedStatement preparedStatement, int i, Object value, Class idValueType) throws SQLException {
+        if (idValueType == Long.class) {
+            if (value == null) {
+                preparedStatement.setNull(i, Types.BIGINT);
+            } else {
+                preparedStatement.setLong(i, (Long) value);
+            }
+        } else if (idValueType == String.class) {
+            // Tror ikke det er nødvendig å håndtere null spesielt her
+            preparedStatement.setString(i, (String) value);
+        } else {
+            throw new ImplementationException("Value type " + idValueType.getName() + " er ikke støttet");
+        }
+
+    }
+
     public static void setBubbleIdValue(PreparedStatement preparedStatement, int i, BubbleId<?> bubbleId, Class idValueType) throws SQLException {
         if (idValueType == Long.class) {
             if (bubbleId == null) {
@@ -57,6 +73,16 @@ public class StoreJDBCHelper extends JDBCHelper {
             return resultSet.getLong(i);
         } else if (idValueType == String.class) {
             return resultSet.getString(i);
+        } else {
+            throw new ImplementationException("Valuetype " + idValueType.getName() + " støttes ikke");
+        }
+    }
+
+    public static Object getBubbleIdValue(ResultSet resultSet, String name, Class idValueType) throws SQLException {
+        if (idValueType == Long.class) {
+            return resultSet.getLong(name);
+        } else if (idValueType == String.class) {
+            return resultSet.getString(name);
         } else {
             throw new ImplementationException("Valuetype " + idValueType.getName() + " støttes ikke");
         }

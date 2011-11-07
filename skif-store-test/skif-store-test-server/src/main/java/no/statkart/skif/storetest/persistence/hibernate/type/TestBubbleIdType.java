@@ -16,8 +16,8 @@ public class TestBubbleIdType extends BubbleIdType {
     }
 
     @Override
-    protected Object createPrototypeId(Long value, SnapshotVersion snapshotVersion) {
-        return new TestBubbleId(value).asReplicaVersion(snapshotVersion);
+    protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
+        return new TestBubbleId((Long)value).asReplicaVersion(snapshotVersion);
     }
 
 }

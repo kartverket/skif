@@ -19,9 +19,15 @@ public class ADbKodeId extends DbKodeId<ADbKode> implements StoreTestDbKodeId<AD
     public static ADbKodeId A1Id = define(1);
     public static ADbKodeId A2Id = define(2);
 
+    @Override
+    public Long getValue() {
+        return (Long) super.getValue();
+    }
+
     protected ADbKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
+
 
     @Override
     protected DbKodeSupport getKodeSupport() {

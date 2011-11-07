@@ -15,7 +15,7 @@ public class FooIdType extends BubbleIdType {
     }
 
     @Override
-    protected Object createPrototypeId(Long value, SnapshotVersion snapshotTime) {
-        return new FooId(value, snapshotTime);
+    protected Object createPrototypeId(Object value, SnapshotVersion snapshotTime) {
+        return new FooId((Long)value, snapshotTime);
     }
 }

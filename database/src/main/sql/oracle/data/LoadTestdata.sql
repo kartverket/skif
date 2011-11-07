@@ -5,7 +5,7 @@ insert into TestBubble values (2, 'Text 2');
 insert into TableSequence (tableName, nextFreeNumber) values ('GLOBAL_SEQUENCE',999999);
 
 insert into AKode values(1, 'A1');
-insert into AKode values(2, 'A');
+insert into AKode values(2, 'A2');
 insert into AKodeLoc values(1, 'b', 'Kodebeskrivelse for A1 bokmål');
 insert into AKodeLoc values(1, 'n', 'Kodebeskrivelse for A1 nynorsk');
 insert into AKodeLoc values(2, 'b', 'Kodebeskrivelse for A bokmål');
@@ -31,10 +31,25 @@ insert into CKodeLoc values(10, 'n', 'Kodebeskrivelse for C2A nynorsk');
 insert into CKodeLoc values(11, 'b', 'Kodebeskrivelse for C2B bokmål');
 insert into CKodeLoc values(11, 'n', 'Kodebeskrivelse for C2B nynorsk');
 
+insert into XstrKode values('A', 'X1');
+insert into XstrKode values('B', 'X2');
+insert into XstrKodeLoc values('A', 'b', 'Kodebeskrivelse for X1 bokmål');
+insert into XstrKodeLoc values('A', 'n', 'Kodebeskrivelse for X1 nynorsk');
+insert into XstrKodeLoc values('B', 'b', 'Kodebeskrivelse for X2 bokmål');
+insert into XstrKodeLoc values('B', 'n', 'Kodebeskrivelse for X2 nynorsk');
+
+insert into YstrKode values('A', 'Y1');
+insert into YstrKode values('B', 'Y2');
+insert into YstrKodeLoc values('A', 'b', 'Kodebeskrivelse for Y1 bokmål');
+insert into YstrKodeLoc values('A', 'n', 'Kodebeskrivelse for Y1 nynorsk');
+insert into YstrKodeLoc values('B', 'b', 'Kodebeskrivelse for Y2 bokmål');
+insert into YstrKodeLoc values('B', 'n', 'Kodebeskrivelse for Y2 nynorsk');
+
 insert into Kodeliste values(10001, 'AKode', 'no.statkart.skif.storetest.domain.demo.koder.ADbKode');
 insert into Kodeliste values(10002, 'BKode', 'no.statkart.skif.storetest.domain.demo.koder.BDbKode');
 insert into Kodeliste values(10003, 'C1Kode', 'no.statkart.skif.storetest.domain.demo.koder.C1DbKode');
 insert into Kodeliste values(10004, 'C2Kode', 'no.statkart.skif.storetest.domain.demo.koder.C2DbKode');
+--insert into Kodeliste values(10005, 'XStrKode', 'no.statkart.skif.storetest.domain.demo.koder.XStrKode');
 
 insert into KodelisteLoc values(10001, 'b', 'Kodelistebeskrivelse for AKode bokmål');
 insert into KodelisteLoc values(10001, 'n', 'Kodelistebeskrivelse for AKode nynorsk');
@@ -44,6 +59,8 @@ insert into KodelisteLoc values(10003, 'b', 'Kodelistebeskrivelse for C1Kode bok
 insert into KodelisteLoc values(10003, 'n', 'Kodelistebeskrivelse for C1Kode nynorsk');
 insert into KodelisteLoc values(10004, 'b', 'Kodelistebeskrivelse for C2Kode bokmål');
 insert into KodelisteLoc values(10004, 'n', 'Kodelistebeskrivelse for C2Kode nynorsk');
+--insert into KodelisteLoc values(10005, 'b', 'Kodelistebeskrivelse for XstrKode bokmål');
+--insert into KodelisteLoc values(10005, 'n', 'Kodelistebeskrivelse for XstrKode bokmål');
 
 insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:00:00.00'),snapshot_time.to_t('2011-10-02 08:01:00.00'),1,2200,'KARTGATA');
 insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:01:00.00'),snapshot_time.to_t('2011-10-02 08:02:00.00'),2,2200,'KARTVEGEN');

@@ -1,9 +1,8 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionSeed;
+import no.statkart.skif.store.*;
+import no.statkart.skif.store.util.StoreJDBCHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
 import org.hibernate.util.StringHelper;
@@ -27,18 +26,18 @@ import java.sql.Types;
  */
 public abstract class BubbleIdType implements UserType {
     /* Logging is implemented as in org.hibernate.type.NullableType in order to get similar logging performance and output as for standard hibernate types */
-    private static final boolean IS_VALUE_TRACING_ENABLED = LoggerFactory.getLogger(StringHelper.qualifier(BubbleIdType.class.getName())).isTraceEnabled();
+    protected static final boolean IS_VALUE_TRACING_ENABLED = LoggerFactory.getLogger(StringHelper.qualifier(BubbleIdType.class.getName())).isTraceEnabled();
     private transient Logger log;
 
 
-    private Logger log() {
+    protected Logger log() {
         if (log == null) {
             log = LoggerFactory.getLogger(getClass());
         }
         return log;
     }
 
-    private static final int[] SQL_TYPES = new int[]{Types.BIGINT};
+    private final int[] SQL_TYPES;
 
     /* Controls the value of {@link #snapshotVersionSeed} for newly created BubbleIdTypes (is a Seed of Seeds) */
     private static SnapshotVersionSeed snapshotVersionSeedSeed = new SnapshotVersionSeed(SnapshotVersion.CURRENT);
@@ -46,7 +45,15 @@ public abstract class BubbleIdType implements UserType {
     /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
     private SnapshotVersionSeed snapshotVersionSeed = snapshotVersionSeedSeed;
 
+    private Class idValueType;
+
     public BubbleIdType() {
+        idValueType = BubbleIds.getValueType(returnedClass());
+        if (idValueType==Long.class) {
+            SQL_TYPES = new int[]{Types.BIGINT};
+        } else {
+            SQL_TYPES = new int[]{Types.VARCHAR};
+        }
     }
 
     public SnapshotVersionSeed getSnapshotVersionSeed() {
@@ -105,7 +112,8 @@ public abstract class BubbleIdType implements UserType {
 
         String name = names[0];
         try {
-            long value = rs.getLong(name);
+            Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, Long.class);
+            //long value = rs.getLong(name);
             if (rs.wasNull()) {
                 if (IS_VALUE_TRACING_ENABLED) {
                     log().trace("returning null as column: " + name);
@@ -135,13 +143,15 @@ public abstract class BubbleIdType implements UserType {
                 if (IS_VALUE_TRACING_ENABLED) {
                     log().trace("binding null to parameter: " + index);
                 }
-                st.setNull(index, Types.BIGINT);
+                StoreJDBCHelper.setBubbleIdValue(st, index, value, Long.class);
+                //st.setNull(index, Types.BIGINT);
             } else {
                 if (IS_VALUE_TRACING_ENABLED) {
                     log().trace("binding '" + value + "' to parameter: " + index);
                 }
                 BubbleId bubbleId = (BubbleId) value;
-                st.setLong(index, (Long) bubbleId.getValue());
+                StoreJDBCHelper.setBubbleIdValue(st, index, bubbleId.getValue(), Long.class) ;
+                //st.setLong(index, (Long) bubbleId.getValue());
             }
         } catch (ClassCastException ce) {
             log().info("could not bind value '" + value + "' to parameter: " + index + "; ClassCastException: expected parameter of class " + getClass() + " got " + ce.getMessage());
@@ -162,14 +172,14 @@ public abstract class BubbleIdType implements UserType {
      *
      * @param value id value for bubbleid'en
      */
-    protected abstract Object createPrototypeId(Long value, SnapshotVersion snapshotTime);
+    protected abstract Object createPrototypeId(Object value, SnapshotVersion snapshotTime);
 
     /**
      * Oppretter BubbleId av riktig type og setter idvalue og SnapshotVersion
      *
      * @param value id value for bubbleid'en
      */
-    public Object createId(Long value) {
+    public Object createId(Object value) {
         BubbleId id = (BubbleId) createPrototypeId(value, snapshotVersionSeed.get());
         return id;
     }

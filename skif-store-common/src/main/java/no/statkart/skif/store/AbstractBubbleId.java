@@ -49,7 +49,12 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 
         private Class calcIdValueType(Class type) {
             try {
-                return type.getMethod("getValue", (Class[])null).getReturnType();
+                Class<?> valueType = type.getMethod("getValue", (Class[]) null).getReturnType();
+
+                if (valueType==Object.class) {
+                    throw new ImplementationException("Klassens getValue() metode returnerer Object. Hadde forventet Long, String eller tilsvarende: " + type);
+                }
+                return valueType;
             } catch (NoSuchMethodException e) {
                 throw new ImplementationException("Klassen har ingen getValue() metode. Dette burde egentlig ikke kunne skje: " + type);
             }
@@ -199,7 +204,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     /**
      * To {@code BubbleId}'er er i utgangspunktet compatible hvis base typen for id'ene er den samme. Det er det samme
      * som at base typen for id'ens {@code BubbleObject}'er er like.
-     *
+     * <p/>
      * I noen tilfeller kan det være nødvendig å overskrive denne metode, se {@link no.statkart.skif.store.kodeliste.Kodeliste}
      *
      * @param id
@@ -207,7 +212,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      */
     protected boolean compatible(AbstractBubbleId id) {
         // Bruker getBaseType istedet for getBaseTypeId da denne er mye raskere pga caching.
-        return clazz == id.clazz || this.getBaseType()==id.getBaseType();
+        return clazz == id.clazz || this.getBaseType() == id.getBaseType();
     }
 
     /**
@@ -312,7 +317,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 
     /**
      * Returns the class of the base id type. The base id type is last non abstract super class of the id class.
-     *
+     * <p/>
      * Note: This method is not fast as the result is not cached. Use {@link #getBaseType()} if possible.
      *
      * @return the base type class of the id
@@ -325,6 +330,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         while (!Modifier.isAbstract(c.getSuperclass().getModifiers())) c = c.getSuperclass();
         return c;
     }
+
     /**
      * Returns the classname without package prefix for the base id type.
      *

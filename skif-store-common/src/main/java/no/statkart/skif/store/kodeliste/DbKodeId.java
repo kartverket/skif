@@ -8,7 +8,7 @@ import no.statkart.skif.store.SnapshotVersion;
  */
 public abstract class DbKodeId<T extends DbKode> extends KodeId<T> {
 
-    protected DbKodeId(Long value, SnapshotVersion snapshotVersion) {
+    protected DbKodeId(Object value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 }

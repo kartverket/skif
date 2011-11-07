@@ -59,6 +59,9 @@ public class DbKodeHibernateTest {
         Session session = sf.openSession();
         ADbKode obj = (ADbKode) session.load(ADbKode.class, ADbKodeId.createInstance(1));
         Assert.assertEquals(obj.getId(), ADbKodeId.A1Id);
+        Class valueType = obj.getId().getValueType();
+        Assert.assertEquals(valueType, Long.class);
+
     }
 
 
@@ -110,6 +113,15 @@ public class DbKodeHibernateTest {
             Assert.assertSame(list.get(i), list2.get(i));
         }
     }
+
+ /*
+    public void testLoadTestXStrDbKode() {
+         SessionFactory sf = setupHibernate();
+         Session session = sf.openSession();
+         XStrDbKode obj = (XStrDbKode) session.load(XStrDbKode.class, XStrDbKodeId.createInstance("A"));
+         Assert.assertEquals(obj.getId(), XStrDbKodeId.AId);
+     }
+*/
 
     public void testLastKodeliste() {
         SessionFactory sf = setupHibernate();

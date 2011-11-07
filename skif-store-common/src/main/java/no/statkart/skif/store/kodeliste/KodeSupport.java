@@ -78,7 +78,15 @@ public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId
         return id;
     }
 
-    public <I extends KodeId<? extends Kode>> I getInstance(Long idValue, SnapshotVersion snapshotVersion) {
+    public <I extends KodeId<? extends Kode>> I createInstance(Class<? extends I> idClass, Object idValue, SnapshotVersion snapshotVersion) {
+        I id = (I) getInstance(idValue, snapshotVersion);
+        if (id == null) {
+            id = BubbleIds.createInstance(idClass, idValue, snapshotVersion);
+        }
+        return id;
+    }
+
+    public <I extends KodeId<? extends Kode>> I getInstance(Object idValue, SnapshotVersion snapshotVersion) {
         return (I) kodeIdResolver.get(idValue, snapshotVersion);
     }
 

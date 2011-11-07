@@ -112,4 +112,27 @@ public class KodeIdResolver {
         id = idMap.get(idValue);
         return (I) id;
     }
+    /**
+     * Henter ut eksisterende KodeId uten å opprette instans først og er dermed raskere enn {@link #getOrCreate(KodeId)}
+     *
+     * @param idValue
+     * @param snapshotVersion
+     * @return null hvis ingen KodeId er definert for idValue
+     */
+    public <I extends KodeId<? extends Kode>> I  get(Object idValue, SnapshotVersion snapshotVersion) {
+        int replicaIndex = snapshotVersion.equals(SnapshotVersion.CURRENT) ? 0 : 1;
+        long longValue = ((Long)idValue).longValue();
+
+        KodeId<?> id;
+        if (longValue < fastLookupIdsArray[replicaIndex].length) {
+            id = fastLookupIdsArray[replicaIndex][(int) longValue];
+            if (id != null) return (I) id;
+        }
+
+//        Ikke optimalisert oppslag
+        ConcurrentHashMap<Long, KodeId<?>> idMap = ids[replicaIndex];
+        id = idMap.get(idValue);
+        return (I) id;
+    }
+
 }

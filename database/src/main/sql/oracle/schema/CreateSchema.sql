@@ -42,9 +42,18 @@ create table CKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, 
 create table CKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table CKodeLoc add constraint FK_CKodeLoc foreign key (id) references CKode;
 
+create table XStrKode ( id varchar2(10) not null, kodeVerdi varchar2(10) not null, primary key (id) );
+create table XStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+alter table XStrKodeLoc add constraint FK_XStrKodeLoc foreign key (id) references XStrKode;
+
+create table YStrKode ( id varchar2(10) not null, kodeVerdi varchar2(10) not null, primary key (id) );
+create table YStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+alter table YStrKodeLoc add constraint FK_YStrKodeLoc foreign key (id) references YStrKode;
+
 create table Kodeliste( id number(19,0) not null, navn varchar2(64), kodeClassname varchar2(255), primary key(id));
 create table KodelisteLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table KodelisteLoc add constraint FK_TestKodelisteLoc foreign key (id) references Kodeliste;
+
 
 CREATE OR REPLACE PACKAGE snapshot_time
 As

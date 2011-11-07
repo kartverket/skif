@@ -65,6 +65,7 @@ public class StoreTestServerModule extends SkifModule {
                 facotryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
                 facotryBuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
                 facotryBuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", CDbKode.class, C1DbKode.class, C2DbKode.class);
+                facotryBuilder.addResourceUsingRelativePath("kodeliste", XStrDbKode.class);
                 facotryBuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodelisteLong.class);
                 facotryBuilder.addResource(TestBubble.class);
                 facotryBuilder.addResource(Foo.class);

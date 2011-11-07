@@ -19,6 +19,11 @@ public class BDbKodeId extends DbKodeId<BDbKode> implements StoreTestDbKodeId<BD
     public static BDbKodeId B1Id = define(1);
     public static BDbKodeId B2Id = define(2);
 
+    @Override
+    public Long getValue() {
+        return (Long) super.getValue();
+    }
+
     protected BDbKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
