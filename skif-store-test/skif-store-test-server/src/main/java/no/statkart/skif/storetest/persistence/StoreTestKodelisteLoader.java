@@ -17,6 +17,6 @@ import java.util.Map;
 public class StoreTestKodelisteLoader extends DbKodelisteLoader {
     @Override
     public List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
-        return  new ArrayList<DbKodeliste>(0); //load(session, DbKodeliste.class, kodeMap);
+        return  load(session, DbKodeliste.class, kodeMap);
     }
 }

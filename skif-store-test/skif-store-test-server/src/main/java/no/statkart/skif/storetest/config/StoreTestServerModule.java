@@ -96,7 +96,7 @@ public class StoreTestServerModule extends SkifModule {
         kodelisteManager.installStatic(AEnumKodeId.class);
         kodelisteManager.installStatic(BEnumKodeId.class);
         kodelisteManager.installStatic(CEnumKodeId.class);
-        kodelisteManager.installStatic(SEnumKodeId.class);
+//        kodelisteManager.installStatic(SEnumKodeId.class);
         return kodelisteManager;
     }
 

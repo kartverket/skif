@@ -62,6 +62,7 @@ public class KodelisteTest extends StoreTestTestCase {
         assertNotNull(list);
     }
 
+    @Test(enabled = false)
     public void testGetStringKodeliste() {
         Store store = injector.getInstance(Store.class);
         Kodeliste kodeliste = store.get(SEnumKodeId.KODELISTE_ID);
