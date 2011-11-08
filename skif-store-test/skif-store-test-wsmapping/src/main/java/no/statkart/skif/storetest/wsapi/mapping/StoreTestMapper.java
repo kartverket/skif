@@ -82,7 +82,7 @@ public class StoreTestMapper extends AbstractMapper {
         // TODO: Endre kodemapper til å kunne håndtere multiple mappinger for source bedre, pt er rekkefølgen er viktig her, siste klasse vinner
         addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestDbKodelisteLong.class));
         addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestEnumKodelisteLong.class));
-        addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestKodelisteLongImpl.class));
+        addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestKodelisteImplLong.class));
 
         // Boble lister
         addMapper(new WsapiListTypeMapper(StoreTestBubbleList.class, Collection.class));

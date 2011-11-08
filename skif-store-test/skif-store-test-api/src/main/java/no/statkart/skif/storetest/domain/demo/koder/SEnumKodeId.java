@@ -7,13 +7,16 @@ import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteString;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteStringId;
 
 /**
+ * En enum kode som bruke en kodeliste med string idValue
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class SEnumKodeId extends EnumKodeId<SEnumKode> implements StoreTestEnumKodeId<SEnumKode> {
-    private static EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>>(SEnumKodeId.class, new StoreTestEnumKodelisteLongId(3), "TestCEnumKodeliste");
+    private static EnumKodeSupport<StoreTestEnumKodelisteString, StoreTestEnumKodelisteStringId<StoreTestEnumKodelisteString>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteString, StoreTestEnumKodelisteStringId<StoreTestEnumKodelisteString>>(SEnumKodeId.class, new StoreTestEnumKodelisteStringId("TestCEnumKodeliste"), "TestCEnumKodeliste");
 
     public static KodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static SEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");

@@ -82,8 +82,8 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getKodeIds().getItem().size(), 0);
 
         // Map wsapi->domain
-        StoreTestKodelisteLongImpl domainKodeliste = map.w2d(target);
-        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLongImpl.class);
+        StoreTestKodelisteImplLong domainKodeliste = map.w2d(target);
+        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImplLong.class);
         assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
@@ -117,8 +117,8 @@ public class StoreTestMappingD2WTest {
         assertEquals(kodeId2.getValue(), "2");
 
         // Map wsapi->domain
-        StoreTestKodelisteLongImpl domainKodeliste = map.w2d(target);
-        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLongImpl.class);
+        StoreTestKodelisteImplLong domainKodeliste = map.w2d(target);
+        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImplLong.class);
         assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
@@ -145,8 +145,8 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getKodeIds().getItem().size(), 0);
 
         // Map wsapi->domain
-        StoreTestKodelisteLongImpl domainKodeliste = map.w2d(target);
-        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLongImpl.class);
+        StoreTestKodelisteImplLong domainKodeliste = map.w2d(target);
+        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImplLong.class);
         assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
@@ -175,8 +175,8 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getKodeIds().getItem().size(), 2);
 
         // Map wsapi->domain
-        StoreTestKodelisteLongImpl domainKodeliste = map.w2d(target);
-        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLongImpl.class);
+        StoreTestKodelisteImplLong domainKodeliste = map.w2d(target);
+        assertEquals(domainKodeliste.getClass(), StoreTestKodelisteImplLong.class);
         assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteImplLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), 1L);
         assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");

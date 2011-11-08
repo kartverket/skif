@@ -13,9 +13,9 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
  * @since 0.6
  */
 public class XStrDbKodeId extends DbKodeId<XStrDbKode> implements StoreTestDbKodeId<XStrDbKode> {
-    private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(XStrDbKodeId.class, new StoreTestDbKodelisteLongId(10001L, SnapshotVersion.CURRENT));
+    private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(XStrDbKodeId.class, new StoreTestDbKodelisteLongId(10005L, SnapshotVersion.CURRENT));
 
-    public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static StoreTestDbKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static XStrDbKodeId AId = define("A");
     public static XStrDbKodeId BId = define("B");
 

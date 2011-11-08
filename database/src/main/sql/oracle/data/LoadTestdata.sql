@@ -49,7 +49,7 @@ insert into Kodeliste values(10001, 'AKode', 'no.statkart.skif.storetest.domain.
 insert into Kodeliste values(10002, 'BKode', 'no.statkart.skif.storetest.domain.demo.koder.BDbKode');
 insert into Kodeliste values(10003, 'C1Kode', 'no.statkart.skif.storetest.domain.demo.koder.C1DbKode');
 insert into Kodeliste values(10004, 'C2Kode', 'no.statkart.skif.storetest.domain.demo.koder.C2DbKode');
---insert into Kodeliste values(10005, 'XStrKode', 'no.statkart.skif.storetest.domain.demo.koder.XStrKode');
+insert into Kodeliste values(10005, 'XStrDbKode', 'no.statkart.skif.storetest.domain.demo.koder.XStrDbKode');
 
 insert into KodelisteLoc values(10001, 'b', 'Kodelistebeskrivelse for AKode bokmål');
 insert into KodelisteLoc values(10001, 'n', 'Kodelistebeskrivelse for AKode nynorsk');
@@ -59,8 +59,8 @@ insert into KodelisteLoc values(10003, 'b', 'Kodelistebeskrivelse for C1Kode bok
 insert into KodelisteLoc values(10003, 'n', 'Kodelistebeskrivelse for C1Kode nynorsk');
 insert into KodelisteLoc values(10004, 'b', 'Kodelistebeskrivelse for C2Kode bokmål');
 insert into KodelisteLoc values(10004, 'n', 'Kodelistebeskrivelse for C2Kode nynorsk');
---insert into KodelisteLoc values(10005, 'b', 'Kodelistebeskrivelse for XstrKode bokmål');
---insert into KodelisteLoc values(10005, 'n', 'Kodelistebeskrivelse for XstrKode bokmål');
+insert into KodelisteLoc values(10005, 'b', 'Kodelistebeskrivelse for XStrDbKode bokmål');
+insert into KodelisteLoc values(10005, 'n', 'Kodelistebeskrivelse for XStrDbKode bokmål');
 
 insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:00:00.00'),snapshot_time.to_t('2011-10-02 08:01:00.00'),1,2200,'KARTGATA');
 insert into FOO_H (ID,TBEGIN,TEND,TVERSION,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:01:00.00'),snapshot_time.to_t('2011-10-02 08:02:00.00'),2,2200,'KARTVEGEN');

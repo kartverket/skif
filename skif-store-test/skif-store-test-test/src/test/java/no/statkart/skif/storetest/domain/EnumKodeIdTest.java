@@ -8,6 +8,7 @@ import no.statkart.skif.store.kodeliste.EnumKodeId;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.SEnumKodeId;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
@@ -26,7 +27,8 @@ public class EnumKodeIdTest {
         assertNotSame(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeAId);
         assertNotSame(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeBId);
     }
-    
+
+
     public void testLike()  {
         AEnumKodeId kodeAId = AEnumKodeId.KodeAId;
 
@@ -58,7 +60,11 @@ public class EnumKodeIdTest {
         assertEquals(enumId2.getSnapshotVersion(), SnapshotVersion.CURRENT);
     }
 
-
+    public void testEnumKodeMedKodelisteSomBrukerStringIdValue()  {
+        SEnumKodeId kodeAId = SEnumKodeId.KodeAId;
+        assertEquals(kodeAId.getValue(), new Long(1));
+        assertEquals(SEnumKodeId.KODELISTE_ID.getValueType(), String.class);
+    }
 }
 
 

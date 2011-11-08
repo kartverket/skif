@@ -148,11 +148,8 @@ public class DbKodeHibernateTest {
 
     public void testKodelisteManager() {
         SessionFactory sf = setupHibernate();
-        // TODO: Fix dette er feil.
         HibernateStoreSession wrapper = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(sf.openSession(), new SnapshotVersionSeed(SnapshotVersion.CURRENT));
         KodelisteManager kodelisteManager = new KodelisteManager();
-
-
 
         DbKodelisteLoader kodelisteLoader = new DbKodelisteLoader() {
             @Override
@@ -163,8 +160,8 @@ public class DbKodeHibernateTest {
 
         KodelistePersister kodelistePersister = new KodelistePersister(wrapper, kodelisteLoader, kodelisteManager);
         Collection<? extends BubbleObject> list = kodelistePersister.getAllKodelisterAndKoder();
-        Collection<? extends BubbleObject> list2 = kodelistePersister.getAllKodelisterAndKoder();
         Assert.assertNotNull(list);
+
     }
 
     public void testLoadTestBaz() {
