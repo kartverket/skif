@@ -18,15 +18,7 @@ public class BubbleIds {
     private static ConcurrentHashMap<Class, Constructor> constructorMap = new ConcurrentHashMap<Class, Constructor>();
 
     /**
-     * Denne metode har funksjonalitet for å opprette BubbleIds av forskjellig type uten å måtte bruke {@code new}
-     * operatoren. Dette er nødvendig for enum koder, som garanterer at det kun opprettes en instans per id slik at
-     * {@code ==} fungerer.  Skif rammeverket trenger denne klassen for på generisk vis å kunne opprette bobleId'er
-     * for alle typer.
-     * <p/>
-     * Applikasjonskode fra rådes å bruke denne klassen. I versjon 2.1 av Skif vil enum koder ikke lengere støtte {@code ==}
-     * og denne funksjonaliteten vil bli tatt bort.
-     *
-     * @deprecated
+     * Oppretter en bubbleId instans av gitt type
      */
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, Object idValue, SnapshotVersion snapshotVersion) {
         I id = null;
