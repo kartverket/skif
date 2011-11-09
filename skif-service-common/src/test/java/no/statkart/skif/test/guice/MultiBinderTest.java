@@ -157,7 +157,7 @@ public class MultiBinderTest {
         });
 
         String s = injector.getInstance(String.class);
-        System.out.println(s);
+        assertEquals(s, "no.statkart.skif.test.guice.TestService1 Test");
     }
 }
 

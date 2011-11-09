@@ -30,7 +30,7 @@ public class ServerInjectorRegistry {
 
         final Collection<Class<?>> services = lookupHelper.getServices();
         for (Class<?> service : services) {
-            logger.info("Binding service " + service.getName());
+            logger.info("Binder service " + service.getName());
         }
     }
 

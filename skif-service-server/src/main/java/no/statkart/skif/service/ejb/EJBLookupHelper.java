@@ -2,6 +2,8 @@ package no.statkart.skif.service.ejb;
 
 import no.statkart.skif.exception.*;
 import no.statkart.skif.exception.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.*;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  */
 public class EJBLookupHelper {
+    private static Logger logger = LoggerFactory.getLogger(EJBLookupHelper.class);
     private static EJBLookupHelper instance;
 
     private ConcurrentMap<Class<? extends Object>, Object> ejbRegistry = new ConcurrentHashMap<Class<? extends Object>, Object>();
@@ -77,9 +80,11 @@ public class EJBLookupHelper {
         Object old = ejbRegistry.putIfAbsent(serviceClass, ejbService);
         // TODO: Bruk logging 
         if (old == null) {
-            System.out.println("SKIF: Adding ejb service for service class: " + serviceClass.getName() + " instance: " + ejbService);
+            if (logger.isInfoEnabled()) {
+                logger.info("Legger til ejb service for service class: " + serviceClass.getName() + " instans: " + ejbService);
+            }
         } else {
-            //System.out.println("SKIF: Skiping ejb service for service class (ejb already bound): " + serviceClass.getName() + " instance: " + ejbService);
+            // Service allerede allerede bunnet. Det er ok. Gjør ingen ting da.
         }
     }
 
