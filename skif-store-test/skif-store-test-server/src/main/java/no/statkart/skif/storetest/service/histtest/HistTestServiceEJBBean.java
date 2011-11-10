@@ -9,10 +9,13 @@ import no.statkart.skif.storetest.domain.demo.*;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @author Roar Ingebrigtsen
+ * @author Tor Egil R. Strand
  * @since 2.0
  */
 @Stateless(name = "no.statkart.skif.storetest.service.histtest.HistTestServiceEJBBEan")
@@ -40,5 +43,15 @@ public class HistTestServiceEJBBean extends EJBTimedService implements HistTestS
     @Override
     public Set<FooId<Foo>> findFooIdsForNr(long nr) {
         return serviceChain.findFooIdsForNr(nr);
+    }
+
+    @Override
+    public List<BarId> findBarIdsAliveAtSnapshot(Set<BarId<?>> barIds, SnapshotVersion snapshotVersion) {
+        return serviceChain.findBarIdsAliveAtSnapshot(barIds, snapshotVersion);
+    }
+
+    @Override
+    public Map<FooId<?>, Set<BarId<?>>> findBarIdsForFooIds(Set<FooId<?>> fooIds, SnapshotVersion snapshotVersion) {
+        return serviceChain.findBarIdsForFooIds(fooIds, snapshotVersion);
     }
 }
