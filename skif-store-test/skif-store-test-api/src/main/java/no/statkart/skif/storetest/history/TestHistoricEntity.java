@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.domain;
+package no.statkart.skif.storetest.history;
 
 /**
  *

@@ -6,13 +6,14 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.TestHelper;
-import no.statkart.skif.storetest.domain.*;
 import no.statkart.skif.storetest.domain.demo.TestBubble;
 import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 import no.statkart.skif.storetest.domain.demo.TestEntity;
+import no.statkart.skif.storetest.history.TestHistoricBubble;
+import no.statkart.skif.storetest.history.TestHistoricBubbleId;
+import no.statkart.skif.storetest.history.TestHistoricEntity;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
@@ -32,6 +33,8 @@ public class HibernateTwoSchemasTest {
         sfbuilder.addResource(TestBubble.class);
         sfbuilder.addResource(TestHistoricEntity.class);
         sfbuilder.addResource(TestHistoricBubble.class);
+        sfbuilder.addResourceUsingAbsolutePath(no.statkart.skif.storetest.history.Foo.class, "no/statkart/skif/storetest/persistence/hibernate/Foo2.hbm.xml");
+        sfbuilder.addResource(no.statkart.skif.storetest.domain.demo.Foo.class);
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
         AssertJUnit.assertNotNull(sf);
         return sf;
@@ -183,4 +186,14 @@ public class HibernateTwoSchemasTest {
         TestHelper.exitServer(scope);
         injector.getInstance(HibernateSessionFactoryManager.class).close();
     }
+
+    public void testHibernateLoadFraToForskjelligeSkjemaerV2() {
+        SessionFactory sf = setupHibernate();
+        Session session = sf.openSession();
+        no.statkart.skif.storetest.history.Foo fooh = (no.statkart.skif.storetest.history.Foo) session.load(no.statkart.skif.storetest.history.Foo.class, 1l);
+        no.statkart.skif.storetest.domain.demo.Foo foo = (no.statkart.skif.storetest.domain.demo.Foo) session.load(no.statkart.skif.storetest.domain.demo.Foo.class, 1l);
+        assertNotNull(foo.getNavn());
+        assertNotNull(fooh.getNavn());
+    }
+
 }

@@ -17,7 +17,8 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.*;
-import no.statkart.skif.storetest.domain.TestHistoricBubble;
+import no.statkart.skif.storetest.history.Foo;
+import no.statkart.skif.storetest.history.TestHistoricBubble;
 import no.statkart.skif.storetest.domain.demo.TestBubble;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
@@ -105,7 +106,7 @@ public class TestHelper {
             @Override
             protected void configure() {
                 HibernateSessionFactoryBuilder sfbuilder = TestHelper.createHibernateSessionFactoryBuilder();
-                sfbuilder.addResource(TestBubble.class);
+//                sfbuilder.addResource(TestBubble.class);
 
                 // Definer ServiceRequestScope og bind til instans (dvs singleton)
                 ServiceRequestScope serviceRequestScope = new ServiceRequestScope();
@@ -135,7 +136,7 @@ public class TestHelper {
             @Override
             protected void configure() {
                 HibernateSessionFactoryBuilder sfbuilder = TestHelper.createHibernateSessionFactoryBuilder();
-                sfbuilder.addResource(TestBubble.class);
+//                sfbuilder.addResource(TestBubble.class);
 
                 // Definer ServiceRequestScope og bind til instans (dvs singleton)
                 ServiceRequestScope serviceRequestScope = new ServiceRequestScope();
@@ -174,8 +175,9 @@ public class TestHelper {
 
                 // Alle requester skal dele samme factory manager, mens connection og session managers  kun skal deles per request
                 StoreHibernateSessionFactoryBuilder sfbuilder = TestHelper.createStoreHibernateSessionFactoryBuilder();
-                sfbuilder.addResource(TestBubble.class);
-                sfbuilder.addResource(TestHistoricBubble.class);
+//                sfbuilder.addResource(TestBubble.class);
+//                sfbuilder.addResource(TestHistoricBubble.class);
+//                sfbuilder.addResource(Foo.class);
                 bind(HibernateSessionFactoryBuilder.class).toInstance(sfbuilder);
                 bind(ConnectionFactoryManager.class).toInstance(TestHelper.createConnectionFactoryManager());
 

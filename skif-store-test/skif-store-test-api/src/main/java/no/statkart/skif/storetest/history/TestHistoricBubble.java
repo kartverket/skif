@@ -1,7 +1,8 @@
-package no.statkart.skif.storetest.domain;
+package no.statkart.skif.storetest.history;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 /**
  * @author Henrik Fredholm

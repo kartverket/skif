@@ -1,8 +1,8 @@
-package no.statkart.skif.storetest.persistence.hibernate.type;
+package no.statkart.skif.storetest.persistence.hibernate.type.history;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
-import no.statkart.skif.storetest.domain.TestHistoricBubbleId;
+import no.statkart.skif.storetest.history.TestHistoricBubbleId;
 
 /**
  * @author Roar Ingebrigtsen

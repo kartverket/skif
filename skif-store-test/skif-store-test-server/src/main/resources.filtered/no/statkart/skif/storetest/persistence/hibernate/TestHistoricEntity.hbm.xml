@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-   <class name="no.statkart.skif.storetest.domain.TestHistoricEntity" schema="@skif.db_history_schema_name@">
+   <class name="no.statkart.skif.storetest.history.TestHistoricEntity" schema="@skif.db_history_schema_name@">
       <id name="id" column="id" type="long">
           <generator class="assigned"/>
       </id>
