@@ -2,7 +2,7 @@ package no.statkart.skif.skiftest.exception;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class SimpleNonMappedException extends Exception {
     private String infoField;

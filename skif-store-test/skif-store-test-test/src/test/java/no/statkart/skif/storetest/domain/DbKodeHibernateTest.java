@@ -35,7 +35,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 @Test
 public class DbKodeHibernateTest {

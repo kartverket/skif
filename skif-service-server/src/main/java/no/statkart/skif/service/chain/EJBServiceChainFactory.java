@@ -6,7 +6,7 @@ package no.statkart.skif.service.chain;
  * termineres ved å sende kallet videre til servicens {@code ImplementationServiceChain}.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface EJBServiceChainFactory<S> extends ServiceChainFactory<S> {
 }

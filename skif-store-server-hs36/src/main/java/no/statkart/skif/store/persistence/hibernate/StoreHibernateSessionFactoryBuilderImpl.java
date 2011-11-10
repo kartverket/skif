@@ -17,7 +17,7 @@ import java.util.Properties;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class StoreHibernateSessionFactoryBuilderImpl extends StoreHibernateSessionFactoryBuilder {
     public StoreHibernateSessionFactoryBuilderImpl(Properties hibernateProperties, String mappingFilesDirectory) {

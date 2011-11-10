@@ -10,7 +10,7 @@ import no.statkart.skif.service.ejb.EJBCallProxyHandlerJEE;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ServerServiceModuleStrategyJEE extends ServerServiceModuleStrategy {
     public ServerServiceModuleStrategyJEE() {

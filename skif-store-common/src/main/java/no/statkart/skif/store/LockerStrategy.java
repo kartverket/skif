@@ -4,7 +4,7 @@ import no.statkart.skif.exception.LockedException;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public interface LockerStrategy {
 

@@ -10,7 +10,7 @@ import no.statkart.skif.module.ModuleBuilder;
  * Definere hvilken injector som skal brukes intern i serveren og hvordan denne konfigureres opp.
  *
  * @author Henrik Fredholm
- * @since 0.5
+ * @since 2.0
  */
 public class SkifTestServerInjector {
     public static Injector getInjector() {

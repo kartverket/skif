@@ -11,7 +11,7 @@ import java.util.List;
  * Services i SkifTest som ikke tar ServiceContext som parameter
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class SkifTestGroup1Services implements ServicesListing {
     private static final List<Class<?>> services;

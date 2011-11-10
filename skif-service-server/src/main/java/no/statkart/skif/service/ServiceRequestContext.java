@@ -8,7 +8,7 @@ import java.security.Principal;
 /**
  * Denne klasseninneholder infomasjon om inneværende kall som vedlikeholdes av servicerammeverket.
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ServiceRequestContext implements Serializable {
     private java.security.Principal callerPrincipal;

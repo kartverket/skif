@@ -6,7 +6,7 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ServerModuleStrategySingleVm extends ServerModuleStrategy {
 

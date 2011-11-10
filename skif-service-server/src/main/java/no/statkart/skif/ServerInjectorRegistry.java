@@ -15,7 +15,7 @@ import java.util.Map;
  * Klasse som holder på registrerte skif server injectors. Denne klasse gjør det mulig å ha mer
  * enn en server injector per applikasjon om ønskelig.
  * @author Henrik Fredholm
- * @since 0.5
+ * @since 2.0
  */
 public class ServerInjectorRegistry {
     private static Logger logger = LoggerFactory.getLogger(ServerInjectorRegistry.class);

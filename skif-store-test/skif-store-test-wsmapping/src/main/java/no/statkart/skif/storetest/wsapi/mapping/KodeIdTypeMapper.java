@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kode.KodeId, DomainT extends StoreTestKodeId> extends AbstractStoreTestTypeMapper<WsapiT, DomainT> {
 

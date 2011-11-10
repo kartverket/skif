@@ -18,7 +18,7 @@ import static no.statkart.skif.SkifConstants.*;
  * på det klonet instansen vil ikke påvirke den opprindelige instansen.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class StrategyTuple<T extends ModuleStrategy> implements Cloneable {
     protected T instanceJEE;

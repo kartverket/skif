@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class M2 extends M {
     @Inject

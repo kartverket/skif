@@ -13,7 +13,7 @@ import javax.xml.ws.WebServiceContext;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class SkifWebService<T extends ServiceWSI> {
     private static Logger logger = LoggerFactory.getLogger(SkifWebService.class);

@@ -4,7 +4,7 @@ import com.google.inject.Provider;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class InstanceProvider<T> implements Provider<T> {
     T instance;

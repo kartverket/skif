@@ -12,7 +12,7 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy > {
     private Class<? extends ServiceContext> serviceContextClass = DefaultServiceContext.class;

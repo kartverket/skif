@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
  * {@code ServiceChain}'en (som krever at ServiceRequestScope) og avslutter ServiceRequestScope etterpå.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class SkifWSInterceptor<T> extends ChainedProxyHandler<T> {
     final private TypeLiteral<T> serviceType;

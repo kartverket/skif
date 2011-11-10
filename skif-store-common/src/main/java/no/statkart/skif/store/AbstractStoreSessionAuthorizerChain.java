@@ -4,7 +4,7 @@ import java.util.Collection;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public abstract class AbstractStoreSessionAuthorizerChain extends AbstractStoreSessionReadChain implements StoreSessionAuthorizerChain {
 

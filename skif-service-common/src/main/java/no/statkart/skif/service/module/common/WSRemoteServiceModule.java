@@ -12,7 +12,7 @@ import static no.statkart.skif.SkifUtil.typeLiteral;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class WSRemoteServiceModule extends SkifModule {
     protected List<Class<?>> serviceClasses;

@@ -5,7 +5,7 @@ import no.statkart.skif.module.ModuleStrategy;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ServerModuleStrategy extends ModuleStrategy {
     public void configure(Binder binder) {

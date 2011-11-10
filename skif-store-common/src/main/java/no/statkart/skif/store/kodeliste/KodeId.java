@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T>  {
 

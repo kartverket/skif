@@ -18,7 +18,7 @@ import javax.xml.ws.WebServiceContext;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @WebService(
         name = "KodelisteService",

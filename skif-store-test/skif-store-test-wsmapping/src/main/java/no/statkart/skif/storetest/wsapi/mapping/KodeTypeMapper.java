@@ -4,7 +4,7 @@ import no.statkart.skif.storetest.domain.kode.StoreTestKode;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public class KodeTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kode.Kode, DomainT extends StoreTestKode> extends StoreTestBubbleTypeMapper<WsapiT,DomainT> {
     public KodeTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {

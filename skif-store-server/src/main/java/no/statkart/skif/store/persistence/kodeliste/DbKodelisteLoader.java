@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public abstract class DbKodelisteLoader {
 

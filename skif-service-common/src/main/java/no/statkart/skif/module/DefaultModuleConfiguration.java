@@ -9,7 +9,7 @@ import no.statkart.skif.exception.ImplementationException;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class DefaultModuleConfiguration implements ModuleConfiguration {
     private ModuleStrategyFactory strategyFactory;

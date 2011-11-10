@@ -2,7 +2,7 @@ package no.statkart.skif;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface SkifConstants {
     public static final String JEE_POSTFIX = "JEE";

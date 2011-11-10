@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 @Stateless(name = "no.statkart.skif.storetest.service.histtest.HistTestServiceEJBBEan")
 @Interceptors(StoreTestEJBInterceptorJEE.class)

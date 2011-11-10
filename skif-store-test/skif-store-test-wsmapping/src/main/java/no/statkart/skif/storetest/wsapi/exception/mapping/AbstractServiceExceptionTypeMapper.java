@@ -14,7 +14,7 @@ import java.util.Map;
  * Abstract TypeMapper for exceptions
  *
  * @author Leif Lislegård
- * @since 1.1
+ * @since 2.0
  */
 abstract class AbstractServiceExceptionTypeMapper<WsapiT extends ServiceException, DomainT extends SkifException> extends AbstractTypeMapper<WsapiT, DomainT> {
 

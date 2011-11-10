@@ -9,7 +9,7 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class StoreTestServiceContextMapper extends AbstractServiceContextMapper<StoreTestContext> {
     @Inject

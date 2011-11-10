@@ -11,7 +11,7 @@ import java.util.Map;
  * Mapper for JAX-WS exception classes in API
  *
  * @author Leif Lislegård
- * @since 1.1
+ * @since 2.0
  */
 public class StoreTestExceptionMapper extends AbstractExceptionMapper {
 
@@ -64,7 +64,7 @@ public class StoreTestExceptionMapper extends AbstractExceptionMapper {
          * Kategorisering av exceptions
          *
          * @author Leif Lislegård
-         * @since 1.1
+         * @since 2.0
          */
         public static enum Kategori {
             SERVICE_EXCEPTION(":ServiceException:"),

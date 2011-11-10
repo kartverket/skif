@@ -7,7 +7,7 @@ import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public abstract class KodeIdType extends BubbleIdType {
     @Override

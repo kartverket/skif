@@ -6,7 +6,7 @@ import no.statkart.skif.config.Configuration;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class ModuleWithStrategy<T extends ModuleStrategy> extends SkifModule {
     protected final ModuleStrategyFactory strategyFactory;

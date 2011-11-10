@@ -4,7 +4,7 @@ package no.statkart.skif.mapper;
  * Definerer mapping2 mellom Domain Exceptions og Web Service API Exceptions.
  *
  * @author Leif Lislegård
- * @since 0.6
+ * @since 2.0
  */
 public interface ExceptionMapping extends Mapping {
 

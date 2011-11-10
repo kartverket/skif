@@ -5,7 +5,7 @@ import no.statkart.skif.mapper.Mapping;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public abstract class AbstractSkifTestTypeMapper<WsapiT, DomainT> extends AbstractTypeMapper<WsapiT,  DomainT> {
     protected SkifTestMapping map;

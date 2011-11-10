@@ -10,7 +10,7 @@ import java.sql.*;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ContainerManagedTxCMTCascadeServiceImpl implements ContainerManagedTxCMTCascadeService {
     final Provider<Connection> connectionProvider;

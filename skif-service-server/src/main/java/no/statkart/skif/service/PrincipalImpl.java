@@ -5,7 +5,7 @@ import java.security.Principal;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class PrincipalImpl implements Principal, Serializable {
     private String name;

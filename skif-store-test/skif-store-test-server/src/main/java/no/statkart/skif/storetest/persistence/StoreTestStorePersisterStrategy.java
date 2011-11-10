@@ -13,7 +13,7 @@ import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 /**
  * Strategi som mapper bobleobjekter til hibernate-persister, mens hjelpemodellobjekter blir mappet til egen persister
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  *
  */
 public class StoreTestStorePersisterStrategy implements StorePersisterStrategy {

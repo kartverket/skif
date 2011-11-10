@@ -17,7 +17,7 @@ import java.util.List;
  * forskjellig for hver subklasse.
  *
  * @author Henrik Fredholm
- * @since 0.4
+ * @since 2.0
  */
 public class TestModule extends SkifModule {
 

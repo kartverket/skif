@@ -20,7 +20,7 @@ import java.util.Stack;
  * Mapper som må instansieres for hver type exception som skal mappes ut.
  *
  * @author Leif Lislegård
- * @since 1.1
+ * @since 2.0
  */
 public class ServiceExceptionTypeMapper<WsapiT extends ServiceException, WsapiTInfo extends ServiceFaultInfo, DomainT extends SkifException> extends AbstractServiceExceptionTypeMapper<WsapiT, DomainT> {
 

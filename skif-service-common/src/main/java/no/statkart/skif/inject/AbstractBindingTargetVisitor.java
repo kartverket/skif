@@ -4,7 +4,7 @@ import com.google.inject.spi.*;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class AbstractBindingTargetVisitor<T, V> implements BindingTargetVisitor<T, V>{
     @Override

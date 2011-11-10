@@ -8,7 +8,7 @@ import no.statkart.skif.store.SnapshotVersion;
  * Guice Provider som gir ut et  HibernateStoreSession objekt som hentes fra en HibernateStoreSessionManager.
  *
  * @author Henrik Fredholm
- * @since 0.2
+ * @since 2.0
  */
 public class HibernateStoreSessionProvider implements Provider<HibernateStoreSession> {
     private final HibernateStoreSessionManager storeSessionManager;

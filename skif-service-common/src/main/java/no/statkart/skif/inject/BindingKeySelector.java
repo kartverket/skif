@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class BindingKeySelector extends AbstractBindingTargetVisitor<Object, Void> {
     private List<Key<Object>> keys = new ArrayList<Key<Object>>();

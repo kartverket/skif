@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 @Test
 public class SkifTestMappingW2DTest extends TestCase {

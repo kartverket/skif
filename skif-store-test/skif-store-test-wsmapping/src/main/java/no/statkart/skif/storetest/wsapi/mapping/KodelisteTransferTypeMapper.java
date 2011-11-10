@@ -11,7 +11,7 @@ import java.util.Collection;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class KodelisteTransferTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer, DomainT extends KodelisteTransfer> extends AbstractStoreTestTypeMapper<WsapiT,DomainT> {
     public KodelisteTransferTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {

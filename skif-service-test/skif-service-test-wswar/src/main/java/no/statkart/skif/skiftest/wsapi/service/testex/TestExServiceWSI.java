@@ -9,7 +9,7 @@ import javax.jws.WebParam;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface TestExServiceWSI extends ServiceWSI {
     public String noTx(@WebParam(name = "exceptionClass") String exceptionClass, @WebParam(name = "message") String message) throws SimpleException, SimpleNonMappedException;

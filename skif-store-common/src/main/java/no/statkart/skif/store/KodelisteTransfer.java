@@ -8,7 +8,7 @@ import java.util.Collection;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class KodelisteTransfer<KID extends KodeId, LID extends KodelisteId, K extends Kode> {
     private Collection<? extends KID> kodeIds;

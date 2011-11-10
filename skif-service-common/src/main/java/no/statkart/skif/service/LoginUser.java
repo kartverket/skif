@@ -2,7 +2,7 @@ package no.statkart.skif.service;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class LoginUser {
     private String username;

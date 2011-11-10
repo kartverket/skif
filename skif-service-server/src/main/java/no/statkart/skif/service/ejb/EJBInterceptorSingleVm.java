@@ -32,7 +32,7 @@ import java.util.Map;
  * kall dog gå uten om denne klassen og utføres direkte på servicens {@code ImplementationServiceChain}.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
     protected final Provider<SingleVmRemoteCallContext> singleVmRemoteCallContextProvider;

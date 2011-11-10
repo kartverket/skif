@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 0.6
+ * @since 2.0
  */
 public class TestBubbleIdType extends BubbleIdType {
 

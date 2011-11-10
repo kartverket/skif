@@ -4,7 +4,7 @@ import no.statkart.skif.skiftest.domain.B;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public class BTypeMapper<WsapiT extends no.statkart.skif.skiftest.wsapi.domain.B, DomainT extends B> extends AbstractSkifTestTypeMapper<WsapiT, DomainT> {
 

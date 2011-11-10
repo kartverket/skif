@@ -4,7 +4,7 @@ import no.statkart.skif.inject.Holder;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface ServerUrlHolder extends Holder<String> {
 }

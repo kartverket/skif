@@ -11,7 +11,7 @@ import static org.testng.Assert.fail;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Test
 public class SkifTestTxManagementTest extends SkifTestCase {

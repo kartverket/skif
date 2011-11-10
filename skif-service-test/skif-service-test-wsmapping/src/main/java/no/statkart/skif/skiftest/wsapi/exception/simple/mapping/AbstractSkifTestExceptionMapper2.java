@@ -15,7 +15,7 @@ import java.util.Date;
  * Alle metoder kaster {@link NotImplementedException}
  *
  * @author Leif Lislegård
- * @since 1.1
+ * @since 2.0
  */
 public abstract class AbstractSkifTestExceptionMapper2 implements ExceptionMapping {
 

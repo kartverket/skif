@@ -5,7 +5,7 @@ import java.io.*;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class CopyHelper {
    private static final int BUFFER_SIZE = 1024;

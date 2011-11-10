@@ -4,7 +4,7 @@ import java.util.Locale;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class DefaultServiceContext implements ServiceContext {
     private String systemVersion="1.0";
