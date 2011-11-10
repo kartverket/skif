@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.kodelistesupport.EnumKodeliste;
+import no.statkart.skif.store.kodeliste.EnumKodeliste;
 
 /**
  * @author Henrik Fredholm

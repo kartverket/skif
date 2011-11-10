@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.KodelisteTransfer;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 import javax.ejb.Stateless;

@@ -2,7 +2,7 @@ package no.statkart.skif.store.persistence.kodeliste;
 
 import com.google.inject.Inject;
 import no.statkart.skif.store.*;
-import no.statkart.skif.store.kodelistesupport.*;
+import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 
 import java.util.*;

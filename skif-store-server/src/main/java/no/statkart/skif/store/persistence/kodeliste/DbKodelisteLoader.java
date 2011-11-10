@@ -1,7 +1,7 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.kodelistesupport.*;
+import no.statkart.skif.store.kodeliste.*;
 import org.hibernate.Session;
 
 import java.util.List;

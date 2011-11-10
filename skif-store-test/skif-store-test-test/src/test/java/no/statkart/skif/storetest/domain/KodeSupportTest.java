@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.domain;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.*;
+import no.statkart.skif.store.kodeliste.*;
 import org.testng.annotations.Test;
 
 import java.util.Locale;

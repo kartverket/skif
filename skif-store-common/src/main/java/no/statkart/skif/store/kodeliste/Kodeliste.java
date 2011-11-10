@@ -1,4 +1,4 @@
-package no.statkart.skif.store.kodelistesupport;
+package no.statkart.skif.store.kodeliste;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 

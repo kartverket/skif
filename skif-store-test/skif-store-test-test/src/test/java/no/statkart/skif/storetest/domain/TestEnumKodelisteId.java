@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.EnumKodelisteId;
+import no.statkart.skif.store.kodeliste.EnumKodelisteId;
 
 /**
  * Test implementasjon med minimal funksjonalitet som kun brukes i EnumKodeSupportTest

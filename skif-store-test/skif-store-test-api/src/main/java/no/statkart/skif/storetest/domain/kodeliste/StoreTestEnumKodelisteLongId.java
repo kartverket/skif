@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.domain.kodeliste;
 
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.EnumKodelisteId;
+import no.statkart.skif.store.kodeliste.EnumKodelisteId;
 
 /**
  * @author Henrik Fredholm

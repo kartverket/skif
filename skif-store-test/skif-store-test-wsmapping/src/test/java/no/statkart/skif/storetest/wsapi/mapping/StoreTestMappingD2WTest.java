@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.store.kodelistesupport.*;
+import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.storetest.domain.demo.TestBubble;
 import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 import no.statkart.skif.storetest.domain.demo.koder.ADbKodeId;

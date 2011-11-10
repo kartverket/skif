@@ -5,8 +5,8 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.HashStorePersister;
 import no.statkart.skif.store.StorePersister;
 import no.statkart.skif.store.StorePersisterStrategy;
-import no.statkart.skif.store.kodelistesupport.KodeId;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodeliste.KodeId;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionPersister;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 

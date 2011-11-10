@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.kodelistesupport.Kode;
-import no.statkart.skif.store.kodelistesupport.KodeId;
+import no.statkart.skif.store.kodeliste.Kode;
+import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 import java.util.List;

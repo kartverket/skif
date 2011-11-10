@@ -1,8 +1,8 @@
 package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodelistesupport.EnumKodeId;
-import no.statkart.skif.store.kodelistesupport.EnumKodeSupport;
+import no.statkart.skif.store.kodeliste.EnumKodeId;
+import no.statkart.skif.store.kodeliste.EnumKodeSupport;
 import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;

@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain;
 
-import no.statkart.skif.store.kodelistesupport.EnumKodeliste;
+import no.statkart.skif.store.kodeliste.EnumKodeliste;
 
 /**
  * Test implementasjon som kun brukes i EnumKodeSupportTest

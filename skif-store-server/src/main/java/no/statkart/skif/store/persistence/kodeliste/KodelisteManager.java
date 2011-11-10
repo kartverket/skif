@@ -4,7 +4,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.kodelistesupport.*;
+import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.util.CopyHelper;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import java.util.*;
  * Denne klassen cacher koder og kodelister og håndterer lokalisering av beskrivelse. Klassen vedlikeholder en
  * idmap av ikke lokaliserte koder og kodelister. Utifra denne dannes idmap av lokaliserte koder og kodelister for
  * hver {@link java.util.Locale} etter behov.
- * Lokalisering av en {@link no.statkart.skif.store.kodelistesupport.Kode kode} eller {@link no.statkart.skif.store.kodelistesupport.Kodeliste kodeliste}
+ * Lokalisering av en {@link no.statkart.skif.store.kodeliste.Kode kode} eller {@link no.statkart.skif.store.kodeliste.Kodeliste kodeliste}
  * skjer ved at det først opprettes en kopi av objektet og at felter som skal lokaliseres deretter overskrives ihht ønsket lokale.
  * <p/>
  * Manageren lokaliserer alle objekter i idmapen på en gang første gang et objekt etterspørs for gitt lokale.

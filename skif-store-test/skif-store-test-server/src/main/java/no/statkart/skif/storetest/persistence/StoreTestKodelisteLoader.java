@@ -1,8 +1,8 @@
 package no.statkart.skif.storetest.persistence;
 
-import no.statkart.skif.store.kodelistesupport.DbKode;
-import no.statkart.skif.store.kodelistesupport.DbKodeId;
-import no.statkart.skif.store.kodelistesupport.DbKodeliste;
+import no.statkart.skif.store.kodeliste.DbKode;
+import no.statkart.skif.store.kodeliste.DbKodeId;
+import no.statkart.skif.store.kodeliste.DbKodeliste;
 import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
 import org.hibernate.Session;
 

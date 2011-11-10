@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.kodelistesupport.KodeId;
+import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeliste;
 import no.statkart.skif.storetest.wsapi.domain.kode.KodeIdList;
 

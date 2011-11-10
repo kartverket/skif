@@ -1,9 +1,7 @@
 package no.statkart.skif.storetest.service.histtest;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.demo.BarFoosId;
-import no.statkart.skif.storetest.domain.demo.BarId;
-import no.statkart.skif.storetest.domain.demo.FooId;
+import no.statkart.skif.storetest.domain.demo.*;
 
 import java.util.Set;
 
@@ -37,4 +35,7 @@ public interface HistTestService {
      * @return
      */
     public Set<BarFoosId<?>> findBarFoosIdsMedBarOgFoo(String fooNavn, BarId<?> barId);
+
+    public Set<FooId<Foo>> findFooIdsForNr(long nr);
+
 }

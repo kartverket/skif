@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.demo.koder;
 
-import no.statkart.skif.store.kodelistesupport.EnumKode;
+import no.statkart.skif.store.kodeliste.EnumKode;
 import no.statkart.skif.storetest.domain.kode.StoreTestEnumKode;
 
 

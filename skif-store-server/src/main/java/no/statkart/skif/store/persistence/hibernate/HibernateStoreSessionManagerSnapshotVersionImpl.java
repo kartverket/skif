@@ -61,6 +61,8 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
     public void openHibernateSession(HibernateStoreSessionManagerSnapshotVersionEntry entry) {
         super.openHibernateSession(entry);
         entry.storeSession = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(entry.session, (SnapshotVersionSeed) entry.key);
+        //Dette kallet er lagt inn da man ønsker å få satt et snapshot-tidspunkt i databasen ved kall til services som ikke bruker store. Provider<Connection> vil komme inn her for å hente en connection.
+        changeSnapshotTime(entry.storeSession, ((SnapshotVersionSeed) entry.key).get());
     }
 
     @Override

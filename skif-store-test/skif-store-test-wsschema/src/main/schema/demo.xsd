@@ -92,6 +92,12 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="BazIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="demons:BarId"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="Baz">
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">

@@ -72,6 +72,7 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new WsapiListTypeMapper(BarIdList.class, Collection.class));
         addMapper(new WsapiListTypeMapper(BarFoosIdList.class, Collection.class));
         addMapper(new WsapiListTypeMapper(FooIdList.class, Collection.class));
+        addMapper(new WsapiListTypeMapper(BazIdList.class, Collection.class));
 
         // Boble Objekter
         addMapper(new TestBubbleTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.TestBubble.class, no.statkart.skif.storetest.domain.demo.TestBubble.class));

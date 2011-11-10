@@ -1,6 +1,5 @@
 package no.statkart.skif.storetest.domain.kode;
 
-import no.statkart.skif.store.kodelistesupport.KodeId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 /**

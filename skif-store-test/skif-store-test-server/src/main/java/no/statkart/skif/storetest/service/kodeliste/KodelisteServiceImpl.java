@@ -2,8 +2,7 @@ package no.statkart.skif.storetest.service.kodeliste;
 
 import com.google.inject.Inject;
 import no.statkart.skif.store.KodelisteTransfer;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
-import no.statkart.skif.store.kodelistesupport.KodelisteId;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.finder.KodelisteFinder;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 

@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.persistence.FooFinder;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
@@ -24,10 +25,13 @@ public class HistTestServiceImpl implements HistTestService {
     private final HibernateStoreSessionManager sessionManager;
     private final Store store;
 
+    private final FooFinder fooFinder;
+
     @Inject
-    public HistTestServiceImpl(HibernateStoreSessionManager sessionManager, Store store) {
+    public HistTestServiceImpl(HibernateStoreSessionManager sessionManager, Store store, FooFinder fooFinder) {
         this.sessionManager = sessionManager;
         this.store = store;
+        this.fooFinder = fooFinder;
     }
 
     @Override
@@ -88,5 +92,10 @@ public class HistTestServiceImpl implements HistTestService {
             }
         }
         return result;
+    }
+
+    @Override
+    public Set<FooId<Foo>> findFooIdsForNr(long nr) {
+        return fooFinder.findFooIdsForNr(nr);
     }
 }
