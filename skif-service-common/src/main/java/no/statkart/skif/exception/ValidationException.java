@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 
 /**
  * @author Oddbjørn Kvalsund
- * @since 0.6
+ * @since 2.0
  */
 public class ValidationException extends ApplicationException {
 

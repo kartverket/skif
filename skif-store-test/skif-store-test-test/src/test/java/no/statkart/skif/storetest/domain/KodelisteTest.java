@@ -20,7 +20,7 @@ import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
- * @since 0.5
+ * @since 2.0
  */
 @Test
 public class KodelisteTest extends StoreTestTestCase {

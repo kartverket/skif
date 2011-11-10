@@ -14,7 +14,7 @@ import java.util.List;
  * ved navn "test"  man kan hente ut og teste på.
  *
  * @author Henrik Fredholm
- * @since 0.4
+ * @since 2.0
  */
 public class TestModule extends SkifModule {
 

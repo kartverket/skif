@@ -15,7 +15,7 @@ import java.util.*;
  *
  *
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class KodelistePersister<T extends BubbleObject, I extends BubbleId<? extends T>> implements StorePersister<T, I> {
     private final HibernateStoreSession hibernateSessionWrapper;

@@ -7,7 +7,7 @@ import java.util.Locale;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public abstract class AbstractServiceContextMapper<C> implements ServiceContextMapper<C> {
     protected final Provider<ServiceContext> serviceContextProvider;

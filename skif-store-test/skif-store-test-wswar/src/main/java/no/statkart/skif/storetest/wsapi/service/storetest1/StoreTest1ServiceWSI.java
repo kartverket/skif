@@ -7,7 +7,7 @@ import javax.jws.WebParam;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface StoreTest1ServiceWSI extends ServiceWSI {
     public String put(@WebParam(name = "key")String key, @WebParam(name = "value")String value) throws ServiceException;

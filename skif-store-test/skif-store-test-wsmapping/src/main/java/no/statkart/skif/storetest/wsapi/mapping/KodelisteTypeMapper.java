@@ -7,7 +7,7 @@ import no.statkart.skif.storetest.wsapi.domain.kode.KodeIdList;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste, DomainT extends StoreTestKodeliste> extends StoreTestBubbleTypeMapper<WsapiT,DomainT> {
     private final String wsapiPackagePart;

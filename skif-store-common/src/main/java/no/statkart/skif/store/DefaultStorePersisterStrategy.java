@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
  * Default StorePersisterStrategy that is capable of managing several id-class to {@link StorePersister} bindings
  *
  * @author Leif Lislegård
- * @since 1.1
+ * @since 2.0
  */
 public class DefaultStorePersisterStrategy implements StorePersisterStrategy {
     final LinkedHashMap<Class, StorePersister> persisters = new LinkedHashMap<Class, StorePersister>(4);

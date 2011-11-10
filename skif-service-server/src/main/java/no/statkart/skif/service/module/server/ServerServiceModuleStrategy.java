@@ -12,7 +12,7 @@ import no.statkart.skif.service.provider.ServiceProvider;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
     private EJBServiceChainFactorySpecification ejbServiceChainFactorySpecification;

@@ -16,7 +16,7 @@ import javax.xml.ws.WebServiceContext;
  * {@code WSServiceChain}'en konstrueres ved å sette sammen en en {@code SkifWSInterceptor<W>} med ProxyHandlere
  * fra {@code WSServiceChainFactory}.
  *
- * @since 1.1
+ * @since 2.0
  * @author Henrik Fredholm
  */
 public class WebServiceImplementationFactoryImpl<W> implements WebServiceImplementationFactory<W> {

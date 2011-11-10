@@ -17,7 +17,7 @@ import no.statkart.skif.config.Configuration;
  * bruke prototypen til superklassen.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface ModuleStrategyFactory {
     public <T extends ModuleStrategy, M extends ModuleWithStrategy<T>> StrategyTuple<T> addPrototype(Class<? extends M> moduleClass, StrategyTuple<T> tuple);

@@ -10,7 +10,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class BEnumKodeId extends EnumKodeId<BEnumKode> implements StoreTestEnumKodeId<BEnumKode> {
     private static EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>>(BEnumKodeId.class, new StoreTestEnumKodelisteLongId(2), "TestBEnumKodeliste");

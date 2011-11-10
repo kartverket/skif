@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.kode.StoreTestEnumKode;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class CEnumKode extends EnumKode implements StoreTestEnumKode {
     @Override

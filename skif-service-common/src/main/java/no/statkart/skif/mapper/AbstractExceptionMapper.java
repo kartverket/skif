@@ -5,7 +5,7 @@ import no.statkart.skif.exception.SkifException;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class AbstractExceptionMapper extends AbstractMapper {
     protected final boolean wrapD2WRuntimeExceptions;

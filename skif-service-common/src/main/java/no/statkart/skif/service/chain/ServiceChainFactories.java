@@ -14,7 +14,7 @@ import java.util.Set;
  * Hjelpeklasse for å binde {@code ServiceChainFactory}s
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ServiceChainFactories {
     /**

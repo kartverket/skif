@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class StoreTestKodelisteLoader extends DbKodelisteLoader {
     @Override

@@ -13,7 +13,7 @@ import no.statkart.skif.service.proxy.SingleVmRemoteCallProxyHandler;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class RemoteServiceModuleStrategySingleVm extends RemoteServiceModuleStrategy {
 

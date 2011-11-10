@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
  * Denne factory setter opp {@code CallServiceChain} på serveren. {@code SINGLE_VM}- og {@code JEE}-mode bruker
  * samme {@code ServiceCallChain}.
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ServerCallServiceChainFactory<S> implements CallServiceChainFactory<S> {
     private TypeLiteral<S> type;

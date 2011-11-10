@@ -13,7 +13,7 @@ import javax.interceptor.Interceptors;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.skiftest.service.txmanagement.BeanManagedTxAServiceEJBBean")

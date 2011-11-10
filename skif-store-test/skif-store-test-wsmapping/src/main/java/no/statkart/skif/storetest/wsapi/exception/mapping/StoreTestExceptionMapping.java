@@ -6,7 +6,7 @@ import no.statkart.skif.mapper.ExceptionMapping;
  * Interface that defines implemented cababilities of the mapper.
  *
  * @author Leif Lislegård
- * @since 1.1
+ * @since 2.0
  * @see StoreTestExceptionMapper impl for details
  */
 public interface StoreTestExceptionMapping extends ExceptionMapping {

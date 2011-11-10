@@ -8,7 +8,7 @@ import java.util.*;
  * for hver AbstractBubbleId. På den måte er det mulig å bruke flere StorePersister objekter samtidig.
  *
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public class StoreSessionPersisterChain implements StoreSessionReadChain, StoreSessionUpdateChain {
     private final StorePersisterStrategy persisterStrategy;

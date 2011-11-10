@@ -9,7 +9,7 @@ import no.statkart.skif.service.module.server.*;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ServerModuleStrategyFactory extends AbstractModuleStrategyFactory {
     public ServerModuleStrategyFactory() {

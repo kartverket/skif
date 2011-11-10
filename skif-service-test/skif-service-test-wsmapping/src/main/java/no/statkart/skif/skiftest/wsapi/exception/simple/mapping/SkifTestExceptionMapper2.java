@@ -13,7 +13,7 @@ import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleFaultInfo;
  * Her benyttes et eget hirarki av exceptions og ikke skif's stuktur.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class SkifTestExceptionMapper2 extends AbstractSkifTestExceptionMapper2 {
 

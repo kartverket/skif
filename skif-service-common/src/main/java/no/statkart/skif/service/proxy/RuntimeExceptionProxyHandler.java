@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 /**
  * Fanger RuntimeExceptions som ikke er av type SkifException og wrapper dem i en ImplementationException
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class RuntimeExceptionProxyHandler<S> extends ChainedProxyHandler<S> {
     @Override

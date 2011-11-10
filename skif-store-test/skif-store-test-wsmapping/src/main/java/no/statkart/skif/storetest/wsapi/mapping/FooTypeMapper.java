@@ -4,7 +4,7 @@ import no.statkart.skif.storetest.domain.demo.Foo;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class FooTypeMapper extends StoreTestBubbleTypeMapper<no.statkart.skif.storetest.wsapi.domain.demo.Foo, Foo> {
 

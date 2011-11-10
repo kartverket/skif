@@ -4,7 +4,7 @@ import no.statkart.skif.mapper.*;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public class SkifDefaultTypeMapperTestMapper extends AbstractMapper {
     Class<? extends Mapping> mappingClass;

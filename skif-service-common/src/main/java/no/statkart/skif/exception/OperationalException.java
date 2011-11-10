@@ -6,7 +6,7 @@ import org.slf4j.Logger;
  * Klasse som representerer feil som stammer ifra servermiljøet.
  *
  * @author Leif Lislegård
- * @since 0.6
+ * @since 2.0
  */
 public class OperationalException extends SystemException {
 

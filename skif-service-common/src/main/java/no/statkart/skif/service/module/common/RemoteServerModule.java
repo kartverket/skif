@@ -12,7 +12,7 @@ import javax.net.ssl.HostnameVerifier;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class RemoteServerModule extends ModuleWithStrategy<RemoteServerModuleStrategy> {
     private Class<? extends ServiceContext> serviceContextClass = DefaultServiceContext.class;

@@ -24,7 +24,7 @@ import java.util.HashMap;
  * til serveren slik at kallet utføres trådsikker siden flere klienter kan kalle serveren samtidig.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class SingleVmRemoteCallProxyHandler<S> extends TerminatingProxyHandler<S> {
     protected final TypeLiteral<S> serviceType;

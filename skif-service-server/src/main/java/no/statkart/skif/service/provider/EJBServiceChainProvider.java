@@ -27,7 +27,7 @@ import no.statkart.skif.service.proxy.ProxyHandler;
  * {@code EJBServiceChainFactory}-implementasjoner.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class EJBServiceChainProvider<S> implements Provider<S> {
     final private TypeLiteral<S> type;

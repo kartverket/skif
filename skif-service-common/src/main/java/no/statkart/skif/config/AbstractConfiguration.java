@@ -10,7 +10,7 @@ import java.util.*;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class AbstractConfiguration implements Configuration {
     /**
@@ -173,7 +173,7 @@ public abstract class AbstractConfiguration implements Configuration {
      * Returns the logger used by this configuration object.
      *
      * @return the logger
-     * @since 1.4
+     * @since 2.0
      */
     public Logger getLogger() {
         return log;
@@ -187,7 +187,7 @@ public abstract class AbstractConfiguration implements Configuration {
      * initialization with the logger to be used.
      *
      * @param log the new logger
-     * @since 1.4
+     * @since 2.0
      */
     public void setLogger(Logger log) {
         this.log = (log != null) ? log : LoggerFactory.getLogger(this.getClass());
@@ -767,7 +767,7 @@ public abstract class AbstractConfiguration implements Configuration {
      *
      * @param c the configuration to copy (can be <b>null</b>, then this
      *          operation will have no effect)
-     * @since 1.5
+     * @since 2.0
      */
     public void copy(Configuration c) {
         if (c != null) {
@@ -792,7 +792,7 @@ public abstract class AbstractConfiguration implements Configuration {
      *
      * @param c the configuration to be appended (can be <b>null</b>, then this
      *          operation will have no effect)
-     * @since 1.5
+     * @since 2.0
      */
     public void append(Configuration c) {
         if (c != null) {

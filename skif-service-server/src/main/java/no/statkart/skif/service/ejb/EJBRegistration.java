@@ -27,7 +27,7 @@ import java.util.Set;
  * TODO: Pt må alle slike kjøres før servermodulen opprettes. Kunne være fint hvis dette ikke var nødvendig
  *
  * @author Henrik Fredholm
- * @since 0.5
+ * @since 2.0
  */
 public abstract class EJBRegistration implements ServletContextListener {
     private static Logger logger = LoggerFactory.getLogger(EJBRegistration.class);

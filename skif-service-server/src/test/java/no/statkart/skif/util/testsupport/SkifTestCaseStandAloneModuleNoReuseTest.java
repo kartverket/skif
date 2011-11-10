@@ -14,7 +14,7 @@ import static org.testng.Assert.assertSame;
 /**
  * Tester at injector ikke gjenbrukes på tvers av testmetoder når {@link #isReuseInjector()} returnerer false
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Test
 public class SkifTestCaseStandAloneModuleNoReuseTest extends SkifTestCase {

@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface AServiceWSI extends ServiceWSI {
     public String m1(@WebParam(name = "callSpec") StringList callSpec);

@@ -7,7 +7,7 @@ import no.statkart.skif.service.proxy.RuntimeExceptionProxyHandler;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class SkifTestEJBServiceChainFactory<S> implements EJBServiceChainFactory<S> {
 

@@ -10,7 +10,7 @@ package no.statkart.skif.service.chain;
  * til EJB implementasjonen eller direkte til implementasjonen.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface WSServiceChainFactory<T> extends ServiceChainFactory<T> {
 }

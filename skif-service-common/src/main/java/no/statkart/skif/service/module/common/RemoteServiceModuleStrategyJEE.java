@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class RemoteServiceModuleStrategyJEE extends RemoteServiceModuleStrategy {
     public RemoteServiceModuleStrategyJEE() {

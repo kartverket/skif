@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Annotation som brukes til å anngi objekt som har EJB Service Chain proxies foran seg.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @BindingAnnotation
 @Target({FIELD, PARAMETER, METHOD})

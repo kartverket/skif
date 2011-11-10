@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
  *
  * @author Henrik Fredholm
  * @NotTheadSafe
- * @since 1.1
+ * @since 2.0
  */
 public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 

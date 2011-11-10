@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ClientCallServiceChainFactorySingleVm<S> implements CallServiceChainFactory<S> {
     protected final Provider<SingleVmRemoteCallProxyHandler<S>> singleVmRemoteCallProxyHandlerProvider;

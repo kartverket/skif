@@ -25,7 +25,7 @@ import static no.statkart.skif.SkifUtil.typeLiteral;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
     private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForWSI = WSServiceChainFactoryBase.class;

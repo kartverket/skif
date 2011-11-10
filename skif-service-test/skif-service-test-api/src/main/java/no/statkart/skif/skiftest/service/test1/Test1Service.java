@@ -5,7 +5,7 @@ package no.statkart.skif.skiftest.service.test1;
  * rammeverkskomponenter i implementasjonen og som  bruker en identity mapping2 for å mappe mellom domene og Web Service modell.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface Test1Service {
     public String helloWorld(String message);

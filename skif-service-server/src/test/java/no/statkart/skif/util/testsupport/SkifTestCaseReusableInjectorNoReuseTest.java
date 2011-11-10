@@ -22,7 +22,7 @@ import static org.testng.Assert.*;
  * at denne ikke blir gjenbrukt
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Test(dependsOnGroups = "createsInjectorTest")
 public class SkifTestCaseReusableInjectorNoReuseTest extends SkifTestCase {

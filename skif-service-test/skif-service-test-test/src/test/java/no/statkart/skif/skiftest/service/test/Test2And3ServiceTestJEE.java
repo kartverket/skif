@@ -38,7 +38,7 @@ import static org.testng.Assert.assertEquals;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Test(groups = "server-required")
 public class Test2And3ServiceTestJEE {

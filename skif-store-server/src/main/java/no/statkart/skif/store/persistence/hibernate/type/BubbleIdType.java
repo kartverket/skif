@@ -22,7 +22,7 @@ import java.sql.Types;
  * Hibernate UserType for BubbleId
  *
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public abstract class BubbleIdType implements UserType {
     /* Logging is implemented as in org.hibernate.type.NullableType in order to get similar logging performance and output as for standard hibernate types */

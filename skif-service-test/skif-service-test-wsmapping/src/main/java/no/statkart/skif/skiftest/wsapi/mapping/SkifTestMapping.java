@@ -8,7 +8,7 @@ import java.util.Collection;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public interface SkifTestMapping extends Mapping {
     public AList d2w(Collection source, AList target);

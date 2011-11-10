@@ -4,7 +4,7 @@ import no.statkart.skif.store.AbstractBubbleObject;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public abstract class Kode extends AbstractBubbleObject  {
     private String kodeverdi;

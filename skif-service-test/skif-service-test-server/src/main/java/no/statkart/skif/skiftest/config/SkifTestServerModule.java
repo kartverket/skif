@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class SkifTestServerModule extends SkifModule {
     public SkifTestServerModule(Configuration configuration) {

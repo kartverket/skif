@@ -7,7 +7,7 @@ import no.statkart.skif.service.module.common.RemoteServerModule;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class TestClientModule extends TestModule {
     public TestClientModule(ModuleConfiguration moduleConfiguration) {

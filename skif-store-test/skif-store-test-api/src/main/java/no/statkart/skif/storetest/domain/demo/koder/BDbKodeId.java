@@ -10,7 +10,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class BDbKodeId extends DbKodeId<BDbKode> implements StoreTestDbKodeId<BDbKode> {
     private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(BDbKodeId.class,new StoreTestDbKodelisteLongId(10002L, SnapshotVersion.CURRENT));

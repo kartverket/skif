@@ -4,7 +4,7 @@ import no.statkart.skif.storetest.domain.demo.koder.ADbKodeId;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class ADbKodeIdType extends KodeIdType {
     @Override

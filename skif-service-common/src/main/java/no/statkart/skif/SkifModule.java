@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class SkifModule extends AbstractModule {
     protected final ModuleConfiguration moduleConfiguration;

@@ -43,7 +43,7 @@ import static org.testng.Assert.*;
  * exceptions i en ImplementationException. Dette skjer både i JEE og SINGLE_VM mode.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class StdSkifExceptionMappingTest extends SkifTestCase {
 

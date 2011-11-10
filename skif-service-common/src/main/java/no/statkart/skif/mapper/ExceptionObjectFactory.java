@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
  * Factory som oppretter alle typer kjente {@link SkifException}s
  *
  * @author Leif Lislegård
- * @since 0.6
+ * @since 2.0
  */
 public class ExceptionObjectFactory extends DefaultObjectFactory {
 

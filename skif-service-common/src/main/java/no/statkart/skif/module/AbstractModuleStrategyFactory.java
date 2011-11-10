@@ -11,7 +11,7 @@ import java.util.Map;
  * superklassen hvis  modulklassen ikke selv har en prototype.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class AbstractModuleStrategyFactory implements ModuleStrategyFactory {
     protected  ServiceMode serviceMode = ServiceMode.JEE;

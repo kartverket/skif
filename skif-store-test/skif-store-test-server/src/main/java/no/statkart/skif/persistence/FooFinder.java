@@ -17,7 +17,7 @@ import java.util.Set;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 1.0
+ * @since 2.0
  */
 public class FooFinder {
 

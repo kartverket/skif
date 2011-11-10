@@ -8,7 +8,7 @@ import java.util.*;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class OrderedServiceChainFactoryList<F extends ServiceChainFactory<S>, S> {
     final private List<F> orderedFactoryList;

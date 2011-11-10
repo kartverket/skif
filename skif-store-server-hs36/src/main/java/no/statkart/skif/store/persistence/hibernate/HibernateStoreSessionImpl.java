@@ -7,7 +7,7 @@ import org.hibernate.Session;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class HibernateStoreSessionImpl<T extends BubbleObject, I extends BubbleId<? extends T>> extends HibernateStoreSession<T, I> {
     public HibernateStoreSessionImpl(Session session, SnapshotVersionSeed snapshotVersionSeed) {
