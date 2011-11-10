@@ -67,7 +67,7 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
             connectionFactoryMap.put(SnapshotVersion.OLD, connectionFactory);
         }  else {
             connectionFactoryMap.put(SnapshotVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelBok_DS"));
-            connectionFactoryMap.put(SnapshotVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelOld_DS"));
+            connectionFactoryMap.put(SnapshotVersion.OLD, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelOld_DS"));
         }
         return connectionFactoryMap;
     }
