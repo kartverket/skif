@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.wsapi.service.histtest;
 
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.demo.*;
 
@@ -20,4 +21,8 @@ public interface HistTestServiceWSI extends ServiceWSI {
     public BarFoosIdList findBarFoosIdsMedBarOgFoo(@WebParam(name = "fooNavn") String fooNavn, @WebParam(name = "barId") BarId barId, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
 
     public FooIdList findFooIdsForNr(@WebParam(name = "nr") long nr, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext);
+
+    public BarIdList findBarIdsAliveAtSnapshot(@WebParam(name = "barIds") BarIdList barIds, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion);
+
+    public StoreTestBubbleIdListForStoreTestBubbleIdsMap findBarIdsForFooIds(FooIdList fooIds, SnapshotVersion snapshotVersion);
 }

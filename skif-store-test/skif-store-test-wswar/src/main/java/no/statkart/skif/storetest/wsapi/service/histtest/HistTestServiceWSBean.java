@@ -4,6 +4,7 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.demo.*;
 
@@ -59,5 +60,15 @@ public class HistTestServiceWSBean extends SkifWebService<HistTestServiceWSI> im
     @Override
     public FooIdList findFooIdsForNr(@WebParam(name = "nr") long nr, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
         return wsServiceChain.findFooIdsForNr(nr, storeTestContext);
+    }
+
+    @Override
+    public BarIdList findBarIdsAliveAtSnapshot(@WebParam(name = "barIds") BarIdList barIds, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion) {
+        return wsServiceChain.findBarIdsAliveAtSnapshot(barIds, snapshotVersion);
+    }
+
+    @Override
+    public StoreTestBubbleIdListForStoreTestBubbleIdsMap findBarIdsForFooIds(FooIdList fooIds, SnapshotVersion snapshotVersion) {
+        return wsServiceChain.findBarIdsForFooIds(fooIds, snapshotVersion);
     }
 }
