@@ -255,7 +255,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                     ArrayList value = null;
                     if (source != null) {
                         for (Iterator iterator = ((Collection) source).iterator(); iterator.hasNext(); ) {
-                            if(value == null){
+                            if (value == null) {
                                 value = new ArrayList();
                             }
                             Object next = iterator.next();
@@ -263,7 +263,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                         }
                         targetField.setAccessible(true);
                         targetField.set(target, value);
-                    }else{
+                    } else {
                         targetField.set(target, null);
                     }
                 } else if (checkHasField(target.getClass(), "liste")) {
@@ -271,7 +271,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                     ArrayList value = null;
                     if (source != null) {
                         for (Iterator iterator = ((Collection) source).iterator(); iterator.hasNext(); ) {
-                            if(value == null){
+                            if (value == null) {
                                 value = new ArrayList();
                             }
                             Object next = iterator.next();
@@ -279,7 +279,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                         }
                         targetField.setAccessible(true);
                         targetField.set(target, value);
-                    }else{
+                    } else {
                         targetField.set(target, null);
                     }
                 } else {
@@ -296,13 +296,32 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                         sourceField.setAccessible(true);
 
                         Object source1 = sourceField.get(source);
-                        if (source1 instanceof Collection) {
-                            //Må bruke accessor-metode for å få sortering riktig.
-                            Method method = source.getClass().getMethod("get" + sourceField.getName().substring(0, 1).toUpperCase() + sourceField.getName().substring(1, sourceField.getName().length()), (Class<?>[]) null);
-                            Object sortedSource = method.invoke(source);
-                            targetField.set(target, mapping.d2w(sortedSource, targetField.getType()));
-                        } else {
-                            targetField.set(target, mapping.d2w(source1));
+                        if (source1 != null) {
+                            Object value = null;
+                            if (source1 instanceof Collection) {
+                                //Må bruke accessor-metode for å få sortering riktig.
+                                Method method = source.getClass().getMethod("get" + sourceField.getName().substring(0, 1).toUpperCase() + sourceField.getName().substring(1, sourceField.getName().length()), (Class<?>[]) null);
+                                Object sortedSource = method.invoke(source);
+                                value = mapping.d2w(sortedSource, targetField.getType());
+                            } else {
+                                value = mapping.d2w(source1, targetField.getType());
+                            }
+                            if (value != null) {
+                                //Sjekk om source = Set og target = List, fordi da håndterer vi settingen spesielt
+                                if (List.class.isAssignableFrom(targetField.getType()) && value instanceof Set) {
+                                    List replaceSetWithThisList = new ArrayList((Set) value);
+                                    targetField.set(target, replaceSetWithThisList);
+                                } else {
+                                    //Dersom dette ikke er en spesialsituasjon, så prøver vi den vanlige måten, så får vi evt. en feil
+                                    targetField.set(target, value);
+                                }
+                            }
+                        }else{
+                            //Dersom value = null, så kan vi fremdeles sette den i target.
+                            //Med midre typen er primitiv, da lar vi den bare være
+                            if(!targetField.getType().isPrimitive()){
+                                targetField.set(target, null);
+                            }
                         }
                     } else {
                         //Kan ikke feile dersom vi ikke finner et felt, da vil ikke subklasser kunne fungere.
@@ -368,10 +387,24 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, Do
                         targetField.setAccessible(true);
                         sourceField.setAccessible(true);
                         Object source1 = sourceField.get(source);
-                        if (target instanceof Collection) {
-                            targetField.set(target, mapping.w2d(source1, targetField.getType()));
+                        if (source1 != null) {
+                            Object value = mapping.w2d(source1, targetField.getType());
+                            if (value != null) {
+                                //Sjekk om source = List og target = Set, fordi da håndterer vi settingen spesielt
+                                if (Set.class.isAssignableFrom(targetField.getType()) && value instanceof List) {
+                                    Set replaceListWithThisSet = new HashSet((List) value);
+                                    targetField.set(target, replaceListWithThisSet);
+                                } else {
+                                    //Dersom dette ikke er en spesialsituasjon, så prøver vi den vanlige måten, så får vi evt. en feil
+                                    targetField.set(target, value);
+                                }
+                            }
                         } else {
-                            targetField.set(target, mapping.w2d(source1));
+                            //Dersom value = null, så kan vi fremdeles sette den i target.
+                            //Med midre typen er primitiv, da lar vi den bare være
+                            if(!targetField.getType().isPrimitive()){
+                                targetField.set(target, null);
+                            }
                         }
                     } else {
                         //Kan ikke feile dersom vi ikke finner et felt, da vil ikke subklasser kunne fungere.
