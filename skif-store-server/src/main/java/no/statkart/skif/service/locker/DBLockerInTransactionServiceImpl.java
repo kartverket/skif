@@ -12,7 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DBLockerInTransactionServiceImpl implements DBLockerInTransactionService<Long> {
-    private static Logger logger = LoggerFactory.getLogger(DBLockerServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(DBLockerInTransactionServiceImpl.class);
 
     final Provider<Connection> connectionProvider;
 
