@@ -9,6 +9,8 @@ import no.statkart.skif.exception.OracleBatchUpdateCountException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.util.JDBCHelper;
+import no.statkart.skif.util.OracleUtils;
+import oracle.jdbc.OracleConnection;
 import oracle.jdbc.OraclePreparedStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -615,7 +617,8 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         Set<LockInfo<Long>> renewedLocks = new HashSet<LockInfo<Long>>(existingLocks.size());
         try {
             String sqlString = "UPDATE LOCKINFO SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?";
-            ps = (OraclePreparedStatement) con.prepareStatement(sqlString); //Siden vi vet at connection er en wrappet OracleConnection kan vi caste preparedstatement returen til OraclePreparedStatement
+            OracleConnection oracleCon = OracleUtils.getOracleConnection(con);
+            ps = (OraclePreparedStatement) oracleCon.prepareStatement(sqlString);
             ps.setExecuteBatch(Math.min(existingLocks.size(), MAX_BATCH_SIZE));
             for (LockInfo<Long> lockInfo : existingLocks) {
                 ps.setTimestamp(1, expires);
@@ -693,7 +696,8 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         Set<LockInfo<Long>> timedoutLocks = new HashSet<LockInfo<Long>>(locksToTimeout.size());
         try {
             String sqlString = "UPDATE LOCKINFO SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES < SYSTIMESTAMP";
-            ps = (OraclePreparedStatement) con.prepareStatement(sqlString);  //Siden vi vet at connection er en wrappet OracleConnection kan vi caste preparedstatement returen til OraclePreparedStatement
+            OracleConnection oracleCon = OracleUtils.getOracleConnection(con);
+            ps = (OraclePreparedStatement) oracleCon.prepareStatement(sqlString);
             ps.setExecuteBatch(Math.min(locksToTimeoutList.size(), MAX_BATCH_SIZE));
             for (LockInfo<Long> lock : locksToTimeoutList) {
                 ps.setString(1, owner);

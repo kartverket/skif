@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
+ * Service for å behandle låser i egne transaksjoner.
+ *
  * @author Roar Ingebrigtsen
  * @since 2.0
  */

@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.config;
 import no.statkart.skif.service.ServicesListing;
 import no.statkart.skif.storetest.service.histtest.HistTestService;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
+import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.service.store.StoreService;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class StoreTestStoreServices implements ServicesListing {
         modifiableList.add(StoreService.class);
         modifiableList.add(KodelisteService.class);
         modifiableList.add(HistTestService.class);
+        modifiableList.add(LockingTestService.class);
 
         services = Collections.unmodifiableList(modifiableList);
      }

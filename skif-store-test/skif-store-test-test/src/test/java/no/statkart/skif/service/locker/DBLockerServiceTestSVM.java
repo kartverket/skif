@@ -1,10 +1,9 @@
 package no.statkart.skif.service.locker;
 
-import no.statkart.skif.config.SkifServerModule;
 import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
-import no.statkart.skif.util.testsupport.SkifTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -17,13 +16,7 @@ import java.util.*;
  * @since 2.0
  */
 @Test(groups="singlevm-required")
-public class DBLockerServiceTestSVM extends SkifTestCase {
-
-    public DBLockerServiceTestSVM() {
-        setModuleClass(SkifDBLockerClientModule.class);
-        setSingleVmServerModuleClass(SkifServerModule.class);
-    }
-
+public class DBLockerServiceTestSVM extends StoreTestTestCase {
 
     @Test
     public void testLockElement() {

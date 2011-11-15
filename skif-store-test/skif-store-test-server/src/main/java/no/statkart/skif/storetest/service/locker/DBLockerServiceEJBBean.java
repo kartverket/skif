@@ -1,17 +1,15 @@
-package no.statkart.skif.service.locker;
+package no.statkart.skif.storetest.service.locker;
 
 import com.google.inject.Inject;
-import no.statkart.skif.config.SkifEJBInterceptorJEE;
 import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
+import javax.ejb.*;
 import javax.interceptor.Interceptors;
 import java.util.Collection;
 import java.util.Set;
@@ -21,13 +19,13 @@ import java.util.Set;
  * @since 2.0
  */
 @RolesAllowed("Innsyn")
-@Stateless(name = "no.statkart.skif.service.locker.DBLockerServiceEJBBean")
-@Interceptors(SkifEJBInterceptorJEE.class)
+@Stateless(name = "no.statkart.skif.storetest.service.locker.DBLockerServiceEJBBean")
+@Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionManagement(TransactionManagementType.BEAN)
-public class DBLockerServiceEJBBean extends EJBTimedService implements DBLockerService<Long> {
+public class DBLockerServiceEJBBean extends EJBTimedService implements DBLockerService {
 
     @Inject @EJBServiceChain
-    DBLockerService<Long> serviceChain;
+    DBLockerService serviceChain;
 
     @Override
     public LockInfo<Long> lock(LockKey<Long> lockKey, String owner, long lockTimeout) throws LockedException {

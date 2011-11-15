@@ -6,15 +6,17 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.ConfigurationConstants;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.config.SkifServices;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.persistence.*;
-import no.statkart.skif.service.module.server.ServerServiceModule;
+import no.statkart.skif.service.locker.DBLockerInTransactionService;
+import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
+import no.statkart.skif.store.LockerStrategy;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.StoreService;
+import no.statkart.skif.store.TransactionalLockerStrategy;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
@@ -35,10 +37,14 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
 
     private final String mappingFileDirectoryRootDefault;
     private final Class<? extends StoreService> storeServiceClass;
+    private final Class<? extends DBLockerService> dbLockerServiceClass;
+    private final Class<? extends DBLockerInTransactionService> dbLockerInTransactionServiceClass;
 
-    public ServerStoreModule(ModuleConfiguration moduleConfiguration, Class<? extends StoreService> storeServiceClass, String mappingFileDirectoryRootDefault) {
+    public ServerStoreModule(ModuleConfiguration moduleConfiguration, Class<? extends StoreService> storeServiceClass, Class<? extends DBLockerService> dbLockerServiceClass, Class<? extends DBLockerInTransactionService> dbLockerInTransactionServiceClass, String mappingFileDirectoryRootDefault) {
         super(ServerStoreModuleStrategy.class, moduleConfiguration);
         this.storeServiceClass = storeServiceClass;
+        this.dbLockerServiceClass = dbLockerServiceClass;
+        this.dbLockerInTransactionServiceClass = dbLockerInTransactionServiceClass;
         this.mappingFileDirectoryRootDefault = mappingFileDirectoryRootDefault;
     }
 
@@ -117,8 +123,10 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         // TODO Kanskje vi ikke trenger denne bindingen
         bind(SnapshotVersion.class).toInstance(SnapshotVersion.CURRENT);
 
-        //For LockerStrategy
-        install(new ServerServiceModule(moduleConfiguration, new SkifServices().getServices()));
+        bind(DBLockerService.class).to(dbLockerServiceClass);
+        bind(DBLockerInTransactionService.class).to(dbLockerInTransactionServiceClass);
+        bind(LockerStrategy.class).to(TransactionalLockerStrategy.class);
+        bind(TransactionalLockerStrategy.class).in(ServiceRequestScoped.class);
 
         bind(StoreService.class).to(storeServiceClass);
 

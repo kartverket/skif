@@ -45,6 +45,7 @@ public class StoreTestMapper extends AbstractMapper {
         useIdentityMapping(String.class);
         useIdentityMapping(Integer.class);
         useIdentityMapping(Long.class);
+        useIdentityMapping(Boolean.class);
 
         // Timestamp
         addMapper(new TimestampTypeMapper());

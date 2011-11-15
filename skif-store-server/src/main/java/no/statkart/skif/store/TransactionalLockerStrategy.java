@@ -5,6 +5,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotLockedException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
+import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
 
 import java.util.*;
@@ -18,22 +19,24 @@ import java.util.*;
  */
 public class TransactionalLockerStrategy implements LockerStrategy {
 
-    //Brukes for å holde rede på låser tatt i transaksjonen, samt de som allerede finnes for brukere i transaksjon. Initialiseres som null for å kunne kjøre populate senere
+    //Brukes for å holde rede på låser tatt i transaksjonen, samt de som allerede finnes for brukere i transaksjon. Initialiseres som null for å kunne kjøre populate senere.
     private Map<BubbleId, LockInfo<Long>> lockMap = null;
 
-    //Brukes for å holde rede på hvilke ids som er nye og som derfor ikke kan låses opp
+    //Brukes for å holde rede på hvilke ids som er nye og som derfor ikke kan låses opp.
     private final Set<BubbleId> insertedIds = new HashSet<BubbleId>();
 
-    //Brukes for å holde rede på hvilke ids som er endret og som derfor ikke kan låses opp
+    //Brukes for å holde rede på hvilke ids som er endret og som derfor ikke kan låses opp.
     private final Set<BubbleId> modifiedIds = new HashSet<BubbleId>();
 
-    //Brukes for å finne ut av hvilke låser som skal frigis etter fullføring av transaksjon
+    //Brukes for å finne ut av hvilke låser som skal frigis etter fullføring av transaksjon.
     private final Set<BubbleId> newLockIds = new HashSet<BubbleId>();
 
     //Brukes for å holde rede på hvilke elementer man ønsker å låse opp, men som ikke er låst i denne transaksjonen.
+    //TODO: Matrikkelen låser opp disse når en ikke-oppdateringstjeneste fullfører. Hvorfor?
     private final Set<BubbleId> unlockIds = new HashSet<BubbleId>();
 
     private final DBLockerService<Long> lockerService;
+    private final DBLockerInTransactionService<Long> lockerInTransactionService;
 
     //TODO: Skal disse være her?
     private long lockTimeout = 240 * 60 * 1000 /* 4 timer */;
@@ -44,8 +47,9 @@ public class TransactionalLockerStrategy implements LockerStrategy {
 
 
     @Inject
-    public TransactionalLockerStrategy(DBLockerService lockerService) {
+    public TransactionalLockerStrategy(DBLockerService lockerService, DBLockerInTransactionService lockerInTransactionService) {
         this.lockerService = lockerService;
+        this.lockerInTransactionService = lockerInTransactionService;
     }
 
     @Override
@@ -77,10 +81,10 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     @Override
     public void unlock(BubbleId id, String owner) {
         if (insertedIds.contains(id)) {
-            //TODO: Kan ikke låse opp. Kaste exception^?
+            //TODO: Kan ikke låse opp. Kaste exception?
         } else if (modifiedIds.contains(id)) {
             //TODO: Kan ikke låse opp. Kaste exception?
-        } else if (newLockIds.contains(id)) {
+        } else if (newLockIds.remove(id)) {
             lockerService.unlock(createLockKey(id), owner);
             lockMap.remove(id);
         } else {
@@ -108,6 +112,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
 
     @Override
     public void releaseAllLocks(String owner) {
+        ensureLockMapInitializedForOwner(owner);
         Set<LockKey<Long>> idsForUnlock = new HashSet<LockKey<Long>>();
         for (Map.Entry<BubbleId, LockInfo<Long>> entry : lockMap.entrySet()) {
             if (entry.getValue().getOwner().equals(owner) && !modifiedIds.contains(entry.getKey()) && !insertedIds.contains(entry.getKey())) {
@@ -123,13 +128,8 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     }
 
     @Override
-    public void releaseAllLocksOnCommit(String owner) {
-        lockerService.releaseAllLocks(owner);
-    }
-
-    @Override
-    public void releaseAllLocksOnRollback(String owner) {
-        lockerService.unlockAll(createLockKeys(unlockIds), owner);
+    public void releaseLocksOnRollback(String owner) {
+        lockerService.unlockAll(createLockKeys(newLockIds), owner);
     }
 
 
@@ -161,6 +161,12 @@ public class TransactionalLockerStrategy implements LockerStrategy {
             ensureLockedByCaller(id, owner);
             modifiedIds.add(id);
         }
+    }
+
+    @Override
+    public void consumeAllLocks(String owner) {
+        ensureLockMapInitializedForOwner(owner);
+        lockerInTransactionService.consumeAllLocks(owner, lockMap.size());
     }
 
     /**
@@ -243,7 +249,9 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     /**
      * Verifies that the specified id is already locked by caller.
      *
-     * @param id the id to check.
+     * @param id Id som skal sjekkes
+     * @param owner Bruker som allerede har låsen, men som om nødvendig skal forlenge den
+     * @throws no.statkart.skif.exception.NotLockedException dersom brukeren ikke har noen lås på id-en
      */
     protected synchronized void ensureLockedByCaller(BubbleId id, String owner) throws NotLockedException {
         ensureLockMapInitializedForOwner(owner);
@@ -263,7 +271,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     }
 
     /**
-     * @param owner
+     * @param owner Bruker som skal få alle sine låser fornyet
      */
     private void renewAllLocks(String owner) {
         lockerService.renewAllLocks(owner, lockTimeout);

@@ -29,7 +29,6 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         Assert.assertTrue(strategy.isLockedByOther(testId, "ingroa2"));
 
         strategy.releaseAllLocks("ingroa");
-
     }
 
     public void testUpdate() {
@@ -50,7 +49,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         Assert.assertFalse(strategy.isLockedBy(testId, "ingroa2"));
         Assert.assertTrue(strategy.isLockedByOther(testId, "ingroa2"));
 
-        strategy.releaseAllLocksOnCommit("ingroa");
+        injector.getInstance(DBLockerService.class).releaseAllLocks("ingroa");
     }
 
     @Test(invocationCount = 1 /*200*/)
@@ -75,7 +74,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         Assert.assertFalse(strategy.isLockedBy(testId, "ingroa2"));
         Assert.assertTrue(strategy.isLockedByOther(testId, "ingroa2"));
 
-        strategy.releaseAllLocksOnCommit("ingroa");
+        injector.getInstance(DBLockerService.class).releaseAllLocks("ingroa");
     }
 
     public void testInsert() {
@@ -87,7 +86,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
         Assert.assertFalse(strategy.isLockedBy(testId, "ingroa"));
 
-        strategy.releaseAllLocksOnCommit("ingroa");
+        injector.getInstance(DBLockerService.class).releaseAllLocks("ingroa");
     }
 
     public void testUnlock() {
@@ -105,7 +104,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.unlock(testId, "ingroa");
         Assert.assertTrue(strategy.isLockedBy(testId, "ingroa"));
 
-        strategy.releaseAllLocksOnCommit("ingroa");
+        injector.getInstance(DBLockerService.class).releaseAllLocks("ingroa");
     }
 
     public void testRenewLocksViaUpdate(){
@@ -125,6 +124,6 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         Assert.assertEquals(lockInfo.getOwner(), "ingroa");
         Assert.assertTrue(lockInfo.getExpires().getTime() > l + 250);
 
-        strategy.releaseAllLocksOnCommit("ingroa");
+        db.releaseAllLocks("ingroa");
     }
 }

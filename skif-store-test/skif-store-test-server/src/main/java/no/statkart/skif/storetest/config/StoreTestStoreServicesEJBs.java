@@ -3,6 +3,9 @@ package no.statkart.skif.storetest.config;
 import no.statkart.skif.service.ejb.EJBRegistration;
 import no.statkart.skif.storetest.service.histtest.HistTestService;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
+import no.statkart.skif.storetest.service.locker.DBLockerInTransactionService;
+import no.statkart.skif.storetest.service.locker.DBLockerService;
+import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.service.store.StoreService;
 
 import javax.ejb.EJB;
@@ -17,8 +20,11 @@ import javax.ejb.EJBs;
  */
 @EJBs({
         @EJB(name = "ejb/StoreServiceEJBBean", beanInterface = StoreService.class),
+        @EJB(name = "ejb/DBLockerServiceEJBBean", beanInterface = DBLockerService.class),
+        @EJB(name = "ejb/DBLockerInTransactionServiceEJBBean", beanInterface = DBLockerInTransactionService.class),
         @EJB(name = "ejb/KodelisteServiceEJBBean", beanInterface = KodelisteService.class),
-        @EJB(name = "ejb/HistTestServiceEJBBean", beanInterface = HistTestService.class)
+        @EJB(name = "ejb/HistTestServiceEJBBean", beanInterface = HistTestService.class),
+        @EJB(name = "ejb/LockingTestServiceEJBBean", beanInterface = LockingTestService.class)
 })
 public class StoreTestStoreServicesEJBs extends EJBRegistration {
     public StoreTestStoreServicesEJBs() {

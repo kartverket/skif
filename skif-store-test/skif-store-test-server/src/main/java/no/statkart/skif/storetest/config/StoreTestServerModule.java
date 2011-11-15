@@ -23,7 +23,7 @@ import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
 import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
-import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate;
+import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
@@ -47,8 +47,8 @@ public class StoreTestServerModule extends SkifModule {
         // Konfigurer EJBServiceChain til å bruke en factory som har en ProxyHandler for transaksjonshåndtering
         ModuleStrategyFactory factory = new StoreServerModuleStrategyFactory();
         StrategyTuple<ServerServiceModuleStrategy> prototype = factory.getPrototype(ServerServiceModule.class);
-        prototype.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification(EJBResourceProxyHandlerForHibernate.class));
-        prototype.getStrategy(ServiceMode.JEE).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification(EJBResourceProxyHandlerForHibernate.class));
+        prototype.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification(EJBResourceProxyHandlerForHibernateWithLocks.class));
+        prototype.getStrategy(ServiceMode.JEE).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification(EJBResourceProxyHandlerForHibernateWithLocks.class));
 
         return factory;
     }
@@ -57,7 +57,7 @@ public class StoreTestServerModule extends SkifModule {
     protected void configure() {
         install(new ServerModule(moduleConfiguration));
 
-        ServerStoreModule serverStoreModule = new ServerStoreModule(moduleConfiguration, no.statkart.skif.storetest.service.store.StoreService.class, "no/statkart/skif/storetest/persistence/hibernate") {
+        ServerStoreModule serverStoreModule = new ServerStoreModule(moduleConfiguration, no.statkart.skif.storetest.service.store.StoreService.class, no.statkart.skif.storetest.service.locker.DBLockerService.class, no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class, "no/statkart/skif/storetest/persistence/hibernate") {
             @Override
             protected void configureHibernate(StoreHibernateSessionFactoryBuilder facotryBuilder) {
                 // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
@@ -87,6 +87,7 @@ public class StoreTestServerModule extends SkifModule {
 
         install(new ServerServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices()));
+        install(new ServerServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices()));
     }
 
     @Provides
