@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -184,6 +185,23 @@ public class HibernateStoreSessionManagerSnapshotVersionImpl extends AbstractHib
         }
     }
 
+    @Override
+    public Connection aquireConnection(Object key) {
+        return acquireSnapshotStoreSession((SnapshotVersion) key).getWrappedSession().connection();
+    }
+
+    @Override
+    public void releaseConnection(Connection connection, Object key) {
+        SnapshotVersion snapshotVersion = (SnapshotVersion) key;
+
+        if (entries[UPDATABLE].getSnapshotVersion().equals(snapshotVersion)) {
+            popSnapshotVersion(entries[UPDATABLE]);
+        } else if (entries[BEFORE_UPDATE].getSnapshotVersion().equals(snapshotVersion)) {
+            popSnapshotVersion(entries[BEFORE_UPDATE]);
+        } else {
+            throw new ImplementationException("Forsøk på å frigi Connection for snapshotversion instans som ikke er i bruk");
+        }
+    }
 
     private HibernateStoreSession pushExistingSnapshotVersion(HibernateStoreSessionManagerSnapshotVersionEntry entry) {
         // TODO: utføre sql som tester (i debug mode) at snapshot timestamp på connection er riktig

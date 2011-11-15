@@ -1,6 +1,8 @@
 package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
+import com.vividsolutions.jts.geom.*;
+import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.*;
@@ -15,6 +17,7 @@ import static org.testng.Assert.assertTrue;
 
 /**
  * Tester historisk navigering mellom bobler via servicekall og store
+ *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  */
@@ -44,7 +47,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
         assertTrue(foo.sameVersion(foo2));
     }
 
-    public void testFindBarFoos( ) {
+    public void testFindBarFoos() {
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:03:30.00");
         Set<BarFoosId<?>> barFoosIds = histTestService.findBarFoosIdsSomInneholderFooMedNavn("KART-VEIEN", snapshotVersion);
         assertEquals(barFoosIds.size(), 1);
@@ -64,9 +67,9 @@ public class HistTestServiceTest extends StoreTestTestCase {
     /**
      * Tester kompleks logikk ifm kombinasjon av bruke av id'er og historiske søk
      */
-    public void testFindBarFoosMedBarOgFoos( ) {
+    public void testFindBarFoosMedBarOgFoos() {
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:03:30.00");
-        BarId<?> barId= new BarId<Bar>(1001L, snapshotVersion);
+        BarId<?> barId = new BarId<Bar>(1001L, snapshotVersion);
         Bar bar = store.get(barId);
         assertNotNull(bar, "Bar objekt finne ikke som forventet");
 
@@ -85,7 +88,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
         assertTrue(found, "Fant ikke foo men navn 'KART-VEIEN' som forventet");
     }
 
-    public void testFindFooIdsForNr(){
+    public void testFindFooIdsForNr() {
 
         Set<FooId<Foo>> fooIds = histTestService.findFooIdsForNr(2200);
         assertEquals(fooIds.size(), 1);
@@ -117,11 +120,11 @@ public class HistTestServiceTest extends StoreTestTestCase {
         fooIds.add(new FooId<Foo>(100L));
 
         SnapshotVersion snapshotVersion1 = SnapshotVersion.createInstance("2011-10-02 08:00:00.00");
-        Map<FooId<?>,Set<BarId<?>>> barIdsForFooIdsSnapshot1 = histTestService.findBarIdsForFooIds(fooIds, snapshotVersion1);
+        Map<FooId<?>, Set<BarId<?>>> barIdsForFooIdsSnapshot1 = histTestService.findBarIdsForFooIds(fooIds, snapshotVersion1);
         assertTrue(barIdsForFooIdsSnapshot1.isEmpty(), "Fikk historiske barIds som ikke skulle ha eksistert da");
 
         SnapshotVersion snapshotVersion2 = SnapshotVersion.createInstance("2011-10-02 08:03:00.00");
-        Map<FooId<?>,Set<BarId<?>>> barIdsForFooIdsSnapshot2 = histTestService.findBarIdsForFooIds(fooIds, snapshotVersion2);
+        Map<FooId<?>, Set<BarId<?>>> barIdsForFooIdsSnapshot2 = histTestService.findBarIdsForFooIds(fooIds, snapshotVersion2);
         assertEquals(barIdsForFooIdsSnapshot2.size(), 1, "Fant feil antall fooIds");
         for (Map.Entry<FooId<?>, Set<BarId<?>>> entry : barIdsForFooIdsSnapshot2.entrySet()) {
             assertEquals(entry.getKey().getSnapshotVersion(), snapshotVersion2, "Feil snapshot på fooId");
@@ -142,5 +145,41 @@ public class HistTestServiceTest extends StoreTestTestCase {
                 assertEquals(barId.getSnapshotVersion(), SnapshotVersion.CURRENT, "Feil snapshot på barId");
             }
         }
+    }
+
+    public void testFindGeometricElementsWithPointInSelectionPolygon() {
+
+        GeometryFactory factory = new GeometryFactory(new PrecisionModel(100), -1);
+        Polygon polygon = factory.createPolygon(factory.createLinearRing(
+                new Coordinate[]{
+                        new Coordinate(607950, 6649950),
+                        new Coordinate(608050, 6649950),
+                        new Coordinate(608050, 6650050),
+                        new Coordinate(608050, 6650050),
+                        new Coordinate(607950, 6649950)
+                }), new LinearRing[0]);
+        SelectionPolygon selectionPolygon = new SelectionPolygon(polygon);
+
+        List<GeometricElementId> ids = histTestService.findGeometricElementsWithPointInSelectionPolygon(selectionPolygon, SnapshotVersion.createInstance("2011-10-02 08:05:30.00"));
+
+        assertEquals(ids.size(), 1);
+    }
+
+    public void testFindGeometricElementsWithPolygonInSelectionPolygon() {
+
+        GeometryFactory factory = new GeometryFactory(new PrecisionModel(100), -1);
+        Polygon polygon = factory.createPolygon(factory.createLinearRing(
+                new Coordinate[]{
+                        new Coordinate(607950, 6649950),
+                        new Coordinate(608050, 6649950),
+                        new Coordinate(608050, 6650050),
+                        new Coordinate(608050, 6650050),
+                        new Coordinate(607950, 6649950)
+                }), new LinearRing[0]);
+        SelectionPolygon selectionPolygon = new SelectionPolygon(polygon);
+
+        List<GeometricElementId> ids = histTestService.findGeometricElementsWithPolygonInSelectionPolygon(selectionPolygon, SnapshotVersion.createInstance("2011-10-02 08:05:30.00"));
+
+        assertEquals(ids.size(), 1);
     }
 }

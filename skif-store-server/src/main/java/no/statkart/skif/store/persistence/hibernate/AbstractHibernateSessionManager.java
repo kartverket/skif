@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.NotSupportedException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -196,4 +197,13 @@ public abstract class AbstractHibernateSessionManager<E extends HibernateSession
         }
     }
 
+    @Override
+    public Connection aquireConnection(Object key) {
+        return getEntry(key).connection;
+    }
+
+    @Override
+    public void releaseConnection(Connection connection, Object key) {
+        throw new UnsupportedOperationException();
+    }
 }

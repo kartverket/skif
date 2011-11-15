@@ -36,4 +36,10 @@ BEGIN
 END;
 /
 
+PROMPT purging sdo_metadata for user @oracle_db_username@
+BEGIN
+  DELETE FROM USER_SDO_GEOM_METADATA;
+END;
+/
+
 PROMPT purge successfull!;

@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.service.histtest;
 
+import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.demo.*;
 
@@ -60,5 +61,9 @@ public interface HistTestService {
      * @since 2.1
      */
     public Map<FooId<?>, Set<BarId<?>>> findBarIdsForFooIds(Set<FooId<?>> fooIds, SnapshotVersion snapshotVersion);
+
+    public List<GeometricElementId> findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion);
+
+    public List<GeometricElementId> findGeometricElementsWithPolygonInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion);
 
 }

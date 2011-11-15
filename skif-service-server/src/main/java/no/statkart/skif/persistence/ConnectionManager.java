@@ -27,4 +27,6 @@ public interface ConnectionManager {
     void commit();
     void rollback();
 
+    Connection aquireConnection(Object key);
+    void releaseConnection(Connection connection, Object key);
 }

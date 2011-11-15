@@ -95,4 +95,14 @@ public class ConnectionManagerSingleVm implements ConnectionManager {
             throw new ImplementationException(e);
         }
     }
+
+    @Override
+    public Connection aquireConnection(Object key) {
+        return getConnection(key);
+    }
+
+    @Override
+    public void releaseConnection(Connection connection, Object key) {
+        throw new UnsupportedOperationException();
+    }
 }

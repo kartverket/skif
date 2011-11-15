@@ -16,4 +16,24 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="SelectionPolygon">
+        <xs:sequence>
+            <xs:element name="positions" type="basetypens:PositionList"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Position">
+        <xs:sequence>
+            <xs:element name="x" type="xs:double" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="y" type="xs:double" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="z" type="xs:double" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PositionList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basetypens:Position"/>
+        </xs:sequence>
+    </xs:complexType>
+
 </xs:schema>

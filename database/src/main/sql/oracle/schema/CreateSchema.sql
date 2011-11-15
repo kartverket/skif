@@ -292,3 +292,54 @@ BEGIN
 END BARFOOS_TRIGGER;
 /
 
+
+CREATE TABLE GEOMETRICELEMENT_H (
+  id                  NUMBER(19,0),
+  point               MDSYS.SDO_GEOMETRY,
+  polygon             MDSYS.SDO_GEOMETRY,
+  tBegin              timestamp(6) not null,
+  tEnd                timestamp(6) not null,
+  tVersion            number (19,0) not null,
+  primary key(id, tBegin)
+);
+create view GEOMETRICELEMENT as select * from GEOMETRICELEMENT_H where snapshot_time.t_between(tBegin, tEnd)=1;
+
+CREATE OR REPLACE TRIGGER T_GEOMETRICELEMENT INSTEAD OF INSERT OR UPDATE OR DELETE ON GEOMETRICELEMENT
+ FOR EACH ROW
+  DECLARE
+   t_Now TIMESTAMP := snapshot_time.get_t();
+   t_End TIMESTAMP := timestamp'9999-01-01 00:00:00.00';
+  BEGIN
+
+   IF INSERTING THEN
+    INSERT INTO GEOMETRICELEMENT_H
+        VALUES (:new.ID, point, polygon, t_Now, t_End, 1);
+
+  ELSIF UPDATING THEN
+     IF :old.tBegin < t_Now THEN
+        INSERT INTO GEOMETRICELEMENT_H VALUES (:old.ID, :new.POINT, :new.POLYGON, :old.TBEGIN, t_Now, :old.TVERSION);
+        UPDATE GEOMETRICELEMENT_H SET TVERSION = :old.TVERSION+1
+        WHERE id = :new.id and tEnd = t_End;
+     END IF;
+     UPDATE TEIG_H SET ID=:new.ID, POINT=:new.POINT, POLYGON=:new.POLYGON, TBEGIN=t_Now, TEND=t_End, TVERSION=TVERSION
+        WHERE id = :new.id and tEnd = t_End;
+
+  ELSIF DELETING THEN
+     IF :old.tBegin < t_Now THEN
+        INSERT INTO GEOMETRICELEMENT_H
+           VALUES (:old.ID, :old.POINT, :old.POLYGON, :old.TBEGIN, t_Now, :old.TVERSION);
+     END IF;
+     DELETE FROM GEOMETRICELEMENT_H
+        WHERE id = :old.id AND tEnd = t_End;
+
+  END IF;
+END T_GEOMETRICELEMENT;
+/
+
+INSERT INTO USER_SDO_GEOM_METADATA VALUES ('GEOMETRICELEMENT_h', 'polygon', MDSYS.SDO_DIM_ARRAY( MDSYS.SDO_DIM_ELEMENT('X', 257000, 1352000, 0.0005), MDSYS.SDO_DIM_ELEMENT('Y', 6320000, 8050000, 0.0005)), NULL);
+INSERT INTO USER_SDO_GEOM_METADATA VALUES ('GEOMETRICELEMENT_h', 'point', MDSYS.SDO_DIM_ARRAY( MDSYS.SDO_DIM_ELEMENT('X', 257000, 1352000, 0.0005), MDSYS.SDO_DIM_ELEMENT('Y', 6320000, 8050000, 0.0005)), NULL);
+
+ALTER SESSION SET SORT_AREA_SIZE = 20000000;
+
+CREATE INDEX geometricentity_spatial_idx ON geometricelement_H(polygon) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS ('layer_gtype=POLYGON');
+CREATE INDEX geometricentity2_spatial_idx ON geometricelement_H(point) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS ('layer_gtype=POINT');
