@@ -210,7 +210,7 @@ public class SkifTestCase {
      * @param context
      */
     @BeforeClass(alwaysRun = true)
-    protected final void beforeClass(ITestContext context) {
+    protected void beforeClass(ITestContext context) {
         moduleBuilder = getModuleBuilder(context);
     }
 
@@ -284,7 +284,7 @@ public class SkifTestCase {
      * @param context leveres at TestNG rammeverket og holder state på tvers av testcases
      */
     @BeforeMethod(alwaysRun = true)
-    protected final void beforeMethod(ITestContext context) {
+    protected void beforeMethod(ITestContext context) {
         if (injector == null || !isReuseInjector()) {
             injector = moduleBuilder.buildInjector();
             injector.injectMembers(this);

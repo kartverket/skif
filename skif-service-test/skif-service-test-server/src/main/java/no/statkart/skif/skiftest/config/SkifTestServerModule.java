@@ -8,10 +8,13 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleStrategyFactory;
+import no.statkart.skif.service.BeanManagedTransactionRunOnServerService;
+import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
+import no.statkart.skif.service.module.server.RunOnServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
@@ -20,6 +23,8 @@ import no.statkart.skif.service.proxy.RuntimeExceptionProxyHandler;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -38,6 +43,8 @@ public class SkifTestServerModule extends SkifModule {
     @Override
     protected void configure() {
         install(new ServerModule(moduleConfiguration));
+        install(new RunOnServerServiceModule(moduleConfiguration));
+
         install(new ServerServiceModule(moduleConfiguration, new SkifTestGroup1Services().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new SkifTestGroup2Services().getServices()));
 
