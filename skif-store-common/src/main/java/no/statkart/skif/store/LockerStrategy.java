@@ -2,8 +2,6 @@ package no.statkart.skif.store;
 
 import no.statkart.skif.exception.LockedException;
 
-import java.sql.Connection;
-
 /**
  * @author Henrik Fredholm
  * @since 2.0
@@ -24,7 +22,7 @@ public interface LockerStrategy {
      * Låser opp gjeldende id dersom denne kan låses opp. Nye elementer og endrede/slettede elementer kan ikke låses opp.
      * Elementer som er låst i nåværende transaksjon vil bli forsøkt låst opp direkte, mens elementer som har blitt låst
      * tidligere vil bli lagt i en liste som skal låses opp ved commit av denne transaksjonen. (Låses opp ved kall til
-     * {@link #releaseAllLocksOnCommit(String)})
+     * {@link #consumeAllLocks(String)} eller {@link #releaseLocksOnNonTransactionalScopeCompletion(String)}.)
      *
      * @param id    Id som skal låses opp
      * @param owner Bruker man skal låse opp for
@@ -99,5 +97,12 @@ public interface LockerStrategy {
      * @param owner Bruker som eier låser som skal låses opp
      * @throws no.statkart.skif.exception.OperationalException dersom antall låser som ble låst opp avviker fra det som er forventet
      */
-    void consumeAllLocks(String owner);
+    public void consumeAllLocks(String owner);
+
+    /**
+     * Låser opp de låsene brukeren har kalt unlock på i løpet av et scope, men som var låst fra før.
+     *
+     * @param owner Bruker som eier låser som skal låses opp
+     */
+    public void releaseLocksOnNonTransactionalScopeCompletion(String owner);
 }

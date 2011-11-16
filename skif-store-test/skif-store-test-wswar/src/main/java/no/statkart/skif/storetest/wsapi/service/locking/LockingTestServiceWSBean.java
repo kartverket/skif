@@ -67,4 +67,28 @@ public class LockingTestServiceWSBean extends SkifWebService<LockingTestServiceW
     public void releaseAllLocks(@WebParam(name = "context") StoreTestContext context) throws ServiceException {
         wsServiceChain.releaseAllLocks(context);
     }
+
+    @Override
+    @WebMethod
+    public void loseALock(@WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        wsServiceChain.loseALock(context);
+    }
+
+    @Override
+    @WebMethod
+    public void nonTransactionalLockingFail(@WebParam(name = "bubbleId") StoreTestBubbleId bubbleId, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        wsServiceChain.nonTransactionalLockingFail(bubbleId, context);
+    }
+
+    @Override
+    @WebMethod
+    public void nonTransactionalUnlockingFail(@WebParam(name = "unlockId") StoreTestBubbleId unlockId, @WebParam(name = "lockUnlockId") StoreTestBubbleId lockUnlockId, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        wsServiceChain.nonTransactionalUnlockingFail(unlockId, lockUnlockId, context);
+    }
+
+    @Override
+    @WebMethod
+    public void nonTransactionalUnlocking(@WebParam(name = "unlockId") StoreTestBubbleId unlockId, @WebParam(name = "lockUnlockId") StoreTestBubbleId lockUnlockId, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        wsServiceChain.nonTransactionalUnlocking(unlockId, lockUnlockId, context);
+    }
 }

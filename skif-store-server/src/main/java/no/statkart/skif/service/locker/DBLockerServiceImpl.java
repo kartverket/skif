@@ -42,29 +42,27 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         Connection con = connectionProvider.get();
         Timestamp expires = calcExpiration(con, lockTimeout);
 
-        LockInfo<Long> lockInfo = null;
-        try {
-            // Anta at låsen ikke finnes. Gjør en insert
-            lockInfo = insertLock(con, lockKey, owner, expires);
-            if (lockInfo != null) {
-                return lockInfo;
+        LockInfo<Long> lockInfo;
+
+        // Anta at låsen ikke finnes. Gjør en insert
+        lockInfo = insertLock(con, lockKey, owner, expires);
+        if (lockInfo != null) {
+            return lockInfo;
+        } else {
+            // Lås finnes. Sjekk om bruker allerede har låsen eller den kan times ut.
+            lockInfo = getLock(con, lockKey);
+            if (lockInfo == null) {
+                // Race condition: Kan ikke opprette eller finne lås. Lite sannsynlig at dette skal oppstå
+                throw new LockedException(owner, new LockInfo<Long>(lockKey, null));
+            } else if (lockInfo.isOwnedBy(owner)) {
+                lockInfo = renewLock(con, lockInfo, expires);
+            } else if (lockInfo.expired()) {
+                lockInfo = timeoutAndTakeLock(con, owner, expires, lockInfo);
             } else {
-                // Lås finnes. Sjekk om bruker allerede har låsen eller den kan times ut.
-                lockInfo = getLock(con, lockKey);
-                if (lockInfo == null) {
-                    // Race condition: Kan ikke opprette eller finne lås. Lite sannsynlig at dette skal oppstå
-                    throw new LockedException(owner, new LockInfo<Long>(lockKey, null));
-                } else if (lockInfo.isOwnedBy(owner)) {
-                    lockInfo = renewLock(con, lockInfo, expires);
-                } else if (lockInfo.expired()) {
-                    lockInfo = timeoutAndTakeLock(con, owner, expires, lockInfo);
-                } else {
-                    throw new LockedException(owner, lockInfo);
-                }
+                throw new LockedException(owner, lockInfo);
             }
-        } finally {
-//            closeConnection(con); TODO: Skal connections closes eller er dette noe som connectionmanageren holder rede på?
         }
+
         return lockInfo;
 
     }
@@ -119,7 +117,6 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             if (rollback) {
                 JDBCHelper.rollback(con);
             }
-//            closeConnection(con); TODO: Skal connections closes eller er dette noe som connectionmanageren holder rede på?
         }
     }
 
@@ -145,7 +142,6 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             throw new RuntimeException(e);
         } finally {
             JDBCHelper.close(stmt);
-//            closeConnection(con); TODO: Skal connections closes eller er dette noe som connectionmanageren holder rede på?
         }
     }
 
@@ -167,18 +163,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             if (rollback) {
                 JDBCHelper.rollback(con);
             }
-//            closeConnection(con); TODO: Skal connections closes eller er dette noe som connectionmanageren holder rede på?
         }
     }
 
     @Override
     public Collection<LockInfo<Long>> getLocksBy(String owner) {
         Connection con = connectionProvider.get();
-        try {
-            return getLocksBy(con, owner);
-        } finally {
-//            closeConnection(con); TODO: Skal connections closes eller er dette noe som connectionmanageren holder rede på?
-        }
+        return getLocksBy(con, owner);
     }
 
     @Override
@@ -197,7 +188,6 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             throw new OperationalException("Sletting av alle låser for bruker feilet: " + owner, e);
         } finally {
             JDBCHelper.close(stmt);
-//            closeConnection(con); TODO: Skal connections closes eller er dette noe som connectionmanageren holder rede på?
         }
 
     }
@@ -206,12 +196,8 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     public Collection<LockInfo<Long>> renewAllLocks(String owner, long lockTimeout) {
         Connection con = connectionProvider.get();
         Timestamp expires = calcExpiration(con, lockTimeout);
-        try {
-           renewAllLocks(con, owner, expires);
-           return getLocksBy(con, owner);
-        } finally {
-//            closeConnection(con); TODO: Skal connections closes eller er dette noe som connectionmanageren holder rede på?
-        }
+        renewAllLocks(con, owner, expires);
+        return getLocksBy(con, owner);
     }
 
     @Override
@@ -231,8 +217,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      */
     private Timestamp calcExpiration(Connection con, long lockTimeout) throws OperationalException {
         long diff = getDBMillisecDifference(con);
-        Timestamp expires = new Timestamp(System.currentTimeMillis() + lockTimeout + diff);
-        return expires;
+        return new Timestamp(System.currentTimeMillis() + lockTimeout + diff);
     }
 
     /**
@@ -288,8 +273,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             logger.debug("SQL: SELECT SYSTIMESTAMP FROM DUAL)");
             rs = stmt.executeQuery();
             rs.next();
-            Timestamp dbTimestamp = rs.getTimestamp(1);
-            return dbTimestamp;
+            return rs.getTimestamp(1);
         } catch (SQLException e) {
             throw new OperationalException("Uventet feil ved lesing av SYSTIMESTAMP fra database", e);
         } finally {
@@ -740,7 +724,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         int BATCH_SIZE = 10;
         PreparedStatement stmt = null;
         try {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             buf.append("DELETE FROM LOCKINFO WHERE (ID=? AND CLASS=? AND OWNER=?) ");
             for (int i = 2; i <= BATCH_SIZE; i++) {
                 buf.append("OR (ID=? AND CLASS=? AND OWNER=?)");

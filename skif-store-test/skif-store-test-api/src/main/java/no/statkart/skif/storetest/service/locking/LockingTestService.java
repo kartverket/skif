@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.service.locking;
 
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.storetest.domain.demo.FooId;
 
 /**
  * Inneholder metoder av den typen LockingTest trenger.
@@ -14,4 +15,8 @@ public interface LockingTestService {
     public void fail(int badNumber);
     public boolean isLockedByMe(BubbleId bubbleId);
     public void releaseAllLocks();
+    public void loseALock();
+    public void nonTransactionalLockingFail(BubbleId id);
+    public void nonTransactionalUnlockingFail(BubbleId unlockId, BubbleId lockUnlockId);
+    public void nonTransactionalUnlocking(BubbleId unlockId, BubbleId lockUnlockId);
 }

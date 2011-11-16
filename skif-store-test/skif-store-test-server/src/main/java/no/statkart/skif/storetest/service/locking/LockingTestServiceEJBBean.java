@@ -55,4 +55,28 @@ public class LockingTestServiceEJBBean extends EJBTimedService implements Lockin
     public void releaseAllLocks() {
         serviceChain.releaseAllLocks();
     }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @Override
+    public void loseALock() {
+        serviceChain.loseALock();
+    }
+
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @Override
+    public void nonTransactionalLockingFail(BubbleId id) {
+        serviceChain.nonTransactionalLockingFail(id);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @Override
+    public void nonTransactionalUnlockingFail(BubbleId unlockId, BubbleId lockUnlockId) {
+        serviceChain.nonTransactionalUnlockingFail(unlockId, lockUnlockId);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @Override
+    public void nonTransactionalUnlocking(BubbleId unlockId, BubbleId lockUnlockId) {
+        serviceChain.nonTransactionalUnlocking(unlockId, lockUnlockId);
+    }
 }

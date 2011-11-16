@@ -46,8 +46,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
         if (serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
             if (serviceMode == ServiceMode.SINGLE_VM) {
                 connectionManager.beginTransaction();
-            } else {
-                // TODO: Registrer JTA callback
+            } else if (shouldUnlockForService()) {
                 Transaction t = weblogic.transaction.TransactionHelper.getTransactionHelper().getTransaction();
                 try {
                     t.registerSynchronization(new Synchronization() {
@@ -80,12 +79,19 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                 if (serviceRequestContext.inTx()) {
                     connectionManager.flush();
                 }
-                if (serviceRequestContext.isNewTx() && !DBLockerService.class.isAssignableFrom(serviceType.getRawType())) {
+
+                // Dersom dette er ytterste metode i et transaksjonelt scope, skal alle låser frigis i transaksjonen
+                if (serviceRequestContext.isNewTx() && shouldUnlockForService()) {
                     lockerStrategy.consumeAllLocks(serviceRequestContext.getUserName());
                 }
+
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
                     connectionManager.commit();
-                    // TODO: Unlock i egen transaksjon også?
+                }
+
+                // Dersom dette er ytterste metode i et ikke-transaksjonelt scope, så skal de låser frigis som i scopet eksplisitt har blitt låst opp
+                if (!serviceRequestContext.isContinuation() && !serviceRequestContext.isTransactional() && shouldUnlockForService()) {
+                    lockerStrategy.releaseLocksOnNonTransactionalScopeCompletion(serviceRequestContext.getUserName());
                 }
             }
 
@@ -100,10 +106,24 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
             if (serviceRequestContext.isNewTx()) {
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
                     connectionManager.rollback();
-                    lockerStrategy.releaseLocksOnRollback(serviceRequestContext.getUserName());
                 }
                 connectionManager.close();
             }
+
+            // Dersom er scope feiler, så skal alle låser tatt i løpet av det, frigis igjen.
+            if (!serviceRequestContext.isContinuation() && shouldUnlockForService()) {
+                lockerStrategy.releaseLocksOnRollback(serviceRequestContext.getUserName());
+            }
+
             connectionManager.endAllocateConnectionsViaHibernateSession();
+    }
+
+    /**
+     * Sjekker om service er av typen som skal føre til opplåsing av låser.
+     *
+     * @return <code>true</code> dersom låser skal låses opp når tjenesten er ferdig, enten det er snakk om rollback eller commit
+     */
+    private boolean shouldUnlockForService() {
+        return !DBLockerService.class.isAssignableFrom(serviceType.getRawType());
     }
 }

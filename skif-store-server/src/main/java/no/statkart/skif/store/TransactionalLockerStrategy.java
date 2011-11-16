@@ -32,7 +32,6 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     private final Set<BubbleId> newLockIds = new HashSet<BubbleId>();
 
     //Brukes for å holde rede på hvilke elementer man ønsker å låse opp, men som ikke er låst i denne transaksjonen.
-    //TODO: Matrikkelen låser opp disse når en ikke-oppdateringstjeneste fullfører. Hvorfor?
     private final Set<BubbleId> unlockIds = new HashSet<BubbleId>();
 
     private final DBLockerService<Long> lockerService;
@@ -81,15 +80,16 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     @Override
     public void unlock(BubbleId id, String owner) {
         if (insertedIds.contains(id)) {
-            //TODO: Kan ikke låse opp. Kaste exception?
+            throw new ImplementationException("Forsøkte å låse opp objekt som er inserted: " + id.toString());
         } else if (modifiedIds.contains(id)) {
-            //TODO: Kan ikke låse opp. Kaste exception?
+            throw new ImplementationException("Forsøkte å låse opp objekt som er endret: " + id.toString());
         } else if (newLockIds.remove(id)) {
             lockerService.unlock(createLockKey(id), owner);
-            lockMap.remove(id);
+            if (lockMap != null) {
+                lockMap.remove(id);
+            }
         } else {
             unlockIds.add(id);
-            lockMap.remove(id);
         }
     }
 
@@ -129,7 +129,9 @@ public class TransactionalLockerStrategy implements LockerStrategy {
 
     @Override
     public void releaseLocksOnRollback(String owner) {
-        lockerService.unlockAll(createLockKeys(newLockIds), owner);
+        if (!newLockIds.isEmpty()) {
+            lockerService.unlockAll(createLockKeys(newLockIds), owner);
+        }
     }
 
 
@@ -169,6 +171,13 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         lockerInTransactionService.consumeAllLocks(owner, lockMap.size());
     }
 
+    @Override
+    public void releaseLocksOnNonTransactionalScopeCompletion(String owner) {
+        if (!unlockIds.isEmpty()) {
+            lockerService.unlockAll(createLockKeys(unlockIds), owner);
+        }
+    }
+
     /**
      * Finner ut om en eksisterende lås trenger å bli fornyet
      *
@@ -187,7 +196,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
      */
     private BubbleId createBubbleIdFromLockKey(LockKey<Long> lockKey) {
         try {
-            Class<? extends BubbleId<?>> idClass = (Class<? extends BubbleId<?>>) Class.forName(lockKey.discriminator);
+            Class<? extends BubbleId> idClass = (Class<? extends BubbleId>) Class.forName(lockKey.discriminator);
             return BubbleIds.createInstance(idClass, lockKey.keyValue, SnapshotVersion.CURRENT);
         } catch (ClassNotFoundException e) {
             throw new ImplementationException("Class.forName feilet for klassen " + lockKey.discriminator + " i TransactionalLockerStrategy", e);

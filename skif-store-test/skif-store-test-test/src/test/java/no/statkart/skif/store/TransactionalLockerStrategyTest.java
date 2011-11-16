@@ -1,5 +1,6 @@
 package no.statkart.skif.store;
 
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotLockedException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
@@ -101,8 +102,11 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
         strategy.lock(testId, "ingroa");
         strategy.registerRemoved(testId, "ingroa");
-        strategy.unlock(testId, "ingroa");
-        Assert.assertTrue(strategy.isLockedBy(testId, "ingroa"));
+        try {
+            strategy.unlock(testId, "ingroa");
+        } catch (ImplementationException e) {
+            Assert.assertTrue(e.getMessage().contains("Forsøkte å låse opp objekt som er endret"));
+        }
 
         injector.getInstance(DBLockerService.class).releaseAllLocks("ingroa");
     }
