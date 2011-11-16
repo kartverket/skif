@@ -6,6 +6,7 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import org.hibernate.HibernateException;
+import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
@@ -24,9 +25,9 @@ public abstract class StoreHibernateSessionFactoryBuilder extends HibernateSessi
     private final List<Class<?>> bubbleClassDeleteOrder = new ArrayList<Class<?>>();
     private final static Object LOCK = new Object();
 
-    public StoreHibernateSessionFactoryBuilder(Properties hibernateProperties, String mappingFilesDirectory) {
+    public StoreHibernateSessionFactoryBuilder(Properties hibernateProperties, String mappingFilesDirectory, Interceptor interceptor) {
         super(hibernateProperties, mappingFilesDirectory);
-        interceptor = new HibernateStoreInterceptor();
+        this.interceptor = interceptor;
     }
 
     public StoreHibernateSessionFactoryBuilder addResourceWithSubclasses(Class baseclass, Class... subclasses) {

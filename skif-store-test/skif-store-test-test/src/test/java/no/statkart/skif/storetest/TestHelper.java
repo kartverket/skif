@@ -58,7 +58,7 @@ public class TestHelper {
     public static StoreHibernateSessionFactoryBuilder createStoreHibernateSessionFactoryBuilder() {
         Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
         Properties properties = ConfigurationConverter.getProperties(cfg);
-        return HibernateVersionFactory.Accessor.get().createStoreHibernateSessionFactoryBuilder(properties, "no/statkart/skif/storetest/persistence/hibernate");
+        return HibernateVersionFactory.Accessor.get().createStoreHibernateSessionFactoryBuilder(properties, "no/statkart/skif/storetest/persistence/hibernate", new HibernateStoreInterceptor());
     }
 
 

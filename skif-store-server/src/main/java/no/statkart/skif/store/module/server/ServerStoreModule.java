@@ -82,7 +82,7 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         Properties properties = getHibernateProperties();
         logger.trace("Properties used for configuring hibernate: '{}'", properties);
         String mappingFileDirectoryRoot = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.HIBERNATE_MAPPRING_FILE_ROOT, mappingFileDirectoryRootDefault);
-        return HibernateVersionFactory.Accessor.get().createStoreHibernateSessionFactoryBuilder(properties, mappingFileDirectoryRoot);
+        return HibernateVersionFactory.Accessor.get().createStoreHibernateSessionFactoryBuilder(properties, mappingFileDirectoryRoot, new HibernateStoreInterceptor());
     }
 
     protected abstract void configureHibernate(StoreHibernateSessionFactoryBuilder factoryBuilderStore);
