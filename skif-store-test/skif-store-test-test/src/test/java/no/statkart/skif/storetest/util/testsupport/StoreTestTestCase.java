@@ -18,10 +18,12 @@ import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.util.testsupport.SkifTestCase;
+import org.testng.annotations.Test;
 
 /**
  * @author Henrik Fredholm
  */
+@Test
 public class StoreTestTestCase extends SkifTestCase {
     public StoreTestTestCase() {
         setModuleClass(StoreTestClientModule.class);
