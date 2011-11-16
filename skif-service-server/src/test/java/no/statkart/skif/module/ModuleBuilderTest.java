@@ -33,6 +33,8 @@ public class ModuleBuilderTest {
         systemConfiguration = (SystemConfiguration) ConfigurationUtils.cloneConfiguration(new SystemConfiguration());
     }
 
+    // Configuration c = ConfigurationFactory.create()
+    // configuration c = ConfigurationFactory.cateate(new String[]{skif-default.properties, historikk-default.properties}, new String[] {skif.properties, histrokk.properties})
 
     public void testMinimaltOppsettStandaloneModule() {
         ModuleBuilder builder = new ModuleBuilder();

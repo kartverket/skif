@@ -9,6 +9,7 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
+import no.statkart.skif.service.module.server.RunOnServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
@@ -56,6 +57,7 @@ public class StoreTestServerModule extends SkifModule {
     @Override
     protected void configure() {
         install(new ServerModule(moduleConfiguration));
+        install(new RunOnServerServiceModule(moduleConfiguration));
 
         ServerStoreModule serverStoreModule = new ServerStoreModule(moduleConfiguration, no.statkart.skif.storetest.service.store.StoreService.class, no.statkart.skif.storetest.service.locker.DBLockerService.class, no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class, "no/statkart/skif/storetest/persistence/hibernate") {
             @Override
