@@ -23,21 +23,25 @@ import java.util.*;
 public class BarFinder {
 
     @Inject
-    private HibernateStoreSessionManager sessionManager;
+    private ConnectionManager connectionManager;
 
     public List<BarId> findBarIdsAliveAtSnapshot(Set<BarId<?>> barIds, SnapshotVersion snapshotVersion) {
-        HibernateStoreSession hibernateStoreSession = sessionManager.acquireSnapshotStoreSession(snapshotVersion);
+        Connection connection = connectionManager.aquireConnection(snapshotVersion);
 
         QueryGenerator generator = new QueryGenerator("id", "bar");
-        generator.setConnection(hibernateStoreSession.getWrappedSession().connection(), snapshotVersion);
+        generator.setConnection(connection, snapshotVersion);
         generator.addSelection("id in", new ArrayList<BarId<?>>(barIds));
-        return generator.executeQueryForBubbleIdList(BarId.class);
+        List<BarId> retur = generator.executeQueryForBubbleIdList(BarId.class);
+
+        connectionManager.releaseConnection(connection, snapshotVersion);
+
+        return retur;
     }
 
     public Map<FooId<?>, Set<BarId<?>>> findBarIdsForFooIds(Set<FooId<?>> fooIds, final SnapshotVersion snapshotVersion) {
         final Map<FooId<?>, Set<BarId<?>>> barIdsForFooIds = new HashMap<FooId<?>, Set<BarId<?>>>();
 
-        HibernateStoreSession hibernateStoreSession = sessionManager.acquireSnapshotStoreSession(snapshotVersion);
+        Connection connection = connectionManager.aquireConnection(snapshotVersion);
 
         PreparedStatementExecutor executor = new PreparedStatementExecutor() {
             @Override
@@ -57,7 +61,7 @@ public class BarFinder {
             }
         };
 
-        executor.execute(hibernateStoreSession.getWrappedSession().connection(), "select id, fooid from bar where fooid in ", fooIds);
+        executor.execute(connection, "select id, fooid from bar where fooid in ", fooIds);
 
         return barIdsForFooIds;
     }
