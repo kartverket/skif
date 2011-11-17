@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.demo.TestBubble;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public class StoreTestMappingW2DTest extends TestCase {
     StoreTestMapper mapper = new StoreTestMapper();

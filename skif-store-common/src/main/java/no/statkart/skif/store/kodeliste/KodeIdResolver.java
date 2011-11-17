@@ -112,4 +112,5 @@ public class KodeIdResolver {
         id = idMap.get(idValue);
         return (I) id;
     }
+
 }

@@ -1,6 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.EnumKodeId;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -56,11 +57,11 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     public Object getInstance(int code) throws HibernateException {
         if (code < values.length) {
             if (values[code] == null) {
-                values[code] = BubbleIds.createInstance(enumClass, code);
+                values[code] = BubbleIds.createInstance(enumClass, new Long(code), SnapshotVersion.CURRENT);
             }
             return values[code];
         } else {
-            return BubbleIds.createInstance(enumClass, code);
+            return BubbleIds.createInstance(enumClass, new Long(code), SnapshotVersion.CURRENT);
         }
     }
 

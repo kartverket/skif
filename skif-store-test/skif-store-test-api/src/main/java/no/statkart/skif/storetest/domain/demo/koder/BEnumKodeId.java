@@ -10,7 +10,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class BEnumKodeId extends EnumKodeId<BEnumKode> implements StoreTestEnumKodeId<BEnumKode> {
     private static EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>>(BEnumKodeId.class, new StoreTestEnumKodelisteLongId(2), "TestBEnumKodeliste");
@@ -32,10 +32,6 @@ public class BEnumKodeId extends EnumKodeId<BEnumKode> implements StoreTestEnumK
 
     protected static BEnumKodeId define(long idValue, String kodeVerdi, String beskrivelesesKey) {
         return kodeSupport.defineKode(BEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey).getId();
-    }
-
-    public static BEnumKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(BEnumKodeId.class, idValue, SnapshotVersion.CURRENT);
     }
 
     private Object readResolve() {

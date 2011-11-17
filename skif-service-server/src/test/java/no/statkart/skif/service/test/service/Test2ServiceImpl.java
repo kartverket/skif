@@ -5,7 +5,7 @@ import no.statkart.skif.service.ServiceRequestContext;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class Test2ServiceImpl implements Test2Service {
 

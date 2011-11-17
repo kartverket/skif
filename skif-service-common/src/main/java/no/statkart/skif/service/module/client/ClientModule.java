@@ -8,7 +8,7 @@ import no.statkart.skif.service.ServiceContext;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ClientModule extends SkifModule {
     private Class<? extends ServiceContext> serviceContextClass = DefaultServiceContext.class;

@@ -182,7 +182,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     private BubbleId createBubbleIdFromLockKey(LockKey<Long> lockKey) {
         try {
             Class<? extends BubbleId<?>> idClass = (Class<? extends BubbleId<?>>) Class.forName(lockKey.discriminator);
-            return BubbleIds.createInstance(idClass, lockKey.keyValue);
+            return BubbleIds.createInstance(idClass, lockKey.keyValue, SnapshotVersion.CURRENT);
         } catch (ClassNotFoundException e) {
             throw new ImplementationException("Class.forName feilet for klassen " + lockKey.discriminator + " i TransactionalLockerStrategy", e);
         }

@@ -12,7 +12,7 @@ import java.util.Map;
  * Klassen bruker et {@code Map<String, Object>} dataobjekt for mest mulig fleksibel overføring av data via klassen.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class SingleVmRemoteCallContext {
     private Map<String, Object> contextData;

@@ -7,7 +7,7 @@ import no.statkart.skif.service.proxy.TerminatingProxyHandler;
  * håndterer EJB spesifikke exceptions slik at det blir transparent om kallet går via EJB eller direkte.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class EJBCallProxyHandler<S> extends TerminatingProxyHandler<S> {
 }

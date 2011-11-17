@@ -10,7 +10,7 @@ import java.util.GregorianCalendar;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 0.2
+ * @since 2.0
  */
 public class DateTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, Date> {
 

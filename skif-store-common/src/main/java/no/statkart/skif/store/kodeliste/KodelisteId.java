@@ -21,13 +21,8 @@ public abstract class KodelisteId<T extends Kodeliste> extends AbstractBubbleId<
 
 
     @Override
-    public boolean equals(Object id) {
-        if (id == null) return false;
-        return id instanceof KodelisteId && equals((KodelisteId) id);
-    }
-
-    protected boolean equals(AbstractBubbleId id) {
-        return getValue().equals(id.getValue()) && getSnapshotVersion().equals(id.getSnapshotVersion());
+    protected boolean compatible(AbstractBubbleId id) {
+        return id instanceof KodelisteId;
     }
 
     @Override

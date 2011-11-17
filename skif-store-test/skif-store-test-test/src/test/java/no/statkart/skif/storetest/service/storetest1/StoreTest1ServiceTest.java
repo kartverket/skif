@@ -14,7 +14,6 @@ import static org.testng.Assert.fail;
 @Test
 public class StoreTest1ServiceTest extends StoreTestTestCase {
 
-
     /**
      * Test kall til metode som kalder andre metoder. Ingen metoder krever tx
      */
@@ -28,12 +27,10 @@ public class StoreTest1ServiceTest extends StoreTestTestCase {
             storeTest1Service.putThatFails("key1", "value2");
             fail("Forventet exception");
         } catch (ImplementationException t) {
-            System.out.println(t);
         }
         assertEquals(storeTest1Service.get("key1"), "value1", "Forrige metode skulle ikke ha endret 'key1'");
         assertEquals(storeTest1Service.remove("key1"), "value1");
         assertEquals(storeTest1Service.get("key1"), null);
-        System.out.println("Done");
     }
 
 

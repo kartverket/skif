@@ -8,7 +8,7 @@ import no.statkart.skif.skiftest.wsapi.exception.simple.*;
  * Se dokumentasjon i {@link SimpleFaultInfo}
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @WebFault(name = "SimpleException", targetNamespace = "http://skif.statkart.no/skiftest/wsapi/exception")
 public class SimpleException extends java.lang.Exception {

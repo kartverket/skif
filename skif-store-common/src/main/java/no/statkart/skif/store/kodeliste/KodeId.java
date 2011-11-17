@@ -8,13 +8,10 @@ import java.lang.reflect.Field;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T>  {
 
-    public static <I extends KodeId<?>> I createInstance(Class<I> idClass, long idValue) {
-        return (I) getKodeSupport(idClass).createInstance(idClass, idValue, SnapshotVersion.CURRENT);
-    }
 
     public static <I extends KodeId<?>> KodelisteId getKodelisteId(Class<I> idClass) {
         return (KodelisteId) getKodeSupport(idClass).getKodelisteId();
@@ -33,13 +30,12 @@ public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T>  {
         }
     }
 
-
-    public Long getValue() {
-        return (Long) super.getValue();
+    protected KodeId(Object value) {
+        super(value);
     }
 
-    protected KodeId(Long value, SnapshotVersion snapshotVersion) {
-        super(value, snapshotVersion);
+    protected KodeId(Object value, SnapshotVersion version) {
+        super(value, version);
     }
 
     public KodelisteId<?> getKodelisteId() {
@@ -48,15 +44,6 @@ public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T>  {
 
     protected abstract KodeSupport getKodeSupport();
     
-    @Override
-    public boolean equals(Object id) {
-        return this == id;
-    }
-
-    @Override
-    public KodeId<T> resolveInstance() {
-        return getKodeSupport().getOrCreateInstance(this);
-    }
 
     @Override
     public String toString() {

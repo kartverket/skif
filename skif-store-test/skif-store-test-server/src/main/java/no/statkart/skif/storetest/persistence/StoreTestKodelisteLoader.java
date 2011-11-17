@@ -12,11 +12,11 @@ import java.util.Map;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class StoreTestKodelisteLoader extends DbKodelisteLoader {
     @Override
     public List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
-        return  new ArrayList<DbKodeliste>(0); //load(session, DbKodeliste.class, kodeMap);
+        return  load(session, DbKodeliste.class, kodeMap);
     }
 }

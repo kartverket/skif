@@ -8,7 +8,7 @@ import no.statkart.skif.exception.ImplementationException;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class ModuleStrategy implements Cloneable {
     protected Configuration configuration = new MapConfiguration();

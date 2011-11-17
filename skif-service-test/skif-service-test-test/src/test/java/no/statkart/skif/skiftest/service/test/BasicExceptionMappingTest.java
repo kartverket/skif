@@ -88,7 +88,6 @@ public class BasicExceptionMappingTest extends SkifTestCase {
             if (injector.getInstance(Configuration.class).getBoolean(ConfigurationConstants.SINGLE_VM)) {
                 assertEquals(t.getClass(), SimpleNonMappedException.class);
             } else {
-                System.out.println(t);
             }
         }
     }

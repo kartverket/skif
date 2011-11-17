@@ -16,11 +16,11 @@ public class FooId<T extends Foo> extends AbstractBubbleId<T> implements StoreTe
         return (Long)super.getValue();
     }
 
-    public FooId(Long value) {
+    public FooId(Object value) {
         super(value, SnapshotVersion.CURRENT);
     }
 
-    public FooId(Long value, SnapshotVersion snapshotVersion) {
+    public FooId(Object value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 }

@@ -9,7 +9,7 @@ import no.statkart.skif.service.chain.ServiceChainFactories;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class RemoteServiceModuleStrategy extends ModuleStrategy {
     private CallServiceChainFactorySpecification callServiceChainFactorySpecification;

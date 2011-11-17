@@ -6,7 +6,7 @@ import java.util.Stack;
  * A <code>ThreadLocal</code> class that supports supend and resume operation.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ThreadLocalWithSuspend<T> extends ThreadLocal<T> {
     private ThreadLocalStack<T> suspended = new ThreadLocalStack<T>();

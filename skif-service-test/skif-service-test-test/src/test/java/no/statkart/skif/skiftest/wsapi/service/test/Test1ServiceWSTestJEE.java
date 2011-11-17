@@ -35,7 +35,7 @@ import static org.testng.Assert.fail;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Test(groups = "server-required")
 public class Test1ServiceWSTestJEE {

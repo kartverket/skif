@@ -7,7 +7,7 @@ import no.statkart.skif.service.SingleVmServer;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class SingleVmNoWSRemoteCallProxyHandler<S> extends SingleVmRemoteCallProxyHandler<S> {
 

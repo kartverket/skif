@@ -6,7 +6,7 @@ import org.slf4j.Logger;
  * Klasse som representerer implemetasjonsfeil i kode enten på server, eller i kall fra klient.
  *
  * @author Leif Lislegård
- * @since 0.6
+ * @since 2.0
  */
 public class ImplementationException extends SystemException {
 

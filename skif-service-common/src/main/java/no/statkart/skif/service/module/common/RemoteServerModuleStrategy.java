@@ -5,7 +5,7 @@ import no.statkart.skif.module.ModuleStrategy;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class RemoteServerModuleStrategy extends ModuleStrategy {
     public abstract void configure(Binder binder);

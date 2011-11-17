@@ -5,7 +5,7 @@ package no.statkart.skif.service.chain;
  * type {@code ServiceChain} utføres i forkant av hvert kall til service-implementasjonen på server.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface ImplementationServiceChainFactory<S> extends ServiceChainFactory<S> {
 }

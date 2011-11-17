@@ -9,7 +9,7 @@ import java.lang.reflect.Proxy;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class IdentityMapper implements InvocationHandler {
 

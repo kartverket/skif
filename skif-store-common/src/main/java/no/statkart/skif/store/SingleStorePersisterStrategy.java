@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 /**
  * Strategi som mapper alle bobleobjekter til samme persister
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public class SingleStorePersisterStrategy implements StorePersisterStrategy {
     final StorePersister persister;

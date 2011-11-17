@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class IdentityExceptionTypeMapper<T extends Throwable> extends AbstractTypeMapper<T, T> {
     private Mapping mapping;

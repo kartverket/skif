@@ -8,7 +8,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class C1DbKodeId extends CDbKodeId<C1DbKode> {
     private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(C1DbKodeId.class,new StoreTestDbKodelisteLongId(10003L, SnapshotVersion.CURRENT));
@@ -17,7 +17,7 @@ public class C1DbKodeId extends CDbKodeId<C1DbKode> {
     public static C1DbKodeId C1AId = define(1);
     public static C1DbKodeId C1BId = define(2);
 
-    protected C1DbKodeId(Long value, SnapshotVersion snapshotVersion) {
+    public C1DbKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 
@@ -28,10 +28,6 @@ public class C1DbKodeId extends CDbKodeId<C1DbKode> {
 
     protected static C1DbKodeId define(long idValue) {
         return kodeSupport.define(C1DbKodeId.class, idValue);
-    }
-
-    public static C1DbKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(C1DbKodeId.class, idValue, SnapshotVersion.CURRENT);
     }
 
     private Object readResolve() {

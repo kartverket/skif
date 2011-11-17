@@ -16,8 +16,17 @@ public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId
     private final KLID kodelisteId;
     private final Class<? extends KodeId<?>> kodeIdClass;
 
-    public Class<? extends KodeId<?>> getKodeIdClass() {
-        return kodeIdClass;
+    public KodeSupport(Class<? extends KodeId<?>> idClass, KLID kodelisteId) {
+        this.kodelisteId = kodelisteId;
+        this.kodeIdClass = idClass;
+        if (idClass != null) {
+            checkForKodeSupportStaticFiledDeclaration(idClass);
+
+            // TODO: Denne skal bort i 2.1
+            if (EnumKodeId.class.isAssignableFrom(idClass)) {
+                checkForResolveObjectMethodDeclaration(idClass);
+            }
+        }
     }
 
     public static <I extends KodeId<?>> KodeSupport getKodeSupport(Class<I> idClass) {
@@ -33,17 +42,14 @@ public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId
         }
     }
 
-
-    private final KodeIdResolver kodeIdResolver = new KodeIdResolver();
-
-    public KodeSupport(Class<? extends KodeId<?>> idClass, KLID kodelisteId) {
-        this.kodelisteId = kodelisteId;
-        this.kodeIdClass = idClass;
-        if (idClass != null) {
-            checkForKodeSupportStaticFiledDeclaration(idClass);
-            checkForResolveObjectMethodDeclaration(idClass);
-        }
+    public KLID getKodelisteId() {
+        return kodelisteId;
     }
+
+    public Class<? extends KodeId<?>> getKodeIdClass() {
+        return kodeIdClass;
+    }
+
 
     private void checkForKodeSupportStaticFiledDeclaration(Class<? extends KodeId<?>> idClass) {
         try {
@@ -59,35 +65,6 @@ public abstract class KodeSupport<KL extends Kodeliste, KLID extends KodelisteId
         } catch (NoSuchMethodException e) {
             throw new ImplementationException("KodeId klasse mangler metode 'readResolve':  " + idClass, e);
         }
-    }
-
-    public KLID getKodelisteId() {
-        return kodelisteId;
-    }
-
-    public <I extends KodeId<? extends Kode>> I getOrCreateInstance(I newInstance) {
-        return (I) kodeIdResolver.getOrCreate(newInstance);
-    }
-
-
-    public <I extends KodeId<? extends Kode>> I createInstance(Class<? extends I> idClass, long idValue, SnapshotVersion snapshotVersion) {
-        I id = (I) getInstance(idValue, snapshotVersion);
-        if (id == null) {
-            id = BubbleIds.createInstance(idClass, idValue, snapshotVersion);
-        }
-        return id;
-    }
-
-    public <I extends KodeId<? extends Kode>> I getInstance(Long idValue, SnapshotVersion snapshotVersion) {
-        return (I) kodeIdResolver.get(idValue, snapshotVersion);
-    }
-
-    public boolean isNewKoderAllowed() {
-        return kodeIdResolver.isNewKoderAllowed();
-    }
-
-    public void setNewKoderAllowed(boolean value) {
-        kodeIdResolver.setNewKoderAllowed(value);
     }
 
     public final <T extends Kodeliste, I extends KodelisteId<? extends T>> T localize(T kodeliste, Locale locale) {

@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 0.6
+ * @since 2.0
  */
 public class TestBubbleIdType extends BubbleIdType {
 
@@ -16,8 +16,8 @@ public class TestBubbleIdType extends BubbleIdType {
     }
 
     @Override
-    protected Object createPrototypeId(Long value, SnapshotVersion snapshotVersion) {
-        return new TestBubbleId(value).asReplicaVersion(snapshotVersion);
+    protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
+        return new TestBubbleId((Long)value).asReplicaVersion(snapshotVersion);
     }
 
 }

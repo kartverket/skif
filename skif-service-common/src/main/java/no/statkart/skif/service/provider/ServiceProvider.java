@@ -28,7 +28,7 @@ import java.util.*;
  * styrt av hvilke scope som er anvendt i bindingen av {@code S}.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ServiceProvider<S> implements Provider<S> {
     final private TypeLiteral<S> type;

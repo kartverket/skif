@@ -19,7 +19,7 @@ import static org.testng.Assert.*;
  * når no-reuse er satt i property fil.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Test(dependsOnGroups = "createsReuseDisabledInjectorTest")
 public class SkifTestCaseReusableInjectorReuseDisabledTest extends SkifTestCase {

@@ -8,7 +8,7 @@ import no.statkart.skif.module.ModuleConfiguration;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class WSServerModule extends SkifModule {
     private ClassLoader classLoader = getClass().getClassLoader();

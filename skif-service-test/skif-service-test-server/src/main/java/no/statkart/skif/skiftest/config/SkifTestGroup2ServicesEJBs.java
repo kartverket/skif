@@ -12,7 +12,7 @@ import javax.ejb.EJBs;
  *
  * @author Henrik Fredholm
  * @see no.statkart.skif.service.ejb.EJBRegistration
- * @since 1.1
+ * @since 2.0
  */
 @EJBs({
         @EJB(name = "ejb/Test2ServiceEJBBean", beanInterface = Test2Service.class),

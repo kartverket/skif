@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceModuleStrategy> {
     protected final ClassLoader classLoader;

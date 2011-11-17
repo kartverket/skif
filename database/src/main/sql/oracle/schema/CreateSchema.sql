@@ -30,21 +30,30 @@ create table LockInfo (
    primary key (id, class)
 );
 
-create table TestAKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, primary key (id) );
-create table TestAKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
-alter table TestAKodeLoc add constraint FK_TestAKodeLoc foreign key (id) references TestAKode;
+create table AKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, primary key (id) );
+create table AKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+alter table AKodeLoc add constraint FK_AKodeLoc foreign key (id) references AKode;
 
-create table TestBKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, primary key (id) );
-create table TestBKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
-alter table TestBKodeLoc add constraint FK_TestBKodeLoc foreign key (id) references TestBKode;
+create table BKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, primary key (id) );
+create table BKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+alter table BKodeLoc add constraint FK_BKodeLoc foreign key (id) references BKode;
 
-create table TestCKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, class varchar2(64) not null, primary key (id) );
-create table TestCKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
-alter table TestCKodeLoc add constraint FK_TestCKodeLoc foreign key (id) references TestCKode;
+create table CKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, class varchar2(64) not null, primary key (id) );
+create table CKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+alter table CKodeLoc add constraint FK_CKodeLoc foreign key (id) references CKode;
+
+create table XStrKode ( id varchar2(10) not null, kodeVerdi varchar2(10) not null, primary key (id) );
+create table XStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+alter table XStrKodeLoc add constraint FK_XStrKodeLoc foreign key (id) references XStrKode;
+
+create table YStrKode ( id varchar2(10) not null, kodeVerdi varchar2(10) not null, primary key (id) );
+create table YStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+alter table YStrKodeLoc add constraint FK_YStrKodeLoc foreign key (id) references YStrKode;
 
 create table Kodeliste( id number(19,0) not null, navn varchar2(64), kodeClassname varchar2(255), primary key(id));
 create table KodelisteLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table KodelisteLoc add constraint FK_TestKodelisteLoc foreign key (id) references Kodeliste;
+
 
 CREATE OR REPLACE PACKAGE snapshot_time
 As
@@ -143,6 +152,17 @@ END FOO_TRIGGER;
 CREATE TABLE Baz (
     id                   NUMBER(19,0) NOT NULL ENABLE,
     text                 VARCHAR2(255 BYTE),
+    fooId                number(19,0) not null,
+    testAEnumKodeId      number(10,0) not null,
+    testC2DbKodeId       number(19,0) not null,
+    PRIMARY KEY (id)
+);
+
+-- Denne tabell har heller ikke historikk
+CREATE TABLE Raz (
+    id                   NUMBER(19,0) NOT NULL ENABLE,
+    text                 VARCHAR2(255 BYTE),
+    compText             VARCHAR2(255 BYTE),
     fooId                number(19,0) not null,
     PRIMARY KEY (id)
 );

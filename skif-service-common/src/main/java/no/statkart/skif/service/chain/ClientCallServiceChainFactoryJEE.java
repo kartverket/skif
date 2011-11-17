@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class ClientCallServiceChainFactoryJEE<S> implements CallServiceChainFactory<S> {
     protected final TypeLiteral<S> type;

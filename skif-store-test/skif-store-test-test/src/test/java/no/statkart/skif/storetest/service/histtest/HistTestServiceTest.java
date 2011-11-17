@@ -7,7 +7,7 @@ import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
-import java.util.Set;
+import java.util.*;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -16,6 +16,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * Tester historisk navigering mellom bobler via servicekall og store
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  */
 @Test
 public class HistTestServiceTest extends StoreTestTestCase {
@@ -90,5 +91,56 @@ public class HistTestServiceTest extends StoreTestTestCase {
         assertEquals(fooIds.size(), 1);
 
 
+    }
+
+    /**
+     * @since 2.1
+     */
+    public void testFindBarIdsAliveAtSnapshot() {
+        Set<BarId<?>> barIds = new HashSet<BarId<?>>();
+        barIds.add(new BarId(1001L));
+        barIds.add(new BarId(1002L));
+
+        List<BarId> barIdsAliveAtSnapshot1 = histTestService.findBarIdsAliveAtSnapshot(barIds, SnapshotVersion.CURRENT);
+        assertEquals(barIdsAliveAtSnapshot1, barIds, "Fant ikke riktig current barIds");
+
+        SnapshotVersion oldSnapshot = SnapshotVersion.createInstance("2011-10-02 08:00:00.00");
+        List<BarId> barIdsAliveAtSnapshot2 = histTestService.findBarIdsAliveAtSnapshot(barIds, oldSnapshot);
+        assertTrue(barIdsAliveAtSnapshot2.isEmpty(), "Fant barIds når ingen skulle ha vært der");
+    }
+
+    /**
+     * @since 2.1
+     */
+    public void testFindBarIdsForFooIds() {
+        Set<FooId<?>> fooIds = new HashSet<FooId<?>>();
+        fooIds.add(new FooId<Foo>(100L));
+
+        SnapshotVersion snapshotVersion1 = SnapshotVersion.createInstance("2011-10-02 08:00:00.00");
+        Map<FooId<?>,Set<BarId<?>>> barIdsForFooIdsSnapshot1 = histTestService.findBarIdsForFooIds(fooIds, snapshotVersion1);
+        assertTrue(barIdsForFooIdsSnapshot1.isEmpty(), "Fikk historiske barIds som ikke skulle ha eksistert da");
+
+        SnapshotVersion snapshotVersion2 = SnapshotVersion.createInstance("2011-10-02 08:03:00.00");
+        Map<FooId<?>,Set<BarId<?>>> barIdsForFooIdsSnapshot2 = histTestService.findBarIdsForFooIds(fooIds, snapshotVersion2);
+        assertEquals(barIdsForFooIdsSnapshot2.size(), 1, "Fant feil antall fooIds");
+        for (Map.Entry<FooId<?>, Set<BarId<?>>> entry : barIdsForFooIdsSnapshot2.entrySet()) {
+            assertEquals(entry.getKey().getSnapshotVersion(), snapshotVersion2, "Feil snapshot på fooId");
+            Set<BarId<?>> barIds = entry.getValue();
+            assertEquals(barIds.size(), 2, "Fant feil antall barIds");
+            for (BarId<?> barId : barIds) {
+                assertEquals(barId.getSnapshotVersion(), snapshotVersion2, "Feil snapshot på barId");
+            }
+        }
+
+        Map<FooId<?>, Set<BarId<?>>> barIdsForFooIdsCurrent = histTestService.findBarIdsForFooIds(fooIds, SnapshotVersion.CURRENT);
+        assertEquals(barIdsForFooIdsCurrent.size(), 1, "Fant feil antall fooIds");
+        for (Map.Entry<FooId<?>, Set<BarId<?>>> entry : barIdsForFooIdsCurrent.entrySet()) {
+            assertEquals(entry.getKey().getSnapshotVersion(), SnapshotVersion.CURRENT, "Feil snapshot på fooId");
+            Set<BarId<?>> barIds = entry.getValue();
+            assertEquals(barIds.size(), 2, "Fant feil antall barIds");
+            for (BarId<?> barId : barIds) {
+                assertEquals(barId.getSnapshotVersion(), SnapshotVersion.CURRENT, "Feil snapshot på barId");
+            }
+        }
     }
 }

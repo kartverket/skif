@@ -8,6 +8,7 @@ import no.statkart.skif.store.kodeliste.EnumKodeId;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.SEnumKodeId;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
@@ -26,23 +27,21 @@ public class EnumKodeIdTest {
         assertNotSame(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeAId);
         assertNotSame(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeBId);
     }
-    
+
+
     public void testLike()  {
         AEnumKodeId kodeAId = AEnumKodeId.KodeAId;
 
-        AEnumKodeId id = AEnumKodeId.createInstance(kodeAId.getValue());
+        AEnumKodeId id = EnumKodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
         assertSame(kodeAId, id);
 
-        AEnumKodeId id1 = EnumKodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
+        AEnumKodeId id1 = KodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
         assertSame(kodeAId, id1);
 
-        AEnumKodeId id2 = KodeId.createInstance(AEnumKodeId.class, kodeAId.getValue());
+        AEnumKodeId id2 = BubbleIds.createInstance(AEnumKodeId.class, kodeAId.getValue(), SnapshotVersion.CURRENT);
         assertSame(kodeAId, id2);
-
-        AEnumKodeId id3 = BubbleIds.createInstance(AEnumKodeId.class, kodeAId.getValue());
-        assertSame(kodeAId, id3);
-
     }
+
 
     public void testCopy() {
         AEnumKodeId id = CopyHelper.copy(AEnumKodeId.KodeAId);
@@ -56,8 +55,16 @@ public class EnumKodeIdTest {
     }
 
     public void testHistorikk() {
-        AbstractBubbleId<AEnumKode> enumId = AEnumKodeId.createInstance(27);
+        AbstractBubbleId<AEnumKode> enumId = EnumKodeId.createInstance(AEnumKodeId.class, 27);
         AbstractBubbleId<AEnumKode> enumId2 = enumId.asReplicaVersion(SnapshotVersion.createInstance("2011-10-02 08:03:15.00"));
         assertEquals(enumId2.getSnapshotVersion(), SnapshotVersion.CURRENT);
     }
+
+    public void testEnumKodeMedKodelisteSomBrukerStringIdValue()  {
+        SEnumKodeId kodeAId = SEnumKodeId.KodeAId;
+        assertEquals(kodeAId.getValue(), new Long(1));
+        assertEquals(SEnumKodeId.KODELISTE_ID.getValueType(), String.class);
+    }
 }
+
+

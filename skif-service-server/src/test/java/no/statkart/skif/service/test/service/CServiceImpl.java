@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class CServiceImpl implements CService {

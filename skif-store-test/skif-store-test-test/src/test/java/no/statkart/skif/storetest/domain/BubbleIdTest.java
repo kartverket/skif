@@ -17,7 +17,7 @@ public class BubbleIdTest  {
 
     public void testTestBubbleId() {
         assertEquals(BubbleIds.getValueType(TestBubbleId.class), Long.class);
-        TestBubbleId<?> testBubbleId = BubbleIds.createInstance(TestBubbleId.class, 10, SnapshotVersion.CURRENT);
+        TestBubbleId<?> testBubbleId = BubbleIds.createInstance(TestBubbleId.class, new Long(10), SnapshotVersion.CURRENT);
         assertEquals(testBubbleId.getValue(), new Long(10));
         assertEquals(testBubbleId.getValueType(), Long.class);
         assertEquals(testBubbleId.getSnapshotVersion(), SnapshotVersion.CURRENT);

@@ -4,7 +4,7 @@ import no.statkart.skif.service.module.common.RemoteServiceModuleStrategy;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class StrategyTuples {
     public static <T extends ModuleStrategy> StrategyTuple<T> newStrategyTuple() {

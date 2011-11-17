@@ -1,6 +1,8 @@
 package no.statkart.skif.service.ejb;
 
 import no.statkart.skif.service.ServicesListing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -25,9 +27,10 @@ import java.util.Set;
  * TODO: Pt må alle slike kjøres før servermodulen opprettes. Kunne være fint hvis dette ikke var nødvendig
  *
  * @author Henrik Fredholm
- * @since 0.5
+ * @since 2.0
  */
 public abstract class EJBRegistration implements ServletContextListener {
+    private static Logger logger = LoggerFactory.getLogger(EJBRegistration.class);
     final protected ServicesListing servicesListing;
 
     public EJBRegistration(ServicesListing servicesListing) {
@@ -47,8 +50,7 @@ public abstract class EJBRegistration implements ServletContextListener {
         final Collection<Class<?>> requiredServices = getRequiredServices();
         for (Class<?> service : requiredServices) {
             if (!servicesFromEJBContext.contains(service)) {
-                // TODO: Bruk logging
-                System.out.println("XXXXX - Missing @EJB service ref: " + service.getName());
+                logger.error("Missing @EJB service ref: {}", service.getName());
             }
         }
     }

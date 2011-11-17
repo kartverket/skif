@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.kode.StoreTestDbKode;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public abstract class CDbKode extends DbKode implements StoreTestDbKode {
     @Override

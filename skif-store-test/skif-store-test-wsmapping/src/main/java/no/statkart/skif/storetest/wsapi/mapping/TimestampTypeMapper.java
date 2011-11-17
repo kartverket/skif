@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class TimestampTypeMapper extends AbstractStoreTestTypeMapper<no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp, Timestamp> {
 

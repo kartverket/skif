@@ -65,6 +65,7 @@ public class StoreTestServerModule extends SkifModule {
                 facotryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
                 facotryBuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
                 facotryBuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", CDbKode.class, C1DbKode.class, C2DbKode.class);
+                facotryBuilder.addResourceUsingRelativePath("kodeliste", XStrDbKode.class);
                 facotryBuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodelisteLong.class);
                 facotryBuilder.addResource(TestBubble.class);
                 facotryBuilder.addResource(Foo.class);
@@ -95,6 +96,7 @@ public class StoreTestServerModule extends SkifModule {
         kodelisteManager.installStatic(AEnumKodeId.class);
         kodelisteManager.installStatic(BEnumKodeId.class);
         kodelisteManager.installStatic(CEnumKodeId.class);
+//        kodelisteManager.installStatic(SEnumKodeId.class);
         return kodelisteManager;
     }
 

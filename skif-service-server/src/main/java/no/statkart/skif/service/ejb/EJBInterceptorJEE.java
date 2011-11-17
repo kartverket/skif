@@ -35,7 +35,7 @@ public abstract class EJBInterceptorJEE {
     public Object aroundService(InvocationContext invocationContext) throws Exception {
         Injector injector = getInjector();
 
-         TxMode origTxMode=null;
+        TxMode origTxMode = null;
         try {
             TypeLiteral<EJBAttributesLookup<?>> type = SkifUtil.typeLiteral(EJBAttributesLookup.class, invocationContext.getMethod().getDeclaringClass());
             EJBAttributesLookup<?> ejbAttributesLookup = injector.getInstance(Key.get(type));
@@ -43,10 +43,12 @@ public abstract class EJBInterceptorJEE {
             ServiceRequestContext serviceRequestContext = injector.getInstance(ServiceRequestContext.class);
             origTxMode = serviceRequestContext.getTxMode();
 
-            System.out.println("BEG - " + origTxMode + "-->" + txType + " " + invocationContext.getMethod());
+            if (logger.isDebugEnabled()) {
+                logger.debug("BEG - " + origTxMode + "-->" + txType + " " + invocationContext.getMethod());
+            }
 
             if (isNewContextRequired(origTxMode, txType)) {
-                return executeInNewContext(injector, invocationContext, serviceRequestContext , txType, ejbAttributesLookup.isBeanManagedTransaction());
+                return executeInNewContext(injector, invocationContext, serviceRequestContext, txType, ejbAttributesLookup.isBeanManagedTransaction());
             } else {
                 return executeInExistingContext(injector, invocationContext, serviceRequestContext, origTxMode, txType);
             }
@@ -54,8 +56,13 @@ public abstract class EJBInterceptorJEE {
             logger.debug("Exception i EJBInterceptor", t);
             throw t;
         } finally {
-            System.out.println("END - " + invocationContext.getMethod());
-            if (origTxMode == TxMode.NOT_IN_EJB) System.out.println();
+            if (logger.isDebugEnabled()) {
+                if (origTxMode == TxMode.NOT_IN_EJB) {
+                    logger.debug("END - {}\n" + invocationContext.getMethod());
+                } else {
+                    logger.debug("END - " + invocationContext.getMethod());
+                }
+            }
         }
     }
 
@@ -65,9 +72,9 @@ public abstract class EJBInterceptorJEE {
         return ejbAttributesLookup.lookupAttribute(invocationContext.getMethod());
     }
 
-    private Object executeInNewContext(Injector injector, InvocationContext invocationContext, ServiceRequestContext serviceRequestContext,  TransactionAttributeType txType, boolean isBeanManagedTransaction) throws Exception {
+    private Object executeInNewContext(Injector injector, InvocationContext invocationContext, ServiceRequestContext serviceRequestContext, TransactionAttributeType txType, boolean isBeanManagedTransaction) throws Exception {
         final TxMode txMode = (txType == TransactionAttributeType.REQUIRED || txType == TransactionAttributeType.REQUIRES_NEW) ? TxMode.TX : TxMode.NO_TX;
-        ServiceRequestContext newServiceRequestContext = new ServiceRequestContext(serviceRequestContext, txMode,isBeanManagedTransaction, txType);
+        ServiceRequestContext newServiceRequestContext = new ServiceRequestContext(serviceRequestContext, txMode, isBeanManagedTransaction, txType);
         ServiceContext serviceContext = CopyHelper.copy(injector.getInstance(ServiceContext.class));
         newServiceRequestContext.setCallerPrincipal(sessionContext.getCallerPrincipal());
         newServiceRequestContext.incNestedLevel();
@@ -127,11 +134,11 @@ public abstract class EJBInterceptorJEE {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Canceling timer for " + s);
                 }
-                if (timer!=null) {
+                if (timer != null) {
                     timer.cancel();
                 }
             } catch (NoSuchObjectLocalException e) {
-                logger.debug("NoSuchObjectLocalException", e)   ;
+                logger.debug("NoSuchObjectLocalException", e);
                 // Ignore, timer has already fired
             }
         }

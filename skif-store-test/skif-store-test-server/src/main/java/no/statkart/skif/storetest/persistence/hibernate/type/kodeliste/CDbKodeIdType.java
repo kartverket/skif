@@ -5,7 +5,7 @@ import no.statkart.skif.storetest.domain.demo.koder.CDbKodeId;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class CDbKodeIdType extends KodeIdType {
     @Override

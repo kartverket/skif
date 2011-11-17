@@ -17,7 +17,7 @@ import java.util.Collection;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public interface StoreTestMapping extends Mapping {
     public StoreTestBubbleId<? extends StoreTestBubble> w2d(no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId source);

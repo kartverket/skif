@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Singleton
 public class OrderedCallServiceChainFactoryList<S> extends OrderedServiceChainFactoryList<CallServiceChainFactory<S>, S> {

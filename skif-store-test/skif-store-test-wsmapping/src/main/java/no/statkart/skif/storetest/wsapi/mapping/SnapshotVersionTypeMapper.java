@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class SnapshotVersionTypeMapper extends AbstractStoreTestTypeMapper<no.statkart.skif.storetest.wsapi.domain.SnapshotVersion, SnapshotVersion> {
 

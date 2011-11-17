@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
  * {@code ProxyHandler} for service {@code S} som sender kallet videre til instans av type {@code S}.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class InstanceCallProxyHandler<S> extends TerminatingProxyHandler<S> {
     final protected S instance;

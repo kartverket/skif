@@ -51,6 +51,20 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="TestSEnumKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestSEnumKode">
+        <xs:complexContent>
+            <xs:extension base="kodens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="TestADbKodeId">
         <xs:complexContent>
             <xs:extension base="kodens:KodeId">
@@ -92,17 +106,32 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="TestCDbKodeId">
+    <xs:complexType name="TestC2DbKodeId">
         <xs:complexContent>
             <xs:extension base="kodens:KodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="TestCDbKode">
+    <xs:complexType name="TestC2DbKode">
         <xs:complexContent>
             <xs:extension base="kodens:Kode">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="TestXStrDbKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestXStrDbKode">
+        <xs:complexContent>
+            <xs:extension base="kodens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
 </xs:schema>

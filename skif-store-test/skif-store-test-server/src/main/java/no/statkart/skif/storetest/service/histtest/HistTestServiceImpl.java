@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.persistence.BarFinder;
 import no.statkart.skif.persistence.FooFinder;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
@@ -16,10 +17,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  */
 public class HistTestServiceImpl implements HistTestService {
     private final HibernateStoreSessionManager sessionManager;
@@ -27,11 +30,17 @@ public class HistTestServiceImpl implements HistTestService {
 
     private final FooFinder fooFinder;
 
+    /**
+     * @since 2.1
+     */
+    private final BarFinder barFinder;
+
     @Inject
-    public HistTestServiceImpl(HibernateStoreSessionManager sessionManager, Store store, FooFinder fooFinder) {
+    public HistTestServiceImpl(HibernateStoreSessionManager sessionManager, Store store, FooFinder fooFinder, BarFinder barFinder) {
         this.sessionManager = sessionManager;
         this.store = store;
         this.fooFinder = fooFinder;
+        this.barFinder = barFinder;
     }
 
     @Override
@@ -97,5 +106,15 @@ public class HistTestServiceImpl implements HistTestService {
     @Override
     public Set<FooId<Foo>> findFooIdsForNr(long nr) {
         return fooFinder.findFooIdsForNr(nr);
+    }
+
+    @Override
+    public List<BarId> findBarIdsAliveAtSnapshot(Set<BarId<?>> barIds, SnapshotVersion snapshotVersion) {
+        return barFinder.findBarIdsAliveAtSnapshot(barIds, snapshotVersion);
+    }
+
+    @Override
+    public Map<FooId<?>, Set<BarId<?>>> findBarIdsForFooIds(Set<FooId<?>> fooIds, SnapshotVersion snapshotVersion) {
+        return barFinder.findBarIdsForFooIds(fooIds, snapshotVersion);
     }
 }

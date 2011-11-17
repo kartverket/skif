@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
  * TODO: Implementer EJB exception konvertering
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class EJBCallProxyHandlerJEE<S> extends EJBCallProxyHandler<S> {
     private final TypeLiteral<S> type;

@@ -11,7 +11,7 @@ import static org.testng.Assert.assertEquals;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Test
 public class MultiBinderTest {
@@ -157,7 +157,7 @@ public class MultiBinderTest {
         });
 
         String s = injector.getInstance(String.class);
-        System.out.println(s);
+        assertEquals(s, "no.statkart.skif.test.guice.TestService1 Test");
     }
 }
 

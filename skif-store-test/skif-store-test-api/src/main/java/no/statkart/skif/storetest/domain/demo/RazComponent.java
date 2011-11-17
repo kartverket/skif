@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 1.0
+ * @since 2.0
  */
 public class RazComponent implements Serializable{
 

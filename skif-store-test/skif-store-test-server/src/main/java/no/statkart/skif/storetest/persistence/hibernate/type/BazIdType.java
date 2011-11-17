@@ -15,7 +15,7 @@ public class BazIdType extends BubbleIdType {
     }
 
     @Override
-    protected Object createPrototypeId(Long value, SnapshotVersion snapshotVersion) {
-        return new BazId(value, snapshotVersion);
+    protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
+        return new BazId((Long)value, snapshotVersion);
     }
 }

@@ -16,7 +16,7 @@ public class DbKodeSupport<KL extends DbKodeliste, KLID extends DbKodelisteId<KL
         super(idClass, kodelisteId);
     }
 
-    public <I extends DbKodeId<? extends DbKode>> I define(Class<I> idClass, long idValue) {
+    public <I extends DbKodeId<? extends DbKode>> I define(Class<I> idClass, Object idValue) {
         I id = BubbleIds.createInstance(idClass, idValue, SnapshotVersion.CURRENT);
         return id;
     }

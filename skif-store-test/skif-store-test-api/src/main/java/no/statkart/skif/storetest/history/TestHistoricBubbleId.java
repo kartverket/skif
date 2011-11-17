@@ -22,11 +22,11 @@ public class TestHistoricBubbleId<T extends TestHistoricBubble> extends Abstract
         super(new Long(idValue));
     }
 
-    public TestHistoricBubbleId(Long idValue) {
+    public TestHistoricBubbleId(Object idValue) {
         super(idValue);
     }
 
-    public TestHistoricBubbleId(Long value, SnapshotVersion version) {
+    public TestHistoricBubbleId(Object value, SnapshotVersion version) {
         super(value, version);
     }
 }

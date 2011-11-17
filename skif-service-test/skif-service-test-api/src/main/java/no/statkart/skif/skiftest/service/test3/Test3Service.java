@@ -9,7 +9,7 @@ import no.statkart.skif.skiftest.exception.SimpleException;
  * parameter og bruker ServiceRequestContext i implementasjonen. Servicen kaller ikke andre komponenter.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface Test3Service {
     public A b2A(B b);

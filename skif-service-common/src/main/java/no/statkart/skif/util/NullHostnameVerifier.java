@@ -4,7 +4,7 @@ import javax.net.ssl.HostnameVerifier;
 /**
  * Denne godtar alt
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class NullHostnameVerifier implements HostnameVerifier {
 

@@ -11,7 +11,7 @@ import javax.interceptor.Interceptors;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 0.6
+ * @since 2.0
  */
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.skiftest.service.test1.Test1ServiceEJBBean")

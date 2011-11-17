@@ -4,7 +4,7 @@ import no.statkart.skif.service.chain.WSServiceChainFactoryBase;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class WSServerServiceModuleStrategyJEE extends WSServerServiceModuleStrategy {
     public WSServerServiceModuleStrategyJEE() {

@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
  * ikke har noen bean implementasjon.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Singleton
 public class EJBCallTypeChooserProxyHandler<S> extends TerminatingProxyHandler<S> {

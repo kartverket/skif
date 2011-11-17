@@ -2,7 +2,7 @@ package no.statkart.skif.skiftest.wsapi.mapping;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
 public class SkifTestMapper3 extends SkifTestMapper {
     public SkifTestMapper3() {

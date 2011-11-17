@@ -13,7 +13,7 @@ import no.statkart.skif.exception.SkifException;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class DServiceImpl implements DService {
     private final Provider<DService> indirectProvider;

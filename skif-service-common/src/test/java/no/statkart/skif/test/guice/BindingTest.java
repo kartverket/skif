@@ -3,9 +3,11 @@ package no.statkart.skif.test.guice;
 import com.google.inject.*;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
+
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 @Test
 public class BindingTest {
@@ -35,7 +37,7 @@ public class BindingTest {
         });
 
         String s = injector.getInstance(String.class);
-        System.out.println(s);
+        assertEquals(s, "no.statkart.skif.test.guice.TestService1 Test");
     }
 
 }

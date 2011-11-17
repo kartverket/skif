@@ -11,7 +11,7 @@ import java.io.PrintWriter;
  *
  *
  * @author Leif Lislegård
- * @since 0.6
+ * @since 2.0
  */
 public class ServerException extends RuntimeException {
 

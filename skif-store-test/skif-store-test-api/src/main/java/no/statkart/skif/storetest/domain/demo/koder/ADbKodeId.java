@@ -10,7 +10,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class ADbKodeId extends DbKodeId<ADbKode> implements StoreTestDbKodeId<ADbKode> {
     private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(ADbKodeId.class,new StoreTestDbKodelisteLongId(10001L, SnapshotVersion.CURRENT));
@@ -19,9 +19,15 @@ public class ADbKodeId extends DbKodeId<ADbKode> implements StoreTestDbKodeId<AD
     public static ADbKodeId A1Id = define(1);
     public static ADbKodeId A2Id = define(2);
 
-    protected ADbKodeId(Long value, SnapshotVersion snapshotVersion) {
+    @Override
+    public Long getValue() {
+        return (Long) super.getValue();
+    }
+
+    public ADbKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
+
 
     @Override
     protected DbKodeSupport getKodeSupport() {
@@ -31,14 +37,5 @@ public class ADbKodeId extends DbKodeId<ADbKode> implements StoreTestDbKodeId<AD
     protected static ADbKodeId define(long idValue) {
         return kodeSupport.define(ADbKodeId.class, idValue);
     }
-
-    public static ADbKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(ADbKodeId.class, idValue, SnapshotVersion.CURRENT);
-    }
-
-    private Object readResolve() {
-        return resolveInstance();
-    }
-
 }
 

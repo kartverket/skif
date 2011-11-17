@@ -33,7 +33,7 @@ import java.util.*;
  * TODO: pt brukes ikke lokale. Man kan angi null.
  *
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class KodelisteManager {
 

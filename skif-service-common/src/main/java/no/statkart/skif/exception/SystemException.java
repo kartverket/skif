@@ -11,7 +11,7 @@ import org.slf4j.Logger;
  * En skiller disse inn i {@link ImplementationException implementasjonsfeil} og {@link OperationalException operasjonsfeil}.
  *
  * @author Leif Lislegård
- * @since 0.6
+ * @since 2.0
  */
 public class SystemException extends SkifException {
 

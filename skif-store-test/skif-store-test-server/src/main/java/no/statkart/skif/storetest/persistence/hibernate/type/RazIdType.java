@@ -15,7 +15,7 @@ public class RazIdType extends BubbleIdType {
     }
 
     @Override
-    protected Object createPrototypeId(Long value, SnapshotVersion snapshotVersion) {
-        return new RazId(value, snapshotVersion);
+    protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
+        return new RazId((Long)value, snapshotVersion);
     }
 }

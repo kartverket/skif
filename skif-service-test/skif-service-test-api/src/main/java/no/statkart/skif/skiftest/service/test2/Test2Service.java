@@ -8,7 +8,7 @@ import no.statkart.skif.skiftest.domain.B;
  * parameter og bruker ServiceRequestContext i implementasjonen. Servicen kaller ikke andre komponenter.
  *
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public interface Test2Service {
     public B a2B(A a);

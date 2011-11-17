@@ -5,7 +5,7 @@ import no.statkart.skif.store.kodeliste.Kodeliste;
 /**
  * @author Henrik Fredholm
  */
-public class StoreTestKodelisteLongImpl extends Kodeliste implements StoreTestKodelisteLong {
+public class StoreTestKodelisteImplLong extends Kodeliste implements StoreTestKodelisteLong {
     @Override
     public StoreTestKodelisteImplLongId<?> getId() {
         return (StoreTestKodelisteImplLongId<?>) super.getId();

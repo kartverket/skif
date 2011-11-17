@@ -20,7 +20,7 @@ import java.util.Set;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleStrategy> {
     protected final Set<Class<? extends Object>> services = new HashSet<Class<? extends Object>>();

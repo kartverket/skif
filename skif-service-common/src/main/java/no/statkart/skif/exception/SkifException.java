@@ -10,7 +10,7 @@ import org.slf4j.Logger;
  *
  * @author Henrik Fredholm
  * @author Leif Lislegård
- * @since 0.6
+ * @since 2.0
  */
 public class SkifException extends RuntimeException {
     private String feilkode = "";

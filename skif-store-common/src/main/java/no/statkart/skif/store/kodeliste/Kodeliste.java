@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public abstract class Kodeliste extends AbstractBubbleObject  {
     private Class<? extends KodeId<?>> kodeIdClass;

@@ -9,7 +9,7 @@ import java.util.HashSet;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 2.5
+ * @since 2.0
  */
 public class BarfoosTypeMapper extends StoreTestBubbleTypeMapper<no.statkart.skif.storetest.wsapi.domain.demo.BarFoos, BarFoos> {
     public BarfoosTypeMapper() {

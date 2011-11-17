@@ -10,7 +10,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
  * @author Henrik Fredholm
- * @since 0.6
+ * @since 2.0
  */
 public class BDbKodeId extends DbKodeId<BDbKode> implements StoreTestDbKodeId<BDbKode> {
     private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(BDbKodeId.class,new StoreTestDbKodelisteLongId(10002L, SnapshotVersion.CURRENT));
@@ -19,7 +19,12 @@ public class BDbKodeId extends DbKodeId<BDbKode> implements StoreTestDbKodeId<BD
     public static BDbKodeId B1Id = define(1);
     public static BDbKodeId B2Id = define(2);
 
-    protected BDbKodeId(Long value, SnapshotVersion snapshotVersion) {
+    @Override
+    public Long getValue() {
+        return (Long) super.getValue();
+    }
+
+    public  BDbKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 
@@ -30,10 +35,6 @@ public class BDbKodeId extends DbKodeId<BDbKode> implements StoreTestDbKodeId<BD
 
     protected static BDbKodeId define(long idValue) {
         return kodeSupport.define(BDbKodeId.class, idValue);
-    }
-
-    public static BDbKodeId createInstance(long idValue) {
-        return kodeSupport.createInstance(BDbKodeId.class, idValue, SnapshotVersion.CURRENT);
     }
 
     private Object readResolve() {

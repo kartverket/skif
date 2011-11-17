@@ -1,15 +1,16 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.kode.StoreTestKodeId;
 
 import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Henrik Fredholm
- * @since 0.3
+ * @since 2.0
  */
-public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kode.KodeId, DomainT extends StoreTestKodeId> extends AbstractStoreTestTypeMapper<WsapiT,DomainT> {
+public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kode.KodeId, DomainT extends StoreTestKodeId> extends AbstractStoreTestTypeMapper<WsapiT, DomainT> {
 
     public KodeIdTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
         super(wsapiClass, domainClass);
@@ -23,7 +24,13 @@ public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.do
 
     @Override
     protected DomainT getInitialDomainObject(WsapiT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        DomainT target = BubbleIds.createInstance(getDomainClass(), Long.parseLong(source.getValue()));
+        DomainT target;
+        Class valueType = BubbleIds.getValueType(getDomainClass());
+        if (valueType == Long.class) {
+            target = BubbleIds.createInstance(getDomainClass(), Long.valueOf(source.getValue()), SnapshotVersion.CURRENT);
+        } else {
+            target = BubbleIds.createInstance(getDomainClass(), source.getValue(), SnapshotVersion.CURRENT);
+        }
         return target;
     }
 }

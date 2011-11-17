@@ -6,14 +6,17 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import no.statkart.skif.exception.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.ws.WebServiceContext;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public abstract class SkifWebService<T extends ServiceWSI> {
+    private static Logger logger = LoggerFactory.getLogger(SkifWebService.class);
     Class<T> serviceClass;
 
     protected SkifWebService(Class<T> serviceClass) {
@@ -21,19 +24,21 @@ public abstract class SkifWebService<T extends ServiceWSI> {
     }
 
     private WebServiceImplementationFactory<T> getFactory(Injector injector) {
-        TypeLiteral<WebServiceImplementationFactory<T>> factoryType =  (TypeLiteral<WebServiceImplementationFactory<T>>) TypeLiteral.get(Types.newParameterizedType(WebServiceImplementationFactory.class, serviceClass));
+        TypeLiteral<WebServiceImplementationFactory<T>> factoryType = (TypeLiteral<WebServiceImplementationFactory<T>>) TypeLiteral.get(Types.newParameterizedType(WebServiceImplementationFactory.class, serviceClass));
         return injector.getInstance(Key.get(factoryType));
     }
 
     protected T getServiceImplementation(Injector injector, WebServiceContext ctx) {
-        System.out.println("SKIF: Creating WebService: " + getClass().getName() + " using injector: " + System.identityHashCode(injector) );
+        if (logger.isInfoEnabled()) {
+            logger.info("Oppretter WebService: " + getClass().getName() + " vha injector: " + System.identityHashCode(injector));
+        }
         try {
-            if (injector==null) {
-                throw new ConfigurationException("Fant ikke injector for "+ getClass().getName() + ": Sjekk at init() metoden setter injector hørende til modulen");
+            if (injector == null) {
+                throw new ConfigurationException("SKIF: Fant ikke injector for " + getClass().getName() + ": Sjekk at init() metoden setter injector hørende til modulen");
             }
             return getFactory(injector).getService(ctx, this.getClass());
         } catch (RuntimeException e) {
-            e.printStackTrace();
+            logger.error("Kunne ikke opprette WebService: "+ getClass().getName() + " vha injector: " + System.identityHashCode(injector),e);
             throw e;
         }
     }

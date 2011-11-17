@@ -8,7 +8,7 @@ import no.statkart.skif.service.module.server.ServerModule;
 
 /**
  * @author Henrik Fredholm
- * @since 1.1
+ * @since 2.0
  */
 public class TestServerModule extends TestModule {
     public TestServerModule(ModuleConfiguration moduleConfiguration) {
