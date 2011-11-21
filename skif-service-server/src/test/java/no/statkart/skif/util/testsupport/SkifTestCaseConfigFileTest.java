@@ -16,8 +16,8 @@ import static org.testng.Assert.assertTrue;
 public class SkifTestCaseConfigFileTest extends SkifTestCase {
 
     @Override
-    protected String getConfigurationFilename() {
-        return "no/statkart/skif/util/testsupport/test-skif-singlevm-true.properties";
+    protected String[] getConfigurationFilenames() {
+        return new String[]{"no/statkart/skif/util/testsupport/test-skif-singlevm-true.properties"};
     }
 
     @Override

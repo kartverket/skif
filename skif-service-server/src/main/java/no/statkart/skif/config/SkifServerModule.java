@@ -39,11 +39,11 @@ public class SkifServerModule extends SkifModule {
     protected void configure() {
         install(new ServerModule(moduleConfiguration));
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
-            String username = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.DB_USERNAME);
-            String password = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.DB_PASSWORD);
-            String sid = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.DB_SID);
-            String hostname = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.DB_HOSTNAME);
-            String port = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.DB_PORT);
+            String username = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_USERNAME);
+            String password = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_PASSWORD);
+            String sid = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_SID);
+            String hostname = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_HOSTNAME);
+            String port = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_PORT);
             String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
             bind(ConnectionFactory.class).toInstance(new JDBCConnectionFactory(url, username, password));
             bind(ConnectionManager.class).to(ConnectionManagerSingleVm.class).in(ServiceRequestScoped.class);

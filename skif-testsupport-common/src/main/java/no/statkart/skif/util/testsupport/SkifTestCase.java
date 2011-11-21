@@ -4,7 +4,8 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.SkifConfigConstants;
+import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.config.SystemConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.LoginUser;
@@ -20,6 +21,7 @@ import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -91,9 +93,9 @@ public class SkifTestCase {
 
     private Class<? extends Module> singleVmServerModuleClass;
 
-    private String configurationFilename = "skif.properties";
+    private String[] configurationFilenames = null;
 
-    private String singleVmServerConfigurationFilename = "skif.properties";
+    private String[] singleVmServerConfigurationFilenames = null;
 
     private Boolean singleVm;
 
@@ -126,18 +128,12 @@ public class SkifTestCase {
         setModuleClass((Class<? extends Module>) SkifUtil.classForName(moduleClassname));
     }
 
-    /**
-     * Angir filnavn på properties for konfigurasjonen. Default er "skif.properties". Hvis filen ikke
-     * finnes eller metoden returnerer null brukes et tomt properties sett.
-     *
-     * @return
-     */
-    protected String getConfigurationFilename() {
-        return configurationFilename;
+    protected String[] getConfigurationFilenames() {
+        return configurationFilenames;
     }
 
-    protected void setConfigurationFilename(String configurationFilename) {
-        this.configurationFilename = configurationFilename;
+    protected void setConfigurationFilenames(String[] configurationFilenames) {
+        this.configurationFilenames = configurationFilenames;
     }
 
     protected Class<? extends Module> getSingleVmServerModuleClass() {
@@ -165,13 +161,13 @@ public class SkifTestCase {
      * Angir SingleVm ServerConfigurasjonsklasse. Denne må være satt, enten direkte eller indirekte, for at
      * en SingleVm server skal kunne opprettes
      */
-    protected String getSingleVmServerConfigurationFilename() {
-        return singleVmServerConfigurationFilename;
+    protected String[] getSingleVmServerConfigurationFilenames() {
+        return singleVmServerConfigurationFilenames;
 
     }
 
-    protected void setSingleVmServerConfigurationFilename(String singleVmServerConfigurationFilename) {
-        this.singleVmServerConfigurationFilename = singleVmServerConfigurationFilename;
+    protected void setSingleVmServerConfigurationFilenames(String[] singleVmServerConfigurationFilenames) {
+        this.singleVmServerConfigurationFilenames = singleVmServerConfigurationFilenames;
     }
 
     /**
@@ -247,9 +243,11 @@ public class SkifTestCase {
             builder.setModuleClassname(moduleClassname);
         }
 
-        String configurationFilename = getConfigurationFilename();
-        if (configurationFilename!=null) {
-            builder.setConfigurationFilename(configurationFilename);
+        String[] configurationFilenames = getConfigurationFilenames();
+        if (configurationFilenames!=null) {
+            builder.setConfiguration(new SkifConfiguration(configurationFilenames));
+        } else {
+            builder.setConfiguration(new SkifConfiguration());
         }
 
         String singleVmServerModuleClassname = getSingleVmServerModuleClassname();
@@ -257,9 +255,11 @@ public class SkifTestCase {
             builder.setSingleVmServerModuleClassname(singleVmServerModuleClassname);
         }
 
-        String singleVmServerConfigurationFilename = getSingleVmServerConfigurationFilename();
-        if (singleVmServerConfigurationFilename!=null) {
-            builder.setSingleVmServerConfigurationFilename(singleVmServerConfigurationFilename);
+        String[] singleVmServerConfigurationFilenames = getSingleVmServerConfigurationFilenames();
+        if (singleVmServerConfigurationFilenames!=null) {
+            builder.setSingleVmServerConfiguration(new SkifConfiguration(singleVmServerConfigurationFilenames));
+        } else {
+            builder.setSingleVmServerConfiguration(new SkifConfiguration());
         }
 
 
@@ -274,7 +274,7 @@ public class SkifTestCase {
      * Beregner konfigurasjonsnøkkel for testcase på basis av hvilke konfigurasjonsklasser testcasen bruker.
      */
     protected final String calcConfigurationKey() {
-        return getModuleClassname() + ":" + getConfigurationFilename() + ":" + getSingleVmServerModuleClassname() + ":" +  getSingleVmServerConfigurationFilename()+ ":" + isSingleVm();
+        return getModuleClassname() + ":" + Arrays.toString(getConfigurationFilenames()) + ":" + getSingleVmServerModuleClassname() + ":" +  Arrays.toString(getSingleVmServerConfigurationFilenames()) + ":" + isSingleVm();
     }
 
     /**
@@ -299,13 +299,13 @@ public class SkifTestCase {
     protected void resetLogin() {
         Configuration configuration = injector.getInstance(Configuration.class);
 
-        String serverUrl = configuration.getString(ConfigurationConstants.SERVER_URL);
+        String serverUrl = configuration.getString(SkifConfigConstants.SERVER_URL);
         final ServerUrlHolder serverUrlHolder = injector.getInstance(ServerUrlHolder.class);
         serverUrlHolder.set(serverUrl);
 
         LoginUserHolder userHolder = injector.getInstance(LoginUserHolder.class);
-        String username = configuration.getString(ConfigurationConstants.SERVER_USERNAME);
-        String password = configuration.getString(ConfigurationConstants.SERVER_PASSWORD);
+        String username = configuration.getString(SkifConfigConstants.SERVER_USERNAME);
+        String password = configuration.getString(SkifConfigConstants.SERVER_PASSWORD);
         userHolder.set(new LoginUser(username, password));
 
     }
@@ -317,7 +317,7 @@ public class SkifTestCase {
      * @param o2  objekt vi vil sammenligne mot o
      * @param <T> Klasse for objektene o og o2
      */
-    protected <T extends Object> void compareWithAsserts(T o, T o2) {
+    protected <T> void compareWithAsserts(T o, T o2) {
         Method[] methods = o.getClass().getMethods();
 
         for (Method method : methods) {

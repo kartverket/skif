@@ -30,8 +30,8 @@ public class SkifTestCaseReusableInjectorReuseDisabledCreatorTest extends SkifTe
     SingleVmServer singleVmServer;
 
     @Override
-    protected String getConfigurationFilename() {
-        return "no/statkart/skif/util/testsupport/reuse-disabled.properties";
+    protected String[] getConfigurationFilenames() {
+        return new String[]{"no/statkart/skif/util/testsupport/reuse-disabled.properties"};
     }
 
 

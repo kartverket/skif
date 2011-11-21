@@ -1,12 +1,10 @@
 package no.statkart.skif.skiftest;
 
-import no.statkart.skif.config.ConfigurationConstants;
-import no.statkart.skif.config.PropertiesConfiguration;
+import no.statkart.skif.config.SkifConfigConstants;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.SkifConfiguration;
 import org.testng.annotations.Test;
 
-import java.util.Properties;
-
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -21,8 +19,8 @@ public class ConfigurationTest {
      * en property SINGLE_VM som er satt til enten true eller false.
      */
     public void testReadSkifProperties() {
-        PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration("skif.properties");
-        String value = propertiesConfiguration.getString(ConfigurationConstants.SINGLE_VM);
+        Configuration configuration = new SkifConfiguration();
+        String value = configuration.getString(SkifConfigConstants.SINGLE_VM);
         assertTrue("true".equalsIgnoreCase(value)||"false".equalsIgnoreCase(value));
     }
 }

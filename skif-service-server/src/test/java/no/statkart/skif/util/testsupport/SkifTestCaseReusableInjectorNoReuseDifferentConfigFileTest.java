@@ -44,10 +44,10 @@ public class SkifTestCaseReusableInjectorNoReuseDifferentConfigFileTest extends 
     }
 
     @Override
-    protected String getConfigurationFilename() {
+    protected String[] getConfigurationFilenames() {
         // Returner property som ikke hedder "skif.properties" slik at configurationKey som beregnes av SkifTestCase blir
         // forskjellig fra den brukt av tidligere tester. Det vil fører til at server instansen ikke gjenbrukes
-        return "no/statkart/skif/util/testsupport/empty.properties";
+        return new String[]{"no/statkart/skif/util/testsupport/empty.properties"};
     }
 
     @Override

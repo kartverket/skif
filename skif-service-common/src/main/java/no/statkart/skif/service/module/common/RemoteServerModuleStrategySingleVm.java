@@ -2,7 +2,7 @@ package no.statkart.skif.service.module.common;
 
 import com.google.inject.Binder;
 import com.google.inject.Injector;
-import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.service.SingleVmServer;
 
 /**
@@ -15,7 +15,7 @@ public class RemoteServerModuleStrategySingleVm extends RemoteServerModuleStrate
     @Override
     public void configure(Binder binder) {
         if (injector==null) {
-            injector = (Injector) getConfiguration().getProperty(ConfigurationConstants.SINGLE_VM_SERVER_INJECTOR);
+            injector = (Injector) getConfiguration().getProperty(SkifConfigConstants.SINGLE_VM_SERVER_INJECTOR);
         }
         binder.bind(SingleVmServer.class).toInstance(new SingleVmServer(injector));
     }

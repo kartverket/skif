@@ -2,7 +2,7 @@ package no.statkart.skif.module;
 
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.MapConfiguration;
 import no.statkart.skif.exception.ImplementationException;
@@ -46,14 +46,14 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
     @Override
     public ServiceMode getServiceMode() {
         if (serviceMode!=null) return serviceMode;
-        final boolean isSingleVm = configuration.getBoolean(ConfigurationConstants.SINGLE_VM, false);
+        final boolean isSingleVm = configuration.getBoolean(SkifConfigConstants.SINGLE_VM, false);
         return isSingleVm ? ServiceMode.SINGLE_VM : ServiceMode.JEE;
 
     }
 
     public DefaultModuleConfiguration setServiceMode(ServiceMode serviceMode) {
         this.serviceMode=null;
-        configuration.setProperty(ConfigurationConstants.SINGLE_VM, String.valueOf(serviceMode==ServiceMode.SINGLE_VM));
+        configuration.setProperty(SkifConfigConstants.SINGLE_VM, String.valueOf(serviceMode==ServiceMode.SINGLE_VM));
         return this;
     }
 
@@ -63,7 +63,7 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
     }
 
     protected ModuleStrategyFactory createStrategyFactory() {
-        final String classname = configuration.getString(ConfigurationConstants.MODULE_STRATEGY_FACTORY_CLASS);
+        final String classname = configuration.getString(SkifConfigConstants.MODULE_STRATEGY_FACTORY_CLASS);
         if (classname==null) return null;
 
         Class<? extends ModuleStrategyFactory> strategyFactoryClass = SkifUtil.classForName(classname);

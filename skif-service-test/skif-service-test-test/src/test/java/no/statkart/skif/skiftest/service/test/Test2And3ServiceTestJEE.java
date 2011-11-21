@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.ServiceMode;
+import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.mapper.IdentityMapper;
@@ -44,7 +45,7 @@ import static org.testng.Assert.assertEquals;
 public class Test2And3ServiceTestJEE {
     private Injector injector;
 
-    SkifTestConfigurationAccessor config  = new SkifTestConfigurationAccessor();
+    SkifTestConfigurationAccessor config  = new SkifTestConfigurationAccessor(new SkifConfiguration());
 
     private ModuleConfiguration createClientConfiguration() {
         return new DefaultModuleConfiguration()

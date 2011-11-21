@@ -3,7 +3,7 @@ package no.statkart.skif.service.module;
 import com.google.inject.*;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -97,7 +97,7 @@ public class SingleVmModuleTest {
     }
 
     private Injector createClientInjector(Injector serverInjector, List<Class<? extends Object>> services) {
-        clientCfg.getConfiguration().setProperty(ConfigurationConstants.SINGLE_VM_SERVER_INJECTOR, serverInjector);
+        clientCfg.getConfiguration().setProperty(SkifConfigConstants.SINGLE_VM_SERVER_INJECTOR, serverInjector);
         return Guice.createInjector(
                 new RemoteServerModule(clientCfg),
                 new RemoteServiceModule(clientCfg, services, new IdentityMapper().getMapping())

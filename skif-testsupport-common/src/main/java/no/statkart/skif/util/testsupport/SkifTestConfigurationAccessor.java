@@ -1,7 +1,8 @@
 package no.statkart.skif.util.testsupport;
 
+import com.google.inject.Inject;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.PropertiesConfiguration;
 
 /**
@@ -10,24 +11,21 @@ import no.statkart.skif.config.PropertiesConfiguration;
 public class SkifTestConfigurationAccessor {
     public final Configuration configuration;
 
-    public SkifTestConfigurationAccessor() {
-        this(new PropertiesConfiguration("skif.properties"));
-    }
-
+    @Inject
     public SkifTestConfigurationAccessor(Configuration configuration) {
         this.configuration = configuration;
     }
 
     public String getServerUrl() {
-        return configuration.getString(ConfigurationConstants.SERVER_URL);
+        return configuration.getString(SkifConfigConstants.SERVER_URL);
     }
 
     public String getUsername() {
-        return configuration.getString(ConfigurationConstants.SERVER_USERNAME);
+        return configuration.getString(SkifConfigConstants.SERVER_USERNAME);
     }
 
     public String getPassword() {
-        return configuration.getString(ConfigurationConstants.SERVER_PASSWORD);
+        return configuration.getString(SkifConfigConstants.SERVER_PASSWORD);
     }
 
     public String getTestUser() {

@@ -4,7 +4,7 @@ import com.google.inject.TypeLiteral;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -81,7 +81,7 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
     protected StoreHibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
         Properties properties = getHibernateProperties();
         logger.trace("Properties used for configuring hibernate: '{}'", properties);
-        String mappingFileDirectoryRoot = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.HIBERNATE_MAPPRING_FILE_ROOT, mappingFileDirectoryRootDefault);
+        String mappingFileDirectoryRoot = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.HIBERNATE_MAPPRING_FILE_ROOT, mappingFileDirectoryRootDefault);
         return HibernateVersionFactory.Accessor.get().createStoreHibernateSessionFactoryBuilder(properties, mappingFileDirectoryRoot, new HibernateStoreInterceptor());
     }
 

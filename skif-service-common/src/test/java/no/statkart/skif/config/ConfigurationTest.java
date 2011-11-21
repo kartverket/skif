@@ -63,4 +63,22 @@ public class ConfigurationTest {
         assertEquals(cfg.getProperty("key4"), "overwritten4");
     }
 
+    public void testSkifConfiguration() {
+        SkifConfiguration skifConfiguration = new SkifConfiguration(getClass().getResource("configuration-test.properties").toString());
+
+        assertEquals(skifConfiguration.getString("key1"), "value1");
+
+        System.setProperty("key1", "system1");
+        assertEquals(skifConfiguration.getString("key1"), "system1");
+
+        skifConfiguration.setProperty("key1", "overridden1");
+        assertEquals(skifConfiguration.getString("key1"), "overridden1");
+
+        skifConfiguration.clearProperty("key1");
+        assertEquals(skifConfiguration.getString("key1"), "system1");
+
+        System.clearProperty("key1");
+        assertEquals(skifConfiguration.getString("key1"), "value1") ;
+    }
+
 }

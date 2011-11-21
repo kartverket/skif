@@ -7,18 +7,16 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
 
-import static no.statkart.skif.config.ConfigurationConstants.*;
+import static no.statkart.skif.config.SkifConfigConstants.*;
 
-import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.*;
 import no.statkart.skif.config.internal.ConfigurationUtils;
-import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.guava.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -44,6 +42,7 @@ public class ModuleBuilder {
      * constructoren når builderen opprettes. Moduler som deler Configuration instans bruker samme SystemConfiguration
      * instans. Moduler som ikke deler Configuration instans bruker hver sin SystemConfiguration kopi. SingleVmServer
      * moduler deler ikke Configuration instans med klienten har bruker derfor sin egen SystemConfiguration instans.
+     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      */
     private SystemConfiguration systemConfiguration;
 
@@ -80,6 +79,7 @@ public class ModuleBuilder {
 
     /**
      * Configuration som kombinerer alle de andre configurations. Initialiseres lazy.
+     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      */
     private CompositeConfiguration compositeConfiguration;
 
@@ -87,6 +87,10 @@ public class ModuleBuilder {
         this(null);
     }
 
+    /**
+     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
+     * @param systemConfiguration systemkonfigurasjon
+     */
     public ModuleBuilder(SystemConfiguration systemConfiguration) {
         this.systemConfiguration = systemConfiguration;
         this.builderConfiguration = new MapConfiguration();
@@ -150,10 +154,19 @@ public class ModuleBuilder {
         return this;
     }
 
+    /**
+     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
+     * @return konfigurasjonsfilnavn
+     */
     public String getConfigurationFilename() {
         return getCompositeConfiguration().getString(CONFIGURATION_FILENAME);
     }
 
+    /**
+     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
+     * @param filename navn på konfigurasjonsfil
+     * @return <code>this</code>
+     */
     public ModuleBuilder setConfigurationFilename(String filename) {
         builderConfiguration.setProperty(CONFIGURATION_FILENAME, filename);
         setConfiguration(null);
@@ -312,7 +325,7 @@ public class ModuleBuilder {
     }
 
     private Configuration createConfigurationForModule() {
-        CompositeConfiguration c = new CompositeConfiguration(ConfigurationUtils.cloneConfiguration(builderConfiguration));
+        StackedConfiguration c = new StackedConfiguration((MapConfiguration) builderConfiguration.clone());
         if (systemConfiguration != null) {
             c.addConfiguration(systemConfiguration);
         }
@@ -320,6 +333,7 @@ public class ModuleBuilder {
             Injector singleVmServerInjector = getSingleVmServerInjector();
             c.setProperty(SINGLE_VM_SERVER_INJECTOR, singleVmServerInjector);
         }
+        c.addConfiguration(getConfiguration());
         return c;
     }
 
@@ -333,7 +347,7 @@ public class ModuleBuilder {
         ModuleConfiguration moduleConfiguration = new DefaultModuleConfiguration(c, moduleStrategyFactory);
         if (getServiceMode() == ServiceMode.SINGLE_VM && getSingleVmServerModuleClassname() != null) {
             Injector singleVmServerInjector = getSingleVmServerInjector();
-            moduleConfiguration.getConfiguration().setProperty(ConfigurationConstants.SINGLE_VM_SERVER_INJECTOR, singleVmServerInjector);
+            moduleConfiguration.getConfiguration().setProperty(SkifConfigConstants.SINGLE_VM_SERVER_INJECTOR, singleVmServerInjector);
         }
         return moduleConfiguration;
     }

@@ -1,7 +1,7 @@
 package no.statkart.skif.util;
 
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.JDBCConnectionFactory;
 
@@ -59,11 +59,11 @@ public class JDBCHelper {
     }
 
     public static JDBCConnectionFactory createJDBCConnectionFactory(Configuration configuration) {
-        String username = configuration.getString(ConfigurationConstants.DB_USERNAME);
-        String password = configuration.getString(ConfigurationConstants.DB_PASSWORD);
-        String sid = configuration.getString(ConfigurationConstants.DB_SID);
-        String hostname = configuration.getString(ConfigurationConstants.DB_HOSTNAME);
-        String port = configuration.getString(ConfigurationConstants.DB_PORT);
+        String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
+        String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
+        String sid = configuration.getString(SkifConfigConstants.DB_SID);
+        String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
+        String port = configuration.getString(SkifConfigConstants.DB_PORT);
         String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
         return new JDBCConnectionFactory(url, username, password);
     }

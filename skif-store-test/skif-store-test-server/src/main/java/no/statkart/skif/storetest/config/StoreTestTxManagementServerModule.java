@@ -4,7 +4,7 @@ import com.google.inject.Singleton;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
-import no.statkart.skif.config.ConfigurationConstants;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
@@ -52,11 +52,11 @@ public class StoreTestTxManagementServerModule extends SkifModule {
 
         // Konfigurer factories for database connections og hibernate
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
-            String username = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.DB_USERNAME);
-            String password = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.DB_PASSWORD);
-            String sid = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.DB_SID);
-            String hostname = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.DB_HOSTNAME);
-            String port = moduleConfiguration.getConfiguration().getString(ConfigurationConstants.DB_PORT);
+            String username = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_USERNAME);
+            String password = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_PASSWORD);
+            String sid = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_SID);
+            String hostname = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_HOSTNAME);
+            String port = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_PORT);
             String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
             bind(ConnectionFactory.class).toInstance(new JDBCConnectionFactory(url, username, password));
 

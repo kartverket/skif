@@ -1,6 +1,8 @@
 package no.statkart.skif.store;
 
 import com.google.inject.Inject;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotLockedException;
 import no.statkart.skif.locker.LockInfo;
@@ -38,17 +40,20 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     private final DBLockerInTransactionService<Long> lockerInTransactionService;
 
     //TODO: Skal disse være her?
-    private long lockTimeout = 240 * 60 * 1000 /* 4 timer */;
-    protected long MAX_TRANSACTION_DURATION = 30 * 60 * 1000; // 30 minutter
+    private final long LOCK_TIMEOUT;
+    private final long MAX_TRANSACTION_DURATION;
 
     //Informasjon om man har verifisert at låser for bruker vil vare til MAX_TRANSACTION_DURATION
     private boolean locksVerified = false;
 
 
     @Inject
-    public TransactionalLockerStrategy(DBLockerService lockerService, DBLockerInTransactionService lockerInTransactionService) {
+    public TransactionalLockerStrategy(DBLockerService lockerService, DBLockerInTransactionService lockerInTransactionService, Configuration configuration) {
         this.lockerService = lockerService;
         this.lockerInTransactionService = lockerInTransactionService;
+
+        LOCK_TIMEOUT = configuration.getLong(SkifConfigConstants.LOCK_TIMEOUT);
+        MAX_TRANSACTION_DURATION = configuration.getLong(SkifConfigConstants.MAX_TRANSACTION_DURATION);
     }
 
     @Override
@@ -61,7 +66,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
             ensureLockMapInitializedForOwner(owner);
             LockInfo<Long> lock = lockMap.get(id);
             if (lock == null || !renewNotRequired(lock)) {
-                lock = lockerService.lock(createLockKey(id), owner, lockTimeout);
+                lock = lockerService.lock(createLockKey(id), owner, LOCK_TIMEOUT);
                 lockMap.put(id, lock);
                 if (lock.isNew()) {
                     newLockIds.add(id);
@@ -269,7 +274,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
             throw new NotLockedException("BubbleId: " + id + " not locked by " + owner);
         }
 
-        // We only need to verify once per service call, because we assume that the lockTimeout created for new locks
+        // We only need to verify once per service call, because we assume that the LOCK_TIMEOUT created for new locks
         // during the service call always will be longer that MAX_TRANSACTION_DURATION.
         if (!locksVerified) {
             if (lock.expiresBefore(MAX_TRANSACTION_DURATION)) {
@@ -283,7 +288,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
      * @param owner Bruker som skal få alle sine låser fornyet
      */
     private void renewAllLocks(String owner) {
-        lockerService.renewAllLocks(owner, lockTimeout);
+        lockerService.renewAllLocks(owner, LOCK_TIMEOUT);
         initializeLockMapForOwner(owner);
     }
 

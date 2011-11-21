@@ -4,8 +4,8 @@ package no.statkart.skif.config;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class ConfigurationConstants {
-    private ConfigurationConstants() {}
+public class SkifConfigConstants {
+    private SkifConfigConstants() {}
 
     public final static String SINGLE_VM_SERVER_INJECTOR = "skif.single_vm_serverInjector";
     public final static String SINGLE_VM = "skif.single_vm";
@@ -31,8 +31,8 @@ public class ConfigurationConstants {
     public static final String DB_PORT = "skif.db_port";
     public static final String DB_SID = "skif.db_sid";
 
-
     public static final String HIBERNATE_MAPPRING_FILE_ROOT = "skif.hibernate_mapping_file_root";
 
-
+    public static final String LOCK_TIMEOUT = "skif.lock_timeout";
+    public static final String MAX_TRANSACTION_DURATION = "skif.max_transaction_duration";
 }

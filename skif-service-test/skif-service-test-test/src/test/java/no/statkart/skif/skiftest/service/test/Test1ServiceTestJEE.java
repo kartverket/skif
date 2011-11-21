@@ -5,6 +5,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.ServiceMode;
+import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.service.module.ClientModuleStrategyFactory;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.DefaultModuleConfiguration;
@@ -23,7 +24,6 @@ import no.statkart.skif.service.proxy.D2WAdapterProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.util.NullHostnameVerifier;
-import no.statkart.skif.util.SkifConfigurationAccessor;
 import no.statkart.skif.util.testsupport.SkifTestConfigurationAccessor;
 import org.testng.annotations.Test;
 
@@ -41,7 +41,7 @@ import static org.testng.Assert.assertEquals;
 @Test(groups = "server-required")
 public class Test1ServiceTestJEE {
     private Injector injector;
-    private SkifTestConfigurationAccessor config = new SkifTestConfigurationAccessor();
+    private SkifTestConfigurationAccessor config = new SkifTestConfigurationAccessor(new SkifConfiguration());
 
     private ModuleConfiguration createClientConfiguration() {
         return new DefaultModuleConfiguration()

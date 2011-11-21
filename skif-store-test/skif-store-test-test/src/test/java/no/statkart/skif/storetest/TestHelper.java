@@ -7,6 +7,7 @@ import com.google.inject.Singleton;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
+import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.persistence.ConnectionFactory;
 import no.statkart.skif.persistence.ConnectionFactoryManager;
 import no.statkart.skif.persistence.ConnectionFactoryManagerMultiVersionImpl;
@@ -26,15 +27,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertSame;
-
 public class TestHelper {
     private TestHelper() {
     }
 
     public static Configuration getSkifConfiguration() {
-        return new PropertiesConfiguration("skif.properties");
+        return new SkifConfiguration();
     }
 
     public static JDBCConnectionFactory createJDBCConnectionFactory() {

@@ -17,8 +17,8 @@ import static org.testng.Assert.assertNull;
 public class SkifTestCaseNoConfigFileTest extends SkifTestCase {
 
     @Override
-    protected String getConfigurationFilename() {
-        return null;
+    protected String[] getConfigurationFilenames() {
+        return new String[0];
     }
 
     @Override
