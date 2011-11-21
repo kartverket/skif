@@ -251,6 +251,9 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                     typeMapper.mapWsapiObject(source, target);
                 } else if (typeMapper instanceof WsapiMapTypeMapper) {
                     target = getMap(args);
+                    if(args.length == 3 && args[2] instanceof MapperInfo){
+                        ((WsapiMapTypeMapper) typeMapper).setValueType(((MapperInfo) args[2]).value()[1]);
+                    }
                     typeMapper.mapWsapiObject(source, target);
                 } else if (typeMapper instanceof DefaultTypeMapper) {
                     target = getTargetForGenericTypeMapper(args);
@@ -342,6 +345,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 result = new HashMap();
                 break;
             case 2:
+            case 3:
                 if (args[1] instanceof Map) {
                     result = (Map) args[1];
                 } else if (args[1] instanceof Class) {

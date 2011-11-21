@@ -2,11 +2,11 @@ package no.statkart.skif.skiftest.wsapi.exception.simple.mapping;
 
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.mapper.ExceptionMapping;
+import no.statkart.skif.mapper.MapperInfo;
 import no.statkart.skif.mapper.ObjectFactory;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -35,6 +35,12 @@ public abstract class AbstractSkifTestExceptionMapper2 implements ExceptionMappi
     public <T> T w2d(Object source, Class<T> targetClass) {
         throw new NotImplementedException("na");
     }
+
+    @Override
+    public <T> T w2d(Object source, Class<T> targetClass, MapperInfo mapperInfo) {
+        throw new NotImplementedException("na");
+    }
+
 
     public Object[] d2w(Object[] source, Class<?>[] webServiceParameterTypes) {
         throw new NotImplementedException("na");

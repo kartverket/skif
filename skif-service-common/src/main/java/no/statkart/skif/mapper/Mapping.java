@@ -24,6 +24,7 @@ public interface Mapping extends BaseMapping {
 
     public <T> T d2w(Object source, Class<T> targetClass);
     public <T> T w2d(Object source, Class<T> targetClass);
+    public <T> T w2d(Object source, Class<T> targetClass, MapperInfo mapperInfo);
 
     public <T> T d2w(Object source);
     public <T> T w2d(Object source);

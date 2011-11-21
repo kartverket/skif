@@ -3,6 +3,7 @@ package no.statkart.skif.service.proxy;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
+import no.statkart.skif.mapper.MapperInfo;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.mapper.MappingException;
 import org.slf4j.Logger;
@@ -65,7 +66,12 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
         try {
             Object result = adapteeRoot.invoke(proxy, m, mappedArgs);
-            return map.w2d(result, method.getReturnType());
+            MapperInfo annotation = method.getAnnotation(MapperInfo.class);
+            if(annotation != null) {
+                return map.w2d(result, method.getReturnType(), annotation);
+            } else {
+                return map.w2d(result, method.getReturnType());
+            }
 
         } catch (Throwable t) {
             if (exceptionMapping != null) {

@@ -1,6 +1,7 @@
 package no.statkart.skif.mapper;
 
 import no.statkart.skif.SkifUtil;
+import no.statkart.skif.exception.ImplementationException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,6 +19,7 @@ public class WsapiMapTypeMapper<WsapiT, DomainT extends Map<Object, Collection>>
     private Method setValueMethod;
     private Method setKeyMethod;
     private Method getKeyMethod;
+    private Class<?> valueClass;
 
     public WsapiMapTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
         super(wsapiClass, domainClass);
@@ -81,7 +83,7 @@ public class WsapiMapTypeMapper<WsapiT, DomainT extends Map<Object, Collection>>
         List entryList = getEntryList(source);
         for (Object entry : entryList) {
             Object domainKey = map.w2d(getKeyForEntry(entry));
-            List domainValueList = new ArrayList();
+            Collection domainValueList = createDomainList();
             map.w2d(getValueForEntry(entry), domainValueList);
 
             target.put(domainKey, domainValueList);
@@ -151,5 +153,29 @@ public class WsapiMapTypeMapper<WsapiT, DomainT extends Map<Object, Collection>>
         }
     }
 
+    private Collection createDomainList() {
+        if(valueClass == null) {
+            return new ArrayList();
+        } else if(valueClass.equals(Set.class)) {
+            return new HashSet();
+        } else if(valueClass.equals(List.class)) {
+            return new ArrayList();
+        } else {
+            try {
+                Object o = valueClass.newInstance();
+                if(!(o instanceof Collection)) {
+                    throw new ImplementationException("valueClass som har blitt satt på WsapiTypeMapper er ikke av typen java.util.Collection. Den er av typen " + o.getClass());
+                }
+                return (Collection) o;
+            } catch (InstantiationException e) {
+                throw new MappingException("Could not instantiate valueClass: " + entryClass.getName(), e);
+            } catch (IllegalAccessException e) {
+                throw new MappingException("Could not instantiate valueClass: " + entryClass.getName(), e);
+            }
+        }
+    }
 
+    public void setValueType(Class<?> valueClass) {
+        this.valueClass = valueClass;
+    }
 }
