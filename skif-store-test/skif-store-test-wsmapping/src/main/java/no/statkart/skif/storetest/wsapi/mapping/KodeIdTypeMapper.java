@@ -20,6 +20,7 @@ public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.do
     public void mapDomainObject(DomainT source, WsapiT target) {
         super.mapDomainObject(source, target);
         target.setValue(source.getStringValue());
+        target.setSnapshotVersion(map.d2w(source.getSnapshotVersion()));
     }
 
     @Override
@@ -27,9 +28,9 @@ public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.do
         DomainT target;
         Class valueType = BubbleIds.getValueType(getDomainClass());
         if (valueType == Long.class) {
-            target = BubbleIds.createInstance(getDomainClass(), Long.valueOf(source.getValue()), SnapshotVersion.CURRENT);
+            target = BubbleIds.createInstance(getDomainClass(), Long.valueOf(map.w2d(source.getValue())), map.w2d(source.getSnapshotVersion()));
         } else {
-            target = BubbleIds.createInstance(getDomainClass(), source.getValue(), SnapshotVersion.CURRENT);
+            target = BubbleIds.createInstance(getDomainClass(), map.w2d(source.getValue()), map.w2d(source.getSnapshotVersion()));
         }
         return target;
     }

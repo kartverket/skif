@@ -12,4 +12,5 @@ dependencies {
     testCompile project(path: ':skif-store-common', configuration: "testApi")
     testCompile project(path: ':skif-service-server', configuration: "tests")
     testCompile libraries.dbunit
+    testCompile libraries.unitils
 }

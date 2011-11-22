@@ -19,7 +19,6 @@ public class TimestampTypeMapper extends AbstractStoreTestTypeMapper<no.statkart
 
         target.setTime(map.d2w(source.getTime()));
         target.setNanos(map.d2w(source.getNanos()));
-
     }
 
     @Override

@@ -149,18 +149,36 @@ public class AutomagicTest {
                     if (!(fieldPath.split("\\.").length > 10)) {
                         if (field.getType().isPrimitive()) {
                             if (field.getType().equals(Integer.TYPE)) {
-                                field.set(retVal, randomGenerator.nextInt());
+                                if(o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")){
+                                    //Må bruke SnapshotVersion.CURRENT.getNanos() (som er 0) pga EnumKodeId som kun kan være current.
+                                    field.set(retVal, 0);
+                                } else {
+                                    field.set(retVal, randomGenerator.nextInt());
+                                }
                             } else if (field.getType().equals(Float.TYPE)) {
                                 field.set(retVal, randomGenerator.nextFloat());
                             } else if (field.getType().equals(Double.TYPE)) {
                                 field.set(retVal, randomGenerator.nextDouble());
                             } else if (field.getType().equals(Long.TYPE)) {
-                                field.set(retVal, randomGenerator.nextLong());
+                                if(o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")){
+                                    //på grun av enumKodeId må vi bruke SnapshotVersion.CURRENT
+                                   field.set(retVal, 253370761200000L );
+                                } else {
+                                    field.set(retVal, randomGenerator.nextLong());
+                                }
                             } else if (field.getType().equals(Boolean.TYPE)) {
                                 field.set(retVal, true);
                             }
                         } else if (field.getType().getSimpleName().equals("String")) {
-                            field.set(retVal, field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100));
+                            if (o.getClass().toString().endsWith("KodeId")) {
+                                //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
+                                field.set(retVal, ""+(randomGenerator.nextInt(1)+1));
+                            } else if (o.getClass().toString().endsWith("Id")) {
+                                //Id må settes til string men kun nummeric verdier
+                                field.set(retVal, ""+randomGenerator.nextInt());
+                            } else {
+                                field.set(retVal, field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100));
+                            }
                         } else if (field.getType().isArray()) {
                             throw new IllegalArgumentException("Støtte for array-felter er ikke implementert enda.");
                         } else if (field.getType().equals(XMLGregorianCalendar.class)) {
@@ -189,7 +207,12 @@ public class AutomagicTest {
                             field.set(retVal, list);
                         } else if (isClassAbstract(field.getType())) {
                             if (field.getType().getName().startsWith("no.")) {
-                                field.set(retVal, generateDummyData(generateConcreteSubclass(field.getType()), fieldPath + "." + field.getName()));
+                                if("id".equalsIgnoreCase(field.getName())){
+                                    //generere for abstrakt id
+                                    field.set(retVal, generateDummyData(generateConcreteSubclassId(field.getType(),o.getClass().getName()), fieldPath + "." + field.getName()));
+                                } else {
+                                    field.set(retVal, generateDummyData(generateConcreteSubclass(field.getType()), fieldPath + "." + field.getName()));
+                                }
                             } else {
                                 logger.debug("Hopper over: " + field.getName() + ", som er av type: " + field.getType() + ", og abstrakt, i klasse " + o.getClass().getName());
                             }
@@ -276,6 +299,20 @@ public class AutomagicTest {
         }
 
         return besteMatch;
+    }
+
+    private Object generateConcreteSubclassId(Class clazz, String inClazzName) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        if(inClazzName == null){
+            throw new MappingException("Kan ikke generere id for NULL kasse");
+        }
+        if(!isClassAbstract(clazz)){
+            return generateConcreteSubclass(clazz);
+        }
+
+        //finn id for inClazzName
+        String idName = inClazzName+"Id";
+        Class idClazz = Class.forName(idName);
+        return idClazz.newInstance();
     }
 
     private Object generateConcreteSubclass(Class clazz) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
