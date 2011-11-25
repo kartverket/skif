@@ -4,7 +4,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.service.proxy.InstanceCallProxyHandler;
+import no.statkart.skif.service.proxy.ProviderCallProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
+import no.statkart.skif.service.proxy.TerminatingProviderProxyHandler;
 
 import javax.annotation.Nullable;
 
@@ -27,8 +29,9 @@ public class ImplementationServiceChainFactoryBase<S> implements ImplementationS
 
     @Override
     public ProxyHandler<S> createChain() {
-        final S instance = implementationProvider.get();
-        return new InstanceCallProxyHandler<S>(instance);
+//        final S instance = implementationProvider.get();
+//        return new InstanceCallProxyHandler<S>(instance);
+        return new ProviderCallProxyHandler<S>(implementationProvider);
     }
 
     @Override

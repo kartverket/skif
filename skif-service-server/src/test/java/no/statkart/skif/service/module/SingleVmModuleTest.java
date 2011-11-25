@@ -9,6 +9,7 @@ import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
+import no.statkart.skif.service.PrincipalImpl;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
@@ -121,7 +122,7 @@ public class SingleVmModuleTest {
     }
 
     /**
-     * Kall til createChain() kan normalt kun kaldes med et aktivt ServiceRequestScope
+     * Invoke på service kan kun skje med et aktivt ServiceRequestScope
      */
     @Test(expectedExceptions = com.google.inject.ProvisionException.class)
     public void testCreateImplementationServiceChainFactory_NoScope() {
@@ -130,7 +131,12 @@ public class SingleVmModuleTest {
                 Key.get(new TypeLiteral<ImplementationServiceChainFactory<Test2Service>>() {
                 }));
         assertNotNull(factory);
-        factory.createChain();
+
+        // Kall til createChain vil kun gå godt her hvis ProxyHandleren bruke en provider for lazy initialisering
+        ProxyHandler<Test2Service> chain = factory.createChain();
+        Test2Service test2Service = chain.buildProxy(Test2Service.class);
+        // Først her opprettes servicen og oppdager manglende ServiceRequestScope
+        test2Service.helloWorld("s");
     }
 
     /**
@@ -144,7 +150,12 @@ public class SingleVmModuleTest {
         assertNotNull(factory);
         final ServiceRequestScope scope = serverInjector.getInstance(ServiceRequestScope.class);
         scope.enter();
-        assertNotNull(factory.createChain());
+        ServiceRequestContext context = new ServiceRequestContext();
+        context.setCallerPrincipal(new PrincipalImpl("foo"));
+        scope.seed(ServiceRequestContext.class, context);
+        ProxyHandler<Test2Service> chain = factory.createChain();
+        Test2Service test2Service = chain.buildProxy(Test2Service.class);
+        test2Service.helloWorld("s");
     }
 
 

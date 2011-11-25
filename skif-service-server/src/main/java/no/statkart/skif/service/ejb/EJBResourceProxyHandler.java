@@ -1,8 +1,7 @@
 package no.statkart.skif.service.ejb;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
+import no.statkart.skif.service.proxy.ProxyHandler;
 
 import java.lang.reflect.Method;
 
@@ -22,6 +21,7 @@ public abstract class EJBResourceProxyHandler<S> extends ChainedProxyHandler<S> 
     public Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         try {
             beginService();
+            ProxyHandler<S> chained = getChained();
             Object result = chained.invoke(proxy, method, args);
             completeService();
             return result;
