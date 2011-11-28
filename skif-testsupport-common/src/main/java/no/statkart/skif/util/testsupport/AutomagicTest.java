@@ -115,7 +115,14 @@ public class AutomagicTest {
     protected Map<String, List<Class>> discoverClassHierarchy(List<Class> classes, Map<String, List<Class>> className2ListOfSubclasses) throws ClassNotFoundException {
         for (Iterator<Class> iterator = classes.iterator(); iterator.hasNext(); ) {
             Class next = iterator.next();
-            if (!getSkipTestingForTheseClasses().contains(next.getName())) {
+
+            String nextName = next.getName();
+            String packageName = nextName.substring(0, nextName.lastIndexOf("."));
+            boolean bpackage = getSkipTestingForTheseClasses().contains(packageName);
+            boolean exact = getSkipTestingForTheseClasses().contains(nextName);
+            boolean testClass = !(exact || bpackage);
+
+            if (testClass) {
                 if (next != null && next.getSuperclass() != null) {
 
                     List<Class> subclasses = className2ListOfSubclasses.get(next.getSuperclass().getName());
@@ -149,7 +156,7 @@ public class AutomagicTest {
                     if (!(fieldPath.split("\\.").length > 10)) {
                         if (field.getType().isPrimitive()) {
                             if (field.getType().equals(Integer.TYPE)) {
-                                if(o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")){
+                                if (o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")) {
                                     //Må bruke SnapshotVersion.CURRENT.getNanos() (som er 0) pga EnumKodeId som kun kan være current.
                                     field.set(retVal, 0);
                                 } else {
@@ -160,9 +167,13 @@ public class AutomagicTest {
                             } else if (field.getType().equals(Double.TYPE)) {
                                 field.set(retVal, randomGenerator.nextDouble());
                             } else if (field.getType().equals(Long.TYPE)) {
-                                if(o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")){
+                                if (o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")) {
                                     //på grun av enumKodeId må vi bruke SnapshotVersion.CURRENT
-                                   field.set(retVal, 253370761200000L );
+                                    field.set(retVal, 253370761200000L);
+                                } else if (o.getClass().toString().endsWith("KodeId") && field.getName().equals("value")) {
+                                    field.set(retVal, randomGenerator.nextInt(2));
+                                } else if (o.getClass().toString().endsWith("SprakformId") && field.getName().equals("value")) {
+                                    field.set(retVal, randomGenerator.nextInt(3));
                                 } else {
                                     field.set(retVal, randomGenerator.nextLong());
                                 }
@@ -172,10 +183,10 @@ public class AutomagicTest {
                         } else if (field.getType().getSimpleName().equals("String")) {
                             if (o.getClass().toString().endsWith("KodeId")) {
                                 //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
-                                field.set(retVal, ""+(randomGenerator.nextInt(1)+1));
+                                field.set(retVal, "" + (randomGenerator.nextInt(1) + 1));
                             } else if (o.getClass().toString().endsWith("Id")) {
                                 //Id må settes til string men kun nummeric verdier
-                                field.set(retVal, ""+randomGenerator.nextInt());
+                                field.set(retVal, "" + randomGenerator.nextInt());
                             } else {
                                 field.set(retVal, field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100));
                             }
@@ -190,7 +201,16 @@ public class AutomagicTest {
                         } else if (field.getType().equals(Integer.class)) {
                             field.set(retVal, randomGenerator.nextInt());
                         } else if (field.getType().equals(Long.class)) {
-                            field.set(retVal, randomGenerator.nextLong());
+                            if (o.getClass().toString().endsWith("KodeId")) {
+                                field.set(retVal, Long.parseLong("" + randomGenerator.nextInt(1) + 1));
+                            } else if (o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")) {
+                                field.set(retVal, 253370761200000L);
+                            }else  if (o.getClass().toString().endsWith("formId")) {
+                                //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
+                                field.set(retVal, "" + (randomGenerator.nextInt(1) + 1));
+                            } else {
+                                field.set(retVal, randomGenerator.nextLong());
+                            }
                         } else if (field.getType().equals(Float.class)) {
                             field.set(retVal, randomGenerator.nextFloat());
                         } else if (field.getType().equals(Double.class)) {
@@ -202,14 +222,18 @@ public class AutomagicTest {
                             if (isClassAbstract(genericClass)) {
                                 list.add(generateDummyData(generateConcreteSubclass(genericClass), fieldPath + "." + field.getName()));
                             } else {
-                                list.add(generateDummyData(createNewInstance(genericClass), fieldPath + "." + field.getName()));
+                                if (genericClass.getName().equals(String.class.getName())) {
+                                    list.add(field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100));
+                                } else {
+                                    list.add(generateDummyData(createNewInstance(genericClass), fieldPath + "." + field.getName()));
+                                }
                             }
                             field.set(retVal, list);
                         } else if (isClassAbstract(field.getType())) {
                             if (field.getType().getName().startsWith("no.")) {
-                                if("id".equalsIgnoreCase(field.getName())){
+                                if ("id".equalsIgnoreCase(field.getName())) {
                                     //generere for abstrakt id
-                                    field.set(retVal, generateDummyData(generateConcreteSubclassId(field.getType(),o.getClass().getName()), fieldPath + "." + field.getName()));
+                                    field.set(retVal, generateDummyData(generateConcreteSubclassId(field.getType(), o.getClass().getName()), fieldPath + "." + field.getName()));
                                 } else {
                                     field.set(retVal, generateDummyData(generateConcreteSubclass(field.getType()), fieldPath + "." + field.getName()));
                                 }
@@ -217,10 +241,20 @@ public class AutomagicTest {
                                 logger.debug("Hopper over: " + field.getName() + ", som er av type: " + field.getType() + ", og abstrakt, i klasse " + o.getClass().getName());
                             }
                         } else {
-                            //recurse
-                            Object o2 = createNewInstance(field.getType());
-                            generateDummyData(o2, fieldPath + "." + field.getName());
-                            field.set(retVal, o2);
+                            if (field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("MatrikkelBubbleId")) {
+                                Object o2 = generateConcreteSubclassId(o.getClass().getName());
+                                generateDummyData(o2, fieldPath + "." + field.getName());
+                                field.set(retVal, o2);
+                            } else if (field.getName().endsWith("KodeId") && field.getType().getName().startsWith("no.")) {
+                                Object o2 = generateConcreteKodeId(field.getType());
+                                generateDummyData(o2, fieldPath + "." + field.getName());
+                                field.set(retVal, o2);
+                            } else {
+                                //recurse
+                                Object o2 = createNewInstance(field.getType());
+                                generateDummyData(o2, fieldPath + "." + field.getName());
+                                field.set(retVal, o2);
+                            }
                         }
                     }
                 }
@@ -301,17 +335,45 @@ public class AutomagicTest {
         return besteMatch;
     }
 
-    private Object generateConcreteSubclassId(Class clazz, String inClazzName) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        if(inClazzName == null){
+    private Object generateConcreteKodeId(Class clazz) {
+        if (clazz == null) {
             throw new MappingException("Kan ikke generere id for NULL kasse");
         }
-        if(!isClassAbstract(clazz)){
+
+        Object o;
+        try {
+            o = clazz.newInstance();
+        } catch (InstantiationException e) {
+            throw new MappingException("Kan ikke instansiere klasse " + clazz.getName());
+        } catch (IllegalAccessException e) {
+            throw new MappingException("Konstruktør kan ikke nås for " + clazz.getName());
+        }
+        return o;
+    }
+
+    private Object generateConcreteSubclassId(Class clazz, String inClazzName) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        if (inClazzName == null) {
+            throw new MappingException("Kan ikke generere id for NULL kasse");
+        }
+        if (!isClassAbstract(clazz)) {
             return generateConcreteSubclass(clazz);
         }
 
         //finn id for inClazzName
-        String idName = inClazzName+"Id";
+        String idName = inClazzName + "Id";
         Class idClazz = Class.forName(idName);
+        return idClazz.newInstance();
+    }
+
+    private Object generateConcreteSubclassId(String inClazzName) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        if (inClazzName == null) {
+            throw new MappingException("Kan ikke generere id for NULL kasse");
+        }
+
+        //finn id for inClazzName
+        String idName = inClazzName + "Id";
+        Class idClazz = Class.forName(idName);
+
         return idClazz.newInstance();
     }
 
