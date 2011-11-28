@@ -86,8 +86,8 @@ task deploy {
         ant.taskdef(name: 'wldeploy', classname: 'weblogic.ant.taskdefs.management.WLDeploy', classpath: libraries.weblogic.asPath)
 
         wlsDeployProtocol = 'http'
-        wlsDeployIp = 'localhost'
-        wlsDeployPort = '7001'
+        wlsDeployIp = "${wls_hostname}"
+        wlsDeployPort = "${wls_port}"
         wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
 
 
@@ -103,8 +103,8 @@ task undeploy {
         ant.taskdef(name: 'wldeploy', classname: 'weblogic.ant.taskdefs.management.WLDeploy', classpath: configurations.weblogic.asPath)
 
         wlsDeployProtocol = 'http'
-        wlsDeployIp = 'localhost'
-        wlsDeployPort = '7001'
+        wlsDeployIp = "${wls_hostname}"
+        wlsDeployPort = "${wls_port}"
         wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
 
         ant.wldeploy(action: 'undeploy', name: project.name, user: 'admmatr', password: 'matrikkeladm1',

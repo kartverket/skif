@@ -18,6 +18,7 @@ import static org.testng.Assert.assertSame;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@Test (groups = "singlevm-required")
 public class BasicExceptionMappingTestSVM extends SkifTestCase {
 
     @Inject
