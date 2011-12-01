@@ -33,7 +33,7 @@ apply plugin: 'idea'
 if (project.hasProperty('version')) { version = getProperty('version') }
 
 // standard kode-versjon for branch
-if (version == 'unspecified') { version = '2.0.1' }
+if (version == 'unspecified') { version = '2.0.2-SNAPSHOT' }
 
 //MATH-31: adding profile feature. defaults to gradle-user.properties
 if (!rootProject.hasProperty('profile')) {
