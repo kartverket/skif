@@ -13,12 +13,12 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;
  * @since 2.0
  */
 public class CEnumKodeId extends EnumKodeId<CEnumKode> implements StoreTestEnumKodeId<CEnumKode> {
-    private static EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>>(CEnumKodeId.class, new StoreTestEnumKodelisteLongId(3), "TestCEnumKodeliste");
+    private static EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>>(CEnumKodeId.class, new StoreTestEnumKodelisteLongId(3), "TestCEnumKodeliste.navn");
 
     public static KodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
-    public static CEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");
-    public static CEnumKodeId KodeAId = define(1, "A", "Kode A");
-    public static CEnumKodeId KodeBId = define(2, "B", "Kode B");
+    public static CEnumKodeId IkkeOppgittId = define(0, "-", "Kode.IkkeOppgitt");
+    public static CEnumKodeId KodeAId = define(1, "A", "CEnumKode.A");
+    public static CEnumKodeId KodeBId = define(2, "B", "CEnumKode.B");
 
     protected CEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);

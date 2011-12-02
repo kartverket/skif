@@ -30,6 +30,8 @@ import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
 import no.statkart.skif.storetest.persistence.StoreTestKodelisteLoader;
 import no.statkart.skif.storetest.persistence.StoreTestStorePersisterStrategy;
+import no.statkart.skif.storetest.util.DemoKodeMsg;
+import no.statkart.skif.util.KodeMsg;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,7 +87,8 @@ public class StoreTestServerModule extends SkifModule {
         bind(Store.class).to(StoreServer.class);
         bind(DbKodelisteLoader.class).to(StoreTestKodelisteLoader.class);
 
-
+       // EnumKode internasjonalisering
+        bind(KodeMsg.class).to(DemoKodeMsg.class);
 
         install(new ServerServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices()));
@@ -94,8 +97,8 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @Singleton
-    KodelisteManager bubbleKodelisteManagerProvider() {
-        KodelisteManager kodelisteManager = new KodelisteManager();
+    KodelisteManager bubbleKodelisteManagerProvider(KodeMsg kodeMsg) {
+        KodelisteManager kodelisteManager = new KodelisteManager(kodeMsg);
         kodelisteManager.installStatic(AEnumKodeId.class);
         kodelisteManager.installStatic(BEnumKodeId.class);
         kodelisteManager.installStatic(CEnumKodeId.class);

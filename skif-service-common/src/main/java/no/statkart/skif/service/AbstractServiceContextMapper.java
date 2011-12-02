@@ -7,6 +7,7 @@ import java.util.Locale;
 
 /**
  * @author Henrik Fredholm
+ * @author Jan Holmen
  * @since 2.0
  */
 public abstract class AbstractServiceContextMapper<C> implements ServiceContextMapper<C> {
@@ -24,8 +25,8 @@ public abstract class AbstractServiceContextMapper<C> implements ServiceContextM
 
         String[] strings = locale.split("_");
 
-        if(strings.length != 2){
-            throw new ValidationException("Locale parameter på context skal ha to deler, hver på to bokstaver, separert med _ Første del skal følge ISO-639 og andre del skal følge ISO-3166");
+        if(strings.length < 2){
+            throw new ValidationException("Locale parameter på context skal ha to eller tre deler, hver på to bokstaver, separert med _ Første del skal følge ISO-639, andre del skal følge ISO-3166, tredje ledd er språkvariant");
         }
 
         if(strings[0].toLowerCase() != strings[0]) {
@@ -36,7 +37,14 @@ public abstract class AbstractServiceContextMapper<C> implements ServiceContextM
             throw new ValidationException("Andre del av Locale på context skal følge standarden ISO-3166 og være to store bokstaver", null);
         }
 
-        return new Locale(strings[0], strings[1]);
+        //Språkvariant strings[2] kan inneholde både store og små bokstaver og må mappes hvis den er oppgitt.
+
+        if(strings.length==2){
+            return new Locale(strings[0], strings[1]);
+        } else if( strings.length == 3){
+            return new Locale(strings[0], strings[1], strings[2]);
+        }
+        throw new ValidationException("Locale er ikke på formen 'no_NO' eller 'no_NO_NY', ingen mapping gjort", null);
     }
 
 }

@@ -1,11 +1,13 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
+import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.util.CopyHelper;
+import no.statkart.skif.util.KodeMsg;
 
 import java.util.*;
 
@@ -30,7 +32,6 @@ import java.util.*;
  * utvides til å sett et timestamp felt i databasen i en eller annen tabell hvergang det skjer en oppdatering og
  * manageren bør refreshes. Siden oppdatering ikke er påkrevet ennå er dette ikke implementert.
  * <p/>
- * TODO: pt brukes ikke lokale. Man kan angi null.
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -58,15 +59,22 @@ public class KodelisteManager {
      */
     private volatile Map<BubbleId<?>, BubbleObject> nonLocalizedcache;
 
-    /**
-     * Alle koder og kodelister lokalisert for bokmål;
-     */
-    private volatile Map<BubbleId<?>, BubbleObject> localizedCache_b;
 
     /**
-     * Alle koder og kodelister lokalisert for nynorsk;
+     * Alle koder og kodelister for lokaliserte språk.
      */
-    private volatile Map<BubbleId<?>, BubbleObject> localizedCache_n;
+    private volatile Map<Locale,Map<BubbleId<?>, BubbleObject>> localizedCacheMap = new HashMap<Locale, Map<BubbleId<?>, BubbleObject>>();
+
+    /**
+     * Lokalisering av EnumKoder, holder på resourcebundles for ett språk.
+     * Laster etter som de blir brukt i koden.
+     */
+    private final KodeMsg kodeMsg;
+
+    @Inject
+    public KodelisteManager(KodeMsg kodeMsg) {
+        this.kodeMsg = kodeMsg;
+    }
 
     public long getVersion() {
         return version;
@@ -139,8 +147,7 @@ public class KodelisteManager {
         this.nonLocalizedcache = Collections.unmodifiableMap(cache);
         this.kodeIds = kodeIds;
         this.kodelisteIds = kodelisteIds;
-        this.localizedCache_b = null;
-        this.localizedCache_n = null;
+        localizedCacheMap = new HashMap<Locale, Map<BubbleId<?>, BubbleObject>>();
     }
 
     /**
@@ -177,15 +184,21 @@ public class KodelisteManager {
     }
 
     private Map<BubbleId<?>, BubbleObject> getLocalizedCache(Locale lokale) {
-        Map<BubbleId<?>, BubbleObject> localizedCache = localizedCache_b;
+        Map<BubbleId<?>, BubbleObject> localizedCache = localizedCacheMap.get(lokale);
         if (localizedCache == null) {
             localizedCache = initializeLocalizedCache(lokale);
         }
         return localizedCache;
     }
 
+    /**
+     * todo kun lokalisere og cache enumkoder, dbkoder skal lokaliseres sammen med vanlige bobleobjekter.
+     * @param lokale
+     * @return
+     */
     private synchronized Map<BubbleId<?>, BubbleObject> initializeLocalizedCache(Locale lokale) {
-        if (localizedCache_b == null) {
+        Map<BubbleId<?>, BubbleObject> localizedCache_lokale = localizedCacheMap.get(lokale);
+        if (localizedCache_lokale == null) {
             if (nonLocalizedcache == null) {
                 nonLocalizedcache = new HashMap<BubbleId<?>, BubbleObject>(nonLocalizedStaticCache);
             }
@@ -193,32 +206,37 @@ public class KodelisteManager {
             for (Map.Entry<BubbleId<?>, BubbleObject> e : nonLocalizedcache.entrySet()) {
                 BubbleObject copy = CopyHelper.copy(e.getValue());
                 BubbleObject localizedObject = (BubbleObject) localizeObject(lokale, copy);
-                localizedCache.put(localizedObject.getId(), localizedObject);
+                //todo når håndtering av dbkoder er lagt sammen med andre bobleobjekter kan denne inn.
+//                if(localizedObject instanceof EnumKode){
+                    localizedCache.put(localizedObject.getId(), localizedObject);
+//                }
             }
-            localizedCache_b = localizedCache;
+            localizedCache_lokale = localizedCache;
+            localizedCacheMap.put(lokale,localizedCache);
         }
-        return localizedCache_b;
+        return localizedCache_lokale;
     }
 
     private BubbleObject localizeObject(Locale lokale, BubbleObject bubbleObject) {
-        // TODO: Bruke lokale
         if (bubbleObject instanceof EnumKode) {
             EnumKode bubbleKode = (EnumKode) bubbleObject;
-            // TODO: Lokaliser!
-            String lokalisertBeskrivelse = bubbleKode.getBeskrivelsesKey();
+            String beskrivelsesKey = bubbleKode.getBeskrivelsesKey();
+            bubbleKode.setBeskrivelsesKey(beskrivelsesKey);
+            String lokalisertBeskrivelse = kodeMsg.getString(beskrivelsesKey, lokale);
             bubbleKode.setBeskrivelse(lokalisertBeskrivelse);
         } else if (bubbleObject instanceof DbKode) {
             DbKode bubbleKode = (DbKode) bubbleObject;
-            String lokalisertBeskrivelse = bubbleKode.getLokalisertBeskrivelse().get("b");
+            String lokalisertBeskrivelse = bubbleKode.getLokalisertBeskrivelse().get(lokale.toString());
             bubbleKode.setBeskrivelse(lokalisertBeskrivelse);
         } else if (bubbleObject instanceof EnumKodeliste) {
             EnumKodeliste kodeliste = (EnumKodeliste) bubbleObject;
-            // TODO: Lokaliser!
-            String lokalisertBeskrivelse = kodeliste.getBeskrivelsesKey();
+            String beskrivelsesKey = kodeliste.getBeskrivelsesKey();
+            String lokalisertBeskrivelse = kodeMsg.getString(beskrivelsesKey,lokale);
             kodeliste.setBeskrivelse(lokalisertBeskrivelse);
+            kodeliste.setBeskrivelsesKey(beskrivelsesKey);
         } else {
             DbKodeliste kodeliste = (DbKodeliste) bubbleObject;
-            String lokalisertBeskrivelse = kodeliste.getLokalisertBeskrivelse().get("b");
+            String lokalisertBeskrivelse = kodeliste.getLokalisertBeskrivelse().get(lokale.toString());
             kodeliste.setBeskrivelse(lokalisertBeskrivelse);
         }
         return bubbleObject;

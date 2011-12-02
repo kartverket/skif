@@ -16,12 +16,12 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteStringI
  * @since 2.0
  */
 public class SEnumKodeId extends EnumKodeId<SEnumKode> implements StoreTestEnumKodeId<SEnumKode> {
-    private static EnumKodeSupport<StoreTestEnumKodelisteString, StoreTestEnumKodelisteStringId<StoreTestEnumKodelisteString>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteString, StoreTestEnumKodelisteStringId<StoreTestEnumKodelisteString>>(SEnumKodeId.class, new StoreTestEnumKodelisteStringId("TestCEnumKodeliste"), "TestCEnumKodeliste");
+    private static EnumKodeSupport<StoreTestEnumKodelisteString, StoreTestEnumKodelisteStringId<StoreTestEnumKodelisteString>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteString, StoreTestEnumKodelisteStringId<StoreTestEnumKodelisteString>>(SEnumKodeId.class, new StoreTestEnumKodelisteStringId("TestSEnumKodeliste"), "TestSEnumKodeliste.navn");
 
     public static KodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
-    public static SEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");
-    public static SEnumKodeId KodeAId = define(1, "A", "Kode A");
-    public static SEnumKodeId KodeBId = define(2, "B", "Kode B");
+    public static SEnumKodeId IkkeOppgittId = define(0, "-", "Kode.IkkeOppgitt");
+    public static SEnumKodeId KodeAId = define(1, "A", "SEnumKodeId.A");
+    public static SEnumKodeId KodeBId = define(2, "B", "SEnumKodeId.B");
 
     protected SEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);

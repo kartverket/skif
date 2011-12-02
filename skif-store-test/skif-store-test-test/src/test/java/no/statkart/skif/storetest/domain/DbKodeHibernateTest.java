@@ -1,5 +1,8 @@
 package no.statkart.skif.storetest.domain;
 
+import com.google.inject.Provider;
+import no.statkart.skif.service.DefaultServiceContext;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
@@ -7,6 +10,7 @@ import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.kodeliste.DbKode;
 import no.statkart.skif.store.kodeliste.DbKodeId;
 import no.statkart.skif.store.kodeliste.DbKodeliste;
+import no.statkart.skif.store.kodeliste.EnumKode;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateVersionFactory;
 import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
@@ -21,15 +25,13 @@ import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
+import no.statkart.skif.storetest.util.DemoKodeMsg;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.testng.AssertJUnit.assertNotNull;
 
@@ -149,8 +151,8 @@ public class DbKodeHibernateTest {
     public void testKodelisteManager() {
         SessionFactory sf = setupHibernate();
         HibernateStoreSession wrapper = HibernateVersionFactory.Accessor.get().createHibernateStoreSession(sf.openSession(), new SnapshotVersionSeed(SnapshotVersion.CURRENT));
-        KodelisteManager kodelisteManager = new KodelisteManager();
-
+        DemoKodeMsg kodeMsg = new DemoKodeMsg();
+        KodelisteManager kodelisteManager = new KodelisteManager(kodeMsg);
         DbKodelisteLoader kodelisteLoader = new DbKodelisteLoader() {
             @Override
             public List<DbKodeliste> load(Session session, Map<DbKodeId<?>, DbKode> kodeMap) {
@@ -158,7 +160,16 @@ public class DbKodeHibernateTest {
             }
         };
 
-        KodelistePersister kodelistePersister = new KodelistePersister(wrapper, kodelisteLoader, kodelisteManager);
+        Provider<ServiceContext> provider = new Provider<ServiceContext>() {
+            ServiceContext context=new DefaultServiceContext();
+            @Override
+            public ServiceContext get() {
+                return context;
+            }
+        };
+
+        provider.get().setLocale(new Locale("no","NO"));
+        KodelistePersister kodelistePersister = new KodelistePersister(wrapper, kodelisteLoader, kodelisteManager, provider);
         Collection<? extends BubbleObject> list = kodelistePersister.getAllKodelisterAndKoder();
         Assert.assertNotNull(list);
 

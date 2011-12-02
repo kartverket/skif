@@ -1,22 +1,36 @@
 package no.statkart.skif.storetest.domain;
 
 
-import no.statkart.skif.store.KodeIdLookup;
-import no.statkart.skif.store.KodelisteTransfer;
-import no.statkart.skif.store.Store;
-import no.statkart.skif.store.kodeliste.Kode;
-import no.statkart.skif.store.kodeliste.Kodeliste;
+import com.google.inject.Provider;
+import no.statkart.skif.service.DefaultServiceContext;
+import no.statkart.skif.service.ServiceContext;
+import no.statkart.skif.store.*;
+import no.statkart.skif.store.kodeliste.*;
+import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
+import no.statkart.skif.store.persistence.hibernate.HibernateVersionFactory;
+import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
+import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
+import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
+import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
+import no.statkart.skif.storetest.TestHelper;
+import no.statkart.skif.storetest.domain.demo.Baz;
+import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
+import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.testng.Assert.*;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertNotNull;
 
 /**
  * @author Henrik Fredholm
@@ -87,13 +101,64 @@ public class KodelisteTest extends StoreTestTestCase {
     }
 
     public void testKodeIdLookup() {
-         KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
-         Store store = injector.getInstance(Store.class);
-         KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
-         List<Kode> objects = new ArrayList<Kode>();
-         store.register(kodelisteTransfer.getObjects(), objects);
-         KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
-         BEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(BEnumKodeId.class, "B");
-         assertSame(bKodeId, BEnumKodeId.KodeBId);
-     }
+        KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
+        Store store = injector.getInstance(Store.class);
+        KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
+        List<Kode> objects = new ArrayList<Kode>();
+        store.register(kodelisteTransfer.getObjects(), objects);
+        KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
+        BEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(BEnumKodeId.class, "B");
+        assertSame(bKodeId, BEnumKodeId.KodeBId);
+    }
+
+
+    public void testEnumKodeLokale() {
+        KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
+        Store store = injector.getInstance(Store.class);
+
+        ServiceContext context = injector.getInstance(ServiceContext.class);
+        context.setLocale(new Locale("no", "NO"));
+
+        Kode enumKode = store.get(CEnumKodeId.KodeAId);
+        assertNotNull(enumKode);
+        assertFalse(enumKode.getBeskrivelse().contains("(nynorsk)"));
+
+        Collection<? extends KodelisteId> kodelisteIds = kodelisteService.getKodelisteIds();
+        assertNotNull(kodelisteIds);
+        for (KodelisteId listeId : kodelisteIds) {
+            BubbleObject o = store.get(listeId);
+            if (o instanceof Kodeliste) {
+                Kodeliste liste = (Kodeliste) o;
+                for (Kode kode : liste.getKoder()) {
+                    String beskrivelse = kode.getBeskrivelse();
+                    assertNotNull(beskrivelse);
+                    assertFalse(beskrivelse.contains("."));
+                    assertFalse(beskrivelse.contains("(nynorsk)"));
+                }
+            }
+        }
+
+        store.clear();
+        context.setLocale(new Locale("no", "NO","NY"));
+
+        enumKode = store.get(BEnumKodeId.KodeAId);
+        assertNotNull(enumKode);
+        assertTrue(enumKode.getBeskrivelse().contains("(nynorsk)"));
+
+        Collection<? extends KodelisteId> kodelisteIdsNy = kodelisteService.getKodelisteIds();
+        assertNotNull(kodelisteIdsNy);
+         for (KodelisteId listeId : kodelisteIdsNy) {
+            BubbleObject o = store.get(listeId);
+            if (o instanceof Kodeliste) {
+                Kodeliste liste = (Kodeliste) o;
+                for (Kode kode : liste.getKoder()) {
+                    String beskrivelse = kode.getBeskrivelse();
+                    assertNotNull(beskrivelse);
+                    assertFalse(beskrivelse.contains("."));
+                    assertTrue(beskrivelse.contains("nynorsk"));
+                }
+            }
+        }
+    }
+
 }

@@ -1,6 +1,8 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
@@ -21,18 +23,20 @@ public class KodelistePersister<T extends BubbleObject, I extends BubbleId<? ext
     private final HibernateStoreSession hibernateSessionWrapper;
     private final KodelisteManager kodelisteManager;
     private final DbKodelisteLoader dbKodelisteLoader;
+    private final Provider<ServiceContext> serviceContextProvider;
 
 
     @Inject
-    public KodelistePersister(HibernateStoreSession hibernateSessionWrapper, DbKodelisteLoader dbKodelisteLoader, KodelisteManager kodelisteManager) {
+    public KodelistePersister(HibernateStoreSession hibernateSessionWrapper, DbKodelisteLoader dbKodelisteLoader, KodelisteManager kodelisteManager,Provider<ServiceContext> serviceContextProvider) {
         this.hibernateSessionWrapper = hibernateSessionWrapper;
         this.kodelisteManager = kodelisteManager;
         this.dbKodelisteLoader = dbKodelisteLoader;
+        this.serviceContextProvider = serviceContextProvider;
     }
 
     public T get(I bubbleId) {
         refreshKodeManagerIfNeeded();
-        return (T) kodelisteManager.get(bubbleId, null);
+        return (T) kodelisteManager.get(bubbleId, serviceContextProvider.get().getLocale());
     }
 
     @Override
@@ -42,7 +46,7 @@ public class KodelistePersister<T extends BubbleObject, I extends BubbleId<? ext
         for (Map.Entry<SnapshotVersion, Collection<? extends I>> snapshotVersionListEntry : bubbleIdsForSnapshotMap.entrySet()) {
             SnapshotVersion snapshotVersion = snapshotVersionListEntry.getKey();
             Collection<? extends I> bubbleIds = snapshotVersionListEntry.getValue();
-            Collection<T> bubbles = (Collection<T>)kodelisteManager.get(bubbleIds, null);
+            Collection<T> bubbles = (Collection<T>)kodelisteManager.get(bubbleIds, serviceContextProvider.get().getLocale());
             result.put(snapshotVersion, bubbles);
         }
         return result;
@@ -69,12 +73,12 @@ public class KodelistePersister<T extends BubbleObject, I extends BubbleId<? ext
 
     public Collection<? extends BubbleObject> getAllKodelisterAndKoder() {
         refreshKodeManagerIfNeeded();
-        return kodelisteManager.getAllKodelisterAndKoder(null);
+        return kodelisteManager.getAllKodelisterAndKoder(serviceContextProvider.get().getLocale());
     }
 
     public KodelisteTransfer getKodelisteTransfer() {
         refreshKodeManagerIfNeeded();
-        return kodelisteManager.getKodelisteTransfer(null);
+        return kodelisteManager.getKodelisteTransfer(serviceContextProvider.get().getLocale());
     }
 
     private void refreshKodeManagerIfNeeded() {
