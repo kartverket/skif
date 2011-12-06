@@ -1,9 +1,6 @@
 package no.statkart.skif.store3.persistence.hibernate;
 
 import com.google.inject.Inject;
-import com.sun.corba.se.spi.presentation.rmi.PresentationManager;
-import no.statkart.skif.store3.persistence.PersistenceDescriptor;
-import no.statkart.skif.store3.persistence.PersistenceDescriptorRegistry;
 import org.hibernate.SessionFactory;
 
 /**
