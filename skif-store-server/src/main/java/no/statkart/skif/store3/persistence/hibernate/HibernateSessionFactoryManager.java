@@ -8,6 +8,6 @@ import org.hibernate.SessionFactory;
  */
 public interface HibernateSessionFactoryManager extends Closeable {
     public SessionFactory getFactory(int index);
-    public Object[] getPersistenceDescriptors();
+    public HibernateSessionFactoryDescriptor[] getPersistenceDescriptors();
     public void close();
 }
