@@ -1,157 +1,64 @@
-/**
- * This project produces an ear module from a list of ear modules (ejb and war). All dependencies for the ear modules
- * are copied to the APP-INF lib of the ear, except for those dependencies already provided by the jee server.
- *
- * The application.xml file is auto generated from the list of modules. War projects are expected to have a variable
- * called 'contextRoot' which is used for defining the context-root tag in application.xml
- */
+apply plugin: 'ear'
 
-import groovy.xml.XmlUtil
-import groovy.xml.StreamingMarkupBuilder
-import groovy.util.slurpersupport.GPathResult
-import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
-
-earModules = [
-        project(':skif-store-test:skif-store-test-server'),
-        project(':skif-store-test:skif-store-test-wswar')
+Map warMap = [
+        ':skif-store-test:skif-store-test-wswar': 'storetest/wsapi',
 ]
 
-configurations {
-    modules {
-        description = 'files to deployed as ear modules'
-    }
-
-    earlib {
-        description = 'files to deploy in earlib'
-    }
-}
+List ejbList = [
+        ':skif-store-test:skif-store-test-server'
+]
 
 dependencies {
-    // TODO: Error. archives is empty. To be fixed in Gradle 1.0
-    //jeeModule.each { project ->  modules project.configurations.archives}
+    ejbList.each {
+        deploy project(it)
+    }
+    warMap.each {
+        deploy project(it.key)
+    }
+    (ejbList + warMap.keySet()).each {
+        earlib project(it)
+    }
 
+    // TODO: Bør noen av de andre modulene trekke med seg denne (de har den nå på testCompile)?
     earlib project(':skif-config')
-
-    earModules.each { project -> modules project.configurations.archives.allArtifactFiles }
-    earModules.each { project -> earlib project.configurations.default - configurations.modules}
 }
 
-
-task earlib(type: Sync) {
-    from configurations.earlib
-    into "${buildDir}/tempEar/APP-INF/lib"
-}
-
-task metainf {
-    doLast {
-        copy {
-            from 'src/main/config/META-INF'
-            into "${buildDir}/tempEar/META-INF"
-            exclude 'application.xml'
-        }
-        addEarModulesToApplicationXml("${projectDir}/src/main/config/META-INF/application.xml", "${buildDir}/tempEar/META-INF/application.xml")
-    }
-}
-
-task modules(type: Sync) {
-    from configurations.modules
-    into "${buildDir}/tempEarModules"
-}
-
-
-task ear(type: Jar, dependsOn: [earlib, metainf, modules]) {
-    extension = "ear"
-    from("${buildDir}/tempEar")
-    from("${buildDir}/tempEarModules")
-}
-
-task build(dependsOn: ear)
-
-artifacts {
-    archives ear
-}
-
-uploadArchives {
-    repositories {
-// TODO: Fix
-//        add project.repositories.releases
-    }
-    // uploadDescriptor = false
-}
-
-
-task deploy {
-
-    doLast {
-        ant.taskdef(name: 'wldeploy', classname: 'weblogic.ant.taskdefs.management.WLDeploy', classpath: libraries.weblogic.asPath)
-
-        wlsDeployProtocol = 'http'
-        wlsDeployIp = "${wls_hostname}"
-        wlsDeployPort = "${wls_port}"
-        wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
-
-
-        ant.wldeploy(action: 'deploy', source: "${buildDir}/libs/skif-store-test-ear-${version}.ear", name: project.name, user: 'admmatr', password: 'matrikkeladm1',
-                adminurl: wlsAdminUrl, targets: 'AdminServer', upload: true, timeout: 18000, verbose: true, failonerror: true)
-    }
-}
-
-task undeploy {
-
-
-    doLast {
-        ant.taskdef(name: 'wldeploy', classname: 'weblogic.ant.taskdefs.management.WLDeploy', classpath: configurations.weblogic.asPath)
-
-        wlsDeployProtocol = 'http'
-        wlsDeployIp = "${wls_hostname}"
-        wlsDeployPort = "${wls_port}"
-        wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
-
-        ant.wldeploy(action: 'undeploy', name: project.name, user: 'admmatr', password: 'matrikkeladm1',
-                adminurl: wlsAdminUrl, targets: 'AdminServer', graceful: true, verbose: true, failonerror: true)
-    }
-}
-
-def void addEarModulesToApplicationXml(String srcApplicationXmlFilename, String targetApplicationXmlFilename) {
-    File file = new File(srcApplicationXmlFilename)
-    GPathResult xml = readApplicationXml(file)
-    earModules.each {project ->
-        ArchivePublishArtifact artifact = project.configurations.archives.allArtifacts.iterator().next();
-            switch (artifact.extension) {
-            case 'jar':
-                xml.appendNode {
-                    module("") {
-                        ejb("${artifact.archiveTask.archiveName}")
-                    }
-                }
-                break;
-            case 'war':
-                xml.appendNode {
-                    module("") {
-                        web("") {
-                            'web-uri'("${artifact.archiveTask.archiveName}")
-                            'context-root'(project.contextRoot)
-                        }
-                    }
-                }
-                break;
-            default:
-                break;
+ear {
+    libDirName 'APP-INF/lib'
+    deploymentDescriptor {
+        version = "5"
+        displayName= "skif-store-test"
+        warMap.each {
+            def p = project(it.key)
+            webModule(p.name + '-' + p.version + ".war", it.value)
         }
     }
-    def targetFile = new FileWriter(targetApplicationXmlFilename);
-    targetFile.write(serializeApplicationXml(xml))
-    targetFile.close()
 }
 
-def GPathResult readApplicationXml(File file) {
-    return new XmlSlurper().parse(file).declareNamespace([jee: "http://java.sun.com/xml/ns/javaee", xsi: "http://www.w3.org/2001/XMLSchema-instance"])
+ant.taskdef(name: 'wldeploy', classname: 'weblogic.ant.taskdefs.management.WLDeploy', classpath: configurations.weblogic.asPath)
+
+task deploy(dependsOn: 'assemble') << {
+    wlsDeployProtocol = "${wls_deploy_protocol}"
+    wlsDeployIp = "${wls_deploy_hostname}"
+    wlsDeployPort = "${wls_deploy_port}"
+    wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
+    wlsDeployTargets = "${wls_deploy_targets}"
+    wlsDeployUsername = "${wls_username}"
+    wlsDeployPassword = "${wls_password}"
+
+    ant.wldeploy(action: 'deploy', source: "${ear.archivePath}", name: project.name, user: wlsDeployUsername, password: wlsDeployPassword,
+                 adminurl: wlsAdminUrl, targets: wlsDeployTargets, upload: 'true', timeout: '18000', verbose: 'true', failonerror: 'true')
 }
 
-def String serializeApplicationXml(GPathResult xml) {
-    XmlUtil.serialize(new StreamingMarkupBuilder().bind {
-        mkp.declareNamespace(["": "http://java.sun.com/xml/ns/javaee"])
-        mkp.yield xml
-    })
-}
+task undeploy << {
+    wlsDeployProtocol = "${wls_deploy_protocol}"
+    wlsDeployIp = "${wls_deploy_hostname}"
+    wlsDeployPort = "${wls_deploy_port}"
+    wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
+    wlsDeployTargets = "${wls_deploy_targets}"
+    wlsDeployUsername = "${wls_username}"
+    wlsDeployPassword = "${wls_password}"
 
+    ant.wldeploy(action: 'undeploy', name: project.name, user: wlsDeployUsername, password: wlsDeployPassword,
+            adminurl: wlsAdminUrl, targets: 'AdminServer', graceful: true, verbose: true, failonerror: true)
+}

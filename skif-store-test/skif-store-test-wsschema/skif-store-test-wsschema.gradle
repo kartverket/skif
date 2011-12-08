@@ -1,42 +1,12 @@
-jaxbSourceDir = file('src/main/schema')
-jaxbTargetDir = file('build/generated/main/java')
-
-sourceSets.main.java.srcDirs = ['src/main/java', "${jaxbTargetDir}"]
-
-// Source is in the build directory so we need to unexclude it
-idea.module.iml {
-    whenMerged {
-        it.excludeFolders = it.excludeFolders.findAll{!it.url.contains("build")}
-    }
-}
-
-configurations {
-    jaxb
-}
+apply plugin: 'statkart-xjc-plugin'
 
 dependencies {
     jaxb libraries.jaxb_xjc
     jaxb libraries.build_utils
 }
 
-task jaxb {
-    inputs.dir jaxbSourceDir
-    outputs.dir jaxbTargetDir
-
-    doLast {
-        jaxbTargetDir.mkdirs()
-        ant.taskdef(name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.jaxb.asPath)
-        ant.xjc(destdir: "${jaxbTargetDir}", extension: 'true') {
-            arg(line: '-grunnbokDoc no.statkart.skif.storetest.wsapi.domain no.statkart.skif.teststore.domain')
-            schema(dir: "${jaxbSourceDir}", includes: '**/*.xsd')
-        }
-    }
+statKartXjc {
+    String jaxbSourceDir = 'src/main/schema'
+    schema(jaxbSourceDir, '**/*.xsd', 'no.statkart.skif.storetest.wsapi.domain no.statkart.skif.teststore.domain')
+    xjcLibraries = configurations.jaxb
 }
-
-clean << {
-    ant.delete(dir: "${jaxbTargetDir}")
-    jaxbTargetDir.mkdirs()
-}
-
-compileJava.dependsOn jaxb
-ideaModule.dependsOn jaxb

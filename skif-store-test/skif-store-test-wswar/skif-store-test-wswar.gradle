@@ -1,103 +1,17 @@
-/**
- * This subproject produces a Web Service war file by using Weblogics jwcs ant task. This
- * task produces an ear with an exploded war file which needs to be jar'ed into a war file.
- *
- * Since the war file is produced in a non-standard fashion this project uses Gradles java plugin instead of the
- * war Plugin. The java plugin compiles sources and produces resources to classes in the standard way. The
- * jar task has been altered completely such that it  produces a war file by jar'ing the contents of the exploded war
- * in the ear produced by jwcs. Into this war file the jar task also copies all resources from classes.
- *
- * The projects archive artifact has been modified to indicate that the produced artifact is of type 'war' and has
- * extension 'war.
- *                                                                                .
- */
+import no.statkart.gradle.util.DependencyUtil
 
-import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact;
-
-wsschemaProject = project(':skif-store-test:skif-store-test-wsschema')
-wsmappingProject = project(':skif-store-test:skif-store-test-wsmapping')
-
-earBuildDir = file("${buildDir}/ear")
-contextRoot = "storetest/wsapi"
-wsModuleName = "${name}-${version}"
-
-// Changing project archive artifact to be a war instead of jar. Would have been nice if Gradle could derive this automatically from the properties of the jar task
-project.getConfigurations().getByName(Dependency.ARCHIVES_CONFIGURATION).allArtifacts.each {
-    ArchivePublishArtifact a ->
-    if (a.name == project.name) {
-        a.extension = "war"
-        a.type = "war"
-        a.archiveTask.archiveName -= '.jar'
-        a.archiveTask.archiveName += '.war'
-    }
-}
+apply plugin: 'statkart-weblogic-wswar-plugin'
 
 dependencies {
     compile project(':skif-store-test:skif-store-test-server')
-    compile wsmappingProject
+    compile project(':skif-store-test:skif-store-test-wsmapping')
 
     provided libraries.weblogic
+    provided files(DependencyUtil.getJavaTools())
 }
 
-task wsgen {
-    wsschemaProject.sourceSets.main.allSource.srcDirs.each { inputs.dir it}
-    inputs.dir file('src/main/java')
-    inputs.dir file(wsschemaProject.sourceSets.main.classesDir)
-    outputs.dir earBuildDir
-
-    doLast {
-        ant.taskdef(name: 'jwsc', classname: 'weblogic.wsee.tools.anttasks.JwscTask', classpath: libraries.weblogic.asPath)
-        earBuildDir.mkdirs()
-
-        ant.jwsc(srcdir: 'src/main/java', destdir: earBuildDir, keepGenerated: 'true', classpath: (configurations.compile + configurations.provided).asPath, verbose: 'false', debug: 'true', includeantruntime: 'false') {
-            module(name: wsModuleName, contextpath: contextRoot, explode: 'true') {
-                jws(file: 'no/statkart/skif/storetest/wsapi/service/storetest1/StoreTest1ServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
-                    wlhttptransport(serviceuri: 'StoreTest1ServiceWS')
-                }
-
-                jws(file: 'no/statkart/skif/storetest/wsapi/service/store/StoreServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
-                    wlhttptransport(serviceuri: 'StoreServiceWS')
-                }
-                jws(file: 'no/statkart/skif/storetest/wsapi/service/kodeliste/KodelisteServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
-                    wlhttptransport(serviceuri: 'KodelisteServiceWS')
-                }
-
-                jws(file: 'no/statkart/skif/storetest/wsapi/service/txmanagement/BeanManagedTxAServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
-                    wlhttptransport(serviceuri: 'BeanManagedTxAServiceWS')
-                }
-                jws(file: 'no/statkart/skif/storetest/wsapi/service/txmanagement/ContainerManagedTxAServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
-                    wlhttptransport(serviceuri: 'ContainerManagedTxAServiceWS')
-                }
-                jws(file: 'no/statkart/skif/storetest/wsapi/service/txmanagement/ContainerManagedTxCMTCascadeServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
-                    wlhttptransport(serviceuri: 'ContainerManagedTxCMTCascadeServiceWS')
-                }
-                jws(file: 'no/statkart/skif/storetest/wsapi/service/id/SequenceBlockAllocatorServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
-                    wlhttptransport(serviceuri: 'SequenceBlockAllocatorServiceWS')
-                }
-                jws(file: 'no/statkart/skif/storetest/wsapi/service/histtest/HistTestServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
-                    wlhttptransport(serviceuri: 'HistTestServiceWS')
-                }
-                jws(file: 'no/statkart/skif/storetest/wsapi/service/locking/LockingTestServiceWSBean.java', generateWsdl: 'true', type: 'JAXWS') {
-                    wlhttptransport(serviceuri: 'LockingTestServiceWS')
-                }
-            }
-        }
-    }
+statKartWeblogicWsWar {
+    sourceDir = 'src/main/java'
+    classpath = configurations.compile + configurations.provided
+    weblogicLibraries = configurations.weblogic
 }
-
-wsgen.dependsOn(wsschemaProject.classes)
-wsgen.dependsOn(classes)
-
-jar {
-    // Clear original settings
-    getMainSpec().getMainSpec().getSourcePaths().clear()
-
-    extension = "war"
-    type = "war"
-    from("${earBuildDir}/${wsModuleName}") { exclude 'WEB-INF/web.xml'}
-    from "src/main/webapp"
-}
-
-jar.dependsOn(wsgen)
-
-
