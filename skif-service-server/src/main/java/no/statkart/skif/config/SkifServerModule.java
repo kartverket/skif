@@ -53,7 +53,5 @@ public class SkifServerModule extends SkifModule {
             bind(ConnectionManager.class).to(ConnectionManagerJEE.class).in(ServiceRequestScoped.class);
             bind(Connection.class).toProvider(new ConnectionProvider(null)).in(ServiceRequestScoped.class);
         }
-
-        install(new ServerServiceModule(moduleConfiguration, new SkifServices().getServices()));
     }
 }

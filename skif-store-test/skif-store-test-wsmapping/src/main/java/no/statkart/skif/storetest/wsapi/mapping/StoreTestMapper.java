@@ -45,12 +45,16 @@ public class StoreTestMapper extends AbstractMapper {
         useIdentityMapping(String.class);
         useIdentityMapping(Integer.class);
         useIdentityMapping(Long.class);
+        useIdentityMapping(Boolean.class);
 
         // Timestamp
         addMapper(new TimestampTypeMapper());
 
         // SnapshotVersion
         addMapper(new SnapshotVersionTypeMapper());
+
+        //SelectionPolygon
+        addMapper(new SelectionPolygonTypeMapper());
 
         // Alle Id'er
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.TestBubbleId.class, no.statkart.skif.storetest.domain.demo.TestBubbleId.class));
@@ -59,6 +63,7 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId.class, no.statkart.skif.storetest.domain.demo.BarFoosId.class));
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.BazId.class, no.statkart.skif.storetest.domain.demo.BazId.class));
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.RazId.class, no.statkart.skif.storetest.domain.demo.RazId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.GeometricElementId.class, no.statkart.skif.storetest.domain.demo.GeometricElementId.class));
 
         // TODO: Endre kodemapper til å kunne håndtere multiple mappinger for source, rekkefølgen er viktig her
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestDbKodelisteLongId.class));
@@ -73,6 +78,7 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new WsapiListTypeMapper(BarFoosIdList.class, Collection.class));
         addMapper(new WsapiListTypeMapper(FooIdList.class, Collection.class));
         addMapper(new WsapiListTypeMapper(BazIdList.class, Collection.class));
+        addMapper(new WsapiListTypeMapper(GeometricElementIdList.class, Collection.class));
 
         // Boble Objekter
         addMapper(new TestBubbleTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.TestBubble.class, no.statkart.skif.storetest.domain.demo.TestBubble.class));

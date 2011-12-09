@@ -4,7 +4,9 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
+import no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon;
 import no.statkart.skif.storetest.wsapi.domain.demo.*;
 
 import javax.annotation.PostConstruct;
@@ -59,5 +61,24 @@ public class HistTestServiceWSBean extends SkifWebService<HistTestServiceWSI> im
     @Override
     public FooIdList findFooIdsForNr(@WebParam(name = "nr") long nr, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
         return wsServiceChain.findFooIdsForNr(nr, storeTestContext);
+    }
+
+    @Override
+    public BarIdList findBarIdsAliveAtSnapshot(@WebParam(name = "barIds") BarIdList barIds, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name="storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findBarIdsAliveAtSnapshot(barIds, snapshotVersion, storeTestContext);
+    }
+
+    @Override
+    public StoreTestBubbleIdListForStoreTestBubbleIdsMap findBarIdsForFooIds(FooIdList fooIds, SnapshotVersion snapshotVersion, @WebParam(name="storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findBarIdsForFooIds(fooIds, snapshotVersion, storeTestContext);
+    }
+
+    public GeometricElementIdList findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion, StoreTestContext storeTestContext) {
+        return wsServiceChain.findGeometricElementsWithPointInSelectionPolygon(selectionPolygon, snapshotVersion, storeTestContext);
+    }
+
+    @Override
+    public GeometricElementIdList findGeometricElementsWithPolygonInSelectionPolygon(@WebParam(name = "selectionPolygon") SelectionPolygon selectionPolygon, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findGeometricElementsWithPolygonInSelectionPolygon(selectionPolygon, snapshotVersion, storeTestContext);
     }
 }

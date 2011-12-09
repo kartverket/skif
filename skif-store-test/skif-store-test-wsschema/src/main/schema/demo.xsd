@@ -158,6 +158,25 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="GeometricElementId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId"/>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="GeometricElement">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble"/>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="GeometricElementIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="demons:GeometricElementIdList"/>
+        </xs:sequence>
+    </xs:complexType>
+    
     <!-- Ikke  bobler -->
 
     <!--xs:complexType name="A">

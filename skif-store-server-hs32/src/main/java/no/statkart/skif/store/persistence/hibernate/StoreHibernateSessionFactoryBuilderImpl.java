@@ -5,6 +5,7 @@ import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizer;
 import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefConfiguration;
+import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.event.DeleteEventListener;
@@ -20,8 +21,8 @@ import java.util.Properties;
  * @author Henrik Fredholm
  */
 public class StoreHibernateSessionFactoryBuilderImpl extends StoreHibernateSessionFactoryBuilder {
-    public StoreHibernateSessionFactoryBuilderImpl(Properties hibernateProperties, String mappingFilesDirectory) {
-        super(hibernateProperties, mappingFilesDirectory);
+    public StoreHibernateSessionFactoryBuilderImpl(Properties hibernateProperties, String mappingFilesDirectory, Interceptor interceptor) {
+        super(hibernateProperties, mappingFilesDirectory, interceptor);
     }
 
     protected Configuration createConfiguration(Properties props) {

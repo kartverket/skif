@@ -24,6 +24,13 @@ GRANT insert ON TestHistoricBubble TO @db_non_history_schema_name@;
 GRANT update ON TestHistoricBubble TO @db_non_history_schema_name@;
 GRANT delete ON TestHistoricBubble TO @db_non_history_schema_name@;
 
+GRANT select ON Foo TO HANSTE;
+GRANT insert ON Foo TO HANSTE;
+GRANT update ON Foo TO HANSTE;
+GRANT delete ON Foo TO HANSTE;
+
+grant execute on SNAPSHOT_TIME to HANSTE;
+
 insert into TestHistoricEntity values (1, 'Test');
 insert into TestHistoricBubble values (1, 'Test');
 

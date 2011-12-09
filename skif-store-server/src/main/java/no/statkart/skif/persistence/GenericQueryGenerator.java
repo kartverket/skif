@@ -1,9 +1,15 @@
 package no.statkart.skif.persistence;
 
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import no.statkart.skif.domain.JTSUtils;
+import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import no.statkart.skif.util.JDBCHelper;
+import no.statkart.skif.util.OracleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +34,7 @@ import java.util.Date;
  */
 public class GenericQueryGenerator {
     private static Logger logger = LoggerFactory.getLogger(GenericQueryGenerator.class);
+    protected Connection connection;
 
     private static abstract class TableOrInlineView {
 
@@ -139,7 +146,8 @@ public class GenericQueryGenerator {
         this.projection.add(select);
     }
 
-    public GenericQueryGenerator() {
+    public GenericQueryGenerator(Connection connection) {
+        this.connection = connection;
     }
 
 
@@ -246,6 +254,17 @@ public class GenericQueryGenerator {
     public void addSelection(String string, List objects) {
         addSelectionImpl(string, null, objects);
     }
+
+    /**
+     * Legger til et søkepolygon som seleksjon.
+     *
+     * @param string
+     * @param selectionPolygon
+     */
+    public void addSelection(String string, SelectionPolygon selectionPolygon) {
+       addSelectionImpl(string, null, selectionPolygon);
+    }
+
 
 
     /**
@@ -406,6 +425,20 @@ public class GenericQueryGenerator {
             }
             buffer.append(where1).append(buffer_);
             parameters.addAll(list);
+        } else if( parameter instanceof SelectionPolygon ) {
+           SelectionPolygon selectionPolygon = (SelectionPolygon) parameter;
+           Polygon polygon = selectionPolygon.getPolygon();
+           polygon = instansierOgKopierPolygon(polygon);
+
+           if( prefix ) {
+              buffer.append(" " + operator + " ");
+           }
+           buffer.append("mdsys.sdo_relate(").append(where1).append(",?,'mask=anyinteract')='TRUE'");
+           if( where2 != null ) {
+              buffer.append(where2);
+           }
+           parameters.add(new GeometriTilSdoStructMapper(OracleUtils.getOracleConnection(connection)).createStruct(polygon));
+
 
         } else {
 
@@ -573,6 +606,17 @@ public class GenericQueryGenerator {
                 JDBCHelper.close(result, stmt);
             }
         }
+    }
+
+    private static Polygon instansierOgKopierPolygon(Polygon polygon) {
+       //lager en ny instans av polygonet
+
+       //nb: geometri-objekter må være opprettet med et geometryFactory som har SRID == -1 == OracleUtils.getOracleIntSRID()
+
+       GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), OracleUtils.getOracleIntSRID());
+       polygon = JTSUtils.kopierPolygon(polygon, geometryFactory);
+
+       return polygon;
     }
 
 

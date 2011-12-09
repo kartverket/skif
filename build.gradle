@@ -27,7 +27,6 @@ evaluationOrder 'skif-store-test:skif-store-test-ear'
 
 
 apply plugin: 'idea'
-apply plugin: 'maven'
 
 
 // version kan settes via properties (feks kommandolinje -P )
@@ -108,7 +107,7 @@ buildscript {
         mavenLocal()  //må ha denne for å kunne hente ned lokalt installerte dev-versjoner...
     }
     dependencies {
-        classpath "no.statkart:statkart-gradle-plugins:${'16-SNAPSHOT'}"
+        classpath "no.statkart:statkart-gradle-plugins:${'3-SNAPSHOT'}"
     }
 }
 
@@ -120,11 +119,14 @@ versions = [
 
         oracle : '11.2.0.2.0',
         hibernate: '3.2.6.GA',
+//        hibernate: '3.6.4',
         slf4j : '1.6.1',
 //        slf4j : properties['versions.slf4j'],
         logback : '0.9.28',
         guice : '3.0',
         jaxb : '2.1.13',
+        jts : "1.7.1",
+        gt2_oracle_spatial : "2.2.2",
 ]
 
 // build a map of the dependency artifacts to use. Allows centralized definition of the version of artifacts to
@@ -166,9 +168,9 @@ libraries = [
         // JAXB
         jaxb_impl: "com.sun.xml.bind:jaxb-impl:${versions.jaxb}",
         jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${versions.jaxb}",
-        build_utils: "no.statkart.grunnbok:build-utils:${versions.BUILD_UTILS}"
+        build_utils: "no.statkart.grunnbok:build-utils:${versions.BUILD_UTILS}",
 
-
+        jts: "com.vividsolutions:jts:${versions.jts}",
 ]
 
 // JAX-WS runtime for weblogic
@@ -190,6 +192,10 @@ libraries.weblogic = files(
         "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.6.0.0.jar",
         libraries.jaxws_rt,
 )
+
+libraries.gt2 = [
+        'org.geotools:gt2-oracle-spatial:2.2.2@jar',
+]
 
 libraries.guice_with_used_deps = [
         libraries.guice,
@@ -217,7 +223,8 @@ libraries.hibernate_tools_3_2 = [
 libraries.hibernate_3_6 = [
         'org.hibernate:hibernate-parent:3.6.4.Final',
         'org.hibernate:hibernate-core:3.6.4.Final',
-        'javassist:javassist:3.12.0.GA'
+        'javassist:javassist:3.12.0.GA',
+        libraries.ojdbc,
 ]
 
 def boolean isJavaProject(Project project) {

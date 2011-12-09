@@ -62,6 +62,10 @@ public class HibernateSessionFactoryBuilder {
         return this;
     }
 
+    public SessionFactory build(){
+        return build(null);
+    }
+
     public SessionFactory build(SnapshotVersionSeed key) {
         SessionFactory sessionFactory = null;
         logger.debug("creating session factory");

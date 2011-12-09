@@ -30,7 +30,7 @@ public class ServerServiceModule extends ModuleWithStrategy<ServerServiceModuleS
     }
 
 
-    private void configureServices() {
+    protected void configureServices() {
         for (Class<? extends Object> service : services) {
             strategy.bindServiceChainFactoriesForService(binder(), service);
             strategy.bindService(binder(), service);

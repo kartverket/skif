@@ -1,6 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.store.SnapshotVersionSeed;
+import org.hibernate.Interceptor;
 import org.hibernate.Session;
 
 import java.util.Properties;
@@ -16,7 +17,7 @@ public class HibernateVersionFactoryImpl implements HibernateVersionFactory {
     }
 
     @Override
-    public StoreHibernateSessionFactoryBuilder createStoreHibernateSessionFactoryBuilder(Properties properties, String mappingFileDirectoryRoot) {
-        return new StoreHibernateSessionFactoryBuilderImpl(properties, mappingFileDirectoryRoot);
+    public StoreHibernateSessionFactoryBuilder createStoreHibernateSessionFactoryBuilder(Properties properties, String mappingFileDirectoryRoot, Interceptor interceptor) {
+        return new StoreHibernateSessionFactoryBuilderImpl(properties, mappingFileDirectoryRoot, interceptor);
     }
 }

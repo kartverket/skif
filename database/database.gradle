@@ -75,3 +75,18 @@ task dbInitAsHistUser {
         }
     }
 }
+task dbInitAsNonHistUser {
+    description = 'Populerer NonHist-skjema, og granter rettigheter'
+    def mySqlTasks = [tasks.CreateNonHistSchema, tasks.LoadTestdataForNonHistSchema]
+
+    mySqlTasks.each {
+        dependsOn = it.dependsOn
+    }
+
+    doLast {
+        mySqlTasks.each {
+            println "${name} -> ${it.path}"
+            it.execute()
+        }
+    }
+}

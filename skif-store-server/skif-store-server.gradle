@@ -12,6 +12,8 @@ dependencies {
       provided libraries.hibernate_3_6
     }
 
+    compile libraries.gt2
+
     provided libraries.weblogic
 
     testCompile project(':skif-config')

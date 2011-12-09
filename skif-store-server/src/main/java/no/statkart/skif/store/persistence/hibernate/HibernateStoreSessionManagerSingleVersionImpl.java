@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class HibernateStoreSessionManagerSingleVersionImpl extends AbstractHibernateSessionManager<HibernateStoreSessionManagerEntry> implements HibernateStoreSessionManager {
     private static Logger logger = LoggerFactory.getLogger(HibernateSessionManagerSingleVersionImpl.class);
     private final ServiceRequestContext serviceRequestContext;
-    private HibernateStoreSessionManagerEntry entry = new HibernateStoreSessionManagerEntry(SnapshotVersion.CURRENT);
+    private HibernateStoreSessionManagerEntry entry = new HibernateStoreSessionManagerEntry(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
     private long versionedContextLevel = 0;
     private long versionedSessionLevel = 0;
 
@@ -26,7 +26,7 @@ public class HibernateStoreSessionManagerSingleVersionImpl extends AbstractHiber
     public HibernateStoreSessionManagerSingleVersionImpl(ConnectionFactoryManager connectionFactoryManager, HibernateSessionFactoryManagerSingleVersionImpl hibernateSessionFactoryManager, ServiceRequestContext serviceRequestContext) {
         super(connectionFactoryManager, hibernateSessionFactoryManager);
         this.serviceRequestContext = serviceRequestContext;
-        entry.key = SnapshotVersion.CURRENT;
+        entry.key = new SnapshotVersionSeed(SnapshotVersion.CURRENT);
     }
 
     @Override

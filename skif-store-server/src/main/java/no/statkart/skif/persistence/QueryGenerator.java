@@ -21,7 +21,6 @@ import java.util.List;
  */
 public class QueryGenerator extends GenericQueryGenerator {
     private static Logger logger = LoggerFactory.getLogger(QueryGenerator.class);
-    private Connection connection;
     private SnapshotVersion snapshotVersion;
 
     public QueryGenerator(String select, String from, String where) {
@@ -41,7 +40,7 @@ public class QueryGenerator extends GenericQueryGenerator {
     }
 
     public QueryGenerator(Connection connection, SnapshotVersion snapshotVersion) {
-        this.connection = connection;
+        super(connection);
         this.snapshotVersion = snapshotVersion;
     }
 

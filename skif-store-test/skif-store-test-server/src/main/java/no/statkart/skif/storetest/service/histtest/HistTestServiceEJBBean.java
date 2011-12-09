@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
+import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.SnapshotVersion;
@@ -53,5 +54,15 @@ public class HistTestServiceEJBBean extends EJBTimedService implements HistTestS
     @Override
     public Map<FooId<?>, Set<BarId<?>>> findBarIdsForFooIds(Set<FooId<?>> fooIds, SnapshotVersion snapshotVersion) {
         return serviceChain.findBarIdsForFooIds(fooIds, snapshotVersion);
+    }
+
+    @Override
+    public List<GeometricElementId> findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {
+        return serviceChain.findGeometricElementsWithPointInSelectionPolygon(selectionPolygon, snapshotVersion);
+    }
+
+    @Override
+    public List<GeometricElementId> findGeometricElementsWithPolygonInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {
+        return serviceChain.findGeometricElementsWithPolygonInSelectionPolygon(selectionPolygon, snapshotVersion);
     }
 }

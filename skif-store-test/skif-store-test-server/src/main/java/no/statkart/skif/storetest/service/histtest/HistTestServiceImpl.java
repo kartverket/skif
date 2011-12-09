@@ -1,9 +1,11 @@
 package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
+import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.BarFinder;
 import no.statkart.skif.persistence.FooFinder;
+import no.statkart.skif.persistence.GeometriFinder;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
@@ -35,12 +37,15 @@ public class HistTestServiceImpl implements HistTestService {
      */
     private final BarFinder barFinder;
 
+    private final GeometriFinder geometriFinder;
+
     @Inject
-    public HistTestServiceImpl(HibernateStoreSessionManager sessionManager, Store store, FooFinder fooFinder, BarFinder barFinder) {
+    public HistTestServiceImpl(HibernateStoreSessionManager sessionManager, Store store, FooFinder fooFinder, BarFinder barFinder, GeometriFinder geometriFinder) {
         this.sessionManager = sessionManager;
         this.store = store;
         this.fooFinder = fooFinder;
         this.barFinder = barFinder;
+        this.geometriFinder = geometriFinder;
     }
 
     @Override
@@ -116,5 +121,15 @@ public class HistTestServiceImpl implements HistTestService {
     @Override
     public Map<FooId<?>, Set<BarId<?>>> findBarIdsForFooIds(Set<FooId<?>> fooIds, SnapshotVersion snapshotVersion) {
         return barFinder.findBarIdsForFooIds(fooIds, snapshotVersion);
+    }
+
+    @Override
+    public List<GeometricElementId> findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {
+        return geometriFinder.findGeometricElementsWithPointInSelectionPolygon(selectionPolygon, snapshotVersion);
+    }
+
+    @Override
+    public List<GeometricElementId> findGeometricElementsWithPolygonInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {
+        return geometriFinder.findGeometricElementsWithPolygonInSelectionPolygon(selectionPolygon, snapshotVersion);
     }
 }
