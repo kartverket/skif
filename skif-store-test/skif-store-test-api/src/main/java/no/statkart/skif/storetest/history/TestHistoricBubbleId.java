@@ -29,4 +29,10 @@ public class TestHistoricBubbleId<T extends TestHistoricBubble> extends Abstract
     public TestHistoricBubbleId(Object value, SnapshotVersion version) {
         super(value, version);
     }
+
+    @Override
+    public Long getValue() {
+        return (Long)super.getValue();
+    }
+
 }
