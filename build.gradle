@@ -30,7 +30,7 @@ buildscript {
         mavenRepo name: 'public', urls: publicRepo
     }
     dependencies {
-        classpath 'no.statkart:statkart-gradle-plugins:16-SNAPSHOT'
+        classpath 'no.statkart:statkart-gradle-plugins:16'
     }
 }
 
