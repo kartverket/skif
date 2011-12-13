@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @author Henrik Fredholm
  */
-public class PersistenceManagerForHibernate implements PersistenceManager, TransactionalResource {
+public class PersistenceManagerForHibernate implements PersistenceManager {
     private final SnapshotManagedHibernateSession hibernateSessionManager;
 
     private final SnapshotManagedHibernatePersistenceSession hibernatePersistenceSessionManager;
