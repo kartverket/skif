@@ -1,7 +1,6 @@
 package no.statkart.skif.store3.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.SessionNotAcquiredException;
 import no.statkart.skif.guava.Preconditions;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store3.persistence.*;
@@ -53,7 +52,6 @@ public class SnapshotManagedHibernateSession implements SnapshotManaged<Session>
      *
      * @param snapshotVersion
      * @return session med ønsket snapshotVersion satt
-     * @throws SessionNotAcquiredException hvis ingen session ble allokert og dermed heller ingen snapshot ble pushet på stacken
      */
     @Override
     public Session acquireForSnapshot(SnapshotVersion snapshotVersion) {

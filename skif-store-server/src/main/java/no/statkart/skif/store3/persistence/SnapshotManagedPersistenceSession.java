@@ -1,6 +1,5 @@
 package no.statkart.skif.store3.persistence;
 
-import no.statkart.skif.exception.SessionNotAcquiredException;
 import no.statkart.skif.store.SnapshotVersion;
 
 /**
