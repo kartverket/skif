@@ -41,8 +41,6 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
                 String idString;
                 if(classname.contains("Impl")) {
                     idString = classname.substring(0, classname.indexOf("Impl")) + "IdImpl";
-                } else if(classname.endsWith("2")) {
-                    idString = classname.substring(0, classname.length() - 1) + "Id";
                 } else {
                     idString = classname + "Id";
                 }
