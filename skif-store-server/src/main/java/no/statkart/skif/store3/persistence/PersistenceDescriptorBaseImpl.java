@@ -42,7 +42,6 @@ public class PersistenceDescriptorBaseImpl<S> implements PersistenceDescriptor<S
     }
 
     public void setObject(S object) {
-        Preconditions.checkArgument(object != null, "object er allerede satt");
         this.object = object;
     }
 }

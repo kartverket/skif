@@ -8,8 +8,7 @@ import no.statkart.skif.store.SnapshotVersion;
 public interface SnapshotSessionEventSource {
     void addListener(SnapshotSessionEventListener listener);
     void removeListener (SnapshotSessionEventListener listener);
-    void fireOnChangeSnapshot(SnapshotVersion snapshotVersion);
-    void fireOnFlush();
+    void fireOnClose();
+    void fireOnChangeSnapshot();
     void fireOnClear();
-    void fireOnEvict();
 }

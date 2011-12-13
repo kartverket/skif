@@ -6,9 +6,8 @@ import no.statkart.skif.store.SnapshotVersion;
 /**
  * @author Henrik Fredholm
  */
-public interface SnapshotManaged<S> {
-    S acquireForSnapshot(SnapshotVersion snapshotVersion) throws SessionNotAcquiredException;
-    S releaseForSnapshot(S s);
+public interface SnapshotManagedPersistenceSession<S extends PersistenceSession> {
+    S acquireForSnapshot(SnapshotVersion snapshotVersion);
+    S releaseForSnapshot(PersistenceSession s);
     PersistenceDescriptor[] getPersistenceDescriptors();
-    void close();
 }

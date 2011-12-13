@@ -65,8 +65,8 @@ public class HibernateSessionManagerTest {
 
     public void testHibernateSessionManager() {
 
-        HibernateSessionFactoryDescriptor descriptor1 = new HibernateSessionFactoryDescriptor("current", new SnapshotVersionSeed(SnapshotVersion.CURRENT), getHibernateProperties());
-        HibernateSessionFactoryDescriptor descriptor2 = new HibernateSessionFactoryDescriptor("old", new SnapshotVersionSeed(SnapshotVersion.OLD), getHibernateProperties());
+        HibernateSessionFactoryDescriptor descriptor1 = new HibernateSessionFactoryDescriptor("current", new SnapshotVersionSeed(SnapshotVersion.CURRENT), false, getHibernateProperties());
+        HibernateSessionFactoryDescriptor descriptor2 = new HibernateSessionFactoryDescriptor("old", new SnapshotVersionSeed(SnapshotVersion.OLD), false, getHibernateProperties());
         hibernateSessionFactoryManager = new HibernateSessionFactoryManagerImpl(createHibernateSessionFactoryBuilder().addResource(TestBubble.class), descriptor1, descriptor2);
         assertNotNull(hibernateSessionFactoryManager);
 
@@ -115,8 +115,8 @@ public class HibernateSessionManagerTest {
 
 
     public void testAccepts() {
-        HibernateSessionFactoryDescriptor descriptor1 = new HibernateSessionFactoryDescriptor("current", new SnapshotVersionSeed(SnapshotVersion.CURRENT), getHibernateProperties());
-        HibernateSessionFactoryDescriptor descriptor2 = new HibernateSessionFactoryDescriptor("old", new SnapshotVersionSeed(SnapshotVersion.OLD), getHibernateProperties());
+        HibernateSessionFactoryDescriptor descriptor1 = new HibernateSessionFactoryDescriptor("current", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true,  getHibernateProperties());
+        HibernateSessionFactoryDescriptor descriptor2 = new HibernateSessionFactoryDescriptor("old", new SnapshotVersionSeed(SnapshotVersion.OLD), true, getHibernateProperties());
 
         assertTrue(descriptor1.accepts(SnapshotVersion.CURRENT));
         assertFalse(descriptor1.accepts(SnapshotVersion.OLD));

@@ -6,8 +6,7 @@ import no.statkart.skif.store.SnapshotVersion;
  * @author Henrik Fredholm
  */
 public interface SnapshotSessionEventListener {
-    void onChangeSnapshot(SnapshotVersion snapshotVersion);
-    void onFlush();
+    void onChangeSnapshot();
     void onClear();
-    void onEvict();
+    void onClose();
 }

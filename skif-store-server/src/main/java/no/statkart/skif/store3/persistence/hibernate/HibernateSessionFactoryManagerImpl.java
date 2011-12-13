@@ -39,6 +39,7 @@ public class HibernateSessionFactoryManagerImpl implements  HibernateSessionFact
         if (factory ==null) {
             HibernateSessionFactoryDescriptor descriptor = descriptors[index];
             factory = factoryBuilder.build(descriptor.getSeed(), descriptor.getHibernateProperties(), descriptor.getHibernateInterceptor());
+            descriptors[index].setObject(factory);
         }
         return factory;
     }
@@ -52,7 +53,7 @@ public class HibernateSessionFactoryManagerImpl implements  HibernateSessionFact
             SessionFactory factory = descriptors[i].getObject();
             if (factory!=null) {
                 factory.close();
-                descriptors[i] = null;
+                descriptors[i].setObject(null);
             }
         }
     }

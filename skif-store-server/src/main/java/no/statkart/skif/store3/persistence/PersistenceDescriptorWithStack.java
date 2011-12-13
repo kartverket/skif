@@ -9,25 +9,22 @@ import java.util.Deque;
  * @author Henrik Fredholm
  */
 public class PersistenceDescriptorWithStack<S, W extends PersistenceDescriptor<?>> extends PersistenceDescriptorWrapper<S, W> {
-    Deque<SnapshotVersion> stack = new ArrayDeque<SnapshotVersion>();
+    private Deque<SnapshotVersion> stack = new ArrayDeque<SnapshotVersion>();
 
     public PersistenceDescriptorWithStack(W wrapped) {
         super(wrapped);
     }
 
     public void pushSnapshotVersion(SnapshotVersion snapshotVersion) {
-        stack.push(wrapped.getSeed().get());
-        wrapped.getSeed().set(snapshotVersion);
+        stack.push(snapshotVersion);
     }
 
     public SnapshotVersion popSnapshotVersion() {
-        SnapshotVersion snapshotVersion = stack.pop();
-        wrapped.getSeed().set(snapshotVersion);
-        return snapshotVersion;
+        return stack.pop();
     }
 
     public SnapshotVersion peekSnapshotVersion() {
-        return stack.pop();
+        return stack.peek();
     }
 
 }
