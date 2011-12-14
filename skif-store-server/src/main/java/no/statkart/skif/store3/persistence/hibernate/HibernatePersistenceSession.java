@@ -25,6 +25,17 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
+ * En PersistenceSession som bruker hibernate som underliggende session og som er knyttet til en gitt SnapshotVersion.
+ *
+ * Klassen håndterer lasting av bobler basert på id og har støtte for lazyloading. Klassen holder styr på hvilke bobler
+ * som helt sikkert er fuldt initialisert samt hvilke bobler som har blitt gitt ut og som muligvis ikke er fuldt initialisert.
+ * Det er også mulig å angi om bobler alltid skal lastet fuldt ut før de blir gitt ut.
+ *
+ * Ved endring av SnapshotVersion på den underliggende hibernate session forventer klasse å bli fortalt om dette via
+ * en event. Klassen vi da sørge for at alle lastet bobler som har blitt gitt ut blir fuldt initialisert.
+ * Deretter nullstilles listene over lastet bobler.
+ *
+ *
  * @author Henrik Fredholm
  */
 public class HibernatePersistenceSession implements PersistenceSession {
@@ -56,13 +67,13 @@ public class HibernatePersistenceSession implements PersistenceSession {
             @Override
             public void onChangeSnapshot() {
                 ensureBubblesFullyLoaded();
-
-                //To change body of implemented methods use File | Settings | File Templates.
+                onClear();
             }
 
             @Override
             public void onClear() {
-                //To change body of implemented methods use File | Settings | File Templates.
+                fullyInitializedBubbles.clear();
+                exportedLazyLoadedBubbles.clear();
             }
 
             @Override
@@ -117,7 +128,7 @@ public class HibernatePersistenceSession implements PersistenceSession {
             checkSnapshotVersion(bubbleId);
             T bubble;
             if ((bubble = (T) fullyInitializedBubbles.get(bubbleId)) != null) {
-
+                alreadyLoaded.add(bubble);
             } else if ((bubble = (T) exportedLazyLoadedBubbles.get(bubbleId)) != null) {
                 alreadyLoaded.add(bubble);
             } else if ((bubble = lookupInHibernateCache(bubbleId)) != null) {
@@ -171,12 +182,6 @@ public class HibernatePersistenceSession implements PersistenceSession {
             fullyInitializedBubbles.remove(bubbleId);
             exportedLazyLoadedBubbles.remove(bubbleId);
         }
-    }
-
-    public void evictAll() {
-        session.clear();
-        fullyInitializedBubbles.clear();
-        exportedLazyLoadedBubbles.clear();
     }
 
     public void ensureBubblesFullyLoaded() {
