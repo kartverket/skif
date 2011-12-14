@@ -60,16 +60,17 @@ public class SnapshotManagedHibernateSessionTest {
             assertEquals(foo_100_S1.getId().getSnapshotVersion(), S1);
         } finally {
             sessionManager.releaseForSnapshot(session);
+            sessionManager.close();
+            sessionFactoryManager.close();
         }
 
-        sessionManager.close();
-        sessionFactoryManager.close();
     }
 
     @Test(invocationCount = 200)
     public void testLoadObjectWithHistory_many() {
         testLoadObjectWithHistory();
     }
+
 
     public void testCommit() {
         HibernateSessionFactoryBuilder sessionFactoryBuilder = createHibernateSessionFactoryBuilderWithHistory();
@@ -81,8 +82,8 @@ public class SnapshotManagedHibernateSessionTest {
             sessionManager.beginTransaction();
             hibernateSession = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
 
-            hibernateSession.createQuery("delete from TestEntity").executeUpdate();
-            TestEntity entity1 = new TestEntity(1L, "Entity1");
+            hibernateSession.createQuery("delete from TestEntity where id>100").executeUpdate();
+            TestEntity entity1 = new TestEntity(101L, "Entity101");
             hibernateSession.save(entity1);
 
             hibernateSession.flush();
@@ -92,14 +93,14 @@ public class SnapshotManagedHibernateSessionTest {
             sessionManager.close();
 
             hibernateSession = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
-            TestEntity entity2 = (TestEntity) hibernateSession.load(TestEntity.class, 1L);
+            TestEntity entity2 = (TestEntity) hibernateSession.load(TestEntity.class, 101L);
             assertNotSame(entity1, entity2);
             assertEquals(entity1, entity2);
         } finally {
             sessionManager.releaseForSnapshot(hibernateSession);
+            sessionManager.close();
+            sessionFactoryManager.close();
         }
-        sessionManager.close();
-        sessionFactoryManager.close();
     }
 
     @Test(invocationCount = 200)

@@ -101,8 +101,8 @@ public class HibernateSessionManagerTest {
 
 
         org.hibernate.classic.Session session = factory0.openSession();
-        session.createSQLQuery("insert into testbubble values (1,'Text 1'");
-        session.createSQLQuery("insert into testbubble values (2,'Text 2'");
+        session.createSQLQuery("insert into testbubble values (1,'Text 1')").executeUpdate();
+        session.createSQLQuery("insert into testbubble values (2,'Text 2')").executeUpdate();
         session.flush();
 
         try {
@@ -218,8 +218,8 @@ public class HibernateSessionManagerTest {
 //        HibernateSessionManager sessionManager = new HibernateSessionManagerSingleVersionImpl(connectionFactoryManager, hibernateSessionFactoryManager, new ServiceRequestContext());
 //        Session hibernateSession = sessionManager.getHibernateSession(NOT_USED);
 //        sessionManager.beginTransaction();
-//        hibernateSession.createQuery("delete from TestEntity").executeUpdate();
-//        TestEntity entity1 = new TestEntity(1L, "Entity1");
+//        hibernateSession.createQuery("delete from TestEntity where id>100").executeUpdate();
+//        TestEntity entity1 = new TestEntity(101L, "Entity101");
 //        hibernateSession.save(entity1);
 //        sessionManager.commit();
 //        sessionManager.close();

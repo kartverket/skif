@@ -91,8 +91,8 @@ public class SnapshotManagedHibernatePersistenceSessionTest {
             sessionManager.getWrappedSessionManager().beginTransaction();
             session = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
 
-            session.getWrappedSession().createQuery("delete from TestEntity").executeUpdate();
-            TestEntity entity1 = new TestEntity(1L, "Entity1");
+            session.getWrappedSession().createQuery("delete from TestEntity where id>100").executeUpdate();
+            TestEntity entity1 = new TestEntity(101L, "Entity101");
             session.getWrappedSession().save(entity1);
 
             session.getWrappedSession().flush();
@@ -102,7 +102,7 @@ public class SnapshotManagedHibernatePersistenceSessionTest {
             sessionManager.getWrappedSessionManager().close();
 
             session = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
-            TestEntity entity2 = (TestEntity) session.getWrappedSession().load(TestEntity.class, 1L);
+            TestEntity entity2 = (TestEntity) session.getWrappedSession().load(TestEntity.class, 101L);
             assertNotSame(entity1, entity2);
             assertEquals(entity1, entity2);
         } finally {
