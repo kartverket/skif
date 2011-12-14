@@ -31,7 +31,7 @@ public abstract class StoreHibernateSessionFactoryBuilder extends HibernateSessi
     }
 
     public StoreHibernateSessionFactoryBuilder addResourceWithSubclasses(Class baseclass, Class... subclasses) {
-        super.addResourceWithSubclasses(baseclass, subclasses);
+        super.addResource(baseclass);
         for (Class subclass : subclasses) {
             if (BubbleObject.class.isAssignableFrom(subclass)) {
                 bubbleClassDeleteOrder.add(subclass);
@@ -40,18 +40,8 @@ public abstract class StoreHibernateSessionFactoryBuilder extends HibernateSessi
         return this;
     }
 
-    public StoreHibernateSessionFactoryBuilder addResourceWithSubclassesUsingRelativePath(String relativePath, Class baseclass, Class... subclasses) {
-        super.addResourceWithSubclassesUsingRelativePath(relativePath, baseclass, subclasses);
-        for (Class subclass : subclasses) {
-            if (BubbleObject.class.isAssignableFrom(subclass)) {
-                bubbleClassDeleteOrder.add(subclass);
-            }
-        }
-        return this;
-    }
-
-    public StoreHibernateSessionFactoryBuilder addResourceUsingAbsolutePath(Class clazz, String hbmFilename) {
-        super.addResourceUsingAbsolutePath(clazz, hbmFilename);
+    public StoreHibernateSessionFactoryBuilder addResource(Class clazz) {
+        super.addResource(clazz);
         if (BubbleObject.class.isAssignableFrom(clazz)) {
             bubbleClassDeleteOrder.add(clazz);
 

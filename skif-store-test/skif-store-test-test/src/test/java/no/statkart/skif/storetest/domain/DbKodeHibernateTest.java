@@ -42,12 +42,12 @@ public class DbKodeHibernateTest {
 
     private SessionFactory setupHibernate() {
         StoreHibernateSessionFactoryBuilder sfbuilder = TestHelper.createStoreHibernateSessionFactoryBuilder();
-        sfbuilder.addResourceUsingRelativePath("kode", EnumKodeIdType.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", XStrDbKode.class);
-        sfbuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", CDbKode.class, C1DbKode.class, C2DbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodelisteLong.class);
+        sfbuilder.addResource(EnumKodeIdType.class);
+        sfbuilder.addResource(ADbKode.class);
+        sfbuilder.addResource(BDbKode.class);
+        sfbuilder.addResource(XStrDbKode.class);
+        sfbuilder.addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class);
+        sfbuilder.addResource(StoreTestDbKodelisteLong.class);
         sfbuilder.addResource(Foo.class);
         sfbuilder.addResource(Baz.class);
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));

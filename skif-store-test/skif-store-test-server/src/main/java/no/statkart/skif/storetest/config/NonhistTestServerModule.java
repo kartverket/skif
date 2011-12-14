@@ -65,17 +65,17 @@ public class NonhistTestServerModule extends SkifModule {
             @Override
             protected void configureHibernate(StoreHibernateSessionFactoryBuilder factoryBuilder) {
                 // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
-                factoryBuilder.addResourceUsingRelativePath("kode", no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType.class);
-                factoryBuilder.addResourceUsingRelativePath("kodeliste", no.statkart.skif.storetest.domain.demo.koder.CDbKode.class);
+                factoryBuilder.addResource(no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType.class);
+                factoryBuilder.addResource(no.statkart.skif.storetest.domain.demo.koder.CDbKode.class);
                 factoryBuilder.addResource(no.statkart.skif.storetest.domain.demo.Foo.class);
                 factoryBuilder.addResource(no.statkart.skif.storetest.domain.demo.Bar.class);
                 factoryBuilder.addResource(no.statkart.skif.storetest.domain.demo.Baz.class);
-                factoryBuilder.addResourceUsingRelativePath("kode", EnumKodeIdType.class);
-                factoryBuilder.addResourceUsingAbsolutePath(CDbKode.class, "no/statkart/skif/storetest/persistence/hibernate/kodeliste/CDbKode2.hbm.xml");
+                factoryBuilder.addResource(EnumKodeIdType.class);
+                factoryBuilder.addResource(CDbKode.class);
 //                factoryBuilder.addResourceUsingAbsolutePath(EnumKodeIdType.class, "no/statkart/skif/storetest/persistence/hibernate/EnumKodeIdType2.hbm.xml");
-                factoryBuilder.addResourceUsingAbsolutePath(Foo.class, "no/statkart/skif/storetest/persistence/hibernate/Foo2.hbm.xml");
-                factoryBuilder.addResourceUsingAbsolutePath(Baz.class, "no/statkart/skif/storetest/persistence/hibernate/Baz2.hbm.xml");
-                factoryBuilder.addResourceUsingAbsolutePath(Bar.class, "no/statkart/skif/storetest/persistence/hibernate/Bar2.hbm.xml");
+                factoryBuilder.addResource(Foo.class);
+                factoryBuilder.addResource(Baz.class);
+                factoryBuilder.addResource(Bar.class);
             }
         };
         serverStoreModule.getStrategy(ServiceMode.JEE).setHibernateConfigurationFilename("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties");

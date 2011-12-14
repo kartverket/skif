@@ -36,7 +36,7 @@ public class NonhistTestServiceTest extends SkifTestCase {
 
     private SessionFactory setupHibernate() {
         HibernateSessionFactoryBuilder sfbuilder = TestHelper.createHibernateSessionFactoryBuilder();
-        sfbuilder.addResourceUsingAbsolutePath(no.statkart.skif.storetest.domain.nonhist.Foo.class, "no/statkart/skif/storetest/persistence/hibernate/Foo2.hbm.xml");
+        sfbuilder.addResource(no.statkart.skif.storetest.domain.nonhist.Foo.class);
         sfbuilder.addResource(no.statkart.skif.storetest.domain.demo.Foo.class);
         SessionFactory sf = sfbuilder.build();
         AssertJUnit.assertNotNull(sf);
@@ -77,11 +77,18 @@ public class NonhistTestServiceTest extends SkifTestCase {
         boolean gotDemoDomainObject = false;
         boolean gotNonhistDomainObject = false;
         for (Iterator<BubbleObject> iterator = foos.iterator(); iterator.hasNext(); ) {
-            BubbleObject next = iterator.next();
+            BubbleObject next = iterator.next();            
             if(next.getClass().getPackage().getName().contains("domain.demo")){
-                gotDemoDomainObject = true;
+                gotDemoDomainObject = true;     
+                no.statkart.skif.storetest.domain.demo.Foo foo = (no.statkart.skif.storetest.domain.demo.Foo) next;                
+                Class type = foo.getId().getValueType();
+                assertEquals(type.getSimpleName(), "Long");
             }else if(next.getClass().getPackage().getName().contains("domain.nonhist")){
                 gotNonhistDomainObject = true;
+                Foo foo = (Foo) next;
+                Class type = foo.getId().getValueType();
+                assertEquals(type.getSimpleName(), "Long");
+
             }
         }
         assertTrue(gotDemoDomainObject, "Fikk ikke returnert minst ett domain.demo objekt");

@@ -33,7 +33,7 @@ public class HibernateTwoSchemasTest {
         sfbuilder.addResource(TestBubble.class);
         sfbuilder.addResource(TestHistoricEntity.class);
         sfbuilder.addResource(TestHistoricBubble.class);
-        sfbuilder.addResourceUsingAbsolutePath(no.statkart.skif.storetest.domain.nonhist.Foo.class, "no/statkart/skif/storetest/persistence/hibernate/Foo2.hbm.xml");
+        sfbuilder.addResource(no.statkart.skif.storetest.domain.nonhist.Foo.class);
         sfbuilder.addResource(no.statkart.skif.storetest.domain.demo.Foo.class);
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
         AssertJUnit.assertNotNull(sf);
