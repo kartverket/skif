@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping default-cascade="none" default-lazy="false">
+<hibernate-mapping default-cascade="none" default-lazy="false" auto-import="false">
 
-   <class name="no.statkart.skif.storetest.history.Foo" schema="@skif.db_history_schema_name@">
-      <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.history.FooIdType">
+   <class name="no.statkart.skif.storetest.domain.demo.Foo" schema="HANSTE_HIST">
+      <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.FooIdType">
           <generator class="assigned"/>
       </id>
 

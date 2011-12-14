@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false" auto-import="false">
+
+    <class name="no.statkart.skif.storetest.domain.nonhist.Bar" schema="@skif.db_non_history_schema_name@">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.nonhist.BarIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="husnr"/>
+        <property name="bokstav"/>
+        <many-to-one
+           name="foo"
+           column="fooId"
+           class="no.statkart.skif.storetest.domain.nonhist.Foo">
+           <meta attribute="bubble-ref"/>
+        </many-to-one>
+        <many-to-one
+           name="baz"
+           column="bazId"
+           class="no.statkart.skif.storetest.domain.nonhist.Baz">
+           <meta attribute="bubble-ref"/>
+        </many-to-one>
+
+    </class>
+
+</hibernate-mapping>
