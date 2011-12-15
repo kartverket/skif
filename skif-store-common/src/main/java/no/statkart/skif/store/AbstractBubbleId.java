@@ -262,7 +262,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      *
      * @return the class
      */
-    public Class getType() {
+    public Class<T> getType() {
         if (typeInfo == null) {
             typeInfo = getTypeInfo(clazz);
         }

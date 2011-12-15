@@ -13,7 +13,7 @@ public interface BubbleId<T extends BubbleObject> extends Serializable{
     public BubbleId<T> resolveInstance();
     public T createTypeInstance();
     public Class getBaseType();
-    public Class getType();
+    public Class<T> getType();
     public Class getValueType();
     public boolean equalsIgnoreSnapshotVersion(Object object);
 }

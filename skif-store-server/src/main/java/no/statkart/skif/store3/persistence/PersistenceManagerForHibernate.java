@@ -1,5 +1,6 @@
 package no.statkart.skif.store3.persistence;
 
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
@@ -7,7 +8,9 @@ import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store3.persistence.hibernate.SnapshotManagedHibernatePersistenceSession;
 import no.statkart.skif.store3.persistence.hibernate.SnapshotManagedHibernateSession;
+import no.statkart.skif.store3.persistence.kode.EnumKodeManager;
 import no.statkart.skif.store3.persistence.kode.SnapshotManagedKodePersistenceSession;
+import no.statkart.skif.util.KodeMsg;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,10 +27,10 @@ public class PersistenceManagerForHibernate implements PersistenceManager {
     private final SnapshotManagedKodePersistenceSession kodePersistenceSessionManager;
 
 
-    public PersistenceManagerForHibernate(SnapshotManagedHibernateSession hibernateSessionManager) {
+    public PersistenceManagerForHibernate(SnapshotManagedHibernateSession hibernateSessionManager, EnumKodeManager enumKodeManager, KodeMsg kodeMsg, ServiceContext serviceContext) {
         this.hibernateSessionManager = hibernateSessionManager;
         this.hibernatePersistenceSessionManager = new SnapshotManagedHibernatePersistenceSession(hibernateSessionManager);
-        this.kodePersistenceSessionManager = new SnapshotManagedKodePersistenceSession(hibernateSessionManager);
+        this.kodePersistenceSessionManager = new SnapshotManagedKodePersistenceSession(hibernateSessionManager, enumKodeManager, kodeMsg, serviceContext);
     }
 
     public SnapshotManagedHibernateSession getHibernateSessionManager() {
