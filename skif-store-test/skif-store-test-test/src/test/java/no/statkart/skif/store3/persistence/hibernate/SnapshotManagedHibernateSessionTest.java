@@ -66,7 +66,7 @@ public class SnapshotManagedHibernateSessionTest {
 
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 0)
     public void testLoadObjectWithHistory_many() {
         testLoadObjectWithHistory();
     }
@@ -103,7 +103,7 @@ public class SnapshotManagedHibernateSessionTest {
         }
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 0)
     public void testCommit_many() {
         testCommit();
     }
@@ -137,7 +137,7 @@ public class SnapshotManagedHibernateSessionTest {
         sessionFactoryManager.close();
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 0)
     public void testLoadHistoricObjects_many() {
         testLoadHistoricObjects();
     }

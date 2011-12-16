@@ -21,7 +21,7 @@ import java.sql.SQLException;
  * Session session3 = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
  * assertSame(session1, session3);
  * Session session4 = sessionManager.acquireForSnapshot(SnapshotVersion.OLD);
- * assertSame(session4, session4);
+ * assertSame(session2, session4);
  * } finally {
  * sessionManager.exitScope();
  * }

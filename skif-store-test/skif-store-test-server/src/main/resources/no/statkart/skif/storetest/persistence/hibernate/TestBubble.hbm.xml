@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-   <class name="no.statkart.skif.storetest.domain.demo.TestBubble">
+   <class name="no.statkart.skif.storetest.domain.demo.TestBubble" select-before-update="true">
       <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.TestBubbleIdType">
           <generator class="assigned"/>
       </id>

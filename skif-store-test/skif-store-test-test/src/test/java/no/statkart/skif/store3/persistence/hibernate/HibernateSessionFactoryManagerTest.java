@@ -82,7 +82,7 @@ public class HibernateSessionFactoryManagerTest {
 
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 0)
     public void testOpenAndCloseForSingleFactoryManager_Many() {
         testOpenAndCloseForSingleFactoryManager();
     }
@@ -118,7 +118,7 @@ public class HibernateSessionFactoryManagerTest {
         //sessionFactoryManager.endService();
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 0)
     public void testCreateSessionAndLoadObject_Many() {
         testCreateSessionAndLoadObject();
     }

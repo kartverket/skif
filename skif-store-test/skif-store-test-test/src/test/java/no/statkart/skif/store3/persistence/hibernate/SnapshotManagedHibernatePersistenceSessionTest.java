@@ -5,15 +5,10 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store3.persistence.PersistenceSession;
-import no.statkart.skif.store3.persistence.hibernate.*;
-import no.statkart.skif.storetest.domain.demo.Foo;
-import no.statkart.skif.storetest.domain.demo.FooId;
-import no.statkart.skif.storetest.domain.demo.TestEntity;
-import org.hibernate.Session;
+import no.statkart.skif.storetest.domain.demo.*;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import weblogic.j2ee.descriptor.wl.PersistenceBeanDConfig;
 
 import java.util.Properties;
 
@@ -78,9 +73,201 @@ public class SnapshotManagedHibernatePersistenceSessionTest {
 
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 0)
     public void testLoadObjectWithHistory_many() {
         testLoadObjectWithHistory();
+    }
+
+    public void testInsert() {
+        SnapshotManagedHibernatePersistenceSession sessionManager = new SnapshotManagedHibernatePersistenceSession(new SnapshotManagedHibernateSession(sessionFactoryManager));
+
+        HibernatePersistenceSession session = null;
+        try {
+            sessionManager.getWrappedSessionManager().beginTransaction();
+            session = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
+            session.getWrappedSession().createQuery("delete from TestBubble where id>100").executeUpdate();
+            TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
+            testBubble.setText("Text 101");
+            session.insert(testBubble);
+            session.getWrappedSession().flush();
+            sessionManager.getWrappedSessionManager().commit();
+
+            session.getWrappedSession().clear();
+
+            TestBubble loadedTestBuble = session.get(testBubble.getId());
+            assertEquals(loadedTestBuble.getId(), testBubble.getId());
+            assertEquals(loadedTestBuble.getText(), testBubble.getText());
+        } catch (Throwable t) {
+            t.printStackTrace();
+        } finally {
+            sessionManager.releaseForSnapshot(session);
+            sessionManager.getWrappedSessionManager().close();
+        }
+
+    }
+
+    public void testUpdate() {
+        SnapshotManagedHibernatePersistenceSession sessionManager = new SnapshotManagedHibernatePersistenceSession(new SnapshotManagedHibernateSession(sessionFactoryManager));
+
+        testInsert();
+        HibernatePersistenceSession session = null;
+        try {
+            sessionManager.getWrappedSessionManager().beginTransaction();
+            session = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
+            TestBubble testBubble = session.get(new TestBubbleId<TestBubble>(101));
+            testBubble.setText("updated");
+            session.update(testBubble);
+            sessionManager.getWrappedSessionManager().commit();
+
+            sessionManager.getWrappedSessionManager().clear();
+            TestBubble loadedTestBuble = session.get(testBubble.getId());
+            assertEquals(loadedTestBuble.getText(), "updated");
+        } finally {
+            sessionManager.releaseForSnapshot(session);
+            sessionManager.getWrappedSessionManager().close();
+        }
+
+    }
+
+    public void testUpdateDetatchNotLoaded() {
+        SnapshotManagedHibernatePersistenceSession sessionManager = new SnapshotManagedHibernatePersistenceSession(new SnapshotManagedHibernateSession(sessionFactoryManager));
+
+        testInsert();
+        HibernatePersistenceSession session = null;
+        try {
+            sessionManager.getWrappedSessionManager().beginTransaction();
+            session = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
+            TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
+            testBubble.setText("Updated");
+            testBubble = session.update(testBubble);
+            sessionManager.getWrappedSessionManager().commit();
+
+            sessionManager.getWrappedSessionManager().clear();
+            TestBubble loadedTestBuble = session.get(testBubble.getId());
+            assertEquals(loadedTestBuble.getText(), "Updated");
+        } finally {
+            sessionManager.releaseForSnapshot(session);
+            sessionManager.getWrappedSessionManager().close();
+        }
+    }
+
+    @Test(invocationCount = 0)
+    public void testUpdateDetatchNotLoaded_many() {
+        testUpdateDetatchNotLoaded();
+    }
+
+    public void testUpdateDetatchAlreadyLoaded() {
+        SnapshotManagedHibernatePersistenceSession sessionManager = new SnapshotManagedHibernatePersistenceSession(new SnapshotManagedHibernateSession(sessionFactoryManager));
+
+        testInsert();
+        HibernatePersistenceSession session = null;
+        try {
+            sessionManager.getWrappedSessionManager().beginTransaction();
+            session = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
+            TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
+            testBubble.setText("Updated");
+            session.get(testBubble.getId());
+            testBubble = session.update(testBubble);
+            sessionManager.getWrappedSessionManager().commit();
+
+            sessionManager.getWrappedSessionManager().clear();
+            TestBubble loadedTestBuble = session.get(testBubble.getId());
+            assertEquals(loadedTestBuble.getText(), "Updated");
+        } finally {
+            sessionManager.releaseForSnapshot(session);
+            sessionManager.getWrappedSessionManager().close();
+        }
+    }
+
+    public void testDeleteNotAlreadyLoaded() {
+        SnapshotManagedHibernatePersistenceSession sessionManager = new SnapshotManagedHibernatePersistenceSession(new SnapshotManagedHibernateSession(sessionFactoryManager));
+
+        testInsert();
+        HibernatePersistenceSession session = null;
+        try {
+            sessionManager.getWrappedSessionManager().beginTransaction();
+            session = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
+            TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
+            testBubble.setText("Updated");
+            TestBubble deletedBubble = session.delete(testBubble);
+            sessionManager.getWrappedSessionManager().commit();
+            assertEquals(deletedBubble.getText(), "Text 101");
+        } finally {
+            sessionManager.releaseForSnapshot(session);
+            sessionManager.getWrappedSessionManager().close();
+        }
+    }
+
+    @Test(invocationCount = 0)
+    public void testDeleteNotAlreadyLoaded_many() {
+        testDeleteAlreadyLoaded();
+    }
+
+    /**
+     * Test at objekt som slettes er det som er i databasen og ikke detatched
+     */
+    public void testDeleteAlreadyLoaded() {
+        SnapshotManagedHibernatePersistenceSession sessionManager = new SnapshotManagedHibernatePersistenceSession(new SnapshotManagedHibernateSession(sessionFactoryManager));
+
+        testInsert();
+        HibernatePersistenceSession session = null;
+        try {
+            sessionManager.getWrappedSessionManager().beginTransaction();
+            session = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
+            TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
+            testBubble.setText("Updated");
+            session.get(testBubble.getId());
+            TestBubble deletedBubble = session.delete(testBubble);
+            sessionManager.getWrappedSessionManager().commit();
+            assertEquals(deletedBubble.getText(), "Text 101");
+        } finally {
+            sessionManager.releaseForSnapshot(session);
+            sessionManager.getWrappedSessionManager().close();
+        }
+    }
+
+    /**
+     * Test at objekt som slettes er det som er i databasen og ikke detatched
+     */
+    public void testDeleteNotLoaded() {
+        SnapshotManagedHibernatePersistenceSession sessionManager = new SnapshotManagedHibernatePersistenceSession(new SnapshotManagedHibernateSession(sessionFactoryManager));
+
+        testInsert();
+        HibernatePersistenceSession session = null;
+        try {
+            sessionManager.getWrappedSessionManager().beginTransaction();
+            session = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
+            TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
+            testBubble.setText("Updated");
+            TestBubble deletedBubble = session.delete(testBubble);
+            sessionManager.getWrappedSessionManager().commit();
+            assertEquals(deletedBubble.getText(), "Text 101");
+        } finally {
+            sessionManager.releaseForSnapshot(session);
+            sessionManager.getWrappedSessionManager().close();
+        }
+    }
+
+    /**
+     * Test at objekt som slettes er det som har blitt oppdatet og ikke det som opprindelig var i databasen
+     */
+    public void testDeleteUpdated() {
+        SnapshotManagedHibernatePersistenceSession sessionManager = new SnapshotManagedHibernatePersistenceSession(new SnapshotManagedHibernateSession(sessionFactoryManager));
+
+        testInsert();
+        HibernatePersistenceSession session = null;
+        try {
+            sessionManager.getWrappedSessionManager().beginTransaction();
+            session = sessionManager.acquireForSnapshot(SnapshotVersion.CURRENT);
+            TestBubble testBubble = session.get(new TestBubbleId<TestBubble>(101));
+            testBubble.setText("Updated");
+            TestBubble deletedBubble = session.delete(testBubble);
+            sessionManager.getWrappedSessionManager().commit();
+            assertEquals(deletedBubble.getText(), "Updated");
+        } finally {
+            sessionManager.releaseForSnapshot(session);
+            sessionManager.getWrappedSessionManager().close();
+        }
     }
 
     public void testCommit() {
@@ -111,7 +298,7 @@ public class SnapshotManagedHibernatePersistenceSessionTest {
         }
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 0)
     public void testCommit_many() {
         testCommit();
     }
@@ -142,7 +329,7 @@ public class SnapshotManagedHibernatePersistenceSessionTest {
         }
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 0)
     public void testLoadHistoricObjects_many() {
         testLoadHistoricObjects();
     }

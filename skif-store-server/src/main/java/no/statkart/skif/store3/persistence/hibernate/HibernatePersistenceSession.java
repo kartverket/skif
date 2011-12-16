@@ -18,27 +18,30 @@ import org.hibernate.engine.PersistenceContext;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.AbstractComponentType;
 import org.hibernate.type.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
 
 /**
  * En PersistenceSession som bruker hibernate som underliggende session og som er knyttet til en gitt SnapshotVersion.
- *
+ * <p/>
  * Klassen håndterer lasting av bobler basert på id og har støtte for lazyloading. Klassen holder styr på hvilke bobler
  * som helt sikkert er fuldt initialisert samt hvilke bobler som har blitt gitt ut og som muligvis ikke er fuldt initialisert.
  * Det er også mulig å angi om bobler alltid skal lastet fuldt ut før de blir gitt ut.
- *
+ * <p/>
  * Ved endring av SnapshotVersion på den underliggende hibernate session forventer klasse å bli fortalt om dette via
  * en event. Klassen vi da sørge for at alle lastet bobler som har blitt gitt ut blir fuldt initialisert.
  * Deretter nullstilles listene over lastet bobler.
  *
- *
  * @author Henrik Fredholm
  */
 public class HibernatePersistenceSession implements PersistenceSession {
+    private static Logger logger = LoggerFactory.getLogger(HibernatePersistenceSession.class);
     private static int CRITERIA_BATCH_POWER = 9;
     private static final String ID_KOLONNE_NAVN = "id";
 
@@ -51,6 +54,8 @@ public class HibernatePersistenceSession implements PersistenceSession {
     private Map fullyInitializedBubbles = new HashMap();
     private Map exportedLazyLoadedBubbles = new HashMap();
 
+    private boolean useMergeForUpdate = false;
+
     /**
      * Bestemmer om Bubbler kan ha lazyloaded assosiasjoner som ikke er initialisert i det bubblen
      * utleveres fra HibernateSessionWrapper
@@ -62,7 +67,7 @@ public class HibernatePersistenceSession implements PersistenceSession {
         this.eventSource = eventSource;
         this.snapshotVersionSeed = snapshotVersionSeed;
 
-        eventSource.addListener(new SnapshotSessionEventListener(){
+        eventSource.addListener(new SnapshotSessionEventListener() {
 
             @Override
             public void onChangeSnapshot() {
@@ -86,6 +91,27 @@ public class HibernatePersistenceSession implements PersistenceSession {
     public Session getWrappedSession() {
         return session;
     }
+
+    //@Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T getUpdatable(I bubbleId) {
+        T bubble;
+
+        checkSnapshotVersion(bubbleId);
+        try {
+            bubble = getFromHibernateSessionOrLoadEnsureLatest(bubbleId);
+            if (bubble == null)
+                throw new ObjectNotFoundException(bubbleId, "Objekt finnes ikke: " + bubbleId);
+            if (!isLazyLoadedBubblesAllowed()) {
+                ensureFullyInitialized(bubble);
+            } else {
+                exportedLazyLoadedBubbles.put(bubble.getId(), bubble);
+            }
+            return bubble;
+        } catch (HibernateException e) {
+            throw new ImplementationException("Load feilet for " + bubbleId, e);
+        }
+    }
+
 
     /**
      * Laster en boble basert på boblens id.
@@ -172,6 +198,87 @@ public class HibernatePersistenceSession implements PersistenceSession {
             throw new ImplementationException("Ikke alle objekter kunne finnes: " + bubbleIds);
         }
         return result;
+    }
+
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubbleObject) {
+        try {
+            session.save(bubbleObject);
+        } catch (HibernateException e) {
+            throw new ImplementationException("Update feilet for " + bubbleObject);
+        }
+    }
+
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T update(T bubbleObject) {
+        try {
+            if (useMergeForUpdate) {
+                // Sjekk at object finnes i database slik at merge ikke gjør en insert istedet for update
+                getFromHibernateSessionOrLoad(bubbleObject.getId());
+                return (T) session.merge(bubbleObject);
+            } else {
+                evictOtherInstanceFromHibernateSession(bubbleObject);
+                session.update(bubbleObject); // Viktig at class-mapping inneholder 'select-before-update="true"'. Dette bør settes automatisk ved konfigurasjon av hibernate session factory.
+                return bubbleObject;
+            }
+        } catch (HibernateException e) {
+            throw new ImplementationException("Update feilet for " + bubbleObject);
+        }
+    }
+
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T delete(T bubbleObject) {
+        try {
+            // Henter objekt fra database/session istedet for å bruke bubbelObject fordi dette kan være fra
+            // klienten og inneholde endringer som ikke har blitt flushet hvilket kan føre til feil i hibernate
+            BubbleId bubbleId = bubbleObject.getId();
+            BubbleObject bubble = (BubbleObject) session.get(bubbleId.getType(), bubbleId);
+            if (bubble == null) {
+                throw new ObjectNotFoundException(bubbleId, "Objekt finnes ikke: " + bubbleId);
+            }
+            fullyInitializedBubbles.remove(bubbleId);
+            exportedLazyLoadedBubbles.remove(bubbleId);
+            session.delete(bubble);
+            return (T) bubble;
+        } catch (HibernateException e) {
+            throw new ImplementationException("Delete feilet for " + bubbleObject, e);
+        }
+    }
+
+    /**
+     * Sjekk om hibernate har et objekt med samme id som <code>bubbleObject</code>, kast hibernate's
+     * objekt ut av hibernate cache dersom objektet hibernate innehar ikke er identisk med
+     * <code>bubbleObject</code>. Identisk betyr samme objekt-instans ikke equals-likhet.
+     *
+     * @param bubbleObject et objekt som kanskje er lastet gjennom hibernate tidligere i denne
+     *                     sesjonen
+     * @throws HibernateException dersom evict(..) på hibernate session feiler
+     */
+    private void evictOtherInstanceFromHibernateSession(BubbleObject bubbleObject) throws HibernateException {
+        // Hibernate tillater ikke update på et objekt når et annet objekt med samme id finnes i hibernate sin cache
+        // Vi må teste på dette og evt. kaste ut det gamle objektet fra hibernate sin cache.
+        // Dette kan kun testes ved å forsøke å loaded objektet og se om man får det samme objket som man
+        // har fra før. Dersom objektet ikke var loadet vil Hibernate retunerer en proxy hvis objektet støtter
+        // lazyloading. Dette kallet gir derfor ingen database aksess for objekter som støtter lazyloading. For objekter
+        // som ikke støtter lazyloading vil dette gi en ekstra db access.
+        Object obj = getFromHibernatePersistenceContext(bubbleObject.getId());
+        if (obj != bubbleObject) {
+            if (obj instanceof HibernateProxy) {
+                // Hibernate hadde ikke noen anden boble instans, men vi må kaste ut den proxyen som ble
+                // skapt av loaden ovenfor
+            } else {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Evict av annen boble instans assosiert med sessionen : " + bubbleObject.getId());
+                }
+                // Dersom den gamle instansen har blitt endret vil hibernate kunne gi en "postInsert feil: possible nonthreadsafe access to session"
+                // Denne feilen kan unngåes hvis man gjør en session.flush() her slik at alle endringer fra den gamle instansen
+                // kommer ned i databasen. Rammeverket skal dog fange opp og hindre at det oppdateres på flere instanser av
+                // samme objekt innenfor samme session. Det skal derfor ikke være noen flush her.
+                //session.flush();
+                // La den nye versjonen erstatte den gamle. Det er tryggt å anta at denne også er fullt initialisert.
+                fullyInitializedBubbles.put(bubbleObject.getId(), bubbleObject);
+            }
+            session.evict(obj);
+        } else {
+            // Gjør ingen ting, bubbleObject er det objektet som allerede ligger i hibernate sessionen
+        }
     }
 
     @Override
@@ -275,14 +382,30 @@ public class HibernatePersistenceSession implements PersistenceSession {
         return idsByType;
     }
 
-
     private <T extends BubbleObject, I extends BubbleId<? extends T>> T getFromHibernateSessionOrLoad(I bubbleId) {
+        T bubble = getFromHibernatePersistenceContext(bubbleId);
+        if (bubble == null) {
+            bubble = (T) session.get(bubbleId.getType(), bubbleId, LockMode.NONE);
+        }
+        return bubble;
+    }
+
+    private <T extends BubbleObject, I extends BubbleId<? extends T>> T getFromHibernatePersistenceContext(I bubbleId) {
         T bubble;
         final EntityPersister classPersister = getClassPersister(bubbleId.getType());
         final EntityKey key = new EntityKey(bubbleId, classPersister, EntityMode.POJO);
         bubble = (T) ((SessionImpl) session).getPersistenceContext().getEntity(key);
-        if (bubble == null) {
-            bubble = (T) session.get(bubbleId.getType(), bubbleId);
+        return bubble;
+    }
+
+    private <T extends BubbleObject, I extends BubbleId<? extends T>> T getFromHibernateSessionOrLoadEnsureLatest(I bubbleId) {
+        T bubble;
+        final EntityPersister classPersister = getClassPersister(bubbleId.getType());
+        final EntityKey key = new EntityKey(bubbleId, classPersister, EntityMode.POJO);
+        boolean bubbleWasAlreadyLoaded = ((SessionImpl) session).getPersistenceContext().getEntity(key) != null;
+        bubble = (T) session.get(bubbleId.getType(), bubbleId, LockMode.READ);
+        if (bubbleWasAlreadyLoaded) {
+            // TODO: check that alrady loaded entities of bubble are uptodate
         }
         return bubble;
     }
@@ -329,7 +452,7 @@ public class HibernatePersistenceSession implements PersistenceSession {
 
         ClassMetadata classMetadata = ((SessionImpl) session).getFactory().getClassMetadata(object.getClass());
 
-        if( erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
+        if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
 
         EntityPersister persister = (EntityPersister) classMetadata;
         Type[] types = persister.getPropertyTypes();
@@ -495,3 +618,5 @@ public class HibernatePersistenceSession implements PersistenceSession {
         this.lazyLoadedBubblesAllowed = lazyLoadedBubblesAllowed;
     }
 }
+
+
