@@ -1,5 +1,6 @@
 package no.statkart.skif.util.testsupport;
 
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.MappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -16,6 +18,8 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Denne testklassen går gjennom alle klasser som ligger i den angitte wsapiPkg eller under og tester mappingen av de, ved å:
@@ -31,7 +35,7 @@ import java.util.*;
  * @author Steinar Hansen
  */
 public class AutomagicTest {
-    protected Logger logger = LoggerFactory.getLogger(AutomagicTest.class);
+    protected static Logger logger = LoggerFactory.getLogger(AutomagicTest.class);
     private Set<String> wsapiPkg = new HashSet<String>();
     private Set<String> domainPkg = new HashSet<String>();
     private Set<String> skipTestingForTheseClasses = new HashSet<String>();
@@ -63,16 +67,52 @@ public class AutomagicTest {
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
         List<File> dirs = new ArrayList<File>();
+        ArrayList<Class> classes = new ArrayList<Class>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
-            String fileName = resource.getFile();
-            String fileNameDecoded = URLDecoder.decode(fileName, "UTF-8");
-            dirs.add(new File(fileNameDecoded));
+            String protocol = resource.getProtocol();
+            if (protocol.equals("file")) {
+                String fileName = resource.getFile();
+                String fileNameDecoded = URLDecoder.decode(fileName, "UTF-8");
+                final File e = new File(fileNameDecoded);
+                if (e.isDirectory())
+                    classes.addAll(findClasses(e, packageName));
+            } else if (protocol.equals("jar")) {
+                String filepath = resource.getPath();
+                int idx = filepath.indexOf("!");
+                String parsedJarName = filepath.substring(0, idx);
+                if (resource != null) {
+                    URL resource2 = new URL(parsedJarName);
+                    ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
+                    ZipEntry ze;
+                    while ((ze = zip2.getNextEntry()) != null) {
+                        String entryName = ze.getName();
+
+                        logger.info(entryName);
+                        if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
+                            Class _class;
+                            String className = null;
+                            try {
+                                className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
+
+                                _class = Class.forName(className);
+                            } catch (ExceptionInInitializerError e) {
+                                // happen, for example, in classes, which depend on
+                                // Spring to inject some beans, and which fail,
+                                // if dependency is not fulfilled
+                                _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+                            }
+                            if(_class.getPackage().toString().contains(packageName)){
+                                classes.add(_class);
+                            }
+                        }
+                    }
+                }
+            } else {
+                throw new ImplementationException("Ukjent protokoll: " + protocol);
+            }
         }
-        ArrayList<Class> classes = new ArrayList<Class>();
-        for (File directory : dirs) {
-            classes.addAll(findClasses(directory, packageName));
-        }
+
         return classes;
     }
 
@@ -205,7 +245,7 @@ public class AutomagicTest {
                                 field.set(retVal, Long.parseLong("" + randomGenerator.nextInt(1) + 1));
                             } else if (o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")) {
                                 field.set(retVal, 253370761200000L);
-                            }else  if (o.getClass().toString().endsWith("formId")) {
+                            } else if (o.getClass().toString().endsWith("formId")) {
                                 //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
                                 field.set(retVal, "" + (randomGenerator.nextInt(1) + 1));
                             } else {

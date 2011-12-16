@@ -55,9 +55,9 @@ public class DbUtilKodeTest {
 
     private SessionFactory setupHibernate() {
         HibernateSessionFactoryBuilder sfbuilder = TestHelper.createHibernateSessionFactoryBuilder();
-        sfbuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
-        sfbuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodelisteLong.class);
+        sfbuilder.addResource(ADbKode.class);
+        sfbuilder.addResource(BDbKode.class);
+        sfbuilder.addResource(StoreTestDbKodelisteLong.class);
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
         assertNotNull(sf);
         return sf;

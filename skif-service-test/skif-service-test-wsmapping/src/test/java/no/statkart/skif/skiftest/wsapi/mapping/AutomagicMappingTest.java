@@ -45,7 +45,7 @@ public class AutomagicMappingTest extends AutomagicTest {
         discoverClassHierarchy();
     }
 
-
+    @Test
     public void testAllClasses() throws Exception {
         int abstrakte = 0;
         int lister = 0;

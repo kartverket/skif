@@ -65,12 +65,12 @@ public class StoreTestServerModule extends SkifModule {
             @Override
             protected void configureHibernate(StoreHibernateSessionFactoryBuilder facotryBuilder) {
                 // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
-                facotryBuilder.addResourceUsingRelativePath("kode", EnumKodeIdType.class);
-                facotryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
-                facotryBuilder.addResourceUsingRelativePath("kodeliste", BDbKode.class);
-                facotryBuilder.addResourceWithSubclassesUsingRelativePath("kodeliste", CDbKode.class, C1DbKode.class, C2DbKode.class);
-                facotryBuilder.addResourceUsingRelativePath("kodeliste", XStrDbKode.class);
-                facotryBuilder.addResourceUsingRelativePath("kodeliste", StoreTestDbKodelisteLong.class);
+                facotryBuilder.addResource(EnumKodeIdType.class);
+                facotryBuilder.addResource(ADbKode.class);
+                facotryBuilder.addResource(BDbKode.class);
+                facotryBuilder.addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class);
+                facotryBuilder.addResource(XStrDbKode.class);
+                facotryBuilder.addResource(StoreTestDbKodelisteLong.class);
                 facotryBuilder.addResource(TestBubble.class);
                 facotryBuilder.addResource(Foo.class);
                 facotryBuilder.addResource(Baz.class);
