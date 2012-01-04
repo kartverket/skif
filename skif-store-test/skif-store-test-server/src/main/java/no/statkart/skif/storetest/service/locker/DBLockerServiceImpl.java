@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.service.locker;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import no.statkart.skif.config.Configuration;
 
 import java.sql.Connection;
 
@@ -13,7 +14,7 @@ import java.sql.Connection;
  */
 public class DBLockerServiceImpl extends no.statkart.skif.service.locker.DBLockerServiceImpl implements DBLockerService {
     @Inject
-    public DBLockerServiceImpl(Provider<Connection> connectionProvider) {
-        super(connectionProvider);
+    public DBLockerServiceImpl(Provider<Connection> connectionProvider, Configuration configuration) {
+        super(connectionProvider, configuration);
     }
 }

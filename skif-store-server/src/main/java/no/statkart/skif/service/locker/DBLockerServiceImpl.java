@@ -2,6 +2,8 @@ package no.statkart.skif.service.locker;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.exception.OperationalException;
@@ -26,6 +28,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     private static Logger logger = LoggerFactory.getLogger(DBLockerServiceImpl.class);
 
     final Provider<Connection> connectionProvider;
+    final Configuration configuration;
 
     private static long dbMillisecDifference;
     private static boolean dbMilliescDifferenceInitialized;
@@ -33,8 +36,9 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     private static final int MAX_BATCH_SIZE = 100;
 
     @Inject
-    public DBLockerServiceImpl(Provider<Connection> connectionProvider) {
+    public DBLockerServiceImpl(Provider<Connection> connectionProvider, Configuration configuration) {
         this.connectionProvider = connectionProvider;
+        this.configuration = configuration;
     }
 
     @Override
@@ -126,7 +130,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
 
         PreparedStatement stmt = null;
         try {
-            String sqlString = "DELETE FROM LOCKINFO WHERE ID=? AND CLASS=? AND OWNER=?";
+            String sqlString = "DELETE FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID=? AND CLASS=? AND OWNER=?";
             stmt = con.prepareStatement(sqlString);
             stmt.setLong(1, lockKey.keyValue);
             stmt.setString(2, lockKey.discriminator);
@@ -178,7 +182,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
 
         PreparedStatement stmt = null;
         try {
-            String sqlString = "DELETE FROM LOCKINFO WHERE OWNER=?";
+            String sqlString = "DELETE FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE OWNER=?";
             stmt = con.prepareStatement(sqlString);
             stmt.setString(1, owner);
             logger.debug("SQL: " + sqlString);
@@ -295,13 +299,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     private LockInfo<Long> insertLock(Connection con, LockKey<Long> lockKey, String owner, Timestamp expires) {
         PreparedStatement stmt = null;
         try {
-            stmt = con.prepareStatement("INSERT INTO LOCKINFO (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)");
+            stmt = con.prepareStatement("INSERT INTO " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)");
             stmt.setLong(1, lockKey.keyValue);
             stmt.setString(2, lockKey.discriminator);
             stmt.setString(3, owner);
             stmt.setTimestamp(4, expires);
             if (logger.isDebugEnabled()) {
-                logger.debug("SQL: INSERT INTO LOCKINFO (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)");
+                logger.debug("SQL: INSERT INTO " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)");
                 logger.debug("SQL: PARAM 1=" + lockKey.keyValue);
                 logger.debug("SQL: PARAM 2=" + lockKey.discriminator);
                 logger.debug("SQL: PARAM 3=" + owner);
@@ -324,7 +328,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         PreparedStatement stmt = null;
         Set<LockInfo<Long>> newLockInfos = new HashSet<LockInfo<Long>>();
         try {
-            String sqlString = "INSERT INTO LOCKINFO (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)";
+            String sqlString = "INSERT INTO " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)";
             stmt = con.prepareStatement(sqlString);
             for (LockKey<Long> lockKey : lockKeys) {
                 stmt.setLong(1, lockKey.keyValue);
@@ -332,7 +336,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 stmt.setString(3, owner);
                 stmt.setTimestamp(4, expires);
                 if (logger.isDebugEnabled()) {
-                    logger.debug("SQL: INSERT INTO LOCKINFO (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)");
+                    logger.debug("SQL: INSERT INTO " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)");
                     logger.debug("SQL: PARAM 1=" + lockKey.keyValue);
                     logger.debug("SQL: PARAM 2=" + lockKey.discriminator);
                     logger.debug("SQL: PARAM 3=" + owner);
@@ -370,7 +374,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            String sqlString = "SELECT OWNER, EXPIRES FROM LOCKINFO WHERE ID=? AND CLASS=?";
+            String sqlString = "SELECT OWNER, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID=? AND CLASS=?";
             stmt = con.prepareStatement(sqlString);
             stmt.setLong(1, lockKey.keyValue);
             stmt.setString(2, lockKey.discriminator);
@@ -406,13 +410,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     private LockInfo<Long> renewLock(Connection con, LockInfo<Long> lockInfo, Timestamp expires) throws LockedException {
         PreparedStatement stmt = null;
         try {
-            stmt = con.prepareStatement("UPDATE LOCKINFO SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?");
+            stmt = con.prepareStatement("UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?");
             stmt.setTimestamp(1, expires);
             stmt.setLong(2, lockInfo.getLockKey().keyValue);
             stmt.setString(3, lockInfo.getLockKey().discriminator);
             stmt.setString(4, lockInfo.getOwner());
             if (logger.isDebugEnabled()) {
-                logger.debug("SQL: UPDATE LOCKINFO SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?");
+                logger.debug("SQL: UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?");
                 logger.debug("SQL: PARAM 1=" + expires);
                 logger.debug("SQL: PARAM 2=" + lockInfo.getLockKey().keyValue);
                 logger.debug("SQL: PARAM 3=" + lockInfo.getLockKey().discriminator);
@@ -447,13 +451,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     private LockInfo<Long> timeoutAndTakeLock(Connection con, String owner, Timestamp expires, LockInfo<Long> lockInfo) {
         PreparedStatement stmt = null;
         try {
-            stmt = con.prepareStatement("UPDATE LOCKINFO SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES<SYSTIMESTAMP");
+            stmt = con.prepareStatement("UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES<SYSTIMESTAMP");
             stmt.setString(1, owner);
             stmt.setTimestamp(2, expires);
             stmt.setLong(3, lockInfo.getLockKey().keyValue);
             stmt.setString(4, lockInfo.getLockKey().discriminator);
             if (logger.isDebugEnabled()) {
-                logger.debug("SQL: UPDATE LOCKINFO SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES< SYSTIMESTAMP");
+                logger.debug("SQL: UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES< SYSTIMESTAMP");
                 logger.debug("SQL: PARAM 1=" + owner);
                 logger.debug("SQL: PARAM 2=" + lockInfo.getLockKey().keyValue);
                 logger.debug("SQL: PARAM 3=" + expires);
@@ -500,7 +504,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         Set<LockKey<Long>> idsWanted = new HashSet<LockKey<Long>>();
         try {
             // Vi spør ikke etter CLASS da det komplisere query. Gjør en filter etter på
-            String sqlString = "SELECT ID, CLASS, OWNER, EXPIRES FROM LOCKINFO WHERE ID IN (?,?,?,?,?,?,?,?,?,?)";
+            String sqlString = "SELECT ID, CLASS, OWNER, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID IN (?,?,?,?,?,?,?,?,?,?)";
             stmt = con.prepareStatement(sqlString);
             for (int i = 1; i <= 10; i++) {
                 if (keyIterator.hasNext()) {
@@ -600,7 +604,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         int batchResult = 0;
         Set<LockInfo<Long>> renewedLocks = new HashSet<LockInfo<Long>>(existingLocks.size());
         try {
-            String sqlString = "UPDATE LOCKINFO SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?";
+            String sqlString = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?";
             OracleConnection oracleCon = OracleUtils.getOracleConnection(con);
             ps = (OraclePreparedStatement) oracleCon.prepareStatement(sqlString);
             ps.setExecuteBatch(Math.min(existingLocks.size(), MAX_BATCH_SIZE));
@@ -679,7 +683,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         List<LockInfo<Long>> locksToTimeoutList = new ArrayList<LockInfo<Long>>(locksToTimeout);
         Set<LockInfo<Long>> timedoutLocks = new HashSet<LockInfo<Long>>(locksToTimeout.size());
         try {
-            String sqlString = "UPDATE LOCKINFO SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES < SYSTIMESTAMP";
+            String sqlString = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES < SYSTIMESTAMP";
             OracleConnection oracleCon = OracleUtils.getOracleConnection(con);
             ps = (OraclePreparedStatement) oracleCon.prepareStatement(sqlString);
             ps.setExecuteBatch(Math.min(locksToTimeoutList.size(), MAX_BATCH_SIZE));
@@ -725,7 +729,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         PreparedStatement stmt = null;
         try {
             StringBuilder buf = new StringBuilder();
-            buf.append("DELETE FROM LOCKINFO WHERE (ID=? AND CLASS=? AND OWNER=?) ");
+            buf.append("DELETE FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE (ID=? AND CLASS=? AND OWNER=?) ");
             for (int i = 2; i <= BATCH_SIZE; i++) {
                 buf.append("OR (ID=? AND CLASS=? AND OWNER=?)");
             }
@@ -758,7 +762,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
-            String sqlString = "SELECT ID, CLASS, EXPIRES FROM LOCKINFO WHERE OWNER=?";
+            String sqlString = "SELECT ID, CLASS, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE OWNER=?";
             stmt = con.prepareStatement(sqlString);
             stmt.setString(1, owner);
             if (logger.isDebugEnabled()) {
@@ -785,7 +789,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
        ResultSet rs = null;
        try {
           // NB: Records som har en lengre utløpstid enn den nye utløpstid oppdateres ikke.
-          String sqlString = "UPDATE LOCKINFO SET EXPIRES=? WHERE OWNER=? AND EXPIRES < ?";
+          String sqlString = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE OWNER=? AND EXPIRES < ?";
           stmt = con.prepareStatement(sqlString);
           stmt.setTimestamp(1, expires);
           stmt.setString(2, owner);

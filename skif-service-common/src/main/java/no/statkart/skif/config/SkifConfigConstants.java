@@ -35,4 +35,6 @@ public class SkifConfigConstants {
 
     public static final String LOCK_TIMEOUT = "skif.lock_timeout";
     public static final String MAX_TRANSACTION_DURATION = "skif.max_transaction_duration";
+
+    public static final String DB_LOCK_TABLENAME = "skif.db_lock_tablename";
 }
