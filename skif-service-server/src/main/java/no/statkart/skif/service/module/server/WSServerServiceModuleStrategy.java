@@ -3,11 +3,13 @@ package no.statkart.skif.service.module.server;
 import com.google.inject.Binder;
 import com.google.inject.PrivateBinder;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.module.ModuleStrategy;
 import no.statkart.skif.service.annotation.WSServiceChain;
 import no.statkart.skif.service.chain.*;
 import no.statkart.skif.service.ejb.EJBCallProxyHandler;
+import no.statkart.skif.service.logging.ServerLoggingProxyHandler;
 import no.statkart.skif.service.provider.WSServiceChainProvider;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 import no.statkart.skif.service.proxy.W2DAdapterWithServiceContextMapperProxyHandler;
@@ -28,7 +30,7 @@ import static no.statkart.skif.SkifUtil.typeLiteral;
  * @since 2.0
  */
 public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
-    private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForWSI = WSServiceChainFactoryBase.class;
+    private WSServiceChainFactorySpecification  wsServiceChainFactorySpecificationForWSI = new WSServiceChainFactoryWithLoggingSpecification(ServerLoggingProxyHandler.class);
     private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForService = WSServiceChainFactoryBase.class;
 
     /**
@@ -38,14 +40,12 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
      */
     protected String[] classWSIPackageMappings = {"api:wsapi", "service:wsapi.service"};
 
-
-    public Class<? extends WSServiceChainFactory> getWsServiceChainFactoryClassForWSI() {
-        return wsServiceChainFactoryClassForWSI;
+    public WSServiceChainFactorySpecification getWsServiceChainFactorySpecificationForWSI() {
+        return wsServiceChainFactorySpecificationForWSI;
     }
 
-    public WSServerServiceModuleStrategy setWsServiceChainFactoryClassForWSI(Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForWSI) {
-        this.wsServiceChainFactoryClassForWSI = wsServiceChainFactoryClassForWSI;
-        return this;
+    public void setWsServiceChainFactorySpecificationForWSI(WSServiceChainFactorySpecification wsServiceChainFactorySpecificationForWSI) {
+        this.wsServiceChainFactorySpecificationForWSI = wsServiceChainFactorySpecificationForWSI;
     }
 
     public Class<? extends WSServiceChainFactory> getWsServiceChainFactoryClassForService() {
@@ -53,6 +53,7 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
     }
 
     /**
+     * @param wsServiceChainFactoryClassForService
      * @return {@link #classWSIPackageMappings}
      */
     public WSServerServiceModuleStrategy setWsServiceChainFactoryClassForService(Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForService) {
@@ -61,6 +62,7 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
     }
 
     /**
+     * @param classWSIPackageMappings
      * @see #classWSIPackageMappings
      */
     public WSServerServiceModuleStrategy setClassWSIPackageMappings(String... classWSIPackageMappings) {
@@ -75,9 +77,14 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
 
     protected void bindWSServiceChainFactoryForService(Binder outerBinder, PrivateBinder innerBinder, Class<? extends Object> serviceClass, Class<? extends ServiceWSI> serviceWSIClass) {
         // W2DAdapterWithServiceContextMapperProxyHandler refererer til Mapping som er bunnet til innerBinder. Må derfor selv bindes i innerBinder
-        innerBinder.bind(typeLiteral(TerminatingProxyHandler.class, serviceWSIClass)).annotatedWith(WSServiceChain.class).to(typeLiteral(W2DAdapterWithServiceContextMapperProxyHandler.class, serviceWSIClass, serviceClass));
+        TypeLiteral typeLiteral1 = typeLiteral(TerminatingProxyHandler.class, serviceWSIClass);
+        TypeLiteral typeLiteral2 = typeLiteral(W2DAdapterWithServiceContextMapperProxyHandler.class, serviceWSIClass, serviceClass);
+
+        innerBinder.bind(typeLiteral1).annotatedWith(WSServiceChain.class).to(typeLiteral2);
+        wsServiceChainFactorySpecificationForWSI.bindProxyHandlersForService(innerBinder,serviceWSIClass);
+
         // wsServiceChainFactoryClassForWSI refererer til TerminatingProxyHandler som er bunnet til innerBinder i innerBinder
-        innerBinder.bind(typeLiteral(WSServiceChainFactory.class, serviceWSIClass)).to(typeLiteral(wsServiceChainFactoryClassForWSI, serviceWSIClass)).in(Singleton.class);
+        innerBinder.bind(typeLiteral(WSServiceChainFactory.class, serviceWSIClass)).to(typeLiteral(wsServiceChainFactorySpecificationForWSI.getFactoryClass(), serviceWSIClass)).in(Singleton.class);
         innerBinder.expose(typeLiteral(WSServiceChainFactory.class, serviceWSIClass));
 
         outerBinder.bind(typeLiteral(WSServiceChainFactory.class, serviceClass)).to(typeLiteral(wsServiceChainFactoryClassForService, serviceClass)).in(Singleton.class);

@@ -8,7 +8,6 @@ import no.statkart.skif.service.chain.WSServiceChainFactoryBase;
  */
 public class WSServerServiceModuleStrategyJEE extends WSServerServiceModuleStrategy {
     public WSServerServiceModuleStrategyJEE() {
-        setWsServiceChainFactoryClassForWSI(WSServiceChainFactoryBase.class);
         setWsServiceChainFactoryClassForService(WSServiceChainFactoryBase.class);
     }
 }
