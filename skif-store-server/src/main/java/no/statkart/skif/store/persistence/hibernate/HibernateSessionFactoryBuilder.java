@@ -2,6 +2,7 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.HibernateException;
@@ -45,9 +46,11 @@ public class HibernateSessionFactoryBuilder {
         try {
             findAllMappings();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            logger.error("findAllMappings()", e);
+            throw new OperationalException(e);
         } catch (URISyntaxException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            logger.error("findAllMappings()", e);
+            throw new ImplementationException(e);
         }
     }
 
@@ -165,12 +168,33 @@ public class HibernateSessionFactoryBuilder {
                 String parsedJarName = filepath.substring(0, idx);
                 URL resource2 = new URL(parsedJarName);
                 ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
-                ZipEntry ze;
-                while ((ze = zip2.getNextEntry()) != null) {
-                    String entryName = ze.getName();
-                    if (entryName.endsWith(".hbm.xml")) {
-                        files.add(entryName);
+                try {
+                    ZipEntry ze;
+                    while ((ze = zip2.getNextEntry()) != null) {
+                        String entryName = ze.getName();
+                        if (entryName.endsWith(".hbm.xml")) {
+                            files.add(entryName);
+                        }
                     }
+                } finally {
+                    zip2.close();
+                }
+            } else if (protocol.equals("zip")) {
+                String filepath = resource.getPath();
+                int idx = filepath.indexOf("!");
+                String parsedJarName = filepath.substring(0, idx);
+                URL resource2 = new File(parsedJarName).toURI().toURL();
+                ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
+                try {
+                    ZipEntry ze;
+                    while ((ze = zip2.getNextEntry()) != null) {
+                        String entryName = ze.getName();
+                        if (entryName.endsWith(".hbm.xml")) {
+                            files.add(entryName);
+                        }
+                    }
+                } finally {
+                    zip2.close();
                 }
             } else {
                 throw new ImplementationException("Ukjent protokoll: " + protocol);
