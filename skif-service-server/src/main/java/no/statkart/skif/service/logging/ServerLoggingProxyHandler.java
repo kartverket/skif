@@ -13,8 +13,6 @@ import java.util.logging.Level;
 /**
  * Proxy for å kalle direkte til underliggende objekt. Brukes som avsluttende element i en proxykjede.
  *
- * TODO: SKIF-120: Denne klassa er kopiert frå skif. Vi bør egentlig få denne klassa tilbake i skif.
- *
  * @author Henrik Fredholm
  */
 public class ServerLoggingProxyHandler<T> extends ChainedProxyHandler<T> {
