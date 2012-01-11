@@ -1,14 +1,23 @@
 <configuration>
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <!-- encoders are assigned the type
-         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-    <encoder>
-      <pattern>%d{ISO8601} [%thread] %-5level %-45logger{45} - %msg%n</pattern>
-    </encoder>
-  </appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+     ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{ISO8601} [%thread] %-5level %-45logger{45} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-  <root level="warn">
-    <appender-ref ref="STDOUT" />
-  </root>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logback-output.log</file>
+        <encoder>
+            <pattern>%d{ISO8601} %-5level %-45logger{45} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <root level="info">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
 </configuration>

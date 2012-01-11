@@ -39,8 +39,10 @@ public class HibernateSessionFactoryBuilder {
 
     public HibernateSessionFactoryBuilder(Properties hibernateProperties, String mappingFilesDirectory) {
         this.hibernateProperties = hibernateProperties;
-        if (!mappingFilesDirectory.endsWith("/")) {
-            mappingFilesDirectory += "/";
+        if (!mappingFilesDirectory.equals("")){
+            if (!mappingFilesDirectory.endsWith("/")) {
+                mappingFilesDirectory += "/";
+            }
         }
         this.mappingFilesDirectory = mappingFilesDirectory;
         try {
@@ -151,62 +153,30 @@ public class HibernateSessionFactoryBuilder {
         assert classLoader != null;
         Enumeration<URL> resources = classLoader.getResources(mappingFilesDirectory);
         List<String> files = new ArrayList<String>();
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
+        Set<String> startPaths = new HashSet<String>();
 
-            String protocol = resource.getProtocol();
-            if (protocol.equals("file")) {
-                String fileName = resource.getPath();
-                if(fileName.endsWith(".hbm.xml")){
-                    files.add(fileName);
-                }else if(fileName.endsWith("/")){//Directory
-                    files.addAll(findHbmXmlFiles(fileName));
-                }
-            } else if (protocol.equals("jar")) {
-                String filepath = resource.getPath();
-                int idx = filepath.indexOf("!");
-                String parsedJarName = filepath.substring(0, idx);
-                URL resource2 = new URL(parsedJarName);
-                ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
-                try {
-                    ZipEntry ze;
-                    while ((ze = zip2.getNextEntry()) != null) {
-                        String entryName = ze.getName();
-                        if (entryName.endsWith(".hbm.xml")) {
-                            files.add(entryName);
-                        }
-                    }
-                } finally {
-                    zip2.close();
-                }
-            } else if (protocol.equals("zip")) {
-                String filepath = resource.getPath();
-                int idx = filepath.indexOf("!");
-                String parsedJarName = filepath.substring(0, idx);
-                URL resource2 = new File(parsedJarName).toURI().toURL();
-                ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
-                try {
-                    ZipEntry ze;
-                    while ((ze = zip2.getNextEntry()) != null) {
-                        String entryName = ze.getName();
-                        if (entryName.endsWith(".hbm.xml")) {
-                            files.add(entryName);
-                        }
-                    }
-                } finally {
-                    zip2.close();
-                }
-            } else {
-                throw new ImplementationException("Ukjent protokoll: " + protocol);
-            }
+        findHbmFilenames(resources, files, startPaths);
 
-        }
+        iterateOverFilesAndFindClassnames(classLoader, files, startPaths);
 
+
+
+    }
+
+    private void iterateOverFilesAndFindClassnames(ClassLoader classLoader, List<String> files, Set<String> startPaths) {
         for (Iterator<String> iterator = files.iterator(); iterator.hasNext(); ) {
             String file = iterator.next();
             try {
-                
-                InputStream is = classLoader.getResourceAsStream(file);
+                String reducedFileName = file;
+                for (Iterator<String> stringIterator = startPaths.iterator(); stringIterator.hasNext(); ) {
+                    String next = stringIterator.next();
+                    if (file.contains(next)) {
+                        reducedFileName = file.replace(next, "");
+                        break;
+                    }
+                }
+
+                InputStream is = classLoader.getResourceAsStream(reducedFileName);
                 InputStreamReader isr = new InputStreamReader(is);
                 BufferedReader input = new BufferedReader(isr);
 
@@ -219,11 +189,9 @@ public class HibernateSessionFactoryBuilder {
                             final int i2 = line.indexOf('"', i + 1);
                             String className = line.substring(i + 1, i2);
                             if (!className2resourceNameMap.containsKey(className)) {
-                                final int pathIdx1 = file.indexOf("no/statkart");
-                                String path = file.substring(pathIdx1);
-                                className2resourceNameMap.put(className, path);
+                                className2resourceNameMap.put(className, reducedFileName);
                             } else {
-                                if(!line.matches(".*<typedef class=\".*\".*")) {
+                                if (!line.matches(".*<typedef class=\".*\".*")) {
                                     throw new ConfigurationException("Klasse med navn:" + className + " har allerede blitt mappet i fil: " + className2resourceNameMap.get(className));
                                 }
                             }
@@ -243,7 +211,80 @@ public class HibernateSessionFactoryBuilder {
                 throw new ImplementationException(ex);
             }
         }
+    }
 
+    private void findHbmFilenames(Enumeration<URL> resources, List<String> files, Set<String> startPaths) throws IOException {
+        while (resources.hasMoreElements()) {
+            URL resource = resources.nextElement();
+            String path = resource.getPath();
+            path = path.replaceFirst("/", "");
+            startPaths.add(path.replaceFirst(mappingFilesDirectory, ""));
+            logger.info("Test!!!" + resource.getPath());
+            org.testng.Reporter.log("TestNG!!!" + resource.getPath());
+            String protocol = resource.getProtocol();
+            if (protocol.equals("file")) {
+                checkForFilesWithFileProtocol(files, resource);
+            } else if (protocol.equals("jar")) {
+                checkForFilesWithJarProtocol(files, resource);
+            } else if (protocol.equals("zip")) {
+                checkForFilesWithZipProtocol(files, resource);
+            } else {
+                throw new ImplementationException("Ukjent protokoll: " + protocol);
+            }
+
+        }
+    }
+
+    private void checkForFilesWithZipProtocol(List<String> files, URL resource) throws IOException {
+        String filepath = resource.getPath();
+        int idx = filepath.indexOf("!");
+        String parsedJarName = filepath.substring(0, idx);
+        URL resource2 = new File(parsedJarName).toURI().toURL();
+        ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
+        try {
+            ZipEntry ze;
+            while ((ze = zip2.getNextEntry()) != null) {
+                String entryName = ze.getName();
+                if (entryName.endsWith(".hbm.xml")) {
+                    files.add(entryName);
+                }
+            }
+        } finally {
+            zip2.close();
+        }
+    }
+
+    private void checkForFilesWithJarProtocol(List<String> files, URL resource) throws IOException {
+        String filepath = resource.getPath();
+        int idx = filepath.indexOf("!");
+        String parsedJarName = filepath.substring(0, idx);
+        URL resource2 = new URL(parsedJarName);
+        ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
+        try {
+            ZipEntry ze;
+            while ((ze = zip2.getNextEntry()) != null) {
+                String entryName = ze.getName();
+                if (entryName.endsWith(".hbm.xml")) {
+                    files.add(entryName);
+                }
+            }
+        } finally {
+            zip2.close();
+        }
+    }
+
+    private void checkForFilesWithFileProtocol(List<String> files, URL resource) throws IOException {
+        String fileName = resource.getPath();
+        if (fileName.endsWith(".hbm.xml")) {
+            final String replace = fileName.replace("\\", "/");
+            if (fileName.startsWith("/")) {
+                files.add(replace.replaceFirst("/", ""));
+            } else {
+                files.add(replace);
+            }
+        } else if (fileName.endsWith("/")) {//Directory
+            files.addAll(findHbmXmlFiles(fileName));
+        }
     }
 
     private static List<String> findHbmXmlFiles(String path) throws IOException {
@@ -254,13 +295,17 @@ public class HibernateSessionFactoryBuilder {
         for (File file : files) {
             String fileName = file.getCanonicalPath();
             if (file.isDirectory()) {
-                assert !fileName.contains(".");
                 returnFiles.addAll(findHbmXmlFiles(fileName));
             } else if (fileName.endsWith(".hbm.xml")) {
                 //Trim filename to contain the resource-part. 
-                int i = fileName.indexOf("no\\statkart");
-                String trimmedFileName = fileName.substring(i);
-                returnFiles.add(trimmedFileName.replace("\\", "/"));
+//                int i = fileName.indexOf("no\\statkart");
+//                String trimmedFileName = fileName.substring(i);
+                final String replace = fileName.replace("\\", "/");
+                if (fileName.startsWith("/")) {
+                    returnFiles.add(replace.replaceFirst("/", ""));
+                } else {
+                    returnFiles.add(replace);
+                }
             }
         }
         return returnFiles;
