@@ -10,4 +10,5 @@ import javax.jws.WebParam;
  */
 public interface Test1ServiceWSI extends ServiceWSI {
     public String helloWorld(@WebParam(name = "message") String message);
+    public String helloVersion(@WebParam(name = "message") String message);
 }

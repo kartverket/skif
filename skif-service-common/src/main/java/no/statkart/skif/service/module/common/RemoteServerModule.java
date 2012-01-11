@@ -66,7 +66,9 @@ public class RemoteServerModule extends ModuleWithStrategy<RemoteServerModuleStr
 
         // Standard bindinger som må være med
         bind(ServiceMode.class).toInstance(moduleConfiguration.getServiceMode());
-        bind(ServiceContext.class).to(serviceContextClass).in(Singleton.class);
+        bind(ServiceContext.class).to(serviceContextClass);
+        bind(serviceContextClass).in(Singleton.class);
+
         bind(Configuration.class).toInstance(moduleConfiguration.getConfiguration());
         bind(ModuleConfiguration.class).toInstance(moduleConfiguration);
 

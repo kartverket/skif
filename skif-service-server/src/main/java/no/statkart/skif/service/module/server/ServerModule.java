@@ -42,7 +42,8 @@ public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy > {
 
         // Standard bindinger som må være med
         bind(ServiceMode.class).toInstance(moduleConfiguration.getServiceMode());
-        bind(ServiceContext.class).to(serviceContextClass).in(ServiceRequestScoped.class);
+        bind(ServiceContext.class).to(serviceContextClass);
+        bind(serviceContextClass).in(ServiceRequestScoped.class);
         bind(Configuration.class).toInstance(moduleConfiguration.getConfiguration());
         bind(ModuleConfiguration.class).toInstance(moduleConfiguration);
 

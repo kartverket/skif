@@ -89,7 +89,8 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
         try {
             serviceRequestScope.seed(ServiceRequestContext.class, serviceRequestContext);
             if (serviceContext != null) {
-                serviceRequestScope.seed(ServiceContext.class, serviceContext);
+                serviceRequestScope.seed((Class<ServiceContext>)serviceContext.getClass(), serviceContext);
+//                serviceRequestScope.seed(ServiceContext.class, serviceContext);
             }
             return invokeInContext(method, args);
         } finally {

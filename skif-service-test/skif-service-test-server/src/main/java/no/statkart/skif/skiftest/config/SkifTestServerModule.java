@@ -20,6 +20,7 @@ import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.RuntimeExceptionProxyHandler;
+import no.statkart.skif.skiftest.service.SkifTestServiceContext;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -42,7 +43,7 @@ public class SkifTestServerModule extends SkifModule {
 
     @Override
     protected void configure() {
-        install(new ServerModule(moduleConfiguration));
+        install(new ServerModule(moduleConfiguration).setServiceContextClass(SkifTestServiceContext.class));
         install(new RunOnServerServiceModule(moduleConfiguration));
 
         install(new ServerServiceModule(moduleConfiguration, new SkifTestGroup1Services().getServices()));

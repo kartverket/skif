@@ -25,4 +25,9 @@ public class Test1ServiceEJBBean extends EJBTimedService implements Test1Service
     public String helloWorld(String message) {
         return serviceChain.helloWorld(message);
     }
+
+    @Override
+    public String helloVersion(String message) {
+        return serviceChain.helloVersion(message);
+    }
 }

@@ -44,4 +44,10 @@ public class Test1ServiceWSBean extends SkifWebService<Test1ServiceWSI> implemen
 //        System.out.println("In Test1ServiceWSBean: helloWorld");
         return wsServiceChain.helloWorld(message);
     }
+
+    @Override
+    @WebMethod
+    public String helloVersion(@WebParam(name = "message") String message) {
+        return wsServiceChain.helloVersion(message);
+    }
 }
