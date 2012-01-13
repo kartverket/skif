@@ -136,13 +136,13 @@ public class HibernateSessionManagerTest {
         HibernateSessionManager sessionManager = new HibernateSessionManagerSingleVersionImpl(connectionFactoryManager, hibernateSessionFactoryManager, new ServiceRequestContext());
         Session hibernateSession = sessionManager.getHibernateSession(NOT_USED);
         sessionManager.beginTransaction();
-        hibernateSession.createQuery("delete from TestEntity").executeUpdate();
-        TestEntity entity1 = new TestEntity(1L, "Entity1");
+        hibernateSession.createQuery("delete from TestEntity where id>100").executeUpdate();
+        TestEntity entity1 = new TestEntity(101L, "Entity101");
         hibernateSession.save(entity1);
         sessionManager.commit();
         sessionManager.close();
 
-        TestEntity entity2 = (TestEntity) sessionManager.getHibernateSession(NOT_USED).load(TestEntity.class, 1L);
+        TestEntity entity2 = (TestEntity) sessionManager.getHibernateSession(NOT_USED).load(TestEntity.class, 101L);
 
         assertEquals(entity1, entity2);
         sessionManager.close();

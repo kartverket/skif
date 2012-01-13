@@ -373,7 +373,7 @@ public class StoreImpl implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer<T,I> transfer) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer transfer) {
         throw new UnsupportedOperationException();  //TODO
     }
 
@@ -436,6 +436,21 @@ public class StoreImpl implements Store {
     @Override
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
         return storeService.getVersionsForList(ids, start, end);
+    }
+
+    @Override
+    public <T extends BubbleObject> void insert(T bubbleObject) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public <T extends BubbleObject> void update(T bubbleObject) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public <T extends BubbleObject> void delete(T bubbleObject) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 
 import java.util.*;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -100,6 +101,22 @@ public class StoreServiceTest extends StoreTestTestCase {
 
         Assert.assertEquals(foos.size(), 4);
 
+    }
+
+    /**
+     * Tester uthenting av objekter basert på id'er i forskjellig rekkefølge.
+     */
+    @Test
+    public void testStoreGetManyFoos() {
+        StoreService store = injector.getInstance(StoreService.class);
+
+        FooId<Foo> fooId_100 = new FooId<Foo>(100L);
+        FooId<Foo> fooId_101 = new FooId<Foo>(101L);
+        FooId<Foo> fooId_100_080030 = new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:00:30.00"));
+        FooId<Foo> fooId_100_080130 = new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:01:30.00"));
+
+        assertThat(store.getObjects(Arrays.asList(fooId_101, fooId_100))).hasSize(2);
+        assertThat(store.getObjects(Arrays.asList(fooId_101, fooId_100))).onProperty("id.value").contains(101L, 100L);
     }
 
     @Test

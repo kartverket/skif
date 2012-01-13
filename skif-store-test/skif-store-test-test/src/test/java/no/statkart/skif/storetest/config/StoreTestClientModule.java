@@ -40,6 +40,10 @@ public class StoreTestClientModule extends SkifModule {
                 .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
                 .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
         );
+        install(new RemoteServiceModule(moduleConfiguration, new StoreTestStoreUpdateServices().getServices(), new StoreTestMapper().getMapping())
+                .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
+        );
         //Legger til DBLockerService dersom man kjører i singleVm. Denne tjenesten finnes ikke som en webservice, og kan derfor ikke legges til ved kjøring av tester i client/server
         if(moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
             install(new RemoteServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices(), new StoreTestMapper().getMapping())); // Angir bare en mapping, siden det er irrelevant for en intern tjeneste

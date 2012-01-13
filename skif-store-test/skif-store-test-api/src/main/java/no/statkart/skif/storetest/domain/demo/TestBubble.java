@@ -15,7 +15,12 @@ public class TestBubble extends AbstractBubbleObject implements StoreTestBubble 
     }
 
     public TestBubble(TestBubbleId<?> id) {
+        this(id, null);
+    }
+
+    public TestBubble(TestBubbleId<?> id, String text) {
         super(id);
+        this.text = text;
     }
 
     @Override

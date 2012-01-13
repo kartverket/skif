@@ -3,10 +3,7 @@ package no.statkart.skif.storetest.service.store;
 import com.google.inject.Inject;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.service.ServiceRequestContext;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +15,7 @@ import java.util.Map;
  */
 public class StoreServiceImpl implements StoreService {
     @Inject
-    StoreServer store;
+    Store store;
 
     @Inject
     VersionFinder versionFinder;

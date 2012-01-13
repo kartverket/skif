@@ -92,6 +92,7 @@ public class StoreTestServerModule extends SkifModule {
 
         install(new ServerServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices()));
+        install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreUpdateServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices()));
     }
 

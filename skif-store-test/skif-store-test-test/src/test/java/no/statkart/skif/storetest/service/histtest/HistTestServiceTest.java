@@ -115,6 +115,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
     /**
      * @since 2.1
      */
+    @Test(enabled=false)
     public void testFindBarIdsForFooIds() {
         Set<FooId<?>> fooIds = new HashSet<FooId<?>>();
         fooIds.add(new FooId<Foo>(100L));

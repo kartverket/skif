@@ -33,7 +33,7 @@ public interface Store {
     <T extends BubbleObject> Collection<? extends T> register(Collection<? extends T> bubbleObjects, Collection<? super T> resolvedObjects);
     <T extends BubbleObject> T registerLocked(T bubbleObject);
     <T extends BubbleObject, I extends BubbleId<? extends T>> void registerLocked(Collection<T> bubbleObjects, Collection<T> resolvedObjects);
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer<T, I> transfer);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer transfer);
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId);
 
@@ -43,6 +43,11 @@ public interface Store {
 
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end);
+
+    public <T extends BubbleObject> void insert(T bubbleObject);
+    public <T extends BubbleObject> void update(T bubbleObject);
+    public <T extends BubbleObject> void delete(T bubbleObject);
+
 
  /*
     <T extends BubbleObject> Collection<? extends T> get(Collection<? extends BubbleId<? extends T>> bubbleIds, MissingObjectStrategy obj);
