@@ -193,7 +193,7 @@ public class HibernateSessionFactoryBuilder {
                             } else {
                                 if (!line.matches(".*<typedef class=\".*\".*")) {
                                     if(!className2resourceNameMap.get(className).equals(reducedFileName)){
-                                        throw new ConfigurationException("Klasse med navn:" + className + " har allerede blitt mappet i fil: " + className2resourceNameMap.get(className));
+                                        throw new ConfigurationException("Klasse med navn:" + className + ", med angitt mapping i fil: "+reducedFileName+" har allerede blitt mappet i fil: " + className2resourceNameMap.get(className));
                                     }
                                 }
                             }
@@ -221,8 +221,6 @@ public class HibernateSessionFactoryBuilder {
             String path = resource.getPath();
             path = path.replaceFirst("/", "");
             startPaths.add(path.replaceFirst(mappingFilesDirectory, ""));
-            logger.info("Test!!!" + resource.getPath());
-            org.testng.Reporter.log("TestNG!!!" + resource.getPath());
             String protocol = resource.getProtocol();
             if (protocol.equals("file")) {
                 checkForFilesWithFileProtocol(files, resource);

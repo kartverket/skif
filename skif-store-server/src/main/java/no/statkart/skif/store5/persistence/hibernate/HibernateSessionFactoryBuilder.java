@@ -229,7 +229,7 @@ public abstract class HibernateSessionFactoryBuilder {
                             } else {
                                 if (!line.matches(".*<typedef class=\".*\".*")) {
                                     if(!className2resourceNameMap.get(className).equals(reducedFileName)){
-                                        throw new ConfigurationException("Klasse med navn:" + className + " har allerede blitt mappet i fil: " + className2resourceNameMap.get(className));
+                                        throw new ConfigurationException("Klasse med navn:" + className + ", med angitt mapping i fil: "+reducedFileName+" har allerede blitt mappet i fil: " + className2resourceNameMap.get(className));
                                     }
                                 }
                             }
