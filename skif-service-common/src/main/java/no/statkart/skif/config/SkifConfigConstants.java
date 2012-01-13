@@ -5,7 +5,6 @@ package no.statkart.skif.config;
  * @since 2.0
  */
 public class SkifConfigConstants {
-    private SkifConfigConstants() {}
 
     public final static String SINGLE_VM_SERVER_INJECTOR = "skif.single_vm_serverInjector";
     public final static String SINGLE_VM = "skif.single_vm";
