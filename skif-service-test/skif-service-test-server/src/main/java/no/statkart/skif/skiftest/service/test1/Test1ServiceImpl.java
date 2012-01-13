@@ -24,7 +24,9 @@ public class Test1ServiceImpl implements Test1Service {
 
     @Override
     public String helloVersion(String message) {
-        assert serviceContextProvider.get().equals(skifTestServiceContextProvider.get());
+        ServiceContext serviceContext = serviceContextProvider.get();
+        SkifTestServiceContext skifTestServiceContext = skifTestServiceContextProvider.get();
+        assert serviceContext.equals(skifTestServiceContext);
 
         return "Hello1: " + message + ". Version: " + skifTestServiceContextProvider.get().getSystemVersion();
     }

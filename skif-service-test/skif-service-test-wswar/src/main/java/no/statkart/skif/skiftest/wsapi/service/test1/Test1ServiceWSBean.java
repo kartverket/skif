@@ -3,12 +3,13 @@ package no.statkart.skif.skiftest.wsapi.service.test1;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
+import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
 
-import javax.annotation.Resource;
 import javax.annotation.PostConstruct;
-import javax.jws.WebService;
-import javax.jws.WebParam;
+import javax.annotation.Resource;
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
 /**
@@ -37,17 +38,17 @@ public class Test1ServiceWSBean extends SkifWebService<Test1ServiceWSI> implemen
 
     @Override
     @WebMethod
-    public String helloWorld(@WebParam(name = "message") String message) {
+    public String helloWorld(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) {
 //        System.out.println("here : " + ctx.isUserInRole("Innsyn"));
 //        System.out.println("here : " + ctx.isUserInRole("Matrikkelfører"));
 //        System.out.println("here : " + ctx.isUserInRole("Posten"));
 //        System.out.println("In Test1ServiceWSBean: helloWorld");
-        return wsServiceChain.helloWorld(message);
+        return wsServiceChain.helloWorld(message, skifTestContext);
     }
 
     @Override
     @WebMethod
-    public String helloVersion(@WebParam(name = "message") String message) {
-        return wsServiceChain.helloVersion(message);
+    public String helloVersion(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) {
+        return wsServiceChain.helloVersion(message, skifTestContext);
     }
 }

@@ -1,12 +1,8 @@
 package no.statkart.skif.skiftest.service.test;
 
-import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
-import no.statkart.skif.service.BeanManagedTransactionRunOnServerService;
-import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
-import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.module.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
@@ -15,12 +11,10 @@ import no.statkart.skif.skiftest.config.SkifTestGroup1Services;
 import no.statkart.skif.skiftest.config.SkifTestGroupABCDServices;
 import no.statkart.skif.skiftest.config.SkifTestGroupExServices;
 import no.statkart.skif.skiftest.service.SkifTestServiceContext;
+import no.statkart.skif.skiftest.wsapi.SkifTestServiceContextMapper;
 import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestExceptionMapper2;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -44,7 +38,7 @@ public class SkifTestClientModule extends SkifModule {
                     setExceptionMapping(new SkifTestExceptionMapper2().getMapping()));
             install(new RemoteServiceModule(moduleConfiguration, new SkifTestGroupABCDServices().getServices(), new SkifTestMapper().getMapping()).
                     setExceptionMapping(new SkifTestExceptionMapper().getMapping()));
-            install(new RemoteServiceModule(moduleConfiguration, new SkifTestGroup1Services().getServices(), new SkifTestMapper().getMapping()));
+            install(new RemoteServiceModule(moduleConfiguration, new SkifTestGroup1Services().getServices(), new SkifTestMapper().getMapping()).setServiceContextMapperClass(SkifTestServiceContextMapper.class));
         }
     }
 

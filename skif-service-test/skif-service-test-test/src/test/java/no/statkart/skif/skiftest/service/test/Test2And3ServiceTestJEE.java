@@ -93,7 +93,7 @@ public class Test2And3ServiceTestJEE {
         injector = Guice.createInjector(
                 new RemoteServerModule(clientCfg)
                         .setHostnameVerifierClass(NullHostnameVerifier.class),
-                new RemoteServiceModule(clientCfg, services1, new IdentityMapper().getMapping()),
+                new RemoteServiceModule(clientCfg, services1, new IdentityMapper().getMapping()).setServiceContextMapperClass(SkifTestServiceContextMapper.class),
                 remoteServiceModule,
                 new RemoteServiceModule(clientCfg, services3, new SkifTestMapper3().getMapping())
                         .setServiceContextMapperClass(SkifTestServiceContextMapper.class));

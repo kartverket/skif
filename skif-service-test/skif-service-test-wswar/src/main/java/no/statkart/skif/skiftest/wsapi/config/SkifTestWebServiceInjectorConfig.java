@@ -40,7 +40,7 @@ public class SkifTestWebServiceInjectorConfig implements ServletContextListener 
         injector = ejbServiceInjector.createChildInjector(
                 new ServletModule(),
                 new WSServerModule(configuration, classLoader),
-                new WSServerServiceModule(configuration, new SkifTestGroup1Services().getServices(), mapping,classLoader ),
+                new WSServerServiceModule(configuration, new SkifTestGroup1Services().getServices(), mapping,classLoader ).setServiceContextMapperClass(SkifTestServiceContextMapper.class),
                 new WSServerServiceModule(configuration, new SkifTestGroup2Services().getServices(), mapping, classLoader)
                     .setServiceContextMapperClass(SkifTestServiceContextMapper.class),
                 new WSServerServiceModule(configuration, new SkifTestGroupABCDServices().getServices(), mapping, classLoader)

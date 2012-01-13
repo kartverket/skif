@@ -6,6 +6,7 @@ import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.service.ServiceContextMapper;
 import no.statkart.skif.service.module.ClientModuleStrategyFactory;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.DefaultModuleConfiguration;
@@ -21,8 +22,13 @@ import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.provider.ServiceProvider;
 import no.statkart.skif.service.proxy.D2WAdapterProxyHandler;
+import no.statkart.skif.service.proxy.D2WAdapterWithServiceContextMapperProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;
+import no.statkart.skif.skiftest.service.SkifTestServiceContext;
+import no.statkart.skif.skiftest.service.test1.Test1Service;
+import no.statkart.skif.skiftest.wsapi.SkifTestServiceContextMapper;
+import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
 import no.statkart.skif.util.NullHostnameVerifier;
 import no.statkart.skif.util.testsupport.SkifTestConfigurationAccessor;
 import org.testng.annotations.Test;
@@ -57,7 +63,7 @@ public class Test1ServiceTestJEE {
 
         injector = Guice.createInjector(
                 new RemoteServerModule(clientCfg)
-                        .setHostnameVerifierClass(NullHostnameVerifier.class),
+                        .setHostnameVerifierClass(NullHostnameVerifier.class).setServiceContextClass(SkifTestServiceContext.class),
                 new AbstractModule() {
                     @Override
                     protected void configure() {
@@ -68,12 +74,14 @@ public class Test1ServiceTestJEE {
                         bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceProvider<no.statkart.skif.skiftest.wsapi.service.test1.Test1Service>>() {
                         });
 
+                        bind(new TypeLiteral<ServiceContextMapper<?>>(){}).to(SkifTestServiceContextMapper.class);
+
                         // Bind Mapping
                         bind(Mapping.class).toInstance(new IdentityMapper().getMapping());
 
                         // Bind CallServiceChainFactory and support required support classes
                         bind(new TypeLiteral<TerminatingProxyHandler<no.statkart.skif.skiftest.service.test1.Test1Service>>() {}).
-                                to(new TypeLiteral<D2WAdapterProxyHandler<no.statkart.skif.skiftest.service.test1.Test1Service, no.statkart.skif.skiftest.wsapi.service.test1.Test1Service>>() {});//
+                                to(new TypeLiteral<D2WAdapterWithServiceContextMapperProxyHandler<Test1Service, no.statkart.skif.skiftest.wsapi.service.test1.Test1Service>>() {});//
                         ServiceChainFactories.multibindFactory(binder(), CallServiceChainFactory.class, no.statkart.skif.skiftest.service.test1.Test1Service.class, ClientCallServiceChainFactoryJEE.class);
 
                         // Bind ServiceProvider
@@ -95,7 +103,7 @@ public class Test1ServiceTestJEE {
         injector = Guice.createInjector(
                 new RemoteServerModule(clientCfg)
                         .setHostnameVerifierClass(NullHostnameVerifier.class),
-                new RemoteServiceModule(clientCfg, services, new IdentityMapper().getMapping())
+                new RemoteServiceModule(clientCfg, services, new IdentityMapper().getMapping()).setServiceContextMapperClass(SkifTestServiceContextMapper.class)
         );
         callTest1Service();
     }

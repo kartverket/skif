@@ -7,4 +7,7 @@ import no.statkart.skif.service.DefaultServiceContext;
  * @since 2.0
  */
 public class SkifTestServiceContext extends DefaultServiceContext {
+    public SkifTestServiceContext() {
+        System.out.println("ogagoagoaogaogo");
+    }
 }

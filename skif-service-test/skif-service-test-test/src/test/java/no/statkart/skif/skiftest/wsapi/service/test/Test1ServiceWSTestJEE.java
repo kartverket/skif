@@ -15,11 +15,13 @@ import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.WSRemoteServiceModule;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.service.ws.JaxWsServiceWithDynamicRequestContextProvider;
+import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
 import no.statkart.skif.skiftest.wsapi.service.test1.Test1Service;
 import no.statkart.skif.skiftest.wsapi.service.test1.Test1ServiceWS;
 import no.statkart.skif.skiftest.wsapi.service.test2.Test2Service;
 import no.statkart.skif.util.NullHostnameVerifier;
 import no.statkart.skif.util.testsupport.SkifTestConfigurationAccessor;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
@@ -140,8 +142,8 @@ public class Test1ServiceWSTestJEE {
      * støtter dynamisk endringer username, password og url
      * som
      */
-   @Test(groups = "server-required")
-   public void testJaxWsClientServiceCreateUsingProviderWithDynamicRequestContext() throws Exception {
+    @Test(groups = "server-required")
+    public void testJaxWsClientServiceCreateUsingProviderWithDynamicRequestContext() throws Exception {
         ModuleConfiguration clientCfg = createClientConfiguration();
 
         injector = Guice.createInjector(
@@ -157,21 +159,23 @@ public class Test1ServiceWSTestJEE {
 
         final Test1Service instance = injector.getInstance(Test1Service.class);
         final ServerUrlHolder serverUrlHolder = injector.getInstance(ServerUrlHolder.class);
-       serverUrlHolder.set(config.getServerUrl());
+        serverUrlHolder.set(config.getServerUrl());
 
         final LoginUserHolder loginUserHolder = injector.getInstance(LoginUserHolder.class);
 
         loginUserHolder.set(new LoginUser(config.getUsername(), config.getPassword()));
-        assertEquals(instance.helloWorld("Henrik"), "Hello1: Henrik");
+        SkifTestContext skifTestContext = new SkifTestContext();
+        skifTestContext.setLocale("nb_NO");
+        assertEquals(instance.helloWorld("Henrik", skifTestContext), "Hello1: Henrik");
         loginUserHolder.set(new LoginUser(config.getTestUser(), config.getTestUserPassword()));
-        assertEquals(instance.helloWorld("Henrik"), "Hello1: Henrik");
+        assertEquals(instance.helloWorld("Henrik", skifTestContext), "Hello1: Henrik");
 
         try {
             loginUserHolder.set(new LoginUser("unknown_user", "wrongPassword"));
-            assertEquals(instance.helloWorld("Henrik"), "Hello1: Henrik");
+            assertEquals(instance.helloWorld("Henrik", skifTestContext), "Hello1: Henrik");
             fail("Forventet exception");
         } catch (com.sun.xml.ws.client.ClientTransportException e) {
-            assertEquals(e.getMessage(), "The server sent HTTP status code 401: Unauthorized");
+            Assert.assertEquals(e.getArguments()[0], 401);
         }
 
     }
@@ -186,7 +190,7 @@ public class Test1ServiceWSTestJEE {
 
         injector = Guice.createInjector(
                 new RemoteServerModule(clientCfg)
-                    .setHostnameVerifierClass(NullHostnameVerifier.class),
+                        .setHostnameVerifierClass(NullHostnameVerifier.class),
                 new WSRemoteServiceModule(clientCfg, serviceClasses)
         );
         final Test1Service instance = injector.getInstance(Test1Service.class);
@@ -195,9 +199,11 @@ public class Test1ServiceWSTestJEE {
 
         final LoginUserHolder loginUserHolder = injector.getInstance(LoginUserHolder.class);
         loginUserHolder.set(new LoginUser(config.getUsername(), config.getPassword()));
-        assertEquals(instance.helloWorld("Henrik"), "Hello1: Henrik");
+        SkifTestContext skifTestContext = new SkifTestContext();
+        skifTestContext.setLocale("nb_NO");
+        assertEquals(instance.helloWorld("Henrik", skifTestContext), "Hello1: Henrik");
         loginUserHolder.set(new LoginUser(config.getTestUser(), config.getTestUserPassword()));
-        assertEquals(instance.helloWorld("Henrik"), "Hello1: Henrik");
+        assertEquals(instance.helloWorld("Henrik", skifTestContext), "Hello1: Henrik");
     }
 
     private void callWSService() {
@@ -206,7 +212,9 @@ public class Test1ServiceWSTestJEE {
         final ServerUrlHolder serverUrlHolder = injector.getInstance(ServerUrlHolder.class);
         serverUrlHolder.set(config.getServerUrl());
         final Test1Service instance = injector.getInstance(Test1Service.class);
-        assertEquals(instance.helloWorld("Henrik"), "Hello1: Henrik");
+        SkifTestContext skifTestContext = new SkifTestContext();
+        skifTestContext.setLocale("nb_NO");
+        assertEquals(instance.helloWorld("Henrik", skifTestContext), "Hello1: Henrik");
     }
 
 }

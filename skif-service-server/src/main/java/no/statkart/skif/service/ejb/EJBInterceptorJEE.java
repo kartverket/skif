@@ -86,7 +86,7 @@ public abstract class EJBInterceptorJEE {
         try {
             serviceRequestScope.seed(ServiceRequestContext.class, newServiceRequestContext);
             if (serviceContext != null) {
-                serviceRequestScope.seed(ServiceContext.class, serviceContext);
+                serviceRequestScope.seed((Class<ServiceContext>) serviceContext.getClass(), serviceContext);
             }
             return invokeInContext(injector, invocationContext);
         } finally {
