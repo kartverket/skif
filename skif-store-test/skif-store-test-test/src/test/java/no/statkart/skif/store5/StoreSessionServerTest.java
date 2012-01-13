@@ -82,7 +82,8 @@ public class StoreSessionServerTest {
     @BeforeClass
     public void setUp() {
         no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder sessionFactoryBuilder = TestHelper5.createHibernateSessionFactoryBuilderWithHistory();
-        sessionFactoryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
+//        sessionFactoryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
+        sessionFactoryBuilder.addResource(ADbKode.class);
         sessionFactoryManagerBundle = createHibernateSessionFactorManagerBundle(sessionFactoryBuilder, hibernateProperties);
     }
 

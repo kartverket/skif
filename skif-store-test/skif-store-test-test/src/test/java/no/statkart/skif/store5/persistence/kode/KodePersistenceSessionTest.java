@@ -53,7 +53,8 @@ public class KodePersistenceSessionTest {
     @BeforeClass
     public void setUp() {
         HibernateSessionFactoryBuilder sessionFactoryBuilder = createHibernateSessionFactoryBuilderWithHistory();
-        sessionFactoryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
+//        sessionFactoryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
+        sessionFactoryBuilder.addResource(ADbKode.class);
         sessionFactoryManagerBundle = createHibernateSessionFactorManagerBundle(sessionFactoryBuilder, hibernateProperties);
     }
 
