@@ -110,12 +110,22 @@ libraries = [
 ]
 
 // JAX-WS runtime for weblogic
-libraries.jaxws_rt = files(
+// Dette er den gamle versjonen av libraries.jaxws_rt. Den skal slettes når alle utviklere har gått over til å bruke weblogic 10.3.5 for utvikling.
+// For å bruke denne versjonen istedenfor nåværende, rename denne til libraries.jaxws_rt, og rename det under til noe annet.
+libraries.jaxws_rt_10_3_1 = files(
         files("${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.0.0.0_2-1-4.jar"),
 )
 
+// JAX-WS runtime for weblogic
+libraries.jaxws_rt = files(
+        files("${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.2.0.0_2-1-5.jar"),
+)
+
+
 // Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
-libraries.weblogic = files(
+// Dette er den gamle versjonen av libraries.weblogic. Den skal slettes når alle utviklere har gått over til å bruke weblogic 10.3.5 for utvikling.
+// For å bruke denne versjonen istedenfor nåværende, rename denne til libraries.weblogic, og rename det under til noe annet.
+libraries.weblogic_10_3_1 = files(
         "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
         "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
         "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
@@ -129,6 +139,20 @@ libraries.weblogic = files(
         libraries.jaxws_rt,
 )
 
+// Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
+libraries.weblogic = files(
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
+        "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar/",
+        "${WEBLOGIC_HOME}/modules/javax.ejb_3.0.1.jar",
+        "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
+        "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
+        "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
+        "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.7.0.0.jar",
+        "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.9.0.0.jar",
+        libraries.jaxws_rt,
+)
 libraries.gt2 = [
         'org.geotools:gt2-oracle-spatial:2.2.2-CUSTOM@jar',
 ]
