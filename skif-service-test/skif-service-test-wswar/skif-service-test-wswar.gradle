@@ -15,3 +15,18 @@ statKartWeblogicWsWar {
     classpath = configurations.compile + configurations.provided
     weblogicLibraries = configurations.weblogic
 }
+
+configurations {
+    singlevm {
+        description = 'En Jar-utgave for bruk i SingleVM'
+        extendsFrom runtime
+    }
+}
+
+task singleVmJar(type: Jar, dependsOn: weblogicWsWar) {
+    from new File(new File(new File(weblogicWsWar.buildEarDirFile, weblogicWsWar.jswcWarDirName), 'WEB-INF'), 'classes')
+}
+
+artifacts {
+    singlevm singleVmJar
+}

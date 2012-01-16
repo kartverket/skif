@@ -9,4 +9,5 @@ dependencies {
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
     testCompile project(':skif-service-test:skif-service-test-server')
+    testCompile project(path: ':skif-service-test:skif-service-test-wswar', configuration: 'singlevm')
 }

@@ -5,9 +5,7 @@ import com.google.inject.PrivateBinder;
 import com.google.inject.PrivateModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
-import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.guava.Preconditions;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
@@ -113,7 +111,7 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
         if (classWSIPackageMappings != null) {
             getStrategy().setClassWSIPackageMappings(classWSIPackageMappings);
         }
-        Preconditions.checkArgument(moduleConfiguration.getServiceMode() == ServiceMode.JEE, "Kun ServiceMode.JEE er støttet");
+//        Preconditions.checkArgument(moduleConfiguration.getServiceMode() == ServiceMode.JEE, "Kun ServiceMode.JEE er støttet");
         requireBindings();
         install(new PrivateModule() {
             @Override
