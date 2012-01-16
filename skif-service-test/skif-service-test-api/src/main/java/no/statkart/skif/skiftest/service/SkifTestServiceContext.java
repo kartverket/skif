@@ -8,6 +8,5 @@ import no.statkart.skif.service.DefaultServiceContext;
  */
 public class SkifTestServiceContext extends DefaultServiceContext {
     public SkifTestServiceContext() {
-        System.out.println("ogagoagoaogaogo");
     }
 }
