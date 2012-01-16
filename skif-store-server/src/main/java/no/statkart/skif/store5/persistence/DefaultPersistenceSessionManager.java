@@ -16,6 +16,7 @@ import java.util.Map;
 public class DefaultPersistenceSessionManager implements PersistenceSessionManager {
     final protected PersistenceSessionForSnapshot[] bundle;
     final protected PersistenceSessionProxyCache proxyCache;
+    protected boolean isActive;
 
     protected SnapshotVersion snapshotVersion;
     protected PersistenceSessionForSnapshot sessionForSnapshot;
@@ -27,11 +28,11 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     }
 
     @Override
-    public PersistenceSessionForSnapshot getForSnapshot(SnapshotVersion snapshotVersion) {
+    public PersistenceSessionForSnapshot getForSnapshotVersion(SnapshotVersion snapshotVersion) {
         if (this.snapshotVersion == snapshotVersion) return sessionForSnapshot;
 
-        this.snapshotVersion = snapshotVersion;
         sessionForSnapshot = findForSnapshot(snapshotVersion);
+        this.snapshotVersion = snapshotVersion;
         if (sessionForSnapshot.isSnapshotChangable()) {
             sessionForSnapshot = proxyCache.getOrCreateProxy(sessionForSnapshot, snapshotVersion);
         }
@@ -48,13 +49,6 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
 
     }
 
-    @Override
-    public void close() {
-        for (PersistenceSessionForSnapshot persistenceSessionForSnapshot : bundle) {
-            PersistenceSessionMaster master = persistenceSessionForSnapshot.getImplementation(PersistenceSessionMaster.class);
-            master.close();
-        }
-    }
 
     @Override
     public PersistenceSessionForSnapshot lockForSnapshot(SnapshotVersion snapshotVersion) {
@@ -67,21 +61,50 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     }
 
     @Override
+    public boolean isActive() {
+        return isActive;
+    }
+
+    @Override
+    public void setActive() {
+        isActive = true;
+    }
+
+    @Override
+    public void close() {
+        for (PersistenceSessionForSnapshot persistenceSessionForSnapshot : bundle) {
+            PersistenceSessionMaster master = persistenceSessionForSnapshot.getImplementation(PersistenceSessionMaster.class);
+            master.close();
+        }
+    }
+
+    @Override
     public void beginTransaction() {
-        PersistenceSessionMaster implementation = getForSnapshot(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
+        PersistenceSessionMaster implementation = getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
         implementation.beginTransaction();
     }
 
     @Override
     public void commit() {
-        PersistenceSessionMaster implementation = getForSnapshot(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
+        PersistenceSessionMaster implementation = getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
         implementation.commit();
     }
 
+    @Override
+    public void rollback() {
+        PersistenceSessionMaster implementation = getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
+        implementation.rollback();
+    }
+
+    @Override
+    public void flush() {
+        PersistenceSessionMaster implementation = getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
+        implementation.flush();
+    }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
-        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshot(bubbleId.getSnapshotVersion());
+        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubbleId.getSnapshotVersion());
         return persistenceSessionForSnapshot.get(bubbleId);
     }
 
@@ -114,7 +137,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
                 snapshotManagedCollectionMap = new HashMap<PersistenceSessionForSnapshot, Collection<I>>(2);
                 map.put(snapshotVersion, snapshotManagedCollectionMap);
             }
-            PersistenceSessionForSnapshot persistenceManager = getForSnapshot(snapshotVersion).getForBubbleId(bubbleId.getClass());
+            PersistenceSessionForSnapshot persistenceManager = getForSnapshotVersion(snapshotVersion).getForBubbleId(bubbleId.getClass());
 
             Collection<I> collection = snapshotManagedCollectionMap.get(persistenceManager);
             if (collection == null) {
@@ -128,43 +151,43 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubble) {
-        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshot(bubble.getId().getSnapshotVersion());
+        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
         persistenceSessionForSnapshot.insert(bubble);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubble) {
-        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshot(bubble.getId().getSnapshotVersion());
+        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
         persistenceSessionForSnapshot.update(bubble);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubble) {
-        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshot(bubble.getId().getSnapshotVersion());
+        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
         persistenceSessionForSnapshot.delete(bubble);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void evict(I bubbleId) {
-        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshot(bubbleId.getSnapshotVersion());
+        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubbleId.getSnapshotVersion());
         persistenceSessionForSnapshot.evict(bubbleId);
     }
 
     @Override
     public <T extends BubbleObject> void ensureFullyLoaded(T bubble) {
-        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshot(bubble.getId().getSnapshotVersion());
+        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
         persistenceSessionForSnapshot.ensureFullyLoaded(bubble);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId) {
-        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshot(bubbleId.getSnapshotVersion());
+        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubbleId.getSnapshotVersion());
         return persistenceSessionForSnapshot.refresh(bubbleId);
     }
 
     @Override
     public <T extends BubbleObject> void refresh(T bubble) {
-        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshot(bubble.getId().getSnapshotVersion());
+        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
         persistenceSessionForSnapshot.refresh(bubble);
     }
 }

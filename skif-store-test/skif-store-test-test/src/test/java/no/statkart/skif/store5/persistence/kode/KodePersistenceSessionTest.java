@@ -19,12 +19,10 @@ import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryMana
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.KodeMsg;
-import org.hibernate.criterion.AbstractEmptinessExpression;
 import org.junit.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import weblogic.wsee.policy.deployment.WsPolicyDescriptor;
 
 import java.util.*;
 
@@ -172,7 +170,7 @@ public class KodePersistenceSessionTest {
     public void testGetImplementation() {
         PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
-        KodePersistenceSession implementation = persistenceSessionManager.getForSnapshot(SnapshotVersion.CURRENT).getImplementation(KodePersistenceSession.class);
+        KodePersistenceSession implementation = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(KodePersistenceSession.class);
         try {
             AEnumKode aEnumKodeA = implementation.get(AEnumKodeId.KodeAId);
             Assert.assertEquals("Kode A", aEnumKodeA.getBeskrivelse());

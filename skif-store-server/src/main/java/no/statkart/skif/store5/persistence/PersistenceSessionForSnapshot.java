@@ -8,7 +8,7 @@ import org.hibernate.Session;
  * @author Henrik Fredholm
  */
 public interface PersistenceSessionForSnapshot extends PersistenceSession {
-    SnapshotVersion getShapshot();
+    SnapshotVersion getSnapshot();
     SnapshotVersion setSnapshot(SnapshotVersion snapshotVersion);
     boolean isSnapshotChangable();
     boolean acceptsSnapshot(SnapshotVersion snapshotVersion);

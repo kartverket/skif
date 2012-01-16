@@ -131,7 +131,7 @@ public class StoreSessionServerTest {
         persistenceSessionManager = createPersistenceSessionManager();
         storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, MemoryLockerSingleton.getInstance()));
 
-        HibernatePersistenceSessionMaster persistenceSessionMaster = persistenceSessionManager.getForSnapshot(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMaster.class);
+        HibernatePersistenceSessionMaster persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMaster.class);
         try {
             Session session = persistenceSessionMaster.reserveSession();
             session.createQuery("delete from TestBubble where id>100").executeUpdate();

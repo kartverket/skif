@@ -7,9 +7,10 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store3.persistence.hibernate.HibernatePersistenceSession;
-import no.statkart.skif.store3.persistence.hibernate.SnapshotManagedHibernatePersistenceSession;
-import no.statkart.skif.store3.persistence.hibernate.SnapshotManagedHibernateSession;
-import no.statkart.skif.storetest.domain.demo.*;
+import no.statkart.skif.storetest.domain.demo.Foo;
+import no.statkart.skif.storetest.domain.demo.FooId;
+import no.statkart.skif.storetest.domain.demo.TestBubble;
+import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 import org.hibernate.Session;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -26,10 +27,11 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 
 /**
+ * Tester for {@link DefaultHibernatePersistenceSession}
  * @author Henrik Fredholm
  */
 @Test
-public class HibernatePersistenceSessionTest {
+public class DefaultHibernatePersistenceSessionTest {
     Properties hibernateProperties;
 
     static String T1 = "2011-10-02 08:01:00.00";
@@ -58,7 +60,7 @@ public class HibernatePersistenceSessionTest {
 
     HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
 
-    public HibernatePersistenceSessionTest() {
+    public DefaultHibernatePersistenceSessionTest() {
         Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
         hibernateProperties = ConfigurationConverter.getProperties(cfg);
     }

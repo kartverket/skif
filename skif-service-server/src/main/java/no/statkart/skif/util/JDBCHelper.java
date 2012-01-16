@@ -4,6 +4,8 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.JDBCConnectionFactory;
+import no.statkart.skif.persistence5.jdbc.ConnectionFactoryUsingJDBC;
+import no.statkart.skif.store.SnapshotVersion;
 
 import java.sql.*;
 
@@ -68,4 +70,13 @@ public class JDBCHelper {
         return new JDBCConnectionFactory(url, username, password);
     }
 
+    public static ConnectionFactoryUsingJDBC createConnectionFactoryUsingJDBC(Configuration configuration, SnapshotVersion snapshotVersion, boolean setSnapshotOnSession) {
+        String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
+        String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
+        String sid = configuration.getString(SkifConfigConstants.DB_SID);
+        String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
+        String port = configuration.getString(SkifConfigConstants.DB_PORT);
+        String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
+        return new ConnectionFactoryUsingJDBC(url, username, password, false, snapshotVersion, setSnapshotOnSession);
+    }
 }

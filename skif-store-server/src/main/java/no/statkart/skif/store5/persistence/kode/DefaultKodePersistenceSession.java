@@ -144,8 +144,8 @@ public class DefaultKodePersistenceSession implements KodePersistenceSession {
     }
 
     @Override
-    public SnapshotVersion getShapshot() {
-        return persistenceSessionMaster.getShapshot();
+    public SnapshotVersion getSnapshot() {
+        return persistenceSessionMaster.getSnapshot();
     }
 
     @Override

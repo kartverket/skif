@@ -58,7 +58,7 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
     }
 
     private void verifySnapshotVersion(PersistenceSessionForSnapshot sessionForSnapshot, SnapshotVersion snapshotVersion2) {
-        if (sessionForSnapshot.getShapshot() != snapshotVersion2) {
+        if (sessionForSnapshot.getSnapshot() != snapshotVersion2) {
             throw new ImplementationException("Uventet endring av SnapshotVersion under kall til PersistenceSessionForSnapshot. Forventet: " + snapshotVersion2 + ". Faktisk:" + sessionForSnapshot);
         }
     }
@@ -68,7 +68,7 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
     }
 
     @Override
-    public SnapshotVersion getShapshot() {
+    public SnapshotVersion getSnapshot() {
         return snapshotVersion;
     }
 

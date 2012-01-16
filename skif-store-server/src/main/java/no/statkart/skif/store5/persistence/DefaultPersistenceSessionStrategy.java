@@ -26,8 +26,8 @@ public class DefaultPersistenceSessionStrategy implements PersistenceSessionStra
 
     }
     @Override
-    public SnapshotVersion getShapshot() {
-        return master.getShapshot();
+    public SnapshotVersion getSnapshot() {
+        return master.getSnapshot();
     }
 
     @Override

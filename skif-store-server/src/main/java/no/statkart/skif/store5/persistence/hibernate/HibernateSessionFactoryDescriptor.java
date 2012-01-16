@@ -14,7 +14,7 @@ import java.util.Properties;
  * @author Henrik Fredholm
  */
 public class HibernateSessionFactoryDescriptor {
-    private String name;
+    private final String name;
     private final SnapshotVersionSeed seed;
     private final SnapshotVersion initialSeedValue;
     private final boolean setSnapshotOnSession;

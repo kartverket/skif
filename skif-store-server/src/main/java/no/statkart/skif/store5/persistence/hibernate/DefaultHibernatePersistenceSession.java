@@ -60,7 +60,7 @@ public class DefaultHibernatePersistenceSession implements HibernatePersistenceS
 
 
     @Override
-    public SnapshotVersion getShapshot() {
+    public SnapshotVersion getSnapshot() {
         return sessionFactoryDescriptor.getSnapshotVersion();
     }
 

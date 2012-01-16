@@ -6,8 +6,6 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
-import no.statkart.skif.store5.persistence.PersistenceSessionManager;
 import no.statkart.skif.store5.persistence.hibernate.DefaultHibernatePersistenceSession;
 import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMaster;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
@@ -106,11 +104,11 @@ public class PersistenceSessionManagerTest {
             assertEquals(foo_100_S3.getId().getSnapshotVersion(), S3);
 
             try {
-                Session session = persistenceSession.getForSnapshot(OLD).getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
+                Session session = persistenceSession.getForSnapshotVersion(OLD).getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
                 Foo foo_101_OLD = persistenceSession.get(FooId_101_OLD);
                 assertEquals(foo_101_OLD.getId().getSnapshotVersion(), OLD);
             } finally {
-                persistenceSession.getForSnapshot(OLD).getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
+                persistenceSession.getForSnapshotVersion(OLD).getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
             }
             Foo foo_101_S3 = persistenceSession.get(FooId_101_S3);
             assertEquals(foo_101_S3.getId().getSnapshotVersion(), S3);
