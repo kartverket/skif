@@ -1,6 +1,10 @@
 package no.statkart.skif.storetest;
 
 import com.google.inject.util.Providers;
+import no.statkart.skif.ConfigurationConverter;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.PropertiesConfiguration;
+import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store5.persistence.hibernate.*;
@@ -15,6 +19,13 @@ import java.util.Properties;
  * @author Henrik Fredholm
  */
 public class TestHelper5 {
+
+    public static Properties createHibernatePropertiesSingleVm() {
+        Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
+        Properties hibernateProperties = ConfigurationConverter.getProperties(cfg);
+        return hibernateProperties;
+    }
+
     public static HibernateSessionFactoryManager createHibernateSessionFactorManagerWithSingleSessionNoHistory(HibernateSessionFactoryBuilder sessionFactoryBuilder, Properties hibernateProperties) {
         return new HibernateSessionFactoryManager(sessionFactoryBuilder,
                 new HibernateSessionFactoryDescriptor("CURRENT(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties)
@@ -35,16 +46,13 @@ public class TestHelper5 {
         );
     }
 
-
     /**
-     * Builder som ikke inneholder bobler med historikk
+     * Builder som inneholder bobler med historikk.
      *
      * @return
      */
-    public static  HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilderWithNoHistory() {
-        return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate")
-                .addResource(TestEntity.class)
-                .addResource(TestBubble.class);
+    public static  HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
+        return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate");
     }
 
     /**
@@ -57,8 +65,6 @@ public class TestHelper5 {
                 .addResource(TestEntity.class)
                 .addResource(TestBubble.class)
                 .addResource(Foo.class);
-
-
     }
 
 }

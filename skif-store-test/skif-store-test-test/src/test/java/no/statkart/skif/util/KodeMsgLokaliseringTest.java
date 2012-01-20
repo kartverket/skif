@@ -20,7 +20,7 @@ import java.util.Locale;
  * To change this template use File | Settings | File Templates.
  */
 @Test
-public class KodeMsgLokaliseringTest extends StoreTestTestCase5 {
+public class KodeMsgLokaliseringTest {
 
     public KodeMsgLokaliseringTest() {
         super();
@@ -50,14 +50,5 @@ public class KodeMsgLokaliseringTest extends StoreTestTestCase5 {
         Assert.assertNotSame(key, kodeString2);
         Assert.assertNotSame(kodeString,kodeString2);
         Assert.assertTrue(kodeString2.contains("(nynorsk)"));
-
-
-
     }
-
-
-
-
-
-
 }
