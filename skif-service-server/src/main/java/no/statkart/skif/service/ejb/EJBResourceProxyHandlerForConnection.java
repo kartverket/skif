@@ -1,16 +1,11 @@
 package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import no.statkart.skif.ServiceMode;
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.persistence.ConnectionManager;
 import no.statkart.skif.persistence5.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
 
 /**
  * @author Henrik Fredholm

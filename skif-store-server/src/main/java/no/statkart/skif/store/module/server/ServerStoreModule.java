@@ -65,19 +65,6 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         return ConfigurationConverter.getProperties(hibernateConfiguration);
     }
 
-    protected Map<Object, ConnectionFactory> createConnectionFactoryMap() {
-        Map<Object, ConnectionFactory> connectionFactoryMap = new HashMap<Object, ConnectionFactory>();
-        if  (moduleConfiguration.getServiceMode()== ServiceMode.SINGLE_VM) {
-            JDBCConnectionFactory connectionFactory = JDBCHelper.createJDBCConnectionFactory(moduleConfiguration.getConfiguration());
-            connectionFactoryMap.put(SnapshotVersion.CURRENT, connectionFactory);
-            connectionFactoryMap.put(SnapshotVersion.OLD, connectionFactory);
-        }  else {
-            connectionFactoryMap.put(SnapshotVersion.CURRENT, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelBok_DS"));
-            connectionFactoryMap.put(SnapshotVersion.OLD, new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelOld_DS"));
-        }
-        return connectionFactoryMap;
-    }
-
 //    protected StoreHibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
 //        Properties properties = getHibernateProperties();
 //        logger.trace("Properties used for configuring hibernate: '{}'", properties);
