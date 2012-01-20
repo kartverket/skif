@@ -1,6 +1,5 @@
-package no.statkart.skif.persistence5.jdbc;
+package no.statkart.skif.persistence.jdbc;
 
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.store.SnapshotVersion;
 
@@ -8,7 +7,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**

@@ -1,4 +1,4 @@
-package no.statkart.skif.persistence5.jdbc;
+package no.statkart.skif.persistence.jdbc;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.SnapshotVersion;

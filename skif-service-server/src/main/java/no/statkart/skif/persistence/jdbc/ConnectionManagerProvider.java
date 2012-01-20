@@ -1,9 +1,9 @@
-package no.statkart.skif.persistence5.jdbc;
+package no.statkart.skif.persistence.jdbc;
 
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.statkart.skif.persistence5.ResourceManager;
+import no.statkart.skif.persistence.ResourceManager;
 
 /**
  * @author Henrik Fredholm

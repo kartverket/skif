@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.exception.OperationalException;
-import no.statkart.skif.persistence5.ResourceManager;
+import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 import no.statkart.skif.service.locker.DBLockerService;

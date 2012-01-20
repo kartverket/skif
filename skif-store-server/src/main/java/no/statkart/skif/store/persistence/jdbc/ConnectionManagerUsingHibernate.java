@@ -1,7 +1,7 @@
 package no.statkart.skif.store.persistence.jdbc;
 
-import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
-import no.statkart.skif.persistence5.jdbc.ConnectionManager;
+import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
+import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * ConnectionManager som oppretter connections via en tilknyttet {@link PersistenceSessionManager} og underliggende
- * {@link HibernatePersistenceSessionMaster}. Alle meoder for {@link no.statkart.skif.persistence5.TransactionalResource}
+ * {@link HibernatePersistenceSessionMaster}. Alle meoder for {@link no.statkart.skif.persistence.TransactionalResource}
  * på denne klasse metoder er tomme da de håndteres den tilknyttede {@code PersistenceSessionManager}. For å for dette
  * til settes {@code PersistenceSessionManager} til aktiv når connections hennes ut via denne klasse.
  *

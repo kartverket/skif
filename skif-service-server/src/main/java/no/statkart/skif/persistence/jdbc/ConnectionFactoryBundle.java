@@ -1,9 +1,5 @@
-package no.statkart.skif.persistence5.jdbc;
+package no.statkart.skif.persistence.jdbc;
 
-import no.statkart.skif.persistence5.TransactionalResource;
-import no.statkart.skif.store.SnapshotVersion;
-
-import java.sql.Connection;
 import java.util.Arrays;
 import java.util.List;
 

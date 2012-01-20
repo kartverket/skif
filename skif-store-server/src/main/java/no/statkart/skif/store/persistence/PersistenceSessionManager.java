@@ -1,6 +1,6 @@
 package no.statkart.skif.store.persistence;
 
-import no.statkart.skif.persistence5.TransactionalResource;
+import no.statkart.skif.persistence.TransactionalResource;
 import no.statkart.skif.store.SnapshotVersion;
 
 /**

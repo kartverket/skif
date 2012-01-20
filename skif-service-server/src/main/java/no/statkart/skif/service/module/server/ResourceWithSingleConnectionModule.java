@@ -6,8 +6,8 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.persistence5.ResourceManager;
-import no.statkart.skif.persistence5.jdbc.*;
+import no.statkart.skif.persistence.ResourceManager;
+import no.statkart.skif.persistence.jdbc.*;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
 

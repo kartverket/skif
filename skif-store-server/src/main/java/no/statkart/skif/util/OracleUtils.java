@@ -1,9 +1,8 @@
 package no.statkart.skif.util;
 
-import net.sf.ehcache.constructs.asynchronous.Command;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
-import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
+import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
 import oracle.jdbc.OracleConnection;
 import org.hibernate.jdbc.ConnectionWrapper;
 import org.slf4j.Logger;

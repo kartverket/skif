@@ -2,6 +2,7 @@ package no.statkart.skif.persistence;
 
 import com.google.inject.Inject;
 import no.statkart.skif.domain.SelectionPolygon;
+import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.demo.GeometricElementId;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class GeometriFinder {
 
     @Inject
-    private no.statkart.skif.persistence5.jdbc.ConnectionManager connectionManager;
+    private ConnectionManager connectionManager;
 
 
     public List<GeometricElementId>  findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {

@@ -1,7 +1,7 @@
 package no.statkart.skif.store.persistence.jdbc;
 
-import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
-import no.statkart.skif.persistence5.jdbc.ConnectionReservationForSnapshot;
+import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
+import no.statkart.skif.persistence.jdbc.ConnectionReservationForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import org.hibernate.jdbc.ConnectionWrapper;
 

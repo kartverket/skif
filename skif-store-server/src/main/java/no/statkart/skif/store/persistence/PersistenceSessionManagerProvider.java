@@ -2,7 +2,7 @@ package no.statkart.skif.store.persistence;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.statkart.skif.persistence5.ResourceManager;
+import no.statkart.skif.persistence.ResourceManager;
 
 /**
  * @author Henrik Fredholm

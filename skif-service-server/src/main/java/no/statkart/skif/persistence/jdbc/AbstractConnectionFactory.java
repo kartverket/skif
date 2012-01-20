@@ -1,11 +1,9 @@
-package no.statkart.skif.persistence5.jdbc;
+package no.statkart.skif.persistence.jdbc;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.SnapshotVersion;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * @author Henrik Fredholm

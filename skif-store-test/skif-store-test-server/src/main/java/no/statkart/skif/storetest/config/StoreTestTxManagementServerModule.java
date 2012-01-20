@@ -11,8 +11,11 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
-import no.statkart.skif.persistence5.ResourceManager;
-import no.statkart.skif.persistence5.jdbc.*;
+import no.statkart.skif.persistence.ResourceManager;
+import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
+import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersionProvider;
+import no.statkart.skif.persistence.jdbc.ConnectionManager;
+import no.statkart.skif.persistence.jdbc.ConnectionManagerProvider;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import no.statkart.skif.service.module.server.ServerModule;
@@ -62,7 +65,7 @@ public class StoreTestTxManagementServerModule extends SkifModule {
         install(new ServerServiceModule(moduleConfiguration, new StoreTestTxManagementServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestSequenceBlockAllocatorServices().getServices()));
 
-        bind(no.statkart.skif.persistence5.jdbc.ConnectionManager.class).toProvider(ConnectionManagerProvider.class);
+        bind(ConnectionManager.class).toProvider(ConnectionManagerProvider.class);
         bind(Connection.class).to(ConnectionForSnapshotVersion.class);
         bind(ConnectionForSnapshotVersion.class).toProvider(ConnectionForSnapshotVersionProvider.class);
         bind(PersistenceSessionManager.class).toProvider(PersistenceSessionManagerProvider.class);
@@ -119,7 +122,7 @@ public class StoreTestTxManagementServerModule extends SkifModule {
     @ServiceRequestScoped
     ResourceManager provideResourceManager(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle) {
         Configuration configuration = moduleConfiguration.getConfiguration();
-        no.statkart.skif.persistence5.jdbc.ConnectionManager connectionManager;
+        ConnectionManager connectionManager;
         Properties hibernatePropertiesCurrent;
         Properties hibernatePropertiesOld;
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
@@ -156,7 +159,7 @@ public class StoreTestTxManagementServerModule extends SkifModule {
         ResourceManager resourceManager = new ResourceManager(
                 new ResourceManager.Entry(
                         new ConnectionManagerUsingHibernate(persistenceSessionManager),
-                        no.statkart.skif.persistence5.jdbc.ConnectionManager.class
+                        ConnectionManager.class
                 ),
                 new ResourceManager.Entry(
                         persistenceSessionManager,

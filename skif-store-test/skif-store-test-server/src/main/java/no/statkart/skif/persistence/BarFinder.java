@@ -1,6 +1,7 @@
 package no.statkart.skif.persistence;
 
 import com.google.inject.Inject;
+import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.demo.BarId;
@@ -20,7 +21,7 @@ import java.util.*;
 public class BarFinder {
 
     @Inject
-    private no.statkart.skif.persistence5.jdbc.ConnectionManager connectionManager;
+    private ConnectionManager connectionManager;
 
     public List<BarId> findBarIdsAliveAtSnapshot(Set<BarId<?>> barIds, SnapshotVersion snapshotVersion) {
         Connection connection = connectionManager.getForSnapshotVersion(snapshotVersion);

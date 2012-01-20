@@ -1,8 +1,9 @@
 package no.statkart.skif.persistence5;
 
 import no.statkart.skif.config.SkifConfiguration;
-import no.statkart.skif.persistence5.jdbc.ConnectionManager;
-import no.statkart.skif.persistence5.jdbc.ConnectionManagerUsingFactory;
+import no.statkart.skif.persistence.ResourceManager;
+import no.statkart.skif.persistence.jdbc.ConnectionManager;
+import no.statkart.skif.persistence.jdbc.ConnectionManagerUsingFactory;
 import no.statkart.skif.store.SnapshotVersion;
 import org.testng.annotations.Test;
 

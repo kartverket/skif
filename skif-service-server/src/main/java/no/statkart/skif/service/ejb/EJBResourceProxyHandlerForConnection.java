@@ -2,7 +2,7 @@ package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
 import no.statkart.skif.ServiceMode;
-import no.statkart.skif.persistence5.ResourceManager;
+import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -3,7 +3,7 @@ package no.statkart.skif.store.persistence.jdbc;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
+import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;

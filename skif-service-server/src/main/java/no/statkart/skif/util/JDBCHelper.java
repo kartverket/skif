@@ -3,7 +3,7 @@ package no.statkart.skif.util;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.persistence5.jdbc.ConnectionFactoryUsingJDBC;
+import no.statkart.skif.persistence.jdbc.ConnectionFactoryUsingJDBC;
 import no.statkart.skif.store.SnapshotVersion;
 
 import java.sql.*;

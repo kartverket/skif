@@ -1,16 +1,13 @@
 package no.statkart.skif.persistence;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.demo.Baz;
-import no.statkart.skif.storetest.domain.demo.BazId;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
 import no.statkart.skif.util.JDBCHelper;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,7 +21,7 @@ import java.util.Set;
 public class FooFinder {
 
     @Inject
-    private no.statkart.skif.persistence5.jdbc.ConnectionManager connectionManager;
+    private ConnectionManager connectionManager;
 
     public Set<FooId<Foo>> findFooIdsForNr(long nr) {
         Set<FooId<Foo>> fooIds = new HashSet<FooId<Foo>>();

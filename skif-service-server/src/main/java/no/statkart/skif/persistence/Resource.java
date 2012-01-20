@@ -1,4 +1,4 @@
-package no.statkart.skif.persistence5;
+package no.statkart.skif.persistence;
 
 /**
  * @author Henrik Fredholm

@@ -10,11 +10,11 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
-import no.statkart.skif.persistence5.ResourceManager;
-import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
-import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersionProvider;
-import no.statkart.skif.persistence5.jdbc.ConnectionManager;
-import no.statkart.skif.persistence5.jdbc.ConnectionManagerProvider;
+import no.statkart.skif.persistence.ResourceManager;
+import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
+import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersionProvider;
+import no.statkart.skif.persistence.jdbc.ConnectionManager;
+import no.statkart.skif.persistence.jdbc.ConnectionManagerProvider;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
@@ -231,7 +231,7 @@ public class StoreTestServerModule extends SkifModule {
         ResourceManager resourceManager = new ResourceManager(
                 new ResourceManager.Entry(
                         new ConnectionManagerUsingHibernate(persistenceSessionManager),
-                        no.statkart.skif.persistence5.jdbc.ConnectionManager.class
+                        ConnectionManager.class
                 ),
                 new ResourceManager.Entry(
                         persistenceSessionManager,
