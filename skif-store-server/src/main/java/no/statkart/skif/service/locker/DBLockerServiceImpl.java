@@ -48,22 +48,32 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
 
         LockInfo<Long> lockInfo;
 
-        // Anta at låsen ikke finnes. Gjør en insert
-        lockInfo = insertLock(con, lockKey, owner, expires);
-        if (lockInfo != null) {
-            return lockInfo;
-        } else {
-            // Lås finnes. Sjekk om bruker allerede har låsen eller den kan times ut.
-            lockInfo = getLock(con, lockKey);
+        boolean rollback = true;
+        try {
+            // Anta at låsen ikke finnes. Gjør en insert
+            lockInfo = insertLock(con, lockKey, owner, expires);
             if (lockInfo == null) {
-                // Race condition: Kan ikke opprette eller finne lås. Lite sannsynlig at dette skal oppstå
-                throw new LockedException(owner, new LockInfo<Long>(lockKey, null));
-            } else if (lockInfo.isOwnedBy(owner)) {
-                lockInfo = renewLock(con, lockInfo, expires);
-            } else if (lockInfo.expired()) {
-                lockInfo = timeoutAndTakeLock(con, owner, expires, lockInfo);
-            } else {
-                throw new LockedException(owner, lockInfo);
+                // Lås finnes. Sjekk om bruker allerede har låsen eller den kan times ut.
+                lockInfo = getLock(con, lockKey);
+                if (lockInfo == null) {
+                    // Race condition: Kan ikke opprette eller finne lås. Lite sannsynlig at dette skal oppstå
+                    throw new LockedException(owner, new LockInfo<Long>(lockKey, null));
+                } else if (lockInfo.isOwnedBy(owner)) {
+                    lockInfo = renewLock(con, lockInfo, expires);
+                } else if (lockInfo.expired()) {
+                    lockInfo = timeoutAndTakeLock(con, owner, expires, lockInfo);
+                } else {
+                    throw new LockedException(owner, lockInfo);
+                }
+            }
+
+            con.commit();
+            rollback = false;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (rollback) {
+                JDBCHelper.rollback(con);
             }
         }
 
@@ -78,7 +88,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         Timestamp expires = calcExpiration(con, lockTimeout);
         Set<LockInfo<Long>> result;
         try {
-            con.setAutoCommit(false);
+//            con.setAutoCommit(false);
             Set<LockInfo<Long>> insertedLocks = insertLocks(con, lockKeys, owner, expires);
             if (insertedLocks != null) {
                 result = insertedLocks;
@@ -129,6 +139,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         Connection con = connectionProvider.get();
 
         PreparedStatement stmt = null;
+        boolean rollback = true;
         try {
             String sqlString = "DELETE FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID=? AND CLASS=? AND OWNER=?";
             stmt = con.prepareStatement(sqlString);
@@ -142,10 +153,16 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 logger.debug("SQL: PARAM 3=" + owner);
             }
             stmt.executeUpdate();
+
+            con.commit();
+            rollback = false;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
             JDBCHelper.close(stmt);
+            if (rollback) {
+                JDBCHelper.rollback(con);
+            }
         }
     }
 
@@ -154,7 +171,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         boolean rollback = false;
         Connection con = connectionProvider.get();
         try {
-            con.setAutoCommit(false);
+//            con.setAutoCommit(false);
             unlockAll(con, unLockKeys, owner);
             con.commit();
         } catch (RuntimeException e) {
@@ -181,6 +198,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         Connection con = connectionProvider.get();
 
         PreparedStatement stmt = null;
+        boolean rollback = true;
         try {
             String sqlString = "DELETE FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE OWNER=?";
             stmt = con.prepareStatement(sqlString);
@@ -188,10 +206,15 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             logger.debug("SQL: " + sqlString);
             logger.debug("SQL: PARAM 1=" + owner);
             stmt.executeUpdate();
+            con.commit();
+            rollback = false;
         } catch (SQLException e) {
             throw new OperationalException("Sletting av alle låser for bruker feilet: " + owner, e);
         } finally {
             JDBCHelper.close(stmt);
+            if (rollback) {
+                JDBCHelper.rollback(con);
+            }
         }
 
     }
@@ -200,7 +223,18 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     public Collection<LockInfo<Long>> renewAllLocks(String owner, long lockTimeout) {
         Connection con = connectionProvider.get();
         Timestamp expires = calcExpiration(con, lockTimeout);
-        renewAllLocks(con, owner, expires);
+        boolean rollback = true;
+        try {
+            renewAllLocks(con, owner, expires);
+            con.commit();
+            rollback = false;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (rollback) {
+                JDBCHelper.rollback(con);
+            }
+        }
         return getLocksBy(con, owner);
     }
 
@@ -729,7 +763,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         PreparedStatement stmt = null;
         try {
             StringBuilder buf = new StringBuilder();
-            buf.append("DELETE FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE (ID=? AND CLASS=? AND OWNER=?) ");
+            buf.append("DELETE FROM ").append(configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME)).append(" WHERE (ID=? AND CLASS=? AND OWNER=?) ");
             for (int i = 2; i <= BATCH_SIZE; i++) {
                 buf.append("OR (ID=? AND CLASS=? AND OWNER=?)");
             }
