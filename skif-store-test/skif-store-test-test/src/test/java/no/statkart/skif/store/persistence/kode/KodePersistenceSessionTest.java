@@ -1,4 +1,4 @@
-package no.statkart.skif.store5.persistence.kode;
+package no.statkart.skif.store.persistence.kode;
 
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
@@ -16,6 +16,9 @@ import no.statkart.skif.store5.persistence.hibernate.DefaultHibernatePersistence
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManager;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManagerBundle;
+import no.statkart.skif.store5.persistence.kode.DefaultKodePersistenceSession;
+import no.statkart.skif.store5.persistence.kode.EnumKodeManager;
+import no.statkart.skif.store5.persistence.kode.KodePersistenceSession;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.KodeMsg;
@@ -31,7 +34,7 @@ import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactor
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * Test av {@link KodePersistenceSession}.
+ * Test av {@link no.statkart.skif.store5.persistence.kode.KodePersistenceSession}.
  *
  * @author Henrik Fredholm
  * @since 2.1

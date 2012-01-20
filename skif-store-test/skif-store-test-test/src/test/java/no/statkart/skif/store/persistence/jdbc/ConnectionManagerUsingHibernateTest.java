@@ -1,4 +1,4 @@
-package no.statkart.skif.store5.persistence.jdbc;
+package no.statkart.skif.store.persistence.jdbc;
 
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
@@ -9,6 +9,7 @@ import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store5.persistence.hibernate.DefaultHibernatePersistenceSession;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManagerBundle;
+import no.statkart.skif.store5.persistence.jdbc.ConnectionManagerUsingHibernate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -22,7 +23,7 @@ import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactor
 import static org.testng.Assert.*;
 
 /**
- * Tester for {@link  ConnectionManagerUsingHibernate}
+ * Tester for {@link  no.statkart.skif.store5.persistence.jdbc.ConnectionManagerUsingHibernate}
  *
  * @author Henrik Fredholm
  * @since 2.1

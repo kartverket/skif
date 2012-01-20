@@ -1,4 +1,4 @@
-package no.statkart.skif.store5;
+package no.statkart.skif.store;
 
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
@@ -6,6 +6,7 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store5.*;
 import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store5.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store5.persistence.PersistenceSessionManager;
@@ -72,7 +73,7 @@ public class StoreSessionServerTest {
     HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
     PersistenceSessionManager persistenceSessionManager;
 
-    StoreServer storeServer;
+    no.statkart.skif.store5.StoreServer storeServer;
 
     public StoreSessionServerTest() {
         Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
@@ -129,7 +130,7 @@ public class StoreSessionServerTest {
     @BeforeMethod
     public void createStore() {
         persistenceSessionManager = createPersistenceSessionManager();
-        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, MemoryLockerSingleton.getInstance()));
+        storeServer = new no.statkart.skif.store5.StoreServer(new StoreSessionServer(persistenceSessionManager, MemoryLockerSingleton.getInstance()));
 
         HibernatePersistenceSessionMaster persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMaster.class);
         try {

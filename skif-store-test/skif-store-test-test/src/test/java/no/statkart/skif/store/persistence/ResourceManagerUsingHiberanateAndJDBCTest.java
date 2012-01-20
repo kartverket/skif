@@ -1,4 +1,4 @@
-package no.statkart.skif.store5.persistence;
+package no.statkart.skif.store.persistence;
 
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
@@ -6,6 +6,8 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.persistence5.ResourceManager;
 import no.statkart.skif.persistence5.jdbc.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
+import no.statkart.skif.store5.persistence.PersistenceSessionManager;
 import no.statkart.skif.store5.persistence.hibernate.DefaultHibernatePersistenceSession;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManagerBundle;
