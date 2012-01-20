@@ -112,12 +112,12 @@ libraries = [
 // JAX-WS runtime for weblogic
 // Dette er den gamle versjonen av libraries.jaxws_rt. Den skal slettes når alle utviklere har gått over til å bruke weblogic 10.3.5 for utvikling.
 // For å bruke denne versjonen istedenfor nåværende, rename denne til libraries.jaxws_rt, og rename det under til noe annet.
-libraries.jaxws_rt = files(
+libraries.jaxws_rt_10_3_1 = files(
         files("${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.0.0.0_2-1-4.jar"),
 )
 
 // JAX-WS runtime for weblogic
-libraries.jaxws_rt_new = files(
+libraries.jaxws_rt = files(
         files("${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.2.0.0_2-1-5.jar"),
 )
 
