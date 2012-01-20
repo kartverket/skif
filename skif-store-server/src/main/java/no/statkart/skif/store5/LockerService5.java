@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * @author Henrik Fredholm
  */
-public interface LockerService {
+public interface LockerService5 {
    /**
     * Locks (or relocks) an item. If this key allready posesses the lock,
     * the lock time will be renewed to the current time
@@ -21,7 +21,7 @@ public interface LockerService {
     *         <b>Note</b> that the exception will contain the key of the item, change
     *         this if keys are secrets
     */
-   BubbleLock lock(BubbleId id, String key, long lockTimeout) throws LockedException;
+   BubbleLock5 lock(BubbleId id, String key, long lockTimeout) throws LockedException;
 
    Set lockAll(Set ids, String key, long lockTimeout) throws LockedException;
 

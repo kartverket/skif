@@ -5,7 +5,10 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
+import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
+import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryDescriptor;
+import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.TestEntity;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -31,13 +34,14 @@ public class HibernateSessionFactoryBuilderTest {
     private HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
         Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
         Properties properties = ConfigurationConverter.getProperties(cfg);
-        return new HibernateSessionFactoryBuilder(properties, "no/statkart/skif/storetest/persistence/hibernate");
+        return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate");
     }
 
     public void testCreateFactorySessionAndConnection() throws SQLException, InterruptedException {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestEntity.class);
-        SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
+        Properties hibernateProperties = TestHelper.createHibernatePropertiesSingleVm() ;
+        SessionFactory sf = sfbuilder.build(new HibernateSessionFactoryDescriptor("", new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties));
         assertNotNull(sf);
         Session s = sf.openSession();
         Connection c = s.connection();
@@ -59,7 +63,8 @@ public class HibernateSessionFactoryBuilderTest {
     public void testCreateFactoryWithEntity() throws SQLException {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestEntity.class);
-        SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
+        Properties hibernateProperties = TestHelper.createHibernatePropertiesSingleVm() ;
+        SessionFactory sf = sfbuilder.build(new HibernateSessionFactoryDescriptor("", new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties));
         assertNotNull(sf);
         Session s = sf.openSession();
         Query query = s.createQuery("from TestEntity");

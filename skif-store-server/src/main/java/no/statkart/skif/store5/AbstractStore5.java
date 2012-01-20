@@ -13,19 +13,19 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
 /**
  * @author Henrik Fredholm
  */
-public class AbstractStore implements Store {
-    protected WrappableStoreSession storeSession;
+public class AbstractStore5 implements Store {
+    protected WrappableStoreSession5 storeSession;
     final private Injector injector;
 
-    public AbstractStore(StoreSessionServer storeSession, Injector injector) {
+    public AbstractStore5(StoreSessionServer5 storeSession, Injector injector) {
         this.injector = injector;
         this.storeSession = storeSession;
         storeSession.setStore(this);
     }
 
-    protected StoreUnitOfWork storeUnitOfWork() {
-        if (storeSession instanceof StoreUnitOfWork) {
-            return (StoreUnitOfWork) storeSession;
+    protected StoreUnitOfWork5 storeUnitOfWork() {
+        if (storeSession instanceof StoreUnitOfWork5) {
+            return (StoreUnitOfWork5) storeSession;
         } else {
             throw new ImplementationException("Not in UnitOfWork");
         }
@@ -226,7 +226,7 @@ public class AbstractStore implements Store {
 
     @Override
     public boolean inUnitOfWork() {
-        return storeSession instanceof StoreUnitOfWork;
+        return storeSession instanceof StoreUnitOfWork5;
     }
 
     //@Override

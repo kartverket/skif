@@ -25,15 +25,15 @@ public class KodelisteFinder {
     }
 
     public Collection<? extends KodelisteId<?>> getKodelisteIds() {
-        return kodelistePersister.getKodelisteIds();
+        return null; //kodelistePersister.getKodelisteIds();
     }
 
     public Collection<? extends KodeId<?>> getKodeIds() {
-        return kodelistePersister.getKodeIds();
+        return null; //kodelistePersister.getKodeIds();
     }
 
     public Collection<? extends BubbleObject> getAllKodelisterAndKoder() {
-        return store.register(kodelistePersister.getAllKodelisterAndKoder(), new ArrayList<BubbleObject>());
+        return null; //store.register(kodelistePersister.getAllKodelisterAndKoder(), new ArrayList<BubbleObject>());
     }
 }
 

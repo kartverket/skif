@@ -3,9 +3,6 @@ package no.statkart.skif.persistence;
 import com.google.inject.Inject;
 import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManager;
-import no.statkart.skif.storetest.domain.demo.GeometricElement;
 import no.statkart.skif.storetest.domain.demo.GeometricElementId;
 
 import java.sql.Connection;

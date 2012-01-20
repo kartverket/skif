@@ -5,7 +5,7 @@ import no.statkart.skif.store.BubbleObject;
 /**
  * @author Henrik Fredholm
  */
-public interface StoreSessionReadListener {
+public interface StoreSessionReadListener5 {
     <T extends BubbleObject> T onRegister(T bubbleObject);
 
 }

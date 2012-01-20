@@ -11,31 +11,31 @@ import no.statkart.skif.store.BubbleObject;
 /**
  * @author Henrik Fredholm
  */
-public class StoreEntry {
+public class StoreEntry5 {
     final int MAX_LEVELS = 4;
     BubbleId<?> id;
     protected BubbleObject[] bubbleObject = new BubbleObject[MAX_LEVELS];
-    protected StoreEntryState[] state = new StoreEntryState[MAX_LEVELS];
+    protected StoreEntryState5[] state = new StoreEntryState5[MAX_LEVELS];
     protected boolean[] locked = new boolean[MAX_LEVELS];
     protected boolean[] lockedByLevel = new boolean[MAX_LEVELS];
 
-    public StoreEntry(BubbleObject bubbleObject) {
-        this(bubbleObject, StoreEntryState.UNCHANGED);
+    public StoreEntry5(BubbleObject bubbleObject) {
+        this(bubbleObject, StoreEntryState5.UNCHANGED);
     }
 
-    public StoreEntry(int level, BubbleObject bubbleObject, StoreEntryState state) {
+    public StoreEntry5(int level, BubbleObject bubbleObject, StoreEntryState5 state) {
         this(bubbleObject.getId());
         this.bubbleObject[level] = bubbleObject;
         this.state[level] = state;
     }
 
-    public StoreEntry(BubbleObject bubbleObject, StoreEntryState state) {
+    public StoreEntry5(BubbleObject bubbleObject, StoreEntryState5 state) {
         this(bubbleObject.getId());
         this.bubbleObject[0] = bubbleObject;
         this.state[0] = state;
     }
 
-    public StoreEntry(BubbleId<?> id) {
+    public StoreEntry5(BubbleId<?> id) {
         this.id = id;
     }
 
@@ -57,20 +57,20 @@ public class StoreEntry {
         return bubbleObject[level];
     }
 
-    public StoreEntryState getState(int level) {
+    public StoreEntryState5 getState(int level) {
         return state[level];
     }
 
-    public void setState(int level, StoreEntryState state) {
+    public void setState(int level, StoreEntryState5 state) {
         this.state[level] = state;
     }
 
-    public StoreEntryState getDerivedState(int level) {
+    public StoreEntryState5 getDerivedState(int level) {
         while (state[level] == null) level--;
         return state[level];
     }
 
-    public void setStateCheckLocked(int level, StoreEntryState state) {
+    public void setStateCheckLocked(int level, StoreEntryState5 state) {
         if (this.locked[level]!= true) {
             throw new ImplementationException("Objekt har ikke blitt låst for StoreSession Level " + level  +": " + id);
         }

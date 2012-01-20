@@ -20,13 +20,13 @@ import java.util.Set;
  *
  * @author Henrik Fredholm
  */
-public interface TransactionalLocker extends Synchronization {
+public interface TransactionalLocker5 extends Synchronization {
 
    /** Sets the LockerService used by this TransactionalLocker */
-   LockerService getLockerService();
+   LockerService5 getLockerService();
 
    /** Returns the LockerService used by this TransactionalLocker */
-   void setLockerService(LockerService lockerService);
+   void setLockerService(LockerService5 lockerService);
 
    /** Returns the principal name associated with this TransactionalLocker */
    String getPrincipalName();

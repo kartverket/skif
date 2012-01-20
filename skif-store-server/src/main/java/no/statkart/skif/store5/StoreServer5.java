@@ -5,15 +5,15 @@ import no.statkart.skif.exception.ImplementationException;
 /**
  * @author Henrik Fredholm
  */
-public class StoreServer extends AbstractStore {
+public class StoreServer5 extends AbstractStore5 {
 
-    public StoreServer(StoreSessionServer storeSession) {
+    public StoreServer5(StoreSessionServer5 storeSession) {
         super(storeSession, null);
     }
 
-    protected StoreSessionServer storeServerSession() {
-        if (storeSession instanceof StoreSessionServer) {
-            return (StoreSessionServer)storeSession;
+    protected StoreSessionServer5 storeServerSession() {
+        if (storeSession instanceof StoreSessionServer5) {
+            return (StoreSessionServer5)storeSession;
         } else {
             throw new ImplementationException("UnitOfWork is active");
         }

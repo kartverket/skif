@@ -1,11 +1,6 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.*;
-import no.statkart.skif.store.kodeliste.*;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 
 import java.util.*;
 
@@ -19,76 +14,76 @@ import java.util.*;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class KodelistePersister<T extends BubbleObject, I extends BubbleId<? extends T>> implements StorePersister<T, I> {
-    private final HibernateStoreSession hibernateSessionWrapper;
-    private final KodelisteManager kodelisteManager;
-    private final DbKodelisteLoader dbKodelisteLoader;
-    private final Provider<ServiceContext> serviceContextProvider;
+public class KodelistePersister <T extends BubbleObject, I extends BubbleId<? extends T>>   { // implements StorePersister<T, I> {
+//    private final HibernateStoreSession hibernateSessionWrapper;
+//    private final KodelisteManager kodelisteManager;
+//    private final DbKodelisteLoader dbKodelisteLoader;
+//    private final Provider<ServiceContext> serviceContextProvider;
 
 
-    @Inject
-    public KodelistePersister(HibernateStoreSession hibernateSessionWrapper, DbKodelisteLoader dbKodelisteLoader, KodelisteManager kodelisteManager,Provider<ServiceContext> serviceContextProvider) {
-        this.hibernateSessionWrapper = hibernateSessionWrapper;
-        this.kodelisteManager = kodelisteManager;
-        this.dbKodelisteLoader = dbKodelisteLoader;
-        this.serviceContextProvider = serviceContextProvider;
-    }
-
-    public T get(I bubbleId) {
-        refreshKodeManagerIfNeeded();
-        return (T) kodelisteManager.get(bubbleId, serviceContextProvider.get().getLocale());
-    }
-
-    @Override
-    public Map<SnapshotVersion, Collection<? extends T>> get(Map<SnapshotVersion, Collection<? extends I>> bubbleIdsForSnapshotMap) {
-        refreshKodeManagerIfNeeded();
-        Map<SnapshotVersion, Collection<? extends T>> result = new HashMap<SnapshotVersion, Collection<? extends T>>();
-        for (Map.Entry<SnapshotVersion, Collection<? extends I>> snapshotVersionListEntry : bubbleIdsForSnapshotMap.entrySet()) {
-            SnapshotVersion snapshotVersion = snapshotVersionListEntry.getKey();
-            Collection<? extends I> bubbleIds = snapshotVersionListEntry.getValue();
-            Collection<T> bubbles = (Collection<T>)kodelisteManager.get(bubbleIds, serviceContextProvider.get().getLocale());
-            result.put(snapshotVersion, bubbles);
-        }
-        return result;
-    }
-
-    public void evict(I bubbleId) {
-        hibernateSessionWrapper.evict(bubbleId);
-    }
-
-    public void evictAll() {
-        hibernateSessionWrapper.evictAll();
-    }
-
-    public Collection<? extends KodelisteId<?>> getKodelisteIds() {
-        refreshKodeManagerIfNeeded();
-        return kodelisteManager.getKodelisteIds();
-
-    }
-
-    public Collection<? extends KodeId<?>> getKodeIds() {
-        refreshKodeManagerIfNeeded();
-        return kodelisteManager.getKodeIds();
-    }
-
-    public Collection<? extends BubbleObject> getAllKodelisterAndKoder() {
-        refreshKodeManagerIfNeeded();
-        return kodelisteManager.getAllKodelisterAndKoder(serviceContextProvider.get().getLocale());
-    }
-
-    public KodelisteTransfer getKodelisteTransfer() {
-        refreshKodeManagerIfNeeded();
-        return kodelisteManager.getKodelisteTransfer(serviceContextProvider.get().getLocale());
-    }
-
-    private void refreshKodeManagerIfNeeded() {
-        synchronized (kodelisteManager) {
-            if (kodelisteManager.getVersion()==0) {
-                Map<DbKodeId<?>, DbKode> kodeMap = new HashMap<DbKodeId<?>, DbKode>();
-                List<DbKodeliste> kodelister = dbKodelisteLoader.load(hibernateSessionWrapper.getWrappedSession(), kodeMap) ;
-                kodelisteManager.updateDynamic(kodelister, kodeMap.values());
-                kodelisteManager.setVersion(1);
-            }
-        }
-    }
+//    @Inject
+//    public KodelistePersister(HibernateStoreSession hibernateSessionWrapper, DbKodelisteLoader dbKodelisteLoader, KodelisteManager kodelisteManager,Provider<ServiceContext> serviceContextProvider) {
+//        this.hibernateSessionWrapper = hibernateSessionWrapper;
+//        this.kodelisteManager = kodelisteManager;
+//        this.dbKodelisteLoader = dbKodelisteLoader;
+//        this.serviceContextProvider = serviceContextProvider;
+//    }
+//
+//    public T get(I bubbleId) {
+//        refreshKodeManagerIfNeeded();
+//        return (T) kodelisteManager.get(bubbleId, serviceContextProvider.get().getLocale());
+//    }
+//
+//    @Override
+//    public Map<SnapshotVersion, Collection<? extends T>> get(Map<SnapshotVersion, Collection<? extends I>> bubbleIdsForSnapshotMap) {
+//        refreshKodeManagerIfNeeded();
+//        Map<SnapshotVersion, Collection<? extends T>> result = new HashMap<SnapshotVersion, Collection<? extends T>>();
+//        for (Map.Entry<SnapshotVersion, Collection<? extends I>> snapshotVersionListEntry : bubbleIdsForSnapshotMap.entrySet()) {
+//            SnapshotVersion snapshotVersion = snapshotVersionListEntry.getKey();
+//            Collection<? extends I> bubbleIds = snapshotVersionListEntry.getValue();
+//            Collection<T> bubbles = (Collection<T>)kodelisteManager.get(bubbleIds, serviceContextProvider.get().getLocale());
+//            result.put(snapshotVersion, bubbles);
+//        }
+//        return result;
+//    }
+//
+//    public void evict(I bubbleId) {
+//        hibernateSessionWrapper.evict(bubbleId);
+//    }
+//
+//    public void evictAll() {
+//        hibernateSessionWrapper.evictAll();
+//    }
+//
+//    public Collection<? extends KodelisteId<?>> getKodelisteIds() {
+//        refreshKodeManagerIfNeeded();
+//        return kodelisteManager.getKodelisteIds();
+//
+//    }
+//
+//    public Collection<? extends KodeId<?>> getKodeIds() {
+//        refreshKodeManagerIfNeeded();
+//        return kodelisteManager.getKodeIds();
+//    }
+//
+//    public Collection<? extends BubbleObject> getAllKodelisterAndKoder() {
+//        refreshKodeManagerIfNeeded();
+//        return kodelisteManager.getAllKodelisterAndKoder(serviceContextProvider.get().getLocale());
+//    }
+//
+//    public KodelisteTransfer getKodelisteTransfer() {
+//        refreshKodeManagerIfNeeded();
+//        return kodelisteManager.getKodelisteTransfer(serviceContextProvider.get().getLocale());
+//    }
+//
+//    private void refreshKodeManagerIfNeeded() {
+//        synchronized (kodelisteManager) {
+//            if (kodelisteManager.getVersion()==0) {
+//                Map<DbKodeId<?>, DbKode> kodeMap = new HashMap<DbKodeId<?>, DbKode>();
+//                List<DbKodeliste> kodelister = dbKodelisteLoader.load(hibernateSessionWrapper.getWrappedSession(), kodeMap) ;
+//                kodelisteManager.updateDynamic(kodelister, kodeMap.values());
+//                kodelisteManager.setVersion(1);
+//            }
+//        }
+//    }
 }

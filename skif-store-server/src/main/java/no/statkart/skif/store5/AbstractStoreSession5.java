@@ -11,26 +11,26 @@ import java.util.Set;
 /**
  * @author Henrik Fredholm
  */
-public abstract class AbstractStoreSession implements WrappableStoreSession {
+public abstract class AbstractStoreSession5 implements WrappableStoreSession5 {
     protected final int level;
-    protected final StoreCache storeCache;
+    protected final StoreCache5 storeCache;
     protected final Set<BubbleId<?>> modifiedByThisLevel= new LinkedHashSet<BubbleId<?>>(150);
     protected final Set<BubbleId<?>> lockedByThisLevel= new HashSet<BubbleId<?>>(150);
 
-    protected AbstractStoreSession(int level, StoreCache storeCache) {
+    protected AbstractStoreSession5(int level, StoreCache5 storeCache) {
         this.level = level;
         this.storeCache = storeCache;
     }
 
     @Override
     public final <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
-        StoreEntry entry = getEntry(level, bubbleId);
+        StoreEntry5 entry = getEntry(level, bubbleId);
         return (T)entry.getBubbleObject(level);
     }
 
     @Override
-    public final <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry getEntry(int level, I bubbleId) {
-        StoreEntry entry = storeCache.get(bubbleId);
+    public final <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry5 getEntry(int level, I bubbleId) {
+        StoreEntry5 entry = storeCache.get(bubbleId);
         if (entry == null) {
             entry = loadEntry(level, bubbleId);
         }
@@ -54,7 +54,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
     @Override
     public final <T extends BubbleObject> T register(T bubbleObject) {
-        StoreEntry entry = registerEntry(level, bubbleObject);
+        StoreEntry5 entry = registerEntry(level, bubbleObject);
         return (T) entry.getBubbleObject(level);
     }
 
@@ -75,7 +75,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I bubbleId) {
-        StoreEntry entry = lockEntry(level, bubbleId);
+        StoreEntry5 entry = lockEntry(level, bubbleId);
         return (T)entry.getBubbleObject(level);
     }
 }

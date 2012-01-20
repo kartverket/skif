@@ -43,13 +43,13 @@ import java.util.*;
  *
  * @author Henrik Fredholm
  */
-public class ReleaseAllLocksOnUpdateTransactionalLocker implements TransactionalLocker {
-   private static Logger log = LoggerFactory.getLogger(ReleaseAllLocksOnUpdateTransactionalLocker.class);
+public class ReleaseAllLocksOnUpdateTransactionalLocker5 implements TransactionalLocker5 {
+   private static Logger log = LoggerFactory.getLogger(ReleaseAllLocksOnUpdateTransactionalLocker5.class);
 
    /**
     * Service responsible for managing locks accross all users
     */
-   protected LockerService locker;
+   protected LockerService5 locker;
 
    /**
     * Period in milliseconds before new and renew locks timeout
@@ -116,10 +116,10 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
    /**
     * Cached locks, saves calls to LockService
     */
-   private Map<BubbleId, BubbleLock> lockMap = null;
+   private Map<BubbleId, BubbleLock5> lockMap = null;
 
 
-   public ReleaseAllLocksOnUpdateTransactionalLocker(LockerService lockerService, String principalName, long lockTimeout) {
+   public ReleaseAllLocksOnUpdateTransactionalLocker5(LockerService5 lockerService, String principalName, long lockTimeout) {
       this.locker = lockerService;
       this.principalName = principalName;
 
@@ -154,11 +154,11 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     * @param lock
     * @return true if the lock does not need to be renewed
     */
-   private boolean renewNotRequired(BubbleLock lock) {
+   private boolean renewNotRequired(BubbleLock5 lock) {
       return !lock.expiresBefore(MAX_TRANSACTION_DURATION);
    }
 
-   private BubbleLock lookupLock(BubbleId bubbleId) {
+   private BubbleLock5 lookupLock(BubbleId bubbleId) {
       ensureLockMapInitialized();
       return lockMap.get(bubbleId);
    }
@@ -171,9 +171,9 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
    }
 
    private void initializeLockMap(Collection locks) {
-      lockMap = new HashMap<BubbleId, BubbleLock>();
+      lockMap = new HashMap<BubbleId, BubbleLock5>();
       for( Iterator iterator = locks.iterator(); iterator.hasNext(); ) {
-         BubbleLock lock = (BubbleLock) iterator.next();
+         BubbleLock5 lock = (BubbleLock5) iterator.next();
          lockMap.put(lock.getId(), lock);
       }
    }
@@ -189,14 +189,14 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     * @throws no.statkart.skif.exception.LockedException if the objects was already locked by somebody else
     */
    public synchronized boolean lock(BubbleId bubbleId) throws LockedException {
-      ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("Attempting to lock:  " + bubbleId + " for " + principalName);
+      ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("Attempting to lock:  " + bubbleId + " for " + principalName);
 
       boolean lockIsNew;
 
       if( insertedIds.contains(bubbleId) ) {
          lockIsNew = false;
       } else {
-         BubbleLock lock = lookupLock(bubbleId);
+         BubbleLock5 lock = lookupLock(bubbleId);
 
          if( lock != null && renewNotRequired(lock) ) {
             return false;
@@ -221,7 +221,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     */
 
    public Set lockAll(Set ids) throws LockedException {
-      ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("Attempting to lock:  " + ids + " for " + principalName);
+      ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("Attempting to lock:  " + ids + " for " + principalName);
 
       // Calculate ids to lock. Don't need to lock ids of inserted objects or ids already having a lock that does not need to be renewed
       Set idsToLock = new HashSet(ids);
@@ -229,7 +229,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
          idsToLock.removeAll(insertedIds);
          for( Iterator iterator = idsToLock.iterator(); iterator.hasNext(); ) {
             BubbleId bubbleId = (BubbleId) iterator.next();
-            BubbleLock lock = lookupLock(bubbleId);
+            BubbleLock5 lock = lookupLock(bubbleId);
             if( lock != null && renewNotRequired(lock) ) {
                iterator.remove();
             }
@@ -239,7 +239,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
          if( !idsToLock.isEmpty() ) {
             Set locks = locker.lockAll(idsToLock, principalName, lockTimeout);
             for( Iterator iterator = locks.iterator(); iterator.hasNext(); ) {
-               BubbleLock lock = (BubbleLock) iterator.next();
+               BubbleLock5 lock = (BubbleLock5) iterator.next();
                lockMap.put(lock.getId(), lock);
                if( lock.isNew() ) {
                   newLockIds.add(lock.getId());
@@ -258,7 +258,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
    public synchronized void registerInserted(BubbleId bubbleId) {
       setUpdateService(true);
       if( log.isDebugEnabled() ) {
-         ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("Registering inserted:  " + bubbleId + "for " + getPrincipalName());
+         ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("Registering inserted:  " + bubbleId + "for " + getPrincipalName());
       }
       insertedIds.add(bubbleId);
    }
@@ -273,7 +273,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     */
    public synchronized void registerUpdated(BubbleId bubbleId) {
       setUpdateService(true);
-      ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("Registering updated:  " + bubbleId + "for " + getPrincipalName());
+      ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("Registering updated:  " + bubbleId + "for " + getPrincipalName());
       if( insertedIds.contains(bubbleId) ) return;
       ensureLockedByCaller(bubbleId);
       modifiedIds.add(bubbleId);
@@ -289,7 +289,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     */
    public synchronized void registerRemoved(BubbleId bubbleId) {
       setUpdateService(true);
-      ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("Registering removed:  " + bubbleId + "for " + getPrincipalName());
+      ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("Registering removed:  " + bubbleId + "for " + getPrincipalName());
       if( insertedIds.remove(bubbleId) ) return;
       ensureLockedByCaller(bubbleId);
       modifiedIds.add(bubbleId);
@@ -304,13 +304,13 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     * @throws no.statkart.skif.exception.LockedException if locked by somebody else
     */
    public synchronized void unlock(BubbleId bubbleId) {
-      ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("Registering unlock:  " + bubbleId + "for " + getPrincipalName());
+      ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("Registering unlock:  " + bubbleId + "for " + getPrincipalName());
       if( insertedIds.contains(bubbleId) ) {
          // TODO: throw exception instead?
-         ReleaseAllLocksOnUpdateTransactionalLocker.log.warn("Attmepting to unlock object that has been inserted in current transaction:" + bubbleId + " for " + getPrincipalName());
+         ReleaseAllLocksOnUpdateTransactionalLocker5.log.warn("Attmepting to unlock object that has been inserted in current transaction:" + bubbleId + " for " + getPrincipalName());
       } else if( modifiedIds.contains(bubbleId) ) {
          // TODO: throw exception instead?
-         ReleaseAllLocksOnUpdateTransactionalLocker.log.warn("Attempting to unlock object that has been modified or removed in current transaction:" + bubbleId + " for " + getPrincipalName());
+         ReleaseAllLocksOnUpdateTransactionalLocker5.log.warn("Attempting to unlock object that has been modified or removed in current transaction:" + bubbleId + " for " + getPrincipalName());
       } else if( newLockIds.contains(bubbleId) ) {
          locker.unlock(bubbleId, principalName);
       } else {
@@ -327,17 +327,17 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     * @throws no.statkart.skif.exception.LockedException if locked by somebody else
     */
    public synchronized void unlock(Set bubbleIds) {
-      ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("Registering unlock:  " + bubbleIds + "for " + getPrincipalName());
+      ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("Registering unlock:  " + bubbleIds + "for " + getPrincipalName());
       Set idsToUnlockNow = new HashSet(bubbleIds.size());
 
       for( Iterator iterator = bubbleIds.iterator(); iterator.hasNext(); ) {
          BubbleId bubbleId = (BubbleId) iterator.next();
          if( insertedIds.contains(bubbleId) ) {
             // TODO: throw exception instead?
-            ReleaseAllLocksOnUpdateTransactionalLocker.log.warn("Attmepting to unlock object that has been inserted in current transaction:" + bubbleId + " for " + getPrincipalName());
+            ReleaseAllLocksOnUpdateTransactionalLocker5.log.warn("Attmepting to unlock object that has been inserted in current transaction:" + bubbleId + " for " + getPrincipalName());
          } else if( modifiedIds.contains(bubbleId) ) {
             // TODO: throw exception instead?
-            ReleaseAllLocksOnUpdateTransactionalLocker.log.warn("Attempting to unlock object that has been modified or removed in current transaction:" + bubbleId + " for " + getPrincipalName());
+            ReleaseAllLocksOnUpdateTransactionalLocker5.log.warn("Attempting to unlock object that has been modified or removed in current transaction:" + bubbleId + " for " + getPrincipalName());
          } else if( newLockIds.contains(bubbleId) ) {
             idsToUnlockNow.add(bubbleId);
          } else {
@@ -356,11 +356,11 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
    }
 
 
-   public LockerService getLockerService() {
+   public LockerService5 getLockerService() {
       return locker;
    }
 
-   public void setLockerService(LockerService lockerService) {
+   public void setLockerService(LockerService5 lockerService) {
       this.locker = lockerService;
    }
 
@@ -412,12 +412,12 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     * Releases locks on all modified (including removed) objects and explicitly unlocked objects.
     */
    private void updateServiceCompletedSuccessfully() {
-      ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("Releasing all locks for " + principalName);
+      ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("Releasing all locks for " + principalName);
       locker.releaseAllLocks(principalName);
    }
 
    private void nonUpdateServiceCompletedSuccessfully() {
-      ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("Releasing all locks for " + principalName);
+      ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("Releasing all locks for " + principalName);
       if( !unLockIds.isEmpty() ) {
          locker.unlockAll(unLockIds, principalName);
       }
@@ -428,7 +428,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     * Releases all locks obtained in current transaction.
     */
    private void releaseLocksAfterServiceFailure() {
-      ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("Releasing " + newLockIds.size() + " locks for " + principalName);
+      ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("Releasing " + newLockIds.size() + " locks for " + principalName);
       if( !newLockIds.isEmpty() ) {
          locker.unlockAll(newLockIds, principalName);
       }
@@ -462,7 +462,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     *          if id was not already locked by caller.
     */
    protected synchronized void ensureLockedByCaller(BubbleId id) throws NotLockedException {
-      BubbleLock lock = lookupLock(id);
+      BubbleLock5 lock = lookupLock(id);
       if( lock == null ) {
          throw new NotLockedException(id.toString() + " " + getPrincipalName());
       }
@@ -497,7 +497,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
     * @param status
     */
    public synchronized void afterCompletion(int status) {
-      ReleaseAllLocksOnUpdateTransactionalLocker.log.debug("JTA synchronization callback called: " + this + " [ " + Thread.currentThread() + "]");
+      ReleaseAllLocksOnUpdateTransactionalLocker5.log.debug("JTA synchronization callback called: " + this + " [ " + Thread.currentThread() + "]");
 
       if( !waitForJTASynchronization ) {
          throw new ImplementationException("Recieved unexpected JTA callback. Callback has already been called. Transaction status: " + status);
@@ -511,7 +511,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker implements Transactional
       if( serviceCallCompleted ) {
          doClose();
       } else {
-         ReleaseAllLocksOnUpdateTransactionalLocker.log.warn("Leaving TransactionalLocker for service completion (callback was called due to transaction timeout): " + this + " [" + Thread.currentThread() + "]");
+         ReleaseAllLocksOnUpdateTransactionalLocker5.log.warn("Leaving TransactionalLocker for service completion (callback was called due to transaction timeout): " + this + " [" + Thread.currentThread() + "]");
       }
    }
 

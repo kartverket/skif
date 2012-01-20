@@ -19,11 +19,11 @@ import java.util.*;
  *
  * @author  Henrik Fredholm
  */
-public class MemoryLocker implements LockerService {
-   private static Logger log = LoggerFactory.getLogger(MemoryLocker.class);
+public class MemoryLocker5 implements LockerService5 {
+   private static Logger log = LoggerFactory.getLogger(MemoryLocker5.class);
 
    /** The current locks */
-   private Map<BubbleId,BubbleLock> locks = new HashMap();
+   private Map<BubbleId,BubbleLock5> locks = new HashMap();
 
    /**
     * Obtains a lock for the specified id
@@ -33,8 +33,8 @@ public class MemoryLocker implements LockerService {
     * @return the obtained lock. The lock will specifiy whether it is new or was already held by the user
     * @throws no.statkart.skif.exception.LockedException
     */
-   public synchronized BubbleLock lock(BubbleId id, String key, long lockTimeout) throws LockedException {
-      BubbleLock lock = locks.get(id);
+   public synchronized BubbleLock5 lock(BubbleId id, String key, long lockTimeout) throws LockedException {
+      BubbleLock5 lock = locks.get(id);
       Timestamp expires = new Timestamp(System.currentTimeMillis() + lockTimeout);
 
 
@@ -42,23 +42,23 @@ public class MemoryLocker implements LockerService {
          throw new RuntimeException("Cannot lock: " + id + ". User is null");
       }
       if( lock == null ) {
-         MemoryLocker.log.debug("Locking : " + id + " for user " + key);
-         lock =  new BubbleLock(id, key, expires, true);
+         MemoryLocker5.log.debug("Locking : " + id + " for user " + key);
+         lock =  new BubbleLock5(id, key, expires, true);
          locks.put(id,lock);
          return lock;
       } else if( lock.isOwnedBy(key) ) {
-         MemoryLocker.log.debug("Renewing lock : " + id + " for user " + key);
-         lock = new BubbleLock(id, key, expires, false);
+         MemoryLocker5.log.debug("Renewing lock : " + id + " for user " + key);
+         lock = new BubbleLock5(id, key, expires, false);
          locks.put(id, lock);
          return lock;
       } else if( lock.expired() ) {
-         MemoryLocker.log.debug("Expiring lock : " + id + " for user " + lock.getKey());
-         MemoryLocker.log.debug("Locking : " + id + " for user " + key);
-         lock = new BubbleLock(id, key, expires, true);
+         MemoryLocker5.log.debug("Expiring lock : " + id + " for user " + lock.getKey());
+         MemoryLocker5.log.debug("Locking : " + id + " for user " + key);
+         lock = new BubbleLock5(id, key, expires, true);
          locks.put(id, lock);
          return lock;
       } else {
-         MemoryLocker.log.debug("Cannot lock : " + id + " for user " + key + ". Was locked by user " + lock.getKey());
+         MemoryLocker5.log.debug("Cannot lock : " + id + " for user " + key + ". Was locked by user " + lock.getKey());
          // TODO: Integrer gammelt med nytt. Dette er ikke pent!
          throw new LockedException(key, new LockInfo<BubbleId>( new LockKey<BubbleId>("", lock.getId()), lock.getKey()));
       }
@@ -79,18 +79,18 @@ public class MemoryLocker implements LockerService {
     * @throws no.statkart.skif.exception.LockedException if not all locks could be obtainded
     */
    public synchronized Set lockAll(Set ids, String key, long lockTimeout) throws LockedException {
-      Set<BubbleLock> result = new HashSet(ids.size());
+      Set<BubbleLock5> result = new HashSet(ids.size());
       try {
          for( Iterator iterator = ids.iterator(); iterator.hasNext(); ) {
             BubbleId bubbleId = (BubbleId) iterator.next();
-            BubbleLock lock = lock(bubbleId, key, lockTimeout);
+            BubbleLock5 lock = lock(bubbleId, key, lockTimeout);
             result.add(lock);
          }
          return result;
       } catch(RuntimeException e) {
          // Cleanup
          for( Iterator iterator = result.iterator(); iterator.hasNext(); ) {
-            BubbleLock bubbleLock = (BubbleLock) iterator.next();
+            BubbleLock5 bubbleLock = (BubbleLock5) iterator.next();
             if (bubbleLock.isNew()) locks.remove(bubbleLock.getId());
          }
          throw e;
@@ -103,12 +103,12 @@ public class MemoryLocker implements LockerService {
     * @param key unique string identifying the locker
     */
    public synchronized void unlock(BubbleId id, String key) {
-      BubbleLock lock = locks.get(id);
+      BubbleLock5 lock = locks.get(id);
       if( lock != null && lock.isOwnedBy(key) ) {
-         MemoryLocker.log.debug("Unlocking " + id + " for " + key);
+         MemoryLocker5.log.debug("Unlocking " + id + " for " + key);
          locks.remove(id);
       } else {
-         MemoryLocker.log.debug("Could not unlock " + id + " for " + key + " (Maybe lock has been acquired by another user after timeout)");
+         MemoryLocker5.log.debug("Could not unlock " + id + " for " + key + " (Maybe lock has been acquired by another user after timeout)");
       }
    }
 
@@ -123,11 +123,11 @@ public class MemoryLocker implements LockerService {
     * @param key unique string identifying the locker
     */
    public synchronized void releaseAllLocks(String key) {
-      MemoryLocker.log.debug("Releasing all locks for " + key);
+      MemoryLocker5.log.debug("Releasing all locks for " + key);
       for( Iterator iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
          Map.Entry entry = (Map.Entry) iterator.next();
-         if (((BubbleLock)entry.getValue()).isOwnedBy(key)) {
-            MemoryLocker.log.debug("Unlocking " + ((BubbleLock)entry.getValue()).getId() + " for " + key );
+         if (((BubbleLock5)entry.getValue()).isOwnedBy(key)) {
+            MemoryLocker5.log.debug("Unlocking " + ((BubbleLock5)entry.getValue()).getId() + " for " + key );
             iterator.remove();
          }
       }
@@ -136,10 +136,10 @@ public class MemoryLocker implements LockerService {
    public synchronized Collection renewAllLocks(String key, long lockTimeout) {
       Timestamp expires = new Timestamp(System.currentTimeMillis() + lockTimeout);
       for( Iterator iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
-         Map.Entry<BubbleId, BubbleLock> entry = (Map.Entry<BubbleId, BubbleLock>) iterator.next();
-         BubbleLock lock = entry.getValue();
+         Map.Entry<BubbleId, BubbleLock5> entry = (Map.Entry<BubbleId, BubbleLock5>) iterator.next();
+         BubbleLock5 lock = entry.getValue();
          if (lock.isOwnedBy(key)) {
-            entry.setValue(new BubbleLock(lock.getId(), lock.getKey(), expires, false));
+            entry.setValue(new BubbleLock5(lock.getId(), lock.getKey(), expires, false));
          }
       }
       return getLocksBy(key);
@@ -147,8 +147,8 @@ public class MemoryLocker implements LockerService {
 
    public void unlockAll(Set<BubbleId> unLockIds, String key) {
       for( Iterator iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
-         Map.Entry<BubbleId, BubbleLock> entry = (Map.Entry<BubbleId, BubbleLock>) iterator.next();
-         BubbleLock lock = entry.getValue();
+         Map.Entry<BubbleId, BubbleLock5> entry = (Map.Entry<BubbleId, BubbleLock5>) iterator.next();
+         BubbleLock5 lock = entry.getValue();
          if (unLockIds.contains(lock.getId()) &&lock.isOwnedBy(key) ) {
             iterator.remove();
          }
@@ -157,7 +157,7 @@ public class MemoryLocker implements LockerService {
 
    public synchronized boolean isLockedBy(BubbleId bubbleId, String key) {
       boolean result = false;
-      BubbleLock lock = locks.get(bubbleId);
+      BubbleLock5 lock = locks.get(bubbleId);
       if (lock!=null && lock.isOwnedBy(key)) {
          //TODO: renew lock?
          result=true;
@@ -178,11 +178,11 @@ public class MemoryLocker implements LockerService {
    public void releaseAllLocksInTransaction(String key, int expectedLockCount) {
       int lockCount = 0;
 
-      MemoryLocker.log.debug("Releasing all locks for " + key + " in transaction");
+      MemoryLocker5.log.debug("Releasing all locks for " + key + " in transaction");
       for( Iterator iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
          Map.Entry entry = (Map.Entry) iterator.next();
-         if (((BubbleLock)entry.getValue()).isOwnedBy(key)) {
-            MemoryLocker.log.debug("Unlocking " + ((BubbleLock)entry.getValue()).getId() + " for " + key + " in transaction" );
+         if (((BubbleLock5)entry.getValue()).isOwnedBy(key)) {
+            MemoryLocker5.log.debug("Unlocking " + ((BubbleLock5)entry.getValue()).getId() + " for " + key + " in transaction" );
             iterator.remove();
             ++lockCount;
          }
@@ -201,7 +201,7 @@ public class MemoryLocker implements LockerService {
    public synchronized Collection getLocksBy(String key) {
       List locks = new ArrayList(100);
       for( Iterator iterator = this.locks.values().iterator(); iterator.hasNext(); ) {
-         BubbleLock lock = (BubbleLock) iterator.next();
+         BubbleLock5 lock = (BubbleLock5) iterator.next();
          if (lock.isOwnedBy(key)) {
             locks.add(lock);
          }

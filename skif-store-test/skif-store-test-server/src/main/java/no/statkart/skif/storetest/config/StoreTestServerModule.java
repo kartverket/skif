@@ -30,8 +30,9 @@ import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceS
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
-import no.statkart.skif.store5.MemoryLockerSingleton;
-import no.statkart.skif.store5.StoreSessionServer;
+import no.statkart.skif.store5.MemoryLockerSingleton5;
+import no.statkart.skif.store5.StoreServer5;
+import no.statkart.skif.store5.StoreSessionServer5;
 import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store5.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store5.persistence.PersistenceSessionManager;
@@ -76,7 +77,7 @@ public class StoreTestServerModule extends SkifModule {
         install(new ServerModule(moduleConfiguration));
         install(new RunOnServerServiceModule(moduleConfiguration));
 
-        bind(Store.class).to(no.statkart.skif.store5.StoreServer.class);
+        bind(Store.class).to(StoreServer5.class);
 
         // EnumKode internasjonalisering
         bind(KodeMsg.class).to(DemoKodeMsg.class);
@@ -104,8 +105,8 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    no.statkart.skif.store5.StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager) {
-        no.statkart.skif.store5.StoreServer storeServer = new no.statkart.skif.store5.StoreServer(new StoreSessionServer(persistenceSessionManager, MemoryLockerSingleton.getInstance()));
+    StoreServer5 provideStoreServer(PersistenceSessionManager persistenceSessionManager) {
+        StoreServer5 storeServer = new StoreServer5(new StoreSessionServer5(persistenceSessionManager, MemoryLockerSingleton5.getInstance()));
         return storeServer;
     }
 

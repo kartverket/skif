@@ -26,7 +26,8 @@ public class KodelisteServiceImpl implements KodelisteService {
 
     @Override
     public KodelisteTransfer getKodelister() {
-        KodelisteTransfer kodelisteTransfer = kodelistePersister.getKodelisteTransfer();
+        // TODO Fix
+        KodelisteTransfer kodelisteTransfer = null; //kodelistePersister.getKodelisteTransfer();
         return new KodelisteTransfer(kodelisteTransfer.getKodeIds(), kodelisteTransfer.getKodelisteIds(), kodelisteTransfer.getObjects());
     }
 

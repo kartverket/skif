@@ -3,8 +3,6 @@ package no.statkart.skif.storetest.persistence;
 import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManager;
 import no.statkart.skif.store5.persistence.PersistenceSessionManager;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;

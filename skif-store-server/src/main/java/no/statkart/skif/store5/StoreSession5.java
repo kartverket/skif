@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  * @author Henrik Fredholm
  */
-public interface StoreSession {
+public interface StoreSession5 {
     /**
      * Henter objekt med gitt bubbleId knyttet til sessionen. Hvis ingen objekt er knyttet til sessionen vil objektet
      * blir hentet fra underliggende session

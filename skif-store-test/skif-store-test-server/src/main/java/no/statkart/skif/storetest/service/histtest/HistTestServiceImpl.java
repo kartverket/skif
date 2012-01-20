@@ -8,8 +8,6 @@ import no.statkart.skif.persistence.FooFinder;
 import no.statkart.skif.persistence.GeometriFinder;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManager;
 import no.statkart.skif.store5.persistence.PersistenceSessionManager;
 import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMaster;
 import no.statkart.skif.storetest.domain.demo.*;

@@ -5,7 +5,6 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.persistence5.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
