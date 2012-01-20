@@ -6,7 +6,7 @@ import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import static org.testng.Assert.assertTrue;
  * @author Tor Egil R. Strand
  */
 @Test
-public class HistTestServiceTest extends StoreTestTestCase5 {
+public class HistTestServiceTest extends StoreTestTestCase {
 
     @Inject
     private HistTestService histTestService;

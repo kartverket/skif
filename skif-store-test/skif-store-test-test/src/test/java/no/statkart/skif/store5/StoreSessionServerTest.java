@@ -14,7 +14,7 @@ import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSession
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store5.persistence.kode.DefaultKodePersistenceSession;
 import no.statkart.skif.store5.persistence.kode.EnumKodeManager;
-import no.statkart.skif.storetest.TestHelper5;
+import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
 import no.statkart.skif.storetest.domain.demo.TestBubble;
@@ -33,7 +33,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
-import static no.statkart.skif.storetest.TestHelper5.createHibernateSessionFactorManagerBundle;
+import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactorManagerBundle;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
@@ -81,7 +81,7 @@ public class StoreSessionServerTest {
 
     @BeforeClass
     public void setUp() {
-        no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder sessionFactoryBuilder = TestHelper5.createHibernateSessionFactoryBuilderWithHistory();
+        no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder sessionFactoryBuilder = TestHelper.createHibernateSessionFactoryBuilderWithHistory();
 //        sessionFactoryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
         sessionFactoryBuilder.addResource(ADbKode.class);
         sessionFactoryManagerBundle = createHibernateSessionFactorManagerBundle(sessionFactoryBuilder, hibernateProperties);

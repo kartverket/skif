@@ -18,7 +18,7 @@ import java.util.Properties;
 /**
  * @author Henrik Fredholm
  */
-public class TestHelper5 {
+public class TestHelper {
 
     public static Properties createHibernatePropertiesSingleVm() {
         Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");

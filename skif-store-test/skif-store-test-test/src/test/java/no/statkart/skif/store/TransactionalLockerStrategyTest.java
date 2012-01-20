@@ -6,7 +6,7 @@ import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.storetest.domain.demo.TestBubbleId;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -17,7 +17,7 @@ import java.util.Collection;
  * @since 2.0
  */
 @Test(groups = "singlevm-required")
-public class TransactionalLockerStrategyTest extends StoreTestTestCase5 {
+public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     public void testIsLockedBy() {
         TransactionalLockerStrategy strategy = injector.getInstance(TransactionalLockerStrategy.class);

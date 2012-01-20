@@ -12,7 +12,7 @@ import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import static org.testng.AssertJUnit.assertNotNull;
  * @since 2.0
  */
 @Test(enabled = false)
-public class KodelisteTest extends StoreTestTestCase5 {
+public class KodelisteTest extends StoreTestTestCase {
 
     public void testEquals() {
         StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong> enumKodelisteId = new StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>(1);

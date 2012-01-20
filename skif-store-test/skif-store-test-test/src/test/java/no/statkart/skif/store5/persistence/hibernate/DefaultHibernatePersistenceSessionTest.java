@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import static no.statkart.skif.storetest.TestHelper5.createHibernateSessionFactorManagerBundle;
-import static no.statkart.skif.storetest.TestHelper5.createHibernateSessionFactoryBuilderWithHistory;
+import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactorManagerBundle;
+import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactoryBuilderWithHistory;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 

@@ -7,7 +7,7 @@ import no.statkart.skif.store.kodeliste.DbKodeliste;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryDescriptor;
-import no.statkart.skif.storetest.TestHelper5;
+import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.Baz;
 import no.statkart.skif.storetest.domain.demo.BazId;
 import no.statkart.skif.storetest.domain.demo.Foo;
@@ -32,7 +32,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 public class DbKodeHibernateTest {
 
     private SessionFactory setupHibernate() {
-        HibernateSessionFactoryBuilder sfbuilder = TestHelper5.createHibernateSessionFactoryBuilder();
+        HibernateSessionFactoryBuilder sfbuilder = TestHelper.createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(EnumKodeIdType.class);
         sfbuilder.addResource(ADbKode.class);
         sfbuilder.addResource(BDbKode.class);
@@ -42,7 +42,7 @@ public class DbKodeHibernateTest {
         sfbuilder.addResource(Foo.class);
         sfbuilder.addResource(Baz.class);
 
-        Properties hibernateProperties = TestHelper5.createHibernatePropertiesSingleVm() ;
+        Properties hibernateProperties = TestHelper.createHibernatePropertiesSingleVm() ;
         SessionFactory sf = sfbuilder.build(new HibernateSessionFactoryDescriptor("", new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties));
         assertNotNull(sf);
         return sf;

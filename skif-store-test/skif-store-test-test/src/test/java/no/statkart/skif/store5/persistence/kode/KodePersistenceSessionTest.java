@@ -26,8 +26,8 @@ import org.testng.annotations.Test;
 
 import java.util.*;
 
-import static no.statkart.skif.storetest.TestHelper5.createHibernateSessionFactorManagerBundle;
-import static no.statkart.skif.storetest.TestHelper5.createHibernateSessionFactoryBuilderWithHistory;
+import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactorManagerBundle;
+import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactoryBuilderWithHistory;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**

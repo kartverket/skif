@@ -3,10 +3,8 @@ package no.statkart.skif.store5.persistence;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.persistence5.ResourceManager;
 import no.statkart.skif.persistence5.jdbc.ConnectionManager;
-import no.statkart.skif.persistence5.jdbc.ConnectionManagerUsingFactory;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store5.persistence.hibernate.DefaultHibernatePersistenceSession;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
@@ -20,13 +18,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import static no.statkart.skif.storetest.TestHelper5.createHibernateSessionFactorManagerBundle;
-import static no.statkart.skif.storetest.TestHelper5.createHibernateSessionFactoryBuilderWithHistory;
-import static no.statkart.skif.util.JDBCHelper.createConnectionFactoryUsingJDBC;
+import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactorManagerBundle;
+import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactoryBuilderWithHistory;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertSame;
 

@@ -21,8 +21,8 @@ import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 /**
  * @author Henrik Fredholm
  */
-public class StoreTestClientModule5 extends SkifModule {
-    public StoreTestClientModule5(ModuleConfiguration moduleConfiguration) {
+public class StoreTestClientModule extends SkifModule {
+    public StoreTestClientModule(ModuleConfiguration moduleConfiguration) {
         super(moduleConfiguration);
     }
 
