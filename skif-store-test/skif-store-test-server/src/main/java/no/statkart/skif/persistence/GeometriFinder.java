@@ -18,30 +18,27 @@ import java.util.List;
 public class GeometriFinder {
 
     @Inject
-    private ConnectionManager connectionManager;
+    private no.statkart.skif.persistence5.jdbc.ConnectionManager connectionManager;
+
 
     public List<GeometricElementId>  findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {
 
-        Connection connection = connectionManager.aquireConnection(snapshotVersion);
+        Connection connection = connectionManager.getForSnapshotVersion(snapshotVersion);
 
         QueryGenerator generator = new QueryGenerator("id", "geometricelement");
         generator.setConnection(connection, snapshotVersion);
         generator.addSelection("point", selectionPolygon);
-
-        connectionManager.releaseConnection(connection, snapshotVersion);
 
         return generator.executeQueryForBubbleIdList(GeometricElementId.class);
     }
 
     public List<GeometricElementId> findGeometricElementsWithPolygonInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {
 
-        Connection connection = connectionManager.aquireConnection(snapshotVersion);
+        Connection connection = connectionManager.getForSnapshotVersion(snapshotVersion);
 
         QueryGenerator generator = new QueryGenerator("id", "geometricelement");
         generator.setConnection(connection, snapshotVersion);
         generator.addSelection("polygon", selectionPolygon);
-
-        connectionManager.releaseConnection(connection, snapshotVersion);
 
         return generator.executeQueryForBubbleIdList(GeometricElementId.class);
     }

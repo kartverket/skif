@@ -5,6 +5,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import org.junit.Assert;
 
 import org.testng.annotations.Test;
@@ -19,7 +20,7 @@ import java.util.Locale;
  * To change this template use File | Settings | File Templates.
  */
 @Test
-public class KodeMsgLokaliseringTest extends StoreTestTestCase {
+public class KodeMsgLokaliseringTest extends StoreTestTestCase5 {
 
     public KodeMsgLokaliseringTest() {
         super();

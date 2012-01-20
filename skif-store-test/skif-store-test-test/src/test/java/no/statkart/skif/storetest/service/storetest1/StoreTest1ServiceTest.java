@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.service.storetest1;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -12,7 +13,8 @@ import static org.testng.Assert.fail;
  * @since 2.0
  */
 @Test
-public class StoreTest1ServiceTest extends StoreTestTestCase {
+public class StoreTest1ServiceTest extends StoreTestTestCase5 {
+
 
     /**
      * Test kall til metode som kalder andre metoder. Ingen metoder krever tx

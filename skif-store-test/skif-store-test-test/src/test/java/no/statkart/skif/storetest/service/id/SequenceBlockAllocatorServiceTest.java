@@ -18,7 +18,7 @@ public class SequenceBlockAllocatorServiceTest extends SkifTestCase {
         setSingleVmServerModuleClass(StoreTestTxManagementServerModule.class);
     }
 
-    public void testAllocateSequenceBlock(){
+    public void  testAllocateSequenceBlock(){
         SequenceBlockAllocatorService service = injector.getInstance(SequenceBlockAllocatorService.class);
         long seqNo = service.allocateSequenceBlock("GLOBAL_SEQUENCE", 10);
         Assert.assertTrue(seqNo > 0);

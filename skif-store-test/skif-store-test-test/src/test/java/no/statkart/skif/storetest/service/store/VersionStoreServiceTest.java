@@ -6,6 +6,7 @@ import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -19,7 +20,7 @@ import java.util.Map;
  * @since 2.0
  */
 @Test
-public class VersionStoreServiceTest extends StoreTestTestCase {
+public class VersionStoreServiceTest extends StoreTestTestCase5 {
     @Inject
     StoreService service;
 

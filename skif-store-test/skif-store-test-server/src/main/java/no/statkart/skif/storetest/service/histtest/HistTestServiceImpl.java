@@ -10,9 +10,12 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManager;
+import no.statkart.skif.store5.persistence.PersistenceSessionManager;
+import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMaster;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Query;
+import org.hibernate.Session;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,7 +30,7 @@ import java.util.Set;
  * @author Tor Egil R. Strand
  */
 public class HistTestServiceImpl implements HistTestService {
-    private final HibernateStoreSessionManager sessionManager;
+    private final PersistenceSessionManager persistenceSessionManager;
     private final Store store;
 
     private final FooFinder fooFinder;
@@ -40,8 +43,8 @@ public class HistTestServiceImpl implements HistTestService {
     private final GeometriFinder geometriFinder;
 
     @Inject
-    public HistTestServiceImpl(HibernateStoreSessionManager sessionManager, Store store, FooFinder fooFinder, BarFinder barFinder, GeometriFinder geometriFinder) {
-        this.sessionManager = sessionManager;
+    public HistTestServiceImpl(PersistenceSessionManager persistenceSessionManager, Store store, FooFinder fooFinder, BarFinder barFinder, GeometriFinder geometriFinder) {
+        this.persistenceSessionManager = persistenceSessionManager;
         this.store = store;
         this.fooFinder = fooFinder;
         this.barFinder = barFinder;
@@ -50,11 +53,10 @@ public class HistTestServiceImpl implements HistTestService {
 
     @Override
     public Set<FooId<?>> findFooIdsForNavn(String navn, SnapshotVersion snapshotVersion) {
-
-        HibernateStoreSession storeSession = null;
+        HibernatePersistenceSessionMaster masterForSnapshot = persistenceSessionManager.getForSnapshotVersion(snapshotVersion).getImplementation(HibernatePersistenceSessionMaster.class);
         try {
-            storeSession = sessionManager.acquireSnapshotStoreSession(snapshotVersion);
-            Query query = storeSession.getWrappedSession().createQuery("from Foo where navn=:navn");
+            Session session = masterForSnapshot.reserveSession();
+            Query query = session.createQuery("from Foo where navn=:navn");
             List<Foo> foos = query.setString("navn", navn).list();
             Set<FooId<?>> result = new HashSet<FooId<?>>(foos.size());
 
@@ -63,20 +65,18 @@ public class HistTestServiceImpl implements HistTestService {
             }
             return result;
         } finally {
-            sessionManager.releaseSnapshotStoreSession(storeSession);
+            masterForSnapshot.releaseSession();
         }
-
-
     }
 
     @Override
     public Set<BarFoosId<?>> findBarFoosIdsSomInneholderFooMedNavn(String navn, SnapshotVersion snapshotVersion) {
         Set<BarFoosId<?>> result = new HashSet<BarFoosId<?>>();
-        HibernateStoreSession hibernateStoreSession = null;
         PreparedStatement preparedStatement = null;
+        HibernatePersistenceSessionMaster masterForSnapshot = persistenceSessionManager.getForSnapshotVersion(snapshotVersion).getImplementation(HibernatePersistenceSessionMaster.class);
         try {
-            hibernateStoreSession = sessionManager.acquireSnapshotStoreSession(snapshotVersion);
-            preparedStatement = hibernateStoreSession.getWrappedSession().connection().
+            Session session = masterForSnapshot.reserveSession();
+            preparedStatement = session.connection().
                     prepareStatement("select bf.barFoosId from FooForBarFoos bf, Foo foo  where bf.fooId = foo.id and foo.navn=?");
             preparedStatement.setString(1, navn);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -87,7 +87,7 @@ public class HistTestServiceImpl implements HistTestService {
             throw new ImplementationException(e);
         } finally {
             JDBCHelper.close(preparedStatement);
-            sessionManager.releaseSnapshotStoreSession(hibernateStoreSession);
+            masterForSnapshot.releaseSession();
         }
         return result;
     }

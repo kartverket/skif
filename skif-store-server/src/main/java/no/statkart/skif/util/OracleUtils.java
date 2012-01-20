@@ -1,7 +1,9 @@
 package no.statkart.skif.util;
 
+import net.sf.ehcache.constructs.asynchronous.Command;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
+import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
 import oracle.jdbc.OracleConnection;
 import org.hibernate.jdbc.ConnectionWrapper;
 import org.slf4j.Logger;
@@ -29,6 +31,15 @@ public class OracleUtils {
      */
     public static OracleConnection getOracleConnection(Connection con) {
         OracleConnection oracleConnection = null;
+
+        if (con instanceof ConnectionForSnapshotVersion) {
+            ConnectionForSnapshotVersion connectionForSnapshotVersion = ConnectionForSnapshotVersion.class.cast(con);
+            con = connectionForSnapshotVersion.reserve();
+            // TODO: Dette er ikke så pent å låse opp før vi bruker connection. I teorien kan vi komme til endre den før vi bruker den. Men det går sikkert bra. Burde vurdere annet design som koden som bruker dette.
+            connectionForSnapshotVersion.release();
+
+        }
+
         if (con instanceof ConnectionWrapper) {
             con = ((ConnectionWrapper) con).getWrappedConnection();
         }

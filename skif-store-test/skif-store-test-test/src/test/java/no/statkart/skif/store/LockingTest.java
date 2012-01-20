@@ -6,6 +6,7 @@ import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.storetest.domain.demo.FooId;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -17,7 +18,7 @@ import static org.testng.Assert.*;
  * @since 2.1
  */
 @Test
-public class LockingTest extends StoreTestTestCase {
+public class LockingTest extends StoreTestTestCase5 {
     @Inject
     LockingTestService lockingTestService;
 

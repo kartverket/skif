@@ -5,6 +5,7 @@ import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.service.module.ClientModuleStrategyFactory;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
 import org.testng.annotations.BeforeClass;
@@ -24,7 +25,7 @@ import org.unitils.reflectionassert.ReflectionComparatorMode;
  * @since 3.0
  */
 @Test
-public class SnapshotVersionMappingTest extends StoreTestTestCase {
+public class SnapshotVersionMappingTest extends StoreTestTestCase5 {
     private StoreTestMapper testMapper = new StoreTestMapper();
     private StoreTestMapping mapping = testMapper.getMapping();
 

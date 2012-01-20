@@ -21,6 +21,7 @@ import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.testng.Assert;
@@ -36,8 +37,8 @@ import static org.testng.AssertJUnit.assertNotNull;
  * @author Henrik Fredholm
  * @since 2.0
  */
-@Test
-public class KodelisteTest extends StoreTestTestCase {
+@Test(enabled = false)
+public class KodelisteTest extends StoreTestTestCase5 {
 
     public void testEquals() {
         StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong> enumKodelisteId = new StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>(1);

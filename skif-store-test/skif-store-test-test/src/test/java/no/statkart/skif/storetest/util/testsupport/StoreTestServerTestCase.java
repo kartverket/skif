@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.util.testsupport;
 
 import no.statkart.skif.storetest.config.StoreTestClientModule;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
+import no.statkart.skif.storetest.config.StoreTestServerModule5;
 import no.statkart.skif.util.testsupport.SkifServerTestCase;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 
@@ -11,6 +12,6 @@ import no.statkart.skif.util.testsupport.SkifTestCase;
 public class StoreTestServerTestCase extends SkifServerTestCase {
     public StoreTestServerTestCase() {
         setModuleClass(StoreTestClientModule.class);
-        setSingleVmServerModuleClass(StoreTestServerModule.class);
+        setSingleVmServerModuleClass(StoreTestServerModule5.class);
     }
 }

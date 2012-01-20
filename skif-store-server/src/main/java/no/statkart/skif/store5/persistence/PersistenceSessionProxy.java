@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.InterfaceAddress;
 import java.util.*;
 
 /**
@@ -31,7 +32,18 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
         this.delegate = persistenceSessionForSnapshot;
         this.snapshotVersion = snapshotVersion;
         this.proxyCache = proxyCache;
-        this.proxy = (PersistenceSessionForSnapshot) Proxy.newProxyInstance(delegate.getClass().getClassLoader(), delegate.getClass().getInterfaces(), this);
+        Class[] interfaces = getDerivedInterfaces(delegate.getClass());
+        this.proxy = (PersistenceSessionForSnapshot) Proxy.newProxyInstance(delegate.getClass().getClassLoader(), interfaces, this);
+
+    }
+
+    private final Class[] getDerivedInterfaces(Class<?> clazz) {
+        List<Class> interfaces = new ArrayList<Class>(5);
+        do {
+            interfaces.addAll(Arrays.asList(clazz.getInterfaces()));
+            clazz = clazz.getSuperclass();
+        } while (clazz!=null);
+        return interfaces.toArray(new Class[0]);
     }
 
     @Override
