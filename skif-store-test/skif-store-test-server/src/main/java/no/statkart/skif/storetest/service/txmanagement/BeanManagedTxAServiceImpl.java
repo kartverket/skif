@@ -27,6 +27,7 @@ public class BeanManagedTxAServiceImpl implements BeanManagedTxAService {
         try {
             statement = c.createStatement();
             statement.execute("delete from TestMap");
+            c.commit();
         } catch (SQLException e) {
             throw new ImplementationException(e);
         } finally {
@@ -70,7 +71,6 @@ public class BeanManagedTxAServiceImpl implements BeanManagedTxAService {
         Connection connection = connectionProvider.get();
         PreparedStatement ps = null;
         try {
-            connection.setAutoCommit(false);
             if (oldValue == null) {
                 ps = connection.prepareStatement("insert into TestMap values(?,?)");
                 ps.setString(1, key);
@@ -93,9 +93,7 @@ public class BeanManagedTxAServiceImpl implements BeanManagedTxAService {
             JDBCHelper.rollback(connection);
             throw new ImplementationException(e);
         } finally {
-            JDBCHelper.setAutoCommit(connection, true);
             JDBCHelper.close(ps);
-
         }
         return oldValue;
     }

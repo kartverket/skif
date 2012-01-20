@@ -27,7 +27,7 @@ import java.util.zip.ZipInputStream;
  * historikk.
  *
  * Builderen initialiseres opp med de tabeller/klasse som hiberate skal jobbe med og har støtte for å definere sletterekkefølge
- * for bobler. For å opprette en factory kalles {@link #build(no.statkart.skif.store.SnapshotVersionSeed, java.util.Properties)()}.
+ * for bobler. For å opprette en factory kalles {@link #build)()}.
  * Ved å endre på properties mellom hver kall til build er det mulig å opprette factories (og hibernate sessions) som går mot
  * forskjellige data sources slik at konseptet om OLD og CURRENT session støttes.
  *
@@ -59,7 +59,21 @@ public abstract class HibernateSessionFactoryBuilder {
         }
     }
 
+    public HibernateSessionFactoryBuilder addResourceWithSubclasses(Class baseclass, Class... subclasses) {
+        addResource(baseclass);
+        for (Class subclass : subclasses) {
+            if (BubbleObject.class.isAssignableFrom(subclass)) {
+                bubbleClassDeleteOrder.add(subclass);
+            }
+        }
+        return this;
+    }
+
+
     public HibernateSessionFactoryBuilder addResource(Class clazz) {
+        if (BubbleObject.class.isAssignableFrom(clazz)) {
+            bubbleClassDeleteOrder.add(clazz);
+        }
         final String resourceName = className2resourceNameMap.get(clazz.getName());
         if (resourceName != null) {
             hbmResource.add(resourceName);
@@ -101,7 +115,6 @@ public abstract class HibernateSessionFactoryBuilder {
         hbmResource.add(hbmFilename);
         if (BubbleObject.class.isAssignableFrom(clazz)) {
             bubbleClassDeleteOrder.add(clazz);
-
         }
         return this;
     }

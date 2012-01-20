@@ -5,6 +5,7 @@ import com.google.inject.Provider;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ConnectionManager;
+import no.statkart.skif.persistence5.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,24 +18,23 @@ import java.sql.SQLException;
 public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHandler<S> {
     private static Logger log = LoggerFactory.getLogger(EJBResourceProxyHandlerForConnection.class);
 
-    private final ConnectionManager connectionManager;
+    private final ResourceManager resourceManager;
     private final ServiceRequestContext serviceRequestContext;
     private final ServiceMode serviceMode;
 
     @Inject
-    public EJBResourceProxyHandlerForConnection(ConnectionManager connectionManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode) {
-        this.connectionManager = connectionManager;
+    public EJBResourceProxyHandlerForConnection(ResourceManager resourceManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode) {
+        this.resourceManager = resourceManager;
         this.serviceRequestContext = serviceRequestContext;
         this.serviceMode = serviceMode;
     }
-
 
     @Override
     protected void beginService() {
         log.debug("begin");
 
         if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
-            connectionManager.beginTransaction();
+            resourceManager.beginTransaction();
         }
 
     }
@@ -43,9 +43,9 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
     protected void completeService() {
         log.debug("complete");
         if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
-            connectionManager.commit();
+            resourceManager.commit();
         }
-        connectionManager.close();
+        resourceManager.close();
     }
 
     @Override
@@ -54,9 +54,9 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
         serviceRequestContext.setRollbackOnly();
         if (serviceRequestContext.isNewTx()) {
             if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
-                connectionManager.rollback();
+                resourceManager.rollback();
             }
-            connectionManager.close();
+            resourceManager.close();
         }
     }
 }

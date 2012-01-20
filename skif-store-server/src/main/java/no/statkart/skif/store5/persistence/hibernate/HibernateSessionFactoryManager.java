@@ -33,7 +33,6 @@ public class HibernateSessionFactoryManager {
 
     protected synchronized void createFactory() {
         if (factory == null) {
-            factory = null;
             factory = factoryBuilder.build(descriptor);
         }
     }

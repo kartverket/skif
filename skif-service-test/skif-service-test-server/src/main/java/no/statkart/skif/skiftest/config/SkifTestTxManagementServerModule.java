@@ -2,20 +2,16 @@ package no.statkart.skif.skiftest.config;
 
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
-import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
-import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandlerForConnection;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
+import no.statkart.skif.service.module.server.ResourceWithSingleConnectionModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
-import no.statkart.skif.service.scope.ServiceRequestScoped;
-
-import java.sql.Connection;
 
 /**
  * @author Henrik Fredholm
@@ -39,25 +35,13 @@ public class SkifTestTxManagementServerModule extends SkifModule {
     @Override
     protected void configure() {
         install(new ServerModule(moduleConfiguration));
-        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
-            String username = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_USERNAME);
-            String password = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_PASSWORD);
-            String sid = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_SID);
-            String hostname = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_HOSTNAME);
-            String port = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.DB_PORT);
-            String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
-            bind(ConnectionFactory.class).toInstance(new JDBCConnectionFactory(url, username, password));
-            bind(ConnectionManager.class).to(ConnectionManagerSingleVm.class).in(ServiceRequestScoped.class);
-            bind(Connection.class).toProvider(new ConnectionProvider(null)).in(ServiceRequestScoped.class);
-        } else {
-            bind(ConnectionFactory.class).toInstance(new DataSourceConnectionFactory("no.statkart.matrikkel.persistens.MatrikkelBok_DS"));
-            bind(ConnectionManager.class).to(ConnectionManagerJEE.class).in(ServiceRequestScoped.class);
-            bind(Connection.class).toProvider(new ConnectionProvider(null)).in(ServiceRequestScoped.class);
-        }
 
         install(new ServerServiceModule(moduleConfiguration, new SkifTestTxManagementServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new SkifTestSequenceBlockAllocatorServices().getServices()));
+
+        install(new ResourceWithSingleConnectionModule(moduleConfiguration));
     }
+
 }
 
 

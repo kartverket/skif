@@ -23,7 +23,7 @@ public class StoreTestStoreServices implements ServicesListing {
         List<Class<?>> modifiableList = new ArrayList<Class<?>>();
         
         modifiableList.add(StoreService.class);
-        modifiableList.add(KodelisteService.class);
+        //modifiableList.add(KodelisteService.class);
         modifiableList.add(HistTestService.class);
         modifiableList.add(LockingTestService.class);
 

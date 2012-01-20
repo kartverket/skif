@@ -10,5 +10,5 @@ import java.sql.Connection;
  * @since 2.1
  */
 public interface ConnectionManager  extends TransactionalResource {
-    Connection getForSnapshotVersion(SnapshotVersion snapshotVersion);
+    ConnectionForSnapshotVersion getForSnapshotVersion(SnapshotVersion snapshotVersion);
 }

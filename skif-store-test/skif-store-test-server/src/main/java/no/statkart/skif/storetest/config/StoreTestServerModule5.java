@@ -1,14 +1,25 @@
 package no.statkart.skif.storetest.config;
 
-import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.PropertiesConfiguration;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
+import no.statkart.skif.persistence5.ResourceManager;
+import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
+import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersionProvider;
+import no.statkart.skif.persistence5.jdbc.ConnectionManager;
+import no.statkart.skif.persistence5.jdbc.ConnectionManagerProvider;
+import no.statkart.skif.service.DefaultServiceContext;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
+import no.statkart.skif.service.locker.DBLockerInTransactionService;
+import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.service.module.server.RunOnServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
@@ -16,25 +27,29 @@ import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
-import no.statkart.skif.store.module.server.ServerStoreModule;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionManager;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSessionPersister;
-import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
-import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
-import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
-import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
+import no.statkart.skif.store5.MemoryLockerSingleton;
+import no.statkart.skif.store5.StoreSessionServer;
+import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
+import no.statkart.skif.store5.persistence.DefaultPersistenceSessionStrategy;
+import no.statkart.skif.store5.persistence.PersistenceSessionManager;
+import no.statkart.skif.store5.persistence.PersistenceSessionManagerProvider;
+import no.statkart.skif.store5.persistence.hibernate.*;
+import no.statkart.skif.store5.persistence.jdbc.ConnectionManagerUsingHibernate;
+import no.statkart.skif.store5.persistence.kode.DefaultKodePersistenceSession;
+import no.statkart.skif.store5.persistence.kode.EnumKodeManager;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
-import no.statkart.skif.storetest.persistence.StoreTestKodelisteLoader;
-import no.statkart.skif.storetest.persistence.StoreTestStorePersisterStrategy;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.KodeMsg;
+import org.hibernate.Session;
+import org.hibernate.cfg.Environment;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Connection;
+import java.util.Locale;
+import java.util.Properties;
 
 /**
  * @author Henrik Fredholm
@@ -61,111 +76,170 @@ public class StoreTestServerModule5 extends SkifModule {
         install(new ServerModule(moduleConfiguration));
         install(new RunOnServerServiceModule(moduleConfiguration));
 
-        ServerStoreModule serverStoreModule = new ServerStoreModule(moduleConfiguration, no.statkart.skif.storetest.service.store.StoreService.class, no.statkart.skif.storetest.service.locker.DBLockerService.class, no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class, "no/statkart/skif/storetest/persistence/hibernate") {
-            @Override
-            protected void configureHibernate(StoreHibernateSessionFactoryBuilder facotryBuilder) {
-                // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
-                facotryBuilder.addResource(EnumKodeIdType.class);
-                facotryBuilder.addResource(ADbKode.class);
-                facotryBuilder.addResource(BDbKode.class);
-                facotryBuilder.addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class);
-                facotryBuilder.addResource(XStrDbKode.class);
-                facotryBuilder.addResource(StoreTestDbKodelisteLong.class);
-                facotryBuilder.addResource(TestBubble.class);
-                facotryBuilder.addResource(Foo.class);
-                facotryBuilder.addResource(Baz.class);
-                facotryBuilder.addResource(Raz.class);
-                facotryBuilder.addResource(Bar.class);
-                facotryBuilder.addResource(BarFoos.class);
-                facotryBuilder.addResource(TestMap.class);
-            }
-        };
-        serverStoreModule.getStrategy(ServiceMode.JEE).setHibernateConfigurationFilename("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties");
-        serverStoreModule.getStrategy(ServiceMode.SINGLE_VM).setHibernateConfigurationFilename("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
-        install(serverStoreModule);
+        bind(Store.class).to(no.statkart.skif.store5.StoreServer.class);
 
-        bind(Store.class).to(StoreServer.class);
-        bind(DbKodelisteLoader.class).to(StoreTestKodelisteLoader.class);
-
-       // EnumKode internasjonalisering
+        // EnumKode internasjonalisering
         bind(KodeMsg.class).to(DemoKodeMsg.class);
 
         install(new ServerServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreUpdateServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices()));
-    }
 
-    @Provides
-    @Singleton
-    KodelisteManager bubbleKodelisteManagerProvider(KodeMsg kodeMsg) {
-        KodelisteManager kodelisteManager = new KodelisteManager(kodeMsg);
-        kodelisteManager.installStatic(AEnumKodeId.class);
-        kodelisteManager.installStatic(BEnumKodeId.class);
-        kodelisteManager.installStatic(CEnumKodeId.class);
-//        kodelisteManager.installStatic(SEnumKodeId.class);
-        return kodelisteManager;
-    }
+        bind(ConnectionManager.class).toProvider(ConnectionManagerProvider.class);
+        bind(Connection.class).to(ConnectionForSnapshotVersion.class);
+        bind(PersistenceSessionManager.class).toProvider(PersistenceSessionManagerProvider.class);
+        bind(ConnectionForSnapshotVersion.class).toProvider(ConnectionForSnapshotVersionProvider.class);
 
+        bind(DBLockerService.class).to(no.statkart.skif.storetest.service.locker.DBLockerService.class);
+        bind(DBLockerInTransactionService.class).to(no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class);
+        bind(LockerStrategy.class).to(TransactionalLockerStrategy.class);
+        bind(TransactionalLockerStrategy.class).in(ServiceRequestScoped.class);
+
+        bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
+        bind(Session.class).toProvider(SessionProvider.class);
+
+
+    }
 
     @Provides
     @ServiceRequestScoped
-    StoreServer storeProvider(HibernateStoreSessionManager hibernateStoreSessionManager, HashStorePersister hashStorePersister, KodelistePersister kodelistePersister, Injector injector) {
-        HibernateStoreSessionPersister hibernateStoreSessionPersister = new HibernateStoreSessionPersister(hibernateStoreSessionManager);
-
-        StorePersisterStrategy storePersisterStrategy = new StoreTestStorePersisterStrategy(hibernateStoreSessionPersister, hashStorePersister,kodelistePersister) ;
-
-        AbstractStoreSessionAuthorizerChain authorizerChain = new AbstractStoreSessionAuthorizerChain() {
-            @Override
-            public <T extends BubbleObject> void maskFields(StoreEntry<T> storeEntry) {
-                T bubbleObject = storeEntry.getBubbleObject();
-/*
-                if (bubbleObject instanceof TSubMaskedBubble) {
-                    TSubMaskedBubble copy = (TSubMaskedBubble) CopyHelper.copy(bubbleObject);
-                    copy.setMaskedField("masked-field");
-                    storeEntry.setBubbleObject((T)copy);
-                }
-*/
-            }
-        };
-
-        StoreCache storeCache = new StoreCache();
-        StoreSessionChain[] storeChainList = {
-                authorizerChain,
-                new StoreSessionCacheChain(),
-                new StoreSessionPersisterChain(storePersisterStrategy, null)
-
-        };
-        StoreServer store = new StoreServer(storeCache, storeChainList);
-        injector.injectMembers(store);
-        store.init();
-
-        return store;
+    no.statkart.skif.store5.StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager) {
+        no.statkart.skif.store5.StoreServer storeServer = new no.statkart.skif.store5.StoreServer(new StoreSessionServer(persistenceSessionManager, MemoryLockerSingleton.getInstance()));
+        return storeServer;
     }
 
     @Provides
     @Singleton
-    HashStorePersister storePersisterProvider() {
-        Map<BubbleId<?>, BubbleObject> storeMap = new HashMap<BubbleId<?>, BubbleObject>();
-        addToMap(new TestBubbleId(1), storeMap);
-        addToMap(new TestBubbleId(2), storeMap);
-        addToMap(new TestBubbleId(3), storeMap);
-
-        HashStorePersister storePersister = new HashStorePersister(storeMap);
-        return storePersister;
+    EnumKodeManager provideEnumKodeManager() {
+        EnumKodeManager enumKodeManager = new EnumKodeManager();
+        enumKodeManager.installStatic(AEnumKodeId.class);
+        enumKodeManager.installStatic(BEnumKodeId.class);
+        enumKodeManager.installStatic(CEnumKodeId.class);
+//        kodelisteManager.installStatic(SEnumKodeId.class);
+        return enumKodeManager;
     }
 
-    private <T extends BubbleObject, I extends BubbleId<? extends T>> T addToMap(I id, Map<BubbleId<?>, BubbleObject> storeMap) {
-        T bubble = createBubble(id);
-        storeMap.put(bubble.getId(), bubble);
-        return bubble;
+
+    @Provides
+    @Singleton
+    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle() {
+
+        Configuration configuration = moduleConfiguration.getConfiguration();
+
+        // TODO: Hent directory fra moduleConfiguration
+        HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate")
+                // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
+                .addResource(EnumKodeIdType.class)
+                .addResource(ADbKode.class)
+                .addResource(BDbKode.class)
+                .addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class)
+                .addResource(XStrDbKode.class)
+                .addResource(StoreTestDbKodelisteLong.class)
+                .addResource(TestBubble.class)
+                .addResource(Foo.class)
+                .addResource(Baz.class)
+                .addResource(Raz.class)
+                .addResource(Bar.class)
+                .addResource(BarFoos.class)
+                .addResource(TestMap.class)
+                .addResource(TestEntity.class);
+
+
+        Properties hibernatePropertiesCurrent;
+        Properties hibernatePropertiesOld;
+        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
+            String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
+            String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
+            String sid = configuration.getString(SkifConfigConstants.DB_SID);
+            String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
+            String port = configuration.getString(SkifConfigConstants.DB_PORT);
+            String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
+
+            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties"));
+            hibernatePropertiesOld = hibernatePropertiesCurrent;
+            // TODO: Set properties fra konfigurasjon
+            //hibernateProperties.setProperty(Environment.USER, username);
+            //hibernateProperties.setProperty(Environment.PASS, password);
+            //hibernateProperties.setProperty(Environment.URL, url);
+        } else {
+            String datasourceCurrent = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelBok_DS");
+            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
+            hibernatePropertiesCurrent.setProperty(Environment.DATASOURCE, datasourceCurrent);
+
+            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelOld_DS");
+            hibernatePropertiesOld = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
+            hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
+        }
+
+        HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle = new HibernateSessionFactoryManagerBundle(hibernateSessionFactoryBuilder,
+                new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernatePropertiesCurrent),
+                new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernatePropertiesOld)
+        );
+        return hibernateSessionFactoryManagerBundle;
+
     }
 
-    private <T extends BubbleObject, I extends BubbleId<? extends T>> T createBubble(I id) {
-        T bubble = id.createTypeInstance();
-        bubble.setId(id);
-        return (T) bubble;
-    }
+    @Provides
+    @ServiceRequestScoped
+    ResourceManager provideResourceManager(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodeManager enumKodeManager, KodeMsg kodeMsg, ServiceContext serviceContext) {
+        Configuration configuration = moduleConfiguration.getConfiguration();
+        Properties hibernatePropertiesCurrent;
+        Properties hibernatePropertiesOld;
+        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
+            String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
+            String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
+            String sid = configuration.getString(SkifConfigConstants.DB_SID);
+            String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
+            String port = configuration.getString(SkifConfigConstants.DB_PORT);
+            String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
 
+            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties"));
+            hibernatePropertiesOld = hibernatePropertiesCurrent;
+            // TODO: Set properties fra konfigurasjon
+            //hibernateProperties.setProperty(Environment.USER, username);
+            //hibernateProperties.setProperty(Environment.PASS, password);
+            //hibernateProperties.setProperty(Environment.URL, url);
+        } else {
+            String datasourceCurrent = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelBok_DS");
+            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
+            hibernatePropertiesCurrent.setProperty(Environment.DATASOURCE, datasourceCurrent);
+
+            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelOld_DS");
+            hibernatePropertiesOld = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
+            hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
+        }
+
+        DefaultHibernatePersistenceSession persistenceSessionMasterCurrent = new DefaultHibernatePersistenceSessionImpl(
+                hibernateSessionFactoryManagerBundle.getBundle().get(0)
+        );
+
+        DefaultHibernatePersistenceSession persistenceSessionMasterOld = new DefaultHibernatePersistenceSessionImpl(
+                hibernateSessionFactoryManagerBundle.getBundle().get(1)
+        );
+
+        PersistenceSessionManager persistenceSessionManager = new DefaultPersistenceSessionManager(
+                new DefaultPersistenceSessionStrategy(
+                        persistenceSessionMasterCurrent,
+                        new DefaultKodePersistenceSession(persistenceSessionMasterCurrent, enumKodeManager, kodeMsg, serviceContext)
+                ),
+                new DefaultPersistenceSessionStrategy(
+                        persistenceSessionMasterOld,
+                        new DefaultKodePersistenceSession(persistenceSessionMasterOld, enumKodeManager, kodeMsg, serviceContext)
+                )
+        );
+
+        ResourceManager resourceManager = new ResourceManager(
+                new ResourceManager.Entry(
+                        new ConnectionManagerUsingHibernate(persistenceSessionManager),
+                        no.statkart.skif.persistence5.jdbc.ConnectionManager.class
+                ),
+                new ResourceManager.Entry(
+                        persistenceSessionManager,
+                        PersistenceSessionManager.class
+                )
+        );
+        return resourceManager;
+    }
 }
 

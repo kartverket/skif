@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store5.StoreServer;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

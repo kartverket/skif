@@ -127,16 +127,20 @@ public class DefaultHibernatePersistenceSession implements HibernatePersistenceS
 
     @Override
     public Session reserveSession() {
-        reserveCount++;
+        if (sessionFactoryDescriptor.isSnapshotChangable()) {
+            reserveCount++;
+        }
         return session();
     }
 
     @Override
     public void releaseSession() {
-        if (reserveCount > 0) {
-            reserveCount--;
-        } else {
-            throw new ImplementationException("Session er ikke reservert");
+        if (sessionFactoryDescriptor.isSnapshotChangable()) {
+            if (reserveCount > 0) {
+                reserveCount--;
+            } else {
+                throw new ImplementationException("Session er ikke reservert");
+            }
         }
     }
 
@@ -703,6 +707,7 @@ public class DefaultHibernatePersistenceSession implements HibernatePersistenceS
     public void flush() {
         session().flush();
     }
+
     public void beginTransaction() {
         localTransaction = session().beginTransaction();
     }
@@ -713,7 +718,7 @@ public class DefaultHibernatePersistenceSession implements HibernatePersistenceS
     }
 
     public void rollback() {
-       localTransaction.rollback();
+        localTransaction.rollback();
     }
 
     @Override

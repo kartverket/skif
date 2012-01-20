@@ -2,6 +2,7 @@ package no.statkart.skif.store.service.ejb;
 
 import com.google.inject.Inject;
 import no.statkart.skif.ServiceMode;
+import no.statkart.skif.persistence5.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionManager;
@@ -14,13 +15,13 @@ import org.slf4j.LoggerFactory;
 public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHandler<S> {
     private static Logger log = LoggerFactory.getLogger(EJBResourceProxyHandlerForHibernate.class);
 
-    private final HibernateSessionManager connectionManager;
+    private final ResourceManager resourceManager;
     private final ServiceRequestContext serviceRequestContext;
     private final ServiceMode serviceMode;
 
     @Inject
-    public EJBResourceProxyHandlerForHibernate(HibernateSessionManager connectionManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode) {
-        this.connectionManager = connectionManager;
+    public EJBResourceProxyHandlerForHibernate(ResourceManager resourceManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode) {
+        this.resourceManager = resourceManager;
         this.serviceRequestContext = serviceRequestContext;
         this.serviceMode = serviceMode;
     }
@@ -30,9 +31,10 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
     protected void beginService() {
         log.debug("begin");
 
-        connectionManager.beingAllocateConnectionsViaHibernateSession();
+        //TODO: angi eksplisitt at connections skal allokeres via hibernate. Pt skjer det alltid
+        //connectionManager.beingAllocateConnectionsViaHibernateSession();
         if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
-            connectionManager.beginTransaction();
+            resourceManager.beginTransaction();
         }
 
     }
@@ -42,15 +44,15 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
         log.debug("complete");
             if (serviceRequestContext.isContainerManagedTransaction()) {
                 if (serviceRequestContext.inTx()) {
-                    connectionManager.flush();
+                    resourceManager.flush();
                 }
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
-                    connectionManager.commit();
+                    resourceManager.commit();
                 }
             }
 
-            connectionManager.close();
-            connectionManager.endAllocateConnectionsViaHibernateSession();
+            resourceManager.close();
+            //connectionManager.endAllocateConnectionsViaHibernateSession();
     }
 
     @Override
@@ -59,10 +61,10 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
             serviceRequestContext.setRollbackOnly();
             if (serviceRequestContext.isNewTx()) {
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
-                    connectionManager.rollback();
+                    resourceManager.rollback();
                 }
-                connectionManager.close();
+                resourceManager.close();
             }
-            connectionManager.endAllocateConnectionsViaHibernateSession();
+            //connectionManager.endAllocateConnectionsViaHibernateSession();
     }
 }

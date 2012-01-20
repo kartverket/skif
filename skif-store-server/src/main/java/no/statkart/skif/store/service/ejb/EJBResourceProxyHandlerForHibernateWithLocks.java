@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.exception.OperationalException;
+import no.statkart.skif.persistence5.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 import no.statkart.skif.service.locker.DBLockerService;
@@ -23,15 +24,15 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
     private static Logger log = LoggerFactory.getLogger(EJBResourceProxyHandlerForHibernateWithLocks.class);
 
     private final TypeLiteral<S> serviceType;
-    private final HibernateSessionManager connectionManager;
+    private final ResourceManager resourceManager;
     private final ServiceRequestContext serviceRequestContext;
     private final ServiceMode serviceMode;
     private final LockerStrategy lockerStrategy;
 
     @Inject
-    public EJBResourceProxyHandlerForHibernateWithLocks(TypeLiteral<S> serviceType, HibernateSessionManager connectionManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode, LockerStrategy lockerStrategy) {
+    public EJBResourceProxyHandlerForHibernateWithLocks(TypeLiteral<S> serviceType, ResourceManager resourceManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode, LockerStrategy lockerStrategy) {
         this.serviceType = serviceType;
-        this.connectionManager = connectionManager;
+        this.resourceManager = resourceManager;
         this.serviceRequestContext = serviceRequestContext;
         this.serviceMode = serviceMode;
         this.lockerStrategy = lockerStrategy;
@@ -42,10 +43,10 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
     protected void beginService() {
         log.debug("begin");
 
-        connectionManager.beingAllocateConnectionsViaHibernateSession();
+        //resourceManager.beingAllocateConnectionsViaHibernateSession();
         if (serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
             if (serviceMode == ServiceMode.SINGLE_VM) {
-                connectionManager.beginTransaction();
+                resourceManager.beginTransaction();
             } else if (shouldUnlockForService()) {
                 Transaction t = weblogic.transaction.TransactionHelper.getTransactionHelper().getTransaction();
                 try {
@@ -77,7 +78,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
         log.debug("complete");
             if (serviceRequestContext.isContainerManagedTransaction()) {
                 if (serviceRequestContext.inTx()) {
-                    connectionManager.flush();
+                    resourceManager.flush();
                 }
 
                 // Dersom dette er ytterste metode i et transaksjonelt scope, skal alle låser frigis i transaksjonen
@@ -86,7 +87,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                 }
 
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
-                    connectionManager.commit();
+                    resourceManager.commit();
                 }
 
                 // Dersom dette er ytterste metode i et ikke-transaksjonelt scope, så skal de låser frigis som i scopet eksplisitt har blitt låst opp
@@ -95,8 +96,8 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                 }
             }
 
-            connectionManager.close();
-            connectionManager.endAllocateConnectionsViaHibernateSession();
+            resourceManager.close();
+            //resourceManager.endAllocateConnectionsViaHibernateSession();
     }
 
     @Override
@@ -105,9 +106,9 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
             serviceRequestContext.setRollbackOnly();
             if (serviceRequestContext.isNewTx()) {
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
-                    connectionManager.rollback();
+                    resourceManager.rollback();
                 }
-                connectionManager.close();
+                resourceManager.close();
             }
 
             // Dersom er scope feiler, så skal alle låser tatt i løpet av det, frigis igjen.
@@ -115,7 +116,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                 lockerStrategy.releaseLocksOnRollback(serviceRequestContext.getUserName());
             }
 
-            connectionManager.endAllocateConnectionsViaHibernateSession();
+            //resourceManager.endAllocateConnectionsViaHibernateSession();
     }
 
     /**

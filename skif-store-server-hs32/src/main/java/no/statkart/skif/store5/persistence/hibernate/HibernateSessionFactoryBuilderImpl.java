@@ -19,9 +19,11 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Denne versjon støtter bubbleref
+ * Denne klasse inneholder Hibernate 3.2.6 specifikk kode. Den skal integreres i superklassen
+ * når SKIF støtter bubbleref for seneste versjon av hibernate
  *
  * @author Henrik Fredholm
+ * @since 2.1
  */
 public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryBuilder {
     public HibernateSessionFactoryBuilderImpl(String mappingFilesDirectory) {

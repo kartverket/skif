@@ -17,6 +17,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     final protected PersistenceSessionForSnapshot[] bundle;
     final protected PersistenceSessionProxyCache proxyCache;
     protected boolean isActive;
+    protected boolean inTransaction;
 
     protected SnapshotVersion snapshotVersion;
     protected PersistenceSessionForSnapshot sessionForSnapshot;
@@ -82,16 +83,19 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     public void beginTransaction() {
         PersistenceSessionMaster implementation = getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
         implementation.beginTransaction();
+        inTransaction = true;
     }
 
     @Override
     public void commit() {
         PersistenceSessionMaster implementation = getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
         implementation.commit();
+        inTransaction = false;
     }
 
     @Override
     public void rollback() {
+        inTransaction = false;
         PersistenceSessionMaster implementation = getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
         implementation.rollback();
     }

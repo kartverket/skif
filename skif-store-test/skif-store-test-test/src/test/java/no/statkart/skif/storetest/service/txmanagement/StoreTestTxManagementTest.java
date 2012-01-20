@@ -44,7 +44,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     @Test
     public void test() {
         final ContainerManagedTxCMTCascadeService cascadeService = injector.getInstance(ContainerManagedTxCMTCascadeService.class);
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 200; i++) {
             try {
                 cascadeService.containerTest3("key1", "multiValue1", null, "multiValue2");
             } catch (ValidationException e) {

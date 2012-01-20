@@ -1,7 +1,6 @@
 package no.statkart.skif.persistence5;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.persistence5.jdbc.ConnectionManager;
 
 import java.util.*;
 
@@ -14,6 +13,7 @@ public class ResourceManager implements TransactionalResource {
     private boolean isActive;
 
     private HashMap<Key, Entry> map = new HashMap<Key, Entry>();
+    private Entry[] entries;
 
     public final static class Key {
         private final String name;
@@ -69,6 +69,8 @@ public class ResourceManager implements TransactionalResource {
     }
 
     public ResourceManager(Entry... entries) {
+        this.entries=entries;
+
         for (Entry entry : entries) {
             List<Class<? extends Resource>> types = new ArrayList<Class<? extends Resource>>(Arrays.asList(entry.types));
             types.add(entry.implementation.getClass());
@@ -88,11 +90,15 @@ public class ResourceManager implements TransactionalResource {
             throw new ImplementationException("Fant ingen resource av type " + type);
         }
         entry.implementation.setActive();
+        ensureTransactionStarted(entry);
+        return type.cast(entry.implementation);
+    }
+
+    private void ensureTransactionStarted(Entry entry) {
         if (inTransaction && entry.implementation instanceof TransactionalResource && !entry.transactionStarted) {
             TransactionalResource.class.cast(entry.implementation).beginTransaction();
             entry.transactionStarted = true;
         }
-        return type.cast(entry.implementation);
     }
 
     @Override
@@ -109,11 +115,17 @@ public class ResourceManager implements TransactionalResource {
     @Override
     public void beginTransaction() {
         inTransaction = true;
+        for (Entry entry : entries) {
+            if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
+                TransactionalResource.class.cast(entry.implementation).beginTransaction();
+            }
+        }
+
     }
 
     @Override
     public void flush() {
-        for (Entry entry : map.values()) {
+        for (Entry entry : entries) {
             if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
                 TransactionalResource.class.cast(entry.implementation).flush();
             }
@@ -122,13 +134,14 @@ public class ResourceManager implements TransactionalResource {
 
     @Override
     public void commit() {
-        for (Entry entry : map.values()) {
+        for (Entry entry : entries) {
             if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
+                ensureTransactionStarted(entry);
                 TransactionalResource.class.cast(entry.implementation).commit();
             }
         }
         inTransaction = false;
-        for (Entry entry : map.values()) {
+        for (Entry entry : entries) {
             if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
                 entry.transactionStarted = false;
             }
@@ -137,13 +150,14 @@ public class ResourceManager implements TransactionalResource {
 
     @Override
     public void rollback() {
-        for (Entry entry : map.values()) {
+        for (Entry entry : entries) {
             if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
+                ensureTransactionStarted(entry);
                 TransactionalResource.class.cast(entry.implementation).rollback();
             }
         }
         inTransaction = false;
-        for (Entry entry : map.values()) {
+        for (Entry entry : entries) {
             if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
                 entry.transactionStarted = false;
             }
@@ -152,7 +166,7 @@ public class ResourceManager implements TransactionalResource {
 
     @Override
     public void close() {
-        for (Entry entry : map.values()) {
+        for (Entry entry : entries) {
             if (entry.implementation.isActive()) {
                 entry.implementation.close();
             }

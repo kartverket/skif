@@ -18,6 +18,7 @@ import java.sql.SQLException;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@Deprecated
 public interface ConnectionManager {
     Connection getConnection(Object key);
     boolean isActive(Object key);
