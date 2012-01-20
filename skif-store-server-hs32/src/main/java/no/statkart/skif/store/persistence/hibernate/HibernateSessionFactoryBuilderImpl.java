@@ -5,7 +5,6 @@ import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizer;
 import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefConfiguration;
-import no.statkart.skif.store5.persistence.hibernate.*;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.cfg.Configuration;
@@ -26,7 +25,7 @@ import java.util.Properties;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class HibernateSessionFactoryBuilderImpl extends no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder {
+public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryBuilder {
     public HibernateSessionFactoryBuilderImpl(String mappingFilesDirectory) {
         super(mappingFilesDirectory);
     }
@@ -40,7 +39,7 @@ public class HibernateSessionFactoryBuilderImpl extends no.statkart.skif.store5.
             // TODO: Dette blir feil for SnapshotVersion.OLD. Må bruke old datasource
             logger.info("SKIF hibernatekonfigurasjon(3.2): " + props.get("hibernate.connection.datasource"));
         }
-        ClassLoader cl = no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder.class.getClassLoader();
+        ClassLoader cl = HibernateSessionFactoryBuilder.class.getClassLoader();
         Configuration cfg = null;
         try {
             // NB: getBubbleClassDeleteOrder() definerer slette rekkefølgen for alle {@code BubbleObject} typer.

@@ -5,8 +5,7 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
-import no.statkart.skif.store5.persistence.hibernate.*;
+import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.TestBubble;
 import no.statkart.skif.storetest.domain.demo.TestEntity;
@@ -58,7 +57,7 @@ public class TestHelper {
      *
      * @return
      */
-    public static  HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilderWithHistory() {
+    public static HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilderWithHistory() {
         return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate")
                 .addResource(TestEntity.class)
                 .addResource(TestBubble.class)

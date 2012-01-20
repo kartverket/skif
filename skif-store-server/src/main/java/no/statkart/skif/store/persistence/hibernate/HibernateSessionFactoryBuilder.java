@@ -1,4 +1,4 @@
-package no.statkart.skif.store5.persistence.hibernate;
+package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;

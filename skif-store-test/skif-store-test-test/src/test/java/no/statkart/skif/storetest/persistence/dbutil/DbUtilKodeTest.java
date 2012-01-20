@@ -2,8 +2,8 @@ package no.statkart.skif.storetest.persistence.dbutil;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
-import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryDescriptor;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryDescriptor;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.koder.ADbKode;
 import no.statkart.skif.storetest.domain.demo.koder.ADbKodeId;

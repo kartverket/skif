@@ -6,7 +6,6 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store5.persistence.hibernate.*;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
 import no.statkart.skif.storetest.domain.demo.TestBubble;
@@ -27,7 +26,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 
 /**
- * Tester for {@link no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMasterImpl}
+ * Tester for {@link HibernatePersistenceSessionMasterImpl}
  * @author Henrik Fredholm
  */
 @Test
@@ -67,7 +66,7 @@ public class DefaultHibernatePersistenceSessionTest {
 
     @BeforeClass
     public void setUp() {
-        no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder sessionFactoryBuilder = createHibernateSessionFactoryBuilderWithHistory();
+        HibernateSessionFactoryBuilder sessionFactoryBuilder = createHibernateSessionFactoryBuilderWithHistory();
         sessionFactoryManagerBundle = createHibernateSessionFactorManagerBundle(sessionFactoryBuilder, hibernateProperties);
     }
 

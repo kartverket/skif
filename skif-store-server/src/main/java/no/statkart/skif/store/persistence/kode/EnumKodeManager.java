@@ -1,4 +1,4 @@
-package no.statkart.skif.store5.persistence.kode;
+package no.statkart.skif.store.persistence.kode;
 
 import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;

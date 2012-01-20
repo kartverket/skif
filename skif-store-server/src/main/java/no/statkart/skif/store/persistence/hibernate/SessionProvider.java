@@ -1,4 +1,4 @@
-package no.statkart.skif.store5.persistence.hibernate;
+package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;

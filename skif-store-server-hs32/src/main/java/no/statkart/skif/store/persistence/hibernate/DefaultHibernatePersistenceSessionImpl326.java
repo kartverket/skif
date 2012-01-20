@@ -1,7 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.matrikkel.persistens.hibernate.bubbleref.BubbleRefIdPersister;
-import no.statkart.skif.store5.persistence.hibernate.*;
 import org.hibernate.metadata.ClassMetadata;
 
 /**
@@ -14,7 +13,7 @@ import org.hibernate.metadata.ClassMetadata;
  */
 public class DefaultHibernatePersistenceSessionImpl326 extends HibernatePersistenceSessionMasterImpl {
 
-    public DefaultHibernatePersistenceSessionImpl326(no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManager sessionFactoryManager) {
+    public DefaultHibernatePersistenceSessionImpl326(HibernateSessionFactoryManager sessionFactoryManager) {
         super(sessionFactoryManager);
     }
 

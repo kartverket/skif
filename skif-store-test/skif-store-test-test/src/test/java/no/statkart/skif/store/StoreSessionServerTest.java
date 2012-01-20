@@ -8,11 +8,12 @@ import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
-import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMaster;
-import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManagerBundle;
-import no.statkart.skif.store5.persistence.kode.DefaultKodePersistenceSession;
-import no.statkart.skif.store5.persistence.kode.EnumKodeManager;
+import no.statkart.skif.store.persistence.hibernate.*;
+import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
+import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
+import no.statkart.skif.store.persistence.kode.DefaultKodePersistenceSession;
+import no.statkart.skif.store.persistence.kode.EnumKodeManager;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
@@ -80,7 +81,7 @@ public class StoreSessionServerTest {
 
     @BeforeClass
     public void setUp() {
-        no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder sessionFactoryBuilder = TestHelper.createHibernateSessionFactoryBuilderWithHistory();
+        HibernateSessionFactoryBuilder sessionFactoryBuilder = TestHelper.createHibernateSessionFactoryBuilderWithHistory();
 //        sessionFactoryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
         sessionFactoryBuilder.addResource(ADbKode.class);
         sessionFactoryManagerBundle = createHibernateSessionFactorManagerBundle(sessionFactoryBuilder, hibernateProperties);

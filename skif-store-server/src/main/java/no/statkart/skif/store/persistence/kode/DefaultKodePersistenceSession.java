@@ -1,4 +1,4 @@
-package no.statkart.skif.store5.persistence.kode;
+package no.statkart.skif.store.persistence.kode;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
@@ -9,7 +9,7 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
-import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMaster;
+import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import no.statkart.skif.util.KodeMsg;
 
 import java.util.*;

@@ -12,13 +12,10 @@ import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
-import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManager;
-import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManagerBundle;
-import no.statkart.skif.store5.persistence.kode.DefaultKodePersistenceSession;
-import no.statkart.skif.store5.persistence.kode.EnumKodeManager;
-import no.statkart.skif.store5.persistence.kode.KodePersistenceSession;
+import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManager;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.KodeMsg;
@@ -34,7 +31,7 @@ import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactor
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * Test av {@link no.statkart.skif.store5.persistence.kode.KodePersistenceSession}.
+ * Test av {@link KodePersistenceSession}.
  *
  * @author Henrik Fredholm
  * @since 2.1

@@ -1,4 +1,4 @@
-package no.statkart.skif.store5.persistence.jdbc;
+package no.statkart.skif.store.persistence.jdbc;
 
 import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
 import no.statkart.skif.persistence5.jdbc.ConnectionManager;
