@@ -3,7 +3,6 @@ package no.statkart.skif.service.locker;
 import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import org.testng.Assert;
 import org.testng.annotations.Test;

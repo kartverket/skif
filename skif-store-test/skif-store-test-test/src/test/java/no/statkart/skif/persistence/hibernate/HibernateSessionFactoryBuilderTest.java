@@ -23,6 +23,7 @@ import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
+ * @since 2.1
  */
 @Test
 public class HibernateSessionFactoryBuilderTest {

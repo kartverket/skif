@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import no.statkart.skif.persistence.FooFinder;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import org.testng.annotations.Test;
 

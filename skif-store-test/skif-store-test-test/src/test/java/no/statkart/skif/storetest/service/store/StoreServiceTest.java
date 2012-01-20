@@ -5,7 +5,6 @@ import com.google.inject.Key;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import org.testng.Assert;
 import org.testng.annotations.Test;

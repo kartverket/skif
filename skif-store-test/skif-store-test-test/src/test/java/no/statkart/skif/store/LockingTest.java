@@ -5,7 +5,6 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.storetest.domain.demo.FooId;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import org.testng.annotations.Test;
 

@@ -1,33 +1,24 @@
 package no.statkart.skif.storetest.domain;
 
 
-import com.google.inject.Provider;
-import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
-import no.statkart.skif.store.*;
-import no.statkart.skif.store.kodeliste.*;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
-import no.statkart.skif.store.persistence.hibernate.HibernateVersionFactory;
-import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
-import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
-import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
-import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
-import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
-import no.statkart.skif.storetest.TestHelper;
-import no.statkart.skif.storetest.domain.demo.Baz;
-import no.statkart.skif.storetest.domain.demo.Foo;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.KodeIdLookup;
+import no.statkart.skif.store.KodelisteTransfer;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.kodeliste.Kode;
+import no.statkart.skif.store.kodeliste.Kodeliste;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
-import no.statkart.skif.storetest.util.DemoKodeMsg;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 import static org.testng.Assert.*;
 import static org.testng.AssertJUnit.assertFalse;

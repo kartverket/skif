@@ -24,7 +24,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
+ * TODO: Denne test virker ikke
  * @author Henrik Fredholm
+ * @author since 2.1
  */
 @Test
 public class HibernateSessionFactoryBuilderWithEmptyMappingDirTest {

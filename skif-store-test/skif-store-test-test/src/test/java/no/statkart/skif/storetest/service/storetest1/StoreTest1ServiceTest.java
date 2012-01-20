@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.service.storetest1;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase5;
 import org.testng.annotations.Test;
 

@@ -1,26 +1,12 @@
 package no.statkart.skif.storetest.domain;
 
-import com.google.inject.Provider;
-import no.statkart.skif.service.DefaultServiceContext;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
-import no.statkart.skif.store.kodeliste.DbKode;
-import no.statkart.skif.store.kodeliste.DbKodeId;
 import no.statkart.skif.store.kodeliste.DbKodeliste;
-import no.statkart.skif.store.kodeliste.EnumKode;
-import no.statkart.skif.store.persistence.hibernate.HibernateStoreSession;
-import no.statkart.skif.store.persistence.hibernate.HibernateVersionFactory;
-import no.statkart.skif.store.persistence.hibernate.StoreHibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
-import no.statkart.skif.store.persistence.kodeliste.DbKodelisteLoader;
-import no.statkart.skif.store.persistence.kodeliste.KodelisteManager;
-import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryDescriptor;
-import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.TestHelper5;
 import no.statkart.skif.storetest.domain.demo.Baz;
 import no.statkart.skif.storetest.domain.demo.BazId;
@@ -28,13 +14,13 @@ import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
-import no.statkart.skif.storetest.util.DemoKodeMsg;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.List;
+import java.util.Properties;
 
 import static org.testng.AssertJUnit.assertNotNull;
 

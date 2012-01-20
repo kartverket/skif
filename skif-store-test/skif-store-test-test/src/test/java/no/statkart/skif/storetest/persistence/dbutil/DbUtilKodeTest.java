@@ -1,25 +1,21 @@
 package no.statkart.skif.storetest.persistence.dbutil;
 
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.storetest.TestHelper;
+import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
+import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryDescriptor;
+import no.statkart.skif.storetest.TestHelper5;
 import no.statkart.skif.storetest.domain.demo.koder.ADbKode;
 import no.statkart.skif.storetest.domain.demo.koder.ADbKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.BDbKode;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
-import org.dbunit.IDatabaseTester;
-import org.dbunit.dataset.DataSetException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.FileNotFoundException;
+import java.util.Properties;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
@@ -54,11 +50,12 @@ public class DbUtilKodeTest {
     */
 
     private SessionFactory setupHibernate() {
-        HibernateSessionFactoryBuilder sfbuilder = TestHelper.createHibernateSessionFactoryBuilder();
+        HibernateSessionFactoryBuilder sfbuilder = TestHelper5.createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(ADbKode.class);
         sfbuilder.addResource(BDbKode.class);
         sfbuilder.addResource(StoreTestDbKodelisteLong.class);
-        SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
+        Properties hibernateProperties = TestHelper5.createHibernatePropertiesSingleVm() ;
+        SessionFactory sf = sfbuilder.build(new HibernateSessionFactoryDescriptor("", new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties));
         assertNotNull(sf);
         return sf;
     }
