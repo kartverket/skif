@@ -1,17 +1,15 @@
 package no.statkart.skif.storetest;
 
-import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
 import no.statkart.skif.store5.persistence.hibernate.*;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.TestBubble;
 import no.statkart.skif.storetest.domain.demo.TestEntity;
-import org.hibernate.Interceptor;
 
 import java.util.Properties;
 

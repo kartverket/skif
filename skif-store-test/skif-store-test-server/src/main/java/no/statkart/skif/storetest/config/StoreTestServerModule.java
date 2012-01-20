@@ -15,7 +15,6 @@ import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
 import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersionProvider;
 import no.statkart.skif.persistence5.jdbc.ConnectionManager;
 import no.statkart.skif.persistence5.jdbc.ConnectionManagerProvider;
-import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
@@ -27,6 +26,8 @@ import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
+import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImpl;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
 import no.statkart.skif.store5.MemoryLockerSingleton;
@@ -48,7 +49,6 @@ import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
 
 import java.sql.Connection;
-import java.util.Locale;
 import java.util.Properties;
 
 /**

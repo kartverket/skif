@@ -5,6 +5,7 @@ import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizer;
 import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefConfiguration;
+import no.statkart.skif.store5.persistence.hibernate.*;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.cfg.Configuration;
@@ -13,19 +14,24 @@ import org.hibernate.event.PreLoadEventListener;
 import org.hibernate.event.def.DefaultPreLoadEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 /**
+ * Denne klasse inneholder Hibernate 3.2.6 specifikk kode. Den skal integreres i superklassen
+ * når SKIF støtter bubbleref for seneste versjon av hibernate
+ *
  * @author Henrik Fredholm
+ * @since 2.1
  */
-public class StoreHibernateSessionFactoryBuilderImpl extends StoreHibernateSessionFactoryBuilder {
-    public StoreHibernateSessionFactoryBuilderImpl(Properties hibernateProperties, String mappingFilesDirectory, Interceptor interceptor) {
-        super(hibernateProperties, mappingFilesDirectory, interceptor);
+public class HibernateSessionFactoryBuilderImpl extends no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder {
+    public HibernateSessionFactoryBuilderImpl(String mappingFilesDirectory) {
+        super(mappingFilesDirectory);
     }
 
-    protected Configuration createConfiguration(Properties props) {
+    protected Configuration createConfiguration(Properties props, @Nullable Interceptor interceptor) {
         // Log databaseparametre. I singlevm mode brukes JDBCTransactionFactory (dvs url, bruker/password).
         // I servermode brukes JTATransactionFactory (dvs datasource)
         if (props.get("hibernate.transaction.factory_class").equals("org.hibernate.transaction.JDBCTransactionFactory")) {
@@ -34,7 +40,7 @@ public class StoreHibernateSessionFactoryBuilderImpl extends StoreHibernateSessi
             // TODO: Dette blir feil for SnapshotVersion.OLD. Må bruke old datasource
             logger.info("SKIF hibernatekonfigurasjon(3.2): " + props.get("hibernate.connection.datasource"));
         }
-        ClassLoader cl = StoreHibernateSessionFactoryBuilder.class.getClassLoader();
+        ClassLoader cl = no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder.class.getClassLoader();
         Configuration cfg = null;
         try {
             // NB: getBubbleClassDeleteOrder() definerer slette rekkefølgen for alle {@code BubbleObject} typer.
@@ -44,7 +50,9 @@ public class StoreHibernateSessionFactoryBuilderImpl extends StoreHibernateSessi
             for (String hbm : hbmResource) {
                 cfg.addResource(hbm, cl);
             }
-            cfg.setInterceptor(interceptor);
+            if (interceptor!=null) {
+                cfg.setInterceptor(interceptor);
+            }
 
 
             // Legg in patch for Hibernate 3.2.6
