@@ -55,8 +55,8 @@ import java.util.Properties;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class StoreTestServerModule5 extends SkifModule {
-    public StoreTestServerModule5(Configuration configuration) {
+public class StoreTestServerModule extends SkifModule {
+    public StoreTestServerModule(Configuration configuration) {
         super(configuration);
     }
 
