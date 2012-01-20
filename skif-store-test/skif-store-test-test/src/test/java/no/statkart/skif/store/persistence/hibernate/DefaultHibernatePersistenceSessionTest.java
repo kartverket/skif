@@ -6,7 +6,6 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store3.persistence.hibernate.HibernatePersistenceSession;
 import no.statkart.skif.store5.persistence.hibernate.*;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
@@ -258,7 +257,6 @@ public class DefaultHibernatePersistenceSessionTest {
         DefaultHibernatePersistenceSession persistenceSession = new DefaultHibernatePersistenceSession(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
-        HibernatePersistenceSession session = null;
         try {
             persistenceSession.beginTransaction();
             TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
