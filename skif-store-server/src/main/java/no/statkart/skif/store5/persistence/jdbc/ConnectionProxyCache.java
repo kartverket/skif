@@ -2,10 +2,9 @@ package no.statkart.skif.store5.persistence.jdbc;
 
 import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store5.persistence.PersistenceSessionMaster;
+import no.statkart.skif.store.persistence.PersistenceSessionMaster;
 import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMaster;
 
-import java.sql.Connection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

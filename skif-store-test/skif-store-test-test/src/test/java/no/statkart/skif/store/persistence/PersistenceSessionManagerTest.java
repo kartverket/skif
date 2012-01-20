@@ -6,9 +6,7 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
-import no.statkart.skif.store5.persistence.PersistenceSessionManager;
-import no.statkart.skif.store5.persistence.hibernate.DefaultHibernatePersistenceSession;
+import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMaster;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManagerBundle;
@@ -86,8 +84,8 @@ public class PersistenceSessionManagerTest {
     private PersistenceSessionManager createPersistenceSessionManager() {
         return new
                 DefaultPersistenceSessionManager(
-                    new DefaultHibernatePersistenceSession(sessionFactoryManagerBundle.getBundle().get(0)),
-                    new DefaultHibernatePersistenceSession(sessionFactoryManagerBundle.getBundle().get(1))
+                    new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0)),
+                    new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1))
             );
     }
 
@@ -149,7 +147,7 @@ public class PersistenceSessionManagerTest {
 
 
     public void testLoadObjectsForOLD() {
-        DefaultHibernatePersistenceSession persistenceSession = new DefaultHibernatePersistenceSession(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             Foo foo_100_OLD = persistenceSession.get(FooId_100_OLD);
             assertEquals(foo_100_OLD.getId().getSnapshotVersion(), OLD);
@@ -162,7 +160,7 @@ public class PersistenceSessionManagerTest {
     }
 
     public void testLoadObjectsForHistoric() {
-        DefaultHibernatePersistenceSession persistenceSession = new DefaultHibernatePersistenceSession(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             // Må endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
             persistenceSession.setSnapshot(S3);
@@ -177,7 +175,7 @@ public class PersistenceSessionManagerTest {
     }
 
     public void testLoadObjectsForOLDAndHistoricOneByOne() {
-        DefaultHibernatePersistenceSession persistenceSession = new DefaultHibernatePersistenceSession(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             Foo foo_100_OLD = persistenceSession.get(FooId_100_OLD);
             assertEquals(foo_100_OLD.getId().getSnapshotVersion(), OLD);
@@ -198,7 +196,7 @@ public class PersistenceSessionManagerTest {
 
     @Test(expectedExceptions = ImplementationException.class)
     public void testLoadObjectsForOLDAndHistoricTogether_Fail() {
-        DefaultHibernatePersistenceSession persistenceSession = new DefaultHibernatePersistenceSession(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             List<BubbleId<Foo>> fooIds = new ArrayList<BubbleId<Foo>>();
             fooIds.add(FooId_100_OLD);
@@ -211,7 +209,7 @@ public class PersistenceSessionManagerTest {
     }
 
     public void testInsertAndCommit() {
-        DefaultHibernatePersistenceSession persistenceSession = new DefaultHibernatePersistenceSession(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
 
         try {
             persistenceSession.beginTransaction();

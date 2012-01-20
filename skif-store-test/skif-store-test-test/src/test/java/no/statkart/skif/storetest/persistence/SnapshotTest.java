@@ -3,11 +3,10 @@ package no.statkart.skif.storetest.persistence;
 import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store5.persistence.PersistenceSessionManager;
+import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
 import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;

@@ -23,9 +23,9 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate;
-import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
-import no.statkart.skif.store5.persistence.PersistenceSessionManager;
-import no.statkart.skif.store5.persistence.PersistenceSessionManagerProvider;
+import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
+import no.statkart.skif.store.persistence.PersistenceSessionManager;
+import no.statkart.skif.store.persistence.PersistenceSessionManagerProvider;
 import no.statkart.skif.store5.persistence.hibernate.*;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store5.persistence.jdbc.ConnectionManagerUsingHibernate;
@@ -148,8 +148,8 @@ public class StoreTestTxManagementServerModule extends SkifModule {
         }
 
         PersistenceSessionManager persistenceSessionManager = new DefaultPersistenceSessionManager(
-                new DefaultHibernatePersistenceSession(hibernateSessionFactoryManagerBundle.getBundle().get(0)),
-                new DefaultHibernatePersistenceSession(hibernateSessionFactoryManagerBundle.getBundle().get(1))
+                new HibernatePersistenceSessionMasterImpl(hibernateSessionFactoryManagerBundle.getBundle().get(0)),
+                new HibernatePersistenceSessionMasterImpl(hibernateSessionFactoryManagerBundle.getBundle().get(1))
         );
         connectionManager = new ConnectionManagerUsingHibernate(persistenceSessionManager);
 

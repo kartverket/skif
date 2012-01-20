@@ -3,7 +3,7 @@ package no.statkart.skif.store5.persistence.hibernate;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store5.persistence.PersistenceSessionManager;
+import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import org.hibernate.Session;
 
 /**

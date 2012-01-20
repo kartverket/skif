@@ -26,17 +26,17 @@ import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
-import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImpl;
+import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImpl326;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
-import no.statkart.skif.store5.MemoryLockerSingleton5;
-import no.statkart.skif.store5.StoreServer5;
-import no.statkart.skif.store5.StoreSessionServer5;
-import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
-import no.statkart.skif.store5.persistence.DefaultPersistenceSessionStrategy;
-import no.statkart.skif.store5.persistence.PersistenceSessionManager;
-import no.statkart.skif.store5.persistence.PersistenceSessionManagerProvider;
+import no.statkart.skif.store.MemoryLockerSingleton5;
+import no.statkart.skif.store.StoreServer5;
+import no.statkart.skif.store.StoreSessionServer5;
+import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
+import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
+import no.statkart.skif.store.persistence.PersistenceSessionManager;
+import no.statkart.skif.store.persistence.PersistenceSessionManagerProvider;
 import no.statkart.skif.store5.persistence.hibernate.*;
 import no.statkart.skif.store5.persistence.jdbc.ConnectionManagerUsingHibernate;
 import no.statkart.skif.store5.persistence.kode.DefaultKodePersistenceSession;
@@ -211,11 +211,11 @@ public class StoreTestServerModule extends SkifModule {
             hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
         }
 
-        DefaultHibernatePersistenceSession persistenceSessionMasterCurrent = new DefaultHibernatePersistenceSessionImpl(
+        HibernatePersistenceSessionMasterImpl persistenceSessionMasterCurrent = new DefaultHibernatePersistenceSessionImpl326(
                 hibernateSessionFactoryManagerBundle.getBundle().get(0)
         );
 
-        DefaultHibernatePersistenceSession persistenceSessionMasterOld = new DefaultHibernatePersistenceSessionImpl(
+        HibernatePersistenceSessionMasterImpl persistenceSessionMasterOld = new DefaultHibernatePersistenceSessionImpl326(
                 hibernateSessionFactoryManagerBundle.getBundle().get(1)
         );
 

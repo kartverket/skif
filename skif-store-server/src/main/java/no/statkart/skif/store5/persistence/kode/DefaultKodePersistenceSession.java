@@ -8,7 +8,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.*;
-import no.statkart.skif.store5.persistence.PersistenceSessionForSnapshot;
+import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMaster;
 import no.statkart.skif.util.KodeMsg;
 

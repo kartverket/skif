@@ -1,16 +1,12 @@
 package no.statkart.skif.store5.persistence.jdbc;
 
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
 import no.statkart.skif.persistence5.jdbc.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store5.persistence.PersistenceSessionManager;
+import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * ConnectionManager som oppretter connections via en tilknyttet {@link PersistenceSessionManager} og underliggende

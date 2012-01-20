@@ -1,7 +1,6 @@
 package no.statkart.skif.store5.persistence.hibernate;
 
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store5.persistence.PersistenceSessionMaster;
+import no.statkart.skif.store.persistence.PersistenceSessionMaster;
 import org.hibernate.Session;
 
 /**

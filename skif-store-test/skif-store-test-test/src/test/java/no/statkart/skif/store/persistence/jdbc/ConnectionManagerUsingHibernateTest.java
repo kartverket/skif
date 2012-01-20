@@ -5,8 +5,8 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.persistence5.jdbc.ConnectionForSnapshotVersion;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
-import no.statkart.skif.store5.persistence.hibernate.DefaultHibernatePersistenceSession;
+import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
+import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store5.persistence.jdbc.ConnectionManagerUsingHibernate;
@@ -45,8 +45,8 @@ public class ConnectionManagerUsingHibernateTest {
         HibernateSessionFactoryBuilder sessionFactoryBuilder = createHibernateSessionFactoryBuilderWithHistory();
         sessionFactoryManagerBundle = createHibernateSessionFactorManagerBundle(sessionFactoryBuilder, hibernateProperties);
         persistenceSessionManager = new DefaultPersistenceSessionManager(
-                new DefaultHibernatePersistenceSession(sessionFactoryManagerBundle.getBundle().get(0)),
-                new DefaultHibernatePersistenceSession(sessionFactoryManagerBundle.getBundle().get(1))
+                new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0)),
+                new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1))
         );
         connectionManager = new ConnectionManagerUsingHibernate(persistenceSessionManager);
     }

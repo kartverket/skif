@@ -5,11 +5,10 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
-import no.statkart.skif.store5.*;
-import no.statkart.skif.store5.persistence.DefaultPersistenceSessionManager;
-import no.statkart.skif.store5.persistence.DefaultPersistenceSessionStrategy;
-import no.statkart.skif.store5.persistence.PersistenceSessionManager;
-import no.statkart.skif.store5.persistence.hibernate.DefaultHibernatePersistenceSession;
+import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
+import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
+import no.statkart.skif.store.persistence.PersistenceSessionManager;
+import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store5.persistence.hibernate.HibernatePersistenceSessionMaster;
 import no.statkart.skif.store5.persistence.hibernate.HibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store5.persistence.kode.DefaultKodePersistenceSession;
@@ -107,10 +106,10 @@ public class StoreSessionServerTest {
 
         KodeMsg kodeMsg = new DemoKodeMsg();
 
-        DefaultHibernatePersistenceSession masterCurrent = new DefaultHibernatePersistenceSession(
+        HibernatePersistenceSessionMasterImpl masterCurrent = new HibernatePersistenceSessionMasterImpl(
                 sessionFactoryManagerBundle.getBundle().get(0)
         );
-        DefaultHibernatePersistenceSession masterOld = new DefaultHibernatePersistenceSession(
+        HibernatePersistenceSessionMasterImpl masterOld = new HibernatePersistenceSessionMasterImpl(
                 sessionFactoryManagerBundle.getBundle().get(1)
         );
 
