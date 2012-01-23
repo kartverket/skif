@@ -6,19 +6,19 @@ import no.statkart.skif.exception.ImplementationException;
 /**
  * @author Henrik Fredholm
  */
-public class StoreServer5 extends AbstractStore5 {
+public class StoreServer extends AbstractStore {
 
-    public StoreServer5(StoreSessionServer5 storeSession) {
+    public StoreServer(StoreSessionServer storeSession) {
         this(storeSession, null);
     }
 
-    public StoreServer5(StoreSessionServer5 storeSessionServer, Injector injector) {
+    public StoreServer(StoreSessionServer storeSessionServer, Injector injector) {
         super(storeSessionServer, injector);
         storeSessionServer.setStore(this);
     }
-    protected StoreSessionServer5 storeServerSession() {
-        if (storeSession instanceof StoreSessionServer5) {
-            return (StoreSessionServer5)storeSession;
+    protected StoreSessionServer storeServerSession() {
+        if (storeSession instanceof StoreSessionServer) {
+            return (StoreSessionServer)storeSession;
         } else {
             throw new ImplementationException("UnitOfWork is active");
         }

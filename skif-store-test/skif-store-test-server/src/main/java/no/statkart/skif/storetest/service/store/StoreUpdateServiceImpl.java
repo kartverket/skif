@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.StoreServer5;
+import no.statkart.skif.store.StoreServer;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.Collection;
  */
 public class StoreUpdateServiceImpl implements StoreUpdateService {
     @Inject
-    StoreServer5 store;
+    StoreServer store;
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(@Nullable I bubbleId) throws ObjectNotFoundException {

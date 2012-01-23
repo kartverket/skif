@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author Henrik Fredholm
  */
-public interface TransactionalLocker5 extends Synchronization {
+public interface TransactionalLocker extends Synchronization {
 
    /** Sets the LockerService used by this TransactionalLocker */
    LockerService5 getLockerService();

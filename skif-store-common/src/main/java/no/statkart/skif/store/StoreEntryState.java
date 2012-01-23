@@ -3,6 +3,6 @@ package no.statkart.skif.store;
 /**
  * @author Henrik Fredholm
  */
-public enum StoreEntryState5 {
+public enum StoreEntryState {
     UNCHANGED, INSERTED, INSERTED_DELETED, UPDATED, DELETED
 }

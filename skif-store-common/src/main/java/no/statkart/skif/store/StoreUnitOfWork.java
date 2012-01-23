@@ -6,23 +6,23 @@ import java.util.List;
 /**
  * @author Henrik Fredholm
  */
-public class StoreUnitOfWork5 extends AbstractStoreSession5 {
-    protected final WrappableStoreSession5 wrappedStoreSession;
+public class StoreUnitOfWork extends AbstractStoreSession {
+    protected final WrappableStoreSession wrappedStoreSession;
 
-    public StoreUnitOfWork5(int level, WrappableStoreSession5 wrappedStoreSession, StoreCache5 storeCache) {
+    public StoreUnitOfWork(int level, WrappableStoreSession wrappedStoreSession, StoreCache storeCache) {
         super(level, storeCache);
         this.wrappedStoreSession = wrappedStoreSession;
     }
 
-    public StoreUnitOfWork5 beginUnitOfWork() {
-        return new StoreUnitOfWork5(level+1, wrappedStoreSession, storeCache);
+    public StoreUnitOfWork beginUnitOfWork() {
+        return new StoreUnitOfWork(level+1, wrappedStoreSession, storeCache);
     }
 
-    public WrappableStoreSession5 abortUnitOfWork() {
+    public WrappableStoreSession abortUnitOfWork() {
         return this;
     }
 
-    public WrappableStoreSession5 endUnitOfWork() {
+    public WrappableStoreSession endUnitOfWork() {
         return this;
     }
 
@@ -30,7 +30,7 @@ public class StoreUnitOfWork5 extends AbstractStoreSession5 {
         return null;
     }
 
-    WrappableStoreSession5 commitUnitOfWork() {
+    WrappableStoreSession commitUnitOfWork() {
         return this;
     }
 
@@ -47,12 +47,12 @@ public class StoreUnitOfWork5 extends AbstractStoreSession5 {
 
 
     @Override
-    public <T extends BubbleObject> StoreEntry5 registerEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry registerEntry(int level, T bubbleObject) {
         return wrappedStoreSession.registerEntry(level, bubbleObject);
     }
 
     @Override
-    public <T extends BubbleObject> StoreEntry5 registerLockedEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry registerLockedEntry(int level, T bubbleObject) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -67,37 +67,37 @@ public class StoreUnitOfWork5 extends AbstractStoreSession5 {
     }
 
     @Override
-    public <T extends BubbleObject> StoreEntry5 insertEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry insertEntry(int level, T bubbleObject) {
         return wrappedStoreSession.insertEntry(level, bubbleObject);
     }
 
     @Override
-    public <T extends BubbleObject> StoreEntry5 updateEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry updateEntry(int level, T bubbleObject) {
         return wrappedStoreSession.updateEntry(level, bubbleObject);
     }
 
     @Override
-    public <T extends BubbleObject> StoreEntry5 deleteEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry deleteEntry(int level, T bubbleObject) {
         return wrappedStoreSession.deleteEntry(level, bubbleObject);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry5> getEntries(int level, Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> getEntries(int level, Collection<I> bubbleIds) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry5 loadEntry(int level, I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry loadEntry(int level, I bubbleId) {
         return wrappedStoreSession.loadEntry(level, bubbleId);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry5> loadEntries(int level, Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Collection<I> bubbleIds) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry5 lockEntry(int level, I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
         return wrappedStoreSession.lockEntry(level, bubbleId);
     }
 

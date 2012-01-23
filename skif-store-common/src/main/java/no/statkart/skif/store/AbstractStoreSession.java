@@ -7,26 +7,26 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
 /**
  * @author Henrik Fredholm
  */
-public abstract class AbstractStoreSession5 implements WrappableStoreSession5 {
+public abstract class AbstractStoreSession implements WrappableStoreSession {
     protected final int level;
-    protected final StoreCache5 storeCache;
+    protected final StoreCache storeCache;
     protected final Set<BubbleId<?>> modifiedByThisLevel= new LinkedHashSet<BubbleId<?>>(150);
     protected final Set<BubbleId<?>> lockedByThisLevel= new HashSet<BubbleId<?>>(150);
 
-    protected AbstractStoreSession5(int level, StoreCache5 storeCache) {
+    protected AbstractStoreSession(int level, StoreCache storeCache) {
         this.level = level;
         this.storeCache = storeCache;
     }
 
     @Override
     public final <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
-        StoreEntry5 entry = getEntry(level, bubbleId);
+        StoreEntry entry = getEntry(level, bubbleId);
         return (T)entry.getBubbleObject(level);
     }
 
     @Override
-    public final <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry5 getEntry(int level, I bubbleId) {
-        StoreEntry5 entry = storeCache.get(bubbleId);
+    public final <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry getEntry(int level, I bubbleId) {
+        StoreEntry entry = storeCache.get(bubbleId);
         if (entry == null) {
             entry = loadEntry(level, bubbleId);
         }
@@ -49,7 +49,7 @@ public abstract class AbstractStoreSession5 implements WrappableStoreSession5 {
 
         for (I bubbleId : bubbleIds) {
             orderedBubbleIds.add(bubbleId);
-            final StoreEntry5 storeEntry = storeCache.get(bubbleId);
+            final StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry != null && storeEntry.getBubbleObject(level)!= null) {
                 bubbleObjects.add((T)storeEntry.getBubbleObject(level));
             } else {
@@ -63,14 +63,14 @@ public abstract class AbstractStoreSession5 implements WrappableStoreSession5 {
 
         // Sjekk om alle ble funnet
         if (missingBubbleIds!=null) {
-            final Collection<StoreEntry5> storeEntries = getEntries(level, missingBubbleIds);
-            final Map<BubbleId<?>, StoreEntry5> storeEntryMap = new HashMap<BubbleId<?>, StoreEntry5>(storeEntries.size());
-            for (StoreEntry5 storeEntry : storeEntries) {
+            final Collection<StoreEntry> storeEntries = getEntries(level, missingBubbleIds);
+            final Map<BubbleId<?>, StoreEntry> storeEntryMap = new HashMap<BubbleId<?>, StoreEntry>(storeEntries.size());
+            for (StoreEntry storeEntry : storeEntries) {
                 storeEntryMap.put(storeEntry.getId(), storeEntry);
             }
             for (int i = 0; i < bubbleObjects.size(); i++) {
                 if (bubbleObjects.get(i)==null) {
-                    final StoreEntry5 storeEntry = storeEntryMap.get(orderedBubbleIds.get(i));
+                    final StoreEntry storeEntry = storeEntryMap.get(orderedBubbleIds.get(i));
                     bubbleObjects.set(i, (T)storeEntry.getBubbleObject(level));
                 }
             }
@@ -85,7 +85,7 @@ public abstract class AbstractStoreSession5 implements WrappableStoreSession5 {
 
     @Override
     public final <T extends BubbleObject> T register(T bubbleObject) {
-        StoreEntry5 entry = registerEntry(level, bubbleObject);
+        StoreEntry entry = registerEntry(level, bubbleObject);
         return (T) entry.getBubbleObject(level);
     }
 
@@ -106,7 +106,7 @@ public abstract class AbstractStoreSession5 implements WrappableStoreSession5 {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I bubbleId) {
-        StoreEntry5 entry = lockEntry(level, bubbleId);
+        StoreEntry entry = lockEntry(level, bubbleId);
         return (T)entry.getBubbleObject(level);
     }
 

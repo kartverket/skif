@@ -72,8 +72,8 @@ public class StoreTestClientModule extends SkifModule {
     @Provides
     @Singleton
     Store storeProvider(StoreService storeService, Injector injector) {
-        StoreSessionClient5 storeSession = new StoreSessionClient5(storeService);
-        Store store = new StoreClient5(storeSession, injector);
+        StoreSessionClient storeSession = new StoreSessionClient(storeService);
+        Store store = new StoreClient(storeSession, injector);
         injector.injectMembers(store);
         return store;
     }

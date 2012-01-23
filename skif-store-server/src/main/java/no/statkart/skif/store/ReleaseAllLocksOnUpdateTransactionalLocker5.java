@@ -42,7 +42,7 @@ import java.util.*;
  *
  * @author Henrik Fredholm
  */
-public class ReleaseAllLocksOnUpdateTransactionalLocker5 implements TransactionalLocker5 {
+public class ReleaseAllLocksOnUpdateTransactionalLocker5 implements TransactionalLocker {
    private static Logger log = LoggerFactory.getLogger(ReleaseAllLocksOnUpdateTransactionalLocker5.class);
 
    /**

@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * @author Henrik Fredholm
  */
-public interface StoreLocker5 {
+public interface StoreLocker {
     /**
      * Unlocks a previously locked object. If the object has been locked in the current transaction it
      * is unlocked immediately. If the object has been locked in a previous transaction it is unlocked

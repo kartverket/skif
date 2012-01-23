@@ -13,9 +13,9 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
 /**
  * @author Henrik Fredholm
  */
-public class StoreSessionServer5 extends AbstractStoreSession5 {
+public class StoreSessionServer extends AbstractStoreSession {
     private final PersistenceSessionManager persistenceSessionManager;
-    private final List<StoreSessionReadListener5> readListeners = new ArrayList<StoreSessionReadListener5>();
+    private final List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
     private Store store;
     private Provider<VersionFinder> versionFinderProvider;
 
@@ -23,14 +23,14 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
     /**
      * Låser tatt for inneværende service
      */
-    private TransactionalLocker5 transactionalLocker;
+    private TransactionalLocker transactionalLocker;
 
 
-    public StoreSessionServer5(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
-        this(persistenceSessionManager, new StoreCache5(), versionFinderProvider, lockerService);
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService);
     }
 
-    public StoreSessionServer5(PersistenceSessionManager persistenceSessionManager, StoreCache5 storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
         super(0, storeCache);
         this.persistenceSessionManager = persistenceSessionManager;
         this.transactionalLocker = new ReleaseAllLocksOnUpdateTransactionalLocker5(lockerService, "principal", lockTimeout);
@@ -39,7 +39,7 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
 
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry5 loadEntry(int level, I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry loadEntry(int level, I bubbleId) {
         T bubbleObject = load(bubbleId);
         return storeCache.registerUnchanged(level, bubbleObject);
     }
@@ -48,16 +48,16 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
         T bubbleObject = persistenceSessionManager.get(bubbleId);
         bubbleObject.register(store);
         T processedBubbleObject = bubbleObject;
-        for (StoreSessionReadListener5 readListener : readListeners) {
+        for (StoreSessionReadListener readListener : readListeners) {
             processedBubbleObject = readListener.onRegister(processedBubbleObject);
         }
         return bubbleObject;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry5> getEntries(int level, Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> getEntries(int level, Collection<I> bubbleIds) {
         // TODO: Optimize for bulk access
-        Collection<StoreEntry5> result = new ArrayList<StoreEntry5>(bubbleIds.size());
+        Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
         for (I bubbleId : bubbleIds) {
               result.add(getEntry(level, bubbleId));
         }
@@ -66,9 +66,9 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
 
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry5> loadEntries(int level, Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Collection<I> bubbleIds) {
         // TODO: Optimize for bulk access
-        Collection<StoreEntry5> result = new ArrayList<StoreEntry5>(bubbleIds.size());
+        Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
         for (I bubbleId : bubbleIds) {
             result.add(loadEntry(level, bubbleId));
         }
@@ -89,7 +89,7 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
         List<I> missingBubbleIds = null;
 
         for (I bubbleId : bubbleIds) {
-            final StoreEntry5 storeEntry = storeCache.get(bubbleId);
+            final StoreEntry storeEntry = storeCache.get(bubbleId);
             final BubbleObject bubbleObject = storeEntry == null ? null : storeEntry.getBubbleObject(level);
             if (bubbleObject != null) {
                 bubbleObjects.add((T) bubbleObject);
@@ -103,11 +103,11 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
 
         if (missingBubbleIds != null) {
             if (missingBubbleIds.size() == 1) {
-                StoreEntry5 entry = loadEntry(level, missingBubbleIds.get(0));
+                StoreEntry entry = loadEntry(level, missingBubbleIds.get(0));
                 bubbleObjects.add((T) entry.getBubbleObject(level));
             } else {
-                Collection<StoreEntry5> entries = loadEntries(level, missingBubbleIds);
-                for (StoreEntry5 entry : entries) {
+                Collection<StoreEntry> entries = loadEntries(level, missingBubbleIds);
+                for (StoreEntry entry : entries) {
                     bubbleObjects.add((T) entry.getBubbleObject(level));
 
                 }
@@ -119,7 +119,7 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
      * For StoreSessionServer har denne meotden samme funksjonalitet som {@link #getEntry(int, no.statkart.skif.store.BubbleId)}
      */
     @Override
-    public <T extends BubbleObject> StoreEntry5 registerEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry registerEntry(int level, T bubbleObject) {
         return getEntry(level, bubbleObject.getId());
     }
 
@@ -127,7 +127,7 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
      * For StoreSessionServer har denne meotden samme funksjonalitet som {@link #lockEntry(int, no.statkart.skif.store.BubbleId)}
      */
     @Override
-    public <T extends BubbleObject> StoreEntry5 registerLockedEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry registerLockedEntry(int level, T bubbleObject) {
         return lockEntry(level, bubbleObject.getId());
     }
 
@@ -137,10 +137,10 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
     }
 
     @Override
-    public <T extends BubbleObject> StoreEntry5 insertEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry insertEntry(int level, T bubbleObject) {
         modifiedByThisLevel.add(bubbleObject.getId());
 
-        StoreEntry5 entry = storeCache.get(bubbleObject.getId());
+        StoreEntry entry = storeCache.get(bubbleObject.getId());
 
         if (entry == null) {
             entry = storeCache.registerInserted(level, bubbleObject);
@@ -154,10 +154,10 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
                 case UPDATED:
                     throw new ImplementationException("Forsøk på å kalle insert for objekt hvor update allerede har blitt kaldt: " + bubbleObject.getId());
                 case DELETED:
-                    entry.setState(level, StoreEntryState5.UPDATED);
+                    entry.setState(level, StoreEntryState.UPDATED);
                     break;
                 case INSERTED_DELETED:
-                    entry.setState(level, StoreEntryState5.INSERTED);
+                    entry.setState(level, StoreEntryState.INSERTED);
                     break;
             }
             T oldInstance = (T) entry.getBubbleObject(level);
@@ -176,10 +176,10 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
     }
 
     @Override
-    public <T extends BubbleObject> StoreEntry5 updateEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry updateEntry(int level, T bubbleObject) {
 
         boolean isNewInstance;
-        StoreEntry5 entry = storeCache.get(bubbleObject.getId());
+        StoreEntry entry = storeCache.get(bubbleObject.getId());
 
         if (entry == null) {
             transactionalLocker.registerUpdated(bubbleObject.getId());
@@ -192,7 +192,7 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
                 case INSERTED:
                     break;
                 case UNCHANGED:
-                    entry.setStateCheckLocked(level, StoreEntryState5.UPDATED);
+                    entry.setStateCheckLocked(level, StoreEntryState.UPDATED);
                     transactionalLocker.registerUpdated(bubbleObject.getId());
                     modifiedByThisLevel.add(bubbleObject.getId());
                     break;
@@ -223,21 +223,21 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
         return entry;
     }
 
-    public <T extends BubbleObject> StoreEntry5 deleteEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry deleteEntry(int level, T bubbleObject) {
         modifiedByThisLevel.add(bubbleObject.getId());
 
-        StoreEntry5 entry = storeCache.get(bubbleObject.getId());
+        StoreEntry entry = storeCache.get(bubbleObject.getId());
         if (entry == null) {
             entry = storeCache.registerNewDeleted(level, bubbleObject);
             bubbleObject.register(store);
         } else {
             switch (entry.getState(level)) {
                 case INSERTED:
-                    entry.setStateCheckLocked(level, StoreEntryState5.INSERTED_DELETED);
+                    entry.setStateCheckLocked(level, StoreEntryState.INSERTED_DELETED);
                     break;
                 case UNCHANGED:
                 case UPDATED:
-                    entry.setStateCheckLocked(level, StoreEntryState5.DELETED);
+                    entry.setStateCheckLocked(level, StoreEntryState.DELETED);
                     break;
                 case DELETED:
                 case INSERTED_DELETED:
@@ -312,8 +312,8 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
      * @return låst objekt
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry5 lockEntry(int level, I bubbleId) {
-        StoreEntry5 storeEntry = storeCache.get(bubbleId);
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
+        StoreEntry storeEntry = storeCache.get(bubbleId);
         if (storeEntry != null) {
             int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
             if (lockLevel == level) {
