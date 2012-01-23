@@ -10,9 +10,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  */
 public interface Store {
-    void init();
     void clear();
-
     <T extends BubbleObject, I extends BubbleId<? extends T>> T get(@Nullable I bubbleId);
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds);
     <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<I> bubbleIds);

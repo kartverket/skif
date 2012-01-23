@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.config;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
@@ -11,6 +12,7 @@ import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.persistence.ResourceManager;
+import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
 import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersionProvider;
 import no.statkart.skif.persistence.jdbc.ConnectionManager;
@@ -104,7 +106,7 @@ public class StoreTestServerModule extends SkifModule {
     @Provides
     @ServiceRequestScoped
     StoreServer5 provideStoreServer(PersistenceSessionManager persistenceSessionManager) {
-        StoreServer5 storeServer = new StoreServer5(new StoreSessionServer5(persistenceSessionManager, MemoryLockerSingleton5.getInstance()));
+        StoreServer5 storeServer = new StoreServer5(new StoreSessionServer5(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance()));
         return storeServer;
     }
 

@@ -9,7 +9,9 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
@@ -19,66 +21,61 @@ import static org.testng.Assert.assertNotNull;
  * @author Henrik Fredholm
  */
 @Test
-public class StoreServiceTest extends StoreTestTestCase {
+public class StoreTest extends StoreTestTestCase {
 
     @Inject
-    private StoreService storeService;
+    private Store store;
 
-    public void testStoreService() {
-        StoreService store = injector.getInstance(Key.get(StoreService.class));
+    public void testStoreGet() {
         TestBubbleId<?> a1Id = new TestBubbleId<TestBubble>(1);
         List<TestBubbleId> ids = new ArrayList<TestBubbleId>();
         ids.add(a1Id);
 
-        TestBubble bubble = store.getObject(a1Id);
+        TestBubble bubble = store.get(a1Id);
         assertEquals(a1Id, bubble.getId());
 
-        List<TestBubble> bubbles = store.getObjects(ids);
+        List<TestBubble> bubbles = store.get(ids);
         assertEquals(1, bubbles.size());
         assertEquals(a1Id, bubbles.get(0).getId());
     }
 
 
     public void testStoreGetOld() {
-        StoreService store = injector.getInstance(Key.get(StoreService.class));
         TestBubbleId<?> a1Id = new TestBubbleId<TestBubble>(1L, SnapshotVersion.OLD);
 
-        TestBubble bubble = store.getObject(a1Id);
+        TestBubble bubble = store.get(a1Id);
         assertEquals(a1Id, bubble.getId());
         assertEquals(bubble.getId().getSnapshotVersion(), SnapshotVersion.OLD);
     }
 
     @Test
     public void testStoreGetFoo() {
-
-        StoreService store = injector.getInstance(Key.get(StoreService.class));
-
-        Foo currentFoo = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.CURRENT));
+        Foo currentFoo = store.get(new FooId<Foo>(new Long(100), SnapshotVersion.CURRENT));
         assertNotNull(currentFoo);
         Assert.assertEquals(currentFoo.getNr(), 2200);
         Assert.assertEquals(currentFoo.getNavn(), "KARTVEIEN");
 
-        Foo oldestFoo = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:00:30.00")));
+        Foo oldestFoo = store.get(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:00:30.00")));
         Assert.assertNotNull(oldestFoo);
         Assert.assertEquals(oldestFoo.getNr(), 2200);
         Assert.assertEquals(oldestFoo.getNavn(), "KARTGATA");
 
-        Foo newerFoo = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:01:30.00")));
+        Foo newerFoo = store.get(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:01:30.00")));
         Assert.assertNotNull(newerFoo);
         Assert.assertEquals(newerFoo.getNr(), 2200);
         Assert.assertEquals(newerFoo.getNavn(), "KARTVEGEN");
 
-        Foo newerFoo2 = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:02:30.00")));
+        Foo newerFoo2 = store.get(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:02:30.00")));
         Assert.assertNotNull(newerFoo2);
         Assert.assertEquals(newerFoo2.getNr(), 2200);
         Assert.assertEquals(newerFoo2.getNavn(), "KARTVEIEN");
 
-        Foo newerFoo3 = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:03:30.00")));
+        Foo newerFoo3 = store.get(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:03:30.00")));
         Assert.assertNotNull(newerFoo3);
         Assert.assertEquals(newerFoo3.getNr(), 2200);
         Assert.assertEquals(newerFoo3.getNavn(), "KART-VEIEN");
 
-        Foo newerFoo4 = store.getObject(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:04:30.00")));
+        Foo newerFoo4 = store.get(new FooId<Foo>(new Long(100), SnapshotVersion.createInstance("2011-10-02 08:04:30.00")));
         Assert.assertNotNull(newerFoo4);
         Assert.assertEquals(newerFoo4.getNr(), 2200);
         Assert.assertEquals(newerFoo4.getNavn(), "KARTVEIEN");
@@ -91,14 +88,13 @@ public class StoreServiceTest extends StoreTestTestCase {
      */
     @Test
     public void testStoreGetFooFlereSnapshotVersions() {
-        StoreService store = injector.getInstance(StoreService.class);
 
         ArrayList<FooId<Foo>> ids = new ArrayList<FooId<Foo>>();
         ids.add(new FooId<Foo>(100L, SnapshotVersion.CURRENT));
         ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:00:30.00")));
         ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:01:30.00")));
         ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:06:30.00")));
-        List<Foo> foos = store.getObjects(ids);
+        List<Foo> foos = store.get(ids);
 
         Assert.assertEquals(foos.size(), 4);
 
@@ -109,22 +105,19 @@ public class StoreServiceTest extends StoreTestTestCase {
      */
     @Test
     public void testStoreGetManyFoos() {
-        StoreService store = injector.getInstance(StoreService.class);
 
         FooId<Foo> fooId_100 = new FooId<Foo>(100L);
         FooId<Foo> fooId_101 = new FooId<Foo>(101L);
         FooId<Foo> fooId_100_080030 = new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:00:30.00"));
         FooId<Foo> fooId_100_080130 = new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:01:30.00"));
 
-        assertThat(store.getObjects(Arrays.asList(fooId_101, fooId_100))).hasSize(2);
-        assertThat(store.getObjects(Arrays.asList(fooId_101, fooId_100))).onProperty("id.value").contains(101L, 100L);
+        assertThat(store.get(Arrays.asList(fooId_101, fooId_100))).hasSize(2);
+        assertThat(store.get(Arrays.asList(fooId_101, fooId_100))).onProperty("id.value").contains(101L, 100L);
     }
 
     @Test
     public void testStoreGetBar() {
-        StoreService store = injector.getInstance(StoreService.class);
-        Bar bar = store.getObject(new BarId<Bar>(1001L));
-
+        Bar bar = store.get(new BarId<Bar>(1001L));
         Assert.assertEquals(bar.getHusnr(), 106);
         Assert.assertEquals(bar.getBokstav(), null);
         Assert.assertEquals(bar.getFooId().getValue(), new Long(100));
@@ -132,28 +125,28 @@ public class StoreServiceTest extends StoreTestTestCase {
         Assert.assertEquals(bar.getFooId().getSnapshotVersion(), SnapshotVersion.CURRENT);
         Assert.assertEquals(bar.getBazId().getSnapshotVersion(), SnapshotVersion.CURRENT);
 
-        Baz baz = store.getObject(bar.getBazId());
+        Baz baz = store.get(bar.getBazId());
         Assert.assertEquals(baz.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
         Assert.assertEquals(baz.getFooId().getSnapshotVersion(), SnapshotVersion.CURRENT);
 
 
-        Foo foo = store.getObject(bar.getFooId());
+        Foo foo = store.get(bar.getFooId());
         assertEquals(foo.getNavn(), "KARTVEIEN");
 
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:03:15.00");
-        Bar olderBar = store.getObject(new BarId<Bar>(1001L, snapshotVersion));
+        Bar olderBar = store.get(new BarId<Bar>(1001L, snapshotVersion));
         Assert.assertEquals(olderBar.getHusnr(), 105);
         Assert.assertEquals(olderBar.getBokstav(), null);
         Assert.assertEquals(olderBar.getFooId().getValue(), new Long(100));
         Assert.assertEquals(olderBar.getId().getSnapshotVersion(), snapshotVersion);
         Assert.assertEquals(olderBar.getFooId().getSnapshotVersion(), snapshotVersion);
 
-        baz = store.getObject(olderBar.getBazId());
+        baz = store.get(olderBar.getBazId());
         Assert.assertEquals(baz.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
         Assert.assertEquals(baz.getFooId().getSnapshotVersion(), SnapshotVersion.CURRENT);
 
 
-        Foo olderFoo = store.getObject(olderBar.getFooId());
+        Foo olderFoo = store.get(olderBar.getFooId());
         assertEquals(olderFoo.getNavn(), "KART-VEIEN");
 
     }

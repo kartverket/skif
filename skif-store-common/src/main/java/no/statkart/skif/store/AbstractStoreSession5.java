@@ -1,9 +1,8 @@
 package no.statkart.skif.store;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
+
+import static no.statkart.skif.guava.Preconditions.checkNotNull;
 
 /**
  * @author Henrik Fredholm
@@ -40,8 +39,43 @@ public abstract class AbstractStoreSession5 implements WrappableStoreSession5 {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(Collection<I> bubbleIds) {
+        checkNotNull(bubbleIds, "bubbleIds");
+
+        ArrayList<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
+        ArrayList<I> orderedBubbleIds = new ArrayList<I>(bubbleIds.size());
+        Collections.fill(bubbleObjects, null);
+        ArrayList<I> missingBubbleIds = null;
+
+        for (I bubbleId : bubbleIds) {
+            orderedBubbleIds.add(bubbleId);
+            final StoreEntry5 storeEntry = storeCache.get(bubbleId);
+            if (storeEntry != null && storeEntry.getBubbleObject(level)!= null) {
+                bubbleObjects.add((T)storeEntry.getBubbleObject(level));
+            } else {
+                bubbleObjects.add(null);  // null er plassholder
+                if (missingBubbleIds == null) {
+                    missingBubbleIds = new ArrayList<I>(bubbleIds.size());
+                }
+                missingBubbleIds.add(bubbleId);
+            }
+        }
+
+        // Sjekk om alle ble funnet
+        if (missingBubbleIds!=null) {
+            final Collection<StoreEntry5> storeEntries = getEntries(level, missingBubbleIds);
+            final Map<BubbleId<?>, StoreEntry5> storeEntryMap = new HashMap<BubbleId<?>, StoreEntry5>(storeEntries.size());
+            for (StoreEntry5 storeEntry : storeEntries) {
+                storeEntryMap.put(storeEntry.getId(), storeEntry);
+            }
+            for (int i = 0; i < bubbleObjects.size(); i++) {
+                if (bubbleObjects.get(i)==null) {
+                    final StoreEntry5 storeEntry = storeEntryMap.get(orderedBubbleIds.get(i));
+                    bubbleObjects.set(i, (T)storeEntry.getBubbleObject(level));
+                }
+            }
+        }
+        return bubbleObjects;
     }
 
     @Override
@@ -74,5 +108,10 @@ public abstract class AbstractStoreSession5 implements WrappableStoreSession5 {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I bubbleId) {
         StoreEntry5 entry = lockEntry(level, bubbleId);
         return (T)entry.getBubbleObject(level);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

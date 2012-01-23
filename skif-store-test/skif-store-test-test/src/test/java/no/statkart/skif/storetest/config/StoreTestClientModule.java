@@ -45,27 +45,37 @@ public class StoreTestClientModule extends SkifModule {
                 .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
         );
         //Legger til DBLockerService dersom man kjører i singleVm. Denne tjenesten finnes ikke som en webservice, og kan derfor ikke legges til ved kjøring av tester i client/server
-        if(moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
+        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
             install(new RemoteServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices(), new StoreTestMapper().getMapping())); // Angir bare en mapping, siden det er irrelevant for en intern tjeneste
             bind(DBLockerService.class).to(no.statkart.skif.storetest.service.locker.DBLockerService.class);
             bind(DBLockerInTransactionService.class).to(no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class);
         }
-        bind(StoreReadChain.class).to(StoreReadChainClient.class);
+        //bind(StoreReadChain.class).to(StoreReadChainClient.class);
         bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
     }
 
+    /*
+        @Provides
+        @Singleton
+        Store storeProvider(StoreReadChain storeReadChain, Injector injector) {
+            StoreCache storeCache = new StoreCache();
+            StoreSessionChain[] storeChainList = {
+                    new StoreSessionReadClient(storeReadChain)
+            };
+            StoreClient store = new StoreClient(storeCache, storeChainList);
+            injector.injectMembers(store);
+            store.init();
+            return store;
+        }
+    */
+
     @Provides
     @Singleton
-    Store storeProvider(StoreReadChain storeReadChain, Injector injector) {
-        StoreCache storeCache = new StoreCache();
-        StoreSessionChain[] storeChainList = {
-                new StoreSessionReadClient(storeReadChain)
-        };
-        StoreClient store = new StoreClient(storeCache, storeChainList);
+    Store storeProvider(StoreService storeService, Injector injector) {
+        StoreSessionClient5 storeSession = new StoreSessionClient5(storeService);
+        Store store = new StoreClient5(storeSession, injector);
         injector.injectMembers(store);
-        store.init();
         return store;
     }
-
 
 }

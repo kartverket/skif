@@ -16,10 +16,9 @@ public class AbstractStore5 implements Store {
     protected WrappableStoreSession5 storeSession;
     final private Injector injector;
 
-    public AbstractStore5(StoreSessionServer5 storeSession, Injector injector) {
+    public AbstractStore5(WrappableStoreSession5 storeSession, Injector injector) {
         this.injector = injector;
         this.storeSession = storeSession;
-        storeSession.setStore(this);
     }
 
     protected StoreUnitOfWork5 storeUnitOfWork() {
@@ -36,11 +35,6 @@ public class AbstractStore5 implements Store {
 
     public <T> T getInstance(Key<T> key) {
         return injector.getInstance(key);
-    }
-
-    @Override
-    public void init() {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
@@ -97,7 +91,7 @@ public class AbstractStore5 implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return storeSession.getOrdered(bubbleIds);
     }
 
     @Override
@@ -180,12 +174,12 @@ public class AbstractStore5 implements Store {
 
     @Override
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return storeSession.getVersions(id, start, end);
     }
 
     @Override
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return storeSession.getVersionsForList(ids, start, end);
     }
 
     @Override

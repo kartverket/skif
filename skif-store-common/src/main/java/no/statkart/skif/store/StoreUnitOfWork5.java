@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -98,6 +99,11 @@ public class StoreUnitOfWork5 extends AbstractStoreSession5 {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry5 lockEntry(int level, I bubbleId) {
         return wrappedStoreSession.lockEntry(level, bubbleId);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
+        return wrappedStoreSession.getVersions(id, start, end);
     }
 }
 

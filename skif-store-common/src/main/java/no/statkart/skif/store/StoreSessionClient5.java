@@ -1,40 +1,34 @@
 package no.statkart.skif.store;
 
-import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.persistence.VersionFinder;
-import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.util.CopyHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static no.statkart.skif.guava.Preconditions.checkNotNull;
 
 /**
+ * StoreSession som utgjør avsluttende ledd på klienten. Klassen anvender en {@link StoreService} for å hente
+ * objekter fra server
+ *
  * @author Henrik Fredholm
+ * @since 2.1
  */
-public class StoreSessionServer5 extends AbstractStoreSession5 {
-    private final PersistenceSessionManager persistenceSessionManager;
-    private final List<StoreSessionReadListener5> readListeners = new ArrayList<StoreSessionReadListener5>();
+public class StoreSessionClient5 extends AbstractStoreSession5 {
+    private final StoreService storeService;
     private Store store;
-    private Provider<VersionFinder> versionFinderProvider;
-
-    private long lockTimeout = 240 * 60 * 1000 /* 4 timer */;
-    /**
-     * Låser tatt for inneværende service
-     */
-    private TransactionalLocker5 transactionalLocker;
 
 
-    public StoreSessionServer5(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
-        this(persistenceSessionManager, new StoreCache5(), versionFinderProvider, lockerService);
+    public StoreSessionClient5(StoreService storeService) {
+        this(storeService, new StoreCache5());
     }
 
-    public StoreSessionServer5(PersistenceSessionManager persistenceSessionManager, StoreCache5 storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
+    public StoreSessionClient5(StoreService storeService, StoreCache5 storeCache) {
         super(0, storeCache);
-        this.persistenceSessionManager = persistenceSessionManager;
-        this.transactionalLocker = new ReleaseAllLocksOnUpdateTransactionalLocker5(lockerService, "principal", lockTimeout);
-        this.versionFinderProvider = versionFinderProvider;
+        this.storeService = storeService;
     }
 
 
@@ -45,12 +39,8 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
     }
 
     private <T extends BubbleObject, I extends BubbleId<? extends T>> T load(I bubbleId) {
-        T bubbleObject = persistenceSessionManager.get(bubbleId);
+        T bubbleObject = storeService.getObject(bubbleId);
         bubbleObject.register(store);
-        T processedBubbleObject = bubbleObject;
-        for (StoreSessionReadListener5 readListener : readListeners) {
-            processedBubbleObject = readListener.onRegister(processedBubbleObject);
-        }
         return bubbleObject;
     }
 
@@ -116,7 +106,7 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
     }
 
     /**
-     * For StoreSessionServer har denne meotden samme funksjonalitet som {@link #getEntry(int, no.statkart.skif.store.BubbleId)}
+     * For StoreSessionServer har denne meotden samme funksjonalitet som {@link #getEntry(int, BubbleId)}
      */
     @Override
     public <T extends BubbleObject> StoreEntry5 registerEntry(int level, T bubbleObject) {
@@ -124,7 +114,7 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
     }
 
     /**
-     * For StoreSessionServer har denne meotden samme funksjonalitet som {@link #lockEntry(int, no.statkart.skif.store.BubbleId)}
+     * For StoreSessionServer har denne meotden samme funksjonalitet som {@link #lockEntry(int, BubbleId)}
      */
     @Override
     public <T extends BubbleObject> StoreEntry5 registerLockedEntry(int level, T bubbleObject) {
@@ -166,12 +156,6 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
                 entry.setBubbleObject(level, bubbleObject);
             }
         }
-        transactionalLocker.registerInserted(bubbleObject.getId());
-
-        if (level == 0) {
-            // TODO kall writelisteners her
-            persistenceSessionManager.insert(bubbleObject);
-        }
         return entry;
     }
 
@@ -182,7 +166,6 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
         StoreEntry5 entry = storeCache.get(bubbleObject.getId());
 
         if (entry == null) {
-            transactionalLocker.registerUpdated(bubbleObject.getId());
             entry = storeCache.registerNewUpdated(level, bubbleObject);
             modifiedByThisLevel.add(bubbleObject.getId());
             bubbleObject.register(store);
@@ -193,7 +176,6 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
                     break;
                 case UNCHANGED:
                     entry.setStateCheckLocked(level, StoreEntryState5.UPDATED);
-                    transactionalLocker.registerUpdated(bubbleObject.getId());
                     modifiedByThisLevel.add(bubbleObject.getId());
                     break;
                 case UPDATED:
@@ -213,12 +195,6 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
             } else {
                 isNewInstance = false;
             }
-        }
-
-        // TODO kall writelisteners her, før registering slik at de kan bytte ut til lokalt object om  nødvendig
-        T processedObject = bubbleObject;
-        if (isNewInstance || processedObject != bubbleObject) {
-            persistenceSessionManager.update(processedObject);
         }
         return entry;
     }
@@ -250,20 +226,12 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
                 bubbleObject.register(store);
             }
         }
-        transactionalLocker.registerRemoved(bubbleObject.getId());
 
-        // TODO kall writelisteners her, før registering slik at de kan bytte ut til lokalt object om  nødvendig
-        T processedObject = bubbleObject;
-
-        persistenceSessionManager.delete(processedObject);
         return entry;
     }
 
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
         boolean evictedFromCache = storeCache.evict(level, bubbleId);
-        if (evictedFromCache) {
-            persistenceSessionManager.evict(bubbleId);
-        }
         return evictedFromCache;
     }
 
@@ -283,12 +251,10 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
     }
 
     public void beginTransaction() {
-        persistenceSessionManager.beginTransaction();
     }
 
     public void commit() {
-        finish();
-        persistenceSessionManager.commit();
+        throw new ImplementationException("Cant commit");
     }
 
     /**
@@ -321,7 +287,6 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
             } else if (lockLevel == 0) {
                 // Låst for level 0, må fullinitialiserer og lage kopi
                 T bubbleObject = (T) storeEntry.getBubbleObject(0);
-                persistenceSessionManager.ensureFullyLoaded(bubbleObject);
                 T copy = CopyHelper.copy(bubbleObject);
                 storeEntry.setLocked(level, copy);
             } else if (lockLevel != -1) {
@@ -331,11 +296,11 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
                 storeEntry.setLocked(level, copy);
             } else {
                 // Uvist om låst
-                boolean isNew = transactionalLocker.lock(bubbleId);
+                boolean isNew = true; //transactionalLocker.lock(bubbleId);
                 if (isNew) {
                     // Objekt var ikke låst fra før, må gjøre en refresh
                     T bubbleObject = (T) storeEntry.getBubbleObject(0);
-                    persistenceSessionManager.refresh(bubbleObject);
+                    //persistenceSessionManager.refresh(bubbleObject);
                     if (level != 0) {
                         T copy = CopyHelper.copy(bubbleObject);
                         storeEntry.setLocked(level, copy);
@@ -353,14 +318,14 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
             }
         } else {
             // Ingen entry
-            boolean isNew = transactionalLocker.lock(bubbleId);
+            boolean isNew = true; // transactionalLocker.lock(bubbleId);
             T bubbleObject;
             if (isNew) {
                 // Objekt var ikke låst fra før, må gjøre en refresh
-                bubbleObject = persistenceSessionManager.refresh(bubbleId);
+                bubbleObject = null; //persistenceSessionManager.refresh(bubbleId);
             } else {
                 // Objekt var allrede låst, ingen behov for refresh
-                bubbleObject = persistenceSessionManager.get(bubbleId);
+                bubbleObject = null; //persistenceSessionManager.get(bubbleId);
             }
             storeEntry = storeCache.registerUnchanged(0, bubbleObject);
             if (level == 0) {
@@ -375,16 +340,11 @@ public class StoreSessionServer5 extends AbstractStoreSession5 {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
-        return versionFinderProvider.get().findBubbleIdsForInterval(id, start, end);
+        return storeService.getVersions(id, start,end);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
-        VersionFinder versionFinder = versionFinderProvider.get();
-        Map<I, List<I>> retur  = new HashMap<I, List<I>>();
-        for (I id : ids) {
-            retur.put(id, versionFinder.findBubbleIdsForInterval(id, start, end));
-        }
-        return retur;
-        }
+        return storeService.getVersionsForList(ids, start,end);
+    }
 }

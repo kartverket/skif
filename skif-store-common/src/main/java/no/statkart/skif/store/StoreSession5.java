@@ -4,6 +4,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -23,6 +24,8 @@ public interface StoreSession5 {
      * @return
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds);
+
+    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(Collection<I> bubbleIds);
 
     /**
      * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet

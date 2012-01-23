@@ -1,6 +1,8 @@
 package no.statkart.skif.store;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Henrik Fredholm
@@ -21,5 +23,8 @@ public interface WrappableStoreSession5 extends StoreSession5 {
     <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry5 lockEntry(int level, I bubbleId);
 
 
+    <T extends BubbleObject, I extends BubbleId<? extends T>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
+
+    <T extends BubbleObject, I extends BubbleId<? extends T>>  Map<I,List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end);
 }
 
