@@ -1,3 +1,31 @@
+
+create table ParrentBubble (
+  id number(19,0) not null,
+  Text Varchar2(255),
+  Primary Key (Id)
+);
+
+CREATE TABLE CHILDFORPARRENT(
+  id number (19,0) not null,
+  parrentBubbleId number(19,0) not null,
+  childBubbleId number(19,0) not null,
+  Primary Key (id)
+);
+
+create table ChildBubble(
+  id number(19,0) not null,
+  TEXT VARCHAR2(255),
+  testEntityId number(19,0),
+  PRIMARY KEY (ID)
+) ;
+
+alter table ChildForParrent add constraint FK23723BEA16AF2FAB foreign key (parrentBubbleId) references ParrentBubble;
+ALTER TABLE CHILDFORPARRENT ADD CONSTRAINT FK_CHILDFORPARRENT_CHILD FOREIGN KEY (CHILDBUBBLEID) REFERENCES CHILDBUBBLE;
+
+
+
+
+
 create table TestEntity (
 id number(19,0) not null,
 Text Varchar2(255),
@@ -29,6 +57,9 @@ create table LockInfo (
    expires timestamp not null,
    primary key (id, class)
 );
+
+
+
 
 create table AKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, primary key (id) );
 create table AKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));

@@ -6,9 +6,7 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.*;
-import no.statkart.skif.storetest.domain.demo.Foo;
-import no.statkart.skif.storetest.domain.demo.TestBubble;
-import no.statkart.skif.storetest.domain.demo.TestEntity;
+import no.statkart.skif.storetest.domain.demo.*;
 
 import java.util.Properties;
 
@@ -61,6 +59,8 @@ public class TestHelper {
         return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate")
                 .addResource(TestEntity.class)
                 .addResource(TestBubble.class)
+                .addResource(ParrentBubble.class)
+                .addResource(ChildBubble.class)
                 .addResource(Foo.class);
     }
 

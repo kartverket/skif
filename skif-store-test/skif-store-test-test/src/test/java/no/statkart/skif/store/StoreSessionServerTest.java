@@ -4,6 +4,7 @@ import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
@@ -17,10 +18,7 @@ import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManag
 import no.statkart.skif.store.persistence.kode.DefaultKodePersistenceSession;
 import no.statkart.skif.store.persistence.kode.EnumKodeManager;
 import no.statkart.skif.storetest.TestHelper;
-import no.statkart.skif.storetest.domain.demo.Foo;
-import no.statkart.skif.storetest.domain.demo.FooId;
-import no.statkart.skif.storetest.domain.demo.TestBubble;
-import no.statkart.skif.storetest.domain.demo.TestBubbleId;
+import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.ADbKode;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
@@ -38,10 +36,12 @@ import java.util.Set;
 import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactorManagerBundle;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertSame;
 
 /**
  * @author Henrik Fredholm
+ * @author Jan Holmen
  */
 @Test
 public class StoreSessionServerTest {
@@ -70,6 +70,10 @@ public class StoreSessionServerTest {
     FooId<Foo> FooId_101_OLD = new FooId<Foo>(101L, SnapshotVersion.OLD);
 
     TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<TestBubble>(101);
+    ParrentBubbleId<ParrentBubble> ParrentBubbleId_101 = new ParrentBubbleId<ParrentBubble>(101);
+    ChildBubbleId<ChildBubble> ChildBubbleId_101 = new ChildBubbleId<ChildBubble>(101);
+    ChildBubbleId<ChildBubble> ChildBubbleId_102 = new ChildBubbleId<ChildBubble>(102);
+    Long childForParrentId_102 = (long) 102;
 
     HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
     PersistenceSessionManager persistenceSessionManager;
@@ -131,12 +135,15 @@ public class StoreSessionServerTest {
     @BeforeMethod
     public void createStore() {
         persistenceSessionManager = createPersistenceSessionManager();
-        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null),  MemoryLockerSingleton5.getInstance()));
+        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance()));
 
         HibernatePersistenceSessionMaster persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMaster.class);
         try {
             Session session = persistenceSessionMaster.reserveSession();
             session.createQuery("delete from TestBubble where id>100").executeUpdate();
+            session.createQuery("delete from ChildForParrent where id>100").executeUpdate();
+            session.createQuery("delete from ParrentBubble where id>100").executeUpdate();
+            session.createQuery("delete from ChildBubble where id>100").executeUpdate();
         } finally {
             persistenceSessionMaster.releaseSession();
         }
@@ -262,4 +269,61 @@ public class StoreSessionServerTest {
         storeServer.commit();
         assertSame(storeServer.get(TestBubbleId_101), testBubble_101_2);
     }
+
+    public void testInsertHirarki() {
+        ParrentBubble testBubble_101 = new ParrentBubble(ParrentBubbleId_101);
+        testBubble_101.setText("Insert parrent 1");
+
+        ChildBubble test2Bubble_101 = new ChildBubble(ChildBubbleId_101);
+        test2Bubble_101.setText("Insert child 1");
+        testBubble_101.addChild(ChildBubbleId_101,(long)101);
+
+        ChildBubble test2Bubble_102 = new ChildBubble(ChildBubbleId_102);
+        test2Bubble_102.setText("Insert child 2");
+        testBubble_101.addChild(ChildBubbleId_102,(long)102);
+        test2Bubble_102.setTestBubbleId(new TestBubbleId<TestBubble>(2));
+
+        storeServer.beginTransaction();
+        storeServer.insert(test2Bubble_101);
+        storeServer.insert(test2Bubble_102);
+        storeServer.insert(testBubble_101);
+
+        ChildForParrent childForParrent = testBubble_101.getChildForParrent(ChildBubbleId_101);
+        ParrentBubble parrentBubble = childForParrent.getParrentBubble();
+        assertNotNull(parrentBubble);
+        storeServer.finish();
+        storeServer.commit();
+    }
+
+//    /**
+//     * Dennne kan kjøres manuelt. Det er sjekket at ingen ting kommer i databasen hvis en exception kastes.
+//     */
+//    @Test(invocationCount = 0)
+//    public void testInsertHirarki_Exception() {
+//        ParrentBubble testBubble_101 = new ParrentBubble(ParrentBubbleId_101);
+//        testBubble_101.setText("Insert parrent 1");
+//
+//        ChildBubble test2Bubble_101 = new ChildBubble(ChildBubbleId_101);
+//        test2Bubble_101.setText("Insert child 1");
+//        testBubble_101.addChild(ChildBubbleId_101,(long)101);
+//
+//        ChildBubble test2Bubble_102 = new ChildBubble(ChildBubbleId_102);
+//        test2Bubble_102.setText("Insert child 2");
+//        testBubble_101.addChild(ChildBubbleId_102,(long)102);
+//        test2Bubble_102.setTestBubbleId(new TestBubbleId<TestBubble>(2));
+//
+//        storeServer.beginTransaction();
+//        storeServer.insert(test2Bubble_101);
+//        storeServer.insert(test2Bubble_102);
+//        storeServer.insert(testBubble_101);
+//
+//        ChildForParrent childForParrent = testBubble_101.getChildForParrent(ChildBubbleId_101);
+//        ParrentBubble parrentBubble = childForParrent.getParrentBubble();
+//        assertNotNull(parrentBubble);
+//         if(1==1)throw new ImplementationException("test");
+//        storeServer.finish();
+//        storeServer.commit();
+//    }
+
+
 }

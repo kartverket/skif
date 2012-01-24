@@ -138,6 +138,8 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(XStrDbKode.class)
                 .addResource(StoreTestDbKodelisteLong.class)
                 .addResource(TestBubble.class)
+                .addResource(ChildBubble.class)
+                .addResource(ParrentBubble.class)
                 .addResource(Foo.class)
                 .addResource(Baz.class)
                 .addResource(Raz.class)

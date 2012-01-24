@@ -31,9 +31,7 @@ import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.PersistenceSessionManagerProvider;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.storetest.domain.demo.Foo;
-import no.statkart.skif.storetest.domain.demo.TestBubble;
-import no.statkart.skif.storetest.domain.demo.TestEntity;
+import no.statkart.skif.storetest.domain.demo.*;
 import org.hibernate.cfg.Environment;
 
 import java.sql.Connection;
@@ -82,6 +80,8 @@ public class StoreTestTxManagementServerModule extends SkifModule {
         HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate")
                 .addResource(TestEntity.class)
                 .addResource(TestBubble.class)
+                .addResource(ChildBubble.class)
+                .addResource(ParrentBubble.class)
                 .addResource(Foo.class);
 
 

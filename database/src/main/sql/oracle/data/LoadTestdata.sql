@@ -2,6 +2,29 @@ insert into TestEntity values (1, 'Text 1');
 insert into TestBubble values (1, 'Text 1');
 insert into TestBubble values (2, 'Text 2');
 
+
+
+insert into ParrentBuble values (1, 'Parrent 1');
+insert into ParrentBuble values (2, 'Parrent 2');
+insert into ParrentBuble values (3, 'Parrent 3');
+
+insert into ChildBubble values (1, 'Child 1.1',null);
+insert into ChildBubble values (2, 'Child 1.2',null);
+insert into ChildBubble values (3, 'Child 1.3',null);
+insert into ChildBubble values (4, 'Child 2.1',null);
+insert into ChildBubble values (5, 'Child 2.2',1);
+
+insert into ChildForParrent values(1,1,1);
+insert into ChildForParrent values(2,1,2);
+insert into ChildForParrent values(3,1,3);
+insert into ChildForParrent values(4,2,1);
+insert into ChildForParrent values(5,2,2);
+
+
+
+
+
+
 insert into TableSequence (tableName, nextFreeNumber) values ('GLOBAL_SEQUENCE',999999);
 
 insert into AKode values(1, 'A1');
@@ -98,3 +121,8 @@ insert into FooForBarFoos_H (BarFoosId, fooId, TBEGIN,TEND) values (2001, 101, s
 insert into GEOMETRICELEMENT_H(id, point, polygon, TBEGIN, TEND, TVERSION) values (1, MDSYS.SDO_GEOMETRY(2001,null,MDSYS.SDO_POINT_TYPE(608000,6650000,null),null,null), MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(607900, 6649900, 608100, 6649900, 608100, 6650100, 607900, 6650100, 607900, 6649900)), snapshot_time.to_t('2011-10-02 08:00:31.00'),snapshot_time.to_t('2011-10-02 08:03:31.00'),1);
 insert into GEOMETRICELEMENT_H(id, point, polygon, TBEGIN, TEND, TVERSION) values (1, MDSYS.SDO_GEOMETRY(2001,null,MDSYS.SDO_POINT_TYPE(608010,6650010,null),null,null), MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(607910, 6649910, 608110, 6649910, 608110, 6650110, 607910, 6650110, 607910, 6649910)), snapshot_time.to_t('2011-10-02 08:03:31.00'),snapshot_time.to_t('2011-10-02 08:05:31.00'),2);
 insert into GEOMETRICELEMENT_H(id, point, polygon, TBEGIN, TEND, TVERSION) values (1, MDSYS.SDO_GEOMETRY(2001,null,MDSYS.SDO_POINT_TYPE(608020,6650020,null),null,null), MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(607920, 6649920, 608100, 6649920, 608120, 6650120, 607920, 6650120, 607920, 6649920)), snapshot_time.to_t('2011-10-02 08:05:31.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),3);
+
+
+
+
+
