@@ -1,7 +1,6 @@
 package no.statkart.skif.store;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Henrik Fredholm
@@ -9,56 +8,56 @@ import java.util.List;
 public class StoreUnitOfWork extends AbstractStoreSession {
     protected final WrappableStoreSession wrappedStoreSession;
 
-    public StoreUnitOfWork(int level, WrappableStoreSession wrappedStoreSession, StoreCache storeCache) {
+    // Flags to detect improper usage of the unit of work.
+    protected boolean accessedAfterLastCallToGetTransfer;
+    protected boolean getTransferHasBeenCalled;
+
+    public StoreUnitOfWork(int level, WrappableStoreSession wrappedStoreSession, StoreCache storeCache, Store store) {
         super(level, storeCache);
+        this.setStore(store);
         this.wrappedStoreSession = wrappedStoreSession;
     }
 
-    public StoreUnitOfWork beginUnitOfWork() {
-        return new StoreUnitOfWork(level+1, wrappedStoreSession, storeCache);
-    }
-
-    public WrappableStoreSession abortUnitOfWork() {
-        return this;
-    }
-
-    public WrappableStoreSession endUnitOfWork() {
-        return this;
-    }
-
-    public UnitOfWorkTransfer getUnitOfWorkTransfer() {
-        return null;
-    }
-
-    WrappableStoreSession commitUnitOfWork() {
-        return this;
-    }
-
-
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId) {
+        return wrappedStoreSession.isLocked(bubbleId);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-
-    @Override
-    public <T extends BubbleObject> StoreEntry registerEntry(int level, T bubbleObject) {
-        return wrappedStoreSession.registerEntry(level, bubbleObject);
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry insertEntry(int level, T bubbleObject) {
+        return wrappedStoreSession.insertEntry(level, bubbleObject);
     }
 
     @Override
-    public <T extends BubbleObject> StoreEntry registerLockedEntry(int level, T bubbleObject) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry updateEntry(int level, T bubbleObject) {
+        return wrappedStoreSession.updateEntry(level, bubbleObject);
     }
 
     @Override
-    public void registerTransfer(int level, UnitOfWorkTransfer transfer) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry deleteEntry(int level, T bubbleObject) {
+        return wrappedStoreSession.deleteEntry(level, bubbleObject);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry loadEntry(int level, I bubbleId, boolean refresh) {
+        return wrappedStoreSession.loadEntry(level, bubbleId, false);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Set<I> bubbleIds, boolean refresh) {
+        return wrappedStoreSession.loadEntries(level, bubbleIds, false);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
+        StoreEntry entry = wrappedStoreSession.lockEntry(level, bubbleId);
+        modifiedMap.put(entry.getId(), entry);
+        return entry;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry unlockEntry(int level, I bubbleId) {
+        return wrappedStoreSession.unlockEntry(level, bubbleId);
     }
 
     @Override
@@ -67,43 +66,82 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject> StoreEntry insertEntry(int level, T bubbleObject) {
-        return wrappedStoreSession.insertEntry(level, bubbleObject);
+    public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
+        wrappedStoreSession.ensureFullyLoaded(bubbleObject);
     }
 
-    @Override
-    public <T extends BubbleObject> StoreEntry updateEntry(int level, T bubbleObject) {
-        return wrappedStoreSession.updateEntry(level, bubbleObject);
+    public WrappableStoreSession abortUnitOfWork() {
+        for (StoreEntry storeEntry : modifiedMap.values()) {
+            storeEntry.abort(level);
+            if (storeEntry.isLockedByLevel(level)) {
+                wrappedStoreSession.unlockEntry(level, storeEntry.getId());
+            }
+            if (storeEntry.getLoadedByLevel()==level) {
+                storeCache.remove(storeEntry.getId());
+            }
+        }
+        modifiedMap.clear();
+        return wrappedStoreSession;
     }
 
-    @Override
-    public <T extends BubbleObject> StoreEntry deleteEntry(int level, T bubbleObject) {
-        return wrappedStoreSession.deleteEntry(level, bubbleObject);
+    public WrappableStoreSession endUnitOfWork() {
+        // TODO: check modified etter getUnitOfWorkTransfer
+        return wrappedStoreSession;
     }
 
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> getEntries(int level, Collection<I> bubbleIds) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public UnitOfWorkTransfer getUnitOfWorkTransfer() {
+        accessedAfterLastCallToGetTransfer = false;
+        getTransferHasBeenCalled = true;
+
+        return getSnapshot();
     }
 
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry loadEntry(int level, I bubbleId) {
-        return wrappedStoreSession.loadEntry(level, bubbleId);
+    public UnitOfWorkTransfer getSnapshot() {
+        LinkedHashSet<BubbleId<?>> newIds = new LinkedHashSet<BubbleId<?>>();
+        LinkedHashSet<BubbleId<?>> updatedIds = new LinkedHashSet<BubbleId<?>>();
+        LinkedHashSet<BubbleId<?>> deletedIds = new LinkedHashSet<BubbleId<?>>();
+
+        Map newAndUpdatedObjects = new HashMap();
+        for (Map.Entry<BubbleId<?>, StoreEntry> mapEntry : modifiedMap.entrySet()) {
+            StoreEntry storeCacheEntry = mapEntry.getValue();
+            StoreEntryState state = storeCacheEntry.getState(level);
+            switch (state) {
+                case INSERTED:
+                    newIds.add(mapEntry.getKey());
+                    newAndUpdatedObjects.put(mapEntry.getKey(), storeCacheEntry.getBubbleObject(level));
+                    break;
+                case UPDATED:
+                    updatedIds.add(mapEntry.getKey());
+                    newAndUpdatedObjects.put(mapEntry.getKey(), storeCacheEntry.getBubbleObject(level));
+                    break;
+                case DELETED:
+                    deletedIds.add(mapEntry.getKey());
+                    break;
+            }
+        }
+        return new UnitOfWorkTransfer(newAndUpdatedObjects, deletedIds, newIds, updatedIds);
     }
 
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Collection<I> bubbleIds) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    protected boolean isAccessedAfterGetTransfer() {
+        return accessedAfterLastCallToGetTransfer && getTransferHasBeenCalled;
     }
 
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
-        return wrappedStoreSession.lockEntry(level, bubbleId);
+    WrappableStoreSession commitUnitOfWork() {
+        wrappedStoreSession.commitUnitOfWork(modifiedMap);
+        return wrappedStoreSession;
     }
+
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
         return wrappedStoreSession.getVersions(id, start, end);
     }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
+        return wrappedStoreSession.getVersionsForList(ids, start, end);
+    }
+
+
 }
 

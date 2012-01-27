@@ -5,8 +5,11 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
+import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
+import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.storetest.domain.demo.*;
+import org.hibernate.Session;
 
 import java.util.Properties;
 
@@ -64,4 +67,24 @@ public class TestHelper {
                 .addResource(Foo.class);
     }
 
+    public static void deletePriviouslyWritenTestBubbles(PersistenceSessionForSnapshot persistenceSessionForSnapshot) {
+        try {
+            Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
+            hibernateSession.createQuery("delete from TestBubble where id>100").executeUpdate();
+        } finally {
+            persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
+        }
+
+
+    }
+
+    public static int countInDatabase(PersistenceSessionForSnapshot persistenceSessionForSnapshot, TestBubbleId<TestBubble> bubbleId) {
+        try {
+            Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
+            return hibernateSession.createQuery("select id from TestBubble where id=:id").setLong("id", bubbleId.getValue()).list().size();
+        } finally {
+            persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
+        }
+
+    }
 }

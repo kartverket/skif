@@ -16,24 +16,31 @@ public class StoreServer extends AbstractStore {
         super(storeSessionServer, injector);
         storeSessionServer.setStore(this);
     }
+
     protected StoreSessionServer storeServerSession() {
-        if (storeSession instanceof StoreSessionServer) {
-            return (StoreSessionServer)storeSession;
-        } else {
-            throw new ImplementationException("UnitOfWork is active");
-        }
+        if (storeSession instanceof StoreSessionServer) return (StoreSessionServer) storeSession;
+        throw new ImplementationException("UnitOfWork is active");
     }
 
     public void beginTransaction() {
         storeServerSession().beginTransaction();
     }
 
+
+    public void commitTransaction() {
+        storeServerSession().commitTransaction();
+    }
+
+    public void rollbackTransaction() {
+        storeServerSession().rollbackTransaction();
+
+    }
+
+    public void flush() {
+        storeServerSession().flush();
+    }
+
     public void finish() {
         storeServerSession().finish();
     }
-
-    public void commit() {
-        storeServerSession().commit();
-    }
-
 }

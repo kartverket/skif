@@ -28,6 +28,7 @@ import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
+import no.statkart.skif.store.persistence.*;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate;
@@ -37,10 +38,6 @@ import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWit
 import no.statkart.skif.store.MemoryLockerSingleton5;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.StoreSessionServer;
-import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
-import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
-import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.store.persistence.PersistenceSessionManagerProvider;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
@@ -101,6 +98,7 @@ public class StoreTestServerModule extends SkifModule {
 
         bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
         bind(Session.class).toProvider(SessionProvider.class);
+        bind(PersistenceSessionForSnapshot.class).toProvider(PersistenceSessionForSnapshotProvider.class);
 
 
     }

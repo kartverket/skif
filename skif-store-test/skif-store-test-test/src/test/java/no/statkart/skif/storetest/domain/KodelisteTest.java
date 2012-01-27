@@ -92,16 +92,16 @@ public class KodelisteTest extends StoreTestTestCase {
         assertNotNull(kodelisteTransfer);
     }
 
-    public void testKodeIdLookup() {
-        KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
-        Store store = injector.getInstance(Store.class);
-        KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
-        List<Kode> objects = new ArrayList<Kode>();
-        store.register(kodelisteTransfer.getObjects(), objects);
-        KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
-        BEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(BEnumKodeId.class, "B");
-        assertSame(bKodeId, BEnumKodeId.KodeBId);
-    }
+//    public void testKodeIdLookup() {
+//        KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
+//        Store store = injector.getInstance(Store.class);
+//        KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
+//        List<Kode> objects = new ArrayList<Kode>();
+//        store.register(kodelisteTransfer.getObjects(), objects);
+//        KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
+//        BEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(BEnumKodeId.class, "B");
+//        assertSame(bKodeId, BEnumKodeId.KodeBId);
+//    }
 
 
     public void testEnumKodeLokale() {

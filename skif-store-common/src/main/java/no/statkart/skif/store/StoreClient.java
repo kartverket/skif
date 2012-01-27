@@ -12,9 +12,9 @@ public class StoreClient extends AbstractStore {
         this(storeSession, null);
     }
 
-    public StoreClient(StoreSessionClient storeSessionServer, Injector injector) {
-        super(storeSessionServer, injector);
-        storeSessionServer.setStore(this);
+    public StoreClient(StoreSessionClient storeSessionClient, Injector injector) {
+        super(storeSessionClient, injector);
+        storeSessionClient.setStore(this);
     }
     protected StoreSessionClient storeClientSession() {
         if (storeSession instanceof StoreSessionClient) {

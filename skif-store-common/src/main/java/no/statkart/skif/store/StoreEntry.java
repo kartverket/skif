@@ -5,21 +5,23 @@ package no.statkart.skif.store;
  */
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.util.CopyHelper;
 
 /**
+ *
  * @author Henrik Fredholm
  */
 public class StoreEntry {
-    final int MAX_LEVELS = 4;
+    final static int MAX_LEVELS = 4;
     BubbleId<?> id;
+    protected BubbleObject persistentBubbleObject;
     protected BubbleObject[] bubbleObject = new BubbleObject[MAX_LEVELS];
     protected StoreEntryState[] state = new StoreEntryState[MAX_LEVELS];
-    protected boolean[] locked = new boolean[MAX_LEVELS];
-    protected boolean[] lockedByLevel = new boolean[MAX_LEVELS];
 
-    public StoreEntry(BubbleObject bubbleObject) {
-        this(bubbleObject, StoreEntryState.UNCHANGED);
-    }
+    // TODO: Denne kan tas bort og modelleres via StoreEntryState.LOCKED_UNCHANED
+    protected boolean[] locked = new boolean[MAX_LEVELS];
+    protected int loadedByLevel;
+    protected int lockCreatedByLevel;
 
     public StoreEntry(int level, BubbleObject bubbleObject, StoreEntryState state) {
         this(bubbleObject.getId());
@@ -33,8 +35,41 @@ public class StoreEntry {
         this.state[0] = state;
     }
 
+    public void setPersistentBubbleObject(BubbleObject bubbleObject, BubbleObject persistentBubbleObject) {
+        this.persistentBubbleObject = persistentBubbleObject;
+        this.bubbleObject[0] = bubbleObject;
+    }
+
+    public BubbleObject getPersistentBubbleObject() {
+        return persistentBubbleObject;
+    }
+
+    public boolean hasSeparatePersistentBubbleObject() {
+        return persistentBubbleObject==this.bubbleObject[0];
+    }
+
+    public int getLoadedByLevel() {
+        return loadedByLevel;
+    }
+
+    public void setLoadedByLevel(int loadedByLevel) {
+        this.loadedByLevel = loadedByLevel;
+    }
+
+    public int getLockCreatedByLevel() {
+        return lockCreatedByLevel;
+    }
+
+    public void setLockCreatedByLevel(int lockCreatedByLevel) {
+        this.lockCreatedByLevel = lockCreatedByLevel;
+    }
+
     public StoreEntry(BubbleId<?> id) {
         this.id = id;
+        for (int i = 0; i < state.length; i++) {
+            state[i] = StoreEntryState.NULL;
+
+        }
     }
 
     public BubbleId<?> getId() {
@@ -45,13 +80,12 @@ public class StoreEntry {
         return bubbleObject[level];
     }
 
-
     public void setBubbleObject(int level, BubbleObject bubbleObject) {
         this.bubbleObject[level] = bubbleObject;
     }
 
     public BubbleObject getDerivedBubbleObject(int level) {
-        while (bubbleObject[level] == null) level--;
+        while (level>0 && bubbleObject[level] == null) level--;
         return bubbleObject[level];
     }
 
@@ -64,79 +98,16 @@ public class StoreEntry {
     }
 
     public StoreEntryState getDerivedState(int level) {
-        while (state[level] == null) level--;
+        while (level>0 && state[level] == StoreEntryState.NULL) level--;
         return state[level];
     }
 
-    public void setStateCheckLocked(int level, StoreEntryState state) {
-        if (this.locked[level]!= true) {
-            throw new ImplementationException("Objekt har ikke blitt låst for StoreSession Level " + level  +": " + id);
+    public void setStateAndCheckLocked(int level, StoreEntryState state) {
+        if (this.locked[level] != true) {
+            throw new ImplementationException("Objekt har ikke blitt låst for StoreSession Level " + level + ": " + id);
         }
         this.state[level] = state;
     }
-
-
-//    public T getBubbleObjectIfLocked() {
-//        if (state == StoreEntryState.UNLOCKED) {
-//            return null;
-//        } else {
-//            return bubbleObject;
-//        }
-//    }
-
-
-//    public void replaceIfExistingIsUnlockedAndOlder(StoreEntry<T> newEntry, Store store, StoreEntryState newState) {
-//        if (state == StoreEntryState.UNLOCKED) {
-//            if (bubbleObject==null || bubbleObject.getVersion() < newEntry.bubbleObject.getVersion()) {
-//                // Replace the original
-//                bubbleObject = newEntry.bubbleObject;
-//                bubbleObject.register(store);
-//            }  else {
-//                // Keep the original
-//            }
-//            state = newState;
-//        } else {
-//           if (bubbleObject.getVersion() < newEntry.getBubbleObject().getVersion()) {
-//               throw new ImplementationException("Attempt to register a bubbleObject with a higher version than the existing locked object. Call update() instead");
-//           } else {
-//               // Keep the original
-//           }
-//           // No need to change state
-//        }
-//    }
-
-//    public void replaceObjectIfUnlocked(StoreEntry<T> newEntry, Store store) {
-//        if (state == StoreEntryState.UNLOCKED) {
-//            if (bubbleObject==null || bubbleObject.getVersion() < newEntry.bubbleObject.getVersion()) {
-//                // Replace the original
-//                bubbleObject = newEntry.bubbleObject;
-//                bubbleObject.register(store);
-//            }  else {
-//                // Keep the original
-//            }
-//            state = StoreEntryState.LOCKED;
-//        } else {
-//           if (bubbleObject.getVersion() < newEntry.getBubbleObject().getVersion()) {
-//               throw new ImplementationException("Attempt to register a bubbleObject with a higher version than the existing locked object. Call update() instead");
-//           } else {
-//               // Keep the original
-//           }
-//           // No need to change state
-//        }
-//    }
-//
-//
-//    public boolean reloadNeeded(LockMode lockMode) {
-//        if (lockMode == LockMode.WRITE && state == StoreEntryState.UNLOCKED) {
-//            return true;
-//        } else {
-//            return bubbleObject==null;
-//        }
-//    }
-//
-//    public boolean isLocked() {
-//        return state != StoreEntryState.UNLOCKED;
-//    }
 
     /**
      * Beregner hvilket level eksisterende lås gjelder for startende fra {@code level}
@@ -145,6 +116,7 @@ public class StoreEntry {
      * @return level som lås gjelder for eller -1 hvis ingen lås
      */
     public int calcLockLevelStartingFrom(int level) {
+
         while (locked[level] == false) {
             level = level - 1;
             if (level == -1) break;
@@ -154,39 +126,114 @@ public class StoreEntry {
 
     /**
      * Setter level til locked og sette bubbleObject som må være dekoplet underliggende session
+     *
      * @param level
      * @param bubbleObject
      */
     public void setLocked(int level, BubbleObject bubbleObject) {
-        if (this.locked[level]== true) {
-            throw new ImplementationException("Objekt er allerede låst for StoreSession Level " + level  +": " + bubbleObject.getId());
+        if (this.locked[level] == true) {
+            throw new ImplementationException("Objekt er allerede låst for StoreSession Level " + level + ": " + bubbleObject.getId());
         }
         makeStale(level);
         this.bubbleObject[level] = bubbleObject;
         this.locked[level] = true;
+        this.state[level] = StoreEntryState.UNCHANGED;
     }
 
+    public void unlock(int level) {
+        this.locked[level]=false;
+    }
+
+
     private void makeStale(int level) {
-        if (bubbleObject[level]!=null) {
+        if (bubbleObject[level] != null) {
             // TODO implement
         }
     }
 
-    public void setLocked() {
-        if (this.bubbleObject[0]== null) {
-            throw new ImplementationException("Objekt er ikke satt for StoreSession Level " + 0  +": " + id);
+    public void setLocked(int level) {
+        if (this.bubbleObject[level] == null) {
+            throw new ImplementationException("Objekt er ikke satt for StoreSession Level " + level + ": " + id);
         }
-        if (this.locked[0]== true) {
-            throw new ImplementationException("Objekt er allerede låst for StoreSession Level " + 0  +": " + id);
-        }
-        this.locked[0] = true;
+//        if (this.locked[level] == true) {
+//            throw new ImplementationException("Objekt er allerede låst for StoreSession Level " + level + ": " + id);
+//        }
+        this.locked[level] = true;
+    }
+
+    public void setLockedCreatedByLevel(int level) {
+        this.lockCreatedByLevel= level;
     }
 
     public void checkNotDerivedInstance(int level, BubbleObject bubbleObject) {
-        for(int l = level-1; l>=0; l-- ) {
-            if (bubbleObject == this.bubbleObject[level]) {
-                throw new ImplementationException("Forsøk på å oppdaterer StoreSession(level= "+level+") med instans fra underliggende StoreSession(level="+ l +") for id:" + id);
+        for (int l = level - 1; l >= 0; l--) {
+            if (bubbleObject == this.bubbleObject[l]) {
+                throw new ImplementationException("Forsøk på å oppdaterer StoreSession(level= " + level + ") med instans fra underliggende StoreSession(level=" + l + ") for id:" + id);
             }
         }
+    }
+
+    public void commit(int level) {
+        locked[level - 1] |= locked[level];
+        if (lockCreatedByLevel==level) {
+            lockCreatedByLevel = level - 1;
+        }
+        if (loadedByLevel==level) {
+            lockCreatedByLevel = level - 1;
+        }
+        clear(level);
+    }
+
+    public void abort(int level) {
+        clear(level);
+    }
+
+    public void clear(int level) {
+        state[level] = StoreEntryState.NULL;
+        bubbleObject[level] = null;
+        locked [level] = false;
+    }
+
+    public boolean isModified() {
+        boolean isModified = false;
+        for (StoreEntryState storeEntryState : state) {
+           isModified |= storeEntryState.ordinal() > StoreEntryState.UNCHANGED.ordinal();
+
+        }
+        return isModified;
+    }
+
+    public boolean isLockedByLevel(int level) {
+        return lockCreatedByLevel == level;
+    }
+
+    public boolean isLocked() {
+        boolean isLocked = false;
+        for (boolean l : locked) {
+           isLocked |= l;
+
+        }
+        return isLocked;
+    }
+    public int getLevelForDerivedBubbleObject(int level) {
+        while (level>0 && bubbleObject[level] == null) level--;
+        return level;
+    }
+
+
+    public BubbleObject getDerivedBubbleObjectCopyIfLocked(int level, Store store) {
+        if (bubbleObject[level]!=null) return bubbleObject[level];
+
+        int l = getLevelForDerivedBubbleObject(level);
+        if (isLocked()) {
+            if (l==0) {
+                store.ensureFullyLoaded(bubbleObject[0]);
+            }
+            BubbleObject copy = CopyHelper.copy(bubbleObject[l]);
+            copy.register(store);
+            bubbleObject[level] = copy;
+            l = level;
+        }
+        return bubbleObject[l];
     }
 }

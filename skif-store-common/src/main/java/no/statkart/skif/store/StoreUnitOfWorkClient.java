@@ -1,0 +1,28 @@
+package no.statkart.skif.store;
+
+import no.statkart.skif.exception.ImplementationException;
+
+/**
+ * @author Henrik Fredholm
+ * @since 2.1
+ */
+public class StoreUnitOfWorkClient extends StoreUnitOfWork {
+
+    public StoreUnitOfWorkClient(int level, WrappableStoreSession wrappedStoreSession, StoreCache storeCache, Store store) {
+        super(level, wrappedStoreSession, storeCache, store);
+    }
+
+    public WrappableStoreSession endUnitOfWork() {
+        if (level != 1) {
+            throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork or abortUnitOfWork instead");
+        }
+        if (isAccessedAfterGetTransfer()) {
+            throw new ImplementationException("Store was access beweeen calls to Store.getUnitOfWorkTransfer() and Store.endUnitOfWork() and may result in impropper commit.");
+        }
+
+        if (modifiedMap.size() > 0 && !getTransferHasBeenCalled) {
+            throw new ImplementationException("Store contains modified objects. Call getUnitOfWorkTransfer() before calling endUnitOfWork");
+        }
+        return wrappedStoreSession;
+    }
+}

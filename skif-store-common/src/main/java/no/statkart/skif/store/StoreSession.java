@@ -5,6 +5,7 @@ import no.statkart.skif.store.BubbleObject;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Henrik Fredholm
@@ -20,12 +21,28 @@ public interface StoreSession {
 
     /**
      * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
+     *
      * @param bubbleIds
      * @return
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds);
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds);
 
-    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(Collection<I> bubbleIds);
+
+    /**
+     * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
+     *
+     * @param bubbleIds
+     * @return
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<I> bubbleIds);
+
+    /**
+     * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
+     *
+     * @param bubbleIds
+     * @return
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<I> bubbleIds);
 
     /**
      * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
@@ -36,17 +53,42 @@ public interface StoreSession {
     <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects);
 
     /**
-     * Registrerer et allerede eksisterende objekt med sessionen. Dersom det finne en annen instans med samme id som har
-     * blitt endret vil denne bli returnert.
-     * @param bubbleObject
+     * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
+     *
+     * @param bubbleIds
      * @return
      */
-    <T extends BubbleObject> T register(T bubbleObject);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<I> bubbleIds);
 
     /**
-     * Fjerner objektet fra sessionen. Objekter som har blitt endret fjernes først når endringene
-     * @param bubbleId
+     * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
+     *
+     * @param bubbleIds
      * @return
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds);
+
+    /**
+     * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
+     *
+     * @param bubbleIds
+     * @return
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds);
+
+    /**
+     * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
+     *
+     * @param bubbleIds
+     * @param bubbleObjects
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects);
+
+    /**
+     * Fjerner objektet fra sessionen. Objekter som har blitt endret fjernes ikke
+     * TODO: Legge inn støtte til å kunne fjerne endret objekter etter flush/finishBatch har blitt kjørt
+     * @param bubbleId
+     * @return  true hvis objektet ble fjernet
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(I bubbleId);
 
@@ -78,4 +120,9 @@ public interface StoreSession {
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I bubbleId);
 
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I bubbleId);
+
+    <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId);
+
+    <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
 }

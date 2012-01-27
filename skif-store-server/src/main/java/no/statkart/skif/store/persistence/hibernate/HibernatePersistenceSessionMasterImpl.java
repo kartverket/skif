@@ -1,6 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.*;
+import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
@@ -51,7 +52,8 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
      * Bestemmer om Bubbler kan ha lazyloaded assosiasjoner som ikke er initialisert i det bubblen
      * utleveres fra HibernateSessionWrapper
      */
-    private boolean lazyLoadedBubblesAllowed;
+    private boolean lazyLoadedBubblesAllowedDefault = false;
+    private boolean lazyLoadedBubblesAllowed = lazyLoadedBubblesAllowedDefault;
 
     public HibernatePersistenceSessionMasterImpl(HibernateSessionFactoryManager sessionFactoryManager) {
         this.sessionFactoryManager = sessionFactoryManager;
@@ -71,18 +73,26 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
             if (reserveCount > 0) {
                 throw new ImplementationException("Sessionen er reservert. Kan ikke endre SnapshotVersion fra " + previous + " til " + snapshotVersion);
             }
-            ensureBubblesFullyLoaded();
-            clear();
+            flushAndClearLoadedObjects();
             sessionFactoryDescriptor.setSnapshotVersion(session(), snapshotVersion);
         }
         return previous;
     }
 
+    protected void  flushAndClearLoadedObjects() {
+        flush();
+        ensureBubblesFullyLoaded();
+        session().clear();
+        exportedLazyLoadedBubbles.clear();
+        fullyInitializedBubbles.clear();
+    }
+
     @Override
     public void clear() {
-        flush();
         session().clear();
+        exportedLazyLoadedBubbles.clear();
         fullyInitializedBubbles.clear();
+        lazyLoadedBubblesAllowed = lazyLoadedBubblesAllowedDefault;
     }
 
     @Override
@@ -115,6 +125,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
     @Override
     public void close() {
+        clear();
         try {
             if (lazySession != null) {
                 lazySession.close();
@@ -123,6 +134,8 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         } finally {
             sessionFactoryDescriptor.resetSeed();
         }
+        localTransaction = null;
+        reserveCount = 0;
     }
 
     @Override
@@ -152,7 +165,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         try {
             bubble = getFromHibernateSessionOrLoadEnsureLatest(bubbleId);
             if (bubble == null)
-                throw new ObjectNotFoundException(bubbleId, "Objekt finnes ikke: " + bubbleId);
+                throw new ObjectNotFoundException(bubbleId);
             if (!isLazyLoadedBubblesAllowed()) {
                 ensureFullyLoaded(bubble);
             } else {
@@ -160,7 +173,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
             }
             return bubble;
         } catch (HibernateException e) {
-            throw new ImplementationException("Load feilet for " + bubbleId, e);
+            throw new ObjectNotFoundException(bubbleId, e);
         }
     }
 
@@ -179,7 +192,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         try {
             bubble = getFromHibernateSessionOrLoad(bubbleId);
             if (bubble == null)
-                throw new ObjectNotFoundException(bubbleId, "Objekt finnes ikke: " + bubbleId);
+                throw new ObjectNotFoundException(bubbleId);
             if (!isLazyLoadedBubblesAllowed()) {
                 ensureFullyLoaded(bubble);
             } else {
@@ -187,7 +200,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
             }
             return bubble;
         } catch (HibernateException e) {
-            throw new ImplementationException("Load feilet for " + bubbleId, e);
+            throw new no.statkart.skif.exception.ObjectNotFoundException(bubbleId, e);
         }
     }
 
@@ -709,6 +722,9 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     public void beginTransaction() {
+        if (localTransaction!=null) {
+            throw new ImplementationException("Lokal transaksjon har allerede blitt startet");
+        }
         localTransaction = session().beginTransaction();
     }
 
@@ -718,11 +734,20 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     public void rollback() {
+        if (localTransaction==null) {
+            throw new ImplementationException("Lokal transaksjon har ikke blitt startet");
+        }
         localTransaction.rollback();
+        localTransaction = null;
+        clear();
     }
 
     @Override
     public void commit() {
+        if (localTransaction==null) {
+            throw new ImplementationException("Lokal transaksjon har ikke blitt startet");
+        }
         localTransaction.commit();
+        localTransaction = null;
     }
 }

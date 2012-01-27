@@ -16,8 +16,8 @@ public class ObjectNotFoundException extends FinderException {
         this.notFoundId = notFoundId;
     }
 
-    public ObjectNotFoundException(BubbleId notFoundId, String message) {
-        super(message);
+    public ObjectNotFoundException(BubbleId notFoundId, Throwable e) {
+        super(String.valueOf(notFoundId), e);
         this.notFoundId = notFoundId;
     }
 

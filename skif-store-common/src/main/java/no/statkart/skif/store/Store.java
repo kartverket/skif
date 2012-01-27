@@ -17,6 +17,7 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<I> bubbleIds);
     <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects);
 
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<I> bubbleIds);
     <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds);
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds);
     <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects);
@@ -27,10 +28,8 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<I> bubbleIds);
     <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects);
 
-    <T extends BubbleObject> T register(T bubbleObject);
-    <T extends BubbleObject> Collection<? extends T> register(Collection<? extends T> bubbleObjects, Collection<? super T> resolvedObjects);
-    <T extends BubbleObject> T registerLocked(T bubbleObject);
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void registerLocked(Collection<T> bubbleObjects, Collection<T> resolvedObjects);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(@Nullable I bubbleId);
+
     <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer transfer);
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId);
@@ -45,21 +44,11 @@ public interface Store {
     public <T extends BubbleObject> void insert(T bubbleObject);
     public <T extends BubbleObject> void update(T bubbleObject);
     public <T extends BubbleObject> void delete(T bubbleObject);
+    public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
+
 
 
  /*
-    <T extends BubbleObject> Collection<? extends T> get(Collection<? extends BubbleId<? extends T>> bubbleIds, MissingObjectStrategy obj);
-
-    <T extends BubbleObject> T register(T bubbleObject);
-
-    <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, T> register(Map<I, T> bubbleMap);
-
-    <T extends BubbleObject> Collection<T> register(Collection<T> bubbleObjects);
-
-
-     void evict(Collection<? extends BubbleId<?>> bubbleIds);
-
-    void evictAll();
 
     <T extends BubbleObject> void pin(T bubbleObject);
 
@@ -69,12 +58,13 @@ public interface Store {
 
     void unpin(Collection<? extends BubbleId<?>> bubbleIds);
 */
-    void startUnitOfWork();
-    UnitOfWorkTransfer getUnitOfWorkTransfer();
-    //void getUnitOfWorkSnapshot();
 
+    void beginUnitOfWork();
+    void commitUnitOfWork();
     void abortUnitOfWork();
+    UnitOfWorkTransfer getUnitOfWorkTransfer();
     void endUnitOfWork();
+    //void getUnitOfWorkSnapshot();
     boolean inUnitOfWork();
 
     <S> S getInstance(Class<S> serviceClass);

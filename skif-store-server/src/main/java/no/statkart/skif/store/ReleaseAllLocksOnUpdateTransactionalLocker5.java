@@ -143,7 +143,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker5 implements Transactiona
    }
 
 
-   private void setUpdateService(boolean updateService) {
+   public void setUpdateService(boolean updateService) {
       isUpdateService = updateService;
    }
 
@@ -312,6 +312,7 @@ public class ReleaseAllLocksOnUpdateTransactionalLocker5 implements Transactiona
          ReleaseAllLocksOnUpdateTransactionalLocker5.log.warn("Attempting to unlock object that has been modified or removed in current transaction:" + bubbleId + " for " + getPrincipalName());
       } else if( newLockIds.contains(bubbleId) ) {
          locker.unlock(bubbleId, principalName);
+         lockMap.remove(bubbleId);
       } else {
          unLockIds.add(bubbleId);
       }

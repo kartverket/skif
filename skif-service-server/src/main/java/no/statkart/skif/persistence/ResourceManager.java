@@ -10,6 +10,8 @@ import java.util.*;
  */
 public class ResourceManager implements TransactionalResource {
     private boolean inTransaction;
+
+    /** Angir om ResourceManager har vært i bruk */
     private boolean isActive;
 
     private HashMap<Key, Entry> map = new HashMap<Key, Entry>();
@@ -47,6 +49,8 @@ public class ResourceManager implements TransactionalResource {
         final private String name;
         final private Class<? extends Resource>[] types;
         final private Resource implementation;
+
+        /** Angir om denne resources har fått startet sin transaksjon */
         private boolean transactionStarted;
 
         public Entry(Resource implementation) {
@@ -85,6 +89,7 @@ public class ResourceManager implements TransactionalResource {
     }
 
     public <T extends Resource> T getResource(Class<T> type) {
+        setActive();
         Entry entry = map.get(new Key(type));
         if (entry == null) {
             throw new ImplementationException("Fant ingen resource av type " + type);
@@ -118,6 +123,7 @@ public class ResourceManager implements TransactionalResource {
         for (Entry entry : entries) {
             if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
                 TransactionalResource.class.cast(entry.implementation).beginTransaction();
+                entry.transactionStarted = true;
             }
         }
 

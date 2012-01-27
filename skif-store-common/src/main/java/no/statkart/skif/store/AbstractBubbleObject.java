@@ -43,7 +43,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable{
 
 
     public void register(Store store) {
-        checkState(store!=null, "BubbleObject already registered with a session: {0}", this);
+        checkState(this.store==null || this.store == store, "BubbleObject allerede registrert med en annen session: %s", this);
         this.store = store;
     }
 

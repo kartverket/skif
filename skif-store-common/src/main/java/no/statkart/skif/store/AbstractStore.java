@@ -22,12 +22,10 @@ public class AbstractStore implements Store {
     }
 
     protected StoreUnitOfWork storeUnitOfWork() {
-        if (storeSession instanceof StoreUnitOfWork) {
-            return (StoreUnitOfWork) storeSession;
-        } else {
-            throw new ImplementationException("Not in UnitOfWork");
-        }
+        if (storeSession instanceof StoreUnitOfWork) return (StoreUnitOfWork) storeSession;
+        throw new ImplementationException("Not in UnitOfWork");
     }
+
     @Override
     public <T> T getInstance(Class<T> type) {
         return injector.getInstance(type);
@@ -44,38 +42,23 @@ public class AbstractStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(@Nullable I bubbleId) {
-        if (bubbleId==null) return null;
+        if (bubbleId == null) return null;
         return storeSession.get(bubbleId);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds) {
-        Collection<T> bubbleObjects;
-        if (bubbleIds instanceof Set) {
-            bubbleObjects = get((Set<I>) bubbleIds);
-        } else if (bubbleIds instanceof List) {
-            bubbleObjects = get((List<I>) bubbleIds);
-        } else {
-            checkNotNull(bubbleIds, "bubbleIds");
-            bubbleObjects = get(new ArrayList<I>(bubbleIds));
-        }
-        return bubbleObjects;
+        return storeSession.get(bubbleIds);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<I> bubbleIds) {
-        checkNotNull(bubbleIds, "bubbleIds");
-        Set<T> bubbleObjects = new HashSet<T>(bubbleIds.size());
-        get(bubbleIds, bubbleObjects);
-        return bubbleObjects;
+        return storeSession.get(bubbleIds);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<I> bubbleIds) {
-        checkNotNull(bubbleIds, "bubbleIds");
-        List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
-        get(bubbleIds, bubbleObjects);
-        return bubbleObjects;
+        return storeSession.get(bubbleIds);
     }
 
     @Override
@@ -85,8 +68,13 @@ public class AbstractStore implements Store {
 
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<I> bubbleIds) {
+        return storeSession.getOrdered(bubbleIds);
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return storeSession.getOrdered(bubbleIds);
     }
 
     @Override
@@ -96,12 +84,12 @@ public class AbstractStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        storeSession.getOrdered(bubbleIds, bubbleObjects);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(@Nullable I bubbleId) {
-        if (bubbleId==null) return null;
+        if (bubbleId == null) return null;
         return storeSession.lock(bubbleId);
     }
 
@@ -126,24 +114,9 @@ public class AbstractStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject> T register(@Nullable T bubbleObject) {
-        if (bubbleObject==null) return null;
-        return storeSession.register(bubbleObject);
-    }
-
-    @Override
-    public <T extends BubbleObject> Collection<? extends T> register(Collection<? extends T> bubbleObjects, Collection<? super T> resolvedObjects) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public <T extends BubbleObject> T registerLocked(T bubbleObject) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerLocked(Collection<T> bubbleObjects, Collection<T> resolvedObjects) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(@Nullable I bubbleId) {
+        if (bubbleId == null) return;
+        storeSession.unlock(bubbleId);
     }
 
     @Override
@@ -153,12 +126,13 @@ public class AbstractStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(@Nullable I bubbleId) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        if (bubbleId == null) return false;
+        return storeSession.isLocked(bubbleId);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(@Nullable I bubbleId) {
-        if (bubbleId==null) return false;
+        if (bubbleId == null) return false;
         return storeSession.evict(bubbleId);
     }
 
@@ -197,9 +171,15 @@ public class AbstractStore implements Store {
         storeSession.delete(bubbleObject);
     }
 
+
     @Override
-    public void startUnitOfWork() {
-        storeSession = storeUnitOfWork().beginUnitOfWork();
+    public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
+        storeSession.ensureFullyLoaded(bubbleObject);
+    }
+
+    @Override
+    public void beginUnitOfWork() {
+        storeSession = storeSession.beginUnitOfWork();
     }
 
     @Override
@@ -214,7 +194,8 @@ public class AbstractStore implements Store {
 
     @Override
     public void endUnitOfWork() {
-        storeSession = storeUnitOfWork().endUnitOfWork();
+        StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
+        storeSession = storeUnitOfWork.endUnitOfWork();
     }
 
     @Override
@@ -224,6 +205,6 @@ public class AbstractStore implements Store {
 
     //@Override
     public void commitUnitOfWork() {
-        storeUnitOfWork().commitUnitOfWork();
+        storeSession = storeUnitOfWork().commitUnitOfWork();
     }
 }

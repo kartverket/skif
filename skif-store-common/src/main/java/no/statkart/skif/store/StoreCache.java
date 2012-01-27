@@ -1,9 +1,7 @@
 package no.statkart.skif.store;
 
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Henrik Fredholm
@@ -38,6 +36,16 @@ public class StoreCache {
 
     public void clear() {
         cacheMap.clear();
+    }
+
+    public <T extends BubbleObject> StoreEntry register(int loadedByLevel, T persistentBubbleObject, T bubbleObject) {
+        StoreEntry entry = new StoreEntry(bubbleObject.getId());
+        entry.setPersistentBubbleObject(bubbleObject, persistentBubbleObject);
+        entry.setState(0, StoreEntryState.UNCHANGED);
+        entry.setLoadedByLevel(loadedByLevel);
+        cacheMap.put(bubbleObject.getId(), entry);
+
+        return entry;
     }
 
     public <T extends BubbleObject> StoreEntry registerUnchanged(int level, T bubbleObject) {
@@ -75,5 +83,16 @@ public class StoreCache {
 
     public void setStore(Store store) {
         this.store = store;
+    }
+
+    public <T extends BubbleObject> StoreEntry registerLocked(int level, T processedBubbleObject) {
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public StoreEntry createEntry(int level, BubbleId bubbleId) {
+        StoreEntry entry = new StoreEntry(bubbleId);
+        entry.setLoadedByLevel(level);
+        cacheMap.put(entry.getId(), entry);
+        return entry;
     }
 }

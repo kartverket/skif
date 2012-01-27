@@ -16,7 +16,7 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
 public class StoreSessionServer extends AbstractStoreSession {
     private final PersistenceSessionManager persistenceSessionManager;
     private final List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
-    private Store store;
+    private final List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
     private Provider<VersionFinder> versionFinderProvider;
 
     private long lockTimeout = 240 * 60 * 1000 /* 4 timer */;
@@ -38,233 +38,26 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
 
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry loadEntry(int level, I bubbleId) {
-        T bubbleObject = load(bubbleId);
-        return storeCache.registerUnchanged(level, bubbleObject);
-    }
-
-    private <T extends BubbleObject, I extends BubbleId<? extends T>> T load(I bubbleId) {
-        T bubbleObject = persistenceSessionManager.get(bubbleId);
-        bubbleObject.register(store);
-        T processedBubbleObject = bubbleObject;
-        for (StoreSessionReadListener readListener : readListeners) {
-            processedBubbleObject = readListener.onRegister(processedBubbleObject);
-        }
-        return bubbleObject;
-    }
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> getEntries(int level, Collection<I> bubbleIds) {
-        // TODO: Optimize for bulk access
-        Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
-        for (I bubbleId : bubbleIds) {
-              result.add(getEntry(level, bubbleId));
-        }
-        return result;
-    }
-
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Collection<I> bubbleIds) {
-        // TODO: Optimize for bulk access
-        Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
-        for (I bubbleId : bubbleIds) {
-            result.add(loadEntry(level, bubbleId));
-        }
-        return result;
-    }
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds) {
-        Collection<T> result = new ArrayList<T>(bubbleIds.size());
-        get(bubbleIds, result);
-        return result;
-    }
-
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
-        checkNotNull(bubbleIds, "bubbleIds");
-        List<I> missingBubbleIds = null;
-
-        for (I bubbleId : bubbleIds) {
-            final StoreEntry storeEntry = storeCache.get(bubbleId);
-            final BubbleObject bubbleObject = storeEntry == null ? null : storeEntry.getBubbleObject(level);
-            if (bubbleObject != null) {
-                bubbleObjects.add((T) bubbleObject);
-            } else {
-                if (missingBubbleIds == null) {
-                    missingBubbleIds = new ArrayList<I>(bubbleIds.size());
-                }
-                missingBubbleIds.add(bubbleId);
-            }
-        }
-
-        if (missingBubbleIds != null) {
-            if (missingBubbleIds.size() == 1) {
-                StoreEntry entry = loadEntry(level, missingBubbleIds.get(0));
-                bubbleObjects.add((T) entry.getBubbleObject(level));
-            } else {
-                Collection<StoreEntry> entries = loadEntries(level, missingBubbleIds);
-                for (StoreEntry entry : entries) {
-                    bubbleObjects.add((T) entry.getBubbleObject(level));
-
-                }
-            }
-        }
-    }
-
-    /**
-     * For StoreSessionServer har denne meotden samme funksjonalitet som {@link #getEntry(int, no.statkart.skif.store.BubbleId)}
-     */
-    @Override
-    public <T extends BubbleObject> StoreEntry registerEntry(int level, T bubbleObject) {
-        return getEntry(level, bubbleObject.getId());
-    }
-
-    /**
-     * For StoreSessionServer har denne meotden samme funksjonalitet som {@link #lockEntry(int, no.statkart.skif.store.BubbleId)}
-     */
-    @Override
-    public <T extends BubbleObject> StoreEntry registerLockedEntry(int level, T bubbleObject) {
-        return lockEntry(level, bubbleObject.getId());
-    }
-
-    @Override
-    public void registerTransfer(int level, UnitOfWorkTransfer transfer) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public <T extends BubbleObject> StoreEntry insertEntry(int level, T bubbleObject) {
-        modifiedByThisLevel.add(bubbleObject.getId());
-
-        StoreEntry entry = storeCache.get(bubbleObject.getId());
-
-        if (entry == null) {
-            entry = storeCache.registerInserted(level, bubbleObject);
-            bubbleObject.register(store);
-        } else {
-            switch (entry.getDerivedState(level)) {
-                case UNCHANGED:
-                    throw new ImplementationException("Forsøk på å kalle insert for eksisterende objekt: " + bubbleObject.getId());
-                case INSERTED:
-                    throw new ImplementationException("Forsøk på å kalle insert for objekt hvor insert allerede har blitt kaldt: " + bubbleObject.getId());
-                case UPDATED:
-                    throw new ImplementationException("Forsøk på å kalle insert for objekt hvor update allerede har blitt kaldt: " + bubbleObject.getId());
-                case DELETED:
-                    entry.setState(level, StoreEntryState.UPDATED);
-                    break;
-                case INSERTED_DELETED:
-                    entry.setState(level, StoreEntryState.INSERTED);
-                    break;
-            }
-            T oldInstance = (T) entry.getBubbleObject(level);
-            if (oldInstance != bubbleObject) {
-                // TODO markere entry.getBubbleObject som stale
-                entry.setBubbleObject(level, bubbleObject);
-            }
-        }
-        transactionalLocker.registerInserted(bubbleObject.getId());
-
-        if (level == 0) {
-            // TODO kall writelisteners her
-            persistenceSessionManager.insert(bubbleObject);
-        }
-        return entry;
-    }
-
-    @Override
-    public <T extends BubbleObject> StoreEntry updateEntry(int level, T bubbleObject) {
-
-        boolean isNewInstance;
-        StoreEntry entry = storeCache.get(bubbleObject.getId());
-
-        if (entry == null) {
-            transactionalLocker.registerUpdated(bubbleObject.getId());
-            entry = storeCache.registerNewUpdated(level, bubbleObject);
-            modifiedByThisLevel.add(bubbleObject.getId());
-            bubbleObject.register(store);
-            isNewInstance = true;
-        } else {
-            switch (entry.getState(level)) {
-                case INSERTED:
-                    break;
-                case UNCHANGED:
-                    entry.setStateCheckLocked(level, StoreEntryState.UPDATED);
-                    transactionalLocker.registerUpdated(bubbleObject.getId());
-                    modifiedByThisLevel.add(bubbleObject.getId());
-                    break;
-                case UPDATED:
-                    break;
-                case DELETED:
-                case INSERTED_DELETED:
-                    throw new ImplementationException("Forsøk på å kalle update for objekt hvor delete har blitt kaldt: " + bubbleObject.getId());
-            }
-
-            T oldInstance = (T) entry.getBubbleObject(level);
-            if (oldInstance != bubbleObject) {
-                entry.checkNotDerivedInstance(level, bubbleObject);
-                // TODO markere oldInstance som stale
-                entry.setBubbleObject(level, bubbleObject);
-                bubbleObject.register(store);
-                isNewInstance = true;
-            } else {
-                isNewInstance = false;
-            }
-        }
-
-        // TODO kall writelisteners her, før registering slik at de kan bytte ut til lokalt object om  nødvendig
-        T processedObject = bubbleObject;
-        if (isNewInstance || processedObject != bubbleObject) {
-            persistenceSessionManager.update(processedObject);
-        }
-        return entry;
-    }
-
-    public <T extends BubbleObject> StoreEntry deleteEntry(int level, T bubbleObject) {
-        modifiedByThisLevel.add(bubbleObject.getId());
-
-        StoreEntry entry = storeCache.get(bubbleObject.getId());
-        if (entry == null) {
-            entry = storeCache.registerNewDeleted(level, bubbleObject);
-            bubbleObject.register(store);
-        } else {
-            switch (entry.getState(level)) {
-                case INSERTED:
-                    entry.setStateCheckLocked(level, StoreEntryState.INSERTED_DELETED);
-                    break;
-                case UNCHANGED:
-                case UPDATED:
-                    entry.setStateCheckLocked(level, StoreEntryState.DELETED);
-                    break;
-                case DELETED:
-                case INSERTED_DELETED:
-                    throw new ImplementationException("Forsøk på å kalle update for objekt hvor delete har blitt kaldt: " + bubbleObject.getId());
-            }
-            T oldInstance = (T) entry.getBubbleObject(level);
-            if (oldInstance != bubbleObject) {
-                // TODO marker oldInstance som stale
-                entry.setBubbleObject(level, bubbleObject);
-                bubbleObject.register(store);
-            }
-        }
-        transactionalLocker.registerRemoved(bubbleObject.getId());
-
-        // TODO kall writelisteners her, før registering slik at de kan bytte ut til lokalt object om  nødvendig
-        T processedObject = bubbleObject;
-
-        persistenceSessionManager.delete(processedObject);
-        return entry;
-    }
-
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
-        boolean evictedFromCache = storeCache.evict(level, bubbleId);
-        if (evictedFromCache) {
+        boolean evicted;
+        StoreEntry storeEntry = storeCache.get(bubbleId);
+        if (storeEntry == null) {
             persistenceSessionManager.evict(bubbleId);
+            evicted = true;
+        } else if (storeEntry.isModified()) {
+            evicted = false;
+        } else {
+            if (storeEntry.getLockCreatedByLevel() > 0) {
+                // Kan ikke entry for UnitOfWork må kunne gjøre en unlock ved abort
+                evicted = false;
+            } else {
+                StoreEntry evictedEntry = storeCache.remove(bubbleId);
+                // TODO: marker evictedEntry som stale
+                evicted = evictedEntry != null;
+                persistenceSessionManager.evict(bubbleId);
+            }
         }
-        return evictedFromCache;
+        return evicted;
     }
 
     public void setStore(Store storeServer) {
@@ -279,99 +72,133 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     public void finish() {
         // TODO: Sende finishEvent til WriteListeners
+        clear();
+    }
+
+    private void clear() {
         storeCache.clear();
+        modifiedMap.clear();
     }
 
     public void beginTransaction() {
         persistenceSessionManager.beginTransaction();
+
+        // TODO vurdere om dette er et midlertidig fix eller det skal være slik
+        transactionalLocker.setUpdateService(true);
     }
 
-    public void commit() {
+    public void commitTransaction() {
         finish();
         persistenceSessionManager.commit();
+        transactionalLocker.setUpdateService(true);
+        transactionalLocker.serviceCompleted();
+    }
+
+    public void rollbackTransaction() {
+        transactionalLocker.setRollbackOnly();
+        persistenceSessionManager.rollback();
+        transactionalLocker.serviceCompleted();
+        clear();
     }
 
     /**
      * Låser objekt og lager en kopi av objektet hvis låsingen skjer i en unit of work. Hvis låsingen skjer direkte
      * på StoreSessionServer lages ingen kopi og objekt som er koblet mot underliggende session brukes.
-     *
+     * <p/>
      * Objektet kan være følgende tilstander:
      * <ul>
-     *     <li>Allerede låst for level</li>
-     *     <li>Låst for lavere level</li>
-     *     <li>Ikke låst</li>
-     *     <li>Ikke loaded, men allerede låst</li>
-     *     <li>Ikke loaded og ikke låst</li>
+     * <li>Allerede låst for level</li>
+     * <li>Låst for lavere level</li>
+     * <li>Ikke låst</li>
+     * <li>Ikke loaded, men allerede låst</li>
+     * <li>Ikke loaded og ikke låst</li>
      * </ul>
-     *
+     * <p/>
      * Et av målene for implementasjonen er å utnytte tilgjengelig informasjon for å ungå å måtte gjøre kall mot
      * databasen.
      *
-     * @param level StoreSession level som ønsker å låse objektet
+     * @param level    StoreSession level som ønsker å låse objektet
      * @param bubbleId objekt som skal låses
      * @return låst objekt
      */
-    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
+        // TODO check tEnd
         StoreEntry storeEntry = storeCache.get(bubbleId);
         if (storeEntry != null) {
+            // Entry finnes, må sjekk om objekt er låst på underliggende nivå
             int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
             if (lockLevel == level) {
                 // Allerede låst for level
-            } else if (lockLevel == 0) {
-                // Låst for level 0, må fullinitialiserer og lage kopi
-                T bubbleObject = (T) storeEntry.getBubbleObject(0);
-                persistenceSessionManager.ensureFullyLoaded(bubbleObject);
-                T copy = CopyHelper.copy(bubbleObject);
-                storeEntry.setLocked(level, copy);
-            } else if (lockLevel != -1) {
-                // Låst på mellomliggende nivå, må lage en kopi
-                T bubbleObject = (T) storeEntry.getBubbleObject(lockLevel);
-                T copy = CopyHelper.copy(bubbleObject);
-                storeEntry.setLocked(level, copy);
+            } else if (lockLevel >= 0) {
+                // Låst for underliggende level
+                lockEntry(storeEntry, level, false);
             } else {
                 // Uvist om låst
-                boolean isNew = transactionalLocker.lock(bubbleId);
-                if (isNew) {
+                boolean isNewLock = transactionalLocker.lock(bubbleId);
+                if (isNewLock) {
                     // Objekt var ikke låst fra før, må gjøre en refresh
-                    T bubbleObject = (T) storeEntry.getBubbleObject(0);
-                    persistenceSessionManager.refresh(bubbleObject);
-                    if (level != 0) {
-                        T copy = CopyHelper.copy(bubbleObject);
-                        storeEntry.setLocked(level, copy);
-                    }
-                } else {
-                    // Objekt var allrede låst, ingen behov for refresh
-                    if (level == 0) {
-                        storeEntry.setLocked();
-                    } else {
-                        T bubbleObject = (T) storeEntry.getBubbleObject(0);
-                        T copy = CopyHelper.copy(bubbleObject);
-                        storeEntry.setLocked(level, copy);
-                    }
+                    refreshEntry(storeEntry);
                 }
+                lockEntry(storeEntry, level, isNewLock);
             }
         } else {
-            // Ingen entry
-            boolean isNew = transactionalLocker.lock(bubbleId);
-            T bubbleObject;
-            if (isNew) {
-                // Objekt var ikke låst fra før, må gjøre en refresh
-                bubbleObject = persistenceSessionManager.refresh(bubbleId);
-            } else {
-                // Objekt var allrede låst, ingen behov for refresh
-                bubbleObject = persistenceSessionManager.get(bubbleId);
+            // Ingen entry, opprett entry, refresh objekt hvis det ikke allerede er låst
+            boolean isNewLock = transactionalLocker.lock(bubbleId);
+            storeEntry = loadEntry(level, bubbleId, isNewLock);
+            lockEntry(storeEntry, level, true);
+        }
+        return storeEntry;
+    }
+
+    private void lockEntry(StoreEntry storeEntry, int level, boolean isNewLock) {
+        if (level == 0) {
+            storeEntry.setLocked(0);
+        } else {
+            BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
+            if (derivedBubbleObject == storeEntry.getDerivedBubbleObject(0) && !storeEntry.hasSeparatePersistentBubbleObject()) {
+                persistenceSessionManager.ensureFullyLoaded(derivedBubbleObject);
             }
-            storeEntry = storeCache.registerUnchanged(0, bubbleObject);
-            if (level == 0) {
-                storeEntry.setLocked();
-            } else {
-                T copy = CopyHelper.copy(bubbleObject);
-                storeEntry.setLocked(level, copy);
+            BubbleObject copy = CopyHelper.copy(derivedBubbleObject);
+            storeEntry.setLocked(level, copy);
+        }
+        if (isNewLock) {
+            storeEntry.setLockedCreatedByLevel(level);
+        }
+    }
+
+    private <T extends BubbleObject, I extends BubbleId<? extends T>> void refreshEntry(StoreEntry storeEntry) {
+        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject();
+        persistenceSessionManager.refresh(persistentBubbleObject);
+        T bubbleObject = persistentBubbleObject;
+        for (StoreSessionReadListener readListener : readListeners) {
+            bubbleObject = readListener.onRegister(bubbleObject);
+        }
+        storeEntry.setPersistentBubbleObject(bubbleObject, persistentBubbleObject);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry unlockEntry(int level, I bubbleId) {
+        StoreEntry storeEntry = storeCache.get(bubbleId);
+        if (storeEntry != null) {
+            switch (storeEntry.getDerivedState(level)) {
+                case NULL:
+                case UNCHANGED:
+                    if (isLocked(storeEntry)) {
+                        if (storeEntry.getLockCreatedByLevel() == level) {
+                            transactionalLocker.unlock(bubbleId);
+                            storeEntry.setLockCreatedByLevel(-1);
+                        }
+                        storeEntry.setBubbleObject(level, null);
+                        storeEntry.unlock(level);
+                    }
+                    break;
+                default:
+                    throw new ImplementationException("Objekt har blitt endret og kan ikke låses opp");
             }
         }
         return storeEntry;
     }
+
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
@@ -381,10 +208,148 @@ public class StoreSessionServer extends AbstractStoreSession {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
         VersionFinder versionFinder = versionFinderProvider.get();
-        Map<I, List<I>> retur  = new HashMap<I, List<I>>();
+        Map<I, List<I>> retur = new HashMap<I, List<I>>();
         for (I id : ids) {
             retur.put(id, versionFinder.findBubbleIdsForInterval(id, start, end));
         }
         return retur;
+    }
+
+    @Override
+    public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
+        StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
+        BubbleObject persistentBubbleObject = storeEntry.getPersistentBubbleObject();
+        persistenceSessionManager.ensureFullyLoaded(persistentBubbleObject);
+    }
+
+    protected boolean isLocked(StoreEntry storeEntry) {
+        return storeEntry.isLocked() || transactionalLocker.isLockedByCaller(storeEntry.getId());
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId) {
+        boolean isLocked;
+        StoreEntry storeEntry = storeCache.get(bubbleId);
+        if (storeEntry == null) {
+            isLocked = transactionalLocker.isLockedByCaller(bubbleId);
+        } else {
+            isLocked = storeEntry.isLocked();
         }
+        return isLocked;
+    }
+
+
+    protected <T extends BubbleObject> void onInsertEntry(int level, StoreEntry storeEntry, T bubbleObject) {
+        if (level == 0) {
+            onInsertObject(storeEntry, bubbleObject);
+        } else {
+            storeEntry.setBubbleObject(level, bubbleObject);
+        }
+    }
+
+    private <T extends BubbleObject> void onInsertObject(StoreEntry storeEntry, T bubbleObject) {
+        T resultingPersistentBubbleObject = (T) bubbleObject;
+        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject();
+        for (StoreSessionWriteListener writeListener : writeListeners) {
+            resultingPersistentBubbleObject = writeListener.onInsert(bubbleObject, persistentBubbleObject);
+            persistentBubbleObject = resultingPersistentBubbleObject;
+        }
+        storeEntry.setPersistentBubbleObject(bubbleObject, resultingPersistentBubbleObject);
+        transactionalLocker.registerInserted(resultingPersistentBubbleObject.getId());
+        persistenceSessionManager.insert(resultingPersistentBubbleObject);
+    }
+
+
+    @Override
+    protected <T extends BubbleObject> void onUpdateEntry(int level, StoreEntry storeEntry, T bubbleObject) {
+        if (level == 0) {
+            onUpdateObject(storeEntry, bubbleObject);
+        } else {
+            storeEntry.setBubbleObject(level, bubbleObject);
+        }
+    }
+
+    private <T extends BubbleObject> void onUpdateObject(StoreEntry storeEntry, T bubbleObject) {
+        T resultingPersistentBubbleObject = (T) bubbleObject;
+        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject();
+        for (StoreSessionWriteListener writeListener : writeListeners) {
+            resultingPersistentBubbleObject = writeListener.onUpdate(bubbleObject, persistentBubbleObject);
+            persistentBubbleObject = resultingPersistentBubbleObject;
+        }
+        storeEntry.setPersistentBubbleObject(bubbleObject, resultingPersistentBubbleObject);
+        transactionalLocker.registerUpdated(resultingPersistentBubbleObject.getId());
+        persistenceSessionManager.update(resultingPersistentBubbleObject);
+    }
+
+    @Override
+    protected <T extends BubbleObject> void onDeleteEntry(int level, StoreEntry storeEntry, T bubbleObject) {
+        if (level == 0) {
+            onDeleteObject(storeEntry, bubbleObject);
+        } else {
+            storeEntry.setBubbleObject(level, bubbleObject);
+        }
+    }
+
+    private <T extends BubbleObject> void onDeleteObject(StoreEntry storeEntry, T bubbleObject) {
+        T resultingPersistentBubbleObject = (T) bubbleObject;
+        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject();
+        for (StoreSessionWriteListener writeListener : writeListeners) {
+            resultingPersistentBubbleObject = writeListener.onDelete(bubbleObject, persistentBubbleObject);
+            persistentBubbleObject = resultingPersistentBubbleObject;
+        }
+        storeEntry.setPersistentBubbleObject(bubbleObject, resultingPersistentBubbleObject);
+        transactionalLocker.registerRemoved(resultingPersistentBubbleObject.getId());
+        persistenceSessionManager.delete(resultingPersistentBubbleObject);
+    }
+
+    private <T extends BubbleObject> StoreEntry XXEntry(int level, T persistentBubbleObject) {
+        T bubbleObject = persistentBubbleObject;
+        for (StoreSessionReadListener readListener : readListeners) {
+            bubbleObject = readListener.onRegister(bubbleObject);
+        }
+        return storeCache.register(level, persistentBubbleObject, bubbleObject);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry loadEntry(int level, I bubbleId, boolean refresh) {
+        T persistentBubbleObject;
+        if (refresh) {
+            persistentBubbleObject = persistenceSessionManager.refresh(bubbleId);
+        } else {
+            persistentBubbleObject = persistenceSessionManager.get(bubbleId);
+        }
+        return createEntry(level, persistentBubbleObject);
+    }
+
+    private <T extends BubbleObject> StoreEntry createEntry(int level, T persistentBubbleObject) {
+        T bubbleObject = persistentBubbleObject;
+        for (StoreSessionReadListener readListener : readListeners) {
+            bubbleObject = readListener.onRegister(bubbleObject);
+        }
+        return storeCache.register(level, persistentBubbleObject, bubbleObject);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Set<I> bubbleIds, boolean refresh) {
+        Collection<T> persistentBubbleObjects;
+        if (refresh) {
+            // TODO: bulk optimize
+            persistentBubbleObjects = new ArrayList<T>(bubbleIds.size());
+            for (I bubbleId : bubbleIds) {
+                persistentBubbleObjects.add(persistenceSessionManager.refresh(bubbleId));
+            }
+        } else {
+            persistentBubbleObjects = (Collection<T>) persistenceSessionManager.get(bubbleIds);
+        }
+
+        Collection<StoreEntry> entries = new ArrayList<StoreEntry>(bubbleIds.size());
+        for (T originalBubbleObject : persistentBubbleObjects) {
+            entries.add(createEntry(level, originalBubbleObject));
+        }
+        return entries;
+    }
+
+    public void flush() {
+        persistenceSessionManager.flush();
+    }
 }

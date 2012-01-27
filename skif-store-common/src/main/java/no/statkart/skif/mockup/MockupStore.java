@@ -108,6 +108,11 @@ public class MockupStore implements Store {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<I> bubbleIds) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds) {
         throw new NotImplementedException();
     }
@@ -148,24 +153,10 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject> T register(T bubbleObject) {
-        throw new NotImplementedException();
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(@Nullable I bubbleId) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
-    public <T extends BubbleObject> Collection<? extends T> register(Collection<? extends T> bubbleObjects, Collection<? super T> resolvedObjects) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public <T extends BubbleObject> T registerLocked(T bubbleObject) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerLocked(Collection<T> bubbleObjects, Collection<T> resolvedObjects) {
-        throw new NotImplementedException();
-    }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer transfer) {
@@ -220,7 +211,17 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public void startUnitOfWork() {
+    public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void beginUnitOfWork() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void commitUnitOfWork() {
         throw new NotImplementedException();
     }
 

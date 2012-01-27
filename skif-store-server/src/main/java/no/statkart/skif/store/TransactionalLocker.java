@@ -118,4 +118,8 @@ public interface TransactionalLocker extends Synchronization {
    void clear();
 
    void consumeAllLocks();
+
+    //TODO: Midlertidig fix at denne er her?
+    void setUpdateService(boolean updateService);
+
 }
