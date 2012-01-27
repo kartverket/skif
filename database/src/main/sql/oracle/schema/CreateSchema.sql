@@ -15,7 +15,7 @@ CREATE TABLE CHILDFORPARRENT(
 create table ChildBubble(
   id number(19,0) not null,
   TEXT VARCHAR2(255),
-  testEntityId number(19,0),
+  TESTBUBBLEID number(19,0),
   PRIMARY KEY (ID)
 ) ;
 

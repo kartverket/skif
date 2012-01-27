@@ -4,9 +4,9 @@ insert into TestBubble values (2, 'Text 2');
 
 
 
-insert into ParrentBuble values (1, 'Parrent 1');
-insert into ParrentBuble values (2, 'Parrent 2');
-insert into ParrentBuble values (3, 'Parrent 3');
+insert into ParrentBubble values (1, 'Parrent 1');
+insert into ParrentBubble values (2, 'Parrent 2');
+insert into ParrentBubble values (3, 'Parrent 3');
 
 insert into ChildBubble values (1, 'Child 1.1',null);
 insert into ChildBubble values (2, 'Child 1.2',null);
