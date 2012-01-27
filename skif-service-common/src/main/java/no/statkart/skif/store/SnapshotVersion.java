@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 /**
  * @author Henrik Fredholm
  */
-public class SnapshotVersion implements Serializable {
+public class SnapshotVersion implements Serializable, Comparable<SnapshotVersion> {
     public final static SnapshotVersion START = new SnapshotVersion("2000-01-01 00:00:00.0");
     public final static SnapshotVersion CURRENT = new SnapshotVersion("9999-01-01 00:00:00.0");
     public final static SnapshotVersion OLD = new SnapshotVersion("9997-01-01 00:00:00.0");
@@ -84,5 +84,22 @@ public class SnapshotVersion implements Serializable {
         if (this == CURRENT) return "CURRENT";
         if (this == OLD) return "OLD";
         return getTimestamp().toString();
+    }
+
+    @Override
+    public int compareTo(SnapshotVersion other) {
+        if (this.time < other.time) {
+            return -1;
+        } else if (this.time > other.time) {
+            return 1;
+        } else {
+            if (this.nanos < other.nanos) {
+                return -1;
+            } else if (this.nanos > other.nanos) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
     }
 }

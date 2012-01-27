@@ -86,6 +86,8 @@ public class StoreTestServerModule extends SkifModule {
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreUpdateServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices()));
+        install(new ServerServiceModule(moduleConfiguration, new StoreTestSequenceBlockAllocatorServices().getServices()));
+        install(new ServerServiceModule(moduleConfiguration, new StoreTestTestServices().getServices()));
 
         bind(ConnectionManager.class).toProvider(ConnectionManagerProvider.class);
         bind(Connection.class).to(ConnectionForSnapshotVersion.class);

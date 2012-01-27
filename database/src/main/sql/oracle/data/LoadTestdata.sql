@@ -26,6 +26,7 @@ insert into ChildForParrent values(5,2,2);
 
 
 insert into TableSequence (tableName, nextFreeNumber) values ('GLOBAL_SEQUENCE',999999);
+insert into TableSequence (tableName, nextFreeNumber) values ('TEST_NUMBER',1);
 
 insert into AKode values(1, 'A1');
 insert into AKode values(2, 'A2');
