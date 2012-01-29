@@ -85,11 +85,14 @@ create table Kodeliste( id number(19,0) not null, navn varchar2(64), kodeClassna
 create table KodelisteLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table KodelisteLoc add constraint FK_TestKodelisteLoc foreign key (id) references Kodeliste;
 
+create global temporary table SNAPSHOT_TRANS (v Timestamp) on commit delete rows;
 
 CREATE OR REPLACE PACKAGE snapshot_time
 As
+    Function Get_T_CURRENT Return Timestamp;
     Function Get_T Return Timestamp;
     Function Set_T(Newvalue In Timestamp) Return Timestamp;
+    Function Get_T_Trans Return Timestamp;
     Function To_T(timestampAsString IN VARCHAR2) Return Timestamp;
     Function T_Between(tBegin In Timestamp, tEnd In Timestamp) Return Number;
 END snapshot_time;
@@ -97,22 +100,50 @@ END snapshot_time;
 
 CREATE OR REPLACE PACKAGE BODY snapshot_time
 As
-    T Timestamp;
-    t_End TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
+    T_CURRENT TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
+
+    t Timestamp;
+    t_Trans Timestamp := T_CURRENT;
+
+    Function Get_T_CURRENT
+    RETURN Timestamp
+    IS
+    BEGIN
+      Return T_CURRENT;
+    End Get_T_CURRENT;
+
     Function Get_T
     RETURN Timestamp
     IS
     BEGIN
-      Return T;
+      Return t;
     End Get_T;
 
     Function Set_T(Newvalue In Timestamp)
     RETURN timestamp
     IS
     Begin
-      T:= newValue;
-      Return T;
+      t:= newValue;
+      Return t;
     End Set_T;
+
+    Function Get_T_Trans
+    RETURN Timestamp
+    IS
+    tVal TIMESTAMP;
+    BEGIN
+      BEGIN
+        select v into t_Trans from SNAPSHOT_TRANS;
+        exception
+        when NO_DATA_FOUND THEN
+           t_Trans := NULL;
+       END;
+       IF t_Trans is NULL THEN
+         t_Trans := LOCALTIMESTAMP;
+         insert into SNAPSHOT_TRANS values(t_Trans);
+       END IF;
+      Return t_Trans;
+    End Get_T_Trans;
 
     Function To_T(timestampAsString In Varchar2)
     Return Timestamp
@@ -126,7 +157,7 @@ As
     Is
     retval NUMBER;
     BEGIN
-                IF (TBEGIN<=T AND (T<TEND OR TEND=t_END))
+                IF (TBEGIN<=T AND (T<TEND OR TEND=T_CURRENT))
                 THEN
                     retVal := 1;
                 ELSE
@@ -152,8 +183,8 @@ CREATE OR REPLACE TRIGGER FOO_TRIGGER
 INSTEAD OF INSERT OR UPDATE OR DELETE ON FOO
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.get_t();
-t_End TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF UPDATING THEN
     IF :old.tBegin < t_Trans THEN
@@ -216,8 +247,8 @@ CREATE OR REPLACE TRIGGER BAR_TRIGGER
 INSTEAD OF INSERT OR UPDATE OR DELETE ON BAR
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.get_t();
-t_End TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF UPDATING THEN
     IF :old.tBegin < t_Trans THEN
@@ -258,8 +289,8 @@ CREATE OR REPLACE TRIGGER BARFOOS_TRIGGER
 INSTEAD OF INSERT OR UPDATE OR DELETE ON BARFOOS
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.get_t();
-t_End TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF UPDATING THEN
     IF :old.tBegin < t_Trans THEN
@@ -298,8 +329,8 @@ CREATE OR REPLACE TRIGGER FooForBarFoos_TRIGGER
 INSTEAD OF INSERT OR UPDATE OR DELETE ON FooForBarFoos
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.get_t();
-t_End TIMESTAMP := snapshot_time.to_t('9999-01-01 00:00:00.00');
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF UPDATING THEN
     IF :old.tBegin < t_Trans THEN
@@ -336,13 +367,12 @@ CREATE TABLE GEOMETRICELEMENT_H (
 create view GEOMETRICELEMENT as select * from GEOMETRICELEMENT_H where snapshot_time.t_between(tBegin, tEnd)=1;
 
 CREATE OR REPLACE TRIGGER T_GEOMETRICELEMENT INSTEAD OF INSERT OR UPDATE OR DELETE ON GEOMETRICELEMENT
- FOR EACH ROW
-  DECLARE
-   t_Now TIMESTAMP := snapshot_time.get_t();
-   t_End TIMESTAMP := timestamp'9999-01-01 00:00:00.00';
-  BEGIN
-
-   IF INSERTING THEN
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF INSERTING THEN
     INSERT INTO GEOMETRICELEMENT_H
         VALUES (:new.ID, point, polygon, t_Now, t_End, 1);
 

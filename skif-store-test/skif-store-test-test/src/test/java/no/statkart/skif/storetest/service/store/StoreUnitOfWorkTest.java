@@ -17,6 +17,7 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
+import static no.statkart.skif.storetest.TestHelper.assertNotFound;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
@@ -27,7 +28,7 @@ import static org.testng.Assert.assertSame;
  * @author Henrik Fredholm
  * @since 2.1
  */
-@Test(groups = "broken")
+@Test
 public class StoreUnitOfWorkTest extends StoreTestServerTestCase {
     static String T1 = "2011-10-02 08:01:00.00";
     static String T2 = "2011-10-02 08:02:00.00";
@@ -52,6 +53,7 @@ public class StoreUnitOfWorkTest extends StoreTestServerTestCase {
     FooId<Foo> FooId_101_S4 = new FooId<Foo>(101L, S4);
     FooId<Foo> FooId_101_OLD = new FooId<Foo>(101L, SnapshotVersion.OLD);
 
+    FooId<Foo> FooId_10001_CURRENT = new FooId<Foo>(10001L, SnapshotVersion.CURRENT);
 
     public void testBeginEndEmptyUnitOfWork() {
 
@@ -92,51 +94,6 @@ public class StoreUnitOfWorkTest extends StoreTestServerTestCase {
         });
     }
 
-    public void testUpdateObjectViaUnitOfWork() {
-
-        server.runInBeanManagedTransaction(new RunOnServerMethod() {
-            @Inject
-            Store store;
-            @Inject
-            ResourceManager resourceManager;
-
-            public Object run() {
-                store.beginUnitOfWork();
-                store.beginUnitOfWork();
-                Foo foo_100 = store.lock(FooId_100_CURRENT);
-                foo_100.setNavn("Updated");
-                store.update(foo_100);
-                store.commitUnitOfWork();
-                store.commitUnitOfWork();
-                assertSame(store.get(FooId_100_CURRENT), foo_100);
-                resourceManager.flush();
-
-                return null;
-            }
-        });
-    }
-
-    public void testDeleteObjectViaUnitOfWork() {
-
-        server.runInBeanManagedTransaction(new RunOnServerMethod() {
-            @Inject
-            Store store;
-            @Inject
-            ResourceManager resourceManager;
-
-            public Object run() {
-                store.beginUnitOfWork();
-                Foo foo_100 = store.lock(FooId_100_CURRENT);
-                foo_100.setNavn("Updated");
-                store.delete(foo_100);
-                store.commitUnitOfWork();
-                assertSame(store.get(FooId_100_CURRENT),foo_100);
-                resourceManager.flush();
-
-                return null;
-            }
-        });
-    }
 
 
     public void testInsertDeleteObjectInSameUnitOfWork() {
@@ -144,15 +101,18 @@ public class StoreUnitOfWorkTest extends StoreTestServerTestCase {
         server.runInBeanManagedTransaction(new RunOnServerMethod() {
             @Inject
             Store store;
+            @Inject
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
+                TestHelper.deletePriviouslyWritenTestBubbles(persistenceSessionForSnapshot);
                 store.beginUnitOfWork();
                 TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
                 TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");
                 store.insert(testBubble1);
                 store.delete(testBubble1);
                 store.commitUnitOfWork();
-                assertSame(store.get(TestBubbleId_101_CURRENT), null);
+                assertNotFound(store, TestBubbleId_101_CURRENT);
 
                 return null;
             }
@@ -165,8 +125,11 @@ public class StoreUnitOfWorkTest extends StoreTestServerTestCase {
         server.runInBeanManagedTransaction(new RunOnServerMethod() {
             @Inject
             Store store;
+            @Inject
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
+                TestHelper.deletePriviouslyWritenTestBubbles(persistenceSessionForSnapshot);
                 store.beginUnitOfWork();
                 TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
                 TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");
@@ -177,7 +140,7 @@ public class StoreUnitOfWorkTest extends StoreTestServerTestCase {
                 store.commitUnitOfWork();
                 assertSame(store.get(TestBubbleId_101_CURRENT), copy);
                 store.commitUnitOfWork();
-                assertSame(store.get(TestBubbleId_101_CURRENT), null);
+                assertNotFound(store, TestBubbleId_101_CURRENT);
 
                 return null;
             }
@@ -190,8 +153,11 @@ public class StoreUnitOfWorkTest extends StoreTestServerTestCase {
         server.runInBeanManagedTransaction(new RunOnServerMethod() {
             @Inject
             Store store;
+            @Inject
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
+                TestHelper.deletePriviouslyWritenTestBubbles(persistenceSessionForSnapshot);
                 store.beginUnitOfWork();
                 TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
                 TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");

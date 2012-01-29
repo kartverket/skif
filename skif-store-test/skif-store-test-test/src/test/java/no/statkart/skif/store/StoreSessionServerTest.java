@@ -34,8 +34,7 @@ import org.testng.annotations.*;
 
 import java.util.*;
 
-import static no.statkart.skif.storetest.TestHelper.countInDatabase;
-import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactorManagerBundle;
+import static no.statkart.skif.storetest.TestHelper.*;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.testng.Assert.*;
 import static org.testng.FileAssert.fail;
@@ -141,33 +140,13 @@ public class StoreSessionServerTest {
         persistenceSessionForSnapshot = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT);
         storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance()));
 
-        HibernatePersistenceSessionMaster persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMaster.class);
-        try {
-            Session session = persistenceSessionMaster.reserveSession();
-            Transaction transaction = session.beginTransaction();
-            session.createQuery("delete from TestBubble where id>100").executeUpdate();
-            session.createQuery("delete from ChildForParrent where id>100").executeUpdate();
-            session.createQuery("delete from ParrentBubble where id>100").executeUpdate();
-            session.createQuery("delete from ChildBubble where id>100").executeUpdate();
-            transaction.commit();
-        } finally {
-            persistenceSessionMaster.releaseSession();
-        }
+        deletePriviouslyWritenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
     }
 
     @AfterMethod
     public void closeStore() {
         persistenceSessionManager.close();
     }
-
-    private void assertNotFound(Store store, TestBubbleId<TestBubble> bubbleId) {
-        try {
-            store.get(bubbleId);
-            fail("Objekt skal ikke være i store");
-        } catch (ObjectNotFoundException e) {
-        }
-    }
-
 
     /**
      * Test uthenting av objekt som har historikk. Hent ut enkeltvis og via collection. Test at multiple uthentinger gir samme
@@ -810,5 +789,24 @@ public class StoreSessionServerTest {
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
         assertSame(storeServer.get(TestBubbleId_101), testBubble2);
+    }
+
+
+    public void testFooInsertUpdate() {
+
+        FooId<Foo> FooId_10001 = new FooId<Foo>(10001L);
+
+        storeServer.beginTransaction();
+        Foo foo1 = new Foo();
+        foo1.setId(FooId_10001);
+        foo1.setNavn("Foo Insert");
+        storeServer.insert(foo1);
+        storeServer.commitTransaction();
+
+        storeServer.beginTransaction();
+        Foo  foo2 = storeServer.lock(FooId_10001);
+        foo2.setNavn("Foo Update");
+        storeServer.update(foo2);
+        storeServer.commitTransaction();
     }
 }
