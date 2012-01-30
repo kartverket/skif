@@ -1,0 +1,37 @@
+package no.statkart.skif.storetest.service.store;
+
+import com.google.inject.Inject;
+import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.service.annotation.EJBServiceChain;
+import no.statkart.skif.service.ejb.EJBTimedService;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+
+import javax.annotation.Nullable;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.util.Collection;
+
+/**
+ * @author Roar Ingebrigtsen
+ * @since 2.0
+ */
+@Stateless(name = "no.statkart.skif.storetest.service.store.StoreUpdateServiceEJBBean")
+@Interceptors(StoreTestEJBInterceptorJEE.class)
+public class StoreUpdateServiceEJBBean extends EJBTimedService implements StoreUpdateService {
+
+    @Inject
+    @EJBServiceChain
+    private StoreUpdateService serviceChain;
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lockObject(@Nullable I bubbleId) throws ObjectNotFoundException {
+        return serviceChain.lockObject(bubbleId);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockObjects(Collection<I> bubbleIds) {
+        return lockObjects(bubbleIds);
+    }
+}

@@ -60,6 +60,14 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="MockupTransfer">
+        <xs:sequence>
+            <xs:element name="inserts" type="domainns:StoreTestBubbleList"/>
+            <xs:element name="updates" type="domainns:StoreTestBubbleList"/>
+            <xs:element name="deletes" type="domainns:StoreTestBubbleList"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="StoreTestContext">
         <xs:sequence>
             <xs:element name="systemVersion" type="xs:string"/>

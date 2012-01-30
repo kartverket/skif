@@ -69,6 +69,7 @@ public class MappingTest extends AutomagicTest {
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.basetyper.ObjectFactory");
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.basetyper.package-info");
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon");
+        getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.MockupTransfer");
 
 
         discoverClassHierarchy();

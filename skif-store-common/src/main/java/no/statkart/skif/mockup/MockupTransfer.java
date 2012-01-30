@@ -11,9 +11,12 @@ import java.util.Set;
  * @since 2.1
  */
 public class MockupTransfer {
-    private final Set<BubbleObject> inserts;
-    private final Set<BubbleObject> updates;
-    private final Set<BubbleObject> deletes;
+    private Set<BubbleObject> inserts;
+    private Set<BubbleObject> updates;
+    private Set<BubbleObject> deletes;
+
+    public MockupTransfer() {
+    }
 
     public MockupTransfer(Set<BubbleObject> inserts, Set<BubbleObject> updates, Set<BubbleObject> deletes) {
         this.inserts = Collections.unmodifiableSet(inserts);
@@ -31,5 +34,17 @@ public class MockupTransfer {
 
     public Set<BubbleObject> getDeletes() {
         return deletes;
+    }
+
+    public void setInserts(Set<BubbleObject> inserts) {
+        this.inserts = inserts;
+    }
+
+    public void setUpdates(Set<BubbleObject> updates) {
+        this.updates = updates;
+    }
+
+    public void setDeletes(Set<BubbleObject> deletes) {
+        this.deletes = deletes;
     }
 }

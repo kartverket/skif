@@ -206,7 +206,7 @@ public class StoreSessionServerTest {
 
 
     /**
-     * Tester lock object
+     * Tester lockObject object
      */
     @Test(groups = "broken")
     public void testLockObject() {

@@ -18,12 +18,12 @@ public class StoreUpdateServiceImpl implements StoreUpdateService {
     StoreServer store;
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(@Nullable I bubbleId) throws ObjectNotFoundException {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lockObject(@Nullable I bubbleId) throws ObjectNotFoundException {
         return store.lock(bubbleId);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockObjects(Collection<I> bubbleIds) {
         return store.lock(bubbleIds);
     }
 }

@@ -19,7 +19,7 @@ public class StoreUpdateServiceTest extends StoreTestTestCase {
     StoreUpdateService storeUpdateService;
 
     public void testLockObject() {
-        Foo foo_100 = storeUpdateService.lock(FooId_100);
+        Foo foo_100 = storeUpdateService.lockObject(FooId_100);
         assertEquals(foo_100.getId(), FooId_100);
     }
 }

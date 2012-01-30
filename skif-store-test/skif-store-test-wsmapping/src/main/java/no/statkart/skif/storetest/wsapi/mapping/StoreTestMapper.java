@@ -38,6 +38,7 @@ public class StoreTestMapper extends AbstractMapper {
         // DefaultTypeMapper. Brukes for objekter som har samme properties i domenene
         DefaultTypeMapper dtm = new DefaultTypeMapper();
         dtm.addPackageMapping("no.statkart.skif.storetest.wsapi.domain.demo","no.statkart.skif.storetest.domain.demo");
+        dtm.addPackageMapping("no.statkart.skif.storetest.wsapi.domain", "no.statkart.skif.mockup");
         setDefaultMapper(dtm);
 
 

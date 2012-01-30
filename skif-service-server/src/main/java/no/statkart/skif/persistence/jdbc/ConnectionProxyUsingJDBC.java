@@ -32,7 +32,7 @@ public class ConnectionProxyUsingJDBC implements InvocationHandler, ConnectionRe
         this.snapshotVersion = snapshotVersion;
         this.factory = factory;
         this.delegate = delegate;
-        this.proxy = (ConnectionForSnapshotVersion) Proxy.newProxyInstance(delegate.getClass().getClassLoader(), new Class[]{ConnectionForSnapshotVersion.class}, this);
+        this.proxy = (ConnectionForSnapshotVersion) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{ConnectionForSnapshotVersion.class}, this);
     }
 
     public ConnectionForSnapshotVersion getProxy() {

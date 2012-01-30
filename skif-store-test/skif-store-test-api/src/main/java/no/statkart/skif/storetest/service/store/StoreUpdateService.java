@@ -14,9 +14,9 @@ public interface StoreUpdateService {
     /**
      * Låser {@code bubbleId} for kallende bruker og returnerer tilhørende BubbleObject instans
      */
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(@Nullable I bubbleId) throws ObjectNotFoundException;
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lockObject(@Nullable I bubbleId) throws ObjectNotFoundException;
     /**
      * Låser en collection av {@code bubbleId}s for kallende bruker og returnerer tilhørende BubbleObject instanser
      */
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds);
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockObjects(Collection<I> bubbleIds);
 }
