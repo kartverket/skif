@@ -1,6 +1,8 @@
 package no.statkart.skif.service.sequence;
 
 import com.google.inject.Provider;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.util.JDBCHelper;
@@ -20,10 +22,12 @@ import java.sql.SQLException;
  * @since 2.1
  */
 public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAllocatorService {
-    final Provider<Connection> connectionProvider;
+    protected final Provider<Connection> connectionProvider;
+    protected final Configuration configuration;
 
-    public DefaultSequenceBlockAllocatorServiceImpl(Provider<Connection> connectionProvider) {
+    public DefaultSequenceBlockAllocatorServiceImpl(Provider<Connection> connectionProvider, Configuration configuration) {
         this.connectionProvider = connectionProvider;
+        this.configuration = configuration;
     }
 
     //TODO: Skal denne bare redirecte til den andre implementasjonen?
@@ -38,7 +42,7 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
 
         PreparedStatement stmt = null;
         try {
-            String sqlString = "SELECT NEXTFREENUMBER FROM TABLESEQUENCE WHERE TABLENAME=? FOR UPDATE";
+            String sqlString = "SELECT NEXTFREENUMBER FROM " + configuration.getString(SkifConfigConstants.DB_SEQUENCE_TABLENAME) + " WHERE TABLENAME=? FOR UPDATE";
             stmt = con.prepareStatement(sqlString);
             stmt.setString(1, sequenceName);
             ResultSet rs = stmt.executeQuery();

@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.service.id;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import no.statkart.skif.config.Configuration;
 import no.statkart.skif.service.sequence.DefaultSequenceBlockAllocatorServiceImpl;
 
 import java.sql.Connection;
@@ -13,8 +14,8 @@ import java.sql.Connection;
 public class SequenceBlockAllocatorServiceImpl extends DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAllocatorService {
 
     @Inject
-    public SequenceBlockAllocatorServiceImpl(Provider<Connection> connectionProvider) {
-        super(connectionProvider);
+    public SequenceBlockAllocatorServiceImpl(Provider<Connection> connectionProvider, Configuration configuration) {
+        super(connectionProvider, configuration);
     }
 
 }
