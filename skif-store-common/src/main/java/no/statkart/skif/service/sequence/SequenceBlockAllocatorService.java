@@ -2,7 +2,7 @@ package no.statkart.skif.service.sequence;
 
 /**
  * @author Tor Egil R. Strand
- * @since sprint-5
+ * @since 2.1
  */
 public interface SequenceBlockAllocatorService {
     /**

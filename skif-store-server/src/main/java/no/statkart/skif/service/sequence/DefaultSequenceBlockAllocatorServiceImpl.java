@@ -17,7 +17,7 @@ import java.sql.SQLException;
  *
  * @author Roar Ingebrigtsen
  * @author Tor Egil R. Strand
- * @since sprint-5
+ * @since 2.1
  */
 public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAllocatorService {
     final Provider<Connection> connectionProvider;
