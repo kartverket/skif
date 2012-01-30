@@ -33,4 +33,9 @@ public class TestServiceEJBBean extends EJBTimedService implements TestService {
     public void saveSnapshotTransfer(MockupTransfer transfer, SnapshotVersion snapshotVersion) {
         service.saveSnapshotTransfer(transfer, snapshotVersion);
     }
+
+    @Override
+    public void deleteObject(long id, String tableName) {
+        service.deleteObject(id, tableName);
+    }
 }

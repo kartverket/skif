@@ -11,4 +11,6 @@ import no.statkart.skif.store.SnapshotVersion;
  */
 public interface TestService extends no.statkart.skif.service.test.TestNumberService {
     public void saveSnapshotTransfer(MockupTransfer transfer, SnapshotVersion snapshotVersion);
+
+    public void deleteObject(long id, String tableName);
 }

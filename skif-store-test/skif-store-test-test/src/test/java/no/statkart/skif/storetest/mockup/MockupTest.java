@@ -7,6 +7,7 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.service.test.TestService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import no.statkart.skif.util.CopyHelper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -59,36 +60,46 @@ public class MockupTest extends StoreTestTestCase {
         Assert.assertEquals(number1 + 1, number2);
     }
 
-    @Test(enabled = false)
+    // TODO: Erstatte med full bruk av mockuprammeverk, slik at id blir unik
     public void testSaveRaz() {
         TestService testService = injector.getInstance(TestService.class);
 
-        Raz raz = new Raz();
-        raz.setId(new RazId<Raz>(123L));
-        raz.setText("Foo");
-        RazComponent razComponent = new RazComponent();
-        razComponent.setFooId(new FooId<Foo>(100L));
-        razComponent.setCompText("Bar");
-        raz.setRazComponent(razComponent);
+        try {
+            Raz raz = new Raz();
+            raz.setId(new RazId<Raz>(123L));
+            raz.setText("Foo");
+            RazComponent razComponent = new RazComponent();
+            razComponent.setFooId(new FooId<Foo>(100L));
+            razComponent.setCompText("Bar");
+            raz.setRazComponent(razComponent);
 
-        MockupTransfer transfer = new MockupTransfer(Collections.singleton((BubbleObject) raz), Collections.<BubbleObject>emptySet(), Collections.<BubbleObject>emptySet());
-        testService.saveSnapshotTransfer(transfer, SnapshotVersion.CURRENT);
+            MockupTransfer transfer = new MockupTransfer(Collections.singleton((BubbleObject) raz), Collections.<BubbleObject>emptySet(), Collections.<BubbleObject>emptySet());
+            testService.saveSnapshotTransfer(transfer, SnapshotVersion.CURRENT);
+        } finally {
+            testService.deleteObject(123L, "Raz");
+        }
     }
 
-    @Test(enabled = false)
+    // TODO: Erstatte med full bruk av mockuprammeverk, slik at id blir unik
     public void testSaveFoo() {
-        Foo foo = new Foo();
-        foo.setId(new FooId<Foo>(123L));
-        foo.setNr(4224);
-        foo.setNavn("Mockup");
-
-        MockupTransfer transfer = new MockupTransfer(Collections.singleton((BubbleObject) foo), Collections.<BubbleObject>emptySet(), Collections.<BubbleObject>emptySet());
-
         TestService testService = injector.getInstance(TestService.class);
 
-        testService.saveSnapshotTransfer(transfer, SnapshotVersion.createInstance("2012-01-01 12:00:00"));
+        try {
+            Foo foo = new Foo();
+            foo.setId(new FooId<Foo>(123L));
+            foo.setNr(4224);
+            foo.setNavn("Mockup");
 
-        MockupTransfer transfer2 = new MockupTransfer(Collections.<BubbleObject>emptySet(), Collections.singleton((BubbleObject) foo), Collections.<BubbleObject>emptySet());
-        testService.saveSnapshotTransfer(transfer2, SnapshotVersion.createInstance("2012-01-10 12:00:00"));
+            MockupTransfer transfer = new MockupTransfer(Collections.singleton((BubbleObject) foo), Collections.<BubbleObject>emptySet(), Collections.<BubbleObject>emptySet());
+
+            testService.saveSnapshotTransfer(transfer, SnapshotVersion.createInstance("2012-01-01 12:00:00"));
+
+            Foo foo2 = CopyHelper.copy(foo);
+
+            MockupTransfer transfer2 = new MockupTransfer(Collections.<BubbleObject>emptySet(), Collections.singleton((BubbleObject) foo2), Collections.<BubbleObject>emptySet());
+            testService.saveSnapshotTransfer(transfer2, SnapshotVersion.createInstance("2012-01-10 12:00:00"));
+        } finally {
+            testService.deleteObject(123L, "Foo_H");
+        }
     }
 }
