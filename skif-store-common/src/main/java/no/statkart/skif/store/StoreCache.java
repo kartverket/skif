@@ -1,6 +1,8 @@
 package no.statkart.skif.store;
 
 
+import no.statkart.skif.exception.ImplementationException;
+
 import java.util.*;
 
 /**
@@ -43,37 +45,11 @@ public class StoreCache {
         entry.setPersistentBubbleObject(bubbleObject, persistentBubbleObject);
         entry.setState(0, StoreEntryState.UNCHANGED);
         entry.setLoadedByLevel(loadedByLevel);
-        cacheMap.put(bubbleObject.getId(), entry);
+        StoreEntry oldEntry = cacheMap.put(bubbleObject.getId(), entry);
+        if (oldEntry!=null) {
+            throw new ImplementationException("Duplicate entry:"  + bubbleObject.getId());
+        }
 
-        return entry;
-    }
-
-    public <T extends BubbleObject> StoreEntry registerUnchanged(int level, T bubbleObject) {
-        StoreEntry entry = new StoreEntry(bubbleObject.getId());
-        entry.setBubbleObject(level, bubbleObject);
-        entry.setState(level, StoreEntryState.UNCHANGED);
-        cacheMap.put(bubbleObject.getId(), entry);
-        return entry;
-    }
-
-    public <T extends BubbleObject> StoreEntry registerInserted(int level, T bubbleObject) {
-        StoreEntry entry = new StoreEntry(level, bubbleObject, StoreEntryState.INSERTED);
-        entry.locked[level]=true;
-        cacheMap.put(bubbleObject.getId(), entry);
-        return entry;
-    }
-
-    public <T extends BubbleObject> StoreEntry registerNewUpdated(int level, T bubbleObject) {
-        StoreEntry entry = new StoreEntry(level, bubbleObject, StoreEntryState.UPDATED);
-        entry.locked[level] = true;
-        cacheMap.put(entry.getId(), entry);
-        return entry;
-    }
-
-    public <T extends BubbleObject> StoreEntry registerNewDeleted(int level, T bubbleObject) {
-        StoreEntry entry = new StoreEntry(bubbleObject, StoreEntryState.DELETED);
-        entry.locked[level]= true;
-        cacheMap.put(entry.getId(), entry);
         return entry;
     }
 
@@ -83,10 +59,6 @@ public class StoreCache {
 
     public void setStore(Store store) {
         this.store = store;
-    }
-
-    public <T extends BubbleObject> StoreEntry registerLocked(int level, T processedBubbleObject) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 
     public StoreEntry createEntry(int level, BubbleId bubbleId) {

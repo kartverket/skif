@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
+import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.BubbleId;
@@ -42,5 +43,20 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
     @Override
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
         return serviceChain.getVersionsForList(ids, start, end);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I id) {
+        return serviceChain.isLocked(id);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I id) throws LockedException {
+        return serviceChain.lock(id);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I id) {
+        serviceChain.unlock(id);
     }
 }

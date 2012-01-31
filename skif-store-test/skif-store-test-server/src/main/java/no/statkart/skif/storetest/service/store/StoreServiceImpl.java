@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
+import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.*;
@@ -49,4 +50,18 @@ public class StoreServiceImpl implements StoreService {
         return retur;
     }
 
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I id) {
+        return store.isLocked(id);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I id) throws LockedException {
+        return store.lock(id);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I id) {
+        store.unlock(id);
+    }
 }

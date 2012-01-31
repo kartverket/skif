@@ -25,6 +25,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
     public void setStore(Store store) {
         this.store = store;
+        this.storeCache.setStore(store);
     }
 
     protected boolean isLocked(StoreEntry storeEntry) {

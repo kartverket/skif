@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.service.store;
 
+import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
@@ -22,6 +23,7 @@ public interface StoreService extends no.statkart.skif.store.StoreService {
      * @return BubbleObject for {@code id}
      * @throws ObjectNotFoundException kastes hvis {@code id} ikke finnes
      */
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I id) throws ObjectNotFoundException;
 
     /**
@@ -31,6 +33,7 @@ public interface StoreService extends no.statkart.skif.store.StoreService {
      * @return liste av objekter som ble funnet i udefinert rekkefølge.
      * @throws ObjectNotFoundException hvis ikke alle id'er kunne lastes.
      */
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getObjects(List<I> ids) throws ObjectNotFoundException;
 
     /**
@@ -40,6 +43,7 @@ public interface StoreService extends no.statkart.skif.store.StoreService {
      * @param end slutttidspunkt som avslutter intervallet og som ikke er inkludert
      * @return liste med id'er som ble funnet
      */
+    @Override
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
 
     /**
@@ -51,5 +55,33 @@ public interface StoreService extends no.statkart.skif.store.StoreService {
      * @param end slutttidspunkt som avslutter intervallet og som ikke er inkludert
      * @return map av fundne id'er
      */
+    @Override
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end);
+
+    /**
+     * Låser BubbleObject av type {@code <T>} for {@code id} av type {@code <I>} for kallende bruker og returnerer
+     * objektet.
+     * @param id BubbleId for objekt som skal lastes
+     * @return BubbleObject for {@code id}
+     * @throws ObjectNotFoundException kastes hvis {@code id} ikke finnes
+     * @throws LockedException kastes hvis objekt er låst av en annen bruker
+     */
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I id) throws LockedException;
+
+    /**
+     * Låser opp BubbleObject av type {@code <T>} for {@code id} av type {@code <I>} dersom det er låst av kallende
+     * bruker. Hvis {@code id} er null returneres {@code null}.
+     * @param id BubbleId for objekt som skal låses opp
+     */
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I id);
+
+    /**
+     * Rerturnerer true dersom objektet er låst av kallende bruker
+     * @param id
+     * @return
+     */
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I id);
 }

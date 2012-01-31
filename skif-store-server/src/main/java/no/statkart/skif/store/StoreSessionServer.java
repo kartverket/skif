@@ -70,11 +70,6 @@ public class StoreSessionServer extends AbstractStoreSession {
         return evicted;
     }
 
-    public void setStore(Store storeServer) {
-        this.store = storeServer;
-        this.storeCache.setStore(storeServer);
-    }
-
 
     public void finishBatch() {
         // TODO: Sende finishEvent til WriteListeners
