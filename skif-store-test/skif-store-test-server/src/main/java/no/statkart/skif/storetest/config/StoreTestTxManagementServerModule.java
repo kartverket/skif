@@ -82,6 +82,7 @@ public class StoreTestTxManagementServerModule extends SkifModule {
                 .addResource(TestBubble.class)
                 .addResource(ChildBubble.class)
                 .addResource(ParrentBubble.class)
+                .addResource(FilteredBubble.class)
                 .addResource(Foo.class);
 
 

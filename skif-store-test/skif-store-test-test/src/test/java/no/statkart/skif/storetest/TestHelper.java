@@ -68,6 +68,7 @@ public class TestHelper {
                 .addResource(TestEntity.class)
                 .addResource(TestBubble.class)
                 .addResource(ParrentBubble.class)
+                .addResource(FilteredBubble.class)
                 .addResource(ChildBubble.class)
                 .addResource(Foo.class);
     }
@@ -82,6 +83,7 @@ public class TestHelper {
             hibernateSession.createSQLQuery("delete from ChildForParrent where id>100").executeUpdate();
             hibernateSession.createSQLQuery("delete from ParrentBubble where id>100").executeUpdate();
             hibernateSession.createSQLQuery("delete from ChildBubble where id>100").executeUpdate();
+            hibernateSession.createSQLQuery("delete from FilteredBubble where id>100").executeUpdate();
             hibernateSession.createSQLQuery("delete from FOO_H      where id>10000").executeUpdate();
             hibernateSession.createSQLQuery("delete from BAR_H      where id>10000").executeUpdate();
             hibernateSession.createSQLQuery("delete from BARFOOS_H  where id>10000").executeUpdate();

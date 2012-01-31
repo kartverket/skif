@@ -25,6 +25,7 @@ import no.statkart.skif.storetest.domain.demo.koder.ADbKode;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.CEnumKodeId;
+import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.KodeMsg;
@@ -75,6 +76,11 @@ public class StoreSessionServerTest {
     ChildBubbleId<ChildBubble> ChildBubbleId_101 = new ChildBubbleId<ChildBubble>(101);
     ChildBubbleId<ChildBubble> ChildBubbleId_102 = new ChildBubbleId<ChildBubble>(102);
     Long childForParrentId_102 = (long) 102;
+
+    FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<FilteredBubble>(1);
+    FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<FilteredBubble>(2);
+    FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<FilteredBubble>(101);
+    FilteredBubbleId<FilteredBubble> filteredBubbleId_102 = new FilteredBubbleId<FilteredBubble>(102);
 
     HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
     PersistenceSessionManager persistenceSessionManager;
@@ -138,8 +144,12 @@ public class StoreSessionServerTest {
     public void createStore() {
         persistenceSessionManager = createPersistenceSessionManager();
         persistenceSessionForSnapshot = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT);
-        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance()));
-
+        //ReadListener
+        List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
+        readListeners.add(new TestBubbleFilter());
+        List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
+        writeListeners.add(new TestBubbleFilter());
+        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners));
         deletePriviouslyWritenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
     }
 
@@ -277,11 +287,11 @@ public class StoreSessionServerTest {
 
         ChildBubble test2Bubble_101 = new ChildBubble(ChildBubbleId_101);
         test2Bubble_101.setText("Insert child 1");
-        testBubble_101.addChild(ChildBubbleId_101,(long)101);
+        testBubble_101.addChild(ChildBubbleId_101, (long) 101);
 
         ChildBubble test2Bubble_102 = new ChildBubble(ChildBubbleId_102);
         test2Bubble_102.setText("Insert child 2");
-        testBubble_101.addChild(ChildBubbleId_102,(long)102);
+        testBubble_101.addChild(ChildBubbleId_102, (long) 102);
         test2Bubble_102.setTestBubbleId(new TestBubbleId<TestBubble>(2));
 
         storeServer.beginTransaction();
@@ -324,6 +334,58 @@ public class StoreSessionServerTest {
 //        storeServer.finish();
 //        storeServer.commit();
 //    }
+
+
+    public void testLesFilteredKlasse() {
+        FilteredBubble filteredBubble = storeServer.get(filteredBubbleId_1);
+        assertNotNull(filteredBubble);
+        assertFalse(filteredBubble.getFilterText().contains("*"));
+
+        FilteredBubble filteredBubble2 = storeServer.get(filteredBubbleId_2);
+        assertNotNull(filteredBubble2);
+        assertTrue(filteredBubble2.getFilterText().contains("*"));
+    }
+
+
+    public void testInsertFilteredKlasse() {
+        FilteredBubble filteredBubble = new FilteredBubble(filteredBubbleId_101, "Insert ufiltrert 101", false, "Insert filtrert 101");
+        storeServer.beginTransaction();
+        storeServer.insert(filteredBubble);
+        storeServer.commitTransaction();
+        FilteredBubble lest = storeServer.get(filteredBubble.getId());
+        assertSame(filteredBubble, lest);
+    }
+
+    public void testInsertFilteredKlasse_aktivt_fileter() {
+        String ftekst = "Skal overskrives på vei ned i basen 101";
+        FilteredBubble filteredBubble = new FilteredBubble(filteredBubbleId_101, "Insert ufiltrert 101", true, ftekst);
+        try {
+            storeServer.beginTransaction();
+            storeServer.insert(filteredBubble);
+            storeServer.commitTransaction();
+            fail("insert på filtrert objekt feilet ikke");
+        } catch (Exception e) {
+            //skal feile
+        }
+    }
+
+    public void testLesOppdaterFilteredKlasse() {
+        storeServer.beginTransaction();
+
+        FilteredBubble filteredBubble = storeServer.lock(filteredBubbleId_2);
+        assertNotNull(filteredBubble);
+        filteredBubble.setFilterText(null);
+        try {
+            storeServer.update(filteredBubble);
+            storeServer.commitTransaction();
+            fail("skal ikke klare å lagre objekt som har filtering!");
+        } catch (Exception e) {
+            //skal feile
+        }
+        //assertTrue(storeServer.get(filteredBubbleId_101).getFilterText().contains("*"));
+    }
+
+
 
 
     /**
@@ -804,7 +866,7 @@ public class StoreSessionServerTest {
         storeServer.commitTransaction();
 
         storeServer.beginTransaction();
-        Foo  foo2 = storeServer.lock(FooId_10001);
+        Foo foo2 = storeServer.lock(FooId_10001);
         foo2.setNavn("Foo Update");
         storeServer.update(foo2);
         storeServer.commitTransaction();

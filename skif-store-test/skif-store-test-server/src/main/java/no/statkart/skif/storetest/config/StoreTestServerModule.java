@@ -41,12 +41,15 @@ import no.statkart.skif.store.StoreSessionServer;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
+import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.KodeMsg;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -106,7 +109,7 @@ public class StoreTestServerModule extends SkifModule {
     @Provides
     @ServiceRequestScoped
     StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager) {
-        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance()));
+        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(),null, null));
         return storeServer;
     }
 
@@ -140,6 +143,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(TestBubble.class)
                 .addResource(ChildBubble.class)
                 .addResource(ParrentBubble.class)
+                .addResource(FilteredBubble.class)
                 .addResource(Foo.class)
                 .addResource(Baz.class)
                 .addResource(Raz.class)

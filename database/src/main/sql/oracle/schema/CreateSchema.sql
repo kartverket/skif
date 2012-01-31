@@ -1,4 +1,13 @@
 
+create table FilteredBubble (
+  id number(19,0) not null,
+  Text Varchar2(255),
+  filter number(1,0),
+  FilterText Varchar2(255),
+  Primary Key (Id)
+);
+
+
 create table ParrentBubble (
   id number(19,0) not null,
   Text Varchar2(255),

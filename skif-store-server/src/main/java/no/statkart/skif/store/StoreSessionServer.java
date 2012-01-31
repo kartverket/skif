@@ -6,6 +6,7 @@ import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.util.CopyHelper;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static no.statkart.skif.guava.Preconditions.checkNotNull;
@@ -26,15 +27,21 @@ public class StoreSessionServer extends AbstractStoreSession {
     private TransactionalLocker transactionalLocker;
 
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService);
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService,@Nullable List <StoreSessionReadListener> readListeners, @Nullable List <StoreSessionWriteListener> writeListeners) {
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService,readListeners,writeListeners);
     }
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List <StoreSessionReadListener> readListeners, @Nullable List <StoreSessionWriteListener> writeListeners) {
         super(0, storeCache);
         this.persistenceSessionManager = persistenceSessionManager;
         this.transactionalLocker = new ReleaseAllLocksOnUpdateTransactionalLocker5(lockerService, "principal", lockTimeout);
         this.versionFinderProvider = versionFinderProvider;
+        if(readListeners != null){
+            this.readListeners.addAll(readListeners);
+        }
+        if(writeListeners != null){
+            this.writeListeners.addAll(writeListeners);
+        }
     }
 
 
@@ -347,6 +354,28 @@ public class StoreSessionServer extends AbstractStoreSession {
             entries.add(createEntry(level, originalBubbleObject));
         }
         return entries;
+    }
+
+
+
+    public void registerWriteListener(StoreSessionWriteListener listener){
+        if(!writeListeners.contains(listener)){
+            writeListeners.add(listener);
+        }
+    }
+
+    public boolean removeWriteListener(StoreSessionWriteListener listener){
+        return writeListeners.remove(listener);
+    }
+
+    public void registerReadListener(StoreSessionReadListener listener){
+        if(!readListeners.contains(listener)){
+            readListeners.add(listener);
+        }
+    }
+
+    public boolean removeReadListener(StoreSessionReadListener listener){
+        return readListeners.remove(listener);
     }
 
     public void flush() {
