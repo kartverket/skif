@@ -27,7 +27,10 @@ public class StoreSessionServer extends AbstractStoreSession {
     private TransactionalLocker transactionalLocker;
 
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService,@Nullable List <StoreSessionReadListener> readListeners, @Nullable List <StoreSessionWriteListener> writeListeners) {
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, null, null);
+    }
+   public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService,@Nullable List <StoreSessionReadListener> readListeners, @Nullable List <StoreSessionWriteListener> writeListeners) {
         this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService,readListeners,writeListeners);
     }
 
