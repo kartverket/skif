@@ -68,12 +68,6 @@ public abstract class AbstractMockupFacadeBuilder<T extends AbstractMockupFacade
 
                 bind(Store.class).to(MockupStore.class);
             }
-
-            @Provides
-            @Singleton
-            public MockupStore provideStore() {
-                return new MockupStore();
-            }
         };
 
         Injector injector = Guice.createInjector(module);

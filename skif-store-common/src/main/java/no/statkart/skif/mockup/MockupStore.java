@@ -2,6 +2,7 @@ package no.statkart.skif.mockup;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.store.*;
@@ -19,9 +20,9 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
+@Singleton
 public class MockupStore implements Store {
-    @Inject
-    private Injector injector;
+    private final Injector injector;
 
     /**
      * {@link SnapshotVersion} objekter skal legges inn/oppdateres/slettes på. Standardverdien er
@@ -29,7 +30,13 @@ public class MockupStore implements Store {
      */
     private SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
 
-    private MockupPersister mockupPersister = new MockupPersister(this);
+    private final MockupPersister mockupPersister;
+
+    @Inject
+    public MockupStore(Injector injector, TestNumber testNumber) {
+        this.injector = injector;
+        mockupPersister = new MockupPersister(this, testNumber);
+    }
 
     /**
      * @return snapshotVersion objektene for øyeblikket legges inn på

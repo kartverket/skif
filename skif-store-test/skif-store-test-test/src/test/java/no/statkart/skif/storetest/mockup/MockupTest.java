@@ -73,7 +73,7 @@ public class MockupTest extends StoreTestTestCase {
             razComponent.setCompText("Bar");
             raz.setRazComponent(razComponent);
 
-            MockupTransfer transfer = new MockupTransfer(Collections.singleton((BubbleObject) raz), Collections.<BubbleObject>emptySet(), Collections.<BubbleObject>emptySet());
+            MockupTransfer transfer = new MockupTransfer(Collections.singleton((BubbleObject) raz), Collections.<BubbleObject>emptySet(), Collections.<BubbleObject>emptySet(), -1);
             testService.saveSnapshotTransfer(transfer, SnapshotVersion.CURRENT);
         } finally {
             testService.deleteObject(123L, "Raz");
@@ -90,13 +90,13 @@ public class MockupTest extends StoreTestTestCase {
             foo.setNr(4224);
             foo.setNavn("Mockup");
 
-            MockupTransfer transfer = new MockupTransfer(Collections.singleton((BubbleObject) foo), Collections.<BubbleObject>emptySet(), Collections.<BubbleObject>emptySet());
+            MockupTransfer transfer = new MockupTransfer(Collections.singleton((BubbleObject) foo), Collections.<BubbleObject>emptySet(), Collections.<BubbleObject>emptySet(), -2);
 
             testService.saveSnapshotTransfer(transfer, SnapshotVersion.createInstance("2012-01-01 12:00:00"));
 
             Foo foo2 = CopyHelper.copy(foo);
 
-            MockupTransfer transfer2 = new MockupTransfer(Collections.<BubbleObject>emptySet(), Collections.singleton((BubbleObject) foo2), Collections.<BubbleObject>emptySet());
+            MockupTransfer transfer2 = new MockupTransfer(Collections.<BubbleObject>emptySet(), Collections.singleton((BubbleObject) foo2), Collections.<BubbleObject>emptySet(), -2);
             testService.saveSnapshotTransfer(transfer2, SnapshotVersion.createInstance("2012-01-10 12:00:00"));
         } finally {
             testService.deleteObject(123L, "Foo_H");

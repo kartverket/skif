@@ -65,6 +65,7 @@
             <xs:element name="inserts" type="domainns:StoreTestBubbleList"/>
             <xs:element name="updates" type="domainns:StoreTestBubbleList"/>
             <xs:element name="deletes" type="domainns:StoreTestBubbleList"/>
+            <xs:element name="testNumber" type="xs:int"/>
         </xs:sequence>
     </xs:complexType>
 

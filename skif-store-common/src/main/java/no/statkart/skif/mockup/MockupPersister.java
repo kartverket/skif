@@ -17,14 +17,16 @@ import java.util.*;
  */
 public class MockupPersister {
     private final Store store;
+    private final TestNumber testNumber;
 
     SortedMap<SnapshotVersion, Map<BubbleId, BubbleObject>> snapshots = new TreeMap<SnapshotVersion, Map<BubbleId, BubbleObject>>();
     Map<BubbleId, SnapshotVersion> insertedAtSnapshot = new HashMap<BubbleId, SnapshotVersion>();
     Map<BubbleId, SnapshotVersion> lastSnapshotForBubble = new HashMap<BubbleId, SnapshotVersion>();
     Map<BubbleId, SnapshotVersion> deletedAtSnapshot = new HashMap<BubbleId, SnapshotVersion>();
 
-    public MockupPersister(Store store) {
+    public MockupPersister(Store store, TestNumber testNumber) {
         this.store = store;
+        this.testNumber = testNumber;
     }
 
     /**
@@ -215,7 +217,7 @@ public class MockupPersister {
                 updates.add(kopi);
             }
         }
-        return new MockupTransfer(inserts, updates, deletes);
+        return new MockupTransfer(inserts, updates, deletes, testNumber.getNumber());
     }
 
     /**
@@ -255,7 +257,7 @@ public class MockupPersister {
             }
         }
 
-        return new MockupTransfer(inserts, updates, deletes);
+        return new MockupTransfer(inserts, updates, deletes, testNumber.getNumber());
     }
 
     /**
