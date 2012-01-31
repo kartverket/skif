@@ -28,6 +28,10 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         this.storeCache.setStore(store);
     }
 
+    protected void markModified() {
+        // Nothing do do by default
+    }
+
     protected boolean isLocked(StoreEntry storeEntry) {
         throw new NotImplementedException();
     }
@@ -46,16 +50,18 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             entry = loadEntry(level, bubbleId, false);
         }
 
-        return  (T) entry.getDerivedBubbleObjectCopyIfLocked(level, store);
+        return (T) entry.getDerivedBubbleObjectCopyIfLocked(level, store);
     }
 
     private void addModified(StoreEntry storeEntry) {
         modifiedMap.put(storeEntry.getId(), storeEntry);
+        markModified();
     }
 
     private void removeModified(StoreEntry storeEntry) {
         if (storeEntry != null) {
             modifiedMap.remove(storeEntry.getId());
+            markModified();
         }
     }
 
@@ -371,7 +377,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                     if (entry.getDerivedState(level) == StoreEntryState.DELETED) {
                         commitInsert(entry);
                     } else {
-                        entry.clear(level+1);
+                        entry.clear(level + 1);
                     }
                     break;
             }

@@ -52,6 +52,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
         StoreEntry entry = wrappedStoreSession.lockEntry(level, bubbleId);
         modifiedMap.put(entry.getId(), entry);
+        markModified();
         return entry;
     }
 
@@ -81,6 +82,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
             }
         }
         modifiedMap.clear();
+        markModified();
         return wrappedStoreSession;
     }
 

@@ -1,10 +1,7 @@
 package no.statkart.skif.store;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Henrik Fredholm
@@ -68,5 +65,4 @@ public interface Store {
     boolean inUnitOfWork();
 
     <S> S getInstance(Class<S> serviceClass);
-
 }

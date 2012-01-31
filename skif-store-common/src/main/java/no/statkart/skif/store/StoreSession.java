@@ -4,6 +4,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -125,4 +126,5 @@ public interface StoreSession {
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId);
 
     <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
+
 }

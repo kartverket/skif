@@ -3,6 +3,8 @@ package no.statkart.skif.store;
 import com.google.inject.Injector;
 import no.statkart.skif.exception.ImplementationException;
 
+import java.util.LinkedHashSet;
+
 /**
  * @author Henrik Fredholm
  */
@@ -42,5 +44,24 @@ public class StoreServer extends AbstractStore {
 
     public void finish() {
         storeServerSession().finish();
+    }
+
+    public LinkedHashSet<BubbleId<?>> getDeletedIds() {
+      return storeServerSession().getDeletedIds();
+
+    }
+
+    public LinkedHashSet<BubbleId<?>> getInsertedIds(){
+      return storeServerSession().getInsertedIds();
+
+    }
+
+    public LinkedHashSet<BubbleId<?>> getLockedIds(){
+      return storeServerSession().getLockedIds();
+
+    }
+    public LinkedHashSet<BubbleId<?>> getUpdatedIds(){
+      return storeServerSession().getUpdatedIds();
+
     }
 }

@@ -2,6 +2,8 @@ package no.statkart.skif.store;
 
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.exception.NotLockedException;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.util.CopyHelper;
@@ -18,7 +20,73 @@ public class StoreSessionServer extends AbstractStoreSession {
     private final PersistenceSessionManager persistenceSessionManager;
     private final List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
     private final List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
+    private final List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
     private Provider<VersionFinder> versionFinderProvider;
+    private ModifiedCache modifiedCache;
+
+    private class ModifiedCache {
+        private LinkedHashSet<BubbleId<?>> insertedIds;
+        private LinkedHashSet<BubbleId<?>> updatedIds;
+        private LinkedHashSet<BubbleId<?>> deletedIds;
+        private LinkedHashSet<BubbleId<?>> lockedIds;
+        private LinkedHashMap<BubbleId<?>, StoreEntry> modifiedMap;
+
+        public ModifiedCache(LinkedHashMap<BubbleId<?>, StoreEntry> modifiedMap) {
+            this.modifiedMap = modifiedMap;
+        }
+
+        public void clearCache() {
+            insertedIds = null;
+            updatedIds = null;
+            deletedIds = null;
+            lockedIds = null;
+        }
+
+        private void calc() {
+            insertedIds = new LinkedHashSet<BubbleId<?>>();
+            updatedIds = new LinkedHashSet<BubbleId<?>>();
+            deletedIds = new LinkedHashSet<BubbleId<?>>();
+            lockedIds = new LinkedHashSet<BubbleId<?>>();
+            for (StoreEntry storeEntry : modifiedMap.values()) {
+                switch (storeEntry.getState(0)) {
+                    case UNCHANGED:
+                        if (storeEntry.isLocked()) {
+                            lockedIds.add(storeEntry.getId());
+                        }
+                        break;
+                    case INSERTED:
+                        insertedIds.add(storeEntry.getId());
+                        break;
+                    case UPDATED:
+                        updatedIds.add(storeEntry.getId());
+                        break;
+                    case DELETED:
+                        deletedIds.add(storeEntry.getId());
+                        break;
+                }
+            }
+        }
+
+        public LinkedHashSet<BubbleId<?>> getDeletedIds() {
+            if (deletedIds==null) calc();
+            return deletedIds;
+        }
+
+        public LinkedHashSet<BubbleId<?>> getInsertedIds() {
+            if (insertedIds==null) calc();
+            return insertedIds;
+        }
+
+        public LinkedHashSet<BubbleId<?>> getLockedIds() {
+            if (lockedIds==null) calc();
+            return lockedIds;
+        }
+
+        public LinkedHashSet<BubbleId<?>> getUpdatedIds() {
+            if (lockedIds==null) calc();
+            return updatedIds;
+        }
+    }
 
     private long lockTimeout = 240 * 60 * 1000 /* 4 timer */;
     /**
@@ -30,23 +98,35 @@ public class StoreSessionServer extends AbstractStoreSession {
     public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
         this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, null, null);
     }
-   public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService,@Nullable List <StoreSessionReadListener> readListeners, @Nullable List <StoreSessionWriteListener> writeListeners) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService,readListeners,writeListeners);
+
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners) {
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, readListeners, writeListeners);
     }
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List <StoreSessionReadListener> readListeners, @Nullable List <StoreSessionWriteListener> writeListeners) {
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners) {
         super(0, storeCache);
         this.persistenceSessionManager = persistenceSessionManager;
         this.transactionalLocker = new ReleaseAllLocksOnUpdateTransactionalLocker5(lockerService, "principal", lockTimeout);
         this.versionFinderProvider = versionFinderProvider;
-        if(readListeners != null){
+        if (readListeners != null) {
             this.readListeners.addAll(readListeners);
         }
-        if(writeListeners != null){
+        if (writeListeners != null) {
             this.writeListeners.addAll(writeListeners);
         }
+        modifiedCache = new ModifiedCache(modifiedMap);
     }
 
+    protected void markModified() {
+        modifiedCache.clearCache();
+    }
+
+
+    protected void ensureLocked(StoreEntry storeEntry) {
+        if (!isLocked(storeEntry)) {
+            throw new NotLockedException("Object not locked: " + storeEntry.getId());
+        }
+    }
 
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
         boolean evicted;
@@ -76,13 +156,16 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     public void finish() {
-        // TODO: Sende finishEvent til WriteListeners
+        for (StoreSessionFinishListener finishListener : finishListeners) {
+            finishListener.onFinish((StoreServer)store);
+        }
         clear();
     }
 
     private void clear() {
         storeCache.clear();
         modifiedMap.clear();
+        markModified();
     }
 
     public void beginTransaction() {
@@ -355,28 +438,47 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
 
-
-    public void registerWriteListener(StoreSessionWriteListener listener){
-        if(!writeListeners.contains(listener)){
+    public void registerWriteListener(StoreSessionWriteListener listener) {
+        if (!writeListeners.contains(listener)) {
             writeListeners.add(listener);
         }
     }
 
-    public boolean removeWriteListener(StoreSessionWriteListener listener){
+    public boolean removeWriteListener(StoreSessionWriteListener listener) {
         return writeListeners.remove(listener);
     }
 
-    public void registerReadListener(StoreSessionReadListener listener){
-        if(!readListeners.contains(listener)){
+    public void registerReadListener(StoreSessionReadListener listener) {
+        if (!readListeners.contains(listener)) {
             readListeners.add(listener);
         }
     }
 
-    public boolean removeReadListener(StoreSessionReadListener listener){
+    public boolean removeReadListener(StoreSessionReadListener listener) {
         return readListeners.remove(listener);
     }
 
     public void flush() {
         persistenceSessionManager.flush();
     }
+
+    public LinkedHashSet<BubbleId<?>> getDeletedIds() {
+      return modifiedCache.getDeletedIds();
+
+    }
+
+    public LinkedHashSet<BubbleId<?>> getInsertedIds(){
+      return modifiedCache.getInsertedIds();
+
+    }
+
+    public LinkedHashSet<BubbleId<?>> getLockedIds(){
+      return modifiedCache.getLockedIds();
+
+    }
+    public LinkedHashSet<BubbleId<?>> getUpdatedIds(){
+      return modifiedCache.getUpdatedIds();
+
+    }
+
 }
