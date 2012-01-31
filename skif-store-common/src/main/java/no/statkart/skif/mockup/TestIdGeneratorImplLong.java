@@ -15,11 +15,15 @@ import no.statkart.skif.store.SnapshotVersion;
 public class TestIdGeneratorImplLong implements TestIdGenerator<Long> {
     private long nextIdValue = 1;
 
-    @Override
-    public <I extends BubbleId> I getNextId(TestNumber testNumber, Class<I> idClass) {
+    public Long getNextIdValue(TestNumber testNumber) {
         final long localIdValue = nextIdValue++;
 
-        final long idValue = testNumber.getPrefix() * 10000 + localIdValue;
+        return testNumber.getPrefix() * 10000 + localIdValue;
+    }
+
+    @Override
+    public <I extends BubbleId> I getNextId(TestNumber testNumber, Class<I> idClass) {
+        final Long idValue = getNextIdValue(testNumber);
 
         return BubbleIds.createInstance(idClass, idValue, SnapshotVersion.CURRENT);
     }

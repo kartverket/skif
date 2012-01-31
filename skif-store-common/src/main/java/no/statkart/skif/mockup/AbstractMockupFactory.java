@@ -32,6 +32,10 @@ public abstract class AbstractMockupFactory<T extends TestIdGenerator<?>> {
         return testIdGenerator.getNextId(testNumber, idClass);
     }
 
+    protected T getTestIdGenerator() {
+        return testIdGenerator;
+    }
+
     /**
      * Oppretter alle mockup-objektene denne factory er ansvarlig for og putter dem i mockupens store.
      */

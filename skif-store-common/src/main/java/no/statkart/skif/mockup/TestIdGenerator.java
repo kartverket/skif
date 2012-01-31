@@ -15,5 +15,6 @@ import no.statkart.skif.store.BubbleId;
  * @since 2.1
  */
 public interface TestIdGenerator<T> {
+    public T getNextIdValue(TestNumber testNumber);
     public <I extends BubbleId> I getNextId(TestNumber testNumber, Class<I> idClass);
 }
