@@ -9,6 +9,7 @@ import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
+import javax.management.RuntimeErrorException;
 import java.util.*;
 
 import static no.statkart.skif.guava.Preconditions.checkNotNull;
@@ -68,22 +69,22 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
 
         public LinkedHashSet<BubbleId<?>> getDeletedIds() {
-            if (deletedIds==null) calc();
+            if (deletedIds == null) calc();
             return deletedIds;
         }
 
         public LinkedHashSet<BubbleId<?>> getInsertedIds() {
-            if (insertedIds==null) calc();
+            if (insertedIds == null) calc();
             return insertedIds;
         }
 
         public LinkedHashSet<BubbleId<?>> getLockedIds() {
-            if (lockedIds==null) calc();
+            if (lockedIds == null) calc();
             return lockedIds;
         }
 
         public LinkedHashSet<BubbleId<?>> getUpdatedIds() {
-            if (lockedIds==null) calc();
+            if (lockedIds == null) calc();
             return updatedIds;
         }
     }
@@ -96,14 +97,18 @@ public class StoreSessionServer extends AbstractStoreSession {
 
 
     public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, null, null);
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, null, null, null);
     }
 
     public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, readListeners, writeListeners);
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, readListeners, writeListeners, null);
     }
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners) {
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, readListeners, writeListeners, finishListeners);
+    }
+
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
         super(0, storeCache);
         this.persistenceSessionManager = persistenceSessionManager;
         this.transactionalLocker = new ReleaseAllLocksOnUpdateTransactionalLocker5(lockerService, "principal", lockTimeout);
@@ -113,6 +118,9 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
         if (writeListeners != null) {
             this.writeListeners.addAll(writeListeners);
+        }
+        if (finishListeners != null) {
+            this.finishListeners.addAll(finishListeners);
         }
         modifiedCache = new ModifiedCache(modifiedMap);
     }
@@ -157,7 +165,7 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     public void finish() {
         for (StoreSessionFinishListener finishListener : finishListeners) {
-            finishListener.onFinish((StoreServer)store);
+            finishListener.onFinish((StoreServer) store);
         }
         clear();
     }
@@ -463,21 +471,22 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     public LinkedHashSet<BubbleId<?>> getDeletedIds() {
-      return modifiedCache.getDeletedIds();
+        return modifiedCache.getDeletedIds();
 
     }
 
-    public LinkedHashSet<BubbleId<?>> getInsertedIds(){
-      return modifiedCache.getInsertedIds();
+    public LinkedHashSet<BubbleId<?>> getInsertedIds() {
+        return modifiedCache.getInsertedIds();
 
     }
 
-    public LinkedHashSet<BubbleId<?>> getLockedIds(){
-      return modifiedCache.getLockedIds();
+    public LinkedHashSet<BubbleId<?>> getLockedIds() {
+        return modifiedCache.getLockedIds();
 
     }
-    public LinkedHashSet<BubbleId<?>> getUpdatedIds(){
-      return modifiedCache.getUpdatedIds();
+
+    public LinkedHashSet<BubbleId<?>> getUpdatedIds() {
+        return modifiedCache.getUpdatedIds();
 
     }
 

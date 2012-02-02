@@ -26,7 +26,8 @@ public class TestBubbleFilter implements StoreSessionReadListener, StoreSessionW
         if (bubbleObject instanceof FilteredBubble) {
             FilteredBubble fb = (FilteredBubble) bubbleObject;
             if (fb.isFilter()) {
-                fb.setFilterText(replaced);
+                FilteredBubble ro = new FilteredBubble(fb.getId(), fb.getText(), fb.isFilter(), replaced);
+                return (T)ro;
             }
         }
         return bubbleObject;

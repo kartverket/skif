@@ -42,6 +42,7 @@ import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
+import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.KodeMsg;
 import org.hibernate.Session;
@@ -109,7 +110,14 @@ public class StoreTestServerModule extends SkifModule {
     @Provides
     @ServiceRequestScoped
     StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager) {
-        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(),null, null));
+        //ReadListener
+        List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
+        readListeners.add(new TestBubbleFilter());
+        List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
+        writeListeners.add(new TestBubbleFilter());
+        List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
+        finishListeners.add(new TestBubbleFinishFilter());
+        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners));
         return storeServer;
     }
 

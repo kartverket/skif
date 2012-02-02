@@ -26,6 +26,7 @@ import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.CEnumKodeId;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
+import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.KodeMsg;
@@ -149,7 +150,9 @@ public class StoreSessionServerTest {
         readListeners.add(new TestBubbleFilter());
         List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
         writeListeners.add(new TestBubbleFilter());
-        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners));
+        List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
+        finishListeners.add(new TestBubbleFinishFilter());
+        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners));
         deletePriviouslyWritenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
     }
 
@@ -383,6 +386,18 @@ public class StoreSessionServerTest {
             //skal feile
         }
         //assertTrue(storeServer.get(filteredBubbleId_101).getFilterText().contains("*"));
+    }
+
+
+    public void testFinishFilter() {
+        String str = "Skal byttes ut i finish";
+        storeServer.beginTransaction();
+        FilteredBubble filteredBubble = new FilteredBubble(filteredBubbleId_101, "Finish 101", false, str);
+        storeServer.insert(filteredBubble);
+        storeServer.commitTransaction();
+
+        FilteredBubble lest = storeServer.get(filteredBubbleId_101);
+        assertNotSame(str, lest.getFilterText());
     }
 
 
