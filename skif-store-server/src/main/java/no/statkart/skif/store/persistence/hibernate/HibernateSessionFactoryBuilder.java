@@ -270,8 +270,6 @@ public abstract class HibernateSessionFactoryBuilder {
             String path = resource.getPath();
             path = path.replaceFirst("/", "");
             startPaths.add(path.replaceFirst(mappingFilesDirectory, ""));
-            logger.info("Test!!!" + resource.getPath());
-            org.testng.Reporter.log("TestNG!!!" + resource.getPath());
             String protocol = resource.getProtocol();
             if (protocol.equals("file")) {
                 checkForFilesWithFileProtocol(files, resource);
