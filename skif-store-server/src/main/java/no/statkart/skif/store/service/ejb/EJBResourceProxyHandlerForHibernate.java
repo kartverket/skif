@@ -5,6 +5,7 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
+import no.statkart.skif.store.StoreServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +18,14 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
     private final ResourceManager resourceManager;
     private final ServiceRequestContext serviceRequestContext;
     private final ServiceMode serviceMode;
+    private final StoreServer storeServer;
 
     @Inject
-    public EJBResourceProxyHandlerForHibernate(ResourceManager resourceManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode) {
+    public EJBResourceProxyHandlerForHibernate(ResourceManager resourceManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode, StoreServer storeServer) {
         this.resourceManager = resourceManager;
         this.serviceRequestContext = serviceRequestContext;
         this.serviceMode = serviceMode;
+        this.storeServer = storeServer;
     }
 
 
@@ -44,6 +47,9 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
             if (serviceRequestContext.isContainerManagedTransaction()) {
                 if (serviceRequestContext.inTx()) {
                     resourceManager.flush();
+                }
+                if (serviceRequestContext.isNewTx()) {
+                    storeServer.finish();
                 }
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
                     resourceManager.commit();

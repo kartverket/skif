@@ -9,6 +9,7 @@ import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.store.LockerStrategy;
+import no.statkart.skif.store.StoreServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,14 +28,16 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
     private final ServiceRequestContext serviceRequestContext;
     private final ServiceMode serviceMode;
     private final LockerStrategy lockerStrategy;
+    private final StoreServer storeServer;
 
     @Inject
-    public EJBResourceProxyHandlerForHibernateWithLocks(TypeLiteral<S> serviceType, ResourceManager resourceManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode, LockerStrategy lockerStrategy) {
+    public EJBResourceProxyHandlerForHibernateWithLocks(TypeLiteral<S> serviceType, ResourceManager resourceManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode, LockerStrategy lockerStrategy, StoreServer storeServer) {
         this.serviceType = serviceType;
         this.resourceManager = resourceManager;
         this.serviceRequestContext = serviceRequestContext;
         this.serviceMode = serviceMode;
         this.lockerStrategy = lockerStrategy;
+        this.storeServer = storeServer;
     }
 
 
@@ -78,6 +81,10 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
             if (serviceRequestContext.isContainerManagedTransaction()) {
                 if (serviceRequestContext.inTx()) {
                     resourceManager.flush();
+                }
+
+                if (serviceRequestContext.isNewTx()) {
+                    storeServer.finish();
                 }
 
                 // Dersom dette er ytterste metode i et transaksjonelt scope, skal alle låser frigis i transaksjonen
