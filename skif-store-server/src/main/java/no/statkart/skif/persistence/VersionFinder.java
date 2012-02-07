@@ -78,8 +78,7 @@ public class VersionFinder {
      * @return Tabellnavn for bubbleId
      */
     protected <I extends BubbleId<?>> String finnTabellnavnForId(I bubbleId) {
-        String simpleName = bubbleId.getClass().getSimpleName();
-        return simpleName.substring(0, simpleName.length() - 2) + "_H";
+        return bubbleId.getBaseType().getSimpleName() + "_H";
     }
 }
 
