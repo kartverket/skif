@@ -1,12 +1,9 @@
 package no.statkart.skif.storetest.domain.demo;
 
-
-import no.statkart.skif.store.AbstractObject;
-
-import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
+ * @since 2.1
  * @author Jan Holmen
  */
 public class ChildForParrent implements Serializable { //extends AbstractObject{

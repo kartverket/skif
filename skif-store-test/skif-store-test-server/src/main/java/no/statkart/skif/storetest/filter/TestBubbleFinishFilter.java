@@ -11,11 +11,9 @@ import no.statkart.skif.storetest.domain.demo.FilteredBubbleId;
 import java.util.LinkedHashSet;
 
 /**
- * Created by IntelliJ IDEA.
- * User: holjan
- * Date: 01.02.12
- * Time: 11:27
- * To change this template use File | Settings | File Templates.
+ * Test finisFilter.
+ * @since 2.1
+ * @author Jan Holmen
  */
 public class TestBubbleFinishFilter implements StoreSessionFinishListener {
     @Override

@@ -25,11 +25,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.FileAssert.fail;
 
 /**
- * Created by IntelliJ IDEA.
- * User: holjan
- * Date: 02.02.12
- * Time: 10:46
- * To change this template use File | Settings | File Templates.
+ * Test av read / write og finish filter.
+ * @since 2.1
+ * @author Jan Holmen
  */
 @Test
 public class BubbleFilterTest extends StoreTestServerTestCase {

@@ -6,8 +6,8 @@ import no.statkart.skif.storetest.domain.demo.ParrentBubbleId;
 import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 
 /**
+ * @since 2.1
  * @author Jan Holmen
- * @since 2.0
  */
 public class ParrentBubbleIdType extends BubbleIdType {
 

@@ -5,8 +5,8 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 /**
- * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
+ * @author Jan Holmen
  */
 public class FilteredBubbleId<T extends FilteredBubble> extends AbstractBubbleId<T> implements StoreTestBubbleId<T> {
 

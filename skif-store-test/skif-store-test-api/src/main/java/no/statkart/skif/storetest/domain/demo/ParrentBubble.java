@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * @since 2.1
  * @author Jan Holmen
  */
 public class ParrentBubble  extends AbstractBubbleObject implements StoreTestBubble {

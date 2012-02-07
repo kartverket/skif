@@ -5,6 +5,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 /**
+ * @since 2.1
  * @author Jan Holmen
  */
 public class FilteredBubble extends AbstractBubbleObject implements StoreTestBubble {
