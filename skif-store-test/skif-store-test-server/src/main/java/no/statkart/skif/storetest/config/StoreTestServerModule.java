@@ -41,6 +41,7 @@ import no.statkart.skif.store.StoreSessionServer;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
+import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
@@ -115,6 +116,7 @@ public class StoreTestServerModule extends SkifModule {
         readListeners.add(new TestBubbleFilter());
         List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
         writeListeners.add(new TestBubbleFilter());
+        writeListeners.add(new AggregertObjektFilter());
         List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
         finishListeners.add(new TestBubbleFinishFilter());
         StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners));
@@ -158,7 +160,8 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(Bar.class)
                 .addResource(BarFoos.class)
                 .addResource(TestMap.class)
-                .addResource(TestEntity.class);
+                .addResource(TestEntity.class)
+                .addResource(AggregertObjekt.class);
 
 
         Properties hibernatePropertiesCurrent;

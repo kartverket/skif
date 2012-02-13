@@ -413,3 +413,124 @@ ALTER SESSION SET SORT_AREA_SIZE = 20000000;
 
 CREATE INDEX geometricentity_spatial_idx ON geometricelement_H(polygon) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS ('layer_gtype=POLYGON');
 CREATE INDEX geometricentity2_spatial_idx ON geometricelement_H(point) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS ('layer_gtype=POINT');
+
+create table AggregertObjektMeta_h (
+  id number(19,0) not null,
+  sistOppdatertAv varchar2(255 char),
+  sistOppdatert timestamp,
+  tBegin              timestamp(6) not null,
+  tEnd                timestamp(6) not null,
+  tVersion            number (19,0) not null,
+  primary key (id, tend)
+);
+create table AggregertObjekt_H (
+  id number(19,0) not null,
+  tekst varchar2(255 char),
+  tBegin              timestamp(6) not null,
+  tEnd                timestamp(6) not null,
+  tVersion            number (19,0) not null,
+  primary key (id, tend)
+);
+create table AggregertKomponent_h (
+  id number(19,0) not null,
+  indeks number(10,0) not null,
+  noe varchar2(255 char),
+  annet number(10,0),
+  tBegin              timestamp(6) not null,
+  tEnd                timestamp(6) not null,
+  tVersion            number (19,0) not null,
+  primary key (id, indeks, tend)
+);
+
+create view AggregertObjektMeta as select * from AggregertObjektMeta_H where snapshot_time.t_between(tBegin, tEnd)=1;
+CREATE OR REPLACE TRIGGER T_AggregertObjektMeta INSTEAD OF INSERT OR UPDATE OR DELETE ON AggregertObjektMeta
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF INSERTING THEN
+    INSERT INTO AggregertObjektMeta_H
+        VALUES (:new.id, :new.sistoppdatertav, :new.sistoppdatert, t_Trans, t_End, 1);
+  ELSIF UPDATING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO AggregertObjektMeta_H VALUES (:old.id, :old.sistoppdatertav, :old.sistoppdatert, :old.TBEGIN, t_Trans, :old.TVERSION);
+        UPDATE AggregertObjektMeta_H SET TVERSION = :old.TVERSION+1
+        WHERE id = :new.id and tEnd = t_End;
+     END IF;
+     UPDATE AggregertObjektMeta_H SET ID=:new.ID, sistoppdatertav=:new.sistoppdatertav, sistoppdatert=:new.sistoppdatert, TBEGIN=t_Trans, TEND=t_End, TVERSION=TVERSION
+        WHERE id = :new.id and tEnd = t_End;
+  ELSIF DELETING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO AggregertObjektMeta_H
+           VALUES (:old.ID, :old.sistoppdatertav, :old.sistoppdatert, :old.TBEGIN, t_Trans, :old.TVERSION);
+     END IF;
+     DELETE FROM AggregertObjektMeta_H
+        WHERE id = :old.id AND tEnd = t_End;
+  END IF;
+END T_AggregertObjektMeta;
+/
+
+create view AggregertObjekt as select * from AggregertObjekt_H where snapshot_time.t_between(tBegin, tEnd)=1;
+CREATE OR REPLACE TRIGGER T_AggregertObjekt INSTEAD OF INSERT OR UPDATE OR DELETE ON AggregertObjekt
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF INSERTING THEN
+    INSERT INTO AggregertObjekt_H
+        VALUES (:new.id, :new.tekst, t_Trans, t_End, 1);
+
+  ELSIF UPDATING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO AggregertObjekt_H VALUES (:old.id, :old.tekst, :old.TBEGIN, t_Trans, :old.TVERSION);
+        UPDATE AggregertObjekt_H SET TVERSION = :old.TVERSION+1
+        WHERE id = :new.id and tEnd = t_End;
+     END IF;
+     UPDATE AggregertObjekt_H SET ID=:new.ID, tekst=:new.tekst, TBEGIN=t_Trans, TEND=t_End, TVERSION=TVERSION
+        WHERE id = :new.id and tEnd = t_End;
+
+  ELSIF DELETING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO AggregertObjekt_H
+           VALUES (:old.ID, :old.tekst, :old.TBEGIN, t_Trans, :old.TVERSION);
+     END IF;
+     DELETE FROM AggregertObjekt_H
+        WHERE id = :old.id AND tEnd = t_End;
+
+  END IF;
+END T_AggregertObjekt;
+/
+
+create view AggregertKomponent as select * from AggregertKomponent_H where snapshot_time.t_between(tBegin, tEnd)=1;
+CREATE OR REPLACE TRIGGER T_AggregertKomponent INSTEAD OF INSERT OR UPDATE OR DELETE ON AggregertKomponent
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF INSERTING THEN
+    INSERT INTO AggregertKomponent_H
+        VALUES (:new.id, :new.indeks, :new.noe, :new.annet, t_Trans, t_End, 1);
+
+  ELSIF UPDATING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO AggregertKomponent_H VALUES (:old.id, :old.indeks, :old.noe, :old.annet, :old.TBEGIN, t_Trans, :old.TVERSION);
+        UPDATE AggregertKomponent_H SET TVERSION = :old.TVERSION+1
+        WHERE id = :new.id and indeks = :new.indeks and tEnd = t_End;
+     END IF;
+     UPDATE AggregertKomponent_H SET ID=:new.ID, indeks=:new.indeks, noe=:new.noe, annet=:new.annet, TBEGIN=t_Trans, TEND=t_End, TVERSION=TVERSION
+        WHERE id = :new.id AND indeks = :new.indeks and tEnd = t_End;
+
+  ELSIF DELETING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO AggregertKomponent_H
+           VALUES (:old.ID, :old.indeks, :old.noe, :old.annet, :old.TBEGIN, t_Trans, :old.TVERSION);
+     END IF;
+     DELETE FROM AggregertKomponent_H
+        WHERE id = :old.id AND tEnd = t_End;
+
+  END IF;
+END T_AggregertKomponent;
+/
