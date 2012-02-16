@@ -2,39 +2,32 @@ package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.EnumKodeId;
-import no.statkart.skif.store.kodeliste.EnumKodeSupport;
 import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLong;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;
+import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeSupport;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
  */
-public class AEnumKodeId extends EnumKodeId<AEnumKode> implements StoreTestEnumKodeId<AEnumKode> {
-    private static EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>>(AEnumKodeId.class,new StoreTestEnumKodelisteLongId(1), "TestAEnumKodeliste.navn");
+public class AEnumKodeId extends StoreTestEnumKodeId<AEnumKode> {
+    private static StoreTestEnumKodeSupport<AEnumKode, AEnumKodeId> kodeSupport = new StoreTestEnumKodeSupport<AEnumKode, AEnumKodeId>(AEnumKodeId.class, 1, "demoKodeMsg");
 
-    public static String kodeMsgNavn = "demoKodeMsg";
-    public static StoreTestEnumKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
-    public static AEnumKodeId IkkeOppgittId = define(0, "-", "Kode.IkkeOppgitt");
-    public static AEnumKodeId KodeAId = define(1, "A", "AEnumKode.A");
-    public static AEnumKodeId KodeBId = define(2, "B", "AEnumKode.B");
+    public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static AEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");
+    public static AEnumKodeId KodeAId = define(1, "A", "KodeA");
+    public static AEnumKodeId KodeBId = define(2, "B", "KodeB");
 
-    protected AEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
+    public Long getValue() {
+        return (Long) super.getValue();
+    }
+
+    public AEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 
-    @Override
-    protected EnumKodeSupport getKodeSupport() {
-        return kodeSupport;
-    }
-
     protected static AEnumKodeId define(long idValue, String kodeVerdi, String beskrivelesesKey) {
-        return kodeSupport.defineKode(AEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey).getId();
-    }
-
-    private Object readResolve() {
-        return resolveInstance();
+        return kodeSupport.defineKode(idValue, kodeVerdi, beskrivelesesKey).getId();
     }
 
 }

@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.finder.KodelisteFinder;
-import no.statkart.skif.store.persistence.kodeliste.KodelistePersister;
 
 import java.util.Collection;
 
@@ -15,9 +14,6 @@ import java.util.Collection;
 public class KodelisteServiceImpl implements KodelisteService {
     @Inject
     private KodelisteFinder kodelisteFinder;
-
-    @Inject
-    private KodelistePersister kodelistePersister;
 
     @Override
     public Collection<? extends KodelisteId> getKodelisteIds() {

@@ -9,6 +9,7 @@ import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
+import org.hibernate.jdbc.ConnectionWrapper;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -64,7 +65,8 @@ public class ConnectionManagerUsingHibernateTest {
         assertSame(connectionForSnapshotVersion, connectionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
 
         try {
-            Connection unwrappedConnection = connectionForSnapshotVersion.reserve();
+            Connection wrappedConnection = connectionForSnapshotVersion.reserve();
+            Connection unwrappedConnection = ConnectionWrapper.class.cast(wrappedConnection).getWrappedConnection();
             assertEquals(unwrappedConnection.getClass().getName(), "oracle.jdbc.driver.T4CConnection");
         } finally {
             connectionForSnapshotVersion.release();

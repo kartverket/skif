@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.service.id;
 
+import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.config.StoreTestTxManagementServerModule;
 import no.statkart.skif.storetest.service.txmanagement.StoreTestTxManagementClientModule;
 import no.statkart.skif.util.testsupport.SkifTestCase;
@@ -15,7 +16,7 @@ public class SequenceBlockAllocatorServiceTest extends SkifTestCase {
 
     public SequenceBlockAllocatorServiceTest() {
         setModuleClass(StoreTestTxManagementClientModule.class);
-        setSingleVmServerModuleClass(StoreTestTxManagementServerModule.class);
+        setSingleVmServerModuleClass(StoreTestServerModule.class);
     }
 
     public void  testAllocateSequenceBlock(){

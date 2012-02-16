@@ -134,7 +134,8 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
                 if (IS_VALUE_TRACING_ENABLED) {
                     log().trace("binding '" + value + "' to parameter: " + index);
                 }
-                long idValue = ((EnumKodeId) value).getValue();
+                // TODO: Fix så det virker for string også
+                long idValue = (Long)((EnumKodeId) value).getValue();
                 st.setInt(index,(int)idValue);
             }
         } catch (ClassCastException ce) {
@@ -166,10 +167,10 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     public String objectToSQLString(Object value) {
-        return '\'' + Long.toString(((EnumKodeId) value).getValue()) + '\'';
+        return '\'' + Long.toString((Long)((EnumKodeId) value).getValue()) + '\'';
     }
 
     public String toXMLString(Object value) {
-        return Long.toString(((EnumKodeId) value).getValue());
+        return Long.toString((Long)((EnumKodeId) value).getValue());
     }
 }

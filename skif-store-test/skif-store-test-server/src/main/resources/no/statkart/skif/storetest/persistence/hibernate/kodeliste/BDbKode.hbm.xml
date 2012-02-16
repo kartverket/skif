@@ -3,18 +3,21 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest.domain.demo.koder.BDbKode" table="BKode" >
+    <class name="no.statkart.skif.storetest.domain.demo.koder.BDbKode" table="BKode">
         <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.BDbKodeIdType">
             <generator class="assigned"/>
         </id>
 
         <property name="kodeverdi"/>
 
-        <map name="lokalisertBeskrivelse" table="BKodeLoc">
+        <map name="localizedFieldsMap" table="BKodeLoc">
             <key column="id"/>
             <map-key type="string" column="lokale"/>
-            <element column="beskrivelse" type="string"/>
-        </map> 
+            <composite-element class="no.statkart.skif.store.kodeliste.Kode$LocalizedFields">
+                <property name="navn" type="string" access="field"/>
+                <property name="beskrivelse" type="string" access="field"/>
+           </composite-element>
+        </map>
 
     </class>
 

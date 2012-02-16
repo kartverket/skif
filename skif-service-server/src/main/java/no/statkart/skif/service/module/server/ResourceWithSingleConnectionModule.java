@@ -6,6 +6,7 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleConfiguration;
+import no.statkart.skif.persistence.DefaultResourceManager;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.jdbc.*;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
@@ -53,7 +54,7 @@ public class ResourceWithSingleConnectionModule extends SkifModule {
             );
         }
 
-        ResourceManager resourceManager = new ResourceManager(
+        ResourceManager resourceManager = new DefaultResourceManager(
                 new ResourceManager.Entry(connectionManager, ConnectionManager.class)
         );
         return resourceManager;

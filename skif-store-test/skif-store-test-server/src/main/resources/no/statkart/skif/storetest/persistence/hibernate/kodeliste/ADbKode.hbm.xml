@@ -10,10 +10,13 @@
 
         <property name="kodeverdi"/>
 
-        <map name="lokalisertBeskrivelse" table="AKodeLoc">
+        <map name="localizedFieldsMap" table="AKodeLoc">
             <key column="id"/>
             <map-key type="string" column="lokale"/>
-            <element column="beskrivelse" type="string"/>
+            <composite-element class="no.statkart.skif.store.kodeliste.Kode$LocalizedFields">
+                <property name="navn" type="string" access="field"/>
+                <property name="beskrivelse" type="string" access="field"/>
+           </composite-element>
         </map>
 
     </class>

@@ -172,7 +172,7 @@ public abstract class BubbleIdType implements UserType {
      *
      * @param value id value for bubbleid'en
      */
-    protected abstract Object createPrototypeId(Object value, SnapshotVersion snapshotTime);
+    protected abstract Object createPrototypeId(Object value, SnapshotVersion snapshotVersion);
 
     /**
      * Oppretter BubbleId av riktig type og setter idvalue og SnapshotVersion

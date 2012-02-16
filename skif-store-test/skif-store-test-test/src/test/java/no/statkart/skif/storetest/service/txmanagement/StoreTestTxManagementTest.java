@@ -11,7 +11,7 @@ import static org.testng.Assert.*;
  * @author Henrik Fredholm
  * @since 2.0
  */
-@Test
+@Test(groups="broken")
 public class StoreTestTxManagementTest extends SkifTestCase {
 
     public StoreTestTxManagementTest() {

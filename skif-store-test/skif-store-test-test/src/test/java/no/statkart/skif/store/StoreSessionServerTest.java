@@ -13,25 +13,21 @@ import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.store.persistence.hibernate.*;
-import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
+import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
-import no.statkart.skif.store.persistence.kode.DefaultKodePersistenceSession;
-import no.statkart.skif.store.persistence.kode.EnumKodeManager;
+import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceSessionSubtypeHandler;
+import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.domain.demo.koder.ADbKode;
-import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
-import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
-import no.statkart.skif.storetest.domain.demo.koder.CEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.KodeMsg;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.testng.annotations.*;
 
 import java.util.*;
@@ -115,10 +111,10 @@ public class StoreSessionServerTest {
     }
 
     private PersistenceSessionManager createPersistenceSessionManager(ServiceContext context) {
-        EnumKodeManager enumKodeManager = new EnumKodeManager();
-        enumKodeManager.installStatic(AEnumKodeId.class);
-        enumKodeManager.installStatic(BEnumKodeId.class);
-        enumKodeManager.installStatic(CEnumKodeId.class);
+        EnumKodelisteManager enumKodelistManager = new EnumKodelisteManager();
+        enumKodelistManager.installStatic(AEnumKodeId.class);
+        enumKodelistManager.installStatic(BEnumKodeId.class);
+        enumKodelistManager.installStatic(SEnumKodeId.class);
 
         KodeMsg kodeMsg = new DemoKodeMsg();
 
@@ -132,11 +128,11 @@ public class StoreSessionServerTest {
         return new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
                         masterCurrent,
-                        new DefaultKodePersistenceSession(masterCurrent, enumKodeManager, kodeMsg, context)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelistManager, context)
                 ),
                 new DefaultPersistenceSessionStrategy(
                         masterOld,
-                        new DefaultKodePersistenceSession(masterOld, enumKodeManager, kodeMsg, context)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelistManager, context)
                 )
         );
     }

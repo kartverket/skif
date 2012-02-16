@@ -11,6 +11,7 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
+import no.statkart.skif.persistence.DefaultResourceManager;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
@@ -32,15 +33,12 @@ import no.statkart.skif.store.persistence.*;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate;
-import no.statkart.skif.store.persistence.kode.DefaultKodePersistenceSession;
-import no.statkart.skif.store.persistence.kode.EnumKodeManager;
+import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceSessionSubtypeHandler;
+import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
-import no.statkart.skif.store.MemoryLockerSingleton5;
-import no.statkart.skif.store.StoreServer;
-import no.statkart.skif.store.StoreSessionServer;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
@@ -119,19 +117,18 @@ public class StoreTestServerModule extends SkifModule {
         writeListeners.add(new AggregertObjektFilter());
         List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
         finishListeners.add(new TestBubbleFinishFilter());
-        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners));
+        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners));        
         return storeServer;
     }
 
     @Provides
     @Singleton
-    EnumKodeManager provideEnumKodeManager() {
-        EnumKodeManager enumKodeManager = new EnumKodeManager();
-        enumKodeManager.installStatic(AEnumKodeId.class);
-        enumKodeManager.installStatic(BEnumKodeId.class);
-        enumKodeManager.installStatic(CEnumKodeId.class);
-//        kodelisteManager.installStatic(SEnumKodeId.class);
-        return enumKodeManager;
+    EnumKodelisteManager provideEnumKodelisteManager() {
+        EnumKodelisteManager enumKodelisteManager = new EnumKodelisteManager();
+        enumKodelisteManager.installStatic(AEnumKodeId.class);
+        enumKodelisteManager.installStatic(BEnumKodeId.class);
+        enumKodelisteManager.installStatic(SEnumKodeId.class);
+        return enumKodelisteManager;
     }
 
 
@@ -149,7 +146,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(BDbKode.class)
                 .addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class)
                 .addResource(XStrDbKode.class)
-                .addResource(StoreTestDbKodelisteLong.class)
+                .addResource(StoreTestKodelisteLong.class)
                 .addResource(TestBubble.class)
                 .addResource(ChildBubble.class)
                 .addResource(ParrentBubble.class)
@@ -200,7 +197,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    ResourceManager provideResourceManager(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodeManager enumKodeManager, KodeMsg kodeMsg, ServiceContext serviceContext) {
+    ResourceManager provideResourceManager(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager, KodeMsg kodeMsg, ServiceContext serviceContext) {
         Configuration configuration = moduleConfiguration.getConfiguration();
         Properties hibernatePropertiesCurrent;
         Properties hibernatePropertiesOld;
@@ -239,15 +236,15 @@ public class StoreTestServerModule extends SkifModule {
         PersistenceSessionManager persistenceSessionManager = new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
                         persistenceSessionMasterCurrent,
-                        new DefaultKodePersistenceSession(persistenceSessionMasterCurrent, enumKodeManager, kodeMsg, serviceContext)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterCurrent, enumKodelisteManager, serviceContext)
                 ),
                 new DefaultPersistenceSessionStrategy(
                         persistenceSessionMasterOld,
-                        new DefaultKodePersistenceSession(persistenceSessionMasterOld, enumKodeManager, kodeMsg, serviceContext)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterOld, enumKodelisteManager, serviceContext)
                 )
         );
 
-        ResourceManager resourceManager = new ResourceManager(
+        ResourceManager resourceManager = new DefaultResourceManager(
                 new ResourceManager.Entry(
                         new ConnectionManagerUsingHibernate(persistenceSessionManager),
                         ConnectionManager.class

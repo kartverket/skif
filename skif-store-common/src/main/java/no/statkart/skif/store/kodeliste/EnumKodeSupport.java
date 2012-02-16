@@ -4,36 +4,28 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
  */
-public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelisteId<KL>> extends KodeSupport<KL, KLID> {
-    private Map<KodeId<?>, EnumKode> koder = new HashMap<KodeId<?>, EnumKode>();
-    private KL nonLocalizedKodeliste;
-    private final KodeIdResolver kodeIdResolver = new KodeIdResolver();
+public class EnumKodeSupport<T extends EnumKode, I extends EnumKodeId<T>, KL extends Kodeliste, KLID extends KodelisteId<KL>> {
+    private final Class<I> kodeIdClass;
+    private final KLID kodelisteId;
+    private final String resourceMsgName;
+    private LinkedHashMap<EnumKodeId<?>, EnumKode> koder = new LinkedHashMap<EnumKodeId<?>, EnumKode>();
+    private HashMap<EnumKodeId<?>, String> kodeResourceKeys = new HashMap<EnumKodeId<?>, String>();
 
-    public static <I extends EnumKodeId<?>> EnumKodeSupport getKodeSupport(Class<I> idClass) {
-        return (EnumKodeSupport) KodeSupport.getKodeSupport(idClass);
+    public EnumKodeSupport(Class<I> kodeIdClass, KLID kodelisteId, String resourceMsgName) {
+        this.kodeIdClass = kodeIdClass;
+        this.kodelisteId = kodelisteId;
+        this.resourceMsgName = resourceMsgName;
     }
 
-    public <I extends KodeId<? extends Kode>> I getOrCreate(I kodeId) {
-        return kodeIdResolver.getOrCreate(kodeId);
-    }
-
-    public boolean isNewKoderAllowed() {
-        return kodeIdResolver.isNewKoderAllowed();
-    }
-
-    public void setNewKoderAllowed(boolean value) {
-        kodeIdResolver.setNewKoderAllowed(value);
-    }
-
-    public KL getNonLocalizedKodeliste() {
-        nonLocalizedKodeliste.setKodeIds(new ArrayList(koder.keySet()));
-        return nonLocalizedKodeliste;
+    public KLID getKodelisteId() {
+        return kodelisteId;
     }
 
     public synchronized void addKode(EnumKode kode) {
@@ -43,38 +35,44 @@ public class EnumKodeSupport<KL extends EnumKodeliste, KLID extends EnumKodelist
         koder.put(kode.getId(), kode);
     }
 
-    public EnumKodeSupport(Class<? extends EnumKodeId<?>> idClass, KLID kodelisteId, String kodelisteNavn) {
-        super(idClass, kodelisteId);
-        nonLocalizedKodeliste =  kodelisteId.createTypeInstance();
-        nonLocalizedKodeliste.setId(getKodelisteId());
-        nonLocalizedKodeliste.setKodeIdClass(idClass);
-        nonLocalizedKodeliste.setNavn(kodelisteNavn);
-        nonLocalizedKodeliste.setBeskrivelsesKey(kodelisteNavn);
-    }
-
-    public <T extends EnumKode, I extends EnumKodeId<? extends T>> T defineKode(Class<I> idClass, long idValue, String kodeverdi, String beskrivelesesKey) {
-        I id = BubbleIds.createInstance(idClass, new Long(idValue), SnapshotVersion.CURRENT);
+    public T defineKode(Object idValue, String kodeverdi, String kodeResourceKey) {
+        I id = BubbleIds.createInstance(kodeIdClass, idValue, SnapshotVersion.CURRENT);
         T kode = id.createTypeInstance();
         kode.setId(id);
         kode.setKodeverdi(kodeverdi);
-        kode.setBeskrivelsesKey(beskrivelesesKey);
+        kode.setKodelisteId(kodelisteId);
         addKode(kode);
+        String key = getKodeName() + "." + kodeResourceKey;
+        kodeResourceKeys.put(kode.getId(), key);
         return kode;
     }
 
-    public Collection<EnumKode> getNonLocalizedKoder() {
-        return koder.values();
+    public String getKodelisteResourceKey() {
+        String kodeName = getKodeName();
+        return kodeName + ".kodeliste";
     }
 
-    @Override
-    protected <T extends Kode> String getBeskrivelse(T kode, Locale locale) {
-        // TODO: implementer uthenting fra resourse fil
-        return ((EnumKode)kode).getBeskrivelsesKey() + " lokalister for " + locale;
+    private String getKodeName() {
+        return removeLastChars(getKodeIdClass().getSimpleName(), 2);
     }
 
-    @Override
-    protected <T extends Kodeliste> String getBeskrivelse(T kodeliste, Locale locale) {
-        // TODO: implementer uthenting fra resourse fil
-        return ((EnumKodeliste)kodeliste).getBeskrivelsesKey() + " lokalister for " + locale;
+    private String removeLastChars(String simpleName, int n) {
+        return simpleName.substring(0, simpleName.length()-2);
+    }
+
+    public String getKodeResourceKey(EnumKodeId<?> id) {
+        return kodeResourceKeys.get(id);
+    }
+
+    public Class<? extends KodeId<?>> getKodeIdClass() {
+        return kodeIdClass;
+    }
+
+    public LinkedHashMap<EnumKodeId<?>, EnumKode> getKoder() {
+        return koder;
+    }
+
+    public String getResourceMsgName() {
+        return resourceMsgName;
     }
 }

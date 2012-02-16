@@ -1,35 +1,13 @@
 package no.statkart.skif.store.kodeliste;
 
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 
-import java.lang.reflect.Field;
-
 /**
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
  */
-public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T>  {
-
-
-    public static <I extends KodeId<?>> KodelisteId getKodelisteId(Class<I> idClass) {
-        return (KodelisteId) getKodeSupport(idClass).getKodelisteId();
-    }
-
-    protected static <I extends KodeId<?>> KodeSupport getKodeSupport(Class<I> idClass) {
-        try {
-            Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
-            kodeSupportField.setAccessible(true);
-            KodeSupport kodeSupport = (KodeSupport) kodeSupportField.get(null);
-            return kodeSupport;
-        } catch (NoSuchFieldException e) {
-            throw new ImplementationException("KodeId klasse mangler static field 'kodeSupport': " + idClass);
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException("KodeId klasse mangler static filed 'kodeSupport': " + idClass);
-        }
-    }
-
+public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T> {
     protected KodeId(Object value) {
         super(value);
     }
@@ -38,17 +16,11 @@ public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T>  {
         super(value, version);
     }
 
-    public KodelisteId<?> getKodelisteId() {
-        return (KodelisteId<?>) getKodeSupport().getKodelisteId();
-    }
-
-    protected abstract KodeSupport getKodeSupport();
-    
-
     @Override
     public String toString() {
         return getClass().getSimpleName() + "{" +
                 "value='" + getValue() + '\'' +
                 '}';
     }
+
 }

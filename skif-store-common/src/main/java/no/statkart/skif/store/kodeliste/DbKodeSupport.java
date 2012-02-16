@@ -1,37 +1,28 @@
 package no.statkart.skif.store.kodeliste;
 
-
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 
-import java.util.Locale;
-
 /**
- * @author Roar Ingebrigtsen
- * @since 2.0
+ * @author Henrik Fredholm
+ * @since 2.1
  */
-public class DbKodeSupport<KL extends DbKodeliste, KLID extends DbKodelisteId<KL>> extends KodeSupport<KL, KLID> {
+public class DbKodeSupport<I extends DbKodeId, KL extends Kodeliste, KLID extends KodelisteId<KL>> {
+    private final Class<I> kodeIdClass;
+    private final KLID kodelisteId;
 
-    public DbKodeSupport(Class<? extends KodeId<?>> idClass, KLID kodelisteId) {
-        super(idClass, kodelisteId);
+    public DbKodeSupport(Class<I> kodeIdClass, KLID kodelisteId) {
+        this.kodeIdClass = kodeIdClass;
+        this.kodelisteId = kodelisteId;
     }
 
-    public <I extends DbKodeId<? extends DbKode>> I define(Class<I> idClass, Object idValue) {
-        I id = BubbleIds.createInstance(idClass, idValue, SnapshotVersion.CURRENT);
+    public I defineId(Object idValue) {
+        I id = BubbleIds.createInstance(kodeIdClass, idValue, SnapshotVersion.CURRENT);
         return id;
     }
 
 
-    @Override
-    protected <T extends Kode> String getBeskrivelse(T kode, Locale locale) {
-        // TODO: Bruk lokale
-        return ((DbKode)kode).getLokalisertBeskrivelse().get("b");
+    public KLID getKodelisteId() {
+        return kodelisteId;
     }
-
-    @Override
-    protected <T extends Kodeliste> String getBeskrivelse(T kodeliste, Locale locale) {
-        // TODO: Bruk lokale
-        return ((DbKodeliste)kodeliste).getLokalisertBeskrivelse().get("b");
-    }
-
 }

@@ -1,9 +1,17 @@
 package no.statkart.skif.storetest.domain.kode;
 
 
+import no.statkart.skif.store.kodeliste.DbKode;
+import no.statkart.skif.store.kodeliste.DbKodeId;
+import no.statkart.skif.storetest.domain.StoreTestBubble;
+
 /**
- * @author Roar Ingebrigtsen
- * @since 2.0
+ * @author Henrik Fredholm
+ * @since 2.1
  */
-public interface StoreTestDbKode extends StoreTestKode {
+public abstract class StoreTestDbKode extends DbKode implements StoreTestKode {
+    @Override
+    public StoreTestDbKodeId<?> getId() {
+        return (StoreTestDbKodeId<?>)super.getId();
+    }
 }

@@ -37,20 +37,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="TestCEnumKodeId">
-        <xs:complexContent>
-            <xs:extension base="kodens:KodeId">
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="TestCEnumKode">
-        <xs:complexContent>
-            <xs:extension base="kodens:Kode">
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <xs:complexType name="TestSEnumKodeId">
         <xs:complexContent>
             <xs:extension base="kodens:KodeId">

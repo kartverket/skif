@@ -6,8 +6,6 @@ import no.statkart.skif.exception.ReflectionException;
 import no.statkart.skif.util.Reflection;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,35 +68,6 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     // Cache the class for faster access. This actually matters
     protected Class clazz = getClass();
 
-    @Deprecated
-    public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, long idValue) {
-        return createInstance(idClass, new Long(idValue), SnapshotVersion.CURRENT);
-    }
-
-    @Deprecated
-    public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, long idValue, SnapshotVersion snapshotVersion) {
-        return createInstance(idClass, new Long(idValue), snapshotVersion);
-    }
-
-    @Deprecated
-    public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, Object idValue, SnapshotVersion snapshotVersion) {
-        I id = null;
-        try {
-            Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), SnapshotVersion.class);
-            ctor.setAccessible(true);
-            id = ctor.newInstance(idValue, snapshotVersion);
-            return (I) id.resolveInstance();
-        } catch (InstantiationException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException(e);
-        } catch (NoSuchMethodException e) {
-            throw new ImplementationException(e);
-        } catch (InvocationTargetException e) {
-            throw new ImplementationException(e);
-        }
-    }
-
     public BubbleId<T> resolveInstance() {
         return this;
     }
@@ -129,17 +98,23 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
 
-    public AbstractBubbleId<T> asReplicaVersion(SnapshotVersion snapshotVersion) {
+    public AbstractBubbleId<T> asSnapshotVersion(SnapshotVersion snapshotVersion) {
         if (this.snapshotVersion.equals(snapshotVersion)) return this;
-        return createInstance(this.getClass(), (Long) getValue(), snapshotVersion);
+        return BubbleIds.createInstance(this.getClass(), getValue(), snapshotVersion);
     }
 
-    public AbstractBubbleId<T> asReplicaVersionOld() {
-        return asReplicaVersion(SnapshotVersion.OLD);
+    public AbstractBubbleId<T> asSnapshotVersion(BubbleId<?>  bubbleId) {
+        SnapshotVersion snapshotVersion = bubbleId.getSnapshotVersion();
+        if (this.snapshotVersion.equals(snapshotVersion)) return this;
+        return BubbleIds.createInstance(this.getClass(), getValue(), snapshotVersion);
     }
 
-    public AbstractBubbleId<T> asReplicaVersionCurrent() {
-        return asReplicaVersion(SnapshotVersion.CURRENT);
+    public AbstractBubbleId<T> asSnapshotVersionOld() {
+        return asSnapshotVersion(SnapshotVersion.OLD);
+    }
+
+    public AbstractBubbleId<T> asSnapshotVersionCurrent() {
+        return asSnapshotVersion(SnapshotVersion.CURRENT);
     }
 
     private static TypeInfo getTypeInfo(Class clazz) {

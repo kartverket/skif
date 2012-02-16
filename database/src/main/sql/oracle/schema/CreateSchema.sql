@@ -68,30 +68,28 @@ create table LockInfo (
 );
 
 
-
-
 create table AKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, primary key (id) );
-create table AKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+create table AKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table AKodeLoc add constraint FK_AKodeLoc foreign key (id) references AKode;
 
 create table BKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, primary key (id) );
-create table BKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+create table BKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table BKodeLoc add constraint FK_BKodeLoc foreign key (id) references BKode;
 
 create table CKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, class varchar2(64) not null, primary key (id) );
-create table CKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+create table CKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table CKodeLoc add constraint FK_CKodeLoc foreign key (id) references CKode;
 
 create table XStrKode ( id varchar2(10) not null, kodeVerdi varchar2(10) not null, primary key (id) );
-create table XStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+create table XStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table XStrKodeLoc add constraint FK_XStrKodeLoc foreign key (id) references XStrKode;
 
 create table YStrKode ( id varchar2(10) not null, kodeVerdi varchar2(10) not null, primary key (id) );
-create table YStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+create table YStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table YStrKodeLoc add constraint FK_YStrKodeLoc foreign key (id) references YStrKode;
 
-create table Kodeliste( id number(19,0) not null, navn varchar2(64), kodeClassname varchar2(255), primary key(id));
-create table KodelisteLoc ( id number(19,0) not null, lokale varchar2(10) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+create table Kodeliste( id number(19,0) not null, kodeTypeNavn varchar2(64), kodeIdClassname varchar2(255), primary key(id));
+create table KodelisteLoc ( id number(19,0) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table KodelisteLoc add constraint FK_TestKodelisteLoc foreign key (id) references Kodeliste;
 
 create global temporary table SNAPSHOT_TRANS (v Timestamp) on commit delete rows;

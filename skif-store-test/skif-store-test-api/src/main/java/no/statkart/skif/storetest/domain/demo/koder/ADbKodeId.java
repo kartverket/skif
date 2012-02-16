@@ -2,18 +2,16 @@ package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.DbKodeId;
-import no.statkart.skif.store.kodeliste.DbKodeSupport;
 import no.statkart.skif.storetest.domain.kode.StoreTestDbKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
+import no.statkart.skif.storetest.domain.kode.StoreTestDbKodeSupport;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
  */
-public class ADbKodeId extends DbKodeId<ADbKode> implements StoreTestDbKodeId<ADbKode> {
-    private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(ADbKodeId.class,new StoreTestDbKodelisteLongId(10001L, SnapshotVersion.CURRENT));
+public class ADbKodeId extends StoreTestDbKodeId<ADbKode> {
+    private static StoreTestDbKodeSupport<ADbKodeId> kodeSupport = new StoreTestDbKodeSupport<ADbKodeId>(ADbKodeId.class, 10001L);
 
     public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static ADbKodeId A1Id = define(1);
@@ -28,14 +26,13 @@ public class ADbKodeId extends DbKodeId<ADbKode> implements StoreTestDbKodeId<AD
         super(value, snapshotVersion);
     }
 
-
-    @Override
-    protected DbKodeSupport getKodeSupport() {
-        return kodeSupport;
+    protected static ADbKodeId define(long idValue) {
+        return kodeSupport.defineId(idValue);
     }
 
-    protected static ADbKodeId define(long idValue) {
-        return kodeSupport.define(ADbKodeId.class, idValue);
+    @Override
+    public StoreTestKodelisteLongId<?> getKodelisteId() {
+        return KODELISTE_ID.asSnapshotVersion(this);
     }
 }
 

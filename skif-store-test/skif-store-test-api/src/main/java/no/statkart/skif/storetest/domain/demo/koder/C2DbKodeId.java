@@ -2,8 +2,7 @@ package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.DbKodeSupport;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLong;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodelisteLongId;
+import no.statkart.skif.storetest.domain.kode.StoreTestDbKodeSupport;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
@@ -11,8 +10,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
  * @since 2.0
  */
 public class C2DbKodeId extends CDbKodeId<CDbKode> {
-    private static DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>> kodeSupport = new DbKodeSupport<StoreTestDbKodelisteLong, StoreTestDbKodelisteLongId<StoreTestDbKodelisteLong>>(C2DbKodeId.class,new StoreTestDbKodelisteLongId(10004L, SnapshotVersion.CURRENT));
-
+    private static StoreTestDbKodeSupport<C2DbKodeId> kodeSupport = new StoreTestDbKodeSupport<C2DbKodeId>(C2DbKodeId.class, 10004L);
 
     public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static C2DbKodeId C2A1Id = define(10);
@@ -22,17 +20,13 @@ public class C2DbKodeId extends CDbKodeId<CDbKode> {
         super(value, snapshotVersion);
     }
 
-    @Override
-    protected DbKodeSupport getKodeSupport() {
-        return kodeSupport;
-    }
-
     protected static C2DbKodeId define(long idValue) {
-        return kodeSupport.define(C2DbKodeId.class, idValue);
+        return kodeSupport.defineId(idValue);
     }
 
-    private Object readResolve() {
-        return resolveInstance();
+    @Override
+    public StoreTestKodelisteLongId<?> getKodelisteId() {
+        return KODELISTE_ID.asSnapshotVersion(this);
     }
 
 }

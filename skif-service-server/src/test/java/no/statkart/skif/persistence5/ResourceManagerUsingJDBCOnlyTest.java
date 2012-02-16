@@ -1,6 +1,7 @@
 package no.statkart.skif.persistence5;
 
 import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.persistence.DefaultResourceManager;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.persistence.jdbc.ConnectionManagerUsingFactory;
@@ -29,7 +30,7 @@ public class ResourceManagerUsingJDBCOnlyTest {
                 createConnectionFactoryUsingJDBC(config, SnapshotVersion.OLD, false)
         );
 
-        ResourceManager resourceManager = new ResourceManager(
+        ResourceManager resourceManager = new DefaultResourceManager(
                 new ResourceManager.Entry(managerUsingFactory, ConnectionManager.class)
         );
 

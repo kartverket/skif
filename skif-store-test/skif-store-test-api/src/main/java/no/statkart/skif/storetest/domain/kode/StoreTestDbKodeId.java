@@ -1,9 +1,15 @@
 package no.statkart.skif.storetest.domain.kode;
 
 
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.kodeliste.DbKodeId;
+
 /**
- * @author Roar Ingebrigtsen
- * @since 2.0
+ * @author Henrik Fredholm
+ * @since 2.1
  */
-public interface StoreTestDbKodeId<T extends StoreTestDbKode> extends  StoreTestKodeId<T> {
+public abstract class StoreTestDbKodeId<T extends StoreTestDbKode> extends DbKodeId<T> implements StoreTestKodeId<T> {
+    protected StoreTestDbKodeId(Object value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
+    }
 }

@@ -3,41 +3,35 @@ package no.statkart.skif.storetest.domain.demo.koder;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.EnumKodeId;
 import no.statkart.skif.store.kodeliste.EnumKodeSupport;
-import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLong;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteString;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteStringId;
+import no.statkart.skif.storetest.domain.kode.StoreTestKodeId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId;
 
 /**
  * En enum kode som bruke en kodeliste med string idValue
+ *
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class SEnumKodeId extends EnumKodeId<SEnumKode> implements StoreTestEnumKodeId<SEnumKode> {
-    private static EnumKodeSupport<StoreTestEnumKodelisteString, StoreTestEnumKodelisteStringId<StoreTestEnumKodelisteString>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteString, StoreTestEnumKodelisteStringId<StoreTestEnumKodelisteString>>(SEnumKodeId.class, new StoreTestEnumKodelisteStringId("TestSEnumKodeliste"), "TestSEnumKodeliste.navn");
+public class SEnumKodeId extends StoreTestEnumKodeId<SEnumKode> {
+    private static EnumKodeSupport<SEnumKode, SEnumKodeId, StoreTestKodelisteString, StoreTestKodelisteStringId<StoreTestKodelisteString>> kodeSupport = new EnumKodeSupport<SEnumKode, SEnumKodeId, StoreTestKodelisteString, StoreTestKodelisteStringId<StoreTestKodelisteString>>(SEnumKodeId.class, new StoreTestKodelisteStringId("TestSEnumKodeliste"), "DemoMsg");
 
-    public static KodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
-    public static SEnumKodeId IkkeOppgittId = define(0, "-", "Kode.IkkeOppgitt");
-    public static SEnumKodeId KodeAId = define(1, "A", "SEnumKodeId.A");
-    public static SEnumKodeId KodeBId = define(2, "B", "SEnumKodeId.B");
+    public static StoreTestKodelisteStringId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static SEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");
+    public static SEnumKodeId KodeAId = define(1, "A", "KodeA");
+    public static SEnumKodeId KodeBId = define(2, "B", "KodeB");
 
-    protected SEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
+    public SEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 
-    @Override
-    protected EnumKodeSupport getKodeSupport() {
-        return kodeSupport;
+    public Long getValue() {
+        return (Long) super.getValue();
     }
 
-    protected static SEnumKodeId define(long idValue, String kodeVerdi, String beskrivelesesKey) {
-        return kodeSupport.defineKode(SEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey).getId();
-    }
-
-    private Object readResolve() {
-        return resolveInstance();
+    protected static SEnumKodeId define(long idValue, String kodeVerdi, String resourceKey) {
+        return kodeSupport.defineKode(idValue, kodeVerdi, resourceKey).getId();
     }
 
 }

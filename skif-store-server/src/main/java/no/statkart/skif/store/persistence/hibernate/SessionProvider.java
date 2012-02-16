@@ -2,9 +2,14 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import no.statkart.skif.persistence.ResourceManager;
+import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import org.hibernate.Session;
+
+import java.security.spec.KeySpec;
+import java.sql.Connection;
 
 /**
  * @author Henrik Fredholm

@@ -1,28 +1,27 @@
 package no.statkart.skif.store.kodeliste;
 
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.AbstractBubbleId;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.SnapshotVersion;
 
 /**
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
  */
-public abstract class KodelisteId<T extends Kodeliste> extends AbstractBubbleId<T>  {
+public abstract class KodelisteId<T extends Kodeliste> extends AbstractBubbleId<T> {
     protected KodelisteId() {
     }
 
-    protected KodelisteId(Object value) {
+    public KodelisteId(Object value) {
         super(value);
     }
 
-    protected KodelisteId(Object value, SnapshotVersion version) {
+    public KodelisteId(Object value, SnapshotVersion version) {
         super(value, version);
     }
 
-
-    @Override
-    protected boolean compatible(AbstractBubbleId id) {
-        return id instanceof KodelisteId;
+    public KodelisteId<T> asSnapshotVersion(BubbleId<?> bubbleId) {
+        return (KodelisteId<T>)super.asSnapshotVersion(bubbleId);
     }
 
     @Override

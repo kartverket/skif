@@ -7,7 +7,7 @@ import no.statkart.skif.storetest.domain.kode.StoreTestDbKode;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class XStrDbKode extends DbKode implements StoreTestDbKode {
+public class XStrDbKode extends StoreTestDbKode {
 
     @Override
     public XStrDbKodeId getId() {

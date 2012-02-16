@@ -11,6 +11,7 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
+import no.statkart.skif.persistence.DefaultResourceManager;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
 import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersionProvider;
@@ -157,7 +158,7 @@ public class StoreTestTxManagementServerModule extends SkifModule {
         connectionManager = new ConnectionManagerUsingHibernate(persistenceSessionManager);
 
 
-        ResourceManager resourceManager = new ResourceManager(
+        ResourceManager resourceManager = new DefaultResourceManager(
                 new ResourceManager.Entry(
                         new ConnectionManagerUsingHibernate(persistenceSessionManager),
                         ConnectionManager.class

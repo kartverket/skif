@@ -2,21 +2,11 @@ package no.statkart.skif.store.kodeliste;
 
 /**
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
  */
-public abstract class EnumKode extends Kode {
-    private String beskrivelsesKey;
-
+public class EnumKode extends Kode {
     @Override
     public EnumKodeId<?> getId() {
         return (EnumKodeId<?>) super.getId();
-    }
-
-    public String getBeskrivelsesKey() {
-        return beskrivelsesKey;
-    }
-
-    public void setBeskrivelsesKey(String beskrivelsesKey) {
-        this.beskrivelsesKey = beskrivelsesKey;
     }
 }

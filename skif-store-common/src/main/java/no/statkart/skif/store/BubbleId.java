@@ -16,4 +16,8 @@ public interface BubbleId<T extends BubbleObject> extends Serializable{
     public Class<T> getType();
     public Class getValueType();
     public boolean equalsIgnoreSnapshotVersion(Object object);
+    public BubbleId<T> asSnapshotVersion(SnapshotVersion snapshotVersion);
+    public BubbleId<T> asSnapshotVersion(BubbleId<?>  bubbleId);
+    public BubbleId<T> asSnapshotVersionOld();
+    public BubbleId<T> asSnapshotVersionCurrent();
 }

@@ -18,7 +18,7 @@ public class FilteredBubbleIdType extends BubbleIdType {
 
     @Override
     protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
-        return new ParrentBubbleId((Long)value).asReplicaVersion(snapshotVersion);
+        return new ParrentBubbleId((Long)value).asSnapshotVersion(snapshotVersion);
     }
 
 }

@@ -2,40 +2,32 @@ package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.EnumKodeId;
-import no.statkart.skif.store.kodeliste.EnumKodeSupport;
-import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLong;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodelisteLongId;
+import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeSupport;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
  */
-public class BEnumKodeId extends EnumKodeId<BEnumKode> implements StoreTestEnumKodeId<BEnumKode> {
-    private static EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>> kodeSupport = new EnumKodeSupport<StoreTestEnumKodelisteLong, StoreTestEnumKodelisteLongId<StoreTestEnumKodelisteLong>>(BEnumKodeId.class, new StoreTestEnumKodelisteLongId(2), "TestBEnumKodeliste.navn");
+public class BEnumKodeId extends StoreTestEnumKodeId<BEnumKode> {
+    private static StoreTestEnumKodeSupport<BEnumKode, BEnumKodeId> kodeSupport = new StoreTestEnumKodeSupport<BEnumKode, BEnumKodeId>(BEnumKodeId.class, 2, "demoKodeMsg");
 
-    public static KodelisteId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
+    public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static BEnumKodeId IkkeOppgittId = define(0, "-", "Kode.IkkeOppgitt");
-    public static BEnumKodeId KodeAId = define(1, "A", "BEnumKode.A");
-    public static BEnumKodeId KodeBId = define(2, "B", "BEnumKode.B");
-    public static BEnumKodeId KodeCId = define(1000000000L, "C", "BEnumKode.C");
+    public static BEnumKodeId KodeAId = define(1, "A", "KodeA");
+    public static BEnumKodeId KodeBId = define(2, "B", "KodeB");
+    public static BEnumKodeId KodeCId = define(1000000000L, "C", "KodeC");
 
-    protected BEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
+    public BEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 
-    @Override
-    protected EnumKodeSupport getKodeSupport() {
-        return kodeSupport;
+    public Long getValue() {
+        return (Long) super.getValue();
     }
 
     protected static BEnumKodeId define(long idValue, String kodeVerdi, String beskrivelesesKey) {
-        return kodeSupport.defineKode(BEnumKodeId.class, idValue, kodeVerdi, beskrivelesesKey).getId();
+        return kodeSupport.defineKode(idValue, kodeVerdi, beskrivelesesKey).getId();
     }
-
-    private Object readResolve() {
-        return resolveInstance();
-    }
-
 }

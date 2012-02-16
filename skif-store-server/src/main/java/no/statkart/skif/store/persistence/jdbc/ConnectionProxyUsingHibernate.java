@@ -28,6 +28,7 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
         methodsImplementedByProxy.addAll(Arrays.asList(Object.class.getMethods()));
         methodsImplementedByProxy.addAll(Arrays.asList(ConnectionReservationForSnapshot.class.getMethods()));
     }
+
     public ConnectionProxyUsingHibernate(HibernatePersistenceSessionMaster persistenceSessionMaster) {
         this.persistenceSessionMaster = persistenceSessionMaster;
 
@@ -62,9 +63,6 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
     @Override
     public Connection reserve() {
         Connection connection = persistenceSessionMaster.reserveSession().connection();
-        if (connection instanceof ConnectionWrapper) {
-            connection = ConnectionWrapper.class.cast(connection).getWrappedConnection();
-        }
         return connection;
     }
 
