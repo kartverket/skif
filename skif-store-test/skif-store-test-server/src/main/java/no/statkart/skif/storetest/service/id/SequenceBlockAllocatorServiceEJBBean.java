@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.service.id;
 import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
-import no.statkart.skif.storetest.config.StoreTestTxManagementEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -17,7 +17,7 @@ import javax.interceptor.Interceptors;
  */
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.skiftest.service.id.SequenceBlockAllocatorServiceEJBBean")
-@Interceptors(StoreTestTxManagementEJBInterceptorJEE.class)
+@Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionManagement(TransactionManagementType.BEAN)
 public class SequenceBlockAllocatorServiceEJBBean extends EJBTimedService implements SequenceBlockAllocatorService {
 

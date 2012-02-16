@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.service.txmanagement;
 import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
-import no.statkart.skif.storetest.config.StoreTestTxManagementEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.*;
@@ -15,7 +15,7 @@ import javax.interceptor.Interceptors;
  */
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.skiftest.service.txmanagement.ContainerManagedTxAServiceEJBBean")
-@Interceptors(StoreTestTxManagementEJBInterceptorJEE.class)
+@Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class ContainerManagedTxAServiceEJBBean extends EJBTimedService implements ContainerManagedTxAService {
 

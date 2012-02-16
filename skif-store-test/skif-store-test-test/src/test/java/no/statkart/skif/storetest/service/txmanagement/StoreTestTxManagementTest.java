@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.service.txmanagement;
 
 import no.statkart.skif.exception.ValidationException;
-import no.statkart.skif.storetest.config.StoreTestTxManagementServerModule;
+import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
@@ -16,7 +16,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
 
     public StoreTestTxManagementTest() {
         setModuleClass(StoreTestTxManagementClientModule.class);
-        setSingleVmServerModuleClass(StoreTestTxManagementServerModule.class);
+        setSingleVmServerModuleClass(StoreTestServerModule.class);
     }
 
     /**

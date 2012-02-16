@@ -82,6 +82,7 @@ public class StoreTestServerModule extends SkifModule {
         // EnumKode internasjonalisering
         bind(KodeMsg.class).to(DemoKodeMsg.class);
 
+        install(new ServerServiceModule(moduleConfiguration, new StoreTestTxManagementServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreUpdateServices().getServices()));

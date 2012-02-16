@@ -11,9 +11,6 @@
         <listener-class>no.statkart.skif.storetest.config.StoreTestStoreUpdateServicesEJBs</listener-class>
     </listener>
     <listener>
-        <listener-class>no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig</listener-class>
-    </listener>
-    <listener>
         <listener-class>no.statkart.skif.storetest.config.StoreTestTestServicesEJBs</listener-class>
     </listener>
 
@@ -23,10 +20,10 @@
     <listener>
         <listener-class>no.statkart.skif.storetest.config.StoreTestSequenceBlockAllocatorServicesEJBs</listener-class>
     </listener>
-    <listener>
-        <listener-class>no.statkart.skif.storetest.wsapi.config.StoreTestTxManagementWebServiceInjectorConfig</listener-class>
-    </listener>
 
+    <listener>
+        <listener-class>no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig</listener-class>
+    </listener>
 
     <security-constraint>
         <web-resource-collection>

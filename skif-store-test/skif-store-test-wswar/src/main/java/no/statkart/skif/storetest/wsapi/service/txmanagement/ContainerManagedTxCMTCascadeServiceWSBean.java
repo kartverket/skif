@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.wsapi.service.txmanagement;
 
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
-import no.statkart.skif.storetest.wsapi.config.StoreTestTxManagementWebServiceInjectorConfig;
+import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.annotation.PostConstruct;
@@ -31,7 +31,7 @@ public class ContainerManagedTxCMTCascadeServiceWSBean extends SkifWebService<Co
 
     @PostConstruct
     protected void init() {
-        Injector injector = StoreTestTxManagementWebServiceInjectorConfig.getWebServiceInjector();
+        Injector injector = StoreTestWebServiceInjectorConfig.getWebServiceInjector();
         wsServiceChain = getServiceImplementation(injector, ctx);
     }
 

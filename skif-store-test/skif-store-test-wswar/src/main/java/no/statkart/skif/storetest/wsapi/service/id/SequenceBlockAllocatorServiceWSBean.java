@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.wsapi.service.id;
 
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
-import no.statkart.skif.storetest.wsapi.config.StoreTestTxManagementWebServiceInjectorConfig;
+import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -30,7 +30,7 @@ public class SequenceBlockAllocatorServiceWSBean extends SkifWebService<Sequence
 
     @PostConstruct
     protected void init() {
-        Injector injector = StoreTestTxManagementWebServiceInjectorConfig.getWebServiceInjector();
+        Injector injector = StoreTestWebServiceInjectorConfig.getWebServiceInjector();
         wsServiceChain = getServiceImplementation(injector, ctx);
     }
 

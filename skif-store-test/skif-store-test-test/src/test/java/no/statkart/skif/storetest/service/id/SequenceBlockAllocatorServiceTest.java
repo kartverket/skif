@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.service.id;
 
 import no.statkart.skif.storetest.config.StoreTestServerModule;
-import no.statkart.skif.storetest.config.StoreTestTxManagementServerModule;
 import no.statkart.skif.storetest.service.txmanagement.StoreTestTxManagementClientModule;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.Assert;
