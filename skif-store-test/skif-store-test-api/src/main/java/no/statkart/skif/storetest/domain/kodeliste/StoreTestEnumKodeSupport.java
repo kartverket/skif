@@ -1,8 +1,6 @@
-package no.statkart.skif.storetest.domain.kode;
+package no.statkart.skif.storetest.domain.kodeliste;
 
 import no.statkart.skif.store.kodeliste.*;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
  * @author Henrik Fredholm

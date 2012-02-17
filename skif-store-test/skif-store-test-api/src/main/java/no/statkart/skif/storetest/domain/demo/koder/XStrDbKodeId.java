@@ -1,9 +1,8 @@
 package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodeliste.DbKodeId;
-import no.statkart.skif.storetest.domain.kode.StoreTestDbKodeId;
-import no.statkart.skif.storetest.domain.kode.StoreTestDbKodeSupport;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeSupport;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**

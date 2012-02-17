@@ -1,5 +1,6 @@
-package no.statkart.skif.storetest.domain.kode;
+package no.statkart.skif.storetest.domain.kodeliste;
 
+import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 /**
@@ -7,6 +8,10 @@ import no.statkart.skif.storetest.domain.StoreTestBubble;
  */
 public interface StoreTestKode extends StoreTestBubble {
     public StoreTestKodeId<?> getId();
+
+    public KodelisteId<?> getKodelisteId();
+
+    public void setKodelisteId(KodelisteId<?> kodelisteId);
 
     public String getKodeverdi();
 

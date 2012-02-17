@@ -14,6 +14,4 @@ public abstract class DbKodeId<T extends DbKode> extends KodeId<T> {
     protected DbKodeId(Object value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
-
-    public abstract KodelisteId<?> getKodelisteId();
 }

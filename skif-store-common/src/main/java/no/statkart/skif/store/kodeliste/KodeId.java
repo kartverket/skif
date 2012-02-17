@@ -16,6 +16,8 @@ public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T> {
         super(value, version);
     }
 
+    public abstract KodelisteId<?> getKodelisteId();
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + "{" +

@@ -1,8 +1,7 @@
-package no.statkart.skif.storetest.domain.kode;
+package no.statkart.skif.storetest.domain.kodeliste;
 
 
 import no.statkart.skif.store.kodeliste.EnumKode;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 /**
  * @author Henrik Fredholm

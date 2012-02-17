@@ -10,7 +10,6 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -194,7 +193,10 @@ public class AutomagicTest {
                     //Vi må 'kappe' referansegrafen et sted, og det gjøres enkelt (kanskje for enkelt) ved å si at når
                     //pakkestien blir lengre enn 10 pakker så traverserer vi ikke referansene lenger.
                     if (!(fieldPath.split("\\.").length > 10)) {
-                        if (field.getType().isPrimitive()) {
+                        Object instance = generateInstanceForClass(field.getType());
+                        if (instance!=null) {
+                            field.set(retVal,instance);
+                        } else if (field.getType().isPrimitive()) {
                             if (field.getType().equals(Integer.TYPE)) {
                                 if (o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")) {
                                     //Må bruke SnapshotVersion.CURRENT.getNanos() (som er 0) pga EnumKodeId som kun kan være current.
@@ -227,6 +229,8 @@ public class AutomagicTest {
                             } else if (o.getClass().toString().endsWith("Id")) {
                                 //Id må settes til string men kun nummeric verdier
                                 field.set(retVal, "" + randomGenerator.nextInt());
+                            } else if (field.getName().equals("kodeIdClass")) {
+                                field.set(retVal, "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId");
                             } else {
                                 field.set(retVal, field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100));
                             }
@@ -259,7 +263,10 @@ public class AutomagicTest {
                             ArrayList list = new ArrayList();
                             ParameterizedType genericType = (ParameterizedType) field.getGenericType();
                             Class<?> genericClass = (Class<?>) genericType.getActualTypeArguments()[0];
-                            if (isClassAbstract(genericClass)) {
+                            Object instanceForList = generateInstanceForClass(genericClass);
+                            if (instanceForList!=null) {
+                                list.add(instanceForList);
+                            } else if (isClassAbstract(genericClass)) {
                                 list.add(generateDummyData(generateConcreteSubclass(genericClass), fieldPath + "." + field.getName()));
                             } else {
                                 if (genericClass.getName().equals(String.class.getName())) {
@@ -281,15 +288,19 @@ public class AutomagicTest {
                                 logger.debug("Hopper over: " + field.getName() + ", som er av type: " + field.getType() + ", og abstrakt, i klasse " + o.getClass().getName());
                             }
                         } else {
-                            if (field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("MatrikkelBubbleId")) {
+                           if (field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("MatrikkelBubbleId")) {
                                 Object o2 = generateConcreteSubclassId(o.getClass().getName());
                                 generateDummyData(o2, fieldPath + "." + field.getName());
                                 field.set(retVal, o2);
-                            } else if (field.getName().endsWith("KodeId") && field.getType().getName().startsWith("no.")) {
+                           } else if (field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("BubbleId")) {
+                               Object o2 = generateConcreteSubclassId(o.getClass().getName());
+                               generateDummyData(o2, fieldPath + "." + field.getName());
+                               field.set(retVal, o2);
+                           } else if (field.getName().endsWith("KodeId") && field.getType().getName().startsWith("no.")) {
                                 Object o2 = generateConcreteKodeId(field.getType());
                                 generateDummyData(o2, fieldPath + "." + field.getName());
                                 field.set(retVal, o2);
-                            } else {
+                           } else {
                                 //recurse
                                 Object o2 = createNewInstance(field.getType());
                                 generateDummyData(o2, fieldPath + "." + field.getName());
@@ -321,7 +332,7 @@ public class AutomagicTest {
             Class<?> aClass;
             try {
                 aClass = Class.forName(reroutedPackageName + "." + clazz.getSimpleName());
-                if (Modifier.isAbstract(aClass.getModifiers())) {
+                if (Modifier.isAbstract(aClass.getModifiers()) || aClass.isInterface()) {
                     //Den "andre sidens" klasse er abstrakt. Håndter det som at denne sidens klasse er abstrakt
                     return true;
                 }
@@ -330,7 +341,7 @@ public class AutomagicTest {
                 //Dette skjer f.eks. for lister, som har navn som slutter på List i wsapi, men ikke i domain
                 if (!clazz.getSimpleName().endsWith("List")) {
                     //Men ellers så er det sannsynligvis feil, men vil uansett bli håndtert av testen på mappingen, så vi bare ignorerer dette her
-                    logger.debug("Fant ikke noen klasse: " + reroutedPackageName + "." + clazz.getSimpleName());
+                   logger.debug("Fant ikke noen klasse: " + reroutedPackageName + "." + clazz.getSimpleName());
                 }
             }
 
@@ -366,7 +377,7 @@ public class AutomagicTest {
                     dennesScore++;
                 }
             }
-            if (dennesScore > maxScore) {
+            if (dennesScore >= maxScore) {
                 maxScore = dennesScore;
                 besteMatch = next;
             }
@@ -428,6 +439,10 @@ public class AutomagicTest {
         } else {
             return subclass.newInstance();
         }
+    }
+
+    protected Object generateInstanceForClass(Class clazz) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        return null;
     }
 
     protected <T> T createNewInstance(Class clazz) throws IllegalAccessException, InstantiationException {

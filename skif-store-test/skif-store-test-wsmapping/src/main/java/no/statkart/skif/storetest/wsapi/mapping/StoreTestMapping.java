@@ -4,12 +4,17 @@ import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.KodeId;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKode;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
 import no.statkart.skif.storetest.wsapi.domain.demo.*;
-import no.statkart.skif.storetest.wsapi.domain.kode.KodeIdList;
+import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
 
 import java.sql.Timestamp;
@@ -26,8 +31,8 @@ public interface StoreTestMapping extends Mapping {
     public StoreTestBubbleIdList d2w(Collection source, StoreTestBubbleIdList target);
     public <T extends Collection> T w2d(StoreTestBubbleIdList source, T target);
 
-//    public no.statkart.skif.storetest.wsapi.domain.StoreTestBubble d2w(StoreTestBubble source);
-//    public TestBubble w2d(no.statkart.skif.storetest.wsapi.domain.StoreTestBubble source);
+    public StoreTestBubbleList d2w(Collection source, StoreTestBubbleList target);
+    public <T extends Collection> T w2d(StoreTestBubbleList source, T target);
 
     public no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp d2w(Timestamp source);
     public Timestamp w2d(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp source);
@@ -35,20 +40,17 @@ public interface StoreTestMapping extends Mapping {
     public no.statkart.skif.storetest.wsapi.domain.SnapshotVersion d2w(SnapshotVersion source);
     public SnapshotVersion w2d(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion source);
 
-    public StoreTestBubbleList d2w(Collection source, StoreTestBubbleList target);
-    public <T extends Collection> T w2d(StoreTestBubbleList source, T target);
+    public no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId d2w(KodelisteId<?> source);
+    public KodelisteId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId source);
 
-    public no.statkart.skif.storetest.wsapi.domain.kode.KodeId d2w(KodeId<?> source);
-    public KodeId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kode.KodeId source);
+    public no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId d2w(StoreTestKodelisteLongId<?> source);
+    public StoreTestKodelisteLongId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId source);
 
-    public KodeIdList d2w(Collection source, KodeIdList target);
-    public <T extends Collection> T w2d(KodeIdList source, T target);
+    public no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteStringId d2w(StoreTestKodelisteStringId<?> source);
+    public StoreTestKodelisteStringId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteStringId source);
 
-    public KodeIdList d2w(Collection source, KodelisteIdList target);
-    public <T extends Collection> T w2d(KodelisteIdList source, T target);
-
-    public no.statkart.skif.storetest.wsapi.domain.kode.Kode d2w(Kode source);
-    public Kode w2d(no.statkart.skif.storetest.wsapi.domain.kode.Kode source);
+    public no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId d2w(StoreTestKodeId<?> source);
+    public StoreTestKodeId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId source);
 
     public no.statkart.skif.storetest.domain.demo.BarFoosId<no.statkart.skif.storetest.domain.demo.BarFoos> w2d(no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId source);
     public no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId d2w(no.statkart.skif.storetest.domain.demo.BarFoosId<no.statkart.skif.storetest.domain.demo.BarFoos> source);
@@ -67,5 +69,4 @@ public interface StoreTestMapping extends Mapping {
 
     public FooIdList d2w(Collection source, FooIdList target);
     public <T extends Collection> T w2d(FooIdList source, T target);
-
 }

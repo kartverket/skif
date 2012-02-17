@@ -3,17 +3,67 @@
         version="1.0"
         targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"
         xmlns:kodelistens="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"
-        xmlns:kodens="http://skif.statkart.no/storetest/wsapi/domain/kode"
         xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
     <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
-    <xs:import schemaLocation="kode.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/kode"/>
+
+    <xs:complexType name="KodeId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="KodeIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="kodelistens:KodeId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="KodeIdTestList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Kode">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="kodelisteId" type="kodelistens:KodelisteId"/>
+                    <xs:element name="kodeverdi" type="xs:string"/>
+                    <xs:element name="beskrivelse" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="KodeList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="kodelistens:Kode"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="KodelisteId">
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="KodelisteStringId">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodelisteId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="KodelisteLongId">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodelisteId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -31,8 +81,22 @@
                     <xs:element name="kodeIdClass" type="xs:string"/>
                     <xs:element name="navn" type="xs:string"/>
                     <xs:element name="beskrivelse" type="xs:string"/>
-                    <xs:element name="kodeIds" type="kodens:KodeIdList"/>
+                    <xs:element name="kodeIds" type="kodelistens:KodeIdList"/>
                 </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="KodelisteString">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kodeliste">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="KodelisteLong">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kodeliste">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -47,11 +111,9 @@
     <xs:complexType name="KodelisteTransfer">
         <xs:sequence>
             <xs:element name="KodelisteIds" type="kodelistens:KodelisteIdList"/>
-            <xs:element name="kodeIds" type="kodens:KodeIdList"/>
+            <xs:element name="kodeIds" type="kodelistens:KodeIdList"/>
             <xs:element name="objects" type="domainns:StoreTestBubbleList"/>
         </xs:sequence>
     </xs:complexType>
-
-
 
 </xs:schema>

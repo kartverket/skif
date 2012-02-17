@@ -2,22 +2,22 @@
 <xs:schema
         version="1.0"
         targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"
-        xmlns:kodens="http://skif.statkart.no/storetest/wsapi/domain/kode"
+        xmlns:kodelistens="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
-    <xs:import schemaLocation="kode.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/kode"/>
+    <xs:import schemaLocation="kodeliste.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"/>
 
     <xs:complexType name="TestAEnumKodeId">
         <xs:complexContent>
-            <xs:extension base="kodens:KodeId">
+            <xs:extension base="kodelistens:KodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestAEnumKode">
         <xs:complexContent>
-            <xs:extension base="kodens:Kode">
+            <xs:extension base="kodelistens:Kode">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -25,97 +25,97 @@
 
     <xs:complexType name="TestBEnumKodeId">
         <xs:complexContent>
-            <xs:extension base="kodens:KodeId">
+            <xs:extension base="kodelistens:KodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestBEnumKode">
         <xs:complexContent>
-            <xs:extension base="kodens:Kode">
+            <xs:extension base="kodelistens:Kode">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestSEnumKodeId">
         <xs:complexContent>
-            <xs:extension base="kodens:KodeId">
+            <xs:extension base="kodelistens:KodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestSEnumKode">
         <xs:complexContent>
-            <xs:extension base="kodens:Kode">
+            <xs:extension base="kodelistens:Kode">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestADbKodeId">
         <xs:complexContent>
-            <xs:extension base="kodens:KodeId">
+            <xs:extension base="kodelistens:KodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestADbKode">
         <xs:complexContent>
-            <xs:extension base="kodens:Kode">
+            <xs:extension base="kodelistens:Kode">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestBDbKodeId">
         <xs:complexContent>
-            <xs:extension base="kodens:KodeId">
+            <xs:extension base="kodelistens:KodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestBDbKode">
         <xs:complexContent>
-            <xs:extension base="kodens:Kode">
+            <xs:extension base="kodelistens:Kode">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestC1DbKodeId">
         <xs:complexContent>
-            <xs:extension base="kodens:KodeId">
+            <xs:extension base="kodelistens:KodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestC1DbKode">
         <xs:complexContent>
-            <xs:extension base="kodens:Kode">
+            <xs:extension base="kodelistens:Kode">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="TestC2DbKodeId">
         <xs:complexContent>
-            <xs:extension base="kodens:KodeId">
+            <xs:extension base="kodelistens:KodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestC2DbKode">
         <xs:complexContent>
-            <xs:extension base="kodens:Kode">
+            <xs:extension base="kodelistens:Kode">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestXStrDbKodeId">
         <xs:complexContent>
-            <xs:extension base="kodens:KodeId">
+            <xs:extension base="kodelistens:KodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TestXStrDbKode">
         <xs:complexContent>
-            <xs:extension base="kodens:Kode">
+            <xs:extension base="kodelistens:Kode">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

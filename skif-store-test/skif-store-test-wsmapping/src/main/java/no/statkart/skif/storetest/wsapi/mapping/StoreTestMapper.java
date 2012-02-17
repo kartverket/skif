@@ -9,7 +9,7 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
 import no.statkart.skif.storetest.wsapi.domain.demo.*;
-import no.statkart.skif.storetest.wsapi.domain.kode.KodeIdList;
+import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
 
 import java.util.Collection;
@@ -66,8 +66,9 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.RazId.class, no.statkart.skif.storetest.domain.demo.RazId.class));
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.GeometricElementId.class, no.statkart.skif.storetest.domain.demo.GeometricElementId.class));
 
-        // TODO: Endre kodemapper til å kunne håndtere multiple mappinger for source, rekkefølgen er viktig her
-        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class, StoreTestKodelisteLongId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class, no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class, no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteStringId.class, no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId.class));
 
         // Id Lister
         addMapper(new WsapiListTypeMapper(StoreTestBubbleIdList.class, Collection.class));
@@ -84,8 +85,8 @@ public class StoreTestMapper extends AbstractMapper {
         addMapper(new BarfoosTypeMapper());
         addMapper(new FooTypeMapper());
 
-        // TODO: Endre kodemapper til å kunne håndtere multiple mappinger for source bedre, pt er rekkefølgen er viktig her, siste klasse vinner
-        addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class, StoreTestKodelisteLong.class));
+        addMapper(new KodelisteTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLong.class, StoreTestKodelisteLong.class));
+        addMapper(new KodelisteStringTypeMapper("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteString.class, StoreTestKodelisteString.class));
 
         // Boble lister
         addMapper(new WsapiListTypeMapper(StoreTestBubbleList.class, Collection.class));
@@ -110,6 +111,7 @@ public class StoreTestMapper extends AbstractMapper {
         // Kode
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKode.class, AEnumKode.class));
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestBEnumKode.class, BEnumKode.class));
+        addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestSEnumKode.class, SEnumKode.class));
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestADbKode.class, ADbKode.class));
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestBDbKode.class, BDbKode.class));
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestC1DbKode.class, C1DbKode.class));

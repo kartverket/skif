@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.domain.kode;
+package no.statkart.skif.storetest.domain.kodeliste;
 
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 

@@ -1,10 +1,8 @@
 package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodeliste.EnumKodeId;
 import no.statkart.skif.store.kodeliste.EnumKodeSupport;
-import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
-import no.statkart.skif.storetest.domain.kode.StoreTestKodeId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId;
 
@@ -28,6 +26,11 @@ public class SEnumKodeId extends StoreTestEnumKodeId<SEnumKode> {
 
     public Long getValue() {
         return (Long) super.getValue();
+    }
+
+    @Override
+    public StoreTestKodelisteStringId<?> getKodelisteId() {
+        return KODELISTE_ID.asSnapshotVersion(this);
     }
 
     protected static SEnumKodeId define(long idValue, String kodeVerdi, String resourceKey) {

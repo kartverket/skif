@@ -61,7 +61,7 @@ public class StoreTestMappingD2WTest {
     public void testMapTestEnumkodelisteId() {
         StoreTestKodelisteLongId<StoreTestKodelisteLong> enumKodelisteId = new StoreTestKodelisteLongId<StoreTestKodelisteLong>(1L);
         StoreTestBubbleId storeTestBubbleId = map.d2w(enumKodelisteId);
-        assertSame(storeTestBubbleId.getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class);
+        assertSame(storeTestBubbleId.getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class);
         assertEquals(storeTestBubbleId.getValue(), "1");
     }
 
@@ -96,9 +96,9 @@ public class StoreTestMappingD2WTest {
 
         // Map domain->wsapi
         no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste target = map.d2w(kodeliste);
-        assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.AEnumKodeId");
+        assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId");
         assertEquals(target.getId().getValue(), "1" );
-        assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class );
+        assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class );
         assertEquals(target.getBeskrivelse(), "Test beskrivelse");
         assertEquals(target.getNavn(), "MyTestKodeliste");
         assertEquals(target.getKodeIds().getItem().size(), 0);
@@ -125,16 +125,16 @@ public class StoreTestMappingD2WTest {
 
         // Map domain->wsapi
         no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste target = map.d2w(kodeliste);
-        assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.AEnumKodeId");
+        assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId");
         assertEquals(target.getId().getValue(), "1" );
-        assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class );
+        assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class );
         assertEquals(target.getBeskrivelse(), "Test beskrivelse");
         assertEquals(target.getNavn(), "MyTestKodeliste");
         assertEquals(target.getKodeIds().getItem().size(), 2);
-        no.statkart.skif.storetest.wsapi.domain.kode.KodeId kodeId = target.getKodeIds().getItem().get(0);
+        no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId kodeId = target.getKodeIds().getItem().get(0);
         assertEquals(kodeId.getClass(), no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId.class);
         assertEquals(kodeId.getValue(), "1");
-        no.statkart.skif.storetest.wsapi.domain.kode.KodeId kodeId2 = target.getKodeIds().getItem().get(1);
+        no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId kodeId2 = target.getKodeIds().getItem().get(1);
         assertEquals(kodeId2.getClass(), no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId.class);
         assertEquals(kodeId2.getValue(), "2");
 
@@ -159,9 +159,9 @@ public class StoreTestMappingD2WTest {
 
         // Map domain->wsapi
         no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste target = map.d2w(kodeliste);
-        assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.ADbKodeId");
+        assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestADbKodeId");
         assertEquals(target.getId().getValue(), "1" );
-        assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class );
+        assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class );
         assertEquals(target.getBeskrivelse(), "Test beskrivelse");
         assertEquals(target.getNavn(), "MyTestKodeliste");
         assertEquals(target.getKodeIds().getItem().size(), 0);
@@ -189,9 +189,9 @@ public class StoreTestMappingD2WTest {
 
         // Map domain->wsapi
         no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste target = map.d2w(kodeliste);
-        assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.ADbKodeId");
+        assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestADbKodeId");
         assertEquals(target.getId().getValue(), "1" );
-        assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId.class );
+        assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class );
         assertEquals(target.getBeskrivelse(), "Test beskrivelse");
         assertEquals(target.getNavn(), "MyTestKodeliste");
         assertEquals(target.getKodeIds().getItem().size(), 2);

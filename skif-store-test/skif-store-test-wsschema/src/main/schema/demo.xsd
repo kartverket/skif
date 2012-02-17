@@ -2,12 +2,14 @@
 <xs:schema
         version="1.0"
         targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/demo"
+        xmlns:demoKoderns="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"
         xmlns:demons="http://skif.statkart.no/storetest/wsapi/domain/demo"
         xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
         xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
+    <xs:import schemaLocation="demoKoder.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"/>
     <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
     <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
 
@@ -104,6 +106,8 @@
                 <xs:sequence>
                     <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="fooId" type="demons:FooId" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="testAEnumKodeId" type="demoKoderns:TestAEnumKodeId" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="testC2DbKodeId" type="demoKoderns:TestC2DbKodeId" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

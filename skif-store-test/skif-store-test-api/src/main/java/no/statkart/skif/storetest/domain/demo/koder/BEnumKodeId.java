@@ -1,9 +1,8 @@
 package no.statkart.skif.storetest.domain.demo.koder;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodeliste.EnumKodeId;
-import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeId;
-import no.statkart.skif.storetest.domain.kode.StoreTestEnumKodeSupport;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodeId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodeSupport;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 
 /**
@@ -25,6 +24,11 @@ public class BEnumKodeId extends StoreTestEnumKodeId<BEnumKode> {
 
     public Long getValue() {
         return (Long) super.getValue();
+    }
+
+    @Override
+    public StoreTestKodelisteLongId<?> getKodelisteId() {
+        return KODELISTE_ID.asSnapshotVersion(this);
     }
 
     protected static BEnumKodeId define(long idValue, String kodeVerdi, String beskrivelesesKey) {
