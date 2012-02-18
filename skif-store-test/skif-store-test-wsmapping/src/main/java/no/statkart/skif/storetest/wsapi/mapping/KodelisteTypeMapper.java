@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.kodeliste.KodeId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeliste;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
 
@@ -9,7 +10,7 @@ import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste, DomainT extends StoreTestKodelisteLong> extends StoreTestBubbleTypeMapper<WsapiT,DomainT> {
+public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste, DomainT extends StoreTestKodeliste> extends StoreTestBubbleTypeMapper<WsapiT,DomainT> {
     private final String wsapiPackagePart;
 
      public KodelisteTypeMapper(String wsapiPackagePrefix, Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
