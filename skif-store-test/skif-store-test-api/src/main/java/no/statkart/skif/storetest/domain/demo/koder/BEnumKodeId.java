@@ -13,10 +13,10 @@ public class BEnumKodeId extends StoreTestEnumKodeId<BEnumKode> {
     private static StoreTestEnumKodeSupport<BEnumKode, BEnumKodeId> kodeSupport = new StoreTestEnumKodeSupport<BEnumKode, BEnumKodeId>(BEnumKodeId.class, 2, "demoKodeMsg");
 
     public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
-    public static BEnumKodeId IkkeOppgittId = define(0, "-", "Kode.IkkeOppgitt");
-    public static BEnumKodeId KodeAId = define(1, "A", "KodeA");
-    public static BEnumKodeId KodeBId = define(2, "B", "KodeB");
-    public static BEnumKodeId KodeCId = define(1000000000L, "C", "KodeC");
+    public static BEnumKodeId IkkeOppgittId = define(0, "IkkeOppgitt", "-");
+    public static BEnumKodeId KodeAId = define(1, "KodeA", "A");
+    public static BEnumKodeId KodeBId = define(2, "KodeB", "B");
+    public static BEnumKodeId KodeCId = define(1000000000L, "KodeC", "C");
 
     public BEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
@@ -31,7 +31,9 @@ public class BEnumKodeId extends StoreTestEnumKodeId<BEnumKode> {
         return KODELISTE_ID.asSnapshotVersion(this);
     }
 
-    protected static BEnumKodeId define(long idValue, String kodeVerdi, String beskrivelesesKey) {
-        return kodeSupport.defineKode(idValue, kodeVerdi, beskrivelesesKey).getId();
+    protected static BEnumKodeId define(long idValue, String beskrivelesesKey, String kodeVerdi) {
+        BEnumKode enumKode = kodeSupport.defineKode(idValue, beskrivelesesKey);
+        enumKode.setKodeverdi(kodeVerdi);
+        return enumKode.getId();
     }
 }

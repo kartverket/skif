@@ -16,9 +16,9 @@ public class SEnumKodeId extends StoreTestEnumKodeId<SEnumKode> {
     private static EnumKodeSupport<SEnumKode, SEnumKodeId, StoreTestKodelisteString, StoreTestKodelisteStringId<StoreTestKodelisteString>> kodeSupport = new EnumKodeSupport<SEnumKode, SEnumKodeId, StoreTestKodelisteString, StoreTestKodelisteStringId<StoreTestKodelisteString>>(SEnumKodeId.class, new StoreTestKodelisteStringId("TestSEnumKodeliste"), "DemoMsg");
 
     public static StoreTestKodelisteStringId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
-    public static SEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");
-    public static SEnumKodeId KodeAId = define(1, "A", "KodeA");
-    public static SEnumKodeId KodeBId = define(2, "B", "KodeB");
+    public static SEnumKodeId IkkeOppgittId = define(0, "IkkeOppgitt", "-");
+    public static SEnumKodeId KodeAId = define(1, "KodeA", "A");
+    public static SEnumKodeId KodeBId = define(2, "KodeB", "B");
 
     public SEnumKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
@@ -33,8 +33,10 @@ public class SEnumKodeId extends StoreTestEnumKodeId<SEnumKode> {
         return KODELISTE_ID.asSnapshotVersion(this);
     }
 
-    protected static SEnumKodeId define(long idValue, String kodeVerdi, String resourceKey) {
-        return kodeSupport.defineKode(idValue, kodeVerdi, resourceKey).getId();
+    protected static SEnumKodeId define(long idValue, String beskrivelesesKey, String kodeVerdi) {
+        SEnumKode enumKode = kodeSupport.defineKode(idValue, beskrivelesesKey);
+        enumKode.setKodeverdi(kodeVerdi);
+        return enumKode.getId();
     }
 
 }

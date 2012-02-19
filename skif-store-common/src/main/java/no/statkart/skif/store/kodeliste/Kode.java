@@ -9,7 +9,6 @@ import java.util.Map;
 /**
  * Superklasse for Koder.
  *
- * TODO: Fjerne kodeverdi slik at denne ikke er påkrevet.
  * TODO: Generalisere LocalizedFields slik at det er mulig å angi flere felter i subklasser
  * TODO: Lage eget interface for localize metoden
  *
@@ -17,8 +16,6 @@ import java.util.Map;
  * @since 2.1
  */
 public abstract class Kode extends AbstractBubbleObject {
-    private String kodeverdi;
-
     private LocalizedFields localizedFields = new LocalizedFields();
     private Map<String, LocalizedFields> localizedFieldsMap = new HashMap<String, LocalizedFields>();
     private KodelisteId<?> kodelisteId;
@@ -36,14 +33,6 @@ public abstract class Kode extends AbstractBubbleObject {
     @Override
     public KodeId<?> getId() {
         return (KodeId<?>) super.getId();
-    }
-
-    public String getKodeverdi() {
-        return kodeverdi;
-    }
-
-    public void setKodeverdi(String kodeverdi) {
-        this.kodeverdi = kodeverdi;
     }
 
     public String getNavn() {

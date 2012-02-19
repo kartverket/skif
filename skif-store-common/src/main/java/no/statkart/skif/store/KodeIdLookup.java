@@ -14,6 +14,7 @@ import java.util.Map;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@Deprecated
 public class KodeIdLookup {
     final Map<Class<? extends KodeId>, Map<String, KodeId<?>>> idMapMap = new HashMap<Class<? extends KodeId>, Map<String, KodeId<?>>>();
     final Map<Class<? extends KodeId>, Map<KodeId<?>, String>> stringMapMap = new HashMap<Class<? extends KodeId>, Map<KodeId<?>, String>>();
@@ -27,7 +28,7 @@ public class KodeIdLookup {
                     map = new HashMap<String, KodeId<?>>();
                     idMapMap.put(kode.getId().getClass(), map);
                 }
-                map.put(kode.getKodeverdi(), kode.getId());
+                //map.put(kode.getKodeverdi(), kode.getId());
             }
             { //ids for lookup
                 Map<KodeId<?>, String> map = stringMapMap.get(kode.getId().getClass());
@@ -35,7 +36,7 @@ public class KodeIdLookup {
                     map = new HashMap<KodeId<?>, String>();
                     stringMapMap.put(kode.getId().getClass(), map);
                 }
-                map.put(kode.getId(), kode.getKodeverdi());
+                //map.put(kode.getId(), kode.getKodeverdi());
             }
         }
     }

@@ -13,9 +13,9 @@ public class AEnumKodeId extends StoreTestEnumKodeId<AEnumKode> {
     private static StoreTestEnumKodeSupport<AEnumKode, AEnumKodeId> kodeSupport = new StoreTestEnumKodeSupport<AEnumKode, AEnumKodeId>(AEnumKodeId.class, 1, "demoKodeMsg");
 
     public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
-    public static AEnumKodeId IkkeOppgittId = define(0, "-", "IkkeOppgitt");
-    public static AEnumKodeId KodeAId = define(1, "A", "KodeA");
-    public static AEnumKodeId KodeBId = define(2, "B", "KodeB");
+    public static AEnumKodeId IkkeOppgittId = define(0, "IkkeOppgitt", "-");
+    public static AEnumKodeId KodeAId = define(1, "KodeA", "A");
+    public static AEnumKodeId KodeBId = define(2, "KodeB", "B");
 
     public Long getValue() {
         return (Long) super.getValue();
@@ -30,8 +30,10 @@ public class AEnumKodeId extends StoreTestEnumKodeId<AEnumKode> {
         return KODELISTE_ID.asSnapshotVersion(this);
     }
 
-    protected static AEnumKodeId define(long idValue, String kodeVerdi, String beskrivelesesKey) {
-        return kodeSupport.defineKode(idValue, kodeVerdi, beskrivelesesKey).getId();
+    protected static AEnumKodeId define(long idValue, String beskrivelesesKey, String kodeVerdi) {
+        AEnumKode enumKode = kodeSupport.defineKode(idValue, beskrivelesesKey);
+        enumKode.setKodeverdi(kodeVerdi);
+        return enumKode.getId();
     }
 
 }

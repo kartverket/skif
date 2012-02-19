@@ -35,11 +35,10 @@ public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kod
         koder.put(kode.getId(), kode);
     }
 
-    public T defineKode(Object idValue, String kodeverdi, String kodeResourceKey) {
+    public T defineKode(Object idValue,String kodeResourceKey) {
         I id = BubbleIds.createInstance(kodeIdClass, idValue, SnapshotVersion.CURRENT);
         T kode = id.createTypeInstance();
         kode.setId(id);
-        kode.setKodeverdi(kodeverdi);
         kode.setKodelisteId(kodelisteId);
         addKode(kode);
         String key = getKodeName() + "." + kodeResourceKey;
