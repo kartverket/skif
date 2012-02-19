@@ -11,12 +11,12 @@ import java.util.LinkedHashMap;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class EnumKodeSupport<T extends EnumKode, I extends EnumKodeId<T>, KL extends Kodeliste, KLID extends KodelisteId<KL>> {
+public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kodeliste, KLID extends KodelisteId<KL>> {
     private final Class<I> kodeIdClass;
     private final KLID kodelisteId;
     private final String resourceMsgName;
-    private LinkedHashMap<EnumKodeId<?>, EnumKode> koder = new LinkedHashMap<EnumKodeId<?>, EnumKode>();
-    private HashMap<EnumKodeId<?>, String> kodeResourceKeys = new HashMap<EnumKodeId<?>, String>();
+    private LinkedHashMap<KodeId<?>, Kode> koder = new LinkedHashMap<KodeId<?>, Kode>();
+    private HashMap<KodeId<?>, String> kodeResourceKeys = new HashMap<KodeId<?>, String>();
 
     public EnumKodeSupport(Class<I> kodeIdClass, KLID kodelisteId, String resourceMsgName) {
         this.kodeIdClass = kodeIdClass;
@@ -28,7 +28,7 @@ public class EnumKodeSupport<T extends EnumKode, I extends EnumKodeId<T>, KL ext
         return kodelisteId;
     }
 
-    public synchronized void addKode(EnumKode kode) {
+    public synchronized void addKode(Kode kode) {
         if (koder.containsKey(kode.getId())) {
             throw new ImplementationException("Forsøk på å definere samme kode flere ganger: " + kode );
         }
@@ -60,7 +60,7 @@ public class EnumKodeSupport<T extends EnumKode, I extends EnumKodeId<T>, KL ext
         return simpleName.substring(0, simpleName.length()-2);
     }
 
-    public String getKodeResourceKey(EnumKodeId<?> id) {
+    public String getKodeResourceKey(KodeId<?> id) {
         return kodeResourceKeys.get(id);
     }
 
@@ -68,7 +68,7 @@ public class EnumKodeSupport<T extends EnumKode, I extends EnumKodeId<T>, KL ext
         return kodeIdClass;
     }
 
-    public LinkedHashMap<EnumKodeId<?>, EnumKode> getKoder() {
+    public LinkedHashMap<KodeId<?>, Kode> getKoder() {
         return koder;
     }
 

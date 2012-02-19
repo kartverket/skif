@@ -8,10 +8,7 @@ import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.util.CopyHelper;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Global kodeliste manager som håndterer EnumKoder og tilhørende kodelister. Manageren inneholder
@@ -30,15 +27,17 @@ public class EnumKodelisteManager {
      * Alle enum baserte koder og kodelister.
      */
     private Map<BubbleId<?>, BubbleObject> nonLocalizedEnumCache = new HashMap<BubbleId<?>, BubbleObject>();
+    private Set<Class<? extends KodeId>> enumClasses = new HashSet<Class<? extends KodeId>>();
 
     /**
      * Installerer EnumKoder og tilhørende kodelister
      *
      * @param enumKodeIdClass id-klassen til kode-klassen
      */
-    public void installStatic(Class<? extends EnumKodeId<?>> enumKodeIdClass) {
+    public void installStatic(Class<? extends KodeId<?>> enumKodeIdClass) {
+        enumClasses.add(enumKodeIdClass);
         EnumKodeSupport kodeSupport = getKodeSupport(enumKodeIdClass);
-        LinkedHashMap<EnumKodeId<?>, EnumKode> koder = kodeSupport.getKoder();
+        LinkedHashMap<KodeId<?>, Kode> koder = kodeSupport.getKoder();
 
         Kodeliste kodeliste = (Kodeliste) kodeSupport.getKodelisteId().createTypeInstance();
         kodeliste.setId(kodeSupport.getKodelisteId());
@@ -47,10 +46,13 @@ public class EnumKodelisteManager {
         //new Kodeliste5(kodeSupport.getKodelisteId(), enumKodeIdClass, koder);
         initializeLocalizedFields(kodeSupport, kodeliste);
         nonLocalizedEnumCache.put(kodeliste.getId(), kodeliste);
-        for (Map.Entry<EnumKodeId<?>, EnumKode> entry : koder.entrySet()) {
+        for (Map.Entry<KodeId<?>, Kode> entry : koder.entrySet()) {
             initializeLocalizedFields(kodeSupport, entry.getValue());
             nonLocalizedEnumCache.put(entry.getKey(), entry.getValue());
         }
+    }
+    public boolean isEnumClass(Class<? extends KodeId> kodeIdClass) {
+        return enumClasses.contains(kodeIdClass);
     }
 
     private void initializeLocalizedFields(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Kodeliste kodeliste) {
@@ -64,7 +66,7 @@ public class EnumKodelisteManager {
 
     }
 
-    private void initializeLocalizedFields(EnumKodeSupport<?, ?, ?, ?> kodeSupport, EnumKode enumKode) {
+    private void initializeLocalizedFields(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Kode enumKode) {
         // TODO: lese fra resourcefil
         for (String localeString : getLocaleStrings()) {
             enumKode.setNavn(kodeSupport.getKodeResourceKey(enumKode.getId()) + ".navn (" + localeString + ")");
@@ -97,7 +99,7 @@ public class EnumKodelisteManager {
     }
 
 
-    private EnumKodeSupport<?, ?, ?, ?> getKodeSupport(Class<? extends EnumKodeId> idClass) {
+    private EnumKodeSupport<?, ?, ?, ?> getKodeSupport(Class<? extends KodeId> idClass) {
         try {
             Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
             kodeSupportField.setAccessible(true);

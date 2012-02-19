@@ -10,8 +10,6 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
-import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
-import no.statkart.skif.store.persistence.kodeliste.KodelistePersistenceSessionSubtypeHandler;
 import org.hibernate.Session;
 
 import java.util.*;
@@ -38,21 +36,25 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
         T bubble;
-        if (bubbleId instanceof EnumKodeId) {
-            bubble = enumKodelisteManager.get(bubbleId);
-            if (bubble == null) {
-                throw new ObjectNotFoundException(bubbleId);
+        if (bubbleId instanceof KodeId) {
+            if (enumKodelisteManager.isEnumClass(KodeId.class.cast(bubbleId).getClass())) {
+                // Det er en EnumKode
+                bubble = enumKodelisteManager.get(bubbleId);
+                if (bubble == null) {
+                    throw new ObjectNotFoundException(bubbleId);
+                }
+                if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
+                    setSnapshotVersion(Kode.class.cast(bubble), bubbleId.getSnapshotVersion());
+                }
+                Kode.class.cast(bubble).localize(serviceContext.getLocale().toString());
+            } else {
+                // Det er en DbKode
+                bubble = persistenceSessionMaster.get(bubbleId);
+                Kode dbKode = Kode.class.cast(bubble);
+                // Må sette kodelisteId på kode da denne ikke hentes fra databasen, men tas fra idklassen
+                dbKode.setKodelisteId(dbKode.getId().getKodelisteId());
+                dbKode.localize(serviceContext.getLocale().toString());
             }
-            if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
-                setSnapshotVersion(Kode.class.cast(bubble), bubbleId.getSnapshotVersion());
-            }
-            Kode.class.cast(bubble).localize(serviceContext.getLocale().toString());
-        } else if (bubbleId instanceof DbKodeId) {
-            bubble = persistenceSessionMaster.get(bubbleId);
-            DbKode dbKode = DbKode.class.cast(bubble);
-            // Må sette kodelisteId på kode da denne ikke hentes fra databasen, men tas fra idklassen
-            dbKode.setKodelisteId(dbKode.getId().getKodelisteId());
-            dbKode.localize(serviceContext.getLocale().toString());
         } else {
             // bubbleId er en kodelisteId
             bubble = enumKodelisteManager.get(bubbleId);
@@ -77,11 +79,11 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         Class<? extends Kode> kodeClass = kodeliste.getKodeClass();
         try {
             Session session = persistenceSessionMaster.reserveSession();
-            List<DbKode> list = session.createCriteria(kodeClass).list();
+            List<Kode> list = session.createCriteria(kodeClass).list();
             List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
 
             KodelisteId kodelisteId = kodeliste.getId();
-            for (DbKode t : list) {
+            for (Kode t : list) {
                 if (!t.getId().getKodelisteId().equals(kodelisteId)) {
                     throw new ImplementationException("Feil i kodelisteIdValue for kodeliste: " + kodeliste + " DbKode: " + t + " DbKode.getKodelisteId: " + t.getId().getKodelisteId());
                 }
@@ -118,14 +120,14 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         Set<T> bubbles = new HashSet<T>(bubbleIds.size());
 
         for (I bubbleId : bubbleIds) {
-            if (bubbleId instanceof EnumKodeId) {
+            if (bubbleId instanceof KodeId) {
                 T bubble = enumKodelisteManager.get(bubbleId);
                 if (bubble == null) {
                     throw new ObjectNotFoundException(bubbleId);
                 }
                 Kode.class.cast(bubble).localize(serviceContext.getLocale().toString());
                 bubbles.add(bubble);
-            } else if (bubbleId instanceof DbKodeId) {
+            } else if (bubbleId instanceof KodeId) { //TODO: DbKodeId
                 dbKodeIds.add(bubbleId);
             } else {
                 T bubble = enumKodelisteManager.get(bubbleId);
@@ -173,7 +175,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void evict(I bubbleId) {
-        if (bubbleId instanceof DbKodeId) {
+        if (bubbleId instanceof KodeId) { // TODO DbKodeId
             persistenceSessionMaster.evict(bubbleId);
         }
     }

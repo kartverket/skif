@@ -2,7 +2,7 @@ package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodeliste.EnumKodeId;
+import no.statkart.skif.store.kodeliste.KodeId;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.usertype.EnhancedUserType;
@@ -36,7 +36,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
         return log;
     }
 
-    private Class<? extends EnumKodeId> enumClass;
+    private Class<? extends KodeId> enumClass;
     private static final Class[] INTEGER_ARG = new Class[]{int.class};
     private Method method;
     private Object[] values = new Object[125]; // cached Enum values
@@ -45,8 +45,8 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     public void setParameterValues(Properties parameters) {
         String enumClassName = parameters.getProperty("enumClassName");
         try {
-            enumClass = (Class<? extends EnumKodeId>) Class.forName(enumClassName);
-            if (!EnumKodeId.class.isAssignableFrom(enumClass)) {
+            enumClass = (Class<? extends KodeId>) Class.forName(enumClassName);
+            if (!KodeId.class.isAssignableFrom(enumClass)) {
                 throw new MappingException("Enumklasse implementerer ikke interface EnumKodeId: " + enumClass.getName());
             }
         } catch (ClassNotFoundException cnfe) {
@@ -135,7 +135,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
                     log().trace("binding '" + value + "' to parameter: " + index);
                 }
                 // TODO: Fix så det virker for string også
-                long idValue = (Long)((EnumKodeId) value).getValue();
+                long idValue = (Long)((KodeId) value).getValue();
                 st.setInt(index,(int)idValue);
             }
         } catch (ClassCastException ce) {
@@ -167,10 +167,10 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     public String objectToSQLString(Object value) {
-        return '\'' + Long.toString((Long)((EnumKodeId) value).getValue()) + '\'';
+        return '\'' + Long.toString((Long)((KodeId) value).getValue()) + '\'';
     }
 
     public String toXMLString(Object value) {
-        return Long.toString((Long)((EnumKodeId) value).getValue());
+        return Long.toString((Long)((KodeId) value).getValue());
     }
 }

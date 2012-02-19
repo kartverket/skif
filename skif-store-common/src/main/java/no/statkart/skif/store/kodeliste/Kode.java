@@ -7,7 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * import java.util.Map;
+ * Superklasse for Koder.
+ *
+ * TODO: Fjerne kodeverdi slik at denne ikke er påkrevet.
+ * TODO: Generalisere LocalizedFields slik at det er mulig å angi flere felter i subklasser
+ * TODO: Lage eget interface for localize metoden
  *
  * @author Henrik Fredholm
  * @since 2.1
@@ -74,6 +78,7 @@ public abstract class Kode extends AbstractBubbleObject {
         this.localizedFieldsMap = localizedFieldsMap;
     }
 
+    // TODO: Denne bør ligge i eget interface
     public void localize(String localeString) {
         localizedFields = null;
         if (localeString != null) {
