@@ -2,6 +2,7 @@ package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.*;
+import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
@@ -172,7 +173,9 @@ public abstract class BubbleIdType implements UserType {
      *
      * @param value id value for bubbleid'en
      */
-    protected abstract Object createPrototypeId(Object value, SnapshotVersion snapshotVersion);
+    protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
+        return BubbleIds.createInstance((Class<? extends BubbleId>) returnedClass(), value, snapshotVersion);
+    }
 
     /**
      * Oppretter BubbleId av riktig type og setter idvalue og SnapshotVersion

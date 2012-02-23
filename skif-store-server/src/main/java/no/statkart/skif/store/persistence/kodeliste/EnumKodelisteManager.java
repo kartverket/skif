@@ -27,6 +27,7 @@ public class EnumKodelisteManager {
      * Alle enum baserte koder og kodelister.
      */
     private Map<BubbleId<?>, BubbleObject> nonLocalizedEnumCache = new HashMap<BubbleId<?>, BubbleObject>();
+    private Set<KodelisteId> kodelisteIds = new HashSet<KodelisteId>();
     private Set<Class<? extends KodeId>> enumClasses = new HashSet<Class<? extends KodeId>>();
 
     /**
@@ -43,13 +44,13 @@ public class EnumKodelisteManager {
         kodeliste.setId(kodeSupport.getKodelisteId());
         kodeliste.setKodeIdClass(enumKodeIdClass);
         kodeliste.setKodeIds(new ArrayList<KodeId<?>>(koder.keySet()));
-        //new Kodeliste5(kodeSupport.getKodelisteId(), enumKodeIdClass, koder);
         initializeLocalizedFields(kodeSupport, kodeliste);
         nonLocalizedEnumCache.put(kodeliste.getId(), kodeliste);
         for (Map.Entry<KodeId<?>, Kode> entry : koder.entrySet()) {
             initializeLocalizedFields(kodeSupport, entry.getValue());
             nonLocalizedEnumCache.put(entry.getKey(), entry.getValue());
         }
+        kodelisteIds.add(kodeliste.getId());
     }
     public boolean isEnumClass(Class<? extends KodeId> kodeIdClass) {
         return enumClasses.contains(kodeIdClass);
@@ -112,4 +113,7 @@ public class EnumKodelisteManager {
         }
     }
 
+    public Collection<KodelisteId> getKodelisteIds() {
+        return kodelisteIds;
+    }
 }

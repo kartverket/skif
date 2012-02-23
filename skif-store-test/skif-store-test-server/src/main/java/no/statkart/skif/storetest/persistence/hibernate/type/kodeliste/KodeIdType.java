@@ -11,10 +11,6 @@ import no.statkart.skif.storetest.domain.demo.TestBubbleId;
  * @since 2.0
  */
 public abstract class KodeIdType extends BubbleIdType {
-    @Override
-    protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
-        return BubbleIds.createInstance((Class<? extends KodeId>) returnedClass(), value, snapshotVersion);
-    }
 }
 
 

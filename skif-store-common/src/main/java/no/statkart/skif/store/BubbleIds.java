@@ -4,6 +4,7 @@ import no.statkart.skif.exception.ImplementationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,4 +51,11 @@ public class BubbleIds {
         // TODO: bruke reflection på clazz istedet for å gå mot direkte AbstractBubbleId
         return AbstractBubbleId.getValueType(clazz);
     }
+
+    //public static <T extends BubbleObject, I extends BubbleId<? extends T>> Class<? extends T> getBaseType(Class<I> clazz) {
+    public static Class<? extends BubbleObject> getBaseType(Class<? extends BubbleId<?>> clazz) {
+        // TODO: bruke reflection på clazz istedet for å gå mot direkte AbstractBubbleId
+        return AbstractBubbleId.getTypeInfo(clazz).baseType;
+    }
+
 }

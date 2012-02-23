@@ -1,10 +1,12 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
+import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.*;
@@ -15,6 +17,23 @@ import org.hibernate.Session;
 import java.util.*;
 
 /**
+ * En PersistendeSessionSubtypeHandler for Kodeliste og Kode som henter enum baserte koder fra en {@code EnumKodelisteManager}
+ * og database baserte koder fra Hibernate (via en underliggende HibernatePersistenceSessionMaster).
+ * <p/>
+ * Klassen antar at Kode klasser som ikke kjennes igjen av {@code EnumKodelisteManager} er en Kode klasser som skal hentes
+ * via Hibernate. For Kodelister gjenlder noe tilsvarende. Hvis {@EnumKodelisteManager} ikke inneholder instansen
+ * for en kodelisteId da antas det at kodelisteinstansen skal hentes fra databasen.
+ * <p/>
+ * I den nåværende implementasjon er det litt forskjell på hvordan Kodelister og Koder fra EnumKodeManageren og Hibernate
+ * håndteres. Koder og kodelister som hentes ut fra EnumKodelisteManageren må tilordnes riktig SnapshotVersion
+ * og innhold i kodeliste må beregnes mht hvilke koder som skal med i kodelisten ut fra gitt SnapshotVersoin.
+ * For kodelister og koder som hentes ut fra Hibnernate vil SnapshotVersion allerede være satt riktig. Men innhold i
+ * kodelistene må forsatt beregnes.
+ * <p/>
+ * I alle tilfelle er det nådvendig å lokaliserer kodelister og koder.
+ * <p/>
+ * TODO: Hadde vært fint om håndteringen av enum og database basert koder var mer likt hverandre.
+ *
  * @author Henrik Fredholm
  */
 public class DefaultKodelistePersistenceSessionSubtypeHandler implements KodelistePersistenceSessionSubtypeHandler {
@@ -22,10 +41,15 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     private final ServiceContext serviceContext;
     private final HibernatePersistenceSessionMaster persistenceSessionMaster;
 
-    public DefaultKodelistePersistenceSessionSubtypeHandler(HibernatePersistenceSessionMaster persistenceSessionMaster, EnumKodelisteManager enumKodelisteManager, ServiceContext serviceContext) {
+    // TODO: Denne kunne sikkert bli beregnet utfra hibernate factory siden den vet hvilke klasser i hibernate som er kodelister
+    private final Collection<Class<? extends Kodeliste>> kodelisteClasses;
+
+    public DefaultKodelistePersistenceSessionSubtypeHandler(HibernatePersistenceSessionMaster persistenceSessionMaster, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, ServiceContext serviceContext) {
         this.persistenceSessionMaster = persistenceSessionMaster;
         this.enumKodelisteManager = enumKodelisteManager;
+        this.kodelisteClasses = kodelisteClasses;
         this.serviceContext = serviceContext;
+
     }
 
     @Override
@@ -75,7 +99,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         return bubble;
     }
 
-    private void loadKodeIds(Kodeliste kodeliste) {
+    /**
+     * Laster kodeids for en kodeliste. Hvis kodelisten allerede har kodeids lastes kodene ikke på nytt
+     */
+    protected void loadKodeIds(Kodeliste kodeliste) {
+        if (kodeliste.getKodeIds() != null) return;
+
         Class<? extends Kode> kodeClass = kodeliste.getKodeClass();
         try {
             Session session = persistenceSessionMaster.reserveSession();
@@ -94,6 +123,59 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
             persistenceSessionMaster.reserveSession();
         }
 
+    }
+
+    /**
+     * Laster kodeids for kodelister. Kodelister som allerede har kodeIds får ikke lastet deres koder på nytt.
+     *
+     * @param kodelister
+     */
+    protected void loadKodeIds(Collection<Kodeliste> kodelister) {
+        Set<Class<? extends Kode>> kodeBaseClasses = new HashSet<Class<? extends Kode>>();
+
+        for (Kodeliste kodeliste : kodelister) {
+            if (kodeliste.getKodeIds() == null) {
+                Class<? extends Kode> kodeBaseType = getKodeBaseType(kodeliste);
+                kodeBaseClasses.add(kodeBaseType);
+            }
+        }
+
+        // Beregn settet av kodeIds for hver kodelisteId fra de koder som ble lastet.
+        Map<KodelisteId, List<KodeId<?>>> kodeIdsMap = new HashMap<KodelisteId, List<KodeId<?>>>();
+        KodelisteId prevKodelisteId = null;
+        List<KodeId<?>> kodeIdsList = null;
+        try {
+            Session session = persistenceSessionMaster.reserveSession();
+            for (Class<? extends Kode> kodeBaseClass : kodeBaseClasses) {
+                List<Kode> list = session.createCriteria(kodeBaseClass).list();
+                for (Kode kode : list) {
+                    persistenceSessionMaster.ensureFullyLoaded(kode); // TODO: Bruke subselect ved lasting av kode slik at denne ikke trengs
+                    KodelisteId kodelisteId = kode.getKodelisteId();
+                    if (kodelisteId != prevKodelisteId) {
+                        prevKodelisteId = kodelisteId;
+                        kodeIdsList = kodeIdsMap.get(kodelisteId);
+                        if (kodeIdsList == null) {
+                            kodeIdsList = new ArrayList<KodeId<?>>();
+                            kodeIdsMap.put(kodelisteId, kodeIdsList);
+                        }
+                    }
+                    kodeIdsList.add(kode.getId());
+                }
+            }
+        } finally {
+            persistenceSessionMaster.releaseSession();
+        }
+
+        for (Kodeliste kodeliste : kodelister) {
+            if (kodeliste.getKodeIds() == null) {
+                kodeliste.setKodeIds(kodeIdsMap.get(kodeliste.getId()));
+            }
+        }
+    }
+
+    private Class<? extends Kode> getKodeBaseType(Kodeliste kodeliste) {
+        Class<? extends KodeId<?>> kodeIdClass = kodeliste.getKodeIdClass();
+        return (Class<? extends Kode>) BubbleIds.getBaseType(kodeIdClass);
     }
 
     private void setSnapshotVersion(Kode kode, SnapshotVersion snapshotVersion) {
@@ -225,4 +307,56 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         throw new UnsupportedOperationException();
     }
 
+    public Collection<KodelisteId> getKodelisteIds() {
+        Collection<KodelisteId> result = new ArrayList<KodelisteId>();
+        result.addAll(getEnumKodelisteIds());
+        Collection<Kodeliste> kodelister = getDbKodelister();
+        Collection<Kodeliste> kodelisterWithoutKodeIds = new ArrayList<Kodeliste>();
+        for (Kodeliste kodeliste : kodelister) {
+            if (kodeliste.getKodeIds() == null) {
+                kodelisterWithoutKodeIds.add(kodeliste);
+            } else {
+                result.add(kodeliste.getId());
+            }
+        }
+        if (!kodelisterWithoutKodeIds.isEmpty()) {
+            loadKodeIds(kodelister);
+        }
+        return result;
+    }
+
+    private Collection<Kodeliste> getDbKodelister() {
+        Collection<Kodeliste> result = null;
+        try {
+            Session session = persistenceSessionMaster.reserveSession();
+            for (Class<? extends Kodeliste> kodelisteClass : kodelisteClasses) {
+                List<Kodeliste> list = session.createCriteria(kodelisteClass).list();
+                if (result == null) {
+                    result = list;
+                } else {
+                    result.addAll(list);
+                }
+            }
+            return result;
+        } finally {
+            persistenceSessionMaster.releaseSession();
+        }
+    }
+
+    /**
+     * Returnerer KodelisteIds for alle enum koder med riktig snapshot versjon
+     * @return
+     */
+    private Collection<KodelisteId> getEnumKodelisteIds() {
+        Collection<KodelisteId> kodelisteIdsForCurrent = enumKodelisteManager.getKodelisteIds();
+        SnapshotVersion snapshot = getSnapshot();
+        if (snapshot == SnapshotVersion.CURRENT) return kodelisteIdsForCurrent;
+
+        Collection<KodelisteId> kodelisteIdsForSnapshot = new ArrayList<KodelisteId>(kodelisteIdsForCurrent.size());
+        for (KodelisteId kodelisteId : kodelisteIdsForCurrent) {
+            kodelisteIdsForSnapshot.add((KodelisteId) kodelisteId.asSnapshotVersion(snapshot));
+        }
+
+        return kodelisteIdsForSnapshot;
+    }
 }

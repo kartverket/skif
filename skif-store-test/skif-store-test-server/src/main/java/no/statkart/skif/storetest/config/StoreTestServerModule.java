@@ -28,6 +28,7 @@ import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.*;
+import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
 import no.statkart.skif.store.persistence.*;
 import no.statkart.skif.store.persistence.hibernate.*;
@@ -38,7 +39,9 @@ import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeliste;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
@@ -49,6 +52,7 @@ import org.hibernate.cfg.Environment;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -132,6 +136,20 @@ public class StoreTestServerModule extends SkifModule {
         return enumKodelisteManager;
     }
 
+    /**
+     * Angir hvilke kodeliste typer som finnes. Det er egentlig litt unødvendig å måtte angi det her siden
+     * den informasjon kan utledes fra hiberante factory.
+     * @return
+     */
+    @Provides
+    @Singleton
+    Collection<Class<? extends Kodeliste>> provideKodelisteClasses() {
+        Collection<Class<? extends Kodeliste>> kodelisteClasses = new ArrayList<Class<? extends Kodeliste>>();
+        kodelisteClasses.add(StoreTestKodelisteLong.class);
+        kodelisteClasses.add(StoreTestKodelisteString.class);
+        return kodelisteClasses;
+    }
+
 
     @Provides
     @Singleton
@@ -189,8 +207,8 @@ public class StoreTestServerModule extends SkifModule {
         }
 
         HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle = new HibernateSessionFactoryManagerBundle(hibernateSessionFactoryBuilder,
-                new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernatePropertiesCurrent),
-                new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernatePropertiesOld)
+                new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernatePropertiesCurrent, HibernateStoreInterceptor.class),
+                new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernatePropertiesOld, HibernateStoreInterceptor.class)
         );
         return hibernateSessionFactoryManagerBundle;
 
@@ -198,7 +216,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    ResourceManager provideResourceManager(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager, KodeMsg kodeMsg, ServiceContext serviceContext) {
+    ResourceManager provideResourceManager(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, KodeMsg kodeMsg, ServiceContext serviceContext) {
         Configuration configuration = moduleConfiguration.getConfiguration();
         Properties hibernatePropertiesCurrent;
         Properties hibernatePropertiesOld;
@@ -237,11 +255,11 @@ public class StoreTestServerModule extends SkifModule {
         PersistenceSessionManager persistenceSessionManager = new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
                         persistenceSessionMasterCurrent,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterCurrent, enumKodelisteManager, serviceContext)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterCurrent, enumKodelisteManager, kodelisteClasses, serviceContext)
                 ),
                 new DefaultPersistenceSessionStrategy(
                         persistenceSessionMasterOld,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterOld, enumKodelisteManager, serviceContext)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterOld, enumKodelisteManager, kodelisteClasses, serviceContext)
                 )
         );
 

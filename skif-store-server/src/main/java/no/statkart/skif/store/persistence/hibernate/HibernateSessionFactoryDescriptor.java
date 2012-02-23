@@ -2,12 +2,17 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.inject.Provider;
 import com.google.inject.util.Providers;
+import no.statkart.skif.SkifUtil;
+import no.statkart.skif.config.SkifConfigConstants;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.guava.Preconditions;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 /**
@@ -30,6 +35,33 @@ public class HibernateSessionFactoryDescriptor {
         this(name, seed, setSnapshotOnSession, isSnapshotChangable, hiberanteProperties, Providers.<Interceptor>of(null));
     }
 
+    public HibernateSessionFactoryDescriptor(String name, SnapshotVersionSeed seed, boolean setSnapshotOnSession, boolean isSnapshotChangable, Properties hiberanteProperties, Class<? extends HibernateStoreInterceptor> interceptorClass) {
+        this(name, seed, setSnapshotOnSession, isSnapshotChangable, hiberanteProperties, createInterceptorProvider(interceptorClass, seed));
+    }
+
+    private static Provider<Interceptor> createInterceptorProvider(final Class<? extends Interceptor> interceptorClass, final SnapshotVersionSeed seed) {
+        try {
+            final Constructor<? extends Interceptor> constructor = interceptorClass.getConstructor(SnapshotVersionSeed.class);
+            return new Provider<Interceptor>() {
+                @Override
+                public Interceptor get() {
+                    try {
+                        return constructor.newInstance(seed);
+                    } catch (InstantiationException e) {
+                        throw new ImplementationException(e);
+                    } catch (IllegalAccessException e) {
+                        throw new ImplementationException(e);
+                    } catch (InvocationTargetException e) {
+                        throw new ImplementationException(e);
+                    }
+                }
+            };
+        } catch (NoSuchMethodException e) {
+            throw new ImplementationException("Manglende constructor", e);
+        }
+    }
+
+
     public HibernateSessionFactoryDescriptor(String name, SnapshotVersionSeed seed, boolean setSnapshotOnSession, boolean isSnapshotChangable, Properties hibernateProperties, Provider<Interceptor> hibernateInterceptorProvider) {
         this.name = name;
         this.seed = seed;
@@ -42,7 +74,7 @@ public class HibernateSessionFactoryDescriptor {
     }
 
     public boolean accepts(SnapshotVersion snapshotVersion) {
-        if (seed.get()== SnapshotVersion.CURRENT) {
+        if (seed.get() == SnapshotVersion.CURRENT) {
             return snapshotVersion == SnapshotVersion.CURRENT;
         } else {
             return snapshotVersion != SnapshotVersion.CURRENT;

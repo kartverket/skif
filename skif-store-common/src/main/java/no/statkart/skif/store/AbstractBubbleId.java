@@ -28,7 +28,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * <p/>
      * This class should not be Serializable
      */
-    private static class TypeInfo {
+    static class TypeInfo {
         String typeName;
         Class type;
         Class baseType;
@@ -117,7 +117,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         return asSnapshotVersion(SnapshotVersion.CURRENT);
     }
 
-    private static TypeInfo getTypeInfo(Class clazz) {
+    static TypeInfo getTypeInfo(Class clazz) {
         TypeInfo typeInfo = typeInfoMap.get(clazz);
         if (typeInfo == null) {
             typeInfo = new TypeInfo(calcTypeName(clazz), calcType(clazz), calcBaseType(clazz), clazz);

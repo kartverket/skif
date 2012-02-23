@@ -1,6 +1,7 @@
 package no.statkart.skif.store.kodeliste;
 
 import no.statkart.skif.store.AbstractBubbleObject;
+import no.statkart.skif.store.BubbleId;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -35,6 +36,11 @@ public abstract class Kode extends AbstractBubbleObject {
         return (KodeId<?>) super.getId();
     }
 
+    @Override
+    public void setId(BubbleId<?> id) {
+        super.setId(id);
+    }
+
     public String getNavn() {
         return localizedFields.navn;
     }
@@ -52,6 +58,10 @@ public abstract class Kode extends AbstractBubbleObject {
     }
 
     public KodelisteId<?> getKodelisteId() {
+        if (kodelisteId==null) {
+            KodelisteId kodelisteId = KodeId.class.cast(id).getKodelisteId();
+            setKodelisteId(kodelisteId.asSnapshotVersion(id));
+        }
         return kodelisteId;
     }
 

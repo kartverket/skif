@@ -4,6 +4,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.module.common.BubbleIdFactory;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
@@ -25,7 +26,11 @@ import java.util.Iterator;
 public class HibernateStoreInterceptor extends EmptyInterceptor {
     protected Logger logger = LoggerFactory.getLogger(HibernateStoreInterceptor.class);
 
-    protected SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
+    protected final SnapshotVersionSeed snapshotVersionSeed;
+
+    public HibernateStoreInterceptor(SnapshotVersionSeed snapshotVersionSeed) {
+        this.snapshotVersionSeed = snapshotVersionSeed;
+    }
 
     /**
      * Denne metoden retter opp id'en for entiteter hvor hibernate har brukt supertypens idklasse
@@ -123,7 +128,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
 
     private void sjekkSnapshotVersjon(Serializable id) {
         if (id instanceof BubbleId) {
-            if (((BubbleId) id).getSnapshotVersion() != snapshotVersion) {
+            if (((BubbleId) id).getSnapshotVersion() != snapshotVersionSeed.get()) {
                 throw new ImplementationException("id for instans har feil replicaVersjon", logger);
             }
         }

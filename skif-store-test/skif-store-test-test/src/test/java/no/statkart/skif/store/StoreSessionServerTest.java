@@ -9,6 +9,7 @@ import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
+import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
@@ -22,6 +23,8 @@ import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
@@ -125,14 +128,18 @@ public class StoreSessionServerTest {
                 sessionFactoryManagerBundle.getBundle().get(1)
         );
 
+        Collection<Class<? extends Kodeliste>> kodelisteClasses = new ArrayList<Class<? extends Kodeliste>>();
+        kodelisteClasses.add(StoreTestKodelisteLong.class);
+        kodelisteClasses.add(StoreTestKodelisteString.class);
+
         return new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
                         masterCurrent,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelistManager, context)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelistManager, kodelisteClasses, context)
                 ),
                 new DefaultPersistenceSessionStrategy(
                         masterOld,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelistManager, context)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelistManager, kodelisteClasses, context)
                 )
         );
     }

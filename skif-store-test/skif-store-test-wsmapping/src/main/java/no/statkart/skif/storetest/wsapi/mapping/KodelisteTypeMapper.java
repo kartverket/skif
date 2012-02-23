@@ -7,6 +7,17 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
 
 /**
+ * TypeMapper for Kodeliste i StoreTest applikasjonen.
+ *
+ * Kodeliste inneholder et felt (KodeIdClass) som angir med navnet på den KodeId klasse som
+ * kodeliste instansen er kodeliste for. Dette feltet må mappes slik at klasse navnet blir riktig i det api det mappes
+ * til. Det er ikke noen general regel for hvordan dette skal beregnes, men normalt vil alle klasser hedde det samme i
+ * domene- og ws-apiet og kun pakken vil endres på standard vis når det mappes mellom api'en.
+ *
+ * I StoreTest applikasjonen er også klassenavnene på kodene forskjellige (i domene api'et har de prefix Test) og denne
+ * klassen demonstrerer hvordan dette håndteres. Dersom det ikke er noen fast algoritme for hvordan Kodeklassene
+ * navngis mellom api'ene må man f.eks skrive en KodelisteTypeMapper som bruker en map for å mappe kodeklasse navnene.
+ *
  * @author Henrik Fredholm
  * @since 2.0
  */
