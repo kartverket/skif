@@ -2,20 +2,17 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodeliste.Kode;
-import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKode;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
-import no.statkart.skif.storetest.wsapi.domain.demo.*;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
+import no.statkart.skif.storetest.wsapi.domain.demo.BarFoosIdList;
+import no.statkart.skif.storetest.wsapi.domain.demo.BarIdList;
+import no.statkart.skif.storetest.wsapi.domain.demo.FooIdList;
 
 import java.sql.Timestamp;
 import java.util.Collection;
