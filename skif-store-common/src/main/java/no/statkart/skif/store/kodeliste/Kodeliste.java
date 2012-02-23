@@ -20,7 +20,7 @@ public abstract class Kodeliste extends AbstractBubbleObject {
     private Class<? extends KodeId<?>> kodeIdClass;
     private LocalizedFields localizedFields = new LocalizedFields();
     private Map<String, LocalizedFields> localizedFieldsMap;
-    private List<KodeId<?>> kodeIds;
+    private List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
     private boolean editerbar;
 
     // Avledet felt

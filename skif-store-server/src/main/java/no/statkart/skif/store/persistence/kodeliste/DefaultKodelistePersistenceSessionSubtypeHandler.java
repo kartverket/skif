@@ -103,7 +103,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
      * Laster kodeids for en kodeliste. Hvis kodelisten allerede har kodeids lastes kodene ikke på nytt
      */
     protected void loadKodeIds(Kodeliste kodeliste) {
-        if (kodeliste.getKodeIds() != null) return;
+        if (!kodeliste.getKodeIds().isEmpty()) return;
 
         Class<? extends Kode> kodeClass = kodeliste.getKodeClass();
         try {
@@ -134,7 +134,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         Set<Class<? extends Kode>> kodeBaseClasses = new HashSet<Class<? extends Kode>>();
 
         for (Kodeliste kodeliste : kodelister) {
-            if (kodeliste.getKodeIds() == null) {
+            if (kodeliste.getKodeIds().isEmpty()) {
                 Class<? extends Kode> kodeBaseType = getKodeBaseType(kodeliste);
                 kodeBaseClasses.add(kodeBaseType);
             }
@@ -167,7 +167,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         }
 
         for (Kodeliste kodeliste : kodelister) {
-            if (kodeliste.getKodeIds() == null) {
+            if (kodeliste.getKodeIds().isEmpty()) {
                 kodeliste.setKodeIds(kodeIdsMap.get(kodeliste.getId()));
             }
         }
@@ -313,7 +313,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         Collection<Kodeliste> kodelister = getDbKodelister();
         Collection<Kodeliste> kodelisterWithoutKodeIds = new ArrayList<Kodeliste>();
         for (Kodeliste kodeliste : kodelister) {
-            if (kodeliste.getKodeIds() == null) {
+            if (kodeliste.getKodeIds().isEmpty()) {
                 kodelisterWithoutKodeIds.add(kodeliste);
             } else {
                 result.add(kodeliste.getId());
