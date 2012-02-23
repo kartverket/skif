@@ -12,9 +12,4 @@ public class KodelisteLongIdType extends BubbleIdType {
     public Class returnedClass() {
         return KodelisteLongId.class;
     }
-
-    @Override
-    protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
-        return new KodelisteLongId((Long) value, snapshotVersion);
-    }
 }
