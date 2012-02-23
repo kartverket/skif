@@ -1,6 +1,5 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
-import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
@@ -9,9 +8,13 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodeliste.*;
+import no.statkart.skif.store.kodeliste.Kode;
+import no.statkart.skif.store.kodeliste.KodeId;
+import no.statkart.skif.store.kodeliste.Kodeliste;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 
 import java.util.*;
@@ -20,8 +23,8 @@ import java.util.*;
  * En PersistendeSessionSubtypeHandler for Kodeliste og Kode som henter enum baserte koder fra en {@code EnumKodelisteManager}
  * og database baserte koder fra Hibernate (via en underliggende HibernatePersistenceSessionMaster).
  * <p/>
- * Klassen antar at Kode klasser som ikke kjennes igjen av {@code EnumKodelisteManager} er en Kode klasser som skal hentes
- * via Hibernate. For Kodelister gjenlder noe tilsvarende. Hvis {@EnumKodelisteManager} ikke inneholder instansen
+ * Klassen antar at Kode-klasser som ikke kjennes igjen av {@code EnumKodelisteManager} er Kode-klasser som skal hentes
+ * via Hibernate. For Kodelister gjelder tilsvarende. Hvis {@EnumKodelisteManager} ikke inneholder instansen
  * for en kodelisteId da antas det at kodelisteinstansen skal hentes fra databasen.
  * <p/>
  * I den nåværende implementasjon er det litt forskjell på hvordan Kodelister og Koder fra EnumKodeManageren og Hibernate
@@ -30,7 +33,7 @@ import java.util.*;
  * For kodelister og koder som hentes ut fra Hibnernate vil SnapshotVersion allerede være satt riktig. Men innhold i
  * kodelistene må forsatt beregnes.
  * <p/>
- * I alle tilfelle er det nådvendig å lokaliserer kodelister og koder.
+ * I alle tilfelle er det nødvendig å lokaliserer kodelister og koder til ønsket lokale.
  * <p/>
  * TODO: Hadde vært fint om håndteringen av enum og database basert koder var mer likt hverandre.
  *
@@ -108,7 +111,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         Class<? extends Kode> kodeClass = kodeliste.getKodeClass();
         try {
             Session session = persistenceSessionMaster.reserveSession();
-            List<Kode> list = session.createCriteria(kodeClass).list();
+            List<Kode> list = session.createCriteria(kodeClass)
+                    .setFetchMode("localizedFieldsMap", FetchMode.JOIN)   // TODO: Vurdere om dette er raskere enn subselect (gir 1 sql i stedet for 2)
+                    .list();
             List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
 
             KodelisteId kodelisteId = kodeliste.getId();
@@ -147,7 +152,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         try {
             Session session = persistenceSessionMaster.reserveSession();
             for (Class<? extends Kode> kodeBaseClass : kodeBaseClasses) {
-                List<Kode> list = session.createCriteria(kodeBaseClass).list();
+                List<Kode> list = session.createCriteria(kodeBaseClass)
+                        .setFetchMode("localizedFieldsMap", FetchMode.JOIN)   // TODO: Vurdere om dette er raskere enn subselect (gir 1 sql i stedet for 2)
+                        .list();
                 for (Kode kode : list) {
                     persistenceSessionMaster.ensureFullyLoaded(kode); // TODO: Bruke subselect ved lasting av kode slik at denne ikke trengs
                     KodelisteId kodelisteId = kode.getKodelisteId();
@@ -329,8 +336,11 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         Collection<Kodeliste> result = null;
         try {
             Session session = persistenceSessionMaster.reserveSession();
+
             for (Class<? extends Kodeliste> kodelisteClass : kodelisteClasses) {
-                List<Kodeliste> list = session.createCriteria(kodelisteClass).list();
+                List<Kodeliste> list = session.createCriteria(kodelisteClass)
+                        .setFetchMode("localizedFieldsMap", FetchMode.JOIN)   // TODO: Vurdere om dette er raskere enn subselect (gir 1 sql i stedet for 2)
+                        .list();
                 if (result == null) {
                     result = list;
                 } else {

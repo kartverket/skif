@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest.domain.demo.koder.CDbKode" table="CKode">
+    <class name="no.statkart.skif.storetest.domain.demo.koder.CDbKode" table="CKode" lazy="true">
         <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.CDbKodeIdType">
             <generator class="assigned"/>
         </id>
@@ -11,7 +11,7 @@
 
         <property name="kodeverdi"/>
 
-        <map name="localizedFieldsMap" table="CKodeLoc">
+        <map name="localizedFieldsMap" table="CKodeLoc" lazy="true" fetch="subselect">
             <key column="id"/>
             <map-key type="string" column="lokale"/>
             <composite-element class="no.statkart.skif.store.kodeliste.Kode$LocalizedFields">

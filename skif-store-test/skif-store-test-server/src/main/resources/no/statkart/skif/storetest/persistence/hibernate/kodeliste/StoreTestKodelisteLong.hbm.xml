@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong" table="Kodeliste">
+    <class name="no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong" table="Kodeliste"  lazy="true">
         <!-- Her er det mulig å bruke *KodelisteStringIdType istedet hvis kodelistene skal ha streng baserte id'er -->
         <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.StoreTestKodelisteLongIdType">
             <generator class="assigned"/>
@@ -12,7 +12,7 @@
         <property name="kodeTypeNavn" column="kodeTypeNavn" type="string"/>
         <property name="kodeIdClass" column="kodeIdClassname" type="org.hibernate.type.ClassType"/>
 
-        <map name="localizedFieldsMap" table="KodelisteLoc">
+        <map name="localizedFieldsMap" table="KodelisteLoc" lazy="true" fetch="subselect">
             <key column="id"/>
             <map-key type="string" column="lokale"/>
             <composite-element class="no.statkart.skif.store.kodeliste.Kodeliste$LocalizedFields">
