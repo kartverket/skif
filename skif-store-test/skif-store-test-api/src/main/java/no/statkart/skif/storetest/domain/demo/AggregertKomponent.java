@@ -9,7 +9,7 @@ import no.statkart.skif.store.BubbleObject;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-public class AggregertKomponent implements BubbleComponent{
+public class AggregertKomponent implements BubbleComponent<AggregertObjekt> {
     private String noe;
     private int annet;
     private AggregertObjekt aggregertObjekt;
@@ -30,16 +30,17 @@ public class AggregertKomponent implements BubbleComponent{
         this.annet = annet;
     }
 
-    @Override
-    public void setBubbleObject(BubbleObject bubbleObject) {
-        setAggregertObjekt((AggregertObjekt) bubbleObject);
-    }
-
-    private void setAggregertObjekt(AggregertObjekt aggregertObjekt) {
+    public void setAggregertObjekt(AggregertObjekt aggregertObjekt) {
         this.aggregertObjekt = aggregertObjekt;
     }
 
     public AggregertObjekt getAggregertObjekt() {
         return aggregertObjekt;
+    }
+
+    @Override
+    public void setBubbleObject(AggregertObjekt aggregertObjekt) {
+        this.aggregertObjekt = aggregertObjekt;
+
     }
 }

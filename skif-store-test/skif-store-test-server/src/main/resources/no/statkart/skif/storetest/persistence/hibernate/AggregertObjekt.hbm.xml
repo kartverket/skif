@@ -10,7 +10,7 @@
 
         <property name="tekst"/>
 
-        <list name="komponenter" cascade="all-delete-orphan" table="AggregertKomponent">
+        <list name="komponenter" cascade="all-delete-orphan" table="AggregertKomponent" access="field">
             <key column="id"/>
             <list-index column="indeks"/>
             <composite-element class="no.statkart.skif.storetest.domain.demo.AggregertKomponent">

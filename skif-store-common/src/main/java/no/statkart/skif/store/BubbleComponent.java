@@ -6,6 +6,6 @@ package no.statkart.skif.store;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public interface BubbleComponent {
-    public void setBubbleObject(BubbleObject bubbleObject);
+public interface BubbleComponent<T extends BubbleObject> {
+    public void setBubbleObject(T bubbleObject);
 }
