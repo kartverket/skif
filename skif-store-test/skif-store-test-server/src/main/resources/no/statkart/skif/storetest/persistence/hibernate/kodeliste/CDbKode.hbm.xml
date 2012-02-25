@@ -11,7 +11,7 @@
 
         <property name="kodeverdi"/>
 
-        <map name="localizedFieldsMap" table="CKodeLoc" lazy="true" fetch="subselect">
+        <map name="localizedFieldsMap" table="CKodeLoc" lazy="true" fetch="join">
             <key column="id"/>
             <map-key type="string" column="lokale"/>
             <composite-element class="no.statkart.skif.store.kodeliste.Kode$LocalizedFields">

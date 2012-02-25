@@ -12,7 +12,7 @@
         <property name="kodeTypeNavn" column="kodeTypeNavn" type="string"/>
         <property name="kodeIdClass" column="kodeIdClassname" type="org.hibernate.type.ClassType"/>
 
-        <map name="localizedFieldsMap" table="KodelisteLoc" lazy="true" fetch="subselect">
+        <map name="localizedFieldsMap" table="KodelisteLoc" lazy="true" fetch="join">
             <key column="id"/>
             <map-key type="string" column="lokale"/>
             <composite-element class="no.statkart.skif.store.kodeliste.Kodeliste$LocalizedFields">

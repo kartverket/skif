@@ -480,4 +480,9 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     protected <T extends BubbleObject> void onDeleteEntry(int level, StoreEntry storeEntry, T bubbleObject) {
         storeEntry.setBubbleObject(level, bubbleObject);
     }
+
+    @Override
+    public void register(BubbleTransfer bubbleTransfer) {
+        registerEntries(level, bubbleTransfer);
+    }
 }

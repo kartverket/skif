@@ -27,6 +27,7 @@ public interface Store {
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(@Nullable I bubbleId);
 
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void register(BubbleTransfer transfer);
     <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer transfer);
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId);

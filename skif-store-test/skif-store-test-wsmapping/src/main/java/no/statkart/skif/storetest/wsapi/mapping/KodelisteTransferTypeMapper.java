@@ -5,9 +5,13 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -21,9 +25,8 @@ public class KodelisteTransferTypeMapper<WsapiT extends no.statkart.skif.storete
     @Override
     public void mapDomainObject(DomainT source, WsapiT target) {
         super.mapDomainObject(source, target);
-        target.setKodeIds(map.d2w(source.getKodeIds(), KodeIdList.class));
         target.setKodelisteIds(map.d2w(source.getKodelisteIds(), KodelisteIdList.class));
-        target.setObjects(map.d2w(source.getObjects(), StoreTestBubbleList.class));
+        target.setObjects(map.d2w(source.getObjects().values(), StoreTestBubbleList.class));
     }
 
     @Override
@@ -33,10 +36,10 @@ public class KodelisteTransferTypeMapper<WsapiT extends no.statkart.skif.storete
 
     @Override
     protected DomainT getInitialDomainObject(WsapiT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        ArrayList kodeIds = map.w2d(source.getKodeIds(), new ArrayList());
         ArrayList kodelistIds = map.w2d(source.getKodelisteIds(), new ArrayList());
         ArrayList objects = map.w2d(source.getObjects(), new ArrayList());
-        DomainT domainT = getDomainClass().getConstructor(Collection.class, Collection.class, Collection.class).newInstance(kodeIds, kodelistIds, objects);
+        Constructor<DomainT> constructor = getDomainClass().getConstructor(List.class, Collection[].class);
+        DomainT domainT = constructor.newInstance(kodelistIds, new Collection[]{objects});
         return domainT;
     }
 }

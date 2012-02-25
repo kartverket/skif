@@ -14,7 +14,6 @@ import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
-import org.hibernate.FetchMode;
 import org.hibernate.Session;
 
 import java.util.*;
@@ -88,10 +87,10 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
             if (bubble != null) {
                 // Kodeliste for EnumKode
                 if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
-                    setSnapshotVersion(Kodeliste.class.cast(bubble), bubbleId.getSnapshotVersion());
+                    setSnapshotVersionForEnumKodeliste(Kodeliste.class.cast(bubble), bubbleId.getSnapshotVersion());
                 }
             } else {
-                // Kodeliste for DbKode
+                // Kodeliste for DbKode. Har allerede riktig snapshot version
                 bubble = persistenceSessionMaster.get(bubbleId);
                 Kodeliste kodeliste = Kodeliste.class.cast(bubble);
                 loadKodeIds(kodeliste);
@@ -112,7 +111,6 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         try {
             Session session = persistenceSessionMaster.reserveSession();
             List<Kode> list = session.createCriteria(kodeClass)
-                    .setFetchMode("localizedFieldsMap", FetchMode.JOIN)   // TODO: Vurdere om dette er raskere enn subselect (gir 1 sql i stedet for 2)
                     .list();
             List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
 
@@ -121,13 +119,23 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 if (!t.getId().getKodelisteId().equals(kodelisteId)) {
                     throw new ImplementationException("Feil i kodelisteIdValue for kodeliste: " + kodeliste + " DbKode: " + t + " DbKode.getKodelisteId: " + t.getId().getKodelisteId());
                 }
-                kodeIds.add(t.getId());
+                addFilterKodeForSnapshot(kodeIds, t);
             }
             kodeliste.setKodeIds(kodeIds);
         } finally {
             persistenceSessionMaster.reserveSession();
         }
 
+    }
+
+    /**
+     * Legger til kode i kodelisten. Overskriv denne metode for å filtrerer koder bort som ikke skal være med for
+     * en gitt snapshot versjon, for eksempel basert på kodens gyldighetsdatoer.
+     * @param kodeIds  Liste av kodeids som skal inngå i kodelisten
+     * @param t kode som skal legges til
+     */
+    protected void addFilterKodeForSnapshot(List<KodeId<?>> kodeIds, Kode t) {
+        kodeIds.add(t.getId());
     }
 
     /**
@@ -148,25 +156,25 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         // Beregn settet av kodeIds for hver kodelisteId fra de koder som ble lastet.
         Map<KodelisteId, List<KodeId<?>>> kodeIdsMap = new HashMap<KodelisteId, List<KodeId<?>>>();
         KodelisteId prevKodelisteId = null;
-        List<KodeId<?>> kodeIdsList = null;
+        List<KodeId<?>> kodeIds = null;
         try {
             Session session = persistenceSessionMaster.reserveSession();
             for (Class<? extends Kode> kodeBaseClass : kodeBaseClasses) {
                 List<Kode> list = session.createCriteria(kodeBaseClass)
-                        .setFetchMode("localizedFieldsMap", FetchMode.JOIN)   // TODO: Vurdere om dette er raskere enn subselect (gir 1 sql i stedet for 2)
                         .list();
                 for (Kode kode : list) {
                     persistenceSessionMaster.ensureFullyLoaded(kode); // TODO: Bruke subselect ved lasting av kode slik at denne ikke trengs
                     KodelisteId kodelisteId = kode.getKodelisteId();
                     if (kodelisteId != prevKodelisteId) {
                         prevKodelisteId = kodelisteId;
-                        kodeIdsList = kodeIdsMap.get(kodelisteId);
-                        if (kodeIdsList == null) {
-                            kodeIdsList = new ArrayList<KodeId<?>>();
-                            kodeIdsMap.put(kodelisteId, kodeIdsList);
+                        kodeIds = kodeIdsMap.get(kodelisteId);
+                        if (kodeIds == null) {
+                            kodeIds = new ArrayList<KodeId<?>>();
+                            kodeIdsMap.put(kodelisteId, kodeIds);
                         }
                     }
-                    kodeIdsList.add(kode.getId());
+                    addFilterKodeForSnapshot(kodeIds, kode);
+                    kodeIds.add(kode.getId());
                 }
             }
         } finally {
@@ -190,7 +198,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         kode.setKodelisteId((KodelisteId<?>) kode.getKodelisteId().asSnapshotVersion(snapshotVersion));
     }
 
-    private void setSnapshotVersion(Kodeliste kodeliste, SnapshotVersion snapshotVersion) {
+    private void setSnapshotVersionForEnumKodeliste(Kodeliste kodeliste, SnapshotVersion snapshotVersion) {
         kodeliste.setId(kodeliste.getId().asSnapshotVersion(snapshotVersion));
         List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
         List<KodeId<?>> newkodeIds = new ArrayList<KodeId<?>>(kodeIds.size());
@@ -264,7 +272,8 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void evict(I bubbleId) {
-        if (bubbleId instanceof KodeId) { // TODO DbKodeId
+        if (enumKodelisteManager.get(bubbleId)==null) {
+            // bubbleId kommer fra databasen og kan evictes
             persistenceSessionMaster.evict(bubbleId);
         }
     }
@@ -314,8 +323,8 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         throw new UnsupportedOperationException();
     }
 
-    public Collection<KodelisteId> getKodelisteIds() {
-        Collection<KodelisteId> result = new ArrayList<KodelisteId>();
+    public List<KodelisteId<?>> getKodelisteIds() {
+        List<KodelisteId<?>> result = new ArrayList<KodelisteId<?>>();
         result.addAll(getEnumKodelisteIds());
         Collection<Kodeliste> kodelister = getDbKodelister();
         Collection<Kodeliste> kodelisterWithoutKodeIds = new ArrayList<Kodeliste>();
@@ -339,7 +348,6 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
             for (Class<? extends Kodeliste> kodelisteClass : kodelisteClasses) {
                 List<Kodeliste> list = session.createCriteria(kodelisteClass)
-                        .setFetchMode("localizedFieldsMap", FetchMode.JOIN)   // TODO: Vurdere om dette er raskere enn subselect (gir 1 sql i stedet for 2)
                         .list();
                 if (result == null) {
                     result = list;
@@ -357,12 +365,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
      * Returnerer KodelisteIds for alle enum koder med riktig snapshot versjon
      * @return
      */
-    private Collection<KodelisteId> getEnumKodelisteIds() {
-        Collection<KodelisteId> kodelisteIdsForCurrent = enumKodelisteManager.getKodelisteIds();
+    private Collection<KodelisteId<?>> getEnumKodelisteIds() {
+        Collection<KodelisteId<?>> kodelisteIdsForCurrent = enumKodelisteManager.getKodelisteIds();
         SnapshotVersion snapshot = getSnapshot();
         if (snapshot == SnapshotVersion.CURRENT) return kodelisteIdsForCurrent;
 
-        Collection<KodelisteId> kodelisteIdsForSnapshot = new ArrayList<KodelisteId>(kodelisteIdsForCurrent.size());
+        Collection<KodelisteId<?>> kodelisteIdsForSnapshot = new ArrayList<KodelisteId<?>>(kodelisteIdsForCurrent.size());
         for (KodelisteId kodelisteId : kodelisteIdsForCurrent) {
             kodelisteIdsForSnapshot.add((KodelisteId) kodelisteId.asSnapshotVersion(snapshot));
         }

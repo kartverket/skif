@@ -142,6 +142,19 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
+    public void registerEntries(int level,  BubbleTransfer bubbleTransfer) {
+        for (Object object : bubbleTransfer.getObjects().values()) {
+            BubbleObject bubbleObject = (BubbleObject) object;
+            StoreEntry entry = storeCache.get(bubbleObject.getId());
+            if (entry==null) {
+                storeCache.register(level, bubbleObject, bubbleObject);
+            } else {
+                // TODO: sjekk of object i transfer er nyere/låst
+            }
+        }
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
         StoreEntry entry = storeCache.get(bubbleId);
 

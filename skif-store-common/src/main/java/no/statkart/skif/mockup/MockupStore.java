@@ -342,6 +342,11 @@ public class MockupStore implements Store {
         return ids;
     }
 
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void register(BubbleTransfer transfer) {
+        throw new NotImplementedException();
+    }
+
     public SortedMap<SnapshotVersion, MockupTransfer> getTransfersBefore(SnapshotVersion beforeSnapshotVersion) {
         return mockupPersister.getTransfersBefore(beforeSnapshotVersion);
     }

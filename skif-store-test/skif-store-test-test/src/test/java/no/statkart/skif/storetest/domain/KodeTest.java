@@ -175,11 +175,15 @@ public class KodeTest extends StoreTestTestCase {
     }
 
 
-//    public void testGetKodelisteTransfer() {
-//        KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
-//        KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
-//        assertNotNull(kodelisteTransfer);
-//    }
+    public void testGetKodelisteTransfer() {
+        KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
+        KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
+
+        store.register(kodelisteTransfer);
+        List list = store.get(kodelisteTransfer.getKodelisteIds());
+
+        assertNotNull(kodelisteTransfer);
+    }
 
 //    public void testKodeIdLookup() {
 //        KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);

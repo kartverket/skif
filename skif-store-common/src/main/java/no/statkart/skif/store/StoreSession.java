@@ -127,4 +127,6 @@ public interface StoreSession {
 
     <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
 
+    void register(BubbleTransfer bubbleTransfer);
+
 }

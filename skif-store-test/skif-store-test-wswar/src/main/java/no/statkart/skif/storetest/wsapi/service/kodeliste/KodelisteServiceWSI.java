@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.wsapi.service.kodeliste;
 
 import no.statkart.skif.service.ws.ServiceWSI;
+import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer;
@@ -13,7 +14,7 @@ import javax.jws.WebParam;
  * @since 2.0
  */
 public interface KodelisteServiceWSI extends ServiceWSI {
-    public KodelisteIdList getKodelisteIds(@WebParam(name = "context") StoreTestContext context) throws ServiceException;
+    public KodelisteTransfer getKodeliste(@WebParam(name = "kodeIdClassName") String kodeIdClassName, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
-    public KodelisteTransfer getKodelister(@WebParam(name = "context") StoreTestContext context) throws ServiceException;
+    public KodelisteTransfer getKodelister(@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 }

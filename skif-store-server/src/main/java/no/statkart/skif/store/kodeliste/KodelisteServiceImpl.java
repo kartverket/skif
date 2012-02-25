@@ -1,0 +1,50 @@
+package no.statkart.skif.store.kodeliste;
+
+import com.google.inject.Inject;
+import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.KodelisteTransfer;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
+import no.statkart.skif.store.persistence.PersistenceSessionManager;
+import no.statkart.skif.store.persistence.kodeliste.KodelistePersistenceSessionSubtypeHandler;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * @author Henrik Fredholm
+ * @since 2.1
+ */
+public class KodelisteServiceImpl implements KodelisteService {
+    @Inject
+    private PersistenceSessionManager persistenceSessionManager;
+    @Inject
+    private Store store;
+
+    protected KodelistePersistenceSessionSubtypeHandler getKodelisteSubtypeHandler(SnapshotVersion snapshotVersion) {
+        PersistenceSessionForSnapshot forSnapshotVersion = persistenceSessionManager.getForSnapshotVersion(snapshotVersion);
+        return forSnapshotVersion.getImplementation(KodelistePersistenceSessionSubtypeHandler.class);
+
+    }
+
+    @Override
+    public <I extends KodelisteId<?>> KodelisteTransfer<I> getKodelister(SnapshotVersion snapshotVersion) {
+        List<KodelisteId<?>> kodelisteIds = getKodelisteSubtypeHandler(snapshotVersion).getKodelisteIds();
+        List<Kodeliste> kodelisteList =store.get(kodelisteIds);
+        List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>(kodelisteList.size() * 10);
+        for (Kodeliste kodeliste : kodelisteList) {
+            kodeIds.addAll(kodeliste.getKodeIds());
+        }
+        List<Kode> koder = store.get(kodeIds);
+        KodelisteTransfer kodelisteTransfer = new KodelisteTransfer(kodelisteIds, kodelisteList, koder);
+        return kodelisteTransfer;
+    }
+
+    @Override
+    public <I extends KodelisteId<?>> KodelisteTransfer<I> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion) {
+        throw new NotImplementedException();
+    }
+}

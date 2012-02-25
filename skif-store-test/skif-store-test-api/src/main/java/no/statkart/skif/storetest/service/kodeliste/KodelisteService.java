@@ -10,10 +10,5 @@ import java.util.Collection;
  *
  * @author Henrik Fredholm
  */
-public interface KodelisteService {
-    public Collection<? extends KodelisteId> getKodelisteIds();
-
-    public KodelisteTransfer getKodelister();
-
-    public String getKodelisterTest();
+public interface KodelisteService extends no.statkart.skif.store.kodeliste.KodelisteService  {
 }

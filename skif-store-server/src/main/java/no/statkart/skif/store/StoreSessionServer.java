@@ -398,14 +398,6 @@ public class StoreSessionServer extends AbstractStoreSession {
         persistenceSessionManager.delete(resultingPersistentBubbleObject);
     }
 
-    private <T extends BubbleObject> StoreEntry XXEntry(int level, T persistentBubbleObject) {
-        T bubbleObject = persistentBubbleObject;
-        for (StoreSessionReadListener readListener : readListeners) {
-            bubbleObject = readListener.onRegister(bubbleObject);
-        }
-        return storeCache.register(level, persistentBubbleObject, bubbleObject);
-    }
-
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry loadEntry(int level, I bubbleId, boolean refresh) {
         T persistentBubbleObject;
@@ -490,4 +482,8 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     }
 
+    @Override
+    public void registerEntries(int level, BubbleTransfer bubbleTransfer) {
+        // No-op; alle objekter hentes fra persistence session
+    }
 }

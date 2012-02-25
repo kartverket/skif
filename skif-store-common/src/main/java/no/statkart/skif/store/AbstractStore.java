@@ -120,6 +120,11 @@ public class AbstractStore implements Store {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void register(BubbleTransfer transfer) {
+        storeSession.register(transfer);
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer transfer) {
         //To change body of implemented methods use File | Settings | File Templates.
     }

@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.wsapi.service.kodeliste;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
+import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.demo.*;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteIdList;
@@ -41,13 +42,13 @@ public class KodelisteServiceWSBean extends SkifWebService<KodelisteServiceWSI> 
     }
 
     @Override
-    public KodelisteIdList getKodelisteIds(@WebParam(name = "context") StoreTestContext context) throws ServiceException {
-        return wsServiceChain.getKodelisteIds(context);
+    public KodelisteTransfer getKodeliste(@WebParam(name = "kodeIdClassName") String kodeIdClassName, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        return wsServiceChain.getKodeliste(kodeIdClassName, snapshotVersion, context);
     }
 
     @Override
-    public KodelisteTransfer getKodelister(@WebParam(name = "context") StoreTestContext context) throws ServiceException {
-        return wsServiceChain.getKodelister(context);
+    public KodelisteTransfer getKodelister(@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        return wsServiceChain.getKodelister(snapshotVersion, context);
     }
 }
 

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.KodelisteTransfer;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
@@ -21,19 +22,13 @@ public class KodelisteServiceEJBBean extends EJBTimedService implements Kodelist
     private KodelisteService serviceImpl;
 
     @Override
-    public Collection<? extends KodelisteId> getKodelisteIds() {
-        return serviceImpl.getKodelisteIds();
-
+    public <I extends KodelisteId<?>> KodelisteTransfer<I> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion) {
+        return serviceImpl.getKodeliste(kodeIdClassName, snapshotVersion);
     }
 
     @Override
-    public KodelisteTransfer getKodelister() {
-        return serviceImpl.getKodelister();
-    }
-
-    @Override
-    public String getKodelisterTest() {
-        return "Hello EJB";
+    public <I extends KodelisteId<?>> KodelisteTransfer<I> getKodelister(SnapshotVersion snapshotVersion) {
+        return serviceImpl.getKodelister(snapshotVersion);
     }
 }
 

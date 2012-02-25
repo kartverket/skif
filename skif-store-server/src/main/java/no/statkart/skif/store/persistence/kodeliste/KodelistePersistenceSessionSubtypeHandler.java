@@ -4,6 +4,7 @@ import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.PersistenceSessionSubtypeHandler;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Interface for PersistenceSessionSubtypeHandler som håndterer kodelister og koder. Det er nødvendig
@@ -17,5 +18,5 @@ public interface KodelistePersistenceSessionSubtypeHandler extends PersistenceSe
      * Laster alle kodelister og koder i domenet.
      * @return Collection med all kodelisteids
      */
-    Collection<KodelisteId> getKodelisteIds();
+    List<KodelisteId<?>> getKodelisteIds();
 }

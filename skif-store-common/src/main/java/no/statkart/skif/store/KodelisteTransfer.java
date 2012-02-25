@@ -4,32 +4,29 @@ import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 
+import java.awt.datatransfer.Transferable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
+ * Transfer klasse for kodelister
+ *
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
  */
-public class KodelisteTransfer<KID extends KodeId, LID extends KodelisteId, K extends Kode> {
-    private Collection<? extends KID> kodeIds;
-    private Collection<? extends LID> kodelisteIds;
-    private Collection<? extends K> objects;
+public class KodelisteTransfer<I extends KodelisteId> extends BubbleTransfer {
+    /** Sortert liste av alle kodelisteIds */
+    private List<? extends I> kodelisteIds = new ArrayList<I>();
 
-    public KodelisteTransfer(Collection<? extends KID> kodeIds, Collection<? extends LID> kodelisteIds, Collection<? extends K> objects) {
-        this.kodeIds = kodeIds;
+    public KodelisteTransfer(List<? extends I> kodelisteIds, Collection<? extends BubbleObject>... objects) {
+        for (Collection<? extends BubbleObject> objectList : objects) {
+            add(objectList);
+        }
         this.kodelisteIds = kodelisteIds;
-        this.objects = objects;
     }
 
-    public Collection<? extends KID> getKodeIds() {
-        return kodeIds;
-    }
-
-    public Collection<? extends LID> getKodelisteIds() {
+    public List<? extends I> getKodelisteIds() {
         return kodelisteIds;
-    }
-
-    public Collection<? extends K> getObjects() {
-        return objects;
     }
 }

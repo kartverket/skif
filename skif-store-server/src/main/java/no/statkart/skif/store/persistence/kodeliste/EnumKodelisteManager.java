@@ -27,7 +27,7 @@ public class EnumKodelisteManager {
      * Alle enum baserte koder og kodelister.
      */
     private Map<BubbleId<?>, BubbleObject> nonLocalizedEnumCache = new HashMap<BubbleId<?>, BubbleObject>();
-    private Set<KodelisteId> kodelisteIds = new HashSet<KodelisteId>();
+    private Set<KodelisteId<?>> kodelisteIds = new HashSet<KodelisteId<?>>();
     private Set<Class<? extends KodeId>> enumClasses = new HashSet<Class<? extends KodeId>>();
 
     /**
@@ -113,7 +113,7 @@ public class EnumKodelisteManager {
         }
     }
 
-    public Collection<KodelisteId> getKodelisteIds() {
+    public Collection<KodelisteId<?>> getKodelisteIds() {
         return kodelisteIds;
     }
 }

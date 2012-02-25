@@ -49,7 +49,7 @@ public class StoreCache {
         if (oldEntry!=null) {
             throw new ImplementationException("Duplicate entry:"  + bubbleObject.getId());
         }
-
+        bubbleObject.register(store);
         return entry;
     }
 

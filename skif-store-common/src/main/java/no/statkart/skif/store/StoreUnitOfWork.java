@@ -66,6 +66,10 @@ public class StoreUnitOfWork extends AbstractStoreSession {
         return wrappedStoreSession.evictEntry(level, bubbleId);
     }
 
+    public  void register(BubbleTransfer bubbleTransfer) {
+        wrappedStoreSession.register(bubbleTransfer);
+    }
+
     @Override
     public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
         wrappedStoreSession.ensureFullyLoaded(bubbleObject);
@@ -144,6 +148,9 @@ public class StoreUnitOfWork extends AbstractStoreSession {
         return wrappedStoreSession.getVersionsForList(ids, start, end);
     }
 
-
+    @Override
+    public void registerEntries(int level, BubbleTransfer bubbleTransfer) {
+        wrappedStoreSession.registerEntries(level, bubbleTransfer);
+    }
 }
 
