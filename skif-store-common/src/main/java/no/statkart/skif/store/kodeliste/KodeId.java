@@ -4,6 +4,8 @@ import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 
 /**
+ * Id klasse for {@link Kode}
+ *
  * @author Henrik Fredholm
  * @since 2.1
  */

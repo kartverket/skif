@@ -7,6 +7,7 @@ import no.statkart.skif.SkifUtil;
 import no.statkart.skif.service.*;
 import no.statkart.skif.service.ejb.EJBCallProxyHandler;
 import no.statkart.skif.service.scope.ServiceRequestScope;
+import no.statkart.skif.util.CopyHelper;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -50,7 +51,8 @@ public abstract class SingleVmRemoteCallProxyHandler<S> extends TerminatingProxy
         try {
             serviceRequestScope.seed(SingleVmRemoteCallContext.class, createSingleVmRemoteCallcontext());
             final EJBCallProxyHandler<S> ejbCallProxyHandler = singleVmServerEJBProxyHandlerProvider.get();
-            return ejbCallProxyHandler.invoke(proxy, method, args);
+            Object result = ejbCallProxyHandler.invoke(proxy, method, args);
+            return CopyHelper.copy(result);
         } finally {
             serviceRequestScope.exit();
         }

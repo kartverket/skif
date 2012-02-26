@@ -44,7 +44,7 @@ public class KodeIdLookup {
     public static KodeIdLookup buildFromKodeliste(Collection<? extends Kodeliste> kodelisteCollection) {
         ArrayList<Kode> kodes = new ArrayList<Kode>();
         for (Kodeliste kodeliste : kodelisteCollection) {
-            kodes.addAll(kodeliste.getKoder());
+            //kodes.addAll(kodeliste.getKoder());
         }
         return buildFromKode(kodes);
     }

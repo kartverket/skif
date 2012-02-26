@@ -11,6 +11,7 @@ import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.storetest.domain.demo.Baz;
 import no.statkart.skif.storetest.domain.demo.BazId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
@@ -177,7 +178,8 @@ public class KodeTest extends StoreTestTestCase {
 
     public void testGetKodelisteTransfer() {
         KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
-        KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
+        KodelisteTransfer<StoreTestKodelisteId<?>> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
+        List<? extends StoreTestKodelisteId<?>> kodelisteIds = kodelisteTransfer.getKodelisteIds();
 
         store.register(kodelisteTransfer);
         List list = store.get(kodelisteTransfer.getKodelisteIds());

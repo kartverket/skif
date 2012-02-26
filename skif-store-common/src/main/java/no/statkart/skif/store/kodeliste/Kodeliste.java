@@ -1,143 +1,46 @@
 package no.statkart.skif.store.kodeliste;
 
-import no.statkart.skif.SkifUtil;
-import no.statkart.skif.store.AbstractBubbleObject;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Denne klasse holder på en liste av {@code KodeId}s. Klassen inneholder lokaliseringsstøtte.
- *
+ * Interface for Kodeliste
  * @author Henrik Fredholm
  * @since 2.1
  */
-public abstract class Kodeliste extends AbstractBubbleObject {
-    private String kodeTypeNavn;
-    private Class<? extends KodeId<?>> kodeIdClass;
-    private LocalizedFields localizedFields = new LocalizedFields();
-    private Map<String, LocalizedFields> localizedFieldsMap;
-    private List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
-    private boolean editerbar;
-
-    // Avledet felt
-    private Class<? extends Kode> kodeClass;
-
-
-    public static class LocalizedFields implements Serializable {
-        public String navn = "";
-        public String beskrivelse = "";
-
-        void updateFrom(LocalizedFields l) {
-            navn = l.navn;
-            beskrivelse = l.beskrivelse;
-        }
-    }
-
-    public Kodeliste() {
-        this.localizedFieldsMap = new HashMap<String, LocalizedFields>(3);
-    }
-
-
-    public String getKodeTypeNavn() {
-        return kodeTypeNavn;
-    }
-
-    public void setKodeTypeNavn(String kodeTypeNavn) {
-        this.kodeTypeNavn = kodeTypeNavn;
-    }
-
-    public String getNavn() {
-        return localizedFields.navn;
-    }
-
-    public void setNavn(String navn) {
-        localizedFields.navn = navn;
-    }
-
+public interface Kodeliste extends BubbleObject {
     @Override
-    public KodelisteId getId() {
-        return (KodelisteId) super.getId();
-    }
+    KodelisteId<?> getId();
 
-    public Class<? extends Kode> getKodeClass() {
-        if (kodeClass==null) {
-            String kodeIdClassName = kodeIdClass.getName();
-            String kodeClassName = kodeIdClassName.substring(0, kodeIdClassName.length()-2);
-            kodeClass = SkifUtil.classForName(kodeClassName);
-        }
-        return kodeClass;
-    }
+    Class<? extends Kode> getKodeClass();
 
-    public Class<? extends KodeId<?>> getKodeIdClass() {
-        return kodeIdClass;
-    }
+    Class<? extends KodeId<?>> getKodeIdClass();
 
-    public void setKodeIdClass(Class<? extends KodeId<?>> kodeIdClass) {
-        this.kodeIdClass = kodeIdClass;
-    }
+    void setKodeIdClass(Class<? extends KodeId<?>> kodeIdClass);
 
-    public List<KodeId<?>> getKodeIds() {
-        return kodeIds;
-    }
+    List<KodeId<?>> getKodeIds();
 
-    public void setKodeIds(List<? extends KodeId<?>> kodeIds) {
-        this.kodeIds = (List) kodeIds;
-    }
-
-    public List<Kode> getKoder() {
-        return store.get(kodeIds);
-    }
-
-    public String getBeskrivelse() {
-        return localizedFields.beskrivelse;
-    }
-
-    public void setBeskrivelse(String beskrivelse) {
-        localizedFields.beskrivelse = beskrivelse;
-    }
-
-    public Map<String, LocalizedFields> getLocalizedFieldsMap() {
-        return localizedFieldsMap;
-    }
+    void setKodeIds(List<? extends KodeId<?>> kodeIds);
 
 
-    public boolean isEditerbar() {
-        return editerbar;
-    }
+    boolean isEditerbar();
 
-    public void setEditerbar(boolean editerbar) {
-        this.editerbar = editerbar;
-    }
+    void setEditerbar(boolean editerbar);
 
-    public void setLocalizedFieldsMap(Map<String, LocalizedFields> localizedFieldsMap) {
-        this.localizedFieldsMap = localizedFieldsMap;
-    }
+    void localize(String localeString);
 
-    public void localize(String localeString) {
-        localizedFields = null;
-        if (localeString != null) {
-            localizedFields = localizedFieldsMap.get(localeString);
-            if (localizedFields == null) {
-                localizedFields = new LocalizedFields();
-            }
-        } else {
-            localizedFields = new LocalizedFields();
-        }
-    }
+    void updateLocalized(String localeString);
 
-    public void updateLocalized(String localeString) {
-        LocalizedFields l = localizedFieldsMap.get(localeString);
-        if (l == null) {
-            l = new LocalizedFields();
-            localizedFieldsMap.put(localeString, l);
-        }
-        if (l != localizedFields) {
-            l.updateFrom(localizedFields);
-        }
-    }
+    String getNavn();
+
+    void setNavn(String s);
+
+
+    String getBeskrivelse();
+
+    void setBeskrivelse(String s);
+
+
 }
-

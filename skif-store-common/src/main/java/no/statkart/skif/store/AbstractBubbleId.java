@@ -11,10 +11,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Id klasse for {@link AbstractBubbleObject}
+ * <p/>
+ * Subklasser må definere hvilken konkret type som skal brukes for {@code idValue}. Dette gjørs ved å la subtypen implementerer
+ * metoden {@link #getValue()} med konkret return type (f.eks {@code Long} eller {@code String}.
+ *
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class AbstractBubbleId<T extends BubbleObject> implements BubbleId<T>, Serializable {
+public abstract class AbstractBubbleId<T extends BubbleObject> implements BubbleId<T> {
     private Object value;
 
     /**
@@ -98,22 +103,22 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
 
-    public AbstractBubbleId<T> asSnapshotVersion(SnapshotVersion snapshotVersion) {
+    public BubbleId<T> asSnapshotVersion(SnapshotVersion snapshotVersion) {
         if (this.snapshotVersion.equals(snapshotVersion)) return this;
         return BubbleIds.createInstance(this.getClass(), getValue(), snapshotVersion);
     }
 
-    public AbstractBubbleId<T> asSnapshotVersion(BubbleId<?>  bubbleId) {
+    public BubbleId<T> asSnapshotVersion(BubbleId<?>  bubbleId) {
         SnapshotVersion snapshotVersion = bubbleId.getSnapshotVersion();
         if (this.snapshotVersion.equals(snapshotVersion)) return this;
         return BubbleIds.createInstance(this.getClass(), getValue(), snapshotVersion);
     }
 
-    public AbstractBubbleId<T> asSnapshotVersionOld() {
+    public BubbleId<T> asSnapshotVersionOld() {
         return asSnapshotVersion(SnapshotVersion.OLD);
     }
 
-    public AbstractBubbleId<T> asSnapshotVersionCurrent() {
+    public BubbleId<T> asSnapshotVersionCurrent() {
         return asSnapshotVersion(SnapshotVersion.CURRENT);
     }
 

@@ -6,7 +6,7 @@ package no.statkart.skif.store.kodeliste;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class KodelisteString extends Kodeliste {
+public class KodelisteString extends AbstractKodeliste {
     @Override
     public KodelisteStringId<?> getId() {
         return (KodelisteStringId<?>) super.getId();

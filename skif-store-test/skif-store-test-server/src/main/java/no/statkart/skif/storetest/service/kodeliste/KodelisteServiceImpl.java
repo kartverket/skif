@@ -5,6 +5,7 @@ import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.store.persistence.finder.KodelisteFinder;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteId;
 
 import java.util.Collection;
 
