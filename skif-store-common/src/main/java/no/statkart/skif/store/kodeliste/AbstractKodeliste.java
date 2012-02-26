@@ -2,6 +2,7 @@ package no.statkart.skif.store.kodeliste;
 
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.store.AbstractBubbleObject;
+import no.statkart.skif.store.LocalizedFields;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public abstract class AbstractKodeliste extends AbstractBubbleObject implements 
     private Class<? extends Kode> kodeClass;
 
 
-    public static class LocalizedFields implements Serializable {
+    public static class LocalizedFields implements no.statkart.skif.store.LocalizedFields {
         public String navn = "";
         public String beskrivelse = "";
 

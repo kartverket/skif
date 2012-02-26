@@ -2,6 +2,8 @@ package no.statkart.skif.store.kodeliste;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.Localizable;
+import no.statkart.skif.store.LocalizedFields;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -16,12 +18,12 @@ import java.util.Map;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public abstract class Kode extends AbstractBubbleObject {
+public abstract class Kode extends AbstractBubbleObject implements Localizable{
     private LocalizedFields localizedFields = new LocalizedFields();
     private Map<String, LocalizedFields> localizedFieldsMap = new HashMap<String, LocalizedFields>();
     private KodelisteId<?> kodelisteId;
 
-    public static class LocalizedFields implements Serializable {
+    public static class LocalizedFields implements no.statkart.skif.store.LocalizedFields {
         public String navn = "";
         public String beskrivelse = "";
 
