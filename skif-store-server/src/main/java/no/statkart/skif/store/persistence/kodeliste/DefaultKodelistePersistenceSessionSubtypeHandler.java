@@ -289,6 +289,10 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> refresh(Collection<I> bubbleId) {
+        throw new NotImplementedException();
+    }
+    @Override
     public <T extends BubbleObject> void refresh(T bubble) {
         throw new NotImplementedException();
     }
