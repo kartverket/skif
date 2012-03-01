@@ -33,8 +33,8 @@ public class SEnumKodeId extends StoreTestEnumKodeId<SEnumKode> {
         return KODELISTE_ID.asSnapshotVersion(this);
     }
 
-    protected static SEnumKodeId define(long idValue, String beskrivelesesKey, String kodeVerdi) {
-        SEnumKode enumKode = kodeSupport.defineKode(idValue, beskrivelesesKey);
+    protected static SEnumKodeId define(long idValue, String kodeResourceKey, String kodeVerdi) {
+        SEnumKode enumKode = kodeSupport.defineKode(idValue, kodeResourceKey);
         enumKode.setKodeverdi(kodeVerdi);
         return enumKode.getId();
     }

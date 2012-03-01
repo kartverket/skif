@@ -1,5 +1,6 @@
 package no.statkart.skif.store;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public interface StoreService {
      * @return
      */
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I id);
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getObjects(List<I> ids);
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjects(Collection<I> ids);
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end);
 

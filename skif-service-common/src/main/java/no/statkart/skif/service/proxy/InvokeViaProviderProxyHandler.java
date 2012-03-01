@@ -7,21 +7,27 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * {@code ProxyHandler} for service {@code S} som sender kallet videre til instans av type {@code S}.
+ * {@code ProxyHandler} for service {@code S} som sender kallet videre via en {@code Provider}
+ * for instans av type {@code S}.
+ * <p/>
+ * Denne proxy handler gjør at {@code S} først blir opprettet i det øyeblikk at en metode på
+ * {@code S} utføres. Dersom denne indireksjon ikke trengs kan
+ * {@link InvokeViaInstanceProxyHandler} med fordel brukes i stedet.
  *
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
  */
-public class InstanceCallProxyHandler<S> extends TerminatingProxyHandler<S> {
-    final protected S instance;
+public class InvokeViaProviderProxyHandler<S> extends TerminatingProxyHandler<S> {
+    final protected Provider<S> provider;
 
-    public InstanceCallProxyHandler(S instance) {
-        this.instance = instance;
+    public InvokeViaProviderProxyHandler(Provider<S> provider) {
+        this.provider = provider;
     }
 
     @Override
     protected Object invokeMethod(Object proxy, Method method, Object[] args)  throws Throwable{
         try {
+            S instance = provider.get();
             return method.invoke(instance, args);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
@@ -30,10 +36,5 @@ public class InstanceCallProxyHandler<S> extends TerminatingProxyHandler<S> {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public S buildProxy(Class<S> type) {
-        return type.cast(instance);
     }
 }

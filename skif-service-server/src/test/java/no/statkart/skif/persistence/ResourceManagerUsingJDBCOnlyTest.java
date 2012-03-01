@@ -1,8 +1,6 @@
-package no.statkart.skif.persistence5;
+package no.statkart.skif.persistence;
 
 import no.statkart.skif.config.SkifConfiguration;
-import no.statkart.skif.persistence.DefaultResourceManager;
-import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.persistence.jdbc.ConnectionManagerUsingFactory;
 import no.statkart.skif.store.SnapshotVersion;
@@ -33,6 +31,8 @@ public class ResourceManagerUsingJDBCOnlyTest {
         ResourceManager resourceManager = new DefaultResourceManager(
                 new ResourceManager.Entry(managerUsingFactory, ConnectionManager.class)
         );
+        resourceManager.start();
+
 
 
         ConnectionManager connectionManager = resourceManager.getResource(ConnectionManager.class);
@@ -40,5 +40,6 @@ public class ResourceManagerUsingJDBCOnlyTest {
         Connection forSnapshotVersion = connectionManager.getForSnapshotVersion(SnapshotVersion.CURRENT);
         assertFalse(forSnapshotVersion.getAutoCommit());
         resourceManager.close();
+        resourceManager.shutdown();
     }
 }

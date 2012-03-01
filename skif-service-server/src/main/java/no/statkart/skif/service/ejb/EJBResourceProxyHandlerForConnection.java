@@ -1,6 +1,7 @@
 package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
@@ -13,20 +14,24 @@ import org.slf4j.LoggerFactory;
 public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHandler<S> {
     private static Logger log = LoggerFactory.getLogger(EJBResourceProxyHandlerForConnection.class);
 
-    private final ResourceManager resourceManager;
-    private final ServiceRequestContext serviceRequestContext;
-    private final ServiceMode serviceMode;
+    private final Provider<ResourceManager> resourceManagerProvider;
+    private final Provider<ServiceRequestContext> serviceRequestContextProvider;
+    private final Provider<ServiceMode> serviceModeProvider;
 
     @Inject
-    public EJBResourceProxyHandlerForConnection(ResourceManager resourceManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode) {
-        this.resourceManager = resourceManager;
-        this.serviceRequestContext = serviceRequestContext;
-        this.serviceMode = serviceMode;
+    public EJBResourceProxyHandlerForConnection(Provider<ResourceManager> resourceManagerProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceMode> serviceModeProvider) {
+        this.resourceManagerProvider = resourceManagerProvider;
+        this.serviceRequestContextProvider = serviceRequestContextProvider;
+        this.serviceModeProvider = serviceModeProvider;
     }
 
     @Override
     protected void beginService() {
         log.debug("begin");
+        final ServiceMode serviceMode = serviceModeProvider.get();
+        final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
+        final ResourceManager resourceManager = resourceManagerProvider.get();
+        resourceManager.start();
 
         if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
             resourceManager.beginTransaction();
@@ -37,21 +42,34 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
     @Override
     protected void completeService() {
         log.debug("complete");
+        final ServiceMode serviceMode = serviceModeProvider.get();
+        final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
+        final ResourceManager resourceManager = resourceManagerProvider.get();
+
         if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
             resourceManager.commit();
         }
         resourceManager.close();
+        resourceManager.shutdown();
     }
 
     @Override
     protected void abortService() {
         log.debug("abortService");
-        serviceRequestContext.setRollbackOnly();
-        if (serviceRequestContext.isNewTx()) {
-            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
-                resourceManager.rollback();
+        final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
+        final ServiceMode serviceMode = serviceModeProvider.get();
+        final ResourceManager resourceManager = resourceManagerProvider.get();
+
+        try {
+            serviceRequestContext.setRollbackOnly();
+            if (serviceRequestContext.isNewTx()) {
+                if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
+                    resourceManager.rollback();
+                }
+                resourceManager.close();
             }
-            resourceManager.close();
+        } finally {
+            resourceManager.shutdown();
         }
     }
 }

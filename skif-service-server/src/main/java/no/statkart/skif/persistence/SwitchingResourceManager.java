@@ -2,8 +2,6 @@ package no.statkart.skif.persistence;
 
 import no.statkart.skif.exception.ImplementationException;
 
-import java.util.Map;
-
 /**
  * @author Henrik Fredholm
  * @since 2.1
@@ -42,6 +40,16 @@ public class SwitchingResourceManager implements ResourceManager {
     @Override
     public <T extends Resource> T getResource(Key key) {
         return selected().getResource(key);
+    }
+
+    @Override
+    public void start() {
+        selected().start();
+    }
+
+    @Override
+    public void shutdown() {
+        selected().shutdown();
     }
 
     @Override

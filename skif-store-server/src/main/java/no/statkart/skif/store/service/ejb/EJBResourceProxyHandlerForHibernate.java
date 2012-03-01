@@ -1,6 +1,7 @@
 package no.statkart.skif.store.service.ejb;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
@@ -15,61 +16,77 @@ import org.slf4j.LoggerFactory;
 public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHandler<S> {
     private static Logger log = LoggerFactory.getLogger(EJBResourceProxyHandlerForHibernate.class);
 
-    private final ResourceManager resourceManager;
-    private final ServiceRequestContext serviceRequestContext;
-    private final ServiceMode serviceMode;
-    private final StoreServer storeServer;
+    private final Provider<ResourceManager> resourceManagerProvider;
+    private final Provider<ServiceRequestContext> serviceRequestContextProvider;
+    private final Provider<ServiceMode> serviceModeProvider;
+    private final Provider<StoreServer> storeServerProvider;
 
     @Inject
-    public EJBResourceProxyHandlerForHibernate(ResourceManager resourceManager, ServiceRequestContext serviceRequestContext, ServiceMode serviceMode, StoreServer storeServer) {
-        this.resourceManager = resourceManager;
-        this.serviceRequestContext = serviceRequestContext;
-        this.serviceMode = serviceMode;
-        this.storeServer = storeServer;
+    public EJBResourceProxyHandlerForHibernate(Provider<ResourceManager> resourceManagerProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceMode> serviceModeProvider, Provider<StoreServer> storeServerProvider) {
+        this.resourceManagerProvider = resourceManagerProvider;
+        this.serviceRequestContextProvider = serviceRequestContextProvider;
+        this.serviceModeProvider = serviceModeProvider;
+        this.storeServerProvider = storeServerProvider;
     }
 
 
     @Override
     protected void beginService() {
         log.debug("begin");
+        final ServiceMode serviceMode = serviceModeProvider.get();
+        final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
+        final ResourceManager resourceManager = resourceManagerProvider.get();
 
+        resourceManager.start();
         //TODO: angi eksplisitt at connections skal allokeres via hibernate. Pt skjer det alltid
         //connectionManager.beingAllocateConnectionsViaHibernateSession();
         if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
             resourceManager.beginTransaction();
         }
-
     }
 
     @Override
     protected void completeService() {
         log.debug("complete");
-            if (serviceRequestContext.isContainerManagedTransaction()) {
-                if (serviceRequestContext.inTx()) {
-                    resourceManager.flush();
-                }
-                if (serviceRequestContext.isNewTx()) {
-                    storeServer.finish();
-                }
-                if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
-                    resourceManager.commit();
-                }
-            }
+        final ServiceMode serviceMode = serviceModeProvider.get();
+        final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
+        final ResourceManager resourceManager = resourceManagerProvider.get();
 
-            resourceManager.close();
-            //connectionManager.endAllocateConnectionsViaHibernateSession();
+        if (serviceRequestContext.isContainerManagedTransaction()) {
+            if (serviceRequestContext.inTx()) {
+                resourceManager.flush();
+            }
+            if (serviceRequestContext.isNewTx()) {
+                storeServerProvider.get().finish();
+            }
+            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
+                resourceManager.commit();
+            }
+        }
+
+        resourceManager.close();
+        resourceManager.shutdown();
+        //connectionManager.endAllocateConnectionsViaHibernateSession();
     }
 
     @Override
     protected void abortService() {
         log.debug("abortService");
-            serviceRequestContext.setRollbackOnly();
-            if (serviceRequestContext.isNewTx()) {
-                if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
-                    resourceManager.rollback();
-                }
-                resourceManager.close();
+        final ServiceMode serviceMode = serviceModeProvider.get();
+        final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
+        final ResourceManager resourceManager = resourceManagerProvider.get();
+
+        try {
+        serviceRequestContext.setRollbackOnly();
+        if (serviceRequestContext.isNewTx()) {
+            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
+                resourceManager.rollback();
             }
-            //connectionManager.endAllocateConnectionsViaHibernateSession();
+            resourceManager.close();
+        }
+        //connectionManager.endAllocateConnectionsViaHibernateSession();
+        } finally {
+            resourceManager.shutdown();
+        }
     }
 }

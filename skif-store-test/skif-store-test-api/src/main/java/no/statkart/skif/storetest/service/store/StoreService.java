@@ -6,6 +6,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -27,14 +28,14 @@ public interface StoreService extends no.statkart.skif.store.StoreService {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I id) throws ObjectNotFoundException;
 
     /**
-     * Henter en uordnet liste av BubbleObjects av type  {@code <T>} for {@code ids} av type {@code <I>}. Hvis
+     * Henter en collecton av BubbleObjects av type {@code <T>} for {@code ids} av type {@code <I>}. Hvis
      * {@code ids} inneholder den samme id flere ganger returneres kun et objekt. Id'er som er null ignoreres.
      * @param ids id'er som skal hentes
-     * @return liste av objekter som ble funnet i udefinert rekkefølge.
+     * @return objekter for id'er i udefinert rekkefølge.
      * @throws ObjectNotFoundException hvis ikke alle id'er kunne lastes.
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getObjects(List<I> ids) throws ObjectNotFoundException;
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjects(Collection<I> ids) throws ObjectNotFoundException;
 
     /**
      * Henter alle versjoner av en id for et gitt tidsrom. Id'ene er sortert på versjon i stigende rekkefølge

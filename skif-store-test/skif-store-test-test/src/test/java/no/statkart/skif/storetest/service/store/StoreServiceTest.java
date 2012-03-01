@@ -33,9 +33,9 @@ public class StoreServiceTest extends StoreTestTestCase {
         TestBubble bubble = store.getObject(a1Id);
         assertEquals(a1Id, bubble.getId());
 
-        List<TestBubble> bubbles = store.getObjects(ids);
+        Collection<TestBubble> bubbles = store.getObjects(ids);
         assertEquals(1, bubbles.size());
-        assertEquals(a1Id, bubbles.get(0).getId());
+        assertEquals(a1Id, bubbles.iterator().next().getId());
     }
 
 
@@ -98,7 +98,7 @@ public class StoreServiceTest extends StoreTestTestCase {
         ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:00:30.00")));
         ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:01:30.00")));
         ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:06:30.00")));
-        List<Foo> foos = store.getObjects(ids);
+        Collection<Foo> foos = store.getObjects(ids);
 
         Assert.assertEquals(foos.size(), 4);
 

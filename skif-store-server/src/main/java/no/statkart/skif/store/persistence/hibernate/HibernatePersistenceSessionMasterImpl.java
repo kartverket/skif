@@ -382,6 +382,14 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> refresh(Collection<I> bubbleIds) {
+        for (I bubbleId : bubbleIds) {
+            evict(bubbleId);
+        }
+        return get(bubbleIds);
+    }
+
+    @Override
     public <T extends BubbleObject> void refresh(T bubble) {
         session().refresh(bubble);
     }

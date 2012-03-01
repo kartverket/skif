@@ -13,6 +13,7 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @Stateless(name = "no.statkart.skif.storetest.service.store.StoreServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+// TODO: legge på riktig transattributes
 public class StoreServiceEJBBean extends EJBTimedService implements StoreService {
     @Inject  @EJBServiceChain
     private StoreService serviceChain;
@@ -31,7 +33,7 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getObjects(List<I> ids) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjects(Collection<I> ids) {
         return serviceChain.getObjects(ids);
     }
 

@@ -131,6 +131,11 @@ public class DefaultPersistenceSessionStrategy implements PersistenceSessionStra
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> refresh(Collection<I> bubbleId) {
+        throw new NotImplementedException() ;
+    }
+
+    @Override
     public <T extends BubbleObject> void refresh(T bubble) {
         PersistenceSessionForSnapshot forBubbleId = getForBubbleId(bubble.getId().getClass());
         forBubbleId.refresh(bubble);

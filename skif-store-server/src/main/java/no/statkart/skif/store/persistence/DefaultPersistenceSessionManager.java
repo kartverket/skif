@@ -190,6 +190,11 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> refresh(Collection<I> bubbleIds) {
+        PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(SnapshotVersion.CURRENT);
+        return persistenceSessionForSnapshot.refresh(bubbleIds);
+    }
+    @Override
     public <T extends BubbleObject> void refresh(T bubble) {
         PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
         persistenceSessionForSnapshot.refresh(bubble);

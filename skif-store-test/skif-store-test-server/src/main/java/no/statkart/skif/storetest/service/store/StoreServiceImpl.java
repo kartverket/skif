@@ -6,6 +6,7 @@ import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getObjects(List<I> ids) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjects(Collection<I> ids) {
         return store.get(ids);
     }
 

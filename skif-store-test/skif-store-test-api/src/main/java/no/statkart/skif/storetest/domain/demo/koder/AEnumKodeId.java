@@ -30,8 +30,8 @@ public class AEnumKodeId extends StoreTestEnumKodeId<AEnumKode> {
         return KODELISTE_ID.asSnapshotVersion(this);
     }
 
-    protected static AEnumKodeId define(long idValue, String beskrivelesesKey, String kodeVerdi) {
-        AEnumKode enumKode = kodeSupport.defineKode(idValue, beskrivelesesKey);
+    protected static AEnumKodeId define(long idValue, String kodeResourceKey, String kodeVerdi) {
+        AEnumKode enumKode = kodeSupport.defineKode(idValue, kodeResourceKey);
         enumKode.setKodeverdi(kodeVerdi);
         return enumKode.getId();
     }

@@ -121,9 +121,9 @@ public class SingleVmModuleTest {
     }
 
     /**
-     * Kall til createChain() kan normalt kun kaldes med et aktivt ServiceRequestScope
+     * Kall til createChain() skal kunne kalles  uten ServiceRequestScope (først ved invoke trengs et
+     * aktiv ServiceRequestScope)
      */
-    @Test(expectedExceptions = com.google.inject.ProvisionException.class)
     public void testCreateImplementationServiceChainFactory_NoScope() {
         final Injector serverInjector = createServerInjector(services);
         final ImplementationServiceChainFactory<Test2Service> factory = serverInjector.getInstance(

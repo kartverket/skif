@@ -14,7 +14,9 @@ import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.transform.ResultTransformer;
 
 import java.util.*;
 
@@ -111,6 +113,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         try {
             Session session = persistenceSessionMaster.reserveSession();
             List<Kode> list = session.createCriteria(kodeClass)
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                     .list();
             List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
 
@@ -131,8 +134,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     /**
      * Legger til kode i kodelisten. Overskriv denne metode for å filtrerer koder bort som ikke skal være med for
      * en gitt snapshot versjon, for eksempel basert på kodens gyldighetsdatoer.
-     * @param kodeIds  Liste av kodeids som skal inngå i kodelisten
-     * @param t kode som skal legges til
+     *
+     * @param kodeIds Liste av kodeids som skal inngå i kodelisten
+     * @param t       kode som skal legges til
      */
     protected void addFilterKodeForSnapshot(List<KodeId<?>> kodeIds, Kode t) {
         kodeIds.add(t.getId());
@@ -161,6 +165,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
             Session session = persistenceSessionMaster.reserveSession();
             for (Class<? extends Kode> kodeBaseClass : kodeBaseClasses) {
                 List<Kode> list = session.createCriteria(kodeBaseClass)
+                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                         .list();
                 for (Kode kode : list) {
                     persistenceSessionMaster.ensureFullyLoaded(kode); // TODO: Bruke subselect ved lasting av kode slik at denne ikke trengs
@@ -218,14 +223,17 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
         for (I bubbleId : bubbleIds) {
             if (bubbleId instanceof KodeId) {
-                T bubble = enumKodelisteManager.get(bubbleId);
-                if (bubble == null) {
-                    throw new ObjectNotFoundException(bubbleId);
+                if (enumKodelisteManager.isEnumClass(KodeId.class.cast(bubbleId).getClass())) {
+                    T bubble = enumKodelisteManager.get(bubbleId);
+                    if (bubble != null) {
+                        Kode.class.cast(bubble).localize(serviceContext.getLocale().toString());
+                        bubbles.add(bubble);
+                    } else {
+                        throw new ObjectNotFoundException(bubbleId);
+                    }
+                } else {
+                    dbKodeIds.add(bubbleId);
                 }
-                Kode.class.cast(bubble).localize(serviceContext.getLocale().toString());
-                bubbles.add(bubble);
-            } else if (bubbleId instanceof KodeId) { //TODO: DbKodeId
-                dbKodeIds.add(bubbleId);
             } else {
                 T bubble = enumKodelisteManager.get(bubbleId);
                 if (bubble != null) {
@@ -256,78 +264,103 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubble) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert
+            (T
+                     bubble) {
         throw new NotImplementedException();
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubble) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void update
+            (T
+                     bubble) {
         throw new NotImplementedException();
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubble) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete
+            (T
+                     bubble) {
         throw new NotImplementedException();
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void evict(I bubbleId) {
-        if (enumKodelisteManager.get(bubbleId)==null) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void evict
+            (I
+                     bubbleId) {
+        if (enumKodelisteManager.get(bubbleId) == null) {
             // bubbleId kommer fra databasen og kan evictes
             persistenceSessionMaster.evict(bubbleId);
         }
     }
 
     @Override
-    public <T extends BubbleObject> void ensureFullyLoaded(T bubble) {
+    public <T extends BubbleObject> void ensureFullyLoaded
+            (T
+                     bubble) {
         // No op
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh
+            (I
+                     bubbleId) {
         throw new NotImplementedException();
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> refresh(Collection<I> bubbleId) {
-        throw new NotImplementedException();
-    }
-    @Override
-    public <T extends BubbleObject> void refresh(T bubble) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> refresh
+            (Collection<I> bubbleId) {
         throw new NotImplementedException();
     }
 
     @Override
-    public SnapshotVersion getSnapshot() {
+    public <T extends BubbleObject> void refresh
+            (T
+                     bubble) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public SnapshotVersion getSnapshot
+            () {
         return persistenceSessionMaster.getSnapshot();
     }
 
     @Override
-    public SnapshotVersion setSnapshot(SnapshotVersion snapshotVersion) {
+    public SnapshotVersion setSnapshot
+            (SnapshotVersion
+                     snapshotVersion) {
         return persistenceSessionMaster.setSnapshot(snapshotVersion);
     }
 
     @Override
-    public boolean isSnapshotChangable() {
+    public boolean isSnapshotChangable
+            () {
         return persistenceSessionMaster.isSnapshotChangable();
     }
 
     @Override
-    public boolean acceptsSnapshot(SnapshotVersion snapshotVersion) {
+    public boolean acceptsSnapshot
+            (SnapshotVersion
+                     snapshotVersion) {
         return persistenceSessionMaster.acceptsSnapshot(snapshotVersion);
     }
 
     @Override
-    public PersistenceSessionForSnapshot getForBubbleId(Class<? extends BubbleId> type) {
+    public PersistenceSessionForSnapshot getForBubbleId
+            (Class<? extends BubbleId> type) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <T extends PersistenceSessionForSnapshot> T getImplementation(Class<T> interfaceType) {
+    public <T extends PersistenceSessionForSnapshot> T getImplementation
+            (Class<T> interfaceType) {
         throw new UnsupportedOperationException();
     }
 
-    public List<KodelisteId<?>> getKodelisteIds() {
+    public List<KodelisteId<?>> getKodelisteIds
+            () {
         List<KodelisteId<?>> result = new ArrayList<KodelisteId<?>>();
         result.addAll(getEnumKodelisteIds());
         Collection<Kodeliste> kodelister = getDbKodelister();
@@ -345,13 +378,15 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         return result;
     }
 
-    private Collection<Kodeliste> getDbKodelister() {
+    private Collection<Kodeliste> getDbKodelister
+            () {
         Collection<Kodeliste> result = null;
         try {
             Session session = persistenceSessionMaster.reserveSession();
 
             for (Class<? extends Kodeliste> kodelisteClass : kodelisteClasses) {
                 List<Kodeliste> list = session.createCriteria(kodelisteClass)
+                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                         .list();
                 if (result == null) {
                     result = list;
@@ -367,9 +402,11 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     /**
      * Returnerer KodelisteIds for alle enum koder med riktig snapshot versjon
+     *
      * @return
      */
-    private Collection<KodelisteId<?>> getEnumKodelisteIds() {
+    private Collection<KodelisteId<?>> getEnumKodelisteIds
+    () {
         Collection<KodelisteId<?>> kodelisteIdsForCurrent = enumKodelisteManager.getKodelisteIds();
         SnapshotVersion snapshot = getSnapshot();
         if (snapshot == SnapshotVersion.CURRENT) return kodelisteIdsForCurrent;

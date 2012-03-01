@@ -81,10 +81,12 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Set<I> bubbleIds, boolean refresh) {
-        // TODO: Optimize for bulk access
         Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
-        for (I bubbleId : bubbleIds) {
-            result.add(loadEntry(level, bubbleId, false));
+        Collection<T> objects = storeService.getObjects(bubbleIds);
+        for (T bubbleObject : objects) {
+            StoreEntry entry = storeCache.register(level, bubbleObject);
+            result.add(entry);
+
         }
         return result;
     }

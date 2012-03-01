@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.config;
 
+import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.util.Providers;

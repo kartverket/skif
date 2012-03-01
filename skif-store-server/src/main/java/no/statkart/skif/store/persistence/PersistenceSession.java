@@ -17,6 +17,7 @@ public interface PersistenceSession {
     <T extends BubbleObject, I extends BubbleId<? extends T>> void evict(I bubbleId);
     <T extends BubbleObject> void ensureFullyLoaded(T bubble);
     <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> refresh(Collection<I> bubbleIds);
     <T extends BubbleObject> void refresh(T bubble);
 
 }

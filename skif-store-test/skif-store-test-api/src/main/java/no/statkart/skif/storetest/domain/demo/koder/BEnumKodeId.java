@@ -31,8 +31,8 @@ public class BEnumKodeId extends StoreTestEnumKodeId<BEnumKode> {
         return KODELISTE_ID.asSnapshotVersion(this);
     }
 
-    protected static BEnumKodeId define(long idValue, String beskrivelesesKey, String kodeVerdi) {
-        BEnumKode enumKode = kodeSupport.defineKode(idValue, beskrivelesesKey);
+    protected static BEnumKodeId define(long idValue, String kodeResourceKey, String kodeVerdi) {
+        BEnumKode enumKode = kodeSupport.defineKode(idValue, kodeResourceKey);
         enumKode.setKodeverdi(kodeVerdi);
         return enumKode.getId();
     }

@@ -1,12 +1,13 @@
 package no.statkart.skif.locker;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public class LockInfo<T> {
+public class LockInfo<T> implements Serializable {
 
     /**
      * LockKey of locked object

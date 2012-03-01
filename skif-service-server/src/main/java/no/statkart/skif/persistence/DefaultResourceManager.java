@@ -19,7 +19,7 @@ public class DefaultResourceManager implements ResourceManager {
 
     private HashMap<Key, Entry> map = new HashMap<Key, Entry>();
     private Entry[] entries;
-
+    private boolean started;
 
     public DefaultResourceManager(Entry... entries) {
         this.entries=entries;
@@ -37,7 +37,14 @@ public class DefaultResourceManager implements ResourceManager {
         }
     }
 
+    private void checkIsStarted() {
+        if (!started) {
+            throw new ImplementationException("Forsøk på uthenting av ressours før resource manager har blitt startet");
+        }
+    }
+
     public <T extends Resource> T getResource(Class<T> type) {
+        checkIsStarted();
         setActive();
         Entry entry = map.get(new Key(type));
         if (entry == null) {
@@ -48,7 +55,9 @@ public class DefaultResourceManager implements ResourceManager {
         return type.cast(entry.implementation);
     }
 
+
     public <T extends Resource> T getResource(Key key) {
+        checkIsStarted();
         setActive();
         Entry entry = map.get(key);
 
@@ -68,19 +77,28 @@ public class DefaultResourceManager implements ResourceManager {
         }
     }
 
-    @Override
     public boolean isActive() {
         return isActive;
     }
 
-    @Override
     public void setActive() {
+        checkIsStarted();
         isActive = true;
+    }
 
+    @Override
+    public void start() {
+        started = true;
+    }
+
+    @Override
+    public void shutdown() {
+        started = false;
     }
 
     @Override
     public void beginTransaction() {
+        checkIsStarted();
         inTransaction = true;
         for (Entry entry : entries) {
             if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
@@ -93,6 +111,7 @@ public class DefaultResourceManager implements ResourceManager {
 
     @Override
     public void flush() {
+        checkIsStarted();
         for (Entry entry : entries) {
             if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
                 TransactionalResource.class.cast(entry.implementation).flush();
@@ -102,6 +121,7 @@ public class DefaultResourceManager implements ResourceManager {
 
     @Override
     public void commit() {
+        checkIsStarted();
         for (Entry entry : entries) {
             if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
                 ensureTransactionStarted(entry);
@@ -118,6 +138,7 @@ public class DefaultResourceManager implements ResourceManager {
 
     @Override
     public void rollback() {
+        checkIsStarted();
         for (Entry entry : entries) {
             if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
                 ensureTransactionStarted(entry);
@@ -134,6 +155,7 @@ public class DefaultResourceManager implements ResourceManager {
 
     @Override
     public void close() {
+        checkIsStarted();
         for (Entry entry : entries) {
             if (entry.implementation.isActive()) {
                 entry.implementation.close();

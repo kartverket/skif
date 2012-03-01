@@ -1,12 +1,14 @@
 package no.statkart.skif.locker;
 
+import java.io.Serializable;
+
 /**
  * Interface for LockKey. Brukes for låsing mot database
  *
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public class LockKey<T> {
+public class LockKey<T> implements Serializable {
     public final T keyValue;
     public final String discriminator;
 
@@ -14,8 +16,6 @@ public class LockKey<T> {
         this.discriminator = discriminator;
         this.keyValue = keyValue;
     }
-
-
 
     @Override
     public boolean equals(Object o) {

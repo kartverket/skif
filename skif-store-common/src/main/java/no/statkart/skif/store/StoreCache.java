@@ -39,7 +39,9 @@ public class StoreCache {
     public void clear() {
         cacheMap.clear();
     }
-
+    public <T extends BubbleObject> StoreEntry register(int loadedByLevel, T bubbleObject) {
+        return register(loadedByLevel, bubbleObject, bubbleObject);
+    }
     public <T extends BubbleObject> StoreEntry register(int loadedByLevel, T persistentBubbleObject, T bubbleObject) {
         StoreEntry entry = new StoreEntry(bubbleObject.getId());
         entry.setPersistentBubbleObject(bubbleObject, persistentBubbleObject);

@@ -88,12 +88,14 @@ public class ResourceManagerUsingHibernateTest {
         resourceManager = new DefaultResourceManager(
                 new ResourceManager.Entry(persistenceSessionManager,PersistenceSessionManager.class), new ResourceManager.Entry(connectionManager, ConnectionManager.class)
                 );
+        resourceManager.start();
 
     }
 
     @AfterClass
     void tearDown() {
         resourceManager.close();
+        resourceManager.shutdown();
     }
 
     /**
@@ -101,6 +103,7 @@ public class ResourceManagerUsingHibernateTest {
      * @throws SQLException
      */
     public void testGetResource() throws SQLException {
+
         ConnectionManager connectionManager = resourceManager.getResource(ConnectionManagerUsingHibernate.class);
         assertSame(connectionManager.getClass(), ConnectionManagerUsingHibernate.class);
         assertSame(connectionManager,resourceManager.getResource(ConnectionManagerUsingHibernate.class) );

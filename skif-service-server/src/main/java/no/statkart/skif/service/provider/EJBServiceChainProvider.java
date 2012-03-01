@@ -10,8 +10,8 @@ import no.statkart.skif.service.proxy.ProxyHandler;
 
 /**
  * En Guice provider som returnerer en service proxy av type {@code S} som sender kallet gjennom servicens
- * {@code EJBServiceChain}. Provideren bruke en {@code EJBServiceChainFactory<S>}
- * og en {@code ImplementationServiceChainFactory} til å lager de ProxyHandlere som utgjøre ServiceChain'en. Hver
+ * {@code EJBServiceChain} og {@code ImplementationServiceChain}. Provideren bruke en {@code EJBServiceChainFactory<S>}
+ * og en {@code ImplementationServiceChainFactory} til å lage de ProxyHandlere som utgjøre ServiceChain'en. Hver
  * service av type {@code S} har sin egen {@code EJBServiceChainFactory<S>} og
  * {@code ImplementationServiceChainFactory<S>} implementasjoner og kan derfor ha forskjellige innhold i deres
  * {@code EJBServiceChain}s om ønskelig.
