@@ -1,6 +1,8 @@
 package no.statkart.skif.storetest;
 
 import com.google.inject.Provider;
+import com.google.inject.Provides;
+import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
@@ -33,21 +35,21 @@ public class TestHelper {
 
     public static HibernateSessionFactoryManager createHibernateSessionFactorManagerWithSingleSessionNoHistory(HibernateSessionFactoryBuilder sessionFactoryBuilder, Properties hibernateProperties) {
         return new HibernateSessionFactoryManager(sessionFactoryBuilder,
-                new HibernateSessionFactoryDescriptor("CURRENT(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), false, false, hibernateProperties, HibernateStoreInterceptor.class)
+                new HibernateSessionFactoryDescriptor("CURRENT(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), false, false, hibernateProperties, new HibernateStoreInterceptorFactory())
         );
     }
 
     public static HibernateSessionFactoryManagerBundle createHibernateSessionFactorManagerWithMultipleSessionsNoHistory(HibernateSessionFactoryBuilder sessionFactoryBuilder, Properties hibernateProperties) {
         return new HibernateSessionFactoryManagerBundle(sessionFactoryBuilder,
-                new HibernateSessionFactoryDescriptor("CURRENT(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), false, false, hibernateProperties, HibernateStoreInterceptor.class),
-                new HibernateSessionFactoryDescriptor("OLD(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), false, false, hibernateProperties, HibernateStoreInterceptor.class)
+                new HibernateSessionFactoryDescriptor("CURRENT(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), false, false, hibernateProperties, new HibernateStoreInterceptorFactory()),
+                new HibernateSessionFactoryDescriptor("OLD(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), false, false, hibernateProperties, new HibernateStoreInterceptorFactory())
         );
     }
 
     public static HibernateSessionFactoryManagerBundle createHibernateSessionFactorManagerBundle(HibernateSessionFactoryBuilder sessionFactoryBuilder, Properties hibernateProperties) {
         return new HibernateSessionFactoryManagerBundle(sessionFactoryBuilder,
-                new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernateProperties, HibernateStoreInterceptor.class),
-                new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernateProperties, HibernateStoreInterceptor.class)
+                new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernateProperties, new HibernateStoreInterceptorFactory()),
+                new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernateProperties, new HibernateStoreInterceptorFactory())
         );
     }
 

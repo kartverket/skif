@@ -7,7 +7,6 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryDescriptor;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.TestEntity;
 import org.hibernate.Query;
@@ -41,7 +40,7 @@ public class HibernateSessionFactoryBuilderTest {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestEntity.class);
         Properties hibernateProperties = TestHelper.createHibernatePropertiesSingleVm() ;
-        SessionFactory sf = sfbuilder.build(new HibernateSessionFactoryDescriptor("", new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties));
+        SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties, null);
         assertNotNull(sf);
         Session s = sf.openSession();
         Connection c = s.connection();
@@ -64,7 +63,7 @@ public class HibernateSessionFactoryBuilderTest {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(TestEntity.class);
         Properties hibernateProperties = TestHelper.createHibernatePropertiesSingleVm() ;
-        SessionFactory sf = sfbuilder.build(new HibernateSessionFactoryDescriptor("", new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties));
+        SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties, null);
         assertNotNull(sf);
         Session s = sf.openSession();
         Query query = s.createQuery("from TestEntity");

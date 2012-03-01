@@ -14,6 +14,7 @@ import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -140,8 +141,11 @@ public abstract class HibernateSessionFactoryBuilder {
      * </ul>
      *
      * @return
+     * @param snapshotVersionSeed
+     * @param properties
+     * @param interceptor
      */
-    public SessionFactory build(HibernateSessionFactoryDescriptor descriptor) {
+    public SessionFactory build(SnapshotVersionSeed snapshotVersionSeed, Properties properties, @Nullable Interceptor interceptor) {
         // Denne metoden bruker synkronisering på {@code LOCK} fordi BubbleIdType.SnapshotVersionSeedSeed ikke må endres mens
         // SessionFactory blir opprettet. Det er kun denne metoden som bruker {@code BubbleIdType.SnapshotVersionSeedSeed}.
         // Alle BubbleIdTypes som opprettes i SessionFactory får satt deres snapshotVersionSeed til
@@ -156,9 +160,9 @@ public abstract class HibernateSessionFactoryBuilder {
         logger.debug("creating session factory");
         synchronized (LOCK) {
             try {
-                BubbleIdType.setSnapshotVersionSeedSeed(descriptor.getSeed());
-                Configuration cfg = createConfiguration(descriptor.getHibernateProperties(),descriptor.getHibernateInterceptorProvider().get());
-                if (!SnapshotVersion.CURRENT.equals(descriptor.getSeed().get()) ) {
+                BubbleIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
+                Configuration cfg = createConfiguration(properties,interceptor);
+                if (!SnapshotVersion.CURRENT.equals(snapshotVersionSeed) ) {
                     // Denne kan være satt ifm testing for current session factory, men den skal aldig være satt for
                     // old eller historic session factory. Det ville føre til at auto operasjonen ville bli utført 2 ganger
                     cfg.setProperty("hibernate.hbm2ddl.auto", "");

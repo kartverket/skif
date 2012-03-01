@@ -48,6 +48,7 @@ import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.KodeMsg;
+import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
 
@@ -151,10 +152,21 @@ public class StoreTestServerModule extends SkifModule {
         return kodelisteClasses;
     }
 
+    @Provides
+    HibernateInterceptorFactory provideHibernateInterceptorFactory() {
+        return new HibernateInterceptorFactory() {
+            @Override
+            public Interceptor create(SnapshotVersionSeed snapshotVersionSeed) {
+                return new HibernateStoreInterceptor(snapshotVersionSeed);
+            }
+        };
+    }
+
+
 
     @Provides
     @Singleton
-    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle() {
+    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<HibernateInterceptorFactory> hibernateInterceptorFactoryProvider ) {
 
         Configuration configuration = moduleConfiguration.getConfiguration();
 
@@ -207,9 +219,10 @@ public class StoreTestServerModule extends SkifModule {
             hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
         }
 
+        final HibernateStoreInterceptorFactory hibernateInterceptorFactory = new HibernateStoreInterceptorFactory();
         HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle = new HibernateSessionFactoryManagerBundle(hibernateSessionFactoryBuilder,
-                new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernatePropertiesCurrent, HibernateStoreInterceptor.class),
-                new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernatePropertiesOld, HibernateStoreInterceptor.class)
+                new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernatePropertiesCurrent, hibernateInterceptorFactory),
+                new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernatePropertiesOld, hibernateInterceptorFactory)
         );
         return hibernateSessionFactoryManagerBundle;
 

@@ -24,50 +24,23 @@ public class HibernateSessionFactoryDescriptor {
     private final SnapshotVersion initialSeedValue;
     private final boolean setSnapshotOnSession;
     private final Properties hibernateProperties;
-    private final Provider<Interceptor> hibernateInterceptorProvider;
+    private final HibernateInterceptorFactory hibernateInterceptorFactory;
     private final boolean isSnapshotChangable;
 
-    public HibernateSessionFactoryDescriptor(String name, SnapshotVersionSeed seed, Properties hiberanteProperties) {
-        this(name, seed, false, false, hiberanteProperties, Providers.<Interceptor>of(null));
+    public HibernateSessionFactoryDescriptor(String name, SnapshotVersionSeed seed, Properties hibernateProperties) {
+        this(name, seed, false, false, hibernateProperties);
     }
 
-    public HibernateSessionFactoryDescriptor(String name, SnapshotVersionSeed seed, boolean setSnapshotOnSession, boolean isSnapshotChangable, Properties hiberanteProperties) {
-        this(name, seed, setSnapshotOnSession, isSnapshotChangable, hiberanteProperties, Providers.<Interceptor>of(null));
+    public HibernateSessionFactoryDescriptor(String name, SnapshotVersionSeed seed, boolean setSnapshotOnSession, boolean isSnapshotChangable, Properties hibernateProperties) {
+        this(name, seed, setSnapshotOnSession, isSnapshotChangable, hibernateProperties, new NullHibernateInterceptorFactory());
     }
 
-    public HibernateSessionFactoryDescriptor(String name, SnapshotVersionSeed seed, boolean setSnapshotOnSession, boolean isSnapshotChangable, Properties hiberanteProperties, Class<? extends HibernateStoreInterceptor> interceptorClass) {
-        this(name, seed, setSnapshotOnSession, isSnapshotChangable, hiberanteProperties, createInterceptorProvider(interceptorClass, seed));
-    }
-
-    private static Provider<Interceptor> createInterceptorProvider(final Class<? extends Interceptor> interceptorClass, final SnapshotVersionSeed seed) {
-        try {
-            final Constructor<? extends Interceptor> constructor = interceptorClass.getConstructor(SnapshotVersionSeed.class);
-            return new Provider<Interceptor>() {
-                @Override
-                public Interceptor get() {
-                    try {
-                        return constructor.newInstance(seed);
-                    } catch (InstantiationException e) {
-                        throw new ImplementationException(e);
-                    } catch (IllegalAccessException e) {
-                        throw new ImplementationException(e);
-                    } catch (InvocationTargetException e) {
-                        throw new ImplementationException(e);
-                    }
-                }
-            };
-        } catch (NoSuchMethodException e) {
-            throw new ImplementationException("Manglende constructor", e);
-        }
-    }
-
-
-    public HibernateSessionFactoryDescriptor(String name, SnapshotVersionSeed seed, boolean setSnapshotOnSession, boolean isSnapshotChangable, Properties hibernateProperties, Provider<Interceptor> hibernateInterceptorProvider) {
+    public HibernateSessionFactoryDescriptor(String name, SnapshotVersionSeed seed, boolean setSnapshotOnSession, boolean isSnapshotChangable, Properties hibernateProperties, HibernateInterceptorFactory hibernateInterceptorFactory) {
         this.name = name;
         this.seed = seed;
         this.initialSeedValue = seed.get();
         this.hibernateProperties = hibernateProperties;
-        this.hibernateInterceptorProvider = hibernateInterceptorProvider;
+        this.hibernateInterceptorFactory = hibernateInterceptorFactory;
         this.setSnapshotOnSession = setSnapshotOnSession;
         this.isSnapshotChangable = isSnapshotChangable;
 
@@ -112,8 +85,8 @@ public class HibernateSessionFactoryDescriptor {
         return hibernateProperties;
     }
 
-    public Provider<Interceptor> getHibernateInterceptorProvider() {
-        return hibernateInterceptorProvider;
+    public HibernateInterceptorFactory getHibernateInterceptorFactory() {
+        return hibernateInterceptorFactory;
     }
 
     public boolean isSetSnapshotOnSession() {

@@ -33,7 +33,8 @@ public class HibernateSessionFactoryManager {
 
     protected synchronized void createFactory() {
         if (factory == null) {
-            factory = factoryBuilder.build(descriptor);
+            Interceptor interceptor = descriptor.getHibernateInterceptorFactory().create(descriptor.getSeed());
+            factory = factoryBuilder.build(descriptor.getSeed(), descriptor.getHibernateProperties(), interceptor);
         }
     }
 
@@ -43,12 +44,7 @@ public class HibernateSessionFactoryManager {
 
     public Session createSession() {
         Session session;
-        Interceptor hibernateInterceptor = descriptor.getHibernateInterceptorProvider().get();
-        if (hibernateInterceptor == null) {
-            session = getFactory().openSession();
-        } else {
-            session = getFactory().openSession(hibernateInterceptor);
-        }
+        session = getFactory().openSession();
         return session;
     }
 }
