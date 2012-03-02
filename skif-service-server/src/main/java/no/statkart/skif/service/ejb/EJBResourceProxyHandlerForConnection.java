@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.persistence.ResourceManager;
+import no.statkart.skif.persistence.ResourceManagerConfigurator;
 import no.statkart.skif.service.ServiceRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,15 +15,18 @@ import org.slf4j.LoggerFactory;
 public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHandler<S> {
     private static Logger log = LoggerFactory.getLogger(EJBResourceProxyHandlerForConnection.class);
 
+    private final Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider;
     private final Provider<ResourceManager> resourceManagerProvider;
     private final Provider<ServiceRequestContext> serviceRequestContextProvider;
     private final Provider<ServiceMode> serviceModeProvider;
 
     @Inject
-    public EJBResourceProxyHandlerForConnection(Provider<ResourceManager> resourceManagerProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceMode> serviceModeProvider) {
+    public EJBResourceProxyHandlerForConnection(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<ResourceManager> resourceManagerProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceMode> serviceModeProvider) {
+        this.resourceManagerConfiguratorProvider = resourceManagerConfiguratorProvider;
         this.resourceManagerProvider = resourceManagerProvider;
         this.serviceRequestContextProvider = serviceRequestContextProvider;
         this.serviceModeProvider = serviceModeProvider;
+        resourceManagerConfiguratorProvider.get().setStrategy(ResourceManagerConfigurator.CONNECTION_ONLY);
     }
 
     @Override

@@ -14,13 +14,13 @@ import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.persistence.DefaultResourceManager;
 import no.statkart.skif.persistence.ResourceManager;
+import no.statkart.skif.persistence.ResourceManagerConfigurator;
 import no.statkart.skif.persistence.VersionFinder;
-import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
-import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersionProvider;
-import no.statkart.skif.persistence.jdbc.ConnectionManager;
-import no.statkart.skif.persistence.jdbc.ConnectionManagerProvider;
+import no.statkart.skif.persistence.jdbc.*;
 import no.statkart.skif.service.ServiceContext;
+import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
+import no.statkart.skif.service.ejb.EJBResourceProxyHandlerForConnection;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.service.module.server.RunOnServerServiceModule;
@@ -92,9 +92,17 @@ public class StoreTestServerModule extends SkifModule {
         install(new ServerServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreUpdateServices().getServices()));
-        install(new ServerServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices()));
-        install(new ServerServiceModule(moduleConfiguration, new StoreTestSequenceBlockAllocatorServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestTestServices().getServices()));
+
+        final List<Class<?>> servicesThatOnlyUseConnection = new ArrayList<Class<?>>();
+        servicesThatOnlyUseConnection.addAll(new StoreTestLocalServices().getServices());
+        servicesThatOnlyUseConnection.addAll(new StoreTestSequenceBlockAllocatorServices().getServices());
+        final ServerServiceModule moduleThatOnlyUseConnection = new ServerServiceModule(moduleConfiguration, servicesThatOnlyUseConnection);
+        moduleThatOnlyUseConnection.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification(EJBResourceProxyHandlerForConnection.class));
+        moduleThatOnlyUseConnection.getStrategy(ServiceMode.JEE).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification(EJBResourceProxyHandlerForConnection.class));
+
+        install(moduleThatOnlyUseConnection);
+
 
         bind(ConnectionManager.class).toProvider(ConnectionManagerProvider.class);
         bind(Connection.class).to(ConnectionForSnapshotVersion.class);
@@ -124,7 +132,7 @@ public class StoreTestServerModule extends SkifModule {
         writeListeners.add(new AggregertObjektFilter());
         List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
         finishListeners.add(new TestBubbleFinishFilter());
-        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners));        
+        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners));
         return storeServer;
     }
 
@@ -141,6 +149,7 @@ public class StoreTestServerModule extends SkifModule {
     /**
      * Angir hvilke kodeliste typer som finnes. Det er egentlig litt unødvendig å måtte angi det her siden
      * den informasjon kan utledes fra hiberante factory.
+     *
      * @return
      */
     @Provides
@@ -163,10 +172,9 @@ public class StoreTestServerModule extends SkifModule {
     }
 
 
-
     @Provides
     @Singleton
-    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<HibernateInterceptorFactory> hibernateInterceptorFactoryProvider ) {
+    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<HibernateInterceptorFactory> hibernateInterceptorFactoryProvider) {
 
         Configuration configuration = moduleConfiguration.getConfiguration();
 
@@ -230,7 +238,50 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    ResourceManager provideResourceManager(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, KodeMsg kodeMsg, ServiceContext serviceContext) {
+    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider, Provider<Collection<Class<? extends Kodeliste>>> kodelisteClassesProvider, Provider<KodeMsg> kodeMsgProvider, ServiceContext serviceContext) {
+        final String strategy = resourceManagerConfiguratorProvider.get().getStrategy();
+        if (strategy==ResourceManagerConfigurator.CONNECTION_ONLY) {
+            return createResourceManagerForConnectionOnlyStrategy();
+        }  else {
+            return createResourceManagerForHibernateStrategy(
+                    hibernateSessionFactoryManagerBundleProvider.get(),
+                    enumKodelisteManagerProvider.get(),
+                    kodelisteClassesProvider.get(),
+                    kodeMsgProvider.get(),
+                    serviceContext
+            );
+        }
+
+    }
+
+    ResourceManager createResourceManagerForConnectionOnlyStrategy() {
+        Configuration configuration = moduleConfiguration.getConfiguration();
+        ConnectionManager connectionManager;
+        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
+            String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
+            String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
+            String sid = configuration.getString(SkifConfigConstants.DB_SID);
+            String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
+            String port = configuration.getString(SkifConfigConstants.DB_PORT);
+            String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
+
+            connectionManager = new ConnectionManagerUsingFactory(
+                    new ConnectionFactoryUsingJDBC(url, username, password, false, SnapshotVersion.CURRENT, false)
+            );
+        } else {
+            String datasource = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelBok_DS");
+            connectionManager = new ConnectionManagerUsingFactory(
+                    new ConnectionFactoryUsingDataSource(datasource, false, SnapshotVersion.CURRENT, false)
+            );
+        }
+
+        ResourceManager resourceManager = new DefaultResourceManager(
+                new ResourceManager.Entry(connectionManager, ConnectionManager.class)
+        );
+        return resourceManager;
+    }
+
+    ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, KodeMsg kodeMsg, ServiceContext serviceContext) {
         Configuration configuration = moduleConfiguration.getConfiguration();
         Properties hibernatePropertiesCurrent;
         Properties hibernatePropertiesOld;

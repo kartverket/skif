@@ -15,6 +15,7 @@ import java.util.Map;
  */
 public class DefaultPersistenceSessionManager implements PersistenceSessionManager {
     final protected PersistenceSessionForSnapshot[] bundle;
+    final protected boolean[] active;
     final protected PersistenceSessionProxyCache proxyCache;
     protected boolean isActive;
     protected boolean inTransaction;
@@ -25,6 +26,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
 
     public DefaultPersistenceSessionManager(PersistenceSessionForSnapshot... bundle) {
         this.bundle = bundle;
+        this.active = new boolean[bundle.length];
         this.proxyCache = new PersistenceSessionProxyCache();
     }
 
@@ -41,8 +43,10 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     }
 
     public PersistenceSessionForSnapshot findForSnapshot(SnapshotVersion snapshotVersion) {
-        for (PersistenceSessionForSnapshot persistenceSessionForSnapshot : bundle) {
+        for (int i = 0; i < bundle.length; i++) {
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot = bundle[i];
             if (persistenceSessionForSnapshot.acceptsSnapshot(snapshotVersion)) {
+                active[i] = true;
                 return persistenceSessionForSnapshot;
             }
         }
@@ -73,9 +77,13 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
 
     @Override
     public void close() {
-        for (PersistenceSessionForSnapshot persistenceSessionForSnapshot : bundle) {
-            PersistenceSessionMaster master = persistenceSessionForSnapshot.getImplementation(PersistenceSessionMaster.class);
-            master.close();
+        for (int i = 0; i < bundle.length; i++) {
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot = bundle[i];
+            if (active[i]) {
+                PersistenceSessionMaster master = persistenceSessionForSnapshot.getImplementation(PersistenceSessionMaster.class);
+                master.close();
+                active[i] = false;
+            }
         }
     }
 
@@ -194,6 +202,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
         PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(SnapshotVersion.CURRENT);
         return persistenceSessionForSnapshot.refresh(bubbleIds);
     }
+
     @Override
     public <T extends BubbleObject> void refresh(T bubble) {
         PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
