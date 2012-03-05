@@ -43,6 +43,8 @@ import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeliste;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
+import no.statkart.skif.storetest.domain.multikobling.Person;
+import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
@@ -198,7 +200,11 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(BarFoos.class)
                 .addResource(TestMap.class)
                 .addResource(TestEntity.class)
-                .addResource(AggregertObjekt.class);
+                .addResource(AggregertObjekt.class)
+                .addResource(Person.class)
+                .addResource(Rettsstiftelse.class)
+
+                ;
 
 
         Properties hibernatePropertiesCurrent;

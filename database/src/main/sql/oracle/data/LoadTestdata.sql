@@ -130,6 +130,27 @@ insert into GEOMETRICELEMENT_H(id, point, polygon, TBEGIN, TEND, TVERSION) value
 insert into GEOMETRICELEMENT_H(id, point, polygon, TBEGIN, TEND, TVERSION) values (1, MDSYS.SDO_GEOMETRY(2001,null,MDSYS.SDO_POINT_TYPE(608020,6650020,null),null,null), MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(607920, 6649920, 608100, 6649920, 608120, 6650120, 607920, 6650120, 607920, 6649920)), snapshot_time.to_t('2011-10-02 08:05:31.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),3);
 
 
+-- Multikobling
 
+insert into Person(id) values (1000);
+insert into Person(id) values (1001);
+insert into Person(id) values (1002);
+insert into Person(id) values (1003);
+insert into Person(id) values (1004);
+insert into Person(id) values (1005);
 
+insert into Rettsstiftelse(id, class) values (2001, 'Servitutt');
+insert into Rettsstiftelse(id, class) values (2000, 'Servitutt');
+insert into Rettsstiftelse(id, class) values (2002, 'Servitutt');
+insert into Rettsstiftelse(id, class) values (2003, 'Servitutt');
+insert into Rettsstiftelse(id, class) values (2004, 'Servitutt');
+insert into Rettsstiftelse(id, class) values (2005, 'Servitutt');
 
+insert into Rettsstiftelse(id, class) values (2101, 'Pengeheftelse');
+insert into Rettsstiftelse(id, class) values (2100, 'Pengeheftelse');
+insert into Rettsstiftelse(id, class) values (2102, 'Pengeheftelse');
+insert into Rettsstiftelse(id, class) values (2103, 'Pengeheftelse');
+insert into Rettsstiftelse(id, class) values (2104, 'Pengeheftelse');
+insert into Rettsstiftelse(id, class) values (2105, 'Pengeheftelse');
+
+insert into Rettsstiftelse_Person_Kobling(rettsstiftelseId, rolle, personId) values (2001, 'RETTIGHETSHAVER_AKTIV',1001 );

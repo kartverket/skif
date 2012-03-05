@@ -532,3 +532,26 @@ BEGIN
   END IF;
 END T_AggregertKomponent;
 /
+
+
+-- Multikobling tabeller
+
+create table Person (
+id number(19,0) not null,
+Primary Key (Id)
+);
+
+create table Rettsstiftelse (
+id number(19,0) not null,
+class varchar2(60) not null,
+Primary Key (Id)
+);
+
+create table Rettsstiftelse_Person_Kobling (
+rettsstiftelseId number(19,0) not null,
+rolle varchar2(30) not null,
+personId number(19,0) not null,
+Primary Key (rettsstiftelseId, rolle, personId)
+);
+
+
