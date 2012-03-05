@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.multikobling;
 
 import com.google.inject.Inject;
-import no.statkart.skif.SkifUtil;
 import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubbleId;
@@ -9,7 +8,6 @@ import no.statkart.skif.storetest.domain.multikobling.kobling.RettsstiftelsePers
 import no.statkart.skif.storetest.domain.multikobling.kobling.RetttstiftelseTilPersonKobling;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
-import sun.org.mozilla.javascript.internal.ScriptRuntime;
 
 import java.util.ArrayList;
 import java.util.HashSet;
