@@ -277,7 +277,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         try {
             session().save(bubbleObject);
         } catch (HibernateException e) {
-            throw new ImplementationException("Update feilet for " + bubbleObject);
+            throw new ImplementationException("Update feilet for " + bubbleObject, e);
         }
     }
 
@@ -296,7 +296,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
             evictOtherInstanceFromHibernateSession(bubbleObject);
             session().update(bubbleObject); // Viktig at class-mapping inneholder 'select-before-update="true"'. Dette bør settes automatisk ved konfigurasjon av hibernate session factory.
         } catch (HibernateException e) {
-            throw new ImplementationException("Update feilet for " + bubbleObject);
+            throw new ImplementationException("Update feilet for " + bubbleObject, e);
         }
     }
 
