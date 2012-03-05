@@ -1,7 +1,10 @@
 package no.statkart.skif.storetest.domain.multikobling;
 
 import com.google.inject.Inject;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.multikobling.kobling.RettsstiftelsePersonRolle;
