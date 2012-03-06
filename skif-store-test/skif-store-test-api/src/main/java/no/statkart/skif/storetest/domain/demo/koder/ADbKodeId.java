@@ -33,5 +33,13 @@ public class ADbKodeId extends StoreTestDbKodeId<ADbKode> {
     public StoreTestKodelisteLongId<?> getKodelisteId() {
         return KODELISTE_ID.asSnapshotVersion(this);
     }
+
+    /**
+     * Typesikker sammenlikning av kodeId som ikke tar hensyn til {@code SnapshotVersion}
+     */
+    public boolean equalTo(ADbKodeId id) {
+        return this.equalsIgnoreSnapshotVersion(id);
+    }
+
 }
 

@@ -116,6 +116,22 @@ public class KodeTest extends StoreTestTestCase {
         assertTrue(xStrDbKode_A_Old.getId().equalsIgnoreSnapshotVersion(XStrDbKodeId.AId));
 
         assertFalse(xStrDbKode_A_Old.getId().equals(XStrDbKodeId.AId));
+
+    }
+
+    /**
+     * Koder bør ha egen metode som gir kompileringsfeil ved sammenlikning av koder av forskjellig type og som
+     * ikke tar hensyn til SnapshotVersion
+     */
+    public void testEqualsTo() {
+        XStrDbKode xStrDbKode_A_Current = store.get(XStrDbKodeId.AId);
+        XStrDbKode xStrDbKode_A_Old = store.get(XStrDbKodeId.AId.asSnapshotVersionOld());
+
+        assertTrue(XStrDbKodeId.AId.equalTo(xStrDbKode_A_Current.getId()));
+        assertTrue(XStrDbKodeId.AId.equalTo(xStrDbKode_A_Old.getId()));
+
+        // Skal gi kompileringsfeil:
+        //XStrDbKodeId.AId.equalTo(AEnumKodeId.KodeAId);
     }
 
     public void testLoadBaz() {

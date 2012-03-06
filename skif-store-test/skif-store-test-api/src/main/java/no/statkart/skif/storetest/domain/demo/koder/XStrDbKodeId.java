@@ -34,5 +34,11 @@ public class XStrDbKodeId extends StoreTestDbKodeId<XStrDbKode> {
         return KODELISTE_ID.asSnapshotVersion(this);
     }
 
+    /**
+     * Typesikker sammenlikning av kodeId som ikke tar hensyn til {@code SnapshotVersion}
+     */
+    public boolean equalTo(XStrDbKodeId id) {
+        return this.equalsIgnoreSnapshotVersion(id);
+    }
 }
 

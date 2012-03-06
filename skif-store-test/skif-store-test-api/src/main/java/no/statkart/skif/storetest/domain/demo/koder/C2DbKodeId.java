@@ -27,5 +27,11 @@ public class C2DbKodeId extends CDbKodeId<CDbKode> {
     public StoreTestKodelisteLongId<?> getKodelisteId() {
         return KODELISTE_ID.asSnapshotVersion(this);
     }
+    /**
+     * Typesikker sammenlikning av kodeId som ikke tar hensyn til {@code SnapshotVersion}
+     */
+    public boolean equalTo(C2DbKodeId id) {
+        return this.equalsIgnoreSnapshotVersion(id);
+    }
 
 }

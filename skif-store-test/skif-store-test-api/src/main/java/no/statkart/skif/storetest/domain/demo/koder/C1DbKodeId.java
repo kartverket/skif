@@ -28,4 +28,11 @@ public class C1DbKodeId extends CDbKodeId<C1DbKode> {
         return KODELISTE_ID.asSnapshotVersion(this);
     }
 
+    /**
+     * Typesikker sammenlikning av kodeId som ikke tar hensyn til {@code SnapshotVersion}
+     */
+    public boolean equalTo(C1DbKodeId id) {
+        return this.equalsIgnoreSnapshotVersion(id);
+    }
+
 }
