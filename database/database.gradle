@@ -1,4 +1,4 @@
-apply plugin: 'statkart-dbutils-plugin'
+apply plugin: 'sktools-dbtools-plugin'
 
 
 configurations {

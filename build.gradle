@@ -1,36 +1,34 @@
-import org.apache.tools.ant.filters.ReplaceTokens
 import no.statkart.gradle.util.PropertyUtil
 import no.statkart.gradle.util.GradleUtil
 
 apply plugin: 'idea'
+apply plugin: 'statkart-idea-extensions-plugin'
 
-assert gradle.gradleVersion == '1.0-milestone-4'
+assert gradle.gradleVersion == '1.0-milestone-7'
 
-// Variables to grab from environment
-['WEBLOGIC_HOME', 'COMPUTERNAME', 'PUBLIC_REPO'].each { val ->
-    if (!project.hasProperty(val) && System.getenv(val) != null) {
-        project.setProperty(val, System.getenv(val))
-    }
-}
-
-Map userProperties = PropertyUtil.loadJavaProps(project, [project.file('gradle-user.properties')].findAll {it.exists()}, false)
-logger.info "Filtered props: "
-userProperties.each { logger.info "\t${it}" }
+userProperties = PropertyUtil.loadUserPropertiesOrEmpty(project)
 
 // version kan settes via properties (feks kommandolinje -P )
 if (project.hasProperty('version')) { version = getProperty('version') }
 
 // standard kode-versjon for branch
-if (version == 'unspecified') { version = '2.1-SNAPSHOT' }
+if (version == 'unspecified') { version = '2.1111-SNAPSHOT' }
 
 buildscript {
+    // Variables to grab from environment
+    ['WEBLOGIC_HOME', 'COMPUTERNAME', 'PUBLIC_REPO'].each { val ->
+        if (!project.hasProperty(val) && System.getenv(val) != null) {
+            project.setProperty(val, System.getenv(val))
+        }
+    }
     publicRepo = rootProject.properties.get('PUBLIC_REPO', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
     repositories {
         mavenLocal()
         mavenRepo name: 'public', urls: publicRepo
     }
     dependencies {
-        classpath 'no.statkart:statkart-gradle-plugins:16'
+        classpath 'no.statkart:statkart-gradle-plugins:23'
+        classpath 'no.statkart.sktools.gradle:dbtools-plugin:1.0'
     }
 }
 
@@ -39,7 +37,7 @@ allprojects {
     version = rootProject.version
     group = 'no.statkart.skif'
 
-    PropertyUtil.expandProjectProperties(project, userProperties, false)
+    PropertyUtil.expandProjectProperties(project, userProperties)
 
     plugins.whenPluginAdded() {
         if (it instanceof org.gradle.api.plugins.MavenPlugin) {
@@ -110,47 +108,30 @@ libraries = [
 ]
 
 // JAX-WS runtime for weblogic
-// Dette er den gamle versjonen av libraries.jaxws_rt. Den skal slettes når alle utviklere har gått over til å bruke weblogic 10.3.5 for utvikling.
-// For å bruke denne versjonen istedenfor nåværende, rename denne til libraries.jaxws_rt, og rename det under til noe annet.
-libraries.jaxws_rt_10_3_1 = files(
-        files("${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.0.0.0_2-1-4.jar"),
-)
-
-// JAX-WS runtime for weblogic
 libraries.jaxws_rt = files(
-        files("${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.2.0.0_2-1-5.jar"),
+        files(isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.0.0.0_2-1-4.jar" :
+            "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.2.0.0_2-1-5.jar"),
 )
 
-
-// Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
-// Dette er den gamle versjonen av libraries.weblogic. Den skal slettes når alle utviklere har gått over til å bruke weblogic 10.3.5 for utvikling.
-// For å bruke denne versjonen istedenfor nåværende, rename denne til libraries.weblogic, og rename det under til noe annet.
-libraries.weblogic_10_3_1 = files(
-        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
-        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
-        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
-        "${WEBLOGIC_HOME}/modules/javax.annotation_1.1.jar/",
-        "${WEBLOGIC_HOME}/modules/javax.ejb_3.0.1.jar",
-        "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
-        "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
-        "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
-        "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.5.1.0.jar",
-        "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.6.0.0.jar",
-        libraries.jaxws_rt,
-)
+boolean isWeblogic10310() {
+    new File("${WEBLOGIC_HOME}/utils/config/10.3.1.0/".toString()).exists()
+}
 
 // Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
 libraries.weblogic = files(
         "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
         "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
         "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
-        "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar/",
+        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.1.jar/" :
+            "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar/",
         "${WEBLOGIC_HOME}/modules/javax.ejb_3.0.1.jar",
         "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
         "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
         "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
-        "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.7.0.0.jar",
-        "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.9.0.0.jar",
+        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.5.1.0.jar" :
+            "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.7.0.0.jar",
+        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.6.0.0.jar" :
+            "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.9.0.0.jar",
         libraries.jaxws_rt,
 )
 libraries.gt2 = [
@@ -187,9 +168,6 @@ libraries.hibernate_3_6 = [
         libraries.ojdbc,
 ]
 
-def boolean isJavaProject(Project project) {
-    return project.subprojects.size() == 0 && !project.name.endsWith('-ear')
-}
 
 subprojects { Project project ->
     apply plugin: 'idea'
@@ -218,11 +196,14 @@ subprojects { Project project ->
         weblogic libraries.weblogic
     }
 
-    if (isJavaProject(project)) {
+    if (!project.name.endsWith('-ear')) {
         apply plugin: 'java'
+        apply plugin: 'statkart-filter-properties-plugin'
 
-        sourceCompatibility = '1.6'
-        targetCompatibility = '1.6'
+        statKartFilterProperties {
+            properties = project.properties.findAll { it.value instanceof String }
+            resources = [main: 'src/main/resources.filtered', test: 'src/test/resources.filtered']
+        }
 
         // appropriately inject the common dependencies into each sub-project
         dependencies {
@@ -242,38 +223,6 @@ subprojects { Project project ->
             test.runtimeClasspath += configurations.provided
         }
 
-        //filter properties
-        def filterProperties = loadJavaProps()
-
-        ['main', 'test'].each { String scope ->
-            def unfilteredPropertiesDir = project.file("src/${scope}/resources.filtered")
-            def filteredResourcesDir = project.file("${project.buildDirName}/generated/${scope}/resources")
-
-            def scopeName = scope.replaceFirst(".") {it[0].toUpperCase()}
-
-            if (unfilteredPropertiesDir.isDirectory()) {
-                def filterTask = task("filter${scopeName}Resources") {
-                    inputs.dir(unfilteredPropertiesDir)
-                    inputs.properties(filterProperties)
-                    outputs.dir(filteredResourcesDir)
-                    doLast {
-                        delete(filteredResourcesDir);
-                        copy {
-                            from(unfilteredPropertiesDir)
-                            into(filteredResourcesDir)
-                            filter(ReplaceTokens, tokens: filterProperties)
-                        }
-                        ant.touch() { fileset(dir: filteredResourcesDir)}
-                    }
-                }
-                project.sourceSets."$scope".resources.srcDir filteredResourcesDir
-                project.processResources.dependsOn filterTask
-
-                def createDirTask = task("createFilteredResourceDir", type: Directory) { dir = filteredResourcesDir }
-                project.tasks.ideaModule.dependsOn createDirTask
-            }
-        }
-
         project.idea.module {
             // Får Idea til å legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)
             inheritOutputDirs = true
@@ -282,7 +231,6 @@ subprojects { Project project ->
 
         test {
             boolean singleVm = Boolean.valueOf(rootProject.properties['single_vm'])
-            println "single_vm is set to ${singleVm} for ${project.path}"
             useTestNG() {
                 excludeGroups('broken')
                 if (singleVm) {
@@ -325,6 +273,3 @@ idea.project {
     }
 }
 
-Map loadJavaProps() {
-    PropertyUtil.loadJavaProps(project, [rootProject.file('filter.properties')], false)
-}
