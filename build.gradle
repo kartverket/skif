@@ -12,7 +12,7 @@ userProperties = PropertyUtil.loadUserPropertiesOrEmpty(project)
 if (project.hasProperty('version')) { version = getProperty('version') }
 
 // standard kode-versjon for branch
-if (version == 'unspecified') { version = '2.1111-SNAPSHOT' }
+if (version == 'unspecified') { version = '2.1-SNAPSHOT' }
 
 buildscript {
     // Variables to grab from environment

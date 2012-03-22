@@ -264,30 +264,28 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert
-            (T
-                     bubble) {
-        throw new NotImplementedException();
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubble) {
+        if(!enumKodelisteManager.isEnumClass(KodeId.class.cast(bubble.getId()).getClass())) {
+            persistenceSessionMaster.insert(bubble);
+        }
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void update
-            (T
-                     bubble) {
-        throw new NotImplementedException();
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubble) {
+        if(!enumKodelisteManager.isEnumClass(KodeId.class.cast(bubble.getId()).getClass())) {
+            persistenceSessionMaster.update(bubble);
+        }
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete
-            (T
-                     bubble) {
-        throw new NotImplementedException();
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubble) {
+        if(!enumKodelisteManager.isEnumClass(KodeId.class.cast(bubble.getId()).getClass())) {
+            persistenceSessionMaster.delete(bubble);
+        }
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void evict
-            (I
-                     bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void evict(I bubbleId) {
         if (enumKodelisteManager.get(bubbleId) == null) {
             // bubbleId kommer fra databasen og kan evictes
             persistenceSessionMaster.evict(bubbleId);
@@ -295,16 +293,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     @Override
-    public <T extends BubbleObject> void ensureFullyLoaded
-            (T
-                     bubble) {
+    public <T extends BubbleObject> void ensureFullyLoaded(T bubble) {
         // No op
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh
-            (I
-                     bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId) {
         throw new NotImplementedException();
     }
 

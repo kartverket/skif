@@ -6,6 +6,7 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
@@ -22,10 +23,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.*;
 
 import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactorManagerBundle;
 import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactoryBuilderWithHistory;
@@ -363,6 +361,66 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             persistenceSessionManager.close();
         }
 
+    }
+
+    public void testInsertDbKode() {
+        ServiceContext context = new DefaultServiceContext();
+        context.setLocale(new Locale("no", "NO"));
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+
+        try {
+            BDbKode bDbKodeNy = new BDbKode();
+            bDbKodeNy.setId(new BDbKodeId(1234L, SnapshotVersion.CURRENT));
+            bDbKodeNy.setKodeverdi("AAD12");
+            HashMap<String, Kode.LocalizedFields> localizedFieldsMap = new HashMap<String, Kode.LocalizedFields>();
+            Kode.LocalizedFields bokmaal = new Kode.LocalizedFields();
+            bokmaal.beskrivelse = "Kodebeskrivelse ting for ny kode som er inserted. BOKMÅL";
+            bokmaal.navn = "1234-Bokmål";
+            localizedFieldsMap.put("no_NO", bokmaal);
+            bDbKodeNy.setLocalizedFieldsMap(localizedFieldsMap);
+            persistenceSessionManager.beginTransaction();
+            persistenceSessionManager.insert(bDbKodeNy);
+            persistenceSessionManager.commit();
+        } finally {
+            persistenceSessionManager.close();
+        }
+
+    }
+
+    @Test(dependsOnMethods = "testInsertDbKode")
+    public void testUpdateDbKode() {
+        ServiceContext context = new DefaultServiceContext();
+        context.setLocale(new Locale("no", "NO"));
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+
+        try {
+            BDbKode dbKode = persistenceSessionManager.get(new BDbKodeId(1234L, SnapshotVersion.CURRENT));
+            Kode.LocalizedFields nynorsk = new Kode.LocalizedFields();
+            nynorsk.beskrivelse = "Kodebeskrivelse ting for ny kode som er inserted. NYNORSK";
+            nynorsk.navn = "1234-Nynorsk";
+            dbKode.getLocalizedFieldsMap().put("no_NO_NY", nynorsk);
+            persistenceSessionManager.beginTransaction();
+            persistenceSessionManager.update(dbKode);
+            persistenceSessionManager.commit();
+        } finally {
+            persistenceSessionManager.close();
+        }
+    }
+
+    @Test(dependsOnMethods = "testUpdateDbKode")
+    public void testDeleteDbKode() {
+        ServiceContext context = new DefaultServiceContext();
+        context.setLocale(new Locale("no", "NO"));
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+
+        try {
+            BDbKode dbKode = persistenceSessionManager.get(new BDbKodeId(1234L, SnapshotVersion.CURRENT));
+            persistenceSessionManager.beginTransaction();
+            persistenceSessionManager.delete(dbKode);
+            persistenceSessionManager.commit();
+        } finally {
+            persistenceSessionManager.close();
+        }
     }
 
 //    public void testMixed() {
