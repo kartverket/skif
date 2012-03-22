@@ -16,7 +16,6 @@ import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.transform.ResultTransformer;
 
 import java.util.*;
 

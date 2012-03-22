@@ -12,7 +12,7 @@ userProperties = PropertyUtil.loadUserPropertiesOrEmpty(project)
 if (project.hasProperty('version')) { version = getProperty('version') }
 
 // standard kode-versjon for branch
-if (version == 'unspecified') { version = '2.1-SNAPSHOT' }
+if (version == 'unspecified') { version = '2.1111-SNAPSHOT' }
 
 buildscript {
     // Variables to grab from environment
@@ -104,6 +104,9 @@ libraries = [
         build_utils: "no.statkart.grunnbok:build-utils:${versions.buildUtils}",
 
         jts: "com.vividsolutions:jts:${versions.jts}",
+
+        //Commons-lang 2.5
+        commons_lang: "org.apache.commons:commons-lang3:3.1",
 
 ]
 

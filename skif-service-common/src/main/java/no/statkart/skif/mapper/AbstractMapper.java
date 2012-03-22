@@ -22,7 +22,6 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
      */
     private boolean mergeMapping = false;
 
-    //Felles typemapper - hanste
     private TypeMapper defaultMapper = null;
 
     public boolean isMergeMapping() {
@@ -75,7 +74,6 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
         mappersByWsapiClass.put(typeMapper.getWsapiClass(), typeMapper);
     }
 
-    //Forsøk på å lage en felles typemapper - hanste
     protected void setDefaultMapper(TypeMapper typeMapper) {
         typeMapper.setDomainObjectFactory(domainObjectFactory);
         typeMapper.setWsapiObjectFactory(wsapiObjectFactory);
@@ -242,9 +240,9 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 target = targetArray;
             } else if (useIdentityMapping.contains(source.getClass())) {
                 target = source;
-            } else if (source instanceof Collection) {
+            } /*else if (source instanceof Collection) {
                 target = w2dCollection(args, parameterType);
-            } else {
+            } */else {
                 TypeMapper typeMapper = getMapperByWsapiClass(source.getClass());
                 if (typeMapper instanceof WsapiListTypeMapper) {
                     target = getCollection(args);
@@ -255,7 +253,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                         ((WsapiMapTypeMapper) typeMapper).setValueType(((MapperInfo) args[2]).value()[1]);
                     }
                     typeMapper.mapWsapiObject(source, target);
-                } else if (typeMapper instanceof DefaultTypeMapper) {
+                } else if (typeMapper instanceof AutomaticTypeMapper) {
                     target = getTargetForGenericTypeMapper(args);
                     if (target==null) {
                         target = typeMapper.mapWsapiObject(source);
