@@ -44,7 +44,7 @@ public class ModuleBuilder {
      * moduler deler ikke Configuration instans med klienten har bruker derfor sin egen SystemConfiguration instans.
      * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      */
-    private SystemConfiguration systemConfiguration;
+    protected SystemConfiguration systemConfiguration;
 
     /**
      * Configration som inneholder properties for moduler som builderen skal produsere.
@@ -74,7 +74,7 @@ public class ModuleBuilder {
     /**
      * Delt singleVmServer instans som anvendes dersom useSharedServer er true
      */
-    private Injector singleVmServerInjector;
+    protected Injector singleVmServerInjector;
 
 
     /**
