@@ -11,9 +11,9 @@ import org.hibernate.metadata.ClassMetadata;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class DefaultHibernatePersistenceSessionImpl326 extends HibernatePersistenceSessionMasterImpl {
+public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersistenceSessionMasterImpl {
 
-    public DefaultHibernatePersistenceSessionImpl326(HibernateSessionFactoryManager sessionFactoryManager) {
+    public DefaultHibernatePersistenceSessionImplExt(HibernateSessionFactoryManager sessionFactoryManager) {
         super(sessionFactoryManager);
     }
 

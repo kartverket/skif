@@ -315,11 +315,11 @@ public class StoreTestServerModule extends SkifModule {
             hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
         }
 
-        HibernatePersistenceSessionMasterImpl persistenceSessionMasterCurrent = new DefaultHibernatePersistenceSessionImpl326(
+        HibernatePersistenceSessionMasterImpl persistenceSessionMasterCurrent = new DefaultHibernatePersistenceSessionImplExt(
                 hibernateSessionFactoryManagerBundle.getBundle().get(0)
         );
 
-        HibernatePersistenceSessionMasterImpl persistenceSessionMasterOld = new DefaultHibernatePersistenceSessionImpl326(
+        HibernatePersistenceSessionMasterImpl persistenceSessionMasterOld = new DefaultHibernatePersistenceSessionImplExt(
                 hibernateSessionFactoryManagerBundle.getBundle().get(1)
         );
 
