@@ -18,6 +18,7 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.AbstractComponentType;
+import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +80,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         return previous;
     }
 
-    protected void  flushAndClearLoadedObjects() {
+    protected void flushAndClearLoadedObjects() {
         flush();
         ensureBubblesFullyLoaded();
         session().clear();
@@ -574,7 +575,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                     ensureInitialized(values[i], initializedObjects);
                 }
             } else if (type.isComponentType()) {
-                AbstractComponentType t = (AbstractComponentType) type;
+                ComponentType t = (ComponentType) type;
                 Object component = values[i];
                 if (component != null) {
                     Object[] componentProperties = t.getPropertyValues(component, EntityMode.POJO);
@@ -730,7 +731,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     public void beginTransaction() {
-        if (localTransaction!=null) {
+        if (localTransaction != null) {
             throw new ImplementationException("Lokal transaksjon har allerede blitt startet");
         }
         localTransaction = session().beginTransaction();
@@ -742,7 +743,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     public void rollback() {
-        if (localTransaction==null) {
+        if (localTransaction == null) {
             throw new ImplementationException("Lokal transaksjon har ikke blitt startet");
         }
         localTransaction.rollback();
@@ -752,7 +753,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
     @Override
     public void commit() {
-        if (localTransaction==null) {
+        if (localTransaction == null) {
             throw new ImplementationException("Lokal transaksjon har ikke blitt startet");
         }
         localTransaction.commit();

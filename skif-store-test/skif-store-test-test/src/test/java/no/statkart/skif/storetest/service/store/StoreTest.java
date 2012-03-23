@@ -153,6 +153,12 @@ public class StoreTest extends StoreTestTestCase {
 
     }
 
+    public void testGetChildObject() {
+        StoreService store = injector.getInstance(StoreService.class);
+        ChildBubble childBubble = store.getObject(new ChildBubbleId<ChildBubble>(1L, SnapshotVersion.CURRENT));
+        assertNotNull(childBubble);
+    }
+
     public void testGetBarOld() {
         StoreService store = injector.getInstance(StoreService.class);
         Bar bar = store.getObject(new BarId<Bar>(1001L, SnapshotVersion.OLD));

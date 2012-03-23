@@ -25,6 +25,10 @@ import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
+import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
+import no.statkart.skif.storetest.domain.multikobling.RettsstiftelseId;
+import no.statkart.skif.storetest.domain.multikobling.Servitutt;
+import no.statkart.skif.storetest.domain.multikobling.ServituttId;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
@@ -41,6 +45,11 @@ import static org.testng.Assert.*;
 import static org.testng.FileAssert.fail;
 
 /**
+ * Tester StoreSessionServer funksjonalitet uavhengig av SKIFs servicerammerverk og bruker derfor
+ * ikke oppsettet fra {@link no.statkart.skif.storetest.config.StoreTestServerModule}.
+ * Testen bruker istedet  en HibernateSessionFactoryBuilder  som ligger i {@link TestHelper} så nye klasse som testen
+ * skal bruke må legges inn her.
+ *
  * @author Henrik Fredholm
  * @author Jan Holmen
  */

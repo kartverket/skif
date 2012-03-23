@@ -3,24 +3,22 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-   <class name="no.statkart.skif.storetest.domain.demo.ChildBubble" lazy="true">
-      <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.ChildBubbleIdType">
-          <generator class="assigned"/>
-      </id>
+    <class name="no.statkart.skif.storetest.domain.demo.ChildBubble" lazy="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.ChildBubbleIdType">
+            <generator class="assigned"/>
+        </id>
 
-      <property name="text"/>
+        <property name="text"/>
 
-       <many-to-one
-          name="testBubble"
-          column="testBubbleId"
-          class="no.statkart.skif.storetest.domain.demo.TestBubble"
-          foreign-key="fk_child_test">
-          <meta attribute="bubble-ref"/>
-       </many-to-one>
-
-
+        <many-to-one
+                name="testBubble"
+                column="testBubbleId"
+                class="no.statkart.skif.storetest.domain.demo.TestBubble"
+                foreign-key="fk_child_test">
+            <meta attribute="bubble-ref"/>
+        </many-to-one>
 
 
-   </class>
+    </class>
 
 </hibernate-mapping>
