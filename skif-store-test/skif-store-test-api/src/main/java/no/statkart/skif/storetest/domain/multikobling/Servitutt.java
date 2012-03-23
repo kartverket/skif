@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.domain.multikobling;
 
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
+import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.multikobling.kobling.RettsstiftelsePersonRolle;
 
 import java.util.Set;
@@ -12,6 +13,11 @@ import java.util.Set;
 public class Servitutt extends Rettsstiftelse {
     private Set<PersonId<?>> rettighetshaverAktivIds = rettsstiftelsePersonIdsKoblinger.get(RettsstiftelsePersonRolle.RETTIGHETSHAVER_AKTIV);
     private Set<PersonId<?>> rettighetshaverHistoriskIds = rettsstiftelsePersonIdsKoblinger.get(RettsstiftelsePersonRolle.RETTIGHETSHAVER_HISTORISK);
+
+    @Override
+    public ServituttId<?> getId() {
+        return (ServituttId<?>) super.getId();
+    }
 
     public Set<PersonId<?>> getRettighetshaverAktivIds() {
         return rettighetshaverAktivIds;

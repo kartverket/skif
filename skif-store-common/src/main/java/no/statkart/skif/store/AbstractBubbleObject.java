@@ -13,6 +13,11 @@ public class AbstractBubbleObject implements BubbleObject, Serializable{
     protected BubbleId<?> id;
     private long version = 0;
 
+    @Override
+    public BubbleId<?> getBubbleId() {
+        return id;
+    }
+
     public AbstractBubbleObject(BubbleId<?> id) {
         this.id = id;
     }

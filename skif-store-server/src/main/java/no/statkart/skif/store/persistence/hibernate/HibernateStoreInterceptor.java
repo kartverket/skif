@@ -41,7 +41,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
         if (entity instanceof BubbleObject) {
             BubbleObject bubbleEntity = (BubbleObject) entity;
             String classname = bubbleEntity.getClass().getName();
-            BubbleId bubbleId = (BubbleId) bubbleEntity.getId();
+            BubbleId<?> bubbleId = bubbleEntity.getBubbleId();
             try {
                 String idString;
                 if(classname.contains("Impl")) {

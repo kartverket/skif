@@ -2,9 +2,11 @@ package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
 import com.google.inject.Key;
+import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.*;
+import no.statkart.skif.storetest.domain.multikobling.*;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -190,6 +192,24 @@ public class StoreTest extends StoreTestTestCase {
 
         Raz raz = store.getObject(new RazId<Raz>(601L));
         raz.getRazComponent().getFooId();
+
+    }
+
+
+    public void testGetMedGenerellId(){
+
+        store.get(new RettsstiftelseId<Rettsstiftelse>(2001L, SnapshotVersion.CURRENT));
+        store.get(new ServituttId<Servitutt>(2001L, SnapshotVersion.CURRENT));
+
+        try{
+            store.get(new PengeheftelseId<Pengeheftelse>(2002L, SnapshotVersion.CURRENT));
+        } catch(ObjectNotFoundException oNFE) {
+            //OK
+        }
+        store.get(new RettsstiftelseId<Rettsstiftelse>(2002L, SnapshotVersion.CURRENT));
+        store.get(new ServituttId<Servitutt>(2003L, SnapshotVersion.CURRENT));
+
+
 
     }
 

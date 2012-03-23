@@ -13,6 +13,11 @@ public class Pengeheftelse extends Rettsstiftelse {
     private Set<PersonId<?>> panthaverAktivIds = rettsstiftelsePersonIdsKoblinger.get(RettsstiftelsePersonRolle.PANTHAVER_AKTIV);
     private Set<PersonId<?>> panthaverHistoriskIds = rettsstiftelsePersonIdsKoblinger.get(RettsstiftelsePersonRolle.PANTHAVER_HISTORISK);
 
+    @Override
+    public PengeheftelseId<?> getId() {
+        return (PengeheftelseId<?>) super.getId();
+    }
+
     public Set<PersonId<?>> getPanthaverAktivIds() {
         return panthaverAktivIds;
     }
