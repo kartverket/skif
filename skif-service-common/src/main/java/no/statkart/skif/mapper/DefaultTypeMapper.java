@@ -650,29 +650,67 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                 if (resource != null) {
                     URL resource2 = new URL(parsedJarName);
                     ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
-                    ZipEntry ze;
-                    while ((ze = zip2.getNextEntry()) != null) {
-                        String entryName = ze.getName();
+                    try {
+                        ZipEntry ze;
+                        while ((ze = zip2.getNextEntry()) != null) {
+                            String entryName = ze.getName();
 
-                        if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
-                            Class _class;
-                            String className = null;
-                            try {
-                                className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
+                            if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
+                                Class _class;
+                                String className;
+                                try {
+                                    className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
 
-                                _class = Class.forName(className);
-                            } catch (ExceptionInInitializerError e) {
-                                // happen, for example, in classes, which depend on
-                                // Spring to inject some beans, and which fail,
-                                // if dependency is not fulfilled
-                                _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-                            }
-                            if (_class.getPackage().toString().contains(packageName)) {
-                                classes.add(_class);
+                                    _class = Class.forName(className);
+                                    if (_class.getPackage().toString().contains(packageName)) {
+                                        classes.add(_class);
+                                    }
+                                } catch (ExceptionInInitializerError e) {
+                                    // happen, for example, in classes, which depend on
+                                    // Spring to inject some beans, and which fail,
+                                    // if dependency is not fulfilled
+//                                    _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+                                    throw new MappingException(e);
+                                }
                             }
                         }
+                    } finally {
+                        zip2.close();
                     }
                 }
+            } else if (protocol.equals("zip")) {
+                String filepath = resource.getPath();
+                        int idx = filepath.indexOf("!");
+                        String parsedJarName = filepath.substring(0, idx);
+                        URL resource2 = new File(parsedJarName).toURI().toURL();
+                        ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
+                        try {
+                            ZipEntry ze;
+                            while ((ze = zip2.getNextEntry()) != null) {
+                                String entryName = ze.getName();
+                                if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
+                                    Class _class;
+                                    String className = null;
+                                    try {
+                                        className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
+
+                                        _class = Class.forName(className);
+                                        if (_class.getPackage().toString().contains(packageName)) {
+                                            classes.add(_class);
+                                        }
+                                    } catch (ExceptionInInitializerError e) {
+                                        // happen, for example, in classes, which depend on
+                                        // Spring to inject some beans, and which fail,
+                                        // if dependency is not fulfilled
+//                                        _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+                                        throw new MappingException(e);
+                                    }
+                                }
+                            }
+                        } finally {
+                            zip2.close();
+                        }
+
             } else {
                 throw new ImplementationException("Ukjent protokoll: " + protocol);
             }
@@ -706,13 +744,16 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                 Class _class;
                 try {
                     _class = Class.forName(packageName + '.' + fileName.substring(0, fileName.length() - 6));
+                    classes.add(_class);
                 } catch (ExceptionInInitializerError e) {
+                    throw new MappingException(e);
                     // happen, for example, in classes, which depend on
                     // Spring to inject some beans, and which fail,
                     // if dependency is not fulfilled
-                    _class = Class.forName(packageName + '.' + fileName.substring(0, fileName.length() - 6), false, Thread.currentThread().getContextClassLoader());
+//                    _class = Class.forName(packageName + '.' + fileName.substring(0, fileName.length() - 6), false, Thread.currentThread().getContextClassLoader());
+
                 }
-                classes.add(_class);
+
             }
         }
         return classes;
