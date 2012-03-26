@@ -575,7 +575,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                     ensureInitialized(values[i], initializedObjects);
                 }
             } else if (type.isComponentType()) {
-                ComponentType t = (ComponentType) type;
+                AbstractComponentType t = (AbstractComponentType) type;
                 Object component = values[i];
                 if (component != null) {
                     Object[] componentProperties = t.getPropertyValues(component, EntityMode.POJO);
