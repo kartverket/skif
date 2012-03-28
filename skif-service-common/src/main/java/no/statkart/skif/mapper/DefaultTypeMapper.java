@@ -88,7 +88,6 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
     public DefaultTypeMapper() {
     }
 
-
     /**
      * Denne metoden finner klasser i alle subpakker av de angitte pakkene, og mapper de opp mot hverandre gitt at navnene (SimpleName) på
      * klassene er de samme.
@@ -98,6 +97,18 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
      * @param domainPackage
      */
     public void addPackageMapping(String wsapiPackage, String domainPackage) {
+        addPackageMapping(wsapiPackage, domainPackage, true);
+    }
+    
+    /**
+     * Denne metoden finner klasser i alle subpakker av de angitte pakkene, med mindre recurse er satt til 'false', da leter den bare i den angitte pakken. og mapper de opp mot hverandre gitt at navnene (SimpleName) på
+     * klassene er de samme.
+     * Det er ett unntak, klasser som ender på Kode i wsapiPackage vil mappe mot klasser som ender på KodeId i domainPackage.
+     *
+     * @param wsapiPackage
+     * @param domainPackage
+     */
+    public void addPackageMapping(String wsapiPackage, String domainPackage, boolean recurse) {
         try {
             if (wsapiPackage == null || domainPackage == null) {
                 return;
@@ -106,8 +117,8 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
             wsapiPkg2domainPkg.put(wsapiPackage, domainPackage);
             domainPkg2wsapiPkg.put(domainPackage, wsapiPackage);
 
-            List<Class> wsapiClasses = getClasses(wsapiPackage);
-            List<Class> domainClasses = getClasses(domainPackage);
+            List<Class> wsapiClasses = getClasses(wsapiPackage, recurse);
+            List<Class> domainClasses = getClasses(domainPackage, recurse);
             for (int i = 0; i < wsapiClasses.size(); i++) {
                 Class wsapiClass = wsapiClasses.get(i);
                 String name = wsapiClass.getSimpleName();
@@ -154,12 +165,14 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                     return true;
                 }
             } catch (ClassNotFoundException e) {
-                //Dette kan skje, ikke gjør noe, vi vil ende opp med å returnere false i bunn av metoden uansett.
+                //Dette kan skje, ikke gjør noe, vi vil ende opp med å returnere true eller false i bunn av metoden uansett.
             }
-        } else if (wsapiName.equals(domainName)) {
-            return true;
         }
-        return false;
+        if (wsapiName.equals(domainName)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -234,7 +247,12 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
         WsapiT target = null;
         if (!doNotMapTheseClasses.contains(source.getClass())) {
             try {
-                Class targetClass = findTargetClassFromSourceClass(source.getClass());
+                Class targetClass;
+                if (getWsapiClass() != null) {
+                    targetClass = getWsapiClass();
+                } else {
+                    targetClass = findTargetClassFromSourceClass(source.getClass());
+                }
                 Object alreadyMappedValue = mappedFields.getMappedValue(source, targetClass);
                 if (alreadyMappedValue == null) {
 
@@ -259,7 +277,12 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
         DomainT target = null;
         if (!doNotMapTheseClasses.contains(source.getClass())) {
             try {
-                Class targetClass = findTargetClassFromSourceClass(source.getClass());
+                Class targetClass;
+                if (getDomainClass() != null) {
+                    targetClass = getDomainClass();
+                } else {
+                    targetClass = findTargetClassFromSourceClass(source.getClass());
+                }
                 Object alreadyMappedValue = mappedFields.getMappedValue(source, targetClass);
                 if (alreadyMappedValue == null) {
 
@@ -627,13 +650,13 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
      * @throws java.io.IOException
      */
     @SuppressWarnings("unchecked")
-    protected static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
+    protected static List<Class> getClasses(String packageName, boolean recurse) throws ClassNotFoundException, IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
-        List<File> dirs = new ArrayList<File>();
-        ArrayList<Class> classes = new ArrayList<Class>();
+//        List<File> dirs = new ArrayList<File>();
+        List<Class> classes = new ArrayList<Class>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             String protocol = resource.getProtocol();
@@ -680,40 +703,51 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                 }
             } else if (protocol.equals("zip")) {
                 String filepath = resource.getPath();
-                        int idx = filepath.indexOf("!");
-                        String parsedJarName = filepath.substring(0, idx);
-                        URL resource2 = new File(parsedJarName).toURI().toURL();
-                        ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
-                        try {
-                            ZipEntry ze;
-                            while ((ze = zip2.getNextEntry()) != null) {
-                                String entryName = ze.getName();
-                                if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
-                                    Class _class;
-                                    String className = null;
-                                    try {
-                                        className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
+                int idx = filepath.indexOf("!");
+                String parsedJarName = filepath.substring(0, idx);
+                URL resource2 = new File(parsedJarName).toURI().toURL();
+                ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
+                try {
+                    ZipEntry ze;
+                    while ((ze = zip2.getNextEntry()) != null) {
+                        String entryName = ze.getName();
+                        if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
+                            Class _class;
+                            String className = null;
+                            try {
+                                className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
 
-                                        _class = Class.forName(className);
-                                        if (_class.getPackage().toString().contains(packageName)) {
-                                            classes.add(_class);
-                                        }
-                                    } catch (ExceptionInInitializerError e) {
-                                        // happen, for example, in classes, which depend on
-                                        // Spring to inject some beans, and which fail,
-                                        // if dependency is not fulfilled
-//                                        _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-                                        throw new MappingException(e);
-                                    }
+                                _class = Class.forName(className);
+                                if (_class.getPackage().toString().contains(packageName)) {
+                                    classes.add(_class);
                                 }
+                            } catch (ExceptionInInitializerError e) {
+                                // happen, for example, in classes, which depend on
+                                // Spring to inject some beans, and which fail,
+                                // if dependency is not fulfilled
+//                                        _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+                                throw new MappingException(e);
                             }
-                        } finally {
-                            zip2.close();
                         }
+                    }
+                } finally {
+                    zip2.close();
+                }
 
             } else {
                 throw new ImplementationException("Ukjent protokoll: " + protocol);
             }
+        }
+        
+        if(!recurse){
+            List<Class> trimmedClasses = new ArrayList<Class>();            
+            for (int i = 0; i < classes.size(); i++) {
+                Class aClass = classes.get(i);
+                if(aClass.getPackage().getName().equals(packageName)){
+                    trimmedClasses.add(aClass);
+                }
+            }
+            classes = trimmedClasses;
         }
 
         return classes;
