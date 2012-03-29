@@ -80,8 +80,8 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
     Map<String, String> domainPkg2wsapiPkg = new HashMap<String, String>();
     private Class<WsapiT> wsapiClass;
     private Class<DomainT> domainClass;
-    static Map<Class, Class> classMappings = new HashMap<Class, Class>();
-    static Set<Class> doNotMapTheseClasses = new HashSet<Class>();
+    private Map<Class, Class> classMappings = new HashMap<Class, Class>();
+    private Set<Class> doNotMapTheseClasses = new HashSet<Class>();
     private final MappedFieldsTracker mappedFields = new MappedFieldsTracker();
     private Map<Class, Class> overrideClassMappings;
 
@@ -91,7 +91,6 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
     /**
      * Denne metoden finner klasser i alle subpakker av de angitte pakkene, og mapper de opp mot hverandre gitt at navnene (SimpleName) på
      * klassene er de samme.
-     * Det er ett unntak, klasser som ender på Kode i wsapiPackage vil mappe mot klasser som ender på KodeId i domainPackage.
      *
      * @param wsapiPackage
      * @param domainPackage
@@ -103,7 +102,6 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
     /**
      * Denne metoden finner klasser i alle subpakker av de angitte pakkene, med mindre recurse er satt til 'false', da leter den bare i den angitte pakken. og mapper de opp mot hverandre gitt at navnene (SimpleName) på
      * klassene er de samme.
-     * Det er ett unntak, klasser som ender på Kode i wsapiPackage vil mappe mot klasser som ender på KodeId i domainPackage.
      *
      * @param wsapiPackage
      * @param domainPackage
