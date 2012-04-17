@@ -8,6 +8,7 @@ import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.store.*;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -18,6 +19,7 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
  * En slags {@link Store} som kan brukes for å navigere blant mockup-objekter. Alle id-er
  *
  * @author Tor Egil R. Strand
+ * @author Leif Lislegård
  * @since 2.1
  */
 @Singleton
@@ -303,43 +305,80 @@ public class MockupStore implements Store {
     }
 
     /**
-     * Finner alle BubbleIds som refereres til fra dette objektet og alle underkomponenter.
-     *
-     * @param object objektet som skal granskes
-     * @return alle id-er, inkludert potensielt objektets egen id
-     */
+    * Finner alle BubbleIds som refereres til fra dette objektet og alle underkomponenter.
+    * <p/>
+    * Algoritmen tar høyde for at domenemodellen har doble eller sirkulære linker. Benytter derfor en {@code Stack} for å overkomme dette.
+    *
+    * @param object objektet som skal granskes
+    * @return alle id-er, inkludert potensielt objektets egen id
+    */
     private static Set<BubbleId> findReferencedBubbleIds(Object object) {
-        Set<BubbleId> ids = new HashSet<BubbleId>();
+        if (object == null) {
+            return Collections.emptySet();
+        } else {
+            Set<BubbleId> ids = new HashSet<BubbleId>();
 
-        Class<?> clazz = object.getClass();
-        Field[] fields = clazz.getFields();
-        for (Field field : fields) {
-            if ((field.getModifiers() & Modifier.TRANSIENT) == 0) {
-                if (BubbleId.class.isAssignableFrom(field.getType())) {
-                    try {
-                        field.setAccessible(true);
-                        ids.add((BubbleId) field.get(object));
-                    } catch (IllegalAccessException e) {
-                        throw new ImplementationException("Kan ikke hente ut id-verdi fra objekt", e);
-                    } catch (SecurityException e) {
-                        throw new ImplementationException("Kan ikke hente ut id-verdi fra objekt", e);
+            Stack<Object> stack = new Stack<Object>();
+            HashSet<Object> visitedObjects = new HashSet<Object>();
+
+            stack.push(object);
+            while (!stack.isEmpty()) {
+
+                Object o = stack.pop();
+                if (o != null) {
+                    Class<?> clazz = o.getClass();
+
+                    if (clazz.isArray()) { //dersom array
+                        if (!clazz.getComponentType().isPrimitive()) {
+                            int length = Array.getLength(o);
+                            for (int i = 0; i < length; i++) {
+                                Object objectInArray = Array.get(o, i);
+                                stack.push(objectInArray);
+                            }
+                        }
+
+                    } else { //dersom ikke array
+
+                        if (o instanceof BubbleId) {  //id
+                            ids.add((BubbleId) o);
+                        }
+
+                        if (o instanceof Iterable) {  //collections ol
+                            for (Object objectIncollection : ((Iterable) o)) {
+                                stack.push(objectIncollection);
+                            }
+                        }
+
+                        //sjekker felter
+                        visitedObjects.add(o);
+                        while (clazz != null && clazz != Object.class) {
+                            for (Field field : clazz.getDeclaredFields()) {
+                                if ((Modifier.TRANSIENT & field.getModifiers()) == 0) {
+                                    if (!field.getType().isPrimitive() && !field.getType().getName().startsWith("java.lang.")) {
+                                        try {
+                                            field.setAccessible(true);
+                                            Object component = field.get(o);
+                                            if (!stack.contains(component) && !visitedObjects.contains(component)) {
+                                                stack.push(component);
+                                            }
+                                        } catch (IllegalAccessException e) {
+                                            throw new ImplementationException("Kan ikke hente ut id-verdi fra objekt", e);
+                                        } catch (SecurityException e) {
+                                            throw new ImplementationException("Kan ikke hente ut id-verdi fra objekt", e);
+                                        }
+                                    }
+                                }
+                            }
+                            clazz = clazz.getSuperclass();
+                        }
+
                     }
-                } else {
-                    Object component;
-                    try {
-                        field.setAccessible(true);
-                        component = field.get(object);
-                    } catch (IllegalAccessException e) {
-                        throw new ImplementationException("Kan ikke hente ut id-verdi fra objekt", e);
-                    } catch (SecurityException e) {
-                        throw new ImplementationException("Kan ikke hente ut id-verdi fra objekt", e);
-                    }
-                    ids.addAll(findReferencedBubbleIds(component));
                 }
-            }
-        }
 
-        return ids;
+            }
+
+            return ids;
+        }
     }
 
     @Override
