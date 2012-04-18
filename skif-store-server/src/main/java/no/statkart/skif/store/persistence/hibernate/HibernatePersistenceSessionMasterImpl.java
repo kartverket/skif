@@ -1,6 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import no.statkart.skif.exception.*;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
@@ -18,7 +18,6 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.AbstractComponentType;
-import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,8 +115,9 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         return sessionFactoryDescriptor.accepts(snapshotVersion);
     }
 
-    protected Session session() {
-        if (lazySession == null) {
+    protected synchronized Session session() {
+        //ToDo: MAT-9784 Har lagt inn '|| !lazySession.isOpen()' fordi vi har hatt situasjonen at lazySession ikke er null, men er lukket.
+        if (lazySession == null || !lazySession.isOpen()) {
             lazySession = sessionFactoryManager.createSession();
             sessionFactoryDescriptor.setSnapshotVersion(lazySession, sessionFactoryDescriptor.getSnapshotVersion());
         }
