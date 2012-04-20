@@ -4,7 +4,7 @@ import no.statkart.gradle.util.GradleUtil
 apply plugin: 'idea'
 apply plugin: 'statkart-idea-extensions-plugin'
 
-assert gradle.gradleVersion == '1.0-milestone-7'
+assert ['1.0-milestone-7', '1.0-milestone-8a'].contains(gradle.gradleVersion)
 
 userProperties = PropertyUtil.loadUserPropertiesOrEmpty(project)
 
@@ -23,8 +23,8 @@ buildscript {
     }
     publicRepo = rootProject.properties.get('PUBLIC_REPO', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
     repositories {
+        mavenRepo name: 'public', url: publicRepo
         mavenLocal()
-        mavenRepo name: 'public', urls: publicRepo
     }
     dependencies {
         classpath 'no.statkart:statkart-gradle-plugins:23'
@@ -191,8 +191,8 @@ subprojects { Project project ->
     }
 
     repositories {
+        mavenRepo name: 'public', url: publicRepo
         mavenLocal()
-        mavenRepo name: 'public', urls: publicRepo
     }
 
     dependencies {
