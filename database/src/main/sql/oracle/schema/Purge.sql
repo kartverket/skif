@@ -27,11 +27,20 @@ BEGIN
 END;
 /
 
-PROMPT purging tables for user @db_username@
+PROMPT purging functions for user @db_username@
 BEGIN
   FOR i IN (SELECT object_name FROM all_objects where owner = '@db_username@' AND object_type = 'FUNCTION')
     LOOP
         EXECUTE IMMEDIATE('DROP FUNCTION @db_schema@.' || i.object_name);
+    END LOOP;
+END;
+/
+
+PROMPT purging synonyms for user @db_username@
+BEGIN
+  FOR i IN (SELECT object_name FROM all_objects where owner = '@db_username@' AND object_type = 'SYNONYM')
+    LOOP
+        EXECUTE IMMEDIATE('DROP SYNONYM @db_schema@.' || i.object_name);
     END LOOP;
 END;
 /
