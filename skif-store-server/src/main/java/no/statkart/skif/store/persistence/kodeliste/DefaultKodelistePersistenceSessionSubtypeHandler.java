@@ -264,23 +264,33 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubble) {
-        if(!enumKodelisteManager.isEnumClass(KodeId.class.cast(bubble.getId()).getClass())) {
+        if(!isEnumOrEnumKodeliste(bubble)) {
             persistenceSessionMaster.insert(bubble);
         }
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubble) {
-        if(!enumKodelisteManager.isEnumClass(KodeId.class.cast(bubble.getId()).getClass())) {
+        if(!isEnumOrEnumKodeliste(bubble)) {
             persistenceSessionMaster.update(bubble);
         }
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubble) {
-        if(!enumKodelisteManager.isEnumClass(KodeId.class.cast(bubble.getId()).getClass())) {
+        if(!isEnumOrEnumKodeliste(bubble)) {
             persistenceSessionMaster.delete(bubble);
         }
+    }
+
+    private <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isEnumOrEnumKodeliste(T bubble) {
+        Class clazz = null;
+        if (bubble instanceof Kodeliste) {
+            clazz = ((Kodeliste) bubble).getKodeIdClass();  //sjekker felt som forteller id-klasse for kode implementasjon
+        } else if (bubble instanceof Kode) {
+            clazz = bubble.getId().getClass();
+        }
+        return (clazz != null) && enumKodelisteManager.isEnumClass(clazz);
     }
 
     @Override
