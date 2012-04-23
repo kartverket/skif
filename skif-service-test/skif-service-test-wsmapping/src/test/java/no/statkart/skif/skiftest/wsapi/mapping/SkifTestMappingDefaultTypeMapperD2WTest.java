@@ -2,6 +2,7 @@ package no.statkart.skif.skiftest.wsapi.mapping;
 
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
+import no.statkart.skif.skiftest.domain.C;
 import no.statkart.skif.skiftest.wsapi.domain.AList;
 import org.testng.annotations.Test;
 
@@ -90,4 +91,23 @@ public class SkifTestMappingDefaultTypeMapperD2WTest {
         assertEquals(target.getItem().size(), 2);
         assertEquals(target.getItem().iterator().next().getClass(), no.statkart.skif.skiftest.wsapi.domain.A.class);
     }
+
+    /**
+     * Tester for å belyse 	SKIF-160
+     */
+    @Test(enabled = false)
+    public void testMapTestC(){
+        C source = new C();
+        source.setAs(new A[]{new A("a1"), new A("a2")});
+        source.setInts(new int[]{1,2,3,4});
+        source.setStrings(new String[]{"s1", "s2", "s3"});
+
+        no.statkart.skif.skiftest.wsapi.domain.C target = map.d2w(source);
+        assertEquals(source.getInts(), target.getInts());
+        assertEquals(source.getStrings(), target.getStrings());
+        for(int i = 0; i < source.getAs().length;i++) {
+            assertEquals(source.getAs()[i].getText(), target.getAs().toArray(new A[]{})[i].getText());
+        }
+    }
+
 }

@@ -32,4 +32,11 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="C">
+        <xs:sequence>
+            <xs:element name="ints" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="strings" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="as" type="skiftestns:A" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>
