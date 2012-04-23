@@ -4,15 +4,11 @@ package no.statkart.skif.skiftest.wsapi.mapping;
 import junit.framework.TestCase;
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
-import no.statkart.skif.skiftest.domain.C;
 import no.statkart.skif.skiftest.wsapi.domain.AList;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.testng.Assert.assertEquals;
 
 /**
  * @author Henrik Fredholm
@@ -76,33 +72,33 @@ public class SkifTestMappingDefaultTypeMapperW2DTest extends TestCase {
         assertEquals(target.iterator().next().getClass(), A.class);
     }
 
-    /**
-     * tester for å belyse 	SKIF-160
-     */
-    @Test(enabled = false)
-    public void testMapTestC() {
-        no.statkart.skif.skiftest.wsapi.domain.C source = new no.statkart.skif.skiftest.wsapi.domain.C();
-        no.statkart.skif.skiftest.wsapi.domain.A a1 = new no.statkart.skif.skiftest.wsapi.domain.A();
-        a1.setText("a1");
-        no.statkart.skif.skiftest.wsapi.domain.A a2 = new no.statkart.skif.skiftest.wsapi.domain.A();
-        a2.setText("a2");
-        source.getAs().add(a1);
-        source.getAs().add(a2);
-
-        source.getInts().add(1);
-        source.getInts().add(2);
-        source.getInts().add(3);
-        source.getInts().add(4);
-
-        source.getStrings().add("s1");
-        source.getStrings().add("s2");
-        source.getStrings().add("s3");
-
-        no.statkart.skif.skiftest.wsapi.domain.C target = map.d2w(source);
-        assertEquals(source.getInts(), target.getInts());
-        assertEquals(source.getStrings(), target.getStrings());
-        assertEquals(source.getAs(), target.getAs());
-
-    }
+//    /**
+//     * tester for å belyse 	SKIF-160
+//     */
+//    @Test(enabled = false)
+//    public void testMapTestC() {
+//        no.statkart.skif.skiftest.wsapi.domain.C source = new no.statkart.skif.skiftest.wsapi.domain.C();
+//        no.statkart.skif.skiftest.wsapi.domain.A a1 = new no.statkart.skif.skiftest.wsapi.domain.A();
+//        a1.setText("a1");
+//        no.statkart.skif.skiftest.wsapi.domain.A a2 = new no.statkart.skif.skiftest.wsapi.domain.A();
+//        a2.setText("a2");
+//        source.getAs().add(a1);
+//        source.getAs().add(a2);
+//
+//        source.getInts().add(1);
+//        source.getInts().add(2);
+//        source.getInts().add(3);
+//        source.getInts().add(4);
+//
+//        source.getStrings().add("s1");
+//        source.getStrings().add("s2");
+//        source.getStrings().add("s3");
+//
+//        no.statkart.skif.skiftest.domain.C target = map.d2w(source);
+//        assertEquals(source.getInts(), target.getInts());
+//        assertEquals(source.getStrings(), target.getStrings());
+//        assertEquals(source.getAs(), target.getAs());
+//
+//    }
 }
 
