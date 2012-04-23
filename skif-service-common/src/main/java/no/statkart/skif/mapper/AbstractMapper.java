@@ -2,13 +2,11 @@ package no.statkart.skif.mapper;
 
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.util.CopyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -137,6 +135,16 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                     targetArray[i] = thisMapping.d2w(sourceArray[i], parameterTypes[i]);
                 }
                 target = targetArray;
+            } else if (source instanceof Object[] && !(source instanceof Class[])){
+                Object[] sourceArray = (Object[]) source;
+                Class componentType = ((Class) lastArg).getComponentType();
+                Object[] targetArray = (Object[]) Array.newInstance(componentType, sourceArray.length);
+                for (int i = 0; i < sourceArray.length; i++) {
+                    targetArray[i] = thisMapping.d2w(sourceArray[i], componentType);
+                }
+                target = targetArray;
+            } else if (source.getClass().isArray()) {
+                target = CopyHelper.copy(source);
             } else if (useIdentityMapping.contains(source.getClass())) {
                 target = source;
             } else if (source instanceof Collection) {
@@ -238,6 +246,16 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                     targetArray[i] = thisMapping.w2d(sourceArray[i], parameterTypes[i]);
                 }
                 target = targetArray;
+            } else if (source instanceof Object[]){
+                Object[] sourceArray = (Object[]) source;
+                Class componentType = ((Class) lastArg).getComponentType();
+                Object[] targetArray = (Object[]) Array.newInstance(componentType, sourceArray.length);
+                for (int i = 0; i < sourceArray.length; i++) {
+                    targetArray[i] = thisMapping.w2d(sourceArray[i], componentType);
+                }
+                target = targetArray;
+            } else if (source.getClass().isArray()) {
+                target = CopyHelper.copy(source);
             } else if (useIdentityMapping.contains(source.getClass())) {
                 target = source;
             } /*else if (source instanceof Collection) {
