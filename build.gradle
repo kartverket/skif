@@ -108,6 +108,7 @@ libraries = [
         //Commons-lang 2.5
         commons_lang: "org.apache.commons:commons-lang3:3.1",
 
+        guava: "com.google.guava:guava:11.0.1",
 ]
 
 // JAX-WS runtime for weblogic
@@ -165,9 +166,17 @@ libraries.hibernate_tools_3_2 = [
 ]
 
 libraries.hibernate_3_6 = [
-        'org.hibernate:hibernate-parent:3.6.4.Final',
-        'org.hibernate:hibernate-core:3.6.4.Final',
-        'javassist:javassist:3.12.0.GA',
+        'org.hibernate:hibernate-parent:3.6.10.Final',
+        'org.hibernate:hibernate-core:3.6.10.Final.bubbleref.v1',
+        'commons-collections:commons-collections:3.1',
+        'dom4j:dom4j:1.6.1@jar',
+        'org.hibernate:hibernate-commons-annotations:3.2.0.Final',
+        'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final',
+        'javax.transaction:jta:1.1',
+        'org.antlr:antlr:3.4@jar',
+        'net.sf.ehcache:ehcache-core:2.5.2',
+        'odmg:odmg:3.0@jar',
+        'javassist:javassist:3.12.1.GA',
         libraries.ojdbc,
 ]
 
