@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubbleId;
 /**
  * @author rorchr
  */
-public class AndelIMatrikkelenhetId<T extends AndelIMatrikkelenhet>  extends AbstractStoreTestBubbleId<T> {
+public class AndelIMatrikkelenhetId<T extends AndelIMatrikkelenhet> extends AbstractStoreTestBubbleId<T> {
     public AndelIMatrikkelenhetId(Long value) {
         super(value, SnapshotVersion.CURRENT);
     }

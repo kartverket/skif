@@ -6,6 +6,7 @@ import java.util.Set;
 
 public class Hjemmelsinformasjon extends Rettsstiftelse {
     private Set<AndelIMatrikkelenhetId<?>> kjoeptAndelIds = rettsstiftelseAndelIdsKoblinger.get(RettsstiftelseAndelRolle.KJOEPT);
+    private Set<AndelIMatrikkelenhetId<?>> solgtAndelIds = rettsstiftelseAndelIdsKoblinger.get(RettsstiftelseAndelRolle.SOLGT);
 
     @Override
     public HjemmelsinformasjonId<?> getId() {
@@ -25,5 +26,16 @@ public class Hjemmelsinformasjon extends Rettsstiftelse {
         return store().get(kjoeptAndelIds);
     }
 
+    public Set<AndelIMatrikkelenhetId<?>> getSolgtAndelIds() {
+        return solgtAndelIds;
+    }
 
+    public void setSolgtAndelIds(Set<AndelIMatrikkelenhetId<?>> solgtAndelIds) {
+        this.solgtAndelIds.clear();
+        this.solgtAndelIds.addAll(solgtAndelIds);
+    }
+
+    public Set<AndelIMatrikkelenhet> getSolgtAndel() {
+        return store().get(solgtAndelIds);
+    }
 }
