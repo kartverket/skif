@@ -11,7 +11,7 @@ import no.statkart.skif.storetest.domain.tinglysing.util.KoblingFactory;
 public class RettsstiftelseTilPersonKobling extends Kobling<RettsstiftelsePersonRolle, PersonId<?>> {
     public PersonId personId;
 
-    public static KoblingFactory<RettsstiftelsePersonRolle, PersonId<?>> KOBLING_FACTORY =
+    public static KoblingFactory<RettsstiftelsePersonRolle, PersonId<?>, RettsstiftelseTilPersonKobling> KOBLING_FACTORY =
             new RettsstiftelsePersonRollePersonIdKoblingFactory();
 
     public RettsstiftelseTilPersonKobling() {
@@ -40,9 +40,9 @@ public class RettsstiftelseTilPersonKobling extends Kobling<RettsstiftelsePerson
         personId = value;
     }
 
-    private static class RettsstiftelsePersonRollePersonIdKoblingFactory implements KoblingFactory<RettsstiftelsePersonRolle, PersonId<?>> {
+    private static class RettsstiftelsePersonRollePersonIdKoblingFactory implements KoblingFactory<RettsstiftelsePersonRolle, PersonId<?>, RettsstiftelseTilPersonKobling> {
         @Override
-        public Kobling<RettsstiftelsePersonRolle, PersonId<?>> create(RettsstiftelsePersonRolle rolle, PersonId<?> targetId) {
+        public RettsstiftelseTilPersonKobling create(RettsstiftelsePersonRolle rolle, PersonId<?> targetId) {
             return new RettsstiftelseTilPersonKobling(rolle, targetId);
         }
     }

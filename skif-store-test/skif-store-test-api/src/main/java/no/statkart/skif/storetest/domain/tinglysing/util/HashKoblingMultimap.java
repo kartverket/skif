@@ -13,17 +13,17 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class HashKoblingMultimap<R, V> extends ForwardingSetMultimap<R, V> implements Serializable {
-    private Set<Kobling<R, V>> koblinger = new HashSet<Kobling<R, V>>();
+public class HashKoblingMultimap<R, V, K extends Kobling<R, V>> extends ForwardingSetMultimap<R, V> implements Serializable {
+    private Set<K> koblinger = new HashSet<K>();
     private final SetMultimap<R, V> delegate = HashMultimap.create();
-    private final KoblingFactory<R, V> koblingFactory;
+    private final KoblingFactory<R, V, K> koblingFactory;
 
-    public HashKoblingMultimap(KoblingFactory<R, V> koblingFactory) {
+    public HashKoblingMultimap(KoblingFactory<R, V, K> koblingFactory) {
         this.koblingFactory = koblingFactory;
     }
 
-    public static <R, V> HashKoblingMultimap<R, V> create(KoblingFactory<R, V> koblingFactory) {
-        return new HashKoblingMultimap<R, V>(koblingFactory);
+    public static <R, V, K extends Kobling<R, V>> HashKoblingMultimap<R, V, K> create(KoblingFactory<R, V, K> koblingFactory) {
+        return new HashKoblingMultimap<R, V, K>(koblingFactory);
     }
 
     @Override
@@ -31,11 +31,11 @@ public class HashKoblingMultimap<R, V> extends ForwardingSetMultimap<R, V> imple
         return delegate;
     }
 
-    public Set<Kobling<R, V>> getKoblinger() {
+    public Set<K> getKoblinger() {
         return koblinger;
     }
 
-    public void setKoblinger(Set<Kobling<R, V>> koblinger) {
+    public void setKoblinger(Set<K> koblinger) {
         this.koblinger = koblinger;
         delegate.clear();
         for (Kobling<R, V> k : koblinger) {

@@ -17,9 +17,9 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
     protected DokumentId<?> dokumentId;
 
     protected SetMultimap<Beloepstype, Beloep> beloepMap = HashMultimap.create();
-    protected HashKoblingMultimap<RettsstiftelsePersonRolle, PersonId<?>> rettsstiftelsePersonIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilPersonKobling.KOBLING_FACTORY);
+    protected HashKoblingMultimap<RettsstiftelsePersonRolle, PersonId<?>, RettsstiftelseTilPersonKobling> rettsstiftelsePersonIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilPersonKobling.KOBLING_FACTORY);
     // TODO: støtter ikke gjelderRettsstiftelse
-    protected HashKoblingMultimap<RettsstiftelseAndelRolle, AndelIMatrikkelenhetId<?>> rettsstiftelseAndelIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilAndelKobling.KOBLING_FACTORY);
+    protected HashKoblingMultimap<RettsstiftelseAndelRolle, AndelIMatrikkelenhetId<?>, RettsstiftelseTilAndelKobling> rettsstiftelseAndelIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilAndelKobling.KOBLING_FACTORY);
 
     @Override
     public RettsstiftelseId<?> getId() {
@@ -27,18 +27,18 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
     }
 
     private Set<RettsstiftelseTilPersonKobling> getPersonKoblinger() {
-        return (Set)rettsstiftelsePersonIdsKoblinger.getKoblinger();
+        return rettsstiftelsePersonIdsKoblinger.getKoblinger();
     }
 
     private void setPersonKoblinger(Set<RettsstiftelseTilPersonKobling> personKoblinger) {
-        rettsstiftelsePersonIdsKoblinger.setKoblinger((Set)personKoblinger);
+        rettsstiftelsePersonIdsKoblinger.setKoblinger(personKoblinger);
     }
 
     private Set<RettsstiftelseTilAndelKobling> getAndelKoblinger() {
-        return (Set)rettsstiftelseAndelIdsKoblinger.getKoblinger();
+        return rettsstiftelseAndelIdsKoblinger.getKoblinger();
     }
 
     private void setAndelKoblinger(Set<RettsstiftelseTilAndelKobling> andelKoblinger) {
-        rettsstiftelseAndelIdsKoblinger.setKoblinger((Set)andelKoblinger);
+        rettsstiftelseAndelIdsKoblinger.setKoblinger(andelKoblinger);
     }
 }
