@@ -11,6 +11,27 @@
 
         <discriminator column="class"/>
 
+        <property name="rettsstiftelsestype" type="string" not-null="true"/>
+
+        <many-to-one
+              name="dokument"
+              column="dokumentId"
+              class="no.statkart.skif.storetest.domain.tinglysing.Dokument"
+              access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
+              foreign-key="FK_Rettsstift_Dokument">
+           <meta attribute="bubble-ref"/>
+        </many-to-one>
+
+        <set name="beloep" table="beloep" access="property" lazy="false" cascade="all,delete-orphan">
+            <key column="rettsstiftelseId"/>
+            <composite-element class="no.statkart.skif.storetest.domain.tinglysing.kobling.Beloep">
+                <property name="rolle"/>
+                <property name="beloepsverdi" type="big_decimal" not-null="true"/>
+                <property name="valuta" type="string" not-null="true"/>
+                <property name="beloepstekst" type="string"/>
+            </composite-element>
+        </set>
+
         <set name="personKoblinger" table="Rettsstiftelse_Person_Kobling" cascade="all,delete-orphan">
             <key column="rettsstiftelseId"/>
             <composite-element class="no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseTilPersonKobling">
@@ -21,6 +42,21 @@
                       class="no.statkart.skif.storetest.domain.tinglysing.Person"
                       access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
                       foreign-key="FK_Rettsstift_Person">
+                   <meta attribute="bubble-ref"/>
+                </many-to-one>
+            </composite-element>
+        </set>
+
+        <set name="andelKoblinger" table="Rettsstiftelse_Andel_Kobling" cascade="all,delete-orphan">
+            <key column="rettsstiftelseId"/>
+            <composite-element class="no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseTilAndelKobling">
+                <property name="rolle"/>
+                <many-to-one
+                      name="andel"
+                      column="andelId"
+                      class="no.statkart.skif.storetest.domain.tinglysing.AndelIMatrikkelenhet"
+                      access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
+                      foreign-key="FK_Rettsstift_Andel">
                    <meta attribute="bubble-ref"/>
                 </many-to-one>
             </composite-element>
