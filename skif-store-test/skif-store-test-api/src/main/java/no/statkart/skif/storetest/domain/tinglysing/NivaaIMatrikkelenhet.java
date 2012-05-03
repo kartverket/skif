@@ -7,7 +7,7 @@ import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
  * @since 2.1
  */
 public class NivaaIMatrikkelenhet extends AbstractStoreTestBubble {
-    private MatrikkelenhetId matrikkelenhetId;
+    private MatrikkelenhetId<?> matrikkelenhetId;
     private MatrikkelenhetsnivaaKodeId matrikkelenhetsnivaaKodeId;
 
     @Override
@@ -15,11 +15,11 @@ public class NivaaIMatrikkelenhet extends AbstractStoreTestBubble {
         return (NivaaIMatrikkelenhetId<?>) super.getId();
     }
 
-    public MatrikkelenhetId getMatrikkelenhetId() {
+    public MatrikkelenhetId<?> getMatrikkelenhetId() {
         return matrikkelenhetId;
     }
 
-    public void setMatrikkelenhetId(MatrikkelenhetId matrikkelenhetId) {
+    public void setMatrikkelenhetId(MatrikkelenhetId<?> matrikkelenhetId) {
         this.matrikkelenhetId = matrikkelenhetId;
     }
 

@@ -10,19 +10,57 @@ import no.statkart.skif.mockup.TestNumber;
 @Singleton
 public class PersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<Long>> {
     private final PersonId kartverket;
+    private final PersonId<?> id_21075442340;
+    private final PersonId<?> id_10063843747;
+    private final PersonId<?> id_16046936004;
+    private final PersonId<?> id_9055741147;
+    private final PersonId<?> id_25075044324;
+    private final PersonId<?> id_4124746936;
+    private final PersonId<?> id_25106834507;
+    private final PersonId<?> id_12046433511;
+    private final PersonId<?> id_20065036569;
+    private final PersonId<?> id_22086442993;
+    private final PersonId<?> id_15116848772;
+    private final PersonId<?> id_29107235289;
+    private final PersonId<?> id_958311222;
+    private final PersonId<?> id_21126946969;
 
     @Inject
     public PersonMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator) {
         super(store, testNumber, testIdGenerator);
         kartverket = getNextId(PersonId.class);
-    }
-
-    public PersonId getKartverket() {
-        return kartverket;
+        id_25075044324 = getNextId(PersonId.class);
+        id_25106834507 = getNextId(PersonId.class);
+        id_20065036569 = getNextId(PersonId.class);
+        id_21075442340 = getNextId(PersonId.class);
+        id_10063843747 = getNextId(PersonId.class);
+        id_12046433511 = getNextId(PersonId.class);
+        id_9055741147 = getNextId(PersonId.class);
+        id_22086442993 = getNextId(PersonId.class);
+        id_4124746936 = getNextId(PersonId.class);
+        id_15116848772 = getNextId(PersonId.class);
+        id_16046936004 = getNextId(PersonId.class);
+        id_958311222 = getNextId(PersonId.class);
+        id_21126946969 = getNextId(PersonId.class);
+        id_29107235289 = getNextId(PersonId.class);
     }
 
     public void createAllMockups() {
         store.insert(createPerson(kartverket, "971040238", "STATENS KARTVERK"));
+        store.insert(createPerson(id_25075044324, "25075044324", "KIRKEEIDE HÅVARD"));
+        store.insert(createPerson(id_25106834507, "25106834507", "BØE HALVARD"));
+        store.insert(createPerson(id_20065036569, "20065036569", "BØE RUNE"));
+        store.insert(createPerson(id_21075442340, "21075442340", "BØ RIKARD DAVID"));
+        store.insert(createPerson(id_10063843747, "10063843747", "BØ JENS"));
+        store.insert(createPerson(id_12046433511, "12046433511", "BØ JENS TORE"));
+        store.insert(createPerson(id_9055741147, "9055741147", "BØ KLEMET"));
+        store.insert(createPerson(id_22086442993, "22086442993", "BØ SIGURD"));
+        store.insert(createPerson(id_4124746936, "4124746936", "MOLLAND EIVIND"));
+        store.insert(createPerson(id_15116848772, "15116848772", "HÅHEIM FRANK IVAR"));
+        store.insert(createPerson(id_16046936004, "16046936004", "HÅHEIM LINE ERIKA BØ"));
+        store.insert(createPerson(id_958311222, "958311222", "BØASÆTRA HYTTEFELT ANS"));
+        store.insert(createPerson(id_21126946969, "21126946969", "SELJESET DAG JOHNNY"));
+        store.insert(createPerson(id_29107235289, "29107235289", "FLUSUND BEATE PAULSEN"));
     }
 
     private Person createPerson(PersonId<?> id, String ident, String navn) {
@@ -31,5 +69,65 @@ public class PersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<L
         person.setIdent(ident);
         person.setNavn(navn);
         return person;
+    }
+
+    public PersonId getKartverket() {
+        return kartverket;
+    }
+
+    public PersonId<?> getId_21075442340() {
+        return id_21075442340;
+    }
+
+    public PersonId<?> getId_10063843747() {
+        return id_10063843747;
+    }
+
+    public PersonId<?> getId_16046936004() {
+        return id_16046936004;
+    }
+
+    public PersonId<?> getId_9055741147() {
+        return id_9055741147;
+    }
+
+    public PersonId<?> getId_25075044324() {
+        return id_25075044324;
+    }
+
+    public PersonId<?> getId_4124746936() {
+        return id_4124746936;
+    }
+
+    public PersonId<?> getId_25106834507() {
+        return id_25106834507;
+    }
+
+    public PersonId<?> getId_12046433511() {
+        return id_12046433511;
+    }
+
+    public PersonId<?> getId_20065036569() {
+        return id_20065036569;
+    }
+
+    public PersonId<?> getId_22086442993() {
+        return id_22086442993;
+    }
+
+    public PersonId<?> getId_15116848772() {
+        return id_15116848772;
+    }
+
+    public PersonId<?> getId_29107235289() {
+        return id_29107235289;
+    }
+
+    public PersonId<?> getId_958311222() {
+        return id_958311222;
+    }
+
+    public PersonId<?> getId_21126946969() {
+        return id_21126946969;
     }
 }

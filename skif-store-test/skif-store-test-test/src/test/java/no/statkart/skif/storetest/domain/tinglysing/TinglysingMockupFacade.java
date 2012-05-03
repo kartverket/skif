@@ -9,7 +9,13 @@ import no.statkart.skif.mockup.AbstractMockupFacade;
 public class TinglysingMockupFacade extends AbstractMockupFacade {
 
     @Inject
-    private PersonMockupFactory personMockupFactory;
+    private AndelIMatrikkelenhetMockupFactory andelIMatrikkelenhetMockupFactory;
+
+    @Inject
+    private DokumentMockupFactory dokumentMockupFactory;
+
+    @Inject
+    private HjemmelForPersonMockupFactory hjemmelForPersonMockupFactory;
 
     @Inject
     private KommuneMockupFactory kommuneMockupFactory;
@@ -17,8 +23,14 @@ public class TinglysingMockupFacade extends AbstractMockupFacade {
     @Inject
     private MatrikkelenhetMockupFactory matrikkelenhetMockupFactory;
 
-    public PersonMockupFactory getPersonMockupFactory() {
-        return personMockupFactory;
+    @Inject
+    private NivaaIMatrikkelenhetMockupFactory nivaaIMatrikkelenhetMockupFactory;
+
+    @Inject
+    private PersonMockupFactory personMockupFactory;
+
+    public AndelIMatrikkelenhetMockupFactory getAndelIMatrikkelenhetMockupFactory() {
+        return andelIMatrikkelenhetMockupFactory;
     }
 
     public KommuneMockupFactory getKommuneMockupFactory() {
@@ -29,10 +41,30 @@ public class TinglysingMockupFacade extends AbstractMockupFacade {
         return matrikkelenhetMockupFactory;
     }
 
+    public NivaaIMatrikkelenhetMockupFactory getNivaaIMatrikkelenhetMockupFactory() {
+        return nivaaIMatrikkelenhetMockupFactory;
+    }
+
+    public PersonMockupFactory getPersonMockupFactory() {
+        return personMockupFactory;
+    }
+
+    public DokumentMockupFactory getDokumentMockupFactory() {
+        return dokumentMockupFactory;
+    }
+
+    public HjemmelForPersonMockupFactory getHjemmelForPersonMockupFactory() {
+        return hjemmelForPersonMockupFactory;
+    }
+
     @Override
     public void createAllMockups() {
         personMockupFactory.createAllMockups();
         kommuneMockupFactory.createAllMockups();
         matrikkelenhetMockupFactory.createAllMockups();
+        nivaaIMatrikkelenhetMockupFactory.createAllMockups();
+        andelIMatrikkelenhetMockupFactory.createAllMockups();
+        dokumentMockupFactory.createAllMockups();
+        hjemmelForPersonMockupFactory.createAllMockups();
     }
 }
