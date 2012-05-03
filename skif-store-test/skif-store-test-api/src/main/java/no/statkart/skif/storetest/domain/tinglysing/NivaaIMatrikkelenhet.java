@@ -27,6 +27,10 @@ public class NivaaIMatrikkelenhet extends AbstractStoreTestBubble {
         return matrikkelenhetsnivaaKodeId;
     }
 
+    public MatrikkelenhetsnivaaKode getMatrikkelenhetsnivaaKode() {
+        return store().get(matrikkelenhetsnivaaKodeId);
+    }
+
     public void setMatrikkelenhetsnivaaKodeId(MatrikkelenhetsnivaaKodeId matrikkelenhetsnivaaKodeId) {
         this.matrikkelenhetsnivaaKodeId = matrikkelenhetsnivaaKodeId;
     }
