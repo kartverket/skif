@@ -43,12 +43,12 @@ public class HjemmelForPerson extends Hjemmel {
         return store().get(solgtAndelIds);
     }
 
-    public Set<Beloep> getVederlag() {
-        return vederlag;
+    public Beloep getVederlag() {
+        return vederlag.isEmpty() ? null : vederlag.iterator().next();
     }
 
-    public void setVederlag(Set<Beloep> vederlag) {
+    public void setVederlag(Beloep vederlag) {
         this.vederlag.clear();
-        this.vederlag.addAll(vederlag);
+        this.vederlag.add(vederlag);
     }
 }
