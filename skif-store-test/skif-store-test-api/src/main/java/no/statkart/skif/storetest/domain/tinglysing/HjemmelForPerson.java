@@ -6,14 +6,15 @@ import no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseBeloep
 
 import java.util.Set;
 
-public class Hjemmelsinformasjon extends Rettsstiftelse {
+public class HjemmelForPerson extends Hjemmel {
     private Set<AndelIMatrikkelenhetId<?>> kjoeptAndelIds = rettsstiftelseAndelIdsKoblinger.get(RettsstiftelseAndelRolle.KJOEPT);
     private Set<AndelIMatrikkelenhetId<?>> solgtAndelIds = rettsstiftelseAndelIdsKoblinger.get(RettsstiftelseAndelRolle.SOLGT);
     private Set<Beloep> vederlag = rettsstiftelseBeloep.get(RettsstiftelseBeloepRolle.VEDERLAG);
+    private String omsetningstype = null; // TODO: Implementer når Christian har sjekka inn støtte for koder
 
     @Override
-    public HjemmelsinformasjonId<?> getId() {
-        return (HjemmelsinformasjonId<?>) super.getId();
+    public HjemmelForPersonId<?> getId() {
+        return (HjemmelForPersonId<?>) super.getId();
     }
 
     public Set<AndelIMatrikkelenhetId<?>> getKjoeptAndelIds() {

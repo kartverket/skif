@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.persistence.hibernate.type.tinglysing;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.multikobling.ServituttId;
-import no.statkart.skif.storetest.domain.tinglysing.HjemmelsinformasjonId;
+import no.statkart.skif.storetest.domain.tinglysing.HjemmelForPersonId;
 
 public class HjemmelsinformasjonIdType extends RettsstiftelseIdType {
     @Override
@@ -12,6 +12,6 @@ public class HjemmelsinformasjonIdType extends RettsstiftelseIdType {
 
     @Override
     protected Object createPrototypeId(Object value, SnapshotVersion snapshotTime) {
-        return new HjemmelsinformasjonId((Long)value, snapshotTime);
+        return new HjemmelForPersonId((Long)value, snapshotTime);
     }
 }
