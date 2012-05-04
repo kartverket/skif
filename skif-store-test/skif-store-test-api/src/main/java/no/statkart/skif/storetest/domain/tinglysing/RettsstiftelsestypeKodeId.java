@@ -22,10 +22,6 @@ public class RettsstiftelsestypeKodeId extends StoreTestDbKodeId<Rettsstiftelses
         super(value, snapshotVersion);
     }
 
-    public Long getValue() {
-        return (Long) super.getValue();
-    }
-
     protected static RettsstiftelsestypeKodeId define(long idValue) {
         return kodeSupport.defineId(idValue);
     }

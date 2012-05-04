@@ -70,10 +70,6 @@ public class RettstypeKodeId extends StoreTestDbKodeId<RettstypeKode> {
     public static final RettstypeKodeId VN = define(55);
     public static final RettstypeKodeId SD = define(56);
 
-    public Long getValue() {
-        return (Long) super.getValue();
-    }
-
     public RettstypeKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
