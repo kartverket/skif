@@ -6,7 +6,6 @@ import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestIdGenerator;
 import no.statkart.skif.mockup.TestNumber;
-import no.statkart.skif.storetest.domain.tinglysing.kobling.Beloep;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +25,7 @@ public class HjemmelForMatrikkelenhetMockupFactory extends AbstractMockupFactory
     }
 
     public void createAllMockups() {
-        store.insert(createHjemmelForMatrikkelenhet(id_36405749, "JS_JSA", dokumentMockupFactory.getId_100394_200_2010_2(), createNyeAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_1_14() /* Nye: id_36405749, "JS_JSA */
+        store.insert(createHjemmelForMatrikkelenhet(id_36405749, RettsstiftelsestypeKodeId.JS_JSA, dokumentMockupFactory.getId_100394_200_2010_2(), createNyeAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_1_14() /* Nye: id_36405749, "JS_JSA */
                 , andelIMatrikkelenhetMockupFactory.getId_4004000_1_20() /* Nye: id_36405749, "JS_JSA */
                 , andelIMatrikkelenhetMockupFactory.getId_4004000_1_12() /* Nye: id_36405749, "JS_JSA */
                 , andelIMatrikkelenhetMockupFactory.getId_4004000_1_15() /* Nye: id_36405749, "JS_JSA */
@@ -64,7 +63,7 @@ public class HjemmelForMatrikkelenhetMockupFactory extends AbstractMockupFactory
         return utgaatteAndelIds;
     }
 
-    private HjemmelForMatrikkelenhet createHjemmelForMatrikkelenhet(HjemmelForMatrikkelenhetId<?> id, String rettsstiftelsestype, DokumentId dokumentId, Set<AndelIMatrikkelenhetId<?>> nyeAndelIds, Set<AndelIMatrikkelenhetId<?>> utgaatteAndelIds) {
+    private HjemmelForMatrikkelenhet createHjemmelForMatrikkelenhet(HjemmelForMatrikkelenhetId<?> id, RettsstiftelsestypeKodeId rettsstiftelsestype, DokumentId dokumentId, Set<AndelIMatrikkelenhetId<?>> nyeAndelIds, Set<AndelIMatrikkelenhetId<?>> utgaatteAndelIds) {
         HjemmelForMatrikkelenhet hjemmelForMatrikkelenhet = new HjemmelForMatrikkelenhet();
         hjemmelForMatrikkelenhet.setId(id);
         hjemmelForMatrikkelenhet.setRettsstiftelsestype(rettsstiftelsestype);

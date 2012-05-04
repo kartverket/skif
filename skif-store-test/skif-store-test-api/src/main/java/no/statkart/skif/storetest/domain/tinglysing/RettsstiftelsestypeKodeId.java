@@ -12,9 +12,10 @@ public class RettsstiftelsestypeKodeId extends StoreTestDbKodeId<Rettsstiftelses
     private static StoreTestDbKodeSupport<RettsstiftelsestypeKodeId> kodeSupport = new StoreTestDbKodeSupport<RettsstiftelsestypeKodeId>(RettsstiftelsestypeKodeId.class, 1L);
 
     public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
-    public static RettsstiftelsestypeKodeId HJG = define(1); // TODO: finn id etter at loadTestdata.sql er laget
-    public static RettsstiftelsestypeKodeId FES = define(2); // TODO: finn id etter at loadTestdata.sql er laget
-    public static RettsstiftelsestypeKodeId PAF = define(100); // TODO: finn id etter at loadTestdata.sql er laget
+    public static RettsstiftelsestypeKodeId HJ_HJG = define(1); // TODO: finn id etter at loadTestdata.sql er laget
+    public static RettsstiftelsestypeKodeId FE_FES = define(2); // TODO: finn id etter at loadTestdata.sql er laget
+    public static final RettsstiftelsestypeKodeId JS_JSA = define(3);  // TODO: finn id etter at loadTestdata.sql er laget
+    public static RettsstiftelsestypeKodeId PA_PAF = define(100); // TODO: finn id etter at loadTestdata.sql er laget
 
     public RettsstiftelsestypeKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);

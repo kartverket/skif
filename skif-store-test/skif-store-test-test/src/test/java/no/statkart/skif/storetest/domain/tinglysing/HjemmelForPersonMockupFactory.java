@@ -28,9 +28,9 @@ public class HjemmelForPersonMockupFactory extends AbstractMockupFactory<TestIdG
     }
 
     public void createAllMockups() {
-        store.insert(createHjemmelForPerson(id_23532294, "FE_FES", dokumentMockupFactory.getId_2026_56_2002_1()
+        store.insert(createHjemmelForPerson(id_23532294, RettsstiftelsestypeKodeId.FE_FES, dokumentMockupFactory.getId_2026_56_2002_1()
                 , createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_10_1()) /* Kjøpte: id_23532294, "FE_FES */, createSolgtAndelIds(), createVederlag(0)));
-        store.insert(createHjemmelForPerson(id_26288865, "FE_FES", dokumentMockupFactory.getId_2338_56_2002_3(), createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_11_2() /* Kjøpte: id_26288865, "FE_FES */
+        store.insert(createHjemmelForPerson(id_26288865, RettsstiftelsestypeKodeId.FE_FES, dokumentMockupFactory.getId_2338_56_2002_3(), createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_11_2() /* Kjøpte: id_26288865, "FE_FES */
                 , andelIMatrikkelenhetMockupFactory.getId_4004000_11_1() /* Kjøpte: id_26288865, "FE_FES */), createSolgtAndelIds(), createVederlag(0)));
     }
 
@@ -55,7 +55,7 @@ public class HjemmelForPersonMockupFactory extends AbstractMockupFactory<TestIdG
         return beloep;
     }
 
-    private HjemmelForPerson createHjemmelForPerson(HjemmelForPersonId<?> id, String rettsstiftelsestype, DokumentId dokumentId, Set<AndelIMatrikkelenhetId<?>> kjoeptAndelIds, Set<AndelIMatrikkelenhetId<?>> solgtAndelIds, Beloep vederlag) {
+    private HjemmelForPerson createHjemmelForPerson(HjemmelForPersonId<?> id, RettsstiftelsestypeKodeId rettsstiftelsestype, DokumentId dokumentId, Set<AndelIMatrikkelenhetId<?>> kjoeptAndelIds, Set<AndelIMatrikkelenhetId<?>> solgtAndelIds, Beloep vederlag) {
         HjemmelForPerson hjemmelForPerson = new HjemmelForPerson();
         hjemmelForPerson.setId(id);
         hjemmelForPerson.setRettsstiftelsestype(rettsstiftelsestype);

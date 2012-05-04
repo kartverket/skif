@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class Rettsstiftelse extends AbstractStoreTestBubble {
 
-    protected String rettsstiftelsestype;
+    protected RettsstiftelsestypeKodeId rettsstiftelsestype;
     protected DokumentId<?> dokumentId;
 
     protected HashKoblingMultimap<RettsstiftelsePersonRolle, PersonId<?>, RettsstiftelseTilPersonKobling> rettsstiftelsePersonIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilPersonKobling.KOBLING_FACTORY);
@@ -21,11 +21,11 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
         return (RettsstiftelseId<?>) super.getId();
     }
 
-    public String getRettsstiftelsestype() {
+    public RettsstiftelsestypeKodeId getRettsstiftelsestype() {
         return rettsstiftelsestype;
     }
 
-    public void setRettsstiftelsestype(String rettsstiftelsestype) {
+    public void setRettsstiftelsestype(RettsstiftelsestypeKodeId rettsstiftelsestype) {
         this.rettsstiftelsestype = rettsstiftelsestype;
     }
 
