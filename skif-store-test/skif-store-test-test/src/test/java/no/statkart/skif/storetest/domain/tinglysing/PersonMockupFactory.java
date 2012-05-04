@@ -24,6 +24,8 @@ public class PersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<L
     private final PersonId<?> id_29107235289;
     private final PersonId<?> id_958311222;
     private final PersonId<?> id_21126946969;
+    // FA_FAR
+    private final PersonId<?> id_963989202;
 
     @Inject
     public PersonMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator) {
@@ -43,6 +45,8 @@ public class PersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<L
         id_958311222 = getNextId(PersonId.class);
         id_21126946969 = getNextId(PersonId.class);
         id_29107235289 = getNextId(PersonId.class);
+        // FA_FAR
+        id_963989202 = getNextId(PersonId.class);
     }
 
     public void createAllMockups() {
@@ -61,6 +65,8 @@ public class PersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<L
         store.insert(createPerson(id_958311222, "958311222", "BØASÆTRA HYTTEFELT ANS"));
         store.insert(createPerson(id_21126946969, "21126946969", "SELJESET DAG JOHNNY"));
         store.insert(createPerson(id_29107235289, "29107235289", "FLUSUND BEATE PAULSEN"));
+        // FA_FAR
+        store.insert(createPerson(id_963989202, "963989202", "STRYN KOMMUNE"));
     }
 
     private Person createPerson(PersonId<?> id, String ident, String navn) {
@@ -129,5 +135,9 @@ public class PersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<L
 
     public PersonId<?> getId_21126946969() {
         return id_21126946969;
+    }
+
+    public PersonId<?> getId_963989202() {
+        return id_963989202;
     }
 }

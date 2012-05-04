@@ -140,6 +140,11 @@ public class HashKoblingMultimap<R, V, K extends Kobling<R, V>> extends Forwardi
 
         @Override
         public void clear() {
+            // TODO: Er det trygt å gjere dette?
+            if (delegate == null) {
+                delegate = HashKoblingMultimap.this.delegate.get(rolle);
+            }
+
             delegate.clear();
         }
 

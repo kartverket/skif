@@ -8,9 +8,13 @@ import no.statkart.skif.mockup.TestIdGenerator;
 import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.storetest.domain.tinglysing.kobling.Beloep;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author Knut Inge Bøe
+ */
 @Singleton
 public class HjemmelForPersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<Long>> {
     private final AndelIMatrikkelenhetMockupFactory andelIMatrikkelenhetMockupFactory;
@@ -29,9 +33,9 @@ public class HjemmelForPersonMockupFactory extends AbstractMockupFactory<TestIdG
 
     public void createAllMockups() {
         store.insert(createHjemmelForPerson(id_23532294, RettsstiftelsestypeKodeId.FE_FES, dokumentMockupFactory.getId_2026_56_2002_1()
-                , createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_10_1()) /* Kjøpte: id_23532294, "FE_FES */, createSolgtAndelIds(), createVederlag(0)));
+                , createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_10_1()) /* Kjøpte: id_23532294, "FE_FES */, createSolgtAndelIds(), createVederlag(0,"NOK")));
         store.insert(createHjemmelForPerson(id_26288865, RettsstiftelsestypeKodeId.FE_FES, dokumentMockupFactory.getId_2338_56_2002_3(), createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_11_2() /* Kjøpte: id_26288865, "FE_FES */
-                , andelIMatrikkelenhetMockupFactory.getId_4004000_11_1() /* Kjøpte: id_26288865, "FE_FES */), createSolgtAndelIds(), createVederlag(0)));
+                , andelIMatrikkelenhetMockupFactory.getId_4004000_11_1() /* Kjøpte: id_26288865, "FE_FES */), createSolgtAndelIds(), createVederlag(0,"NOK")));
     }
 
     private Set<AndelIMatrikkelenhetId<?>> createKjoeptAndelIds(AndelIMatrikkelenhetId<?>... andelIds) {
@@ -50,8 +54,10 @@ public class HjemmelForPersonMockupFactory extends AbstractMockupFactory<TestIdG
         return solgtAndelIds;
     }
 
-    private Beloep createVederlag(int vederlag) {
+    private Beloep createVederlag(long vederlag, String valuta) {
         Beloep beloep = new Beloep();
+        beloep.setBeloepsverdi(BigDecimal.valueOf(vederlag));
+        beloep.setValuta(valuta);
         return beloep;
     }
 
@@ -60,9 +66,9 @@ public class HjemmelForPersonMockupFactory extends AbstractMockupFactory<TestIdG
         hjemmelForPerson.setId(id);
         hjemmelForPerson.setRettsstiftelsestype(rettsstiftelsestype);
         hjemmelForPerson.setDokumentId(dokumentId);
-//        hjemmelForPerson.setKjoeptAndelIds(kjoeptAndelIds);
-//        hjemmelForPerson.setSolgtAndelIds(solgtAndelIds);
-//        hjemmelForPerson.setVederlag(vederlag);
+        hjemmelForPerson.setKjoeptAndelIds(kjoeptAndelIds);
+        hjemmelForPerson.setSolgtAndelIds(solgtAndelIds);
+        hjemmelForPerson.setVederlag(vederlag);
         return hjemmelForPerson;
     }
 
