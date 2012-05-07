@@ -75,6 +75,34 @@ public class TinglysingTest extends StoreTestTestCase {
             }
             assertTrue(nivaaIMatrikkelenhetFunnet);
         }
+        {
+        // id_14814744, HJ_HJG
+            final HjemmelForPerson hjemmelForPerson = readFacadeTinglysing.getStore().get(readFacadeTinglysing.getHjemmelForPersonMockupFactory().getId_14814744());
+            assertTrue(hjemmelForPerson.getRettsstiftelsestype().equals(RettsstiftelsestypeKodeId.HJ_HJG));
+            boolean personFunnet = false;
+            for (AndelIMatrikkelenhet andelIMatrikkelenhet : readFacadeTinglysing.getStore().get(hjemmelForPerson.getKjoeptAndelIds())) {
+                final Person person = readFacadeTinglysing.getStore().get(andelIMatrikkelenhet.getAndelseierPersonId());
+                personFunnet = (personFunnet || (person.getNavn().equalsIgnoreCase("BERENTZEN JENNY MARGIT")));
+            }
+            assertTrue(personFunnet);
+            final Beloep beloep = hjemmelForPerson.getVederlag();
+            assertTrue(beloep.getValuta().equalsIgnoreCase("NOK"));
+            assertTrue(beloep.getBeloepsverdi().longValue() == 0);
+        }
+        {
+        // id_14773753, TF_HJF
+            final HjemmelForPerson hjemmelForPerson = readFacadeTinglysing.getStore().get(readFacadeTinglysing.getHjemmelForPersonMockupFactory().getId_14773753());
+            assertTrue(hjemmelForPerson.getRettsstiftelsestype().equals(RettsstiftelsestypeKodeId.TF_HJF));
+            boolean personFunnet = false;
+            for (AndelIMatrikkelenhet andelIMatrikkelenhet : readFacadeTinglysing.getStore().get(hjemmelForPerson.getKjoeptAndelIds())) {
+                final Person person = readFacadeTinglysing.getStore().get(andelIMatrikkelenhet.getAndelseierPersonId());
+                personFunnet = (personFunnet || (person.getNavn().equalsIgnoreCase("SIMONSEN INGRID MURI")));
+            }
+            assertTrue(personFunnet);
+            final Beloep beloep = hjemmelForPerson.getVederlag();
+            assertTrue(beloep.getValuta().equalsIgnoreCase("NOK"));
+            assertTrue(beloep.getBeloepsverdi().longValue() == 0);
+        }
     }
 
 }

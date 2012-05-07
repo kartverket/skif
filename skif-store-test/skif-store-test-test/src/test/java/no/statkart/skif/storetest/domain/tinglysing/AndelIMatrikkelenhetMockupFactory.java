@@ -47,6 +47,15 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
     private final AndelIMatrikkelenhetId<?> id_4025979_1_7;
     private final AndelIMatrikkelenhetId<?> id_4025979_1_8;
     private final AndelIMatrikkelenhetId<?> id_4025979_1_9;
+    // HJ_HJG, TF_HJF
+    private final AndelIMatrikkelenhetId<?> id_2048150_10_1;
+    private final AndelIMatrikkelenhetId<?> id_2048150_1_1;
+    private final AndelIMatrikkelenhetId<?> id_2048150_1_2;
+    private final AndelIMatrikkelenhetId<?> id_2048150_1_3;
+    private final AndelIMatrikkelenhetId<?> id_2048150_1_4;
+    private final AndelIMatrikkelenhetId<?> id_2048150_1_5;
+    private final AndelIMatrikkelenhetId<?> id_2048150_1_6;
+    private final AndelIMatrikkelenhetId<?> id_2048150_1_7;
 
     @Inject
     public AndelIMatrikkelenhetMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator, NivaaIMatrikkelenhetMockupFactory nivaaIMatrikkelenhetMockupFactory, PersonMockupFactory personMockupFactory) {
@@ -86,6 +95,15 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         id_4025979_1_7 = getNextId(AndelIMatrikkelenhetId.class);
         id_4025979_1_8 = getNextId(AndelIMatrikkelenhetId.class);
         id_4025979_1_9 = getNextId(AndelIMatrikkelenhetId.class);
+        // HJ_HJG, TF_HJF
+        id_2048150_10_1 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2048150_1_1 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2048150_1_2 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2048150_1_3 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2048150_1_4 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2048150_1_5 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2048150_1_6 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2048150_1_7 = getNextId(AndelIMatrikkelenhetId.class);
     }
 
     public void createAllMockups() {
@@ -122,6 +140,15 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         store.insert(createAndelIMatrikkelenhet(id_4025979_1_7, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_358_0_0_G(), 5, 20));
         store.insert(createAndelIMatrikkelenhet(id_4025979_1_8, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_10_2_0_F(), 5, 20));
         store.insert(createAndelIMatrikkelenhet(id_4025979_1_9, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), 5, 20));
+        // HJ_HJG, TF_HJF
+        store.insert(createAndelIMatrikkelenhet(id_2048150_10_1, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_F(), personMockupFactory.getId_13093745633(), 1, 1));
+        store.insert(createAndelIMatrikkelenhet(id_2048150_1_1, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_13090844371(), 1, 1));
+        store.insert(createAndelIMatrikkelenhet(id_2048150_1_2, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_12093043071(), 1, 5));
+        store.insert(createAndelIMatrikkelenhet(id_2048150_1_3, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_19113238251(), 1, 5));
+        store.insert(createAndelIMatrikkelenhet(id_2048150_1_4, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_25023537225(), 1, 5));
+        store.insert(createAndelIMatrikkelenhet(id_2048150_1_5, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_10063843747(), 1, 5));
+        store.insert(createAndelIMatrikkelenhet(id_2048150_1_6, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_15124042140(), 1, 5));
+        store.insert(createAndelIMatrikkelenhet(id_2048150_1_7, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_16094440487(), 1, 5));
     }
 
     private AndelIMatrikkelenhet createAndelIMatrikkelenhet(AndelIMatrikkelenhetId<?> id, NivaaIMatrikkelenhetId nivaaIMatrikkelenhetId, NivaaIMatrikkelenhetId andelseierNivaaIMatrikkelenhetId, int teller, int nevner) {
@@ -272,5 +299,37 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
 
     public AndelIMatrikkelenhetId<?> getId_4025979_1_9() {
         return id_4025979_1_9;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2048150_10_1() {
+        return id_2048150_10_1;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2048150_1_1() {
+        return id_2048150_1_1;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2048150_1_2() {
+        return id_2048150_1_2;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2048150_1_3() {
+        return id_2048150_1_3;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2048150_1_4() {
+        return id_2048150_1_4;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2048150_1_5() {
+        return id_2048150_1_5;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2048150_1_6() {
+        return id_2048150_1_6;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2048150_1_7() {
+        return id_2048150_1_7;
     }
 }

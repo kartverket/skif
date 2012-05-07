@@ -19,23 +19,49 @@ import java.util.Set;
 public class HjemmelForPersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<Long>> {
     private final AndelIMatrikkelenhetMockupFactory andelIMatrikkelenhetMockupFactory;
     private final DokumentMockupFactory dokumentMockupFactory;
+    // FE_FES
     private final HjemmelForPersonId<?> id_23532294;
     private final HjemmelForPersonId<?> id_26288865;
+    // HJ_HJG, TF_HJF
+    private final HjemmelForPersonId<?> id_14773753;
+    private final HjemmelForPersonId<?> id_14814744;
+    private final HjemmelForPersonId<?> id_36616289;
 
     @Inject
     public HjemmelForPersonMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator, AndelIMatrikkelenhetMockupFactory andelIMatrikkelenhetMockupFactory, DokumentMockupFactory dokumentMockupFactory) {
         super(store, testNumber, testIdGenerator);
         this.andelIMatrikkelenhetMockupFactory = andelIMatrikkelenhetMockupFactory;
         this.dokumentMockupFactory = dokumentMockupFactory;
+        // FE_FES
         id_23532294 = getNextId(HjemmelForPersonId.class);
         id_26288865 = getNextId(HjemmelForPersonId.class);
+        // HJ_HJG, TF_HJF
+        id_14814744 = getNextId(HjemmelForPersonId.class);
+        id_14773753 = getNextId(HjemmelForPersonId.class);
+        id_36616289 = getNextId(HjemmelForPersonId.class);
     }
 
     public void createAllMockups() {
+        // FE_FES
         store.insert(createHjemmelForPerson(id_23532294, RettsstiftelsestypeKodeId.FE_FES, dokumentMockupFactory.getId_2026_56_2002_1()
-                , createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_10_1()) /* Kjøpte: id_23532294, "FE_FES */, createSolgtAndelIds(), createVederlag(0,"NOK")));
-        store.insert(createHjemmelForPerson(id_26288865, RettsstiftelsestypeKodeId.FE_FES, dokumentMockupFactory.getId_2338_56_2002_3(), createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_11_2() /* Kjøpte: id_26288865, "FE_FES */
-                , andelIMatrikkelenhetMockupFactory.getId_4004000_11_1() /* Kjøpte: id_26288865, "FE_FES */), createSolgtAndelIds(), createVederlag(0,"NOK")));
+                , createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_10_1()) /* Kjøpte: id_23532294, "FE_FES */
+                , createSolgtAndelIds(), createVederlag(0, "NOK")));
+        store.insert(createHjemmelForPerson(id_26288865, RettsstiftelsestypeKodeId.FE_FES, dokumentMockupFactory.getId_2338_56_2002_3()
+                , createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_4004000_11_2() /* Kjøpte: id_26288865, "FE_FES */
+                , andelIMatrikkelenhetMockupFactory.getId_4004000_11_1() /* Kjøpte: id_26288865, "FE_FES */)
+                , createSolgtAndelIds(), createVederlag(0, "NOK")));
+        // HJ_HJG, TF_HJF
+        store.insert(createHjemmelForPerson(id_14814744, RettsstiftelsestypeKodeId.HJ_HJG, dokumentMockupFactory.getId_2567_56_1995_1()
+                , createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_2048150_1_2() /* Kjøpte: id_14814744, HJ_HJG */
+                , andelIMatrikkelenhetMockupFactory.getId_2048150_1_6() /* Kjøpte: id_14814744, HJ_HJG */
+                , andelIMatrikkelenhetMockupFactory.getId_2048150_1_3() /* Kjøpte: id_14814744, HJ_HJG */
+                , andelIMatrikkelenhetMockupFactory.getId_2048150_1_4() /* Kjøpte: id_14814744, HJ_HJG */)
+                , createSolgtAndelIds(andelIMatrikkelenhetMockupFactory.getId_2048150_1_1() /* Solgte: id_14814744, HJ_HJG */), createVederlag(0, "NOK")));
+        store.insert(createHjemmelForPerson(id_36616289, RettsstiftelsestypeKodeId.HJ_HJG, dokumentMockupFactory.getId_283560_200_2010_1()
+                , createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_2048150_1_7() /* Kjøpte: id_36616289, HJ_HJG */)
+                , createSolgtAndelIds(andelIMatrikkelenhetMockupFactory.getId_2048150_1_5() /* Solgte: id_36616289, HJ_HJG */), createVederlag(0, "NOK")));
+        store.insert(createHjemmelForPerson(id_14773753, RettsstiftelsestypeKodeId.TF_HJF, dokumentMockupFactory.getId_2782_56_1986_1()
+                , createKjoeptAndelIds(andelIMatrikkelenhetMockupFactory.getId_2048150_10_1() /* Kjøpte: id_14773753, TF_HJF */), createSolgtAndelIds(), createVederlag(0, "NOK")));
     }
 
     private Set<AndelIMatrikkelenhetId<?>> createKjoeptAndelIds(AndelIMatrikkelenhetId<?>... andelIds) {
@@ -78,5 +104,17 @@ public class HjemmelForPersonMockupFactory extends AbstractMockupFactory<TestIdG
 
     public HjemmelForPersonId<?> getId_26288865() {
         return id_26288865;
+    }
+
+    public HjemmelForPersonId<?> getId_14773753() {
+        return id_14773753;
+    }
+
+    public HjemmelForPersonId<?> getId_14814744() {
+        return id_14814744;
+    }
+
+    public HjemmelForPersonId<?> getId_36616289() {
+        return id_36616289;
     }
 }
