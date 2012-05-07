@@ -120,7 +120,7 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         store.insert(createAndelIMatrikkelenhet(id_4025979_1_5, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_195_0_4_G(), 1, 20));
         store.insert(createAndelIMatrikkelenhet(id_4025979_1_6, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_195_0_5_G(), 1, 20));
         store.insert(createAndelIMatrikkelenhet(id_4025979_1_7, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_358_0_0_G(), 5, 20));
-        store.insert(createAndelIMatrikkelenhet(id_4025979_1_8, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_10_2_0_G(), 5, 20));
+        store.insert(createAndelIMatrikkelenhet(id_4025979_1_8, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_10_2_0_F(), 5, 20));
         store.insert(createAndelIMatrikkelenhet(id_4025979_1_9, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), 5, 20));
     }
 

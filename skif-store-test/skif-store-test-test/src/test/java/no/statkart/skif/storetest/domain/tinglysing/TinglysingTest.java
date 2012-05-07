@@ -71,7 +71,7 @@ public class TinglysingTest extends StoreTestTestCase {
             for (AndelIMatrikkelenhet andelIMatrikkelenhet : readFacadeTinglysing.getStore().get(hjemmelForMatrikkelenhet.getNyeAndelIds())) {
                 final NivaaIMatrikkelenhet nivaaIMatrikkelenhet = readFacadeTinglysing.getStore().get(andelIMatrikkelenhet.getAndelseierNivaaIMatrikkelenhetId());
                 final Matrikkelenhet matrikkelenhet = readFacadeTinglysing.getStore().get(nivaaIMatrikkelenhet.getMatrikkelenhetId());
-                nivaaIMatrikkelenhetFunnet = (nivaaIMatrikkelenhetFunnet || (matrikkelenhet.getBruksnummer() == 10 && matrikkelenhet.getFestenummer() == 2));
+                nivaaIMatrikkelenhetFunnet = (nivaaIMatrikkelenhetFunnet || (matrikkelenhet.getGaardsnummer() == 57 && matrikkelenhet.getBruksnummer() == 10 && matrikkelenhet.getFestenummer() == 2 && nivaaIMatrikkelenhet.getMatrikkelenhetsnivaaKodeId().equals(MatrikkelenhetsnivaaKodeId.Feste)));
             }
             assertTrue(nivaaIMatrikkelenhetFunnet);
         }

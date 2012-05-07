@@ -33,7 +33,7 @@ public class NivaaIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
     private final NivaaIMatrikkelenhetId<?> id_1449_57_195_0_4_G;
     private final NivaaIMatrikkelenhetId<?> id_1449_57_195_0_5_G;
     private final NivaaIMatrikkelenhetId<?> id_1449_57_358_0_0_G;
-    private final NivaaIMatrikkelenhetId<?> id_1449_57_10_2_0_G;
+    private final NivaaIMatrikkelenhetId<?> id_1449_57_10_2_0_F;
 
     @Inject
     public NivaaIMatrikkelenhetMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator, MatrikkelenhetMockupFactory matrikkelenhetMockupFactory) {
@@ -59,7 +59,7 @@ public class NivaaIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         id_1449_57_195_0_4_G = getNextId(NivaaIMatrikkelenhetId.class);
         id_1449_57_195_0_5_G = getNextId(NivaaIMatrikkelenhetId.class);
         id_1449_57_358_0_0_G = getNextId(NivaaIMatrikkelenhetId.class);
-        id_1449_57_10_2_0_G = getNextId(NivaaIMatrikkelenhetId.class);
+        id_1449_57_10_2_0_F = getNextId(NivaaIMatrikkelenhetId.class);
 }
 
     public void createAllMockups() {
@@ -83,7 +83,7 @@ public class NivaaIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         store.insert(createNivaaIMatrikkelenhet(id_1449_57_195_0_4_G, matrikkelenhetMockupFactory.getId_1449_57_195_0_4(),  MatrikkelenhetsnivaaKodeId.Grunn));
         store.insert(createNivaaIMatrikkelenhet(id_1449_57_195_0_5_G, matrikkelenhetMockupFactory.getId_1449_57_195_0_5(),  MatrikkelenhetsnivaaKodeId.Grunn));
         store.insert(createNivaaIMatrikkelenhet(id_1449_57_358_0_0_G, matrikkelenhetMockupFactory.getId_1449_57_358_0_0(),  MatrikkelenhetsnivaaKodeId.Grunn));
-        store.insert(createNivaaIMatrikkelenhet(id_1449_57_10_2_0_G, matrikkelenhetMockupFactory.getId_1449_57_10_2_0(),  MatrikkelenhetsnivaaKodeId.Grunn));
+        store.insert(createNivaaIMatrikkelenhet(id_1449_57_10_2_0_F, matrikkelenhetMockupFactory.getId_1449_57_10_2_0(),   MatrikkelenhetsnivaaKodeId.Feste));
     }
 
     private NivaaIMatrikkelenhet createNivaaIMatrikkelenhet(NivaaIMatrikkelenhetId<?> id, MatrikkelenhetId matrikkelenhetId, MatrikkelenhetsnivaaKodeId matrikkelenhetsnivaaKodeId) {
@@ -170,7 +170,7 @@ public class NivaaIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         return id_1449_57_358_0_0_G;
     }
 
-    public NivaaIMatrikkelenhetId<?> getId_1449_57_10_2_0_G() {
-        return id_1449_57_10_2_0_G;
+    public NivaaIMatrikkelenhetId<?> getId_1449_57_10_2_0_F() {
+        return id_1449_57_10_2_0_F;
     }
 }
