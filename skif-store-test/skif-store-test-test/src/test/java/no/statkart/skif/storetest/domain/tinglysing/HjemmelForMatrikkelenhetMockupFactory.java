@@ -88,7 +88,7 @@ public class HjemmelForMatrikkelenhetMockupFactory extends AbstractMockupFactory
     private HjemmelForMatrikkelenhet createHjemmelForMatrikkelenhet(HjemmelForMatrikkelenhetId<?> id, RettsstiftelsestypeKodeId rettsstiftelsestype, DokumentId dokumentId, Set<AndelIMatrikkelenhetId<?>> nyeAndelIds, Set<AndelIMatrikkelenhetId<?>> utgaatteAndelIds) {
         HjemmelForMatrikkelenhet hjemmelForMatrikkelenhet = new HjemmelForMatrikkelenhet();
         hjemmelForMatrikkelenhet.setId(id);
-        hjemmelForMatrikkelenhet.setRettsstiftelsestype(rettsstiftelsestype);
+        hjemmelForMatrikkelenhet.setRettsstiftelsestypeKodeId(rettsstiftelsestype);
         hjemmelForMatrikkelenhet.setDokumentId(dokumentId);
         hjemmelForMatrikkelenhet.setNyeAndelIds(nyeAndelIds);
         hjemmelForMatrikkelenhet.setUtgaatteAndelIds(utgaatteAndelIds);

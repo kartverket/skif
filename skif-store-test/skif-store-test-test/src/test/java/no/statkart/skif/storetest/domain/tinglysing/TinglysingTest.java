@@ -54,7 +54,7 @@ public class TinglysingTest extends StoreTestTestCase {
         {
             // id_36405749, JS_JSA
             final HjemmelForMatrikkelenhet hjemmelForMatrikkelenhet = readFacadeTinglysing.getStore().get(readFacadeTinglysing.getHjemmelForMatrikkelenhetMockupFactory().getId_36405749());
-            assertTrue(hjemmelForMatrikkelenhet.getRettsstiftelsestype().equals(RettsstiftelsestypeKodeId.JS_JSA));
+            assertTrue(hjemmelForMatrikkelenhet.getRettsstiftelsestypeKodeId().equals(RettsstiftelsestypeKodeId.JS_JSA));
             final Dokument dokument = readFacadeTinglysing.getStore().get(hjemmelForMatrikkelenhet.getDokumentId());
             assertTrue(dokument.getDokumentaar() == 2010);
             final AndelIMatrikkelenhet andelIMatrikkelenhet = readFacadeTinglysing.getStore().get(hjemmelForMatrikkelenhet.getNyeAndelIds().iterator().next());
@@ -64,7 +64,7 @@ public class TinglysingTest extends StoreTestTestCase {
         {
             // id_33124569, FA_FAR
             final HjemmelForMatrikkelenhet hjemmelForMatrikkelenhet = readFacadeTinglysing.getStore().get(readFacadeTinglysing.getHjemmelForMatrikkelenhetMockupFactory().getId_33124569());
-            assertTrue(hjemmelForMatrikkelenhet.getRettsstiftelsestype().equals(RettsstiftelsestypeKodeId.FA_FAR));
+            assertTrue(hjemmelForMatrikkelenhet.getRettsstiftelsestypeKodeId().equals(RettsstiftelsestypeKodeId.FA_FAR));
             final Dokument dokument = readFacadeTinglysing.getStore().get(hjemmelForMatrikkelenhet.getDokumentId());
             assertTrue(dokument.getDokumentaar() == 2007);
             boolean nivaaIMatrikkelenhetFunnet = false;
@@ -78,7 +78,7 @@ public class TinglysingTest extends StoreTestTestCase {
         {
         // id_14814744, HJ_HJG
             final HjemmelForPerson hjemmelForPerson = readFacadeTinglysing.getStore().get(readFacadeTinglysing.getHjemmelForPersonMockupFactory().getId_14814744());
-            assertTrue(hjemmelForPerson.getRettsstiftelsestype().equals(RettsstiftelsestypeKodeId.HJ_HJG));
+            assertTrue(hjemmelForPerson.getRettsstiftelsestypeKodeId().equals(RettsstiftelsestypeKodeId.HJ_HJG));
             boolean personFunnet = false;
             for (AndelIMatrikkelenhet andelIMatrikkelenhet : readFacadeTinglysing.getStore().get(hjemmelForPerson.getKjoeptAndelIds())) {
                 final Person person = readFacadeTinglysing.getStore().get(andelIMatrikkelenhet.getAndelseierPersonId());
@@ -92,7 +92,7 @@ public class TinglysingTest extends StoreTestTestCase {
         {
         // id_14773753, TF_HJF
             final HjemmelForPerson hjemmelForPerson = readFacadeTinglysing.getStore().get(readFacadeTinglysing.getHjemmelForPersonMockupFactory().getId_14773753());
-            assertTrue(hjemmelForPerson.getRettsstiftelsestype().equals(RettsstiftelsestypeKodeId.TF_HJF));
+            assertTrue(hjemmelForPerson.getRettsstiftelsestypeKodeId().equals(RettsstiftelsestypeKodeId.TF_HJF));
             boolean personFunnet = false;
             for (AndelIMatrikkelenhet andelIMatrikkelenhet : readFacadeTinglysing.getStore().get(hjemmelForPerson.getKjoeptAndelIds())) {
                 final Person person = readFacadeTinglysing.getStore().get(andelIMatrikkelenhet.getAndelseierPersonId());

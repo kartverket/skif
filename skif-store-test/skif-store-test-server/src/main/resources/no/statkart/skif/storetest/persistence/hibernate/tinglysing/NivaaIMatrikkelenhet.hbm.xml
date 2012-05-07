@@ -8,7 +8,7 @@
             <generator class="assigned"/>
         </id>
         <many-to-one
-              name="matrikkelenhet"
+              name="matrikkelenhetId"
               column="matrikkelenhetId"
               class="no.statkart.skif.storetest.domain.tinglysing.Matrikkelenhet"
               access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"

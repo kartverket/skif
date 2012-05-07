@@ -9,7 +9,14 @@
         </id>
         <property name="dokumentaar" type="int"/>
         <property name="dokumentnummer" type="int" not-null="true"/>
-        <property name="embete" type="string" not-null="true"/>
+        <many-to-one
+              name="embeteId"
+              column="embeteId"
+              class="no.statkart.skif.storetest.domain.tinglysing.Embete"
+              access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
+              foreign-key="FK_Dokument_Embete">
+           <meta attribute="bubble-ref"/>
+        </many-to-one>
         <property name="status" type="string" not-null="true">
             <type name="org.hibernate.type.EnumType">
                 <param name="enumClass">no.statkart.skif.storetest.domain.tinglysing.Dokumentstatus</param>

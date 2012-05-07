@@ -8,8 +8,9 @@ import java.util.Set;
 
 public class Rettsstiftelse extends AbstractStoreTestBubble {
 
-    protected RettsstiftelsestypeKodeId rettsstiftelsestype;
-    protected DokumentId<?> dokumentId;
+    private RettsstiftelsestypeKodeId rettsstiftelsestypeKodeId;
+    private DokumentId<?> dokumentId;
+    private int rettsstiftelsesnummer;
 
     protected HashKoblingMultimap<RettsstiftelsePersonRolle, PersonId<?>, RettsstiftelseTilPersonKobling> rettsstiftelsePersonIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilPersonKobling.KOBLING_FACTORY);
     // TODO: støtter ikke gjelderRettsstiftelse
@@ -21,12 +22,12 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
         return (RettsstiftelseId<?>) super.getId();
     }
 
-    public RettsstiftelsestypeKodeId getRettsstiftelsestype() {
-        return rettsstiftelsestype;
+    public RettsstiftelsestypeKodeId getRettsstiftelsestypeKodeId() {
+        return rettsstiftelsestypeKodeId;
     }
 
-    public void setRettsstiftelsestype(RettsstiftelsestypeKodeId rettsstiftelsestype) {
-        this.rettsstiftelsestype = rettsstiftelsestype;
+    public void setRettsstiftelsestypeKodeId(RettsstiftelsestypeKodeId rettsstiftelsestypeKodeId) {
+        this.rettsstiftelsestypeKodeId = rettsstiftelsestypeKodeId;
     }
 
     public DokumentId<?> getDokumentId() {
@@ -35,6 +36,14 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
 
     public void setDokumentId(DokumentId<?> dokumentId) {
         this.dokumentId = dokumentId;
+    }
+
+    public int getRettsstiftelsesnummer() {
+        return rettsstiftelsesnummer;
+    }
+
+    public void setRettsstiftelsesnummer(int rettsstiftelsesnummer) {
+        this.rettsstiftelsesnummer = rettsstiftelsesnummer;
     }
 
     private Set<RettsstiftelseTilPersonKobling> getPersonKoblinger() {

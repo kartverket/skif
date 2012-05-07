@@ -11,14 +11,23 @@
 
         <discriminator column="class"/>
 
-        <property name="rettsstiftelsestype" type="string" not-null="true"/>
+        <property name="rettsstiftelsesnummer" type="int" not-null="true"/>
 
         <many-to-one
-              name="dokument"
+              name="dokumentId"
               column="dokumentId"
               class="no.statkart.skif.storetest.domain.tinglysing.Dokument"
               access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
               foreign-key="FK_Rettsstift_Dokument">
+           <meta attribute="bubble-ref"/>
+        </many-to-one>
+
+        <many-to-one
+              name="rettsstiftelsestypeKodeId"
+              column="rettsstiftelsestypeKodeId"
+              class="no.statkart.skif.storetest.domain.tinglysing.RettsstiftelsestypeKode"
+              access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
+              foreign-key="FK_Rettsstift_Rettsstiftelsestype">
            <meta attribute="bubble-ref"/>
         </many-to-one>
 
@@ -37,7 +46,7 @@
             <composite-element class="no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseTilPersonKobling">
                 <property name="rolle"/>
                 <many-to-one
-                      name="person"
+                      name="personId"
                       column="personId"
                       class="no.statkart.skif.storetest.domain.tinglysing.Person"
                       access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
@@ -52,7 +61,7 @@
             <composite-element class="no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseTilAndelKobling">
                 <property name="rolle"/>
                 <many-to-one
-                      name="andel"
+                      name="andelId"
                       column="andelId"
                       class="no.statkart.skif.storetest.domain.tinglysing.AndelIMatrikkelenhet"
                       access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"

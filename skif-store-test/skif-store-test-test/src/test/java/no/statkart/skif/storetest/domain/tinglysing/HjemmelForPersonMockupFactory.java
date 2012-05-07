@@ -90,7 +90,7 @@ public class HjemmelForPersonMockupFactory extends AbstractMockupFactory<TestIdG
     private HjemmelForPerson createHjemmelForPerson(HjemmelForPersonId<?> id, RettsstiftelsestypeKodeId rettsstiftelsestype, DokumentId dokumentId, Set<AndelIMatrikkelenhetId<?>> kjoeptAndelIds, Set<AndelIMatrikkelenhetId<?>> solgtAndelIds, Beloep vederlag) {
         HjemmelForPerson hjemmelForPerson = new HjemmelForPerson();
         hjemmelForPerson.setId(id);
-        hjemmelForPerson.setRettsstiftelsestype(rettsstiftelsestype);
+        hjemmelForPerson.setRettsstiftelsestypeKodeId(rettsstiftelsestype);
         hjemmelForPerson.setDokumentId(dokumentId);
         hjemmelForPerson.setKjoeptAndelIds(kjoeptAndelIds);
         hjemmelForPerson.setSolgtAndelIds(solgtAndelIds);

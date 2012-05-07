@@ -566,9 +566,20 @@ navn varchar2(60),
 Primary Key (Id)
 );
 
---create table Kommune (
--- TODO
---)
+create table Embete (
+id number(19,0) not null,
+embetenummer varchar2(4) not null,
+Primary Key (Id)
+);
+
+create table Kommune (
+id number(19,0) not null,
+kommunenummer varchar2(4) not null,
+navn varchar2(60) not null,
+embeteId number(19,0) not null,
+Primary Key (Id)
+);
+ALTER TABLE Kommune ADD CONSTRAINT FK_Kommune_Embete FOREIGN KEY (embeteId) REFERENCES Embete;
 
 create table Matrikkelenhet (
 id number(19,0) not null,
@@ -579,6 +590,7 @@ festenummer number(5,0),
 seksjonsnummer number(5,0),
 Primary Key (Id)
 );
+alter table Matrikkelenhet add constraint FK_Matrikkelenhet_Kommune foreign key (kommuneId) references Kommune;
 
 create table NivaaIMatrikkelenhet (
 id number(19,0) not null,
@@ -586,15 +598,24 @@ matrikkelenhetId number(19,0) not null,
 matrikkelenhetsnivaaKodeId number(10,0) not null,
 Primary Key (Id)
 );
+alter table NivaaIMatrikkelenhet add constraint FK_Nivaa_Matrikkelenhet foreign key (matrikkelenhetId) references Matrikkelenhet;
+-- TODO foreign key matrikkelenhetsnivaaKodeId
+
+create table AndelIMatrikkelenhet (
+id number(19,0) not null,
+-- TODO
+Primary Key (Id)
+);
 
 create table Dokument (
 id number(19,0) not null,
 dokumentaar number(5,0),
 dokumentnummer number(10,0) not null,
-embete varchar2(30) not null,
+embeteId number(19,0) not null,
 status varchar2(30) not null,
 Primary Key (Id)
 );
+ALTER TABLE Dokument ADD CONSTRAINT FK_Dokument_Embete FOREIGN KEY (embeteId) REFERENCES Embete;
 
 create table Rettsstiftelse_t (
 id number(19,0) not null,
@@ -610,5 +631,6 @@ rolle varchar2(30) not null,
 andelId number(19,0) not null,
 Primary Key (rettsstiftelseId, rolle, andelId)
 );
+ALTER TABLE Rettsstiftelse_Andel_Kobling ADD CONSTRAINT FK_Rettsstift_Andel FOREIGN KEY (andelId) REFERENCES AndelIMatrikkelenhet;
 
 

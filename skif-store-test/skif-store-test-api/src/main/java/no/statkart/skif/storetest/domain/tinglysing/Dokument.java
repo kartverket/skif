@@ -3,12 +3,12 @@ package no.statkart.skif.storetest.domain.tinglysing;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 
 /**
- * @since 2.1
+ * @author rorchr
  */
 public class Dokument extends AbstractStoreTestBubble {
     private int dokumentaar;
     private int dokumentnummer;
-    private String embete; // TODO: enum? Kode?
+    private EmbeteId<?> embeteId;
     private String status;
 
     @Override
@@ -32,12 +32,12 @@ public class Dokument extends AbstractStoreTestBubble {
         this.dokumentnummer = dokumentnummer;
     }
 
-    public String getEmbete() {
-        return embete;
+    public EmbeteId<?> getEmbeteId() {
+        return embeteId;
     }
 
-    public void setEmbete(String embete) {
-        this.embete = embete;
+    public void setEmbeteId(EmbeteId<?> embeteId) {
+        this.embeteId = embeteId;
     }
 
     public String getStatus() {

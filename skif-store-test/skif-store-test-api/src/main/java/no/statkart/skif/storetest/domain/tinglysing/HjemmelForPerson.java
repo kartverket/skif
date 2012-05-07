@@ -10,7 +10,7 @@ public class HjemmelForPerson extends Hjemmel {
     private Set<AndelIMatrikkelenhetId<?>> kjoeptAndelIds = rettsstiftelseAndelIdsKoblinger.get(RettsstiftelseAndelRolle.KJOEPT);
     private Set<AndelIMatrikkelenhetId<?>> solgtAndelIds = rettsstiftelseAndelIdsKoblinger.get(RettsstiftelseAndelRolle.SOLGT);
     private Set<Beloep> vederlag = rettsstiftelseBeloep.get(RettsstiftelseBeloepRolle.VEDERLAG);
-    private OmsetningstypeKodeId omsetningstype;
+    private OmsetningstypeKodeId omsetningstypeKodeId;
 
     @Override
     public HjemmelForPersonId<?> getId() {
@@ -52,11 +52,11 @@ public class HjemmelForPerson extends Hjemmel {
         this.vederlag.add(vederlag);
     }
 
-    public OmsetningstypeKodeId getOmsetningstype() {
-        return omsetningstype;
+    public OmsetningstypeKodeId getOmsetningstypeKodeId() {
+        return omsetningstypeKodeId;
     }
 
-    public void setOmsetningstype(OmsetningstypeKodeId omsetningstype) {
-        this.omsetningstype = omsetningstype;
+    public void setOmsetningstypeKodeId(OmsetningstypeKodeId omsetningstypeKodeId) {
+        this.omsetningstypeKodeId = omsetningstypeKodeId;
     }
 }

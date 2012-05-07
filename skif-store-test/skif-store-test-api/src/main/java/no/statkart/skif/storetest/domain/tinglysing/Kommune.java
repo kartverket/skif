@@ -5,6 +5,7 @@ import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 public class Kommune extends AbstractStoreTestBubble {
     private String kommunenummer;
     private String navn;
+    private EmbeteId<?> embeteId;
 
     @Override
     public KommuneId<?> getId() {
@@ -25,5 +26,13 @@ public class Kommune extends AbstractStoreTestBubble {
 
     public void setNavn(String navn) {
         this.navn = navn;
+    }
+
+    public EmbeteId<?> getEmbeteId() {
+        return embeteId;
+    }
+
+    public void setEmbeteId(EmbeteId<?> embeteId) {
+        this.embeteId = embeteId;
     }
 }
