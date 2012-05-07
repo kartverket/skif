@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.tinglysing.Dokument" lazy="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.tinglysing.DokumentIdType">
+            <generator class="assigned"/>
+        </id>
+        <property name="dokumentaar" type="int"/>
+        <property name="dokumentnummer" type="int" not-null="true"/>
+        <property name="embete" type="string" not-null="true"/>
+        <property name="status" type="string" not-null="true">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">no.statkart.skif.storetest.domain.tinglysing.Dokumentstatus</param>
+            </type>
+        </property>
+
+    </class>
+
+</hibernate-mapping>

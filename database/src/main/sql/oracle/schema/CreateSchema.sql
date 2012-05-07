@@ -554,4 +554,61 @@ personId number(19,0) not null,
 Primary Key (rettsstiftelseId, rolle, personId)
 );
 
+-- Tinglysing-tabeller
+
+-- TODO koder
+
+create table Person_t (
+id number(19,0) not null,
+ident number(11,0) not null,
+identtype varchar2(60) not null,
+navn varchar2(60),
+Primary Key (Id)
+);
+
+--create table Kommune (
+-- TODO
+--)
+
+create table Matrikkelenhet (
+id number(19,0) not null,
+kommuneId number(19,0) not null,
+gaardsnummer number(10,0) not null,
+bruksnummer number(5,0) not null,
+festenummer number(5,0),
+seksjonsnummer number(5,0),
+Primary Key (Id)
+);
+
+create table NivaaIMatrikkelenhet (
+id number(19,0) not null,
+matrikkelenhetId number(19,0) not null,
+matrikkelenhetsnivaaKodeId number(10,0) not null,
+Primary Key (Id)
+);
+
+create table Dokument (
+id number(19,0) not null,
+dokumentaar number(5,0),
+dokumentnummer number(10,0) not null,
+embete varchar2(30) not null,
+status varchar2(30) not null,
+Primary Key (Id)
+);
+
+create table Rettsstiftelse_t (
+id number(19,0) not null,
+class varchar2(60) not null,
+dokumentId number(19,0) not null,
+Primary Key (Id)
+);
+ALTER TABLE Rettsstiftelse_t ADD CONSTRAINT FK_Rettsstift_Dokument FOREIGN KEY (dokumentId) REFERENCES Dokument;
+
+create table Rettsstiftelse_Andel_Kobling (
+rettsstiftelseId number(19,0) not null,
+rolle varchar2(30) not null,
+andelId number(19,0) not null,
+Primary Key (rettsstiftelseId, rolle, andelId)
+);
+
 

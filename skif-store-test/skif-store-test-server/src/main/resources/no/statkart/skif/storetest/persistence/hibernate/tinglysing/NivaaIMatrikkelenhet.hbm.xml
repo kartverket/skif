@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.tinglysing.NivaaIMatrikkelenhet" lazy="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.tinglysing.NivaaIMatrikkelenhetIdType">
+            <generator class="assigned"/>
+        </id>
+        <many-to-one
+              name="matrikkelenhet"
+              column="matrikkelenhetId"
+              class="no.statkart.skif.storetest.domain.tinglysing.Matrikkelenhet"
+              access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
+              foreign-key="FK_Nivaa_Matrikkelenhet">
+           <meta attribute="bubble-ref"/>
+        </many-to-one>
+        <property name="matrikkelenhetsnivaaKodeId" type="no.statkart.skif.storetest.persistence.hibernate.type.tinglysing.MatrikkelenhetsnivaaKodeIdType" not-null="true"/>
+    </class>
+
+</hibernate-mapping>

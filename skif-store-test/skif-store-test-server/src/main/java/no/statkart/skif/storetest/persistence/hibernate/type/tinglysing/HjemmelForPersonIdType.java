@@ -1,13 +1,12 @@
 package no.statkart.skif.storetest.persistence.hibernate.type.tinglysing;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.multikobling.ServituttId;
 import no.statkart.skif.storetest.domain.tinglysing.HjemmelForPersonId;
 
-public class HjemmelsinformasjonIdType extends RettsstiftelseIdType {
+public class HjemmelForPersonIdType extends RettsstiftelseIdType {
     @Override
     public Class returnedClass() {
-        return ServituttId.class;
+        return HjemmelForPersonId.class;
     }
 
     @Override

@@ -8,6 +8,7 @@ import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 public class Dokument extends AbstractStoreTestBubble {
     private int dokumentaar;
     private int dokumentnummer;
+    private String embete; // TODO: enum? Kode?
     private String status;
 
     @Override
@@ -29,6 +30,14 @@ public class Dokument extends AbstractStoreTestBubble {
 
     public void setDokumentnummer(int dokumentnummer) {
         this.dokumentnummer = dokumentnummer;
+    }
+
+    public String getEmbete() {
+        return embete;
+    }
+
+    public void setEmbete(String embete) {
+        this.embete = embete;
     }
 
     public String getStatus() {

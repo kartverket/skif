@@ -3,12 +3,12 @@ package no.statkart.skif.storetest.domain.tinglysing;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 
 /**
- * @author Henrik Fredholm
- * @since 2.1
+ * @author rorchr
  */
 public class Person extends AbstractStoreTestBubble {
 
     private String ident;
+    private Personidenttype identtype;
     private String navn;
 
     @Override
@@ -22,6 +22,14 @@ public class Person extends AbstractStoreTestBubble {
 
     public void setIdent(String ident) {
         this.ident = ident;
+    }
+
+    public Personidenttype getIdenttype() {
+        return identtype;
+    }
+
+    public void setIdenttype(Personidenttype identtype) {
+        this.identtype = identtype;
     }
 
     public String getNavn() {
