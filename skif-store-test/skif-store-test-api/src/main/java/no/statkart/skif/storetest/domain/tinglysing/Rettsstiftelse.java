@@ -15,7 +15,7 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
     protected HashKoblingMultimap<RettsstiftelsePersonRolle, PersonId<?>, RettsstiftelseTilPersonKobling> rettsstiftelsePersonIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilPersonKobling.KOBLING_FACTORY);
     protected HashKoblingMultimap<RettsstiftelseAndelRolle, AndelIMatrikkelenhetId<?>, RettsstiftelseTilAndelKobling> rettsstiftelseAndelIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilAndelKobling.KOBLING_FACTORY);
     protected HashKoblingMultimap<RettsstiftelseBeloepRolle, Beloep, Beloep> rettsstiftelseBeloep = HashKoblingMultimap.create(Beloep.KOBLING_FACTORY);
-    protected HashKoblingMultimap<RettsstiftelseRelasjonRolle, RettsstiftelseRelasjonId<?>, RettsstiftelseTilRettsstiftelseRelasjonKobling> rettsstiftelseRettsstiftelseRelasjonIds = HashKoblingMultimap.create(RettsstiftelseTilRettsstiftelseRelasjonKobling.KOBLING_FACTORY);
+    protected HashKoblingMultimap<RettsstiftelseRelasjonRolle, RettsstiftelseRelasjonId<?>, RettsstiftelseTilRelasjonKobling> rettsstiftelseRettsstiftelseRelasjonIds = HashKoblingMultimap.create(RettsstiftelseTilRelasjonKobling.KOBLING_FACTORY);
 
     @Override
     public RettsstiftelseId<?> getId() {
@@ -70,11 +70,11 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
         rettsstiftelseBeloep.setKoblinger(beloep);
     }
 
-    private Set<RettsstiftelseTilRettsstiftelseRelasjonKobling> getRettsstiftelseRelasjonKoblinger() {
+    private Set<RettsstiftelseTilRelasjonKobling> getRettsstiftelseRelasjonKoblinger() {
         return rettsstiftelseRettsstiftelseRelasjonIds.getKoblinger();
     }
 
-    private void setRettsstiftelseRelasjonKoblinger(Set<RettsstiftelseTilRettsstiftelseRelasjonKobling> rettsstiftelseRelasjonKoblinger) {
-        rettsstiftelseRettsstiftelseRelasjonIds.setKoblinger(rettsstiftelseRelasjonKoblinger);
+    private void setRettsstiftelseRelasjonKoblinger(Set<RettsstiftelseTilRelasjonKobling> rettsstiftelseTilRelasjonKoblinger) {
+        rettsstiftelseRettsstiftelseRelasjonIds.setKoblinger(rettsstiftelseTilRelasjonKoblinger);
     }
 }
