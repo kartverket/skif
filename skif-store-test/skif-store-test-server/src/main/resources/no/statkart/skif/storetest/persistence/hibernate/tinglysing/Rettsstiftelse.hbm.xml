@@ -71,7 +71,7 @@
             </composite-element>
         </set>
 
-        <set name="relasjonKoblinger" table="Rettsstiftelse_Relasjon_Kobling" cascade="all,delete-orphan">
+        <set name="relasjonKoblinger" table="Rettsst_Relasjon_Kobling" cascade="all,delete-orphan">
             <key column="rettsstiftelseId"/>
             <composite-element class="no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseTilRelasjonKobling">
                 <property name="rolle"/>

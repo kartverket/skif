@@ -36,6 +36,10 @@ public class RettsstiftelseRelasjon extends AbstractStoreTestBubble {
         this.rettsstiftelseId = rettsstiftelseId;
     }
 
+    private Set<RettsstiftelseRelasjonTilNivaaKobling> getNivaaKoblinger() {
+        return rettsstiftelseRelasjonNivaaIdsKoblinger.getKoblinger();
+    }
+
     public Set<NivaaIMatrikkelenhetId<?>> getGjelderKunNivaaIMatrikkelenheterIds() {
         return gjelderKunNivaaIMatrikkelenheterIds;
     }

@@ -635,9 +635,25 @@ ALTER TABLE Rettsstiftelse_Andel_Kobling ADD CONSTRAINT FK_Rettsstift_Andel FORE
 
 create table RettsstiftelseRelasjon (
 id number(19,0) not null,
--- TODO
+rettsstiftelseId number(19,0) not null,
 Primary Key (Id)
 );
+
+create table Relasjon_Andel_Kobling (
+rettsstiftelseId number(19,0) not null,
+rolle varchar2(30) not null,
+andelId number(19,0) not null,
+Primary Key (rettsstiftelseId, rolle, andelId)
+);
+ALTER TABLE Relasjon_Andel_Kobling ADD CONSTRAINT FK_Relasjon_Andel FOREIGN KEY (andelId) REFERENCES AndelIMatrikkelenhet;
+
+create table Relasjon_Nivaa_Kobling (
+rettsstiftelseId number(19,0) not null,
+rolle varchar2(30) not null,
+nivaaId number(19,0) not null,
+Primary Key (rettsstiftelseId, rolle, nivaaId)
+);
+ALTER TABLE Relasjon_Nivaa_Kobling ADD CONSTRAINT FK_Relasjon_Nivaa FOREIGN KEY (nivaaId) REFERENCES NivaaIMatrikkelenhet;
 
 create table Rettsst_Relasjon_Kobling (
 rettsstiftelseId number(19,0) not null,

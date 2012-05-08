@@ -8,7 +8,7 @@ import no.statkart.skif.storetest.domain.tinglysing.util.KoblingFactory;
  * @author rorchr
  */
 public class RettsstiftelseRelasjonTilNivaaKobling extends Kobling<RettsstiftelseRelasjonNivaaRolle, NivaaIMatrikkelenhetId<?>> {
-    public NivaaIMatrikkelenhetId nivaaIMatrikkelenhetId;
+    public NivaaIMatrikkelenhetId nivaaId;
 
     public static KoblingFactory<RettsstiftelseRelasjonNivaaRolle, NivaaIMatrikkelenhetId<?>, RettsstiftelseRelasjonTilNivaaKobling> KOBLING_FACTORY =
             new RettsstiftelseRelasjonTilNivaaIMatrikkelenhetKoblingFactory();
@@ -18,7 +18,7 @@ public class RettsstiftelseRelasjonTilNivaaKobling extends Kobling<Rettsstiftels
 
     public RettsstiftelseRelasjonTilNivaaKobling(RettsstiftelseRelasjonNivaaRolle rolle, NivaaIMatrikkelenhetId<?> id) {
         this.rolle = rolle;
-        this.nivaaIMatrikkelenhetId = id;
+        this.nivaaId = id;
     }
 
     private String getRolle() {
@@ -31,12 +31,12 @@ public class RettsstiftelseRelasjonTilNivaaKobling extends Kobling<Rettsstiftels
 
     @Override
     protected NivaaIMatrikkelenhetId<?> getValue() {
-        return nivaaIMatrikkelenhetId;
+        return nivaaId;
     }
 
     @Override
     protected void setValue(NivaaIMatrikkelenhetId<?> value) {
-        nivaaIMatrikkelenhetId = value;
+        nivaaId = value;
     }
 
     private static class RettsstiftelseRelasjonTilNivaaIMatrikkelenhetKoblingFactory
