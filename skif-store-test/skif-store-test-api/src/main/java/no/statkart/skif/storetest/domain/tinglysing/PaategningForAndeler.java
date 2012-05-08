@@ -7,7 +7,7 @@ import java.util.Set;
  */
 public abstract class PaategningForAndeler extends Paategning {
 
-    private Set<RettsstiftelseOgMatrikkelenheterOgAndeler> gjelder;
-    private Set<RettsstiftelseOgMatrikkelenheterOgAndeler> gjelderHistorisk;
+    private Set<RettsstiftelseOgMatrikkelenheterOgAndeler> gjelder; // TODO: Vent på Christian sitt opplegg
+    private Set<RettsstiftelseOgMatrikkelenheterOgAndeler> gjelderHistorisk; // TODO: Vent på Christian sitt opplegg
     
 }

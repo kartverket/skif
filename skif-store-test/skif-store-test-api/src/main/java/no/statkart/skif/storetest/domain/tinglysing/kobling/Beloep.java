@@ -14,6 +14,16 @@ public class Beloep extends Kobling<RettsstiftelseBeloepRolle, Beloep> {
     private String valuta;
     private String beloepstekst;
 
+    public Beloep() {
+    }
+
+    public Beloep(BigDecimal beloepsverdi, String valuta, String beloepstekst, RettsstiftelseBeloepRolle rolle) {
+        this.beloepsverdi = beloepsverdi;
+        this.valuta = valuta;
+        this.beloepstekst = beloepstekst;
+        this.rolle = rolle;
+    }
+
     private String getRolle() {
         return rolle.toString();
     }

@@ -5,6 +5,7 @@ package no.statkart.skif.storetest.domain.tinglysing.kobling;
  * @since 2.1
  */
 public enum RettsstiftelsePersonRolle {
+    TVANGSPAATEGNET, // TODO: Finnes ikkje i dbInit-SQL for dbKode 
     SAKSOEKT,
     SAKSOEKER_AKTIV,
     SAKSOEKER_HISTORISK,
