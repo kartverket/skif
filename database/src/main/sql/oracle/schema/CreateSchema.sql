@@ -557,6 +557,39 @@ Primary Key (rettsstiftelseId, rolle, personId)
 -- Tinglysing-tabeller
 
 -- TODO koder
+create table RettstypeKode (
+id number(19,0) not null,
+kodeVerdi varchar2(10) not null,
+primary key (id)
+);
+
+create table RettstypeKodeLoc (
+id number(19,0) not null,
+lokale varchar2(10) not null,
+navn varchar2(64) not null,
+beskrivelse varchar2(255) not null,
+primary key (id, lokale)
+);
+alter table RettstypeKodeLoc add constraint FK_RettstypeKodeLoc foreign key (id) references RettstypeKode;
+
+
+create table RettsstiftelsestypeKode (
+id number(19,0) not null,
+rettstypeKodeId number(19,0) not null,
+kodeVerdi varchar2(10) not null,
+primary key (id)
+);
+ALTER TABLE RettsstiftelsestypeKode ADD CONSTRAINT FK_RetKode_RettstypeKode FOREIGN KEY (rettstypeKodeId) REFERENCES RettstypeKode;
+
+create table RettsstiftelsestypeKodeLoc (
+id number(19,0) not null,
+lokale varchar2(10) not null,
+navn varchar2(64) not null,
+beskrivelse varchar2(255) not null,
+primary key (id, lokale)
+);
+alter table RettsstiftelsestypeKodeLoc add constraint FK_RettsstiftelsestypeKodeLoc foreign key (id) references RettsstiftelsestypeKode;
+
 
 create table Person_t (
 id number(19,0) not null,
