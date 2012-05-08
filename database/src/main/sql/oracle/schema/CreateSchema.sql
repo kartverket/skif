@@ -556,7 +556,6 @@ Primary Key (rettsstiftelseId, rolle, personId)
 
 -- Tinglysing-tabeller
 
--- TODO koder
 create table RettstypeKode (
 id number(19,0) not null,
 kodeVerdi varchar2(10) not null,
@@ -571,7 +570,6 @@ beskrivelse varchar2(255) not null,
 primary key (id, lokale)
 );
 alter table RettstypeKodeLoc add constraint FK_RettstypeKodeLoc foreign key (id) references RettstypeKode;
-
 
 create table RettsstiftelsestypeKode (
 id number(19,0) not null,
@@ -590,6 +588,35 @@ primary key (id, lokale)
 );
 alter table RettsstiftelsestypeKodeLoc add constraint FK_RettsstiftelsestypeKodeLoc foreign key (id) references RettsstiftelsestypeKode;
 
+create table MatrikkelenhetsnivaaKode (
+id number(19,0) not null,
+kodeVerdi varchar2(10) not null,
+primary key (id)
+);
+
+create table MatrikkelenhetsnivaaKodeLoc (
+id number(19,0) not null,
+lokale varchar2(10) not null,
+navn varchar2(64) not null,
+beskrivelse varchar2(255) not null,
+primary key (id, lokale)
+);
+alter table MatrikkelenhetsnivaaKode add constraint FK_MatrikkelenhetsnivaaKode foreign key (id) references MatrikkelenhetsnivaaKode;
+
+create table OmsetningstypeKode (
+id number(19,0) not null,
+kodeVerdi varchar2(10) not null,
+primary key (id)
+);
+
+create table OmsetningstypeKodeLoc (
+id number(19,0) not null,
+lokale varchar2(10) not null,
+navn varchar2(64) not null,
+beskrivelse varchar2(255) not null,
+primary key (id, lokale)
+);
+alter table OmsetningstypeKodeLoc add constraint FK_OmsetningstypeKodeLoc foreign key (id) references OmsetningstypeKode;
 
 create table Person_t (
 id number(19,0) not null,
@@ -628,11 +655,11 @@ alter table Matrikkelenhet add constraint FK_Matrikkelenhet_Kommune foreign key 
 create table NivaaIMatrikkelenhet (
 id number(19,0) not null,
 matrikkelenhetId number(19,0) not null,
-matrikkelenhetsnivaaKodeId number(10,0) not null,
+matrikkelenhetsnivaaKodeId number(19,0) not null,
 Primary Key (Id)
 );
 alter table NivaaIMatrikkelenhet add constraint FK_Nivaa_Matrikkelenhet foreign key (matrikkelenhetId) references Matrikkelenhet;
--- TODO foreign key matrikkelenhetsnivaaKodeId
+alter table NivaaIMatrikkelenhet add constraint FK_Nivaa_NivaaKode foreign key (matrikkelenhetsnivaaKodeId) references MatrikkelenhetsnivaaKode;
 
 create table AndelIMatrikkelenhet (
 id number(19,0) not null,
@@ -653,10 +680,13 @@ ALTER TABLE Dokument ADD CONSTRAINT FK_Dokument_Embete FOREIGN KEY (embeteId) RE
 create table Rettsstiftelse_t (
 id number(19,0) not null,
 class varchar2(60) not null,
+rettsstiftelsesnummer number(5,0) not null,
 dokumentId number(19,0) not null,
+rettsstiftelsestypeKodeId number(19,0) not null,
 Primary Key (Id)
 );
 ALTER TABLE Rettsstiftelse_t ADD CONSTRAINT FK_Rettsstift_Dokument FOREIGN KEY (dokumentId) REFERENCES Dokument;
+ALTER TABLE Rettsstiftelse_t ADD CONSTRAINT FK_Rettsstift_RtypeKode FOREIGN KEY (rettsstiftelsestypeKodeId) REFERENCES RettsstiftelsestypeKode;
 
 create table Rettsstiftelse_Andel_Kobling (
 rettsstiftelseId number(19,0) not null,

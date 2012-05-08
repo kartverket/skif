@@ -15,7 +15,15 @@
               foreign-key="FK_Nivaa_Matrikkelenhet">
            <meta attribute="bubble-ref"/>
         </many-to-one>
-        <property name="matrikkelenhetsnivaaKodeId" type="no.statkart.skif.storetest.persistence.hibernate.type.tinglysing.MatrikkelenhetsnivaaKodeIdType" not-null="true"/>
+
+        <many-to-one
+              name="matrikkelenhetsnivaaKodeId"
+              column="matrikkelenhetsnivaaKodeId"
+              class="no.statkart.skif.storetest.domain.tinglysing.MatrikkelenhetsnivaaKode"
+              access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
+              foreign-key="FK_Nivaa_NivaaKode">
+           <meta attribute="bubble-ref"/>
+        </many-to-one>
     </class>
 
 </hibernate-mapping>

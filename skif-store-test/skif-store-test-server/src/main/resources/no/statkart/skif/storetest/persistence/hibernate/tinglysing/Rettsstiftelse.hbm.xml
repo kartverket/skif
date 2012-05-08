@@ -27,7 +27,7 @@
               column="rettsstiftelsestypeKodeId"
               class="no.statkart.skif.storetest.domain.tinglysing.RettsstiftelsestypeKode"
               access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
-              foreign-key="FK_Rettsstift_Rettsstiftelsestype">
+              foreign-key="FK_Rettsstift_RtypeKode">
            <meta attribute="bubble-ref"/>
         </many-to-one>
 
