@@ -8,8 +8,8 @@ import java.util.Set;
  * @author Knut Inge Bøe
  */
 public abstract class Paategning extends Rettsstiftelse {
-    private Set<RettsstiftelseRelasjonId<?>> paategnerIds = rettsstiftelseRettsstiftelseRelasjonIds.get(RettsstiftelseRelasjonRolle.PAATEGNER);
-    private Set<RettsstiftelseRelasjonId<?>> paategnerHistoriskIds = rettsstiftelseRettsstiftelseRelasjonIds.get(RettsstiftelseRelasjonRolle.PAATEGNER);
+    private Set<RettsstiftelseRelasjonId<?>> paategnerIds = rettsstiftelseRelasjonIdsKoblinger.get(RettsstiftelseRelasjonRolle.PAATEGNER);
+    private Set<RettsstiftelseRelasjonId<?>> paategnerHistoriskIds = rettsstiftelseRelasjonIdsKoblinger.get(RettsstiftelseRelasjonRolle.PAATEGNER);
 
     public Set<RettsstiftelseRelasjonId<?>> getPaategnerIds() {
         return paategnerIds;

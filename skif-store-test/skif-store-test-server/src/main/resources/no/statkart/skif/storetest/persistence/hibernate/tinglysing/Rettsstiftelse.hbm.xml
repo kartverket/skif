@@ -71,6 +71,21 @@
             </composite-element>
         </set>
 
+        <set name="relasjonKoblinger" table="Rettsstiftelse_Relasjon_Kobling" cascade="all,delete-orphan">
+            <key column="rettsstiftelseId"/>
+            <composite-element class="no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseTilRelasjonKobling">
+                <property name="rolle"/>
+                <many-to-one
+                      name="relasjonId"
+                      column="relasjonId"
+                      class="no.statkart.skif.storetest.domain.tinglysing.RettsstiftelseRelasjon"
+                      access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
+                      foreign-key="FK_Rettsstift_Relasjon">
+                   <meta attribute="bubble-ref"/>
+                </many-to-one>
+            </composite-element>
+        </set>
+
         <subclass name="no.statkart.skif.storetest.domain.tinglysing.HjemmelForPerson" discriminator-value="Hjemmel" lazy="true">
         </subclass>
     </class>

@@ -633,4 +633,17 @@ Primary Key (rettsstiftelseId, rolle, andelId)
 );
 ALTER TABLE Rettsstiftelse_Andel_Kobling ADD CONSTRAINT FK_Rettsstift_Andel FOREIGN KEY (andelId) REFERENCES AndelIMatrikkelenhet;
 
+create table RettsstiftelseRelasjon (
+id number(19,0) not null,
+-- TODO
+Primary Key (Id)
+);
+
+create table Rettsst_Relasjon_Kobling (
+rettsstiftelseId number(19,0) not null,
+rolle varchar2(30) not null,
+relasjonId number(19,0) not null,
+Primary Key (rettsstiftelseId, rolle, relasjonId)
+);
+ALTER TABLE Rettsst_Relasjon_Kobling ADD CONSTRAINT FK_Rettsstift_Relasjon FOREIGN KEY (relasjonId) REFERENCES RettsstiftelseRelasjon;
 
