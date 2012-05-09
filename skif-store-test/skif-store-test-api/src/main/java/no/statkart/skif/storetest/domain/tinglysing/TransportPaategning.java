@@ -15,4 +15,22 @@ public class TransportPaategning extends PaategningPaaRettsstiftelser {
     public TransportPaategningId<?> getId() {
         return (TransportPaategningId<?>) super.getId();
     }
+
+    public Set<PersonId<?>> getTil() {
+        return til;
+    }
+
+    public void setTil(Set<PersonId<?>> til) {
+        this.til.clear();
+        this.til.addAll(til);
+    }
+
+    public Set<PersonId<?>> getFra() {
+        return fra;
+    }
+
+    public void setFra(Set<PersonId<?>> fra) {
+        this.fra.clear();
+        this.fra.addAll(fra);
+    }
 }

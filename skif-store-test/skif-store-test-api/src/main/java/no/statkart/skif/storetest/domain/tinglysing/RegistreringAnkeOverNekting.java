@@ -13,4 +13,11 @@ public class RegistreringAnkeOverNekting extends RegistreringAnke{
         return (RegistreringAnkeOverNektingId<?>) super.getId();
     }
 
+    public Date getNektetDato() {
+        return nektetDato;
+    }
+
+    public void setNektetDato(Date nektetDato) {
+        this.nektetDato = nektetDato;
+    }
 }

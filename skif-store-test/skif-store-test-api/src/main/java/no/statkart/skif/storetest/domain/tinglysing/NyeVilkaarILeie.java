@@ -18,4 +18,29 @@ public class NyeVilkaarILeie extends PaategningForMatrikkelenheter {
     public NyeVilkaarILeieId<?> getId() {
         return (NyeVilkaarILeieId<?>) super.getId();
     }
+
+    public Beloep getLeiebeloep() {
+        return leiebeloep.isEmpty() ? null : leiebeloep.iterator().next();
+    }
+
+    public void setLeiebeloep(Beloep leiebeloep) {
+        this.leiebeloep.clear();
+        this.leiebeloep.add(leiebeloep);
+    }
+
+    public Date getLeieFraDato() {
+        return leieFraDato;
+    }
+
+    public void setLeieFraDato(Date leieFraDato) {
+        this.leieFraDato = leieFraDato;
+    }
+
+    public int getLeietid() {
+        return leietid;
+    }
+
+    public void setLeietid(int leietid) {
+        this.leietid = leietid;
+    }
 }

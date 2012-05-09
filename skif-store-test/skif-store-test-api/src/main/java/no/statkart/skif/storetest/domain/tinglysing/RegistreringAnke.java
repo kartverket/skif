@@ -13,4 +13,11 @@ public class RegistreringAnke extends PaategningPaaRettsstiftelser {
         return (RegistreringAnkeId<?>) super.getId();
     }
 
+    public Date getOversendtLagmannsretten() {
+        return oversendtLagmannsretten;
+    }
+
+    public void setOversendtLagmannsretten(Date oversendtLagmannsretten) {
+        this.oversendtLagmannsretten = oversendtLagmannsretten;
+    }
 }

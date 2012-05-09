@@ -18,4 +18,21 @@ public abstract class PrioritetIkkeTinglystDokument extends PaategningForMatrikk
         return (PrioritetIkkeTinglystDokumentId<?>) super.getId();
     }
 
+    public Beloep getBeloep() {
+        return beloep.isEmpty() ? null : beloep.iterator().next();
+    }
+
+    public void setBeloep(Beloep beloep) {
+        this.beloep.clear();
+        this.beloep.add(beloep);
+    }
+
+    public Set<PersonId<?>> getPanthavere() {
+        return panthavere;
+    }
+
+    public void setPanthavere(Set<PersonId<?>> panthavere) {
+        this.panthavere.clear();
+        this.panthavere.addAll(panthavere);
+    }
 }

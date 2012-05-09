@@ -15,4 +15,13 @@ public class Nedkvittering extends PaategningForMatrikkelenheter {
     public NedkvitteringId<?> getId() {
         return (NedkvitteringId<?>) super.getId();
     }
+
+    public Beloep getBeloepNedkvittertTil() {
+        return beloepNedkvittertTil.isEmpty() ? null : beloepNedkvittertTil.iterator().next();
+    }
+
+    public void setBeloepNedkvittertTil(Beloep beloepNedkvittertTil) {
+        this.beloepNedkvittertTil.clear();
+        this.beloepNedkvittertTil.add(beloepNedkvittertTil);
+    }
 }
