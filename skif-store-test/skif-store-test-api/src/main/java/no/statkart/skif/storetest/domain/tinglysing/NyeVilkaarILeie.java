@@ -18,5 +18,4 @@ public class NyeVilkaarILeie extends PaategningForMatrikkelenheter {
     public NyeVilkaarILeieId<?> getId() {
         return (NyeVilkaarILeieId<?>) super.getId();
     }
-
 }

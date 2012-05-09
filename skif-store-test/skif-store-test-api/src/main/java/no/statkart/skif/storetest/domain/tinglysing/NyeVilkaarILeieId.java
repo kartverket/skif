@@ -5,7 +5,7 @@ import no.statkart.skif.store.SnapshotVersion;
 /**
  * @author Knut Inge Bøe
  */
-public class NyeVilkaarILeieId <T extends NyeVilkaarILeie> extends RettsstiftelseId<T>{
+public class NyeVilkaarILeieId <T extends NyeVilkaarILeie> extends PaategningForMatrikkelenheterId<T>{
     public NyeVilkaarILeieId(Long value) {
         super(value);
     }

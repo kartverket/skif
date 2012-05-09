@@ -12,6 +12,7 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
     private DokumentId<?> dokumentId;
     private int rettsstiftelsesnummer;
 
+    protected HashKoblingMultimap<RettsstiftelseRettsstiftelseRolle, RettsstiftelseId<?>, RettsstiftelseTilRettsstiftelseKobling> rettsstiftelseRettsstiftelseIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilRettsstiftelseKobling.KOBLING_FACTORY);
     protected HashKoblingMultimap<RettsstiftelsePersonRolle, PersonId<?>, RettsstiftelseTilPersonKobling> rettsstiftelsePersonIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilPersonKobling.KOBLING_FACTORY);
     protected HashKoblingMultimap<RettsstiftelseAndelRolle, AndelIMatrikkelenhetId<?>, RettsstiftelseTilAndelKobling> rettsstiftelseAndelIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilAndelKobling.KOBLING_FACTORY);
     protected HashKoblingMultimap<RettsstiftelseBeloepRolle, Beloep, Beloep> rettsstiftelseBeloep = HashKoblingMultimap.create(Beloep.KOBLING_FACTORY);
@@ -52,6 +53,14 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
 
     private void setPersonKoblinger(Set<RettsstiftelseTilPersonKobling> personKoblinger) {
         rettsstiftelsePersonIdsKoblinger.setKoblinger(personKoblinger);
+    }
+
+    private Set<RettsstiftelseTilRettsstiftelseKobling> getRettsstiftelseKoblinger() {
+        return rettsstiftelseRettsstiftelseIdsKoblinger.getKoblinger();
+    }
+
+    private void setRettsstiftelseKoblinger(Set<RettsstiftelseTilRettsstiftelseKobling> rettsstiftelseKoblinger) {
+        rettsstiftelseRettsstiftelseIdsKoblinger.setKoblinger(rettsstiftelseKoblinger);
     }
 
     private Set<RettsstiftelseTilAndelKobling> getAndelKoblinger() {
