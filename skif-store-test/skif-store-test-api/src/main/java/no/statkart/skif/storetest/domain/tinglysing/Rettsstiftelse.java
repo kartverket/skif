@@ -11,6 +11,7 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
     private RettsstiftelsestypeKodeId rettsstiftelsestypeKodeId;
     private DokumentId<?> dokumentId;
     private int rettsstiftelsesnummer;
+    private boolean aktiv = true;
 
     protected HashKoblingMultimap<RettsstiftelseRettsstiftelseRolle, RettsstiftelseId<?>, RettsstiftelseTilRettsstiftelseKobling> rettsstiftelseRettsstiftelseIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilRettsstiftelseKobling.KOBLING_FACTORY);
     protected HashKoblingMultimap<RettsstiftelsePersonRolle, PersonId<?>, RettsstiftelseTilPersonKobling> rettsstiftelsePersonIdsKoblinger = HashKoblingMultimap.create(RettsstiftelseTilPersonKobling.KOBLING_FACTORY);
@@ -41,6 +42,14 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
 
     public int getRettsstiftelsesnummer() {
         return rettsstiftelsesnummer;
+    }
+
+    public boolean isAktiv() {
+        return aktiv;
+    }
+
+    public void setAktiv(boolean aktiv) {
+        this.aktiv = aktiv;
     }
 
     public void setRettsstiftelsesnummer(int rettsstiftelsesnummer) {

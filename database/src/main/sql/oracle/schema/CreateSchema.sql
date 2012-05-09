@@ -689,6 +689,7 @@ create table Rettsstiftelse_t (
 id number(19,0) not null,
 class varchar2(60) not null,
 rettsstiftelsesnummer number(5,0) not null,
+aktiv number(1,0) not null,
 dokumentId number(19,0) not null,
 rettsstiftelsestypeKodeId number(19,0) not null,
 omsetningstypeKodeId number(19,0),

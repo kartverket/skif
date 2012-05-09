@@ -10,7 +10,7 @@
 
         <property name="teller"/>
         <property name="nevner"/>
-        <property name="aktiv"/>
+        <property name="isAktiv"/>
 
         <many-to-one
               name="nivaaIMatrikkelenhetId"

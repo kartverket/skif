@@ -3,12 +3,12 @@ package no.statkart.skif.storetest.domain.tinglysing;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 
 /**
- * @since 2.1
+ * 
  */
 public class AndelIMatrikkelenhet extends AbstractStoreTestBubble {
     private int teller;
     private int nevner;
-    private boolean aktiv;
+    private boolean aktiv = true;
     private NivaaIMatrikkelenhetId<?> nivaaIMatrikkelenhetId;
     private PersonId<?> andelseierPersonId;
     private MatrikkelenhetId<?> andelseierMatrikkelenhetId;
@@ -53,7 +53,7 @@ public class AndelIMatrikkelenhet extends AbstractStoreTestBubble {
         this.andelseierMatrikkelenhetId = andelseierMatrikkelenhetId;
     }
 
-    public boolean getAktiv() {
+    public boolean isAktiv() {
         return aktiv;
     }
 

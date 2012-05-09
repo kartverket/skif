@@ -12,6 +12,7 @@
         <discriminator column="class"/>
 
         <property name="rettsstiftelsesnummer" type="int" not-null="true"/>
+        <property name="aktiv" type="int" not-null="true"/>
 
         <many-to-one
               name="dokumentId"
