@@ -31,9 +31,9 @@
         </many-to-one>
 
         <many-to-one
-              name="andelseierNivaaIMatrikkelenhetId"
+              name="andelseierMatrikkelenhetId"
               column="andelseierMatrikkelenhetId"
-              class="no.statkart.skif.storetest.domain.tinglysing.NivaaIMatrikkelenhet"
+              class="no.statkart.skif.storetest.domain.tinglysing.Matrikkelenhet"
               access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
               foreign-key="FK_Andel_EierMatr">
            <meta attribute="bubble-ref"/>

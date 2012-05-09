@@ -13,6 +13,7 @@ import no.statkart.skif.mockup.TestNumber;
 @Singleton
 public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<TestIdGenerator<Long>> {
     private final NivaaIMatrikkelenhetMockupFactory nivaaIMatrikkelenhetMockupFactory;
+    private final MatrikkelenhetMockupFactory matrikkelenhetMockupFactory;
     private final PersonMockupFactory personMockupFactory;
     private final AndelIMatrikkelenhetId<?> id_4004000_10_1;
     private final AndelIMatrikkelenhetId<?> id_4004000_1_1;
@@ -58,10 +59,11 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
     private final AndelIMatrikkelenhetId<?> id_2048150_1_7;
 
     @Inject
-    public AndelIMatrikkelenhetMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator, NivaaIMatrikkelenhetMockupFactory nivaaIMatrikkelenhetMockupFactory, PersonMockupFactory personMockupFactory) {
+    public AndelIMatrikkelenhetMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator, NivaaIMatrikkelenhetMockupFactory nivaaIMatrikkelenhetMockupFactory, PersonMockupFactory personMockupFactory, MatrikkelenhetMockupFactory matrikkelenhetMockupFactory) {
         super(store, testNumber, testIdGenerator);
         this.nivaaIMatrikkelenhetMockupFactory = nivaaIMatrikkelenhetMockupFactory;
         this.personMockupFactory = personMockupFactory;
+        this.matrikkelenhetMockupFactory = matrikkelenhetMockupFactory;
         id_4004000_10_1 = getNextId(AndelIMatrikkelenhetId.class);
         id_4004000_1_1 = getNextId(AndelIMatrikkelenhetId.class);
         id_4004000_1_10 = getNextId(AndelIMatrikkelenhetId.class);
@@ -113,16 +115,16 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         store.insert(createAndelIMatrikkelenhet(id_4004000_11_1, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_F1(), personMockupFactory.getId_21126946969(), 1, 2));
         store.insert(createAndelIMatrikkelenhet(id_4004000_1_11, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), personMockupFactory.getId_16046936004(), 2, 27));
         store.insert(createAndelIMatrikkelenhet(id_4004000_11_2, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_F1(), personMockupFactory.getId_29107235289(), 1, 2));
-        store.insert(createAndelIMatrikkelenhet(id_4004000_1_12, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_58_1_0_0_G(), 6741, 100000));
-        store.insert(createAndelIMatrikkelenhet(id_4004000_1_13, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_59_1_0_0_G(), 10112, 100000));
-        store.insert(createAndelIMatrikkelenhet(id_4004000_1_14, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_59_2_0_0_G(), 10112, 100000));
-        store.insert(createAndelIMatrikkelenhet(id_4004000_1_15, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_59_3_0_0_G(), 5926, 100000));
-        store.insert(createAndelIMatrikkelenhet(id_4004000_1_16, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_59_6_0_0_G(), 16546, 100000));
-        store.insert(createAndelIMatrikkelenhet(id_4004000_1_17, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_60_1_0_0_G(), 15169, 100000));
-        store.insert(createAndelIMatrikkelenhet(id_4004000_1_18, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_60_2_0_0_G(), 12641, 100000));
-        store.insert(createAndelIMatrikkelenhet(id_4004000_1_19, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_60_3_0_0_G(), 12641, 100000));
+        store.insert(createAndelIMatrikkelenhet(id_4004000_1_12, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), matrikkelenhetMockupFactory.getId_1449_58_1_0_0(), 6741, 100000));
+        store.insert(createAndelIMatrikkelenhet(id_4004000_1_13, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), matrikkelenhetMockupFactory.getId_1449_59_1_0_0(), 10112, 100000));
+        store.insert(createAndelIMatrikkelenhet(id_4004000_1_14, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), matrikkelenhetMockupFactory.getId_1449_59_2_0_0(), 10112, 100000));
+        store.insert(createAndelIMatrikkelenhet(id_4004000_1_15, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), matrikkelenhetMockupFactory.getId_1449_59_3_0_0(), 5926, 100000));
+        store.insert(createAndelIMatrikkelenhet(id_4004000_1_16, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), matrikkelenhetMockupFactory.getId_1449_59_6_0_0(), 16546, 100000));
+        store.insert(createAndelIMatrikkelenhet(id_4004000_1_17, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), matrikkelenhetMockupFactory.getId_1449_60_1_0_0(), 15169, 100000));
+        store.insert(createAndelIMatrikkelenhet(id_4004000_1_18, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), matrikkelenhetMockupFactory.getId_1449_60_2_0_0(), 12641, 100000));
+        store.insert(createAndelIMatrikkelenhet(id_4004000_1_19, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), matrikkelenhetMockupFactory.getId_1449_60_3_0_0(), 12641, 100000));
         store.insert(createAndelIMatrikkelenhet(id_4004000_1_2, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), personMockupFactory.getId_25106834507(), 1, 9));
-        store.insert(createAndelIMatrikkelenhet(id_4004000_1_20, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_60_4_0_0_G(), 10112, 100000));
+        store.insert(createAndelIMatrikkelenhet(id_4004000_1_20, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), matrikkelenhetMockupFactory.getId_1449_60_4_0_0(), 10112, 100000));
         store.insert(createAndelIMatrikkelenhet(id_4004000_1_3, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), personMockupFactory.getId_20065036569(), 1, 9));
         store.insert(createAndelIMatrikkelenhet(id_4004000_1_4, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), personMockupFactory.getId_21075442340(), 1, 9));
         store.insert(createAndelIMatrikkelenhet(id_4004000_1_5, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), personMockupFactory.getId_10063843747(), 1, 9));
@@ -132,14 +134,14 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         store.insert(createAndelIMatrikkelenhet(id_4004000_1_9, nivaaIMatrikkelenhetMockupFactory.getId_1449_58_13_0_0_G(), personMockupFactory.getId_4124746936(), 1, 9));
         // FA_FAR
         store.insert(createAndelIMatrikkelenhet(id_4025979_1_1, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), personMockupFactory.getId_963989202(), 1, 1));
-        store.insert(createAndelIMatrikkelenhet(id_4025979_1_2, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_195_0_1_G(), 1, 20));
-        store.insert(createAndelIMatrikkelenhet(id_4025979_1_3, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_195_0_2_G(), 1, 20));
-        store.insert(createAndelIMatrikkelenhet(id_4025979_1_4, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_195_0_3_G(), 1, 20));
-        store.insert(createAndelIMatrikkelenhet(id_4025979_1_5, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_195_0_4_G(), 1, 20));
-        store.insert(createAndelIMatrikkelenhet(id_4025979_1_6, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_195_0_5_G(), 1, 20));
-        store.insert(createAndelIMatrikkelenhet(id_4025979_1_7, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_358_0_0_G(), 5, 20));
-        store.insert(createAndelIMatrikkelenhet(id_4025979_1_8, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_10_2_0_F(), 5, 20));
-        store.insert(createAndelIMatrikkelenhet(id_4025979_1_9, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), 5, 20));
+        store.insert(createAndelIMatrikkelenhet(id_4025979_1_2, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), matrikkelenhetMockupFactory.getId_1449_57_195_0_1(), 1, 20));
+        store.insert(createAndelIMatrikkelenhet(id_4025979_1_3, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), matrikkelenhetMockupFactory.getId_1449_57_195_0_2(), 1, 20));
+        store.insert(createAndelIMatrikkelenhet(id_4025979_1_4, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), matrikkelenhetMockupFactory.getId_1449_57_195_0_3(), 1, 20));
+        store.insert(createAndelIMatrikkelenhet(id_4025979_1_5, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), matrikkelenhetMockupFactory.getId_1449_57_195_0_4(), 1, 20));
+        store.insert(createAndelIMatrikkelenhet(id_4025979_1_6, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), matrikkelenhetMockupFactory.getId_1449_57_195_0_5(), 1, 20));
+        store.insert(createAndelIMatrikkelenhet(id_4025979_1_7, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), matrikkelenhetMockupFactory.getId_1449_57_358_0_0(), 5, 20));
+        store.insert(createAndelIMatrikkelenhet(id_4025979_1_8, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), matrikkelenhetMockupFactory.getId_1449_57_10_2_0(), 5, 20));
+        store.insert(createAndelIMatrikkelenhet(id_4025979_1_9, nivaaIMatrikkelenhetMockupFactory.getId_1449_57_357_0_0_G(), matrikkelenhetMockupFactory.getId_1449_57_357_0_0(), 5, 20));
         // HJ_HJG, TF_HJF
         store.insert(createAndelIMatrikkelenhet(id_2048150_10_1, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_F(), personMockupFactory.getId_13093745633(), 1, 1));
         store.insert(createAndelIMatrikkelenhet(id_2048150_1_1, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_13090844371(), 1, 1));
@@ -151,9 +153,9 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         store.insert(createAndelIMatrikkelenhet(id_2048150_1_7, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_16094440487(), 1, 5));
     }
 
-    private AndelIMatrikkelenhet createAndelIMatrikkelenhet(AndelIMatrikkelenhetId<?> id, NivaaIMatrikkelenhetId nivaaIMatrikkelenhetId, NivaaIMatrikkelenhetId andelseierNivaaIMatrikkelenhetId, int teller, int nevner) {
+    private AndelIMatrikkelenhet createAndelIMatrikkelenhet(AndelIMatrikkelenhetId<?> id, NivaaIMatrikkelenhetId nivaaIMatrikkelenhetId, MatrikkelenhetId andelseierMatrikkelenhetId, int teller, int nevner) {
         AndelIMatrikkelenhet andelIMatrikkelenhet = createAndelIMatrikkelenhet(id, nivaaIMatrikkelenhetId, teller, nevner);
-        andelIMatrikkelenhet.setAndelseierNivaaIMatrikkelenhetId(andelseierNivaaIMatrikkelenhetId);
+        andelIMatrikkelenhet.setAndelseierMatrikkelenhetId(andelseierMatrikkelenhetId);
         return andelIMatrikkelenhet;
     }
 

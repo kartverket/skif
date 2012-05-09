@@ -58,8 +58,7 @@ public class TinglysingTest extends StoreTestTestCase {
             final Dokument dokument = readFacadeTinglysing.getStore().get(hjemmelForMatrikkelenhet.getDokumentId());
             assertTrue(dokument.getDokumentaar() == 2010);
             final AndelIMatrikkelenhet andelIMatrikkelenhet = readFacadeTinglysing.getStore().get(hjemmelForMatrikkelenhet.getNyeAndelIds().iterator().next());
-            final NivaaIMatrikkelenhet nivaaIMatrikkelenhet = readFacadeTinglysing.getStore().get(andelIMatrikkelenhet.getAndelseierNivaaIMatrikkelenhetId());
-            assertTrue(nivaaIMatrikkelenhet.getMatrikkelenhetsnivaaKodeId().equals(MatrikkelenhetsnivaaKodeId.Grunn));
+            final Matrikkelenhet andelseier = readFacadeTinglysing.getStore().get(andelIMatrikkelenhet.getAndelseierMatrikkelenhetId());
         }
         {
             // id_33124569, FA_FAR
@@ -69,9 +68,8 @@ public class TinglysingTest extends StoreTestTestCase {
             assertTrue(dokument.getDokumentaar() == 2007);
             boolean nivaaIMatrikkelenhetFunnet = false;
             for (AndelIMatrikkelenhet andelIMatrikkelenhet : readFacadeTinglysing.getStore().get(hjemmelForMatrikkelenhet.getNyeAndelIds())) {
-                final NivaaIMatrikkelenhet nivaaIMatrikkelenhet = readFacadeTinglysing.getStore().get(andelIMatrikkelenhet.getAndelseierNivaaIMatrikkelenhetId());
-                final Matrikkelenhet matrikkelenhet = readFacadeTinglysing.getStore().get(nivaaIMatrikkelenhet.getMatrikkelenhetId());
-                nivaaIMatrikkelenhetFunnet = (nivaaIMatrikkelenhetFunnet || (matrikkelenhet.getGaardsnummer() == 57 && matrikkelenhet.getBruksnummer() == 10 && matrikkelenhet.getFestenummer() == 2 && nivaaIMatrikkelenhet.getMatrikkelenhetsnivaaKodeId().equals(MatrikkelenhetsnivaaKodeId.Feste)));
+                final Matrikkelenhet andelseier = readFacadeTinglysing.getStore().get(andelIMatrikkelenhet.getAndelseierMatrikkelenhetId());
+                nivaaIMatrikkelenhetFunnet = (nivaaIMatrikkelenhetFunnet || (andelseier.getGaardsnummer() == 57 && andelseier.getBruksnummer() == 10 && andelseier.getFestenummer() == 2));
             }
             assertTrue(nivaaIMatrikkelenhetFunnet);
         }

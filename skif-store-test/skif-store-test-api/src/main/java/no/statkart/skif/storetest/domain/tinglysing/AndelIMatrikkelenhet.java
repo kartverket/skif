@@ -11,7 +11,7 @@ public class AndelIMatrikkelenhet extends AbstractStoreTestBubble {
     private boolean aktiv;
     private NivaaIMatrikkelenhetId<?> nivaaIMatrikkelenhetId;
     private PersonId<?> andelseierPersonId;
-    private NivaaIMatrikkelenhetId<?> andelseierNivaaIMatrikkelenhetId;
+    private MatrikkelenhetId<?> andelseierMatrikkelenhetId;
 
     public NivaaIMatrikkelenhetId<?> getNivaaIMatrikkelenhetId() {
         return nivaaIMatrikkelenhetId;
@@ -45,12 +45,12 @@ public class AndelIMatrikkelenhet extends AbstractStoreTestBubble {
         this.andelseierPersonId = andelseierPersonId;
     }
 
-    public NivaaIMatrikkelenhetId<?> getAndelseierNivaaIMatrikkelenhetId() {
-        return andelseierNivaaIMatrikkelenhetId;
+    public MatrikkelenhetId<?> getAndelseierMatrikkelenhetId() {
+        return andelseierMatrikkelenhetId;
     }
 
-    public void setAndelseierNivaaIMatrikkelenhetId(NivaaIMatrikkelenhetId<?> andelseierNivaaIMatrikkelenhetId) {
-        this.andelseierNivaaIMatrikkelenhetId = andelseierNivaaIMatrikkelenhetId;
+    public void setAndelseierMatrikkelenhetId(MatrikkelenhetId<?> andelseierMatrikkelenhetId) {
+        this.andelseierMatrikkelenhetId = andelseierMatrikkelenhetId;
     }
 
     public boolean getAktiv() {

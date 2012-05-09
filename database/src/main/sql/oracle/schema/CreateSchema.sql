@@ -673,7 +673,7 @@ Primary Key (Id)
 );
 ALTER TABLE AndelIMatrikkelenhet ADD CONSTRAINT FK_Andel_Nivaa FOREIGN KEY (nivaaIMatrikkelenhetId) REFERENCES NivaaIMatrikkelenhet;
 ALTER TABLE AndelIMatrikkelenhet ADD CONSTRAINT FK_Andel_EierPerson FOREIGN KEY (andelseierPersonId) REFERENCES Person_t;
-ALTER TABLE AndelIMatrikkelenhet ADD CONSTRAINT FK_Andel_EierMatr FOREIGN KEY (andelseierMatrikkelenhetId) REFERENCES NivaaIMatrikkelenhet;
+ALTER TABLE AndelIMatrikkelenhet ADD CONSTRAINT FK_Andel_EierMatr FOREIGN KEY (andelseierMatrikkelenhetId) REFERENCES Matrikkelenhet;
 
 create table Dokument (
 id number(19,0) not null,
