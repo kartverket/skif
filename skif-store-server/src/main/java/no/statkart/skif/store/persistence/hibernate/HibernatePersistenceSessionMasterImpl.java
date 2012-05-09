@@ -551,7 +551,8 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
      * @throws org.hibernate.HibernateException
      *
      */
-    private void ensureInitialized(Object object, IdentityHashMap initializedObjects) throws HibernateException {
+    // TODO: må gjøres abstract og flyttes til 3.2 implementasjon
+    protected void ensureInitialized(Object object, IdentityHashMap initializedObjects) throws HibernateException {
         if (object == null) return;
 
         if (initializedObjects.containsKey(object)) return;
