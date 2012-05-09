@@ -13,4 +13,8 @@ public class DiversePaategningId<T extends DiversePaategning> extends Paategning
     public DiversePaategningId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
+
+    public static DiversePaategningId<?> create(long value) {
+        return new DiversePaategningId<DiversePaategning>(new Long(value));
+    }
 }

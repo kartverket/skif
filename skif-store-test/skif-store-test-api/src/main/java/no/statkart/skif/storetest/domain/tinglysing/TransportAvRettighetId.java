@@ -5,12 +5,16 @@ import no.statkart.skif.store.SnapshotVersion;
 /**
  * @author Knut Inge Bøe
  */
-public class TransportAvRettighetId <T extends TransportAvRettighet> extends TransportPaategningId<T>{
+public class TransportAvRettighetId<T extends TransportAvRettighet> extends TransportPaategningId<T> {
     public TransportAvRettighetId(Long value) {
         super(value);
     }
 
     public TransportAvRettighetId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
+    }
+
+    public static TransportAvRettighetId<?> create(long value) {
+        return new TransportAvRettighetId<TransportAvRettighet>(new Long(value));
     }
 }
