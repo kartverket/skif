@@ -691,10 +691,12 @@ class varchar2(60) not null,
 rettsstiftelsesnummer number(5,0) not null,
 dokumentId number(19,0) not null,
 rettsstiftelsestypeKodeId number(19,0) not null,
+omsetningstypeKodeId number(19,0),
 Primary Key (Id)
 );
 ALTER TABLE Rettsstiftelse_t ADD CONSTRAINT FK_Rettsstift_Dokument FOREIGN KEY (dokumentId) REFERENCES Dokument;
 ALTER TABLE Rettsstiftelse_t ADD CONSTRAINT FK_Rettsstift_RtypeKode FOREIGN KEY (rettsstiftelsestypeKodeId) REFERENCES RettsstiftelsestypeKode;
+ALTER TABLE Rettsstiftelse_t ADD CONSTRAINT FK_Rettsstift_OmsetKode FOREIGN KEY (omsetningstypeKodeId) REFERENCES OmsetningstypeKode;
 
 create table Rettsstiftelse_Andel_Kobling (
 rettsstiftelseId number(19,0) not null,

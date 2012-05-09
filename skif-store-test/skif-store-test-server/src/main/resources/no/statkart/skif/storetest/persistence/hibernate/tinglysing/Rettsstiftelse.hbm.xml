@@ -86,7 +86,15 @@
             </composite-element>
         </set>
 
-        <subclass name="no.statkart.skif.storetest.domain.tinglysing.HjemmelForPerson" discriminator-value="Hjemmel" lazy="true">
+        <subclass name="no.statkart.skif.storetest.domain.tinglysing.HjemmelForPerson" discriminator-value="HjemmelForPerson" lazy="true">
+            <many-to-one
+                  name="omsetningstypeKodeId"
+                  column="omsetningstypeKodeId"
+                  class="no.statkart.skif.storetest.domain.tinglysing.OmsetningstypeKode"
+                  access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
+                  foreign-key="FK_Rettsstift_OmsetKode">
+               <meta attribute="bubble-ref"/>
+            </many-to-one>
         </subclass>
     </class>
 
