@@ -663,9 +663,17 @@ alter table NivaaIMatrikkelenhet add constraint FK_Nivaa_NivaaKode foreign key (
 
 create table AndelIMatrikkelenhet (
 id number(19,0) not null,
--- TODO
+teller number(10,0) not null,
+nevner number(10,0) not null,
+aktiv number(1,0) not null,
+nivaaIMatrikkelenhetId number(19,0) not null,
+andelseierPersonId number(19,0),
+andelseierMatrikkelenhetId number(19,0),
 Primary Key (Id)
 );
+ALTER TABLE AndelIMatrikkelenhet ADD CONSTRAINT FK_Andel_Nivaa FOREIGN KEY (nivaaIMatrikkelenhetId) REFERENCES NivaaIMatrikkelenhet;
+ALTER TABLE AndelIMatrikkelenhet ADD CONSTRAINT FK_Andel_EierPerson FOREIGN KEY (andelseierPersonId) REFERENCES Person_t;
+ALTER TABLE AndelIMatrikkelenhet ADD CONSTRAINT FK_Andel_EierMatr FOREIGN KEY (andelseierMatrikkelenhetId) REFERENCES NivaaIMatrikkelenhet;
 
 create table Dokument (
 id number(19,0) not null,

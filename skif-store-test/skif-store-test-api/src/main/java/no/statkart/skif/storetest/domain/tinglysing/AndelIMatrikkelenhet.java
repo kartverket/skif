@@ -6,12 +6,12 @@ import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
  * @since 2.1
  */
 public class AndelIMatrikkelenhet extends AbstractStoreTestBubble {
-    private NivaaIMatrikkelenhetId<?> nivaaIMatrikkelenhetId;
     private int teller;
     private int nevner;
+    private boolean aktiv;
+    private NivaaIMatrikkelenhetId<?> nivaaIMatrikkelenhetId;
     private PersonId<?> andelseierPersonId;
     private NivaaIMatrikkelenhetId<?> andelseierNivaaIMatrikkelenhetId;
-    private String status;
 
     public NivaaIMatrikkelenhetId<?> getNivaaIMatrikkelenhetId() {
         return nivaaIMatrikkelenhetId;
@@ -53,11 +53,11 @@ public class AndelIMatrikkelenhet extends AbstractStoreTestBubble {
         this.andelseierNivaaIMatrikkelenhetId = andelseierNivaaIMatrikkelenhetId;
     }
 
-    public String getStatus() {
-        return status;
+    public boolean getAktiv() {
+        return aktiv;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setAktiv(boolean aktiv) {
+        this.aktiv = aktiv;
     }
 }

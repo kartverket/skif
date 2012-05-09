@@ -1,11 +1,11 @@
 package no.statkart.skif.storetest.domain.tinglysing;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestIdGenerator;
 import no.statkart.skif.mockup.TestNumber;
-import com.google.inject.Inject;
 
 /**
  * @author Knut Inge Bøe
@@ -169,7 +169,7 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         andelIMatrikkelenhet.setNivaaIMatrikkelenhetId(nivaaIMatrikkelenhetId);
         andelIMatrikkelenhet.setTeller(teller);
         andelIMatrikkelenhet.setNevner(nevner);
-        andelIMatrikkelenhet.setStatus("");
+        andelIMatrikkelenhet.setAktiv(true);
         return andelIMatrikkelenhet;
     }
 
