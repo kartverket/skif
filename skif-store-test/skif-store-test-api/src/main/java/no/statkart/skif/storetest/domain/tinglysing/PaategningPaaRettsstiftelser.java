@@ -16,4 +16,21 @@ public abstract class PaategningPaaRettsstiftelser extends Paategning {
         return (PaategningPaaRettsstiftelserId<?>) super.getId();
     }
 
+    public Set<RettsstiftelseId<?>> getGjelder() {
+        return gjelder;
+    }
+
+    public void setGjelder(Set<RettsstiftelseId<?>> gjelder) {
+        this.gjelder.clear();
+        this.gjelder.addAll(gjelder);
+    }
+
+    public Set<RettsstiftelseId<?>> getGjelderHistorisk() {
+        return gjelderHistorisk;
+    }
+
+    public void setGjelderHistorisk(Set<RettsstiftelseId<?>> gjelderHistorisk) {
+        this.gjelderHistorisk.clear();
+        this.gjelderHistorisk.addAll(gjelderHistorisk);
+    }
 }
