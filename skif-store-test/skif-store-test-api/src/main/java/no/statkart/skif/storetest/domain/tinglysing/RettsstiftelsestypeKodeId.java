@@ -18,6 +18,7 @@ public class RettsstiftelsestypeKodeId extends StoreTestDbKodeId<Rettsstiftelses
     public static final RettsstiftelsestypeKodeId JS_JSA = define(3);  // TODO: finn id etter at loadTestdata.sql er laget
     public static final RettsstiftelsestypeKodeId FA_FAR = define(4);  // TODO: finn id etter at loadTestdata.sql er laget
     public static final RettsstiftelsestypeKodeId TF_HJF = define(5);  // TODO: finn id etter at loadTestdata.sql er laget
+    public static final RettsstiftelsestypeKodeId KL_KRE = define(6);  // TODO: finn id etter at loadTestdata.sql er laget
     public static final RettsstiftelsestypeKodeId PA_PAF = define(100); // TODO: finn id etter at loadTestdata.sql er laget
 
     public RettsstiftelsestypeKodeId(Long value, SnapshotVersion snapshotVersion) {
