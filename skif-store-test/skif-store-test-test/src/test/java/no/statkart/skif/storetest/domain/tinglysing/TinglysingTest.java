@@ -5,6 +5,7 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -74,7 +75,7 @@ public class TinglysingTest extends StoreTestTestCase {
             assertTrue(nivaaIMatrikkelenhetFunnet);
         }
         {
-        // id_14814744, HJ_HJG
+            // id_14814744, HJ_HJG
             final HjemmelForPerson hjemmelForPerson = readFacadeTinglysing.getStore().get(readFacadeTinglysing.getHjemmelForPersonMockupFactory().getId_14814744());
             assertTrue(hjemmelForPerson.getRettsstiftelsestypeKodeId().equals(RettsstiftelsestypeKodeId.HJ_HJG));
             boolean personFunnet = false;
@@ -88,7 +89,7 @@ public class TinglysingTest extends StoreTestTestCase {
             assertTrue(beloep.getBeloepsverdi().longValue() == 0);
         }
         {
-        // id_14773753, TF_HJF
+            // id_14773753, TF_HJF
             final HjemmelForPerson hjemmelForPerson = readFacadeTinglysing.getStore().get(readFacadeTinglysing.getHjemmelForPersonMockupFactory().getId_14773753());
             assertTrue(hjemmelForPerson.getRettsstiftelsestypeKodeId().equals(RettsstiftelsestypeKodeId.TF_HJF));
             boolean personFunnet = false;
@@ -101,6 +102,18 @@ public class TinglysingTest extends StoreTestTestCase {
             assertTrue(beloep.getValuta().equalsIgnoreCase("NOK"));
             assertTrue(beloep.getBeloepsverdi().longValue() == 0);
         }
+        {
+            // id_35109543, KL_KRE
+            final RegistreringAnke registreringAnke = readFacadeTinglysing.getStore().get(readFacadeTinglysing.getPaategningPaaRettsstiftelserMockupFactory().getId_35109543());
+            assertTrue(registreringAnke.getRettsstiftelsestypeKodeId().equals(RettsstiftelsestypeKodeId.KL_KRE));
+            HjemmelForPerson hjemmelForPersonFunnet = null;
+            for (Rettsstiftelse rettsstiftelse : readFacadeTinglysing.getStore().get(registreringAnke.getGjelder())) {
+                final HjemmelForPerson hjemmelForPerson = (HjemmelForPerson) rettsstiftelse;
+                hjemmelForPersonFunnet = (hjemmelForPersonFunnet == null && hjemmelForPerson.getId().equals(readFacadeTinglysing.getHjemmelForPersonMockupFactory().getId_35037127()) ? hjemmelForPerson : null);
+            }
+            assertFalse(hjemmelForPersonFunnet == null);
+            assertTrue(readFacadeTinglysing.getStore().get(registreringAnke.getGjelderHistorisk()).isEmpty()
+            );
+        }
     }
-
 }

@@ -57,6 +57,19 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
     private final AndelIMatrikkelenhetId<?> id_2048150_1_5;
     private final AndelIMatrikkelenhetId<?> id_2048150_1_6;
     private final AndelIMatrikkelenhetId<?> id_2048150_1_7;
+    // KL_KRE
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_1;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_14;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_2;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_6;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_15;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_16;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_3;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_5;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_13;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_4;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_7;
+    private final AndelIMatrikkelenhetId<?> id_2139786_1_12;
 
     @Inject
     public AndelIMatrikkelenhetMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator, NivaaIMatrikkelenhetMockupFactory nivaaIMatrikkelenhetMockupFactory, PersonMockupFactory personMockupFactory, MatrikkelenhetMockupFactory matrikkelenhetMockupFactory) {
@@ -106,6 +119,19 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         id_2048150_1_5 = getNextId(AndelIMatrikkelenhetId.class);
         id_2048150_1_6 = getNextId(AndelIMatrikkelenhetId.class);
         id_2048150_1_7 = getNextId(AndelIMatrikkelenhetId.class);
+        // KL_KRE
+        id_2139786_1_4 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_7 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_12 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_14 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_16 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_2 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_5 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_13 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_6 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_15 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_1 = getNextId(AndelIMatrikkelenhetId.class);
+        id_2139786_1_3 = getNextId(AndelIMatrikkelenhetId.class);
     }
 
     public void createAllMockups() {
@@ -151,6 +177,19 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         store.insert(createAndelIMatrikkelenhet(id_2048150_1_5, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_10063843747(), 1, 5));
         store.insert(createAndelIMatrikkelenhet(id_2048150_1_6, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_15124042140(), 1, 5));
         store.insert(createAndelIMatrikkelenhet(id_2048150_1_7, nivaaIMatrikkelenhetMockupFactory.getId_1449_59_39_0_0_G(), personMockupFactory.getId_16094440487(), 1, 5));
+        // KL_KRE
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_2, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_1975818(), 1, 4));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_3, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_4092535911(), 1, 4));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_6, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_10096840492(), 1, 1));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_12, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_4092535911(), 1, 4));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_16, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_10096840492(), 3, 4));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_4, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_25023137332(), 1, 4));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_1, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_22012032580(), 1, 4));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_15, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_22012032580(), 1, 4));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_5, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_22012032580(), 1, 1));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_14, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_25023137332(), 1, 4));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_7, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_22012032580(), 1, 1));
+        store.insert(createAndelIMatrikkelenhet(id_2139786_1_13, nivaaIMatrikkelenhetMockupFactory.getId_1531_99_90_0_0_G(), personMockupFactory.getId_10020230(), 1, 4));
     }
 
     private AndelIMatrikkelenhet createAndelIMatrikkelenhet(AndelIMatrikkelenhetId<?> id, NivaaIMatrikkelenhetId nivaaIMatrikkelenhetId, MatrikkelenhetId andelseierMatrikkelenhetId, int teller, int nevner) {
@@ -333,5 +372,53 @@ public class AndelIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
 
     public AndelIMatrikkelenhetId<?> getId_2048150_1_7() {
         return id_2048150_1_7;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_1() {
+        return id_2139786_1_1;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_14() {
+        return id_2139786_1_14;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_2() {
+        return id_2139786_1_2;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_6() {
+        return id_2139786_1_6;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_15() {
+        return id_2139786_1_15;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_16() {
+        return id_2139786_1_16;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_3() {
+        return id_2139786_1_3;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_5() {
+        return id_2139786_1_5;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_13() {
+        return id_2139786_1_13;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_4() {
+        return id_2139786_1_4;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_7() {
+        return id_2139786_1_7;
+    }
+
+    public AndelIMatrikkelenhetId<?> getId_2139786_1_12() {
+        return id_2139786_1_12;
     }
 }

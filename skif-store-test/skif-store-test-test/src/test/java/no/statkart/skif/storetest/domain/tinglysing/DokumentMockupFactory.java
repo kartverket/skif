@@ -21,6 +21,15 @@ public class DokumentMockupFactory extends AbstractMockupFactory<TestIdGenerator
     private final DokumentId<?> id_283560_200_2010_1;
     private final DokumentId<?> id_2567_56_1995_1;
     private final DokumentId<?> id_2782_56_1986_1;
+    // KL_KRE
+    private final DokumentId<?> id_301173_58_1964_1;
+    private final DokumentId<?> id_1062140_200_2007_2;
+    private final DokumentId<?> id_1062121_200_2007_1;
+    private final DokumentId<?> id_1062140_200_2007_1;
+    private final DokumentId<?> id_1062121_200_2007_3;
+    private final DokumentId<?> id_1062121_200_2007_4;
+    private final DokumentId<?> id_873_200_2009_2;
+    private final DokumentId<?> id_873_200_2009_1;
 
     @Inject
     public DokumentMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator) {
@@ -34,6 +43,15 @@ public class DokumentMockupFactory extends AbstractMockupFactory<TestIdGenerator
         id_283560_200_2010_1 = getNextId(DokumentId.class);
         id_2782_56_1986_1 = getNextId(DokumentId.class);
         id_2567_56_1995_1 = getNextId(DokumentId.class);
+        // KL_KRE
+        id_1062140_200_2007_2 = getNextId(DokumentId.class);
+        id_1062121_200_2007_4 = getNextId(DokumentId.class);
+        id_1062121_200_2007_3 = getNextId(DokumentId.class);
+        id_301173_58_1964_1 = getNextId(DokumentId.class);
+        id_1062140_200_2007_1 = getNextId(DokumentId.class);
+        id_1062121_200_2007_1 = getNextId(DokumentId.class);
+        id_873_200_2009_1 = getNextId(DokumentId.class);
+        id_873_200_2009_2 = getNextId(DokumentId.class);
     }
 
     public void createAllMockups() {
@@ -46,6 +64,15 @@ public class DokumentMockupFactory extends AbstractMockupFactory<TestIdGenerator
         store.insert(createDokument(id_283560_200_2010_1, 2010, 283560, "  "));
         store.insert(createDokument(id_2782_56_1986_1, 1986, 2782, "  "));
         store.insert(createDokument(id_2567_56_1995_1, 1995, 2567, "  "));
+        // KL_KRE
+        store.insert(createDokument(id_1062121_200_2007_1, 2007, 1062121, "  "));
+        store.insert(createDokument(id_1062121_200_2007_4, 2007, 1062121, "  "));
+        store.insert(createDokument(id_1062140_200_2007_1, 2007, 1062140, "  "));
+        store.insert(createDokument(id_1062140_200_2007_2, 2007, 1062140, "  "));
+        store.insert(createDokument(id_1062121_200_2007_3, 2007, 1062121, "  "));
+        store.insert(createDokument(id_301173_58_1964_1, 1964, 301173, "  "));
+        store.insert(createDokument(id_873_200_2009_1, 2009, 873, "  "));
+        store.insert(createDokument(id_873_200_2009_2, 2009, 873, "  "));
     }
 
     private Dokument createDokument(DokumentId<?> id, int dokumentaar, int dokumentnummer, String status) {
@@ -83,5 +110,37 @@ public class DokumentMockupFactory extends AbstractMockupFactory<TestIdGenerator
 
     public DokumentId<?> getId_2782_56_1986_1() {
         return id_2782_56_1986_1;
+    }
+
+    public DokumentId<?> getId_301173_58_1964_1() {
+        return id_301173_58_1964_1;
+    }
+
+    public DokumentId<?> getId_1062140_200_2007_2() {
+        return id_1062140_200_2007_2;
+    }
+
+    public DokumentId<?> getId_1062121_200_2007_1() {
+        return id_1062121_200_2007_1;
+    }
+
+    public DokumentId<?> getId_1062140_200_2007_1() {
+        return id_1062140_200_2007_1;
+    }
+
+    public DokumentId<?> getId_1062121_200_2007_3() {
+        return id_1062121_200_2007_3;
+    }
+
+    public DokumentId<?> getId_1062121_200_2007_4() {
+        return id_1062121_200_2007_4;
+    }
+
+    public DokumentId<?> getId_873_200_2009_1() {
+        return id_873_200_2009_1;
+    }
+
+    public DokumentId<?> getId_873_200_2009_2() {
+        return id_873_200_2009_2;
     }
 }

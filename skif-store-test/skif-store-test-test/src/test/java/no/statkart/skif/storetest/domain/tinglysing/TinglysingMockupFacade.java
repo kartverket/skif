@@ -30,6 +30,9 @@ public class TinglysingMockupFacade extends AbstractMockupFacade {
     private NivaaIMatrikkelenhetMockupFactory nivaaIMatrikkelenhetMockupFactory;
 
     @Inject
+    private PaategningPaaRettsstiftelserMockupFactory paategningPaaRettsstiftelserMockupFactory;
+
+    @Inject
     private PersonMockupFactory personMockupFactory;
 
     public AndelIMatrikkelenhetMockupFactory getAndelIMatrikkelenhetMockupFactory() {
@@ -64,6 +67,10 @@ public class TinglysingMockupFacade extends AbstractMockupFacade {
         return hjemmelForMatrikkelenhetMockupFactory;
     }
 
+    public PaategningPaaRettsstiftelserMockupFactory getPaategningPaaRettsstiftelserMockupFactory() {
+        return paategningPaaRettsstiftelserMockupFactory;
+    }
+
     @Override
     public void createAllMockups() {
         personMockupFactory.createAllMockups();
@@ -74,5 +81,6 @@ public class TinglysingMockupFacade extends AbstractMockupFacade {
         dokumentMockupFactory.createAllMockups();
         hjemmelForMatrikkelenhetMockupFactory.createAllMockups();
         hjemmelForPersonMockupFactory.createAllMockups();
+        paategningPaaRettsstiftelserMockupFactory.createAllMockups();
     }
 }

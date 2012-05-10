@@ -35,6 +35,14 @@ public class PersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<L
     private final PersonId<?> id_13090844371;
     private final PersonId<?> id_19113238251;
     private final PersonId<?> id_25023537225;
+    // KL_KRE
+    private final PersonId<?> id_1975818;
+    private final PersonId<?> id_4092535911;
+    private final PersonId<?> id_25023137332;
+    private final PersonId<?> id_22012032580;
+    private final PersonId<?> id_10096840492;
+    private final PersonId<?> id_10020230;
+    private final PersonId<?> id_10020143;
 
     @Inject
     public PersonMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator) {
@@ -65,6 +73,14 @@ public class PersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<L
         id_12093043071 = getNextId(PersonId.class);
         id_19113238251 = getNextId(PersonId.class);
         id_16094440487 = getNextId(PersonId.class);
+    // KL_KRE
+    id_22012032580 = getNextId(PersonId.class);
+    id_4092535911 = getNextId(PersonId.class);
+    id_10020230 = getNextId(PersonId.class);
+    id_25023137332 = getNextId(PersonId.class);
+    id_10096840492 = getNextId(PersonId.class);
+    id_1975818 = getNextId(PersonId.class);
+    id_10020143 = getNextId(PersonId.class);
     }
 
     public void createAllMockups() {
@@ -94,6 +110,14 @@ public class PersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<L
 //        store.insert(createPerson(id_10063843747, "10063843747", "BØ JENS"));
         store.insert(createPerson(id_13093745633, "13093745633", "SIMONSEN INGRID MURI"));
         store.insert(createPerson(id_19113238251, "19113238251", "BERENTZEN JENNY MARGIT"));
+    // KL_KRE
+        store.insert(createPerson(id_10020230, "10020230", "IDA FEY"));
+        store.insert(createPerson(id_22012032580, "22012032580", "NYMARK KARSTEN"));
+        store.insert(createPerson(id_1975818, "1975818", "FEY IDA"));
+        store.insert(createPerson(id_10096840492, "10096840492", "NYMARK GUNNHILD ANITA"));
+        store.insert(createPerson(id_25023137332, "25023137332", "NYMARK GUNNAR RAGNAR"));
+        store.insert(createPerson(id_4092535911, "4092535911", "NYMARK JON TORVALD"));
+        store.insert(createPerson(id_10020143, "10020143", "IDA FEY"));
     }
 
     private Person createPerson(PersonId<?> id, String ident, String navn) {
@@ -194,5 +218,33 @@ public class PersonMockupFactory extends AbstractMockupFactory<TestIdGenerator<L
 
     public PersonId<?> getId_25023537225() {
         return id_25023537225;
+    }
+
+    public PersonId<?> getId_1975818() {
+        return id_1975818;
+    }
+
+    public PersonId<?> getId_4092535911() {
+        return id_4092535911;
+    }
+
+    public PersonId<?> getId_25023137332() {
+        return id_25023137332;
+    }
+
+    public PersonId<?> getId_22012032580() {
+        return id_22012032580;
+    }
+
+    public PersonId<?> getId_10096840492() {
+        return id_10096840492;
+    }
+
+    public PersonId<?> getId_10020230() {
+        return id_10020230;
+    }
+
+    public PersonId<?> getId_10020143() {
+        return id_10020143;
     }
 }

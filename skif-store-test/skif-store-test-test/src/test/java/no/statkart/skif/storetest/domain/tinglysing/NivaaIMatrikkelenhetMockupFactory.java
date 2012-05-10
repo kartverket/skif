@@ -37,6 +37,8 @@ public class NivaaIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
     // HJ_HJG, TF_HJF
     private final NivaaIMatrikkelenhetId<?> id_1449_59_39_0_0_G;
     private final NivaaIMatrikkelenhetId<?> id_1449_59_39_0_0_F;
+    // KL_KRE
+    private final NivaaIMatrikkelenhetId<?> id_1531_99_90_0_0_G;
 
     @Inject
     public NivaaIMatrikkelenhetMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator, MatrikkelenhetMockupFactory matrikkelenhetMockupFactory) {
@@ -66,6 +68,8 @@ public class NivaaIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         // HJ_HJG, TF_HJF
         id_1449_59_39_0_0_G = getNextId(NivaaIMatrikkelenhetId.class);
         id_1449_59_39_0_0_F = getNextId(NivaaIMatrikkelenhetId.class);
+        // KL_KRE
+        id_1531_99_90_0_0_G = getNextId(NivaaIMatrikkelenhetId.class);
     }
 
     public void createAllMockups() {
@@ -93,6 +97,8 @@ public class NivaaIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
         // HJ_HJG, TF_HJF
         store.insert(createNivaaIMatrikkelenhet(id_1449_59_39_0_0_G, matrikkelenhetMockupFactory.getId_1449_59_39_0_0(), MatrikkelenhetsnivaaKodeId.Grunn));
         store.insert(createNivaaIMatrikkelenhet(id_1449_59_39_0_0_F, matrikkelenhetMockupFactory.getId_1449_59_39_0_0(), MatrikkelenhetsnivaaKodeId.Feste));
+        // KL_KRE
+        store.insert(createNivaaIMatrikkelenhet(id_1531_99_90_0_0_G, matrikkelenhetMockupFactory.getId_1531_99_90_0_0(), MatrikkelenhetsnivaaKodeId.Grunn));
     }
 
     private NivaaIMatrikkelenhet createNivaaIMatrikkelenhet(NivaaIMatrikkelenhetId<?> id, MatrikkelenhetId matrikkelenhetId, MatrikkelenhetsnivaaKodeId matrikkelenhetsnivaaKodeId) {
@@ -189,5 +195,9 @@ public class NivaaIMatrikkelenhetMockupFactory extends AbstractMockupFactory<Tes
 
     public NivaaIMatrikkelenhetId<?> getId_1449_59_39_0_0_F() {
         return id_1449_59_39_0_0_F;
+    }
+
+    public NivaaIMatrikkelenhetId<?> getId_1531_99_90_0_0_G() {
+        return id_1531_99_90_0_0_G;
     }
 }

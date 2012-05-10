@@ -32,6 +32,8 @@ public class MatrikkelenhetMockupFactory extends AbstractMockupFactory<TestIdGen
     private final MatrikkelenhetId<?> id_1449_57_195_0_3;
     // HJ_HJG, TF_HJF
     private final MatrikkelenhetId<?> id_1449_59_39_0_0;
+    // KL_KRE
+    private final MatrikkelenhetId<?> id_1531_99_90_0_0;
 
     @Inject
     public MatrikkelenhetMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator, KommuneMockupFactory kommuneMockupFactory) {
@@ -59,6 +61,8 @@ public class MatrikkelenhetMockupFactory extends AbstractMockupFactory<TestIdGen
         id_1449_57_195_0_2 = getNextId(MatrikkelenhetId.class);
         // HJ_HJG, TF_HJF
         id_1449_59_39_0_0 = getNextId(MatrikkelenhetId.class);
+        // KL_KRE
+        id_1531_99_90_0_0 = getNextId(MatrikkelenhetId.class);
     }
 
     public void createAllMockups() {
@@ -84,6 +88,8 @@ public class MatrikkelenhetMockupFactory extends AbstractMockupFactory<TestIdGen
         store.insert(createMatrikkelenhet(id_1449_57_195_0_1, kommuneMockupFactory.getId_1449(), 57, 195, 0, 1));
         // HJ_HJG, TF_HJF
         store.insert(createMatrikkelenhet(id_1449_59_39_0_0, kommuneMockupFactory.getId_1449(), 59, 39, 0, 0));
+        // KL_KRE
+        store.insert(createMatrikkelenhet(id_1531_99_90_0_0, kommuneMockupFactory.getId_1531(), 99, 90, 0, 0));
     }
 
     private Matrikkelenhet createMatrikkelenhet(MatrikkelenhetId<?> id, KommuneId kommuneId, int gaardsnummer, int bruksnummer) {
@@ -180,5 +186,9 @@ public class MatrikkelenhetMockupFactory extends AbstractMockupFactory<TestIdGen
 
     public MatrikkelenhetId<?> getId_1449_59_39_0_0() {
         return id_1449_59_39_0_0;
+    }
+
+    public MatrikkelenhetId<?> getId_1531_99_90_0_0() {
+        return id_1531_99_90_0_0;
     }
 }
