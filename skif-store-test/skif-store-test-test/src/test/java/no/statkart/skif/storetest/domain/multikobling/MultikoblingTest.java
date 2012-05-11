@@ -50,6 +50,13 @@ public class MultikoblingTest extends StoreTestTestCase {
 
             servitutt.getRettighetshaverAktivIds().add(personIds.get(i));
             servitutt.getRettighetshaverHistoriskIds().add(personIds.get(i + 5));
+
+            assertThat(servitutt.getPersonKoblinger()).contains(
+                    new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.RETTIGHETSHAVER_AKTIV, personIds.get(i)),
+                    new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.RETTIGHETSHAVER_HISTORISK, personIds.get(i + 5))
+            );
+            assertThat(servitutt.getRettighetshaverAktivIds().contains(personIds.get(i)));
+            assertThat(servitutt.getRettighetshaverHistoriskIds().contains(personIds.get(i+5)));
         }
 
         for (int i = 0; i < 5; i++) {
@@ -61,10 +68,17 @@ public class MultikoblingTest extends StoreTestTestCase {
             pengeheftelse.getPanthaverAktivIds().add(personIds.get(i));
             pengeheftelse.getPanthaverAktivIds().add(personIds.get(i));
             pengeheftelse.getPanthavereHistoriskIds().add(personIds.get(i + 5));
+
+            assertThat(pengeheftelse.getPersonKoblinger()).contains(
+                    new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.PANTHAVER_AKTIV, personIds.get(i)),
+                    new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.PANTHAVER_HISTORISK, personIds.get(i + 5))
+            );
+            assertThat(pengeheftelse.getPanthaverAktivIds().contains(personIds.get(i)));
+            assertThat(pengeheftelse.getPanthavereHistoriskIds().contains(personIds.get(i+5)));
+
         }
-        System.out.println(personIds);
-        System.out.println(servituttIds);
-        System.out.println(pengeheftelseIds);
+
+
         final Pengeheftelse pengeheftelse = store.get(pengeheftelseIds.get(2));
         final UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
         store.endUnitOfWork();

@@ -10,6 +10,18 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * En datastruktur som inneholder et sett av koblinger til objekter av type {@code V} sortert på roller av type {@code R},
+ * hvor koblingen er en subtype {@code Kobling<R,V>} som opprettes av {@code koblingFactory}.
+ *
+ * Klasser, {@code E}, som definere felter av denne type kan se på som eier av koblingene inneholdt i datastrukturen. På
+ * databasenivå mappes datastruktur til en link tabell med tre nøkler: id for {@code E}, rolle, og id for
+ * {@code V}.
+ *
+ * I nåværende implementasjon inneholder datastrukturen både et {@code Set} objekt og et {@code SetMultimap}. Grunnen
+ * til dette er at det pt ikke finnes noen hibernate implementasjon for persistering av {@code SetMultimap} direkte.
+ *
+ * TODO NB: Dersom hiberante kaller {@link #setKoblinger(java.util.Set) } ofte kan det oppstå performance problemer. Vi bør sjekke om dette skjer
+ *
  * @author Henrik Fredholm
  * @since 2.1
  */
@@ -130,26 +142,22 @@ public class HashKoblingMultimap<R, V> extends ForwardingSetMultimap<R, V> imple
 
         @Override
         public boolean add(V element) {
-            return super.add(element);
+            return HashKoblingMultimap.this.put(rolle,element);
         }
 
         @Override
         public boolean addAll(Collection<? extends V> tids) {
-            return super.addAll(tids);
+            return standardAddAll(tids);
         }
 
         @Override
         public void clear() {
-            delegate.clear();
+            HashKoblingMultimap.this.clear();
         }
 
         @Override
-        public boolean remove(Object object) {
-            final boolean changed = delegate.remove(object);
-            if (changed) {
-                HashKoblingMultimap.this.koblinger.remove(HashKoblingMultimap.this.koblingFactory.create(rolle, (V)object));
-            }
-            return changed;
+        public boolean remove(Object element) {
+            return HashKoblingMultimap.this.remove(rolle, element);
         }
 
         @Override
@@ -159,7 +167,7 @@ public class HashKoblingMultimap<R, V> extends ForwardingSetMultimap<R, V> imple
 
         @Override
         public boolean retainAll(Collection<?> collection) {
-            return standardRetainAll(collection);
+            return standardRetainAll(collection); // todo check at denne virker
         }
 
         @Override
