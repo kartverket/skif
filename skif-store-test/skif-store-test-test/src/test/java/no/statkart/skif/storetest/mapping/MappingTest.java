@@ -38,10 +38,10 @@ public class MappingTest extends AutomagicTest {
 
         getWsapiPkg().add("no.statkart.skif.storetest.wsapi.domain.demo.koder");
         getWsapiPkg().add("no.statkart.skif.storetest.wsapi.domain.demo");
-        getWsapiPkg().add("no.statkart.skif.storetest.wsapi.domain");
+//        getWsapiPkg().add("no.statkart.skif.storetest.wsapi.domain");
         getDomainPkg().add("no.statkart.skif.storetest.domain.demo.koder");
         getDomainPkg().add("no.statkart.skif.storetest.domain.demo");
-        getDomainPkg().add("no.statkart.skif.storetest.domain");
+//        getDomainPkg().add("no.statkart.skif.storetest.domain");
 //        getDomainPkg().add("no.statkart.skif.store.kodeliste");
 
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.StoreTestBubble");
@@ -73,7 +73,6 @@ public class MappingTest extends AutomagicTest {
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.basetyper.package-info");
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon");
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.MockupTransfer");
-
 
         discoverClassHierarchy();
     }

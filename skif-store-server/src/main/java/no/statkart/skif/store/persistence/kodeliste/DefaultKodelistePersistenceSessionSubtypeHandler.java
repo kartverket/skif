@@ -103,7 +103,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     /**
-     * Laster kodeids for en kodeliste. Hvis kodelisten allerede har kodeids lastes kodene ikke på nytt
+     * Laster kodeids for en enkelt kodeliste. Hvis kodelisten allerede har fått beregnet kodeids så lastes
+     * kodene ikke på nytt. Algoritmen laster ikke koder for andre kodelister. Dersom mange kodelister skal lastes
+     * bør {@link #loadKodeIds(java.util.Collection)} brukes istedet.
      */
     protected void loadKodeIds(Kodeliste kodeliste) {
         if (!kodeliste.getKodeIds().isEmpty()) return;
@@ -142,9 +144,13 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     /**
-     * Laster kodeids for kodelister. Kodelister som allerede har kodeIds får ikke lastet deres koder på nytt.
+     * Laster kodeids for et sett av database baserte kodelister på effektiv. For hver kodeliste beregnes hvilken
+     * tabell kodene ligger. Dernest lastes alle koder i hver tabell og kodene legge inn i deres tilhørende
+     * kodeliste dersom kodelisten skal lastes. Denne algoritme sikre at kodelister som kode tabell får laster
+     * alle koder via en felles sql. Koder som tilhører kodelister som ikke lastes ignoreres. Kodelister som allerede
+     * har fått beregne tilhørende kodeIds får ikke beregnet deres kodeIds på nytt.
      *
-     * @param kodelister
+     * @param kodelister database kodelister som skal lastes
      */
     protected void loadKodeIds(Collection<Kodeliste> kodelister) {
         Set<Class<? extends Kode>> kodeBaseClasses = new HashSet<Class<? extends Kode>>();
@@ -362,6 +368,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public List<KodelisteId<?>> getKodelisteIds
             () {
         List<KodelisteId<?>> result = new ArrayList<KodelisteId<?>>();
@@ -369,18 +378,24 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         Collection<Kodeliste> kodelister = getDbKodelister();
         Collection<Kodeliste> kodelisterWithoutKodeIds = new ArrayList<Kodeliste>();
         for (Kodeliste kodeliste : kodelister) {
+            result.add(kodeliste.getId());
             if (kodeliste.getKodeIds().isEmpty()) {
                 kodelisterWithoutKodeIds.add(kodeliste);
-            } else {
-                result.add(kodeliste.getId());
             }
         }
         if (!kodelisterWithoutKodeIds.isEmpty()) {
             loadKodeIds(kodelister);
         }
+
         return result;
     }
 
+    /**
+     * Laster alle database baserte kodelister. Kodelistene kodeIds beregnes og lastes ikke. Dette må gjøres via
+     * kall til {@link #loadKodeIds(no.statkart.skif.store.kodeliste.Kodeliste)}} eller
+     * {@link #loadKodeIds(java.util.Collection)}
+     * @return alle database kodelister
+     */
     private Collection<Kodeliste> getDbKodelister
             () {
         Collection<Kodeliste> result = null;

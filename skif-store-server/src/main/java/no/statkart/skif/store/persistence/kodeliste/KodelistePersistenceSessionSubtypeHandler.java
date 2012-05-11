@@ -15,7 +15,8 @@ import java.util.List;
  */
 public interface KodelistePersistenceSessionSubtypeHandler extends PersistenceSessionSubtypeHandler {
     /**
-     * Laster alle kodelister og koder i domenet.
+     * Returnerer alle enum og database basert kodelister for gitt snapshot versjon. Sørger for
+     * at alle tilhørende kodelister og koder  er lastet.
      * @return Collection med all kodelisteids
      */
     List<KodelisteId<?>> getKodelisteIds();

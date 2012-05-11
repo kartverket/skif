@@ -1,8 +1,9 @@
 package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
-import com.google.inject.Key;
 import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.service.sequence.IdService;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.*;
@@ -16,8 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
@@ -182,7 +182,7 @@ public class StoreTest extends StoreTestTestCase {
         Assert.assertEquals(barFoos.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
         Assert.assertEquals(barFoos.getBarId(), new BarId<Bar>(1001L));
         Assert.assertEquals(barFoos.getBar().getId(), new BarId<Bar>(1001L)); //Bruker her store internt i objektet
-        Assert.assertEquals(barFoos.getFooIds(), Arrays.asList(new FooId<Foo>(100L),new FooId<Foo>(101L)));
+        Assert.assertEquals(barFoos.getFooIds(), Arrays.asList(new FooId<Foo>(100L), new FooId<Foo>(101L)));
 
 
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:03:15.00");
@@ -193,7 +193,7 @@ public class StoreTest extends StoreTestTestCase {
 
     }
 
-    public void testStoreGetRaz(){
+    public void testStoreGetRaz() {
         StoreService store = injector.getInstance(StoreService.class);
 
         Raz raz = store.getObject(new RazId<Raz>(601L));
@@ -202,21 +202,56 @@ public class StoreTest extends StoreTestTestCase {
     }
 
 
-    public void testGetMedGenerellId(){
+    public void testGetMedGenerellId() {
 
         store.get(new RettsstiftelseId<Rettsstiftelse>(2001L, SnapshotVersion.CURRENT));
         store.get(new ServituttId<Servitutt>(2001L, SnapshotVersion.CURRENT));
 
-        try{
+        try {
             store.get(new PengeheftelseId<Pengeheftelse>(2002L, SnapshotVersion.CURRENT));
-        } catch(ObjectNotFoundException oNFE) {
+        } catch (ObjectNotFoundException oNFE) {
             //OK
         }
         store.get(new RettsstiftelseId<Rettsstiftelse>(2002L, SnapshotVersion.CURRENT));
         store.get(new ServituttId<Servitutt>(2003L, SnapshotVersion.CURRENT));
 
-
-
     }
 
- }
+    /**
+     * Tester insert object med automatisk tildeling av id
+     */
+    public void testAutomatiskTilordningAvIdViaInsert() {
+        try {
+            store.beginUnitOfWork();
+            TestBubble testBubble1 = new TestBubble();
+            testBubble1.setText("Insert Automatisk 1");
+            assertNull(testBubble1.getId());
+            store.insert(testBubble1);
+            TestBubble testBubble2 = new TestBubble();
+            testBubble2.setText("Insert Automatisk 2");
+            assertNull(testBubble2.getId());
+            store.insert(testBubble2);
+            assertNotNull(testBubble2.getId());
+            assertFalse(testBubble1.getId().equals(testBubble2.getId()));
+        } finally {
+            store.abortUnitOfWork();
+        }
+    }
+
+    /**
+     * Tester insert object med automatisk tildeling av id
+     */
+    public void testManuellAllokeringAvId() {
+        try {
+            store.beginUnitOfWork();
+            TestBubble testBubble1 = new TestBubble();
+            final TestBubbleId<?> nextId = store.getInstance(IdService.class).getNextId(TestBubbleId.class);
+            assertNotNull(nextId.getValue());
+            testBubble1.setId(nextId);
+            store.insert(testBubble1);
+        } finally {
+            store.abortUnitOfWork();
+        }
+    }
+
+}

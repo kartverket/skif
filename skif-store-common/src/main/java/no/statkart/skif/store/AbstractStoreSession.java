@@ -3,6 +3,7 @@ package no.statkart.skif.store;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.NotLockedException;
+import no.statkart.skif.service.sequence.IdService;
 
 import java.util.*;
 
@@ -16,6 +17,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     protected final StoreCache storeCache;
     protected final LinkedHashMap<BubbleId<?>, StoreEntry> modifiedMap;
     protected Store store;
+    protected IdService idService;
 
     protected AbstractStoreSession(int level, StoreCache storeCache) {
         this.level = level;
@@ -26,6 +28,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     public void setStore(Store store) {
         this.store = store;
         this.storeCache.setStore(store);
+        this.idService = store.getInstance(IdService.class);
     }
 
     protected void markModified() {
@@ -320,6 +323,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
     @Override
     public final <T extends BubbleObject> void insert(T bubbleObject) {
+        // Opprett BubbleId av riktig type hvis null
+        if (bubbleObject.getId()==null) {
+            final BubbleId<? extends BubbleObject> bubbleId = idService.getNextId(BubbleIds.getBubbleIdClass(bubbleObject.getClass()));
+            bubbleObject.setId(bubbleId);
+        }
         StoreEntry storeEntry = insertEntry(level, bubbleObject);
         addModified(storeEntry);
     }

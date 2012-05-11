@@ -1,5 +1,8 @@
 package no.statkart.skif.store;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
@@ -9,6 +12,7 @@ import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
+import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
@@ -22,13 +26,12 @@ import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceS
 import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.domain.demo.koder.*;
+import no.statkart.skif.storetest.domain.demo.koder.ADbKode;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.SEnumKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
-import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
-import no.statkart.skif.storetest.domain.multikobling.RettsstiftelseId;
-import no.statkart.skif.storetest.domain.multikobling.Servitutt;
-import no.statkart.skif.storetest.domain.multikobling.ServituttId;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
@@ -164,7 +167,14 @@ public class StoreSessionServerTest {
         writeListeners.add(new TestBubbleFilter());
         List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
         finishListeners.add(new TestBubbleFinishFilter());
-        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners));
+
+        Injector fakeInjector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toProvider(Providers.<IdService>of(null));
+            }
+        });
+        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners), fakeInjector);
         deletePriviouslyWritenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
     }
 
@@ -228,7 +238,6 @@ public class StoreSessionServerTest {
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
     }
-
 
     /**
      * Tester lockObject object

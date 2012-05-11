@@ -1,7 +1,9 @@
 package no.statkart.skif.store;
 
-import com.google.inject.Injector;
+import com.google.inject.*;
+import com.google.inject.util.Providers;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.service.sequence.IdService;
 
 import java.util.LinkedHashSet;
 
@@ -9,10 +11,6 @@ import java.util.LinkedHashSet;
  * @author Henrik Fredholm
  */
 public class StoreServer extends AbstractStore {
-
-    public StoreServer(StoreSessionServer storeSession) {
-        this(storeSession, null);
-    }
 
     public StoreServer(StoreSessionServer storeSessionServer, Injector injector) {
         super(storeSessionServer, injector);

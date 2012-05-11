@@ -197,6 +197,16 @@ public class KodeTest extends StoreTestTestCase {
         KodelisteTransfer<StoreTestKodelisteId<?>> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
         List<? extends StoreTestKodelisteId<?>> kodelisteIds = kodelisteTransfer.getKodelisteIds();
 
+        assertThat(kodelisteIds).contains(
+                AEnumKodeId.KODELISTE_ID,
+                BEnumKodeId.KODELISTE_ID,
+                SEnumKodeId.KODELISTE_ID,
+                ADbKodeId.KODELISTE_ID,
+                BDbKodeId.KODELISTE_ID,
+                C1DbKodeId.KODELISTE_ID,
+                C2DbKodeId.KODELISTE_ID
+                );
+
         store.register(kodelisteTransfer);
         List list = store.get(kodelisteTransfer.getKodelisteIds());
 

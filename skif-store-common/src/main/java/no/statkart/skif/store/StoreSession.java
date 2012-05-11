@@ -96,6 +96,10 @@ public interface StoreSession {
     /**
      * Oppretter objektet i sessionen. Metoden kaster exception hvis objektet allerede er knyttet til sessionen eller
      * det finnes en annen instans med samme id som er knyttet til sessionen.
+     *
+     * Dersom som objektets id er null så tildeles objektet automatisk en ny id via kall til
+     * {@link no.statkart.skif.service.sequence.IdService}
+     *
      * @param bubbleObject
      */
     <T extends BubbleObject> void insert(T bubbleObject);

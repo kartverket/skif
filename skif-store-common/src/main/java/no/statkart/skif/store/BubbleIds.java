@@ -1,5 +1,6 @@
 package no.statkart.skif.store;
 
+import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.lang.reflect.Constructor;
@@ -56,6 +57,10 @@ public class BubbleIds {
     public static Class<? extends BubbleObject> getBaseType(Class<? extends BubbleId<?>> clazz) {
         // TODO: bruke reflection på clazz istedet for å gå mot direkte AbstractBubbleId
         return AbstractBubbleId.getTypeInfo(clazz).baseType;
+    }
+
+    public static <T extends BubbleObject> Class<? extends BubbleId<T>> getBubbleIdClass(Class<T> bubbleClass) {
+        return SkifUtil.classForName(bubbleClass.getName()+"Id");
     }
 
 }

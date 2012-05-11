@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.config;
 
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -28,6 +29,9 @@ import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
+import no.statkart.skif.service.sequence.IdService;
+import no.statkart.skif.service.sequence.IdServiceImpl;
+import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
@@ -86,6 +90,8 @@ public class StoreTestServerModule extends SkifModule {
         install(new RunOnServerServiceModule(moduleConfiguration));
 
         bind(Store.class).to(StoreServer.class);
+        bind(IdService.class).to(IdServiceImpl.class);
+        bind(SequenceBlockAllocatorService.class).to(no.statkart.skif.storetest.service.id.SequenceBlockAllocatorService.class);
 
         // EnumKode internasjonalisering
         bind(KodeMsg.class).to(DemoKodeMsg.class);
@@ -125,7 +131,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager) {
+    StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager, Injector injector) {
         //ReadListener
         List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
         readListeners.add(new TestBubbleFilter());
@@ -134,7 +140,7 @@ public class StoreTestServerModule extends SkifModule {
         writeListeners.add(new AggregertObjektFilter());
         List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
         finishListeners.add(new TestBubbleFinishFilter());
-        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners));
+        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners), injector);
         return storeServer;
     }
 

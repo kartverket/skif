@@ -17,6 +17,9 @@ import no.statkart.skif.service.module.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.module.common.RunOnServerRemoteServiceModule;
+import no.statkart.skif.service.sequence.IdService;
+import no.statkart.skif.service.sequence.IdServiceImpl;
+import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.service.test.TestNumberService;
 import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.service.test.TestService;
@@ -62,6 +65,10 @@ public class StoreTestClientModule extends SkifModule {
                 .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
         );
 
+        bind(IdService.class).to(IdServiceImpl.class);
+        bind(SequenceBlockAllocatorService.class).to(no.statkart.skif.storetest.service.id.SequenceBlockAllocatorService.class);
+
+
         //Legger til DBLockerService dersom man kjører i singleVm. Denne tjenesten finnes ikke som en webservice, og kan derfor ikke legges til ved kjøring av tester i client/server
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
             install(new RemoteServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices(), mapping)); // Angir bare en mapping, siden det er irrelevant for en intern tjeneste
@@ -74,6 +81,7 @@ public class StoreTestClientModule extends SkifModule {
         TypeLiteral<TestIdGenerator<Long>> testIdGeneratorLongType = SkifUtil.typeLiteral(TestIdGenerator.class, Long.class);
         bind(testIdGeneratorLongType).to(TestIdGeneratorImplLong.class);
         bind(TestNumberService.class).to(TestService.class);
+
     }
 
     /*
