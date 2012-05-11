@@ -681,9 +681,10 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                                 String className;
                                 try {
                                     className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-
-                                    _class = Class.forName(className);
-                                    if (_class.getPackage().toString().contains(packageName)) {
+                                    String classPackageName = className.substring(0, className.lastIndexOf("."));
+                                    // Laster kun klasser som ligger under packageName
+                                    if (classPackageName.contains(packageName)) {
+                                        _class = Class.forName(className);
                                         classes.add(_class);
                                     }
                                 } catch (ExceptionInInitializerError e) {
@@ -714,11 +715,13 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                             String className = null;
                             try {
                                 className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-
-                                _class = Class.forName(className);
-                                if (_class.getPackage().toString().contains(packageName)) {
+                                String classPackageName = className.substring(0, className.lastIndexOf("."));
+                                // Laster kun klasser som ligger under packageName
+                                if (classPackageName.contains(packageName)) {
+                                    _class = Class.forName(className);
                                     classes.add(_class);
                                 }
+
                             } catch (ExceptionInInitializerError e) {
                                 // happen, for example, in classes, which depend on
                                 // Spring to inject some beans, and which fail,

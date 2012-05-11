@@ -93,16 +93,19 @@ public class AutomagicTest {
                             String className = null;
                             try {
                                 className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-
-                                _class = Class.forName(className);
+                                String classPackageName = className.substring(0, className.lastIndexOf("."));
+                                // Laster kun klasser som ligger under packageName
+                                if (classPackageName.contains(packageName)) {
+                                    System.err.println("PackageName="+ packageName);
+                                    _class = Class.forName(className);
+                                    classes.add(_class);
+                                }
                             } catch (ExceptionInInitializerError e) {
+                                throw new MappingException(e);
                                 // happen, for example, in classes, which depend on
                                 // Spring to inject some beans, and which fail,
                                 // if dependency is not fulfilled
-                                _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-                            }
-                            if(_class.getPackage().toString().contains(packageName)){
-                                classes.add(_class);
+                                //_class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
                             }
                         }
                     }
@@ -139,13 +142,14 @@ public class AutomagicTest {
                 Class _class;
                 try {
                     _class = Class.forName(packageName + '.' + fileName.substring(0, fileName.length() - 6));
+                    classes.add(_class);
                 } catch (ExceptionInInitializerError e) {
+                    throw new MappingException(e);
                     // happen, for example, in classes, which depend on
                     // Spring to inject some beans, and which fail,
                     // if dependency is not fulfilled
-                    _class = Class.forName(packageName + '.' + fileName.substring(0, fileName.length() - 6), false, Thread.currentThread().getContextClassLoader());
+                    //_class = Class.forName(packageName + '.' + fileName.substring(0, fileName.length() - 6), false, Thread.currentThread().getContextClassLoader());
                 }
-                classes.add(_class);
             }
         }
         return classes;
