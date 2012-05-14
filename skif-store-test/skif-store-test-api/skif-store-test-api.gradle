@@ -1,6 +1,5 @@
 dependencies {
     compile project(':skif-store-common')
-    compile libraries.guava
 
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')

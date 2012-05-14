@@ -6,8 +6,8 @@ configurations {
 
 dependencies {
     compile project(':skif-service-common')
-
     compile libraries.jts
+    compile libraries.guava
 
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
