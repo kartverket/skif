@@ -1,7 +1,5 @@
 package no.statkart.skif.storetest.domain.multikobling.kobling;
 
-import no.statkart.skif.store.multikobling.Kobling;
-import no.statkart.skif.store.multikobling.KoblingFactory;
 import no.statkart.skif.storetest.domain.multikobling.PersonId;
 
 /**
