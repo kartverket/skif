@@ -64,7 +64,7 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
         if (refreshNeeded) {
             delegate.clear();
             for (K k : koblinger) {
-                delegate.put(k.rolle, k.getValue());
+                delegate.put(k.getRolle(), k.getValue());
             }
             refreshNeeded = false;
         }

@@ -14,7 +14,7 @@
         <set name="personKoblinger" table="Rettsstiftelse_Person_Kobling" cascade="all,delete-orphan">
             <key column="rettsstiftelseId"/>
             <composite-element class="no.statkart.skif.storetest.domain.multikobling.kobling.RetttstiftelseTilPersonKobling">
-                <property name="rolle"/>
+                <property name="rolleFix" column="rolle" />
                 <many-to-one
                       name="person"
                       column="personId"

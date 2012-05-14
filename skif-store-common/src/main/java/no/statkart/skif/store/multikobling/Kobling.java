@@ -8,32 +8,28 @@ import java.io.Serializable;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class Kobling<R,V> implements Serializable {
-    public R rolle;
-    public V value;
+public abstract class Kobling<R,V> implements Serializable {
+    private R rolle;
 
     public Kobling() {
     }
 
     public Kobling(R rolle, V value) {
         this.rolle = rolle;
-        this.value = value;
+        setValue(value);
     }
 
-    private String getRolle() {
-        return rolle.toString();
+    public R getRolle() {
+        return rolle;
     }
 
     public void setRolle(R rolle) {
         this.rolle = rolle;
     }
 
-    protected V getValue() {
-        return value;
-    }
-    protected void setValue(V value) {
-        this.value = value;
-    }
+    protected abstract V getValue();
+
+    protected abstract void setValue(V value);
 
     @Override
     public boolean equals(Object o) {
@@ -43,7 +39,8 @@ public class Kobling<R,V> implements Serializable {
         Kobling kobling = (Kobling) o;
 
         if (rolle != null ? !rolle.equals(kobling.rolle) : kobling.rolle != null) return false;
-        if (value != null ? !value.equals(kobling.value) : kobling.value != null) return false;
+        V value = getValue();
+        if (value != null ? !value.equals(kobling.getValue()) : kobling.getValue() != null) return false;
 
         return true;
     }
@@ -51,6 +48,7 @@ public class Kobling<R,V> implements Serializable {
     @Override
     public int hashCode() {
         int result = rolle != null ? rolle.hashCode() : 0;
+        V value = getValue();
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
     }
