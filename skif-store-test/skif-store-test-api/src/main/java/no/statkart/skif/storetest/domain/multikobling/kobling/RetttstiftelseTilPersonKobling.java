@@ -1,5 +1,7 @@
 package no.statkart.skif.storetest.domain.multikobling.kobling;
 
+import no.statkart.skif.store.multikobling.Kobling;
+import no.statkart.skif.store.multikobling.KoblingFactory;
 import no.statkart.skif.storetest.domain.multikobling.PersonId;
 
 /**
@@ -9,7 +11,7 @@ import no.statkart.skif.storetest.domain.multikobling.PersonId;
 public class RetttstiftelseTilPersonKobling extends Kobling<RettsstiftelsePersonRolle, PersonId<?>> {
     public PersonId personId;
 
-    public static KoblingFactory<RettsstiftelsePersonRolle, PersonId<?>> KOBLING_FACTORY =
+    public static KoblingFactory<RettsstiftelsePersonRolle, PersonId<?>, RetttstiftelseTilPersonKobling> KOBLING_FACTORY =
             new RettsstiftelsePersonRollePersonIdKoblingFactory();
 
     public RetttstiftelseTilPersonKobling() {
@@ -56,9 +58,9 @@ public class RetttstiftelseTilPersonKobling extends Kobling<RettsstiftelsePerson
         return personId != null ? personId.hashCode() : 0;
     }
 
-    private static class RettsstiftelsePersonRollePersonIdKoblingFactory implements KoblingFactory<RettsstiftelsePersonRolle, PersonId<?>> {
+    private static class RettsstiftelsePersonRollePersonIdKoblingFactory implements KoblingFactory<RettsstiftelsePersonRolle, PersonId<?>, RetttstiftelseTilPersonKobling> {
         @Override
-        public Kobling<RettsstiftelsePersonRolle, PersonId<?>> create(RettsstiftelsePersonRolle rolle, PersonId<?> targetId) {
+        public RetttstiftelseTilPersonKobling create(RettsstiftelsePersonRolle rolle, PersonId<?> targetId) {
             return new RetttstiftelseTilPersonKobling(rolle, targetId);
         }
     }

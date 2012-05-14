@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.domain.multikobling;
 
+import no.statkart.skif.store.multikobling.Multikobling;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.multikobling.kobling.RettsstiftelsePersonRolle;
 import no.statkart.skif.storetest.domain.multikobling.kobling.RetttstiftelseTilPersonKobling;
@@ -12,7 +13,7 @@ import java.util.Set;
  */
 public class Rettsstiftelse extends AbstractStoreTestBubble {
     // Denne bør normalt være protected. Er her public for testing
-    public HashKoblingMultimap<RettsstiftelsePersonRolle, PersonId<?>> rettsstiftelsePersonIdsKoblinger = HashKoblingMultimap.create(RetttstiftelseTilPersonKobling.KOBLING_FACTORY);
+    public Multikobling<RettsstiftelsePersonRolle, PersonId<?>, RetttstiftelseTilPersonKobling> rettsstiftelsePersonIdsKoblinger = Multikobling.create(RetttstiftelseTilPersonKobling.KOBLING_FACTORY);
 
     @Override
     public RettsstiftelseId<?> getId() {
@@ -21,11 +22,11 @@ public class Rettsstiftelse extends AbstractStoreTestBubble {
 
     // Denne kan normalt være private
     public Set<RetttstiftelseTilPersonKobling> getPersonKoblinger() {
-        return (Set)rettsstiftelsePersonIdsKoblinger.getKoblinger();
+        return rettsstiftelsePersonIdsKoblinger.getKoblinger();
     }
 
     // Denne kan normat være private
     public void setPersonKoblinger(Set<RetttstiftelseTilPersonKobling> personKoblinger) {
-        rettsstiftelsePersonIdsKoblinger.setKoblinger((Set)personKoblinger);
+        rettsstiftelsePersonIdsKoblinger.setKoblinger(personKoblinger);
     }
 }
