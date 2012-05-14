@@ -1,8 +1,8 @@
 package no.statkart.skif.storetest.domain.multikobling.kobling;
 
+import no.statkart.skif.store.multikobling.Kobling;
+import no.statkart.skif.store.multikobling.KoblingFactory;
 import no.statkart.skif.storetest.domain.multikobling.PersonId;
-import no.statkart.skif.storetest.domain.multikobling.util.Kobling;
-import no.statkart.skif.storetest.domain.multikobling.util.KoblingFactory;
 
 /**
  * @author Henrik Fredholm
