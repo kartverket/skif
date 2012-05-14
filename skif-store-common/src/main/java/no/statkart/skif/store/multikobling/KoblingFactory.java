@@ -1,6 +1,4 @@
-package no.statkart.skif.storetest.domain.multikobling.util;
-
-import no.statkart.skif.store.BubbleId;
+package no.statkart.skif.store.multikobling;
 
 import java.io.Serializable;
 
