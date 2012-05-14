@@ -1,11 +1,11 @@
 package no.statkart.skif.storetest.domain.tinglysing;
 
+import no.statkart.skif.store.multikobling.HashKoblingMultimap;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseRelasjonAndelRolle;
 import no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseRelasjonNivaaRolle;
 import no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseRelasjonTilAndelKobling;
 import no.statkart.skif.storetest.domain.tinglysing.kobling.RettsstiftelseRelasjonTilNivaaKobling;
-import no.statkart.skif.storetest.domain.tinglysing.util.HashKoblingMultimap;
 
 import java.util.Set;
 

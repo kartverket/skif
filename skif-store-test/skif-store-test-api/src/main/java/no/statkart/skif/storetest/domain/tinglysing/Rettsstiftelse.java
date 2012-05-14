@@ -1,8 +1,8 @@
 package no.statkart.skif.storetest.domain.tinglysing;
 
+import no.statkart.skif.store.multikobling.HashKoblingMultimap;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.tinglysing.kobling.*;
-import no.statkart.skif.storetest.domain.tinglysing.util.HashKoblingMultimap;
 
 import java.util.Set;
 

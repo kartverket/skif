@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.domain.tinglysing.util;
+package no.statkart.skif.store.multikobling;
 
 import java.io.Serializable;
 

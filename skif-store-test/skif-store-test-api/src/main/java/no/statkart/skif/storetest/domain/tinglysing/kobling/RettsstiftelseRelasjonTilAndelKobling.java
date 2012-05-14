@@ -1,8 +1,8 @@
 package no.statkart.skif.storetest.domain.tinglysing.kobling;
 
+import no.statkart.skif.store.multikobling.Kobling;
+import no.statkart.skif.store.multikobling.KoblingFactory;
 import no.statkart.skif.storetest.domain.tinglysing.AndelIMatrikkelenhetId;
-import no.statkart.skif.storetest.domain.tinglysing.util.Kobling;
-import no.statkart.skif.storetest.domain.tinglysing.util.KoblingFactory;
 
 /**
  * @author rorchr
