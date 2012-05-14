@@ -9,7 +9,6 @@ import no.statkart.skif.storetest.domain.multikobling.PersonId;
  * @since 2.1
  */
 public class RetttstiftelseTilPersonKobling extends Kobling<RettsstiftelsePersonRolle, PersonId<?>> {
-    public PersonId personId;
 
     public static KoblingFactory<RettsstiftelsePersonRolle, PersonId<?>, RetttstiftelseTilPersonKobling> KOBLING_FACTORY =
             new RettsstiftelsePersonRollePersonIdKoblingFactory();
@@ -18,44 +17,15 @@ public class RetttstiftelseTilPersonKobling extends Kobling<RettsstiftelsePerson
     }
 
     public RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle rolle, PersonId<?> id) {
-        this.rolle = rolle;
-        this.personId = id;
+        super(rolle,id);
     }
 
-    private String getRolle() {
-        return rolle.toString();
-    }
-
+    /**
+     * Brukes av hibernate for mapping av String til rolle. Trengs kun for å støtte hibernate 3.2.6. I 3.4.10 kan man bruke hibernates støtte for enum
+     * @param rolle
+     */
     private void setRolle(String rolle) {
         this.rolle = RettsstiftelsePersonRolle.valueOf(rolle);
-    }
-
-    @Override
-    protected PersonId<?> getValue() {
-        return personId;
-    }
-
-    @Override
-    protected void setValue(PersonId<?> value) {
-        personId = value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RetttstiftelseTilPersonKobling that = (RetttstiftelseTilPersonKobling) o;
-
-        if (rolle != null ? !rolle.equals(that.rolle) : that.rolle != null) return false;
-        if (personId != null ? !personId.equals(that.personId) : that.personId != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return personId != null ? personId.hashCode() : 0;
     }
 
     private static class RettsstiftelsePersonRollePersonIdKoblingFactory implements KoblingFactory<RettsstiftelsePersonRolle, PersonId<?>, RetttstiftelseTilPersonKobling> {
