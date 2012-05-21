@@ -119,7 +119,6 @@ public class BubbleRefConfiguration extends Configuration {
 
     public SessionFactory buildSessionFactory() throws HibernateException {
         configureManyToOneBubbleMappings();
-//        setInterceptor(new HibernateStoreInterceptor()); // TODO: Må fiksast
         return super.buildSessionFactory();
     }
 
@@ -304,33 +303,42 @@ public class BubbleRefConfiguration extends Configuration {
         for (Iterator iterator = persistentClass.getPropertyClosureIterator(); iterator.hasNext();) {
             // Prosesser hver property i mapping
             Property prop = (Property) iterator.next();
-            MetaAttribute attrib = prop.getMetaAttribute("bubble-ref");
-            if (prop.getValue() instanceof Collection) {
-                if (attrib != null) {
-                    // Collection består av bubble-ref referanser
-                    configureCollectionBubbleMapping(prop, persistentClass);
-                } else {
-                    // Sjekk om collection inneholder component mapping
-                    Collection c = (Collection) prop.getValue();
-                    if (c.getElement() instanceof Component) {
-                        // Prosesser hver property i component mapping
-                        Component component = (Component) c.getElement();
-                        configureManyToOneBubbleMappingsForComponent(component, persistentClass, mappings);
-                    }
-                }
-            } else if (prop.getValue() instanceof Component) {
-                // Prosesser hver property i component mapping
-                Component component = (Component) prop.getValue();
-                for (Iterator componentIterator = component.getPropertyIterator(); componentIterator.hasNext();) {
-                    Property componentProperty = (Property) componentIterator.next();
-                    MetaAttribute componentAtttrib = componentProperty.getMetaAttribute("bubble-ref");
-                    if (componentAtttrib != null && componentProperty.getValue() instanceof Collection) {
-                        configureCollectionBubbleMapping(componentProperty, persistentClass);
-                    }
-                }
-            }
+            configurePropertyBubbleMappings(persistentClass, mappings, prop);
         }
 
+    }
+
+    /**
+      *Går igjennom mappings for en enkelt property i persistent klasse og fixer mappinger som bruker bubble-ref
+     * hvor det er nødvendig. Siden en property kan være en komponent, som igjen inneholder properties er denne
+     * metode rekursiv.
+     * @param persistentClass
+     * @param mappings
+     * @param prop
+     */
+    private void configurePropertyBubbleMappings(PersistentClass persistentClass, Mappings mappings, Property prop) {
+        if (prop.getValue() instanceof Collection) {
+            MetaAttribute attrib = prop.getMetaAttribute("bubble-ref");
+            if (attrib != null) {
+                // Collection består av bubble-ref referanser
+                configureCollectionBubbleMapping(prop, persistentClass);
+            } else {
+                // Sjekk om collection inneholder component mapping
+                Collection c = (Collection) prop.getValue();
+                if (c.getElement() instanceof Component) {
+                    // Prosesser hver property i component mapping
+                    Component component = (Component) c.getElement();
+                    configureManyToOneBubbleMappingsForComponent(component, persistentClass, mappings);
+                }
+            }
+        } else if (prop.getValue() instanceof Component) {
+            // Prosesser hver property i component mapping
+            Component component = (Component) prop.getValue();
+            for (Iterator componentIterator = component.getPropertyIterator(); componentIterator.hasNext();) {
+                Property componentProperty = (Property) componentIterator.next();
+                configurePropertyBubbleMappings(persistentClass, mappings, componentProperty);
+            }
+        }
     }
 
     private void configureCollectionBubbleMapping(Property prop, PersistentClass persistentClass) throws MappingException {
