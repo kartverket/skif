@@ -1,5 +1,6 @@
 package no.statkart.skif.store;
 
+import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import no.statkart.skif.exception.ImplementationException;
@@ -126,7 +127,33 @@ public class AbstractStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer transfer) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Set<BubbleId<?>> ids = Sets.newHashSet();
+        try {
+            beginUnitOfWork();
+            for (BubbleObject bubbleObject : transfer.getInsertedObjects()) {
+                if (ids.add(bubbleObject.getId())==false) {
+                    throw new ImplementationException("Objekt er inneholdt to ganger i transfser: " + bubbleObject.getId());
+                }
+                insert(bubbleObject);
+                ids.add(bubbleObject.getId());
+            }
+            for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
+                if (ids.add(bubbleObject.getId())==false) {
+                    throw new ImplementationException("Objekt er inneholdt to ganger i transfser: " + bubbleObject.getId());
+                }
+                update(bubbleObject);
+            }
+            for (BubbleObject bubbleObject : transfer.getDeletedObjects()) {
+                if (ids.add(bubbleObject.getId())==false) {
+                    throw new ImplementationException("Objekt er inneholdt to ganger i transfser: " + bubbleObject.getId());
+                }
+                delete(bubbleObject);
+            }
+            commitUnitOfWork();
+        } catch (RuntimeException e) {
+            abortUnitOfWork();
+            throw e;
+        }
     }
 
     @Override
@@ -184,6 +211,7 @@ public class AbstractStore implements Store {
 
     @Override
     public void beginUnitOfWork() {
+        // TODO: Burde lage en dummy UnitOfWork først som aldrig feiler slik at abortUnitOfWork poper riktig av stakken hvis storeSession.beginUnitOfWork() feiler
         storeSession = storeSession.beginUnitOfWork();
     }
 
@@ -199,6 +227,7 @@ public class AbstractStore implements Store {
 
     @Override
     public void endUnitOfWork() {
+        // TODO: Ikke sikker på at denne skal være her
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
         storeSession = storeUnitOfWork.endUnitOfWork();
     }

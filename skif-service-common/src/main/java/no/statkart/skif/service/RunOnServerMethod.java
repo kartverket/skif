@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * @author Henrik Fredholm
  */
-public abstract class RunOnServerMethod implements Serializable {
+public abstract class RunOnServerMethod {
     protected transient Injector injector;
 
     public final void init(Injector injector) {

@@ -1,56 +1,27 @@
 package no.statkart.skif.mockup;
 
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.BubbleTransfer;
+import no.statkart.skif.store.UnitOfWorkTransfer;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 /**
  * TODO: Erstatt med ordentlig transfer
  * @author Tor Egil R. Strand
+ * @author Henrik Fredholm
  * @since 2.1
  */
-public class MockupTransfer {
-    private Set<BubbleObject> inserts;
-    private Set<BubbleObject> updates;
-    private Set<BubbleObject> deletes;
-    private int testNumber;
+public class MockupTransfer extends UnitOfWorkTransfer {
+    private final TestNumber testNumber;
 
-    public MockupTransfer() {
-    }
-
-    public MockupTransfer(Set<BubbleObject> inserts, Set<BubbleObject> updates, Set<BubbleObject> deletes, int testNumber) {
+    public MockupTransfer(List<? extends BubbleObject> inserts, List<? extends BubbleObject> updatedObjects, List<? extends BubbleObject> deletedObjects, TestNumber testNumber) {
+        super(inserts, updatedObjects, deletedObjects);
         this.testNumber = testNumber;
-        this.inserts = Collections.unmodifiableSet(inserts);
-        this.updates = Collections.unmodifiableSet(updates);
-        this.deletes = Collections.unmodifiableSet(deletes);
     }
 
-    public Set<BubbleObject> getInserts() {
-        return inserts;
-    }
-
-    public Set<BubbleObject> getUpdates() {
-        return updates;
-    }
-
-    public Set<BubbleObject> getDeletes() {
-        return deletes;
-    }
-
-    public void setInserts(Set<BubbleObject> inserts) {
-        this.inserts = inserts;
-    }
-
-    public void setUpdates(Set<BubbleObject> updates) {
-        this.updates = updates;
-    }
-
-    public void setDeletes(Set<BubbleObject> deletes) {
-        this.deletes = deletes;
-    }
-
-    public int getTestNumber() {
+    public TestNumber getTestNumber() {
         return testNumber;
     }
 }

@@ -13,15 +13,16 @@ import no.statkart.skif.storetest.domain.demo.FooId;
  * Basert på LoadTestdata.sql
  *
  * @author Tor Egil R. Strand
+ * @author Henrik Fredholm
  * @since 2.1
  */
-public class FooMockupFactory extends AbstractMockupFactory<TestIdGenerator<Long>> {
+public class FooMockupFactory extends AbstractMockupFactory {
     private final FooId fooIdKartveien;
     private final FooId fooIdGamleveien;
 
     @Inject
-    public FooMockupFactory(MockupStore store, TestNumber testNumber, TestIdGenerator<Long> testIdGenerator) {
-        super(store, testNumber, testIdGenerator);
+    public FooMockupFactory(MockupStore store, TestNumber testNumber) {
+        super(store, testNumber);
 
         fooIdKartveien = getNextId(FooId.class);
         fooIdGamleveien = getNextId(FooId.class);

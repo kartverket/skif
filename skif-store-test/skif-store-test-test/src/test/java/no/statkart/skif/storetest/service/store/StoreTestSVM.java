@@ -3,7 +3,6 @@ package no.statkart.skif.storetest.service.store;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.RunOnServerMethod;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.UnitOfWorkTransfer;
@@ -13,9 +12,7 @@ import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import weblogic.ejb20.persistence.spi.PersistenceRuntimeException;
 
-import static no.statkart.skif.storetest.TestHelper.countInDatabase;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
@@ -132,7 +129,7 @@ public class StoreTestSVM extends StoreTestServerTestCase {
         store.update(testBubble_101);
         UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
         store.endUnitOfWork();
-        assertThat(unitOfWorkTransfer.getNewIds()).contains(TestBubbleId_101);
+        assertThat(unitOfWorkTransfer.getInsertedObjects()).onProperty("id").contains(TestBubbleId_101);
     }
 
     // TODO: flere tester

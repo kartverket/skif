@@ -36,10 +36,10 @@ public class IdServiceImpl implements IdService {
     private int blockSize = 10;
 
     public <T extends BubbleId<?>> T getNextId(Class<T> idClass) {
-        return BubbleIds.createInstance(idClass,getNextValue(idClass), SnapshotVersion.CURRENT);
+        return BubbleIds.createInstance(idClass, getNextIdValue(idClass), SnapshotVersion.CURRENT);
     }
 
-    public  synchronized <T extends BubbleId<?>> Object getNextValue(Class<T> aClass) {
+    public  synchronized <T extends BubbleId<?>> Object getNextIdValue(Class<T> aClass) {
         long value = 0;
         String sequenceName = getSequenceName(aClass);
         Entry entry = (Entry) sequences.get(sequenceName);

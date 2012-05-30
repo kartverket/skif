@@ -1,6 +1,7 @@
 package no.statkart.skif.mockup;
 
 import com.google.inject.Inject;
+import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
@@ -13,15 +14,15 @@ import no.statkart.skif.store.Store;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-public abstract class AbstractMockupFactory<T extends TestIdGenerator<?>> {
+public abstract class AbstractMockupFactory {
     protected final MockupStore store;
     private final TestNumber testNumber;
-    private final T testIdGenerator;
+    private final IdService testIdGenerator;
 
-    protected AbstractMockupFactory(MockupStore store, TestNumber testNumber, T testIdGenerator) {
+    protected AbstractMockupFactory(MockupStore store, TestNumber testNumber) {
         this.store = store;
         this.testNumber = testNumber;
-        this.testIdGenerator = testIdGenerator;
+        this.testIdGenerator = store.getInstance(IdService.class);
     }
 
     public TestNumber getTestNumber() {
@@ -29,11 +30,7 @@ public abstract class AbstractMockupFactory<T extends TestIdGenerator<?>> {
     }
 
     protected <I extends BubbleId> I getNextId(Class<I> idClass) {
-        return testIdGenerator.getNextId(testNumber, idClass);
-    }
-
-    protected T getTestIdGenerator() {
-        return testIdGenerator;
+        return testIdGenerator.getNextId(idClass);
     }
 
     /**

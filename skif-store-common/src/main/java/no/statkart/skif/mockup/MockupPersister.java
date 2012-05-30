@@ -1,5 +1,6 @@
 package no.statkart.skif.mockup;
 
+import com.google.common.collect.Lists;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
@@ -13,13 +14,14 @@ import java.util.*;
  * Inneholder snapshots. Alle id-er skal være current.
  *
  * @author Tor Egil R. Strand
+ * @author Henrik Fredholm
  * @since 2.1
  */
 public class MockupPersister {
     private final Store store;
     private final TestNumber testNumber;
 
-    SortedMap<SnapshotVersion, Map<BubbleId, BubbleObject>> snapshots = new TreeMap<SnapshotVersion, Map<BubbleId, BubbleObject>>();
+    SortedMap<SnapshotVersion, Map<BubbleId<?>, BubbleObject>> snapshots = new TreeMap<SnapshotVersion, Map<BubbleId<?>, BubbleObject>>();
     Map<BubbleId, SnapshotVersion> insertedAtSnapshot = new HashMap<BubbleId, SnapshotVersion>();
     Map<BubbleId, SnapshotVersion> lastSnapshotForBubble = new HashMap<BubbleId, SnapshotVersion>();
     Map<BubbleId, SnapshotVersion> deletedAtSnapshot = new HashMap<BubbleId, SnapshotVersion>();
@@ -30,15 +32,16 @@ public class MockupPersister {
     }
 
     /**
-     * Henter ut et snapshot. Det opprettes hvis det ikke allerede finnes.
+     * Henter ut et snapshot. Det opprettes hvis det ikke allerede finnes. Det brukes en
+     * LinkedHashMap for å bevare operasjons rekkefølgen.
      *
      * @param snapshotVersion tidspunkt for snapshot
      * @return snapshot
      */
-    private Map<BubbleId, BubbleObject> getSnapshot(SnapshotVersion snapshotVersion) {
-        Map<BubbleId, BubbleObject> snapshot = snapshots.get(snapshotVersion);
+    private Map<BubbleId<?>, BubbleObject> getSnapshot(SnapshotVersion snapshotVersion) {
+        Map<BubbleId<?>, BubbleObject> snapshot = snapshots.get(snapshotVersion);
         if (snapshot == null) {
-            snapshot = new HashMap<BubbleId, BubbleObject>();
+            snapshot = new LinkedHashMap<BubbleId<?>, BubbleObject>();
             snapshots.put(snapshotVersion, snapshot);
         }
         return snapshot;
@@ -60,10 +63,10 @@ public class MockupPersister {
      * <p/>
      * Følgende krav gjelder:
      * <ul>
-     *     <li>Objektet kan ikke allerede ha blitt inserted på noe tidspunkt</li>
+     * <li>Objektet kan ikke allerede ha blitt inserted på noe tidspunkt</li>
      * </ul>
      *
-     * @param bubbleObject objektet som skal settes inn
+     * @param bubbleObject    objektet som skal settes inn
      * @param snapshotVersion tidspunktet objektet skal anses som opprettet på
      */
     public void insert(BubbleObject bubbleObject, SnapshotVersion snapshotVersion) {
@@ -72,7 +75,7 @@ public class MockupPersister {
             throw new ImplementationException("Object already mocked up: " + bubbleObject.getId());
         }
 
-        Map<BubbleId, BubbleObject> snapshot = getSnapshot(snapshotVersion);
+        Map<BubbleId<?>, BubbleObject> snapshot = getSnapshot(snapshotVersion);
         snapshot.put(bubbleObject.getId(), bubbleObject);
         insertedAtSnapshot.put(bubbleObject.getId(), snapshotVersion);
         lastSnapshotForBubble.put(bubbleObject.getId(), snapshotVersion);
@@ -84,12 +87,12 @@ public class MockupPersister {
      * <p/>
      * Følgende krav gjelder:
      * <ul>
-     *     <li>Objektet må ha blitt inserted på et tidligere eller likt tidspunkt</li>
-     *     <li>Objektet kan ikke ha blitt updated på et senere tidspunkt</li>
-     *     <li>Objektet kan ikke ha blitt deleted på et tidligere eller likt tidspunkt</li>
+     * <li>Objektet må ha blitt inserted på et tidligere eller likt tidspunkt</li>
+     * <li>Objektet kan ikke ha blitt updated på et senere tidspunkt</li>
+     * <li>Objektet kan ikke ha blitt deleted på et tidligere eller likt tidspunkt</li>
      * </ul>
      *
-     * @param bubbleObject objektet som skal oppdateres
+     * @param bubbleObject    objektet som skal oppdateres
      * @param snapshotVersion tidspunktet objektet skal anses som oppdatert på
      */
     public void update(BubbleObject bubbleObject, SnapshotVersion snapshotVersion) {
@@ -106,7 +109,7 @@ public class MockupPersister {
             throw new ImplementationException("Object has been deleted: " + bubbleObject.getId() + " " + deletionSnapshot.getTimestampString());
         }
 
-        Map<BubbleId, BubbleObject> snapshot = getSnapshot(snapshotVersion);
+        Map<BubbleId<?>, BubbleObject> snapshot = getSnapshot(snapshotVersion);
         BubbleObject oldBubble = snapshot.put(bubbleObject.getId(), bubbleObject);
         if (oldBubble != bubbleObject) {
             bubbleObject.register(store);
@@ -119,12 +122,12 @@ public class MockupPersister {
      * <p/>
      * Følgende krav gjelder:
      * <ul>
-     *     <li>Objektet må ha blitt inserted på et tidligere eller likt tidspunkt</li>
-     *     <li>Objektet kan ikke ha blitt updated på et senere tidspunkt</li>
-     *     <li>Objektet kan ikke ha blitt deleted på et tidligere eller likt tidspunkt</li>
+     * <li>Objektet må ha blitt inserted på et tidligere eller likt tidspunkt</li>
+     * <li>Objektet kan ikke ha blitt updated på et senere tidspunkt</li>
+     * <li>Objektet kan ikke ha blitt deleted på et tidligere eller likt tidspunkt</li>
      * </ul>
      *
-     * @param bubbleObject objektet som skal slettes
+     * @param bubbleObject    objektet som skal slettes
      * @param snapshotVersion tidspunktet objektet skal anses som slettet på
      */
     public void delete(BubbleObject bubbleObject, SnapshotVersion snapshotVersion) {
@@ -141,7 +144,7 @@ public class MockupPersister {
             throw new ImplementationException("Object has been deleted: " + bubbleObject.getId() + " " + deletionSnapshot.getTimestampString());
         }
 
-        Map<BubbleId, BubbleObject> snapshot = getSnapshot(snapshotVersion);
+        Map<BubbleId<?>, BubbleObject> snapshot = getSnapshot(snapshotVersion);
         BubbleObject oldBubble = snapshot.put(bubbleObject.getId(), bubbleObject);
         if (oldBubble != bubbleObject) {
             bubbleObject.register(store);
@@ -153,7 +156,7 @@ public class MockupPersister {
     /**
      * Henter ut objektet slik det ville ha sett ut på gitt tidspunkt. OBS! Objektet returneres med current id-er.
      *
-     * @param bubbleId id til objektet som skal slås opp
+     * @param bubbleId        id til objektet som skal slås opp
      * @param snapshotVersion tidspunktet søket skal starte på og gå bakover i tid
      * @return objektet
      */
@@ -170,14 +173,14 @@ public class MockupPersister {
 
         if (snapshots.containsKey(snapshotVersion)) {
             // Prøv først gjeldende snapshotversion
-            Map<BubbleId, BubbleObject> snapshot = snapshots.get(snapshotVersion);
+            Map<BubbleId<?>, BubbleObject> snapshot = snapshots.get(snapshotVersion);
             BubbleObject bubbleObject = snapshot.get(bubbleId);
             if (bubbleObject != null) {
                 return bubbleObject;
             }
         }
-        for (SortedMap<SnapshotVersion, Map<BubbleId, BubbleObject>> submap = snapshots.headMap(snapshotVersion); !submap.isEmpty(); submap = submap.headMap(submap.lastKey())) {
-            Map<BubbleId, BubbleObject> snapshot = submap.get(submap.lastKey());
+        for (SortedMap<SnapshotVersion, Map<BubbleId<?>, BubbleObject>> submap = snapshots.headMap(snapshotVersion); !submap.isEmpty(); submap = submap.headMap(submap.lastKey())) {
+            Map<BubbleId<?>, BubbleObject> snapshot = submap.get(submap.lastKey());
             BubbleObject bubbleObject = snapshot.get(bubbleId);
             if (bubbleObject != null) {
                 return bubbleObject;
@@ -192,72 +195,69 @@ public class MockupPersister {
      * <p/>
      * Objektene i transfer er kopier, slik at de ikke lenger er knyttet opp til denne Store og dermed kan puttes inn
      * i en ordentlig Store.
-     *
+     * <p/>
+     * TODO: Pga effektivitet bør objektene ikke kopieres. Dersom de skal legges direkte inn i store kan transfer
+     * lage en kopi om nødvendig
+     * <p/>
+     * <p/>
      * TODO: Transfer er ikke klar enda
      *
      * @param snapshotVersion tidspunkt som skal hentes ut
      * @return transfer med inserts, updates og deletes
      */
     public MockupTransfer getTransfer(SnapshotVersion snapshotVersion) {
-        Map<BubbleId, BubbleObject> snapshot = snapshots.get(snapshotVersion);
+        Map<BubbleId<?>, BubbleObject> snapshot = snapshots.get(snapshotVersion);
         if (snapshot == null) {
             throw new ImplementationException("Snapshot does not exists: " + snapshotVersion.getTimestampString());
         }
 
-        Set<BubbleObject> inserts = new HashSet<BubbleObject>();
-        Set<BubbleObject> updates = new HashSet<BubbleObject>();
-        Set<BubbleObject> deletes = new HashSet<BubbleObject>();
+        List<BubbleObject> insertedObjects = Lists.newArrayList();
+        List<BubbleObject> updatedObjects = Lists.newArrayList();
+        List<BubbleObject> deletedObjects = Lists.newArrayList();
         for (BubbleObject bubbleObject : snapshot.values()) {
-            BubbleObject kopi = CopyHelper.copy(bubbleObject);
             if (snapshotVersion.equals(insertedAtSnapshot.get(bubbleObject.getId()))) {
-                inserts.add(kopi);
+                insertedObjects.add(bubbleObject);
             } else if (snapshotVersion.equals(deletedAtSnapshot.get(bubbleObject.getId()))) {
-                deletes.add(kopi);
+                deletedObjects.add(bubbleObject);
             } else {
-                updates.add(kopi);
+                updatedObjects.add(bubbleObject);
             }
         }
-        return new MockupTransfer(inserts, updates, deletes, testNumber.getNumber());
+        return new MockupTransfer(insertedObjects, updatedObjects, deletedObjects, testNumber);
     }
 
     /**
      * Henter ut inserts, updates og deletes for gitte objekter i gitt SnapshotVersion. Gitt snapshot må ha blitt laget.
      * Dersom noen av objektene ikke har blitt endret i gitt snapshot, så blir de ikke med i transfer.
      * <p/>
-     * Objektene i transfer er kopier, slik at de ikke lenger er knyttet opp til denne Store og dermed kan puttes inn
-     * i en ordentlig Store.
+     * Objektene i transferen vil forsatt være knyttet opp mot MockupStore og må derfor kopieres før de puttes inn i
+     * ordentlig Store. Dette skjer normalt automatisk.
+     * <p/>
      *
-     * TODO: Transfer er ikke klar enda
-     *
-     * @param ids id-er til objekter som skal hentes ut
+     * @param ids             id-er til objekter som skal hentes ut
      * @param snapshotVersion tidspunkt som skal hentes ut
      * @return transfer med inserts, updates og deletes
      */
     public MockupTransfer getTransferForIds(Set<? extends BubbleId> ids, SnapshotVersion snapshotVersion) {
-        Map<BubbleId, BubbleObject> snapshot = snapshots.get(snapshotVersion);
+        Map<BubbleId<?>, BubbleObject> snapshot = snapshots.get(snapshotVersion);
         if (snapshot == null) {
             throw new ImplementationException("Snapshot does not exists: " + snapshotVersion.getTimestampString());
         }
 
-        Set<BubbleObject> inserts = new HashSet<BubbleObject>();
-        Set<BubbleObject> updates = new HashSet<BubbleObject>();
-        Set<BubbleObject> deletes = new HashSet<BubbleObject>();
-
+        List<BubbleObject> insertedObjects = Lists.newArrayList();
+        List<BubbleObject> updatedObjects = Lists.newArrayList();
+        List<BubbleObject> deletedObjects = Lists.newArrayList();
         for (BubbleId id : ids) {
             BubbleObject bubbleObject = snapshot.get(id);
-            if (bubbleObject != null) {
-                BubbleObject kopi = CopyHelper.copy(bubbleObject);
-                if (snapshotVersion.equals(insertedAtSnapshot.get(bubbleObject.getId()))) {
-                    inserts.add(kopi);
-                } else if (snapshotVersion.equals(deletedAtSnapshot.get(bubbleObject.getId()))) {
-                    deletes.add(kopi);
-                } else {
-                    updates.add(kopi);
-                }
+            if (snapshotVersion.equals(insertedAtSnapshot.get(bubbleObject.getId()))) {
+                insertedObjects.add(bubbleObject);
+            } else if (snapshotVersion.equals(deletedAtSnapshot.get(bubbleObject.getId()))) {
+                deletedObjects.add(bubbleObject);
+            } else {
+                updatedObjects.add(bubbleObject);
             }
         }
-
-        return new MockupTransfer(inserts, updates, deletes, testNumber.getNumber());
+        return new MockupTransfer(insertedObjects, updatedObjects, deletedObjects, testNumber);
     }
 
     /**

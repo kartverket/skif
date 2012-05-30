@@ -2,16 +2,19 @@ package no.statkart.skif.storetest.mockup;
 
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.mockup.TestNumber;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.service.test.TestService;
+import no.statkart.skif.storetest.service.test.TestdataService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.testng.collections.Lists;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.SortedMap;
 
 /**
@@ -28,21 +31,23 @@ public class MockupTest extends StoreTestTestCase {
         MockupFacade readFacade = mockupFacadeBuilder.getForReadTest();
         Assert.assertEquals(TestNumber.NR_0, readFacade.getTestNumber(), "readFacade har feil testnummer");
 
-        MockupTransfer transfer = readFacade.getTransfer(SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
-        Assert.assertEquals(1, transfer.getInserts().size(), "Antall inserts i transfer");
-        Assert.assertEquals(0, transfer.getUpdates().size(), "Antall updates i transfer");
-        Assert.assertEquals(0, transfer.getDeletes().size(), "Antall deletes i transfer");
+        Assert.assertEquals(injector.getInstance(MockupFacadeBuilder.class), mockupFacadeBuilder, "MockupFacadeBuilder skal være singleton slik at read testsett gjenbrukes automatisk");
 
-        Foo foo = (Foo) transfer.getInserts().iterator().next();
-        Assert.assertNull(foo.store(), "Store-tilknytning skulle være null");
+        MockupTransfer transfer = readFacade.getTransfer(SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
+        Assert.assertEquals(1, transfer.getInsertedObjects().size(), "Antall inserts i transfer");
+        Assert.assertEquals(0, transfer.getUpdatedObjects().size(), "Antall updates i transfer");
+        Assert.assertEquals(0, transfer.getDeletedObjects().size(), "Antall deletes i transfer");
+
+//        Foo foo = (Foo) transtransfer.getNewIds().iterator().next();
+//        Assert.assertNull(foo.store(), "Store-tilknytning skulle være null");
 
         MockupTransfer transfer2 = readFacade.getTransfer(SnapshotVersion.createInstance("2011-10-02 08:01:00.00"));
-        Assert.assertEquals(0, transfer2.getInserts().size(), "Antall inserts i transfer2");
-        Assert.assertEquals(1, transfer2.getUpdates().size(), "Antall updates i transfer2");
-        Assert.assertEquals(0, transfer2.getDeletes().size(), "Antall deletes i transfer2");
+        Assert.assertEquals(0, transfer2.getInsertedObjects().size(), "Antall inserts i transfer2");
+        Assert.assertEquals(1, transfer2.getUpdatedObjects().size(), "Antall updates i transfer2");
+        Assert.assertEquals(0, transfer2.getDeletedObjects().size(), "Antall deletes i transfer2");
 
-        Foo foo2 = (Foo) transfer2.getUpdates().iterator().next();
-        Assert.assertNull(foo2.store(), "Store-tilknytning skulle være null");
+//        Foo foo2 = (Foo) transfer2.getUpdates().iterator().next();
+//        Assert.assertNull(foo2.store(), "Store-tilknytning skulle være null");
 
         SortedMap<SnapshotVersion,MockupTransfer> allTransfers = readFacade.getAllTransfers();
         Assert.assertEquals(5, allTransfers.size(), "Antall historiske transfers");
@@ -60,9 +65,29 @@ public class MockupTest extends StoreTestTestCase {
         Assert.assertEquals(number1 + 1, number2);
     }
 
+    public void testAssignIdAndSave() {
+        MockupFacadeBuilder mockupFacadeBuilder = injector.getInstance(MockupFacadeBuilder.class);
+
+        MockupFacade facade = mockupFacadeBuilder.getForWriteTest();
+        Foo foo = new Foo();
+        foo.setNavn("foo-navn");
+        foo.setNr(10);
+        facade.getStore().insert(foo);
+        Raz raz = new Raz();
+        raz.setText("Foo");
+        RazComponent razComponent = new RazComponent();
+        razComponent.setFooId(foo.getId());
+        razComponent.setCompText("Bar");
+        raz.setRazComponent(razComponent);
+        facade.getStore().insert(raz);
+        MockupTransfer transfer = facade.getTransfer();
+        TestdataService testService = injector.getInstance(TestdataService.class);
+        testService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
+    }
+
     // TODO: Erstatte med full bruk av mockuprammeverk, slik at id blir unik
     public void testSaveRaz() {
-        TestService testService = injector.getInstance(TestService.class);
+        TestdataService testService = injector.getInstance(TestdataService.class);
 
         try {
             Raz raz = new Raz();
@@ -73,16 +98,18 @@ public class MockupTest extends StoreTestTestCase {
             razComponent.setCompText("Bar");
             raz.setRazComponent(razComponent);
 
-            MockupTransfer transfer = new MockupTransfer(Collections.singleton((BubbleObject) raz), Collections.<BubbleObject>emptySet(), Collections.<BubbleObject>emptySet(), -1);
-            testService.saveSnapshotTransfer(transfer, SnapshotVersion.CURRENT);
+            final List<Raz> razs = Collections.singletonList(raz);
+            final List<? extends BubbleObject> s = Collections.singletonList(raz);
+
+            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(raz), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(-1));
+            testService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
         } finally {
             testService.deleteObject(123L, "Raz");
         }
     }
 
-    // TODO: Erstatte med full bruk av mockuprammeverk, slik at id blir unik
     public void testSaveFoo() {
-        TestService testService = injector.getInstance(TestService.class);
+        TestdataService testService = injector.getInstance(TestdataService.class);
 
         try {
             Foo foo = new Foo();
@@ -90,14 +117,14 @@ public class MockupTest extends StoreTestTestCase {
             foo.setNr(4224);
             foo.setNavn("Mockup");
 
-            MockupTransfer transfer = new MockupTransfer(Collections.singleton((BubbleObject) foo), Collections.<BubbleObject>emptySet(), Collections.<BubbleObject>emptySet(), -2);
+            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(foo), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(-2));
 
-            testService.saveSnapshotTransfer(transfer, SnapshotVersion.createInstance("2012-01-01 12:00:00"));
+            testService.saveSnapshotTransfer(SnapshotVersion.createInstance("2012-01-01 12:00:00"), transfer);
 
             Foo foo2 = CopyHelper.copy(foo);
 
-            MockupTransfer transfer2 = new MockupTransfer(Collections.<BubbleObject>emptySet(), Collections.singleton((BubbleObject) foo2), Collections.<BubbleObject>emptySet(), -2);
-            testService.saveSnapshotTransfer(transfer2, SnapshotVersion.createInstance("2012-01-10 12:00:00"));
+            MockupTransfer transfer2 = new MockupTransfer(Collections.<BubbleObject>emptyList(), Collections.singletonList(foo2), Collections.<BubbleObject>emptyList(), new TestNumber(-2));
+            testService.saveSnapshotTransfer(SnapshotVersion.createInstance("2012-01-10 12:00:00"),  transfer2);
         } finally {
             testService.deleteObject(123L, "Foo_H");
         }

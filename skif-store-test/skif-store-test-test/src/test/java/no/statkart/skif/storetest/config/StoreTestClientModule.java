@@ -22,7 +22,8 @@ import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.service.test.TestNumberService;
 import no.statkart.skif.store.*;
-import no.statkart.skif.storetest.service.test.TestService;
+import no.statkart.skif.storetest.service.test.TestdataService;
+import no.statkart.skif.storetest.service.test.TestdataServiceImpl;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
@@ -78,9 +79,8 @@ public class StoreTestClientModule extends SkifModule {
         //bind(StoreReadChain.class).to(StoreReadChainClient.class);
         bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
 
-        TypeLiteral<TestIdGenerator<Long>> testIdGeneratorLongType = SkifUtil.typeLiteral(TestIdGenerator.class, Long.class);
-        bind(testIdGeneratorLongType).to(TestIdGeneratorImplLong.class);
-        bind(TestNumberService.class).to(TestService.class);
+//        TypeLiteral<TestIdGenerator<Long>> testIdGeneratorLongType = SkifUtil.typeLiteral(TestIdGenerator.class, Long.class);
+//        bind(testIdGeneratorLongType).to(TestIdGeneratorImplLong.class);
 
     }
 

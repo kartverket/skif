@@ -12,15 +12,15 @@ import no.statkart.skif.store.BubbleId;
 public interface IdService {
 
    /**
-    * Returnere neste frie id-verdi og gitt klasse.
+    * Returnere neste frie id-verdi for gitt klasse.
     * <p>
     * Det er implementasjonsspesifikk om samme sekvens vil bli brukt for alle klasser eller om klasser vil ha egne
     * sekvenser.
     *
     * @param idClass klasse det skal allokeres id-verdi for
-    * @return neste ubruke id-verdi
+    * @return neste ubruke id-verdi for klassen
     */
-   public <T extends BubbleId<?>> Object getNextValue(Class<T> idClass);
+   public <T extends BubbleId<?>> Object getNextIdValue(Class<T> idClass);
 
    /**
     * Oppretter et nytt BubbleId objekt med neste fri id-verdi for klassen.
@@ -43,7 +43,7 @@ public interface IdService {
    public void setBlockSize(int blockSize);
 
    /**
-    * Nullstiller cachet sekvens. Neste kall til {@link #getNextValue} vil allokere en ny sekvensblokk. Ubrukte
+    * Nullstiller cachet sekvens. Neste kall til {@link #getNextIdValue} vil allokere en ny sekvensblokk. Ubrukte
     * sekvensnumre vil gå tabt.
     */
    public void clear();

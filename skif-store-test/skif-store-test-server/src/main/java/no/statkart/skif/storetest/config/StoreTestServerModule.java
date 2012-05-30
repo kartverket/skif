@@ -32,6 +32,7 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
+import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
@@ -52,6 +53,7 @@ import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
+import no.statkart.skif.storetest.service.test.TestdataServiceImpl;
 import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.KodeMsg;
 import org.hibernate.Interceptor;
@@ -126,6 +128,7 @@ public class StoreTestServerModule extends SkifModule {
         bind(Session.class).toProvider(SessionProvider.class);
         bind(PersistenceSessionForSnapshot.class).toProvider(PersistenceSessionForSnapshotProvider.class);
 
+        bind(TestdataService.class).to(no.statkart.skif.storetest.service.test.TestdataServiceImpl.class);
 
     }
 

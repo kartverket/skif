@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public class RazComponent implements Serializable{
 
-    FooId<Foo> fooId;
+    FooId<?> fooId;
     private String compText;
 
     @Inject
@@ -20,11 +20,11 @@ public class RazComponent implements Serializable{
     public RazComponent() {
     }
 
-    public FooId<Foo> getFooId() {
+    public FooId<?> getFooId() {
         return fooId;
     }
 
-    public void setFooId(FooId<Foo> fooId) {
+    public void setFooId(FooId<?> fooId) {
         this.fooId = fooId;
     }
 

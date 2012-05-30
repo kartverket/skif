@@ -1,5 +1,7 @@
 package no.statkart.skif.store;
 
+import com.google.common.collect.Lists;
+
 import java.util.*;
 
 /**
@@ -103,29 +105,26 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     public UnitOfWorkTransfer getSnapshot() {
-        LinkedHashSet<BubbleId<?>> newIds = new LinkedHashSet<BubbleId<?>>();
-        LinkedHashSet<BubbleId<?>> updatedIds = new LinkedHashSet<BubbleId<?>>();
-        LinkedHashSet<BubbleId<?>> deletedIds = new LinkedHashSet<BubbleId<?>>();
+        List<BubbleObject> insertedObjects = Lists.newArrayList();
+        List<BubbleObject> updatedObjects = Lists.newArrayList();
+        List<BubbleObject> deletedObjects = Lists.newArrayList();
 
-        Map newAndUpdatedObjects = new HashMap();
         for (Map.Entry<BubbleId<?>, StoreEntry> mapEntry : modifiedMap.entrySet()) {
             StoreEntry storeCacheEntry = mapEntry.getValue();
             StoreEntryState state = storeCacheEntry.getState(level);
             switch (state) {
                 case INSERTED:
-                    newIds.add(mapEntry.getKey());
-                    newAndUpdatedObjects.put(mapEntry.getKey(), storeCacheEntry.getBubbleObject(level));
+                    insertedObjects.add(storeCacheEntry.getBubbleObject(level));
                     break;
                 case UPDATED:
-                    updatedIds.add(mapEntry.getKey());
-                    newAndUpdatedObjects.put(mapEntry.getKey(), storeCacheEntry.getBubbleObject(level));
+                    updatedObjects.add(storeCacheEntry.getBubbleObject(level));
                     break;
                 case DELETED:
-                    deletedIds.add(mapEntry.getKey());
+                    deletedObjects.add(storeCacheEntry.getBubbleObject(level));
                     break;
             }
         }
-        return new UnitOfWorkTransfer(newAndUpdatedObjects, deletedIds, newIds, updatedIds);
+        return new UnitOfWorkTransfer(insertedObjects, updatedObjects, deletedObjects);
     }
 
     protected boolean isAccessedAfterGetTransfer() {

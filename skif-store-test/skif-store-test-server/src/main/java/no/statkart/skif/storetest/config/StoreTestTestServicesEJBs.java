@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.config;
 
 import no.statkart.skif.service.ejb.EJBRegistration;
-import no.statkart.skif.storetest.service.test.TestService;
+import no.statkart.skif.storetest.service.test.TestdataService;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBs;
@@ -14,7 +14,7 @@ import javax.ejb.EJBs;
  * @since 2.1
  */
 @EJBs({
-        @EJB(name = "ejb/TestServiceEJBBean", beanInterface = TestService.class)
+        @EJB(name = "ejb/TestServiceEJBBean", beanInterface = TestdataService.class)
 })
 public class StoreTestTestServicesEJBs extends EJBRegistration {
     public StoreTestTestServicesEJBs() {

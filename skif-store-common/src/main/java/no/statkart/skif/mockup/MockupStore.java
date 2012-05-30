@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.*;
 
 import javax.annotation.Nullable;
@@ -25,6 +26,7 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
 @Singleton
 public class MockupStore implements Store {
     private final Injector injector;
+    protected IdService idService;
 
     /**
      * {@link SnapshotVersion} objekter skal legges inn/oppdateres/slettes på. Standardverdien er
@@ -35,9 +37,10 @@ public class MockupStore implements Store {
     private final MockupPersister mockupPersister;
 
     @Inject
-    public MockupStore(Injector injector, TestNumber testNumber) {
+    public MockupStore(Injector injector, TestNumber testNumber, IdService idService) {
         this.injector = injector;
         mockupPersister = new MockupPersister(this, testNumber);
+        this.idService = idService;
     }
 
     /**
@@ -206,6 +209,11 @@ public class MockupStore implements Store {
 
     @Override
     public <T extends BubbleObject> void insert(T bubbleObject) {
+        // Opprett BubbleId av riktig type hvis null
+        if (bubbleObject.getId()==null) {
+            final BubbleId<? extends BubbleObject> bubbleId = idService.getNextId(BubbleIds.getBubbleIdClass(bubbleObject.getClass()));
+            bubbleObject.setId(bubbleId);
+        }
         mockupPersister.insert(bubbleObject, snapshotVersion);
     }
 

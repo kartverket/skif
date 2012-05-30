@@ -51,10 +51,27 @@ public abstract class SingleVmRemoteCallProxyHandler<S> extends TerminatingProxy
         try {
             serviceRequestScope.seed(SingleVmRemoteCallContext.class, createSingleVmRemoteCallcontext());
             final EJBCallProxyHandler<S> ejbCallProxyHandler = singleVmServerEJBProxyHandlerProvider.get();
+            args = copyArgs(args);
             Object result = ejbCallProxyHandler.invoke(proxy, method, args);
             return CopyHelper.copy(result);
         } finally {
             serviceRequestScope.exit();
+        }
+    }
+
+    /**
+     * Serialiserer argumenter før de sendes til server. Hvis argumentet er av type {@code
+     * RunOnServerMethod} så serialiseres argumentet. Forsøk på å serialisere RunOnServerMethod
+     * vil føre til en masse problemer siden objektet ofte er implementert som en anonym klasse og vil
+     * har peker til et outer objekt (testcasen) som ikke kan serialiseres.
+     * @param args
+     * @return
+     */
+    private Object[] copyArgs(Object[] args) {
+        if (args!=null && args.length==1 && args[0] instanceof RunOnServerMethod) {
+            return args;
+        } else {
+            return CopyHelper.copy(args);
         }
     }
 

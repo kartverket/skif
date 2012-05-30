@@ -1,12 +1,15 @@
 package no.statkart.skif.mockup;
 
+import java.io.Serializable;
+
 /**
  * Identifiserer et testsett. Testsett 0 skal aldri modifiseres.
  *
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-public class TestNumber {
+public class TestNumber implements Serializable
+{
     public static final TestNumber NR_0 = new TestNumber(0);
 
     private final int number;

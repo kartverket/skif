@@ -1,13 +1,8 @@
 package no.statkart.skif.storetest.service.id;
 
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.storetest.config.StoreTestClientModule;
-import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.domain.demo.TestBubbleId;
-import no.statkart.skif.storetest.service.txmanagement.StoreTestTxManagementClientModule;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.util.testsupport.SkifTestCase;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -27,9 +22,9 @@ public class IdServiceTest extends StoreTestTestCase {
         try {
             idService.clear();
             idService.setBlockSize(2);
-            final Long idValue1 = Long.class.cast(idService.getNextValue(TestBubbleId.class));
-            final Long idValue2 = Long.class.cast(idService.getNextValue(TestBubbleId.class));
-            final Long idValue3 = Long.class.cast(idService.getNextValue(TestBubbleId.class));
+            final Long idValue1 = Long.class.cast(idService.getNextIdValue(TestBubbleId.class));
+            final Long idValue2 = Long.class.cast(idService.getNextIdValue(TestBubbleId.class));
+            final Long idValue3 = Long.class.cast(idService.getNextIdValue(TestBubbleId.class));
             assertEquals(new Long(idValue1+1), new Long(idValue2));
             assertTrue(idValue2 < idValue3);
         } finally {

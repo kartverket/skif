@@ -27,5 +27,4 @@
     <logger name="org.hibernate.type" level="trace" additivity="true"/>
 -->
 
-    org.hibernate.type
 </configuration>

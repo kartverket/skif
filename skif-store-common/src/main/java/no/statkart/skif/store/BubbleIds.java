@@ -1,12 +1,15 @@
 package no.statkart.skif.store;
 
+import com.google.common.collect.Lists;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -60,7 +63,14 @@ public class BubbleIds {
     }
 
     public static <T extends BubbleObject> Class<? extends BubbleId<T>> getBubbleIdClass(Class<T> bubbleClass) {
-        return SkifUtil.classForName(bubbleClass.getName()+"Id");
+        return SkifUtil.classForName(bubbleClass.getName() + "Id");
     }
 
+    public static List<BubbleId<?>> asIds(List<? extends BubbleObject> bubbleObjects) {
+        List<BubbleId<?>> ids = new ArrayList<BubbleId<?>>(bubbleObjects.size());
+        for (BubbleObject bubbleObject : bubbleObjects) {
+            ids.add(bubbleObject.getId());
+        }
+        return ids;
+    }
 }

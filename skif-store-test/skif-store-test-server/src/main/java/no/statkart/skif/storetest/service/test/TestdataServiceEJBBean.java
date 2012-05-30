@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.service.test;
 
 import com.google.inject.Inject;
 import no.statkart.skif.mockup.MockupTransfer;
+import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.SnapshotVersion;
@@ -10,9 +11,10 @@ import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
+import java.util.SortedMap;
 
 /**
- * EJB for {@link TestServiceImpl}.
+ * EJB for {@link TestdataServiceImpl}.
  *
  * @author Tor Egil R. Strand
  * @since 2.1
@@ -20,18 +22,23 @@ import javax.interceptor.Interceptors;
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.storetest.service.test.TestServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
-public class TestServiceEJBBean extends EJBTimedService implements TestService {
+public class TestdataServiceEJBBean extends EJBTimedService implements TestdataService {
     @Inject @EJBServiceChain
-    private TestService service;
+    private TestdataService service;
 
     @Override
-    public int getNextTestNumber() {
+    public TestNumber getNextTestNumber() {
         return service.getNextTestNumber();
     }
 
     @Override
-    public void saveSnapshotTransfer(MockupTransfer transfer, SnapshotVersion snapshotVersion) {
-        service.saveSnapshotTransfer(transfer, snapshotVersion);
+    public void saveAll(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers) {
+        service.saveAll(snapshotTransfers);
+    }
+
+    @Override
+    public void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer mockupTransfer) {
+        service.saveSnapshotTransfer(snapshotVersion, mockupTransfer);
     }
 
     @Override

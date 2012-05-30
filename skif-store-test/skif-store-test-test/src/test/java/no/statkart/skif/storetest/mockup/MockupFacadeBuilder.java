@@ -2,8 +2,10 @@ package no.statkart.skif.storetest.mockup;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFacadeBuilder;
 import no.statkart.skif.service.test.TestNumberService;
+import no.statkart.skif.storetest.service.test.TestdataService;
 
 /**
  * Implementasjon av mockupfacadebuilder for storetest-applikasjonen.
@@ -11,9 +13,10 @@ import no.statkart.skif.service.test.TestNumberService;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
+@Singleton
 public class MockupFacadeBuilder extends AbstractMockupFacadeBuilder<MockupFacade> {
     @Inject
-    public MockupFacadeBuilder(Injector injector, TestNumberService testNumberService) {
-        super(MockupFacade.class, injector, testNumberService);
+    public MockupFacadeBuilder(TestdataService testNumberService) {
+        super(MockupFacade.class, testNumberService);
     }
 }
