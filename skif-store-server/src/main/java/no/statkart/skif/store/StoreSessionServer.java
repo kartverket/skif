@@ -164,6 +164,9 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     public void finish() {
+        //Flusher først for å sikre at sql kjørt i finishListeners kjøres mot riktige data
+        flush();
+
         for (StoreSessionFinishListener finishListener : finishListeners) {
             finishListener.onFinish((StoreServer) store);
         }
