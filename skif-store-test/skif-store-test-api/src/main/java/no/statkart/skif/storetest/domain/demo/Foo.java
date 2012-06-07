@@ -15,7 +15,7 @@ public class Foo extends AbstractBubbleObject implements StoreTestBubble {
     private String navn;
     private Timestamp beginLifespanVersion;
     private Timestamp endLifespanVersion;
-
+    private FooEntityComponent fooEntityComponent;
     public boolean sameVersion(Foo o) {
         if (!this.getId().getValue().equals(o.getId().getValue())) return false;
         if (!this.getBeginLifespanVersion().equals(o.getBeginLifespanVersion())) return false;
@@ -58,5 +58,13 @@ public class Foo extends AbstractBubbleObject implements StoreTestBubble {
 
     public void setEndLifespanVersion(Timestamp endLifespanVersion) {
         this.endLifespanVersion = endLifespanVersion;
+    }
+
+    public FooEntityComponent getFooEntityComponent() {
+        return fooEntityComponent;
+    }
+
+    public void setFooEntityComponent(FooEntityComponent fooEntityComponent) {
+        this.fooEntityComponent = fooEntityComponent;
     }
 }

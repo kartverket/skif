@@ -22,9 +22,9 @@ public class MockupPersister {
     private final TestNumber testNumber;
 
     SortedMap<SnapshotVersion, Map<BubbleId<?>, BubbleObject>> snapshots = new TreeMap<SnapshotVersion, Map<BubbleId<?>, BubbleObject>>();
-    Map<BubbleId, SnapshotVersion> insertedAtSnapshot = new HashMap<BubbleId, SnapshotVersion>();
-    Map<BubbleId, SnapshotVersion> lastSnapshotForBubble = new HashMap<BubbleId, SnapshotVersion>();
-    Map<BubbleId, SnapshotVersion> deletedAtSnapshot = new HashMap<BubbleId, SnapshotVersion>();
+    Map<BubbleId, SnapshotVersion> insertedAtSnapshot = new LinkedHashMap<BubbleId, SnapshotVersion>();
+    Map<BubbleId, SnapshotVersion> lastSnapshotForBubble = new LinkedHashMap<BubbleId, SnapshotVersion>();
+    Map<BubbleId, SnapshotVersion> deletedAtSnapshot = new LinkedHashMap<BubbleId, SnapshotVersion>();
 
     public MockupPersister(Store store, TestNumber testNumber) {
         this.store = store;

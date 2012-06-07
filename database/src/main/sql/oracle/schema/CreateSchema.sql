@@ -233,9 +233,16 @@ CREATE TABLE Raz (
     text                 VARCHAR2(255 BYTE),
     compText             VARCHAR2(255 BYTE),
     fooId                number(19,0) not null,
+    RazEntityComponentId number(19,0),
     PRIMARY KEY (id)
 );
 
+-- Denne tabell har heller ikke historikk
+CREATE TABLE RazEntityComponent (
+    id                   NUMBER(19,0) NOT NULL ENABLE,
+    componentName        VARCHAR2(255 BYTE),
+    PRIMARY KEY (id)
+);
 
 CREATE TABLE BAR_H (
     id                   NUMBER(19,0) NOT NULL ENABLE,

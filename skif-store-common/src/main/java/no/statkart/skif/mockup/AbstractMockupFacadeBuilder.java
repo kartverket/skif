@@ -1,13 +1,9 @@
 package no.statkart.skif.mockup;
 
 import com.google.inject.*;
-import com.google.inject.spi.LinkedKeyBinding;
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.service.test.TestNumberService;
 import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.*;
-
-import java.util.Map;
 
 /**
  * Baseklasse for opprettelse av mockupfacade-instanser. En faktisk implementasjon trenger bare implementere

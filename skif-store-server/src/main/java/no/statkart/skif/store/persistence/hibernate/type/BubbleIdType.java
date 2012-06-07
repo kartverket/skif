@@ -33,7 +33,7 @@ public abstract class BubbleIdType implements UserType {
 
     protected Logger log() {
         if (log == null) {
-            log = LoggerFactory.getLogger(getClass());
+            log = LoggerFactory.getLogger(BubbleIdType.class );
         }
         return log;
     }

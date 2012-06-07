@@ -1,10 +1,8 @@
 package no.statkart.skif.storetest.mockup;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFacadeBuilder;
-import no.statkart.skif.service.test.TestNumberService;
 import no.statkart.skif.storetest.service.test.TestdataService;
 
 /**

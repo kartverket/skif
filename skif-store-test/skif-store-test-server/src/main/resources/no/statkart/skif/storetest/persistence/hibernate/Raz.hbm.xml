@@ -3,26 +3,35 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-   <class name="no.statkart.skif.storetest.domain.demo.Raz">
-      <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.RazIdType">
-          <generator class="assigned"/>
-      </id>
+    <class name="no.statkart.skif.storetest.domain.demo.Raz" select-before-update="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.RazIdType">
+            <generator class="assigned"/>
+        </id>
 
-      <property name="text"/>
+        <property name="text"/>
 
-       <component name="razComponent" class="no.statkart.skif.storetest.domain.demo.RazComponent">
-           <many-to-one
-               name="foo"
-               column="fooId"
-               class="no.statkart.skif.storetest.domain.demo.Foo"
-               access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor">
-               <meta attribute="bubble-ref"/>
+        <component name="razComponent" class="no.statkart.skif.storetest.domain.demo.RazComponent">
+            <many-to-one
+                    name="foo"
+                    column="fooId"
+                    class="no.statkart.skif.storetest.domain.demo.Foo"
+                    access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor">
+                <meta attribute="bubble-ref"/>
             </many-to-one>
 
-           <property name="compText"/>
-       </component>
+            <property name="compText"/>
+        </component>
+        <many-to-one name="razEntityComponent" column="razEntityComponentId" unique="true" cascade="all-delete-orphan"/>
 
+    </class>
 
-   </class>
+    <class name="no.statkart.skif.storetest.domain.demo.RazEntityComponent" select-before-update="true">
+        <id name="id" column="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+
+        <property name="componentName"/>
+    </class>
+
 
 </hibernate-mapping>

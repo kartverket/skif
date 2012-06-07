@@ -105,9 +105,11 @@ insert into BAZ (ID, TEXT, FOOID, TESTAENUMKODEID, TESTC2DBKODEID) values (501, 
 insert into BAZ (ID, TEXT, FOOID, TESTAENUMKODEID, TESTC2DBKODEID) values (502, 'Baz 2', 100, 1, 11);
 insert into BAZ (ID, TEXT, FOOID, TESTAENUMKODEID, TESTC2DBKODEID) values (503, 'Baz 3', 101, 2, 10);
 
-insert into RAZ (ID, TEXT,COMPTEXT, FOOID) values (601, 'Raz 1','CompRaz 1', 100);
-insert into RAZ (ID, TEXT,COMPTEXT, FOOID) values (602, 'Raz 2','CompRaz 2', 100);
-insert into RAZ (ID, TEXT,COMPTEXT, FOOID) values (603, 'Raz 3','CompRaz 3', 101);
+insert into RAZ (ID, TEXT,COMPTEXT, FOOID, RAZENTITYCOMPONENTID) values (601, 'Raz 1','CompRaz 1', 100, 610 );
+insert into RAZ (ID, TEXT,COMPTEXT, FOOID, RAZENTITYCOMPONENTID) values (602, 'Raz 2','CompRaz 2', 100, NULL);
+insert into RAZ (ID, TEXT,COMPTEXT, FOOID, RAZENTITYCOMPONENTID) values (603, 'Raz 3','CompRaz 3', 101, NULL);
+
+insert into RAZENTITYCOMPONENT (ID, COMPONENTNAME) values (610, 'Raz 1');
 
 
 insert into BAR_H (ID,TBEGIN,TEND,TVERSION,HUSNR,BOKSTAV,FOOID, BAZID) values (1001,snapshot_time.to_t('2011-10-02 08:00:30.00'),snapshot_time.to_t('2011-10-02 08:03:30.00'),1,105,NULL,100, 501);

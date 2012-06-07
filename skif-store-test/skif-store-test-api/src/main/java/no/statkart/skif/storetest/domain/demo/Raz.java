@@ -11,6 +11,7 @@ public class Raz extends AbstractBubbleObject implements StoreTestBubble {
 
     private String text;
     private RazComponent razComponent;
+    private RazEntityComponent razEntityComponent;
 
     @Override
     public RazId<?> getId() {
@@ -31,5 +32,13 @@ public class Raz extends AbstractBubbleObject implements StoreTestBubble {
 
     public void setRazComponent(RazComponent razComponent) {
         this.razComponent = razComponent;
+    }
+
+    public RazEntityComponent getRazEntityComponent() {
+        return razEntityComponent;
+    }
+
+    public void setRazEntityComponent(RazEntityComponent razEntityComponent) {
+        this.razEntityComponent = razEntityComponent;
     }
 }

@@ -197,6 +197,7 @@ public class StoreServiceTest extends StoreTestTestCase {
 
         Raz raz = store.getObject(new RazId<Raz>(601L));
         raz.getRazComponent().getFooId();
+        Assert.assertEquals(raz.getRazEntityComponent().getId(), new Long(610L));
 
     }
 

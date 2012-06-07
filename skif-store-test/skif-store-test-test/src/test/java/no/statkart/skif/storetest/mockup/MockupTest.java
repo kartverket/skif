@@ -38,16 +38,10 @@ public class MockupTest extends StoreTestTestCase {
         Assert.assertEquals(0, transfer.getUpdatedObjects().size(), "Antall updates i transfer");
         Assert.assertEquals(0, transfer.getDeletedObjects().size(), "Antall deletes i transfer");
 
-//        Foo foo = (Foo) transtransfer.getNewIds().iterator().next();
-//        Assert.assertNull(foo.store(), "Store-tilknytning skulle være null");
-
         MockupTransfer transfer2 = readFacade.getTransfer(SnapshotVersion.createInstance("2011-10-02 08:01:00.00"));
         Assert.assertEquals(0, transfer2.getInsertedObjects().size(), "Antall inserts i transfer2");
         Assert.assertEquals(1, transfer2.getUpdatedObjects().size(), "Antall updates i transfer2");
         Assert.assertEquals(0, transfer2.getDeletedObjects().size(), "Antall deletes i transfer2");
-
-//        Foo foo2 = (Foo) transfer2.getUpdates().iterator().next();
-//        Assert.assertNull(foo2.store(), "Store-tilknytning skulle være null");
 
         SortedMap<SnapshotVersion,MockupTransfer> allTransfers = readFacade.getAllTransfers();
         Assert.assertEquals(5, allTransfers.size(), "Antall historiske transfers");
@@ -67,6 +61,7 @@ public class MockupTest extends StoreTestTestCase {
 
     public void testAssignIdAndSave() {
         MockupFacadeBuilder mockupFacadeBuilder = injector.getInstance(MockupFacadeBuilder.class);
+        injector.getInstance(no.statkart.skif.service.test.TestdataService.class);
 
         MockupFacade facade = mockupFacadeBuilder.getForWriteTest();
         Foo foo = new Foo();
@@ -97,6 +92,7 @@ public class MockupTest extends StoreTestTestCase {
             razComponent.setFooId(new FooId<Foo>(100L));
             razComponent.setCompText("Bar");
             raz.setRazComponent(razComponent);
+            raz.setRazEntityComponent(new RazEntityComponent("TestRaz"));
 
             final List<Raz> razs = Collections.singletonList(raz);
             final List<? extends BubbleObject> s = Collections.singletonList(raz);
@@ -107,6 +103,32 @@ public class MockupTest extends StoreTestTestCase {
             testService.deleteObject(123L, "Raz");
         }
     }
+
+    public void testSaveUpdateRaz() {
+        TestdataService testService = injector.getInstance(TestdataService.class);
+
+        try {
+            Raz raz = new Raz();
+            raz.setId(new RazId<Raz>(123L));
+            raz.setText("Foo");
+            RazComponent razComponent = new RazComponent();
+            razComponent.setFooId(new FooId<Foo>(100L));
+            razComponent.setCompText("Bar");
+            raz.setRazComponent(razComponent);
+            raz.setRazEntityComponent(new RazEntityComponent("TestRaz"));
+
+            final List<Raz> razs = Collections.singletonList(raz);
+            final List<? extends BubbleObject> s = Collections.singletonList(raz);
+
+            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(raz), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(-1));
+            testService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
+
+
+        } finally {
+            testService.deleteObject(123L, "Raz");
+        }
+    }
+
 
     public void testSaveFoo() {
         TestdataService testService = injector.getInstance(TestdataService.class);

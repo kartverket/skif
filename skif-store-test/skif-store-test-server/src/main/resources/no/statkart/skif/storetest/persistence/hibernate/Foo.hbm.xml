@@ -3,15 +3,14 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-   <class name="no.statkart.skif.storetest.domain.demo.Foo">
-      <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.FooIdType">
-          <generator class="assigned"/>
-      </id>
+    <class name="no.statkart.skif.storetest.domain.demo.Foo">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.FooIdType">
+            <generator class="assigned"/>
+        </id>
 
-      <property name="nr"/>
-       <property name="navn"/>
-       <property name="beginLifespanVersion" column="tBegin" type="timestamp"/>
-       <property name="endLifespanVersion" column="tEnd" type="timestamp"/>
-   </class>
-
+        <property name="nr"/>
+        <property name="navn"/>
+        <property name="beginLifespanVersion" column="tBegin" type="timestamp"/>
+        <property name="endLifespanVersion" column="tEnd" type="timestamp"/>
+    </class>
 </hibernate-mapping>

@@ -126,7 +126,7 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
 
     @Override
     public String toString() {
-        return (refreshNeeded ? "(delegate needs refresh)" : "(deletage up-to-date)");
+        return (refreshNeeded ? "(delegate needs refresh)" : "(delegate up-to-date)");
     }
 
     @Override
@@ -192,7 +192,7 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
 
         @Override
         public void clear() {
-            Multikobling.this.clear();
+            standardClear();
         }
 
         @Override
