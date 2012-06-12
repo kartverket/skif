@@ -79,6 +79,9 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
         defaultMapper = typeMapper;
     }
 
+    public TypeMapper getDefaultMapper() {
+        return defaultMapper;
+    }
 
     protected void addMapperW2D(TypeMapper<?, ?> typeMapper) {
         typeMapper.setDomainObjectFactory(domainObjectFactory);

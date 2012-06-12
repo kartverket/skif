@@ -71,6 +71,8 @@ import java.util.zip.ZipInputStream;
 public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<WsapiT, DomainT> {
     private Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
 
+    private static Map<Class<?>, Map<String, Field>> fieldsWithInheritedFieldsByClass = new HashMap<Class<?>, Map<String, Field>>();
+
     private ObjectFactory domainObjectFactory;
     private ObjectFactory wsapiObjectFactory;
 
@@ -86,6 +88,10 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
     private Map<Class, Class> overrideClassMappings;
 
     public DefaultTypeMapper() {
+    }
+
+    public void clearMappedFields(){
+        mappedFields.clear();
     }
 
     /**
@@ -807,15 +813,29 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
      * I disse tilfellene så skal feltet som heter 'nesten' det samme returneres.
      */
 
-    protected Field getFieldWithInheritedFields(Class<?> c, String fieldname) {
+    protected static Field getFieldWithInheritedFields(Class<?> c, String fieldname) {
+
+        Map<String, Field> fieldMap = fieldsWithInheritedFieldsByClass.get(c);
+        if(fieldMap == null) {
+            fieldMap = new HashMap<String, Field>();
+            fieldsWithInheritedFieldsByClass.put(c, fieldMap);
+        }
+
+        Field field = fieldMap.get(fieldname);
+        if(field != null) {
+            return field;
+        }
+
         Collection<Field> fields = new ArrayList<Field>();
         addDeclaredAndInheritedFields(c, fields);
         for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext(); ) {
             Field next = iterator.next();
             if (next.getName().equals(fieldname) || (next.getName() + "Id").equals(fieldname) || next.getName().equals(fieldname + "Id")) {
+                fieldMap.put(fieldname, next);
                 return next;
             }
         }
+        fieldMap.put(fieldname, null);
         return null;
     }
 
