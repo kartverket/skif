@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.NotImplementedException;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -96,22 +97,31 @@ public class AbstractStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
+        lock(bubbleIds, bubbleObjects);
+        return bubbleObjects;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<I> bubbleIds) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        Set<T> bubbleObjects = new HashSet<T>(bubbleIds.size());
+        lock(bubbleIds, bubbleObjects);
+        return bubbleObjects;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<I> bubbleIds) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
+        lock(bubbleIds, bubbleObjects);
+        return bubbleObjects;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // TODO: implementer som batch
+        for (I bubbleId : bubbleIds) {
+            bubbleObjects.add(storeSession.lock(bubbleId));
+        }
     }
 
     @Override
@@ -170,12 +180,17 @@ public class AbstractStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(Collection<I> bubbleIds) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        // TODO: Hva bør egentlig returneres her?
+        boolean allWasEviced = true;
+        for (I bubbleId : bubbleIds) {
+            allWasEviced &= storeSession.evict(bubbleId);
+        }
+        return allWasEviced;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new NotImplementedException("Kommer ved behov");
     }
 
     @Override

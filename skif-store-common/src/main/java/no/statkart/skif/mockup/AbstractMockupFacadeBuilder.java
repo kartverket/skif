@@ -39,8 +39,8 @@ public abstract class AbstractMockupFacadeBuilder<T extends AbstractMockupFacade
     }
 
     /**
-     * Returnerer mockupfacade for tester som ikke skriver til databasen.  Gjenntatte kall til denne metoden gir
-     * samme mockupfacase. Objekter i denne mockupfacade bør ikke endres siden de gjenbrukes på tvers av alle tester.
+     * Returnerer mockupfacade med testsett for tester som ikke endre på data i databasen. Gjenntatte kall til denne
+     * metoden gir samme mockupfacade. Objekter i denne mockupfacade bør ikke endres siden de gjenbrukes på tvers av alle tester.
      *
      * @return mockupfacade
      */
@@ -49,13 +49,40 @@ public abstract class AbstractMockupFacadeBuilder<T extends AbstractMockupFacade
     }
 
     /**
-     * Returnerer mockupfacade for tester som skriver til databasen. Hvert kall vil returnere en ny facade.
+     * Returnerer mockupfacade med testsett for tester som ikke endre på data i databasen og lagre testsettet
+     * i databasen hvis det ikke allerede finnes.
+     * @return
+     */
+    public T getForReadTestAndSaveData() {
+        testdataService.saveAll(readFacade.getAllTransfers());
+        return readFacade;
+    }
+
+
+    /**
+     * Returnerer mockupfacade med testsett for tester som endre på data. Hvert kall vil returnere en ny facade
+     * med et eget unikt datasett
      *
      * @return mockupfacade
      */
     public T getForWriteTest() {
         return createFacade(testdataService.getNextTestNumber());
     }
+
+
+
+    /**
+     * Returnerer mockupfacade med testsett for tester som endre på data og lagre testsettet til databaseb.
+     * Hvert kall vil returnere en ny facade med et eget unikt datasett
+     *
+     * @return mockupfacade
+     */
+    public T getForWriteTestAndSaveData() {
+        final T writeFacade = getForWriteTest();
+        testdataService.saveAll(writeFacade.getAllTransfers());
+        return writeFacade;
+    }
+
 
     private T createFacade(final TestNumber testNumber) {
         Module module = new AbstractModule() {

@@ -10,6 +10,8 @@ import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import java.util.SortedMap;
 
@@ -32,11 +34,13 @@ public class TestdataServiceEJBBean extends EJBTimedService implements TestdataS
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void saveAll(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers) {
         service.saveAll(snapshotTransfers);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer mockupTransfer) {
         service.saveSnapshotTransfer(snapshotVersion, mockupTransfer);
     }

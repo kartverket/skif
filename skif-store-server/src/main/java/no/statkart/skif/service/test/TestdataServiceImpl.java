@@ -7,12 +7,8 @@ import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.mockup.TestNumber;
-import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.Store;
+import no.statkart.skif.store.*;
 import no.statkart.skif.util.JDBCHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +16,12 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
 /**
  * Tjeneste for å legge inn testdata generert via mockup rammeverket i en database. For hver testsett som legges inn
- * undersøkes det om datasettet finnes fra før i databasen. Kun datasett for {@code TestNumber} kan finnes fra før.
+ * undersøkes det om datasettet finnes fra før i databasen. Kun datasett for {@code TestNumber.NR_0} kan finnes fra før.
  *
  * @author Henrik Fredholm
  * @since 2.1
@@ -57,30 +52,41 @@ public class TestdataServiceImpl implements TestdataService {
     public void saveAll(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers) {
         // Sjekk om testsettet allerede er skrevet til databasen
         MockupTransfer firstTransfer = snapshotTransfers.values().iterator().next();
-        BubbleId aBubbleId = (BubbleId) firstTransfer.getInsertedObjects().iterator().next();
-
-        // TODO? Støtte i SKIF for bare å sjekke om objektet finnes
-        boolean funnet;
-        try {
-            store.get(aBubbleId);
-            funnet = true;
-        } catch (ObjectNotFoundException e) {
-            funnet = false;
-        }
-
-        if (funnet) {
-            if (!firstTransfer.getTestNumber().equals(TestNumber.NR_0)) {
-                throw new ImplementationException("Testsettet finnes allerede i databasen: " + firstTransfer.getTestNumber());
-            }
-        } else {
+        boolean saveTestSet = !testsetExists(firstTransfer);
+        if (saveTestSet) {
             for (Map.Entry<SnapshotVersion, MockupTransfer> entry : snapshotTransfers.entrySet()) {
                 testdataService.saveSnapshotTransfer(entry.getKey(), entry.getValue());
             }
         }
     }
 
+    private boolean testsetExists(MockupTransfer transfer) {
+        BubbleObject bubbleObject = transfer.getInsertedObjects().iterator().next();
+        boolean funnet;
+        try {
+            store.get(bubbleObject.getBubbleId());
+            funnet = true;
+        } catch (ObjectNotFoundException e) {
+            funnet = false;
+        }
+
+        if (funnet) {
+            if (!transfer.getTestNumber().equals(TestNumber.NR_0)) {
+                throw new ImplementationException("Testsettet finnes allerede i databasen: " + transfer.getTestNumber());
+            }
+        }
+        return funnet;
+    }
+
     @Override
     public void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer transfer) {
+        final boolean saveTestSet = !(SnapshotVersion.CURRENT == snapshotVersion && testsetExists(transfer));
+        if (saveTestSet) {
+            saveSnapshotTransferInternal(snapshotVersion, transfer);
+        }
+    }
+
+    private void saveSnapshotTransferInternal(SnapshotVersion snapshotVersion, MockupTransfer transfer) {
         setTransactionSnapshot(snapshotVersion);
         try {
             store.beginUnitOfWork();
@@ -90,6 +96,8 @@ public class TestdataServiceImpl implements TestdataService {
             store.commitUnitOfWork();
         } catch (RuntimeException e) {
             store.abortUnitOfWork();
+            throw e;
+
         }
     }
 

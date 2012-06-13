@@ -28,7 +28,7 @@ public class TestNumber implements Serializable
      * @return id-prefiks unikt for testsett
      */
     public long getPrefix() {
-        return getNumber() + 10000;
+        return getNumber() + 20000;
     }
 
     @Override
@@ -45,5 +45,12 @@ public class TestNumber implements Serializable
     @Override
     public int hashCode() {
         return number;
+    }
+
+    @Override
+    public String toString() {
+        return "TestNumber{" +
+                "number=" + number +
+                '}';
     }
 }

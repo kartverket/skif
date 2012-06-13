@@ -31,7 +31,7 @@ public class FooMockupFactory extends AbstractMockupFactory {
         return fooIdKartveien;
     }
 
-    public FooId getFooIdGamleveien() {
+    public FooId<?> getFooIdGamleveien() {
         return fooIdGamleveien;
     }
 
