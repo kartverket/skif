@@ -1,4 +1,8 @@
-package no.statkart.skif.store;
+package no.statkart.skif.store.service;
+
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.SnapshotVersion;
 
 import java.util.Collection;
 import java.util.List;

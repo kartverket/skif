@@ -1,31 +1,17 @@
 package no.statkart.skif.store.module.server;
 
-import com.google.inject.TypeLiteral;
 import no.statkart.skif.ConfigurationConverter;
-import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
-import no.statkart.skif.persistence.*;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
-import no.statkart.skif.service.scope.ServiceRequestScoped;
-import no.statkart.skif.store.LockerStrategy;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.StoreService;
-import no.statkart.skif.store.TransactionalLockerStrategy;
-import no.statkart.skif.store.persistence.hibernate.*;
-import no.statkart.skif.util.JDBCHelper;
-import org.hibernate.Session;
+import no.statkart.skif.store.service.StoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /**

@@ -34,11 +34,22 @@ public class UnitOfWorkTransfer implements Serializable {
      */
     private final List<BubbleObject> deletedObjects;
 
-
     public UnitOfWorkTransfer(List<? extends BubbleObject> insertedObjects, List<? extends BubbleObject> updatedObjects, List<? extends BubbleObject> deletedObjects) {
         this.insertedObjects = (List<BubbleObject>) insertedObjects;
         this.updatedObjects = (List<BubbleObject>) updatedObjects;
         this.deletedObjects = (List<BubbleObject>) deletedObjects;
+    }
+
+    public boolean isShared() {
+        boolean isShared = false;
+        if (!insertedObjects.isEmpty()) {
+            isShared = insertedObjects.get(0).store()!=null;
+        } else if (!updatedObjects.isEmpty()) {
+            isShared = updatedObjects.get(0).store()!=null;
+        } else if (!deletedObjects.isEmpty()) {
+            isShared = deletedObjects.get(0).store()!=null;
+        }
+        return isShared;
     }
 
     public List<BubbleObject> getInsertedObjects() {

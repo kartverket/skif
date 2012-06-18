@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author Henrik Fredholm
  */
-public interface StoreService extends no.statkart.skif.store.StoreService {
+public interface StoreService extends no.statkart.skif.store.service.StoreService {
 
     /**
      * Henter BubbleObject av type {@code <T>} for {@code id} av type {@code <I>}. Hvis {@code id} er null

@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -138,6 +139,10 @@ public class AbstractStore implements Store {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer transfer) {
         Set<BubbleId<?>> ids = Sets.newHashSet();
+        if (transfer.isShared()) {
+            transfer = CopyHelper.copy(transfer);
+        }
+
         try {
             beginUnitOfWork();
             for (BubbleObject bubbleObject : transfer.getInsertedObjects()) {
@@ -221,6 +226,7 @@ public class AbstractStore implements Store {
 
     @Override
     public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
+        storeSession.ensureFullyLoaded(bubbleObject);
         storeSession.ensureFullyLoaded(bubbleObject);
     }
 

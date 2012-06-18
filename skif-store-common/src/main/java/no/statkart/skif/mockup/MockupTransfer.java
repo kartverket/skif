@@ -8,7 +8,6 @@ import no.statkart.skif.store.UnitOfWorkTransfer;
 import java.util.*;
 
 /**
- * TODO: Erstatt med ordentlig transfer
  * @author Tor Egil R. Strand
  * @author Henrik Fredholm
  * @since 2.1

@@ -1,8 +1,7 @@
 package no.statkart.skif.store;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.NotImplementedException;
-import no.statkart.skif.exception.NotLockedException;
+import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.util.CopyHelper;
 
 import java.util.*;

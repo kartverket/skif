@@ -50,16 +50,26 @@ public class TestdataServiceImpl implements TestdataService {
 
     @Override
     public void saveAll(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers) {
-        // Sjekk om testsettet allerede er skrevet til databasen
+        // Sjekk om testsettet allerede er skrevet til databasen ved å sjekke på om første id i transfer finnes
         MockupTransfer firstTransfer = snapshotTransfers.values().iterator().next();
-        boolean saveTestSet = !testsetExists(firstTransfer);
-        if (saveTestSet) {
+        if (testsetExists(firstTransfer)) {
+            if (!firstTransfer.getTestNumber().equals(TestNumber.NR_0)) {
+                throw new ImplementationException("Testsettet finnes allerede i databasen: " + firstTransfer.getTestNumber());
+            }
+        } else {
             for (Map.Entry<SnapshotVersion, MockupTransfer> entry : snapshotTransfers.entrySet()) {
                 testdataService.saveSnapshotTransfer(entry.getKey(), entry.getValue());
             }
         }
     }
 
+    /**
+     * Sjekker om testset allerede finnes i databasen ved å sjekk om første id i transfer
+     * finnes i databasen.
+     *
+     * TODO: Burde bruke VersionFinder i stedet da første objekt i transfer kan være historisk slettet.
+     *
+     */
     private boolean testsetExists(MockupTransfer transfer) {
         BubbleObject bubbleObject = transfer.getInsertedObjects().iterator().next();
         boolean funnet;
@@ -69,24 +79,11 @@ public class TestdataServiceImpl implements TestdataService {
         } catch (ObjectNotFoundException e) {
             funnet = false;
         }
-
-        if (funnet) {
-            if (!transfer.getTestNumber().equals(TestNumber.NR_0)) {
-                throw new ImplementationException("Testsettet finnes allerede i databasen: " + transfer.getTestNumber());
-            }
-        }
         return funnet;
     }
 
     @Override
     public void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer transfer) {
-        final boolean saveTestSet = !(SnapshotVersion.CURRENT == snapshotVersion && testsetExists(transfer));
-        if (saveTestSet) {
-            saveSnapshotTransferInternal(snapshotVersion, transfer);
-        }
-    }
-
-    private void saveSnapshotTransferInternal(SnapshotVersion snapshotVersion, MockupTransfer transfer) {
         setTransactionSnapshot(snapshotVersion);
         try {
             store.beginUnitOfWork();

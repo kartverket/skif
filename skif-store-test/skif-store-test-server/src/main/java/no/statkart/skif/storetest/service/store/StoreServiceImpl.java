@@ -15,54 +15,5 @@ import java.util.Map;
 /**
  * @author Henrik Fredholm
  */
-public class StoreServiceImpl implements StoreService {
-    @Inject
-    Store store;
-
-    @Inject
-    VersionFinder versionFinder;
-
-
-    @Inject
-    ServiceRequestContext serviceRequestContext;
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I id) {
-        return store.get(id);
-    }
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjects(Collection<I> ids) {
-        return store.get(ids);
-    }
-
-
-    @Override
-    public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
-        return versionFinder.findBubbleIdsForInterval(id, start, end);
-    }
-
-    @Override
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
-        Map<I, List<I>> retur  = new HashMap<I, List<I>>();
-        for (I id : ids) {
-            retur.put(id, versionFinder.findBubbleIdsForInterval(id, start, end));
-        }
-        return retur;
-    }
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I id) {
-        return store.isLocked(id);
-    }
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I id) throws LockedException {
-        return store.lock(id);
-    }
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I id) {
-        store.unlock(id);
-    }
+public class StoreServiceImpl extends no.statkart.skif.store.service.StoreServiceImpl implements StoreService {
 }
