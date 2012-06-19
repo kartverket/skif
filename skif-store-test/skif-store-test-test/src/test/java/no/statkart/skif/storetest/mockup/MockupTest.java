@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.mockup.TestNumber;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
@@ -14,7 +13,6 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.testng.collections.Lists;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,12 +39,12 @@ public class MockupTest extends StoreTestTestCase {
      * Tester opprettelse av mockup readsett og innhold
      */
     public void testMockupBuilder() {
-        MockupFacadeBuilder mockupFacadeBuilder = injector.getInstance(MockupFacadeBuilder.class);
+        MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 
         MockupFacade readFacade = mockupFacadeBuilder.getForReadTest();
         Assert.assertTrue(readFacade.getTestNumber().isNR_0(), "readFacade har feil testnummer");
 
-        Assert.assertEquals(injector.getInstance(MockupFacadeBuilder.class), mockupFacadeBuilder, "MockupFacadeBuilder skal være singleton slik at read testsett gjenbrukes automatisk");
+        Assert.assertEquals(injector.getInstance(MockupFacadeFactory.class), mockupFacadeBuilder, "MockupFacadeBuilder skal være singleton slik at read testsett gjenbrukes automatisk");
 
         MockupTransfer transfer = readFacade.getTransfer(SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
         Assert.assertEquals(1, transfer.getInsertedObjects().size(), "Antall inserts i transfer");
@@ -67,7 +65,7 @@ public class MockupTest extends StoreTestTestCase {
      * lagres en gang
      */
     public void testSaveReadSet() {
-        MockupFacadeBuilder mockupFacadeBuilder = injector.getInstance(MockupFacadeBuilder.class);
+        MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
         MockupFacade readFacade = mockupFacadeBuilder.getForReadTestAndSaveData();
         Assert.assertNotNull(store.get(readFacade.getFooMockupFactory().getFooIdGamleveien()));
 
@@ -78,7 +76,7 @@ public class MockupTest extends StoreTestTestCase {
     }
 
     public void testCreateMultipleWriteSets()  {
-        MockupFacadeBuilder mockupFacadeBuilder = injector.getInstance(MockupFacadeBuilder.class);
+        MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 
         MockupFacade facade1 = mockupFacadeBuilder.getForWriteTestAndSaveData();
         MockupFacade facade2 = mockupFacadeBuilder.getForWriteTestAndSaveData();
@@ -96,7 +94,7 @@ public class MockupTest extends StoreTestTestCase {
      */
     @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Testsettet finnes allerede i databasen: TestNumber.*" )
     public void testSaveSameWriteSetMultipleTimes() {
-        MockupFacadeBuilder mockupFacadeBuilder = injector.getInstance(MockupFacadeBuilder.class);
+        MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 
         MockupFacade facade = mockupFacadeBuilder.getForWriteTest();
 
@@ -106,7 +104,7 @@ public class MockupTest extends StoreTestTestCase {
 
 
     public void testSaveWriteSetNumber() {
-        MockupFacadeBuilder mockupFacadeBuilder = injector.getInstance(MockupFacadeBuilder.class);
+        MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 
         MockupFacade facade1 = mockupFacadeBuilder.getForWriteTest();
         MockupFacade facade2 = mockupFacadeBuilder.getForWriteTest();
@@ -119,7 +117,7 @@ public class MockupTest extends StoreTestTestCase {
 
 
     public void testAssignIdAndSave() {
-        MockupFacadeBuilder mockupFacadeBuilder = injector.getInstance(MockupFacadeBuilder.class);
+        MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
         injector.getInstance(no.statkart.skif.service.test.TestdataService.class);
 
         MockupFacade facade = mockupFacadeBuilder.getForWriteTest();

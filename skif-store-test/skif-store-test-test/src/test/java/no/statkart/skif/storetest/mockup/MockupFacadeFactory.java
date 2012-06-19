@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.mockup;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import no.statkart.skif.mockup.AbstractMockupFacadeBuilder;
+import no.statkart.skif.mockup.AbstractMockupFacadeFactory;
 import no.statkart.skif.storetest.service.test.TestdataService;
 
 /**
@@ -12,9 +12,9 @@ import no.statkart.skif.storetest.service.test.TestdataService;
  * @since 2.1
  */
 @Singleton
-public class MockupFacadeBuilder extends AbstractMockupFacadeBuilder<MockupFacade> {
+public class MockupFacadeFactory extends AbstractMockupFacadeFactory<MockupFacade> {
     @Inject
-    public MockupFacadeBuilder(TestdataService testdataService) {
+    public MockupFacadeFactory(TestdataService testdataService) {
         super(MockupFacade.class, testdataService);
     }
 }

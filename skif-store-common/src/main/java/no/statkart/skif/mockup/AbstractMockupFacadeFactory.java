@@ -19,7 +19,7 @@ import no.statkart.skif.store.*;
  * @since 2.1
  */
 @Singleton
-public abstract class AbstractMockupFacadeBuilder<T extends AbstractMockupFacade> {
+public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade> {
     private final Class<T> mockupFacadeClass;
 
     private final T readFacade;
@@ -27,11 +27,11 @@ public abstract class AbstractMockupFacadeBuilder<T extends AbstractMockupFacade
     private final TestdataService testdataService;
     private final Class<? extends IdService> idServiceImplementationClass;
 
-    protected AbstractMockupFacadeBuilder(Class<T> mockupFacadeClass, TestdataService testdataService) {
+    protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService) {
         this(mockupFacadeClass, testdataService, TestIdServiceLong.class);
     }
 
-    protected AbstractMockupFacadeBuilder(Class<T> mockupFacadeClass, TestdataService testdataService, Class<? extends IdService> idServiceImplementationClass) {
+    protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService, Class<? extends IdService> idServiceImplementationClass) {
         this.mockupFacadeClass = mockupFacadeClass;
         this.testdataService = testdataService;
         this.idServiceImplementationClass = idServiceImplementationClass;
