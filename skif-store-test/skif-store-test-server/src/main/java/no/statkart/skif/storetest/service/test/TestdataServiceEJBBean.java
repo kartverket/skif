@@ -28,6 +28,12 @@ public class TestdataServiceEJBBean extends EJBTimedService implements TestdataS
     @Inject @EJBServiceChain
     private TestdataService service;
 
+
+    @Override
+    public TestNumber getTestNumber_0() {
+        return service.getTestNumber_0();
+    }
+
     @Override
     public TestNumber getNextTestNumber() {
         return service.getNextTestNumber();

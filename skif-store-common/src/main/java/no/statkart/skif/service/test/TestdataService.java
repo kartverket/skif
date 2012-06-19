@@ -12,6 +12,13 @@ import java.util.SortedMap;
  */
 public interface TestdataService {
     /**
+     * Returnerer testnummer 0
+     *
+     * @return neste testnummer
+     */
+    public TestNumber getTestNumber_0();
+
+    /**
      * Finner neste ledige testnummer.
      *
      * @return neste testnummer

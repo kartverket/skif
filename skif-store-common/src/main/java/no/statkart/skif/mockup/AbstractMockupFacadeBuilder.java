@@ -35,7 +35,7 @@ public abstract class AbstractMockupFacadeBuilder<T extends AbstractMockupFacade
         this.mockupFacadeClass = mockupFacadeClass;
         this.testdataService = testdataService;
         this.idServiceImplementationClass = idServiceImplementationClass;
-        readFacade = createFacade(TestNumber.NR_0);
+        readFacade = createFacade(testdataService.getTestNumber_0());
     }
 
     /**

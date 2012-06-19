@@ -14,7 +14,7 @@ import no.statkart.skif.storetest.service.test.TestdataService;
 @Singleton
 public class MockupFacadeBuilder extends AbstractMockupFacadeBuilder<MockupFacade> {
     @Inject
-    public MockupFacadeBuilder(TestdataService testNumberService) {
-        super(MockupFacade.class, testNumberService);
+    public MockupFacadeBuilder(TestdataService testdataService) {
+        super(MockupFacade.class, testdataService);
     }
 }

@@ -12,6 +12,7 @@ import no.statkart.skif.store.SnapshotVersion;
  */
 public interface TestdataService extends no.statkart.skif.service.test.TestdataService {
     /**
+     * TODO: Ta bort
      * Hjelpe tjeneste for skif-tester som brukes til å slette data i tester som ikke bruker unike testdatasett
      * @param id
      * @param tableName

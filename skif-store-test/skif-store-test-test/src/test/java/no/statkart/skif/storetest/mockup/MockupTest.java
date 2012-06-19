@@ -44,7 +44,7 @@ public class MockupTest extends StoreTestTestCase {
         MockupFacadeBuilder mockupFacadeBuilder = injector.getInstance(MockupFacadeBuilder.class);
 
         MockupFacade readFacade = mockupFacadeBuilder.getForReadTest();
-        Assert.assertEquals(TestNumber.NR_0, readFacade.getTestNumber(), "readFacade har feil testnummer");
+        Assert.assertTrue(readFacade.getTestNumber().isNR_0(), "readFacade har feil testnummer");
 
         Assert.assertEquals(injector.getInstance(MockupFacadeBuilder.class), mockupFacadeBuilder, "MockupFacadeBuilder skal være singleton slik at read testsett gjenbrukes automatisk");
 
@@ -156,7 +156,7 @@ public class MockupTest extends StoreTestTestCase {
             final List<Raz> razs = Collections.singletonList(raz);
             final List<? extends BubbleObject> s = Collections.singletonList(raz);
 
-            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(raz), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(-1));
+            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(raz), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(0,-1));
             testService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
         } finally {
             testService.deleteObject(123L, "Raz");
@@ -179,7 +179,7 @@ public class MockupTest extends StoreTestTestCase {
             final List<Raz> razs = Collections.singletonList(raz);
             final List<? extends BubbleObject> s = Collections.singletonList(raz);
 
-            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(raz), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(-1));
+            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(raz), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(0, -1));
             testService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
 
 
@@ -198,13 +198,13 @@ public class MockupTest extends StoreTestTestCase {
             foo.setNr(4224);
             foo.setNavn("Mockup");
 
-            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(foo), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(-2));
+            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(foo), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(0, -2));
 
             testService.saveSnapshotTransfer(SnapshotVersion.createInstance("2012-01-01 12:00:00"), transfer);
 
             Foo foo2 = CopyHelper.copy(foo);
 
-            MockupTransfer transfer2 = new MockupTransfer(Collections.<BubbleObject>emptyList(), Collections.singletonList(foo2), Collections.<BubbleObject>emptyList(), new TestNumber(-2));
+            MockupTransfer transfer2 = new MockupTransfer(Collections.<BubbleObject>emptyList(), Collections.singletonList(foo2), Collections.<BubbleObject>emptyList(), new TestNumber(0, -2));
             testService.saveSnapshotTransfer(SnapshotVersion.createInstance("2012-01-10 12:00:00"),  transfer2);
         } finally {
             testService.deleteObject(123L, "Foo_H");

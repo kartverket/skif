@@ -7,6 +7,7 @@ import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.mockup.TestNumber;
+import no.statkart.skif.mockup.TestNumberFactory;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.*;
 import no.statkart.skif.util.JDBCHelper;
@@ -42,10 +43,18 @@ public class TestdataServiceImpl implements TestdataService {
     @Inject
     TestdataService testdataService;
 
+    @Inject
+    TestNumberFactory testNumberFactory;
+
+
+    @Override
+    public TestNumber getTestNumber_0() {
+        return testNumberFactory.create(0);
+    }
 
     @Override
     public TestNumber getNextTestNumber() {
-        return new TestNumber((int) sequenceBlockAllocatorService.allocateSequenceBlock("TEST_NUMBER", 1));
+        return testNumberFactory.create((int)sequenceBlockAllocatorService.allocateSequenceBlock("TEST_NUMBER", 1));
     }
 
     @Override
@@ -53,7 +62,7 @@ public class TestdataServiceImpl implements TestdataService {
         // Sjekk om testsettet allerede er skrevet til databasen ved å sjekke på om første id i transfer finnes
         MockupTransfer firstTransfer = snapshotTransfers.values().iterator().next();
         if (testsetExists(firstTransfer)) {
-            if (!firstTransfer.getTestNumber().equals(TestNumber.NR_0)) {
+            if (!firstTransfer.getTestNumber().isNR_0()) {
                 throw new ImplementationException("Testsettet finnes allerede i databasen: " + firstTransfer.getTestNumber());
             }
         } else {
