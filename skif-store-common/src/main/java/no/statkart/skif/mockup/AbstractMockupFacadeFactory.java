@@ -22,7 +22,7 @@ import no.statkart.skif.store.*;
 public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade> {
     private final Class<T> mockupFacadeClass;
 
-    private final T readFacade;
+    private final Provider<T> readFacadeProvider;
 
     private final TestdataService testdataService;
     private final Class<? extends IdService> idServiceImplementationClass;
@@ -35,7 +35,16 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
         this.mockupFacadeClass = mockupFacadeClass;
         this.testdataService = testdataService;
         this.idServiceImplementationClass = idServiceImplementationClass;
-        readFacade = createFacade(testdataService.getTestNumber_0());
+
+        // Bruker her en Provider som oppretter readFacade første gang man ber om den. Må være lazy fordi testdataService ikke bør kalles
+        // i forbindelse med opprettelse MockupFacadeFactory'en. TestdataService gjør et kall til serveren og krever bl.a
+        // at bruker login er satt opp.
+        readFacadeProvider = new Provider<T>() {
+            @Override
+            public T get() {
+                return createFacade(AbstractMockupFacadeFactory.this.testdataService.getTestNumber_0());
+            }
+        };
     }
 
     /**
@@ -45,7 +54,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
      * @return mockupfacade
      */
     public T getForReadTest() {
-        return readFacade;
+        return readFacadeProvider.get();
     }
 
     /**
@@ -54,6 +63,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
      * @return
      */
     public T getForReadTestAndSaveData() {
+        final T readFacade = readFacadeProvider.get();
         testdataService.saveAll(readFacade.getAllTransfers());
         return readFacade;
     }

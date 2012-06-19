@@ -3,16 +3,11 @@ package no.statkart.skif.storetest.service.store;
 import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
-import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
-import sun.security.util.Resources_zh_CN;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 /**
  * Tester mixed kjørsel på klient og tjener.

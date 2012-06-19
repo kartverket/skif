@@ -2,6 +2,11 @@ package no.statkart.skif.storetest.mockup;
 
 import com.google.inject.Inject;
 import no.statkart.skif.mockup.AbstractMockupFacade;
+import no.statkart.skif.mockup.AbstractMockupFactory;
+import org.testng.collections.Lists;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Mockupfacade for storetest-applikasjonen.
@@ -19,7 +24,7 @@ public class MockupFacade extends AbstractMockupFacade {
     }
 
     @Override
-    public void createAllMockups() {
-        fooMockupFactory.createAllMockups();
+    public List<? extends AbstractMockupFactory> getAllMockupFactories() {
+        return Arrays.asList(fooMockupFactory);
     }
 }

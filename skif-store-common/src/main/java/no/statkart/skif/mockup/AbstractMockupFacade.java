@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -29,7 +31,13 @@ public abstract class AbstractMockupFacade {
         return testNumber;
     }
 
-    public abstract void createAllMockups();
+    public abstract List<? extends AbstractMockupFactory> getAllMockupFactories();
+
+    public void createAllMockups() {
+        for (AbstractMockupFactory mockupFactory : getAllMockupFactories()) {
+            mockupFactory.createAllMockups();
+        }
+    }
 
     public MockupTransfer getTransfer() {
         return getTransfer(SnapshotVersion.CURRENT);
