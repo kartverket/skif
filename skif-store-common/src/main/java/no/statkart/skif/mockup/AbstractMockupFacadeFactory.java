@@ -1,10 +1,10 @@
 package no.statkart.skif.mockup;
 
 import com.google.inject.*;
-import com.google.inject.name.Names;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.test.TestdataService;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Store;
 
 /**
  * Baseklasse for opprettelse av mockupfacade-instanser. En faktisk implementasjon trenger bare implementere
@@ -96,14 +96,10 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
 
 
     private T createFacade(final TestNumber testNumber) {
-
-        final TestNumber testNumber_0 = testdataService.getTestNumber_0();
-
         Module module = new AbstractModule() {
             @Override
             protected void configure() {
                 bind(TestNumber.class).toInstance(testNumber);
-                bind(TestNumber.class).annotatedWith(Names.named("testNumber_0")).toInstance(testNumber_0);
                 bind(IdService.class).to(idServiceImplementationClass);
                 bind(Store.class).to(MockupStore.class);
             }
