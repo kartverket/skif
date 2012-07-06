@@ -14,6 +14,7 @@ import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
+import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;

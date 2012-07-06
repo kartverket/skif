@@ -28,7 +28,7 @@ import java.util.zip.ZipInputStream;
  * historikk.
  *
  * Builderen initialiseres opp med de tabeller/klasse som hiberate skal jobbe med og har støtte for å definere sletterekkefølge
- * for bobler. For å opprette en factory kalles {@link #build)()}.
+ * for bobler. For å opprette en factory kalles {@link #build}.
  * Ved å endre på properties mellom hver kall til build er det mulig å opprette factories (og hibernate sessions) som går mot
  * forskjellige data sources slik at konseptet om OLD og CURRENT session støttes.
  *
@@ -187,7 +187,7 @@ public abstract class HibernateSessionFactoryBuilder {
      */
     protected abstract Configuration createConfiguration(Properties props, Interceptor interceptor);
 
-    public List getBubbleClassDeleteOrder() {
+    public List<Class<?>> getBubbleClassDeleteOrder() {
         return bubbleClassDeleteOrder;
     }
     /**

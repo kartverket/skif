@@ -18,10 +18,7 @@ import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
-import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
+import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceSessionSubtypeHandler;
 import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.storetest.TestHelper;
@@ -149,7 +146,7 @@ public class StoreSessionServerTest {
                         masterCurrent,
                         new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelistManager, kodelisteClasses, context)
                 ),
-                new DefaultPersistenceSessionStrategy(
+            new DefaultPersistenceSessionStrategy(
                         masterOld,
                         new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelistManager, kodelisteClasses, context)
                 )
@@ -174,7 +171,10 @@ public class StoreSessionServerTest {
                 bind(IdService.class).toProvider(Providers.<IdService>of(null));
             }
         });
-        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), readListeners, writeListeners, finishListeners), fakeInjector);
+
+        final HibernateBubbleDependencyComparator dependencyComparator = new HibernateBubbleDependencyComparator(sessionFactoryManagerBundle);
+
+        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), MemoryLockerSingleton5.getInstance(), dependencyComparator, readListeners, writeListeners, finishListeners), fakeInjector);
         deletePriviouslyWritenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
     }
 

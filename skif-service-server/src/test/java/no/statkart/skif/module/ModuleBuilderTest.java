@@ -8,13 +8,12 @@ import no.statkart.skif.config.MapConfiguration;
 import no.statkart.skif.config.SystemConfiguration;
 import no.statkart.skif.config.internal.ConfigurationUtils;
 import no.statkart.skif.service.SingleVmServer;
-import no.statkart.skif.service.module.ClientModuleStrategyFactory;
+import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
-import java.util.List;
 
 import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;

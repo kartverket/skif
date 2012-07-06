@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.mapping;
 
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.module.DefaultModuleConfiguration;
-import no.statkart.skif.service.module.ClientModuleStrategyFactory;
+import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;

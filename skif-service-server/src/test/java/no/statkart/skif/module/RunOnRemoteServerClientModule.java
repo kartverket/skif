@@ -1,17 +1,16 @@
 package no.statkart.skif.module;
 
-import com.google.inject.name.Names;
+import no.statkart.skif.SkifModule;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
-
+import no.statkart.skif.service.module.common.RunOnServerRemoteServiceModule;
 
 /**
- * En meget enkel ClientModule som brukes for unit testing.
  * @author Henrik Fredholm
- * @since 2.0
+ * @since 2.1
  */
-public class TestClientModule extends TestModule {
-    public TestClientModule(ModuleConfiguration moduleConfiguration) {
+public class RunOnRemoteServerClientModule extends SkifModule {
+    public RunOnRemoteServerClientModule(ModuleConfiguration moduleConfiguration) {
         super(moduleConfiguration);
     }
 
@@ -22,12 +21,7 @@ public class TestClientModule extends TestModule {
 
     @Override
     protected void configure() {
-        super.configure();
         install(new RemoteServerModule(moduleConfiguration));
-    }
-
-    @Override
-    protected void configureModulename() {
-        bind(String.class).annotatedWith(Names.named("modulename")).toInstance("TestClientModule");
+        install(new RunOnServerRemoteServiceModule(moduleConfiguration));
     }
 }

@@ -1,4 +1,4 @@
-package no.statkart.skif.service.module;
+package no.statkart.skif.service.module.client;
 
 import no.statkart.skif.module.AbstractModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuples;

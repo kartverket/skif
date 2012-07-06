@@ -10,7 +10,7 @@ import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;
-import no.statkart.skif.service.module.ClientModuleStrategyFactory;
+import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.WSRemoteServiceModule;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;

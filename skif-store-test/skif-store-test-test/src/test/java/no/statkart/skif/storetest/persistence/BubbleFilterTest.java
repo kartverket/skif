@@ -40,7 +40,6 @@ public class BubbleFilterTest extends StoreTestServerTestCase {
 
     @BeforeMethod
     public void deletePriviouslyWritenTestBubbles() {
-        System.err.println("Delete first");
 
         server.runInBeanManagedTransaction(new RunOnServerMethod() {
             @Inject
@@ -48,7 +47,6 @@ public class BubbleFilterTest extends StoreTestServerTestCase {
 
             public Object run() {
                 TestHelper.deletePriviouslyWritenTestBubbles(persistenceSessionForSnapshot);
-                System.err.println("DONE!");
                 return null;
             }
         });
@@ -166,7 +164,6 @@ public class BubbleFilterTest extends StoreTestServerTestCase {
     // Ser ut til at metoden som skal slette dynamisk data ikke gjør jobben og så feiler denne testen fordi data fra annet testtilfelle ligger igjen
     @Test(groups = "broken")
     public void testFinish_ok() {
-        System.err.println("testFinish_ok");
         deletePriviouslyWritenTestBubbles();
         Store storeClient = injector.getInstance(Store.class);
         FilteredBubble filteredBubble;

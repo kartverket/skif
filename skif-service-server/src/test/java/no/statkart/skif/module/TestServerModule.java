@@ -5,6 +5,7 @@ import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import no.statkart.skif.service.module.server.ServerModule;
 
 /**
+ * En meget enkel ServerModule som bruke for unit testing.
  * @author Henrik Fredholm
  * @since 2.0
  */

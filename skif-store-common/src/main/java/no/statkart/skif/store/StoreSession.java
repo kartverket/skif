@@ -3,6 +3,7 @@ package no.statkart.skif.store;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;

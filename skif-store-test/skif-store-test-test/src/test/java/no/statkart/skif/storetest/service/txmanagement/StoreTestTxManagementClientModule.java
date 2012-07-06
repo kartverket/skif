@@ -4,7 +4,7 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
-import no.statkart.skif.service.module.ClientModuleStrategyFactory;
+import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.storetest.config.StoreTestSequenceBlockAllocatorServices;

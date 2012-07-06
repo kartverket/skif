@@ -76,7 +76,8 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
             serviceContext = (ServiceContext) contextData.get("serviceContext");
             serviceRequestContext = new ServiceRequestContext(txMode, beanManagedTransaction, txType);
             LoginUser loginUser = (LoginUser) contextData.get("credentials");
-            serviceRequestContext.setCallerPrincipal(new PrincipalImpl(loginUser.getUsername()));
+            final PrincipalImpl callerPrincipal = (loginUser==null) ? new PrincipalImpl(null) :  new PrincipalImpl(loginUser.getUsername());
+            serviceRequestContext.setCallerPrincipal(callerPrincipal);
             serviceRequestContext.setServicename(method.getName());
         } else {
             serviceRequestContext = new ServiceRequestContext(serviceRequestContextProvider.get(), txMode, false, txType);

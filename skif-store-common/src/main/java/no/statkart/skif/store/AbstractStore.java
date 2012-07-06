@@ -225,9 +225,10 @@ public class AbstractStore implements Store {
 
 
     @Override
-    public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
-        storeSession.ensureFullyLoaded(bubbleObject);
-        storeSession.ensureFullyLoaded(bubbleObject);
+    public <T extends BubbleObject> void ensureFullyLoaded(@Nullable T bubbleObject) {
+        if (bubbleObject!=null) {
+            storeSession.ensureFullyLoaded(bubbleObject);
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package no.statkart.skif.service.module.client;
 import com.google.inject.Singleton;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.module.ModuleConfiguration;
+import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
 
@@ -17,6 +18,10 @@ public class ClientModule extends SkifModule {
         super(configuration);
     }
 
+    @Override
+    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+        return new ClientModuleStrategyFactory();
+    }
     @Override
     protected void configure() {
         bind(ServiceContext.class).to(DefaultServiceContext.class).in(Singleton.class);

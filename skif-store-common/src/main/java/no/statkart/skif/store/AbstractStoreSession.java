@@ -3,6 +3,7 @@ package no.statkart.skif.store;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.NotLockedException;
+import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 
 import java.util.*;
@@ -53,7 +54,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             entry = loadEntry(level, bubbleId, false);
         }
 
-        return (T) entry.getDerivedBubbleObjectCopyIfLocked(level, store);
+        final T bubble = (T) entry.getDerivedBubbleObjectCopyIfLocked(level, store);
+        if (bubble==null) {
+            throw new ObjectNotFoundException(bubbleId);
+        }
+        return bubble;
     }
 
     private void addModified(StoreEntry storeEntry) {

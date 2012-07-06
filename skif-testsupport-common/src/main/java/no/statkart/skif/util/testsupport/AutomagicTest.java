@@ -96,7 +96,6 @@ public class AutomagicTest {
                                 String classPackageName = className.substring(0, className.lastIndexOf("."));
                                 // Laster kun klasser som ligger under packageName
                                 if (classPackageName.contains(packageName)) {
-                                    System.err.println("PackageName="+ packageName);
                                     _class = Class.forName(className);
                                     classes.add(_class);
                                 }

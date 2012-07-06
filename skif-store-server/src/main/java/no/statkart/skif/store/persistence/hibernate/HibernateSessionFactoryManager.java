@@ -4,6 +4,8 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import java.util.List;
+
 /**
  * @author Henrik Fredholm
  */
@@ -46,5 +48,9 @@ public class HibernateSessionFactoryManager {
         Session session;
         session = getFactory().openSession();
         return session;
+    }
+
+    public List<Class<?>> getBubbleDependencyOrder() {
+        return factoryBuilder.getBubbleClassDeleteOrder();
     }
 }

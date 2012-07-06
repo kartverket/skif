@@ -1,37 +1,16 @@
 package no.statkart.skif.skiftest.service.test;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
-import no.statkart.skif.ServiceMode;
-import no.statkart.skif.SkifModule;
 import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ServerException;
 import no.statkart.skif.exception.SkifException;
-import no.statkart.skif.mapper.MappingException;
-import no.statkart.skif.module.ModuleBuilder;
-import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.module.ModuleStrategyFactory;
-import no.statkart.skif.service.LoginUser;
-import no.statkart.skif.service.LoginUserHolder;
-import no.statkart.skif.service.ServerUrlHolder;
-import no.statkart.skif.service.module.ClientModuleStrategyFactory;
-import no.statkart.skif.service.module.common.RemoteServerModule;
-import no.statkart.skif.service.module.common.RemoteServiceModule;
-import no.statkart.skif.skiftest.config.SkifTestGroupABCDServices;
-import no.statkart.skif.skiftest.config.SkifTestGroupExServices;
 import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.exception.SimpleNonMappedException;
 import no.statkart.skif.skiftest.service.testd.DService;
-import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
-import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestExceptionMapper2;
-import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 import no.statkart.skif.util.testsupport.SkifTestCase;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import javax.xml.ws.soap.SOAPFaultException;
 
 import static org.testng.Assert.*;
 

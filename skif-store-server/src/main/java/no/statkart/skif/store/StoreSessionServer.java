@@ -1,15 +1,14 @@
 package no.statkart.skif.store;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.NotLockedException;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
-import javax.management.RuntimeErrorException;
 import java.util.*;
 
 import static no.statkart.skif.guava.Preconditions.checkNotNull;
@@ -23,9 +22,11 @@ public class StoreSessionServer extends AbstractStoreSession {
     private final List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
     private final List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
     private Provider<VersionFinder> versionFinderProvider;
+    private final BubbleDependencyComparator bubbleDependencyComparator;
+
     private ModifiedCache modifiedCache;
 
-    private class ModifiedCache {
+    private static class ModifiedCache {
         private LinkedHashSet<BubbleId<?>> insertedIds;
         private LinkedHashSet<BubbleId<?>> updatedIds;
         private LinkedHashSet<BubbleId<?>> deletedIds;
@@ -89,6 +90,21 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
     }
 
+    private static class StoreMapEntryComparator implements Comparator<Map.Entry<BubbleId<?>, StoreEntry>> {
+        private final BubbleDependencyComparator bubbleDependencyComparator;
+        private final int level;
+
+        public StoreMapEntryComparator(BubbleDependencyComparator bubbleDependencyComparator, int level) {
+            this.bubbleDependencyComparator = bubbleDependencyComparator;
+            this.level = level;
+        }
+
+        @Override
+        public int compare(Map.Entry<BubbleId<?>, StoreEntry> o1, Map.Entry<BubbleId<?>, StoreEntry> o2) {
+            return bubbleDependencyComparator.compare(o1.getValue().getBubbleObject(level), o2.getValue().getBubbleObject(level));
+        }
+    }
+
     private long lockTimeout = 240 * 60 * 1000 /* 4 timer */;
     /**
      * Låser tatt for inneværende service
@@ -96,23 +112,20 @@ public class StoreSessionServer extends AbstractStoreSession {
     private TransactionalLocker transactionalLocker;
 
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, null, null, null);
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, BubbleDependencyComparator bubbleDependencyComparator) {
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, bubbleDependencyComparator, null, null, null);
     }
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, readListeners, writeListeners, null);
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, bubbleDependencyComparator, readListeners, writeListeners, finishListeners);
     }
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, readListeners, writeListeners, finishListeners);
-    }
-
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
         super(0, storeCache);
         this.persistenceSessionManager = persistenceSessionManager;
         this.transactionalLocker = new ReleaseAllLocksOnUpdateTransactionalLocker5(lockerService, "principal", lockTimeout);
         this.versionFinderProvider = versionFinderProvider;
+        this.bubbleDependencyComparator = bubbleDependencyComparator;
         if (readListeners != null) {
             this.readListeners.addAll(readListeners);
         }
@@ -198,6 +211,53 @@ public class StoreSessionServer extends AbstractStoreSession {
         persistenceSessionManager.rollback();
         transactionalLocker.serviceCompleted();
         clear();
+    }
+
+    @Override
+    public void commitUnitOfWork(Map<BubbleId<?>, StoreEntry> modified) {
+        // TODO: Opptimaliser
+
+        // Reorder modifications
+        List<Map.Entry<BubbleId<?>, StoreEntry>> inserted = Lists.newArrayList();
+        List<Map.Entry<BubbleId<?>, StoreEntry>> updated = Lists.newArrayList();
+        List<Map.Entry<BubbleId<?>, StoreEntry>> deleted = Lists.newArrayList();
+
+        // Legg inn i ovenstående lister;
+        for (Map.Entry<BubbleId<?>, StoreEntry> entry : modified.entrySet()) {
+            switch (entry.getValue().getState(level + 1)) {
+                case INSERTED:
+                    inserted.add(entry);
+                    break;
+                case UPDATED:
+                    updated.add(entry);
+                    break;
+                case DELETED:
+                    deleted.add(entry);
+                    break;
+                case INSERTED_DELETED:
+                    deleted.add(entry);
+                    break;
+                case DELETED_INSERTED:
+                    inserted.add(entry);
+                    break;
+            }
+        }
+        final StoreMapEntryComparator c = new StoreMapEntryComparator(bubbleDependencyComparator, level + 1);
+        Collections.sort(inserted, c);
+        Collections.sort(updated, c);
+        Collections.reverse(deleted);
+        Map<BubbleId<?>, StoreEntry> modifiedSorted = new LinkedHashMap<BubbleId<?>, StoreEntry>(modified.size());
+        for (Map.Entry<BubbleId<?>, StoreEntry> mapEntry : inserted) {
+            modifiedSorted.put(mapEntry.getKey(), mapEntry.getValue());
+        }
+        for (Map.Entry<BubbleId<?>, StoreEntry> mapEntry : updated) {
+            modifiedSorted.put(mapEntry.getKey(), mapEntry.getValue());
+        }
+        for (Map.Entry<BubbleId<?>, StoreEntry> mapEntry : deleted) {
+            modifiedSorted.put(mapEntry.getKey(), mapEntry.getValue());
+        }
+        super.commitUnitOfWork(modifiedSorted);
+
     }
 
     /**
@@ -316,9 +376,9 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
-        StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
-        BubbleObject persistentBubbleObject = storeEntry.getPersistentBubbleObject();
-        persistenceSessionManager.ensureFullyLoaded(persistentBubbleObject);
+            StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
+            BubbleObject persistentBubbleObject = storeEntry.getPersistentBubbleObject();
+            persistenceSessionManager.ensureFullyLoaded(persistentBubbleObject);
     }
 
     protected boolean isLocked(StoreEntry storeEntry) {
