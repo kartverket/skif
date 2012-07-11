@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.demo.BubbleWithList" select-before-update="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.BubbleWithListIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <set name="components" lazy="true" cascade="all-delete-orphan,evict" batch-size="256" access="field" inverse="true">
+           <key column="bubbleWithListId"/>
+           <one-to-many class="no.statkart.skif.storetest.domain.demo.BubbleWithListComponent"/>
+        </set>
+
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.demo.BubbleWithListComponent" lazy="true" select-before-update="true">
+        <id name="id" column="id">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="componentName"/>
+        <many-to-one name="bubbleWithList" class="no.statkart.skif.storetest.domain.demo.BubbleWithList" column="bubbleWithListId" not-null="true"/>
+
+        <property name="tBegin" column="tBegin" type="timestamp"/>
+        <property name="tEnd" column="tEnd" type="timestamp"/>
+        <property name="tVersion" column="tVersion" type="long"/>
+
+
+        <property name="aEnumKodeId" type="Demo_AEnumKodeIdType"/>
+
+    </class>
+
+</hibernate-mapping>

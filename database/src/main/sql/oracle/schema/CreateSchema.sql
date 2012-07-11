@@ -561,3 +561,86 @@ personId number(19,0) not null,
 Primary Key (rettsstiftelseId, rolle, personId)
 );
 
+create table BubbleWithList_h (
+  id number(19, 0) not null,
+  tBegin              timestamp(6) not null,
+  tEnd                timestamp(6) not null,
+  tVersion            number (19,0) not null,
+  primary key (id, tend)
+);
+
+create view BubbleWithList as select * from BubbleWithList_h where snapshot_time.t_between(tBegin, tEnd)=1;
+CREATE OR REPLACE TRIGGER T_BubbleWithList INSTEAD OF INSERT OR UPDATE OR DELETE ON BubbleWithList
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF INSERTING THEN
+    INSERT INTO BubbleWithList_h
+        VALUES (:new.id, t_Trans, t_End, 1);
+
+  ELSIF UPDATING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO BubbleWithList_h VALUES (:old.id, :old.TBEGIN, t_Trans, :old.TVERSION);
+        UPDATE BubbleWithList_h SET TVERSION = :old.TVERSION+1
+        WHERE id = :new.id and tEnd = t_End;
+     END IF;
+     UPDATE BubbleWithList_h SET ID=:new.ID, TBEGIN=t_Trans, TEND=t_End, TVERSION=TVERSION
+        WHERE id = :new.id and tEnd = t_End;
+
+  ELSIF DELETING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO BubbleWithList_h
+           VALUES (:old.ID, :old.TBEGIN, t_Trans, :old.TVERSION);
+     END IF;
+     DELETE FROM BubbleWithList_h
+        WHERE id = :old.id AND tEnd = t_End;
+
+  END IF;
+END T_BubbleWithList;
+/
+
+
+create table BubbleWithListComponent_h (
+  id number(19, 0) not null,
+  componentName varchar2(255 BYTE),
+  bubblewithlistid number(19, 0),
+  aEnumKodeId number(19, 0),
+  tBegin              timestamp(6) not null,
+  tEnd                timestamp(6) not null,
+  tVersion            number (19,0) not null,
+  primary key (id, tend)
+);
+
+create view BubbleWithListComponent as select * from BubbleWithListComponent_h where snapshot_time.t_between(tBegin, tEnd)=1;
+CREATE OR REPLACE TRIGGER T_BubbleWithListComponent INSTEAD OF INSERT OR UPDATE OR DELETE ON BubbleWithListComponent
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF INSERTING THEN
+    INSERT INTO BubbleWithListComponent_h
+        VALUES (:new.id, :new.componentname, :new.bubblewithlistid, :new.aEnumKodeId, t_Trans, t_End, 1);
+
+  ELSIF UPDATING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO BubbleWithListComponent_h VALUES (:old.id, :old.componentname, :old.bubblewithlistid, :old.aEnumKodeId, :old.TBEGIN, t_Trans, :old.TVERSION);
+        UPDATE BubbleWithListComponent_h SET TVERSION = :old.TVERSION+1
+        WHERE id = :new.id and tEnd = t_End;
+     END IF;
+     UPDATE BubbleWithListComponent_h SET ID=:new.ID, componentname=:new.componentname, bubblewithlistid=:new.bubblewithlistid, aEnumKodeId=:new.aEnumKodeId, TBEGIN=t_Trans, TEND=t_End, TVERSION=TVERSION
+        WHERE id = :new.id and tEnd = t_End;
+
+  ELSIF DELETING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO BubbleWithListComponent_h
+           VALUES (:old.ID, :old.componentname, :old.bubblewithlistid, :old.aEnumKodeId, :old.TBEGIN, t_Trans, :old.TVERSION);
+     END IF;
+     DELETE FROM BubbleWithListComponent_h
+        WHERE id = :old.id AND tEnd = t_End;
+
+  END IF;
+END T_BubbleWithListComponent;
+/

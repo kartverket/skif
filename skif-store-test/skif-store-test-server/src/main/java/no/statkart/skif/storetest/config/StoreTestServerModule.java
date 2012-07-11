@@ -213,7 +213,9 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(TestEntity.class)
                 .addResource(AggregertObjekt.class)
                 .addResource(Person.class)
-                .addResource(Rettsstiftelse.class);
+                .addResource(Rettsstiftelse.class)
+                .addResource(BubbleWithList.class);
+
 
 
         Properties hibernatePropertiesCurrent;
