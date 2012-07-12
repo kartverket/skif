@@ -78,7 +78,9 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     public boolean equals(Object x, Object y) throws HibernateException {
-        return x.equals(y);
+        if(x == null && y != null) return false;
+
+        return x == null || x.equals(y);
     }
 
     public int hashCode(Object x) throws HibernateException {
