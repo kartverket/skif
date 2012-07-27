@@ -10,10 +10,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @since 2.1
  * @author Jan Holmen
+ * @since 2.1
  */
-public class ParrentBubble  extends AbstractBubbleObject implements StoreTestBubble {
+public class ParrentBubble extends AbstractBubbleObject implements StoreTestBubble {
     private String text;
     private Set<ChildForParrent> childForParrents = new HashSet<ChildForParrent>();
 
@@ -57,39 +57,44 @@ public class ParrentBubble  extends AbstractBubbleObject implements StoreTestBub
 //    }
 
 
-
-
-    public void addChild(ChildBubbleId<ChildBubble> childId, Long id){
+    public void addChild(ChildBubbleId<ChildBubble> childId, Long id) {
         addChildForParrent(new ChildForParrent(childId, id));
     }
 
-    public boolean addChildForParrent(ChildForParrent cfp){
+    public boolean addChildForParrent(ChildForParrent cfp) {
         cfp.setParrentBubble(this);
         return childForParrents.add(cfp);
     }
 
-    public Set getChildBubbleIds(){
-        Set <ChildBubbleId<ChildBubble>> ids = new HashSet<ChildBubbleId<ChildBubble>>();
-        for(ChildForParrent cfp : childForParrents){
+    public Set getChildBubbleIds() {
+        Set<ChildBubbleId<ChildBubble>> ids = new HashSet<ChildBubbleId<ChildBubble>>();
+        for (ChildForParrent cfp : childForParrents) {
             ids.add(cfp.getChildBubbleId());
         }
         return ids;
     }
 
-    public ChildForParrent getChildForParrent(ChildBubbleId childId){
+    public ChildForParrent getChildForParrent(ChildBubbleId childId) {
         ChildForParrent ret = null;
-        for(ChildForParrent cfp : childForParrents){
-            if(cfp.getChildBubble().getId().equals(childId)){
+        for (ChildForParrent cfp : childForParrents) {
+            if (cfp.getChildBubble().getId().equals(childId)) {
                 return cfp;//ret = cfp;
             }
         }
         return ret;
     }
 
-     public Set<ChildForParrent> getChildForParrents() {
-      return Collections.unmodifiableSet(childForParrents);
-   }
+    public Set<ChildForParrent> getChildForParrents() {
+        return Collections.unmodifiableSet(childForParrents);
+    }
 
+    public void setChildForParrents(Set<ChildForParrent> childForParrents) {
+        this.childForParrents = childForParrents;
+    }
+
+    public void clearChildren() {
+        childForParrents.clear();
+    }
 
 
 }

@@ -3,20 +3,20 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-   <class name="no.statkart.skif.storetest.domain.demo.ParrentBubble" lazy="true">
+   <class name="no.statkart.skif.storetest.domain.demo.ParrentBubble" lazy="true" select-before-update="true">
       <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.ParrentBubbleIdType">
           <generator class="assigned"/>
       </id>
 
       <property name="text"/>
 
-       <set name="childForParrents" access="field" lazy="true" batch-size="256" cascade="all-delete-orphan,evict">
+       <set name="childForParrents" access="field" lazy="true" batch-size="256" cascade="all-delete-orphan,evict" inverse="true">
           <key column="parrentBubbleId"/>
           <one-to-many  class="no.statkart.skif.storetest.domain.demo.ChildForParrent"/>
        </set>
    </class>
 
-    <class name="no.statkart.skif.storetest.domain.demo.ChildForParrent"  table="childforparrent" lazy="true">
+    <class name="no.statkart.skif.storetest.domain.demo.ChildForParrent"  table="childforparrent" lazy="true" select-before-update="true">
        <id name="id" column="id">
           <generator class="assigned" />
        </id>
