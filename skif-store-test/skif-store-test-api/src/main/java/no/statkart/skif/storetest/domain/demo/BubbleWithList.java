@@ -16,6 +16,7 @@ import java.util.Set;
  * @since 2.1
  */
 public class BubbleWithList extends AbstractBubbleObject implements StoreTestBubble {
+    private String text;
 
     private Set<BubbleWithListComponent> components;
 
@@ -43,5 +44,13 @@ public class BubbleWithList extends AbstractBubbleObject implements StoreTestBub
 
     public void setComponents(Set<BubbleWithListComponent> components) {
         this.components = components;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

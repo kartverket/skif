@@ -195,7 +195,7 @@ public class AbstractStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll() {
-        throw new NotImplementedException("Kommer ved behov");
+        return storeSession.evictAll();
     }
 
     @Override
@@ -233,7 +233,7 @@ public class AbstractStore implements Store {
 
     @Override
     public void beginUnitOfWork() {
-        // TODO: Burde lage en dummy UnitOfWork først som aldrig feiler slik at abortUnitOfWork poper riktig av stakken hvis storeSession.beginUnitOfWork() feiler
+        // TODO: Burde lage en dummy UnitOfWork først som aldrig feiler slik at abortUnitOfWork popper riktig av stakken hvis storeSession.beginUnitOfWork() feiler
         storeSession = storeSession.beginUnitOfWork();
     }
 
@@ -244,6 +244,7 @@ public class AbstractStore implements Store {
 
     @Override
     public void abortUnitOfWork() {
+        // TODO: Bør sikre at denne alltid popper av et nivå av unit of work også selv om det kastes exception.
         storeSession = storeUnitOfWork().abortUnitOfWork();
     }
 

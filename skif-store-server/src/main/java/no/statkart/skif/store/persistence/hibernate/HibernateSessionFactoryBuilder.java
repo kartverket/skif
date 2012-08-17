@@ -39,7 +39,8 @@ public abstract class HibernateSessionFactoryBuilder {
     private final static Object LOCK = new Object();
     protected final List<String> hbmResource = new ArrayList<String>();
     protected final String mappingFilesDirectory;
-    private final List<Class<?>> bubbleClassDeleteOrder = new ArrayList<Class<?>>();
+    private final Map<Class<? extends BubbleObject>, Integer> bubbleClassDependencyIndex = new HashMap<Class<? extends BubbleObject>, Integer>();
+    private int nextOrderIndex;
     private Map<String, String> className2resourceNameMap = new HashMap<String, String>();
 
     public HibernateSessionFactoryBuilder(String mappingFilesDirectory) {
@@ -61,10 +62,15 @@ public abstract class HibernateSessionFactoryBuilder {
     }
 
     public HibernateSessionFactoryBuilder addResourceWithSubclasses(Class baseclass, Class... subclasses) {
+        return addResourceWithSubclassesUseNextIndex(baseclass, subclasses);
+
+    }
+
+    public HibernateSessionFactoryBuilder addResourceWithSubclassesUseNextIndex(Class baseclass, Class... subclasses) {
         addResource(baseclass);
         for (Class subclass : subclasses) {
             if (BubbleObject.class.isAssignableFrom(subclass)) {
-                bubbleClassDeleteOrder.add(subclass);
+                bubbleClassDependencyIndex.put(subclass, nextOrderIndex);
             }
         }
         return this;
@@ -72,8 +78,17 @@ public abstract class HibernateSessionFactoryBuilder {
 
 
     public HibernateSessionFactoryBuilder addResource(Class clazz) {
+        return addResourceUseNextIndex(clazz);
+    }
+
+    public HibernateSessionFactoryBuilder addResourceUseNextIndex(Class clazz) {
+        nextOrderIndex++;
+       return addResourceUseSameIndex(clazz);
+    }
+
+    public HibernateSessionFactoryBuilder addResourceUseSameIndex(Class clazz) {
         if (BubbleObject.class.isAssignableFrom(clazz)) {
-            bubbleClassDeleteOrder.add(clazz);
+            bubbleClassDependencyIndex.put(clazz, nextOrderIndex);
         }
         final String resourceName = className2resourceNameMap.get(clazz.getName());
         if (resourceName != null) {
@@ -82,8 +97,8 @@ public abstract class HibernateSessionFactoryBuilder {
             throw new ConfigurationException("Fant ingen *.hbm.xml mappingfil for " + clazz.getName());
         }
         return this;
-    }
 
+    }
 /*
     public HibernateSessionFactoryBuilder addResourceUsingRelativePath(String relativePath, Class clazz) {
         addResourceUsingAbsolutePath(clazz, mappingFilesDirectory + relativePath + "/" + clazz.getSimpleName() + ".hbm.xml");
@@ -112,10 +127,14 @@ public abstract class HibernateSessionFactoryBuilder {
 
 */
 
-    public HibernateSessionFactoryBuilder addResourceUsingAbsolutePath(Class clazz, String hbmFilename) {
+    public HibernateSessionFactoryBuilder addResourceUsingAbsolutePathUseNextIndex(Class clazz, String hbmFilename) {
+        nextOrderIndex++;
+        return addResourceUsingAbsolutePathUseOrderIndex(clazz, hbmFilename);
+    }
+    public HibernateSessionFactoryBuilder addResourceUsingAbsolutePathUseOrderIndex(Class clazz, String hbmFilename) {
         hbmResource.add(hbmFilename);
         if (BubbleObject.class.isAssignableFrom(clazz)) {
-            bubbleClassDeleteOrder.add(clazz);
+            bubbleClassDependencyIndex.put(clazz, nextOrderIndex);
         }
         return this;
     }
@@ -187,8 +206,8 @@ public abstract class HibernateSessionFactoryBuilder {
      */
     protected abstract Configuration createConfiguration(Properties props, Interceptor interceptor);
 
-    public List<Class<?>> getBubbleClassDeleteOrder() {
-        return bubbleClassDeleteOrder;
+    public Map<Class<? extends BubbleObject>, Integer> getBubbleClassDependencyIndex() {
+        return bubbleClassDependencyIndex;
     }
     /**
      * Forsøker å finne alle className->hbm-fil mappinger.

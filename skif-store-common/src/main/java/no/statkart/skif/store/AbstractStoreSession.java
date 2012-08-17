@@ -327,6 +327,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll() {
+        return evictAllEntries(level);
+    }
+
+    @Override
     public final <T extends BubbleObject> void insert(T bubbleObject) {
         // Opprett BubbleId av riktig type hvis null
         if (bubbleObject.getId()==null) {

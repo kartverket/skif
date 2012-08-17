@@ -95,6 +95,14 @@ public interface StoreSession {
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(I bubbleId);
 
     /**
+     * Fjerner objektet fra sessionen. Objekter som har blitt endret fjernes ikke
+     * TODO: Legge inn støtte til å kunne fjerne endret objekter etter flush/finishBatch har blitt kjørt
+     * @param bubbleId
+     * @return  true hvis objektet ble fjernet
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll();
+
+    /**
      * Oppretter objektet i sessionen. Metoden kaster exception hvis objektet allerede er knyttet til sessionen eller
      * det finnes en annen instans med samme id som er knyttet til sessionen.
      *

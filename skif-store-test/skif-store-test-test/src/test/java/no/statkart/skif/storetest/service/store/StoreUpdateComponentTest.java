@@ -197,6 +197,7 @@ public class StoreUpdateComponentTest extends StoreTestServerTestCase {
 
                 BubbleWithList copy = new BubbleWithList();
                 copy.setId(bubbleId);
+                copy.setText("updated");
                 copy.setComponents(new HashSet<BubbleWithListComponent>());
                 store.lock(copy.getId());
 
@@ -219,6 +220,7 @@ public class StoreUpdateComponentTest extends StoreTestServerTestCase {
 
                 BubbleWithList copy = new BubbleWithList();
                 copy.setId(bubbleId);
+                copy.setText("text");
                 copy.setComponents(new HashSet<BubbleWithListComponent>());
                 BubbleWithListComponent e = new BubbleWithListComponent(2202L, "component for 2201", AEnumKodeId.KodeAId);
                 e.setBubbleWithList(copy);
@@ -232,6 +234,8 @@ public class StoreUpdateComponentTest extends StoreTestServerTestCase {
     }
 
     public void testUpdateMedRemoveAvComponentEtterAtObjektErLastetIStore() {
+        // Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke
+        store.evictAll();
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject

@@ -68,6 +68,11 @@ public class StoreUnitOfWork extends AbstractStoreSession {
         return wrappedStoreSession.evictEntry(level, bubbleId);
     }
 
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAllEntries(int level) {
+        return wrappedStoreSession.evictAllEntries(level);
+    }
+
     public  void register(BubbleTransfer bubbleTransfer) {
         wrappedStoreSession.register(bubbleTransfer);
     }

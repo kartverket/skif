@@ -14,7 +14,7 @@ import java.util.Map;
  * nonpublic. The implementation is based on the default implementation  {@link
  * org.hibernate.property.DirectPropertyAccessor}, but has been modified to produce a field
  * with postfix "Ids" for a given property. E.g. a mapping property named "users" would produce a
- * field accessor for the field "userIds".
+ * field accessor for the field "usersIds".
  *
  * @author Christian A. Rektorli
  * @author Henrik Fredholm

@@ -171,6 +171,28 @@ public class StoreSessionServer extends AbstractStoreSession {
         return evicted;
     }
 
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAllEntries(int level) {
+        boolean allWasEvicted = true;
+        final Iterator<StoreEntry> iterator = storeCache.values().iterator();
+        while (iterator.hasNext()) {
+            final StoreEntry storeEntry = iterator.next();
+            if (storeEntry.isModified()) {
+                allWasEvicted = false;
+            } else {
+                if (storeEntry.getLockCreatedByLevel() > 0) {
+                    // Kan ikke entry for UnitOfWork må kunne gjøre en unlock ved abort
+                    allWasEvicted = false;
+                } else {
+                    iterator.remove();
+                    // TODO: marker evictedEntry som stale
+                    persistenceSessionManager.evict(storeEntry.getId());
+                }
+            }
+        }
+        return allWasEvicted;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
 
     public void finishBatch() {
         // TODO: Sende finishEvent til WriteListeners
@@ -217,7 +239,7 @@ public class StoreSessionServer extends AbstractStoreSession {
     public void commitUnitOfWork(Map<BubbleId<?>, StoreEntry> modified) {
         // TODO: Opptimaliser
 
-        // Reorder modifications
+        // Sorter bobler i henhold til definert bubble dependency ordering
         List<Map.Entry<BubbleId<?>, StoreEntry>> inserted = Lists.newArrayList();
         List<Map.Entry<BubbleId<?>, StoreEntry>> updated = Lists.newArrayList();
         List<Map.Entry<BubbleId<?>, StoreEntry>> deleted = Lists.newArrayList();
@@ -376,9 +398,9 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
-            StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
-            BubbleObject persistentBubbleObject = storeEntry.getPersistentBubbleObject();
-            persistenceSessionManager.ensureFullyLoaded(persistentBubbleObject);
+        StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
+        BubbleObject persistentBubbleObject = storeEntry.getPersistentBubbleObject();
+        persistenceSessionManager.ensureFullyLoaded(persistentBubbleObject);
     }
 
     protected boolean isLocked(StoreEntry storeEntry) {

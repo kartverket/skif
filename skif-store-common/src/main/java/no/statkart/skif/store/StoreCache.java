@@ -59,6 +59,13 @@ public class StoreCache {
         return cacheMap.entrySet();
     }
 
+    public Collection<StoreEntry> values() {
+        return cacheMap.values();
+    }
+
+    public Set<BubbleId<?>> keySet() {
+        return cacheMap.keySet();
+    }
     public void setStore(Store store) {
         this.store = store;
     }

@@ -158,13 +158,27 @@ public class StoreSessionClient extends AbstractStoreSession {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
         StoreEntry entry = storeCache.get(bubbleId);
-
         if (entry != null && entry.getDerivedState(level) == StoreEntryState.UNCHANGED && entry.calcLockLevelStartingFrom(level) == -1) {
             storeCache.remove(bubbleId);
             return true;
         } else {
             return false;
         }
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAllEntries(int level) {
+        boolean allWasEvicted = true;
+        final Iterator<StoreEntry> iterator = storeCache.values().iterator();
+        while (iterator.hasNext()) {
+            final StoreEntry entry = iterator.next();
+            if (entry != null && entry.getDerivedState(level) == StoreEntryState.UNCHANGED && entry.calcLockLevelStartingFrom(level) == -1) {
+                iterator.remove();
+            } else {
+                allWasEvicted = false;
+            }
+        }
+        return allWasEvicted;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
