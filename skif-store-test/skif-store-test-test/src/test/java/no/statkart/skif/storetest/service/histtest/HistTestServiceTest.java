@@ -21,7 +21,7 @@ import static org.testng.Assert.assertTrue;
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  */
-@Test
+@Test(groups = "broken")
 public class HistTestServiceTest extends StoreTestTestCase {
 
     @Inject
