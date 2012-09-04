@@ -2,7 +2,9 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleDependencyComparator;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 
 import java.util.Map;
@@ -29,10 +31,19 @@ public class HibernateBubbleDependencyComparator implements BubbleDependencyComp
     @Override
     public int compare(BubbleObject o1, BubbleObject o2) {
         // Håndtere også Lazy klasser
-        int i1 = bubbleClassDependencyIndex.get(o1.getId().getType());
-        int i2 = bubbleClassDependencyIndex.get(o2.getId().getType());
+        int i1 = getIndex(o1);
+        int i2 = getIndex(o2);
         if (i1<i2) return -1;
         if (i1==i2) return 0;
         return 1;
+    }
+
+    private Integer getIndex(BubbleObject bubbleObject) {
+        final BubbleId<?> bubbleId = bubbleObject.getId();
+        final Integer index = bubbleClassDependencyIndex.get(bubbleId.getType());
+        if (index==null) {
+            throw new ImplementationException("BubbleObject har ikke fått definert dependency index (må defineres alle BubbleObject subklasser via HibernateSessionFactoryBuilder): " + bubbleId.getType());
+        }
+        return index;
     }
 }

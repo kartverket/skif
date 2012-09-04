@@ -68,14 +68,33 @@ public abstract class HibernateSessionFactoryBuilder {
 
     public HibernateSessionFactoryBuilder addResourceWithSubclassesUseNextIndex(Class baseclass, Class... subclasses) {
         addResource(baseclass);
-        for (Class subclass : subclasses) {
-            if (BubbleObject.class.isAssignableFrom(subclass)) {
-                bubbleClassDependencyIndex.put(subclass, nextOrderIndex);
+        addDependencyUseSameIndex(subclasses);
+        return this;
+    }
+
+
+    public HibernateSessionFactoryBuilder addDependencyIndex(Class... classes) {
+        nextOrderIndex++;
+        addDependencyUseSameIndex(classes);
+        return this;
+    }
+
+    public HibernateSessionFactoryBuilder addDependencyUseSameIndex(Class... classes) {
+        for (Class clazz : classes) {
+            if (BubbleObject.class.isAssignableFrom(clazz)) {
+                createDependencyIndex(clazz);
             }
         }
         return this;
     }
 
+    private void createDependencyIndex(Class clazz) {
+
+        final Integer previousIndex = bubbleClassDependencyIndex.put(clazz, nextOrderIndex);
+        if (previousIndex !=null) {
+            throw new ImplementationException("Dependency index for BubbleObject er allerede definert:" + clazz.getName());
+        }
+    }
 
     public HibernateSessionFactoryBuilder addResource(Class clazz) {
         return addResourceUseNextIndex(clazz);
@@ -88,7 +107,7 @@ public abstract class HibernateSessionFactoryBuilder {
 
     public HibernateSessionFactoryBuilder addResourceUseSameIndex(Class clazz) {
         if (BubbleObject.class.isAssignableFrom(clazz)) {
-            bubbleClassDependencyIndex.put(clazz, nextOrderIndex);
+            createDependencyIndex(clazz);
         }
         final String resourceName = className2resourceNameMap.get(clazz.getName());
         if (resourceName != null) {
@@ -134,7 +153,7 @@ public abstract class HibernateSessionFactoryBuilder {
     public HibernateSessionFactoryBuilder addResourceUsingAbsolutePathUseOrderIndex(Class clazz, String hbmFilename) {
         hbmResource.add(hbmFilename);
         if (BubbleObject.class.isAssignableFrom(clazz)) {
-            bubbleClassDependencyIndex.put(clazz, nextOrderIndex);
+            createDependencyIndex(clazz);
         }
         return this;
     }
