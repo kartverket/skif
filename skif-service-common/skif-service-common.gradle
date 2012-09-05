@@ -12,7 +12,7 @@ dependencies {
 
 task testJar(type: Jar) {
     classifier = 'tests'
-    from sourceSets.test.classes
+    from sourceSets.test.output
 }
 
 

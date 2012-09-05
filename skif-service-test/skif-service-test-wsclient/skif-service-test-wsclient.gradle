@@ -1,18 +1,14 @@
-apply plugin: 'statkart-wsclient-plugin'
-apply plugin: 'statkart-javadoc-plugin'
+apply plugin: 'sktools-weblogic-wsclient-plugin'
+
 
 dependencies {
-    basewar project(':skif-service-test:skif-service-test-wswar')
+  weblogicProvided libraries.weblogic
+  weblogicProvided libraries['tools.jar']
 }
 
-wsClient {
-    weblogicLibraries = configurations.weblogic
-
-    fixExceptionsFor = [[
-            exceptionPackageImport: 'import no.statkart.skif.skiftest.wsapi.exception.*;',
-            exceptionPackage: 'no/statkart/skif/skiftest/wsapi/exception',
-            exceptionFilePattern: '**/wsapi/service/**/*Exception.java',
-            regexpMatch: /package no\.statkart\.skif\.skiftest\.wsapi\.service(\..+)*;/,
-            regexpReplace: /package no\.statkart\.skif\.skiftest\.wsapi\.exception;/
-    ]]
+weblogicWsClient {
+  webService {
+    baseWar { project(path: ':skif-service-test:skif-service-test-wswar', configuration: 'weblogic') }
+    exceptionReusePackage 'no.statkart.skif.skiftest.wsapi.exception'
+  }
 }

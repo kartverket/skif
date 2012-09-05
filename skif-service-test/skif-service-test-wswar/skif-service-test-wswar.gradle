@@ -1,32 +1,45 @@
-import no.statkart.gradle.util.DependencyUtil
+apply plugin: 'sktools-weblogic-wswar-plugin'
 
-apply plugin: 'statkart-weblogic-wswar-plugin'
+sourceSets.weblogic {
+    java.srcDirs = ['src/main/java']
+    resources.srcDirs = []
+}
+
+warWeblogic {
+  from 'src/main/webapp'
+}
 
 dependencies {
-    compile project(':skif-service-test:skif-service-test-server')
-    compile project(':skif-service-test:skif-service-test-wsmapping')
+    weblogicCompile project(':skif-service-test:skif-service-test-server')
+    weblogicCompile project(':skif-service-test:skif-service-test-wsmapping')
 
-    provided libraries.weblogic
-    provided files(DependencyUtil.getJavaTools())
+    weblogicProvided libraries['tools.jar']
+    weblogicProvided libraries.weblogic
 }
 
-statKartWeblogicWsWar {
-    sourceDir = 'src/main/java'
-    classpath = configurations.compile + configurations.provided
-    weblogicLibraries = configurations.weblogic
-}
 
 configurations {
     singlevm {
         description = 'En Jar-utgave for bruk i SingleVM'
-        extendsFrom runtime
+        extendsFrom weblogic
     }
 }
 
-task singleVmJar(type: Jar, dependsOn: weblogicWsWar) {
-    from new File(new File(new File(weblogicWsWar.buildEarDirFile, weblogicWsWar.jswcWarDirName), 'WEB-INF'), 'classes')
+
+task jarSingleVm(type: Jar, dependsOn: project.tasks.warWeblogic.dependsOn) {
+  classifier = 'singlevm'
+
+  doFirst {
+    from project.sourceSets.weblogic.output
+  }
 }
 
 artifacts {
-    singlevm singleVmJar
+    singlevm jarSingleVm
+}
+
+//trenger disse i IntelliJ
+project.idea.module {
+    scopes.get('PROVIDED', [plus: [configurations.weblogicProvided, configurations.singlevm], minus: []])
+    scopes.get('COMPILE', [plus: [configurations.weblogic], minus: []])
 }

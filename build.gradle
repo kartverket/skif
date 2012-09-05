@@ -1,67 +1,51 @@
-import no.statkart.gradle.util.PropertyUtil
-import no.statkart.gradle.util.GradleUtil
+assert ['1.0', '1.1'].contains(gradle.gradleVersion)
 
-apply plugin: 'idea'
-apply plugin: 'statkart-idea-extensions-plugin'
+apply plugin: 'sktools-filterproperties-plugin'
 
-assert ['1.0-milestone-7', '1.0-milestone-8a'].contains(gradle.gradleVersion)
+//user properties
+Map userProperties = propertyUtils.fromFile('gradle-user.properties') << gradle.startParameter.projectProperties
+propertyUtils.assignPropertiesToProject(userProperties)
 
-userProperties = PropertyUtil.loadUserPropertiesOrEmpty(project)
-
-// version kan settes via properties (feks kommandolinje -P )
-if (project.hasProperty('version')) { version = getProperty('version') }
-
-// standard kode-versjon for branch
-if (version == 'unspecified') { version = '2.1-SNAPSHOT' }
-
-buildscript {
-    // Variables to grab from environment
-    ['WEBLOGIC_HOME', 'COMPUTERNAME', 'PUBLIC_REPO'].each { val ->
-        if (!project.hasProperty(val) && System.getenv(val) != null) {
-            project.setProperty(val, System.getenv(val))
-        }
-    }
-    publicRepo = rootProject.properties.get('PUBLIC_REPO', 'http://skrivap92.statkart.no:8001/nexus/content/groups/public/')
-    repositories {
-        mavenRepo name: 'public', url: publicRepo
-        mavenLocal()
-    }
-    dependencies {
-        classpath 'no.statkart:statkart-gradle-plugins:23'
-        classpath 'no.statkart.sktools.gradle:dbtools-plugin:1.0'
-    }
-}
 
 allprojects {
+    apply plugin: 'sktools-filterproperties-plugin'
+    propertyUtils.assignPropertiesToProject(userProperties)
+
+    //version kan bestemmes via env variabel og -P parameter
+    if (project.hasProperty('version')) { version = getProperty('version') }
+
     defaultTasks 'build'
-    version = rootProject.version
     group = 'no.statkart.skif'
 
-    PropertyUtil.expandProjectProperties(project, userProperties)
 
-    plugins.whenPluginAdded() {
-        if (it instanceof org.gradle.api.plugins.MavenPlugin) {
-            uploadArchives.repositories.mavenDeployer {
-                if (!version.contains("SNAPSHOT")) {
-                    repository(url: uri(properties.get('REPO_UPLOAD_RELEASES', 'http://skrivap92.statkart.no:8001/nexus/content/repositories/releases/'))) {
-                        authentication(userName: "admin", password: "admin123")
-                    }
-                } else {
-                    repository(url: uri(properties.get('REPO_UPLOAD_SNAPSHOTS', 'http://skrivap92.statkart.no:8001/nexus/content/repositories/snapshots/'))) {
-                        authentication(userName: "admin", password: "admin123")
-                    }
-                }
-            }
+    apply plugin: 'idea'
+    apply plugin: 'sktools-ideaextensions-plugin'
+
+
+    repositories {
+        if (MAVEN_LOCAL_FOR_PROJECT) {
+            println '...initializing MAVEN_LOCAL_FOR_PROJECT'
+            mavenLocal()
+        }
+        mavenRepo name: 'public', url: MAVEN_REPO
+
+        if (!MAVEN_LOCAL_FOR_PROJECT) {
+            mavenLocal()
         }
     }
+
 }
 
+//todo: deklarere std versjon
 // library versions to use. will be initialized from version.* in project.properties
-versions = properties.findAll { it.key.startsWith('version.') }.collectEntries { key, value -> [key.replace('version.', ''), value] }
+def versions = properties.findAll { it.key.startsWith('version.') }.collectEntries { key, value -> [key.replace('version.', ''), value] }
 
 // build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
 // use. In that respect it serves a role similar to <dependencyManagement> in Maven
-libraries = [
+def libraries = [
+
+        // Tools
+        'tools.jar': files("${System.getenv('JAVA_HOME')}/lib/tools.jar").stopExecutionIfEmpty(), //JAVA_HOME ikke satt??
 
         // Database
         ojdbc: "com.oracle:ojdbc6:${versions.oracle}@jar",
@@ -99,9 +83,6 @@ libraries = [
         // JAXB
         jaxb_impl: "com.sun.xml.bind:jaxb-impl:${versions.jaxb}",
         jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${versions.jaxb}",
-
-        // Build system
-        build_utils: "no.statkart.grunnbok:build-utils:${versions.buildUtils}",
 
         jts: "com.vividsolutions:jts:${versions.jts}",
 
@@ -199,23 +180,28 @@ subprojects { Project project ->
         }
     }
 
-    repositories {
-        mavenRepo name: 'public', url: publicRepo
-        mavenLocal()
-    }
-
     dependencies {
         weblogic libraries.weblogic
     }
 
-    if (!project.name.endsWith('-ear')) {
+    if (!['-ear', '-wswar'].find {project.name.endsWith(it)}) {
         apply plugin: 'java'
-        apply plugin: 'statkart-filter-properties-plugin'
+        apply plugin: 'sktools-filterproperties-plugin'
 
-        statKartFilterProperties {
-            properties = project.properties.findAll { it.value instanceof String }
-            resources = [main: 'src/main/resources.filtered', test: 'src/test/resources.filtered']
+
+        propertyUtils.expandProjectProperties() //må ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
+        //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
+
+        //user properties
+        project.filterProperties {
+            Map filterProperties = propertyUtils.fromFile("${project.name}-filter.properties") << gradle.startParameter.projectProperties
+            propertyUtils.expandProperties(filterProperties)
+
+//            println "filterprops: ${filterProperties}" //debug
+            properties filterProperties
         }
+
+        project.ext.set('libraries', libraries) //eksponerer denne for alle prosjekter
 
         // appropriately inject the common dependencies into each sub-project
         dependencies {
@@ -242,7 +228,12 @@ subprojects { Project project ->
         }
 
         test {
+            // Vi ønsker vanligvis å kjøre alle tester i alle moduler.
+            ignoreFailures = true
+
             boolean singleVm = Boolean.valueOf(rootProject.properties['single_vm'])
+            logger.debug "single_vm is set to ${singleVm} for ${project.path}"
+
             useTestNG() {
                 excludeGroups('broken')
                 if (singleVm) {
@@ -251,23 +242,41 @@ subprojects { Project project ->
                     excludeGroups('singlevm-required')
                 }
             }
-            systemProperties "org.uncommons.reportng.stylesheet": "${project.rootProject.file('all/test/report/reportng-1.1.3/stylesheets/hudsonesque.css')}"
-            systemProperties "org.uncommons.reportng.title": "${project.name} Report"
 
-            options {
-                listeners << 'org.uncommons.reportng.HTMLReporter'
-                listeners << 'org.uncommons.reportng.JUnitXMLReporter'
-            }
             jvmArgs '-Xmx1024m'
             if (rootProject.hasProperty('test.remote.debug')) {
                 jvmArgs '-Xdebug'
                 jvmArgs '-Xnoagent'
                 jvmArgs '-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y'
             }
+
+            //listening to test execution events
+            afterTest { descriptor, result ->
+                logger.lifecycle("${result.toString() == 'SUCCESS' ? ' Sucessfully tested' : 'Failed testing'} : ${descriptor.className}#${descriptor.name}")
+                if (result.resultType.name() == 'FAILURE') {
+                    logger.error("${result.exception}")
+                }
+            }
+
         }
 
-        //Source is in the build directory so we need to unexclude it
-        GradleUtil.makeIdeaShowBuildDirectory(project)
+        afterEvaluate {
+            //kobler inn standard upload repositores ved bruk av maven plugin
+            if (plugins.hasPlugin('maven')) {
+                uploadArchives.repositories.mavenDeployer {
+                    repository(url: uri(REPO_UPLOAD_RELEASES)) {
+                        authentication([userName: REPO_UPLOAD_RELEASES_USERNAME, password: REPO_UPLOAD_RELEASES_PASSWORD])
+                    }
+                    snapshotRepository(url: uri(REPO_UPLOAD_SNAPSHOTS)) {
+                        authentication([userName: REPO_UPLOAD_SNAPSHOTS_USERNAME, password: REPO_UPLOAD_SNAPSHOTS_PASSWORD])
+                    }
+                }
+            }
+        }
+
+        //todo
+//        Source is in the build directory so we need to unexclude it
+//        GradleUtil.makeIdeaShowBuildDirectory(project)
     }
 }
 
@@ -285,3 +294,58 @@ idea.project {
     }
 }
 
+
+buildscript {
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Env variabler til bruk ved utvikling mot lokalt Maven Repository
+    //  - Disse styrer også repository som blir brukt til å uploade artifakter
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    [
+            'MAVEN_REPO',
+            'REPO_UPLOAD_RELEASES',
+            'REPO_UPLOAD_RELEASES_USERNAME',
+            'REPO_UPLOAD_RELEASES_PASSWORD',
+            'REPO_UPLOAD_SNAPSHOTS',
+            'REPO_UPLOAD_SNAPSHOTS_USERNAME',
+            'REPO_UPLOAD_SNAPSHOTS_PASSWORD',
+    ].each { key ->
+        if (!project.hasProperty(key)) {
+            throw new GradleException("Mandatory env variable ORG_GRADLE_PROJECT_${key} not set!")
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Påkrevde env variable
+    // Disse kan bli satt via env variabler eller via gradle.properties i gradle user home dir
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ['WEBLOGIC_HOME'].each { key ->
+        if (!project.hasProperty(key)) {
+            throw new GradleException("Mandatory env variable ORG_GRADLE_PROJECT_${key} not set!")
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Switch for tentativ utvikling mot lokalt maven repository
+    // Se http://forums.gradle.org/gradle/topics/dependency_resolution_in_gradle_1_0_milestone_8 for teknisk beskrivelse.
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    project.ext.set('MAVEN_LOCAL_FOR_BUILDSYSTEM', (Boolean.parseBoolean(System.getenv('MAVEN_LOCAL')) || Boolean.parseBoolean(System.getenv('MAVEN_LOCAL_FOR_BUILDSYSTEM'))) ? true : null)
+    project.ext.set('MAVEN_LOCAL_FOR_PROJECT', (Boolean.parseBoolean(System.getenv('MAVEN_LOCAL')) || Boolean.parseBoolean(System.getenv('MAVEN_LOCAL_FOR_PROJECT'))) ? true : null)
+
+
+    repositories {
+        if (MAVEN_LOCAL_FOR_BUILDSYSTEM) {
+            println '...initializing MAVEN_LOCAL_FOR_BUILDSYSTEM'
+            mavenLocal()
+        }
+        mavenRepo name: 'public', url: MAVEN_REPO
+
+        if (!MAVEN_LOCAL_FOR_BUILDSYSTEM) {
+            mavenLocal()
+        }
+    }
+
+    dependencies {
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-SNAPSHOT'
+    }
+}

@@ -1,45 +1,53 @@
 apply plugin: 'sktools-dbtools-plugin'
 
 
-configurations {
-    drivers
-}
 
-dependencies {
-    drivers libraries.ojdbc
-}
-
-
+// properties for substituering
+def filterProperties  = [
+        db_username: db_username,
+        db_schema: db_username,
+]
 
 configureDatabasePlugin {
+    useDrivers libraries.ojdbc
 
-    //todo: endre navn til db_hostname i plugin?
-    if (hasProperty('db_host')) {
-        setProperty 'db_hostname', properties['db_host']
+    project.ext.tns = "${db_sid}_${db_hostname}"
+
+    toolset(name: '', type: 'oracle', prefix: '') {
+        sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
+        sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql')
+        sqlTask('loadTestdata', sqlFile: 'src/main/sql/oracle/data/LoadTestdata.sql')
+
+        properties = project.properties
+
+        credentials.username = db_username
+        credentials.password = db_username
+        url = "jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}"
     }
 
-    useDrivers configurations.drivers
+    /**
+     * Toolset for SYSTEM-bruker
+     */
+    toolset(name: 'sa', type: 'oracle', prefix: 'sa') {
+        sqlTask('grant', sqlFile: 'src/main/sql/oracle/schema/GrantRole.sql')
 
-    useToolset('oracle', '', 'main/sql/oracle') {
-        url = "jdbc:oracle:thin:@${project.property('db_hostname')}:${project.property('db_port')}:${project.property('db_sid')}"
+        properties = filterProperties
+
+        credentials.username = admin_db_username
+        credentials.password = admin_db_password
+        url = "jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}"
+
     }
 
 }
 
+
 task dbInit {
-
     description = 'Purger schema, oppretter schema og fyller inn testdata'
-    def tasks = [tasks.Purge, tasks.CreateSchema, tasks.LoadTestdata]
 
-    tasks.each {
-        dependsOn = it.dependsOn
-    }
-
-    doLast {
-        tasks.each {
-            println "${name} -> ${it.path}"
-            it.execute()
-        }
-    }
+    int i = 0 //hacker til nytt lag av tasker da gradle 1.0 eksekverer dependencies i alfabetisk rekkefølge
+    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['purge'])
+    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchema'])
+    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['loadTestdata'])
 
 }

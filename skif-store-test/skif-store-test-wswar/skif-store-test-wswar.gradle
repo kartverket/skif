@@ -1,17 +1,27 @@
-import no.statkart.gradle.util.DependencyUtil
+apply plugin: 'sktools-weblogic-wswar-plugin'
 
-apply plugin: 'statkart-weblogic-wswar-plugin'
+sourceSets.weblogic {
+  java.srcDirs = ['src/main/java']
+  resources.srcDirs = []
+}
+
+
+warWeblogic {
+  from 'src/main/webapp'
+}
+
 
 dependencies {
-    compile project(':skif-store-test:skif-store-test-server')
-    compile project(':skif-store-test:skif-store-test-wsmapping')
+    weblogicCompile project(':skif-store-test:skif-store-test-server')
+    weblogicCompile project(':skif-store-test:skif-store-test-wsmapping')
 
-    provided libraries.weblogic
-    provided files(DependencyUtil.getJavaTools())
+    weblogicProvided libraries['tools.jar']
+    weblogicProvided libraries.weblogic
 }
 
-statKartWeblogicWsWar {
-    sourceDir = 'src/main/java'
-    classpath = configurations.compile + configurations.provided
-    weblogicLibraries = configurations.weblogic
+//trenger dette for IntelliJ
+project.idea.module {
+    scopes.get('PROVIDED', [plus: [configurations.weblogicProvided], minus: []])
+    scopes.get('COMPILE', [plus: [configurations.weblogic], minus: []])
 }
+

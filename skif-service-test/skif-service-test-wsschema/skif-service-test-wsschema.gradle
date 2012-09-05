@@ -1,12 +1,23 @@
-apply plugin: 'statkart-xjc-plugin'
+apply plugin: 'sktools-xjc-plugin'
+
+
+sourceSets {
+  main {
+    xjc {
+      schema {
+        srcDir 'src/main/schema'
+        config.skDoc from: 'no.statkart.skif.skiftest.wsapi.domain', to: 'no.statkart.skif.skiftest.domain'
+      }
+    }
+    resources.srcDirs = []
+  }
+}
 
 dependencies {
     jaxb libraries.jaxb_xjc
-    jaxb libraries.build_utils
 }
 
-statKartXjc {
-    String jaxbSourceDir = 'src/main/schema'
-    schema(jaxbSourceDir, '**/*.xsd', 'no.statkart.skif.skiftest.wsapi.domain no.statkart.skif.skiftest.domain')
-    xjcLibraries = configurations.jaxb
+//trenger dette for IntelliJ
+project.idea.module {
+    sourceDirs += sourceSets.main.xjc.schemas.collect { file("gen/main/xjc/${it.name}")}
 }

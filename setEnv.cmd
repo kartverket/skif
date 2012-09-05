@@ -41,4 +41,37 @@ REM set PATH=%PATH%;%MS_NET_HOME%;%MS_SDK_HOME%;%NUNIT_HOME%\bin\net-2.0
 
 @REM echo PATH=%PATH%
 
+if "%ORG_GRADLE_PROJECT_version%"=="" (
+   for /D %%P in (%PROJECT_ROOT%) do (
+      set ORG_GRADLE_PROJECT_matrikkel_versjon=%%~nP-SNAPSHOT
+      @echo Setter hovedversjon til '%%~nP-SNAPSHOT'
+   )
+)
+
+if "%ORG_GRADLE_PROJECT_LOCALHOSTNAME%"=="" (
+   @echo Setter std maskinnavn
+   set ORG_GRADLE_PROJECT_LOCALHOSTNAME=%COMPUTERNAME%.statkart.no
+)
+
+if "%ORG_GRADLE_PROJECT_MAVEN_REPO%"=="" (
+   @echo Setter std Maven Repository for utvikling [felles]
+   set ORG_GRADLE_PROJECT_MAVEN_REPO=http://skrivap92.statkart.no:8001/nexus/content/groups/public/
+)
+
+if "%ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES%"=="" (
+   @echo Setter std Maven Repository for releases
+   set ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES=http://skrivap92.statkart.no:8001/nexus/content/repositories/releases/
+   set ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES_USERNAME=admin
+   set ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES_PASSWORD=admin123
+)
+
+if "%ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS%"=="" (
+   @echo Setter std Maven Repository for snapshots
+   set ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS=http://skrivap92.statkart.no:8001/nexus/content/repositories/snapshots/
+   set ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS_USERNAME=admin
+   set ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS_PASSWORD=admin123
+)
+
+@gradle --version
+
 :exit
