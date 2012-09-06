@@ -36,9 +36,11 @@ allprojects {
 
 }
 
-//todo: deklarere std versjon
-// library versions to use. will be initialized from version.* in project.properties
-def versions = properties.findAll { it.key.startsWith('version.') }.collectEntries { key, value -> [key.replace('version.', ''), value] }
+// Optional configuration of library versions to use.
+// Simply add version properties to your gradle-user.property file to use this feature.
+def libVersion(String name, String defaultValue) {
+    project.ext.properties.get('version.' + name, defaultValue) //development mode only
+}
 
 // build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
 // use. In that respect it serves a role similar to <dependencyManagement> in Maven
@@ -48,29 +50,29 @@ def libraries = [
         'tools.jar': files("${System.getenv('JAVA_HOME')}/lib/tools.jar").stopExecutionIfEmpty(), //JAVA_HOME ikke satt??
 
         // Database
-        ojdbc: "com.oracle:ojdbc6:${versions.oracle}@jar",
+        ojdbc: "com.oracle:ojdbc6:${libVersion('oracle', '11.2.0.2.0')}@jar",
 
         // Logging 
-        slf4j_api: "org.slf4j:slf4j-api:${versions.slf4j}@jar",
-        jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${versions.slf4j}@jar",
-        jul_to_slf4j: "org.slf4j:jul-to-slf4j:${versions.slf4j}@jar",
-        log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${versions.slf4j}@jar",
-        logback_classic: "ch.qos.logback:logback-classic:${versions.logback}@jar",
-        logback_core: "ch.qos.logback:logback-core:${versions.logback}@jar",
+        slf4j_api: "org.slf4j:slf4j-api:${libVersion('slf4j', '1.6.1')}@jar",
+        jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${libVersion('slf4j', '1.6.1')}@jar",
+        jul_to_slf4j: "org.slf4j:jul-to-slf4j:${libVersion('slf4j', '1.6.1')}@jar",
+        log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${libVersion('slf4j', '1.6.1')}@jar",
+        logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '0.9.28')}@jar",
+        logback_core: "ch.qos.logback:logback-core:${libVersion('logback', '0.9.28')}@jar",
 
         // Guice med extensions
-        guice: "com.google.inject:guice:${versions.guice}",
-        guice_multibindings: "com.google.inject.extensions:guice-multibindings:${versions.guice}",
-        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${versions.guice}",
-        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${versions.guice}",
-        guice_grapher: "com.google.inject.extensions:guice-grapher:${versions.guice}",
+        guice: "com.google.inject:guice:${libVersion('guice', '3.0')}",
+        guice_multibindings: "com.google.inject.extensions:guice-multibindings:${libVersion('guice', '3.0')}",
+        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${libVersion('guice', '3.0')}",
+        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${libVersion('guice', '3.0')}",
+        guice_grapher: "com.google.inject.extensions:guice-grapher:${libVersion('guice', '3.0')}",
         // guice-servlet depends on servlet-api som her er provided via weblogic og derfor ikke skal være med her
-        guice_servlet: "com.google.inject.extensions:guice-servlet:${versions.guice}@jar",
+        guice_servlet: "com.google.inject.extensions:guice-servlet:${libVersion('guice', '3.0')}@jar",
 
         jsr330: "javax.inject:javax.inject:1",
 
         // Utility libraries
-        guava: "com.google.guava:guava:r09",
+        guava: "com.google.guava:guava:11.0.1",
         jsr305: "com.google.code.findbugs:jsr305:1.3.9",
 
         // Testing
@@ -81,15 +83,14 @@ def libraries = [
         fest: 'org.easytesting:fest-assert:1.4',
 
         // JAXB
-        jaxb_impl: "com.sun.xml.bind:jaxb-impl:${versions.jaxb}",
-        jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${versions.jaxb}",
+        jaxb_impl: "com.sun.xml.bind:jaxb-impl:${libVersion('jaxb', '2.1.13')}",
+        jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${libVersion('jaxb', '2.1.13')}",
 
-        jts: "com.vividsolutions:jts:${versions.jts}",
+        jts: "com.vividsolutions:jts:${libVersion('jts', '1.7.1')}",
 
         //Commons-lang 2.5
         commons_lang: "org.apache.commons:commons-lang3:3.1",
 
-        guava: "com.google.guava:guava:11.0.1",
 ]
 
 // JAX-WS runtime for weblogic
@@ -138,12 +139,12 @@ libraries.hibernate_3_2 = [
         'dom4j:dom4j:1.4@jar',
         'net.sf.ehcache:ehcache:1.2.3@jar',
         'odmg:odmg:3.0@jar',
-        "org.hibernate:hibernate:${versions.hibernate}-bubbleref-v2@jar",
+        "org.hibernate:hibernate:3.2.6.GA-bubbleref-v2@jar",
         libraries.ojdbc,
 ]
 
 libraries.hibernate_tools_3_2 = [
-        "org.hibernate:hibernate-tools:${versions.hibernate}@jar",
+        "org.hibernate:hibernate-tools:3.2.6.GA@jar",
 ]
 
 libraries.hibernate_3_6 = [
