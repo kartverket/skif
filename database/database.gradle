@@ -39,6 +39,28 @@ configureDatabasePlugin {
 
     }
 
+    /**
+     * Template for tilleggelse av historikk
+     */
+    toolset(name: 'historikk', type: 'oracle', prefix: 'historikk') {
+//        sqlTask('HistorikkForTAND', sqlFile: 'src/main/sql/oracle/historikk/ApplyHistorikkToTAND.sql') {
+//            dependsOn sqlTask('UpdateViewForTAND', sqlFile: 'src/main/sql/oracle/historikk/UpdateHistorikkViewForTAND.sql')
+//        }
+
+        filterProperties = [
+                DATA_CONVERT_TIMESTAMP: '2012-09-02 00:00:00.00',   //dato for dump av kildebase som skal materialiseres
+        ]
+
+        credentials.username = admin_db_username
+        credentials.password = admin_db_password
+        url = "jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}"
+
+        //samletasker..
+        project.task('historikkUpdateAllViews', description: 'Oppdaterer historikk views for Regin@ base') {
+            dependsOn tasks.getTasks().findAll {name, task -> name.startsWith 'UpdateViewFor'}.values()
+        }
+    }
+
 }
 
 
@@ -51,3 +73,7 @@ task dbInit {
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['loadTestdata'])
 
 }
+
+
+apply from: 'genHistorikkTemplateTask.gradle'
+genHistorikkTemplate.config.oracleConvention = project.convention.plugins['db'].dbToolSets[''] //credentials til bruker med les tilgang til alle schema

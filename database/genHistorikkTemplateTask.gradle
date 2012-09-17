@@ -1,0 +1,453 @@
+/**
+ * Gjenbrukbar task for generering av sql scripts som kan danner basis for script for tilleggelse av historikk funksjonalitet for entiteter.
+ * Denne funksjonaliteten ble utviklet i GBOK-862.
+ *
+ *
+ * Denne tasken produserer to filer per tabell - "ApplyHistorikkTo%.sql" og "UpdateHistorikkViewFor%.sql" der
+ *  - ApplyHistorikkTo%.sql inneholder tabelldeklarasjon samt datamigrering.
+ *  - "UpdateHistorikkViewFor%.sql" inneholder views og triggere per tabell.
+ *
+ *
+ * Parameterisering av denne tasken gjøres via:
+ *   apply from: 'genHistorikkTemplateTask.gradle'
+ *   genHistorikkTemplate.config {
+ *     oracleConvention = project.convention.plugins['db'].dbToolSets['']
+ *   }
+ *
+ * Genererte script krever at snapshot_time package og SNAPSHOT_TRANS temp tabell finnes. Disse ligger i filene:
+ *  - .../historikk/CreateTemporaryTableSnapshotTrans.sql
+ *  - .../historikk/UpdatePackageSnapshotTime.sql
+ */
+
+class GenHistorikkTemplateConfig {
+    def oracleConvention
+    def genDir
+
+    String getSchema() {
+        oracleConvention.properties['db_schema']
+    }
+}
+
+task genHistorikkTemplate(description: 'Genererer PLSQL template script for tillegg av historikk') {
+
+    it.extensions.create('config', GenHistorikkTemplateConfig)
+    config.genDir = "${project.buildDir}/gen/schemaHistorikk"
+
+//    Pseudo funksjonalitet for kodegenerering.
+//
+//    Disse scriptene forutsetter at de kjøres med en databasebruker som har tilgang til alle tabeller
+//
+//    ApplyHistorikkTo%.sql :
+//
+//    for all user tables with name not like %_H {
+//
+//      if not table_h exists then {
+//
+//        filename = ApplyHistorikkTo%
+//
+//        create table_h
+//
+//        select into table_h from table
+//
+//        delete table
+//      }
+//    }
+//
+//
+//    UpdateHistorikkViewFor%.sql :
+//
+//    for all user tables with name == %_H {
+//      filename = UpdateHistorikkViewFor%
+//
+//      create or replace view %
+//      create or replace trigger T_%
+//    }
+
+    doLast {
+        def sql = groovy.sql.Sql.newInstance(config.oracleConvention.url, config.oracleConvention.credentials.username, config.oracleConvention.credentials.password, config.oracleConvention.driver)
+        println("connected to source database: ${sql.connection.metaData.URL} [${sql.connection.metaData.userName}]")
+
+        def historikkColumNames = [TBEGIN: 'tBegin', TEND: 'tEnd', TVERSION: 'tVersion']
+
+        def findTableNamesForUser = { username ->
+          def ret = []
+          sql.eachRow("select OBJECT_NAME from ALL_OBJECTS where OBJECT_TYPE in ('TABLE', 'VIEW') and OWNER like ? and OBJECT_NAME not like '%\$%'", [username]) {
+            ret.add(it[0])
+          }
+          return ret.sort()
+        }
+
+        def findColumnNames = { String userName, String tableName, String schema = userName ->
+          def ret = []
+
+          def resultSet = sql.properties.connection.metaData.getColumns(schema, userName, tableName, null)
+          while( resultSet.next() ) {
+            ret.add(resultSet.getString('COLUMN_NAME'))
+          }
+
+          resultSet.close()
+
+          return ret
+        }
+
+        def findPKColumnNames = { String schema, tableName ->
+          def ret = []
+          def resultSet = sql.properties.connection.metaData.getPrimaryKeys(null, schema, tableName)
+          while( resultSet.next() ) {
+            ret[resultSet.getInt('KEY_SEQ') - 1] = resultSet.getString('COLUMN_NAME')
+          }
+          resultSet.close()
+//                    println "!!!!!!!!PK ${schema}.${tableName} -> ${ret.join(',')}"
+          return ret
+        }
+
+
+        def writeDDLForTable = { Writer out, String tableName, def result ->
+
+            out.write "CREATE TABLE \"${tableName}\" \n(\n"
+
+            def sourceTableName
+            def sourceTableSchema
+
+            while( result.next() ) {
+                sourceTableSchema = result.getString('TABLE_SCHEM')
+                sourceTableName = result.getString('TABLE_NAME')
+
+                out.write "\t\"${result.getString('COLUMN_NAME')}\""
+
+                //type
+                out.write '\t'
+                boolean isCharType = false
+                switch (result.getInt('DATA_TYPE')) {
+                    case java.sql.Types.CHAR:
+                        out.write "CHAR"
+                        isCharType = true
+                        break
+                    case java.sql.Types.NCHAR:
+                        out.write "NCHAR"
+                        isCharType = true
+                        break
+                    case java.sql.Types.VARCHAR:
+                        out.write "VARCHAR2"
+                        isCharType = true
+                        break
+                    case java.sql.Types.NVARCHAR:
+                        out.write "NVARCHAR2"
+                        isCharType = true
+                        break
+                    case java.sql.Types.DECIMAL:
+                    case java.sql.Types.NUMERIC:
+                    case java.sql.Types.DOUBLE:
+                    case java.sql.Types.FLOAT:
+                    case java.sql.Types.INTEGER:
+                    case java.sql.Types.SMALLINT:
+                    case java.sql.Types.REAL:
+                    case java.sql.Types.TINYINT:
+                        out.write "NUMBER"
+                        break
+                    case java.sql.Types.DATE:
+                        out.write "DATE"
+                        break
+                    case java.sql.Types.TIMESTAMP:
+                        out.write "TIMESTAMP"
+                        break
+                    default:
+                    out.write "UNKNOWN_TYPE"
+                }
+
+                //precision
+                if (result.getString('COLUMN_SIZE')) {
+                    if (isCharType == true) {
+                        out.write "(${result.getInt('COLUMN_SIZE')} CHAR"
+                    } else {
+                        out.write "(${result.getInt('COLUMN_SIZE')}"
+                        if (result.getString('DECIMAL_DIGITS')) {
+                            out.write ",${result.getInt('DECIMAL_DIGITS')}"
+                        }
+                    }
+                    out.write ")"
+                }
+
+                out.write '\t'
+
+                //default value if applicable
+                def defaultValue = result.getString('COLUMN_DEF')
+                if (defaultValue != null) {
+                    out.write " DEFAULT ${defaultValue}"
+                }
+
+                //nullable if applicable
+                switch (result.getInt('NULLABLE')) {
+                    case 0: //java.sql.DatabaseMetadata.columnNoNulls
+                        out.write " NOT NULL"
+                        break
+                    case 1: //java.sql.DatabaseMetadata.columnNullable
+                        out.write " NULL"
+                        break
+                }
+
+                out.write ',\n'
+            }
+
+            out.write "\t\"${historikkColumNames.TBEGIN}\" TIMESTAMP(6) DEFAULT sysdate NOT NULL,\n"
+            out.write "\t\"${historikkColumNames.TEND}\" TIMESTAMP(6) DEFAULT timestamp'9999-01-01 00:00:00.00' NOT NULL,\n"
+            out.write "\t\"${historikkColumNames.TVERSION}\" NUMBER (19,0) DEFAULT 0 NOT NULL\n"
+            out.write "); \n"
+
+            //primary key definition
+
+            def pk = findPKColumnNames(sourceTableSchema, sourceTableName) + [historikkColumNames.TEND] //TEND part of PK
+            if (!pk.isEmpty()) {
+                out.write '\n\n\n'
+                out.write "ALTER TABLE \"${tableName}\" \nADD CONSTRAINT \"C_PK_${tableName}\" PRIMARY KEY \n"
+                out.write "(\n\t"
+                out.write(pk.collect{"\"$it\""}.join(',\n\t'))
+                out.write "\n"
+                out.write ")\n"
+                out.write "ENABLE\n"
+                out.write ";"
+                out.write "\n"
+            }
+
+
+
+            result.close()
+            out.flush()
+
+        }
+
+        def writeDMLMaterialize = { Writer out, String tableName, def result ->
+
+            def sourceColumnNames = []
+            def sourceSchema
+            while( result.next() ) {
+                sourceColumnNames << result.getString('COLUMN_NAME')
+                sourceSchema = result.getString('TABLE_SCHEM')
+            }
+            def allColumnNames = sourceColumnNames + historikkColumNames.values()
+
+
+            out.write "\n"
+            out.write "--Materialization\n"
+            //felles tidspunkt for alle initierte data via filtrert property
+            out.write "select snapshot_time.Set_T('@DATA_CONVERT_TIMESTAMP@') from dual; --felles tidspunkt for initierte/konverterte historiske data\n"
+
+            out.write "\n"
+            out.write "--Materialization of ${tableName}\n"
+
+            out.write "INSERT INTO \"${tableName}\" \n"
+            out.write "(\n\t"
+            out.write( allColumnNames.collect { "\"${it}\"" }.join(', \n\t'))
+            out.write "\n )\n"
+            out.write " SELECT \n\t"
+            //liste av kolonner som skal kopieres over.
+            out.write( allColumnNames.collect {
+                switch (it.toUpperCase()) {
+                    case 'TBEGIN': return 'snapshot_time.Get_T()'
+                    case 'TEND': return "snapshot_time.To_T('9999-01-01 00:00:00.00')"
+                    case 'TVERSION': return '1'
+                    default: return it
+                }
+            }.join(', \n\t'))
+            out.write "\n"
+            out.write " FROM ${sourceSchema}.\"${tableName}\";"
+            out.write "\n\n"
+
+            result.close()
+            out.flush()
+        }
+
+        def writeDDLDropForTable = { Writer out, String tableName ->
+
+            out.write "\n--drop original table in order to reuse object name for view \n"
+            out.write "DROP TABLE \"${tableName}\" CASCADE CONSTRAINTS PURGE;" //PURGE purges it from oracle recycle bin
+
+            out.flush()
+        }
+
+        def writeDDLForView = { Writer out, String tableName, def result ->
+
+            out.write "\n"
+            out.write "-- View for ${tableName}\n"
+            out.write "CREATE OR REPLACE VIEW \"${tableName}\" AS SELECT * FROM \"${tableName}_H\" WHERE snapshot_time.T_Between(\"${historikkColumNames.TBEGIN}\", \"${historikkColumNames.TEND}\") = 1;"
+
+            result.close()
+            out.flush()
+        }
+
+        def writeTriggersForTable = { Writer out, String viewName, String hTableName, def columnNames, def pkColumns ->
+
+            out.write "\n\n"
+            out.write "-- Trigger for ${viewName}"
+            out.write """
+CREATE OR REPLACE TRIGGER "T_${viewName}"\
+ INSTEAD OF INSERT OR UPDATE OR DELETE ON "${viewName}"
+ FOR EACH ROW
+  DECLARE
+    t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+    t_Delete TIMESTAMP := snapshot_time.Get_T_Trans() - numtodsinterval(0.0001, 'SECOND');
+    t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+  BEGIN
+
+  IF INSERTING THEN
+    INSERT INTO "${hTableName}"
+        VALUES (${
+        columnNames.collect {
+          switch( it.toUpperCase() ) {
+            case 'TBEGIN': return "t_Trans"
+            case 'TEND': return 't_End'       //defaults to value defined for table
+            case 'TVERSION': return 1         //nye objekter inserted via view får version=1 (default 0)
+            default: return ":new.\"${it}\""
+          }
+        }.join(', ')
+      });
+
+  ELSIF UPDATING THEN
+     IF :old."${historikkColumNames.TBEGIN}" < t_Trans THEN
+        INSERT INTO "${hTableName}" VALUES (${
+        columnNames.collect {
+          switch( it.toUpperCase() ) {
+            case 'TEND': return 't_Trans'
+            default: ":old.\"${it}\""
+          }
+        }.join(', ')
+      });
+        UPDATE "${hTableName}" SET "${historikkColumNames.TVERSION}" = :old."${historikkColumNames.TVERSION}" + 1
+        WHERE ${
+        pkColumns.collect {
+          switch( it.toUpperCase() ) {
+            case 'TEND': return "\"${historikkColumNames.TEND}\" = t_End"
+            default: return "\"${it}\" = :new.\"${it}\""
+          }
+        }.join(' AND ')
+      };
+     END IF;
+     UPDATE "${hTableName}" SET ${
+        columnNames.collect {
+          switch( it.toUpperCase() ) {
+            case 'TBEGIN': return "\"${it}\"=t_Trans"
+            case 'TEND': return "\"${it}\"=t_End" //"${it}=:old.${it}"
+            case 'TVERSION': return "\"${historikkColumNames.TVERSION}\"=\"${historikkColumNames.TVERSION}\""
+            default: return "\"${it}\" = :new.\"${it}\""
+          }
+        }.join(', ')
+      }
+        WHERE ${
+        pkColumns.collect {
+          switch( it.toUpperCase() ) {
+            case 'TEND': return "\"${historikkColumNames.TEND}\" = t_End"
+            default: return "\"${it}\" = :new.\"${it}\""
+          }
+        }.join(' AND ')
+      };
+
+  ELSIF DELETING THEN
+     IF :old."${historikkColumNames.TBEGIN}" < t_Trans THEN
+        INSERT INTO "${hTableName}"
+           VALUES (${
+        columnNames.collect {
+          switch( it.toUpperCase() ) {
+            case 'TEND': return 't_Delete'
+            default: return ":old.\"${it}\""
+          }
+        }.join(', ')
+      });
+        INSERT INTO ${hTableName}
+           VALUES (${
+        columnNames.collect {
+          switch( it.toUpperCase() ) {
+            case 'TBEGIN': return 't_Delete'
+            case 'TEND': return 't_Trans'
+            case 'TVERSION': return ":old.\"${historikkColumNames.TVERSION}\" + 1"
+            default: return ":old.\"${it}\""
+          }
+        }.join(', ')
+      });
+     END IF;
+     DELETE FROM "${hTableName}"
+        WHERE ${
+        pkColumns.collect {
+          switch( it.toUpperCase() ) {
+            case 'TEND': return "\"${historikkColumNames.TEND}\" = t_End"
+            default: return "\"${it}\" = :old.\"${it}\""
+          }
+        }.join(' AND ')
+      };
+
+  END IF;
+END "T_${viewName}"; """
+
+            out.flush()
+        }
+
+
+        //algoritme
+        def tableSQLFiles = []
+        def viewSQLFiles = []
+
+        findTableNamesForUser(sql.properties.connection.metaData.userName).findAll { !it.endsWith('_H') }.each { tableName ->
+
+            def userName = sql.properties.connection.metaData.userName
+
+            File tableDDLFile = project.file("${config.genDir}/ApplyHistorikkFor${tableName}.sql")
+            Writer tableDDL
+            if( tableDDLFile != null ) {
+              tableDDLFile.parentFile.mkdirs()
+              if( !tableDDLFile.exists() ) {
+                tableDDLFile.createNewFile()
+              }
+              tableDDL = tableDDLFile.newWriter(false)
+              tableSQLFiles << project.relativePath(tableDDLFile).replace('\\', '/')
+            }
+
+            File viewDDLFile = project.file("${config.genDir}/UpdateHistorikkViewFor${tableName}.sql")
+            Writer viewDDL
+            if( viewDDLFile != null ) {
+              viewDDLFile.parentFile.mkdirs()
+              if( !viewDDLFile.exists() ) {
+                viewDDLFile.createNewFile()
+              }
+              viewDDL = viewDDLFile.newWriter(false)
+              viewSQLFiles << project.relativePath(viewDDLFile).replace('\\', '/')
+            }
+
+            // table DDL and DML
+
+            writeDDLForTable(tableDDL, "${tableName}_H", sql.properties.connection.metaData.getColumns(config.schema, userName, tableName, null))
+            writeDMLMaterialize(tableDDL, "${tableName}_H", sql.properties.connection.metaData.getColumns(config.schema, userName, tableName, null))
+            writeDDLDropForTable(tableDDL, "${tableName}")
+
+            //view DDL
+            writeDDLForView(viewDDL, "${tableName}", sql.properties.connection.metaData.getColumns(config.schema, userName, tableName, null))
+
+
+            //trigger
+            def columnNames = findColumnNames(userName, tableName) + historikkColumNames.values()
+            def pkColumns = findPKColumnNames(userName, tableName) + [historikkColumNames.TEND]
+            writeTriggersForTable(viewDDL, "${tableName}", "${tableName}_H", columnNames, pkColumns)
+
+
+
+            //flusher filer
+            tableDDL.flush()
+            viewDDL.flush()
+
+        }
+
+        //logger nye filer
+
+        println "wrote table SQLs to:"
+        tableSQLFiles.each {println " ${it}"}
+        println "\n\n"
+        println "wrote view and trigger SQLs to"
+        viewSQLFiles.each {println " ${it}"}
+
+
+    }
+
+    doFirst {
+        project.delete(project.file(config.genDir))
+    }
+
+
+}
