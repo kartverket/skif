@@ -314,20 +314,25 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId) {
-        throw new NotImplementedException();
+        T bubble = enumKodelisteManager.get(bubbleId);
+        if (bubble == null) {
+            persistenceSessionMaster.refresh(bubbleId);
+            bubble = get(bubbleId);
+        }
+        return bubble;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> refresh
-            (Collection<I> bubbleId) {
-        throw new NotImplementedException();
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> refresh(Collection<I> bubbleIds) {
+        for (I bubbleId : bubbleIds) {
+            evict(bubbleId);
+        }
+        return (Collection<T>) get(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject> void refresh
-            (T
-                     bubble) {
-        throw new NotImplementedException();
+    public <T extends BubbleObject> void refresh(T bubble) {
+        persistenceSessionMaster.refresh(bubble);
     }
 
     @Override
