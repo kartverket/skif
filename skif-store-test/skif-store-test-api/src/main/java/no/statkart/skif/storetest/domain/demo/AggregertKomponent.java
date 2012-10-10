@@ -40,8 +40,12 @@ public class AggregertKomponent implements BubbleComponent<AggregertObjekt>, Ser
     }
 
     @Override
-    public void setBubbleObject(AggregertObjekt aggregertObjekt) {
-        this.aggregertObjekt = aggregertObjekt;
+    public AggregertObjekt getOwner() {
+        return getAggregertObjekt();
+    }
 
+    @Override
+    public void setOwner(AggregertObjekt owner) {
+        setAggregertObjekt(owner);
     }
 }
