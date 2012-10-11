@@ -43,9 +43,25 @@ configureDatabasePlugin {
      * Template for tilleggelse av historikk
      */
     toolset(name: 'historikk', type: 'oracle', prefix: 'historikk') {
-//        sqlTask('HistorikkForTAND', sqlFile: 'src/main/sql/oracle/historikk/ApplyHistorikkToTAND.sql') {
-//            dependsOn sqlTask('UpdateViewForTAND', sqlFile: 'src/main/sql/oracle/historikk/UpdateHistorikkViewForTAND.sql')
+
+        //hjelpefunksjon for eksekveringsrekkefølge dersom task blir kjørt
+        def dependsOnIfExecuted = { def task, def dependent ->
+            gradle.taskGraph.whenReady { if (gradle.taskGraph.hasTask(dependent)) task.dependsOn(dependent)  }
+            return task
+        }
+
+//        sqlTask('UpdateViewForTAND', sqlFile: 'src/main/sql/oracle/regina/UpdateHistorikkViewForTAND.sql') {
+//            dependsOnIfExecuted it, sqlTask('HistorikkForTAND', sqlFile: 'src/main/sql/oracle/regina/ApplyHistorikkForTAND.sql')
 //        }
+
+        //kjøres før import
+        sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
+
+        //tasker for historikk mekanikk
+        sqlTask('updatePackageSnapshotTime', sqlFile: 'src/main/sql/oracle/historikk/UpdatePackageSnapshotTime.sql') {
+            dependsOn sqlTask('createSnapshotTrans', sqlFile: 'src/main/sql/oracle/historikk/CreateTemporaryTableSnapshotTrans.sql', failOnError:false) //feiler ikke dersom tabell allerede finnes fra før
+        }
+
 
         filterProperties = [
                 DATA_CONVERT_TIMESTAMP: '2012-09-02 00:00:00.00',   //dato for dump av kildebase som skal materialiseres
@@ -55,10 +71,20 @@ configureDatabasePlugin {
         credentials.password = admin_db_password
         url = "jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}"
 
+
         //samletasker..
-        project.task('historikkUpdateAllViews', description: 'Oppdaterer historikk views for Regin@ base') {
-            dependsOn tasks.getTasks().findAll {name, task -> name.startsWith 'UpdateViewFor'}.values()
+        project.task('reginaUpdateAllViews', description: 'Oppdaterer historikk views og triggere for kilde-skjema') { def reginaUpdateAllViews ->
+            tasks.getTasks().findAll {name, task -> name.startsWith 'UpdateViewFor'}.values().each {
+                reginaUpdateAllViews.dependsOn it
+                it.dependsOn tasks['updatePackageSnapshotTime']
+            }
         }
+
+        project.task('reginaApplyHistorikk', description: 'Etablerer historikk tabeller for kilde-skjema') {
+            dependsOn tasks.getTasks().findAll {name, task -> name.startsWith 'HistorikkFor'}.values()
+            dependsOn project.tasks['reginaUpdateAllViews']
+        }
+
     }
 
 }
@@ -77,3 +103,5 @@ task dbInit {
 
 apply from: 'genHistorikkTemplateTask.gradle'
 genHistorikkTemplate.config.oracleConvention = project.convention.plugins['db'].dbToolSets[''] //credentials til bruker med les tilgang til alle schema
+//GBOK-14: mulighet for ignorering av spesifike felt for tabeller
+genHistorikkTemplate.config.ignoredColumnNames = []
