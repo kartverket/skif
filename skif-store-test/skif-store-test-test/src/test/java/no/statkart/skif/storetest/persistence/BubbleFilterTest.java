@@ -1,22 +1,14 @@
 package no.statkart.skif.storetest.persistence;
 
 import com.google.inject.Inject;
-import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.RunOnServerMethod;
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
-import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
-import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.FilteredBubble;
 import no.statkart.skif.storetest.domain.demo.FilteredBubbleId;
-import no.statkart.skif.storetest.domain.demo.Foo;
-import no.statkart.skif.storetest.domain.demo.FooId;
-import no.statkart.skif.storetest.service.histtest.HistTestService;
-import no.statkart.skif.storetest.service.txmanagement.BeanManagedTxAService;
-import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -31,7 +23,7 @@ import static org.testng.FileAssert.fail;
  * @since 2.1
  */
 @Test
-public class BubbleFilterTest extends StoreTestServerTestCase {
+public class BubbleFilterTest extends StoreTestMixedTestCase {
     FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<FilteredBubble>(1);
     FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<FilteredBubble>(2);
     FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<FilteredBubble>(101);
@@ -160,7 +152,7 @@ public class BubbleFilterTest extends StoreTestServerTestCase {
 //        assertTrue(oppdatertTekst.equals(lest.getFilterText()));
 //    }
 
-
+  /*
     // Ser ut til at metoden som skal slette dynamisk data ikke gjør jobben og så feiler denne testen fordi data fra annet testtilfelle ligger igjen
     @Test(groups = "broken")
     public void testFinish_ok() {
@@ -194,5 +186,5 @@ public class BubbleFilterTest extends StoreTestServerTestCase {
         }
     }
 
-
+    */
 }

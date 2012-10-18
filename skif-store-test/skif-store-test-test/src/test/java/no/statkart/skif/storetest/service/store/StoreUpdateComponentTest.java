@@ -5,7 +5,7 @@ import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
-import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -23,7 +23,7 @@ import java.util.HashSet;
  * @since 2.1
  */
 @Test
-public class StoreUpdateComponentTest extends StoreTestServerTestCase {
+public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 
     @Inject
     Store store;

@@ -17,4 +17,10 @@ public class WSServiceChainFactorySpecification extends FactorySpecification<WSS
     @Override
     public <S> void bindProxyHandlersForService(Binder binder, Class<S> service) {
     }
+
+    @Override
+    public WSServiceChainFactorySpecification clone() {
+        return (WSServiceChainFactorySpecification) super.clone();
+    }
+
 }

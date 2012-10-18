@@ -1,17 +1,18 @@
 package no.statkart.skif.service.chain;
 
 import com.google.inject.Binder;
+import no.statkart.skif.exception.ImplementationException;
 
 /**
  * En spesifikasjon som angir en ServiceChainFactory klasse med tilhørende Guice bindinger som må til for å binde opp
  * ProxyHandlere som factoryen anvender for hver service.
  * </p>
- * Klassen har også en hjelpemetoden{@link #requireBinding(com.google.inject.Binder, Class)} som gjør de mulig å angi
+ * Klassen har også en hjelpemetode {@link #requireBinding(com.google.inject.Binder, Class)} som gjør de mulig å angi
  * andre bindinger som factoryen avhenger av og som allerede må være bundet opp.
  *
  * @author Henrik Fredholm
  */
-public abstract class FactorySpecification<T extends ServiceChainFactory> {
+public abstract class FactorySpecification<T extends ServiceChainFactory> implements Cloneable {
     protected Class<? extends T> factoryClass;
 
     /**
@@ -31,4 +32,12 @@ public abstract class FactorySpecification<T extends ServiceChainFactory> {
         binder.getProvider(type);
     }
 
+    @Override
+    public FactorySpecification<T> clone() {
+        try {
+            return (FactorySpecification<T>) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new ImplementationException(e);
+        }
+    }
 }

@@ -13,4 +13,10 @@ public class CallServiceChainFactorySpecification extends FactorySpecification<C
     @Override
     public <S> void bindProxyHandlersForService(Binder binder, Class<S> service) {
     }
+
+    @Override
+    public CallServiceChainFactorySpecification clone() {
+        return (CallServiceChainFactorySpecification) super.clone();
+    }
+
 }

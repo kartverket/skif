@@ -9,7 +9,7 @@ import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -25,7 +25,7 @@ import static org.testng.Assert.assertSame;
  * @since 2.1
  */
 @Test(groups = "singlevm-required")
-public class StoreTestSVM extends StoreTestServerTestCase {
+public class StoreTestSVM extends StoreTestMixedTestCase {
     static String T1 = "2011-10-02 08:01:00.00";
     static String T2 = "2011-10-02 08:02:00.00";
     static String T3 = "2011-10-02 08:03:00.00";

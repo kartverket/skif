@@ -5,6 +5,7 @@ import com.google.inject.name.Names;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.MapConfiguration;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SystemConfiguration;
 import no.statkart.skif.config.internal.ConfigurationUtils;
 import no.statkart.skif.service.SingleVmServer;
@@ -12,8 +13,10 @@ import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import weblogic.auddi.uddi.datastructure.Name;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
@@ -50,6 +53,24 @@ public class ModuleBuilderTest {
         final Configuration config2 = injector2.getInstance(Configuration.class);
         assertNotSame(config, config2);
 
+    }
+
+    public void testMinimaltOppsettStandaloneModuleMedExtensionModule() {
+        ModuleBuilder builder = new ModuleBuilder();
+        builder.setModuleClass(TestModule.class);
+        builder.setModuleExtClass(TestExtModule.class);
+        List<Module> modules = builder.buildModules();
+        assertSame(modules.get(0).getClass(), TestModule.class);
+        assertSame(modules.get(1).getClass(), TestExtModule.class);
+
+        Injector injector = Guice.createInjector(modules);
+        final Configuration config = injector.getInstance(Configuration.class);
+        final List test = injector.getInstance(Key.get(List.class, Names.named("test")));
+        final List testExt = injector.getInstance(Key.get(List.class, Names.named("testExt")));
+        final List testExt2 = injector.getInstance(Key.get(List.class, Names.named("testExt2")));
+        assertNotNull(test);
+        assertNotNull(testExt);
+        assertSame(test, testExt2);
     }
 
     public void testMinimaltOppsettStandaloneModuleMedConfiguration() {
@@ -159,6 +180,26 @@ public class ModuleBuilderTest {
         assertEquals(injector1.getInstance(Key.get(String.class, Names.named("modulename"))), "TestClientModule");
         final SingleVmServer singleVmServer = injector1.getInstance(SingleVmServer.class);
         assertEquals(singleVmServer.getInjector().getInstance(Key.get(String.class, Names.named("modulename"))), "TestServerModule");
+    }
+
+    public void testMinimaltOppsettClientServerModuleMedExtension() {
+        ModuleBuilder builder = new ModuleBuilder();
+        builder.setModuleClass(TestClientModule.class);
+        builder.setSingleVmServerModuleClass(TestServerModule.class);
+        builder.setSingleVmServerModuleExtClass(TestExtModule.class);
+        builder.setSingleVmServerEjbServiceChainExtClassname("not-a-real-classname");
+        builder.setServiceMode(ServiceMode.SINGLE_VM);
+        Injector injector1 = builder.buildInjector();
+
+        assertEquals(injector1.getInstance(Key.get(String.class, Names.named("modulename"))), "TestClientModule");
+        final SingleVmServer singleVmServer = injector1.getInstance(SingleVmServer.class);
+        assertEquals(singleVmServer.getInjector().getInstance(Key.get(String.class, Names.named("modulename"))), "TestServerModule");
+        final List testExt2 = singleVmServer.getInjector().getInstance(Key.get(List.class, Names.named("testExt2")));
+
+        final String ejbServiceChainClassname = singleVmServer.getInjector().getInstance(Configuration.class).getString(SkifConfigConstants.EJB_SERVICE_CHAIN_EXT_CLASS);
+        assertEquals(ejbServiceChainClassname, "not-a-real-classname");
+
+        assertNotNull(testExt2);
     }
 
     public void testClientServerOppsettMedDeltServer() {

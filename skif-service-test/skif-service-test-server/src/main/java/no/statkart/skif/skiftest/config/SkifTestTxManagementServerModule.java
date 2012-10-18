@@ -5,7 +5,8 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
-import no.statkart.skif.service.chain.EJBServiceChainFactoryWithTxSpecification;
+import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
+import no.statkart.skif.service.ejb.EJBCounterProxyHandler;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandlerForConnection;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import no.statkart.skif.service.module.server.ResourceWithSingleConnectionModule;
@@ -24,11 +25,11 @@ public class SkifTestTxManagementServerModule extends SkifModule {
 
     @Override
     protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
-        // Konfigurer EJBServiceChain til å bruke en factory som har en ProxyHandler for transaksjonshåndtering
+        // Konfigurer EJBServiceChain for denne modul til å bruke en factory som har en ProxyHandler for transaksjonshåndtering
         ModuleStrategyFactory factory = new ServerModuleStrategyFactory();
         StrategyTuple<ServerServiceModuleStrategy> prototype = factory.getPrototype(ServerServiceModule.class);
-        prototype.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification(EJBResourceProxyHandlerForConnection.class));
-        prototype.getStrategy(ServiceMode.JEE).setEjbServiceChainFactorySpecification(new EJBServiceChainFactoryWithTxSpecification(EJBResourceProxyHandlerForConnection.class));
+        prototype.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactorySpecification(EJBResourceProxyHandlerForConnection.class));
+        prototype.getStrategy(ServiceMode.JEE).setEjbServiceChainFactorySpecification(new EJBServiceChainFactorySpecification(EJBResourceProxyHandlerForConnection.class));
         return factory;
     }
 
@@ -36,7 +37,14 @@ public class SkifTestTxManagementServerModule extends SkifModule {
     protected void configure() {
         install(new ServerModule(moduleConfiguration));
 
-        install(new ServerServiceModule(moduleConfiguration, new SkifTestTxManagementServices().getServices()));
+        // Eksempel: Legg på ekstra proxyhandler programmatisk for SkifTestTxManagementServices
+        final ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, new SkifTestTxManagementServices().getServices());
+        serverServiceModule
+                .getStrategy(ServiceMode.SINGLE_VM)
+                .getEjbServiceChainFactorySpecification()
+                .appendEJBServiceChainProxyHandler(EJBCounterProxyHandler.class);
+        install(serverServiceModule);
+
         install(new ServerServiceModule(moduleConfiguration, new SkifTestSequenceBlockAllocatorServices().getServices()));
 
         install(new ResourceWithSingleConnectionModule(moduleConfiguration));

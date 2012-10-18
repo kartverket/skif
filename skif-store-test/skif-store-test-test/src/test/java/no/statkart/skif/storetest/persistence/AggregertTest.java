@@ -8,9 +8,8 @@ import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.AggregertKomponent;
 import no.statkart.skif.storetest.domain.demo.AggregertObjekt;
 import no.statkart.skif.storetest.domain.demo.AggregertObjektId;
-import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
@@ -25,7 +24,7 @@ import java.sql.Statement;
  * @since 2.1
  */
 @Test
-public class AggregertTest extends StoreTestServerTestCase {
+public class AggregertTest extends StoreTestMixedTestCase {
     @AfterMethod
     public void cleanUp() {
         server.runInTxRequiresNew(new RunOnServerMethod() {

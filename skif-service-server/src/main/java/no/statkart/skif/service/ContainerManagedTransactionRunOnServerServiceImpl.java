@@ -11,6 +11,7 @@ import javax.ejb.TransactionManagementType;
 /**
  * @author Henrik Fredholm
  */
+@Deprecated
 public class ContainerManagedTransactionRunOnServerServiceImpl implements ContainerManagedTransactionRunOnServerService {
     @Inject
     Injector injector;

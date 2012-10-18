@@ -6,6 +6,7 @@ import no.statkart.skif.SkifUtil;
 import no.statkart.skif.service.chain.*;
 import no.statkart.skif.service.ejb.EJBCallProxyHandler;
 import no.statkart.skif.service.ejb.EJBInterceptorSingleVm;
+import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
 /**
  * Denne klasse brukes via refelction

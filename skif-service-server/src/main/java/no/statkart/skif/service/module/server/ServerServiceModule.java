@@ -1,5 +1,6 @@
 package no.statkart.skif.service.module.server;
 
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.module.ModuleConfiguration;
 

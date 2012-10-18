@@ -3,6 +3,8 @@ package no.statkart.skif.skiftest.config;
 import com.google.inject.Binder;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
+import com.google.inject.name.Names;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
@@ -55,6 +57,8 @@ public class SkifTestServerModule extends SkifModule {
         install(serverServiceModule);
 
         install(new ServerServiceModule(moduleConfiguration, new SkifTestGroupExServices().getServices()));
+
+        bind(List.class).annotatedWith(Names.named("SharedList")).to(ArrayList.class).in(Singleton.class);
     }
 }
 

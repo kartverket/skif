@@ -18,38 +18,22 @@ import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
  *     <li>{@code EJBResourceManager}</li>
  * </ul>
  *
- * @author Henrik Fredholm
+ * @author HenriNk Fredholm
  */
+@Deprecated
 public class EJBServiceChainFactoryWithTxSpecification extends EJBServiceChainFactorySpecification {
-    private final Class<? extends EJBResourceProxyHandler> ejbResourceProxyHandlerImplentationClass;
 
     public EJBServiceChainFactoryWithTxSpecification(Class<? extends EJBResourceProxyHandler> ejbResourceProxyHandlerImplentationClass) {
-        this(EJBServiceChainFactoryWithTx.class, ejbResourceProxyHandlerImplentationClass);
+        this(EJBServiceChainFactoryBase.class, ejbResourceProxyHandlerImplentationClass);
     }
 
     public EJBServiceChainFactoryWithTxSpecification(Class<? extends EJBServiceChainFactory> factoryClass, Class<? extends EJBResourceProxyHandler> ejbResourceProxyHandlerImplentationClass) {
-        super(factoryClass);
-        this.ejbResourceProxyHandlerImplentationClass = ejbResourceProxyHandlerImplentationClass;
+        super(factoryClass, ejbResourceProxyHandlerImplentationClass);
     }
 
     @Override
     public <S> void bindProxyHandlersForService(Binder binder, Class<S> service) {
         super.bindProxyHandlersForService(binder, service);
-        TypeLiteral<EJBResourceProxyHandler<S>> ejbResourceProxyHandlerType = SkifUtil.typeLiteral(EJBResourceProxyHandler.class, service);
-        TypeLiteral<? extends EJBResourceProxyHandler<S>>  ejbResourceProxyHandlerImplType = SkifUtil.typeLiteral(ejbResourceProxyHandlerImplentationClass, service);
-        binder.bind(ejbResourceProxyHandlerType).to(ejbResourceProxyHandlerImplType);
         requireBinding(binder, ConnectionManager.class);
     }
-
-    /**
-     * Oppretter en avhengighet fra modulen definert av {@code binder} til {@code type}.
-     * Når injectoren opprettes så vil Guide rapportere en feil hvis {@code type} ikke
-     * kan injectes.
-     *
-     * @since 2.0
-     */
-    protected void requireBinding(Binder binder, Class<?> type) {
-        binder.getProvider(type);
-    }
-
 }

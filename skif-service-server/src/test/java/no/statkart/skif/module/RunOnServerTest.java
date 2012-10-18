@@ -4,11 +4,11 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Named;
-import no.statkart.skif.service.BeanManagedTransactionRunOnServerService;
-import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
-import no.statkart.skif.service.RunOnServerMethod;
+import no.statkart.skif.service.*;
 import no.statkart.skif.service.module.client.RunOnRemoteServerBuilder;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
@@ -21,7 +21,7 @@ public class RunOnServerTest {
     public void testManualSetup() {
         final ModuleBuilder moduleBuilder = new ModuleBuilder();
         moduleBuilder.setSingleVm(true);
-        moduleBuilder.setModuleClass(RunOnRemoteServerClientModule.class);
+        moduleBuilder.setModuleClass(RunOnRemoteServerTestClientModule.class);
         moduleBuilder.setSingleVmServerModuleClass(RunOnRemoteServerTestServerModule.class);
 
         final Injector injector = moduleBuilder.buildInjector();
@@ -55,6 +55,36 @@ public class RunOnServerTest {
         assertEquals(result, "TestServerModule" );
     }
 
+    public void testBuildContainerManagedNotSupportedTransactionService() {
+        final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
+        final ContainerManagedNotSupportedTransactionRunOnServerService service = builder.buildContainerManagedNotSupportedTranactionService();
+        Object result = service.run(new RunOnServerMethod() {
+            @Inject
+            @Named("modulename")
+            private String moduleName;
+            @Override
+            public Object run() {
+                return moduleName;
+            }
+        });
+        assertEquals(result, "TestServerModule" );
+    }
+
+    public void testBuildContainerManagedRequiresNewTransactionService() {
+        final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
+        final ContainerManagedRequiresNewTransactionRunOnServerService service = builder.buildContainerManagedRequiresNewTranactionService();
+        Object result = service.run(new RunOnServerMethod() {
+            @Inject
+            @Named("modulename")
+            private String moduleName;
+            @Override
+            public Object run() {
+                return moduleName;
+            }
+        });
+        assertEquals(result, "TestServerModule" );
+    }
+
     public void testBuildContainerManagedService() {
         final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
         final ContainerManagedTransactionRunOnServerService service = builder.buildContainerManagedService();
@@ -71,7 +101,7 @@ public class RunOnServerTest {
         assertEquals(result, "TestServerModule" );
     }
 
-    public void testBuildStandardGuideModule() {
+    public void testBuildStandardGuiceModule() {
         final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
         Injector injector = Guice.createInjector(builder.buildModule());
 
@@ -88,6 +118,30 @@ public class RunOnServerTest {
             }
         });
         assertEquals(result, "TestServerModule" );
+    }
+
+
+    public void testBuildWithExtensionModule() {
+        final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class, TestExtModule.class, TestExtEJBServiceChainProxyHandler.class);
+        Injector injector = Guice.createInjector(builder.buildModule());
+
+        final BeanManagedTransactionRunOnServerService service =injector.getInstance(BeanManagedTransactionRunOnServerService.class);
+
+        Object result = service.run(new RunOnServerMethod() {
+            @Inject
+            @Named("modulename")
+            private String moduleName;
+
+            @Inject
+            @Named("testExt2")
+            List list;
+
+            @Override
+            public Object run() {
+                return moduleName + " list.get(0): " + list.get(0);
+            }
+        });
+        assertEquals(result, "TestServerModule list.get(0): Inserted by TestExtEJBServiceChainProxyHandler" );
     }
 
 }

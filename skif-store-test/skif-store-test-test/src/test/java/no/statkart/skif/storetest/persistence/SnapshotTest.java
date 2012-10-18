@@ -6,7 +6,7 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
-import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -16,7 +16,7 @@ import static org.testng.Assert.*;
  * @since 2.1
  */
 @Test
-public class SnapshotTest extends StoreTestServerTestCase {
+public class SnapshotTest extends StoreTestMixedTestCase {
 
     public void testHentObjectForForskjelligSnapshot() {
 

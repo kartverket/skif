@@ -1,20 +1,83 @@
 package no.statkart.skif.service.chain;
 
-import com.google.inject.Binder;
+import com.google.inject.*;
+import com.google.inject.util.Types;
+import no.statkart.skif.SkifUtil;
+import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
+import no.statkart.skif.service.proxy.ChainedProxyHandler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
+ * EJBServiceChainFactoryFactorySpecification som gir mulighet for å angi en ordnet liste av
+ * {@code ChainedProxyHandler}-klasser som EJBServiceChainFactory'en skal sette opp.
+ *
  * @author Henrik Fredholm
+ * @see  EJBServiceChainFactoryBase
+ * @since 2.0
  */
 public class EJBServiceChainFactorySpecification extends FactorySpecification<EJBServiceChainFactory> {
-    public EJBServiceChainFactorySpecification() {
-        super(EJBServiceChainFactoryBase.class);
+    private ArrayList<Class<? extends ChainedProxyHandler>> ejbCallChainProxyHandlerClassList;
+
+    public EJBServiceChainFactorySpecification(Class<? extends ChainedProxyHandler>... ejbCallChainProxyHandlerClasses) {
+        this(EJBServiceChainFactoryBase.class, ejbCallChainProxyHandlerClasses);
     }
 
-    public EJBServiceChainFactorySpecification(Class<? extends EJBServiceChainFactory> factoryClass) {
+    public EJBServiceChainFactorySpecification(Class<? extends EJBServiceChainFactory> factoryClass, Class<? extends ChainedProxyHandler>... ejbResourceProxyHandlerImplentationClasses) {
         super(factoryClass);
+        this.ejbCallChainProxyHandlerClassList = new ArrayList<Class<? extends ChainedProxyHandler>>(Arrays.asList(ejbResourceProxyHandlerImplentationClasses));
     }
+
+    public void appendEJBServiceChainProxyHandler(Class<? extends ChainedProxyHandler> ejbServiceChainProxyHandler) {
+        ejbCallChainProxyHandlerClassList.add(ejbServiceChainProxyHandler);
+    }
+
 
     @Override
     public <S> void bindProxyHandlersForService(Binder binder, Class<S> service) {
+        final List<TypeLiteral<? extends ChainedProxyHandler<S>>> ejbCallChainProxyHandlerTypeList = new ArrayList<TypeLiteral<? extends ChainedProxyHandler<S>>>(ejbCallChainProxyHandlerClassList.size());
+        for (Class<? extends ChainedProxyHandler> chainedProxyHandlerImplClass : ejbCallChainProxyHandlerClassList) {
+            TypeLiteral<? extends EJBResourceProxyHandler<S>>  ejbCallChainProxyHandlerType = SkifUtil.typeLiteral(chainedProxyHandlerImplClass, service);
+            binder.bind(ejbCallChainProxyHandlerType);
+            ejbCallChainProxyHandlerTypeList.add(ejbCallChainProxyHandlerType);
+        }
+        TypeLiteral<List<ChainedProxyHandler<S>>> ejbCallChainProxyHandlerListType =
+                (TypeLiteral<List<ChainedProxyHandler<S>>>) TypeLiteral.get(Types.listOf(Types.newParameterizedType(ChainedProxyHandler.class, service)));
+
+        binder.bind(ejbCallChainProxyHandlerListType).toProvider(new Provider<List<ChainedProxyHandler<S>>>() {
+            @Inject
+            Injector injector;
+
+            @Override
+            public List<ChainedProxyHandler<S>> get() {
+                List<ChainedProxyHandler<S>> list = new ArrayList<ChainedProxyHandler<S>>(ejbCallChainProxyHandlerTypeList.size());
+                for (TypeLiteral<? extends ChainedProxyHandler<S>> type : ejbCallChainProxyHandlerTypeList) {
+                    final ChainedProxyHandler<S> proxyHandler = injector.getInstance(Key.get(type));
+                    list.add(proxyHandler);
+                }
+                return list;
+            }
+        });
+    }
+
+    /**
+     * Oppretter en avhengighet fra modulen definert av {@code binder} til {@code type}.
+     * Når injectoren opprettes så vil Guide rapportere en feil hvis {@code type} ikke
+     * kan injectes.
+     *
+     * @since 2.0
+     */
+    protected void requireBinding(Binder binder, Class<?> type) {
+        binder.getProvider(type);
+    }
+
+    @Override
+    public EJBServiceChainFactorySpecification clone() {
+        EJBServiceChainFactorySpecification clone = (EJBServiceChainFactorySpecification) super.clone();
+        clone.ejbCallChainProxyHandlerClassList = (ArrayList<Class<? extends ChainedProxyHandler>>) ejbCallChainProxyHandlerClassList.clone();
+        return clone;
     }
 }

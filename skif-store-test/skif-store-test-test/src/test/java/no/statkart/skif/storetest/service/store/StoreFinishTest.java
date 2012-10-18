@@ -6,7 +6,7 @@ import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.FilteredBubble;
 import no.statkart.skif.storetest.domain.demo.FilteredBubbleId;
-import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.JDBCHelper;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -24,7 +24,7 @@ import static org.testng.Assert.assertNotSame;
  * @since 2.1
  */
 @Test
-public class StoreFinishTest extends StoreTestServerTestCase {
+public class StoreFinishTest extends StoreTestMixedTestCase {
     private static final String str = "Skal byttes ut i finish";
 
     private static final FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<FilteredBubble>(101);

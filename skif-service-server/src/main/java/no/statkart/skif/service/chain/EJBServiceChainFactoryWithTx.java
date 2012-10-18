@@ -11,6 +11,7 @@ import no.statkart.skif.service.proxy.ProxyHandler;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@Deprecated
 public class EJBServiceChainFactoryWithTx<S> implements EJBServiceChainFactory<S> {
     private final Provider<EJBResourceProxyHandler<S>> ejbResourceProxyHandlerProvider;
 

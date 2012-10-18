@@ -1,5 +1,6 @@
 package no.statkart.skif.skiftest.service.test;
 
+import com.google.inject.name.Names;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
@@ -32,6 +33,8 @@ public class SkifTestClientModule extends SkifModule {
 
         @Override
         protected void configure() {
+            bind(String.class).annotatedWith(Names.named("client")).toInstance("ClientString");
+
             install(new RemoteServerModule(moduleConfiguration).setServiceContextClass(SkifTestServiceContext.class));
             install(new RunOnServerRemoteServiceModule(moduleConfiguration));
             install(new RemoteServiceModule(moduleConfiguration, new SkifTestGroupExServices().getServices(), new SkifTestMapper().getMapping()).

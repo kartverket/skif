@@ -3,6 +3,7 @@ package no.statkart.skif.service.module.server;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleStrategy;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.annotation.Implementation;
@@ -85,4 +86,12 @@ public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
         }
     }
 
+    @Override
+    public ServerServiceModuleStrategy clone() {
+        final ServerServiceModuleStrategy clone = (ServerServiceModuleStrategy) super.clone();
+        clone.ejbServiceChainFactorySpecification = ejbServiceChainFactorySpecification.clone();
+        clone.implementationServiceChainFactorySpecification = implementationServiceChainFactorySpecification.clone();
+        clone.callServiceChainFactorySpecification = callServiceChainFactorySpecification.clone();
+        return clone;
+    }
 }

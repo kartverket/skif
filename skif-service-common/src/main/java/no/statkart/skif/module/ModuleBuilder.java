@@ -14,11 +14,14 @@ import no.statkart.skif.config.*;
 import no.statkart.skif.config.internal.ConfigurationUtils;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.guava.Preconditions;
+import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -249,6 +252,20 @@ public class ModuleBuilder {
         return this;
     }
 
+    public String getModuleExtClassname() {
+        return getCompositeConfiguration().getString(MODULE_EXT_CLASS);
+    }
+
+    public ModuleBuilder setModuleExtClassname(String moduleClassname) {
+        builderConfiguration.setProperty(MODULE_EXT_CLASS, moduleClassname);
+        return this;
+    }
+
+    public ModuleBuilder setModuleExtClass(Class<? extends Module> moduleClass) {
+        setModuleExtClassname(moduleClass.getName());
+        return this;
+    }
+
     public ModuleStrategyFactory getModuleStrategyFactory() {
         return moduleStrategyFactory;
     }
@@ -271,6 +288,20 @@ public class ModuleBuilder {
         return this;
     }
 
+    public String getEjbServiceChainExtClassname() {
+        return builderConfiguration.getString(EJB_SERVICE_CHAIN_EXT_CLASS);
+    }
+
+    public ModuleBuilder setEjbServiceChainExtClass(Class<? extends ChainedProxyHandler> ejbServiceChainExtClass) {
+        setSingleVmServerEjbServiceChainExtClassname(ejbServiceChainExtClass.getName());
+        return this;
+    }
+
+    public ModuleBuilder setEjbServiceChainExtClassname(String ejbServiceChainExtClassname) {
+        builderConfiguration.setProperty(EJB_SERVICE_CHAIN_EXT_CLASS, ejbServiceChainExtClassname);
+        return this;
+    }
+
     public String getSingleVmServerModuleClassname() {
         return getCompositeConfiguration().getString(SINGLE_VM_SERVER_MODULE_CLASS);
     }
@@ -282,6 +313,34 @@ public class ModuleBuilder {
 
     public ModuleBuilder setSingleVmServerModuleClass(Class<? extends Module> singleVmServerModuleClass) {
         setSingleVmServerModuleClassname(singleVmServerModuleClass.getName());
+        return this;
+    }
+
+    public String getSingleVmServerModuleExtClassname() {
+        return getCompositeConfiguration().getString(SINGLE_VM_SERVER_MODULE_EXT_CLASS);
+    }
+
+    public ModuleBuilder setSingleVmServerModuleExtClassname(String singleVmServerModuleClassname) {
+        builderConfiguration.setProperty(SINGLE_VM_SERVER_MODULE_EXT_CLASS, singleVmServerModuleClassname);
+        return this;
+    }
+
+    public ModuleBuilder setSingleVmServerModuleExtClass(Class<? extends Module> singleVmServerModuleClass) {
+        setSingleVmServerModuleExtClassname(singleVmServerModuleClass.getName());
+        return this;
+    }
+
+    public String getSingleVmServerEjbServiceChainExtClassname() {
+        return builderConfiguration.getString(SINGLE_VM_SERVER_EJB_SERVICE_CHAIN_EXT_CLASS);
+    }
+
+    public ModuleBuilder setSingleVmServerEjbServiceChainExtClass(Class<? extends ChainedProxyHandler> ejbServiceChainExtClass) {
+        setSingleVmServerEjbServiceChainExtClassname(ejbServiceChainExtClass.getName());
+        return this;
+    }
+
+    public ModuleBuilder setSingleVmServerEjbServiceChainExtClassname(String ejbServiceChainExtClassname) {
+        builderConfiguration.setProperty(SINGLE_VM_SERVER_EJB_SERVICE_CHAIN_EXT_CLASS, ejbServiceChainExtClassname);
         return this;
     }
 
@@ -301,7 +360,30 @@ public class ModuleBuilder {
     }
 
     public Module buildModule() {
-        Constructor<? extends SkifModule> constructor = getModuleConstructor();
+        String moduleClassname = getModuleClassname();
+        Preconditions.checkNotNull(getModuleClassname(), "ModuleClassname");
+        Preconditions.checkArgument(getModuleExtClassname() == null, "ModuleExtClassname er satt. Bruk buildModules()");
+        Constructor<? extends SkifModule> constructor = getModuleConstructor(moduleClassname);
+        final Module module = buildModule(constructor);
+        return module;
+
+    }
+
+    public List<Module> buildModules() {
+        List<Module> modules = new ArrayList<Module>();
+        String moduleClassname = getModuleClassname();
+        Preconditions.checkNotNull(getModuleClassname(), "ModuleClassname");
+        Constructor<? extends SkifModule> constructor = getModuleConstructor(moduleClassname);
+        modules.add(buildModule(constructor));
+        final String moduleExtClassname = getModuleExtClassname();
+        if (moduleExtClassname!= null) {
+            constructor = getModuleConstructor(moduleExtClassname);
+            modules.add(buildModule(constructor));
+        }
+        return modules;
+    }
+
+    private Module buildModule(Constructor<? extends SkifModule> constructor) {
         SkifModule module = null;
         Object constructorParameter;
         if (constructorIsUsingModuleConfigurationParameter(constructor)) {
@@ -367,9 +449,14 @@ public class ModuleBuilder {
         return c;
     }
 
+    @Deprecated
     public <T extends SkifModule> Constructor<T> getModuleConstructor() {
         String moduleClassname = getModuleClassname();
         Preconditions.checkNotNull(getModuleClassname(), "ModuleClassname");
+        return getModuleConstructor(moduleClassname);
+    }
+
+    private <T extends SkifModule> Constructor<T> getModuleConstructor(String moduleClassname) {
         Class<T> moduleClass = (Class<T>) SkifUtil.classForName(moduleClassname);
         Constructor<T> constructor;
         try {
@@ -391,26 +478,8 @@ public class ModuleBuilder {
         return constructor.getParameterTypes()[0] == ModuleConfiguration.class;
     }
 
-
-    private Module createModule(Class<? extends Module> moduleClass, ModuleConfiguration cfg) {
-        try {
-            final Constructor<? extends Module> constructor = moduleClass.getConstructor(ModuleConfiguration.class);
-            try {
-                return constructor.newInstance(cfg);
-            } catch (InvocationTargetException e) {
-                throw new ImplementationException(e);
-            } catch (InstantiationException e) {
-                throw new ImplementationException(e);
-            } catch (IllegalAccessException e) {
-                throw new ImplementationException(e);
-            }
-        } catch (NoSuchMethodException e) {
-            throw new ImplementationException("Fant ingen passende constructor for module class: " + moduleClass.getName());
-        }
-    }
-
     public Injector buildInjector() {
-        return Guice.createInjector(buildModule());
+        return Guice.createInjector(buildModules());
     }
 
     public Injector getSingleVmServerInjector() {
@@ -419,8 +488,10 @@ public class ModuleBuilder {
             SystemConfiguration singleVmServerSystemConfiguration = (SystemConfiguration) ConfigurationUtils.cloneConfiguration(systemConfiguration);
             if (singleVmServerSystemConfiguration != null) {
                 singleVmServerSystemConfiguration.clearProperty(SINGLE_VM_SERVER_MODULE_CLASS);
+                singleVmServerSystemConfiguration.clearProperty(SINGLE_VM_SERVER_MODULE_EXT_CLASS);
                 singleVmServerSystemConfiguration.clearProperty(SINGLE_VM_SERVER_MODULE_STRATEGY_FACTORY_CLASS);
                 singleVmServerSystemConfiguration.clearProperty((SINGLE_VM_SERVER_CONFIGURATION_FILENAME));
+                singleVmServerSystemConfiguration.clearProperty((SINGLE_VM_SERVER_EJB_SERVICE_CHAIN_EXT_CLASS));
             }
             ModuleBuilder singleVmServerModuleBuilder = new ModuleBuilder(singleVmServerSystemConfiguration);
 
@@ -429,6 +500,11 @@ public class ModuleBuilder {
             String moduleClassname = getSingleVmServerModuleClassname();
             if (moduleClassname != null) {
                 singleVmServerModuleBuilder.setModuleClassname(moduleClassname);
+            }
+
+            String moduleExtClassname = getSingleVmServerModuleExtClassname();
+            if (moduleExtClassname != null) {
+                singleVmServerModuleBuilder.setModuleExtClassname(moduleExtClassname);
             }
 
             String moduleStrategyFactoryClassname = getSingleVmServerModuleStrategyFactoryClassname();
@@ -441,6 +517,11 @@ public class ModuleBuilder {
                 singleVmServerModuleBuilder.setModuleStrategyFactory(moduleStrategyFactory);
             }
 
+            String ejbServiceChainExtClassname = getSingleVmServerEjbServiceChainExtClassname();
+            if (ejbServiceChainExtClassname != null) {
+                singleVmServerModuleBuilder.setEjbServiceChainExtClassname(ejbServiceChainExtClassname);
+            }
+
             Configuration configuration = getSingleVmServerConfiguration();
             if (configuration != null) {
                 singleVmServerModuleBuilder.setConfiguration(configuration);
@@ -449,32 +530,4 @@ public class ModuleBuilder {
         }
         return singleVmServerInjector;
     }
-
-    private ModuleBuilder createSingleVmServerModuleBuilder() {
-        ModuleBuilder singleVmServerModuleBuilder = new ModuleBuilder(systemConfiguration);
-
-        // Overfør properties
-        String moduleClassname = getSingleVmServerModuleClassname();
-        if (moduleClassname != null) {
-            singleVmServerModuleBuilder.setModuleClassname(moduleClassname);
-        }
-
-        final ModuleStrategyFactory moduleStrategyFactory = getSingleVmServerModuleStrategyFactory();
-        if (moduleStrategyFactory != null) {
-            singleVmServerModuleBuilder.setModuleStrategyFactory(moduleStrategyFactory);
-        }
-
-        final String moduleStrategyFactoryClassname = getSingleVmServerModuleStrategyFactoryClassname();
-        if (moduleStrategyFactoryClassname != null) {
-            singleVmServerModuleBuilder.setModuleStrategyFactoryClassname(moduleStrategyFactoryClassname);
-        }
-
-        singleVmServerModuleBuilder.setServiceMode(ServiceMode.SINGLE_VM);
-        singleVmServerModuleBuilder.setConfiguration(getSingleVmServerConfiguration());
-
-        singleVmServerInjector = singleVmServerModuleBuilder.buildInjector();
-        return singleVmServerModuleBuilder;
-
-    }
-
 }

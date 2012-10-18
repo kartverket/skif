@@ -9,8 +9,8 @@ import no.statkart.skif.service.module.common.RunOnServerRemoteServiceModule;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class RunOnRemoteServerClientModule extends SkifModule {
-    public RunOnRemoteServerClientModule(ModuleConfiguration moduleConfiguration) {
+public class RunOnRemoteServerTestClientModule extends SkifModule {
+    public RunOnRemoteServerTestClientModule(ModuleConfiguration moduleConfiguration) {
         super(moduleConfiguration);
     }
 

@@ -1,11 +1,17 @@
 package no.statkart.skif.service.module.server;
 
 import no.statkart.skif.ServiceMode;
+import no.statkart.skif.SkifUtil;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.service.BeanManagedTransactionRunOnServerService;
+import no.statkart.skif.service.ContainerManagedNotSupportedTransactionRunOnServerService;
+import no.statkart.skif.service.ContainerManagedRequiresNewTransactionRunOnServerService;
 import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
+import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
+import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
 import java.util.*;
 
@@ -20,12 +26,30 @@ import java.util.*;
  */
 public class RunOnServerServiceModule extends ServerServiceModule {
     public RunOnServerServiceModule(ModuleConfiguration configuration) {
-        super(configuration, Arrays.asList(ContainerManagedTransactionRunOnServerService.class, BeanManagedTransactionRunOnServerService.class));
+        super(configuration, getList());
     }
+
+    private static Collection<Class<? extends Object>> getList() {
+        ArrayList<Class<?>> list = new ArrayList<Class<?>>();
+        list.add(ContainerManagedNotSupportedTransactionRunOnServerService.class);
+        list.add(ContainerManagedRequiresNewTransactionRunOnServerService.class);
+        list.add(BeanManagedTransactionRunOnServerService.class);
+
+        // TODO: Ta denne bort
+        list.add(ContainerManagedTransactionRunOnServerService.class);
+
+        return list;
+    }
+
 
     @Override
     protected void configure() {
         if (moduleConfiguration.getServiceMode()== ServiceMode.SINGLE_VM) {
+            final String ejbServiceChainExtClassname = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.EJB_SERVICE_CHAIN_EXT_CLASS);
+            if (ejbServiceChainExtClassname!=null) {
+                Class<? extends ChainedProxyHandler> ejbServiceChainExtClass = SkifUtil.classForName(ejbServiceChainExtClassname);
+                getStrategy().getEjbServiceChainFactorySpecification().appendEJBServiceChainProxyHandler(ejbServiceChainExtClass);
+            }
             super.configure();
         }
     }

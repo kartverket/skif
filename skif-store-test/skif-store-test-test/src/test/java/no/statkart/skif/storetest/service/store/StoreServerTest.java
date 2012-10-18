@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -18,7 +18,7 @@ import static org.testng.Assert.*;
  * @since 2.1
  */
 @Test
-public class StoreServerTest extends StoreTestServerTestCase {
+public class StoreServerTest extends StoreTestMixedTestCase {
 
     public static final FooId<Foo> FOO_ID_100 = new FooId<Foo>(100L);
     @Inject
@@ -29,13 +29,14 @@ public class StoreServerTest extends StoreTestServerTestCase {
         clientStore.beginUnitOfWork();
         clientStore.insert(testBubbleOnClient);
 
-        TestBubble testBubbleFromServer = (TestBubble) server.runInTxSupported(new RunOnServerMethod() {
+        TestBubble testBubbleFromServer = (TestBubble) server.runInTxNotSupported(new RunOnServerMethod() {
             @Inject
             Store storeOnServer;
 
             @Override
             public Object run() {
                 TestBubble testBubbleOnServer = new TestBubble();
+                // TODO: Burde egentlig feile siden det gjøre en oppdatering og metoden ikke har transaksjonskontekst
                 storeOnServer.insert(testBubbleOnServer);
 
                 return testBubbleOnServer;
@@ -43,13 +44,14 @@ public class StoreServerTest extends StoreTestServerTestCase {
         });
         assertFalse(testBubbleOnClient.getId().equals(testBubbleFromServer.getId()));
 
-        TestBubble testBubbleFromServer2 = (TestBubble) server.runInTxSupported(new RunOnServerMethod() {
+        TestBubble testBubbleFromServer2 = (TestBubble) server.runInTxNotSupported(new RunOnServerMethod() {
             @Inject
             Store storeOnServer;
 
             @Override
             public Object run() {
                 TestBubble testBubbleOnServer = new TestBubble();
+                // TODO: Burde egentlig feile siden det gjøre en oppdatering og metoden ikke har transaksjonskontekst
                 storeOnServer.insert(testBubbleOnServer);
 
                 return testBubbleOnServer;
@@ -87,7 +89,7 @@ public class StoreServerTest extends StoreTestServerTestCase {
         });
         assertNotNull(testBubbleFromServer.getId());
 
-        // Oppdater EntityComponent
+        // Oppdater ComponentWithExplicitId
         Raz testBubbleFromServer2 = (Raz) server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
             Store storeOnServer;
@@ -139,7 +141,7 @@ public class StoreServerTest extends StoreTestServerTestCase {
         });
         assertNotNull(testBubbleFromServer.getId());
 
-        // Oppdater EntityComponent med ny EntityComponent. Den opprinnelige EntiyComponent blir feilaktig liggende igjen.
+        // Oppdater ComponentWithExplicitId med ny ComponentWithExplicitId. Den opprinnelige EntiyComponent blir feilaktig liggende igjen.
         // TODO: Hibernate delete-orphan virker ikke!
         System.out.println("Denne blir liggende igjen: " + testBubbleFromServer.getRazEntityComponent().getId());
         Raz testBubbleFromServer2 = (Raz) server.runInTxRequiresNew(new RunOnServerMethod() {

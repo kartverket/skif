@@ -5,8 +5,11 @@ import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.BeanManagedTransactionRunOnServerService;
+import no.statkart.skif.service.ContainerManagedNotSupportedTransactionRunOnServerService;
+import no.statkart.skif.service.ContainerManagedRequiresNewTransactionRunOnServerService;
 import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -22,8 +25,22 @@ import java.util.Collection;
 public class RunOnServerRemoteServiceModule extends RemoteServiceModule {
 
     public RunOnServerRemoteServiceModule(ModuleConfiguration configuration) {
-        super(configuration, Arrays.asList(ContainerManagedTransactionRunOnServerService.class, BeanManagedTransactionRunOnServerService.class), new IdentityMapper().getMapping());
+        super(configuration, getList(), new IdentityMapper().getMapping());
     }
+
+    private static Collection<Class<? extends Object>> getList() {
+        ArrayList<Class<?>> list = new ArrayList<Class<?>>();
+        list.add(ContainerManagedNotSupportedTransactionRunOnServerService.class);
+        list.add(ContainerManagedRequiresNewTransactionRunOnServerService.class);
+        list.add(BeanManagedTransactionRunOnServerService.class);
+
+        // TODO: Ta bort
+        list.add(ContainerManagedTransactionRunOnServerService.class);
+
+        return list;
+    }
+
+
 
     @Override
     protected void configure() {

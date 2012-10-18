@@ -8,9 +8,9 @@ import no.statkart.skif.config.Configuration;
  * factory'en ut en {@code StrategyTuple} som er istand til å inneholde {@code ModuleStrategy}'er for
  * alle {@code ServiceMode}-verdier.
  * <p/>
- * Configurasjon av factory'en skjer via prototyper. Hver {@ModuleWithStrategy}-subklasse kan definere sin egen
- * prototype. Når en modul trenger strategien sin opprettes en ny {@code StrategyTuple}-instans som er en kopi
- * av prototypen definert for modulen. Modulen kan dermed tilpasse strategien sin uten at prototype endres.
+ * Configurasjon av factory'en skjer via prototyper. Hver {@code ModuleWithStrategy}-subklasse kan definere sin egen
+ * prototype. Når en modul opprettes, hentes ut en ny {@code StrategyTuple}-instans som er en kopi
+ * av prototypen definert for modultypen. Modulen kan tilpasse strategien sin uten at prototype for modultypen endres.
  * <p/>
  * Det er implementasjonsavhengig hva som skjer hvis en modul ikke har fått satt noen prototype. Implementasjonen
  * kan enten kaste en ConfigurationException eller bruke en algoritme for å finne en passende protoype, f.eks

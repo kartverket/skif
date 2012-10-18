@@ -2,7 +2,6 @@ package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
@@ -13,7 +12,7 @@ import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
 import no.statkart.skif.storetest.domain.demo.TestBubble;
 import no.statkart.skif.storetest.domain.demo.TestBubbleId;
-import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
@@ -29,7 +28,7 @@ import static org.testng.Assert.assertSame;
  * @since 2.1
  */
 @Test
-public class StoreUnitOfWorkTest extends StoreTestServerTestCase {
+public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     static String T1 = "2011-10-02 08:01:00.00";
     static String T2 = "2011-10-02 08:02:00.00";
     static String T3 = "2011-10-02 08:03:00.00";
