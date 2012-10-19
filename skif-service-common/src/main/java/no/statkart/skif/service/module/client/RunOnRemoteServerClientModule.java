@@ -27,7 +27,11 @@ public class RunOnRemoteServerClientModule extends ClientModule {
 
     @Override
     protected void configure() {
-        install(new RemoteServerModule(moduleConfiguration).setServiceContextClass(serviceContextClass));
+        final RemoteServerModule remoteServerModule = new RemoteServerModule(moduleConfiguration);
+        if (serviceContextClass!=null) {
+            remoteServerModule.setServiceContextClass(serviceContextClass);
+        }
+        install(remoteServerModule);
         install(new RunOnServerRemoteServiceModule(moduleConfiguration));
     }
 }

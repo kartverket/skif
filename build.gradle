@@ -230,8 +230,8 @@ subprojects { Project project ->
         }
 
         test {
-            // Vi ønsker vanligvis å kjøre alle tester i alle moduler.
-            ignoreFailures = true
+            // Vi ønsker som default å stoppe ved første modul som feiler.
+            ignoreFailures = false
 
             boolean singleVm = Boolean.valueOf(rootProject.properties['single_vm'])
             logger.debug "single_vm is set to ${singleVm} for ${project.path}"
