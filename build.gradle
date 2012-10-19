@@ -77,10 +77,10 @@ def libraries = [
 
         // Testing
         testng: 'org.testng:testng:6.0.1',
-        mockito: 'org.mockito:mockito-all:1.8.5',
+        mockito: 'org.mockito:mockito-all:1.9.5',
         dbunit: 'org.dbunit:dbunit:2.4.8@jar',
         unitils: 'org.unitils:unitils-core:3.1',
-        fest: 'org.easytesting:fest-assert:1.4',
+        fest: 'org.easytesting:fest-assert-core:2.0M8',
 
         // JAXB
         jaxb_impl: "com.sun.xml.bind:jaxb-impl:${libVersion('jaxb', '2.1.13')}",
@@ -189,6 +189,7 @@ subprojects { Project project ->
         apply plugin: 'java'
         apply plugin: 'sktools-filterproperties-plugin'
 
+	 test.testLogging.showStandardStreams = true
 
         propertyUtils.expandProjectProperties() //må ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
         //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
