@@ -40,7 +40,7 @@ import org.testng.annotations.*;
 import java.util.*;
 
 import static no.statkart.skif.storetest.TestHelper.*;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.*;
 import static org.testng.Assert.*;
 import static org.testng.FileAssert.fail;
 
@@ -204,7 +204,7 @@ public class StoreSessionServerTest {
         fooIds.add(FooId_101_OLD);
         fooIds.add(FooId_101_S3);
         Set<Foo> foos = storeServer.get(fooIds);
-        assertThat(foos).onProperty("id").containsOnly(FooId_101_OLD, FooId_101_S3);
+        assertThat(extractProperty("id").from(foos)).containsOnly(FooId_101_OLD, FooId_101_S3);
 
         // Test at multipel uthenting gir samme objekter
         fooIds = new HashSet<FooId<?>>(3);

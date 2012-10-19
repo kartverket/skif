@@ -7,6 +7,7 @@ import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.Kode;
+import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
@@ -27,7 +28,7 @@ import java.util.*;
 
 import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactorManagerBundle;
 import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactoryBuilderWithHistory;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.*;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -228,9 +229,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             assertEquals(kodelisteForEnumKodeA.getKodeIdClass(), AEnumKodeId.class);
             assertEquals(kodelisteForEnumKodeA.getId(), AEnumKodeId.KODELISTE_ID.asSnapshotVersionOld());
             assertThat(kodelisteForEnumKodeA.getKodeIds()).containsExactly(
-                    AEnumKodeId.IkkeOppgittId.asSnapshotVersionOld(),
-                    AEnumKodeId.KodeAId.asSnapshotVersionOld(),
-                    AEnumKodeId.KodeBId.asSnapshotVersionOld()
+                    (KodeId<?>)AEnumKodeId.IkkeOppgittId.asSnapshotVersionOld(),
+                    (KodeId<?>)AEnumKodeId.KodeAId.asSnapshotVersionOld(),
+                    (KodeId<?>)AEnumKodeId.KodeBId.asSnapshotVersionOld()
             );
             assertEquals(kodelisteForEnumKodeA.getBeskrivelse(), "AEnumKode.kodeliste.beskrivelse (no_NO)");
         } finally {

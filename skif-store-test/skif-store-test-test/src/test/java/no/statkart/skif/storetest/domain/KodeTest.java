@@ -7,6 +7,7 @@ import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.kodeliste.Kode;
+import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.storetest.domain.demo.Baz;
 import no.statkart.skif.storetest.domain.demo.BazId;
@@ -24,7 +25,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.*;
 import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
@@ -54,9 +55,9 @@ public class KodeTest extends StoreTestTestCase {
         assertEquals(aEnumKode.getKodelisteId(), AEnumKodeId.KODELISTE_ID.asSnapshotVersionOld());
         Kodeliste kodeliste = store.get(aEnumKode.getKodelisteId());
         assertThat(kodeliste.getKodeIds()).containsExactly(
-                AEnumKodeId.IkkeOppgittId.asSnapshotVersionOld(),
-                AEnumKodeId.KodeAId.asSnapshotVersionOld(),
-                AEnumKodeId.KodeBId.asSnapshotVersionOld()
+                (KodeId<?>)AEnumKodeId.IkkeOppgittId.asSnapshotVersionOld(),
+                (KodeId<?>)AEnumKodeId.KodeAId.asSnapshotVersionOld(),
+                (KodeId<?>)AEnumKodeId.KodeBId.asSnapshotVersionOld()
         );
     }
 

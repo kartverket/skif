@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactorManagerBundle;
 import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactoryBuilderWithHistory;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertSame;
@@ -133,7 +133,7 @@ public class PersistenceSessionManagerTest {
             ids.add(FooId_100_S4);
             ids.add(FooId_101_S4);
             Collection<? extends Foo> foos = persistenceSession.get(ids);
-            assertThat(foos).onProperty("id").containsOnly(FooId_100_CURRENT, FooId_100_OLD, FooId_101_OLD, FooId_101_CURRENT, FooId_100_S3, FooId_100_S4, FooId_101_S4);
+            assertThat(extractProperty("id").from(foos)).containsOnly(FooId_100_CURRENT, FooId_100_OLD, FooId_101_OLD, FooId_101_CURRENT, FooId_100_S3, FooId_100_S4, FooId_101_S4);
         } finally {
             persistenceSession.close();
         }

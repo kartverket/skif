@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 
 import java.util.*;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -117,7 +117,7 @@ public class StoreServiceTest extends StoreTestTestCase {
         FooId<Foo> fooId_100_080130 = new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:01:30.00"));
 
         assertThat(store.getObjects(Arrays.asList(fooId_101, fooId_100))).hasSize(2);
-        assertThat(store.getObjects(Arrays.asList(fooId_101, fooId_100))).onProperty("id.value").contains(101L, 100L);
+        assertThat(extractProperty("id.value").from(store.getObjects(Arrays.asList(fooId_101, fooId_100)))).contains(101L, 100L);
     }
 
     @Test

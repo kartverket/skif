@@ -13,7 +13,7 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
@@ -129,7 +129,7 @@ public class StoreTestSVM extends StoreTestMixedTestCase {
         store.update(testBubble_101);
         UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
         store.endUnitOfWork();
-        assertThat(unitOfWorkTransfer.getInsertedObjects()).onProperty("id").contains(TestBubbleId_101);
+        assertThat(extractProperty("id").from(unitOfWorkTransfer.getInsertedObjects())).contains(TestBubbleId_101);
     }
 
     // TODO: flere tester
