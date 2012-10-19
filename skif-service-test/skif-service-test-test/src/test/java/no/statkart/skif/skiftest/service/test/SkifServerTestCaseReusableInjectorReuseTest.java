@@ -3,7 +3,7 @@ package no.statkart.skif.skiftest.service.test;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import no.statkart.skif.skiftest.config.SkifTestServerModule;
-import no.statkart.skif.util.testsupport.SkifServer3TestCase;
+import no.statkart.skif.util.testsupport.SkifServerTestCase;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import static org.testng.Assert.assertTrue;
  * @since 2.0
  */
 @Test(dependsOnGroups = "SkifServerTest.createsInjector")
-public class SkifServerTestCaseReusableInjectorReuseTest extends SkifServer3TestCase {
+public class SkifServerTestCaseReusableInjectorReuseTest extends SkifServerTestCase {
     private static String TEST_VALUE="testvalue";
 
     public SkifServerTestCaseReusableInjectorReuseTest() {

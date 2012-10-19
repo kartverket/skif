@@ -4,12 +4,10 @@ import com.google.inject.Injector;
 import com.google.inject.spi.InjectionPoint;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.SkifConfiguration;
-import no.statkart.skif.config.SystemConfiguration;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.RunOnServerService;
-import no.statkart.skif.service.module.client.RunOnRemoteServerBuilder;
 import no.statkart.skif.service.module.client.RunOnRemoteServerClientModule;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import org.testng.IHookCallBack;
@@ -19,23 +17,22 @@ import org.testng.ITestResult;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Set;
 
 /**
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class SkifServer3TestCase extends AbstractSkifTestCase implements IHookable {
+public class SkifServerTestCase extends AbstractSkifTestCase implements IHookable {
     private Injector clientInjector;
     private final Class<? extends SkifModule> serverModuleExtClass;
     private final Class<? extends ChainedProxyHandler> ejbServiceChainExtClass;
 
-    public SkifServer3TestCase(Class<? extends SkifModule> serverModuleClass) {
+    public SkifServerTestCase(Class<? extends SkifModule> serverModuleClass) {
         this(RunOnRemoteServerClientModule.class, serverModuleClass, null, null);
     }
 
-    public SkifServer3TestCase(Class<? extends SkifModule> moduleClass, Class<? extends SkifModule> serverModuleClass, Class<? extends SkifModule> serverModuleExtClass, Class<? extends ChainedProxyHandler> ejbServiceChainExtClass) {
+    public SkifServerTestCase(Class<? extends SkifModule> moduleClass, Class<? extends SkifModule> serverModuleClass, Class<? extends SkifModule> serverModuleExtClass, Class<? extends ChainedProxyHandler> ejbServiceChainExtClass) {
         setModuleClass(moduleClass);
         setSingleVmServerModuleClass(serverModuleClass);
         this.serverModuleExtClass = serverModuleExtClass;
@@ -95,21 +92,21 @@ public class SkifServer3TestCase extends AbstractSkifTestCase implements IHookab
         runOnServerService.run(new RunOnServerMethod() {
             @Override
             public Object run() {
-                SkifServer3TestCase.this.injector = injector;
-                injector.injectMembers(SkifServer3TestCase.this);
+                SkifServerTestCase.this.injector = injector;
+                injector.injectMembers(SkifServerTestCase.this);
                 Injector savedClientInjector = clientInjector;
                 clientInjector = null;
                 try {
                     callBack.runTestMethod(testResult);
                     return null;
                 } finally {
-                    SkifServer3TestCase.this.injector = null;
+                    SkifServerTestCase.this.injector = null;
                     clientInjector = savedClientInjector;
-                    resetInjectedMembers(SkifServer3TestCase.this);
+                    resetInjectedMembers(SkifServerTestCase.this);
                 }
             }
 
-            private void resetInjectedMembers(SkifServer3TestCase testCase) {
+            private void resetInjectedMembers(SkifServerTestCase testCase) {
                 final Set<InjectionPoint> injectionPoints = InjectionPoint.forInstanceMethodsAndFields(testCase.getClass());
                 for (InjectionPoint injectionPoint : injectionPoints) {
                     final Member member = injectionPoint.getMember();

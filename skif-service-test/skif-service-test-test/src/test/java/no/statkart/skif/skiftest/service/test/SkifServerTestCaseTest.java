@@ -1,12 +1,10 @@
 package no.statkart.skif.skiftest.service.test;
 
 import com.google.inject.Inject;
-import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.service.testa.AService;
-import no.statkart.skif.util.testsupport.SkifMixedTestCase;
-import no.statkart.skif.util.testsupport.SkifServer3TestCase;
+import no.statkart.skif.util.testsupport.SkifServerTestCase;
 import no.statkart.skif.util.testsupport.TestServerMethodTransactionAttribute;
 import no.statkart.skif.util.testsupport.TestServerMethodTransactionAttributeType;
 import org.testng.annotations.Test;
@@ -19,13 +17,13 @@ import static org.testng.Assert.*;
  * @author Henrik Fredholm
  */
 @Test
-public class SkifServer3TestCaseTest extends SkifServer3TestCase {
+public class SkifServerTestCaseTest extends SkifServerTestCase {
     @Inject
     AService serviceA;
     @Inject
     ServiceRequestContext serviceRequestContext;
 
-    public SkifServer3TestCaseTest() {
+    public SkifServerTestCaseTest() {
         super(SkifTestServerModule.class);
     }
 
