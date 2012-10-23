@@ -25,17 +25,17 @@ public class SkifMixedTestCase extends SkifTestCase {
 
     protected class RunOnServer {
         public Object runInBeanManagedTransaction(RunOnServerMethod method) {
-            BeanManagedTransactionRunOnServerService runOnServerService = injector.getInstance(BeanManagedTransactionRunOnServerService.class);
+            RunOnServerWithTxBeanManagedService runOnServerService = injector.getInstance(RunOnServerWithTxBeanManagedService.class);
             return runOnServerService.run(method);
         }
 
         public Object runInTxNotSupported(RunOnServerMethod method) {
-            ContainerManagedNotSupportedTransactionRunOnServerService runOnServerService = injector.getInstance(ContainerManagedNotSupportedTransactionRunOnServerService.class);
+            RunOnServerWithTxNotSupportedService runOnServerService = injector.getInstance(RunOnServerWithTxNotSupportedService.class);
             return runOnServerService.run(method);
         }
 
         public Object runInTxRequiresNew(RunOnServerMethod method) {
-            ContainerManagedRequiresNewTransactionRunOnServerService runOnServerService = injector.getInstance(ContainerManagedRequiresNewTransactionRunOnServerService.class);
+            RunOnServerWithTxRequiresNewService runOnServerService = injector.getInstance(RunOnServerWithTxRequiresNewService.class);
             return runOnServerService.run(method);
         }
     }

@@ -5,9 +5,9 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
-import no.statkart.skif.service.BeanManagedTransactionRunOnServerService;
-import no.statkart.skif.service.ContainerManagedNotSupportedTransactionRunOnServerService;
-import no.statkart.skif.service.ContainerManagedRequiresNewTransactionRunOnServerService;
+import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
+import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
+import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
@@ -63,15 +63,15 @@ public class RunOnRemoteServerBuilder {
         return moduleBuilder.buildInjector().getInstance(ContainerManagedTransactionRunOnServerService.class);
     }
 
-    public ContainerManagedNotSupportedTransactionRunOnServerService buildContainerManagedNotSupportedTranactionService() {
-        return moduleBuilder.buildInjector().getInstance(ContainerManagedNotSupportedTransactionRunOnServerService.class);
+    public RunOnServerWithTxNotSupportedService buildContainerManagedNotSupportedTranactionService() {
+        return moduleBuilder.buildInjector().getInstance(RunOnServerWithTxNotSupportedService.class);
     }
 
-    public ContainerManagedRequiresNewTransactionRunOnServerService buildContainerManagedRequiresNewTranactionService() {
-        return moduleBuilder.buildInjector().getInstance(ContainerManagedRequiresNewTransactionRunOnServerService.class);
+    public RunOnServerWithTxRequiresNewService buildContainerManagedRequiresNewTranactionService() {
+        return moduleBuilder.buildInjector().getInstance(RunOnServerWithTxRequiresNewService.class);
     }
 
-    public BeanManagedTransactionRunOnServerService buildBeanManagedService() {
-        return moduleBuilder.buildInjector().getInstance(BeanManagedTransactionRunOnServerService.class);
+    public RunOnServerWithTxBeanManagedService buildBeanManagedService() {
+        return moduleBuilder.buildInjector().getInstance(RunOnServerWithTxBeanManagedService.class);
     }
 }

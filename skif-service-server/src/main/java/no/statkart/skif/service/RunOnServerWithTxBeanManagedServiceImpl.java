@@ -10,7 +10,7 @@ import javax.ejb.TransactionManagementType;
  * @author Henrik Fredholm
  */
 @TransactionManagement(TransactionManagementType.BEAN)
-public class BeanManagedTransactionRunOnServerServiceImpl implements BeanManagedTransactionRunOnServerService {
+public class RunOnServerWithTxBeanManagedServiceImpl implements RunOnServerWithTxBeanManagedService {
     @Inject
     Injector injector;
     public Object run(RunOnServerMethod method) {

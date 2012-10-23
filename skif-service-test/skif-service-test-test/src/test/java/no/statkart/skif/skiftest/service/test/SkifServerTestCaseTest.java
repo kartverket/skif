@@ -5,8 +5,8 @@ import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.service.testa.AService;
 import no.statkart.skif.util.testsupport.SkifServerTestCase;
-import no.statkart.skif.util.testsupport.TestServerMethodTransactionAttribute;
-import no.statkart.skif.util.testsupport.TestServerMethodTransactionAttributeType;
+import no.statkart.skif.util.testsupport.TestTransactionAttribute;
+import no.statkart.skif.util.testsupport.TestTransactionAttributeType;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class SkifServerTestCaseTest extends SkifServerTestCase {
         super(SkifTestServerModule.class);
     }
 
-    @TestServerMethodTransactionAttribute(TestServerMethodTransactionAttributeType.BEAN)
+    @TestTransactionAttribute(TestTransactionAttributeType.TX_BEAN)
     public void testRunOnServerUsingBeanManagedTransaction() {
         String result = serviceA.m1(Arrays.asList("BService.m2"));
         assertTrue(serviceRequestContext.isBeanManagedTransaction());
@@ -35,7 +35,7 @@ public class SkifServerTestCaseTest extends SkifServerTestCase {
         assertEquals(result, "AService.m1 BService.m2");
     }
 
-    @TestServerMethodTransactionAttribute(TestServerMethodTransactionAttributeType.NOT_SUPPORTED)
+    @TestTransactionAttribute(TestTransactionAttributeType.TX_NOT_SUPPORTED)
     public void testRunOnServerUsingTxNotSupported() {
         String result = serviceA.m1(Arrays.asList("BService.m2"));
         assertTrue(serviceRequestContext.isContainerManagedTransaction());
@@ -43,7 +43,7 @@ public class SkifServerTestCaseTest extends SkifServerTestCase {
         assertEquals(result, "AService.m1 [Tx:BService.m2]");
     }
 
-    @TestServerMethodTransactionAttribute(TestServerMethodTransactionAttributeType.REQUIRES_NEW)
+    @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
     public void testRunOnServerUsingTxRequiresNew() {
         String result = serviceA.m1(Arrays.asList("BService.m2"));
         assertTrue(serviceRequestContext.isContainerManagedTransaction());

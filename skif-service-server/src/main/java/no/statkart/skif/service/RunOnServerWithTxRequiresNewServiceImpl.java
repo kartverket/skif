@@ -10,7 +10,7 @@ import javax.ejb.TransactionAttributeType;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class ContainerManagedRequiresNewTransactionRunOnServerServiceImpl implements ContainerManagedRequiresNewTransactionRunOnServerService {
+public class RunOnServerWithTxRequiresNewServiceImpl implements RunOnServerWithTxRequiresNewService {
     @Inject
     Injector injector;
     @Override

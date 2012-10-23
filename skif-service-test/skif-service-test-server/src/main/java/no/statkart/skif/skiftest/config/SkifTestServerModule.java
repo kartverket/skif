@@ -10,8 +10,6 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleStrategyFactory;
-import no.statkart.skif.service.BeanManagedTransactionRunOnServerService;
-import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;

@@ -2,15 +2,13 @@ package no.statkart.skif.service.module.common;
 
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.mapper.IdentityMapper;
-import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.service.BeanManagedTransactionRunOnServerService;
-import no.statkart.skif.service.ContainerManagedNotSupportedTransactionRunOnServerService;
-import no.statkart.skif.service.ContainerManagedRequiresNewTransactionRunOnServerService;
+import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
+import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
+import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -30,9 +28,9 @@ public class RunOnServerRemoteServiceModule extends RemoteServiceModule {
 
     private static Collection<Class<? extends Object>> getList() {
         ArrayList<Class<?>> list = new ArrayList<Class<?>>();
-        list.add(ContainerManagedNotSupportedTransactionRunOnServerService.class);
-        list.add(ContainerManagedRequiresNewTransactionRunOnServerService.class);
-        list.add(BeanManagedTransactionRunOnServerService.class);
+        list.add(RunOnServerWithTxNotSupportedService.class);
+        list.add(RunOnServerWithTxRequiresNewService.class);
+        list.add(RunOnServerWithTxBeanManagedService.class);
 
         // TODO: Ta bort
         list.add(ContainerManagedTransactionRunOnServerService.class);

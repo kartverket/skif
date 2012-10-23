@@ -3,14 +3,11 @@ package no.statkart.skif.service.module.server;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.module.ModuleWithStrategy;
-import no.statkart.skif.service.BeanManagedTransactionRunOnServerService;
-import no.statkart.skif.service.ContainerManagedNotSupportedTransactionRunOnServerService;
-import no.statkart.skif.service.ContainerManagedRequiresNewTransactionRunOnServerService;
+import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
+import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
+import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
-import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
 import java.util.*;
@@ -31,9 +28,9 @@ public class RunOnServerServiceModule extends ServerServiceModule {
 
     private static Collection<Class<? extends Object>> getList() {
         ArrayList<Class<?>> list = new ArrayList<Class<?>>();
-        list.add(ContainerManagedNotSupportedTransactionRunOnServerService.class);
-        list.add(ContainerManagedRequiresNewTransactionRunOnServerService.class);
-        list.add(BeanManagedTransactionRunOnServerService.class);
+        list.add(RunOnServerWithTxNotSupportedService.class);
+        list.add(RunOnServerWithTxRequiresNewService.class);
+        list.add(RunOnServerWithTxBeanManagedService.class);
 
         // TODO: Ta denne bort
         list.add(ContainerManagedTransactionRunOnServerService.class);

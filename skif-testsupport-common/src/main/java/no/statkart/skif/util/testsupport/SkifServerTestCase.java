@@ -46,7 +46,7 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
         return clientInjector;
     }
 
-    private RunOnServerService getService(TestServerMethodTransactionAttributeType txType) {
+    private RunOnServerService getService(TestTransactionAttributeType txType) {
         return getClientInjector().getInstance(txType.getServiceClass());
     }
 
@@ -87,7 +87,7 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
     @Override
     public final void run(final IHookCallBack callBack, final ITestResult testResult) {
         Method testMethod = TestNGSupport.getMethod(callBack);
-        final TestServerMethodTransactionAttributeType txType = TestServerMethodTransactionAttributesLookup.getAnnotation(testMethod);
+        final TestTransactionAttributeType txType = TestTransactionAttributesLookup.getAnnotation(testMethod);
         final RunOnServerService runOnServerService = getService(txType);
         runOnServerService.run(new RunOnServerMethod() {
             @Override

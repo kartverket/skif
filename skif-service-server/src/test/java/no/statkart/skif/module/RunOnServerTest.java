@@ -25,7 +25,7 @@ public class RunOnServerTest {
         moduleBuilder.setSingleVmServerModuleClass(RunOnRemoteServerTestServerModule.class);
 
         final Injector injector = moduleBuilder.buildInjector();
-        final BeanManagedTransactionRunOnServerService service = injector.getInstance(BeanManagedTransactionRunOnServerService.class);
+        final RunOnServerWithTxBeanManagedService service = injector.getInstance(RunOnServerWithTxBeanManagedService.class);
 
 
         Object result = service.run(new RunOnServerMethod() {
@@ -42,7 +42,7 @@ public class RunOnServerTest {
 
     public void testBuildBeanManagedService() {
         final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
-        final BeanManagedTransactionRunOnServerService service = builder.buildBeanManagedService();
+        final RunOnServerWithTxBeanManagedService service = builder.buildBeanManagedService();
         Object result = service.run(new RunOnServerMethod() {
             @Inject
             @Named("modulename")
@@ -57,7 +57,7 @@ public class RunOnServerTest {
 
     public void testBuildContainerManagedNotSupportedTransactionService() {
         final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
-        final ContainerManagedNotSupportedTransactionRunOnServerService service = builder.buildContainerManagedNotSupportedTranactionService();
+        final RunOnServerWithTxNotSupportedService service = builder.buildContainerManagedNotSupportedTranactionService();
         Object result = service.run(new RunOnServerMethod() {
             @Inject
             @Named("modulename")
@@ -72,7 +72,7 @@ public class RunOnServerTest {
 
     public void testBuildContainerManagedRequiresNewTransactionService() {
         final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
-        final ContainerManagedRequiresNewTransactionRunOnServerService service = builder.buildContainerManagedRequiresNewTranactionService();
+        final RunOnServerWithTxRequiresNewService service = builder.buildContainerManagedRequiresNewTranactionService();
         Object result = service.run(new RunOnServerMethod() {
             @Inject
             @Named("modulename")
@@ -105,7 +105,7 @@ public class RunOnServerTest {
         final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
         Injector injector = Guice.createInjector(builder.buildModule());
 
-        final BeanManagedTransactionRunOnServerService service =injector.getInstance(BeanManagedTransactionRunOnServerService.class);
+        final RunOnServerWithTxBeanManagedService service =injector.getInstance(RunOnServerWithTxBeanManagedService.class);
 
         Object result = service.run(new RunOnServerMethod() {
             @Inject
@@ -125,7 +125,7 @@ public class RunOnServerTest {
         final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class, TestExtModule.class, TestExtEJBServiceChainProxyHandler.class);
         Injector injector = Guice.createInjector(builder.buildModule());
 
-        final BeanManagedTransactionRunOnServerService service =injector.getInstance(BeanManagedTransactionRunOnServerService.class);
+        final RunOnServerWithTxBeanManagedService service =injector.getInstance(RunOnServerWithTxBeanManagedService.class);
 
         Object result = service.run(new RunOnServerMethod() {
             @Inject
