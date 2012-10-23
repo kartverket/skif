@@ -148,9 +148,9 @@ public abstract class HibernateSessionFactoryBuilder {
 
     public HibernateSessionFactoryBuilder addResourceUsingAbsolutePathUseNextIndex(Class clazz, String hbmFilename) {
         nextOrderIndex++;
-        return addResourceUsingAbsolutePathUseOrderIndex(clazz, hbmFilename);
+        return addResourceUsingAbsolutePathUseSameIndex(clazz, hbmFilename);
     }
-    public HibernateSessionFactoryBuilder addResourceUsingAbsolutePathUseOrderIndex(Class clazz, String hbmFilename) {
+    public HibernateSessionFactoryBuilder addResourceUsingAbsolutePathUseSameIndex(Class clazz, String hbmFilename) {
         hbmResource.add(hbmFilename);
         if (BubbleObject.class.isAssignableFrom(clazz)) {
             createDependencyIndex(clazz);
