@@ -14,29 +14,12 @@ rem set GRADLE_HOME=C:\bin\gradle-1.1
 set ORG_GRADLE_PROJECT_WEBLOGIC_HOME=C:\bea_wls10.3.5
 
 
-
-@rem echo Definerer maskinnavn [optional]
-@rem set ORG_GRADLE_PROJECT_LOCALHOSTNAME=%COMPUTERNAME%.statkart.no
-
-@rem echo Definerer Maven Repository for utvikling [optional]
-@rem set ORG_GRADLE_PROJECT_MAVEN_REPO=http://skrivap92.statkart.no:8001/nexus/content/groups/public/
-
-@rem echo Definerer lokalt Nexus Maven Reposotory repo for offline utvikling [optional]
-@rem set ORG_GRADLE_PROJECT_MAVEN_REPO=http://localhost:8081/nexus/content/repositories/statkart/
-
-@rem echo Definerer Maven Repository for releases [optional]
-@rem set ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES=http://skrivap92.statkart.no:8001/nexus/content/repositories/releases/
-@rem set ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES_USERNAME=admin
-@rem set ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES_PASSWORD=admin123
-
-@rem echo Definerer Maven Repository for snapshots [optional]
-@rem set ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS=http://skrivap92.statkart.no:8001/nexus/content/repositories/snapshots/
-@rem set ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS_USERNAME=admin
-@rem set ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS_PASSWORD=admin123
-
-
 @rem Setup Perforce windows integrasjon (optional)
 @rem p4 set P4CLIENT=%USERNAME%-%COMPUTERNAME%
 @rem p4 set P4PORT=skrivap42:1666
 @rem p4 set P4USER=%USERNAME%
 
+@rem .NET plattform. MS_NET_HOME skal inneholde csc.exe og MS_SDK_HOME skal inneholde wsdl.exe og svcutil.exe
+@rem set MS_NET_HOME=C:\WINDOWS\Microsoft.NET\Framework\v3.5
+@rem set MS_SDK_HOME=C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin
+@rem set NUNIT_HOME=C:\Program Files\NUnit 2.5.2
