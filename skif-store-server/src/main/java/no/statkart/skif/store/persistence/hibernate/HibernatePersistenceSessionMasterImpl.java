@@ -373,13 +373,9 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId) {
-        T bubble = lookupInHibernateCache(bubbleId);
-        if (bubble != null) {
-            session().refresh(bubble);
-        } else {
-            bubble = get(bubbleId);
-        }
-        return bubble;
+        //TODO: På grunn av feilen beskrevet i SKIF-231 har vi valgt å ikke bruke refresh på session her inntil videre.
+        evict(bubbleId);
+        return get(bubbleId);
     }
 
     @Override
