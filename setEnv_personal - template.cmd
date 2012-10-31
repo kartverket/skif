@@ -2,6 +2,8 @@
 @rem SETTER BRUKER/MASKIN SPESEFIKKE ENVIRONMENT VARIABLE FOR HOVEDPROSJEKTET
 @rem
 
+mode con codepage select=1252
+
 @rem Java, Gradle
 set JAVA_HOME=C:\Program Files\Java\jdk1.6.0_30
 set GRADLE_HOME=C:\bin\gradle-1.0
