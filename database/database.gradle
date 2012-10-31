@@ -29,7 +29,7 @@ configureDatabasePlugin {
      * Toolset for SYSTEM-bruker
      */
     toolset(name: 'sa', type: 'oracle', prefix: 'sa') {
-        sqlTask('grant', sqlFile: 'src/main/sql/oracle/schema/GrantRole.sql')
+        sqlTask('grant', sqlFile: 'src/main/sql/oracle/schema/GrantRole.sql', description:'Denne må kjøres en gang før du får tilstrekkelige privilegier til å kjøre dbInit')
 
         properties = filterProperties
 
