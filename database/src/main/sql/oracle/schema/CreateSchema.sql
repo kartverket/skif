@@ -602,6 +602,46 @@ BEGIN
 END T_BubbleWithList;
 /
 
+create table BWLForBWL_h(
+  underBWLId number(19,0) not null,
+  bwlId number(19,0) not null,
+  tBegin              timestamp(6) not null,
+  tEnd                timestamp(6) not null,
+  tVersion            number (19,0) not null,
+  primary key(underBWLId, bwlId)
+);
+
+create view BWLForBWL as select * from BWLForBWL_h where snapshot_time.t_between(tBegin, tEnd)=1;
+CREATE OR REPLACE TRIGGER T_BWLForBWL INSTEAD OF INSERT OR UPDATE OR DELETE ON BWLForBWL
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF INSERTING THEN
+    INSERT INTO BWLForBWL_h
+        VALUES (:new.underBWLId, :new.bwlId, t_Trans, t_End, 1);
+
+  ELSIF UPDATING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO BWLForBWL_h VALUES (:old.underBWLId, :old.bwlId, :old.TBEGIN, t_Trans, :old.TVERSION);
+        UPDATE BWLForBWL_h SET TVERSION = :old.TVERSION+1
+        WHERE underBWLId = :new.underBWLId and bwlId = :new.bwlId and tEnd = t_End;
+     END IF;
+     UPDATE BWLForBWL_h SET UNDERBWLID=:new.underBWLId, bwlId=:new.bwlId, TBEGIN=t_Trans, TEND=t_End, TVERSION=TVERSION
+        WHERE underBWLId = :new.underBWLId and bwlId = :new.bwlId and tEnd = t_End;
+
+  ELSIF DELETING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO BWLForBWL_h
+           VALUES (:old.underBWLId, :old.bwlId, :old.TBEGIN, t_Trans, :old.TVERSION);
+     END IF;
+     DELETE FROM BWLForBWL_h
+        WHERE underBWLId = :old.underBWLId and bwlId = :old.bwlId AND tEnd = t_End;
+
+  END IF;
+END T_BWLForBWL;
+/
 
 create table BubbleWithListComponent_h (
   id number(19, 0) not null,
@@ -644,4 +684,46 @@ BEGIN
 
   END IF;
 END T_BubbleWithListComponent;
+/
+
+create table BubbleWithListComponent2_h (
+  id number(19, 0) not null,
+  componentName varchar2(255 BYTE),
+  bubblewithlistid number(19, 0),
+  tBegin              timestamp(6) not null,
+  tEnd                timestamp(6) not null,
+  tVersion            number (19,0) not null,
+  primary key (id, tend)
+);
+
+create view BubbleWithListComponent2 as select * from BubbleWithListComponent2_h where snapshot_time.t_between(tBegin, tEnd)=1;
+CREATE OR REPLACE TRIGGER T_BubbleWithListComponent2 INSTEAD OF INSERT OR UPDATE OR DELETE ON BubbleWithListComponent2
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF INSERTING THEN
+    INSERT INTO BubbleWithListComponent2_h
+        VALUES (:new.id, :new.componentname, :new.bubblewithlistid, t_Trans, t_End, 1);
+
+  ELSIF UPDATING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO BubbleWithListComponent2_h VALUES (:old.id, :old.componentname, :old.bubblewithlistid, :old.TBEGIN, t_Trans, :old.TVERSION);
+        UPDATE BubbleWithListComponent2_h SET TVERSION = :old.TVERSION+1
+        WHERE id = :new.id and tEnd = t_End;
+     END IF;
+     UPDATE BubbleWithListComponent2_h SET ID=:new.ID, componentname=:new.componentname, bubblewithlistid=:new.bubblewithlistid, TBEGIN=t_Trans, TEND=t_End, TVERSION=TVERSION
+        WHERE id = :new.id and tEnd = t_End;
+
+  ELSIF DELETING THEN
+     IF :old.tBegin < t_Trans THEN
+        INSERT INTO BubbleWithListComponent2_h
+           VALUES (:old.ID, :old.componentname, :old.bubblewithlistid, :old.TBEGIN, t_Trans, :old.TVERSION);
+     END IF;
+     DELETE FROM BubbleWithListComponent2_h
+        WHERE id = :old.id AND tEnd = t_End;
+
+  END IF;
+END T_BubbleWithListComponent2;
 /

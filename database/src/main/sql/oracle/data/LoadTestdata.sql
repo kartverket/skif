@@ -158,5 +158,10 @@ insert into Rettsstiftelse(id, class) values (2105, 'Pengeheftelse');
 insert into Rettsstiftelse_Person_Kobling(rettsstiftelseId, rolle, personId) values (2001, 'RETTIGHETSHAVER_AKTIV',1001 );
 
 insert into BubbleWithList values (2201, 'text', null, null, null);
+insert into BubbleWithList values (2204, 'text2', null, null, null);
+
+insert into BwlForBwl values (2204, 2201, null, null, null);
 
 insert into BubbleWithListComponent values (2202, 'component for 2201', 2201, 1, null, null, null);
+
+insert into BubbleWithListComponent2 values (2203, 'component for 2201', 2201, null, null, null);

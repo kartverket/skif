@@ -19,6 +19,9 @@ public class BubbleWithList extends AbstractBubbleObject implements StoreTestBub
     private String text;
 
     private Set<BubbleWithListComponent> components;
+    private Set<BubbleWithListComponent2> components2;
+
+    private Set<BubbleWithListId<?>> otherBWLIds;
 
     public BubbleWithList() {
     }
@@ -52,5 +55,21 @@ public class BubbleWithList extends AbstractBubbleObject implements StoreTestBub
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Set<BubbleWithListId<?>> getOtherBWLIds() {
+        return otherBWLIds;
+    }
+
+    public void setOtherBWLIds(Set<BubbleWithListId<?>> otherBWLIds) {
+        this.otherBWLIds = otherBWLIds;
+    }
+
+    public Set<BubbleWithListComponent2> getComponents2() {
+        return components2;
+    }
+
+    public void setComponents2(Set<BubbleWithListComponent2> components2) {
+        this.components2 = components2;
     }
 }

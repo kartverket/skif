@@ -213,7 +213,8 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(AggregertObjekt.class)
                 .addResource(Person.class)
                 .addResource(Rettsstiftelse.class)
-                .addResource(BubbleWithList.class);
+                .addResource(BubbleWithList.class)
+                ;
 
 
 
