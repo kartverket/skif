@@ -17,7 +17,7 @@ import static org.testng.Assert.assertFalse;
  * @author Henrik Fredholm
  * @since 2.1
  */
-@Test
+@Test(groups = "singlevm-required")
 public class ResourceManagerUsingJDBCOnlyTest {
 
     public void test() throws SQLException {
