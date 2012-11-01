@@ -13,13 +13,13 @@ public class Foo extends AbstractBubbleObject implements StoreTestBubble {
 
     private long nr;
     private String navn;
-    private Timestamp beginLifespanVersion;
-    private Timestamp endLifespanVersion;
+    private Timestamp oppdateringsdato;
+    private Timestamp sluttdato;
     private FooEntityComponent fooEntityComponent;
     public boolean sameVersion(Foo o) {
         if (!this.getId().getValue().equals(o.getId().getValue())) return false;
-        if (!this.getBeginLifespanVersion().equals(o.getBeginLifespanVersion())) return false;
-        if (!this.getEndLifespanVersion().equals(o.getEndLifespanVersion())) return false;
+        if (!this.getOppdateringsdato().equals(o.getOppdateringsdato())) return false;
+        if (!this.getSluttdato().equals(o.getSluttdato())) return false;
         return true;
     }
 
@@ -44,20 +44,20 @@ public class Foo extends AbstractBubbleObject implements StoreTestBubble {
         this.nr = nr;
     }
 
-    public Timestamp getBeginLifespanVersion() {
-        return beginLifespanVersion;
+    public Timestamp getOppdateringsdato() {
+        return oppdateringsdato;
     }
 
-    public void setBeginLifespanVersion(Timestamp beginLifespanVersion) {
-        this.beginLifespanVersion = beginLifespanVersion;
+    public void setOppdateringsdato(Timestamp oppdateringsdato) {
+        this.oppdateringsdato = oppdateringsdato;
     }
 
-    public Timestamp getEndLifespanVersion() {
-        return endLifespanVersion;
+    public Timestamp getSluttdato() {
+        return sluttdato;
     }
 
-    public void setEndLifespanVersion(Timestamp endLifespanVersion) {
-        this.endLifespanVersion = endLifespanVersion;
+    public void setSluttdato(Timestamp sluttdato) {
+        this.sluttdato = sluttdato;
     }
 
     public FooEntityComponent getFooEntityComponent() {

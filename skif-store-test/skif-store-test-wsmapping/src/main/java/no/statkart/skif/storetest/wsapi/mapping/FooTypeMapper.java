@@ -16,8 +16,8 @@ public class FooTypeMapper extends StoreTestBubbleTypeMapper<no.statkart.skif.st
     public void mapDomainObject(Foo source, no.statkart.skif.storetest.wsapi.domain.demo.Foo target) {
         super.mapDomainObject(source, target);
         
-        target.setBeginLifespanVersion(map.d2w(source.getBeginLifespanVersion()));
-        target.setEndLifespanVersion(map.d2w(source.getEndLifespanVersion()));
+        target.setOppdateringsdato(map.d2w(source.getOppdateringsdato()));
+        target.setSluttdato(map.d2w(source.getSluttdato()));
         target.setNavn(map.d2w(source.getNavn()));
         target.setNr(map.d2w(source.getNr()));
     }
@@ -26,8 +26,8 @@ public class FooTypeMapper extends StoreTestBubbleTypeMapper<no.statkart.skif.st
     public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.demo.Foo source, Foo target) {
         super.mapWsapiObject(source, target);
 
-        target.setBeginLifespanVersion(map.w2d(source.getBeginLifespanVersion()));
-        target.setEndLifespanVersion(map.w2d(source.getEndLifespanVersion()));
+        target.setOppdateringsdato(map.w2d(source.getOppdateringsdato()));
+        target.setSluttdato(map.w2d(source.getSluttdato()));
         target.setNavn(map.w2d(source.getNavn()));
         target.setNr(map.w2d(source.getNr()));
     }

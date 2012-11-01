@@ -57,7 +57,7 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 
         BubbleWithList bubbleWithList = store.get(new BubbleWithListId<BubbleWithList>(2201L));
         for (BubbleWithListComponent bubbleWithListComponent : bubbleWithList.getComponents()) {
-            Assert.assertEquals(bubbleWithListComponent.gettVersion(), 1);
+            Assert.assertEquals(bubbleWithListComponent.getVersjonId(), 1);
         }
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
@@ -114,7 +114,7 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 
         BubbleWithList bubbleWithList = store.get(new BubbleWithListId<BubbleWithList>(2201L));
         for (BubbleWithListComponent bubbleWithListComponent : bubbleWithList.getComponents()) {
-            Assert.assertEquals(bubbleWithListComponent.gettVersion(), 1);
+            Assert.assertEquals(bubbleWithListComponent.getVersjonId(), 1);
         }
     }
 
@@ -148,7 +148,7 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 
         BubbleWithList bubbleWithList = store.get(new BubbleWithListId<BubbleWithList>(2201L));
         for (BubbleWithListComponent bubbleWithListComponent : bubbleWithList.getComponents()) {
-            Assert.assertEquals(bubbleWithListComponent.gettVersion(), 1);
+            Assert.assertEquals(bubbleWithListComponent.getVersjonId(), 1);
         }
 
         //Fjern nr 2 slik at vi kan kjøre tester på nytt

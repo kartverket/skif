@@ -37,10 +37,10 @@ public class HistTestServiceTest extends StoreTestTestCase {
         FooId<?> fooId = fooIds.iterator().next();
         assertEquals(fooId.getSnapshotVersion(), snapshotVersion);
 
-        // Ta utgangspunkt i beginLifespanVersion og sjekk at vi finner samme foo på nytt
+        // Ta utgangspunkt i oppdateringsdato og sjekk at vi finner samme foo på nytt
         Foo foo = store.get(fooId);
         assertEquals(foo.getNavn(), "KART-VEIEN");
-        Set<FooId<?>> fooIds2 = histTestService.findFooIdsForNavn("KART-VEIEN", SnapshotVersion.createInstance(foo.getBeginLifespanVersion()));
+        Set<FooId<?>> fooIds2 = histTestService.findFooIdsForNavn("KART-VEIEN", SnapshotVersion.createInstance(foo.getOppdateringsdato()));
         assertEquals(fooIds2.size(), 1);
         FooId<?> fooId2 = fooIds2.iterator().next();
         Foo foo2 = store.get(fooId2);
