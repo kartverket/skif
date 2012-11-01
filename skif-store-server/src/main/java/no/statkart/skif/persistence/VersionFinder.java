@@ -26,11 +26,11 @@ public class VersionFinder {
         List<I> retur = new ArrayList<I>();
 
         String tabellnavn = finnTabellnavnForId(bubbleId);
-        String sql = "select id, tBegin from " + tabellnavn +
+        String sql = "select id, oppdateringsdato from " + tabellnavn +
                 " where id = ? and " +
-                "((? < tEnd and tEnd <= ?) " +                     // intervalStartValue < tEnd <= endInterval
-                "or (? <= tBegin and tBegin < ?) " +              // intervalStartValue <= tBegin < endInterval
-                "or (tBegin < ? and ? < tEnd))";                  // tBegin < intervalStartValue and intervalEndValue < tEnd
+                "((? < sluttdato and sluttdato <= ?) " +                     // intervalStartValue < sluttdato <= endInterval
+                "or (? <= oppdateringsdato and oppdateringsdato < ?) " +              // intervalStartValue <= oppdateringsdato < endInterval
+                "or (oppdateringsdato < ? and ? < sluttdato))";                  // oppdateringsdato < intervalStartValue and intervalEndValue < sluttdato
 
 
         Timestamp intervalStartValue = getTimestampValue(start);

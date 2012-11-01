@@ -11,7 +11,7 @@ END SNAPSHOT_TIME;
 
 CREATE OR REPLACE PACKAGE BODY SNAPSHOT_TIME
 As
-    -- Betegner timestamp for gjeldende snapshot versjon av objektet. Kan betegnes som den versjonen som er 'levende'. Settes til tEnd på levende snapshot.
+    -- Betegner timestamp for gjeldende snapshot versjon av objektet. Kan betegnes som den versjonen som er 'levende'. Settes til sluttdato på levende snapshot.
     t_Current TIMESTAMP := SNAPSHOT_TIME.To_T('9999-01-01 00:00:00.00');
 
     -- initialiserer t slik at man får oppdaterte data i views som standard (se T_Between())

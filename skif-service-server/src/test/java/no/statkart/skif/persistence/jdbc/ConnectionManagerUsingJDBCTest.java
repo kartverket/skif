@@ -209,7 +209,7 @@ public class ConnectionManagerUsingJDBCTest {
 
         try {
             unwrappedConnection = forSnapshotVersion.reserve();
-            preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and tversion = ?");
+            preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?");
             preparedStatement.setString(1, unavn);
             preparedStatement.setInt(2, 101);
             preparedStatement.setLong(3, 2);
@@ -239,7 +239,7 @@ public class ConnectionManagerUsingJDBCTest {
             try {
                 if (unwrappedConnection != null) {
                     //resett etter testen.
-                    preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and tversion = ?");
+                    preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?");
                     preparedStatement.setString(1, "GAMMELVEIEN");
                     preparedStatement.setInt(2, 101);
                     preparedStatement.setLong(3, 2);
@@ -279,7 +279,7 @@ public class ConnectionManagerUsingJDBCTest {
     private String getNavn(Connection unwrappedConnection, int id, int version) throws SQLException {
         String retNavn = null;
         PreparedStatement preparedStatement;
-        preparedStatement = unwrappedConnection.prepareStatement("select * from foo_h where id = ? and tversion = ?");
+        preparedStatement = unwrappedConnection.prepareStatement("select * from foo_h where id = ? and versjonId = ?");
         preparedStatement.setInt(1, id);
         preparedStatement.setInt(2, version);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -312,7 +312,7 @@ public class ConnectionManagerUsingJDBCTest {
         Connection unwrappedConnection = null;
         try {
             unwrappedConnection = forSnapshotVersion.reserve();
-            preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and tversion = ?");
+            preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?");
             preparedStatement.setString(1, unavn);
             preparedStatement.setInt(2, 101);
             preparedStatement.setLong(3, 2);
@@ -330,7 +330,7 @@ public class ConnectionManagerUsingJDBCTest {
                 if (unwrappedConnection != null) {
                     int updated = 0;
                      //resett for andre tester.....
-                    preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and tversion = ?");
+                    preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?");
                     preparedStatement.setString(1, "GAMMELVEIEN");
                     preparedStatement.setInt(2, 101);
                     preparedStatement.setInt(3, 2);

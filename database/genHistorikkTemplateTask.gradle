@@ -68,7 +68,7 @@ task genHistorikkTemplate(description: 'Genererer PLSQL template script for till
         def sql = groovy.sql.Sql.newInstance(config.oracleConvention.url, config.oracleConvention.credentials.username, config.oracleConvention.credentials.password, config.oracleConvention.driver)
         println("connected to source database: ${sql.connection.metaData.URL} [${sql.connection.metaData.userName}]")
 
-        def historikkColumNames = [TBEGIN: 'tBegin', TEND: 'tEnd', TVERSION: 'tVersion']
+        def historikkColumNames = [oppdateringsdato: 'oppdateringsdato', sluttdato: 'sluttdato', versjonId: 'versjonId']
         def ignoredColumnNames = config.ignoredColumnNames
 
         def findTableNamesForUser = { username ->
@@ -188,9 +188,9 @@ task genHistorikkTemplate(description: 'Genererer PLSQL template script for till
                 }
             }
 
-            out.write "\t\"${historikkColumNames.TBEGIN}\" TIMESTAMP(6) DEFAULT sysdate NOT NULL,\n"
-            out.write "\t\"${historikkColumNames.TEND}\" TIMESTAMP(6) DEFAULT timestamp'9999-01-01 00:00:00.00' NOT NULL,\n"
-            out.write "\t\"${historikkColumNames.TVERSION}\" NUMBER (19,0) DEFAULT 0 NOT NULL\n"
+            out.write "\t\"${historikkColumNames.oppdateringsdato}\" TIMESTAMP(6) DEFAULT sysdate NOT NULL,\n"
+            out.write "\t\"${historikkColumNames.sluttdato}\" TIMESTAMP(6) DEFAULT timestamp'9999-01-01 00:00:00.00' NOT NULL,\n"
+            out.write "\t\"${historikkColumNames.versjonId}\" NUMBER (19,0) DEFAULT 0 NOT NULL\n"
             out.write "); \n"
 
             //primary key definition
@@ -200,7 +200,7 @@ task genHistorikkTemplate(description: 'Genererer PLSQL template script for till
             println "MAP ${sourceTableSchema}.${sourceTableName}, TARGET @regina_db_schema@.${sourceTableName}, KEYCOLS (${pk.join(', ')});"
 
 
-            pk << historikkColumNames.TEND //TEND part of PK
+            pk << historikkColumNames.sluttdato //sluttdato part of PK
             if (!pk.isEmpty()) {
                 out.write '\n\n\n'
                 out.write "ALTER TABLE \"${tableName}\" \nADD CONSTRAINT \"C_PK_${tableName}\" PRIMARY KEY \n"
@@ -243,9 +243,9 @@ task genHistorikkTemplate(description: 'Genererer PLSQL template script for till
             //liste av kolonner som skal kopieres over.
             out.write( allColumnNames.collect {
                 switch (it.toUpperCase()) {
-                    case 'TBEGIN': return "timestamp'@DATA_CONVERT_TIMESTAMP@'"  //felles tidspunkt for initierte/konverterte historiske data
-                    case 'TEND': return "timestamp'9999-01-01 00:00:00.00'"
-                    case 'TVERSION': return '1'
+                    case 'oppdateringsdato': return "timestamp'@DATA_CONVERT_TIMESTAMP@'"  //felles tidspunkt for initierte/konverterte historiske data
+                    case 'sluttdato': return "timestamp'9999-01-01 00:00:00.00'"
+                    case 'versjonId': return '1'
                     default: return it
                 }
             }.join(', \n\t'))
@@ -273,7 +273,7 @@ task genHistorikkTemplate(description: 'Genererer PLSQL template script for till
             out.write columnNames.collect{"   \"${it}\""}.join(',\n')
             out.write "\n) AS SELECT \n"
             out.write columnNames.collect{"   \"${it}\""}.join(',\n')
-            out.write "\n FROM \"${viewName}_H\" WHERE snapshot_time.T_Between(\"${historikkColumNames.TBEGIN}\", \"${historikkColumNames.TEND}\") = 1;"
+            out.write "\n FROM \"${viewName}_H\" WHERE snapshot_time.T_Between(\"${historikkColumNames.oppdateringsdato}\", \"${historikkColumNames.sluttdato}\") = 1;"
 
             out.flush()
         }
@@ -297,33 +297,33 @@ CREATE OR REPLACE TRIGGER "T_${viewName}"\
         VALUES (${
         columnNames.collect {
           switch( it.toUpperCase() ) {
-            case 'TBEGIN': return "t_Trans"
-            case 'TEND': return 't_End'       //defaults to value defined for table
-            case 'TVERSION': return 1         //nye objekter inserted via view får version=1 (default 0)
+            case 'oppdateringsdato': return "t_Trans"
+            case 'sluttdato': return 't_End'       //defaults to value defined for table
+            case 'versjonId': return 1         //nye objekter inserted via view får version=1 (default 0)
             default: return ":new.\"${it}\""
           }
         }.join(', ')
       });
 
   ELSIF UPDATING THEN
-     IF :old."${historikkColumNames.TBEGIN}" < t_Trans THEN
+     IF :old."${historikkColumNames.oppdateringsdato}" < t_Trans THEN
         INSERT INTO "${hTableName}" VALUES (
            ${
                 columnNames.collect {
                     switch (it.toUpperCase()) {
-                        case 'TEND': return 't_Trans'
+                        case 'sluttdato': return 't_Trans'
                         default: ":old.\"${it}\""
                     }
                 }.join(', \n           ')
             }
            )
         ;
-        UPDATE "${hTableName}" SET "${historikkColumNames.TVERSION}" = :old."${historikkColumNames.TVERSION}" + 1
+        UPDATE "${hTableName}" SET "${historikkColumNames.versjonId}" = :old."${historikkColumNames.versjonId}" + 1
         WHERE
            ${
                 pkColumns.collect {
                     switch (it.toUpperCase()) {
-                        case 'TEND': return "\"${historikkColumNames.TEND}\" = t_End"
+                        case 'sluttdato': return "\"${historikkColumNames.sluttdato}\" = t_End"
                         default: return "\"${it}\" = :new.\"${it}\""
                     }
                 }.join('\n           AND ')
@@ -335,9 +335,9 @@ CREATE OR REPLACE TRIGGER "T_${viewName}"\
            ${
                 columnNames.collect {
                     switch (it.toUpperCase()) {
-                        case 'TBEGIN': return "\"${it}\"=t_Trans"
-                        case 'TEND': return "\"${it}\"=t_End"
-                        case 'TVERSION': return "\"${historikkColumNames.TVERSION}\"=\"${historikkColumNames.TVERSION}\""
+                        case 'oppdateringsdato': return "\"${it}\"=t_Trans"
+                        case 'sluttdato': return "\"${it}\"=t_End"
+                        case 'versjonId': return "\"${historikkColumNames.versjonId}\"=\"${historikkColumNames.versjonId}\""
                         default: return "\"${it}\" = :new.\"${it}\""
                     }
                 }.join(', \n           ')
@@ -346,7 +346,7 @@ CREATE OR REPLACE TRIGGER "T_${viewName}"\
            ${
                 pkColumns.collect {
                     switch (it.toUpperCase()) {
-                        case 'TEND': return "\"${historikkColumNames.TEND}\" = t_End"
+                        case 'sluttdato': return "\"${historikkColumNames.sluttdato}\" = t_End"
                         default: return "\"${it}\" = :new.\"${it}\""
                     }
                 }.join('\n           AND ')
@@ -354,13 +354,13 @@ CREATE OR REPLACE TRIGGER "T_${viewName}"\
         ;
 
   ELSIF DELETING THEN
-     IF :old."${historikkColumNames.TBEGIN}" < t_Trans THEN
+     IF :old."${historikkColumNames.oppdateringsdato}" < t_Trans THEN
         INSERT INTO "${hTableName}"
            VALUES (
            ${
                 columnNames.collect {
                     switch (it.toUpperCase()) {
-                        case 'TEND': return 't_Delete'
+                        case 'sluttdato': return 't_Delete'
                         default: return ":old.\"${it}\""
                     }
                 }.join(', \n           ')
@@ -372,9 +372,9 @@ CREATE OR REPLACE TRIGGER "T_${viewName}"\
            ${
                 columnNames.collect {
                     switch (it.toUpperCase()) {
-                        case 'TBEGIN': return 't_Delete'
-                        case 'TEND': return 't_Trans'
-                        case 'TVERSION': return ":old.\"${historikkColumNames.TVERSION}\" + 1"
+                        case 'oppdateringsdato': return 't_Delete'
+                        case 'sluttdato': return 't_Trans'
+                        case 'versjonId': return ":old.\"${historikkColumNames.versjonId}\" + 1"
                         default: return ":old.\"${it}\""
                     }
                 }.join(', \n           ')
@@ -387,7 +387,7 @@ CREATE OR REPLACE TRIGGER "T_${viewName}"\
            ${
                 pkColumns.collect {
                     switch (it.toUpperCase()) {
-                        case 'TEND': return "\"${historikkColumNames.TEND}\" = t_End"
+                        case 'sluttdato': return "\"${historikkColumNames.sluttdato}\" = t_End"
                         default: return "\"${it}\" = :old.\"${it}\""
                     }
                 }.join('\n           AND ')
@@ -445,7 +445,7 @@ END "T_${viewName}"; """
 
 
             //trigger
-            def pkColumns = findPKColumnNames(userName, tableName) + [historikkColumNames.TEND]
+            def pkColumns = findPKColumnNames(userName, tableName) + [historikkColumNames.sluttdato]
             writeTriggersForTable(viewDDL, "${tableName}", "${tableName}_H", columnNames, pkColumns)
 
 

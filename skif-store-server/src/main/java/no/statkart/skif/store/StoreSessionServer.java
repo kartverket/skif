@@ -303,7 +303,7 @@ public class StoreSessionServer extends AbstractStoreSession {
      * @return låst objekt
      */
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
-        // TODO check tEnd
+        // TODO check sluttdato
         StoreEntry storeEntry = storeCache.get(bubbleId);
         if (storeEntry != null) {
             // Entry finnes, må sjekk om objekt er låst på underliggende nivå

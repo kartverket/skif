@@ -12,32 +12,32 @@ public class BubbleWithListComponent2 implements Serializable{
     private Long id;
     private String componentName;
     private BubbleWithList bubbleWithList;
-    private Date tBegin;
-    private Date tEnd;
-    private long tVersion;
+    private Date oppdateringsdato;
+    private Date sluttdato;
+    private long versjonId;
 
-    public Date gettBegin() {
-        return tBegin;
+    public Date getOppdateringsdato() {
+        return oppdateringsdato;
     }
 
-    public void settBegin(Date tBegin) {
-        this.tBegin = tBegin;
+    public void setOppdateringsdato(Date oppdateringsdato) {
+        this.oppdateringsdato = oppdateringsdato;
     }
 
-    public Date gettEnd() {
-        return tEnd;
+    public Date getSluttdato() {
+        return sluttdato;
     }
 
-    public void settEnd(Date tEnd) {
-        this.tEnd = tEnd;
+    public void setSluttdato(Date sluttdato) {
+        this.sluttdato = sluttdato;
     }
 
-    public long gettVersion() {
-        return tVersion;
+    public long getVersjonId() {
+        return versjonId;
     }
 
-    public void settVersion(long tVersion) {
-        this.tVersion = tVersion;
+    public void setVersjonId(long versjonId) {
+        this.versjonId = versjonId;
     }
 
     public BubbleWithList getBubbleWithList() {

@@ -43,9 +43,9 @@
         <many-to-one name="bubbleWithList" class="no.statkart.skif.storetest.domain.demo.BubbleWithList"
                      column="bubbleWithListId" not-null="true"/>
 
-        <property name="tBegin" column="tBegin" type="timestamp" update="false" insert="false"/>
-        <property name="tEnd" column="tEnd" type="timestamp" update="false" insert="false"/>
-        <property name="tVersion" column="tVersion" type="long" update="false" insert="false"/>
+        <property name="oppdateringsdato" type="timestamp" update="false" insert="false"/>
+        <property name="sluttdato" type="timestamp" update="false" insert="false"/>
+        <property name="versjonId" type="long" update="false" insert="false"/>
 
 
         <property name="aEnumKodeId" type="Demo_AEnumKodeIdType"/>
@@ -62,9 +62,9 @@
         <many-to-one name="bubbleWithList" class="no.statkart.skif.storetest.domain.demo.BubbleWithList"
                      column="bubbleWithListId" not-null="true"/>
 
-        <property name="tBegin" column="tBegin" type="timestamp" update="false" insert="false"/>
-        <property name="tEnd" column="tEnd" type="timestamp" update="false" insert="false"/>
-        <property name="tVersion" column="tVersion" type="long" update="false" insert="false"/>
+        <property name="oppdateringsdato" type="timestamp" update="false" insert="false"/>
+        <property name="sluttdato" type="timestamp" update="false" insert="false"/>
+        <property name="versjonId" type="long" update="false" insert="false"/>
 
     </class>
 
