@@ -13,7 +13,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId;
  * @since 2.0
  */
 public class SEnumKodeId extends StoreTestEnumKodeId<SEnumKode> {
-    private static EnumKodeSupport<SEnumKode, SEnumKodeId, StoreTestKodelisteString, StoreTestKodelisteStringId<StoreTestKodelisteString>> kodeSupport = new EnumKodeSupport<SEnumKode, SEnumKodeId, StoreTestKodelisteString, StoreTestKodelisteStringId<StoreTestKodelisteString>>(SEnumKodeId.class, new StoreTestKodelisteStringId("TestSEnumKodeliste"), "DemoMsg");
+    private static EnumKodeSupport<SEnumKode, SEnumKodeId, StoreTestKodelisteString, StoreTestKodelisteStringId<StoreTestKodelisteString>> kodeSupport = new EnumKodeSupport<SEnumKode, SEnumKodeId, StoreTestKodelisteString, StoreTestKodelisteStringId<StoreTestKodelisteString>>(SEnumKodeId.class, new StoreTestKodelisteStringId("TestSEnumKodeliste"), "no.statkart.skif.storetest.lokalisering.DemoKodeMsg");
 
     public static StoreTestKodelisteStringId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static SEnumKodeId IkkeOppgittId = define(0, "IkkeOppgitt", "-");

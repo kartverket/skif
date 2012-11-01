@@ -4,10 +4,13 @@ import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Localizable;
 import no.statkart.skif.store.LocalizedFields;
+import org.apache.commons.lang3.LocaleUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Superklasse for Koder.
@@ -82,14 +85,19 @@ public abstract class Kode extends AbstractBubbleObject implements Localizable{
     // TODO: Denne bør ligge i eget interface
     public void localize(String localeString) {
         localizedFields = null;
-        if (localeString != null) {
-            localizedFields = localizedFieldsMap.get(localeString);
-            if (localizedFields == null) {
-                localizedFields = new LocalizedFields();
+        ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
+        Locale locale = LocaleUtils.toLocale(localeString);
+        LocalizedFields fields;
+        while (true) {
+            fields = localizedFieldsMap.get(locale != null ? locale.toString() : "");
+
+            if (fields != null || locale == null) {
+                break;
             }
-        } else {
-            localizedFields = new LocalizedFields();
+
+            locale = control.getFallbackLocale("", locale); // Første parameter kan ikke være null, men det ser ikke ut til at den brukes til noe
         }
+        localizedFields = fields != null ? fields : new LocalizedFields();
     }
 
     public void updateLocalized(String localeString) {

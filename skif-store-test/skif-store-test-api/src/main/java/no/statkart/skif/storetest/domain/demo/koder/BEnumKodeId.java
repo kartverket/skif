@@ -10,7 +10,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
  * @since 2.1
  */
 public class BEnumKodeId extends StoreTestEnumKodeId<BEnumKode> {
-    private static StoreTestEnumKodeSupport<BEnumKode, BEnumKodeId> kodeSupport = new StoreTestEnumKodeSupport<BEnumKode, BEnumKodeId>(BEnumKodeId.class, 2, "demoKodeMsg");
+    private static StoreTestEnumKodeSupport<BEnumKode, BEnumKodeId> kodeSupport = new StoreTestEnumKodeSupport<BEnumKode, BEnumKodeId>(BEnumKodeId.class, 2, "no.statkart.skif.storetest.lokalisering.DemoKodeMsg");
 
     public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static BEnumKodeId IkkeOppgittId = define(0, "IkkeOppgitt", "-");

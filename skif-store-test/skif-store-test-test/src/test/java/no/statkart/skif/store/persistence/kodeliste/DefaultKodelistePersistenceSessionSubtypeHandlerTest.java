@@ -112,12 +112,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             AEnumKode aEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KodeAId);
             assertEquals(aEnumKodeA.getId(), AEnumKodeId.KodeAId);
             assertEquals(aEnumKodeA.getKodelisteId(), AEnumKodeId.KODELISTE_ID);
-            assertEquals(aEnumKodeA.getBeskrivelse(), "AEnumKode.KodeA.beskrivelse (no_NO)");
+            assertEquals(aEnumKodeA.getBeskrivelse(), "Kode A er den første av AKodene");
 
             AEnumKode aEnumKodeB = persistenceSessionManager.get(AEnumKodeId.KodeBId);
             assertEquals(aEnumKodeB.getId(), AEnumKodeId.KodeBId);
             assertEquals(aEnumKodeB.getKodelisteId(), AEnumKodeId.KODELISTE_ID);
-            assertEquals(aEnumKodeB.getBeskrivelse(), "AEnumKode.KodeB.beskrivelse (no_NO)");
+            assertEquals(aEnumKodeB.getBeskrivelse(), "Kode B er den andre av AKodene");
         } finally {
             persistenceSessionManager.close();
         }
@@ -132,12 +132,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             BEnumKode bEnumKodeA = persistenceSessionManager.get(BEnumKodeId.KodeAId);
             assertEquals(bEnumKodeA.getId(), BEnumKodeId.KodeAId);
             assertEquals(bEnumKodeA.getKodelisteId(), BEnumKodeId.KODELISTE_ID);
-            assertEquals(bEnumKodeA.getBeskrivelse(), "BEnumKode.KodeA.beskrivelse (no_NO)");
+            assertEquals(bEnumKodeA.getBeskrivelse(), "Kode A er den første av BKodene");
 
             BEnumKode bEnumKodeB = persistenceSessionManager.get(BEnumKodeId.KodeBId);
             assertEquals(bEnumKodeB.getId(), BEnumKodeId.KodeBId);
             assertEquals(bEnumKodeB.getKodelisteId(), BEnumKodeId.KODELISTE_ID);
-            assertEquals(bEnumKodeB.getBeskrivelse(), "BEnumKode.KodeB.beskrivelse (no_NO)");
+            assertEquals(bEnumKodeB.getBeskrivelse(), "Kode B er den andre av BKodene");
         } finally {
             persistenceSessionManager.close();
         }
@@ -152,12 +152,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             SEnumKode sEnumKodeA = persistenceSessionManager.get(SEnumKodeId.KodeAId);
             assertEquals(sEnumKodeA.getId(), SEnumKodeId.KodeAId);
             assertEquals(sEnumKodeA.getKodelisteId(), SEnumKodeId.KODELISTE_ID);
-            assertEquals(sEnumKodeA.getBeskrivelse(), "SEnumKode.KodeA.beskrivelse (no_NO)");
+            assertEquals(sEnumKodeA.getBeskrivelse(), "Kode A er den første av SKodene");
 
             SEnumKode sEnumKodeB = persistenceSessionManager.get(SEnumKodeId.KodeBId);
-            assertEquals(sEnumKodeA.getId(), SEnumKodeId.KodeAId);
-            assertEquals(sEnumKodeA.getKodelisteId(), SEnumKodeId.KODELISTE_ID);
-            assertEquals(sEnumKodeA.getBeskrivelse(), "SEnumKode.KodeA.beskrivelse (no_NO)");
+            assertEquals(sEnumKodeB.getId(), SEnumKodeId.KodeBId);
+            assertEquals(sEnumKodeB.getKodelisteId(), SEnumKodeId.KODELISTE_ID);
+            assertEquals(sEnumKodeB.getBeskrivelse(), "Kode B er den andre av SKodene");
         } finally {
             persistenceSessionManager.close();
         }
@@ -172,7 +172,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             AEnumKode aEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KodeAId.asSnapshotVersionOld());
             assertEquals(aEnumKodeA.getId(), AEnumKodeId.KodeAId.asSnapshotVersionOld());
             assertEquals(aEnumKodeA.getKodelisteId(), AEnumKodeId.KODELISTE_ID.asSnapshotVersionOld());
-            assertEquals(aEnumKodeA.getBeskrivelse(), "AEnumKode.KodeA.beskrivelse (no_NO)");
+            assertEquals(aEnumKodeA.getBeskrivelse(), "Kode A er den første av AKodene");
         } finally {
             persistenceSessionManager.close();
         }
@@ -185,10 +185,10 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 
         try {
             AEnumKode aEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KodeAId);
-            assertEquals(aEnumKodeA.getBeskrivelse(), "AEnumKode.KodeA.beskrivelse (no_NO_NY)");
+            assertEquals(aEnumKodeA.getBeskrivelse(), "Kode A er den fyrste av AKodane");
 
             AEnumKode aEnumKodeB = persistenceSessionManager.get(AEnumKodeId.KodeBId);
-            assertEquals(aEnumKodeB.getBeskrivelse(), "AEnumKode.KodeB.beskrivelse (no_NO_NY)");
+            assertEquals(aEnumKodeB.getBeskrivelse(), "Kode B er den andre av AKodane");
         } finally {
             persistenceSessionManager.close();
         }
@@ -203,17 +203,17 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             Kodeliste kodelisteForAEnumKode = persistenceSessionManager.get(AEnumKodeId.KODELISTE_ID);
             assertEquals(kodelisteForAEnumKode.getKodeIdClass(), AEnumKodeId.class);
             assertEquals(kodelisteForAEnumKode.getId(), AEnumKodeId.KODELISTE_ID);
-            assertEquals(kodelisteForAEnumKode.getBeskrivelse(), "AEnumKode.kodeliste.beskrivelse (no_NO)");
+            assertEquals(kodelisteForAEnumKode.getBeskrivelse(), "Kodeliste for AEnumKode");
 
             Kodeliste kodelisteForBEnumKode = persistenceSessionManager.get(BEnumKodeId.KODELISTE_ID);
             assertEquals(kodelisteForBEnumKode.getKodeIdClass(), BEnumKodeId.class);
             assertEquals(kodelisteForBEnumKode.getId(), BEnumKodeId.KODELISTE_ID);
-            assertEquals(kodelisteForBEnumKode.getBeskrivelse(), "BEnumKode.kodeliste.beskrivelse (no_NO)");
+            assertEquals(kodelisteForBEnumKode.getBeskrivelse(), "Kodeliste for BEnumKode");
 
             Kodeliste kodelisteForSEnumKode = persistenceSessionManager.get(SEnumKodeId.KODELISTE_ID);
             assertEquals(kodelisteForSEnumKode.getKodeIdClass(), SEnumKodeId.class);
             assertEquals(kodelisteForSEnumKode.getId(), SEnumKodeId.KODELISTE_ID);
-            assertEquals(kodelisteForSEnumKode.getBeskrivelse(), "SEnumKode.kodeliste.beskrivelse (no_NO)");
+            assertEquals(kodelisteForSEnumKode.getBeskrivelse(), "Kodeliste for SEnumKode, som er String-basert");
         } finally {
             persistenceSessionManager.close();
         }
@@ -233,7 +233,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
                     (KodeId<?>)AEnumKodeId.KodeAId.asSnapshotVersionOld(),
                     (KodeId<?>)AEnumKodeId.KodeBId.asSnapshotVersionOld()
             );
-            assertEquals(kodelisteForEnumKodeA.getBeskrivelse(), "AEnumKode.kodeliste.beskrivelse (no_NO)");
+            assertEquals(kodelisteForEnumKodeA.getBeskrivelse(), "Kodeliste for AEnumKode");
         } finally {
             persistenceSessionManager.close();
         }
@@ -246,7 +246,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 
         try {
             Kodeliste kodelisteForEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KODELISTE_ID);
-            assertEquals(kodelisteForEnumKodeA.getBeskrivelse(), "AEnumKode.kodeliste.beskrivelse (no_NO_NY)");
+            assertEquals(kodelisteForEnumKodeA.getBeskrivelse(), "Kodeliste for AEnumKode");
         } finally {
             persistenceSessionManager.close();
         }

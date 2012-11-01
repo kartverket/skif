@@ -31,9 +31,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
-import no.statkart.skif.storetest.util.DemoKodeMsg;
 import no.statkart.skif.util.CopyHelper;
-import no.statkart.skif.util.KodeMsg;
 import org.hibernate.Session;
 import org.testng.annotations.*;
 
@@ -127,8 +125,6 @@ public class StoreSessionServerTest {
         enumKodelistManager.installStatic(AEnumKodeId.class);
         enumKodelistManager.installStatic(BEnumKodeId.class);
         enumKodelistManager.installStatic(SEnumKodeId.class);
-
-        KodeMsg kodeMsg = new DemoKodeMsg();
 
         HibernatePersistenceSessionMasterImpl masterCurrent = new HibernatePersistenceSessionMasterImpl(
                 sessionFactoryManagerBundle.getBundle().get(0)

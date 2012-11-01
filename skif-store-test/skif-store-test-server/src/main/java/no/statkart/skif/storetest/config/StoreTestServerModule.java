@@ -52,8 +52,6 @@ import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
-import no.statkart.skif.storetest.util.DemoKodeMsg;
-import no.statkart.skif.util.KodeMsg;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
@@ -92,9 +90,6 @@ public class StoreTestServerModule extends SkifModule {
         bind(Store.class).to(StoreServer.class);
         bind(IdService.class).to(IdServiceImpl.class);
         bind(SequenceBlockAllocatorService.class).to(no.statkart.skif.storetest.service.id.SequenceBlockAllocatorService.class);
-
-        // EnumKode internasjonalisering
-        bind(KodeMsg.class).to(DemoKodeMsg.class);
 
         install(new ServerServiceModule(moduleConfiguration, new StoreTestTxManagementServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices()));
@@ -257,7 +252,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider, Provider<Collection<Class<? extends Kodeliste>>> kodelisteClassesProvider, Provider<KodeMsg> kodeMsgProvider, ServiceContext serviceContext) {
+    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider, Provider<Collection<Class<? extends Kodeliste>>> kodelisteClassesProvider, ServiceContext serviceContext) {
         final String strategy = resourceManagerConfiguratorProvider.get().getStrategy();
         if (strategy == ResourceManagerConfigurator.CONNECTION_ONLY) {
             return createResourceManagerForConnectionOnlyStrategy();
@@ -266,7 +261,6 @@ public class StoreTestServerModule extends SkifModule {
                     hibernateSessionFactoryManagerBundleProvider.get(),
                     enumKodelisteManagerProvider.get(),
                     kodelisteClassesProvider.get(),
-                    kodeMsgProvider.get(),
                     serviceContext
             );
         }
@@ -300,7 +294,7 @@ public class StoreTestServerModule extends SkifModule {
         return resourceManager;
     }
 
-    ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, KodeMsg kodeMsg, ServiceContext serviceContext) {
+    ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, ServiceContext serviceContext) {
         Configuration configuration = moduleConfiguration.getConfiguration();
         Properties hibernatePropertiesCurrent;
         Properties hibernatePropertiesOld;

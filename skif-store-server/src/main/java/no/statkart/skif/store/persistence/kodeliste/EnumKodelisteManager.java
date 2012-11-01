@@ -2,13 +2,20 @@ package no.statkart.skif.store.persistence.kodeliste;
 
 import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.util.CopyHelper;
+import no.statkart.skif.util.ResourceLister;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Global kodeliste manager som håndterer EnumKoder og tilhørende kodelister. Manageren inneholder
@@ -29,6 +36,11 @@ public class EnumKodelisteManager {
     private Map<BubbleId<?>, BubbleObject> nonLocalizedEnumCache = new HashMap<BubbleId<?>, BubbleObject>();
     private Set<KodelisteId<?>> kodelisteIds = new HashSet<KodelisteId<?>>();
     private Set<Class<? extends KodeId>> enumClasses = new HashSet<Class<? extends KodeId>>();
+
+    /**
+     * Alle innleste resource filer.
+     */
+    private Map<String, Map<String, Properties>> resourceFiles = new HashMap<String, Map<String, Properties>>();
 
     /**
      * Installerer EnumKoder og tilhørende kodelister
@@ -52,27 +64,94 @@ public class EnumKodelisteManager {
         }
         kodelisteIds.add(kodeliste.getId());
     }
+
     public boolean isEnumClass(Class<? extends KodeId> kodeIdClass) {
         return enumClasses.contains(kodeIdClass);
     }
 
+    private Map<String, Properties> getResourceProperties(String baseName) {
+        Map<String, Properties> propertyFiles = resourceFiles.get(baseName);
+        if (propertyFiles == null) {
+            propertyFiles = new HashMap<String, Properties>();
+
+            int lastDot = baseName.lastIndexOf('.');
+            final String packageName, resourceName;
+            if (lastDot < 1) { // Hvis baseName starter med punktum, så er det ingen pakke foran
+                packageName = "";
+                resourceName = baseName;
+            } else {
+                packageName = baseName.substring(0, lastDot);
+                resourceName = baseName.substring(lastDot + 1);
+            }
+
+            try {
+                ResourceLister resourceLister = new ResourceLister(packageName);
+                String quotedResourceName = Pattern.quote(resourceName);
+                Pattern resourcePattern = Pattern.compile(quotedResourceName + "(?:_(.*))?\\.properties");
+
+                for (String resourceFilename : resourceLister) {
+                    Matcher matcher = resourcePattern.matcher(resourceFilename);
+                    if (matcher.matches()) {
+                        String localeName = matcher.group(1);
+                        String fullResourceName = baseName;
+                        if (localeName != null) {
+                            fullResourceName = fullResourceName + "_" + localeName;
+                        }
+                        fullResourceName = fullResourceName.replace('.', '/') + ".properties";
+                        URL resourceUrl = getClass().getClassLoader().getResource(fullResourceName);
+
+                        Properties properties = new Properties();
+                        InputStream inputStream = resourceUrl.openStream();
+                        try {
+                            properties.load(inputStream);
+                        } finally {
+                            try {
+                                inputStream.close();
+                            } catch (IOException ignored) {
+                            }
+                        }
+                        propertyFiles.put(localeName != null ? localeName : "", properties);
+                    }
+                }
+            } catch (IOException e) {
+                throw new OperationalException("Feil under lesing av lokaliseringsfiler", e);
+            }
+
+            propertyFiles = Collections.unmodifiableMap(propertyFiles);
+            resourceFiles.put(baseName, propertyFiles);
+        }
+        return propertyFiles;
+    }
+
     private void initializeLocalizedFields(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Kodeliste kodeliste) {
-        // TODO: lese fra resourcefil
-        for (String localeString : getLocaleStrings()) {
-            kodeliste.setNavn(kodeSupport.getKodelisteResourceKey() + ".navn (" + localeString + ")");
-            kodeliste.setBeskrivelse(kodeSupport.getKodelisteResourceKey() + ".beskrivelse (" + localeString + ")");
-            kodeliste.updateLocalized(localeString);
+        Map<String, Properties> resourceProperties = getResourceProperties(kodeSupport.getResourceMsgName());
+        for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
+            Properties properties = entry.getValue();
+            String navn = properties.getProperty(kodeSupport.getKodelisteResourceKey() + ".navn");
+            String beskrivelse = properties.getProperty(kodeSupport.getKodelisteResourceKey() + ".beskrivelse");
+
+            if (navn != null || beskrivelse != null) {
+                kodeliste.setNavn(navn);
+                kodeliste.setBeskrivelse(beskrivelse);
+                kodeliste.updateLocalized(entry.getKey());
+            }
         }
         kodeliste.localize(null);
 
     }
 
     private void initializeLocalizedFields(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Kode enumKode) {
-        // TODO: lese fra resourcefil
-        for (String localeString : getLocaleStrings()) {
-            enumKode.setNavn(kodeSupport.getKodeResourceKey(enumKode.getId()) + ".navn (" + localeString + ")");
-            enumKode.setBeskrivelse(kodeSupport.getKodeResourceKey(enumKode.getId()) + ".beskrivelse (" + localeString + ")");
-            enumKode.updateLocalized(localeString);
+        Map<String, Properties> resourceProperties = getResourceProperties(kodeSupport.getResourceMsgName());
+        for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
+            Properties properties = entry.getValue();
+            String navn = properties.getProperty(kodeSupport.getKodeResourceKey(enumKode.getId()) + ".navn");
+            String beskrivelse = properties.getProperty(kodeSupport.getKodeResourceKey(enumKode.getId()) + ".beskrivelse");
+
+            if (navn != null || beskrivelse != null) {
+                enumKode.setBeskrivelse(beskrivelse);
+                enumKode.setNavn(navn);
+                enumKode.updateLocalized(entry.getKey());
+            }
         }
         enumKode.localize(null);
     }
@@ -93,10 +172,6 @@ public class EnumKodelisteManager {
         Class<? extends T> bubbleType = bubbleId.getType();
 
         return bubbleType.cast(copyObject);
-    }
-
-    protected String[] getLocaleStrings() {
-        return new String[]{"no_NO", "no_NO_NY"};
     }
 
 
