@@ -1,4 +1,5 @@
 apply plugin: 'ear'
+apply plugin: 'sktools-weblogic-deploy-plugin'
 
 Map warMap = [
         ':skif-service-test:skif-service-test-wswar': 'skiftest/wsapi',
@@ -10,13 +11,14 @@ List ejbList = [
 
 dependencies {
     ejbList.each {
-        deploy project(it)
+        def p = project(it)
+        deploy p
+        earlib p
     }
     warMap.each {
-        deploy project(it.key)
-    }
-    (ejbList + warMap.keySet()).each {
-        earlib project(it)
+        def p = project(path: it.key, configuration: 'weblogic')
+        deploy p
+        earlib p
     }
 
     // TODO: Bør noen av de andre modulene trekke med seg denne (de har den nå på testCompile)?
@@ -30,35 +32,24 @@ ear {
         displayName = "skif-service-test"
         warMap.each {
             def p = project(it.key)
-            webModule(p.name + '-' + p.version + ".war", it.value)
+            webModule(p.name + '-weblogic-' + p.version + ".war", it.value)
         }
     }
 }
 
-ant.taskdef(name: 'wldeploy', classname: 'weblogic.ant.taskdefs.management.WLDeploy', classpath: configurations.weblogic.asPath)
+weblogicDeploy {
+    classpath = libraries.weblogic
+    url(host: wls_deploy_hostname, port: wls_deploy_port, protocol: wls_deploy_protocol)
+    targets = wls_deploy_targets
+    username = wls_username
+    password = wls_password
 
-task deploy(dependsOn: 'assemble') << {
-    wlsDeployProtocol = "${wls_deploy_protocol}"
-    wlsDeployIp = "${wls_deploy_hostname}"
-    wlsDeployPort = "${wls_deploy_port}"
-    wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
-    wlsDeployTargets = "${wls_deploy_targets}"
-    wlsDeployUsername = "${wls_username}"
-    wlsDeployPassword = "${wls_password}"
+    file = ear
+    name = archivesBaseName
 
-    ant.wldeploy(action: 'deploy', source: "${ear.archivePath}", name: project.name, user: wlsDeployUsername, password: wlsDeployPassword,
-                 adminurl: wlsAdminUrl, targets: wlsDeployTargets, upload: 'true', timeout: '18000', verbose: 'true', failonerror: 'true')
-}
+    undeployTask('undeploy', description: "Undeployer ${name} til ${url}")
 
-task undeploy << {
-    wlsDeployProtocol = "${wls_deploy_protocol}"
-    wlsDeployIp = "${wls_deploy_hostname}"
-    wlsDeployPort = "${wls_deploy_port}"
-    wlsAdminUrl = "${wlsDeployProtocol}://${wlsDeployIp}:${wlsDeployPort}"
-    wlsDeployTargets = "${wls_deploy_targets}"
-    wlsDeployUsername = "${wls_username}"
-    wlsDeployPassword = "${wls_password}"
-
-    ant.wldeploy(action: 'undeploy', name: project.name, user: wlsDeployUsername, password: wlsDeployPassword,
-            adminurl: wlsAdminUrl, targets: 'AdminServer', graceful: true, verbose: true, failonerror: true)
+    deployTask('deploy', dependsOn: [undeployTask], description: "Deployer ${name} til ${url}") {
+        timeout = 1200000
+    }
 }

@@ -185,14 +185,14 @@ subprojects { Project project ->
         weblogic libraries.weblogic
     }
 
+    propertyUtils.expandProjectProperties() //må ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
+    //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
+
     if (!['-ear', '-wswar'].find {project.name.endsWith(it)}) {
         apply plugin: 'java'
         apply plugin: 'sktools-filterproperties-plugin'
 
-	 test.testLogging.showStandardStreams = true
-
-        propertyUtils.expandProjectProperties() //må ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
-        //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
+        test.testLogging.showStandardStreams = true
 
         //user properties
         project.filterProperties {
@@ -348,6 +348,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-SNAPSHOT'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build46'
     }
 }
