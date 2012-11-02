@@ -9,6 +9,8 @@ import static no.statkart.skif.guava.Preconditions.checkState;
  * @since 2.0
  */
 public class AbstractBubbleObject implements BubbleObject, Serializable{
+    private static final long serialVersionUID = 1L;
+
     protected transient Store store;
     protected BubbleId<?> id;
     private long version = 0;

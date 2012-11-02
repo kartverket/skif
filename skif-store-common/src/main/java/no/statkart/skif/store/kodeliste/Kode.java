@@ -22,6 +22,8 @@ import java.util.ResourceBundle;
  * @since 2.1
  */
 public abstract class Kode extends AbstractBubbleObject implements Localizable{
+    private static final long serialVersionUID = 1L;
+
     private LocalizedFields localizedFields = new LocalizedFields();
     private Map<String, LocalizedFields> localizedFieldsMap = new HashMap<String, LocalizedFields>();
     private KodelisteId<?> kodelisteId;

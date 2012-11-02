@@ -10,6 +10,8 @@ import no.statkart.skif.store.SnapshotVersion;
  * @since 2.1
  */
 public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T> {
+    private static final long serialVersionUID = 1L;
+
     protected KodeId(Object value) {
         super(value);
     }

@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2.0
  */
 public abstract class AbstractBubbleId<T extends BubbleObject> implements BubbleId<T> {
+    private static final long serialVersionUID = 1L;
+
     private Object value;
 
     /**
