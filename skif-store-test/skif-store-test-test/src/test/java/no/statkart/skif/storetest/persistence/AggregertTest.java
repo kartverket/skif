@@ -23,7 +23,7 @@ import java.sql.Statement;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-@Test
+@Test(groups = "singlevm-required")
 public class AggregertTest extends StoreTestMixedTestCase {
     @AfterMethod
     public void cleanUp() {

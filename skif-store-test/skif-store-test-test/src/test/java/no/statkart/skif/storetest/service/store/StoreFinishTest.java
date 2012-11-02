@@ -23,7 +23,7 @@ import static org.testng.Assert.assertNotSame;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-@Test
+@Test(groups = "singlevm-required")
 public class StoreFinishTest extends StoreTestMixedTestCase {
     private static final String str = "Skal byttes ut i finish";
 

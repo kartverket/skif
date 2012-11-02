@@ -51,7 +51,7 @@ import static org.testng.FileAssert.fail;
  * @author Henrik Fredholm
  * @author Jan Holmen
  */
-@Test
+@Test(groups = "singlevm-required")
 public class StoreSessionServerTest {
     Properties hibernateProperties;
     static String T1 = "2011-10-02 08:01:00.00";

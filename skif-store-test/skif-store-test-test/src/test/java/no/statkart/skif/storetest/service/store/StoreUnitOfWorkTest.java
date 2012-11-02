@@ -27,7 +27,7 @@ import static org.testng.Assert.assertSame;
  * @author Henrik Fredholm
  * @since 2.1
  */
-@Test
+@Test(groups = "singlevm-required")
 public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     static String T1 = "2011-10-02 08:01:00.00";
     static String T2 = "2011-10-02 08:02:00.00";

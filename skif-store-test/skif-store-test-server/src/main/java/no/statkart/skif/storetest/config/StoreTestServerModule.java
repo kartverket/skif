@@ -32,6 +32,7 @@ import no.statkart.skif.service.sequence.HighLowGenerator;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
+import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
@@ -95,7 +96,8 @@ public class StoreTestServerModule extends SkifModule {
         install(new ServerServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreUpdateServices().getServices()));
-
+        install(new ServerServiceModule(moduleConfiguration, new StoreTestTestServices().getServices()));
+        bind(TestdataService.class).to(no.statkart.skif.storetest.service.test.TestdataService.class);
 
         {
             // Definer services som ikke bruker Store, men bare SQL connection

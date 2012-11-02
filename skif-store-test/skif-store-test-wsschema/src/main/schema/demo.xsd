@@ -34,6 +34,24 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="ChildBubbleId">
+            <xs:complexContent>
+                <xs:extension base="domainns:StoreTestBubbleId">
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+
+    <xs:complexType name="ChildBubble">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="text" type="xs:string"/>
+                    <xs:element name="testBubbleId" type="demons:TestBubbleId"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
 
     <xs:complexType name="FooId">
         <xs:complexContent>
@@ -132,6 +150,7 @@
                 <xs:sequence>
                     <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="razComponent" type="demons:RazComponent" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="razEntityComponent" type="demons:RazEntityComponent" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -141,6 +160,13 @@
         <xs:sequence>
             <xs:element name="compText" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="fooId" type="demons:FooId" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="RazEntityComponent">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="componentName" type="xs:string" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 

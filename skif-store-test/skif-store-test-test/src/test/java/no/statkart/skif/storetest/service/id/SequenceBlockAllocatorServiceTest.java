@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.service.id;
 
 import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.service.txmanagement.StoreTestTxManagementClientModule;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -11,12 +12,7 @@ import org.testng.annotations.Test;
  * @since 2.0
  */
 @Test
-public class SequenceBlockAllocatorServiceTest extends SkifTestCase {
-
-    public SequenceBlockAllocatorServiceTest() {
-        setModuleClass(StoreTestTxManagementClientModule.class);
-        setSingleVmServerModuleClass(StoreTestServerModule.class);
-    }
+public class SequenceBlockAllocatorServiceTest extends StoreTestTestCase {
 
     public void  testAllocateSequenceBlock(){
         SequenceBlockAllocatorService service = injector.getInstance(SequenceBlockAllocatorService.class);

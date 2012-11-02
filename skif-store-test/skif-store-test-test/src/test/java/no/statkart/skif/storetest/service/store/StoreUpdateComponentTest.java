@@ -22,7 +22,7 @@ import java.util.HashSet;
  * @author Roar Ingebrigtsen
  * @since 2.1
  */
-@Test
+@Test(groups = "singlevm-required")
 public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 
     @Inject

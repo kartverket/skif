@@ -34,7 +34,7 @@ import static org.testng.Assert.assertSame;
 /**
  * @author Henrik Fredholm
  */
-@Test
+@Test(groups = "singlevm-required")
 public class PersistenceSessionManagerTest {
     Properties hibernateProperties;
 

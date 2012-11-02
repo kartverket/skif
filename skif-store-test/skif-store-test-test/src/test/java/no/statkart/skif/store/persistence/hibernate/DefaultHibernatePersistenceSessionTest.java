@@ -29,7 +29,7 @@ import static org.testng.Assert.assertNotSame;
  * Tester for {@link HibernatePersistenceSessionMasterImpl}
  * @author Henrik Fredholm
  */
-@Test
+@Test(groups = "singlevm-required")
 public class DefaultHibernatePersistenceSessionTest {
     Properties hibernateProperties;
 

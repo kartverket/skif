@@ -60,19 +60,56 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="MockupTransfer">
-        <xs:sequence>
-            <xs:element name="inserts" type="domainns:StoreTestBubbleList"/>
-            <xs:element name="updates" type="domainns:StoreTestBubbleList"/>
-            <xs:element name="deletes" type="domainns:StoreTestBubbleList"/>
-            <xs:element name="testNumber" type="xs:int"/>
-        </xs:sequence>
-    </xs:complexType>
-
     <xs:complexType name="StoreTestContext">
         <xs:sequence>
             <xs:element name="systemVersion" type="xs:string"/>
             <xs:element name="locale" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="UnitOfWorkTransfer">
+        <xs:sequence>
+            <xs:element name="insertedObjects" type="domainns:StoreTestBubbleList"/>
+            <xs:element name="updatedObjects" type="domainns:StoreTestBubbleList"/>
+            <xs:element name="deletedObjects" type="domainns:StoreTestBubbleList"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TestNumber">
+        <xs:sequence>
+            <xs:element name="offset" type="xs:int"/>
+            <xs:element name="number" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MockupTransfer">
+        <xs:complexContent>
+            <xs:extension base="domainns:UnitOfWorkTransfer">
+                <xs:sequence>
+                    <xs:element name="testNumber" type="domainns:TestNumber"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="MockupSnapshotMap">
+        <xs:annotation>
+            <xs:appinfo>
+                <IsDictionary
+                        xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                    true
+                </IsDictionary>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="key" nillable="true" type="domainns:SnapshotVersion"/>
+                        <xs:element name="value" type="domainns:MockupTransfer"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 

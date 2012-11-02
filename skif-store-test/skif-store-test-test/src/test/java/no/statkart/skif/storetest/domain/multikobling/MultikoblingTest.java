@@ -23,7 +23,7 @@ import static org.testng.Assert.assertEquals;
  * @author Henrik Fredholm
  * @since 2.1
  */
-@Test
+@Test(groups = "singlevm-required")
 public class MultikoblingTest extends StoreTestTestCase {
     @Inject
     Store store;

@@ -15,7 +15,7 @@ import static org.testng.Assert.*;
  * @author Roar Ingebrigtsen
  * @since 2.1
  */
-@Test
+@Test(groups = "singlevm-required")
 public class SnapshotTest extends StoreTestMixedTestCase {
 
     public void testHentObjectForForskjelligSnapshot() {

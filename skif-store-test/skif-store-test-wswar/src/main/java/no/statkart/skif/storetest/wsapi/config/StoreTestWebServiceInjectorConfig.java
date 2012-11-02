@@ -47,8 +47,6 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
                         .setExceptionMapping(new StoreTestExceptionMapper().getMapping()),
                 new WSServerServiceModule(configuration, new StoreTestTxManagementServices().getServices(), mapping, classLoader)
                         .setExceptionMapping(new StoreTestExceptionMapper().getMapping()),
-                new WSServerServiceModule(configuration, new StoreTestSequenceBlockAllocatorServices().getServices(), mapping, classLoader)
-                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping()),
 
                 // Services som har ServiceContext
                 new WSServerServiceModule(configuration, new StoreTestTestServices().getServices(), mapping, classLoader)
@@ -59,8 +57,10 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class),
                 new WSServerServiceModule(configuration, new StoreTestStoreUpdateServices().getServices(), mapping, classLoader)
                         .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                        .setServiceContextMapperClass(StoreTestServiceContextMapper.class),
+                new WSServerServiceModule(configuration, new StoreTestSequenceBlockAllocatorServices().getServices(), mapping, classLoader)
+                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
-
         );
     }
 

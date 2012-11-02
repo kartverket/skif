@@ -202,6 +202,8 @@ public class StoreTest extends StoreTestTestCase {
     }
 
 
+    // TODO: Mapping mangler for webservice
+    @Test(groups = "singlevm-required")
     public void testGetMedGenerellId() {
 
         store.get(new RettsstiftelseId<Rettsstiftelse>(2001L, SnapshotVersion.CURRENT));

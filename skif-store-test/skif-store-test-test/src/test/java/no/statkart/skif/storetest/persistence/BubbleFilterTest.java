@@ -22,7 +22,7 @@ import static org.testng.FileAssert.fail;
  * @author Jan Holmen
  * @since 2.1
  */
-@Test
+@Test(groups = "singlevm-required")
 public class BubbleFilterTest extends StoreTestMixedTestCase {
     FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<FilteredBubble>(1);
     FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<FilteredBubble>(2);

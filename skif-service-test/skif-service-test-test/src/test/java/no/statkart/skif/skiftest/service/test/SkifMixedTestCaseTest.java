@@ -19,7 +19,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Henrik Fredholm
  */
-@Test
+@Test(groups = "singlevm-required")
 public class SkifMixedTestCaseTest extends SkifMixedTestCase {
 
     public SkifMixedTestCaseTest() {

@@ -18,8 +18,8 @@ import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreClient;
-import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.store.StoreSessionClient;
+import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapping;
@@ -64,14 +64,14 @@ public class StoreTestClientModule extends SkifModule {
 
         bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
 
+        install(new RemoteServiceModule(moduleConfiguration, new StoreTestTestServices().getServices(), mapping)
+                .setExceptionMapping(exceptionMapping)
+                .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
+        );
+        bind(no.statkart.skif.service.test.TestdataService.class).to(no.statkart.skif.storetest.service.test.TestdataService.class);
+
         //Legger til DBLockerService dersom man kjører i singleVm. Denne tjenesten finnes ikke som en webservice, og kan derfor ikke legges til ved kjøring av tester i client/server
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
-            install(new RemoteServiceModule(moduleConfiguration, new StoreTestTestServices().getServices(), mapping)
-                    .setExceptionMapping(exceptionMapping)
-                    .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
-            );
-            bind(no.statkart.skif.service.test.TestdataService.class).to(no.statkart.skif.storetest.service.test.TestdataService.class);
-
             install(new RemoteServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices(), mapping)); // Angir bare en mapping, siden det er irrelevant for en intern tjeneste
             bind(DBLockerService.class).to(no.statkart.skif.storetest.service.locker.DBLockerService.class);
             bind(DBLockerInTransactionService.class).to(no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class);

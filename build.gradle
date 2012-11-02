@@ -185,6 +185,10 @@ subprojects { Project project ->
         weblogic libraries.weblogic
     }
 
+    clean {
+        delete 'gen'
+    }
+
     propertyUtils.expandProjectProperties() //må ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
     //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
 
@@ -348,6 +352,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build46'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build47'
     }
 }

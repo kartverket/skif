@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.wsapi.service.id;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -36,7 +37,7 @@ public class SequenceBlockAllocatorServiceWSBean extends SkifWebService<Sequence
 
 
     @Override
-    public long allocateSequenceBlock(@WebParam(name = "sequenceName") String sequenceName, @WebParam(name = "blockSize") int blockSize) {
-        return wsServiceChain.allocateSequenceBlock(sequenceName, blockSize);
+    public long allocateSequenceBlock(@WebParam(name = "sequenceName") String sequenceName, @WebParam(name = "blockSize") int blockSize, @WebParam(name = "context") StoreTestContext context) {
+        return wsServiceChain.allocateSequenceBlock(sequenceName, blockSize, context);
     }
 }

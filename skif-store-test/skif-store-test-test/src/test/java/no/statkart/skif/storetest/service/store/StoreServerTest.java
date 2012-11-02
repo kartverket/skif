@@ -17,7 +17,7 @@ import static org.testng.Assert.*;
  * @author Henrik Fredholm
  * @since 2.1
  */
-@Test
+@Test(groups = "singlevm-required")
 public class StoreServerTest extends StoreTestMixedTestCase {
 
     public static final FooId<Foo> FOO_ID_100 = new FooId<Foo>(100L);
