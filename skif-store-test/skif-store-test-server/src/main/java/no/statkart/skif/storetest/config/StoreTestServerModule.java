@@ -124,10 +124,10 @@ public class StoreTestServerModule extends SkifModule {
         bind(Session.class).toProvider(SessionProvider.class);
         bind(PersistenceSessionForSnapshot.class).toProvider(PersistenceSessionForSnapshotProvider.class);
 
-        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
-            install(new ServerServiceModule(moduleConfiguration, new StoreTestTestServices().getServices()));
-            bind(no.statkart.skif.service.test.TestdataService.class).to(no.statkart.skif.storetest.service.test.TestdataService.class);
-        }
+//        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
+//            install(new ServerServiceModule(moduleConfiguration, new StoreTestTestServices().getServices()));
+//            bind(no.statkart.skif.service.test.TestdataService.class).to(no.statkart.skif.storetest.service.test.TestdataService.class);
+//        }
     }
 
     @Provides
