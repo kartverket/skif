@@ -8,7 +8,7 @@ import no.statkart.skif.store.SnapshotVersion;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class KodelisteLongId<T extends KodelisteLong> extends AbstractKodelisteId<T> {
+public abstract class KodelisteLongId<T extends KodelisteLong> extends AbstractKodelisteId<T> {
     public KodelisteLongId(Long value) {
         super(value);
     }
