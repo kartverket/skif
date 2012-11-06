@@ -50,7 +50,7 @@ public class KodeTest extends StoreTestTestCase {
 
 
     public void testGetEnumKode_Old() {
-        AEnumKode aEnumKode = store.get(AEnumKodeId.KodeAId.asSnapshotVersionOld());
+        AEnumKode aEnumKode = store.get((AEnumKodeId) AEnumKodeId.KodeAId.asSnapshotVersionOld());
         assertEquals(aEnumKode.getId(), AEnumKodeId.KodeAId.asSnapshotVersionOld());
         assertEquals(aEnumKode.getKodelisteId(), AEnumKodeId.KODELISTE_ID.asSnapshotVersionOld());
         Kodeliste kodeliste = store.get(aEnumKode.getKodelisteId());
@@ -70,7 +70,7 @@ public class KodeTest extends StoreTestTestCase {
     }
 
     public void testLoadADbKode_Old() {
-        ADbKode aDbKode_A1 = store.get(ADbKodeId.A1Id.asSnapshotVersionOld());
+        ADbKode aDbKode_A1 = store.get((ADbKodeId) ADbKodeId.A1Id.asSnapshotVersionOld());
         assertEquals(aDbKode_A1.getKodeverdi(), "A1");
         assertEquals(aDbKode_A1.getId().getSnapshotVersion(), SnapshotVersion.OLD);
         Class valueType = aDbKode_A1.getId().getValueType();
@@ -109,7 +109,7 @@ public class KodeTest extends StoreTestTestCase {
      */
     public void testKodeEquals() {
         XStrDbKode xStrDbKode_A_Current = store.get(XStrDbKodeId.AId);
-        XStrDbKode xStrDbKode_A_Old = store.get(XStrDbKodeId.AId.asSnapshotVersionOld());
+        XStrDbKode xStrDbKode_A_Old = store.get((XStrDbKodeId) XStrDbKodeId.AId.asSnapshotVersionOld());
 
         assertEquals(xStrDbKode_A_Current.getId().asSnapshotVersionCurrent(), XStrDbKodeId.AId);
         assertEquals(xStrDbKode_A_Old.getId().asSnapshotVersionCurrent(), XStrDbKodeId.AId);
@@ -126,7 +126,7 @@ public class KodeTest extends StoreTestTestCase {
      */
     public void testEqualsTo() {
         XStrDbKode xStrDbKode_A_Current = store.get(XStrDbKodeId.AId);
-        XStrDbKode xStrDbKode_A_Old = store.get(XStrDbKodeId.AId.asSnapshotVersionOld());
+        XStrDbKode xStrDbKode_A_Old = store.get((XStrDbKodeId) XStrDbKodeId.AId.asSnapshotVersionOld());
 
         assertTrue(XStrDbKodeId.AId.equalTo(xStrDbKode_A_Current.getId()));
         assertTrue(XStrDbKodeId.AId.equalTo(xStrDbKode_A_Old.getId()));

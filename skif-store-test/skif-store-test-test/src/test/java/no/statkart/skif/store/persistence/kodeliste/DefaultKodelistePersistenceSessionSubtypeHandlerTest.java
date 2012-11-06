@@ -169,7 +169,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
         PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
 
         try {
-            AEnumKode aEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KodeAId.asSnapshotVersionOld());
+            AEnumKode aEnumKodeA = persistenceSessionManager.get((AEnumKodeId) AEnumKodeId.KodeAId.asSnapshotVersionOld());
             assertEquals(aEnumKodeA.getId(), AEnumKodeId.KodeAId.asSnapshotVersionOld());
             assertEquals(aEnumKodeA.getKodelisteId(), AEnumKodeId.KODELISTE_ID.asSnapshotVersionOld());
             assertEquals(aEnumKodeA.getBeskrivelse(), "Kode A er den første av AKodene");

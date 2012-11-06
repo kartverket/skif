@@ -105,22 +105,22 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
 
-    public BubbleId<T> asSnapshotVersion(SnapshotVersion snapshotVersion) {
+    public BubbleId<? super T> asSnapshotVersion(SnapshotVersion snapshotVersion) {
         if (this.snapshotVersion.equals(snapshotVersion)) return this;
-        return BubbleIds.createInstance(this.getClass(), getValue(), snapshotVersion);
+        return BubbleIds.createInstance(this.getBaseIdType(), getValue(), snapshotVersion);
     }
 
-    public BubbleId<T> asSnapshotVersion(BubbleId<?>  bubbleId) {
+    public BubbleId<? super T> asSnapshotVersion(BubbleId<?>  bubbleId) {
         SnapshotVersion snapshotVersion = bubbleId.getSnapshotVersion();
         if (this.snapshotVersion.equals(snapshotVersion)) return this;
-        return BubbleIds.createInstance(this.getClass(), getValue(), snapshotVersion);
+        return BubbleIds.createInstance(this.getBaseIdType(), getValue(), snapshotVersion);
     }
 
-    public BubbleId<T> asSnapshotVersionOld() {
+    public BubbleId<? super T> asSnapshotVersionOld() {
         return asSnapshotVersion(SnapshotVersion.OLD);
     }
 
-    public BubbleId<T> asSnapshotVersionCurrent() {
+    public BubbleId<? super T> asSnapshotVersionCurrent() {
         return asSnapshotVersion(SnapshotVersion.CURRENT);
     }
 
