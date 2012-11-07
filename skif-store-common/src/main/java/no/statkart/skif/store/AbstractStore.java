@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
@@ -221,6 +220,11 @@ public class AbstractStore implements Store {
     @Override
     public <T extends BubbleObject> void delete(T bubbleObject) {
         storeSession.delete(bubbleObject);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
+        storeSession.reorderModification(bubbleId);
     }
 
 

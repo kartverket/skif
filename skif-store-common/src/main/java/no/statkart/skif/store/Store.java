@@ -42,6 +42,8 @@ public interface Store {
     public <T extends BubbleObject> void insert(T bubbleObject);
     public <T extends BubbleObject> void update(T bubbleObject);
     public <T extends BubbleObject> void delete(T bubbleObject);
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId);
+
     public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
 
 

@@ -197,6 +197,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(XStrDbKode.class)
                 .addResource(StoreTestKodelisteLong.class)
                 .addResource(TestBubble.class)
+                .addResourceUseSameIndex(SelfBubble.class)   // Blir sortert sammen me TestBubble
                 .addResource(ChildBubble.class)
                 .addResource(ParrentBubble.class)
                 .addResource(FilteredBubble.class)

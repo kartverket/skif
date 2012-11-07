@@ -71,6 +71,7 @@ public class TestHelper {
         return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate")
                 .addResource(TestEntity.class)
                 .addResource(TestBubble.class)
+                .addResourceUseSameIndex(SelfBubble.class)   // Blir sortert sammen me TestBubble
                 .addResource(ParrentBubble.class)
                 .addResource(FilteredBubble.class)
                 .addResource(ChildBubble.class)
@@ -93,6 +94,7 @@ public class TestHelper {
             hibernateSession.createSQLQuery("delete from BARFOOS_H  where id>10000").executeUpdate();
             hibernateSession.createSQLQuery("delete from FooForBarFoos_H  where BarFoosId>10000").executeUpdate();
             hibernateSession.createSQLQuery("delete from GEOMETRICELEMENT_H  where id>10000").executeUpdate();
+            hibernateSession.createSQLQuery("delete from SelfBubble where id>100").executeUpdate();
             transaction.commit();
         } finally {
             persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();

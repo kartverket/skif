@@ -20,11 +20,14 @@
         <appender-ref ref="STDOUT"/>
     </root>
 
+    <!-- Hibernate -->
 
-<!--
+    <!--
     <logger name="org.hibernate.SQL" level="debug" additivity="true"/>
-
     <logger name="org.hibernate.type" level="trace" additivity="true"/>
--->
+    <logger name="no.statkart.skif.store.persistence.hibernate.type" level="trace" additivity="true"/>
+    -->
+
+    <!-- end-hibernate -->
 
 </configuration>

@@ -97,7 +97,6 @@ public interface StoreSession {
     /**
      * Fjerner objektet fra sessionen. Objekter som har blitt endret fjernes ikke
      * TODO: Legge inn støtte til å kunne fjerne endret objekter etter flush/finishBatch har blitt kjørt
-     * @param bubbleId
      * @return  true hvis objektet ble fjernet
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll();
@@ -132,6 +131,16 @@ public interface StoreSession {
      */
     <T extends BubbleObject> void delete(T bubbleObject);
 
+    /**
+     * Endre på objektets oppdateringsrekkefølge i sessionen slik at objektet kommer etter alle andre objekter
+     * med samme sorteringsindex i sessionen.  Metoden kaster en exception hvis objektet ikke er endret i sessionen
+     * eller hvis sessionen ikke er en unit of work
+     *
+     * @param bubbleId
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId);
+
+
     <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I bubbleId);
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I bubbleId);
@@ -141,5 +150,4 @@ public interface StoreSession {
     <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
 
     void register(BubbleTransfer bubbleTransfer);
-
 }

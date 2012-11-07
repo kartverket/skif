@@ -355,6 +355,15 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
+        final StoreEntry storeEntry = modifiedMap.remove(bubbleId);
+        if (storeEntry==null) {
+            throw new ImplementationException("BubbleId ikke modifisert i session: " + bubbleId);
+        }
+        modifiedMap.put(bubbleId, storeEntry);
+    }
+
+    @Override
     public final <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I bubbleId) {
         StoreEntry entry = lockEntry(level, bubbleId);
         return (T) entry.getBubbleObject(level);

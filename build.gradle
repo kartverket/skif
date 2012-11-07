@@ -50,7 +50,8 @@ def libraries = [
         'tools.jar': files("${System.getenv('JAVA_HOME')}/lib/tools.jar").stopExecutionIfEmpty(), //JAVA_HOME ikke satt??
 
         // Database
-        ojdbc: "com.oracle:ojdbc6:${libVersion('oracle', '11.2.0.2.0')}@jar",
+        // TODO: Legge inn støtte for å kunne velge mellom debug og produksjonsversjon
+        ojdbc: "com.oracle:ojdbc6_g:${libVersion('oracle', '11.2.0.2.0')}@jar",
 
         // Logging 
         slf4j_api: "org.slf4j:slf4j-api:${libVersion('slf4j', '1.6.1')}@jar",

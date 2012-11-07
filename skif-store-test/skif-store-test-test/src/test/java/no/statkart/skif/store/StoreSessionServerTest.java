@@ -33,6 +33,7 @@ import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.util.CopyHelper;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import org.testng.annotations.*;
 
 import java.util.*;
@@ -53,6 +54,7 @@ import static org.testng.FileAssert.fail;
  */
 @Test(groups = "singlevm-required")
 public class StoreSessionServerTest {
+
     Properties hibernateProperties;
     static String T1 = "2011-10-02 08:01:00.00";
     static String T2 = "2011-10-02 08:02:00.00";
@@ -78,6 +80,7 @@ public class StoreSessionServerTest {
     FooId<Foo> FooId_101_OLD = new FooId<Foo>(101L, SnapshotVersion.OLD);
 
     TestBubbleId<TestBubble> TestBubbleId_1 = new TestBubbleId<TestBubble>(1);
+    TestBubbleId<TestBubble> TestBubbleId_2 = new TestBubbleId<TestBubble>(2);
     TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<TestBubble>(101);
     ParrentBubbleId<ParrentBubble> ParrentBubbleId_101 = new ParrentBubbleId<ParrentBubble>(101);
     ChildBubbleId<ChildBubble> ChildBubbleId_101 = new ChildBubbleId<ChildBubble>(101);
@@ -142,7 +145,7 @@ public class StoreSessionServerTest {
                         masterCurrent,
                         new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelistManager, kodelisteClasses, context)
                 ),
-            new DefaultPersistenceSessionStrategy(
+                new DefaultPersistenceSessionStrategy(
                         masterOld,
                         new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelistManager, kodelisteClasses, context)
                 )
@@ -416,8 +419,6 @@ public class StoreSessionServerTest {
         FilteredBubble lest = storeServer.get(filteredBubbleId_101);
         assertNotSame(str, lest.getFilterText());
     }
-
-
 
 
     /**
@@ -903,4 +904,93 @@ public class StoreSessionServerTest {
         storeServer.update(foo2);
         storeServer.commitTransaction();
     }
+
+    public void testReorderModification() {
+        storeServer.beginTransaction();
+
+        SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<SelfBubble>(101L);
+        SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<SelfBubble>(102L);
+        SelfBubbleId<SelfBubble> selfBubbleId_103 = new SelfBubbleId<SelfBubble>(103L);
+        SelfBubble b_101 = new SelfBubble(selfBubbleId_101);
+        SelfBubble b_102 = new SelfBubble(selfBubbleId_102);
+        SelfBubble b_103 = new SelfBubble(selfBubbleId_103);
+        b_102.setRefId(b_101.getId());
+
+        TestBubble testBubble = new TestBubble(TestBubbleId_101);
+
+        // b_102 refererer b_101 og man bør derfor få referanse feil. Men dersom b_101 og b_102 er med i samme batch går det
+        // greit likevel. Har derfor langt inn testBubble for å bryte batchen. For det skal virke må Store ikke
+        // stokke om på rekkefølgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
+        storeServer.beginUnitOfWork();
+        storeServer.insert(b_102);
+        storeServer.insert(testBubble);
+        storeServer.insert(b_101);
+        storeServer.insert(b_103);
+        storeServer.reorderModification(b_102.getId());
+        storeServer.commitUnitOfWork();
+        storeServer.commitTransaction();
+    }
+
+    public void testReorderModificationNotInUnitOfWork() {
+        try {
+            storeServer.beginTransaction();
+
+            SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<SelfBubble>(101L);
+            SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<SelfBubble>(102L);
+            SelfBubbleId<SelfBubble> selfBubbleId_103 = new SelfBubbleId<SelfBubble>(103L);
+            SelfBubble b_101 = new SelfBubble(selfBubbleId_101);
+            SelfBubble b_102 = new SelfBubble(selfBubbleId_102);
+            SelfBubble b_103 = new SelfBubble(selfBubbleId_103);
+            b_102.setRefId(b_101.getId());
+
+            TestBubble testBubble = new TestBubble(TestBubbleId_101);
+
+            // b_102 refererer b_101 og man bør derfor få referanse feil. Men dersom b_101 og b_102 er med i samme batch går det
+            // greit likevel. Har derfor langt inn testBubble for å bryte batchen. For det skal virke må Store ikke
+            // stokke om på rekkefølgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
+            storeServer.insert(b_102);
+            storeServer.insert(testBubble);
+            storeServer.insert(b_101);
+            storeServer.insert(b_103);
+            storeServer.reorderModification(b_102.getId());
+            fail();
+        } catch (ImplementationException e) {
+        } finally {
+            storeServer.rollbackTransaction();
+        }
+    }
+
+    public void testReorderModificationNoReorder() {
+        try {
+            storeServer.beginTransaction();
+
+            SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<SelfBubble>(101L);
+            SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<SelfBubble>(102L);
+            SelfBubbleId<SelfBubble> selfBubbleId_103 = new SelfBubbleId<SelfBubble>(103L);
+            SelfBubble b_101 = new SelfBubble(selfBubbleId_101);
+            SelfBubble b_102 = new SelfBubble(selfBubbleId_102);
+            SelfBubble b_103 = new SelfBubble(selfBubbleId_103);
+            b_102.setRefId(b_101.getId());
+
+            TestBubble testBubble = new TestBubble(TestBubbleId_101);
+
+            // b_102 refererer b_101 og man bør derfor få referanse feil. Men dersom b_101 og b_102 er med i samme batch går det
+            // greit likevel. Har derfor langt inn testBubble for å bryte batchen. For det skal virke må Store ikke
+            // stokke om på rekkefølgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
+            storeServer.beginUnitOfWork();
+            storeServer.insert(b_102);
+            storeServer.insert(testBubble);
+            storeServer.insert(b_101);
+            storeServer.insert(b_103);
+            // Uten denne går det ikke bra:
+            // storeServer.rescheduleModification(b_102.getId());
+            storeServer.commitUnitOfWork();
+            storeServer.flush();
+            fail();
+        } catch (ConstraintViolationException e) {
+        } finally {
+            storeServer.rollbackTransaction();
+        }
+    }
+
 }

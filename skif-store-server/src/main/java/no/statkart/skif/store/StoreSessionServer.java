@@ -149,6 +149,11 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
     }
 
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
+        throw new ImplementationException("Operasjon kun støttet i UnitOfWork. UnitOfWork er ikke aktiv. BubbleId: " + bubbleId);
+    }
+
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
         boolean evicted;
         StoreEntry storeEntry = storeCache.get(bubbleId);

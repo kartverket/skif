@@ -228,6 +228,11 @@ public class MockupStore implements Store {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
         throw new NotImplementedException();
     }

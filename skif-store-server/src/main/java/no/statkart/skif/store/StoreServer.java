@@ -22,6 +22,7 @@ public class StoreServer extends AbstractStore {
         throw new ImplementationException("UnitOfWork is active");
     }
 
+
     public void beginTransaction() {
         storeServerSession().beginTransaction();
     }

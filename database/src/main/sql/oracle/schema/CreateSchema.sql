@@ -47,6 +47,17 @@ text varchar2(255),
 Primary Key (Id)
 );
 
+create table SelfBubble (
+id number(19,0) not null,
+text varchar2(255),
+refId number(19,0),
+
+Primary Key (Id)
+);
+alter table SelfBubble add constraint Self_FK foreign key (refId) references SelfBubble;
+
+
+
 create table TestMap (
 k varchar2(255) not null,
 v Varchar2(255),
