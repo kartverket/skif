@@ -6,6 +6,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
+import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.*;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.criterion.Expression;
@@ -15,6 +16,7 @@ import org.hibernate.engine.EntityKey;
 import org.hibernate.engine.PersistenceContext;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.AbstractComponentType;
@@ -23,6 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 /**
@@ -40,7 +46,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     protected Session lazySession;
 
     /* Holder referanse til alle bobler lastet i denne sesjonen som allerede er fullt initialisert */
-    private Map fullyInitializedBubbles = new HashMap();
+    private Map<BubbleId, BubbleObject> fullyInitializedBubbles = new HashMap<BubbleId, BubbleObject>();
     private Map exportedLazyLoadedBubbles = new HashMap();
 
     private int reserveCount = 0;
@@ -294,9 +300,11 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubbleObject) {
         try {
-            evictOtherInstanceFromHibernateSession(bubbleObject);
+            convertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject);
             session().update(bubbleObject); // Viktig at class-mapping inneholder 'select-before-update="true"'. Dette bør settes automatisk ved konfigurasjon av hibernate session factory.
         } catch (HibernateException e) {
+            throw new ImplementationException("Update feilet for " + bubbleObject, e);
+        } catch (SQLException e) {
             throw new ImplementationException("Update feilet for " + bubbleObject, e);
         }
     }
@@ -319,6 +327,161 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         } catch (HibernateException e) {
             throw new ImplementationException("Delete feilet for " + bubbleObject, e);
         }
+    }
+
+    /**
+     * Sjekk om objektet har endret type i forhold til det som ligger i Hibernate/databasen. Dersom så har skjedd, så
+     * må ikke-felles felter nullstilles og det utføres en spesiell SQL som endrer objekttypen i databasen.
+     * <p/>
+     * Uansett sørges det for at Hibernates cache ikke inneholder et objekt med samme id, med mindre det også er
+     * nøyaktig samme objekt (instans) som <i>bubbleObject</i>.
+     *
+     * @param bubbleObject et objekt som kanskje er lastet gjennom hibernate tidligere i denne
+     *                     sesjonen
+     * @throws HibernateException    dersom get() eller evict() på hibernate session feiler
+     * @throws java.sql.SQLException dersom SQL feiler ved typeendring
+     */
+    private void convertObjectIfTypeChangedAndEvictOtherInstance(BubbleObject bubbleObject) throws HibernateException, SQLException {
+        // Hibernate tillater ikke update på et objekt når et annet objekt med samme id finnes i hibernate sin cache
+        // Vi må teste på dette og evt. kaste ut det gamle objektet fra hibernate sin cache.
+        // Dette kan kun testes ved å forsøke å loaded objektet og se om man får det samme objket som man
+        // har fra før. Dersom objektet ikke var loadet vil Hibernate retunerer en proxy. Dette kallet gir
+        // derfor ingen database aksess.
+        Object obj = session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
+        if (obj != bubbleObject) {
+            if (!(bubbleObject.getClass().isInstance(obj))) {
+                changeType(bubbleObject, (BubbleObject) obj);
+
+                fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
+            } else {
+                // Objektet har ikke endret type, bare hiv ut gammel versjon fra Hibernate.
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Evict av annen boble instans assosiert med sessionen : " + bubbleObject.getBubbleId());
+                }
+                // Dersom den gamle instansen har blitt endret vil hibernate kunne gi en "postInsert feil: possible nonthreadsafe access to session"
+                // Denne feilen kan unngåes hvis man gjør en session.flush() her slik at alle endringer fra den gamle instansen
+                // kommer ned i databasen. Rammeverket skal dog fange opp og hindre at det oppdateres på flere instanser av
+                // samme objekt innenfor samme session. Det skal derfor ikke være noen flush her.
+                //session.flush();
+                // La den nye versjonen erstatte den gamle. Det er tryggt å anta at denne også er fullt initialisert.
+                fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
+
+                session().evict(obj);
+            }
+        } else {
+            // Gjør ingen ting, bubbleObject er det objektet som allerede ligger i hibernate sessionen
+        }
+    }
+
+    /**
+     * Utfører nødvendige Hibernate- og SQL-operasjoner som må til for å endre <i>previousObject</i> til
+     * <i>currentObject</i>. <i>previousObject</i> må være siste utgave av objektet i <i>denne</i> sesjonen og ha samme
+     * replicaversion.
+     *
+     * @param currentObject  det oppdaterte objektet av ny type
+     * @param previousObject forrige utgave av <i>currentObject</i>
+     * @throws SQLException dersom databasen ikke samarbeider
+     * @since 2.1
+     */
+    private void changeType(BubbleObject currentObject, BubbleObject previousObject) throws SQLException {
+        List<Field> primitiveFields;
+        try {
+            primitiveFields = blankUtIkkeFellesFelter(previousObject, currentObject.getClass());
+        } catch (IllegalAccessException e) {
+            throw new ImplementationException("Kunne ikke blanke ut felter i fra-objekt som endrer type", e, logger);
+        }
+
+        flush();
+        evict(currentObject.getBubbleId());
+
+        Statement statement = session().connection().createStatement();
+        try {
+            final AbstractEntityPersister fromEntityPersister = (AbstractEntityPersister) getClassPersister(previousObject.getClass());
+            final AbstractEntityPersister toEntityPersister = (AbstractEntityPersister) getClassPersister(currentObject.getClass());
+            final String dbTable = toEntityPersister.getTableName();
+
+            if (fromEntityPersister.isMultiTable()) {
+                throw new ImplementationException("Kan ikke endre type fra " + previousObject.getClass() + " da denne spenner flere tabeller", logger);
+            }
+            if (toEntityPersister.isMultiTable()) {
+                throw new ImplementationException("Kan ikke endre type til " + currentObject.getClass() + " da denne spenner flere tabeller", logger);
+            }
+            if (!dbTable.equals(fromEntityPersister.getTableName())) {
+                throw new ImplementationException("Kan ikke endre type fra " + previousObject.getClass() + " til " + currentObject.getClass() + " da de ligger i forskjellige tabeller", logger);
+            }
+
+            final String discriminatorColumn = toEntityPersister.getDiscriminatorColumnName();
+            final String discriminatorValue = toEntityPersister.getDiscriminatorSQLValue(); // Inkluderer apostrofer hvis tekst
+
+            StringBuilder sql = new StringBuilder("update ");
+            sql.append(dbTable);
+            sql.append(" set ").append(discriminatorColumn).append('=').append(discriminatorValue);
+
+            if (!primitiveFields.isEmpty()) {
+                final boolean[] propertyNullability = fromEntityPersister.getPropertyNullability();
+
+                for (int i = 0; i < primitiveFields.size(); i++) {
+                    final Field field = primitiveFields.get(i);
+                    final int propertyIndex = fromEntityPersister.getPropertyIndex(field.getName());
+                    if (propertyNullability[propertyIndex]) {
+                        final String[] propertyColumnNames = fromEntityPersister.getPropertyColumnNames(propertyIndex);
+                        if (propertyColumnNames.length != 1) {
+                            throw new ImplementationException("Property " + field.getName() + " er mappet til flere kolonner: " + Arrays.toString(propertyColumnNames), logger);
+                        }
+                        sql.append(", ").append(propertyColumnNames[0]).append("=null");
+                    } else {
+                        logger.warn("Property " + field.getName() + " er ikke nullable, men unik for fra-klasse " + previousObject.getClass());
+                    }
+                }
+            }
+
+            sql.append(" where id=").append(currentObject.getBubbleId().getValue());
+
+            final String sqlString = sql.toString();
+            logger.debug(sqlString);
+            int rows = statement.executeUpdate(sqlString);
+            if (rows != 1) {
+                throw new ImplementationException("Ved endring av bobletype skulle antall oppdaterte rader vært 1, var " + rows, logger);
+            }
+        } finally {
+            JDBCHelper.close(statement);
+        }
+    }
+
+    /**
+     * Når et objekt skal endre type, må alle felter som finnes i fra-typen men ikke i til-typen, blankes ut.
+     * Det vil si at kolleksjoner må tømmes og referanser må settes til <code>null</code>.
+     * <p/>
+     * Primitive felter kan ikke nulles ut. Disse blir returnert slik at de kan nulles ut med SQL, om mulig.
+     *
+     * @param bubbleObject den gamle utgaven av objektet med sin gamle type
+     * @param tilClass     typen objektet skal endres til
+     * @return liste over primitive felter som må nulles ut med SQL
+     * @throws IllegalAccessException dersom det av en eller annen grunn ikke er mulig å få tak i noen av feltene
+     * @since 2.1
+     */
+    private static List<Field> blankUtIkkeFellesFelter(BubbleObject bubbleObject, Class<? extends BubbleObject> tilClass) throws IllegalAccessException {
+        ArrayList<Field> primitiveFields = new ArrayList<Field>();
+
+        for (Class clazz = bubbleObject.getClass(); !clazz.isAssignableFrom(tilClass); clazz = clazz.getSuperclass()) {
+            for (Field field : clazz.getDeclaredFields()) {
+                // Ikke nullstill statiske felter
+                if ((field.getModifiers() & (Modifier.STATIC | Modifier.FINAL)) == 0) {
+                    field.setAccessible(true);
+                    if (Collection.class.isAssignableFrom(field.getType())) {
+                        ((Collection) field.get(bubbleObject)).clear();
+                    } else if (!field.getType().isPrimitive()) {
+                        field.set(bubbleObject, null);
+                    } else {
+                        primitiveFields.add(field);
+                    }
+                } else if (logger.isDebugEnabled()) {
+                    logger.debug("Bobletypeendring: Blanker ikke ut felt " + field.toString());
+                }
+            }
+        }
+
+        return primitiveFields;
     }
 
     /**
