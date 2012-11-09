@@ -47,6 +47,9 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
 
     private Mapping thisMapping;
 
+    private final ThreadLocal<Integer> recurseLevel_w2d = new ThreadLocal<Integer>();
+    private final ThreadLocal<Integer> recurseLevel_d2w = new ThreadLocal<Integer>();
+
     public AbstractMapper(Class<? extends Mapping> mappingClass) {
         this(mappingClass, new DefaultObjectFactory(), new DefaultObjectFactory(), false);
     }
@@ -56,6 +59,8 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
      */
     @SuppressWarnings("unchecked")
     public AbstractMapper(Class<? extends Mapping> mappingClass, ObjectFactory wsapiObjectFactory, ObjectFactory domainObjectFactory, boolean mergeMapping) {
+        this.recurseLevel_d2w.set(0);
+        this.recurseLevel_w2d.set(0);
         this.wsapiObjectFactory = wsapiObjectFactory;
         this.domainObjectFactory = domainObjectFactory;
         thisMapping = (Mapping) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{mappingClass}, this);
@@ -103,11 +108,38 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object target;
 
-
         if (method.getName().equals("w2d")) {
-            target = w2d(args);
+            //try/finally for å vedlikeholde en teller for hvor dypt i rekursjonsgrafen vi er.
+            //Dersom vi er på toppen så kan vi clearMappedFields fra DefaultTypeMapper.
+            try{
+                int i = recurseLevel_w2d.get();
+                if(i==0){
+                    if(defaultMapper!=null){
+                        ((DefaultTypeMapper)defaultMapper).clearMappedFields();
+                    }
+                }
+                recurseLevel_w2d.set(++i);
+                target = w2d(args);
+            }finally{
+                int i = recurseLevel_w2d.get();
+                recurseLevel_w2d.set(--i);
+            }
         } else if (method.getName().equals("d2w")) {
-            target = d2w(args);
+            //try/finally for å vedlikeholde en teller for hvor dypt i rekursjonsgrafen vi er.
+            //Dersom vi er på toppen så kan vi clearMappedFields fra DefaultTypeMapper.
+            try{
+                int i = recurseLevel_d2w.get();
+                if(i==0){
+                    if(defaultMapper!=null){
+                        ((DefaultTypeMapper)defaultMapper).clearMappedFields();
+                    }
+                }
+                recurseLevel_d2w.set(++i);
+                target = d2w(args);
+            }finally{
+                int i = recurseLevel_d2w.get();
+                recurseLevel_d2w.set(--i);
+            }
         } else {
             target = method.invoke(this, args);
             //throw new SkifImplementationException("Unexpected method call: " + method.toGenericString());

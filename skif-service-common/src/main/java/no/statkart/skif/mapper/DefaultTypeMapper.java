@@ -90,7 +90,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
     public DefaultTypeMapper() {
     }
 
-    public void clearMappedFields(){
+    public void clearMappedFields() {
         mappedFields.clear();
     }
 
@@ -104,7 +104,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
     public void addPackageMapping(String wsapiPackage, String domainPackage) {
         addPackageMapping(wsapiPackage, domainPackage, true);
     }
-    
+
     /**
      * Denne metoden finner klasser i alle subpakker av de angitte pakkene, med mindre recurse er satt til 'false', da leter den bare i den angitte pakken. og mapper de opp mot hverandre gitt at navnene (SimpleName) på
      * klassene er de samme.
@@ -235,7 +235,13 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
             retVal = this.overrideClassMappings.get(sourceClass);
         }
         if (retVal == null) {
-            if (classMappings.containsKey(sourceClass)) {
+            //Hvis kildeklassen har et felt som heter 'item' så er dette en collection-klasse.
+            if (checkHasField(sourceClass, "item")) {
+                return Class.forName("java.util.ArrayList");
+                //Eller hvis kildeklassen har et felt som heter 'liste' så er dette en collection-klasse.
+            } else if (checkHasField(sourceClass, "liste")) {
+                return Class.forName("java.util.ArrayList");
+            } else if (classMappings.containsKey(sourceClass)) {
                 retVal = classMappings.get(sourceClass);
             } else {
                 throw new MappingException("Kunne ikke mappe: " + sourceClass.toString() + ", fant ingen motsvarende klasse");
@@ -660,7 +666,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
 //        List<File> dirs = new ArrayList<File>();
-        List<Class> classes = new ArrayList<Class>();
+        Set<Class> classes = new HashSet<Class>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             String protocol = resource.getProtocol();
@@ -745,19 +751,19 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                 throw new ImplementationException("Ukjent protokoll: " + protocol);
             }
         }
-        
-        if(!recurse){
-            List<Class> trimmedClasses = new ArrayList<Class>();            
-            for (int i = 0; i < classes.size(); i++) {
-                Class aClass = classes.get(i);
-                if(aClass.getPackage().getName().equals(packageName)){
+
+        if (!recurse) {
+            Set<Class> trimmedClasses = new HashSet<Class>();
+            for (Iterator<Class> iterator = classes.iterator(); iterator.hasNext(); ) {
+                Class aClass = iterator.next();
+                if (aClass.getPackage().getName().equals(packageName)) {
                     trimmedClasses.add(aClass);
                 }
             }
             classes = trimmedClasses;
         }
 
-        return classes;
+        return new ArrayList<Class>(classes);
     }
 
 
@@ -816,13 +822,13 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
     protected static Field getFieldWithInheritedFields(Class<?> c, String fieldname) {
 
         Map<String, Field> fieldMap = fieldsWithInheritedFieldsByClass.get(c);
-        if(fieldMap == null) {
+        if (fieldMap == null) {
             fieldMap = new HashMap<String, Field>();
             fieldsWithInheritedFieldsByClass.put(c, fieldMap);
         }
 
         Field field = fieldMap.get(fieldname);
-        if(field != null) {
+        if (field != null) {
             return field;
         }
 
