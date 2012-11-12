@@ -27,7 +27,7 @@ public class OracleLogHelper {
      * Angir hvormye info som skal logges
      */
     public enum Verbose {
-        ON, OFF
+        ON, OFF, FULL
     }
 
     ;
@@ -50,7 +50,7 @@ public class OracleLogHelper {
         handler.setLevel(Level.ALL);
         handler.setFormatter(new SimpleFormatter());
         handler.publish(new LogRecord(Level.INFO, "Oracle Logging configured"));
-        handler.publish(new LogRecord(Level.INFO, "Oracle Library path: " + oracle.jdbc.driver.OracleLog.class.getProtectionDomain().getCodeSource() ));
+        handler.publish(new LogRecord(Level.INFO, "Oracle Library path: " + oracle.jdbc.driver.OracleLog.class.getProtectionDomain().getCodeSource()));
         logger = Logger.getLogger("oracle.jdbc");
         Logger.getLogger("oracle.jdbc").addHandler(handler);
         Logger.getLogger("oracle.jdbc").setUseParentHandlers(false);
@@ -83,11 +83,11 @@ public class OracleLogHelper {
      */
     public static void enableTrace(Verbose mode) {
         configureOracleJDBCLogging();
-        filter.verbose = mode == Verbose.ON;
-        if (mode == Verbose.ON) {
-            Logger.getLogger("oracle.jdbc").setLevel(Level.FINER);
+        filter.verbose = mode;
+        if (mode == Verbose.OFF) {
+            Logger.getLogger("oracle.jdbc").setLevel(Level.FINE);
         } else {
-            Logger.getLogger("oracle.jdbc").setLevel(Level.CONFIG);
+            Logger.getLogger("oracle.jdbc").setLevel(Level.FINER);
         }
         oracle.jdbc.driver.OracleLog.setTrace(true);
     }
@@ -113,7 +113,7 @@ public class OracleLogHelper {
     }
 
     private static class OracleLogFilter implements Filter {
-        boolean verbose = false;
+        Verbose verbose = Verbose.OFF;
 
         public boolean isLoggable(LogRecord record) {
             boolean result = true;
@@ -124,10 +124,12 @@ public class OracleLogHelper {
                 String methodname = record.getSourceMethodName();
                 if (classname != null && methodname != null) {
                     if (record.getLevel().intValue() == Level.FINE.intValue()) {
-                        if (methodname.equals("connect"))  {
+                        if (methodname.equals("connect")) {
                             // Logger oppkobling mot database
                             result = true;
-                        } else if (methodname.equals("addBatch") && record.getMessage().contains("Enter: ")) {
+                        } else if (verbose!=Verbose.OFF && methodname.equals("addBatch") && record.getMessage().contains("Enter: ")) {
+                            result = true;
+                        } else if (verbose==Verbose.OFF && methodname.equals("prepareStatement") && classname.equals("oracle.jdbc.driver.PhysicalConnection") && record.getMessage().contains("Public Enter:")) {
                             result = true;
                         }
                     } else {
@@ -148,6 +150,10 @@ public class OracleLogHelper {
                         }
                     }
                 }
+            }
+
+            if (verbose==Verbose.FULL)  {
+              result = true;
             }
             return result;
         }
