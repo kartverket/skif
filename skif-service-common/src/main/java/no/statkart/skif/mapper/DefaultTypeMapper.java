@@ -171,12 +171,12 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
             } catch (ClassNotFoundException e) {
                 //Dette kan skje, ikke gjør noe, vi vil ende opp med å returnere true eller false i bunn av metoden uansett.
             }
-        }
-        if (wsapiName.equals(domainName)) {
+        } else if (wsapiName.equals(domainName)) {
             return true;
         } else {
             return false;
         }
+        return false;
     }
 
 
