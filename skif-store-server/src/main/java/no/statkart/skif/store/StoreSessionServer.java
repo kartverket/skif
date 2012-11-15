@@ -210,35 +210,10 @@ public class StoreSessionServer extends AbstractStoreSession {
         clear();
     }
 
-    private void clear() {
+    public void clear() {
         storeCache.clear();
         modifiedMap.clear();
         markModified();
-    }
-
-    /**
-     * TODO: Blir kun kalt av tester. persistenceSessionManager.beginTransaction() blir kalt av andre ting til vanlig.
-     */
-    public void beginTransaction() {
-        persistenceSessionManager.beginTransaction();
-    }
-
-    /**
-     * TODO: Blir kun kalt av tester. persistenceSessionManager.commit() blir kalt av andre ting til vanlig.
-     */
-    public void commitTransaction() {
-        finish();
-        persistenceSessionManager.commit();
-        lockerStrategy.consumeAllLocks();
-    }
-
-    /**
-     * TODO: Blir kun kalt av tester. persistenceSessionManager.rollback() blir kalt av andre ting til vanlig.
-     */
-    public void rollbackTransaction() {
-        persistenceSessionManager.rollback();
-        lockerStrategy.releaseLocksOnRollback();
-        clear();
     }
 
     @Override

@@ -165,7 +165,6 @@ public class TransactionalLockerStrategy implements LockerStrategy {
 
     @Override
     public void registerUpdated(BubbleId id) {
-        String owner = serviceRequestContext.getUserName();
         if (!insertedIds.contains(id)) {
             ensureLockedByCaller(id);
             modifiedIds.add(id);
@@ -174,7 +173,6 @@ public class TransactionalLockerStrategy implements LockerStrategy {
 
     @Override
     public void registerRemoved(BubbleId id) {
-        String owner = serviceRequestContext.getUserName();
         if (!insertedIds.contains(id)) {
             ensureLockedByCaller(id);
             modifiedIds.add(id);
@@ -214,10 +212,12 @@ public class TransactionalLockerStrategy implements LockerStrategy {
      */
     private BubbleId createBubbleIdFromLockKey(LockKey<Long> lockKey) {
         try {
-            Class<? extends BubbleId> idClass = (Class<? extends BubbleId>) Class.forName(lockKey.discriminator);
+            Class<? extends BubbleId> idClass = Class.forName(lockKey.discriminator).asSubclass(BubbleId.class);
             return BubbleIds.createInstance(idClass, lockKey.keyValue, SnapshotVersion.CURRENT);
         } catch (ClassNotFoundException e) {
             throw new ImplementationException("Class.forName feilet for klassen " + lockKey.discriminator + " i TransactionalLockerStrategy", e);
+        } catch (ClassCastException e) {
+            throw new ImplementationException("Class.forName returnerte ikke-bobleid-klasse for " + lockKey.discriminator + " i TransactionalLockerStrategy", e);
         }
     }
 
@@ -238,7 +238,6 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     }
 
     private void ensureLockMapInitialized() {
-        String owner = serviceRequestContext.getUserName();
         if (lockMap == null) {
             lockMap = new HashMap<BubbleId, LockInfo<Long>>();
             initializeLockMap();

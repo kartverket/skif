@@ -3,6 +3,7 @@ package no.statkart.skif.store;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.SkifUtil;
@@ -102,6 +103,8 @@ public class StoreSessionServerTest {
     PersistenceSessionManager persistenceSessionManager;
     PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
+    LockerStrategy lockerStrategy;
+
     StoreServer storeServer;
 
     public StoreSessionServerTest() {
@@ -177,6 +180,7 @@ public class StoreSessionServerTest {
                 bind(SkifUtil.typeLiteral(DBLockerService.class, Long.class)).toInstance(MemoryLockerSingleton.getInstance());
                 bind(SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).toInstance(MemoryLockerSingleton.getInstance());
                 bind(LockerStrategy.class).to(TransactionalLockerStrategy.class);
+                bind(TransactionalLockerStrategy.class).in(Singleton.class);
                 bind(Configuration.class).toInstance(new SkifConfiguration());
                 ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
                 serviceRequestContext.setCallerPrincipal(new PrincipalImpl("test"));
@@ -186,6 +190,8 @@ public class StoreSessionServerTest {
 
         final HibernateBubbleDependencyComparator dependencyComparator = new HibernateBubbleDependencyComparator(sessionFactoryManagerBundle);
 
+        lockerStrategy = fakeInjector.getInstance(LockerStrategy.class);
+
         storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), fakeInjector.getInstance(LockerStrategy.class), dependencyComparator, readListeners, writeListeners, finishListeners), fakeInjector);
         deletePriviouslyWritenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
     }
@@ -193,6 +199,24 @@ public class StoreSessionServerTest {
     @AfterMethod
     public void closeStore() {
         persistenceSessionManager.close();
+    }
+
+    private void beginTransaction() {
+        persistenceSessionManager.beginTransaction();
+    }
+
+    private void commitTransaction() {
+        storeServer.finish();
+        lockerStrategy.consumeAllLocks();
+        persistenceSessionManager.commit();
+        lockerStrategy.clear();
+    }
+
+    private void rollbackTransaction() {
+        lockerStrategy.releaseLocksOnRollback();
+        persistenceSessionManager.rollback();
+        storeServer.clear();
+        lockerStrategy.clear();
     }
 
     /**
@@ -238,16 +262,15 @@ public class StoreSessionServerTest {
         }
     }
 
-
     /**
      * Tester insert object
      */
     public void testInsert() {
         TestBubble testBubble_100 = new TestBubble(TestBubbleId_101);
         testBubble_100.setText("Insert 1");
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.insert(testBubble_100);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
     }
 
@@ -260,8 +283,8 @@ public class StoreSessionServerTest {
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         assertSame(storeServer.lock(TestBubbleId_101), testBubble_101);
 
-        storeServer.beginTransaction();
-        storeServer.commitTransaction();
+        beginTransaction();
+        commitTransaction();
 
         // Denne skal ikke gi en ekstra select statement
         assertSame(storeServer.get(TestBubbleId_101), testBubble_101);
@@ -277,11 +300,11 @@ public class StoreSessionServerTest {
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         assertEquals(testBubble_101.getText(), "Insert 1");
 
-        storeServer.beginTransaction();
+        beginTransaction();
         testBubble_101.setText("Update 1");
 
         storeServer.update(testBubble_101);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Update 1");
     }
 
@@ -290,11 +313,11 @@ public class StoreSessionServerTest {
      */
     public void testUpdateMultipleTimes() {
         testUpdate();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         testBubble_101.setText("Update 2");
         storeServer.update(testBubble_101);
-        storeServer.commitTransaction();
+        commitTransaction();
         testBubble_101 = storeServer.get(TestBubbleId_101);
         assertEquals(testBubble_101.getText(), "Update 2");
     }
@@ -304,7 +327,7 @@ public class StoreSessionServerTest {
      */
     public void testUpdateMultipleInstances() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         testBubble_101.setText("Update 2");
         storeServer.update(testBubble_101);
@@ -313,7 +336,7 @@ public class StoreSessionServerTest {
         testBubble_101_2.setText("Update 3");
         storeServer.update(testBubble_101_2);
 
-        storeServer.commitTransaction();
+        commitTransaction();
         assertSame(storeServer.get(TestBubbleId_101), testBubble_101_2);
     }
 
@@ -330,7 +353,7 @@ public class StoreSessionServerTest {
         testBubble_101.addChild(ChildBubbleId_102, (long) 102);
         test2Bubble_102.setTestBubbleId(new TestBubbleId<TestBubble>(2));
 
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.insert(test2Bubble_101);
         storeServer.insert(test2Bubble_102);
         storeServer.insert(testBubble_101);
@@ -338,7 +361,7 @@ public class StoreSessionServerTest {
         ChildForParrent childForParrent = testBubble_101.getChildForParrent(ChildBubbleId_101);
         ParrentBubble parrentBubble = childForParrent.getParrentBubble();
         assertNotNull(parrentBubble);
-        storeServer.commitTransaction();
+        commitTransaction();
     }
 
 //    /**
@@ -358,7 +381,7 @@ public class StoreSessionServerTest {
 //        testBubble_101.addChild(ChildBubbleId_102,(long)102);
 //        test2Bubble_102.setTestBubbleId(new TestBubbleId<TestBubble>(2));
 //
-//        storeServer.beginTransaction();
+//        beginTransaction();
 //        storeServer.insert(test2Bubble_101);
 //        storeServer.insert(test2Bubble_102);
 //        storeServer.insert(testBubble_101);
@@ -367,8 +390,7 @@ public class StoreSessionServerTest {
 //        ParrentBubble parrentBubble = childForParrent.getParrentBubble();
 //        assertNotNull(parrentBubble);
 //         if(1==1)throw new ImplementationException("test");
-//        storeServer.finish();
-//        storeServer.commit();
+//        commitTransaction();
 //    }
 
 
@@ -385,9 +407,9 @@ public class StoreSessionServerTest {
 
     public void testInsertFilteredKlasse() {
         FilteredBubble filteredBubble = new FilteredBubble(filteredBubbleId_101, "Insert ufiltrert 101", false, "Insert filtrert 101");
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.insert(filteredBubble);
-        storeServer.commitTransaction();
+        commitTransaction();
         FilteredBubble lest = storeServer.get(filteredBubble.getId());
         assertSame(filteredBubble, lest);
     }
@@ -396,9 +418,9 @@ public class StoreSessionServerTest {
         String ftekst = "Skal overskrives på vei ned i basen 101";
         FilteredBubble filteredBubble = new FilteredBubble(filteredBubbleId_101, "Insert ufiltrert 101", true, ftekst);
         try {
-            storeServer.beginTransaction();
+            beginTransaction();
             storeServer.insert(filteredBubble);
-            storeServer.commitTransaction();
+            commitTransaction();
             fail("insert på filtrert objekt feilet ikke");
         } catch (Exception e) {
             //skal feile
@@ -406,14 +428,14 @@ public class StoreSessionServerTest {
     }
 
     public void testLesOppdaterFilteredKlasse() {
-        storeServer.beginTransaction();
+        beginTransaction();
 
         FilteredBubble filteredBubble = storeServer.lock(filteredBubbleId_2);
         assertNotNull(filteredBubble);
         filteredBubble.setFilterText(null);
         try {
             storeServer.update(filteredBubble);
-            storeServer.commitTransaction();
+            commitTransaction();
             fail("skal ikke klare å lagre objekt som har filtering!");
         } catch (Exception e) {
             //skal feile
@@ -424,10 +446,10 @@ public class StoreSessionServerTest {
 
     public void testFinishFilter() {
         String str = "Skal byttes ut i finish";
-        storeServer.beginTransaction();
+        beginTransaction();
         FilteredBubble filteredBubble = new FilteredBubble(filteredBubbleId_101, "Finish 101", false, str);
         storeServer.insert(filteredBubble);
-        storeServer.commitTransaction();
+        commitTransaction();
 
         FilteredBubble lest = storeServer.get(filteredBubbleId_101);
         assertNotSame(str, lest.getFilterText());
@@ -439,10 +461,10 @@ public class StoreSessionServerTest {
      */
     public void testDeleteObject() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         storeServer.delete(testBubble_101);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
     }
 
@@ -451,12 +473,12 @@ public class StoreSessionServerTest {
      */
     public void testDeleteObjectAnnenInstans() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         TestBubble copy = CopyHelper.copy(testBubble_101);
         storeServer.delete(copy);
         assertSame(storeServer.get(TestBubbleId_101), copy);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
     }
 
@@ -465,11 +487,11 @@ public class StoreSessionServerTest {
      */
     public void testDeleteInsertObject() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         storeServer.delete(testBubble_101);
         storeServer.insert(testBubble_101);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
     }
 
@@ -478,14 +500,14 @@ public class StoreSessionServerTest {
      */
     public void testDeleteInsertUpdateObject() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         storeServer.delete(testBubble_101);
         storeServer.insert(testBubble_101);
         storeServer.update(testBubble_101);
         storeServer.delete(testBubble_101);
         storeServer.insert(testBubble_101);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
     }
 
@@ -514,80 +536,70 @@ public class StoreSessionServerTest {
     public void testEvictInsertedObject() {
         TestBubble testBubble_101 = new TestBubble(TestBubbleId_101);
         testBubble_101.setText("Insert 1");
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.insert(testBubble_101);
         assertFalse(storeServer.evict(TestBubbleId_101));
         assertTrue(storeServer.isLocked(TestBubbleId_101));
         storeServer.finish();
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
         assertFalse(storeServer.isLocked(TestBubbleId_101));
     }
 
-    // TODO: Denne brokenheten oppstod ved integrering av låsebehandling i Store og i transaksjoner
-    @Test(groups="broken")
     public void testEvictUpdatedObject() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         testBubble_101.setText("Updated 101");
         storeServer.update(testBubble_101);
         assertFalse(storeServer.evict(TestBubbleId_101));
         assertTrue(storeServer.isLocked(TestBubbleId_101));
         storeServer.finish();
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
         assertFalse(storeServer.isLocked(TestBubbleId_101));
     }
 
-    // TODO: Denne brokenheten oppstod ved integrering av låsebehandling i Store og i transaksjoner
-    @Test(groups="broken")
     public void testEvictBeforeUpdateObject() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         testBubble_101.setText("Updated 101");
         assertTrue(storeServer.evict(TestBubbleId_101));
         storeServer.update(testBubble_101);
         assertTrue(storeServer.isLocked(TestBubbleId_101));
         storeServer.finish();
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
         assertFalse(storeServer.isLocked(TestBubbleId_101));
     }
 
-    // TODO: Denne brokenheten oppstod ved integrering av låsebehandling i Store og i transaksjoner
-    @Test(groups="broken")
     public void testEvictDeletedObject() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         storeServer.delete(testBubble_101);
         assertFalse(storeServer.evict(TestBubbleId_101));
         assertTrue(storeServer.isLocked(TestBubbleId_101));
         storeServer.finish();
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
         assertFalse(storeServer.isLocked(TestBubbleId_101));
     }
 
-    // TODO: Denne brokenheten oppstod ved integrering av låsebehandling i Store og i transaksjoner
-    @Test(groups="broken")
     public void testEvictBeforeDeleteObject() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         assertTrue(storeServer.evict(TestBubbleId_101));
         storeServer.delete(testBubble_101);
         assertTrue(storeServer.isLocked(TestBubbleId_101));
         storeServer.finish();
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
         assertFalse(storeServer.isLocked(TestBubbleId_101));
     }
 
-    // TODO: Denne brokenheten oppstod ved integrering av låsebehandling i Store og i transaksjoner
-    @Test(groups="broken")
     public void testUnlockObject() {
         testInsert();
         assertFalse(storeServer.isLocked(TestBubbleId_101));
@@ -604,7 +616,7 @@ public class StoreSessionServerTest {
     public void testUnlockInsertedObject() {
         TestBubble testBubble_100 = new TestBubble(TestBubbleId_101);
         testBubble_100.setText("Insert 1");
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.insert(testBubble_100);
         storeServer.unlock(TestBubbleId_101);
     }
@@ -612,7 +624,7 @@ public class StoreSessionServerTest {
     @Test(expectedExceptions = ImplementationException.class)
     public void testUnlockUpdatedObject() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         assertEquals(testBubble_101.getText(), "Insert 1");
         testBubble_101.setText("Update 1");
@@ -623,7 +635,7 @@ public class StoreSessionServerTest {
     @Test(expectedExceptions = ImplementationException.class)
     public void testUnlockDeletedObject() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         storeServer.delete(testBubble_101);
         storeServer.unlock(TestBubbleId_101);
@@ -656,9 +668,9 @@ public class StoreSessionServerTest {
     public void testRollbackTransaction() {
         TestBubble testBubble_101 = new TestBubble(TestBubbleId_101);
         testBubble_101.setText("Insert 1");
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.insert(testBubble_101);
-        storeServer.rollbackTransaction();
+        rollbackTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
 
         try {
@@ -667,50 +679,50 @@ public class StoreSessionServerTest {
         } catch (ObjectNotFoundException e) {
         }
 
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.insert(testBubble_101);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
 
     }
 
     public void testBeginEndMultiLevelEmptyUnitOfWorks() {
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         storeServer.beginUnitOfWork();
         storeServer.beginUnitOfWork();
         storeServer.commitUnitOfWork();
         storeServer.commitUnitOfWork();
         storeServer.commitUnitOfWork();
-        storeServer.commitTransaction();
+        commitTransaction();
     }
 
     public void testInsertViaUOW() {
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         TestBubble testBubble_100 = new TestBubble(TestBubbleId_101);
         testBubble_100.setText("Insert 1");
         storeServer.insert(testBubble_100);
         storeServer.commitUnitOfWork();
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
     }
 
     public void testInsertViaUOW_Abort() {
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         TestBubble testBubble_100 = new TestBubble(TestBubbleId_101);
         testBubble_100.setText("Insert 1");
         storeServer.insert(testBubble_100);
         storeServer.abortUnitOfWork();
         assertNotFound(storeServer, TestBubbleId_101);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
     }
 
     public void testUpdateViaUOW() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
 
         storeServer.beginUnitOfWork();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
@@ -720,14 +732,14 @@ public class StoreSessionServerTest {
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Update 1");
         storeServer.commitUnitOfWork();
 
-        storeServer.commitTransaction();
+        commitTransaction();
         storeServer.evict(testBubble_101.getId());
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Update 1");
     }
 
     public void testUpdateViaUOW_Abort() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
 
         storeServer.beginUnitOfWork();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
@@ -737,27 +749,27 @@ public class StoreSessionServerTest {
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Update 1");
         storeServer.abortUnitOfWork();
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Insert 1");
-        storeServer.commitTransaction();
+        commitTransaction();
         storeServer.evict(testBubble_101.getId());
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Insert 1");
     }
 
     public void testDeleteViaUOW() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
 
         storeServer.beginUnitOfWork();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         storeServer.delete(testBubble_101);
         storeServer.commitUnitOfWork();
 
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
     }
 
     public void testDeleteViaUOW_Abort() {
         testInsert();
-        storeServer.beginTransaction();
+        beginTransaction();
 
         storeServer.beginUnitOfWork();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
@@ -766,40 +778,40 @@ public class StoreSessionServerTest {
         storeServer.abortUnitOfWork();
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Insert 1");
 
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
     }
 
     public void testInsertDeleteObjectInSameUnitOfWork() {
 
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
         storeServer.delete(testBubble1);
         storeServer.commitUnitOfWork();
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
         assertNotFound(storeServer, TestBubbleId_101);
     }
 
     public void testInsertDeleteObjectInSameUnitOfWork_Abort() {
 
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
         storeServer.delete(testBubble1);
         storeServer.abortUnitOfWork();
         assertNotFound(storeServer, TestBubbleId_101);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
         assertNotFound(storeServer, TestBubbleId_101);
     }
 
 
     public void testInsertDeleteObjectViaNestedUnitOfWork() {
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");
@@ -811,12 +823,12 @@ public class StoreSessionServerTest {
         assertSame(storeServer.get(TestBubbleId_101_CURRENT), copy);
         storeServer.commitUnitOfWork();
         assertNotFound(storeServer, TestBubbleId_101_CURRENT);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
     }
 
     public void testInsertDeleteObjectViaNestedUnitOfWork_AbortInner() {
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
@@ -827,12 +839,12 @@ public class StoreSessionServerTest {
         assertSame(storeServer.get(TestBubbleId_101), testBubble1);
         storeServer.commitUnitOfWork();
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "TestBubble 101");
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
     }
 
     public void testInsertDeleteObjectViaNestedUnitOfWork_AbortOuter() {
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
@@ -843,12 +855,12 @@ public class StoreSessionServerTest {
         assertSame(storeServer.get(TestBubbleId_101), copy);
         storeServer.abortUnitOfWork();
         assertNotFound(storeServer, TestBubbleId_101);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
     }
 
     public void testInsertDeleteObjectViaNestedUnitOfWork_AbortBoth() {
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
@@ -859,12 +871,12 @@ public class StoreSessionServerTest {
         assertSame(storeServer.get(TestBubbleId_101), testBubble1);
         storeServer.abortUnitOfWork();
         assertNotFound(storeServer, TestBubbleId_101);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
     }
 
     public void testInsertUpdateDeleteObjectViaMultiNestedUnitOfWork() {
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");
@@ -881,12 +893,12 @@ public class StoreSessionServerTest {
         storeServer.commitUnitOfWork();
         storeServer.commitUnitOfWork();
         assertNotFound(storeServer, TestBubbleId_101_CURRENT);
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
     }
 
     public void testInsertUpdateDeleteObjectViaMultiNestedUnitOfWork_AbortInnder() {
-        storeServer.beginTransaction();
+        beginTransaction();
         storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
@@ -904,7 +916,7 @@ public class StoreSessionServerTest {
         storeServer.commitUnitOfWork();
         assertSame(storeServer.get(TestBubbleId_101), testBubble2);
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "TestBubble updated");
-        storeServer.commitTransaction();
+        commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
         assertSame(storeServer.get(TestBubbleId_101), testBubble2);
     }
@@ -914,22 +926,22 @@ public class StoreSessionServerTest {
 
         FooId<Foo> FooId_10001 = new FooId<Foo>(10001L);
 
-        storeServer.beginTransaction();
+        beginTransaction();
         Foo foo1 = new Foo();
         foo1.setId(FooId_10001);
         foo1.setNavn("Foo Insert");
         storeServer.insert(foo1);
-        storeServer.commitTransaction();
+        commitTransaction();
 
-        storeServer.beginTransaction();
+        beginTransaction();
         Foo foo2 = storeServer.lock(FooId_10001);
         foo2.setNavn("Foo Update");
         storeServer.update(foo2);
-        storeServer.commitTransaction();
+        commitTransaction();
     }
 
     public void testReorderModification() {
-        storeServer.beginTransaction();
+        beginTransaction();
 
         SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<SelfBubble>(101L);
         SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<SelfBubble>(102L);
@@ -951,12 +963,12 @@ public class StoreSessionServerTest {
         storeServer.insert(b_103);
         storeServer.reorderModification(b_102.getId());
         storeServer.commitUnitOfWork();
-        storeServer.commitTransaction();
+        commitTransaction();
     }
 
     public void testReorderModificationNotInUnitOfWork() {
         try {
-            storeServer.beginTransaction();
+            beginTransaction();
 
             SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<SelfBubble>(101L);
             SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<SelfBubble>(102L);
@@ -979,13 +991,13 @@ public class StoreSessionServerTest {
             fail();
         } catch (ImplementationException e) {
         } finally {
-            storeServer.rollbackTransaction();
+            rollbackTransaction();
         }
     }
 
     public void testReorderModificationNoReorder() {
         try {
-            storeServer.beginTransaction();
+            beginTransaction();
 
             SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<SelfBubble>(101L);
             SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<SelfBubble>(102L);
@@ -1012,7 +1024,7 @@ public class StoreSessionServerTest {
             fail();
         } catch (ConstraintViolationException e) {
         } finally {
-            storeServer.rollbackTransaction();
+            rollbackTransaction();
         }
     }
 

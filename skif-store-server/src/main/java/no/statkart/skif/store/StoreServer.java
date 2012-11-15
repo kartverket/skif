@@ -22,30 +22,9 @@ public class StoreServer extends AbstractStore {
         throw new ImplementationException("UnitOfWork is active");
     }
 
-
-    /**
-     * TODO: Blir kun kalt av tester, og bør vel knapt nok bli det.
-     * @see no.statkart.skif.store.StoreSessionServer#beginTransaction()
-     */
-    public void beginTransaction() {
-        storeServerSession().beginTransaction();
-    }
-
-    /**
-     * TODO: Blir kun kalt av tester, og bør vel knapt nok bli det.
-     * @see StoreSessionServer#commitTransaction()
-     */
-    public void commitTransaction() {
-        storeServerSession().commitTransaction();
-    }
-
-    /**
-     * TODO: Blir kun kalt av tester, og bør vel knapt nok bli det.
-     * @see no.statkart.skif.store.StoreSessionServer#rollbackTransaction()
-     */
-    public void rollbackTransaction() {
-        storeServerSession().rollbackTransaction();
-
+    @Override
+    public void clear() {
+        storeServerSession().clear();
     }
 
     public void flush() {
