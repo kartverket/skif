@@ -12,54 +12,47 @@ public interface LockerStrategy {
      * Låser id for owner dersom dette er mulig.
      *
      * @param id    Id som skal låses
-     * @param owner Bruker id skal låses for
      * @return true Dersom lås er tatt og er ny, false dersom lås er tatt men er gammel
-     * @throws no.statkart.skif.exception.LockedException Dersom element er låst av annen bruker
+     * @throws no.statkart.skif.exception.LockedException
+     *          Dersom element er låst av annen bruker
      */
-    public boolean lock(BubbleId id, String owner) throws LockedException;
+    public boolean lock(BubbleId id) throws LockedException;
 
     /**
      * Låser opp gjeldende id dersom denne kan låses opp. Nye elementer og endrede/slettede elementer kan ikke låses opp.
      * Elementer som er låst i nåværende transaksjon vil bli forsøkt låst opp direkte, mens elementer som har blitt låst
      * tidligere vil bli lagt i en liste som skal låses opp ved commit av denne transaksjonen. (Låses opp ved kall til
-     * {@link #consumeAllLocks(String)} eller {@link #releaseLocksOnNonTransactionalScopeCompletion(String)}.)
+     * {@link #consumeAllLocks()} eller {@link #releaseLocksOnNonTransactionalScopeCompletion()}.)
      *
      * @param id    Id som skal låses opp
-     * @param owner Bruker man skal låse opp for
      */
-    void unlock(BubbleId id, String owner);
+    void unlock(BubbleId id);
 
     /**
      * Sjekker om id er låst av owner.
      *
      * @param id    Id som skal sjekkes
-     * @param owner Bruker lås skal sjekkes for
      * @return true dersom owner har en lås på id
      */
-    public boolean isLockedBy(BubbleId id, String owner);
+    public boolean isLockedByCaller(BubbleId id);
 
     /**
      * Sjekker om id er låst av en annen bruker enn owner.
      *
      * @param id    Id som skal sjekkes
-     * @param owner Bruker man skal sjekke for
      * @return true dersom det finnes en lås på id, og eier av låsen ikke er owner
      */
-    public boolean isLockedByOther(BubbleId id, String owner);
+    public boolean isLockedByOther(BubbleId id);
 
     /**
      * Slipper alle låser for owner der objekter ikke er modifisert.
-     *
-     * @param owner Bruker som eier låser som skal låses opp
      */
-    public void releaseAllLocks(String owner);
+    public void releaseAllLocks();
 
     /**
      * Slipper alle låser for owner som er tatt i denne transaksjonen. Rører ikke låser som owner eier fra andre transaksjoner.
-     *
-     * @param owner Bruker som eier låser som skal låses opp
      */
-    public void releaseLocksOnRollback(String owner);
+    public void releaseLocksOnRollback();
 
     /**
      * Tømmer innhold i strategy-klassen
@@ -78,31 +71,28 @@ public interface LockerStrategy {
      * owner ikke holder en lås på id.
      *
      * @param id    Id som skal registreres
-     * @param owner Bruker id skal registreres for
      */
-    public void registerUpdated(BubbleId id, String owner);
+    public void registerUpdated(BubbleId id);
 
     /**
      * Registrer en remove i transaksjonen. Brukes for å holde rede på elementer som ikke kan låses opp. Vil feile dersom
      * owner ikke holder en lås på id.
      *
      * @param id    Id som skal registreres
-     * @param owner Bruker id skal registreres for
      */
-    public void registerRemoved(BubbleId id, String owner);
+    public void registerRemoved(BubbleId id);
 
     /**
      * Låser opp alle brukerens låser i transaksjonen og sjekker at antallet stemmer.
      *
-     * @param owner Bruker som eier låser som skal låses opp
-     * @throws no.statkart.skif.exception.OperationalException dersom antall låser som ble låst opp avviker fra det som er forventet
+     * @throws no.statkart.skif.exception.OperationalException
+     *          dersom antall låser som ble låst opp avviker fra det som er forventet
      */
-    public void consumeAllLocks(String owner);
+    public void consumeAllLocks();
 
     /**
      * Låser opp de låsene brukeren har kalt unlock på i løpet av et scope, men som var låst fra før.
-     *
-     * @param owner Bruker som eier låser som skal låses opp
      */
-    public void releaseLocksOnNonTransactionalScopeCompletion(String owner);
+    public void releaseLocksOnNonTransactionalScopeCompletion();
+
 }

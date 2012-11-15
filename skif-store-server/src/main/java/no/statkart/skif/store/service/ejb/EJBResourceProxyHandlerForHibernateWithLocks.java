@@ -66,7 +66,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                         @Override
                         public void afterCompletion(int status) {
                             if (status != Status.STATUS_COMMITTED) {
-                                lockerStrategyProvider.get().releaseLocksOnRollback(serviceRequestContext.getUserName());
+                                lockerStrategyProvider.get().releaseLocksOnRollback();
                             }
                         }
                     });
@@ -98,7 +98,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
 
             // Dersom dette er ytterste metode i et transaksjonelt scope, skal alle låser frigis i transaksjonen
             if (serviceRequestContext.isNewTx() && shouldUnlockForService()) {
-                lockerStrategyProvider.get().consumeAllLocks(serviceRequestContext.getUserName());
+                lockerStrategyProvider.get().consumeAllLocks();
             }
 
             if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
@@ -107,7 +107,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
 
             // Dersom dette er ytterste metode i et ikke-transaksjonelt scope, så skal de låser frigis som i scopet eksplisitt har blitt låst opp
             if (!serviceRequestContext.isContinuation() && !serviceRequestContext.isTransactional() && shouldUnlockForService()) {
-                lockerStrategyProvider.get().releaseLocksOnNonTransactionalScopeCompletion(serviceRequestContext.getUserName());
+                lockerStrategyProvider.get().releaseLocksOnNonTransactionalScopeCompletion();
             }
         }
 
@@ -133,7 +133,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
 
             // Dersom er scope feiler, så skal alle låser tatt i løpet av det, frigis igjen.
             if (!serviceRequestContext.isContinuation() && shouldUnlockForService()) {
-                lockerStrategyProvider.get().releaseLocksOnRollback(serviceRequestContext.getUserName());
+                lockerStrategyProvider.get().releaseLocksOnRollback();
             }
 
             //resourceManager.get().endAllocateConnectionsViaHibernateSession();

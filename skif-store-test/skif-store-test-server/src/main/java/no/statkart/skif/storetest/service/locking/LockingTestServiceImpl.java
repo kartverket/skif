@@ -27,7 +27,7 @@ public class LockingTestServiceImpl implements LockingTestService {
 
     @Override
     public void lock(BubbleId bubbleId) {
-        lockerStrategy.lock(bubbleId, serviceRequestContext.getUserName());
+        lockerStrategy.lock(bubbleId);
     }
 
     @Override
@@ -37,23 +37,23 @@ public class LockingTestServiceImpl implements LockingTestService {
 
     @Override
     public void fail(int badNumber) {
-        lockerStrategy.lock(new FooId(100L), serviceRequestContext.getUserName());
+        lockerStrategy.lock(new FooId(100L));
         throw new ImplementationException("TestABC123");
     }
 
     @Override
     public boolean isLockedByMe(BubbleId bubbleId) {
-        return lockerStrategy.isLockedBy(bubbleId, serviceRequestContext.getUserName());
+        return lockerStrategy.isLockedByCaller(bubbleId);
     }
 
     @Override
     public void releaseAllLocks() {
-        lockerStrategy.releaseAllLocks(serviceRequestContext.getUserName());
+        lockerStrategy.releaseAllLocks();
     }
 
     @Override
     public void loseALock() {
-        lockerStrategy.lock(new FooId(100L), serviceRequestContext.getUserName());
+        lockerStrategy.lock(new FooId(100L));
 
         // Frigi låsen uten av lockerStrategy får det med seg. Dette vil tilsvare at et annet, eller samme, brukstilfelle har fullført samtidig.
         lockerService.unlock(new LockKey<Long>(FooId.class.getName(), 100L), serviceRequestContext.getUserName());
@@ -61,22 +61,22 @@ public class LockingTestServiceImpl implements LockingTestService {
 
     @Override
     public void nonTransactionalLockingFail(BubbleId id) {
-        lockerStrategy.lock(id, serviceRequestContext.getUserName());
+        lockerStrategy.lock(id);
         throw new ImplementationException("TestABC123");
     }
 
     @Override
     public void nonTransactionalUnlockingFail(BubbleId unlockId, BubbleId lockUnlockId) {
-        lockerStrategy.lock(lockUnlockId, serviceRequestContext.getUserName());
-        lockerStrategy.unlock(unlockId, serviceRequestContext.getUserName());
-        lockerStrategy.unlock(lockUnlockId, serviceRequestContext.getUserName());
+        lockerStrategy.lock(lockUnlockId);
+        lockerStrategy.unlock(unlockId);
+        lockerStrategy.unlock(lockUnlockId);
         throw new ImplementationException("TestABC123");
     }
 
     @Override
     public void nonTransactionalUnlocking(BubbleId unlockId, BubbleId lockUnlockId) {
-        lockerStrategy.lock(lockUnlockId, serviceRequestContext.getUserName());
-        lockerStrategy.unlock(unlockId, serviceRequestContext.getUserName());
-        lockerStrategy.unlock(lockUnlockId, serviceRequestContext.getUserName());
+        lockerStrategy.lock(lockUnlockId);
+        lockerStrategy.unlock(unlockId);
+        lockerStrategy.unlock(lockUnlockId);
     }
 }

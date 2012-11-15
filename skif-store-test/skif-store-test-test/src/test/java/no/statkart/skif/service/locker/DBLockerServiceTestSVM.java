@@ -1,5 +1,7 @@
 package no.statkart.skif.service.locker;
 
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
@@ -17,10 +19,12 @@ import java.util.*;
  */
 @Test(groups="singlevm-required")
 public class DBLockerServiceTestSVM extends StoreTestTestCase {
+    private final TypeLiteral<DBLockerService<Long>> dbLockerServiceTypeLiteral = new TypeLiteral<DBLockerService<Long>>() {
+    };
 
     @Test
     public void testLockElement() {
-        DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+        DBLockerService<Long> service = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 
         long l = System.currentTimeMillis();
         LockInfo<Long> lock = service.lock(new LockKey<Long>("TestKlasse1", new Long(1123)), "ingroa", 50);
@@ -34,7 +38,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
 
     @Test
     public void testFindLocksForOwner() {
-        DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+        DBLockerService<Long> service = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 
         service.releaseAllLocks("ingroa");
 
@@ -54,7 +58,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
 
     @Test
     public void testLockAlreadyLockedElement() {
-        DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+        DBLockerService<Long> service = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 
         service.releaseAllLocks("ingroa");
 
@@ -72,7 +76,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
     @Test(groups = "broken")
     public void testLockElementLockedByOtherUser() {
 
-        DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+        DBLockerService<Long> service = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 
         service.releaseAllLocks("ingroa");
         service.releaseAllLocks("ingroa2");
@@ -97,7 +101,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
 
     @Test
     public void testUnlock() {
-        DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+        DBLockerService<Long> service = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 
         service.releaseAllLocks("ingroa");
         service.releaseAllLocks("ingroa2");
@@ -122,7 +126,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
      */
     @Test
     public void testConcurrentLocks() throws InterruptedException {
-        final DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+        final DBLockerService<Long> service = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 
         service.releaseAllLocks("ingroa0");
         service.releaseAllLocks("ingroa");
@@ -208,7 +212,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
 
     @Test
     public void testLockUnlockRelock(){
-        final DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+        final DBLockerService<Long> service = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 
         service.releaseAllLocks("ingroa");
 
@@ -222,7 +226,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
 
     @Test
     public void testRenewLocks(){
-        final DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+        final DBLockerService<Long> service = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 
         service.releaseAllLocks("ingroa");
 
@@ -244,7 +248,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
 
     @Test
     public void testUnlockNonLockedItems(){
-        final DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+        final DBLockerService<Long> service = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 
         service.releaseAllLocks("ingroa");
 
@@ -263,7 +267,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
 
     @Test
     public void testGetLock(){
-        final DBLockerService<Long> service = injector.getInstance(DBLockerService.class);
+        final DBLockerService<Long> service = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 
         service.releaseAllLocks("ingroa");
 

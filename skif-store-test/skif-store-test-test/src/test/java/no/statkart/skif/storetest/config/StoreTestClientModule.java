@@ -5,6 +5,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
+import no.statkart.skif.SkifUtil;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
@@ -73,8 +74,8 @@ public class StoreTestClientModule extends SkifModule {
         //Legger til DBLockerService dersom man kjører i singleVm. Denne tjenesten finnes ikke som en webservice, og kan derfor ikke legges til ved kjøring av tester i client/server
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
             install(new RemoteServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices(), mapping)); // Angir bare en mapping, siden det er irrelevant for en intern tjeneste
-            bind(DBLockerService.class).to(no.statkart.skif.storetest.service.locker.DBLockerService.class);
-            bind(DBLockerInTransactionService.class).to(no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class);
+            bind(SkifUtil.typeLiteral(DBLockerService.class, Long.class)).to(no.statkart.skif.storetest.service.locker.DBLockerService.class);
+            bind(SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).to(no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class);
         }
     }
 

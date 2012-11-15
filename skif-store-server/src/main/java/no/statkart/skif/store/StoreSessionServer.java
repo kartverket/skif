@@ -11,8 +11,6 @@ import no.statkart.skif.util.CopyHelper;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static no.statkart.skif.guava.Preconditions.checkNotNull;
-
 /**
  * @author Henrik Fredholm
  */
@@ -105,25 +103,24 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
     }
 
-    private long lockTimeout = 240 * 60 * 1000 /* 4 timer */;
     /**
      * Låser tatt for inneværende service
      */
-    private TransactionalLocker transactionalLocker;
+    private LockerStrategy lockerStrategy;
 
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, BubbleDependencyComparator bubbleDependencyComparator) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, bubbleDependencyComparator, null, null, null);
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator) {
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerStrategy, bubbleDependencyComparator, null, null, null);
     }
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerService, bubbleDependencyComparator, readListeners, writeListeners, finishListeners);
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners);
     }
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerService5 lockerService, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
         super(0, storeCache);
         this.persistenceSessionManager = persistenceSessionManager;
-        this.transactionalLocker = new ReleaseAllLocksOnUpdateTransactionalLocker5(lockerService, "principal", lockTimeout);
+        this.lockerStrategy = lockerStrategy;
         this.versionFinderProvider = versionFinderProvider;
         this.bubbleDependencyComparator = bubbleDependencyComparator;
         if (readListeners != null) {
@@ -219,24 +216,28 @@ public class StoreSessionServer extends AbstractStoreSession {
         markModified();
     }
 
+    /**
+     * TODO: Blir kun kalt av tester. persistenceSessionManager.beginTransaction() blir kalt av andre ting til vanlig.
+     */
     public void beginTransaction() {
         persistenceSessionManager.beginTransaction();
-
-        // TODO vurdere om dette er et midlertidig fix eller det skal være slik
-        transactionalLocker.setUpdateService(true);
     }
 
+    /**
+     * TODO: Blir kun kalt av tester. persistenceSessionManager.commit() blir kalt av andre ting til vanlig.
+     */
     public void commitTransaction() {
         finish();
         persistenceSessionManager.commit();
-        transactionalLocker.setUpdateService(true);
-        transactionalLocker.serviceCompleted();
+        lockerStrategy.consumeAllLocks();
     }
 
+    /**
+     * TODO: Blir kun kalt av tester. persistenceSessionManager.rollback() blir kalt av andre ting til vanlig.
+     */
     public void rollbackTransaction() {
-        transactionalLocker.setRollbackOnly();
         persistenceSessionManager.rollback();
-        transactionalLocker.serviceCompleted();
+        lockerStrategy.releaseLocksOnRollback();
         clear();
     }
 
@@ -320,7 +321,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                 lockEntry(storeEntry, level, false);
             } else {
                 // Uvist om låst
-                boolean isNewLock = transactionalLocker.lock(bubbleId);
+                boolean isNewLock = lockerStrategy.lock(bubbleId);
                 if (isNewLock) {
                     // Objekt var ikke låst fra før, må gjøre en refresh
                     refreshEntry(storeEntry);
@@ -329,7 +330,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             }
         } else {
             // Ingen entry, opprett entry, refresh objekt hvis det ikke allerede er låst
-            boolean isNewLock = transactionalLocker.lock(bubbleId);
+            boolean isNewLock = lockerStrategy.lock(bubbleId);
             storeEntry = loadEntry(level, bubbleId, isNewLock);
             lockEntry(storeEntry, level, true);
         }
@@ -371,7 +372,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                 case UNCHANGED:
                     if (isLocked(storeEntry)) {
                         if (storeEntry.getLockCreatedByLevel() == level) {
-                            transactionalLocker.unlock(bubbleId);
+                            lockerStrategy.unlock(bubbleId);
                             storeEntry.setLockCreatedByLevel(-1);
                         }
                         storeEntry.setBubbleObject(level, null);
@@ -409,7 +410,7 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     protected boolean isLocked(StoreEntry storeEntry) {
-        return storeEntry.isLocked() || transactionalLocker.isLockedByCaller(storeEntry.getId());
+        return storeEntry.isLocked() || lockerStrategy.isLockedByCaller(storeEntry.getId());
     }
 
     @Override
@@ -417,7 +418,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         boolean isLocked;
         StoreEntry storeEntry = storeCache.get(bubbleId);
         if (storeEntry == null) {
-            isLocked = transactionalLocker.isLockedByCaller(bubbleId);
+            isLocked = lockerStrategy.isLockedByCaller(bubbleId);
         } else {
             isLocked = storeEntry.isLocked();
         }
@@ -441,7 +442,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             persistentBubbleObject = resultingPersistentBubbleObject;
         }
         storeEntry.setPersistentBubbleObject(bubbleObject, resultingPersistentBubbleObject);
-        transactionalLocker.registerInserted(resultingPersistentBubbleObject.getId());
+        lockerStrategy.registerInserted(resultingPersistentBubbleObject.getId());
         persistenceSessionManager.insert(resultingPersistentBubbleObject);
     }
 
@@ -463,7 +464,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             persistentBubbleObject = resultingPersistentBubbleObject;
         }
         storeEntry.setPersistentBubbleObject(bubbleObject, resultingPersistentBubbleObject);
-        transactionalLocker.registerUpdated(resultingPersistentBubbleObject.getId());
+        lockerStrategy.registerUpdated(resultingPersistentBubbleObject.getId());
         persistenceSessionManager.update(resultingPersistentBubbleObject);
     }
 
@@ -484,7 +485,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             persistentBubbleObject = resultingPersistentBubbleObject;
         }
         storeEntry.setPersistentBubbleObject(bubbleObject, resultingPersistentBubbleObject);
-        transactionalLocker.registerRemoved(resultingPersistentBubbleObject.getId());
+        lockerStrategy.registerRemoved(resultingPersistentBubbleObject.getId());
         persistenceSessionManager.delete(resultingPersistentBubbleObject);
     }
 

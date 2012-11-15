@@ -12,6 +12,8 @@ import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import java.util.Collection;
 import java.util.List;
@@ -28,36 +30,43 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
     private StoreService serviceChain;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I ids) {
         return serviceChain.getObject(ids);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjects(Collection<I> ids) {
         return serviceChain.getObjects(ids);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
         return serviceChain.getVersions(id, start, end);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
         return serviceChain.getVersionsForList(ids, start, end);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I id) {
         return serviceChain.isLocked(id);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I id) throws LockedException {
         return serviceChain.lock(id);
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I id) {
         serviceChain.unlock(id);
     }
