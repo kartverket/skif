@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
-import com.google.inject.Inject;
+import com.google.inject.*;
+import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
@@ -23,7 +24,7 @@ import java.util.*;
 public class TransactionalLockerStrategy implements LockerStrategy {
 
     //Brukes for å holde rede på låser tatt i transaksjonen, samt de som allerede finnes for brukere i transaksjon. Initialiseres som null for å kunne kjøre populate senere.
-    private Map<BubbleId, LockInfo<Long>> lockMap = null;
+    private Map<BubbleId, LockInfo<?>> lockMap = null;
 
     //Brukes for å holde rede på hvilke ids som er nye og som derfor ikke kan låses opp.
     private final Set<BubbleId> insertedIds = new HashSet<BubbleId>();
@@ -37,8 +38,12 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     //Brukes for å holde rede på hvilke elementer man ønsker å låse opp, men som ikke er låst i denne transaksjonen.
     private final Set<BubbleId> unlockIds = new HashSet<BubbleId>();
 
-    private final DBLockerService<Long> lockerService;
-    private final DBLockerInTransactionService<Long> lockerInTransactionService;
+    /**
+     * Injector som kun skal brukes til å slå opp {@link DBLockerService} og {@link DBLockerInTransactionService}, siden
+     * disse kan bindes opp mange ganger med forskjellig typeparameter.
+     */
+    private Injector injector;
+
     private final ServiceRequestContext serviceRequestContext;
 
     //TODO: Skal disse være her?
@@ -49,14 +54,23 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     private boolean locksVerified = false;
 
 
+    /**
+     * @param injector                 injector for å slå opp alle mulige lockerservicer
+     * @param configuration            SKIF-konfigurasjon
+     * @param serviceRequestContext    context for gjeldende request (TransactionalLockerStrategy skal være request scopet)
+     */
     @Inject
-    public TransactionalLockerStrategy(DBLockerService<Long> lockerService, DBLockerInTransactionService<Long> lockerInTransactionService, Configuration configuration, ServiceRequestContext serviceRequestContext) {
-        this.lockerService = lockerService;
-        this.lockerInTransactionService = lockerInTransactionService;
+    public TransactionalLockerStrategy(Injector injector, Configuration configuration, ServiceRequestContext serviceRequestContext) {
+        this.injector = injector; // Skal kun brukes for LockerServicene
         this.serviceRequestContext = serviceRequestContext;
 
         LOCK_TIMEOUT = configuration.getLong(SkifConfigConstants.LOCK_TIMEOUT);
         MAX_TRANSACTION_DURATION = configuration.getLong(SkifConfigConstants.MAX_TRANSACTION_DURATION);
+    }
+
+    private <T> DBLockerService<T> getLockerService(Class<T> idValueClass) {
+        TypeLiteral<DBLockerService<T>> typeLiteral = SkifUtil.typeLiteral(DBLockerService.class, idValueClass);
+        return injector.getInstance(Key.get(typeLiteral));
     }
 
     @Override
@@ -68,9 +82,9 @@ public class TransactionalLockerStrategy implements LockerStrategy {
             lockIsNew = false;
         } else {
             ensureLockMapInitialized();
-            LockInfo<Long> lock = lockMap.get(id);
+            LockInfo<?> lock = lockMap.get(id);
             if (lock == null || !renewNotRequired(lock)) {
-                lock = lockerService.lock(createLockKey(id), owner, LOCK_TIMEOUT);
+                lock = getLockerService(id.getValueType()).lock(createLockKey(id), owner, LOCK_TIMEOUT);
                 lockMap.put(id, lock);
                 if (lock.isNew()) {
                     newLockIds.add(id);
@@ -94,7 +108,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         } else if (modifiedIds.contains(id)) {
             throw new ImplementationException("Forsøkte å låse opp objekt som er endret: " + id.toString());
         } else if (newLockIds.remove(id)) {
-            lockerService.unlock(createLockKey(id), owner);
+            getLockerService(id.getValueType()).unlock(createLockKey(id), owner);
             if (lockMap != null) {
                 lockMap.remove(id);
             }
@@ -108,7 +122,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         String owner = serviceRequestContext.getUserName();
         ensureLockMapInitialized();
         if (lockMap.containsKey(id)) {
-            LockInfo<Long> lockInfo = lockMap.get(id);
+            LockInfo<?> lockInfo = lockMap.get(id);
             return lockInfo.isOwnedBy(owner);
         } else {
             return false;
@@ -118,7 +132,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     @Override
     public boolean isLockedByOther(BubbleId id) {
         String owner = serviceRequestContext.getUserName();
-        LockInfo<Long> lock = lockerService.getLock(createLockKey(id));
+        LockInfo<?> lock = getLockerService(id.getValueType()).getLock(createLockKey(id));
         return lock != null && !lock.isOwnedBy(owner);
     }
 
@@ -126,25 +140,38 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     public void releaseAllLocks() {
         String owner = serviceRequestContext.getUserName();
         ensureLockMapInitialized();
-        Set<LockKey<Long>> idsForUnlock = new HashSet<LockKey<Long>>();
-        for (Map.Entry<BubbleId, LockInfo<Long>> entry : lockMap.entrySet()) {
+        Map<Class<?>, Set<LockKey<?>>> idsForUnlock = new HashMap<Class<?>, Set<LockKey<?>>>();
+        for (Map.Entry<BubbleId, LockInfo<?>> entry : lockMap.entrySet()) {
             if (entry.getValue().getOwner().equals(owner) && !modifiedIds.contains(entry.getKey()) && !insertedIds.contains(entry.getKey())) {
                 if (newLockIds.contains(entry.getKey())) {
-                    idsForUnlock.add(entry.getValue().getLockKey());
+                    LockKey<?> lockKey = entry.getValue().getLockKey();
+                    Set<LockKey<?>> lockKeys = idsForUnlock.get(lockKey.keyValue.getClass());
+                    if (lockKeys == null) {
+                        lockKeys = new HashSet<LockKey<?>>();
+                        idsForUnlock.put(lockKey.keyValue.getClass(), lockKeys);
+                    }
+                    lockKeys.add(lockKey);
                 } else {
                     unlockIds.add(entry.getKey()); //Element er ikke låst i denne transaksjonen og vil bli låst opp når denne er ferdig
                 }
             }
         }
 
-        lockerService.unlockAll(idsForUnlock, owner);
+        for (Map.Entry<Class<?>, Set<LockKey<?>>> entry : idsForUnlock.entrySet()) {
+            DBLockerService lockerService = getLockerService(entry.getKey());
+            lockerService.unlockAll(entry.getValue(), owner);
+        }
     }
 
     @Override
     public void releaseLocksOnRollback() {
         String owner = serviceRequestContext.getUserName();
         if (!newLockIds.isEmpty()) {
-            lockerService.unlockAll(createLockKeys(newLockIds), owner);
+            Map<Class<?>, Set<LockKey<?>>> lockKeysMap = createLockKeys(newLockIds);
+            for (Map.Entry<Class<?>, Set<LockKey<?>>> entry : lockKeysMap.entrySet()) {
+                DBLockerService lockerService = getLockerService(entry.getKey());
+                lockerService.unlockAll(entry.getValue(), owner);
+            }
         }
     }
 
@@ -183,14 +210,25 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     public void consumeAllLocks() {
         String owner = serviceRequestContext.getUserName();
         ensureLockMapInitialized();
-        lockerInTransactionService.consumeAllLocks(owner, lockMap.size());
+
+        Map<Key<?>,Binding<?>> bindings = injector.getBindings();
+        for (Map.Entry<Key<?>, Binding<?>> bindingEntry : bindings.entrySet()) {
+            if (bindingEntry.getKey().getTypeLiteral().getRawType().equals(DBLockerInTransactionService.class)) {
+                DBLockerInTransactionService<?> lockerInTransactionService = (DBLockerInTransactionService<?>) bindingEntry.getValue().getProvider().get();
+                lockerInTransactionService.consumeAllLocks(owner, lockMap.size());
+            }
+        }
     }
 
     @Override
     public void releaseLocksOnNonTransactionalScopeCompletion() {
         String owner = serviceRequestContext.getUserName();
         if (!unlockIds.isEmpty()) {
-            lockerService.unlockAll(createLockKeys(unlockIds), owner);
+            Map<Class<?>, Set<LockKey<?>>> lockKeysMap = createLockKeys(unlockIds);
+            for (Map.Entry<Class<?>, Set<LockKey<?>>> entry : lockKeysMap.entrySet()) {
+                DBLockerService lockerService = getLockerService(entry.getKey());
+                lockerService.unlockAll(entry.getValue(), owner);
+            }
         }
     }
 
@@ -200,7 +238,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
      * @param lock LockInfo<Long> som skal sjekkes
      * @return true dersom låsen ikke trenger å fornyes
      */
-    private boolean renewNotRequired(LockInfo<Long> lock) {
+    private boolean renewNotRequired(LockInfo<?> lock) {
         return !lock.expiresBefore(MAX_TRANSACTION_DURATION);
     }
 
@@ -210,7 +248,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
      * @param lockKey LockKey som gir verdier for instansen
      * @return BubbleId av type angitt av lockKey sin discriminator
      */
-    private BubbleId createBubbleIdFromLockKey(LockKey<Long> lockKey) {
+    private BubbleId createBubbleIdFromLockKey(LockKey<?> lockKey) {
         try {
             Class<? extends BubbleId> idClass = Class.forName(lockKey.discriminator).asSubclass(BubbleId.class);
             return BubbleIds.createInstance(idClass, lockKey.keyValue, SnapshotVersion.CURRENT);
@@ -221,7 +259,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         }
     }
 
-    private LockKey<Long> createLockKey(BubbleId id) {
+    private LockKey<?> createLockKey(BubbleId id) {
         if (id.getValue() instanceof Long) {
             return new LockKey<Long>(id.getClass().getName(), (Long) id.getValue());
         } else {
@@ -229,17 +267,22 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         }
     }
 
-    private Set<LockKey<Long>> createLockKeys(Set<BubbleId> ids) {
-        Set<LockKey<Long>> lockKeys = new HashSet<LockKey<Long>>();
+    private Map<Class<?>, Set<LockKey<?>>> createLockKeys(Set<BubbleId> ids) {
+        Map<Class<?>, Set<LockKey<?>>> lockKeysMap = new HashMap<Class<?>, Set<LockKey<?>>>();
         for (BubbleId id : ids) {
+            Set<LockKey<?>> lockKeys = lockKeysMap.get(id.getValueType());
+            if (lockKeys == null) {
+                lockKeys = new HashSet<LockKey<?>>();
+                lockKeysMap.put(id.getValueType(), lockKeys);
+            }
             lockKeys.add(createLockKey(id));
         }
-        return lockKeys;
+        return lockKeysMap;
     }
 
     private void ensureLockMapInitialized() {
         if (lockMap == null) {
-            lockMap = new HashMap<BubbleId, LockInfo<Long>>();
+            lockMap = new HashMap<BubbleId, LockInfo<?>>();
             initializeLockMap();
         } else if (lockMapInitializedForDifferentOwner()) {
             initializeLockMap();
@@ -253,7 +296,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
      */
     private boolean lockMapInitializedForDifferentOwner() {
         String owner = serviceRequestContext.getUserName();
-        for (Map.Entry<BubbleId, LockInfo<Long>> entry : lockMap.entrySet()) {
+        for (Map.Entry<BubbleId, LockInfo<?>> entry : lockMap.entrySet()) {
             if (entry.getValue().isOwnedBy(owner)) {
                 return false;
             }
@@ -266,9 +309,17 @@ public class TransactionalLockerStrategy implements LockerStrategy {
      */
     private void initializeLockMap() {
         String owner = serviceRequestContext.getUserName();
-        Collection<LockInfo<Long>> locksForOwner = lockerService.getLocksBy(owner);
-        for (LockInfo<Long> lock : locksForOwner) {
-            lockMap.put(createBubbleIdFromLockKey(lock.getLockKey()), lock);
+
+        Map<Key<?>,Binding<?>> bindings = injector.getBindings();
+        for (Map.Entry<Key<?>, Binding<?>> bindingEntry : bindings.entrySet()) {
+            if (bindingEntry.getKey().getTypeLiteral().getRawType().equals(DBLockerService.class)) {
+                DBLockerService<?> lockerService = (DBLockerService<?>) bindingEntry.getValue().getProvider().get();
+
+                Collection<? extends LockInfo<?>> locksForOwner = lockerService.getLocksBy(owner);
+                for (LockInfo<?> lock : locksForOwner) {
+                    lockMap.put(createBubbleIdFromLockKey(lock.getLockKey()), lock);
+                }
+            }
         }
     }
 
@@ -282,7 +333,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     protected synchronized void ensureLockedByCaller(BubbleId id) throws NotLockedException {
         ensureLockMapInitialized();
         String owner = serviceRequestContext.getUserName();
-        LockInfo<Long> lock = lockMap.get(id);
+        LockInfo<?> lock = lockMap.get(id);
         if (lock == null) {
             throw new NotLockedException("BubbleId: " + id + " not locked by " + owner);
         }
@@ -301,7 +352,13 @@ public class TransactionalLockerStrategy implements LockerStrategy {
      * @param owner Bruker som skal få alle sine låser fornyet
      */
     private void renewAllLocks(String owner) {
-        lockerService.renewAllLocks(owner, LOCK_TIMEOUT);
+        Map<Key<?>,Binding<?>> bindings = injector.getBindings();
+        for (Map.Entry<Key<?>, Binding<?>> bindingEntry : bindings.entrySet()) {
+            if (bindingEntry.getKey().getTypeLiteral().getRawType().equals(DBLockerService.class)) {
+                DBLockerService<?> lockerService = (DBLockerService<?>) bindingEntry.getValue().getProvider().get();
+                lockerService.renewAllLocks(owner, LOCK_TIMEOUT);
+            }
+        }
         initializeLockMap();
     }
 }

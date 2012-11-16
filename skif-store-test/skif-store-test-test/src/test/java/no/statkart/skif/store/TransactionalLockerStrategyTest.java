@@ -29,12 +29,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
     };
 
     private TransactionalLockerStrategy createTransactionalLockerStrategy(ServiceRequestContext serviceRequestContext) {
-        return new TransactionalLockerStrategy(
-                injector.getInstance(Key.get(dbLockerServiceTypeLiteral)),
-                injector.getInstance(Key.get(new TypeLiteral<DBLockerInTransactionService<Long>>(){})),
-                injector.getInstance(Configuration.class),
-                serviceRequestContext
-        );
+        return new TransactionalLockerStrategy(injector, injector.getInstance(Configuration.class), serviceRequestContext);
     }
 
     public void testIsLockedBy() {
