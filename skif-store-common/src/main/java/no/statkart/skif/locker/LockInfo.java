@@ -8,6 +8,8 @@ import java.sql.Timestamp;
  * @since 2.0
  */
 public class LockInfo<T> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
 
     /**
      * LockKey of locked object

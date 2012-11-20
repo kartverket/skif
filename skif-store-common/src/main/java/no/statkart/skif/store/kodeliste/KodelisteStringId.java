@@ -10,6 +10,8 @@ import no.statkart.skif.store.SnapshotVersion;
  * @since 2.1
  */
 public abstract class KodelisteStringId<T extends KodelisteString> extends AbstractKodelisteId<T> {
+    private static final long serialVersionUID = 1L;
+
     public KodelisteStringId(String value) {
         super(value);
     }

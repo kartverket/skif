@@ -7,6 +7,8 @@ package no.statkart.skif.store.kodeliste;
  * @since 2.1
  */
 public class KodelisteLong extends AbstractKodeliste {
+    private static final long serialVersionUID = 1L;
+
     @Override
     public KodelisteLongId<?> getId() {
         return (KodelisteLongId<?>) super.getId();

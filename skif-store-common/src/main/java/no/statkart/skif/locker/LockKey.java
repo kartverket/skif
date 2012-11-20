@@ -9,6 +9,8 @@ import java.io.Serializable;
  * @since 2.0
  */
 public class LockKey<T> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public final T keyValue;
     public final String discriminator;
 

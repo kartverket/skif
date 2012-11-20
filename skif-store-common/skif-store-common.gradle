@@ -11,6 +11,9 @@ dependencies {
 
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
+
+    testCompile libraries.reflections
+
 }
 
 task testJar(type: Jar) {

@@ -16,6 +16,8 @@ import java.util.List;
  * @since 2.1
  */
 public class KodelisteTransfer<I extends KodelisteId> extends BubbleTransfer {
+    private static final long serialVersionUID = 1L;
+
     /** Sortert liste av alle kodelisteIds */
     private List<? extends I> kodelisteIds = new ArrayList<I>();
 

@@ -8,7 +8,9 @@ import static no.statkart.skif.guava.Preconditions.checkState;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class AbstractObject implements Serializable{
+public abstract class AbstractObject implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     protected transient Store store;
     public abstract Long getId();
 

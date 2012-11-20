@@ -11,6 +11,8 @@ import no.statkart.skif.store.SnapshotVersion;
  * @since 2.1
  */
 public abstract class AbstractKodelisteId<T extends AbstractKodeliste> extends AbstractBubbleId<T> implements KodelisteId<T> {
+    private static final long serialVersionUID = 1L;
+
     /** Brukes av hibernate */
     protected AbstractKodelisteId() {
     }

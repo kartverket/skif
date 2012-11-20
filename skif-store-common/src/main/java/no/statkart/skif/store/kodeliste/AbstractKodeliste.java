@@ -17,6 +17,8 @@ import java.util.*;
  * @since 2.1
  */
 public abstract class AbstractKodeliste extends AbstractBubbleObject implements Kodeliste {
+    private static final long serialVersionUID = 1L;
+
     private String kodeTypeNavn;
     private Class<? extends KodeId<?>> kodeIdClass;
     private LocalizedFields localizedFields = new LocalizedFields();
@@ -29,6 +31,8 @@ public abstract class AbstractKodeliste extends AbstractBubbleObject implements 
 
 
     public static class LocalizedFields implements no.statkart.skif.store.LocalizedFields {
+        private static final long serialVersionUID = 1L;
+
         public String navn = "";
         public String beskrivelse = "";
 

@@ -12,6 +12,8 @@ import java.util.LinkedHashMap;
  * @since 2.1
  */
 public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kodeliste, KLID extends KodelisteId<KL>> {
+    private static final long serialVersionUID = 1L;
+
     private final Class<I> kodeIdClass;
     private final KLID kodelisteId;
     private final String resourceMsgName;

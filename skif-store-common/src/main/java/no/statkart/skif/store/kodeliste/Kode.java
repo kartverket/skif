@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public abstract class Kode extends AbstractBubbleObject implements Localizable{
+public abstract class Kode extends AbstractBubbleObject implements Localizable {
     private static final long serialVersionUID = 1L;
 
     private LocalizedFields localizedFields = new LocalizedFields();
@@ -29,6 +29,8 @@ public abstract class Kode extends AbstractBubbleObject implements Localizable{
     private KodelisteId<?> kodelisteId;
 
     public static class LocalizedFields implements no.statkart.skif.store.LocalizedFields {
+        private static final long serialVersionUID = 1L;
+
         public String navn = "";
         public String beskrivelse = "";
 

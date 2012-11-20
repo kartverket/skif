@@ -47,6 +47,8 @@ import java.util.*;
  * @since 2.1
  */
 public abstract class BubbleTransfer implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Map objects = new LinkedHashMap(256);
     private Set lockedIds = new HashSet();
 

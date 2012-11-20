@@ -27,6 +27,8 @@ import java.util.Set;
  * @since 2.1
  */
 public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMultimap<R, V> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Sett av koblinger som brukes mot hibernate for persistering. Endring som utføres direkte på dette objektet
      * må etterfølges av et kall til {@link #setKoblinger(java.util.Set)} for å sikre riktig synkronisering mellom
@@ -163,6 +165,8 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
 
 
     public class LazyKoblingSet extends ForwardingSet<V> implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         private final R rolle;
         private transient Set<V> delegate;
 

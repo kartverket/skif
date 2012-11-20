@@ -9,6 +9,8 @@ import java.io.Serializable;
  * @since 2.1
  */
 public abstract class Kobling<R,V> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private R rolle;
 
     public Kobling() {

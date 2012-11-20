@@ -7,6 +7,8 @@ import java.sql.Timestamp;
  * @author Henrik Fredholm
  */
 public class SnapshotVersion implements Serializable, Comparable<SnapshotVersion> {
+    private static final long serialVersionUID = 1L;
+
     public final static SnapshotVersion START = new SnapshotVersion("2000-01-01 00:00:00.0");
     public final static SnapshotVersion CURRENT = new SnapshotVersion("9999-01-01 00:00:00.0");
     public final static SnapshotVersion OLD = new SnapshotVersion("9997-01-01 00:00:00.0");

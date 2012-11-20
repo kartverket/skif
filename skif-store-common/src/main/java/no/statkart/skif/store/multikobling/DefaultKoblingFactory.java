@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationTargetException;
  * @since 2.1
  */
 public class DefaultKoblingFactory<R,V, K extends Kobling<R,V>> implements KoblingFactory<R,V,K> {
+    private static final long serialVersionUID = 1L;
+
     private Class<K> koblingClass;
 
     /** Konstruktør som brukes for opprettelse av Kobling objekter. Må være transient siden konstruktører ikke kan serialiseres */
