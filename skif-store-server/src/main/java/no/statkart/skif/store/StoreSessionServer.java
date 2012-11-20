@@ -210,10 +210,37 @@ public class StoreSessionServer extends AbstractStoreSession {
         clear();
     }
 
-    public void clear() {
+    void clear() {
         storeCache.clear();
         modifiedMap.clear();
         markModified();
+    }
+
+    /**
+     * @see StoreServer#beginTransaction()
+     */
+    void beginTransaction() {
+        persistenceSessionManager.beginTransaction();
+    }
+
+    /**
+     * @see StoreServer#commitTransaction()
+     */
+    void commitTransaction() {
+        finish();
+        lockerStrategy.consumeAllLocks();
+        persistenceSessionManager.commit();
+        lockerStrategy.clear();
+    }
+
+    /**
+     * @see StoreServer#rollbackTransaction()
+     */
+    void rollbackTransaction() {
+        lockerStrategy.releaseLocksOnRollback();
+        persistenceSessionManager.rollback();
+        clear();
+        lockerStrategy.clear();
     }
 
     @Override

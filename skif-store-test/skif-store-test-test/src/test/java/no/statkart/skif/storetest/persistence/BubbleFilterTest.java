@@ -5,7 +5,6 @@ import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
-import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.FilteredBubble;
 import no.statkart.skif.storetest.domain.demo.FilteredBubbleId;
@@ -52,14 +51,10 @@ public class BubbleFilterTest extends StoreTestMixedTestCase {
             @Inject
             StoreServer sstore;
 
-            @Inject
-            PersistenceSessionManager persistenceSessionManager;
-
             public Object run() {
-                persistenceSessionManager.beginTransaction();
+                sstore.beginTransaction();
                 sstore.insert(fb);
-                sstore.finish();
-                persistenceSessionManager.commit();
+                sstore.commitTransaction();
                 return null;
             }
         });
@@ -72,11 +67,11 @@ public class BubbleFilterTest extends StoreTestMixedTestCase {
 //            StoreServer sstore;
 //
 //            public Object run() {
-//                beginTransaction();
+//                sstore.beginTransaction();
 //                FilteredBubble locked = sstore.lock(fb.getId());
 //                locked.setFilterText(fb.getFilterText());
 //                sstore.update(locked);
-//                commitTransaction();
+//                sstore.commitTransaction();
 //                return null;
 //            }
 //        });
