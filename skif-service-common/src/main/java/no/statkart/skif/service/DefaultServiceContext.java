@@ -7,6 +7,8 @@ import java.util.Locale;
  * @since 2.0
  */
 public class DefaultServiceContext implements ServiceContext {
+    static final long serialVersionUID = 1L;
+
     private String systemVersion="1.0";
     private Locale locale = new Locale("nb", "NO");
 
