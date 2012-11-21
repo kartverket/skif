@@ -1,12 +1,12 @@
 package no.statkart.skif.storetest.domain.demo;
 
-import java.io.Serializable;
+import no.statkart.skif.store.AbstractEntityComponent;
 
 /**
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class RazEntityComponent implements Serializable {
+public class RazEntityComponent extends AbstractEntityComponent {
     private Long id;
     private String componentName;
 

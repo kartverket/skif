@@ -8,5 +8,5 @@ import java.io.Serializable;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public interface ComponentWithExplicitId<I extends Serializable> extends Identifiable<I>, Component {
+public interface ComponentWithExplicitId extends Component {
 }

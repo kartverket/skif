@@ -1,15 +1,15 @@
 package no.statkart.skif.storetest.domain.demo;
 
+import no.statkart.skif.store.AbstractEntityComponent;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author Roar Ingebrigtsen
  * @since 2.1
  */
-public class BubbleWithListComponent implements Serializable{
+public class BubbleWithListComponent extends AbstractEntityComponent {
     private Long id;
     private String componentName;
     private BubbleWithList bubbleWithList;

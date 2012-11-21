@@ -1,10 +1,12 @@
 package no.statkart.skif.storetest.domain.demo;
 
+import no.statkart.skif.store.AbstractEntityComponent;
+
 /**
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class FooEntityComponent {
+public class FooEntityComponent extends AbstractEntityComponent {
     private Long id;
     private String componentName;
 
@@ -14,5 +16,13 @@ public class FooEntityComponent {
 
     public void setComponentName(String componentName) {
         this.componentName = componentName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

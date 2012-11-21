@@ -1,14 +1,14 @@
 package no.statkart.skif.storetest.domain.demo;
 
-import java.io.Serializable;
+import no.statkart.skif.store.AbstractEntityComponent;
+
 import java.util.Date;
 
 /**
  * @author Roar Ingebrigtsen
  * @since 3.0
  */
-public class BubbleWithListComponent2 implements Serializable{
-
+public class BubbleWithListComponent2 extends AbstractEntityComponent {
     private Long id;
     private String componentName;
     private BubbleWithList bubbleWithList;

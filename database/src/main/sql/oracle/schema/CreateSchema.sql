@@ -31,7 +31,19 @@ create table ChildBubble(
 alter table ChildForParrent add constraint FK23723BEA16AF2FAB foreign key (parrentBubbleId) references ParrentBubble;
 ALTER TABLE CHILDFORPARRENT ADD CONSTRAINT FK_CHILDFORPARRENT_CHILD FOREIGN KEY (CHILDBUBBLEID) REFERENCES CHILDBUBBLE;
 
+create table BubbleWithComponents (
+  id number(19,0) not null,
+  Primary Key (Id)
+);
 
+create table BubbleWithComponentsComponent (
+  id number(19,0) not null,
+  bubbleId number(19,0),
+  Text Varchar2(255),
+  Primary Key (Id)
+);
+ALTER TABLE BubbleWithComponentsComponent ADD CONSTRAINT FK_BWCComponent_Component FOREIGN KEY (bubbleId) REFERENCES BubbleWithComponents;
+create index IDX_BWCComponent_bubbleId on BubbleWithComponentsComponent(bubbleId);
 
 
 

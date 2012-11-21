@@ -214,6 +214,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(Rettsstiftelse.class)
                 .addResource(BubbleWithList.class)
                 .addResource(SubTypedBubble.class)
+                .addResource(BubbleWithComponents.class)
                 ;
 
 

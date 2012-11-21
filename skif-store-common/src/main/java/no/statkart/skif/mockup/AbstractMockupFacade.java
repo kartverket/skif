@@ -1,6 +1,7 @@
 package no.statkart.skif.mockup;
 
 import com.google.inject.Inject;
+import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 
@@ -23,12 +24,22 @@ public abstract class AbstractMockupFacade {
     @Inject
     private TestNumber testNumber;
 
+    @Inject
+    private IdService idService;
+
     public MockupStore getStore() {
         return store;
     }
 
     public TestNumber getTestNumber() {
         return testNumber;
+    }
+
+    /**
+     * @return En {@link IdService} som brukes for å generere test-sett spesifike id-er.
+     */
+    public IdService getIdService() {
+        return idService;
     }
 
     public abstract List<? extends AbstractMockupFactory> getAllMockupFactories();
