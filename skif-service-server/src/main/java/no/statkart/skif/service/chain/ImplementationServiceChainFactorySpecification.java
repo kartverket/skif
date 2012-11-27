@@ -1,27 +1,66 @@
 package no.statkart.skif.service.chain;
 
-import com.google.inject.Binder;
-import no.statkart.skif.exception.ImplementationException;
+import com.google.inject.*;
+import com.google.inject.util.Types;
+import no.statkart.skif.SkifUtil;
+import no.statkart.skif.service.annotation.Implementation;
+import no.statkart.skif.service.proxy.ChainedProxyHandler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Henrik Fredholm
  */
 public class ImplementationServiceChainFactorySpecification extends FactorySpecification<ImplementationServiceChainFactory> {
-    public ImplementationServiceChainFactorySpecification() {
-        super(ImplementationServiceChainFactoryBase.class);
+    private ArrayList<Class<? extends ChainedProxyHandler>> implementationCallChainProxyHandlerClassList;
+
+    public ImplementationServiceChainFactorySpecification(Class<? extends ChainedProxyHandler>... implementationCallChainProxyHandlerClasses) {
+        this(ImplementationServiceChainFactoryBase.class, implementationCallChainProxyHandlerClasses);
     }
 
-    public ImplementationServiceChainFactorySpecification(Class<? extends ImplementationServiceChainFactory> factoryClass) {
+    public ImplementationServiceChainFactorySpecification(Class<? extends ImplementationServiceChainFactory> factoryClass, Class<? extends ChainedProxyHandler>... implementationCallChainProxyHandlerClasses) {
         super(factoryClass);
+        implementationCallChainProxyHandlerClassList = new ArrayList<Class<? extends ChainedProxyHandler>>(Arrays.asList(implementationCallChainProxyHandlerClasses));
+    }
+
+    public void appendImplementationServiceChainProxyHandler(Class<? extends ChainedProxyHandler> implementationServiceChainProxyHandler) {
+        implementationCallChainProxyHandlerClassList.add(implementationServiceChainProxyHandler);
     }
 
     @Override
     public <S> void bindProxyHandlersForService(Binder binder, Class<S> service) {
+        final List<TypeLiteral<? extends ChainedProxyHandler<S>>> implementationCallChainProxyHandlerTypeList = new ArrayList<TypeLiteral<? extends ChainedProxyHandler<S>>>(implementationCallChainProxyHandlerClassList.size());
+        for (Class<? extends ChainedProxyHandler> chainedProxyHandlerImplClass : implementationCallChainProxyHandlerClassList) {
+            TypeLiteral<? extends ChainedProxyHandler<S>> implementationCallChainProxyHandlerType = SkifUtil.typeLiteral(chainedProxyHandlerImplClass, service);
+            binder.bind(implementationCallChainProxyHandlerType);
+            implementationCallChainProxyHandlerTypeList.add(implementationCallChainProxyHandlerType);
+        }
+        TypeLiteral<List<ChainedProxyHandler<S>>> implementationCallChainProxyHandlerListType =
+                (TypeLiteral<List<ChainedProxyHandler<S>>>) TypeLiteral.get(Types.listOf(Types.newParameterizedType(ChainedProxyHandler.class, service)));
+
+        binder.bind(implementationCallChainProxyHandlerListType).annotatedWith(Implementation.class).toProvider(new Provider<List<ChainedProxyHandler<S>>>() {
+            @Inject
+            Injector injector;
+
+            @Override
+            public List<ChainedProxyHandler<S>> get() {
+                List<ChainedProxyHandler<S>> list = new ArrayList<ChainedProxyHandler<S>>(implementationCallChainProxyHandlerTypeList.size());
+                for (TypeLiteral<? extends ChainedProxyHandler<S>> type : implementationCallChainProxyHandlerTypeList) {
+                    final ChainedProxyHandler<S> proxyHandler = injector.getInstance(Key.get(type));
+                    list.add(proxyHandler);
+                }
+                return list;
+            }
+        });
     }
 
     @Override
     public ImplementationServiceChainFactorySpecification clone() {
-        return (ImplementationServiceChainFactorySpecification) super.clone();
+        ImplementationServiceChainFactorySpecification clone = (ImplementationServiceChainFactorySpecification) super.clone();
+        clone.implementationCallChainProxyHandlerClassList = new ArrayList<Class<? extends ChainedProxyHandler>>(implementationCallChainProxyHandlerClassList);
+        return clone;
     }
 
 }

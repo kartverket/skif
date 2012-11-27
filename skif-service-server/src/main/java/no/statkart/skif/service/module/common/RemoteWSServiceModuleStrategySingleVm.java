@@ -34,6 +34,7 @@ public class RemoteWSServiceModuleStrategySingleVm extends RemoteWSServiceModule
     @Override
     public <S> void bindCallServiceChainFactoryForService(Binder outerBinder, Class<S> service) {
         ServiceChainFactories.multibindFactory(outerBinder, CallServiceChainFactory.class, service, callServiceChainFactorySpecification.getFactoryClass());
+        callServiceChainFactorySpecification.bindProxyHandlersForService(outerBinder, service);
     }
 
     @Override

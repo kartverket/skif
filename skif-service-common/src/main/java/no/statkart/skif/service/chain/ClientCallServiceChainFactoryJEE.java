@@ -1,12 +1,16 @@
 package no.statkart.skif.service.chain;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.service.annotation.Call;
+import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * @author Henrik Fredholm
@@ -15,11 +19,13 @@ import javax.annotation.Nullable;
 public class ClientCallServiceChainFactoryJEE<S> implements CallServiceChainFactory<S> {
     protected final TypeLiteral<S> type;
     protected final TerminatingProxyHandler<S> proxyHandler;
+    private final Provider<List<ChainedProxyHandler<S>>> callProxyHandlerListProvider;
 
     @Inject
-    public ClientCallServiceChainFactoryJEE(TypeLiteral<S> type, TerminatingProxyHandler<S> proxyHandler) {
+    public ClientCallServiceChainFactoryJEE(TypeLiteral<S> type, TerminatingProxyHandler<S> proxyHandler, @Call Provider<List<ChainedProxyHandler<S>>> callProxyHandlerListProvider) {
         this.type = type;
         this.proxyHandler = proxyHandler;
+        this.callProxyHandlerListProvider = callProxyHandlerListProvider;
     }
 
     @Override
@@ -29,7 +35,12 @@ public class ClientCallServiceChainFactoryJEE<S> implements CallServiceChainFact
 
     @Override
     public ProxyHandler<S> createChain() {
-        return proxyHandler;
+        ProxyHandler<S> head = proxyHandler;
+        final List<ChainedProxyHandler<S>> proxyHandlerList = callProxyHandlerListProvider.get();
+        for (int i = proxyHandlerList.size() - 1; i >= 0; i--) {
+            head = proxyHandlerList.get(i).setChained(head);
+        }
+        return head;
     }
 
     @Override

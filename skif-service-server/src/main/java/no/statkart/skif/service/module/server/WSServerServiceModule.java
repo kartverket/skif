@@ -12,8 +12,6 @@ import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.service.ServiceContextMapper;
-import no.statkart.skif.service.chain.WSServiceChainFactory;
-import no.statkart.skif.service.chain.WSServiceChainFactoryBase;
 import no.statkart.skif.service.ws.ServiceWSI;
 
 import javax.annotation.Nullable;
@@ -36,9 +34,6 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
      * @see WSServerServiceModuleStrategy#classWSIPackageMappings
      */
     protected String[] classWSIPackageMappings = null;
-
-    private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForWSI = WSServiceChainFactoryBase.class;
-    private Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForService = WSServiceChainFactoryBase.class;
 
     public WSServerServiceModule(Configuration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
         super(WSServerServiceModuleStrategy.class, configuration);

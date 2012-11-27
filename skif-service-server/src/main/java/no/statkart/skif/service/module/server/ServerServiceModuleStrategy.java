@@ -3,7 +3,6 @@ package no.statkart.skif.service.module.server;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleStrategy;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.annotation.Implementation;
@@ -50,7 +49,10 @@ public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
         ejbServiceChainFactorySpecification.bindProxyHandlersForService(binder, service);
 
         ServiceChainFactories.bindFactory(binder, ImplementationServiceChainFactory.class, service, implementationServiceChainFactorySpecification.getFactoryClass());
+        implementationServiceChainFactorySpecification.bindProxyHandlersForService(binder, service);
+
         ServiceChainFactories.multibindFactory(binder, CallServiceChainFactory.class, service, callServiceChainFactorySpecification.getFactoryClass());
+        callServiceChainFactorySpecification.bindProxyHandlersForService(binder, service);
     }
 
     protected abstract <S> void bindEJBCallProxyHandler(Binder binder, Class<S> service);
@@ -78,9 +80,9 @@ public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
         binder.bind(service).annotatedWith(Implementation.class).to(serviceImplClass);
     }
 
-    private <S> Class<S> getServiceImplementationClass(Class<S> service) {
+    private <S> Class<? extends S> getServiceImplementationClass(Class<S> service) {
         try {
-            return (Class<S>) Class.forName(service.getName() + "Impl");
+            return Class.forName(service.getName() + "Impl").asSubclass(service);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

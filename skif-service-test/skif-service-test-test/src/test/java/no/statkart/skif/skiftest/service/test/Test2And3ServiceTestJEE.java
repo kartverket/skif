@@ -1,9 +1,6 @@
 package no.statkart.skif.skiftest.service.test;
 
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
+import com.google.inject.*;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -12,11 +9,13 @@ import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;
+import no.statkart.skif.service.annotation.Call;
 import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ClientCallServiceChainFactoryJEE;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
+import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 import no.statkart.skif.skiftest.domain.A;
@@ -33,6 +32,7 @@ import no.statkart.skif.util.testsupport.SkifTestConfigurationAccessor;
 import org.testng.annotations.Test;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
@@ -133,8 +133,8 @@ public class Test2And3ServiceTestJEE {
 class CallChainFactory<S> extends ClientCallServiceChainFactoryJEE<S> {
 
     @Inject
-    public CallChainFactory(TypeLiteral<S> type, TerminatingProxyHandler<S> proxyHandler) {
-        super(type, proxyHandler);
+    public CallChainFactory(TypeLiteral<S> type, TerminatingProxyHandler<S> proxyHandler, @Call Provider<List<ChainedProxyHandler<S>>> callProxyHandlerListProvider) {
+        super(type, proxyHandler, callProxyHandlerListProvider);
     }
 
     @Override

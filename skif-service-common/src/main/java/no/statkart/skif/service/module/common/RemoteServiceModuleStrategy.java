@@ -48,11 +48,12 @@ public abstract class RemoteServiceModuleStrategy extends ModuleStrategy {
 
     public void requireBindings(Binder binder) {
 
-    };
+    }
 
 
     public <S> void bindCallServiceChainFactoryForService(Binder outerBinder, PrivateBinder innerBinder,  Class<S> service) {
         ServiceChainFactories.multibindFactory(outerBinder, CallServiceChainFactory.class, service, callServiceChainFactorySpecification.getFactoryClass());
+        callServiceChainFactorySpecification.bindProxyHandlersForService(outerBinder, service);
     }
 
     public abstract <S> void bindService(Binder outerBinder, PrivateBinder innerBinder, Class<S> service);
