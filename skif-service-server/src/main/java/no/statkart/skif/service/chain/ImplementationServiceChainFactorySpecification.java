@@ -17,7 +17,7 @@ public class ImplementationServiceChainFactorySpecification extends FactorySpeci
     private ArrayList<Class<? extends ChainedProxyHandler>> implementationCallChainProxyHandlerClassList;
 
     public ImplementationServiceChainFactorySpecification(Class<? extends ChainedProxyHandler>... implementationCallChainProxyHandlerClasses) {
-        this(ImplementationServiceChainFactoryBase.class, implementationCallChainProxyHandlerClasses);
+        this(ImplementationServiceChainFactoryImpl.class, implementationCallChainProxyHandlerClasses);
     }
 
     public ImplementationServiceChainFactorySpecification(Class<? extends ImplementationServiceChainFactory> factoryClass, Class<? extends ChainedProxyHandler>... implementationCallChainProxyHandlerClasses) {

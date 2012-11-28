@@ -3,8 +3,8 @@ package no.statkart.skif.service.module;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
-import no.statkart.skif.service.chain.EJBServiceChainFactoryBase;
-import no.statkart.skif.service.chain.ImplementationServiceChainFactoryBase;
+import no.statkart.skif.service.chain.EJBServiceChainFactoryImpl;
+import no.statkart.skif.service.chain.ImplementationServiceChainFactoryImpl;
 import no.statkart.skif.service.chain.ServerCallServiceChainFactory;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
@@ -26,13 +26,13 @@ public class ServerModuleStrategyFactoryTest {
 
         // Test SingleVm default settings
         assertSame(serverImplServiceStrategy.getStrategy(ServiceMode.SINGLE_VM).getCallServiceChainFactorySpecification().getFactoryClass() , ServerCallServiceChainFactory.class);
-        assertSame(serverImplServiceStrategy.getStrategy(ServiceMode.SINGLE_VM).getEjbServiceChainFactorySpecification().getFactoryClass(), EJBServiceChainFactoryBase.class);
-        assertSame(serverImplServiceStrategy.getStrategy(ServiceMode.SINGLE_VM).getImplementationServiceChainFactorySpecification().getFactoryClass(), ImplementationServiceChainFactoryBase.class);
+        assertSame(serverImplServiceStrategy.getStrategy(ServiceMode.SINGLE_VM).getEjbServiceChainFactorySpecification().getFactoryClass(), EJBServiceChainFactoryImpl.class);
+        assertSame(serverImplServiceStrategy.getStrategy(ServiceMode.SINGLE_VM).getImplementationServiceChainFactorySpecification().getFactoryClass(), ImplementationServiceChainFactoryImpl.class);
 
         // Test JEE default settings
         assertSame(serverImplServiceStrategy.getStrategy(ServiceMode.JEE).getCallServiceChainFactorySpecification().getFactoryClass(), ServerCallServiceChainFactory.class);
-        assertSame(serverImplServiceStrategy.getStrategy(ServiceMode.JEE).getEjbServiceChainFactorySpecification().getFactoryClass(), EJBServiceChainFactoryBase.class);
-        assertSame(serverImplServiceStrategy.getStrategy(ServiceMode.JEE).getImplementationServiceChainFactorySpecification().getFactoryClass(), ImplementationServiceChainFactoryBase.class);
+        assertSame(serverImplServiceStrategy.getStrategy(ServiceMode.JEE).getEjbServiceChainFactorySpecification().getFactoryClass(), EJBServiceChainFactoryImpl.class);
+        assertSame(serverImplServiceStrategy.getStrategy(ServiceMode.JEE).getImplementationServiceChainFactorySpecification().getFactoryClass(), ImplementationServiceChainFactoryImpl.class);
 
     }
 

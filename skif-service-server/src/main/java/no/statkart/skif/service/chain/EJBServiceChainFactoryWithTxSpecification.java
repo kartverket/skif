@@ -1,8 +1,6 @@
 package no.statkart.skif.service.chain;
 
 import com.google.inject.Binder;
-import com.google.inject.TypeLiteral;
-import no.statkart.skif.SkifUtil;
 import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 
@@ -24,7 +22,7 @@ import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 public class EJBServiceChainFactoryWithTxSpecification extends EJBServiceChainFactorySpecification {
 
     public EJBServiceChainFactoryWithTxSpecification(Class<? extends EJBResourceProxyHandler> ejbResourceProxyHandlerImplentationClass) {
-        this(EJBServiceChainFactoryBase.class, ejbResourceProxyHandlerImplentationClass);
+        this(EJBServiceChainFactoryImpl.class, ejbResourceProxyHandlerImplentationClass);
     }
 
     public EJBServiceChainFactoryWithTxSpecification(Class<? extends EJBServiceChainFactory> factoryClass, Class<? extends EJBResourceProxyHandler> ejbResourceProxyHandlerImplentationClass) {

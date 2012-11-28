@@ -13,11 +13,11 @@ import java.util.List;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class EJBServiceChainFactoryBase<S> implements EJBServiceChainFactory<S> {
+public class EJBServiceChainFactoryImpl<S> implements EJBServiceChainFactory<S> {
     private final Provider<List<ChainedProxyHandler<S>>> ejbProxyHandlerListProvider;
 
     @Inject
-    public EJBServiceChainFactoryBase(Provider<List<ChainedProxyHandler<S>>> ejbProxyHandlerListProvider) {
+    public EJBServiceChainFactoryImpl(Provider<List<ChainedProxyHandler<S>>> ejbProxyHandlerListProvider) {
         this.ejbProxyHandlerListProvider = ejbProxyHandlerListProvider;
     }
 

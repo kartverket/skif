@@ -19,12 +19,12 @@ import java.util.List;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class ImplementationServiceChainFactoryBase<S> implements ImplementationServiceChainFactory<S> {
+public class ImplementationServiceChainFactoryImpl<S> implements ImplementationServiceChainFactory<S> {
     private final Provider<S> implementationProvider;
     private final Provider<List<ChainedProxyHandler<S>>> implementationProxyHandlerListProvider;
 
     @Inject
-    public ImplementationServiceChainFactoryBase(@Implementation Provider<S> implementationProvider, @Implementation Provider<List<ChainedProxyHandler<S>>> implementationProxyHandlerListProvider) {
+    public ImplementationServiceChainFactoryImpl(@Implementation Provider<S> implementationProvider, @Implementation Provider<List<ChainedProxyHandler<S>>> implementationProxyHandlerListProvider) {
         this.implementationProvider = implementationProvider;
         this.implementationProxyHandlerListProvider = implementationProxyHandlerListProvider;
     }

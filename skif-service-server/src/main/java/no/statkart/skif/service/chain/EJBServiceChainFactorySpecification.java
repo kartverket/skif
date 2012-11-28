@@ -3,7 +3,6 @@ package no.statkart.skif.service.chain;
 import com.google.inject.*;
 import com.google.inject.util.Types;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
@@ -16,14 +15,14 @@ import java.util.List;
  * {@code ChainedProxyHandler}-klasser som EJBServiceChainFactory'en skal sette opp.
  *
  * @author Henrik Fredholm
- * @see  EJBServiceChainFactoryBase
+ * @see  EJBServiceChainFactoryImpl
  * @since 2.0
  */
 public class EJBServiceChainFactorySpecification extends FactorySpecification<EJBServiceChainFactory> {
     private ArrayList<Class<? extends ChainedProxyHandler>> ejbCallChainProxyHandlerClassList;
 
     public EJBServiceChainFactorySpecification(Class<? extends ChainedProxyHandler>... ejbCallChainProxyHandlerClasses) {
-        this(EJBServiceChainFactoryBase.class, ejbCallChainProxyHandlerClasses);
+        this(EJBServiceChainFactoryImpl.class, ejbCallChainProxyHandlerClasses);
     }
 
     public EJBServiceChainFactorySpecification(Class<? extends EJBServiceChainFactory> factoryClass, Class<? extends ChainedProxyHandler>... ejbResourceProxyHandlerImplentationClasses) {
