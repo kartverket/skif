@@ -47,8 +47,18 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
 
     private Mapping thisMapping;
 
-    private final ThreadLocal<Integer> recurseLevel_w2d = new ThreadLocal<Integer>();
-    private final ThreadLocal<Integer> recurseLevel_d2w = new ThreadLocal<Integer>();
+    private final ThreadLocal<Integer> recurseLevel_w2d = new ThreadLocal<Integer>(){
+        @Override
+        protected Integer initialValue() {
+            return 0;
+        }
+    };
+    private final ThreadLocal<Integer> recurseLevel_d2w = new ThreadLocal<Integer>() {
+        @Override
+        protected Integer initialValue() {
+            return 0;
+        }
+    };
 
     public AbstractMapper(Class<? extends Mapping> mappingClass) {
         this(mappingClass, new DefaultObjectFactory(), new DefaultObjectFactory(), false);
@@ -59,8 +69,6 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
      */
     @SuppressWarnings("unchecked")
     public AbstractMapper(Class<? extends Mapping> mappingClass, ObjectFactory wsapiObjectFactory, ObjectFactory domainObjectFactory, boolean mergeMapping) {
-        this.recurseLevel_d2w.set(0);
-        this.recurseLevel_w2d.set(0);
         this.wsapiObjectFactory = wsapiObjectFactory;
         this.domainObjectFactory = domainObjectFactory;
         thisMapping = (Mapping) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{mappingClass}, this);
@@ -111,32 +119,32 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
         if (method.getName().equals("w2d")) {
             //try/finally for å vedlikeholde en teller for hvor dypt i rekursjonsgrafen vi er.
             //Dersom vi er på toppen så kan vi clearMappedFields fra DefaultTypeMapper.
-            try{
+            try {
                 int i = recurseLevel_w2d.get();
-                if(i==0){
-                    if(defaultMapper!=null){
-                        ((DefaultTypeMapper)defaultMapper).clearMappedFields();
+                if (i == 0) {
+                    if (defaultMapper != null) {
+                        ((DefaultTypeMapper) defaultMapper).clearMappedFields();
                     }
                 }
                 recurseLevel_w2d.set(++i);
                 target = w2d(args);
-            }finally{
+            } finally {
                 int i = recurseLevel_w2d.get();
                 recurseLevel_w2d.set(--i);
             }
         } else if (method.getName().equals("d2w")) {
             //try/finally for å vedlikeholde en teller for hvor dypt i rekursjonsgrafen vi er.
             //Dersom vi er på toppen så kan vi clearMappedFields fra DefaultTypeMapper.
-            try{
+            try {
                 int i = recurseLevel_d2w.get();
-                if(i==0){
-                    if(defaultMapper!=null){
-                        ((DefaultTypeMapper)defaultMapper).clearMappedFields();
+                if (i == 0) {
+                    if (defaultMapper != null) {
+                        ((DefaultTypeMapper) defaultMapper).clearMappedFields();
                     }
                 }
                 recurseLevel_d2w.set(++i);
                 target = d2w(args);
-            }finally{
+            } finally {
                 int i = recurseLevel_d2w.get();
                 recurseLevel_d2w.set(--i);
             }
@@ -170,7 +178,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                     targetArray[i] = thisMapping.d2w(sourceArray[i], parameterTypes[i]);
                 }
                 target = targetArray;
-            } else if (source instanceof Object[] && !(source instanceof Class[])){
+            } else if (source instanceof Object[] && !(source instanceof Class[])) {
                 Object[] sourceArray = (Object[]) source;
                 Class componentType = ((Class) lastArg).getComponentType();
                 Object[] targetArray = (Object[]) Array.newInstance(componentType, sourceArray.length);
@@ -281,7 +289,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                     targetArray[i] = thisMapping.w2d(sourceArray[i], parameterTypes[i]);
                 }
                 target = targetArray;
-            } else if (source instanceof Object[]){
+            } else if (source instanceof Object[]) {
                 Object[] sourceArray = (Object[]) source;
                 Class componentType = ((Class) lastArg).getComponentType();
                 Object[] targetArray = (Object[]) Array.newInstance(componentType, sourceArray.length);
@@ -295,20 +303,20 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 target = source;
             } /*else if (source instanceof Collection) {
                 target = w2dCollection(args, parameterType);
-            } */else {
+            } */ else {
                 TypeMapper typeMapper = getMapperByWsapiClass(source.getClass());
                 if (typeMapper instanceof WsapiListTypeMapper) {
                     target = getCollection(args);
                     typeMapper.mapWsapiObject(source, target);
                 } else if (typeMapper instanceof WsapiMapTypeMapper) {
                     target = getMap(args);
-                    if(args.length == 3 && args[2] instanceof MapperInfo){
+                    if (args.length == 3 && args[2] instanceof MapperInfo) {
                         ((WsapiMapTypeMapper) typeMapper).setValueType(((MapperInfo) args[2]).value()[1]);
                     }
                     typeMapper.mapWsapiObject(source, target);
                 } else if (typeMapper instanceof AutomaticTypeMapper) {
                     target = getTargetForGenericTypeMapper(args);
-                    if (target==null) {
+                    if (target == null) {
                         target = typeMapper.mapWsapiObject(source);
                     } else {
                         typeMapper.mapWsapiObject(source, target);
