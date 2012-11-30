@@ -1,10 +1,12 @@
 package no.statkart.skif.store;
 
 import com.google.inject.*;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.TestIdServiceLong;
 import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.service.StoreService;
+import no.statkart.skif.storetest.domain.demo.TestBubble;
 import no.statkart.skif.storetest.domain.demo.TestBubbleId;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -12,7 +14,7 @@ import org.testng.annotations.Test;
 import java.util.*;
 
 /**
- * Tester grunnleggende ting i {@link StoreClient}.
+ * Tester grunnleggende ting i {@link StoreClient}. Dette er stort sett implementert i diverse session-klasser.
  *
  * @author Tor Egil R. Strand
  * @since 2.1
@@ -51,7 +53,7 @@ public class StoreClientTest {
         try {
             store.endUnitOfWork();
             Assert.fail("Skulle fått feilmelding");
-        } catch (Exception e) {
+        } catch (ImplementationException e) {
             Assert.assertTrue(e.getMessage().contains("In nested UnitOfWork"));
         }
     }
@@ -74,11 +76,98 @@ public class StoreClientTest {
         Assert.assertFalse(store.isLocked(id), "Objektet er fortsatt låst");
     }
 
+    @Test(groups = "broken")
+    public void unlockOnAbortUnitOfWork() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+        StoreClientTestStoreService storeService = injector.getInstance(StoreClientTestStoreService.class);
+
+        TestBubbleId<?> id = new TestBubbleId(1L);
+
+        store.beginUnitOfWork();
+        store.get(id); // TODO: Skal være unødvendig
+        store.lock(id);
+
+        Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke låst");
+        Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke låst ordentlig");
+
+        store.abortUnitOfWork();
+
+        Assert.assertFalse(storeService.isLocked(id), "Objektet ble ikke låst opp");
+    }
+
+    public void dontUnlockOnCommitUnitOfWork() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+        StoreClientTestStoreService storeService = injector.getInstance(StoreClientTestStoreService.class);
+
+        TestBubbleId<?> id = new TestBubbleId(1L);
+
+        store.beginUnitOfWork();
+
+        store.beginUnitOfWork();
+
+        store.get(id); // TODO: Skal være unødvendig
+        store.lock(id);
+
+        Assert.assertTrue(store.isLocked(id), "Objektet er ikke låst");
+        Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke låst ordentlig");
+
+        store.commitUnitOfWork();
+
+        Assert.assertTrue(store.isLocked(id), "Objektet ble låst opp");
+        Assert.assertTrue(storeService.isLocked(id), "Objektet ble låst opp");
+    }
+
+    public void commitLevel1NotAllowed() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+
+        store.beginUnitOfWork();
+        try {
+            store.commitUnitOfWork();
+            Assert.fail("Skulle fått feilmelding");
+        } catch (ImplementationException e) {
+            Assert.assertTrue(e.getMessage().contains("Commit av UnitOfWork direkte mot server støttes ikke"));
+        }
+    }
+
+    public void evict() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+
+        TestBubbleId<?> id = new TestBubbleId(1L);
+
+        TestBubble testBubble1 = store.get(id);
+        store.evict(id);
+        TestBubble testBubble2 = store.get(id);
+
+        Assert.assertNotSame(testBubble2, testBubble1, "Fikk tilbake samme objekt");
+        Assert.assertEquals(testBubble2.getId(), testBubble1.getId(), "Fikk tilbake objekter med forskjellig id");
+    }
+
+    public void evictAll() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+
+        TestBubbleId<?> id = new TestBubbleId(1L);
+
+        TestBubble testBubble1 = store.get(id);
+        store.evictAll();
+        TestBubble testBubble2 = store.get(id);
+
+        Assert.assertNotSame(testBubble2, testBubble1, "Fikk tilbake samme objekt");
+        Assert.assertEquals(testBubble2.getId(), testBubble1.getId(), "Fikk tilbake objekter med forskjellig id");
+    }
+
+    /**
+     * En mockup-StoreService som bare returnerer nyinstansierte bobleobjekter.
+     */
     public static class StoreClientTestStoreService implements StoreService {
-        private final Map<BubbleId<?>, BubbleObject> lockedMap = new HashMap<BubbleId<?>, BubbleObject>();
+        private final Set<BubbleId<?>> lockedIds = new HashSet<BubbleId<?>>();
 
         public void clearLocks() {
-            lockedMap.clear();
+            lockedIds.clear();
         }
 
         private <T extends BubbleObject, I extends BubbleId<? extends T>> T createBubble(I id) {
@@ -96,12 +185,7 @@ public class StoreClientTest {
 
         @Override
         public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I id) {
-            Class<? extends T> bubbleType = id.getType();
-            T bubbleObject = bubbleType.cast(lockedMap.get(id));
-            if (bubbleObject == null) {
-                bubbleObject = createBubble(id);
-            }
-            return bubbleObject;
+            return createBubble(id);
         }
 
         @Override
@@ -125,23 +209,19 @@ public class StoreClientTest {
 
         @Override
         public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I id) {
-            Class<? extends T> bubbleType = id.getType();
-            T bubbleObject = bubbleType.cast(lockedMap.get(id));
-            if (bubbleObject == null) {
-                bubbleObject = createBubble(id);
-                lockedMap.put(id, bubbleObject);
-            }
-            return bubbleObject;
+            T bubble = createBubble(id);
+            lockedIds.add(id);
+            return bubble;
         }
 
         @Override
         public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I id) {
-            lockedMap.remove(id);
+            lockedIds.remove(id);
         }
 
         @Override
         public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I id) {
-            return lockedMap.containsKey(id);
+            return lockedIds.contains(id);
         }
     }
 }
