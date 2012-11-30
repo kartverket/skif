@@ -14,12 +14,10 @@ import java.util.Calendar;
 import java.util.HashSet;
 
 /**
- * Test som tester at vi får lagt til en entitycomponent i en liste på et bobleobjekt uten at eksisterende elementer
- * i listen får nye versjoner.
- * <p/>
  * Se SKIF-210 og SKIF-214 for mer informasjon om problemet som testes her.
  *
  * @author Roar Ingebrigtsen
+ * @author Tor Egil R. Strand
  * @since 2.1
  */
 @Test(groups = "singlevm-required")
@@ -28,7 +26,13 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
     @Inject
     Store store;
 
+    /**
+     * Test som tester at vi får lagt til en entitycomponent i en liste på et bobleobjekt uten at eksisterende elementer
+     * i listen får nye versjoner.
+     */
     public void leggTilEntryIComponentListe() {
+        // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
+        store.evictAll();
 
         final long idToUse = Calendar.getInstance().getTimeInMillis();
 
@@ -90,9 +94,11 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
     }
 
     /**
-     *
+     * Test som tester at bobleobjekt kan oppdateres uten at eksisterende entitycomponents får nye versjoner.
      */
     public void testMapUtOgTilbake() {
+        // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
+        store.evictAll();
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
@@ -119,6 +125,8 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
     }
 
     public void testUpdateUtenAtObjektErLastetIHibernate() {
+        // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
+        store.evictAll();
 
         final long idToUse = Calendar.getInstance().getTimeInMillis();
 
@@ -182,10 +190,12 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 
 
     /**
-     * Et eksempel på problemet beskrevet i 	SKIF-214
+     * Tester at entitycomponents kan fjernes fra ikke-persistent collection.
      */
     @Test(enabled = false)
     public void testUpdateMedRemoveAvComponentUtenAtObjektErLastetIStore() {
+        // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
+        store.evictAll();
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
@@ -233,8 +243,11 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
         });
     }
 
+    /**
+     * Tester at entitycomponents kan fjernes fra persistent collection.
+     */
     public void testUpdateMedRemoveAvComponentEtterAtObjektErLastetIStore() {
-        // Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke
+        // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
         store.evictAll();
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
@@ -282,9 +295,10 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 
 
     /**
-     * Belyser problemet beskrevet i 	SKIF-214
+     * Belyser problemet beskrevet i SKIF-214.
+     * Skal egentlig slette alle komponenter i ParrentBubble 1, men ingenting skjer.
      */
-    @Test(enabled = false)
+    @Test
     public void testUpdateParrentBubbleMedHashSet() {
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
@@ -307,30 +321,5 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
         });
     }
 
-    /**
-     * OBS! Ødelegger data i databasen så kan ikke kjøres mer enn en gang
-     */
-    @Test(enabled = false)
-    public void testUpdateParrentBubbleMedPersistentSet() {
-
-        server.runInTxRequiresNew(new RunOnServerMethod() {
-            @Inject
-            Store store;
-
-            @Override
-            public Object run() {
-                ParrentBubble parrentBubble = store.get(new ParrentBubbleId<ParrentBubble>(1));
-                ParrentBubble copy = CopyHelper.copy(parrentBubble);
-                store.evict(parrentBubble.getId());
-
-                store.lock(copy.getId());
-
-                copy.setChildForParrents(new HashSet<ChildForParrent>());
-                store.update(copy);
-
-                return null;
-            }
-        });
-    }
 }
 
