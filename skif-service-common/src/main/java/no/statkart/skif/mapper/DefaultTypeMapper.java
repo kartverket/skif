@@ -834,15 +834,26 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
 
         Collection<Field> fields = new ArrayList<Field>();
         addDeclaredAndInheritedFields(c, fields);
+        Field matched = null;
+        boolean nameMatch = false;
         for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext(); ) {
             Field next = iterator.next();
-            if (next.getName().equals(fieldname) || (next.getName() + "Id").equals(fieldname) || next.getName().equals(fieldname + "Id")) {
+            if(next.getName().equals(fieldname)){
+                nameMatch = true;
                 fieldMap.put(fieldname, next);
-                return next;
+                matched = next;
+            }else if (!nameMatch && ((next.getName() + "Id").equals(fieldname) || next.getName().equals(fieldname + "Id"))) {
+                matched = next;
+                fieldMap.put(fieldname, next);
             }
         }
-        fieldMap.put(fieldname, null);
-        return null;
+
+        if(matched != null){
+            return matched;
+        }else{
+            fieldMap.put(fieldname, null);
+            return null;
+        }
     }
 
     protected boolean checkHasField(Class clazz, String fieldname) {
