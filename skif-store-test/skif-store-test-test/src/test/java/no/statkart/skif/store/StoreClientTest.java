@@ -132,6 +132,24 @@ public class StoreClientTest {
         }
     }
 
+    public void caching() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+
+        TestBubbleId<?> id = new TestBubbleId(1L);
+
+        TestBubble testBubble1 = store.get(id);
+        TestBubble testBubble2 = store.get(id);
+
+        Assert.assertSame(testBubble2, testBubble1, "Fikk to forskjellige objekter, altså ingen caching");
+
+        store.beginUnitOfWork();
+        TestBubble testBubble3 = store.get(id);
+        store.abortUnitOfWork();
+
+        Assert.assertSame(testBubble3, testBubble1, "Fikk to forskjellige objekter, altså ingen caching");
+    }
+
     public void evict() {
         Injector injector = createInjector();
         Store store = injector.getInstance(Store.class);
