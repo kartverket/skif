@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
 import com.google.common.collect.Lists;
+import no.statkart.skif.exception.ImplementationException;
 
 import java.util.*;
 
@@ -73,7 +74,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
         return wrappedStoreSession.evictAllEntries(level);
     }
 
-    public  void register(BubbleTransfer bubbleTransfer) {
+    public void register(BubbleTransfer bubbleTransfer) {
         wrappedStoreSession.register(bubbleTransfer);
     }
 
@@ -88,7 +89,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
             if (storeEntry.isLockedByLevel(level)) {
                 wrappedStoreSession.unlockEntry(level, storeEntry.getId());
             }
-            if (storeEntry.getLoadedByLevel()==level) {
+            if (storeEntry.getLoadedByLevel() == level) {
                 storeCache.remove(storeEntry.getId());
             }
         }
@@ -98,8 +99,10 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     public WrappableStoreSession endUnitOfWork() {
-        // TODO: check modified etter getUnitOfWorkTransfer
-        return wrappedStoreSession;
+        if (level != 1) {
+            throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork or abortUnitOfWork instead");
+        }
+        throw new ImplementationException("Not supported by UnitOfWork. Call commitUnitOfWork or abortUnitOfWork instead");
     }
 
     public UnitOfWorkTransfer getUnitOfWorkTransfer() {
