@@ -78,9 +78,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
             clientStore.endUnitOfWork();
 
-            // TODO: Denne sjekken er feil. Det skulle vært assertFalse, men en bug i unit-of-work-håndtering tilbakestiller ikke tilstand ved ferdigstilling.
-            Assert.assertTrue(clientStore.isLocked(testBubble.getId()), "Nycommittet objekt skal ikke lenger være låst.");
-
+            Assert.assertFalse(clientStore.isLocked(testBubble.getId()), "Nycommittet objekt skal ikke lenger være låst.");
             Assert.assertNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), testBubble.getId().getValue())), "Nyinsertet objekt skal ikke være låst i lockerservice.");
         } finally {
             if (clientStore.inUnitOfWork()) clientStore.abortUnitOfWork();
@@ -150,9 +148,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
             clientStore.endUnitOfWork();
 
-            // TODO: Denne sjekken er feil. Det skulle vært assertFalse, men en bug i unit-of-work-håndtering tilbakestiller ikke tilstand ved ferdigstilling.
-            Assert.assertTrue(clientStore.isLocked(testBubble.getId()), "Oppdatert objekt skal ikke lenger være låst.");
-
+            Assert.assertFalse(clientStore.isLocked(testBubble.getId()), "Oppdatert objekt skal ikke lenger være låst.");
             Assert.assertNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), testBubble.getId().getValue())), "Oppdatert objekt skal ikke være låst i lockerservice.");
         } finally {
             if (clientStore.inUnitOfWork()) clientStore.abortUnitOfWork();
@@ -220,9 +216,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
                 clientStore.endUnitOfWork();
 
-                // TODO: Denne sjekken er feil. Det skulle vært assertFalse, men en bug i unit-of-work-håndtering tilbakestiller ikke tilstand ved ferdigstilling.
-                Assert.assertTrue(clientStore.isLocked(testBubble.getId()), "Slettet objekt skal ikke lenger være låst.");
-
+                Assert.assertFalse(clientStore.isLocked(testBubble.getId()), "Slettet objekt skal ikke lenger være låst.");
                 Assert.assertNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), testBubble.getId().getValue())), "Slettet objekt skal ikke være låst i lockerservice.");
             } finally {
                 if (clientStore.inUnitOfWork()) clientStore.abortUnitOfWork();

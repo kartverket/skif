@@ -1,15 +1,15 @@
 package no.statkart.skif.persistence.jdbc;
 
+import no.statkart.skif.SkifUtil;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import sun.awt.windows.ThemeReader;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 import static no.statkart.skif.util.JDBCHelper.createConnectionFactoryUsingJDBC;
 import static org.testng.Assert.*;
@@ -25,12 +25,24 @@ import static org.testng.Assert.*;
 public class ConnectionManagerUsingJDBCTest {
     private ConnectionManagerUsingFactory connectionManager;
 
+    String username;
+    String password;
+    String url;
+
     @BeforeClass
     public void setUp() {
-        SkifConfiguration config = new SkifConfiguration();
+        SkifConfiguration configuration = new SkifConfiguration();
+        username = configuration.getString(SkifConfigConstants.DB_USERNAME);
+        password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
+        String sid = configuration.getString(SkifConfigConstants.DB_SID);
+        String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
+        String port = configuration.getString(SkifConfigConstants.DB_PORT);
+        url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
+
+
         connectionManager = new ConnectionManagerUsingFactory(
-                createConnectionFactoryUsingJDBC(config, SnapshotVersion.CURRENT, false),
-                createConnectionFactoryUsingJDBC(config, SnapshotVersion.OLD, false)
+                createConnectionFactoryUsingJDBC(configuration, SnapshotVersion.CURRENT, false),
+                createConnectionFactoryUsingJDBC(configuration, SnapshotVersion.OLD, false)
         );
     }
 
@@ -62,8 +74,19 @@ public class ConnectionManagerUsingJDBCTest {
     }
 
     @Test(invocationCount = 200)
-    public void testAllocateConnection_many() throws SQLException {
+    public void testAllocateConnection_many() throws SQLException, InterruptedException {
         testAllocateConnection();
+    }
+
+    @Test(invocationCount = 200)
+    public void testAllocateConnection_many2() {
+        // Se SKIF 215 hvis denne feiler
+        try {
+            Connection conn = DriverManager.getConnection(url, username, password);
+            conn.close();
+        } catch (SQLException e) {
+            fail(e.getMessage(), e);
+        }
     }
 
 
@@ -220,7 +243,7 @@ public class ConnectionManagerUsingJDBCTest {
             String retNavn_ = getNavn(unwrappedConnection, 101, 2);
             assertTrue(retNavn_.equals(unavn));
 
-            String oldNavn = getOld(101,2);
+            String oldNavn = getOld(101, 2);
             assertFalse(oldNavn.equals(retNavn_), "Old skal ikke vere likt oppdatert navn");
 
             forSnapshotVersion.rollback();
@@ -260,7 +283,7 @@ public class ConnectionManagerUsingJDBCTest {
 
     private String getOld(int id, int version) {
         ConnectionForSnapshotVersion forOldSnapshotVersion = null;
-        String oldNavn=null;
+        String oldNavn = null;
         try {
             //sjekke old
             forOldSnapshotVersion = connectionManager.getForSnapshotVersion(SnapshotVersion.OLD);
@@ -320,8 +343,8 @@ public class ConnectionManagerUsingJDBCTest {
             assertTrue(updated == 1, "Mer en en rad er oppdatert!!!!!!");
             unwrappedConnection.commit();
 
-           String navn = getOld(101,2);
-           assertTrue(unavn.equals(navn), "Oppdatering ikke komittet");
+            String navn = getOld(101, 2);
+            assertTrue(unavn.equals(navn), "Oppdatering ikke komittet");
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -329,7 +352,7 @@ public class ConnectionManagerUsingJDBCTest {
             try {
                 if (unwrappedConnection != null) {
                     int updated = 0;
-                     //resett for andre tester.....
+                    //resett for andre tester.....
                     preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?");
                     preparedStatement.setString(1, "GAMMELVEIEN");
                     preparedStatement.setInt(2, 101);

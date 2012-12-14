@@ -2,6 +2,7 @@ package no.statkart.skif.store;
 
 import com.google.common.collect.Lists;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.guava.Preconditions;
 
 import java.util.*;
 
@@ -102,7 +103,8 @@ public class StoreUnitOfWork extends AbstractStoreSession {
         if (level != 1) {
             throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork or abortUnitOfWork instead");
         }
-        throw new ImplementationException("Not supported by UnitOfWork. Call commitUnitOfWork or abortUnitOfWork instead");
+
+        throw new UnsupportedOperationException();
     }
 
     public UnitOfWorkTransfer getUnitOfWorkTransfer() {

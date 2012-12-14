@@ -23,6 +23,15 @@ public class StoreUnitOfWorkClient extends StoreUnitOfWork {
         if (modifiedMap.size() > 0 && !getTransferHasBeenCalled) {
             throw new ImplementationException("Store contains modified objects. Call getUnitOfWorkTransfer() before calling endUnitOfWork");
         }
+        for (StoreEntry storeEntry : modifiedMap.values()) {
+            if (storeEntry.getLoadedByLevel() == level) {
+                storeCache.remove(storeEntry.getId());
+            } else {
+               storeEntry.clear(level);
+            }
+            storeEntry.lockCreatedByLevel=0;
+        }
+        modifiedMap.clear();
         return wrappedStoreSession;
     }
 }

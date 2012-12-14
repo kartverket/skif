@@ -112,8 +112,10 @@ public class StoreSessionClient extends AbstractStoreSession {
             }
         } else {
             BubbleObject lockedBubbleObject = storeService.lock(bubbleId);
-            storeEntry = storeCache.register(level, lockedBubbleObject, lockedBubbleObject);
-            storeEntry.setLocked(level);
+            storeEntry = storeCache.register(level, null, lockedBubbleObject);
+            // Ønsker ikke å ta en kopi av objektet så vi setter level 0 til null i stedet
+            storeEntry.setBubbleObject(0, null);
+            storeEntry.setLocked(level, lockedBubbleObject);
             storeEntry.setLockCreatedByLevel(level);
         }
         return storeEntry;
