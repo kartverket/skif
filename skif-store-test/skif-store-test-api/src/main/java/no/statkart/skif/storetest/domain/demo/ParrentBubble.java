@@ -48,13 +48,13 @@ public class ParrentBubble extends AbstractBubbleObject implements StoreTestBubb
     }
 
 
-//    public Set<ChildForParrent> getChildForParrents() {
-//        return childForParrents;
-//    }
+    public Set<ChildForParrent> getChildForParrents2() {
+        return childForParrents;
+    }
 
-//    public void setChildForParrents(Set<ChildForParrent> childForParrents) {
-//        this.childForParrents = childForParrents;
-//    }
+    public void setChildForParrents2(Set<ChildForParrent> childForParrents) {
+        this.childForParrents = childForParrents;
+    }
 
 
     public void addChild(ChildBubbleId<ChildBubble> childId, Long id) {

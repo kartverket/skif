@@ -3,15 +3,22 @@ package no.statkart.skif.storetest.service.store;
 import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.CopyHelper;
+import org.hibernate.Session;
+import org.hibernate.collection.PersistentSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Set;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Se SKIF-210 og SKIF-214 for mer informasjon om problemet som testes her.
@@ -296,14 +303,18 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 
     /**
      * Belyser problemet beskrevet i SKIF-214.
-     * Skal egentlig slette alle komponenter i ParrentBubble 1, men ingenting skjer.
+     * Skalslette alle komponenter i ParrentBubble 1, men ingenting skjer pga SKIF-214
+     *
+     * Med SKIF-214 løst blir komponenter slettet.
+     *
+     * TODO: Skrive om testen slik at det ikke endre på data som legges inn via loadData og er en del av "readsettet"
      */
     @Test
     public void testUpdateParrentBubbleMedHashSet() {
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
-            Store store;
+            StoreServer store;
 
             @Override
             public Object run() {
@@ -313,13 +324,19 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 
                 store.lock(copy.getId());
 
-                copy.setChildForParrents(new HashSet<ChildForParrent>());
+                final HashSet<ChildForParrent> childForParrents = new HashSet<ChildForParrent>();
+                //childForParrents.add(CopyHelper.copy(parrentBubble.getChildForParrents().iterator().next()));
+                copy.setChildForParrents(childForParrents);
                 store.update(copy);
 
+                store.flush();
+
+                final Session session = store.getInstance(Session.class);
+                final BigDecimal count = (BigDecimal) session.createSQLQuery("select count(*) from childforparrent where parrentbubbleId=:parentId").setParameter("parentId", parrentBubble.getId()).uniqueResult();
+                assertEquals(count.intValue(), 0, "relasjon ble ikke slettet");
                 return null;
             }
         });
     }
-
 }
 

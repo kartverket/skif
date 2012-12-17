@@ -1,21 +1,24 @@
 package no.statkart.skif.store.persistence.hibernate;
 
+import com.google.common.collect.Maps;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
+import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.*;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.criterion.Expression;
-import org.hibernate.engine.CascadeStyle;
-import org.hibernate.engine.CascadingAction;
-import org.hibernate.engine.EntityKey;
-import org.hibernate.engine.PersistenceContext;
+import org.hibernate.engine.*;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.collection.AbstractCollectionPersister;
+import org.hibernate.persister.collection.CollectionPersister;
+import org.hibernate.persister.collection.OneToManyPersister;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
@@ -300,7 +303,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubbleObject) {
         try {
-            convertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject);
+            assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject);
             session().update(bubbleObject); // Viktig at class-mapping inneholder 'select-before-update="true"'. Dette bør settes automatisk ved konfigurasjon av hibernate session factory.
         } catch (HibernateException e) {
             throw new ImplementationException("Update feilet for " + bubbleObject, e);
@@ -330,10 +333,17 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     /**
-     * Sjekk om objektet har endret type i forhold til det som ligger i Hibernate/databasen. Dersom så har skjedd, så
+     * Laster eksisterende objekt fra databasen hvis det ikke allerede er lastet og prosesserer det nye objektet
+     * dersom nytt og eksisterende objekt er forskjellige instanser.
+     * <p/>
+     * Prosesseringen består i at det nye objektet får oppdatert alle sine collections slik at de inneholder riktig
+     * snapshotverdi av gammel tilstand. Dette er viktig for at hibernate skal kunne oppdatere collections riktig i
+     * databasen (se SKIF-214).
+     * <p/>
+     * Videre så sjekkes det nye objektet har endret type i forhold til eksisterende objekt. Dersom så har skjedd, så
      * må ikke-felles felter nullstilles og det utføres en spesiell SQL som endrer objekttypen i databasen.
      * <p/>
-     * Uansett sørges det for at Hibernates cache ikke inneholder et objekt med samme id, med mindre det også er
+     * Endelig sørges det for at Hibernates cache ikke inneholder et objekt med samme id, med mindre det også er
      * nøyaktig samme objekt (instans) som <i>bubbleObject</i>.
      *
      * @param bubbleObject et objekt som kanskje er lastet gjennom hibernate tidligere i denne
@@ -341,16 +351,25 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
      * @throws HibernateException    dersom get() eller evict() på hibernate session feiler
      * @throws java.sql.SQLException dersom SQL feiler ved typeendring
      */
-    private void convertObjectIfTypeChangedAndEvictOtherInstance(BubbleObject bubbleObject) throws HibernateException, SQLException {
+    private void assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(BubbleObject bubbleObject) throws HibernateException, SQLException {
         // Hibernate tillater ikke update på et objekt når et annet objekt med samme id finnes i hibernate sin cache
-        // Vi må teste på dette og evt. kaste ut det gamle objektet fra hibernate sin cache.
-        // Dette kan kun testes ved å forsøke å loaded objektet og se om man får det samme objket som man
-        // har fra før. Dersom objektet ikke var loadet vil Hibernate retunerer en proxy. Dette kallet gir
-        // derfor ingen database aksess.
-        Object obj = session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
-        if (obj != bubbleObject) {
-            if (!(bubbleObject.getClass().isInstance(obj))) {
-                changeType(bubbleObject, (BubbleObject) obj);
+        // Vi må teste på dette og evt. kaste ut det gamle objektet fra hibernate sin cache. Dette kan testes ved å
+        // slå opp objektet i hibernates interne cache slik at objektet ikke lastes fra databasen hvis det ikke allerede
+        // er lastet.
+        //
+        // Metoden trenger imidlertid alltid informasjon om eksisterende innhold i collections så objektet må lastes
+        // uansett. For å skifte subtype trenges det også at objektet er lastet for å nulle ut ikke-felles-felter.
+        // Dersom objektet ikke allerede er lastet lastes eksistrende objekt her. For bulk updates vil det går raksere
+        // hvis eksisterende objekter allerede er lastet før man kommer her slik at eksisterende objekter ikke lastes
+        // en-etter-en.
+        BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
+        if (existingBubble != bubbleObject) {
+            // TOOD: Denne kan antageligvis tas bort
+            ensureFullyLoaded(existingBubble);
+            attachPersistenceCollectionWithSnapshotOfOldState(bubbleObject, existingBubble);
+
+            if (!(bubbleObject.getClass().isInstance(existingBubble))) {
+                changeType(bubbleObject, (BubbleObject) existingBubble);
 
                 fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
             } else {
@@ -366,10 +385,139 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                 // La den nye versjonen erstatte den gamle. Det er tryggt å anta at denne også er fullt initialisert.
                 fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
 
-                session().evict(obj);
+                session().evict(existingBubble);
             }
         } else {
             // Gjør ingen ting, bubbleObject er det objektet som allerede ligger i hibernate sessionen
+        }
+    }
+
+
+    /**
+     * Sørger for at objektets collections alle er av typen PersisteneCollection og inneholder snapshot av gammel tilstand
+     * i tillegg til ny tilstand.
+     */
+    public void attachPersistenceCollectionWithSnapshotOfOldState(BubbleObject bubbleObject, BubbleObject existingBubble) {
+        try {
+            IdentityHashMap processedObjects = new IdentityHashMap();
+            attachPersistenceCollectionWithSnapshotOfOldState(bubbleObject, existingBubble, processedObjects);
+        } catch (HibernateException e) {
+            throw new ImplementationException("Kunne ikke legge på PersistenceCollection: " + bubbleObject.getId(), e);
+        }
+    }
+
+    /**
+     * Sørger for at objektets collections alle er av typen PersisteneCollection og inneholder snapshot av gammel tilstand
+     * i tillegg til ny tilstand. Hvis en assosiasjon er definert som cascade vil metoden bli kaldt rekursivt på de assosierte
+     * objekter dersom de også finnes i existing object
+     */
+    protected void attachPersistenceCollectionWithSnapshotOfOldState(Object object, Object existingObject, IdentityHashMap processedObjects) throws HibernateException {
+        if (object == null) return;
+
+        if (processedObjects.containsKey(object)) return;
+        processedObjects.put(object, null);
+
+        ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
+
+        if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
+        EntityPersister persister = (EntityPersister) classMetadata;
+        if (!persister.hasCollections()) return;
+
+        Type[] types = persister.getPropertyTypes();
+        Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
+        CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
+
+        EntityPersister persisterExisting = (EntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(existingObject.getClass());
+        Type[] typesExisting = persisterExisting.getPropertyTypes();
+        Object[] valuesExisting = persisterExisting.getPropertyValues(existingObject, EntityMode.POJO);
+
+        int commonLength = 0;
+        if (persister != persisterExisting) {
+            // Beregn felles felter for object og existingObject
+            for (int i = 0; i < types.length && i < typesExisting.length; i++) {
+                if (!types[i].getName().equals(typesExisting[i].getName())) {
+                    commonLength = i;
+                    break;
+                }
+            }
+        } else {
+            commonLength = types.length;
+        }
+
+        for (int i = 0; i < commonLength; i++) {
+            Type type = types[i];
+            if (type.isEntityType()) {
+                if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE)) {
+                    attachPersistenceCollectionWithSnapshotOfOldState(values[i], valuesExisting[i], processedObjects);
+                }
+            } else if (type.isComponentType()) {
+                AbstractComponentType t = (AbstractComponentType) type;
+                Object component = values[i];
+                Object componentExisting = valuesExisting[i];
+                if (component != null) {
+                    Object[] componentProperties = t.getPropertyValues(component, EntityMode.POJO);
+                    Object[] componentPropertiesExisting = t.getPropertyValues(componentExisting, EntityMode.POJO);
+                    boolean wasModified = false;
+                    for (int j = 0; j < componentProperties.length; j++) {
+                        // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
+                        Object componentProperty = componentProperties[j];
+                        if (componentProperties[j] instanceof Collection) {
+                            // For hvert element
+                            boolean cascade = true;
+                            componentProperties[j] = attachPersistentCollection((Collection) componentProperties[j], (Collection) componentPropertiesExisting[j], processedObjects, cascade);
+                            wasModified = true;
+                        } else {
+                            throw new NotImplementedException();
+                            // TODO: Trenger et test eksempel med components for å skrive denne koden riktig
+                            //attachPersistenceCollectionWithSnapshotOfOldState(componentProperty, componentPropertiesExisting, processedObjects);
+                        }
+                    }
+                    if (wasModified) {
+                        t.setPropertyValues(component, componentProperties, EntityMode.POJO);
+                    }
+                }
+            } else if (type.isAssociationType()) {
+                Collection col = (Collection) values[i];
+                Collection colExisting = (Collection) valuesExisting[i];
+                boolean cascade = cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE);
+                Collection collectionWithSnapshot = attachPersistentCollection(col, colExisting, processedObjects, cascade);
+                persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
+            }
+        }
+    }
+
+    protected Collection attachPersistentCollection(Collection collectionInOject, Collection collectionInExistingObject, IdentityHashMap processedObjects, boolean cascade) throws HibernateException {
+        if (collectionInExistingObject instanceof PersistentCollection) {
+            Collection persistentCollection = CopyHelper.copy(collectionInExistingObject);
+            persistentCollection.clear();
+            if (collectionInOject != null) {
+                persistentCollection.addAll(collectionInOject);
+            }
+            if (cascade) {
+                cascadeAttachPersistenceCollections(persistentCollection, collectionInExistingObject, processedObjects);
+            }
+            return persistentCollection;
+        } else {
+            // TODO: Alternativt returner eksisterende collection. Kanskje det er greit?
+            throw new ImplementationException("Kan ikke tildele persistent shapshot. Eksisterende objekt har ikke collection av type PersistentCollection");
+            //return collectionInOject;
+        }
+    }
+
+    protected void cascadeAttachPersistenceCollections(Collection collectionInOject, Collection collectionInExistingObject, IdentityHashMap processedObjects) throws HibernateException {
+        CollectionEntry entry = ((SessionImpl) session()).getPersistenceContext().getCollectionEntry((PersistentCollection) collectionInExistingObject);
+        final CollectionPersister collectionPersister = entry.getLoadedPersister();
+        final EntityPersister elementPersister = ((AbstractCollectionPersister) collectionPersister).getElementPersister();
+        if (elementPersister.hasCollections()) {
+            Map<Serializable, Object> oldElementMap = Maps.newHashMap();
+            for (Object o : collectionInExistingObject) {
+                oldElementMap.put(elementPersister.getIdentifier(o, EntityMode.POJO), o);
+            }
+            for (Object object : collectionInOject) {
+                final Serializable identifier = elementPersister.getIdentifier(object, EntityMode.POJO);
+                final Object valueExisting = oldElementMap.get(identifier);
+                attachPersistenceCollectionWithSnapshotOfOldState(object, valueExisting, processedObjects);
+            }
         }
     }
 
