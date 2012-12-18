@@ -199,7 +199,6 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
     /**
      * Tester at entitycomponents kan fjernes fra ikke-persistent collection.
      */
-    @Test(enabled = false)
     public void testUpdateMedRemoveAvComponentUtenAtObjektErLastetIStore() {
         // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
         store.evictAll();
