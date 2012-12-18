@@ -42,7 +42,6 @@ public class StoreClientTest {
         return Guice.createInjector(module);
     }
 
-    @Test(groups = "broken")
     public void endNestedUnitOfWork() {
         Injector injector = createInjector();
         Store store = injector.getInstance(Store.class);
@@ -58,7 +57,6 @@ public class StoreClientTest {
         }
     }
 
-    @Test(groups = "broken")
     public void forgetLocksOnEndUnitOfWork() {
         Injector injector = createInjector();
         Store store = injector.getInstance(Store.class);
@@ -66,8 +64,10 @@ public class StoreClientTest {
         TestBubbleId<?> id = new TestBubbleId(1L);
 
         store.beginUnitOfWork();
+//        store.get(id);
         store.lock(id);
         Assert.assertTrue(store.isLocked(id), "Objektet ble ikke låst");
+        store.getUnitOfWorkTransfer();
         store.endUnitOfWork();
 
         // Simuler at tjeneren åpner alle låser for brukeren
