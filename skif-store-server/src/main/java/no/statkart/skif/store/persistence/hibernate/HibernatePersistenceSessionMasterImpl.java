@@ -18,11 +18,12 @@ import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.AbstractCollectionPersister;
 import org.hibernate.persister.collection.CollectionPersister;
-import org.hibernate.persister.collection.OneToManyPersister;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.AbstractComponentType;
+import org.hibernate.type.CustomType;
+import org.hibernate.type.NullableType;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -446,42 +447,61 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
         for (int i = 0; i < commonLength; i++) {
             Type type = types[i];
+            Object value = values[i];
+            Object valueExisting = valuesExisting[i];
+            CascadeStyle cascadeStyle = cascadeStyles != null ? cascadeStyles[i] : null;
+
             if (type.isEntityType()) {
-                if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE)) {
-                    attachPersistenceCollectionWithSnapshotOfOldState(values[i], valuesExisting[i], processedObjects);
+                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                    attachPersistenceCollectionWithSnapshotOfOldState(value, valueExisting, processedObjects);
                 }
             } else if (type.isComponentType()) {
-                AbstractComponentType t = (AbstractComponentType) type;
-                Object component = values[i];
-                Object componentExisting = valuesExisting[i];
-                if (component != null) {
-                    Object[] componentProperties = t.getPropertyValues(component, EntityMode.POJO);
-                    Object[] componentPropertiesExisting = t.getPropertyValues(componentExisting, EntityMode.POJO);
-                    boolean wasModified = false;
-                    for (int j = 0; j < componentProperties.length; j++) {
-                        // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
-                        Object componentProperty = componentProperties[j];
-                        if (componentProperties[j] instanceof Collection) {
-                            // For hvert element
-                            boolean cascade = true;
-                            componentProperties[j] = attachPersistentCollection((Collection) componentProperties[j], (Collection) componentPropertiesExisting[j], processedObjects, cascade);
-                            wasModified = true;
-                        } else {
-                            throw new NotImplementedException();
-                            // TODO: Trenger et test eksempel med components for å skrive denne koden riktig
-                            //attachPersistenceCollectionWithSnapshotOfOldState(componentProperty, componentPropertiesExisting, processedObjects);
-                        }
-                    }
-                    if (wasModified) {
-                        t.setPropertyValues(component, componentProperties, EntityMode.POJO);
-                    }
-                }
-            } else if (type.isAssociationType()) {
-                Collection col = (Collection) values[i];
-                Collection colExisting = (Collection) valuesExisting[i];
-                boolean cascade = cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE);
+                attachComponent(value, valueExisting, (AbstractComponentType) type, processedObjects);
+            } else if (type.isCollectionType()) {
+                Collection col = (Collection) value;
+                Collection colExisting = (Collection) valueExisting;
+                boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
                 Collection collectionWithSnapshot = attachPersistentCollection(col, colExisting, processedObjects, cascade);
                 persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
+            } else if (!(type instanceof NullableType) // NullableType er for ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                    && !(type instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+                throw new NotImplementedException();
+                // TODO: Trenger et test eksempel for å skrive denne koden riktig
+            }
+        }
+    }
+
+    protected void attachComponent(Object component, Object componentExisting, AbstractComponentType componentType, IdentityHashMap processedObjects) {
+        if (component != null) {
+            Type[] propertyTypes = componentType.getSubtypes();
+            Object[] properties = componentType.getPropertyValues(component, EntityMode.POJO);
+            Object[] propertiesExisting = componentType.getPropertyValues(componentExisting, EntityMode.POJO);
+            boolean wasModified = false;
+            for (int j = 0; j < properties.length; j++) {
+                Type propertyType = propertyTypes[j];
+                Object property = properties[j];
+                Object propertyExisting = propertiesExisting[j];
+                CascadeStyle cascadeStyle = componentType.getCascadeStyle(j);
+
+                // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
+                if (propertyType.isEntityType()) {
+                    if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                        attachPersistenceCollectionWithSnapshotOfOldState(property, propertyExisting, processedObjects);
+                    }
+                } else if (propertyType.isCollectionType()) {
+                    // For hvert element
+                    boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
+                    properties[j] = attachPersistentCollection((Collection) property, (Collection) propertyExisting, processedObjects, cascade);
+                    wasModified = true;
+                } else if (propertyType.isComponentType()) {
+                    attachComponent(property, propertyExisting, (AbstractComponentType) propertyType, processedObjects);
+                } else if (!(propertyType instanceof NullableType) // NullableType er for ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                        && !(propertyType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+                    throw new NotImplementedException();
+                }
+            }
+            if (wasModified) {
+                componentType.setPropertyValues(component, properties, EntityMode.POJO);
             }
         }
     }
@@ -507,16 +527,20 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     protected void cascadeAttachPersistenceCollections(Collection collectionInOject, Collection collectionInExistingObject, IdentityHashMap processedObjects) throws HibernateException {
         CollectionEntry entry = ((SessionImpl) session()).getPersistenceContext().getCollectionEntry((PersistentCollection) collectionInExistingObject);
         final CollectionPersister collectionPersister = entry.getLoadedPersister();
-        final EntityPersister elementPersister = ((AbstractCollectionPersister) collectionPersister).getElementPersister();
-        if (elementPersister.hasCollections()) {
-            Map<Serializable, Object> oldElementMap = Maps.newHashMap();
-            for (Object o : collectionInExistingObject) {
-                oldElementMap.put(elementPersister.getIdentifier(o, EntityMode.POJO), o);
-            }
-            for (Object object : collectionInOject) {
-                final Serializable identifier = elementPersister.getIdentifier(object, EntityMode.POJO);
-                final Object valueExisting = oldElementMap.get(identifier);
-                attachPersistenceCollectionWithSnapshotOfOldState(object, valueExisting, processedObjects);
+        if (collectionPersister.getElementType().isEntityType()) {
+            final EntityPersister elementPersister = ((AbstractCollectionPersister) collectionPersister).getElementPersister();
+            if (elementPersister.hasCollections()) {
+                Map<Serializable, Object> oldElementMap = Maps.newHashMap();
+                for (Object o : collectionInExistingObject) {
+                    oldElementMap.put(elementPersister.getIdentifier(o, EntityMode.POJO), o);
+                }
+                for (Object object : collectionInOject) {
+                    final Serializable identifier = elementPersister.getIdentifier(object, EntityMode.POJO);
+                    final Object valueExisting = oldElementMap.get(identifier);
+                    if (valueExisting != null) { // TODO: Dersom objektet ikke fantes før, så kan det vel ikke være noen collections som skal attaches?
+                        attachPersistenceCollectionWithSnapshotOfOldState(object, valueExisting, processedObjects);
+                    }
+                }
             }
         }
     }
