@@ -472,7 +472,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     protected void attachComponent(Object component, Object componentExisting, AbstractComponentType componentType, IdentityHashMap processedObjects) {
-        if (component != null) {
+        if (component != null && componentExisting != null) {
             Type[] propertyTypes = componentType.getSubtypes();
             Object[] properties = componentType.getPropertyValues(component, EntityMode.POJO);
             Object[] propertiesExisting = componentType.getPropertyValues(componentExisting, EntityMode.POJO);
