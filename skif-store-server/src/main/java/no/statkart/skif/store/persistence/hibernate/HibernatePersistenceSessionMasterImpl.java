@@ -21,10 +21,7 @@ import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.type.AbstractComponentType;
-import org.hibernate.type.CustomType;
-import org.hibernate.type.NullableType;
-import org.hibernate.type.Type;
+import org.hibernate.type.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -458,11 +455,14 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
             } else if (type.isComponentType()) {
                 attachComponent(value, valueExisting, (AbstractComponentType) type, processedObjects);
             } else if (type.isCollectionType()) {
-                Collection col = (Collection) value;
-                Collection colExisting = (Collection) valueExisting;
                 boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
-                Collection collectionWithSnapshot = attachPersistentCollection(col, colExisting, processedObjects, cascade);
-                persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
+                if (valueExisting instanceof Map) {
+                    Map mapWithSnapshot = attachPersitentMap((Map) value, (Map) valueExisting, processedObjects, cascade);
+                    persister.setPropertyValue(object, i, mapWithSnapshot, EntityMode.POJO);
+                } else {
+                    Collection collectionWithSnapshot = attachPersistentCollection((Collection) value, (Collection) valueExisting, processedObjects, cascade);
+                    persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
+                }
             } else if (!(type instanceof NullableType) // NullableType er for ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
                     && !(type instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
                 throw new NotImplementedException();
@@ -491,7 +491,11 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                 } else if (propertyType.isCollectionType()) {
                     // For hvert element
                     boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
-                    properties[j] = attachPersistentCollection((Collection) property, (Collection) propertyExisting, processedObjects, cascade);
+                    if (propertyExisting instanceof Map) {
+                        properties[j] = attachPersitentMap((Map) property, (Map) propertyExisting, processedObjects, cascade);
+                    } else {
+                        properties[j] = attachPersistentCollection((Collection) property, (Collection) propertyExisting, processedObjects, cascade);
+                    }
                     wasModified = true;
                 } else if (propertyType.isComponentType()) {
                     attachComponent(property, propertyExisting, (AbstractComponentType) propertyType, processedObjects);
@@ -506,12 +510,50 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         }
     }
 
-    protected Collection attachPersistentCollection(Collection collectionInOject, Collection collectionInExistingObject, IdentityHashMap processedObjects, boolean cascade) throws HibernateException {
+    protected Map attachPersitentMap(Map mapInObject, Map mapInExistingObject, IdentityHashMap processedObjects, boolean cascade) {
+        if (mapInExistingObject instanceof PersistentCollection) {
+            final CollectionEntry entry = ((SessionImpl) session()).getPersistenceContext().getCollectionEntry((PersistentCollection) mapInExistingObject);
+            final AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) entry.getLoadedPersister();
+
+            if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
+                throw new ImplementationException("Key må være en LiteralType");
+            }
+
+            Map persistentCollection = CopyHelper.copy(mapInExistingObject);
+            persistentCollection.clear();
+            if (mapInObject != null) {
+                persistentCollection.putAll(mapInObject);
+            }
+            if (cascade) {
+                // Sjekk at det ikke er noen collections inni her
+                Type elementType = collectionPersister.getElementType();
+                if (elementType.isCollectionType()) {
+                    throw new NotImplementedException("Map value kan ikke være collection");
+                } else if (elementType.isAssociationType()) {
+                    EntityPersister entityPersister = collectionPersister.getElementPersister();
+                    Type[] propertyTypes = entityPersister.getPropertyTypes();
+                    for (int i = 0; i < propertyTypes.length; i++) {
+                        Type propertyType = propertyTypes[i];
+                        if (propertyType.isAssociationType() || propertyType.isComponentType()) {
+                            throw new NotImplementedException("Map value må være enkel verdi eller ett-nivå entity");
+                        }
+                    }
+                }
+            }
+            return persistentCollection;
+        } else {
+            // TODO: Alternativt returner eksisterende map. Kanskje det er greit?
+            throw new ImplementationException("Kan ikke tildele persistent shapshot. Eksisterende objekt har ikke map av type PersistentCollection");
+            //return collectionInOject;
+        }
+    }
+
+    protected Collection attachPersistentCollection(Collection collectionInObject, Collection collectionInExistingObject, IdentityHashMap processedObjects, boolean cascade) throws HibernateException {
         if (collectionInExistingObject instanceof PersistentCollection) {
             Collection persistentCollection = CopyHelper.copy(collectionInExistingObject);
             persistentCollection.clear();
-            if (collectionInOject != null) {
-                persistentCollection.addAll(collectionInOject);
+            if (collectionInObject != null) {
+                persistentCollection.addAll(collectionInObject);
             }
             if (cascade) {
                 cascadeAttachPersistenceCollections(persistentCollection, collectionInExistingObject, processedObjects);
@@ -520,14 +562,15 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         } else {
             // TODO: Alternativt returner eksisterende collection. Kanskje det er greit?
             throw new ImplementationException("Kan ikke tildele persistent shapshot. Eksisterende objekt har ikke collection av type PersistentCollection");
-            //return collectionInOject;
+            //return collectionInObject;
         }
     }
 
     protected void cascadeAttachPersistenceCollections(Collection collectionInOject, Collection collectionInExistingObject, IdentityHashMap processedObjects) throws HibernateException {
         CollectionEntry entry = ((SessionImpl) session()).getPersistenceContext().getCollectionEntry((PersistentCollection) collectionInExistingObject);
         final CollectionPersister collectionPersister = entry.getLoadedPersister();
-        if (collectionPersister.getElementType().isEntityType()) {
+        Type elementType = collectionPersister.getElementType();
+        if (elementType.isEntityType()) {
             final EntityPersister elementPersister = ((AbstractCollectionPersister) collectionPersister).getElementPersister();
             if (elementPersister.hasCollections()) {
                 Map<Serializable, Object> oldElementMap = Maps.newHashMap();
@@ -542,6 +585,9 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                     }
                 }
             }
+        } else if (!(elementType instanceof NullableType) // NullableType er for ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                && !(elementType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+            throw new NotImplementedException();
         }
     }
 
