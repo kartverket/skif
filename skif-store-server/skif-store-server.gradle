@@ -14,10 +14,10 @@ dependencies {
     }
 
     compile libraries.gt2
-    compile libraries.testng
 
     provided libraries.weblogic
 
+    testCompile libraries.testng
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
 }

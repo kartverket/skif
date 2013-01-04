@@ -1,6 +1,6 @@
 package no.statkart.skif.store;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotLockedException;
