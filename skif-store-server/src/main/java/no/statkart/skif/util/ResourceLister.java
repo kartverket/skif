@@ -4,8 +4,8 @@ import no.statkart.skif.exception.ImplementationException;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -47,7 +47,10 @@ public class ResourceLister implements Iterable<String> {
     }
 
     private void listZip(URL classpathUrl, String packagePath) throws IOException {
-        InputStream inputStream = classpathUrl.openStream();
+        String filepath = classpathUrl.getPath();
+        int idx = filepath.indexOf("!");
+        String parsedJarName = filepath.substring(0, idx);
+        FileInputStream inputStream = new FileInputStream(parsedJarName);
         try {
             ZipInputStream zipStream = new ZipInputStream(inputStream);
             try {
