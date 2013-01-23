@@ -10,7 +10,6 @@ import org.unitils.reflectionassert.ReflectionAssert;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * Denne testklassen går gjennom alle klasser som ligger i den angitte wsapiPkg eller under og tester mappingen av de, ved å:
@@ -53,8 +52,7 @@ public class AutomagicMappingTest extends AutomagicTest {
         int feilet = 0;
         logger.info("Antall klasser til testing brutto: " + wsapiClasses.size());
 
-        for (Iterator<Class> iterator = wsapiClasses.iterator(); iterator.hasNext(); ) {
-            Class next = iterator.next();
+        for (Class<?> next : wsapiClasses) {
             if (getSkipTestingForTheseClasses().contains(next.getName())) {
                 hardkodet++;
                 continue;

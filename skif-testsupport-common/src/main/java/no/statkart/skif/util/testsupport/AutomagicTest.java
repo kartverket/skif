@@ -5,7 +5,9 @@ import no.statkart.skif.mapper.MappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.File;
@@ -125,7 +127,6 @@ public class AutomagicTest {
      * @return The classes
      * @throws ClassNotFoundException
      */
-    @SuppressWarnings("unchecked")
     private static List<Class> findClasses(File directory, String packageName) throws ClassNotFoundException {
         List<Class> classes = new ArrayList<Class>();
         if (!directory.exists()) {
@@ -155,9 +156,7 @@ public class AutomagicTest {
     }
 
     protected Map<String, List<Class>> discoverClassHierarchy(List<Class> classes, Map<String, List<Class>> className2ListOfSubclasses) throws ClassNotFoundException {
-        for (Iterator<Class> iterator = classes.iterator(); iterator.hasNext(); ) {
-            Class next = iterator.next();
-
+        for (Class next : classes) {
             String nextName = next.getName();
             String packageName = nextName.substring(0, nextName.lastIndexOf("."));
             boolean bpackage = getSkipTestingForTheseClasses().contains(packageName);
@@ -165,7 +164,7 @@ public class AutomagicTest {
             boolean testClass = !(exact || bpackage);
 
             if (testClass) {
-                if (next != null && next.getSuperclass() != null) {
+                if (next.getSuperclass() != null) {
 
                     List<Class> subclasses = className2ListOfSubclasses.get(next.getSuperclass().getName());
                     if (subclasses == null) {
@@ -179,12 +178,10 @@ public class AutomagicTest {
         return className2ListOfSubclasses;
     }
 
-    protected <T extends Object> T generateDummyData(T o, String fieldPath) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        T retVal = null;
+    protected <T> T generateDummyData(T o, String fieldPath) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         if (o != null) {
-            retVal = o;
             List<Field> fields = new ArrayList<Field>();
-            addDeclaredAndInheritedFields(retVal.getClass(), fields);
+            addDeclaredAndInheritedFields(o.getClass(), fields);
             for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext(); ) {
                 Field field = iterator.next();
                 field.setAccessible(true);
@@ -197,121 +194,132 @@ public class AutomagicTest {
                     //pakkestien blir lengre enn 10 pakker så traverserer vi ikke referansene lenger.
                     if (!(fieldPath.split("\\.").length > 10)) {
                         Object instance = generateInstanceForClass(field.getType());
-                        if (instance!=null) {
-                            field.set(retVal,instance);
-                        } else if (field.getType().isPrimitive()) {
-                            if (field.getType().equals(Integer.TYPE)) {
-                                if (o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")) {
-                                    //Må bruke SnapshotVersion.CURRENT.getNanos() (som er 0) pga EnumKodeId som kun kan være current.
-                                    field.set(retVal, 0);
-                                } else {
-                                    field.set(retVal, randomGenerator.nextInt());
-                                }
-                            } else if (field.getType().equals(Float.TYPE)) {
-                                field.set(retVal, randomGenerator.nextFloat());
-                            } else if (field.getType().equals(Double.TYPE)) {
-                                field.set(retVal, randomGenerator.nextDouble());
-                            } else if (field.getType().equals(Long.TYPE)) {
-                                if (o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")) {
-                                    //på grun av enumKodeId må vi bruke SnapshotVersion.CURRENT
-                                    field.set(retVal, 253370761200000L);
-                                } else if (o.getClass().toString().endsWith("KodeId") && field.getName().equals("value")) {
-                                    field.set(retVal, randomGenerator.nextInt(2));
-                                } else if (o.getClass().toString().endsWith("SprakformId") && field.getName().equals("value")) {
-                                    field.set(retVal, randomGenerator.nextInt(3));
-                                } else {
-                                    field.set(retVal, randomGenerator.nextLong());
-                                }
-                            } else if (field.getType().equals(Boolean.TYPE)) {
-                                field.set(retVal, true);
-                            }
-                        } else if (field.getType().getSimpleName().equals("String")) {
-                            if (o.getClass().toString().endsWith("KodeId")) {
-                                //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
-                                field.set(retVal, "" + (randomGenerator.nextInt(1) + 1));
-                            } else if (o.getClass().toString().endsWith("Id")) {
-                                //Id må settes til string men kun nummeric verdier
-                                field.set(retVal, "" + randomGenerator.nextInt());
-                            } else if (field.getName().equals("kodeIdClass")) {
-                                field.set(retVal, "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId");
-                            } else {
-                                field.set(retVal, field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100));
-                            }
-                        } else if (field.getType().isArray()) {
-                            throw new IllegalArgumentException("Støtte for array-felter er ikke implementert enda.");
-                        } else if (field.getType().equals(XMLGregorianCalendar.class)) {
-                            field.set(retVal, createXMLGregorianCalendar(null));
-                        } else if (field.getType().equals(BigInteger.class)) {
-                            field.set(retVal, BigInteger.ONE);
-                        } else if (field.getType().equals(Boolean.class)) {
-                            field.set(retVal, Boolean.TRUE);
-                        } else if (field.getType().equals(Integer.class)) {
-                            field.set(retVal, randomGenerator.nextInt());
-                        } else if (field.getType().equals(Long.class)) {
-                            if (o.getClass().toString().endsWith("KodeId")) {
-                                field.set(retVal, Long.parseLong("" + randomGenerator.nextInt(1) + 1));
-                            } else if (o.getClass().toString().endsWith("SnapshotVersion") || o.getClass().toString().endsWith("Timestamp")) {
-                                field.set(retVal, 253370761200000L);
-                            } else if (o.getClass().toString().endsWith("formId")) {
-                                //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
-                                field.set(retVal, "" + (randomGenerator.nextInt(1) + 1));
-                            } else {
-                                field.set(retVal, randomGenerator.nextLong());
-                            }
-                        } else if (field.getType().equals(Float.class)) {
-                            field.set(retVal, randomGenerator.nextFloat());
-                        } else if (field.getType().equals(Double.class)) {
-                            field.set(retVal, randomGenerator.nextDouble());
-                        } else if (field.getType().equals(List.class)) {
-                            ArrayList list = new ArrayList();
-                            ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-                            Class<?> genericClass = (Class<?>) genericType.getActualTypeArguments()[0];
-                            Object instanceForList = generateInstanceForClass(genericClass);
-                            if (instanceForList!=null) {
-                                list.add(instanceForList);
-                            } else if (isClassAbstract(genericClass)) {
-                                list.add(generateDummyData(generateConcreteSubclass(genericClass), fieldPath + "." + field.getName()));
-                            } else {
-                                if (genericClass.getName().equals(String.class.getName())) {
-                                    list.add(field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100));
-                                } else {
-                                    list.add(generateDummyData(createNewInstance(genericClass), fieldPath + "." + field.getName()));
-                                }
-                            }
-                            field.set(retVal, list);
-                        } else if (isClassAbstract(field.getType())) {
-                            if (field.getType().getName().startsWith("no.")) {
-                                if ("id".equalsIgnoreCase(field.getName())) {
-                                    //generere for abstrakt id
-                                    field.set(retVal, generateDummyData(generateConcreteSubclassId(field.getType(), o.getClass().getName()), fieldPath + "." + field.getName()));
-                                } else {
-                                    field.set(retVal, generateDummyData(generateConcreteSubclass(field.getType()), fieldPath + "." + field.getName()));
-                                }
-                            } else {
-                                logger.debug("Hopper over: " + field.getName() + ", som er av type: " + field.getType() + ", og abstrakt, i klasse " + o.getClass().getName());
-                            }
+                        if (instance != null) {
+                            field.set(o, instance);
                         } else {
-                           if (field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("MatrikkelBubbleId")) {
-                                Object o2 = generateConcreteSubclassId(o.getClass().getName());
-                                generateDummyData(o2, fieldPath + "." + field.getName());
-                                field.set(retVal, o2);
-                           } else if (field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("BubbleId")) {
-                               Object o2 = generateConcreteSubclassId(o.getClass().getName());
-                               generateDummyData(o2, fieldPath + "." + field.getName());
-                               field.set(retVal, o2);
-                           } else if (field.getName().endsWith("KodeId") && field.getType().getName().startsWith("no.")) {
-                                Object o2 = generateConcreteKodeId(field.getType());
-                                generateDummyData(o2, fieldPath + "." + field.getName());
-                                field.set(retVal, o2);
-                           } else {
-                                //recurse
-                                Object o2 = createNewInstance(field.getType());
-                                generateDummyData(o2, fieldPath + "." + field.getName());
-                                field.set(retVal, o2);
-                            }
+                            field.set(o, generateDummyValue(o.getClass(), field, fieldPath));
                         }
                     }
                 }
+            }
+        }
+        return o;
+    }
+
+    protected Object generateDummyValue(Class<?> clazz, Field field, String fieldPath) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        final Object retVal;
+        if (field.getType().isPrimitive()) {
+            if (field.getType().equals(Integer.TYPE)) {
+                if (clazz.toString().endsWith("SnapshotVersion") || clazz.toString().endsWith("Timestamp")) {
+                    //Må bruke SnapshotVersion.CURRENT.getNanos() (som er 0) pga EnumKodeId som kun kan være current.
+                    retVal = 0;
+                } else {
+                    retVal = randomGenerator.nextInt();
+                }
+            } else if (field.getType().equals(Float.TYPE)) {
+                retVal = randomGenerator.nextFloat();
+            } else if (field.getType().equals(Double.TYPE)) {
+                retVal = randomGenerator.nextDouble();
+            } else if (field.getType().equals(Long.TYPE)) {
+                if (clazz.toString().endsWith("SnapshotVersion") || clazz.toString().endsWith("Timestamp")) {
+                    //på grun av enumKodeId må vi bruke SnapshotVersion.CURRENT
+                    retVal = 253370761200000L;
+                } else if (clazz.toString().endsWith("KodeId") && field.getName().equals("value")) {
+                    retVal = randomGenerator.nextInt(2);
+                } else if (clazz.toString().endsWith("SprakformId") && field.getName().equals("value")) {
+                    retVal = randomGenerator.nextInt(3);
+                } else {
+                    retVal = randomGenerator.nextLong();
+                }
+            } else if (field.getType().equals(Boolean.TYPE)) {
+                retVal = true;
+            } else {
+                throw new ImplementationException("Primitiv type " + field.getType() + " håndteres ikke");
+            }
+        } else if (field.getType().getSimpleName().equals("String")) {
+            if (clazz.toString().endsWith("KodeId")) {
+                //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
+                retVal = "" + (randomGenerator.nextInt(1) + 1);
+            } else if (clazz.toString().endsWith("Id")) {
+                //Id må settes til string men kun nummeric verdier
+                retVal = "" + randomGenerator.nextInt();
+            } else if (field.getName().equals("kodeIdClass")) {
+                retVal = "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId";
+            } else {
+                retVal = field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100);
+            }
+        } else if (field.getType().isArray()) {
+            throw new IllegalArgumentException("Støtte for array-felter er ikke implementert enda.");
+        } else if (field.getType().equals(XMLGregorianCalendar.class)) {
+            retVal = createXMLGregorianCalendar(field);
+        } else if (field.getType().equals(BigInteger.class)) {
+            retVal = BigInteger.ONE;
+        } else if (field.getType().equals(Boolean.class)) {
+            retVal = Boolean.TRUE;
+        } else if (field.getType().equals(Integer.class)) {
+            retVal = randomGenerator.nextInt();
+        } else if (field.getType().equals(Long.class)) {
+            if (clazz.toString().endsWith("KodeId")) {
+                retVal = Long.parseLong("" + randomGenerator.nextInt(1) + 1);
+            } else if (clazz.toString().endsWith("SnapshotVersion") || clazz.toString().endsWith("Timestamp")) {
+                retVal = 253370761200000L;
+            } else if (clazz.toString().endsWith("formId")) {
+                //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
+                retVal = "" + (randomGenerator.nextInt(1) + 1);
+            } else {
+                retVal = randomGenerator.nextLong();
+            }
+        } else if (field.getType().equals(Float.class)) {
+            retVal = randomGenerator.nextFloat();
+        } else if (field.getType().equals(Double.class)) {
+            retVal = randomGenerator.nextDouble();
+        } else if (field.getType().equals(List.class)) {
+            ArrayList<Object> list = new ArrayList<Object>();
+            ParameterizedType genericType = (ParameterizedType) field.getGenericType();
+            Class<?> genericClass = (Class<?>) genericType.getActualTypeArguments()[0];
+            Object instanceForList = generateInstanceForClass(genericClass);
+            if (instanceForList != null) {
+                list.add(instanceForList);
+            } else if (isClassAbstract(genericClass)) {
+                list.add(generateDummyData(generateConcreteSubclass(genericClass), fieldPath + "." + field.getName()));
+            } else {
+                if (genericClass.getName().equals(String.class.getName())) {
+                    list.add(field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100));
+                } else {
+                    list.add(generateDummyData(createNewInstance(genericClass), fieldPath + "." + field.getName()));
+                }
+            }
+            retVal = list;
+        } else if (isClassAbstract(field.getType())) {
+            if (field.getType().getName().startsWith("no.")) {
+                if ("id".equalsIgnoreCase(field.getName())) {
+                    //generere for abstrakt id
+                    retVal = generateDummyData(generateConcreteSubclassId(field.getType(), clazz.getName()), fieldPath + "." + field.getName());
+                } else {
+                    retVal = generateDummyData(generateConcreteSubclass(field.getType()), fieldPath + "." + field.getName());
+                }
+            } else {
+                logger.debug("Hopper over: " + field.getName() + ", som er av type: " + field.getType() + ", og abstrakt, i klasse " + clazz.getName());
+                retVal = null;
+            }
+        } else {
+            if (field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("MatrikkelBubbleId")) {
+                Object o2 = generateConcreteSubclassId(clazz.getName());
+                generateDummyData(o2, fieldPath + "." + field.getName());
+                retVal = o2;
+            } else if (field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("BubbleId")) {
+                Object o2 = generateConcreteSubclassId(clazz.getName());
+                generateDummyData(o2, fieldPath + "." + field.getName());
+                retVal = o2;
+            } else if (field.getName().endsWith("KodeId") && field.getType().getName().startsWith("no.")) {
+                Object o2 = generateConcreteKodeId(field.getType());
+                generateDummyData(o2, fieldPath + "." + field.getName());
+                retVal = o2;
+            } else {
+                //recurse
+                Object o2 = createNewInstance(field.getType());
+                generateDummyData(o2, fieldPath + "." + field.getName());
+                retVal = o2;
             }
         }
         return retVal;
@@ -344,7 +352,7 @@ public class AutomagicTest {
                 //Dette skjer f.eks. for lister, som har navn som slutter på List i wsapi, men ikke i domain
                 if (!clazz.getSimpleName().endsWith("List")) {
                     //Men ellers så er det sannsynligvis feil, men vil uansett bli håndtert av testen på mappingen, så vi bare ignorerer dette her
-                   logger.debug("Fant ikke noen klasse: " + reroutedPackageName + "." + clazz.getSimpleName());
+                    logger.debug("Fant ikke noen klasse: " + reroutedPackageName + "." + clazz.getSimpleName());
                 }
             }
 
@@ -367,8 +375,7 @@ public class AutomagicTest {
         String[] elementer = finnDenne.split("\\.");
         int maxScore = 0;
         String besteMatch = null;
-        Iterator<String> domainIter = getDomainPkg().iterator();
-        for (Iterator<String> iterator = domainIter; iterator.hasNext(); ) {
+        for (Iterator<String> iterator = getDomainPkg().iterator(); iterator.hasNext(); ) {
             int dennesScore = 0;
             String next = iterator.next();
             if (next.equals(finnDenne)) {
@@ -448,31 +455,19 @@ public class AutomagicTest {
         return null;
     }
 
-    protected <T> T createNewInstance(Class clazz) throws IllegalAccessException, InstantiationException {
+    protected <T> T createNewInstance(Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T t = null;
         if (clazz.equals(Long.class)) {
-            t = (T) new Long(randomGenerator.nextLong());
+            t = clazz.cast(new Long(randomGenerator.nextLong()));
         } else if (clazz.equals(BigInteger.class)) {
-            t = (T) BigInteger.ONE;
+            t = clazz.cast(BigInteger.ONE); // Caster for å unngå warning
         } else {
-            t = (T) clazz.newInstance();
+            t = clazz.newInstance();
         }
         return t;
     }
 
-    private Field getFieldWithInheritedFields(Class<?> c, String fieldname) {
-        Collection<Field> fields = new ArrayList<Field>();
-        addDeclaredAndInheritedFields(c, fields);
-        for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext(); ) {
-            Field next = iterator.next();
-            if (next.getName().equals(fieldname)) {
-                return next;
-            }
-        }
-        return null;
-    }
-
-    private GregorianCalendar createPureGregorianCalendar(Date date) {
+    protected GregorianCalendar createPureGregorianCalendar(Date date) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.clear();
         calendar.setTime(date);
@@ -480,11 +475,28 @@ public class AutomagicTest {
         return calendar;
     }
 
-    private XMLGregorianCalendar createXMLGregorianCalendar(Date date) {
+    protected XMLGregorianCalendar createXMLGregorianCalendar(Field field) {
+        final GregorianCalendar gregorianCalendar = createPureGregorianCalendar(new Date());
 
-        final GregorianCalendar gregorianCalendar = createPureGregorianCalendar(date == null ? new Date() : date);
         try {
-            return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
+            XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
+
+            XmlSchemaType xmlSchemaType = field.getAnnotation(XmlSchemaType.class);
+            if (xmlSchemaType != null) {
+                String type = xmlSchemaType.name();
+                if (type.equals("date")) {
+                    xmlGregorianCalendar.setHour(DatatypeConstants.FIELD_UNDEFINED);
+                    xmlGregorianCalendar.setMinute(DatatypeConstants.FIELD_UNDEFINED);
+                    xmlGregorianCalendar.setSecond(DatatypeConstants.FIELD_UNDEFINED);
+                    xmlGregorianCalendar.setFractionalSecond(null);
+                } else if (type.equals("time")) {
+                    xmlGregorianCalendar.setYear(DatatypeConstants.FIELD_UNDEFINED);
+                    xmlGregorianCalendar.setMonth(DatatypeConstants.FIELD_UNDEFINED);
+                    xmlGregorianCalendar.setDay(DatatypeConstants.FIELD_UNDEFINED);
+                }
+            }
+
+            return xmlGregorianCalendar;
         } catch (DatatypeConfigurationException e) {
             throw new RuntimeException(e);
         }
@@ -523,13 +535,13 @@ public class AutomagicTest {
      * @throws java.io.IOException
      */
     protected void discoverClassHierarchy() throws ClassNotFoundException, IOException {
-        for (Iterator<String> iterator = getWsapiPkg().iterator(); iterator.hasNext(); ) {
-            wsapiClasses.addAll(getClasses(iterator.next()));
+        for (String s : getWsapiPkg()) {
+            wsapiClasses.addAll(getClasses(s));
         }
         discoverClassHierarchy(wsapiClasses, className2ListOfSubclasses);
 
-        for (Iterator<String> iterator = getDomainPkg().iterator(); iterator.hasNext(); ) {
-            domainClasses.addAll(getClasses(iterator.next()));
+        for (String s : getDomainPkg()) {
+            domainClasses.addAll(getClasses(s));
         }
         discoverClassHierarchy(domainClasses, className2ListOfSubclasses);
     }
