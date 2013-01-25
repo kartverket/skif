@@ -569,7 +569,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                         sourceField.setAccessible(true);
                         Object source1 = sourceField.get(source);
                         if (source1 != null) {
-                            Object value = mapping.w2d(source1, targetField.getType());
+                            Object value = mapping.w2d(source1, targetField.getGenericType());
                             if (value != null) {
                                 //Sjekk om source = List og target = Set, fordi da håndterer vi settingen spesielt
                                 if (Set.class.isAssignableFrom(targetField.getType()) && value instanceof List) {

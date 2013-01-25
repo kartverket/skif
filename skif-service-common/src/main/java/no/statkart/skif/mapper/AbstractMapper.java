@@ -47,7 +47,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
 
     private Mapping thisMapping;
 
-    private final ThreadLocal<Integer> recurseLevel_w2d = new ThreadLocal<Integer>(){
+    private final ThreadLocal<Integer> recurseLevel_w2d = new ThreadLocal<Integer>() {
         @Override
         protected Integer initialValue() {
             return 0;
@@ -160,12 +160,12 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
     protected Object d2w(Object[] args) {
 
         Object lastArg = args[args.length - 1];
-        Class[] parameterTypes = null;
-        Class parameterType = null;
-        if (lastArg instanceof Class[]) {
-            parameterTypes = (Class[]) lastArg;
+        Type[] parameterTypes = null;
+        Type parameterType = null;
+        if (lastArg instanceof Type[]) {
+            parameterTypes = (Type[]) lastArg;
         } else if (lastArg instanceof Class) {
-            parameterType = (Class) lastArg;
+            parameterType = (Type) lastArg;
         }
 
         Object source = args[0];
@@ -192,9 +192,15 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 target = source;
             } else if (source instanceof Collection) {
                 if (parameterType != null) {
-                    target = d2wCollection(args, parameterType);
+                    target = d2wCollection((Collection) source, parameterType);
                 } else {
-                    target = d2wCollection(args, args[1].getClass());
+                    target = d2wCollection((Collection) source, args[1].getClass());
+                }
+            } else if (source instanceof Map) {
+                if (parameterType != null) {
+                    target = d2wMap((Map) source, parameterType);
+                } else {
+                    target = d2wMap((Map) source, args[1].getClass());
                 }
             } else {
                 TypeMapper typeMapper = getMapperByDomainClass(source.getClass());
@@ -208,33 +214,85 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
         return findMapper(sourceClass, mappersByDomainClass, DIRECTION.D2W);
     }
 
-    @SuppressWarnings("unchecked")
-    private Object d2wCollection(Object[] args, Class<?> parameterType) {
-        Object target = null;
+    /**
+     * Mapper en Collection til motsvarende XML-type.
+     *
+     * @param source domene-collection
+     * @param wType  tilsvarende type i wsapi
+     * @return en tilsvarende instans av wsapi-typen
+     */
+    private Object d2wCollection(Collection source, Type wType) {
+        final Object target;
 
-        if (args.length == 2 && args[1] instanceof Class) {
-            try {
-                target = createNewInstance((Class) args[1]);
-            } catch (InstantiationException e) {
-                throw new MappingException(e);
-            } catch (IllegalAccessException e) {
-                throw new MappingException(e);
+        try {
+            final Class clazz;
+            if (wType instanceof ParameterizedType) {
+                clazz = (Class) ((ParameterizedType) wType).getRawType();
+            } else {
+                clazz = (Class) wType;
             }
-        } else if (args.length == 2) {
-            target = args[1];
-        } else {
-            try {
-                target = createNewInstance(parameterType);
-            } catch (InstantiationException e) {
-                throw new MappingException(e);
-            } catch (IllegalAccessException e) {
-                throw new MappingException(e);
-            }
+            target = createNewInstance(clazz);
+        } catch (InstantiationException e) {
+            throw new MappingException(e);
+        } catch (IllegalAccessException e) {
+            throw new MappingException(e);
         }
 
         TypeMapper typeMapper = getMapperByWsapiClass(target.getClass());
-        Object source = args[0];
         typeMapper.mapDomainObject(source, target);
+        return target;
+    }
+
+    /**
+     * Mapper et Map til motsvarende XML-type.
+     *
+     * @param source domene-map
+     * @param wType  tilsvarende type i wsapi
+     * @return en tilsvarende instans av wsapi-typen
+     */
+    private Object d2wMap(Map<?, ?> source, Type wType) {
+        final Object target;
+        final Class<?> wClass;
+        if (wType instanceof ParameterizedType) {
+            wClass = (Class) ((ParameterizedType) wType).getRawType();
+
+        } else {
+            wClass = (Class) wType;
+        }
+
+        try {
+            target = createNewInstance(wClass);
+
+            // Det skal ikke være noe arv som gjør at feltene ikke er umiddelbart tilgjengelig her
+            final Field entryField = wClass.getDeclaredField("entry");
+            entryField.setAccessible(true);
+            List entryList = (List) createNewInstance(entryField.getType());
+            entryField.set(target, entryList);
+
+            ParameterizedType entryListType = (ParameterizedType) entryField.getGenericType(); // Dette er en List<?.Entry>. Vil ha tak i Class for ?.Entry
+            Class<?> entryClass = (Class) entryListType.getActualTypeArguments()[0];
+
+            Field keyField = entryClass.getDeclaredField("key");
+            keyField.setAccessible(true);
+            Field valueField = entryClass.getDeclaredField("value");
+            valueField.setAccessible(true);
+
+            for (Map.Entry<?, ?> sourceEntry : source.entrySet()) {
+                Object targetKey = thisMapping.d2w(sourceEntry.getKey(), keyField.getGenericType());
+                Object targetValue = thisMapping.d2w(sourceEntry.getValue(), valueField.getGenericType());
+                Object targetEntry = entryClass.newInstance();
+                keyField.set(targetEntry, targetKey);
+                valueField.set(targetEntry, targetValue);
+                entryList.add(targetEntry);
+            }
+        } catch (InstantiationException e) {
+            throw new MappingException(e);
+        } catch (IllegalAccessException e) {
+            throw new MappingException(e);
+        } catch (NoSuchFieldException e) {
+            throw new MappingException(e);
+        }
+
         return target;
     }
 
@@ -271,12 +329,12 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
     protected Object w2d(Object[] args) {
 
         Object lastArg = args[args.length - 1];
-        Class[] parameterTypes = null;
-        Class parameterType = null;
-        if (lastArg instanceof Class[]) {
-            parameterTypes = (Class[]) lastArg;
-        } else if (lastArg instanceof Class) {
-            parameterType = (Class) lastArg;
+        Type[] parameterTypes = null;
+        Type parameterType = null;
+        if (lastArg instanceof Type[]) {
+            parameterTypes = (Type[]) lastArg;
+        } else if (lastArg instanceof Type) {
+            parameterType = (Type) lastArg;
         }
 
         Object source = args[0];
@@ -301,9 +359,9 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 target = CopyHelper.copy(source);
             } else if (useIdentityMapping.contains(source.getClass())) {
                 target = source;
-            } /*else if (source instanceof Collection) {
-                target = w2dCollection(args, parameterType);
-            } */ else {
+            } else if (parameterType != null && typeIsMap(parameterType)) {
+                target = w2dMap(source, parameterType);
+            } else {
                 TypeMapper typeMapper = getMapperByWsapiClass(source.getClass());
                 if (typeMapper instanceof WsapiListTypeMapper) {
                     target = getCollection(args);
@@ -329,6 +387,82 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
         return target;
     }
 
+    private Map<?, ?> w2dMap(Object source, Type targetType) {
+        final Map<Object, Object> target = new HashMap<Object, Object>();
+
+        final Type targetKeyType, targetValueType;
+        if (targetType instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) targetType;
+            targetKeyType = parameterizedType.getActualTypeArguments()[0];
+            targetValueType = parameterizedType.getActualTypeArguments()[1];
+        } else {
+            targetKeyType = null;
+            targetValueType = null;
+        }
+
+        try {
+            // Det skal ikke være noe arv som gjør at feltene ikke er umiddelbart tilgjengelig her
+            Class<?> sourceClass = source.getClass();
+            final Field entryField;
+            try {
+                entryField = sourceClass.getDeclaredField("entry");
+            } catch (NoSuchFieldException e) {
+                throw new MappingException("Forventet felt entry ved mapping til map");
+            }
+            entryField.setAccessible(true);
+            final ParameterizedType entryListType = (ParameterizedType) entryField.getGenericType();
+            final Class<?> entryClass = (Class<?>) entryListType.getActualTypeArguments()[0];
+
+            final Field keyField;
+            try {
+                keyField = entryClass.getDeclaredField("key");
+            } catch (NoSuchFieldException e) {
+                throw new MappingException("Forventet felt key i entry-klasse ved mapping til map");
+            }
+            keyField.setAccessible(true);
+            final Field valueField;
+            try {
+                valueField = entryClass.getDeclaredField("value");
+            } catch (NoSuchFieldException e) {
+                throw new MappingException("Forventet felt value i entry-klasse ved mapping til map");
+            }
+            valueField.setAccessible(true);
+
+            List entryList = (List) entryField.get(source);
+            for (Object entry : entryList) {
+                final Object key, value;
+                if (targetKeyType != null) {
+                    key = thisMapping.w2d(keyField.get(entry), targetKeyType);
+                } else {
+                    logger.warn("Vet ikke generisk type for key ved mapping fra " + sourceClass.getName());
+                    key = thisMapping.w2d(keyField.get(entry));
+                }
+                if (targetValueType != null) {
+                    value = thisMapping.w2d(valueField.get(entry), targetValueType);
+                } else {
+                    logger.warn("Vet ikke generisk type for value ved mapping fra " + sourceClass.getName());
+                    value = thisMapping.w2d(valueField.get(entry));
+                }
+                target.put(key, value);
+            }
+        } catch (IllegalAccessException e) {
+            throw new MappingException(e);
+        } catch (ClassCastException e) {
+            throw new MappingException(e);
+        }
+
+        return target;
+    }
+
+    private boolean typeIsMap(Type type) {
+        if (type instanceof ParameterizedType) {
+            Class rawClass = (Class) ((ParameterizedType) type).getRawType();
+            return Map.class.isAssignableFrom(rawClass);
+        } else {
+            return Map.class.isAssignableFrom((Class) type);
+        }
+    }
+
     protected Object getTargetForGenericTypeMapper(Object[] args) {
         Object result = null;
         switch (args.length) {
@@ -338,12 +472,17 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
             case 2:
                 if (args[1] instanceof Collection) {
                     result = (Collection) args[1];
-                } else if (args[1] instanceof Class) {
-                    try {
-                        Class t = (Class) args[1];
-                        if (t.isAssignableFrom(Collection.class)) {
+                } else if (args[1] instanceof Type) {
+                    Class t;
+                    if (args[1] instanceof Class) {
+                        t = (Class) args[1];
+                    } else {
+                        t = (Class) ((ParameterizedType) args[1]).getRawType();
+                    }
 
-                            result = createNewInstance((Class) args[1]);
+                    try {
+                        if (Collection.class.isAssignableFrom(t)) {
+                            result = createNewInstance(t);
                         } else {
                             result = null;
                         }
@@ -372,9 +511,15 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
             case 2:
                 if (args[1] instanceof Collection) {
                     result = (Collection) args[1];
-                } else if (args[1] instanceof Class) {
+                } else if (args[1] instanceof Type) {
+                    Class t;
+                    if (args[1] instanceof Class) {
+                        t = (Class) args[1];
+                    } else {
+                        t = (Class) ((ParameterizedType) args[1]).getRawType();
+                    }
                     try {
-                        Object target = createNewInstance((Class) args[1]);
+                        Object target = createNewInstance(t);
                         if (target instanceof Collection) {
                             result = (Collection) target;
                         } else {
@@ -516,10 +661,6 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
 
     private TypeMapper getMapperByWsapiClass(Class wsapiClass) {
         return findMapper(wsapiClass, mappersByWsapiClass, DIRECTION.W2D);
-    }
-
-    private Object w2dCollection(Object[] args, Class<?> parameterType) {
-        throw new UnsupportedOperationException("Mapping currently not implemented");
     }
 
     public ObjectFactory getDomainObjectFactory() {

@@ -1,7 +1,6 @@
 package no.statkart.skif.skiftest.wsapi.mapping;
 
 
-import junit.framework.TestCase;
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
 import no.statkart.skif.skiftest.wsapi.domain.AList;
@@ -10,12 +9,15 @@ import org.testng.annotations.Test;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
 @Test
-public class SkifTestMappingW2DTest extends TestCase {
+public class SkifTestMappingW2DTest {
     SkifTestMapper mapper = new SkifTestMapper();
     SkifTestMapping map = mapper.getMapping();
 
@@ -45,7 +47,7 @@ public class SkifTestMappingW2DTest extends TestCase {
         source.setText("a");
         A target = map.w2d(source);
         assertNotNull(target);
-        assertEquals("a", target.getText());
+        assertEquals(target.getText(), "a");
     }
 
     public void testMapB() {
@@ -53,7 +55,7 @@ public class SkifTestMappingW2DTest extends TestCase {
         source.setText("b");
         B target = map.w2d(source);
         assertNotNull(target);
-        assertEquals("b", target.getText());
+        assertEquals(target.getText(), "b");
     }
 
 
@@ -68,7 +70,7 @@ public class SkifTestMappingW2DTest extends TestCase {
         source.getItem().add(a1);
         source.getItem().add(a2);
         target = map.w2d(source, target);
-        assertEquals(2, target.size());
+        assertEquals(target.size(), 2);
         assertEquals(target.iterator().next().getClass(), no.statkart.skif.skiftest.domain.A.class);
     }
 }

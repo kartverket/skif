@@ -70,14 +70,14 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
             if(annotation != null) {
                 return map.w2d(result, method.getReturnType(), annotation);
             } else {
-                return map.w2d(result, method.getReturnType());
+                return map.w2d(result, method.getGenericReturnType());
             }
 
         } catch (Throwable t) {
             if (exceptionMapping != null) {
                 //forventer kun exceptions definert for webservice api. Disse er da annotert med @WebFault
                 if (t.getClass().getAnnotation(WebFault.class) != null) {
-                    Throwable mappedException = exceptionMapping.w2d((Throwable)t);
+                    Throwable mappedException = exceptionMapping.w2d(t);
                     throw mappedException;
                 }
             }
@@ -86,7 +86,7 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
     }
 
     protected Object[] mapArgs(Object[] args, Method m) {
-        Object[] mappedArgs = map.d2w(args, m.getParameterTypes());
+        Object[] mappedArgs = map.d2w(args, m.getGenericParameterTypes());
         return mappedArgs;
     }
 }

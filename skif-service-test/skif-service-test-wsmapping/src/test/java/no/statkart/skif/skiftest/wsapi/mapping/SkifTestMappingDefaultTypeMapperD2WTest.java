@@ -3,11 +3,12 @@ package no.statkart.skif.skiftest.wsapi.mapping;
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
 import no.statkart.skif.skiftest.domain.C;
+import no.statkart.skif.skiftest.domain.M;
 import no.statkart.skif.skiftest.wsapi.domain.AList;
+import no.statkart.skif.skiftest.wsapi.domain.AMap;
 import org.testng.annotations.Test;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -110,4 +111,20 @@ public class SkifTestMappingDefaultTypeMapperD2WTest {
 //        }
 //    }
 
+    public void testMapMap() {
+        HashMap<String, Set<A>> aMap = new HashMap<String, Set<A>>();
+        aMap.put("Foo", Collections.singleton(new A("Bar")));
+        M source = new M();
+        source.setMapOfA(aMap);
+
+        no.statkart.skif.skiftest.wsapi.domain.M target = map.d2w(source);
+
+        AMap mapOfA = target.getMapOfAs();
+        List<AMap.Entry> entries = mapOfA.getEntry();
+        assertEquals(entries.size(), 1);
+        assertEquals(entries.get(0).getKey(), "Foo");
+        AList aList = entries.get(0).getValue();
+        assertEquals(aList.getItem().size(), 1);
+        assertEquals(aList.getItem().get(0).getText(), "Bar");
+    }
 }

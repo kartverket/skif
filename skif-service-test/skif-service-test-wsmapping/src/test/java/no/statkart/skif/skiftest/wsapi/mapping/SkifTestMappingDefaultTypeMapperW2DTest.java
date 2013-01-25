@@ -1,21 +1,25 @@
 package no.statkart.skif.skiftest.wsapi.mapping;
 
 
-import junit.framework.TestCase;
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
+import no.statkart.skif.skiftest.domain.M;
 import no.statkart.skif.skiftest.wsapi.domain.AList;
 import org.testng.annotations.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
 @Test
-public class SkifTestMappingDefaultTypeMapperW2DTest extends TestCase {
+public class SkifTestMappingDefaultTypeMapperW2DTest {
     SkifDefaultTypeMapperTestMapper mapper = new SkifDefaultTypeMapperTestMapper();
     SkifTestMapping map = mapper.getMapping();
 
@@ -45,7 +49,7 @@ public class SkifTestMappingDefaultTypeMapperW2DTest extends TestCase {
         source.setText("a");
         A target = map.w2d(source);
         assertNotNull(target);
-        assertEquals("a", target.getText());
+        assertEquals(target.getText(), "a");
     }
 
     public void testMapB() {
@@ -53,7 +57,7 @@ public class SkifTestMappingDefaultTypeMapperW2DTest extends TestCase {
         source.setText("b");
         B target = map.w2d(source);
         assertNotNull(target);
-        assertEquals("b", target.getText());
+        assertEquals(target.getText(), "b");
     }
 
 
@@ -68,7 +72,7 @@ public class SkifTestMappingDefaultTypeMapperW2DTest extends TestCase {
         source.getItem().add(a1);
         source.getItem().add(a2);
         target = map.w2d(source, target);
-        assertEquals(2, target.size());
+        assertEquals(target.size(), 2);
         assertEquals(target.iterator().next().getClass(), A.class);
     }
 
@@ -100,5 +104,27 @@ public class SkifTestMappingDefaultTypeMapperW2DTest extends TestCase {
 //        assertEquals(source.getAs(), target.getAs());
 //
 //    }
+
+    public void testMapMap() {
+        no.statkart.skif.skiftest.wsapi.domain.M source = new no.statkart.skif.skiftest.wsapi.domain.M();
+        no.statkart.skif.skiftest.wsapi.domain.AMap mapOfA = new no.statkart.skif.skiftest.wsapi.domain.AMap();
+        no.statkart.skif.skiftest.wsapi.domain.AMap.Entry entry = new no.statkart.skif.skiftest.wsapi.domain.AMap.Entry();
+        entry.setKey("Foo");
+        no.statkart.skif.skiftest.wsapi.domain.A a = new no.statkart.skif.skiftest.wsapi.domain.A();
+        a.setText("Bar");
+        no.statkart.skif.skiftest.wsapi.domain.AList aList = new no.statkart.skif.skiftest.wsapi.domain.AList();
+        aList.getItem().add(a);
+        entry.setValue(aList);
+        mapOfA.getEntry().add(entry);
+        source.setMapOfAs(mapOfA);
+
+        M target = map.w2d(source);
+
+        assertEquals(target.getMapOfAs().size(), 1);
+        assertTrue(target.getMapOfAs().containsKey("Foo"));
+        Set<A> aSet = target.getMapOfAs().get("Foo");
+        assertEquals(aSet.size(), 1);
+        assertEquals(aSet.iterator().next().getText(), "Bar");
+    }
 }
 
