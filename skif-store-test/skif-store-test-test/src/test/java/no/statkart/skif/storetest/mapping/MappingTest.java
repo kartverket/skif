@@ -18,6 +18,8 @@ import org.unitils.reflectionassert.ReflectionComparatorMode;
 import java.io.IOException;
 import java.util.Iterator;
 
+import static org.testng.Assert.assertTrue;
+
 
 /**
  * @author Jan Holmen
@@ -108,7 +110,7 @@ public class MappingTest extends AutomagicTest {
                     Object o3;
                     Object oTemp = mapping.w2d(o2);
                     o3 = mapping.d2w(oTemp);
-                    ReflectionAssert.assertReflectionEquals(o3.getClass().getSimpleName() + " var ikke like", o3, o2, ReflectionComparatorMode.LENIENT_ORDER);
+                    ReflectionAssert.assertReflectionEquals(o3.getClass().getSimpleName() + " var ikke like", o2, o3, ReflectionComparatorMode.LENIENT_ORDER);
                 }
             } catch (Throwable e) {
                 feilet++;
@@ -123,7 +125,7 @@ public class MappingTest extends AutomagicTest {
 
         logger.info("Antall klasser testet netto: " + (wsapiClasses.size() - hardkodet - abstrakte - lister - feilet));
 
-        assert feilet == 0;
+        assertTrue(feilet == 0);
     }
 
     /**

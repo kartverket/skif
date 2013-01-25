@@ -194,7 +194,9 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
                 if (parameterType != null) {
                     target = d2wCollection((Collection) source, parameterType);
                 } else {
-                    target = d2wCollection((Collection) source, args[1].getClass());
+                    target = args[1];
+                    TypeMapper typeMapper = getMapperByWsapiClass(target.getClass());
+                    typeMapper.mapDomainObject(source, target);
                 }
             } else if (source instanceof Map) {
                 if (parameterType != null) {

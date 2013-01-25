@@ -78,7 +78,7 @@ public class AutomagicMappingTest extends AutomagicTest {
 
                     Object o3;
                     o3 = mapping.d2w(mapping.w2d(o2));
-                    ReflectionAssert.assertReflectionEquals(o3.getClass().getSimpleName() + " var ikke like", o3, o2, ReflectionComparatorMode.LENIENT_ORDER);
+                    ReflectionAssert.assertReflectionEquals(o3.getClass().getSimpleName() + " var ikke like", o2, o3, ReflectionComparatorMode.LENIENT_ORDER);
                 }
             } catch (Throwable e) {
                 feilet++;
