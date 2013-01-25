@@ -10,6 +10,9 @@ import org.unitils.reflectionassert.ReflectionAssert;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import java.io.IOException;
+import java.util.Map;
+
+import static org.testng.Assert.assertTrue;
 
 /**
  * Denne testklassen går gjennom alle klasser som ligger i den angitte wsapiPkg eller under og tester mappingen av de, ved å:
@@ -40,6 +43,7 @@ public class AutomagicMappingTest extends AutomagicTest {
         getDomainPkg().add("no.statkart.skif.skiftest.domain");
 
         getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.SkifTestContext");
+        getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.AMap"); // Denne automagiske greia takler ikke denne ute av kontekst pga. nøstet collection, men den tas som del av M.
 
         discoverClassHierarchy();
     }
@@ -89,7 +93,7 @@ public class AutomagicMappingTest extends AutomagicTest {
 
         logger.info("Antall klasser testet netto: " + (wsapiClasses.size() - hardkodet - abstrakte - lister - feilet));
 
-        assert feilet == 0;
+        assertTrue(feilet == 0);
     }
 
 }
