@@ -316,9 +316,9 @@ public abstract class HibernateSessionFactoryBuilder {
             if (protocol.equals("file")) {
                 checkForFilesWithFileProtocol(files, resource);
             } else if (protocol.equals("jar")) {
-                checkForFilesWithJarProtocol(files, resource, path);
+                checkForFilesWithJarProtocol(files, resource);
             } else if (protocol.equals("zip")) {
-                checkForFilesWithZipProtocol(files, resource, path);
+                checkForFilesWithZipProtocol(files, resource);
             } else {
                 throw new ImplementationException("Ukjent protokoll: " + protocol);
             }
@@ -326,7 +326,7 @@ public abstract class HibernateSessionFactoryBuilder {
         }
     }
 
-    private void checkForFilesWithZipProtocol(List<String> files, URL resource, String path) throws IOException {
+    private void checkForFilesWithZipProtocol(List<String> files, URL resource) throws IOException {
         String filepath = resource.getPath();
         int idx = filepath.indexOf("!");
         String parsedJarName = filepath.substring(0, idx);
@@ -336,7 +336,7 @@ public abstract class HibernateSessionFactoryBuilder {
             ZipEntry ze;
             while ((ze = zip2.getNextEntry()) != null) {
                 String entryName = ze.getName();
-                if (entryName.startsWith(path) && entryName.endsWith(".hbm.xml")) {
+                if (entryName.startsWith(mappingFilesDirectory) && entryName.endsWith(".hbm.xml")) {
                     files.add(entryName);
                 }
             }
@@ -345,7 +345,7 @@ public abstract class HibernateSessionFactoryBuilder {
         }
     }
 
-    private void checkForFilesWithJarProtocol(List<String> files, URL resource, String path) throws IOException {
+    private void checkForFilesWithJarProtocol(List<String> files, URL resource) throws IOException {
         String filepath = resource.getPath();
         int idx = filepath.indexOf("!");
         String parsedJarName = filepath.substring(0, idx);
@@ -355,7 +355,7 @@ public abstract class HibernateSessionFactoryBuilder {
             ZipEntry ze;
             while ((ze = zip2.getNextEntry()) != null) {
                 String entryName = ze.getName();
-                if (entryName.startsWith(path) && entryName.endsWith(".hbm.xml")) {
+                if (entryName.startsWith(mappingFilesDirectory) && entryName.endsWith(".hbm.xml")) {
                     files.add(entryName);
                 }
             }
