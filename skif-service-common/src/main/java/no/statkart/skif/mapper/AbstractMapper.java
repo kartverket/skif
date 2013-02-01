@@ -460,6 +460,8 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
         if (type instanceof ParameterizedType) {
             Class rawClass = (Class) ((ParameterizedType) type).getRawType();
             return Map.class.isAssignableFrom(rawClass);
+        } else if (type instanceof TypeVariable) {
+            return typeIsMap(((TypeVariable) type).getBounds()[0]);
         } else {
             return Map.class.isAssignableFrom((Class) type);
         }
