@@ -19,8 +19,12 @@ import java.util.List;
  */
 public class VersionFinder {
 
+    private final Provider<Connection> connectionProvider;
+
     @Inject
-    Provider<Connection> connectionProvider;
+    public VersionFinder(Provider<Connection> connectionProvider) {
+        this.connectionProvider = connectionProvider;
+    }
 
     public <I extends BubbleId<?>> List<I> findBubbleIdsForInterval(I bubbleId, SnapshotVersion start, SnapshotVersion end) {
         List<I> retur = new ArrayList<I>();
