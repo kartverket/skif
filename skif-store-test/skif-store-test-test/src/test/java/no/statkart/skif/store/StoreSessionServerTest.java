@@ -24,7 +24,6 @@ import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
-import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceSessionSubtypeHandler;
 import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
@@ -39,8 +38,10 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.util.CopyHelper;
+import no.statkart.skif.util.MemoryProfileUtil;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
+import org.testng.Assert;
 import org.testng.annotations.*;
 
 import java.util.*;
@@ -89,7 +90,10 @@ public class StoreSessionServerTest {
     TestBubbleId<TestBubble> TestBubbleId_1 = new TestBubbleId<TestBubble>(1);
     TestBubbleId<TestBubble> TestBubbleId_2 = new TestBubbleId<TestBubble>(2);
     TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<TestBubble>(101);
+    ParrentBubbleId<ParrentBubble> ParrentBubbleId_1 = new ParrentBubbleId<ParrentBubble>(1);
+    ParrentBubbleId<ParrentBubble> ParrentBubbleId_2 = new ParrentBubbleId<ParrentBubble>(2);
     ParrentBubbleId<ParrentBubble> ParrentBubbleId_101 = new ParrentBubbleId<ParrentBubble>(101);
+    ParrentBubbleId<ParrentBubble> ParrentBubbleId_102 = new ParrentBubbleId<ParrentBubble>(102);
     ChildBubbleId<ChildBubble> ChildBubbleId_101 = new ChildBubbleId<ChildBubble>(101);
     ChildBubbleId<ChildBubble> ChildBubbleId_102 = new ChildBubbleId<ChildBubble>(102);
     Long childForParrentId_102 = (long) 102;
@@ -100,7 +104,7 @@ public class StoreSessionServerTest {
     FilteredBubbleId<FilteredBubble> filteredBubbleId_102 = new FilteredBubbleId<FilteredBubble>(102);
 
     HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
-    PersistenceSessionManager persistenceSessionManager;
+    DefaultPersistenceSessionManager persistenceSessionManager;
     PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
     LockerStrategy lockerStrategy;
@@ -125,14 +129,14 @@ public class StoreSessionServerTest {
         sessionFactoryManagerBundle.close();
     }
 
-    private PersistenceSessionManager createPersistenceSessionManager() {
+    private DefaultPersistenceSessionManager createPersistenceSessionManager() {
         ServiceContext context = new DefaultServiceContext();
         context.setLocale(new Locale("no", "NO"));
 
         return createPersistenceSessionManager(context);
     }
 
-    private PersistenceSessionManager createPersistenceSessionManager(ServiceContext context) {
+    private DefaultPersistenceSessionManager createPersistenceSessionManager(ServiceContext context) {
         EnumKodelisteManager enumKodelistManager = new EnumKodelisteManager();
         enumKodelistManager.installStatic(AEnumKodeId.class);
         enumKodelistManager.installStatic(BEnumKodeId.class);
@@ -248,10 +252,10 @@ public class StoreSessionServerTest {
      * Tester insert object
      */
     public void testInsert() {
-        TestBubble testBubble_100 = new TestBubble(TestBubbleId_101);
-        testBubble_100.setText("Insert 1");
+        TestBubble testBubble_101 = new TestBubble(TestBubbleId_101);
+        testBubble_101.setText("Insert 1");
         storeServer.beginTransaction();
-        storeServer.insert(testBubble_100);
+        storeServer.insert(testBubble_101);
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
     }
@@ -259,7 +263,6 @@ public class StoreSessionServerTest {
     /**
      * Tester lockObject object
      */
-    @Test(groups = "broken")
     public void testLockObject() {
         testInsert();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
@@ -268,9 +271,9 @@ public class StoreSessionServerTest {
         storeServer.beginTransaction();
         storeServer.commitTransaction();
 
-        // Denne skal ikke gi en ekstra select statement
+        // Denne skal ikke gi en ekstra select statement (har verifisert dette, frehen)
         assertSame(storeServer.get(TestBubbleId_101), testBubble_101);
-        // Denne skal gi en ekstra select statement for refresh
+        // Denne skal gi en ekstra select statement for refresh (har verifisert dette, frehen)
         assertSame(storeServer.lock(TestBubbleId_101), testBubble_101);
     }
 
@@ -1008,6 +1011,130 @@ public class StoreSessionServerTest {
         } finally {
             storeServer.rollbackTransaction();
         }
+    }
+
+    /**
+     * Denne test er lagt til rette for å kunne bruker JProfiler.
+     */
+    public void testEvictAllAfterCommitRemovesAllObjectsReadOnly() {
+        MemoryProfileUtil.setEnabled(false);
+        MemoryProfileUtil.setUseMessageBox();
+       ParrentBubble Parent_1 = storeServer.get(ParrentBubbleId_1);
+        // I JProfiler 'Record Memory'
+        MemoryProfileUtil.promptAndWait("Enable Memory Record");
+        ParrentBubble Parent_2 = storeServer.get(ParrentBubbleId_2);
+        storeServer.get(FooId_100_OLD);
+        storeServer.get(FooId_100_S2);
+        storeServer.get(FooId_100_S3);
+        MemoryProfileUtil.promptAndWait("Take Heap Snapshot 1");
+        storeServer.evictAll();
+        MemoryProfileUtil.promptAndWait("Take Heap Smapshot 2");
+        persistenceSessionManager.verifySessionIsEmpty();
+    }
+
+    /**
+     * Denne test er lagt til rette for å kunne bruker JProfiler.
+     */
+    public void testEvictAllAfterCommitRemovesAllObjectsAfterCommit() {
+        MemoryProfileUtil.setEnabled(false);
+        MemoryProfileUtil.setUseMessageBox();
+        ParrentBubble Parent_1 = storeServer.get(ParrentBubbleId_1);
+        // I JProfiler 'Record Memory'
+        MemoryProfileUtil.promptAndWait("Enable Memory Record");
+        ParrentBubble Parent_2 = storeServer.get(ParrentBubbleId_2);
+        storeServer.get(FooId_100_OLD);
+        storeServer.get(FooId_100_S2);
+        storeServer.get(FooId_100_S3);
+        MemoryProfileUtil.promptAndWait("Take Heap Snapshot 1");
+        testInsert();
+        storeServer.evictAll();
+        MemoryProfileUtil.promptAndWait("Take Heap Smapshot 2");
+        persistenceSessionManager.verifySessionIsEmpty();
+    }
+
+    /**
+     * Forventer at cachet data tømmes helt, dvs at ny instans må leses inn etter clear()
+     */
+    public void testClearForReadOnly() {
+        ParrentBubble Parent_1 = storeServer.get(ParrentBubbleId_1);
+        ParrentBubble Parent_2 = storeServer.get(ParrentBubbleId_2);
+        storeServer.get(FooId_100_OLD);
+        storeServer.get(FooId_100_S2);
+        storeServer.get(FooId_100_S3);
+        storeServer.clear();
+        persistenceSessionManager.verifySessionIsEmpty();
+        ParrentBubble Parent_1a = storeServer.get(ParrentBubbleId_1);
+        assertNotSame(Parent_1, Parent_1a);
+    }
+
+    /**
+     * Forventer at cachet data tømmes helt, dvs at ny instans må leses inn etter clear().
+     * Dette skal også gjelde objekter som nettopp har blitt opprettet
+     */
+    public void testClearAfterCommit() {
+        ParrentBubble parent_1 = storeServer.get(ParrentBubbleId_1);
+        ParrentBubble parent_2 = storeServer.get(ParrentBubbleId_2);
+        storeServer.get(FooId_100_OLD);
+        storeServer.get(FooId_100_S2);
+        storeServer.get(FooId_100_S3);
+        TestBubble testBubble_101 = new TestBubble(TestBubbleId_101);
+        testBubble_101.setText("Insert 1");
+        storeServer.beginTransaction();
+        storeServer.insert(testBubble_101);
+        storeServer.commitTransaction();
+        assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
+        storeServer.clear();
+        persistenceSessionManager.verifySessionIsEmpty();
+        assertNotSame(parent_1, storeServer.get(ParrentBubbleId_1));
+        assertNotSame(testBubble_101, storeServer.get(TestBubbleId_101));
+    }
+
+    /**
+     * Forventer at cachet data tømmes helt og at endret data er uendret og alt leses på nytt etter clear()
+     */
+    public void testIsClearedAfterRollback() {
+        ParrentBubble parent_1 = storeServer.get(ParrentBubbleId_1);
+        ParrentBubble parent_2 = storeServer.get(ParrentBubbleId_2);
+        storeServer.get(FooId_100_OLD);
+        storeServer.get(FooId_100_S2);
+        storeServer.get(FooId_100_S3);
+        TestBubble testBubble_101 = new TestBubble(TestBubbleId_101);
+        testBubble_101.setText("Insert 1");
+        storeServer.beginTransaction();
+        storeServer.insert(testBubble_101);
+        storeServer.rollbackTransaction();
+        assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
+        persistenceSessionManager.verifySessionIsEmpty();
+        assertNotSame(parent_1, storeServer.get(ParrentBubbleId_1));
+        try {
+            storeServer.get(TestBubbleId_101);
+            failBecauseExceptionWasNotThrown(ObjectNotFoundException.class);
+        } catch (ObjectNotFoundException e) {
+            assertEquals(e.getNotFoundId(), TestBubbleId_101);
+        }
+    }
+
+    /**
+     * Forventer at cachet reaonly data tømmes helt og at låst data forblir uendret ved kall til clear()
+     */
+    public void testClearedWhileInTranaction() {
+        ParrentBubble parent_1 = storeServer.get(ParrentBubbleId_1);
+        ParrentBubble parent_2 = storeServer.get(ParrentBubbleId_2);
+        storeServer.get(FooId_100_OLD);
+        storeServer.get(FooId_100_S2);
+        storeServer.get(FooId_100_S3);
+        TestBubble testBubble_101 = new TestBubble(TestBubbleId_101);
+        testBubble_101.setText("Insert 1");
+        storeServer.beginTransaction();
+        storeServer.insert(testBubble_101);
+        Foo foo_101 = storeServer.lock(FooId_101_CURRENT);
+        foo_101.setNavn("abc123");
+        storeServer.update(foo_101);
+        storeServer.clear();
+        assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
+        assertSame(foo_101, storeServer.get(FooId_101_CURRENT));
+        assertNotSame(parent_1, storeServer.get(ParrentBubbleId_1));
+        storeServer.rollbackTransaction();
     }
 
 }

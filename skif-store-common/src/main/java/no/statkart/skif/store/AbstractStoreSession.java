@@ -36,6 +36,10 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         // Nothing do do by default
     }
 
+    protected boolean hasModifications() {
+        return !modifiedMap.isEmpty();
+    }
+
     protected boolean isLocked(StoreEntry storeEntry) {
         throw new NotImplementedException();
     }
@@ -357,6 +361,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
         final StoreEntry storeEntry = modifiedMap.remove(bubbleId);
+        markModified();
         if (storeEntry==null) {
             throw new ImplementationException("BubbleId ikke modifisert i session: " + bubbleId);
         }

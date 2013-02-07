@@ -12,6 +12,5 @@ public interface PersistenceSessionMaster extends PersistenceSessionForSnapshot 
     public void rollback();
     public void flush();
     public void clear();
-
-
+    void verifySessionIsEmpty();
 }

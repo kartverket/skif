@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
@@ -39,7 +40,7 @@ public class AbstractStore implements Store {
 
     @Override
     public void clear() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        throw new NotImplementedException("todo");
     }
 
     @Override

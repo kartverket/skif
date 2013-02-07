@@ -32,6 +32,7 @@ public class StoreUnitOfWorkClient extends StoreUnitOfWork {
             storeEntry.lockCreatedByLevel=0;
         }
         modifiedMap.clear();
+        markModified();
         return wrappedStoreSession;
     }
 }

@@ -20,7 +20,12 @@ public class StoreServer extends AbstractStore {
         throw new ImplementationException("UnitOfWork is active");
     }
 
-    @Override
+    /**
+     * Fjerner alle umodifiserte objekter fra Store og underliggende sessioner. Hvis Store inneholder modifiserte objekter
+     * så  utføres det {@link #evictAll()}  kall. Hvis Store ikke inneholder modifiserte objekter så nullstilles
+     * Store og underliggende sessioner. Informasjon låste objekter kastes fra minnet, men finnes forsatt i database
+     * og går derfor ikke tapt.
+     */
     public void clear() {
         storeServerSession().clear();
     }
@@ -65,6 +70,14 @@ public class StoreServer extends AbstractStore {
         storeServerSession().flush();
     }
 
+    /**
+     * Flusher endringer, kaller finishListeners, flusher på nytt om nødvendig. Tar deretter og fjerner alle
+     * objekter som har blitt slettet fra Store og setter status for alle andre endret objekter til {@code
+     * UNCHANGED}.
+     * <p/>
+     * Kall til finish() bør etterfølges av kall til enten {@link #commitTransaction()} eller {@link
+     * #rollbackTransaction()} uten at det utføres andre mellomliggende operasjoner på {@code StoreServer}.
+     */
     public void finish() {
         storeServerSession().finish();
     }

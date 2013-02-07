@@ -10,4 +10,6 @@ public interface PersistenceSessionManager extends PersistenceSession, Transacti
     PersistenceSessionForSnapshot getForSnapshotVersion(SnapshotVersion snapshotVersion);
     PersistenceSessionForSnapshot lockForSnapshot(SnapshotVersion snapshotVersion);
     void unlock(PersistenceSessionForSnapshot persistenceSessionForSnapshot);
+    void clear();
+    void verifySessionIsEmpty();
 }

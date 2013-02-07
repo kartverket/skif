@@ -121,6 +121,8 @@ libraries.weblogic = files(
         isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.6.0.0.jar" :
             "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.9.0.0.jar",
         libraries.jaxws_rt,
+        "${WEBLOGIC_HOME}/modules/com.bea.core.utils.wrapper_1.4.0.0.jar",
+        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.5.0.0.jar": "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.7.0.0.jar" ,
 )
 libraries.gt2 = [
         'org.geotools:gt2-oracle-spatial:2.2.2-CUSTOM@jar',

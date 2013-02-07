@@ -23,7 +23,6 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     protected SnapshotVersion snapshotVersion;
     protected PersistenceSessionForSnapshot sessionForSnapshot;
 
-
     public DefaultPersistenceSessionManager(PersistenceSessionForSnapshot... bundle) {
         this.bundle = bundle;
         this.active = new boolean[bundle.length];
@@ -207,5 +206,21 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     public <T extends BubbleObject> void refresh(T bubble) {
         PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
         persistenceSessionForSnapshot.refresh(bubble);
+    }
+
+    @Override
+    public void clear() {
+        for (PersistenceSessionForSnapshot persistenceSessionForSnapshot : bundle) {
+            persistenceSessionForSnapshot.getImplementation(PersistenceSessionMaster.class).clear();
+        }
+
+    }
+
+    @Override
+    public void verifySessionIsEmpty() {
+        for (PersistenceSessionForSnapshot persistenceSessionForSnapshot : bundle) {
+            persistenceSessionForSnapshot.getImplementation(PersistenceSessionMaster.class).verifySessionIsEmpty();
+        }
+
     }
 }

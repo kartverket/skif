@@ -1,5 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
@@ -67,6 +68,17 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         sessionFactoryDescriptor = sessionFactoryManager.getDescriptor();
     }
 
+    public Map<BubbleId, BubbleObject> getFullyInitializedBubbles() {
+        return fullyInitializedBubbles;
+    }
+
+    public Map getExportedLazyLoadedBubbles() {
+        return exportedLazyLoadedBubbles;
+    }
+
+    public int getReserveCount() {
+        return reserveCount;
+    }
 
     @Override
     public SnapshotVersion getSnapshot() {
@@ -1136,5 +1148,21 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         }
         localTransaction.commit();
         localTransaction = null;
+    }
+
+    /**
+     * Hjelpemetode for å sjekke tilstand etter evict. Er egentlig en testmetode, men kan være nyttig å ha som
+     * et sanity check.
+     */
+    @Override
+    public void verifySessionIsEmpty() {
+        Preconditions.checkState(fullyInitializedBubbles.size() == 0, "FullyInitializedBubbles er ikke tom");
+        Preconditions.checkState(exportedLazyLoadedBubbles.size() == 0, "ExportedLazyLoadedBubbles er ikke tom");
+        PersistenceContext persistenceContext = ((SessionImpl) session()).getPersistenceContext();
+        Preconditions.checkState(persistenceContext.getEntitiesByKey().size() == 0, "EntitiesByKey er ikke tom");
+        Preconditions.checkState(persistenceContext.getEntityEntries().size() == 0, "EntitiesByKey er ikke tom");
+        Preconditions.checkState(persistenceContext.getCollectionEntries().size() == 0, "CollectionEnties er ikke tom");
+        Preconditions.checkState(persistenceContext.getCollectionsByKey().size() == 0, "CollectionEnties er ikke tom");
+        Preconditions.checkState(persistenceContext.getNullifiableEntityKeys().size() == 0, "NullifiableEntityKeys er ikke tom");
     }
 }

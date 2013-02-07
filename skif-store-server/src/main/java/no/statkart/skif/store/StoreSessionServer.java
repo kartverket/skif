@@ -35,7 +35,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             this.modifiedMap = modifiedMap;
         }
 
-        public void clearCache() {
+        public void clear() {
             insertedIds = null;
             updatedIds = null;
             deletedIds = null;
@@ -136,9 +136,8 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     protected void markModified() {
-        modifiedCache.clearCache();
+        modifiedCache.clear();
     }
-
 
     protected void ensureLocked(StoreEntry storeEntry) {
         if (!isLocked(storeEntry)) {
@@ -200,20 +199,46 @@ public class StoreSessionServer extends AbstractStoreSession {
         // TODO: Sende finishEvent til WriteListeners
     }
 
+    /**
+     * @see StoreServer#finish()
+     */
     public void finish() {
         //Flusher først for å sikre at sql kjørt i finishListeners kjøres mot riktige data
         flush();
 
         for (StoreSessionFinishListener finishListener : finishListeners) {
             finishListener.onFinish((StoreServer) store);
+            // Ikke nødvendig å kalle flush for hver loop iterasjon siden søk via hibernate flusher automatisk først.
         }
-        clear();
-    }
 
-    void clear() {
-        storeCache.clear();
+        // TODO: Optimaliser bort flush ved å la onFinish returnere true hvis finishListener endret state.
+        flush();
+
+        // Må endre state for alle modifiserte objekter
+        for (StoreEntry storeEntry : modifiedMap.values()) {
+            if (storeEntry.getState(0)== StoreEntryState.DELETED || storeEntry.getState(0)== StoreEntryState.INSERTED_DELETED) {
+               storeCache.remove(storeEntry.getId());
+            } else {
+                storeEntry.setState(0, StoreEntryState.UNCHANGED);
+                storeEntry.unlock(0);
+            }
+        }
         modifiedMap.clear();
         markModified();
+    }
+
+    /**
+     * @see StoreServer#clear()
+     */
+    void clear() {
+        if (hasModifications()) {
+            evictAll();
+        } else {
+            storeCache.clear();
+            modifiedMap.clear();
+            markModified();
+            persistenceSessionManager.clear();
+        }
     }
 
     /**
@@ -239,6 +264,8 @@ public class StoreSessionServer extends AbstractStoreSession {
     void rollbackTransaction() {
         lockerStrategy.releaseLocksOnRollback();
         persistenceSessionManager.rollback();
+        modifiedMap.clear();
+        markModified();
         clear();
         lockerStrategy.clear();
     }
@@ -578,5 +605,10 @@ public class StoreSessionServer extends AbstractStoreSession {
     @Override
     public void registerEntries(int level, BubbleTransfer bubbleTransfer) {
         // No-op; alle objekter hentes fra persistence session
+    }
+
+    /** Gjort tilgjengelig For testing */
+    protected PersistenceSessionManager getPersistenceSessionManager() {
+        return persistenceSessionManager;
     }
 }
