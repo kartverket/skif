@@ -43,8 +43,8 @@ REM set PATH=%PATH%;%MS_NET_HOME%;%MS_SDK_HOME%;%NUNIT_HOME%\bin\net-2.0
 
 if "%ORG_GRADLE_PROJECT_version%"=="" (
    for /D %%P in (%PROJECT_ROOT%) do (
-      set ORG_GRADLE_PROJECT_version=%%~nP-SNAPSHOT
-      @echo Setter versjon til '%%~nP-SNAPSHOT'
+      set ORG_GRADLE_PROJECT_version=%%~nxP-SNAPSHOT
+      @echo Setter versjon til '%%~nxP-SNAPSHOT'
    )
 )
 
