@@ -327,10 +327,6 @@ afterEvaluate {
         }
     }
 
-    println "project.version = ${project.getVersion()}"
-    println "project.version = ${project.version}"
-    println "project.version = ${version}"
-
     // branch spesifike navn for prosjekt og workspace fil.
     ideaWorkspace {
         outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}.iws")
