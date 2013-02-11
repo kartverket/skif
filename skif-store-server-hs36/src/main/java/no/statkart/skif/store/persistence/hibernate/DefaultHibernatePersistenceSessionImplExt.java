@@ -128,4 +128,9 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         }
     }
 
+    protected boolean isSingleColumnType(Type type) {
+        return type instanceof SingleColumnType;
+
+    }
+
 }

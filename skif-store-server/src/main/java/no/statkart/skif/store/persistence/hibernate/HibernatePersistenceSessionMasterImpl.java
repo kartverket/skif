@@ -997,6 +997,16 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         }
     }
 
+    /**
+     * SingleColumnType finnes ikke i 3.2.6 så her brukers test mot NullableType istedet
+     * @param type
+     * @return
+     */
+    // TODO: må gjøres abstract og flyttes til 3.2 implementasjon
+    protected boolean isSingleColumnType(Type type) {
+        return type instanceof NullableType;
+    }
+
     protected boolean erAvTypeSomIkkeSkalInitialiseresVidere(ClassMetadata classMetadata) {
         return !(classMetadata instanceof EntityPersister);
     }

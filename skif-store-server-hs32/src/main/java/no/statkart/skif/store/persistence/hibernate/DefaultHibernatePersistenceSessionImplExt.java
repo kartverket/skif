@@ -11,6 +11,7 @@ import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.type.AbstractComponentType;
+import org.hibernate.type.NullableType;
 import org.hibernate.type.Type;
 
 import java.util.Collection;
@@ -100,6 +101,10 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                 }
             }
         }
+    }
+
+    protected boolean isSingleColumnType(Type type) {
+        return type instanceof NullableType;
     }
 
 }
