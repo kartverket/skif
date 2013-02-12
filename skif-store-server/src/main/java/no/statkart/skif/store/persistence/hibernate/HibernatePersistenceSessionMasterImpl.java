@@ -475,7 +475,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                     Collection collectionWithSnapshot = attachPersistentCollection((Collection) value, (Collection) valueExisting, processedObjects, cascade);
                     persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
                 }
-            } else if (!(isSingleColumnType(type)) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+            } else if (!isSingleColumnType(type) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
                     && !(type instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
                 throw new NotImplementedException();
                 // TODO: Trenger et test eksempel for å skrive denne koden riktig
@@ -511,7 +511,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                     wasModified = true;
                 } else if (propertyType.isComponentType()) {
                     attachComponent(property, propertyExisting, (AbstractComponentType) propertyType, processedObjects);
-                } else if (!(propertyType instanceof NullableType) // NullableType er for ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                } else if (!isSingleColumnType(propertyType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
                         && !(propertyType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
                     throw new NotImplementedException();
                 }
@@ -597,7 +597,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                     }
                 }
             }
-        } else if (!(elementType instanceof NullableType) // NullableType er for ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+        } else if (!isSingleColumnType(elementType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
                 && !(elementType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
             throw new NotImplementedException();
         }
@@ -998,7 +998,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     /**
-     * SingleColumnType finnes ikke i 3.2.6 så her brukers test mot NullableType istedet
+     * SingleColumnType finnes ikke i 3.2.6 så her brukes test mot NullableType istedet
      * @param type
      * @return
      */
