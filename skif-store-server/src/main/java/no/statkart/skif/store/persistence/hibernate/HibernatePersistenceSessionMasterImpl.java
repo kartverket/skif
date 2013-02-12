@@ -597,6 +597,19 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                     }
                 }
             }
+        } else if (elementType.isComponentType()) {
+            ComponentType componentType = (ComponentType) elementType;
+            Type[] propertyTypes = componentType.getSubtypes();
+            for (int i=0; i<propertyTypes.length; i++) {
+                if (propertyTypes[i].isCollectionType()) {
+                    // TODO: Her har vi en collection hvis elementer er av type component som inneholer et felt som er en collection
+                    // Utfordringen her er å match gamle og nye komponenter mot hverander i den overliggende
+                    // collection. For sett kan man bruke equals, men for lister er det ikke opplagt hva man
+                    // man skal bruke. Kanskje indexposisjon. Venter med å implementere støtte for dette til vi
+                    // har en konkret case.
+                    throw new NotImplementedException();
+                }
+            }
         } else if (!isSingleColumnType(elementType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
                 && !(elementType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
             throw new NotImplementedException();
