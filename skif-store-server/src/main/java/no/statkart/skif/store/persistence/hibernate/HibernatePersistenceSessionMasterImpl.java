@@ -475,7 +475,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                     Collection collectionWithSnapshot = attachPersistentCollection((Collection) value, (Collection) valueExisting, processedObjects, cascade);
                     persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
                 }
-            } else if (!(type instanceof NullableType) // NullableType er for ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+            } else if (!(isSingleColumnType(type)) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
                     && !(type instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
                 throw new NotImplementedException();
                 // TODO: Trenger et test eksempel for å skrive denne koden riktig
