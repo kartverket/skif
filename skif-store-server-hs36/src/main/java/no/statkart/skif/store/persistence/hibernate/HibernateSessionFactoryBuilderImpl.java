@@ -1,15 +1,16 @@
 package no.statkart.skif.store.persistence.hibernate;
 
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
+import no.statkart.skif.persistence.hibernate.CurrentDatabaseEventListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizer;
 import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefConfiguration;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.event.DeleteEventListener;
-import org.hibernate.event.PreLoadEventListener;
+import org.hibernate.event.*;
 import org.hibernate.event.def.DefaultPreLoadEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 
@@ -63,6 +64,13 @@ public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryB
             PreLoadEventListener[] preLoadStack = {new EmptyCollectionOptimizerPreLoadListener(optimizers), new DefaultPreLoadEventListener()};
             cfg.getEventListeners().setPreLoadEventListeners(preLoadStack);
 
+            // Legg på listeners for ta vare på event med id ifm databaseoperasjoner for insert, update og delete. Dette flagget setter det for alle sessioner.
+            // Det er også mulig å sette det for en enkelt session via EventListenersUtil klassen. Dermed er det mulig å unngå listener overheaded som introduseres
+            // nå dette flagget settes.
+            if ("true".equalsIgnoreCase(props.getProperty(SkifConfigConstants.USE_DATABASE_EVENT_LISTENER))) {
+                addCurrentDatabaseEventListener(cfg);
+            }
+
             // Nedenstående gjøres nå via en StoreSessionListener og trens derfor ikke lengre her.
             // Old session skal aldrig forsøke å oppdatere emptycollectionsflagget. Derfor legges listeneren kun på Current session
 //          if( SnapshotVersion == SnapshotVersion.CURRENT ) {
@@ -73,6 +81,22 @@ public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryB
             throw new ImplementationException("Feil i hibernate mapping-filer: " + e.getMessage(), e, logger);
         }
         return cfg;
+    }
+
+    private void addCurrentDatabaseEventListener(Configuration cfg) {
+        CurrentDatabaseEventListener rememberCurrentEventListener = new CurrentDatabaseEventListener();
+        PreInsertEventListener[] preInsertEventStack = {rememberCurrentEventListener};
+        cfg.getEventListeners().setPreInsertEventListeners(preInsertEventStack);
+        PreUpdateEventListener[] preUpdateEventStack = {rememberCurrentEventListener};
+        cfg.getEventListeners().setPreUpdateEventListeners(preUpdateEventStack);
+        PreDeleteEventListener[] preDeleteEventStack = {rememberCurrentEventListener};
+        cfg.getEventListeners().setPreDeleteEventListeners(preDeleteEventStack);
+        PostInsertEventListener[] PostInsertEventStack = {rememberCurrentEventListener};
+        cfg.getEventListeners().setPostInsertEventListeners(PostInsertEventStack);
+        PostUpdateEventListener[] PostUpdateEventStack = {rememberCurrentEventListener};
+        cfg.getEventListeners().setPostUpdateEventListeners(PostUpdateEventStack);
+        PostDeleteEventListener[] PostDeleteEventStack = {rememberCurrentEventListener};
+        cfg.getEventListeners().setPostDeleteEventListeners(PostDeleteEventStack);
     }
 
 }

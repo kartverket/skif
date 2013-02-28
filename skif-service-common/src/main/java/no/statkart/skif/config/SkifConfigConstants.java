@@ -43,4 +43,5 @@ public class SkifConfigConstants {
 
     public static final String DB_LOCK_TABLENAME = "skif.db_lock_tablename";
     public static final String DB_SEQUENCE_TABLENAME = "skif.db_sequence_tablename";
+    public static final String USE_DATABASE_EVENT_LISTENER = "skif.use_database_event_listener";
 }
