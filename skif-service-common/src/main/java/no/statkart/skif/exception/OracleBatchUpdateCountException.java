@@ -1,12 +1,12 @@
 package no.statkart.skif.exception;
 
 /**
- * TODO: Er det verdt å ha denne klassen?
+ * Rapporterer at ikke alle forsøk på å oppdatere rader i databasen lyktes.
  *
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public class OracleBatchUpdateCountException extends SkifException {
+public class OracleBatchUpdateCountException extends OperationalException {
     public OracleBatchUpdateCountException(int actualCount, int expectedCount) {
         super("Ikke alle updates førte til endring. Faktisk antall=" + actualCount + ". Forventet antall=" + expectedCount);
     }
