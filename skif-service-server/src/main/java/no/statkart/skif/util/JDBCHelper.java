@@ -23,21 +23,24 @@ public class JDBCHelper {
     }
 
     public static void close(ResultSet resultSet, Statement statement) {
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                throw new ImplementationException(e);
+        try {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    throw new ImplementationException(e);
+                }
+            }
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new ImplementationException(e);
+                }
             }
         }
 
-        if (statement != null) {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                throw new ImplementationException(e);
-            }
-        }
     }
 
     public static void setAutoCommit(Connection c, boolean b) {
