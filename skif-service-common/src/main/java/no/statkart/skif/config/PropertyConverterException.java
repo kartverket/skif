@@ -7,7 +7,7 @@ import no.statkart.skif.exception.ConfigurationException;
  * @since 2.0
  */
 public class PropertyConverterException extends ConfigurationException {
-
+    private static final long serialVersionUID = 1L;
 
     /**
      * Conventional constructor

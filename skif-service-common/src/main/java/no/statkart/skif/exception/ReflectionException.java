@@ -10,6 +10,7 @@ import org.slf4j.Logger;
  * To change this template use File | Settings | File Templates.
  */
 public class ReflectionException extends ImplementationException {
+    private static final long serialVersionUID = 1L;
 
     public ReflectionException(String message) {
         super(message);

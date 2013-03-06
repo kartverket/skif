@@ -7,6 +7,7 @@ package no.statkart.skif.exception;
  * @since 2.0
  */
 public class NotImplementedException extends ImplementationException {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Conventional constructor

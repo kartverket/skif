@@ -13,7 +13,7 @@ import org.slf4j.Logger;
  * @since 2.0
  */
 public class SkifException extends RuntimeException {
-    static final long serialVersionUID = 1L;    //ikke private gjør at man arver denne til alle subklasser. God praksis er at skif implementasjonene sette denne selv for exceptions
+    private static final long serialVersionUID = 1L;
 
     private String feilkode = "";
     private String feilkodebeskrivelse = "Ikke satt";

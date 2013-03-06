@@ -9,6 +9,7 @@ import org.slf4j.Logger;
  * @since 2.0
  */
 public class ApplicationException extends SkifException {
+    private static final long serialVersionUID = 1L;
 
     protected ApplicationException(String message, Throwable cause, Logger logger) {
         super(message, cause, logger);

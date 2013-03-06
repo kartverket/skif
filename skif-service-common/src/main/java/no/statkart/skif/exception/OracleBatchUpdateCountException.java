@@ -7,6 +7,8 @@ package no.statkart.skif.exception;
  * @since 2.0
  */
 public class OracleBatchUpdateCountException extends OperationalException {
+    private static final long serialVersionUID = 1L;
+
     public OracleBatchUpdateCountException(int actualCount, int expectedCount) {
         super("Ikke alle updates førte til endring. Faktisk antall=" + actualCount + ". Forventet antall=" + expectedCount);
     }

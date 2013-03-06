@@ -10,6 +10,7 @@ import java.util.*;
  *
  */
 public class LockedException extends OperationalException {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Locks that could not be aquired

@@ -8,6 +8,7 @@ import no.statkart.skif.exception.ImplementationException;
  * @author Henrik Fredholm
  */
 public class MappingException extends ImplementationException {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Conventional constructor

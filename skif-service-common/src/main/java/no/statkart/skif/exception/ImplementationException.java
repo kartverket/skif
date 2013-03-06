@@ -9,6 +9,7 @@ import org.slf4j.Logger;
  * @since 2.0
  */
 public class ImplementationException extends SystemException {
+    private static final long serialVersionUID = 1L;
 
     public ImplementationException(String message, Throwable cause, Logger logger) {
         super(message, cause, logger);

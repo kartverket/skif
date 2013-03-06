@@ -9,6 +9,8 @@ import no.statkart.skif.store.BubbleId;
  * TODO: Er det riktig den buker BubbleId? Bør den flyttes til pakke store.excption
  */
 public class ObjectNotFoundException extends FinderException {
+    private static final long serialVersionUID = 1L;
+
     private BubbleId notFoundId;
 
     public ObjectNotFoundException(BubbleId notFoundId) {

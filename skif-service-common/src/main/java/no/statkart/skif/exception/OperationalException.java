@@ -9,6 +9,7 @@ import org.slf4j.Logger;
  * @since 2.0
  */
 public class OperationalException extends SystemException {
+    private static final long serialVersionUID = 1L;
 
     protected OperationalException(String message, Throwable cause, Logger logger) {
         super(message, cause, logger);
