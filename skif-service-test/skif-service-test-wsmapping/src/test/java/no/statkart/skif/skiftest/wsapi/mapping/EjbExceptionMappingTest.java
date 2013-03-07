@@ -1,4 +1,4 @@
-package no.statkart.skif.skiftest.mapping;
+package no.statkart.skif.skiftest.wsapi.mapping;
 
 import no.statkart.skif.exception.PermissionDeniedException;
 import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
