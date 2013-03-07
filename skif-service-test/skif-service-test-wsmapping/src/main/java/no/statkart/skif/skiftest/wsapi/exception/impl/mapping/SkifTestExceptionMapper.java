@@ -28,6 +28,9 @@ public class SkifTestExceptionMapper extends AbstractExceptionMapper {
         exceptionClassMap.put(Feilkode.Kategori.SERVICE_APPLICATION_VALIDATION_EXCEPTION.value, no.statkart.skif.exception.ValidationException.class);
         exceptionClassMap.put(Feilkode.Kategori.SERVICE_SYSTEM_IMPLEMENTATION_EXCEPTION.value, no.statkart.skif.exception.ImplementationException.class);
         exceptionClassMap.put(Feilkode.Kategori.SERVICE_SYSTEM_OPERATIONAL_EXCEPTION.value, no.statkart.skif.exception.OperationalException.class);
+        exceptionClassMap.put(Feilkode.Kategori.SERVICE_PERMISSION_DENIED_EXCEPTION.value, no.statkart.skif.exception.PermissionDeniedException.class);
+        exceptionClassMap.put(Feilkode.Kategori.SERVICE_INVALID_USER_EXCEPTION.value, no.statkart.skif.exception.InvalidUserException.class);
+        exceptionClassMap.put(Feilkode.Kategori.SERVICE_ACCESS_EXCEPTION.value, no.statkart.skif.exception.AccessException.class);
         exceptionClassMap.put(Feilkode.Kategori.SERVICE_APPLICATION_EXCEPTION.value, no.statkart.skif.exception.ApplicationException.class);
         exceptionClassMap.put(Feilkode.Kategori.SERVICE_SYSTEM_EXCEPTION.value, no.statkart.skif.exception.SystemException.class);
         exceptionClassMap.put(Feilkode.Kategori.SERVICE_EXCEPTION.value, no.statkart.skif.exception.SkifException.class);
@@ -73,6 +76,9 @@ public class SkifTestExceptionMapper extends AbstractExceptionMapper {
             SERVICE_SYSTEM_IMPLEMENTATION_EXCEPTION(":ServiceException:SystemException:ImplementationException:"),
             SERVICE_SYSTEM_OPERATIONAL_EXCEPTION(":ServiceException:SystemException:OperationalException:"),
             SERVICE_APPLICATION_EXCEPTION(":ServiceException:ApplicationException:"),
+            SERVICE_ACCESS_EXCEPTION(":ServiceException:ApplicationException:AccessException:"),
+            SERVICE_INVALID_USER_EXCEPTION(":ServiceException:ApplicationException:AccessException:InvalidUserException:"),
+            SERVICE_PERMISSION_DENIED_EXCEPTION(":ServiceException:ApplicationException:AccessException:PermissionDeniedException:"),
             SERVICE_APPLICATION_FINDER_EXCEPTION(":ServiceException:ApplicationException:FinderException:"),
             SERVICE_APPLICATION_VALIDATION_EXCEPTION(":ServiceException:ApplicationException:ValidationException:"),;
 
