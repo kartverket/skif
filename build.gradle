@@ -144,7 +144,6 @@ libraries.hibernate_3_2 = [
         'net.sf.ehcache:ehcache:1.2.3@jar',
         'odmg:odmg:3.0@jar',
         "org.hibernate:hibernate:3.2.6.GA-bubbleref-v2@jar",
-        libraries.ojdbc,
 ]
 
 libraries.hibernate_tools_3_2 = [
@@ -163,7 +162,6 @@ libraries.hibernate_3_6 = [
         'net.sf.ehcache:ehcache-core:2.5.2',
         'odmg:odmg:3.0@jar',
         'javassist:javassist:3.12.1.GA',
-        libraries.ojdbc,
 ]
 
 
