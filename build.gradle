@@ -70,7 +70,6 @@ def libraries = [
         // guice-servlet depends on servlet-api som her er provided via weblogic og derfor ikke skal være med her
         guice_servlet: "com.google.inject.extensions:guice-servlet:${libVersion('guice', '3.0')}@jar",
 
-        jsr330: "javax.inject:javax.inject:1",
 
         // Utility libraries
         guava: "com.google.guava:guava:11.0.2",
@@ -134,7 +133,6 @@ libraries.guice_with_used_deps = [
         libraries.guice_throwingproviders,
         libraries.guice_assistedinject,
         libraries.guice_servlet,
-        libraries.jsr330,
 ]
 
 libraries.hibernate_3_2 = [
