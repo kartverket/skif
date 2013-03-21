@@ -42,6 +42,7 @@ import java.util.Collection;
  *
  * @author Kevin Bourrillion
  */
+@Deprecated //SKIF-128
 public final class Preconditions {
   private Preconditions() {}
 
