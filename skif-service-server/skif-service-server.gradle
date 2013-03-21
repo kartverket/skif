@@ -6,8 +6,8 @@ configurations {
 
 dependencies {
     compile project(':skif-service-common')
-    provided libraries.weblogic
     provided libraries.ojdbc
+    provided libraries.weblogic
 
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
