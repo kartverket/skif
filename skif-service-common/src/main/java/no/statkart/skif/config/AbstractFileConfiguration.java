@@ -1,7 +1,7 @@
 package no.statkart.skif.config;
 
-import no.statkart.skif.config.internal.ConfigurationUtils;
-import no.statkart.skif.config.internal.StringUtils;
+import no.statkart.skif.internal.util.InternalConfigurationUtils;
+import no.statkart.skif.internal.util.InternalStringUtils;
 import no.statkart.skif.exception.ConfigurationException;
 
 import java.io.*;
@@ -175,7 +175,7 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
     {
         try
         {
-            URL url = ConfigurationUtils.locate(basePath, fileName);
+            URL url = InternalConfigurationUtils.locate(basePath, fileName);
 
             if (url == null)
             {
@@ -201,7 +201,7 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
     {
         try
         {
-            load(ConfigurationUtils.toURL(file));
+            load(InternalConfigurationUtils.toURL(file));
         }
         catch (ConfigurationException e)
         {
@@ -225,7 +225,7 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
     {
         if (sourceURL == null)
         {
-            if (StringUtils.isEmpty(getBasePath()))
+            if (InternalStringUtils.isEmpty(getBasePath()))
             {
                 // ensure that we have a valid base path
                 setBasePath(url.toString());
@@ -234,7 +234,7 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
         }
 
         // throw an exception if the target URL is a directory
-        File file = ConfigurationUtils.fileFromURL(url);
+        File file = InternalConfigurationUtils.fileFromURL(url);
         if (file != null && file.isDirectory())
         {
             throw new ConfigurationException("Cannot load a configuration from a directory");
@@ -394,11 +394,11 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
         }
         else if (sourceURL != null)
         {
-            return ConfigurationUtils.fileFromURL(sourceURL);
+            return InternalConfigurationUtils.fileFromURL(sourceURL);
         }
         else
         {
-            return ConfigurationUtils.getFile(getBasePath(), getFileName());
+            return InternalConfigurationUtils.getFile(getBasePath(), getFileName());
         }
     }
 
@@ -447,7 +447,7 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
             {
                 try
                 {
-                    path = ConfigurationUtils.getURL(getBasePath(), getFileName()).getPath();
+                    path = InternalConfigurationUtils.getURL(getBasePath(), getFileName()).getPath();
                 }
                 catch (MalformedURLException e)
                 {
@@ -483,7 +483,7 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
     public URL getURL()
     {
         return (sourceURL != null) ? sourceURL
-                : ConfigurationUtils.locate(getBasePath(), getFileName());
+                : InternalConfigurationUtils.locate(getBasePath(), getFileName());
     }
 
     /**
@@ -496,8 +496,8 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
      */
     public void setURL(URL url)
     {
-        setBasePath(ConfigurationUtils.getBasePath(url));
-        setFileName(ConfigurationUtils.getFileName(url));
+        setBasePath(InternalConfigurationUtils.getBasePath(url));
+        setFileName(InternalConfigurationUtils.getFileName(url));
         sourceURL = url;
     }
 

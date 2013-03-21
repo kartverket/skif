@@ -1,8 +1,6 @@
 package no.statkart.skif.config;
 
-import no.statkart.skif.config.internal.BooleanUtils;
-import no.statkart.skif.config.internal.IteratorChain;
-import no.statkart.skif.config.internal.ObjectArrayIterator;
+import no.statkart.skif.internal.util.InternalBooleanUtils;
 
 import java.awt.*;
 import java.lang.reflect.Array;
@@ -169,7 +167,7 @@ public final class PropertyConverter
         }
         else if (value instanceof String)
         {
-            Boolean b = BooleanUtils.toBooleanObject((String) value);
+            Boolean b = InternalBooleanUtils.toBooleanObject((String) value);
             if (b == null)
             {
                 throw new PropertyConverterException("The value " + value + " can't be converted to a Boolean object");

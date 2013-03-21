@@ -1,4 +1,4 @@
-package no.statkart.skif.config.internal;
+package no.statkart.skif.internal.util;
 
 /**
  * Utdrag av StringUtils  fra appache commons-lang pakken. Har fjernet alle metoder som krever andre klasser fra commons-lang.
@@ -102,7 +102,7 @@ import java.util.List;
  * @since 1.0
  * @version $Id: StringUtils.java,v 1.130 2004/05/24 20:15:44 fredrik Exp $
  */
-public class StringUtils {
+public class InternalStringUtils {
     // Performance testing notes (JDK 1.4, Jul03, scolebourne)
     // Whitespace:
     // Character.isWhitespace() is faster than WHITESPACE.indexOf()
@@ -156,7 +156,7 @@ public class StringUtils {
      * <p>This constructor is public to permit tools that require a JavaBean
      * instance to operate.</p>
      */
-    public StringUtils() {
+    public InternalStringUtils() {
         // no init.
     }
 

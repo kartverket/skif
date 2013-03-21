@@ -7,13 +7,12 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.MapConfiguration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SystemConfiguration;
-import no.statkart.skif.config.internal.ConfigurationUtils;
+import no.statkart.skif.internal.util.InternalConfigurationUtils;
 import no.statkart.skif.service.SingleVmServer;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import weblogic.auddi.uddi.datastructure.Name;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +31,7 @@ public class ModuleBuilderTest {
      */
     @BeforeMethod
     public void setupSystemConfigurationClone() {
-        systemConfiguration = (SystemConfiguration) ConfigurationUtils.cloneConfiguration(new SystemConfiguration());
+        systemConfiguration = (SystemConfiguration) InternalConfigurationUtils.cloneConfiguration(new SystemConfiguration());
     }
 
     // Configuration c = ConfigurationFactory.create()

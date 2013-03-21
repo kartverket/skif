@@ -1,4 +1,4 @@
-package no.statkart.skif.config.internal;
+package no.statkart.skif.config;
 
 import java.util.Iterator;
 
@@ -9,7 +9,7 @@ import java.util.Iterator;
  * Time: 9:26:13 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ObjectArrayIterator implements Iterator {
+class ObjectArrayIterator implements Iterator {
    private Object[] array;
    private int i= 0;
    // ctor

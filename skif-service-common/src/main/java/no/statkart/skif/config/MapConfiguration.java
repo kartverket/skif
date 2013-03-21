@@ -1,6 +1,6 @@
 package no.statkart.skif.config;
 
-import no.statkart.skif.config.internal.ConfigurationUtils;
+import no.statkart.skif.internal.util.InternalConfigurationUtils;
 
 import java.util.*;
 
@@ -115,7 +115,7 @@ public class MapConfiguration extends AbstractConfiguration implements Cloneable
         try
         {
             MapConfiguration copy = (MapConfiguration) super.clone();
-            copy.map = (Map) ConfigurationUtils.clone(map);
+            copy.map = (Map) InternalConfigurationUtils.clone(map);
             return copy;
         }
         catch (CloneNotSupportedException cex)

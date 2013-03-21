@@ -3,13 +3,11 @@ package no.statkart.skif;
 import no.statkart.skif.config.AbstractConfiguration;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.MapConfiguration;
-import no.statkart.skif.config.internal.StringUtils;
+import no.statkart.skif.internal.util.InternalStringUtils;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 /**
  * Configuration converter. Helper class to convert between Configuration,
@@ -62,7 +60,7 @@ public final class ConfigurationConverter
             List list = config.getList(key);
 
             // turn the list into a string
-            props.setProperty(key, StringUtils.join(list.iterator(), delimiter));
+            props.setProperty(key, InternalStringUtils.join(list.iterator(), delimiter));
         }
 
         return props;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package no.statkart.skif.config.internal;
+package no.statkart.skif.internal.util;
 
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.ConfigurationRuntimeException;
@@ -38,7 +38,7 @@ import java.util.Iterator;
  * @author Emmanuel Bourg
  * @version $Revision: 720600 $, $Date: 2008-11-25 22:20:01 +0100 (Di, 25 Nov 2008) $
  */
-public final class ConfigurationUtils {
+public final class InternalConfigurationUtils {
     /**
      * Constant for the file URL protocol.
      */
@@ -62,12 +62,12 @@ public final class ConfigurationUtils {
     /**
      * The logger.
      */
-    private static Logger logger = LoggerFactory.getLogger(ConfigurationUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(InternalConfigurationUtils.class);
 
     /**
      * Private constructor. Prevents instances from being created.
      */
-    private ConfigurationUtils() {
+    private InternalConfigurationUtils() {
         // to prevent instantiation...
     }
 
@@ -322,7 +322,7 @@ public final class ConfigurationUtils {
     public static URL locate(String base, String name) {
         if (logger.isDebugEnabled()) {
             StringBuffer buf = new StringBuffer();
-            buf.append("ConfigurationUtils.locate(): base is ").append(base);
+            buf.append("InternalConfigurationUtils.locate(): base is ").append(base);
             buf.append(", name is ").append(name);
             logger.debug(buf.toString());
         }

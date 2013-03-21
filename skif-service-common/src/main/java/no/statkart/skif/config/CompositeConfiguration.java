@@ -1,6 +1,6 @@
 package no.statkart.skif.config;
 
-import no.statkart.skif.config.internal.ConfigurationUtils;
+import no.statkart.skif.internal.util.InternalConfigurationUtils;
 
 import java.util.*;
 
@@ -348,7 +348,7 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
             CompositeConfiguration copy = (CompositeConfiguration) super
                     .clone();
             copy.configList = new LinkedList();
-            copy.inMemoryConfiguration = ConfigurationUtils
+            copy.inMemoryConfiguration = InternalConfigurationUtils
                     .cloneConfiguration(getInMemoryConfiguration());
             copy.configList.add(copy.inMemoryConfiguration);
 
@@ -357,7 +357,7 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
                 Configuration config = getConfiguration(i);
                 if (config != getInMemoryConfiguration())
                 {
-                    copy.addConfiguration(ConfigurationUtils
+                    copy.addConfiguration(InternalConfigurationUtils
                             .cloneConfiguration(config));
                 }
             }

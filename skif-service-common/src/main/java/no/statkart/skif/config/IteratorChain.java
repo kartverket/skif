@@ -1,4 +1,4 @@
-package no.statkart.skif.config.internal;
+package no.statkart.skif.config;
 
 import java.util.*;
 
@@ -27,7 +27,7 @@ import java.util.*;
  * @author Morgan Delagrange
  * @author Stephen Colebourne
  */
-public class IteratorChain implements Iterator {
+class IteratorChain implements Iterator {
 
     /** The chain of iterators */
     protected final List iteratorChain = new ArrayList();

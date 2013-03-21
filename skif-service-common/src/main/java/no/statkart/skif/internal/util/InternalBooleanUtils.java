@@ -1,10 +1,10 @@
-package no.statkart.skif.config.internal;
+package no.statkart.skif.internal.util;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class BooleanUtils {
+public class InternalBooleanUtils {
     /**
      * <p>Converts a String to a boolean (optimised for performance).</p>
      *

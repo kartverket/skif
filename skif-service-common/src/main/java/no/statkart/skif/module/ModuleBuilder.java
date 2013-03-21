@@ -11,7 +11,7 @@ import static no.statkart.skif.config.SkifConfigConstants.*;
 
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.*;
-import no.statkart.skif.config.internal.ConfigurationUtils;
+import no.statkart.skif.internal.util.InternalConfigurationUtils;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.guava.Preconditions;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
@@ -112,7 +112,7 @@ public class ModuleBuilder {
             this.compositeConfiguration = new CompositeConfiguration();
             this.compositeConfiguration.addConfiguration(builderConfiguration);
             if (systemConfiguration != null) {
-                this.compositeConfiguration.addConfiguration(ConfigurationUtils.cloneConfiguration(systemConfiguration));
+                this.compositeConfiguration.addConfiguration(InternalConfigurationUtils.cloneConfiguration(systemConfiguration));
             }
             this.configuration = internalGetConfiguration();
             this.compositeConfiguration.addConfiguration(configuration);
@@ -441,7 +441,7 @@ public class ModuleBuilder {
     private CompositeConfiguration createCompositeConfigurationForModule() {
         final CompositeConfiguration compositeConfiguration = getCompositeConfiguration();
         CompositeConfiguration c = new CompositeConfiguration(compositeConfiguration.getInMemoryConfiguration());
-        c.addConfiguration(ConfigurationUtils.cloneConfiguration(builderConfiguration));
+        c.addConfiguration(InternalConfigurationUtils.cloneConfiguration(builderConfiguration));
         final int numberOfConfigurations = getCompositeConfiguration().getNumberOfConfigurations();
         for (int i = 1; i < numberOfConfigurations - 1; i++) {
             c.addConfiguration(getCompositeConfiguration().getConfiguration(i));
@@ -485,7 +485,7 @@ public class ModuleBuilder {
     public Injector getSingleVmServerInjector() {
         if (!isUseSharedServer()) singleVmServerInjector = null;
         if (singleVmServerInjector == null) {
-            SystemConfiguration singleVmServerSystemConfiguration = (SystemConfiguration) ConfigurationUtils.cloneConfiguration(systemConfiguration);
+            SystemConfiguration singleVmServerSystemConfiguration = (SystemConfiguration) InternalConfigurationUtils.cloneConfiguration(systemConfiguration);
             if (singleVmServerSystemConfiguration != null) {
                 singleVmServerSystemConfiguration.clearProperty(SINGLE_VM_SERVER_MODULE_CLASS);
                 singleVmServerSystemConfiguration.clearProperty(SINGLE_VM_SERVER_MODULE_EXT_CLASS);
