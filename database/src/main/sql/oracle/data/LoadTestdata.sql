@@ -29,10 +29,6 @@ insert into FilteredBubble values(1, 'Orginal 1',0,'Ufilterert');
 insert into FilteredBubble values(2, 'Orginal 2',1,'Filterert');
 
 
-
-insert into TableSequence (tableName, nextFreeNumber) values ('GLOBAL_SEQUENCE',999999);
-insert into TableSequence (tableName, nextFreeNumber) values ('TEST_NUMBER',1);
-
 insert into AKode values(1, 'A1');
 insert into AKode values(2, 'A2');
 insert into AKodeLoc values(1, 'no_NO',    'A1-navn bokmål',  'Kodebeskrivelse for A1 bokmål');

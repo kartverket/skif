@@ -16,6 +16,8 @@ configureDatabasePlugin {
     toolset(name: '', type: 'oracle', prefix: '') {
         sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
         sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql')
+        sqlTask('createSchemaTest', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest.sql')
+        sqlTask('tableSequence', sqlFile: 'src/main/sql/oracle/data/TableSequence.sql')
         sqlTask('loadTestdata', sqlFile: 'src/main/sql/oracle/data/LoadTestdata.sql')
 
         properties = project.properties
@@ -50,10 +52,6 @@ configureDatabasePlugin {
             return task
         }
 
-//        sqlTask('UpdateViewForTAND', sqlFile: 'src/main/sql/oracle/regina/UpdateHistorikkViewForTAND.sql') {
-//            dependsOnIfExecuted it, sqlTask('HistorikkForTAND', sqlFile: 'src/main/sql/oracle/regina/ApplyHistorikkForTAND.sql')
-//        }
-
         //kjøres før import
         sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
 
@@ -67,23 +65,9 @@ configureDatabasePlugin {
                 DATA_CONVERT_TIMESTAMP: '2012-09-02 00:00:00.00',   //dato for dump av kildebase som skal materialiseres
         ]
 
-        credentials.username = admin_db_username
-        credentials.password = admin_db_password
+        credentials.username = db_username
+        credentials.password = db_username
         url = "jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}"
-
-
-        //samletasker..
-        project.task('reginaUpdateAllViews', description: 'Oppdaterer historikk views og triggere for kilde-skjema') { def reginaUpdateAllViews ->
-            tasks.getTasks().findAll {name, task -> name.startsWith 'UpdateViewFor'}.values().each {
-                reginaUpdateAllViews.dependsOn it
-                it.dependsOn tasks['updatePackageSnapshotTime']
-            }
-        }
-
-        project.task('reginaApplyHistorikk', description: 'Etablerer historikk tabeller for kilde-skjema') {
-            dependsOn tasks.getTasks().findAll {name, task -> name.startsWith 'HistorikkFor'}.values()
-            dependsOn project.tasks['reginaUpdateAllViews']
-        }
 
     }
 
@@ -95,7 +79,10 @@ task dbInit {
 
     int i = 0 //hacker til nytt lag av tasker da gradle 1.0 eksekverer dependencies i alfabetisk rekkefølge
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['purge'])
+    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets['historikk'].tasks['updatePackageSnapshotTime'])
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchema'])
+    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchemaTest'])
+    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['tableSequence'])
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['loadTestdata'])
 
 }
