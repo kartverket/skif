@@ -6,6 +6,9 @@ configurations {
 
 dependencies {
     compile project(':skif-service-common')
+
+    compile libraries.guice_for_server
+
     provided libraries.ojdbc
     provided libraries.weblogic
 

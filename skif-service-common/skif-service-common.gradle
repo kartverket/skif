@@ -5,7 +5,7 @@ configurations {
 }
 
 dependencies {
-    compile libraries.guice_with_used_deps
+    compile libraries.guice_for_client
     compile libraries.commons_lang
     provided libraries.jaxws_rt
 

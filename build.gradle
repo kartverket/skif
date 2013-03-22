@@ -127,11 +127,18 @@ libraries.gt2 = [
         'org.geotools:gt2-oracle-spatial:2.2.2-CUSTOM@jar',
 ]
 
-libraries.guice_with_used_deps = [
+
+//minimal bruk av guice
+libraries.guice_for_client = [
         libraries.guice,
         libraries.guice_multibindings,
         libraries.guice_throwingproviders,
         libraries.guice_assistedinject,
+]
+
+//for bruk på server
+libraries.guice_for_server = [
+        libraries.guice_for_client,
         libraries.guice_servlet,
 ]
 
