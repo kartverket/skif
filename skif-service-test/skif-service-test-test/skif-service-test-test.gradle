@@ -1,7 +1,7 @@
 dependencies {
     compile project(':skif-service-test:skif-service-test-api')
-    compile project(':skif-service-test:skif-service-test-wsmapping')
-    compile project(':skif-service-test:skif-service-test-wsclient')
+    compile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
+    compile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsclient')
 
     provided libraries.jaxws_rt
     provided libraries.weblogic
@@ -9,5 +9,5 @@ dependencies {
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
     testCompile project(':skif-service-test:skif-service-test-server')
-    testCompile project(path: ':skif-service-test:skif-service-test-wswar', configuration: 'singlevm')
+    testCompile project(path: ':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wswar', configuration: 'singlevm')
 }

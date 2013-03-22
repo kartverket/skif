@@ -2,7 +2,7 @@ apply plugin: 'ear'
 apply plugin: 'sktools-weblogic-deploy-plugin'
 
 Map warMap = [
-        ':skif-store-test:skif-store-test-wswar': 'storetest/wsapi',
+        ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wswar': 'storetest/wsapi',
 ]
 
 List ejbList = [

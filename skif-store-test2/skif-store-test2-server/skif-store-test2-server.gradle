@@ -4,7 +4,7 @@ configurations {
 
 dependencies {
     compile project(':skif-store-server')
-    compile project(':skif-store-server-hs36')
+    compile project(':skif-store-server:skif-store-server-hs36')
 
     compile project(':skif-store-test2:skif-store-test2-api')
     provided libraries.weblogic

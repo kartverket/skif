@@ -7,7 +7,7 @@ dependencies {
 
 weblogicWsClient {
   webService {
-    baseWar { project(path: ':skif-store-test:skif-store-test-wswar', configuration: 'weblogic') }
+    baseWar { project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wswar', configuration: 'weblogic') }
     exceptionReusePackage 'no.statkart.skif.storetest.wsapi.exception'
   }
 }

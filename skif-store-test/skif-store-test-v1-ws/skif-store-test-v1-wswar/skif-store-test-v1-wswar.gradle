@@ -13,7 +13,7 @@ warWeblogic {
 
 dependencies {
     weblogicCompile project(':skif-store-test:skif-store-test-server')
-    weblogicCompile project(':skif-store-test:skif-store-test-wsmapping')
+    weblogicCompile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
 
     weblogicProvided libraries['tools.jar']
     weblogicProvided libraries.weblogic
