@@ -3,10 +3,8 @@ package no.statkart.skif.store.kodeliste;
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Localizable;
-import no.statkart.skif.store.LocalizedFields;
-import org.apache.commons.lang3.LocaleUtils;
+import no.statkart.skif.internal.util.InternalLocaleUtils;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -90,7 +88,7 @@ public abstract class Kode extends AbstractBubbleObject implements Localizable {
     public void localize(String localeString) {
         localizedFields = null;
         ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
-        Locale locale = LocaleUtils.toLocale(localeString);
+        Locale locale = InternalLocaleUtils.toLocale(localeString);
         LocalizedFields fields;
         while (true) {
             fields = localizedFieldsMap.get(locale != null ? locale.toString() : "");

@@ -2,7 +2,7 @@ package no.statkart.skif.store.kodeliste;
 
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.store.AbstractBubbleObject;
-import org.apache.commons.lang3.LocaleUtils;
+import no.statkart.skif.internal.util.InternalLocaleUtils;
 
 import java.util.*;
 
@@ -133,7 +133,7 @@ public abstract class AbstractKodeliste extends AbstractBubbleObject implements 
     public void localize(String localeString) {
         localizedFields = null;
         ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
-        Locale locale = LocaleUtils.toLocale(localeString);
+        Locale locale = InternalLocaleUtils.toLocale(localeString);
         LocalizedFields fields;
         while (true) {
             fields = localizedFieldsMap.get(locale != null ? locale.toString() : "");

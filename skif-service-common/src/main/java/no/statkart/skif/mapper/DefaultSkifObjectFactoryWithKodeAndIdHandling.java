@@ -3,7 +3,7 @@ package no.statkart.skif.mapper;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.SnapshotVersion;
-import org.apache.commons.lang3.ClassUtils;
+import no.statkart.skif.internal.util.InternalClassUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -41,7 +41,7 @@ public class DefaultSkifObjectFactoryWithKodeAndIdHandling implements ObjectFact
             retVal = (T) constructor.newInstance(o.longValue(), SnapshotVersion.CURRENT);
         } else if (implementsBubbleId(target)) {
             try {
-                List<Class<?>> targetInterfaces = ClassUtils.getAllInterfaces(target);
+                List<Class<?>> targetInterfaces = InternalClassUtils.getAllInterfaces(target);
                 for (int i = 0; i < targetInterfaces.size(); i++) {
                     Class aTargetInterface = targetInterfaces.get(i);
                     if (aTargetInterface.getName().equals("no.statkart.skif.store.BubbleId")) {
@@ -72,7 +72,7 @@ public class DefaultSkifObjectFactoryWithKodeAndIdHandling implements ObjectFact
     private <S> boolean isSourceEnum(S source) {
         try {
             Class enumClass = Class.forName("no.statkart.matrikkel.domene.Enum");
-            if(ClassUtils.isAssignable(source.getClass(), enumClass)){
+            if(InternalClassUtils.isAssignable(source.getClass(), enumClass)){
                 return true;
             }
         } catch (ClassNotFoundException e) {
@@ -84,7 +84,7 @@ public class DefaultSkifObjectFactoryWithKodeAndIdHandling implements ObjectFact
     private <S> boolean isSourceKode(S source) {
         try {
             Class kodeClass = Class.forName("no.statkart.matrikkel.domene.Kode");
-            if(ClassUtils.isAssignable(source.getClass(), kodeClass)){
+            if(InternalClassUtils.isAssignable(source.getClass(), kodeClass)){
                 return true;
             }
         } catch (ClassNotFoundException e) {
@@ -94,7 +94,7 @@ public class DefaultSkifObjectFactoryWithKodeAndIdHandling implements ObjectFact
     }
 
     private <S> boolean isKode(Class target) {
-        List<Class<?>> classes = ClassUtils.getAllSuperclasses(target);
+        List<Class<?>> classes = InternalClassUtils.getAllSuperclasses(target);
         for (int i = 0; i < classes.size(); i++) {
             Class aSuperclass = classes.get(i);
             if (aSuperclass.getName().equals("no.statkart.skif.store.kodeliste.KodeId")) {
@@ -105,7 +105,7 @@ public class DefaultSkifObjectFactoryWithKodeAndIdHandling implements ObjectFact
     }
 
     private boolean implementsBubbleId(Class target) {
-        List<Class<?>> classes = ClassUtils.getAllInterfaces(target);
+        List<Class<?>> classes = InternalClassUtils.getAllInterfaces(target);
         for (int i = 0; i < classes.size(); i++) {
             Class anInterface = classes.get(i);
             if (anInterface.getName().equals("no.statkart.skif.store.BubbleId")) {

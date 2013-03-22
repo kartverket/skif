@@ -31,3 +31,25 @@ artifacts {
     testApi testJar
     archives sourcesJar
 }
+
+task assertDependencies() {
+    //kjøres som en test
+    test.dependsOn it
+
+    doFirst {
+        configurations.runtime.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
+            boolean godkjent = [ //liste over dependencies. For syntax se parsing under..
+                    'org.slf4j',
+                    'com.google.code.findbugs:jsr305',
+                    'com.google.inject:guice',
+                    'com.google.inject.extensions:guice-',
+                    'com.google.guava',
+                    'com.vividsolutions:jts',
+            ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
+
+            if (!godkjent) {
+                throw new TaskExecutionException(it, new RuntimeException('Ukjent avhengighet: ' + dependency)); //avhengighet ikke i godkjent-liste
+            }
+        }
+    }
+}

@@ -2,7 +2,7 @@ package no.statkart.skif.mapper;
 
 
 import no.statkart.skif.exception.ImplementationException;
-import org.apache.commons.lang3.ClassUtils;
+import no.statkart.skif.internal.util.InternalClassUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,7 +28,7 @@ public class DefaultSpifObjectFactoryWithKodeAndIdHandling implements ObjectFact
             retVal = (T) fromIntMethod.invoke(target, value.intValue());
         } else if (implementsBubbleId(target)) {
             try {
-                List<Class<?>> targetInterfaces = ClassUtils.getAllInterfaces(target);
+                List<Class<?>> targetInterfaces = InternalClassUtils.getAllInterfaces(target);
                 for (int i = 0; i < targetInterfaces.size(); i++) {
                     Class aTargetInterface = targetInterfaces.get(i);
                     if(aTargetInterface.getName().equals("net.sf.spif.BubbleId")){
@@ -60,7 +60,7 @@ public class DefaultSpifObjectFactoryWithKodeAndIdHandling implements ObjectFact
     }
 
     private <S> boolean isKode(Class target) {
-        List<Class<?>> classes = ClassUtils.getAllSuperclasses(target);
+        List<Class<?>> classes = InternalClassUtils.getAllSuperclasses(target);
         for (int i = 0; i < classes.size(); i++) {
             Class aSuperclass = classes.get(i);
             if(aSuperclass.getName().equals("no.statkart.matrikkel.domene.Enum")){
@@ -71,7 +71,7 @@ public class DefaultSpifObjectFactoryWithKodeAndIdHandling implements ObjectFact
     }
 
     private boolean implementsBubbleId(Class target) {
-        List<Class<?>> classes = ClassUtils.getAllInterfaces(target);
+        List<Class<?>> classes = InternalClassUtils.getAllInterfaces(target);
         for (int i = 0; i < classes.size(); i++) {
             Class anInterface = classes.get(i);
             if (anInterface.getName().equals("net.sf.spif.BubbleId")) {

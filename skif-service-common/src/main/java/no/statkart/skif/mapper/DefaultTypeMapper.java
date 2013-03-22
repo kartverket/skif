@@ -1,7 +1,7 @@
 package no.statkart.skif.mapper;
 
 import no.statkart.skif.exception.ImplementationException;
-import org.apache.commons.lang3.ClassUtils;
+import no.statkart.skif.internal.util.InternalClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,7 +156,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
         if (wsapiName.endsWith("Kode")) {
             try {
                 Class enumClass = Class.forName("no.statkart.matrikkel.domene.Enum");
-                if (ClassUtils.isAssignable(myWsapiClass, enumClass)) {
+                if (InternalClassUtils.isAssignable(myWsapiClass, enumClass)) {
                     //Dette er en enum, enumer skal mappes til klasse som ender på KodeId.
                     if (domainName.endsWith("KodeId")) {
                         if (domainName.substring(0, domainName.length() - 2).equals(wsapiName)) {
