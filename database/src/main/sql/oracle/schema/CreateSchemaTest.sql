@@ -1,3 +1,4 @@
+-- Oppretter tabeller som brukes i det kaotiske storetest-testprosjektet
 
 create table FilteredBubble (
   id number(19,0) not null,

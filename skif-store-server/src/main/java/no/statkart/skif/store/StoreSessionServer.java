@@ -113,11 +113,11 @@ public class StoreSessionServer extends AbstractStoreSession {
         this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerStrategy, bubbleDependencyComparator, null, null, null);
     }
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<? extends StoreSessionReadListener> readListeners, @Nullable List<? extends StoreSessionWriteListener> writeListeners, @Nullable List<? extends StoreSessionFinishListener> finishListeners) {
         this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners);
     }
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<StoreSessionReadListener> readListeners, @Nullable List<StoreSessionWriteListener> writeListeners, @Nullable List<StoreSessionFinishListener> finishListeners) {
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<? extends StoreSessionReadListener> readListeners, @Nullable List<? extends StoreSessionWriteListener> writeListeners, @Nullable List<? extends StoreSessionFinishListener> finishListeners) {
         super(0, storeCache);
         this.persistenceSessionManager = persistenceSessionManager;
         this.lockerStrategy = lockerStrategy;

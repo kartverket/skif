@@ -1,3 +1,4 @@
+--Oppretter generelle tabeller
 
 create table TableSequence (
    tableName varchar2(255) not null,

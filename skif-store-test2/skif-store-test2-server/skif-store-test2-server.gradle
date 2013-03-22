@@ -12,3 +12,56 @@ dependencies {
     testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
 }
+
+List getAllHbmXmlPaths(def packageDir) {
+    // Denne må komme først, noe den ikke gjør som del av samme filetree som resten
+    FileTree enumHbm = fileTree(packageDir) {
+        include('type/EnumKodeIdType.hbm.xml')
+    }
+
+    FileTree hbms = fileTree(packageDir) {
+        include('*.hbm.xml')
+    }
+
+    List filenames = []
+
+    enumHbm.files.each { File f ->
+        filenames += f.absolutePath
+    }
+    hbms.files.each { File f ->
+        filenames += f.absolutePath
+    }
+
+    filenames
+}
+
+task generateSchemaFromHibernate(type: JavaExec, dependsOn: configurations.runtime) {
+    description = "Lager skjema og plasserer det modulroten"
+
+    def outputFile = file('db_schema.ddl')
+
+//    outputs.file outputFile
+
+    doFirst {
+        println "Genererer databaseskjema til filen: ${outputFile}"
+
+        // sourceSets.main.output.filterResourcesOutputDir er ikke evaluert før doFirst
+        args = [
+                "--output=${outputFile}",
+                "--delimiter=;",
+                "--format",
+                "--text",
+                "--quiet",
+                "--create",
+        ]
+
+        args += getAllHbmXmlPaths(project.file('src/main/resources/no/statkart/skif/storetest2/persistence/hibernate'))
+    }
+
+    main = 'org.hibernate.tool.hbm2ddl.SchemaExport'
+    classpath = sourceSets.main.runtimeClasspath
+
+    systemProperties = [
+            'hibernate.dialect': 'org.hibernate.dialect.Oracle10gDialect',
+    ]
+}

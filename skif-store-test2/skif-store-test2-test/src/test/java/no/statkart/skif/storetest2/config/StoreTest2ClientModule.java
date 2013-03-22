@@ -3,6 +3,8 @@ package no.statkart.skif.storetest2.config;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import net.sf.cglib.proxy.InvocationHandler;
+import net.sf.cglib.proxy.Proxy;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
@@ -23,6 +25,8 @@ import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.StoreSessionClient;
 import no.statkart.skif.store.service.StoreService;
 
+import java.lang.reflect.Method;
+
 /**
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
@@ -40,7 +44,13 @@ public class StoreTest2ClientModule extends SkifModule {
 
     @Override
     protected void configure() {
-        final Mapping mapping = null;
+        // TODO: Midlertidig kode inntil prosjektet får seg noen ws-moduler
+        final Mapping mapping = (Mapping) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Mapping.class}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                return null;
+            }
+        });
 //        final StoreTest2Mapping mapping = new StoreTest2Mapper().getMapping();
 //        final StoreTest2ExceptionMapping exceptionMapping = new StoreTest2ExceptionMapper().getMapping();
 

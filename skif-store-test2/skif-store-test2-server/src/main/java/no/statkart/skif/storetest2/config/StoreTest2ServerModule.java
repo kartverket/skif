@@ -45,6 +45,9 @@ import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceS
 import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
+import no.statkart.skif.storetest2.domain.eierskap.Eiendom;
+import no.statkart.skif.storetest2.domain.eierskap.Eier;
+import no.statkart.skif.storetest2.endringslogg.EndringManager;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
@@ -120,7 +123,7 @@ public class StoreTest2ServerModule extends SkifModule {
         //ReadListener
         List<StoreSessionReadListener> readListeners = ImmutableList.of();
         List<StoreSessionWriteListener> writeListeners = ImmutableList.of();
-        List<StoreSessionFinishListener> finishListeners = ImmutableList.of();
+        List<StoreSessionFinishListener> finishListeners = ImmutableList.<StoreSessionFinishListener>of(injector.getInstance(EndringManager.class));
         StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, injector.getProvider(VersionFinder.class), lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners), injector);
         return storeServer;
     }
@@ -167,7 +170,10 @@ public class StoreTest2ServerModule extends SkifModule {
         // TODO: Hent directory fra moduleConfiguration
         HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest2/persistence/hibernate")
                 // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
-                .addResource(EnumKodeIdType.class);
+                .addResource(EnumKodeIdType.class)
+                .addResource(Eiendom.class)
+                .addResource(Eier.class)
+                ;
 
 
         PropertiesConfiguration hibernatePropertiesConfiguration = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate.properties");

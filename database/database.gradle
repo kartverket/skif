@@ -17,6 +17,7 @@ configureDatabasePlugin {
         sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
         sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql')
         sqlTask('createSchemaTest', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest.sql')
+        sqlTask('createSchemaTest2', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest2.sql')
         sqlTask('tableSequence', sqlFile: 'src/main/sql/oracle/data/TableSequence.sql')
         sqlTask('loadTestdata', sqlFile: 'src/main/sql/oracle/data/LoadTestdata.sql')
 
@@ -82,6 +83,7 @@ task dbInit {
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets['historikk'].tasks['updatePackageSnapshotTime'])
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchema'])
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchemaTest'])
+    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchemaTest2'])
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['tableSequence'])
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['loadTestdata'])
 
