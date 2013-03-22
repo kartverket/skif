@@ -15,6 +15,8 @@ rem set GRADLE_HOME=C:\bin\gradle-1.1
 @rem bestemmer weblogic home
 set ORG_GRADLE_PROJECT_WEBLOGIC_HOME=C:\bea_wls10.3.5
 
+@rem bestemmer bruk av debug JDBC driver for Oracle [SKIF-239]
+set ORA_DEBUG=false
 
 @rem Setup Perforce windows integrasjon (optional)
 @rem p4 set P4CLIENT=%USERNAME%-%COMPUTERNAME%
