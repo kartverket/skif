@@ -1,0 +1,14 @@
+configurations {
+    client
+}
+
+dependencies {
+    compile project(':skif-store-server')
+    compile project(':skif-store-server-hs36')
+
+    compile project(':skif-store-test2:skif-store-test2-api')
+    provided libraries.weblogic
+
+    testCompile project(':skif-config')
+    testCompile project(':skif-testsupport-common')
+}

@@ -1,0 +1,16 @@
+dependencies {
+    compile project(':skif-store-test2:skif-store-test2-api')
+//    compile project(':skif-store-test:skif-store-test2-wsmapping')
+//    compile project(':skif-store-test:skif-store-test2-wsclient')
+
+    provided libraries.jaxws_rt
+    provided libraries.weblogic
+
+    testCompile project(':skif-config')
+    testCompile project(':skif-testsupport-common')
+    testCompile project(':skif-store-test2:skif-store-test2-server')
+    testCompile project(path: ':skif-store-common', configuration: "testApi")
+    testCompile project(path: ':skif-service-server', configuration: "tests")
+    testCompile libraries.dbunit
+    testCompile libraries.unitils
+}
