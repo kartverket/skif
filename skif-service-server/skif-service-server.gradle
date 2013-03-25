@@ -37,7 +37,7 @@ artifacts {
 
 ideaModule {
     doFirst {
-        //SKIF-239: legger inn vanlig driver + debugdriver inn i intellij prosjektet for enkel manuell switching av rekkefølge på classpath.
+        //SKIF-239: legger inn vanlig driver + debugdriver inn i IntelliJ prosjektet for enkel manuell switching av rekkefølge på classpath.
         project.dependencies {
             provided libraries.ojdbc
             provided libraries.ojdbc_g
