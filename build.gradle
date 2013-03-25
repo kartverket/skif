@@ -94,7 +94,7 @@ def libraries = [
 ]
 
 // SKIF-239: Mulighet for valg av ojdbc driver
-libraries.jdbc = System.getenv().get('ORA_DEBUG', 'false').toBoolean() ? libraries.ojdbc_g : libraries.ojdbc
+libraries.jdbc = Boolean.valueOf(System.getenv('ORA_DEBUG') ?: 'false') ? libraries.ojdbc_g : libraries.ojdbc
 
 // JAX-WS runtime for weblogic
 libraries.jaxws_rt = files(
