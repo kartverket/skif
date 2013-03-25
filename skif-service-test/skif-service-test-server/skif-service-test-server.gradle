@@ -3,8 +3,10 @@ dependencies {
     compile project(':skif-service-test:skif-service-test-api')
     provided libraries.weblogic
 
-    testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
+
+    //internal dependencies + optional deps to logging frameworks:
+    testCompile project(':skif-config')
 }
 
 ideaModule {

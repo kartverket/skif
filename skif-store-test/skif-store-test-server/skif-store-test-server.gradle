@@ -3,17 +3,21 @@ configurations {
 }
 
 dependencies {
-    compile project(':skif-store-server')
+    compile project(':skif-store-test:skif-store-test-api')
+
+    //tester disse implementasjonene her..
     if(hibernateVersion.equals("3.2")) {
       compile project(':skif-store-server:skif-store-server-hs32')
     } else if(hibernateVersion.equals("3.6")){
       compile project(':skif-store-server:skif-store-server-hs36')
     }
-    compile project(':skif-store-test:skif-store-test-api')
+
     provided libraries.weblogic
 
-    testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
+
+    //internal dependencies + optional deps to logging frameworks:
+    testCompile project(':skif-config')
 }
 
 task clientJar(type: Jar) {

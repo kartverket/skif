@@ -6,8 +6,10 @@ dependencies {
     provided libraries.jaxws_rt
     provided libraries.weblogic
 
-    testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
-    testCompile project(':skif-service-test:skif-service-test-server')
+    testCompile project(':skif-service-test:skif-service-test-server') //trenger denne avhengighet for testing av servicer
     testCompile project(path: ':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wswar', configuration: 'singlevm')
+
+    //internal dependencies + optional deps to logging frameworks:
+    testCompile project(':skif-config')
 }

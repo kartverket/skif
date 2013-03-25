@@ -1,7 +1,9 @@
 dependencies {
     compile project(':skif-store-common')
 
-    testCompile project(':skif-config')
     testCompile project(':skif-testsupport-common')
+
+    //internal dependencies + optional deps to logging frameworks:
+    testCompile project(':skif-config')
 
 }
