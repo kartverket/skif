@@ -15,6 +15,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -34,10 +35,16 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
 
     protected AbstractEndringManager(Collection<Class<? extends AbstractEndring>> endringsklasser, Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Configuration configuration) {
         this.contextProvider = contextProvider;
-        this.sequenceBlockAllocatorService = new DefaultSequenceBlockAllocatorServiceImpl(connectionProvider, configuration);
-        this.sequenceName = configuration.getString(SkifConfigConstants.ENDRINGSNUMMER_SEQUENCE_NAME);
-        endringklasseMap = new HashMap<Class<? extends BubbleId>, Class<? extends AbstractEndring>>(endringsklasser.size());
 
+        this.sequenceBlockAllocatorService = new DefaultSequenceBlockAllocatorServiceImpl(connectionProvider, configuration) {
+            @Override
+            public void commit(Connection con) throws SQLException {
+                // Committing tas av container for endringsnummer
+            }
+        };
+        this.sequenceName = configuration.getString(SkifConfigConstants.ENDRINGSNUMMER_SEQUENCE_NAME);
+
+        endringklasseMap = new HashMap<Class<? extends BubbleId>, Class<? extends AbstractEndring>>(endringsklasser.size());
         for (Class<? extends AbstractEndring> endringClass : endringsklasser) {
             endringklasseMap.put(findIdClassForEndringClass(endringClass), endringClass);
         }
