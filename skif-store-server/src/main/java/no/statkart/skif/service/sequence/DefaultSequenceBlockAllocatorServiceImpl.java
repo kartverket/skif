@@ -30,15 +30,14 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
         this.configuration = configuration;
     }
 
-    //TODO: Skal denne bare redirecte til den andre implementasjonen?
     @Override
     public long allocateSequenceBlock(String sequenceName, int blockSize) {
         if (blockSize <= 0) throw new RuntimeException("Blocksize må være positiv: " + blockSize);
 
         Connection con = connectionProvider.get();
 
-        long prevFreeNumber = 0;
-        long nextFreeNumber = 0;
+        final long prevFreeNumber;
+        final long nextFreeNumber;
 
         PreparedStatement stmt = null;
         try {
@@ -63,7 +62,7 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
                 con.rollback();
                 throw new ImplementationException("Oppdatering av sekvens med sekvensnavn: " + sequenceName + "feilet. Forventet 1 oppdatering. Fikk: " + result);
             }
-            con.commit();
+            commit(con);
         } catch (SQLException e) {
             throw new OperationalException("Oppdatering av sekvens feilet: " + sequenceName, e);
         } finally {
@@ -74,5 +73,16 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
             }
         }
         return nextFreeNumber - 1;
+    }
+
+    /**
+     * Standardoppførsel er at implementasjonen committer transaksjonen. De som ønsker å benytte sekvensnallokatoren i
+     * egen transaksjon overrider denne til å ikke gjøre noe.
+     *
+     * @param con    databaseforbindelsen
+     * @throws SQLException
+     */
+    public void commit(Connection con) throws SQLException {
+        con.commit();
     }
 }

@@ -1,8 +1,12 @@
 package no.statkart.skif.store.endringslogg;
 
 import com.google.inject.Provider;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ServiceRequestContext;
+import no.statkart.skif.service.sequence.DefaultSequenceBlockAllocatorServiceImpl;
+import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +14,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Connection;
+import java.util.*;
 
 /**
  * Håndterer grunnleggende generering av endringer. Prosjekter må i det minste lage en tynn implementasjon.
@@ -27,11 +29,13 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
     private final Map<Class<? extends BubbleId>, Class<? extends AbstractEndring>> endringklasseMap;
     private final Provider<ServiceRequestContext> contextProvider;
 
-    // TODO: Test
-    private long id = 0;
+    private final SequenceBlockAllocatorService sequenceBlockAllocatorService;
+    private final String sequenceName;
 
-    protected AbstractEndringManager(Provider<ServiceRequestContext> contextProvider, Collection<Class<? extends AbstractEndring>> endringsklasser) {
+    protected AbstractEndringManager(Collection<Class<? extends AbstractEndring>> endringsklasser, Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Configuration configuration) {
         this.contextProvider = contextProvider;
+        this.sequenceBlockAllocatorService = new DefaultSequenceBlockAllocatorServiceImpl(connectionProvider, configuration);
+        this.sequenceName = configuration.getString(SkifConfigConstants.ENDRINGSNUMMER_SEQUENCE_NAME);
         endringklasseMap = new HashMap<Class<? extends BubbleId>, Class<? extends AbstractEndring>>(endringsklasser.size());
 
         for (Class<? extends AbstractEndring> endringClass : endringsklasser) {
@@ -47,7 +51,7 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
 
         Type[] bounds = typeParameters[0].getBounds();
         if (bounds.length != 1) {
-            throw new ImplementationException("Endringsklasse " + endringClass + " typeparameter som ikke har én og bare én bounds", logger);
+            throw new ImplementationException("Endringsklasse " + endringClass + " typeparameter som ikke har én og bare én bound", logger);
         }
 
         final Class<? extends BubbleId> bubbleIdClass;
@@ -79,42 +83,61 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         String principal = serviceRequestContext.getCallerPrincipal().getName();
         Date tidspunkt = new Date();
 
+        List<AbstractEndring> endringer = new ArrayList<AbstractEndring>();
+
         for (BubbleId<?> bubbleId : storeServer.getInsertedIds()) {
-            createEndring(storeServer, tidspunkt, principal, bubbleId, 1);
+            AbstractEndring<?> endring = createEndring(tidspunkt, principal, bubbleId, 1);
+            if (endring != null) {
+                endringer.add(endring);
+            }
         }
         for (BubbleId<?> bubbleId : storeServer.getUpdatedIds()) {
-            createEndring(storeServer, tidspunkt, principal, bubbleId, 2);
+            AbstractEndring<?> endring = createEndring(tidspunkt, principal, bubbleId, 2);
+            if (endring != null) {
+                endringer.add(endring);
+            }
         }
         for (BubbleId<?> bubbleId : storeServer.getUpdatedIds()) {
-            createEndring(storeServer, tidspunkt, principal, bubbleId, 3);
+            AbstractEndring<?> endring = createEndring(tidspunkt, principal, bubbleId, 3);
+            if (endring != null) {
+                endringer.add(endring);
+            }
+        }
+
+        final int antall = endringer.size();
+        if (antall > 0) {
+            long nr = sequenceBlockAllocatorService.allocateSequenceBlock(sequenceName, antall) - antall + 1;
+            for (AbstractEndring endring : endringer) {
+                Class<? extends BubbleId<? extends AbstractEndring>> idClass = BubbleIds.getBubbleIdClass(endring.getClass());
+                BubbleId<? extends AbstractEndring> id = BubbleIds.createInstance(idClass, nr++, SnapshotVersion.CURRENT);
+                endring.setId(id);
+                storeServer.insert(endring);
+            }
         }
     }
 
-    private void createEndring(StoreServer storeServer, Date tidspunkt, String brukernavn, BubbleId<?> bubbleId, int endringstype) {
+    private AbstractEndring<?> createEndring(Date tidspunkt, String brukernavn, BubbleId<?> bubbleId, int endringstype) {
         Class<? extends AbstractEndring> endringClass = endringklasseMap.get(bubbleId.getClass());
         if (endringClass != null) {
-            AbstractEndring<?> endring = createEndring(endringClass);
+            final AbstractEndring<?> endring;
+
+            try {
+                endring = endringClass.newInstance();
+            } catch (InstantiationException e) {
+                throw new ImplementationException(e);
+            } catch (IllegalAccessException e) {
+                throw new ImplementationException(e);
+            }
 
             endring.setEndringstype(endringstype);
             endring.setEndringstidspunkt(tidspunkt);
             endring.setBrukernavn(brukernavn);
             endring.setEndretBubbleId(bubbleId);
 
-            storeServer.insert(endring);
+            return endring;
+        } else {
+            return null;
         }
     }
 
-    private AbstractEndring<?> createEndring(Class<? extends AbstractEndring> endringClass) {
-        try {
-            AbstractEndring endring = endringClass.newInstance();
-            Class<? extends BubbleId<? extends AbstractEndring>> endringIdClass = BubbleIds.getBubbleIdClass(endring.getClass());
-            BubbleId<? extends AbstractEndring> endringId = BubbleIds.createInstance(endringIdClass, ++id, SnapshotVersion.CURRENT);
-            endring.setId(endringId);
-            return endring;
-        } catch (InstantiationException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException(e);
-        }
-    }
 }

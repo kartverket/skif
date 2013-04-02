@@ -47,6 +47,7 @@ import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
 import no.statkart.skif.storetest2.domain.eierskap.Eiendom;
 import no.statkart.skif.storetest2.domain.eierskap.Eier;
+import no.statkart.skif.storetest2.domain.endringslogg.Endring;
 import no.statkart.skif.storetest2.endringslogg.EndringManager;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
@@ -173,6 +174,7 @@ public class StoreTest2ServerModule extends SkifModule {
                 .addResource(EnumKodeIdType.class)
                 .addResource(Eiendom.class)
                 .addResource(Eier.class)
+                .addResource(Endring.class)
                 ;
 
 
