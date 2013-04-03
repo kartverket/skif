@@ -1,0 +1,25 @@
+package no.statkart.skif.storetest2.endringslogg;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+import no.statkart.skif.store.endringslogg.AbstractEndringFinder;
+import no.statkart.skif.storetest2.domain.endringslogg.Endring;
+import org.hibernate.Session;
+
+/**
+ * Finder for endringslogg.
+ *
+ * @author Tor Egil R. Strand
+ * @since 2.2.0
+ */
+@Singleton
+public class EndringFinder extends AbstractEndringFinder<Endring> {
+    /**
+     * @param sessionProvider provider av gjeldende Hibernate-session
+     */
+    @Inject
+    public EndringFinder(Provider<Session> sessionProvider) {
+        super(Endring.class, sessionProvider);
+    }
+}

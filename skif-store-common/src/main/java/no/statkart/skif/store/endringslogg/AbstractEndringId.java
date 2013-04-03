@@ -9,7 +9,7 @@ import no.statkart.skif.store.SnapshotVersion;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public abstract class AbstractEndringId<T extends AbstractEndring> extends AbstractBubbleId<T> {
+public class AbstractEndringId<T extends AbstractEndring> extends AbstractBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
     public AbstractEndringId() {

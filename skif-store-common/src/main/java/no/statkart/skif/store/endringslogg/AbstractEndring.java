@@ -23,6 +23,10 @@ public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBub
         return (AbstractEndringId<?>) super.getId();
     }
 
+    public long getEndringsnummer() {
+        return getId().getValue();
+    }
+
     public int getEndringstype() {
         return endringstype;
     }
