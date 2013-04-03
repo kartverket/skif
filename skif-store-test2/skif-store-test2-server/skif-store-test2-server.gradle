@@ -3,7 +3,13 @@ configurations {
 }
 
 dependencies {
-    compile project(':skif-store-server:skif-store-server-hs36')
+    //tester disse implementasjonene her..
+    if (hibernateVersion.equals("3.2")) {
+        compile project(':skif-store-server:skif-store-server-hs32')
+    } else if (hibernateVersion.equals("3.6")) {
+        compile project(':skif-store-server:skif-store-server-hs36')
+    }
+
     compile project(':skif-store-test2:skif-store-test2-api')
 
     provided libraries.weblogic

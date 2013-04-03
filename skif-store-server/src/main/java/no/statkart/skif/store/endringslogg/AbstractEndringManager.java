@@ -93,19 +93,19 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         List<AbstractEndring> endringer = new ArrayList<AbstractEndring>();
 
         for (BubbleId<?> bubbleId : storeServer.getInsertedIds()) {
-            AbstractEndring<?> endring = createEndring(tidspunkt, principal, bubbleId, 1);
+            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, 1);
             if (endring != null) {
                 endringer.add(endring);
             }
         }
         for (BubbleId<?> bubbleId : storeServer.getUpdatedIds()) {
-            AbstractEndring<?> endring = createEndring(tidspunkt, principal, bubbleId, 2);
+            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, 2);
             if (endring != null) {
                 endringer.add(endring);
             }
         }
         for (BubbleId<?> bubbleId : storeServer.getUpdatedIds()) {
-            AbstractEndring<?> endring = createEndring(tidspunkt, principal, bubbleId, 3);
+            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, 3);
             if (endring != null) {
                 endringer.add(endring);
             }
@@ -123,7 +123,7 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         }
     }
 
-    private AbstractEndring<?> createEndring(Date tidspunkt, String brukernavn, BubbleId<?> bubbleId, int endringstype) {
+    private AbstractEndring<?> createEndring(StoreServer storeServer, Date tidspunkt, String brukernavn, BubbleId<?> bubbleId, int endringstype) {
         Class<? extends AbstractEndring> endringClass = endringklasseMap.get(bubbleId.getClass());
         if (endringClass != null) {
             final AbstractEndring<?> endring;
@@ -141,10 +141,22 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
             endring.setBrukernavn(brukernavn);
             endring.setEndretBubbleId(bubbleId);
 
+            decorateEndring(storeServer, endring);
+
             return endring;
         } else {
             return null;
         }
+    }
+
+    /**
+     * Overstyr denne for å initialisere andre felter enn de som følger med {@link AbstractEndring}. Endringen har på
+     * dette tidspunktet ingen id, og er følgelig ikke lagt inn i store.
+     *
+     * @param storeServer    store
+     * @param endring        endringen som nettopp har blitt laget
+     */
+    protected void decorateEndring(StoreServer storeServer, AbstractEndring<?> endring) {
     }
 
 }
