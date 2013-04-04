@@ -56,6 +56,10 @@ public class StoreTest2ClientModule extends SkifModule {
 
         install(new RemoteServerModule(moduleConfiguration));
         install(new RunOnServerRemoteServiceModule(moduleConfiguration));
+        install(new RemoteServiceModule(moduleConfiguration, new StoreTest2Services().getServices(), mapping)
+//                .setExceptionMapping(exceptionMapping)
+//                .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
+        );
         install(new RemoteServiceModule(moduleConfiguration, new StoreTest2StoreServices().getServices(), mapping)
 //                .setExceptionMapping(exceptionMapping)
 //                .setServiceContextMapperClass(StoreTestServiceContextMapper.class)

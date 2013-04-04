@@ -19,7 +19,7 @@ create table Eier (
 create table Endring (
     id number(19,0) not null,
     class varchar2(255 char) not null,
-    endringstype number(10,0),
+    endringstype number(3,0),
     endringstidspunkt timestamp,
     brukernavn varchar2(255 char),
     endretBubbleId number(19,0),

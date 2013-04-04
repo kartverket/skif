@@ -9,7 +9,7 @@ import no.statkart.skif.storetest2.domain.StoreTest2BubbleId;
  * @since 2.2.0
  */
 
-public class AbstractStoreTest2BubbleId<T extends AbstractStoreTest2Bubble> extends AbstractBubbleId<T> implements StoreTest2BubbleId<T> {
+public abstract class AbstractStoreTest2BubbleId<T extends AbstractStoreTest2Bubble> extends AbstractBubbleId<T> implements StoreTest2BubbleId<T> {
     private static final long serialVersionUID = 1L;
 
     @Override

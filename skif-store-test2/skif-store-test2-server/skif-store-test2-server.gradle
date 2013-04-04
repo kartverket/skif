@@ -6,6 +6,10 @@ dependencies {
     //tester disse implementasjonene her..
     if (hibernateVersion.equals("3.2")) {
         compile project(':skif-store-server:skif-store-server-hs32')
+
+        // SchemaGen trenger disse
+        runtime libraries.jcl_to_slf4j
+        runtime 'commons-collections:commons-collections:2.1.1'
     } else if (hibernateVersion.equals("3.6")) {
         compile project(':skif-store-server:skif-store-server-hs36')
     }

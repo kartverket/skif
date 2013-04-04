@@ -14,7 +14,7 @@ import java.util.Date;
 public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBubbleObject {
     private static final long serialVersionUID = 1L;
 
-    private int endringstype;
+    private Endringstype endringstype;
     private Date endringstidspunkt;
     private String brukernavn;
 
@@ -27,11 +27,11 @@ public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBub
         return getId().getValue();
     }
 
-    public int getEndringstype() {
+    public Endringstype getEndringstype() {
         return endringstype;
     }
 
-    void setEndringstype(int endringstype) {
+    void setEndringstype(Endringstype endringstype) {
         this.endringstype = endringstype;
     }
 

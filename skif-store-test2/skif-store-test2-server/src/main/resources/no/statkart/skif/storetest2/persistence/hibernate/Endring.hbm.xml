@@ -10,7 +10,7 @@
 
         <discriminator column="class" type="string"/>
 
-        <property name="endringstype"/>
+        <property name="endringstype" type="no.statkart.skif.store.persistence.hibernate.type.EndringstypeType"/>
         <property name="endringstidspunkt"/>
         <property name="brukernavn"/>
 

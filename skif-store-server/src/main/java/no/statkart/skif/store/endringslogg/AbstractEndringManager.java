@@ -93,19 +93,19 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         List<AbstractEndring> endringer = new ArrayList<AbstractEndring>();
 
         for (BubbleId<?> bubbleId : storeServer.getInsertedIds()) {
-            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, 1);
+            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, Endringstype.Nyoppretting);
             if (endring != null) {
                 endringer.add(endring);
             }
         }
         for (BubbleId<?> bubbleId : storeServer.getUpdatedIds()) {
-            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, 2);
+            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, Endringstype.Oppdatering);
             if (endring != null) {
                 endringer.add(endring);
             }
         }
-        for (BubbleId<?> bubbleId : storeServer.getUpdatedIds()) {
-            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, 3);
+        for (BubbleId<?> bubbleId : storeServer.getDeletedIds()) {
+            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, Endringstype.Sletting);
             if (endring != null) {
                 endringer.add(endring);
             }
@@ -123,7 +123,7 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         }
     }
 
-    private AbstractEndring<?> createEndring(StoreServer storeServer, Date tidspunkt, String brukernavn, BubbleId<?> bubbleId, int endringstype) {
+    private AbstractEndring<?> createEndring(StoreServer storeServer, Date tidspunkt, String brukernavn, BubbleId<?> bubbleId, Endringstype endringstype) {
         Class<? extends AbstractEndring> endringClass = endringklasseMap.get(bubbleId.getClass());
         if (endringClass != null) {
             final AbstractEndring<?> endring;

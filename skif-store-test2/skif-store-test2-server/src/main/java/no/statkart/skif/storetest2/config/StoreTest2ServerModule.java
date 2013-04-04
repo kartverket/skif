@@ -88,6 +88,7 @@ public class StoreTest2ServerModule extends SkifModule {
         bind(IdService.class).to(IdServiceImpl.class);
         bind(SequenceBlockAllocatorService.class).to(no.statkart.skif.storetest2.service.id.SequenceBlockAllocatorService.class);
 
+        install(new ServerServiceModule(moduleConfiguration, new StoreTest2Services().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTest2StoreServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTest2TestServices().getServices()));
         bind(TestdataService.class).to(no.statkart.skif.storetest2.service.test.TestdataService.class);
