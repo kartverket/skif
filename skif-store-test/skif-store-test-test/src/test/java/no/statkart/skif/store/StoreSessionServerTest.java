@@ -1,9 +1,7 @@
 package no.statkart.skif.store;
 
-import com.google.inject.AbstractModule;
+import com.google.inject.*;
 import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
 import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.SkifUtil;
@@ -181,8 +179,10 @@ public class StoreSessionServerTest {
             @Override
             protected void configure() {
                 bind(IdService.class).toProvider(Providers.<IdService>of(null));
-                bind(SkifUtil.typeLiteral(DBLockerService.class, Long.class)).toInstance(MemoryLockerSingleton.getInstance());
-                bind(SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).toInstance(MemoryLockerSingleton.getInstance());
+                TypeLiteral<MemoryLocker<Long>> memoryLockerLongType = SkifUtil.typeLiteral(MemoryLocker.class, Long.class);
+                bind(memoryLockerLongType).in(Singleton.class);
+                bind(SkifUtil.typeLiteral(DBLockerService.class, Long.class)).to(memoryLockerLongType);
+                bind(SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).to(memoryLockerLongType);
                 bind(LockerStrategy.class).to(TransactionalLockerStrategy.class);
                 bind(TransactionalLockerStrategy.class).in(Singleton.class);
                 bind(Configuration.class).toInstance(new SkifConfiguration());

@@ -18,16 +18,18 @@ import java.util.*;
  * Keeps {@link no.statkart.skif.store.BubbleId identified} items locked for a given
  * time interval (leasing). The lock are held in memory
  *
+ * @param <T>    id value type (typically Long, or maybe String)
+ *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  */
-public class MemoryLocker implements DBLockerService<Long>, DBLockerInTransactionService<Long> {
+public class MemoryLocker<T> implements DBLockerService<T>, DBLockerInTransactionService<T> {
     private static Logger log = LoggerFactory.getLogger(MemoryLocker.class);
 
     /**
      * The current locks
      */
-    private Map<LockKey<Long>, LockInfo<Long>> locks = new HashMap<LockKey<Long>, LockInfo<Long>>();
+    private Map<LockKey<T>, LockInfo<T>> locks = new HashMap<LockKey<T>, LockInfo<T>>();
 
     /**
      * Obtains a lock for the specified id
@@ -39,8 +41,8 @@ public class MemoryLocker implements DBLockerService<Long>, DBLockerInTransactio
      * @throws no.statkart.skif.exception.LockedException
      *
      */
-    public synchronized LockInfo<Long> lock(LockKey<Long> key, String owner, long lockTimeout) throws LockedException {
-        LockInfo<Long> lock = locks.get(key);
+    public synchronized LockInfo<T> lock(LockKey<T> key, String owner, long lockTimeout) throws LockedException {
+        LockInfo<T> lock = locks.get(key);
         Timestamp expires = new Timestamp(System.currentTimeMillis() + lockTimeout);
 
 
@@ -49,18 +51,18 @@ public class MemoryLocker implements DBLockerService<Long>, DBLockerInTransactio
         }
         if (lock == null) {
             MemoryLocker.log.debug("Locking : " + key + " for user " + owner);
-            lock = new LockInfo<Long>(key, owner, expires, true);
+            lock = new LockInfo<T>(key, owner, expires, true);
             locks.put(key, lock);
             return lock;
         } else if (lock.isOwnedBy(owner)) {
             MemoryLocker.log.debug("Renewing lock : " + key + " for user " + owner);
-            lock = new LockInfo<Long>(key, owner, expires, false);
+            lock = new LockInfo<T>(key, owner, expires, false);
             locks.put(key, lock);
             return lock;
         } else if (lock.expired()) {
             MemoryLocker.log.debug("Expiring lock : " + key + " for user " + lock.getOwner());
             MemoryLocker.log.debug("Locking : " + key + " for user " + owner);
-            lock = new LockInfo<Long>(key, owner, expires, true);
+            lock = new LockInfo<T>(key, owner, expires, true);
             locks.put(key, lock);
             return lock;
         } else {
@@ -84,17 +86,17 @@ public class MemoryLocker implements DBLockerService<Long>, DBLockerInTransactio
      * @throws no.statkart.skif.exception.LockedException
      *          if not all locks could be obtainded
      */
-    public synchronized Set<LockInfo<Long>> lockAll(Set<LockKey<Long>> keys, String owner, long lockTimeout) throws LockedException {
-        Set<LockInfo<Long>> result = new HashSet<LockInfo<Long>>(keys.size());
+    public synchronized Set<LockInfo<T>> lockAll(Set<LockKey<T>> keys, String owner, long lockTimeout) throws LockedException {
+        Set<LockInfo<T>> result = new HashSet<LockInfo<T>>(keys.size());
         try {
-            for (LockKey<Long> lockKey : keys) {
-                LockInfo<Long> lock = lock(lockKey, owner, lockTimeout);
+            for (LockKey<T> lockKey : keys) {
+                LockInfo<T> lock = lock(lockKey, owner, lockTimeout);
                 result.add(lock);
             }
             return result;
         } catch (RuntimeException e) {
             // Cleanup
-            for (LockInfo<Long> lockInfo : result) {
+            for (LockInfo<T> lockInfo : result) {
                 if (lockInfo.isNew()) locks.remove(lockInfo.getLockKey());
             }
             throw e;
@@ -107,8 +109,8 @@ public class MemoryLocker implements DBLockerService<Long>, DBLockerInTransactio
      *
      * @param owner unique string identifying the locker
      */
-    public synchronized void unlock(LockKey<Long> key, String owner) {
-        LockInfo<Long> lock = locks.get(key);
+    public synchronized void unlock(LockKey<T> key, String owner) {
+        LockInfo<T> lock = locks.get(key);
         if (lock != null && lock.isOwnedBy(owner)) {
             MemoryLocker.log.debug("Unlocking " + key + " for " + owner);
             locks.remove(key);
@@ -132,8 +134,8 @@ public class MemoryLocker implements DBLockerService<Long>, DBLockerInTransactio
      */
     public synchronized void releaseAllLocks(String owner) {
         MemoryLocker.log.debug("Releasing all locks for " + owner);
-        for (Iterator<Map.Entry<LockKey<Long>, LockInfo<Long>>> iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry<LockKey<Long>, LockInfo<Long>> entry = iterator.next();
+        for (Iterator<Map.Entry<LockKey<T>, LockInfo<T>>> iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<LockKey<T>, LockInfo<T>> entry = iterator.next();
             if (entry.getValue().isOwnedBy(owner)) {
                 MemoryLocker.log.debug("Unlocking " + entry.getValue().getLockKey() + " for " + owner);
                 iterator.remove();
@@ -141,26 +143,26 @@ public class MemoryLocker implements DBLockerService<Long>, DBLockerInTransactio
         }
     }
 
-    public synchronized Collection<LockInfo<Long>> renewAllLocks(String owner, long lockTimeout) {
+    public synchronized Collection<LockInfo<T>> renewAllLocks(String owner, long lockTimeout) {
         Timestamp expires = new Timestamp(System.currentTimeMillis() + lockTimeout);
-        for (Map.Entry<LockKey<Long>, LockInfo<Long>> entry : locks.entrySet()) {
-            LockInfo<Long> lock = entry.getValue();
+        for (Map.Entry<LockKey<T>, LockInfo<T>> entry : locks.entrySet()) {
+            LockInfo<T> lock = entry.getValue();
             if (lock.isOwnedBy(owner)) {
-                entry.setValue(new LockInfo<Long>(lock.getLockKey(), lock.getOwner(), expires, false));
+                entry.setValue(new LockInfo<T>(lock.getLockKey(), lock.getOwner(), expires, false));
             }
         }
         return getLocksBy(owner);
     }
 
     @Override
-    public LockInfo<Long> getLock(LockKey<Long> lockKey) {
+    public LockInfo<T> getLock(LockKey<T> lockKey) {
         return locks.get(lockKey);
     }
 
-    public void unlockAll(Set<LockKey<Long>> unLockIds, String owner) {
-        for (Iterator<Map.Entry<LockKey<Long>, LockInfo<Long>>> iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry<LockKey<Long>, LockInfo<Long>> entry = iterator.next();
-            LockInfo<Long> lock = entry.getValue();
+    public void unlockAll(Set<LockKey<T>> unLockIds, String owner) {
+        for (Iterator<Map.Entry<LockKey<T>, LockInfo<T>>> iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<LockKey<T>, LockInfo<T>> entry = iterator.next();
+            LockInfo<T> lock = entry.getValue();
             if (unLockIds.contains(lock.getLockKey()) && lock.isOwnedBy(owner)) {
                 iterator.remove();
             }
@@ -171,8 +173,8 @@ public class MemoryLocker implements DBLockerService<Long>, DBLockerInTransactio
         int lockCount = 0;
 
         MemoryLocker.log.debug("Releasing all locks for " + owner + " in transaction");
-        for (Iterator<Map.Entry<LockKey<Long>, LockInfo<Long>>> iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry<LockKey<Long>, LockInfo<Long>> entry = iterator.next();
+        for (Iterator<Map.Entry<LockKey<T>, LockInfo<T>>> iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<LockKey<T>, LockInfo<T>> entry = iterator.next();
             if (entry.getValue().isOwnedBy(owner)) {
                 MemoryLocker.log.debug("Unlocking " + entry.getValue().getLockKey() + " for " + owner + " in transaction");
                 iterator.remove();
@@ -191,9 +193,9 @@ public class MemoryLocker implements DBLockerService<Long>, DBLockerInTransactio
      * @param owner unique string identifying the locker
      * @return locks held by key
      */
-    public synchronized Collection<LockInfo<Long>> getLocksBy(String owner) {
-        List<LockInfo<Long>> locks = new ArrayList<LockInfo<Long>>(100);
-        for (LockInfo<Long> lock : this.locks.values()) {
+    public synchronized Collection<LockInfo<T>> getLocksBy(String owner) {
+        List<LockInfo<T>> locks = new ArrayList<LockInfo<T>>(100);
+        for (LockInfo<T> lock : this.locks.values()) {
             if (lock.isOwnedBy(owner)) {
                 locks.add(lock);
             }
