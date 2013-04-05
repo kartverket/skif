@@ -221,7 +221,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
             if (bindingEntry.getKey().getTypeLiteral().getRawType().equals(DBLockerInTransactionService.class)) {
                 Type[] typeArguments = ((ParameterizedType) bindingEntry.getKey().getTypeLiteral().getType()).getActualTypeArguments();
                 DBLockerInTransactionService<?> lockerInTransactionService = (DBLockerInTransactionService<?>) bindingEntry.getValue().getProvider().get();
-                consumedLocks = lockerInTransactionService.consumeAllLocks(owner);
+                consumedLocks += lockerInTransactionService.consumeAllLocks(owner);
             }
         }
 
