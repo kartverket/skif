@@ -1,5 +1,3 @@
-assert ['1.0', '1.1'].contains(gradle.gradleVersion)
-
 apply plugin: 'sktools-filterproperties-plugin'
 
 //user properties
@@ -407,6 +405,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build47'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build91'
     }
 }
