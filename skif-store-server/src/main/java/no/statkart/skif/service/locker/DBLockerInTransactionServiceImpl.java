@@ -22,7 +22,7 @@ public class DBLockerInTransactionServiceImpl implements DBLockerInTransactionSe
     }
 
     @Override
-    public void consumeAllLocks(String owner, final int expectedLockCount) {
+    public int consumeAllLocks(String owner) {
         Connection con = connectionProvider.get();
         PreparedStatement stmt = null;
         try {
@@ -31,11 +31,7 @@ public class DBLockerInTransactionServiceImpl implements DBLockerInTransactionSe
             stmt.setString(1, owner);
             logger.debug("SQL: " + sqlString);
             logger.debug("SQL: PARAM 1=" + owner);
-            final int consumedLockCount = stmt.executeUpdate();
-
-            if (consumedLockCount != expectedLockCount) {
-                throw new OperationalException("Låsene ble borte under fullføring av brukstilfellet. Brukstilfellet har sannsynligvis blitt fullført på en annen tjener.");
-            }
+            return stmt.executeUpdate();
         } catch (SQLException e) {
             throw new OperationalException("Sletting av alle låser for bruker feilet: " + owner, e);
         } finally {

@@ -24,7 +24,7 @@ public class DBLockerInTransactionServiceEJBBean implements DBLockerInTransactio
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED) // TODO: Bør være mandatory
-    public void consumeAllLocks(String owner, int expectedLockCount) {
-        serviceChain.consumeAllLocks(owner, expectedLockCount);
+    public int consumeAllLocks(String owner) {
+        return serviceChain.consumeAllLocks(owner);
     }
 }

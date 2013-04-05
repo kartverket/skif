@@ -169,7 +169,7 @@ public class MemoryLocker<T> implements DBLockerService<T>, DBLockerInTransactio
         }
     }
 
-    public void consumeAllLocks(String owner, int expectedLockCount) {
+    public int consumeAllLocks(String owner) {
         int lockCount = 0;
 
         MemoryLocker.log.debug("Releasing all locks for " + owner + " in transaction");
@@ -182,9 +182,7 @@ public class MemoryLocker<T> implements DBLockerService<T>, DBLockerInTransactio
             }
         }
 
-        if (lockCount != expectedLockCount) {
-            throw new OperationalException("Låsene ble borte under fullføring av brukstilfellet. Brukstilfellet har sannsynligvis blitt fullført på en annen tjener.");
-        }
+        return lockCount;
     }
 
     /**

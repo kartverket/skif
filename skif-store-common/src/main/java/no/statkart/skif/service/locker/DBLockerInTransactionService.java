@@ -8,12 +8,12 @@ package no.statkart.skif.service.locker;
  */
 public interface DBLockerInTransactionService<T> {
     /**
-     * Låser opp alle låser tilhørende brukeren og sjekker at antallet stemmer med det som er forventet. En exception
-     * blir kastet dersom antallet låser avviker fra det forventede.
+     * Låser opp alle låser tilhørende brukeren og returnerer antallet slik at det kan sjekkes at det stemmer med det som er forventet.
+     *
      *
      * @param owner bruker som skal få låsene låst opp
-     * @param expectedLockCount antall forventede låser
+     * @return antall opplåste låser
      * @throws no.statkart.skif.exception.OperationalException hvis antall låser er feil
      */
-    void consumeAllLocks(String owner, int expectedLockCount);
+    int consumeAllLocks(String owner);
 }
