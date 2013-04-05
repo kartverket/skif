@@ -12,6 +12,8 @@ import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -211,12 +213,31 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         String owner = serviceRequestContext.getUserName();
         ensureLockMapInitialized();
 
+        Map<Class<?>, Integer> numLocksPerValueType = new HashMap<Class<?>, Integer>();
+        for (LockInfo<?> lockInfo : lockMap.values()) {
+            Class<?> valueType = lockInfo.getLockKey().keyValue.getClass();
+
+            Integer numLocks = numLocksPerValueType.get(valueType);
+            if (numLocks == null) {
+                numLocks = 1;
+            } else {
+                numLocks = numLocks + 1;
+            }
+            numLocksPerValueType.put(valueType, numLocks);
+        }
+
         Map<Key<?>,Binding<?>> bindings = injector.getBindings();
         for (Map.Entry<Key<?>, Binding<?>> bindingEntry : bindings.entrySet()) {
             if (bindingEntry.getKey().getTypeLiteral().getRawType().equals(DBLockerInTransactionService.class)) {
+                Type[] typeArguments = ((ParameterizedType) bindingEntry.getKey().getTypeLiteral().getType()).getActualTypeArguments();
+                Integer numLocks = numLocksPerValueType.remove(((Class) typeArguments[0]));
+
                 DBLockerInTransactionService<?> lockerInTransactionService = (DBLockerInTransactionService<?>) bindingEntry.getValue().getProvider().get();
-                lockerInTransactionService.consumeAllLocks(owner, lockMap.size());
+                lockerInTransactionService.consumeAllLocks(owner, numLocks != null ? numLocks : 0);
             }
+        }
+        if (!numLocksPerValueType.isEmpty()) {
+            throw new ImplementationException("Fant låser for verdityper som ikke hadde lockerservice: " + numLocksPerValueType.keySet().toString());
         }
     }
 
