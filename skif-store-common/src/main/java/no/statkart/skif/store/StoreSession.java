@@ -132,6 +132,15 @@ public interface StoreSession {
     <T extends BubbleObject> void delete(T bubbleObject);
 
     /**
+     * Markerer objektet som uendret i sessionen.
+     *
+     * @since 2.2.0
+     *
+     * @param bubbleObject
+     */
+    <T extends BubbleObject> void undo(T bubbleObject);
+
+    /**
      * Endre på objektets oppdateringsrekkefølge i sessionen slik at objektet kommer etter alle andre objekter
      * med samme sorteringsindex i sessionen.  Metoden kaster en exception hvis objektet ikke er endret i sessionen
      * eller hvis sessionen ikke er en unit of work

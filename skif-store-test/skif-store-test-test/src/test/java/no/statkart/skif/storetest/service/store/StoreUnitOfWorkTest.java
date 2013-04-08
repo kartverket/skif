@@ -6,6 +6,7 @@ import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.storetest.TestHelper;
 import no.statkart.skif.storetest.domain.demo.Foo;
@@ -17,14 +18,14 @@ import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
 import static no.statkart.skif.storetest.TestHelper.assertNotFound;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertSame;
+import static org.testng.Assert.*;
 
 /**
  * Tester bruk av UnitOfWork på server. Alle tester kjøres via bean managed transaction slik at ingen ting blir
  * committet til databasen.
  *
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  * @since 2.1
  */
 @Test(groups = "singlevm-required")
@@ -92,7 +93,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             }
         });
     }
-
 
 
     public void testInsertDeleteObjectInSameUnitOfWork() {
@@ -169,5 +169,119 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         });
     }
 
+    public void testUndoInsertion() {
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            Store store;
+            @Inject
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
+            public Object run() {
+                TestHelper.deletePriviouslyWritenTestBubbles(persistenceSessionForSnapshot);
+
+                store.beginUnitOfWork();
+                TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
+                TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");
+                store.insert(testBubble1);
+                store.undo(testBubble1);
+                store.commitUnitOfWork();
+                assertNotFound(store, TestBubbleId_101_CURRENT);
+
+                return null;
+            }
+        });
+    }
+
+    public void testUndoUpdate() {
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            Store store;
+            @Inject
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
+
+            public Object run() {
+                TestHelper.deletePriviouslyWritenTestBubbles(persistenceSessionForSnapshot);
+
+                store.beginUnitOfWork();
+                TestBubbleId<?> TestBubbleId_1_CURRENT = new TestBubbleId<TestBubble>(1L);
+                TestBubble testBubble1 = store.lock(TestBubbleId_1_CURRENT);
+                store.update(testBubble1);
+                store.undo(testBubble1);
+                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+                assertTrue(unitOfWorkTransfer.getUpdatedObjects().isEmpty());
+
+                return null;
+            }
+        });
+
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            Store store;
+            @Inject
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
+
+            public Object run() {
+                TestHelper.deletePriviouslyWritenTestBubbles(persistenceSessionForSnapshot);
+
+                store.beginUnitOfWork();
+                TestBubbleId<?> TestBubbleId_1_CURRENT = new TestBubbleId<TestBubble>(1L);
+                TestBubble testBubble1 = store.lock(TestBubbleId_1_CURRENT);
+                String orgText = testBubble1.getText();
+                testBubble1.setText("Blabla");
+                store.update(testBubble1);
+                assertEquals(store.get(TestBubbleId_1_CURRENT).getText(), testBubble1.getText());
+                store.undo(testBubble1);
+                assertEquals(store.get(TestBubbleId_1_CURRENT).getText(), orgText);
+                store.abortUnitOfWork();
+
+                return null;
+            }
+        });
+    }
+
+    public void testUndoDeletion() {
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            Store store;
+            @Inject
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
+
+            public Object run() {
+                TestHelper.deletePriviouslyWritenTestBubbles(persistenceSessionForSnapshot);
+
+                store.beginUnitOfWork();
+                TestBubbleId<?> TestBubbleId_1_CURRENT = new TestBubbleId<TestBubble>(1L);
+                TestBubble testBubble1 = store.lock(TestBubbleId_1_CURRENT);
+                store.delete(testBubble1);
+                store.undo(testBubble1);
+                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+                assertTrue(unitOfWorkTransfer.getDeletedObjects().isEmpty());
+
+                return null;
+            }
+        });
+    }
+
+    public void testUndoInsertionReinsert() {
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            Store store;
+            @Inject
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
+
+            public Object run() {
+                TestHelper.deletePriviouslyWritenTestBubbles(persistenceSessionForSnapshot);
+
+                store.beginUnitOfWork();
+                TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
+                TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");
+                store.insert(testBubble1);
+                store.undo(testBubble1);
+                store.insert(testBubble1);
+                store.abortUnitOfWork();
+
+                return null;
+            }
+        });
+    }
 }

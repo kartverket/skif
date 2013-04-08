@@ -12,6 +12,7 @@ import static no.statkart.skif.guava.Preconditions.checkNotNull;
 
 /**
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  */
 public abstract class AbstractStoreSession implements WrappableStoreSession {
     protected final int level;
@@ -59,7 +60,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         }
 
         final T bubble = (T) entry.getDerivedBubbleObjectCopyIfLocked(level, store);
-        if (bubble==null) {
+        if (bubble == null) {
             throw new ObjectNotFoundException(bubbleId);
         }
         return bubble;
@@ -257,13 +258,13 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                     storeEntry.setState(level, StoreEntryState.UPDATED);
                     break;
                 case UNCHANGED:
-                    // TOOD: checke locked
+                    // TODO: checke locked
                     storeEntry.setState(level, StoreEntryState.UPDATED);
                     break;
                 case INSERTED:
                     break;
                 case DELETED_INSERTED:
-                    // TOOD: checke locked
+                    // TODO: checke locked
                     storeEntry.setState(level, StoreEntryState.UPDATED);
                 case UPDATED:
                     break;
@@ -326,6 +327,34 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean undoEntry(int level, T bubbleObject) {
+        if (level == 0) {
+            throw new ImplementationException("Kan ikke undo på level 0");
+        }
+
+        StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
+
+        if (storeEntry == null) {
+            throw new ImplementationException("Forsøk på å kalle undo for objekt som ikke er knyttet til Store: " + bubbleObject.getId());
+        } else {
+            ensureLocked(storeEntry);
+            storeEntry.checkNotDerivedInstance(level, bubbleObject);
+
+            BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
+            if (derivedBubbleObject == null) {
+                // Objektet har kommet utenfra og ikke opp fra lavere lag. Ta vekk hele StoreEntry.
+                storeCache.remove(storeEntry.getId());
+                return false;
+            } else {
+                // Blank bare ut entry for dette nivået.
+                storeEntry.setState(level, StoreEntryState.NULL);
+                storeEntry.setBubbleObject(level, null);
+                return true;
+            }
+        }
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(I bubbleId) {
         return evictEntry(level, bubbleId);
     }
@@ -338,7 +367,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     @Override
     public final <T extends BubbleObject> void insert(T bubbleObject) {
         // Opprett BubbleId av riktig type hvis null
-        if (bubbleObject.getId()==null) {
+        if (bubbleObject.getId() == null) {
             final BubbleId<? extends BubbleObject> bubbleId = idService.getNextId(BubbleIds.getBubbleIdClass(bubbleObject.getClass()));
             bubbleObject.setId(bubbleId);
         }
@@ -359,10 +388,19 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
+    public <T extends BubbleObject> void undo(T bubbleObject) {
+        boolean entryKept = undoEntry(level, bubbleObject);
+        if (!entryKept) {
+            modifiedMap.remove(bubbleObject.getId());
+            markModified();
+        }
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
         final StoreEntry storeEntry = modifiedMap.remove(bubbleId);
         markModified();
-        if (storeEntry==null) {
+        if (storeEntry == null) {
             throw new ImplementationException("BubbleId ikke modifisert i session: " + bubbleId);
         }
         modifiedMap.put(bubbleId, storeEntry);

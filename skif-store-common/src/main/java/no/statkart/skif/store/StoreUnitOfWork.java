@@ -2,9 +2,11 @@ package no.statkart.skif.store;
 
 import com.google.common.collect.Lists;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.guava.Preconditions;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Henrik Fredholm
@@ -40,6 +42,11 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry deleteEntry(int level, T bubbleObject) {
         return wrappedStoreSession.deleteEntry(level, bubbleObject);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean undoEntry(int level, T bubbleObject) {
+        return wrappedStoreSession.undoEntry(level, bubbleObject);
     }
 
     @Override
@@ -82,6 +89,11 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     @Override
     public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
         wrappedStoreSession.ensureFullyLoaded(bubbleObject);
+    }
+
+    @Override
+    protected boolean isLocked(StoreEntry storeEntry) {
+        return storeEntry.isLocked();
     }
 
     public WrappableStoreSession abortUnitOfWork() {

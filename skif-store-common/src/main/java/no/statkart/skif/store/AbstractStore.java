@@ -224,6 +224,11 @@ public class AbstractStore implements Store {
     }
 
     @Override
+    public <T extends BubbleObject> void undo(T bubbleObject) {
+        storeSession.undo(bubbleObject);
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
         storeSession.reorderModification(bubbleId);
     }
