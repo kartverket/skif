@@ -242,9 +242,6 @@ subprojects { Project project ->
         }
 
         test {
-            // Vi ønsker som default å stoppe ved første modul som feiler.
-            ignoreFailures = false
-
             boolean singleVm = Boolean.valueOf(rootProject.properties['single_vm'])
             logger.debug "single_vm is set to ${singleVm} for ${project.path}"
 
@@ -255,6 +252,7 @@ subprojects { Project project ->
                 } else {
                     excludeGroups('singlevm-required')
                 }
+                listeners << 'org.testng.reporters.XMLReporter' // For Jenkins, siden Gradle ikke tar med default listerners som standard lenger
             }
 
             jvmArgs '-Xmx1024m'
