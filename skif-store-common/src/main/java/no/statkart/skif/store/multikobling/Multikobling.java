@@ -4,10 +4,7 @@ import com.google.common.collect.*;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * En datastruktur som inneholder et sett av koblinger til objekter av type {@code V} sortert på roller av type {@code R},
@@ -163,7 +160,6 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
         return changed;
     }
 
-
     public class LazyKoblingSet extends ForwardingSet<V> implements Serializable {
         private static final long serialVersionUID = 1L;
 
@@ -206,12 +202,12 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
 
         @Override
         public boolean removeAll(Collection<?> collection) {
-            return standardRemoveAll(collection); // todo check at remove blir kallt
+            return standardRemoveAll(collection);
         }
 
         @Override
         public boolean retainAll(Collection<?> collection) {
-            return standardRetainAll(collection); // todo check at denne virker
+            return standardRetainAll(collection);
         }
 
         @Override
@@ -220,6 +216,40 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
                 return "[" + rolle + ": <lazy loaded>]";
             } else {
                 return standardToString();
+            }
+        }
+
+        @Override
+        public Iterator<V> iterator() {
+            return new LazyKoblingIterator(super.iterator());
+        }
+
+        public class LazyKoblingIterator extends ForwardingIterator<V> {
+            private final Iterator<V> delegate;
+            private V current;
+
+            public LazyKoblingIterator(Iterator<V> delegate) {
+                this.delegate = delegate;
+            }
+
+            @Override
+            protected Iterator<V> delegate() {
+                return delegate;
+            }
+
+            @Override
+            public V next() {
+                // remove() må vite hva gjeldende element er
+                current = super.next();
+                return current;
+            }
+
+            @Override
+            public void remove() {
+                // Å bruke Multikobling.this.remove() vil gi ConcurrentModificationException.
+                // Må derfor la delegert iterator oppdatere SetMultimap, og ta koblinger manuelt.
+                super.remove();
+                koblinger.remove(koblingFactory.create(rolle, current));
             }
         }
     }

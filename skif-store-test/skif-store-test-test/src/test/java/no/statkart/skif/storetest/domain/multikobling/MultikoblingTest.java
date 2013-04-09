@@ -5,6 +5,9 @@ import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.UnitOfWorkTransfer;
+import no.statkart.skif.store.multikobling.DefaultKoblingFactory;
+import no.statkart.skif.store.multikobling.Kobling;
+import no.statkart.skif.store.multikobling.Multikobling;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.multikobling.kobling.RettsstiftelsePersonRolle;
@@ -12,15 +15,15 @@ import no.statkart.skif.storetest.domain.multikobling.kobling.RetttstiftelseTilP
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  * @since 2.1
  */
 @Test(groups = "singlevm-required")
@@ -30,7 +33,6 @@ public class MultikoblingTest extends StoreTestTestCase {
 
     public void test() {
         List<PersonId<?>> personIds = new ArrayList<PersonId<?>>();
-        List<ServituttId<?>> servituttIds = new ArrayList<ServituttId<?>>();
         List<PengeheftelseId<?>> pengeheftelseIds = new ArrayList<PengeheftelseId<?>>();
         store.beginUnitOfWork();
 
@@ -45,8 +47,6 @@ public class MultikoblingTest extends StoreTestTestCase {
         for (int i = 0; i < 5; i++) {
             final Servitutt servitutt = (Servitutt) createBubble(ServituttId.class);
             store.insert(servitutt);
-            final ServituttId<?> servituttId = (ServituttId<?>) servitutt.getId();
-            servituttIds.add(servituttId);
 
             servitutt.getRettighetshaverAktivIds().add(personIds.get(i));
             servitutt.getRettighetshaverHistoriskIds().add(personIds.get(i + 5));
@@ -56,13 +56,13 @@ public class MultikoblingTest extends StoreTestTestCase {
                     new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.RETTIGHETSHAVER_HISTORISK, personIds.get(i + 5))
             );
             assertThat(servitutt.getRettighetshaverAktivIds().contains(personIds.get(i)));
-            assertThat(servitutt.getRettighetshaverHistoriskIds().contains(personIds.get(i+5)));
+            assertThat(servitutt.getRettighetshaverHistoriskIds().contains(personIds.get(i + 5)));
         }
 
         for (int i = 0; i < 5; i++) {
             final Pengeheftelse pengeheftelse = (Pengeheftelse) createBubble(PengeheftelseId.class);
             store.insert(pengeheftelse);
-            final PengeheftelseId<?> pengeheftelseId = (PengeheftelseId<?>) pengeheftelse.getId();
+            final PengeheftelseId<?> pengeheftelseId = pengeheftelse.getId();
             pengeheftelseIds.add(pengeheftelseId);
 
             pengeheftelse.getPanthaverAktivIds().add(personIds.get(i));
@@ -74,7 +74,7 @@ public class MultikoblingTest extends StoreTestTestCase {
                     new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.PANTHAVER_HISTORISK, personIds.get(i + 5))
             );
             assertThat(pengeheftelse.getPanthaverAktivIds().contains(personIds.get(i)));
-            assertThat(pengeheftelse.getPanthavereHistoriskIds().contains(personIds.get(i+5)));
+            assertThat(pengeheftelse.getPanthavereHistoriskIds().contains(personIds.get(i + 5)));
 
         }
 
@@ -88,10 +88,10 @@ public class MultikoblingTest extends StoreTestTestCase {
     /**
      * Oppretter BubbleObject av gitt type og tildeler "unik" id
      */
-    static long nexId = 0;
+    static long nextId = 0;
 
     static <I extends AbstractStoreTestBubbleId<T>, T extends AbstractStoreTestBubble> T createBubble(Class<I> idClass) {
-        final I id = BubbleIds.createInstance(idClass, new Long(++nexId), SnapshotVersion.CURRENT);
+        final I id = BubbleIds.createInstance(idClass, ++nextId, SnapshotVersion.CURRENT);
         final T bubble = id.createTypeInstance();
         bubble.setId(id);
         return bubble;
@@ -121,5 +121,84 @@ public class MultikoblingTest extends StoreTestTestCase {
         servitutt.rettsstiftelsePersonIdsKoblinger.put(RettsstiftelsePersonRolle.RETTIGHETSHAVER_AKTIV, PersonId.create(10));
 
 
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public static enum Testrolle {
+        ROLLE_A, ROLLE_B
+    }
+
+    public static class Testkobling extends Kobling<Testrolle, Object> {
+        private Object object;
+
+
+        @SuppressWarnings("UnusedDeclaration")
+        public Testkobling() {
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public Testkobling(Testrolle rolle, Object value) {
+            super(rolle, value);
+        }
+
+        @Override
+        protected Object getValue() {
+            return object;
+        }
+
+        @Override
+        protected void setValue(Object value) {
+            this.object = value;
+        }
+    }
+
+    public void testClear() throws Exception {
+        Multikobling<Testrolle, Object, Testkobling> multikobling = Multikobling.create(DefaultKoblingFactory.create(Testkobling.class));
+        Set<Object> aObjects = multikobling.get(Testrolle.ROLLE_A);
+        aObjects.add("Test");
+        aObjects.add("Test2"); // En ekstra pga. av mulighet for ConcurrentModificationException ved uheldig implementasjon av clear()
+        aObjects.clear();
+        assertTrue(aObjects.isEmpty());
+        assertTrue(multikobling.getKoblinger().isEmpty());
+    }
+
+    public void testRemoveFromIterator() throws Exception {
+        Multikobling<Testrolle, Object, Testkobling> multikobling = Multikobling.create(DefaultKoblingFactory.create(Testkobling.class));
+        Set<Object> aObjects = multikobling.get(Testrolle.ROLLE_A);
+        aObjects.add("Test");
+        final Iterator<Object> iterator = aObjects.iterator();
+        iterator.next();
+        iterator.remove();
+        assertTrue(aObjects.isEmpty());
+        assertTrue(multikobling.getKoblinger().isEmpty());
+    }
+
+    public void testRemove() throws Exception {
+        Multikobling<Testrolle, Object, Testkobling> multikobling = Multikobling.create(DefaultKoblingFactory.create(Testkobling.class));
+        Set<Object> aObjects = multikobling.get(Testrolle.ROLLE_A);
+        aObjects.add("Test");
+        aObjects.remove("Test");
+        assertTrue(aObjects.isEmpty());
+        assertTrue(multikobling.getKoblinger().isEmpty());
+    }
+
+    public void testRemoveAll() throws Exception {
+        Multikobling<Testrolle, Object, Testkobling> multikobling = Multikobling.create(DefaultKoblingFactory.create(Testkobling.class));
+        Set<Object> aObjects = multikobling.get(Testrolle.ROLLE_A);
+        Set<Object> objs = new HashSet<Object>();
+        objs.add("Test");
+        aObjects.addAll(objs);
+        aObjects.removeAll(objs);
+        assertTrue(aObjects.isEmpty());
+        assertTrue(multikobling.getKoblinger().isEmpty());
+    }
+
+    public void testRetainAll() throws Exception {
+        Multikobling<Testrolle, Object, Testkobling> multikobling = Multikobling.create(DefaultKoblingFactory.create(Testkobling.class));
+        Set<Object> aObjects = multikobling.get(Testrolle.ROLLE_A);
+        aObjects.add("Test");
+        aObjects.retainAll(Collections.emptySet());
+        assertTrue(aObjects.isEmpty());
+        assertTrue(multikobling.getKoblinger().isEmpty());
     }
 }
