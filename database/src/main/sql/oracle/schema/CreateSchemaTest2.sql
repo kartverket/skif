@@ -26,6 +26,19 @@ create table Endring (
     primary key (id)
 );
 
+create table ListEntityComponent (
+    id number(19,0) not null,
+    textValue varchar2(255 char),
+    listOfEntityComponentsId number(19,0),
+    listIndex number(10,0),
+    primary key (id)
+);
+
+create table ListOfEntityComponents (
+    id number(19,0) not null,
+    primary key (id)
+);
+
 alter table EiendomForEier
     add constraint FKE3E20945AA81BF14
     foreign key (eierId)
@@ -35,3 +48,8 @@ alter table EiendomForEier
     add constraint FK_Eier_Eiendom
     foreign key (eiendomId)
     references Eiendom;
+
+alter table ListEntityComponent
+    add constraint FK_LIST_OF_ENTITY_COMPONENTS
+    foreign key (listOfEntityComponentsId)
+    references ListOfEntityComponents;

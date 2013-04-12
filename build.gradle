@@ -178,19 +178,17 @@ subprojects { Project project ->
     sourceCompatibility = '1.6'
     targetCompatibility = '1.6'
 
+/*
     configurations {
         weblogic {
             description = 'Weblogic dependencies'
-        }
-
-        provided {
-            description = 'Provided dependencies not to be included in dependencies'
         }
     }
 
     dependencies {
         weblogic libraries.weblogic
     }
+*/
 
     clean {
         delete 'gen'
@@ -202,8 +200,7 @@ subprojects { Project project ->
     if (!['-ear', '-wswar'].find {project.name.endsWith(it)}) {
         apply plugin: 'java'
         apply plugin: 'sktools-filterproperties-plugin'
-
-        test.testLogging.showStandardStreams = true
+        apply plugin: 'sktools-provided-plugin'
 
         //user properties
         project.filterProperties {
@@ -237,8 +234,6 @@ subprojects { Project project ->
         project.idea.module {
             // Får Idea til å legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)
             inheritOutputDirs = true
-            // Provided scope i IntelliJ er ikke tilgjengelig runtime for main. I skrivende stund ikke et problem i SKIF, men gjør dette likt som i andre prosjekter, hvor det er et problem
-            scopes.COMPILE.plus += configurations.provided
         }
 
         test {
@@ -261,6 +256,8 @@ subprojects { Project project ->
                 jvmArgs '-Xnoagent'
                 jvmArgs '-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y'
             }
+
+            testLogging.showStandardStreams = true
 
             //listening to test execution events
             afterTest { descriptor, result ->
@@ -306,10 +303,6 @@ subprojects { Project project ->
             }
 
         }
-
-        //todo
-//        Source is in the build directory so we need to unexclude it
-//        GradleUtil.makeIdeaShowBuildDirectory(project)
     }
 }
 
@@ -403,6 +396,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build91'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build99'
     }
 }

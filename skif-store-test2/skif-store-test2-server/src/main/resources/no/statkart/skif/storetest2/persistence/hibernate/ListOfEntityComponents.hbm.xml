@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest2.domain.list.ListOfEntityComponents" select-before-update="true" lazy="true">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest2.persistence.hibernate.type.ListOfEntityComponentsIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <list name="entityComponents" cascade="all-delete-orphan,evict">
+            <key column="listOfEntityComponentsId" foreign-key="FK_LIST_OF_ENTITY_COMPONENTS"/>
+            <index column="listIndex"/>
+            <one-to-many class="no.statkart.skif.storetest2.domain.list.ListEntityComponent"/>
+        </list>
+    </class>
+
+    <class name="no.statkart.skif.storetest2.domain.list.ListEntityComponent">
+        <id name="id" column="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+
+        <property name="textValue"/>
+    </class>
+
+</hibernate-mapping>
