@@ -113,7 +113,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
         for (I bubbleId : bubbleIds) {
             final StoreEntry storeEntry = storeCache.get(bubbleId);
-            final BubbleObject bubbleObject = storeEntry == null ? null : storeEntry.getBubbleObject(level);
+            final BubbleObject bubbleObject = storeEntry == null ? null : storeEntry.getDerivedBubbleObjectCopyIfLocked(level, store);
             if (bubbleObject != null) {
                 bubbleObjects.add((T) bubbleObject);
             } else {
@@ -127,11 +127,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         if (missingBubbleIds != null) {
             if (missingBubbleIds.size() == 1) {
                 StoreEntry entry = loadEntry(level, missingBubbleIds.iterator().next(), false);
-                bubbleObjects.add((T) entry.getBubbleObject(level));
+                bubbleObjects.add((T) entry.getDerivedBubbleObjectCopyIfLocked(level, store));
             } else {
                 Collection<StoreEntry> entries = loadEntries(level, missingBubbleIds, false);
                 for (StoreEntry entry : entries) {
-                    bubbleObjects.add((T) entry.getBubbleObject(level));
+                    bubbleObjects.add((T) entry.getDerivedBubbleObjectCopyIfLocked(level, store));
 
                 }
             }

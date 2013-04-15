@@ -17,6 +17,9 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
+import java.util.Collections;
+import java.util.Set;
+
 import static no.statkart.skif.storetest.TestHelper.assertNotFound;
 import static org.testng.Assert.*;
 
@@ -278,6 +281,31 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 store.insert(testBubble1);
                 store.undo(testBubble1);
                 store.insert(testBubble1);
+                store.abortUnitOfWork();
+
+                return null;
+            }
+        });
+    }
+
+    public void testGetInUnitOfWork() {
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            Store store;
+
+            public Object run() {
+                final TestBubbleId<?> id = new TestBubbleId(1);
+
+                store.beginUnitOfWork();
+
+                TestBubble testBubble = store.get(id);
+                assertNotNull(testBubble);
+
+                Set<TestBubble> testBubbles = store.get(Collections.singleton(id));
+                assertEquals(testBubbles.size(), 1);
+                assertNotNull(testBubbles.iterator().next());
+                assertEquals(testBubbles.iterator().next(), testBubble);
+
                 store.abortUnitOfWork();
 
                 return null;
