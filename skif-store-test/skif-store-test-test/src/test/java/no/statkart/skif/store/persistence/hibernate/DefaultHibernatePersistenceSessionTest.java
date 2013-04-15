@@ -77,7 +77,7 @@ public class DefaultHibernatePersistenceSessionTest {
 
 
     public void testLoadObjectsForCurrent() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
         try {
             Foo foo_100_CURRENT = persistenceSession.get(FooId_100_CURRENT);
             assertEquals(foo_100_CURRENT.getId().getSnapshotVersion(), CURRENT);
@@ -97,7 +97,7 @@ public class DefaultHibernatePersistenceSessionTest {
 
 
     public void testLoadObjectsForOLD() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             Foo foo_100_OLD = persistenceSession.get(FooId_100_OLD);
             assertEquals(foo_100_OLD.getId().getSnapshotVersion(), OLD);
@@ -110,7 +110,7 @@ public class DefaultHibernatePersistenceSessionTest {
     }
 
     public void testLoadObjectsForHistoric() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             // Må endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
             persistenceSession.setSnapshot(S3);
@@ -125,7 +125,7 @@ public class DefaultHibernatePersistenceSessionTest {
     }
 
     public void testLoadObjectsForOLDAndHistoricOneByOne() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             Foo foo_100_OLD = persistenceSession.get(FooId_100_OLD);
             assertEquals(foo_100_OLD.getId().getSnapshotVersion(), OLD);
@@ -146,7 +146,7 @@ public class DefaultHibernatePersistenceSessionTest {
 
     @Test(expectedExceptions = ImplementationException.class)
     public void testLoadObjectsForOLDAndHistoricTogether_Fail() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             List<BubbleId<Foo>> fooIds = new ArrayList<BubbleId<Foo>>();
             fooIds.add(FooId_100_OLD);
@@ -159,7 +159,7 @@ public class DefaultHibernatePersistenceSessionTest {
     }
 
     public void testInsertAndCommit() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
 
         try {
             persistenceSession.beginTransaction();
@@ -190,7 +190,7 @@ public class DefaultHibernatePersistenceSessionTest {
     }
 
     public void testUpdate() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
         try {
@@ -209,7 +209,7 @@ public class DefaultHibernatePersistenceSessionTest {
     }
 
     public void testUpdateDetatchNotLoaded() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
         try {
@@ -233,7 +233,7 @@ public class DefaultHibernatePersistenceSessionTest {
     }
 
     public void testUpdateDetatchAlreadyLoaded() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
         try {
@@ -253,7 +253,7 @@ public class DefaultHibernatePersistenceSessionTest {
     }
 
     public void testDeleteNotAlreadyLoaded() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
         try {
@@ -277,7 +277,7 @@ public class DefaultHibernatePersistenceSessionTest {
      * Test at objekt som slettes er det som er i databasen og ikke detatched
      */
     public void testDeleteAlreadyLoaded() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
         try {

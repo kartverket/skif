@@ -13,10 +13,7 @@ import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManager;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
+import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
@@ -80,10 +77,10 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
         enumKodelisteManager.installStatic(BEnumKodeId.class);
         enumKodelisteManager.installStatic(SEnumKodeId.class);
 
-        HibernatePersistenceSessionMasterImpl masterCurrent = new HibernatePersistenceSessionMasterImpl(
+        HibernatePersistenceSessionMasterImpl masterCurrent = new DefaultHibernatePersistenceSessionImplExt(
                 sessionFactoryManagerBundle.getBundle().get(0)
         );
-        HibernatePersistenceSessionMasterImpl masterOld = new HibernatePersistenceSessionMasterImpl(
+        HibernatePersistenceSessionMasterImpl masterOld = new DefaultHibernatePersistenceSessionImplExt(
                 sessionFactoryManagerBundle.getBundle().get(1)
         );
 

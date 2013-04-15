@@ -41,7 +41,7 @@ import java.util.Collections;
 /**
  * @author Henrik Fredholm
  */
-public class HibernatePersistenceSessionMasterImpl implements HibernatePersistenceSessionMaster {
+public abstract class HibernatePersistenceSessionMasterImpl implements HibernatePersistenceSessionMaster {
     private static Logger logger = LoggerFactory.getLogger(HibernatePersistenceSessionMasterImpl.class);
     private static final int CRITERIA_BATCH_POWER = 9;
     private static final String ID_KOLONNE_NAVN = "id";
@@ -1263,10 +1263,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
      * @param type
      * @return
      */
-    // TODO: må gjøres abstract og flyttes til 3.2 implementasjon
-    protected boolean isSingleColumnType(Type type) {
-        return type instanceof NullableType;
-    }
+    protected abstract boolean isSingleColumnType(Type type);
 
     protected boolean erAvTypeSomIkkeSkalInitialiseresVidere(ClassMetadata classMetadata) {
         return !(classMetadata instanceof EntityPersister);

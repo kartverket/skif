@@ -7,16 +7,12 @@ import no.statkart.skif.persistence.DefaultResourceManager;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
-import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
+import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate;
 import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.FooId;
 import no.statkart.skif.storetest.domain.demo.TestBubble;
 import no.statkart.skif.storetest.domain.demo.TestBubbleId;
-import org.hibernate.engine.HibernateIterator;
 import org.hibernate.jdbc.ConnectionWrapper;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -28,7 +24,6 @@ import java.util.Properties;
 
 import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactorManagerBundle;
 import static no.statkart.skif.storetest.TestHelper.createHibernateSessionFactoryBuilderWithHistory;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertSame;
 
 /**
@@ -80,8 +75,8 @@ public class ResourceManagerUsingHibernateTest {
         HibernateSessionFactoryBuilder sessionFactoryBuilder = createHibernateSessionFactoryBuilderWithHistory();
         sessionFactoryManagerBundle = createHibernateSessionFactorManagerBundle(sessionFactoryBuilder, hibernateProperties);
         persistenceSessionManager = new DefaultPersistenceSessionManager(
-                new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0)),
-                new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1))
+                new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0)),
+                new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1))
         );
         connectionManager = new ConnectionManagerUsingHibernate(persistenceSessionManager);
 

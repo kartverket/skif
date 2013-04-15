@@ -39,7 +39,6 @@ import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.MemoryProfileUtil;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
-import org.testng.Assert;
 import org.testng.annotations.*;
 
 import java.util.*;
@@ -140,10 +139,10 @@ public class StoreSessionServerTest {
         enumKodelistManager.installStatic(BEnumKodeId.class);
         enumKodelistManager.installStatic(SEnumKodeId.class);
 
-        HibernatePersistenceSessionMasterImpl masterCurrent = new HibernatePersistenceSessionMasterImpl(
+        HibernatePersistenceSessionMasterImpl masterCurrent = new DefaultHibernatePersistenceSessionImplExt (
                 sessionFactoryManagerBundle.getBundle().get(0)
         );
-        HibernatePersistenceSessionMasterImpl masterOld = new HibernatePersistenceSessionMasterImpl(
+        HibernatePersistenceSessionMasterImpl masterOld = new DefaultHibernatePersistenceSessionImplExt (
                 sessionFactoryManagerBundle.getBundle().get(1)
         );
 
