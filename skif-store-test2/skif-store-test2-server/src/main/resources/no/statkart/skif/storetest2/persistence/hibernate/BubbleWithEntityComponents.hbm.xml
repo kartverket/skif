@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest2.domain.entitycomponent.BubbleWithEntityComponents" select-before-update="true" lazy="true">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest2.persistence.hibernate.type.BubbleWithEntityComponentsIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <many-to-one name="mainEntityComponent" class="no.statkart.skif.storetest2.domain.entitycomponent.EntityComponent" cascade="all"/>
+
+        <set name="secondaryEntityComponents" cascade="all-delete-orphan,evict">
+            <key column="bubbleId" foreign-key="FK_BUBBLE_WITH_ENTCOMPS"/>
+            <one-to-many class="no.statkart.skif.storetest2.domain.entitycomponent.EntityComponent"/>
+        </set>
+    </class>
+
+    <class name="no.statkart.skif.storetest2.domain.entitycomponent.EntityComponent" select-before-update="true">
+        <id name="id" column="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+
+        <property name="value"/>
+    </class>
+
+</hibernate-mapping>

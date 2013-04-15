@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.store.AbstractEntityComponent;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
@@ -15,6 +16,7 @@ import org.hibernate.*;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.criterion.Expression;
 import org.hibernate.engine.*;
+import org.hibernate.id.Assigned;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.AbstractCollectionPersister;
@@ -22,7 +24,9 @@ import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.*;
+import org.hibernate.util.EqualsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,13 +36,14 @@ import java.lang.reflect.Modifier;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.Collections;
 
 /**
  * @author Henrik Fredholm
  */
 public class HibernatePersistenceSessionMasterImpl implements HibernatePersistenceSessionMaster {
     private static Logger logger = LoggerFactory.getLogger(HibernatePersistenceSessionMasterImpl.class);
-    private static int CRITERIA_BATCH_POWER = 9;
+    private static final int CRITERIA_BATCH_POWER = 9;
     private static final String ID_KOLONNE_NAVN = "id";
 
     protected final HibernateSessionFactoryManager sessionFactoryManager;
@@ -295,6 +300,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubbleObject) {
         try {
+            checkEntityComponentsOnInsert(bubbleObject);
             session().save(bubbleObject);
         } catch (HibernateException e) {
             throw new ImplementationException("Update feilet for " + bubbleObject, e);
@@ -462,6 +468,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
             if (type.isEntityType()) {
                 if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                    checkForReplacedOrStolenEntityComponent((EntityType) type, value, valueExisting);
                     attachPersistenceCollectionWithSnapshotOfOldState(value, valueExisting, processedObjects);
                 }
             } else if (type.isComponentType()) {
@@ -472,7 +479,9 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                     Map mapWithSnapshot = attachPersitentMap((Map) value, (Map) valueExisting, processedObjects, cascade);
                     persister.setPropertyValue(object, i, mapWithSnapshot, EntityMode.POJO);
                 } else {
-                    Collection collectionWithSnapshot = attachPersistentCollection((Collection) value, (Collection) valueExisting, processedObjects, cascade);
+                    CollectionType collectionType = (CollectionType) type;
+                    Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+                    Collection collectionWithSnapshot = attachPersistentCollection((Collection) value, (Collection) valueExisting, elementType, processedObjects, cascade);
                     persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
                 }
             } else if (!isSingleColumnType(type) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
@@ -498,6 +507,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                 // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
                 if (propertyType.isEntityType()) {
                     if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                        checkForReplacedOrStolenEntityComponent((EntityType) propertyType, property, propertyExisting);
                         attachPersistenceCollectionWithSnapshotOfOldState(property, propertyExisting, processedObjects);
                     }
                 } else if (propertyType.isCollectionType()) {
@@ -506,7 +516,9 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                     if (propertyExisting instanceof Map) {
                         properties[j] = attachPersitentMap((Map) property, (Map) propertyExisting, processedObjects, cascade);
                     } else {
-                        properties[j] = attachPersistentCollection((Collection) property, (Collection) propertyExisting, processedObjects, cascade);
+                        CollectionType collectionType = (CollectionType) propertyType;
+                        Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+                        properties[j] = attachPersistentCollection((Collection) property, (Collection) propertyExisting, elementType, processedObjects, cascade);
                     }
                     wasModified = true;
                 } else if (propertyType.isComponentType()) {
@@ -560,7 +572,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         }
     }
 
-    protected Collection attachPersistentCollection(Collection collectionInObject, Collection collectionInExistingObject, IdentityHashMap processedObjects, boolean cascade) throws HibernateException {
+    protected Collection attachPersistentCollection(Collection collectionInObject, Collection collectionInExistingObject, Type elementType, IdentityHashMap processedObjects, boolean cascade) throws HibernateException {
         if (collectionInExistingObject instanceof PersistentCollection) {
             Collection persistentCollection = CopyHelper.copy(collectionInExistingObject);
             persistentCollection.clear();
@@ -568,6 +580,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
                 persistentCollection.addAll(collectionInObject);
             }
             if (cascade) {
+                checkForStolenEntityComponent(elementType, collectionInObject, collectionInExistingObject);
                 cascadeAttachPersistenceCollections(persistentCollection, collectionInExistingObject, processedObjects);
             }
             return persistentCollection;
@@ -600,7 +613,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         } else if (elementType.isComponentType()) {
             ComponentType componentType = (ComponentType) elementType;
             Type[] propertyTypes = componentType.getSubtypes();
-            for (int i=0; i<propertyTypes.length; i++) {
+            for (int i = 0; i < propertyTypes.length; i++) {
                 if (propertyTypes[i].isCollectionType()) {
                     // TODO: Her har vi en collection hvis elementer er av type component som inneholer et felt som er en collection
                     // Utfordringen her er å match gamle og nye komponenter mot hverander i den overliggende
@@ -613,6 +626,240 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         } else if (!isSingleColumnType(elementType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
                 && !(elementType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
             throw new NotImplementedException();
+        }
+    }
+
+    /**
+     * Sjekker at objektgraften ikke inneholder entity components som har id. Dette er et tegn på at komponenten har
+     * blitt stjålet fra en annen boble.
+     *
+     * @since 2.2.0
+     */
+    private void checkEntityComponentsOnInsert(BubbleObject bubbleObject) {
+        try {
+            IdentityHashMap processedObjects = new IdentityHashMap();
+            checkEntityComponentsOnInsert(bubbleObject, processedObjects);
+        } catch (HibernateException e) {
+            throw new ImplementationException("Kunne ikke legge på sjekke entity components: " + bubbleObject.getId(), e);
+        }
+    }
+
+    /**
+     * Sjekker at objektet ikke referer til entity components som allerede har fått tilordnet id. Hvis en assosiasjon er
+     * definert som cascade vil metoden bli kalt rekursivt på de assosierte objekter.
+     *
+     * @since 2.2.0
+     */
+    private void checkEntityComponentsOnInsert(Object object, IdentityHashMap processedObjects) throws HibernateException {
+        if (object == null) return;
+
+        if (processedObjects.containsKey(object)) return;
+        processedObjects.put(object, null);
+
+        ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
+
+        if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
+        EntityPersister persister = (EntityPersister) classMetadata;
+        if (!persister.hasCollections()) return;
+
+        Type[] types = persister.getPropertyTypes();
+        Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
+        CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
+
+        for (int i = 0; i < types.length; i++) {
+            Type type = types[i];
+            Object value = values[i];
+            CascadeStyle cascadeStyle = cascadeStyles != null ? cascadeStyles[i] : null;
+
+            if (type.isEntityType()) {
+                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                    checkForReplacedOrStolenEntityComponent((EntityType) type, value, null);
+                }
+            } else if (type.isComponentType()) {
+                checkEntityComponentsOnInsertInComponent(value, (AbstractComponentType) type, processedObjects);
+            } else if (type.isCollectionType()) {
+                boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
+                if (value instanceof Map) {
+                    CollectionType collectionType = (CollectionType) type;
+                    checkEntityComponentsInMapOnInsert((Map) value, collectionType, processedObjects, cascade);
+                } else {
+                    CollectionType collectionType = (CollectionType) type;
+                    Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+                    checkEntityComponentsInCollectionOnInsert((Collection) value, elementType, processedObjects, cascade);
+                }
+            } else if (!isSingleColumnType(type) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                    && !(type instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+                throw new NotImplementedException();
+                // TODO: Trenger et test eksempel for å skrive denne koden riktig
+            }
+        }
+    }
+
+    protected void checkEntityComponentsOnInsertInComponent(Object component, AbstractComponentType componentType, IdentityHashMap processedObjects) {
+        if (component != null) {
+            Type[] propertyTypes = componentType.getSubtypes();
+            Object[] properties = componentType.getPropertyValues(component, EntityMode.POJO);
+            boolean wasModified = false;
+            for (int j = 0; j < properties.length; j++) {
+                Type propertyType = propertyTypes[j];
+                Object property = properties[j];
+                CascadeStyle cascadeStyle = componentType.getCascadeStyle(j);
+
+                // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
+                if (propertyType.isEntityType()) {
+                    if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                        checkForReplacedOrStolenEntityComponent((EntityType) propertyType, property, null);
+                        checkEntityComponentsOnInsert(property, processedObjects);
+                    }
+                } else if (propertyType.isCollectionType()) {
+                    // For hvert element
+                    boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
+                    if (property instanceof Map) {
+                        CollectionType collectionType = (CollectionType) propertyType;
+                        checkEntityComponentsInMapOnInsert((Map) property, collectionType, processedObjects, cascade);
+                    } else {
+                        CollectionType collectionType = (CollectionType) propertyType;
+                        Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+                        checkEntityComponentsInCollectionOnInsert((Collection) property, elementType, processedObjects, cascade);
+                    }
+                    wasModified = true;
+                } else if (propertyType.isComponentType()) {
+                    checkEntityComponentsOnInsertInComponent(property, (AbstractComponentType) propertyType, processedObjects);
+                } else if (!isSingleColumnType(propertyType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                        && !(propertyType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+                    throw new NotImplementedException();
+                }
+            }
+            if (wasModified) {
+                componentType.setPropertyValues(component, properties, EntityMode.POJO);
+            }
+        }
+    }
+
+    private void checkEntityComponentsInMapOnInsert(Map mapInObject, CollectionType collectionType, IdentityHashMap processedObjects, boolean cascade) {
+        AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) session().getSessionFactory().getCollectionMetadata(collectionType.getRole());
+
+        if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
+            throw new ImplementationException("Key må være en LiteralType");
+        }
+
+        if (cascade) {
+            // Sjekk at det ikke er noen collections inni her
+            Type elementType = collectionPersister.getElementType();
+            if (elementType.isCollectionType()) {
+                throw new NotImplementedException("Map value kan ikke være collection");
+            } else if (elementType.isAssociationType()) {
+                EntityPersister entityPersister = collectionPersister.getElementPersister();
+                Type[] propertyTypes = entityPersister.getPropertyTypes();
+                for (int i = 0; i < propertyTypes.length; i++) {
+                    Type propertyType = propertyTypes[i];
+                    if (propertyType.isAssociationType() || propertyType.isComponentType()) {
+                        throw new NotImplementedException("Map value må være enkel verdi eller ett-nivå entity");
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkEntityComponentsInCollectionOnInsert(Collection collectionInObject, Type elementType, IdentityHashMap processedObjects, boolean cascade) throws HibernateException {
+        if (cascade) {
+            checkForStolenEntityComponent(elementType, collectionInObject, Collections.emptyList());
+
+            if (elementType.isEntityType()) {
+                for (Object object : collectionInObject) {
+                    checkEntityComponentsOnInsert(object, processedObjects);
+                }
+            } else if (elementType.isComponentType()) {
+                ComponentType componentType = (ComponentType) elementType;
+                Type[] propertyTypes = componentType.getSubtypes();
+                for (int i = 0; i < propertyTypes.length; i++) {
+                    if (propertyTypes[i].isCollectionType()) {
+                        // TODO: Her har vi en collection hvis elementer er av type component som inneholer et felt som er en collection
+                        // Utfordringen her er å match gamle og nye komponenter mot hverander i den overliggende
+                        // collection. For sett kan man bruke equals, men for lister er det ikke opplagt hva man
+                        // man skal bruke. Kanskje indexposisjon. Venter med å implementere støtte for dette til vi
+                        // har en konkret case.
+                        throw new NotImplementedException();
+                    }
+                }
+            } else if (!isSingleColumnType(elementType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                    && !(elementType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+                throw new NotImplementedException();
+            }
+        }
+    }
+
+    /**
+     * Sjekker om <code>value</code> er en entity component har blitt erstattet med en annen eller <code>null</code>,
+     * eller om entity component ser ut til å ha blitt stjålet.
+     *
+     * @param type          typen til feltet
+     * @param value         nåværende verdi
+     * @param valueExisting forrige verdi
+     * @throws ImplementationException dersom entity component har blitt byttet ut med en annen eller <code>null</code>
+     *                                 eller hvis entity component allerede har id
+     * @since 2.2.0
+     */
+    private void checkForReplacedOrStolenEntityComponent(EntityType type, Object value, Object valueExisting) {
+        Class typeClass = type.getReturnedClass();
+        if (AbstractEntityComponent.class.isAssignableFrom(typeClass)) {
+            AbstractEntityPersister persister = (AbstractEntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(type.getName());
+            EntityMetamodel entityMetamodel = persister.getEntityMetamodel();
+            if (valueExisting != null && value == null) {
+                AbstractEntityComponent oldEntityComponent = (AbstractEntityComponent) valueExisting;
+                throw new ImplementationException("Forsøkte å nulle ut komponeent " + typeClass.getName() + " Id:" + oldEntityComponent.getId(), logger);
+            }
+
+            // Dersom komponentid er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk.
+            if (!(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned) && value != null) {
+                final Long oldId;
+                if (valueExisting != null) {
+                    AbstractEntityComponent oldEntityComponent = (AbstractEntityComponent) valueExisting;
+                    oldId = oldEntityComponent.getId();
+                } else {
+                    oldId = null;
+                }
+                AbstractEntityComponent entityComponent = (AbstractEntityComponent) value;
+                final Long newId = entityComponent.getId();
+
+                if (!EqualsHelper.equals(oldId, newId)) {
+                    throw new ImplementationException("Forsøkte å sette komponent til " + typeClass.getName() + " Id:" + newId + ", gammel Id:" + oldId, logger);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sjekker om <code>value</code> er en EntityComponent har blitt erstattet med en annen eller <code>null</code>.
+     *
+     * @param elementType        typen til elementene i collection
+     * @param collection         nåværende collection
+     * @param collectionExisting forrige collection
+     * @throws ImplementationException dersom collection innholder entity component med id som ikke fins i collectionExisting
+     * @since 2.2.0
+     */
+    private void checkForStolenEntityComponent(Type elementType, Collection<?> collection, Collection<?> collectionExisting) {
+        if (elementType.isEntityType()) {
+            Class typeClass = elementType.getReturnedClass();
+            if (AbstractEntityComponent.class.isAssignableFrom(typeClass)) {
+                AbstractEntityPersister persister = (AbstractEntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(elementType.getName());
+                EntityMetamodel entityMetamodel = persister.getEntityMetamodel();
+
+                // Dersom komponentid er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk.
+                if (!(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned)) {
+                    Set<Object> existingIds = new HashSet<Object>();
+                    for (Object o : collectionExisting) {
+                        existingIds.add(((AbstractEntityComponent) o).getId());
+                    }
+
+                    for (Object o : collection) {
+                        AbstractEntityComponent entityComponent = (AbstractEntityComponent) o;
+                        if (entityComponent.getId() != null && !existingIds.contains(entityComponent.getId())) {
+                            throw new ImplementationException("Fant entity component " + typeClass.getName() + " Id:" + entityComponent.getId() + " i collection som ikke inneholdt den fra før", logger);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -1012,6 +1259,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
     /**
      * SingleColumnType finnes ikke i 3.2.6 så her brukes test mot NullableType istedet
+     *
      * @param type
      * @return
      */

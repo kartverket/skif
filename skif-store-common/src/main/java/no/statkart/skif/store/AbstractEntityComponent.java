@@ -14,7 +14,7 @@ public abstract class AbstractEntityComponent implements ComponentWithExplicitId
 
     private Long pseudoId = null;
 
-    protected abstract Long getId();
+    public abstract Long getId();
 
     private Long getPseudoId() {
         if (pseudoId != null) return pseudoId;

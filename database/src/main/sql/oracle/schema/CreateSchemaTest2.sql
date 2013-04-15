@@ -1,5 +1,11 @@
 -- Oppretter tabeller som brukes i storetest2-testprosjektet. Her skal det brukes mockupdata via mockup-rammeverk.
 
+create table BubbleWithEntityComponents (
+    id number(19,0) not null,
+    mainEntityComponent number(19,0),
+    primary key (id)
+);
+
 create table Eiendom (
     id number(19,0) not null,
     primary key (id)
@@ -26,6 +32,13 @@ create table Endring (
     primary key (id)
 );
 
+create table EntityComponent (
+    id number(19,0) not null,
+    value varchar2(255 char),
+    bubbleId number(19,0),
+    primary key (id)
+);
+
 create table ListEntityComponent (
     id number(19,0) not null,
     textValue varchar2(255 char),
@@ -39,6 +52,11 @@ create table ListOfEntityComponents (
     primary key (id)
 );
 
+alter table BubbleWithEntityComponents
+    add constraint FK3405730B705AD7C8
+    foreign key (mainEntityComponent)
+    references EntityComponent;
+
 alter table EiendomForEier
     add constraint FKE3E20945AA81BF14
     foreign key (eierId)
@@ -48,6 +66,11 @@ alter table EiendomForEier
     add constraint FK_Eier_Eiendom
     foreign key (eiendomId)
     references Eiendom;
+
+alter table EntityComponent
+    add constraint FK_BUBBLE_WITH_ENTCOMPS
+    foreign key (bubbleId)
+    references BubbleWithEntityComponents;
 
 alter table ListEntityComponent
     add constraint FK_LIST_OF_ENTITY_COMPONENTS
