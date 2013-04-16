@@ -7,6 +7,8 @@ import java.io.Serializable;
  *
  * @author Henrik Fredholm
  * @since 2.1
+ * @deprecated Omdøpt til {@link EntityComponent}.
  */
-public interface ComponentWithExplicitId extends Component {
+@Deprecated
+public interface ComponentWithExplicitId extends EntityComponent {
 }
