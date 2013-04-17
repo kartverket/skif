@@ -13,7 +13,7 @@ public class M {
         return mapOfAs;
     }
 
-    public void setMapOfA(Map<String, Set<A>> mapOfAs) {
+    public void setMapOfAs(Map<String, Set<A>> mapOfAs) {
         this.mapOfAs = mapOfAs;
     }
 }

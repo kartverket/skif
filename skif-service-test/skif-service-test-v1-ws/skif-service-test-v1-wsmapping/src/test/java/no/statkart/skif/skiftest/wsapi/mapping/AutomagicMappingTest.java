@@ -10,7 +10,6 @@ import org.unitils.reflectionassert.ReflectionAssert;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static org.testng.Assert.assertTrue;
 

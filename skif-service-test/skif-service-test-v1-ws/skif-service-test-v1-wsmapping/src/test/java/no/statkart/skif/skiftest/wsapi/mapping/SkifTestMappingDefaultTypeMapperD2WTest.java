@@ -2,7 +2,6 @@ package no.statkart.skif.skiftest.wsapi.mapping;
 
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
-import no.statkart.skif.skiftest.domain.C;
 import no.statkart.skif.skiftest.domain.M;
 import no.statkart.skif.skiftest.wsapi.domain.AList;
 import no.statkart.skif.skiftest.wsapi.domain.AMap;
@@ -115,7 +114,7 @@ public class SkifTestMappingDefaultTypeMapperD2WTest {
         HashMap<String, Set<A>> aMap = new HashMap<String, Set<A>>();
         aMap.put("Foo", Collections.singleton(new A("Bar")));
         M source = new M();
-        source.setMapOfA(aMap);
+        source.setMapOfAs(aMap);
 
         no.statkart.skif.skiftest.wsapi.domain.M target = map.d2w(source);
 

@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
@@ -22,7 +21,7 @@ import java.util.zip.ZipInputStream;
  * <p>Denne klassen forsøker å mappe to typer mellom hverandre ved å basere seg på to antagelser:
  * <ul>
  * <li>Klassenavnene er like, klassene ligger bare i forskjellige pakker</li>
- * <li>Feltnavnene, merk feltnavnene, ikke accessormetodene, er like i klassene</li>
+ * <li>Accessormetodenes navn er like i klassene</li>
  * </ul>
  * </p>
  * <p/>
@@ -67,11 +66,12 @@ import java.util.zip.ZipInputStream;
  * </pre></blockquote></p>
  *
  * @author Steinar Hansen
+ * @author Tor Egil R. Strand
  */
 public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<WsapiT, DomainT> {
     private Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
 
-    private static Map<Class<?>, Map<String, Field>> fieldsWithInheritedFieldsByClass = new HashMap<Class<?>, Map<String, Field>>();
+    private static Map<Method, Method> settersForGetters = new HashMap<Method, Method>();
 
     private ObjectFactory domainObjectFactory;
     private ObjectFactory wsapiObjectFactory;
@@ -98,8 +98,8 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
      * Denne metoden finner klasser i alle subpakker av de angitte pakkene, og mapper de opp mot hverandre gitt at navnene (SimpleName) på
      * klassene er de samme.
      *
-     * @param wsapiPackage
-     * @param domainPackage
+     * @param wsapiPackage     pakken til JAXB-klassene
+     * @param domainPackage    pakken til Hibernate-domene-klassene
      */
     public void addPackageMapping(String wsapiPackage, String domainPackage) {
         addPackageMapping(wsapiPackage, domainPackage, true);
@@ -109,8 +109,8 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
      * Denne metoden finner klasser i alle subpakker av de angitte pakkene, med mindre recurse er satt til 'false', da leter den bare i den angitte pakken. og mapper de opp mot hverandre gitt at navnene (SimpleName) på
      * klassene er de samme.
      *
-     * @param wsapiPackage
-     * @param domainPackage
+     * @param wsapiPackage     pakken til JAXB-klassene
+     * @param domainPackage    pakken til Hibernate-domene-klassene
      */
     public void addPackageMapping(String wsapiPackage, String domainPackage, boolean recurse) {
         try {
@@ -381,9 +381,9 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
     }
 
     /**
-     * Metode for å angi en klasse som skal ignoreres ved mapping. Fully qualified class name.
+     * Metode for å angi en klasse som skal ignoreres ved mapping.
      *
-     * @param className
+     * @param className    Fully qualified class name.
      */
     public void doNotMapThisClass(String className) {
         try {
@@ -401,93 +401,76 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                 if (checkHasField(target.getClass(), "item")) {
                     Field targetField = target.getClass().getDeclaredField("item");
                     ArrayList value = null;
-                    for (Iterator iterator = ((Collection) source).iterator(); iterator.hasNext(); ) {
+                    for (Object o : ((Collection) source)) {
                         if (value == null) {
                             value = new ArrayList();
                         }
-                        Object next = iterator.next();
-                        value.add(mapping.d2w(next));
+                        value.add(mapping.d2w(o));
                     }
                     targetField.setAccessible(true);
                     targetField.set(target, value);
                 } else if (checkHasField(target.getClass(), "liste")) {
                     Field targetField = target.getClass().getDeclaredField("liste");
                     ArrayList value = null;
-                    for (Iterator iterator = ((Collection) source).iterator(); iterator.hasNext(); ) {
+                    for (Object o : ((Collection) source)) {
                         if (value == null) {
                             value = new ArrayList();
                         }
-                        Object next = iterator.next();
-                        value.add(mapping.d2w(next));
+                        value.add(mapping.d2w(o));
                     }
                     targetField.setAccessible(true);
                     targetField.set(target, value);
                 } else if (target instanceof Collection) {
                     Collection sourceCollection = (Collection) source;
                     Collection targetCollection = (Collection) target;
-                    for (Iterator iterator = sourceCollection.iterator(); iterator.hasNext(); ) {
-                        Object next = iterator.next();
+                    for (Object next : sourceCollection) {
                         targetCollection.add(mapping.d2w(next));
                     }
                 } else {
                     throw new MappingException("Antar at det alltid er en felt med navn 'item' eller 'liste' på andre siden av en Collection. Det var visst feil...");
                 }
             } else {
-                List<Field> sourceFields = new ArrayList<Field>();
-                addDeclaredAndInheritedFields(source.getClass(), sourceFields);
-                for (int i = 0; i < sourceFields.size(); i++) {
-                    Field sourceField = sourceFields.get(i);
-                    Field targetField = getFieldWithInheritedFields(target.getClass(), sourceField.getName());
+                Collection<Method> sourceGetters = findGetters(source.getClass());
+                for (Method sourceGetter : sourceGetters) {
+                    Method targetSetter = findSetterForGetter(target.getClass(), sourceGetter);
 
-                    Field overriddenTargetField = overrideTargetField(sourceField, targetField);
-                    if (overriddenTargetField != null) {
-                        targetField = overriddenTargetField;
+                    Method overriddenSetter = overrideSetter(sourceGetter, targetSetter, target.getClass());
+                    if (overriddenSetter != null) {
+                        targetSetter = overriddenSetter;
                     }
 
-                    if (targetField != null && fieldShouldBeMapped(sourceField, targetField)) {
-                        targetField.setAccessible(true);
-                        sourceField.setAccessible(true);
-
-                        Object source1 = sourceField.get(source);
+                    if (targetSetter != null) {
+                        Object source1 = sourceGetter.invoke(source);
+                        Class<?> targetType = targetSetter.getParameterTypes()[0];
                         if (source1 != null) {
-                            Object value = null;
-                            if (source1 instanceof Collection) {
-                                //Må bruke accessor-metode for å få sortering riktig.
-                                Method method = source.getClass().getMethod("get" + sourceField.getName().substring(0, 1).toUpperCase() + sourceField.getName().substring(1, sourceField.getName().length()), (Class<?>[]) null);
-                                Object sortedSource = method.invoke(source);
-                                value = mapping.d2w(sortedSource, targetField.getType());
-                            } else {
-                                value = mapping.d2w(source1, targetField.getType());
-                            }
+                            Object value = mapping.d2w(source1, targetSetter.getGenericParameterTypes()[0]);
                             if (value != null) {
                                 //Sjekk om source = Set og target = List, fordi da håndterer vi settingen spesielt
-                                if (List.class.isAssignableFrom(targetField.getType()) && value instanceof Set) {
+                                if (List.class.isAssignableFrom(targetType) && value instanceof Set) {
                                     List replaceSetWithThisList = new ArrayList((Set) value);
-                                    targetField.set(target, replaceSetWithThisList);
+                                    targetSetter.invoke(target, replaceSetWithThisList);
                                 } else {
                                     //Dersom dette ikke er en spesialsituasjon, så prøver vi den vanlige måten, så får vi evt. en feil
-                                    targetField.set(target, value);
+                                    targetSetter.invoke(target, value);
                                 }
                             }
                         } else {
                             //Dersom value = null, så kan vi fremdeles sette den i target.
                             //Med midre typen er primitiv, da lar vi den bare være
-                            if (!targetField.getType().isPrimitive()) {
-                                targetField.set(target, null);
+                            if (!targetType.isPrimitive()) {
+                                targetSetter.invoke(target, new Object[]{null});
                             }
                         }
                     } else {
                         //Kan ikke feile dersom vi ikke finner et felt, da vil ikke subklasser kunne fungere.
                         if (logger.isDebugEnabled())
-                            logger.debug("Ignorer feltet: " + sourceField.getName() + ", siden jeg ikke fant et tilsvarende felt i target-klasse");
+                            logger.debug("Ignorer getter: " + sourceGetter.getName() + ", siden jeg ikke fant en tilsvarende setter i target-klasse");
                     }
                 }
             }
         } catch (IllegalAccessException e) {
             throw new MappingException(e);
         } catch (NoSuchFieldException e) {
-            throw new MappingException(e);
-        } catch (NoSuchMethodException e) {
             throw new MappingException(e);
         } catch (InvocationTargetException e) {
             throw new MappingException(e);
@@ -496,17 +479,18 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
     }
 
     /**
-     * Denne metoden gir tilgang til sourceField og targetField før en setting av targetField med verdien fra sourceField,
-     * slik at man evt. overstyre hvilken verdig target skal få. Det er den returnerte targetField som brukes videre i koden.
-     * Så dersom man ønsker å bytte ut target-feltet 'mittFelt' med 'mittAlternativeFelt', så kan man gjøre det i en subklasse
-     * av DefaultTypeMapper se f.eks. {@link no.statkart.skif.mapper.RenamingDefaultTypeMapper}
+     * Denne metoden gir tilgang til sourceGetter og targetSetter før kalling av targetSetter med returverdien fra
+     * sourceGetter, slik at man evt. overstyre hvilken verdig target skal få. Det er den returnerte targetSetter som
+     * brukes videre i koden. Så dersom man ønsker å bytte ut target-property 'minProperty' med 'minAlternativeProperty',
+     * så kan man gjøre det i en subklasse av DefaultTypeMapper se f.eks. {@link no.statkart.skif.mapper.RenamingDefaultTypeMapper}
      *
-     * @param sourceField
-     * @param targetField
-     * @return targetField Field-objektet som benyttes videre.
+     * @param sourceGetter    getter som brukes for å hente ut property fra source
+     * @param targetSetter    setter som i utgangspunktet skal brukes for å sette property på target
+     * @param targetClass     klassen som setteren skal være på
+     * @return setter som benyttes videre istedenfor <code>targetSetter</code> (<code>null</code> for å fortsette å bruke <code>targetSetter</code>
      */
-    protected Field overrideTargetField(Field sourceField, Field targetField) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+    protected Method overrideSetter(Method sourceGetter, Method targetSetter, Class targetClass) {
+        return null;
     }
 
     protected void mapCommonWsapiFields(WsapiT source, DomainT target) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
@@ -519,9 +503,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                     item.setAccessible(true);
                     Object o = item.get(source);
                     if (o != null) {
-                        Iterator iterator = ((Iterable) o).iterator();
-                        while (iterator.hasNext()) {
-                            Object next = iterator.next();
+                        for (Object next : ((Iterable) o)) {
                             targetCollection.add(mapping.w2d(next));
                         }
                     }
@@ -536,9 +518,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                     item.setAccessible(true);
                     Object o = item.get(source);
                     if (o != null) {
-                        Iterator iterator = ((Iterable) o).iterator();
-                        while (iterator.hasNext()) {
-                            Object next = iterator.next();
+                        for (Object next : ((Iterable) o)) {
                             targetCollection.add(mapping.w2d(next));
                         }
                     }
@@ -548,106 +528,53 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
             } else if (source instanceof Collection && target instanceof Collection) {
                 Collection sourceCollection = (Collection) source;
                 Collection targetCollection = (Collection) target;
-                for (Iterator iterator = sourceCollection.iterator(); iterator.hasNext(); ) {
-                    Object next = iterator.next();
+                for (Object next : sourceCollection) {
                     targetCollection.add(mapping.w2d(next));
                 }
             } else {
-                List<Field> sourceFields = new ArrayList<Field>();
-                addDeclaredAndInheritedFields(source.getClass(), sourceFields);
-                for (int i = 0; i < sourceFields.size(); i++) {
-                    Field sourceField = sourceFields.get(i);
-                    Field targetField = getFieldWithInheritedFields(target.getClass(), sourceField.getName());
+                Collection<Method> sourceGetters = findGetters(source.getClass());
+                for (Method sourceGetter : sourceGetters) {
+                    Method targetSetter = findSetterForGetter(target.getClass(), sourceGetter);
 
-                    Field overriddenTargetField = overrideTargetField(sourceField, targetField);
-                    if (overriddenTargetField != null) {
-                        targetField = overriddenTargetField;
+                    Method overriddenSetter = overrideSetter(sourceGetter, targetSetter, target.getClass());
+                    if (overriddenSetter != null) {
+                        targetSetter = overriddenSetter;
                     }
 
-                    if (targetField != null && fieldShouldBeMapped(sourceField, targetField)) {
-                        targetField.setAccessible(true);
-                        sourceField.setAccessible(true);
-                        Object source1 = sourceField.get(source);
+                    if (targetSetter != null) {
+                        Object source1 = sourceGetter.invoke(source);
+                        Class<?> targetType = targetSetter.getParameterTypes()[0];
                         if (source1 != null) {
-                            Object value = mapping.w2d(source1, targetField.getGenericType());
+                            Object value = mapping.w2d(source1, targetSetter.getGenericParameterTypes()[0]);
                             if (value != null) {
                                 //Sjekk om source = List og target = Set, fordi da håndterer vi settingen spesielt
-                                if (Set.class.isAssignableFrom(targetField.getType()) && value instanceof List) {
+                                if (Set.class.isAssignableFrom(targetType) && value instanceof List) {
                                     Set replaceListWithThisSet = new HashSet((List) value);
-                                    targetField.set(target, replaceListWithThisSet);
+                                    targetSetter.invoke(target, replaceListWithThisSet);
                                 } else {
                                     //Dersom dette ikke er en spesialsituasjon, så prøver vi den vanlige måten, så får vi evt. en feil
-                                    targetField.set(target, value);
+                                    targetSetter.invoke(target, value);
                                 }
                             }
                         } else {
                             //Dersom value = null, så kan vi fremdeles sette den i target.
                             //Med midre typen er primitiv, da lar vi den bare være
-                            if (!targetField.getType().isPrimitive()) {
-                                targetField.set(target, null);
+                            if (!targetType.isPrimitive()) {
+                                targetSetter.invoke(target, new Object[]{null});
                             }
                         }
                     } else {
                         //Kan ikke feile dersom vi ikke finner et felt, da vil ikke subklasser kunne fungere.
                         if (logger.isDebugEnabled())
-                            logger.debug("Ignorer feltet: " + sourceField.getName() + ", siden jeg ikke fant et tilsvarende felt i target-klasse");
+                            logger.debug("Ignorer getter: " + sourceGetter.getName() + ", siden jeg ikke fant en tilsvarende setter i target-klasse");
                     }
                 }
             }
         } catch (IllegalAccessException e) {
             throw new MappingException(e);
+        } catch (InvocationTargetException e) {
+            throw new MappingException(e);
         }
-    }
-
-    /**
-     * Felter som ikke er transiente og ikke er konstante skal mappes
-     *
-     * @param sourceField
-     * @param targetField
-     * @return false dersom targetfeltet er konstant (static final) eller kildefeltet er transient eller av type java.lang.Class, ellers true
-     */
-    protected boolean fieldShouldBeMapped(Field sourceField, Field targetField) {
-        boolean retVal = true;
-        if (targetField != null) {
-            if (isVirkeligKonstant(targetField)) {
-                retVal = false;
-            }
-        }
-        if (sourceField != null) {
-            if (isTransient(sourceField)) {
-                retVal = false;
-            }
-            if (sourceField.getType().getName().equals("java.lang.Class")) {
-                retVal = false;
-            }
-        }
-        return retVal;
-    }
-
-    protected boolean isTransient(Field field) {
-        if (field != null) {
-            if (Modifier.isTransient(field.getModifiers())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Static final felter er virkelig konstante, ingen grunn til å forsøke å sette konstante felter.
-     *
-     * @param field
-     * @return
-     */
-    protected boolean isVirkeligKonstant(Field field) {
-        if (field != null) {
-            if (Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers())) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
     }
 
 
@@ -659,7 +586,6 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
      * @throws ClassNotFoundException
      * @throws java.io.IOException
      */
-    @SuppressWarnings("unchecked")
     protected static List<Class> getClasses(String packageName, boolean recurse) throws ClassNotFoundException, IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
@@ -754,10 +680,9 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
 
         if (!recurse) {
             Set<Class> trimmedClasses = new HashSet<Class>();
-            for (Iterator<Class> iterator = classes.iterator(); iterator.hasNext(); ) {
-                Class aClass = iterator.next();
-                if (aClass.getPackage().getName().equals(packageName)) {
-                    trimmedClasses.add(aClass);
+            for (Class c : classes) {
+                if (c.getPackage().getName().equals(packageName)) {
+                    trimmedClasses.add(c);
                 }
             }
             classes = trimmedClasses;
@@ -775,7 +700,6 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
      * @return The classes
      * @throws ClassNotFoundException
      */
-    @SuppressWarnings("unchecked")
     protected static List<Class> findClasses(File directory, String packageName) throws ClassNotFoundException {
         List<Class> classes = new ArrayList<Class>();
         if (!directory.exists()) {
@@ -806,54 +730,66 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
         return classes;
     }
 
-    protected static void addDeclaredAndInheritedFields(Class<?> c, Collection<Field> fields) {
-        fields.addAll(Arrays.asList(c.getDeclaredFields()));
-        Class<?> superClass = c.getSuperclass();
-        if (superClass != null) {
-            addDeclaredAndInheritedFields(superClass, fields);
+    protected Collection<Method> findGetters(Class<?> c) {
+        Method[] methods = c.getMethods();
+        List<Method> getters = new ArrayList<Method>(methods.length / 2);
+        List<Method> idGetters = new ArrayList<Method>(methods.length / 4);
+        for (Method method : methods) {
+            if (!method.isBridge() && method.getName().startsWith("get")) {
+                getters.add(method);
+                if (method.getName().endsWith("Id")) {
+                    idGetters.add(method);
+                }
+            }
         }
+        Iterator<Method> iterator = getters.iterator();
+        while (iterator.hasNext()) {
+            Method getter = iterator.next();
+            boolean match = false;
+            for (Method idGetter : idGetters) {
+                if (!idGetter.equals(getter) && idGetter.getName().startsWith(getter.getName())) {
+                    match = true;
+                }
+            }
+            if (match) {
+                iterator.remove();
+            }
+        }
+        return getters;
     }
 
     /**
      * Spesiell håndtering av at feltet heter ett eller annet "feltnavn" på den ene siden og "feltnavnId" på den andre.
      * I disse tilfellene så skal feltet som heter 'nesten' det samme returneres.
+     * TODO: Denne spesialhåndteringen bør flyttes til matrikkelen
      */
+    protected Method findSetterForGetter(Class<?> c, Method getter) {
 
-    protected static Field getFieldWithInheritedFields(Class<?> c, String fieldname) {
-
-        Map<String, Field> fieldMap = fieldsWithInheritedFieldsByClass.get(c);
-        if (fieldMap == null) {
-            fieldMap = new HashMap<String, Field>();
-            fieldsWithInheritedFieldsByClass.put(c, fieldMap);
+        Method setter = settersForGetters.get(getter);
+        if (setter != null) {
+            return setter;
         }
 
-        Field field = fieldMap.get(fieldname);
-        if (field != null) {
-            return field;
-        }
+        String expectedSetterName = 's' + getter.getName().substring(1);
 
-        Collection<Field> fields = new ArrayList<Field>();
-        addDeclaredAndInheritedFields(c, fields);
-        Field matched = null;
+        Method[] methods = c.getMethods();
+        Method matched = null;
         boolean nameMatch = false;
-        for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext(); ) {
-            Field next = iterator.next();
-            if(next.getName().equals(fieldname)){
-                nameMatch = true;
-                fieldMap.put(fieldname, next);
-                matched = next;
-            }else if (!nameMatch && ((next.getName() + "Id").equals(fieldname) || next.getName().equals(fieldname + "Id"))) {
-                matched = next;
-                fieldMap.put(fieldname, next);
+        for (Method method : methods) {
+            if (method.getParameterTypes().length == 1) {
+                if (method.getName().equals(expectedSetterName)) {
+                    nameMatch = true;
+                    matched = method;
+                } else if (!nameMatch && ((method.getName() + "Id").equals(expectedSetterName) || method.getName().equals(expectedSetterName + "Id"))) {
+                    matched = method;
+                }
             }
         }
 
-        if(matched != null){
-            return matched;
-        }else{
-            fieldMap.put(fieldname, null);
-            return null;
+        if (matched != null) {
+            settersForGetters.put(getter, matched);
         }
+        return matched;
     }
 
     protected boolean checkHasField(Class clazz, String fieldname) {
