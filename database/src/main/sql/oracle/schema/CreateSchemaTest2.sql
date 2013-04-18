@@ -52,6 +52,18 @@ create table ListOfEntityComponents (
     primary key (id)
 );
 
+create table Multirefererende (
+    id number(19,0) not null,
+    primary key (id)
+);
+
+create table MultirefererendeKobling (
+    multirefererendeId number(19,0) not null,
+    rolle varchar2(255 char) not null,
+    tekst varchar2(255 char) not null,
+    primary key (multirefererendeId, rolle, tekst)
+);
+
 alter table BubbleWithEntityComponents
     add constraint FK3405730B705AD7C8
     foreign key (mainEntityComponent)
@@ -76,3 +88,8 @@ alter table ListEntityComponent
     add constraint FK_LIST_OF_ENTITY_COMPONENTS
     foreign key (listOfEntityComponentsId)
     references ListOfEntityComponents;
+
+alter table MultirefererendeKobling
+    add constraint FK_MULTIREFEREREND_KOBLING
+    foreign key (multirefererendeId)
+    references Multirefererende;

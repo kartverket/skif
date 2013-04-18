@@ -50,6 +50,7 @@ import no.statkart.skif.storetest2.domain.eierskap.Eier;
 import no.statkart.skif.storetest2.domain.endringslogg.Endring;
 import no.statkart.skif.storetest2.domain.entitycomponent.BubbleWithEntityComponents;
 import no.statkart.skif.storetest2.domain.list.ListOfEntityComponents;
+import no.statkart.skif.storetest2.domain.multikobling.Multirefererende;
 import no.statkart.skif.storetest2.endringslogg.EndringManager;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
@@ -180,6 +181,7 @@ public class StoreTest2ServerModule extends SkifModule {
                 .addResource(Endring.class)
                 .addResource(ListOfEntityComponents.class)
                 .addResource(BubbleWithEntityComponents.class)
+                .addResource(Multirefererende.class)
                 ;
 
 
