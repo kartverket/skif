@@ -299,10 +299,19 @@ public class StoreSessionServer extends AbstractStoreSession {
                     break;
             }
         }
+
         final StoreMapEntryComparator c = new StoreMapEntryComparator(bubbleDependencyComparator, level + 1);
+        final Comparator<Map.Entry<BubbleId<?>, StoreEntry>> inverseC = new Comparator<Map.Entry<BubbleId<?>, StoreEntry>>() {
+            @Override
+            public int compare(Map.Entry<BubbleId<?>, StoreEntry> o1, Map.Entry<BubbleId<?>, StoreEntry> o2) {
+                return -c.compare(o1, o2);
+            }
+        };
+
         Collections.sort(inserted, c);
         Collections.sort(updated, c);
-        Collections.reverse(deleted);
+        Collections.sort(deleted, inverseC);
+
         Map<BubbleId<?>, StoreEntry> modifiedSorted = new LinkedHashMap<BubbleId<?>, StoreEntry>(modified.size());
         for (Map.Entry<BubbleId<?>, StoreEntry> mapEntry : inserted) {
             modifiedSorted.put(mapEntry.getKey(), mapEntry.getValue());
