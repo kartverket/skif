@@ -4,6 +4,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -11,13 +12,15 @@ import java.util.LinkedHashMap;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kodeliste, KLID extends KodelisteId<KL>> {
+public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kodeliste, KLID extends KodelisteId<KL>> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final Class<I> kodeIdClass;
     private final KLID kodelisteId;
     private final String resourceMsgName;
-    private LinkedHashMap<KodeId<?>, Kode> koder = new LinkedHashMap<KodeId<?>, Kode>();
+
+    // Bruk av KodeId<?> her og i getKodeResourceKey() er fordi vi ikke har noen compile-time garanti for at T.getId() returnerer I
+    private LinkedHashMap<KodeId<?>, T> koder = new LinkedHashMap<KodeId<?>, T>();
     private HashMap<KodeId<?>, String> kodeResourceKeys = new HashMap<KodeId<?>, String>();
 
     public EnumKodeSupport(Class<I> kodeIdClass, KLID kodelisteId, String resourceMsgName) {
@@ -30,7 +33,7 @@ public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kod
         return kodelisteId;
     }
 
-    public synchronized void addKode(Kode kode) {
+    public synchronized void addKode(T kode) {
         if (koder.containsKey(kode.getId())) {
             throw new ImplementationException("Forsøk på å definere samme kode flere ganger: " + kode );
         }
@@ -57,19 +60,19 @@ public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kod
         return removeLastChars(getKodeIdClass().getSimpleName(), 2);
     }
 
-    private String removeLastChars(String simpleName, int n) {
-        return simpleName.substring(0, simpleName.length()-2);
+    private static String removeLastChars(String simpleName, int n) {
+        return simpleName.substring(0, simpleName.length()-n);
     }
 
     public String getKodeResourceKey(KodeId<?> id) {
         return kodeResourceKeys.get(id);
     }
 
-    public Class<? extends KodeId<?>> getKodeIdClass() {
+    public Class<I> getKodeIdClass() {
         return kodeIdClass;
     }
 
-    public LinkedHashMap<KodeId<?>, Kode> getKoder() {
+    public LinkedHashMap<KodeId<?>, T> getKoder() {
         return koder;
     }
 
