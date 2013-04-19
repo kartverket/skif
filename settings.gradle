@@ -37,7 +37,7 @@ include 'skif-store-test2:skif-store-test2-test'
 //include 'skif-store-test:skif-store-test2-ear'
 
 
-rootProject.name = 'gSkif'
+rootProject.name = 'skif'
 
 rootProject.children.each { project -> configureProject(project)}
 
