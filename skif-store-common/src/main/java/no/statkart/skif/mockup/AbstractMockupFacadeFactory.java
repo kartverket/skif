@@ -28,14 +28,17 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     private final TestdataService testdataService;
     private final Class<? extends IdService> idServiceImplementationClass;
 
-    protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService) {
-        this(mockupFacadeClass, testdataService, TestIdServiceLong.class);
+    private final Module[] extraModules;
+
+    protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService, Module... extraModules) {
+        this(mockupFacadeClass, testdataService, TestIdServiceLong.class, extraModules);
     }
 
-    protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService, Class<? extends IdService> idServiceImplementationClass) {
+    protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService, Class<? extends IdService> idServiceImplementationClass, Module... extraModules) {
         this.mockupFacadeClass = mockupFacadeClass;
         this.testdataService = testdataService;
         this.idServiceImplementationClass = idServiceImplementationClass;
+        this.extraModules = extraModules;
 
         // Bruker her en Provider som oppretter readFacade første gang man ber om den. Må være lazy fordi testdataService ikke bør kalles
         // i forbindelse med opprettelse MockupFacadeFactory'en. TestdataService gjør et kall til serveren og krever bl.a
@@ -105,7 +108,15 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
             }
         };
 
-        Injector injector = Guice.createInjector(module);
+        final Injector injector;
+        if (extraModules != null) {
+            Module[] modules = new Module[extraModules.length + 1];
+            modules[0] = module;
+            System.arraycopy(extraModules, 0, modules, 1, extraModules.length);
+            injector = Guice.createInjector(modules);
+        } else {
+            injector = Guice.createInjector(module);
+        }
         T facade = injector.getInstance(mockupFacadeClass);
         facade.createAllMockups();
 
