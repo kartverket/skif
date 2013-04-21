@@ -66,7 +66,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         return bubble;
     }
 
-    private void addModified(StoreEntry storeEntry) {
+    protected  void addModified(StoreEntry storeEntry) {
         modifiedMap.put(storeEntry.getId(), storeEntry);
         markModified();
     }

@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
 import com.google.inject.Injector;
+import no.statkart.skif.exception.AttemptDeleteException;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.util.LinkedHashSet;
@@ -40,6 +41,11 @@ public class StoreServer extends AbstractStore {
      */
     public void beginTransaction() {
         storeServerSession().beginTransaction();
+    }
+
+
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void attemptDelete(I bubbleId) throws AttemptDeleteException {
+        storeServerSession().attemptDelete(bubbleId);
     }
 
     /**

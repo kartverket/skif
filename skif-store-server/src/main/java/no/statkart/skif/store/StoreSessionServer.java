@@ -1,14 +1,22 @@
 package no.statkart.skif.store;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.Provider;
+import no.statkart.skif.exception.AttemptDeleteException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotLockedException;
+import no.statkart.skif.persistence.OracleLogHelper;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
+import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.util.CopyHelper;
+import org.hibernate.JDBCException;
+import org.hibernate.Session;
 
 import javax.annotation.Nullable;
+import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.*;
 
 /**
@@ -216,8 +224,8 @@ public class StoreSessionServer extends AbstractStoreSession {
 
         // Må endre state for alle modifiserte objekter
         for (StoreEntry storeEntry : modifiedMap.values()) {
-            if (storeEntry.getState(0)== StoreEntryState.DELETED || storeEntry.getState(0)== StoreEntryState.INSERTED_DELETED) {
-               storeCache.remove(storeEntry.getId());
+            if (storeEntry.getState(0) == StoreEntryState.DELETED || storeEntry.getState(0) == StoreEntryState.INSERTED_DELETED) {
+                storeCache.remove(storeEntry.getId());
             } else {
                 storeEntry.setState(0, StoreEntryState.UNCHANGED);
                 storeEntry.unlock(0);
@@ -238,6 +246,66 @@ public class StoreSessionServer extends AbstractStoreSession {
             modifiedMap.clear();
             markModified();
             persistenceSessionManager.clear();
+        }
+    }
+
+    private void fixEntryAfterDeleteFailure(StoreEntry storeEntry, StoreEntryState oldState) {
+        // Level er alltid 0
+    }
+
+
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void attemptDelete(I bubbleId) throws AttemptDeleteException {
+        Preconditions.checkState(level == 0, "level!=0");
+        try {
+            OracleLogHelper.enableTraceVerbose();
+            flush();
+            HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
+            Session session = persistenceSessionMaster.reserveSession();
+            Savepoint savepoint = session.connection().setSavepoint();
+            StoreEntry storeEntry = storeCache.get(bubbleId);
+            if (storeEntry == null) {
+                storeEntry = loadEntry(level, bubbleId, false);
+            }
+            StoreEntryState oldState = storeEntry.getState(level);
+            try {
+                deleteEntry(level, storeEntry.getBubbleObject(level));
+                flush();
+                addModified(storeEntry);
+            } catch (JDBCException e) {
+                session.connection().rollback(savepoint);
+                storeEntry.setState(level, oldState);
+                clearPersistenceSessionAndSyncronizeWithStore(persistenceSessionMaster);
+                throw new AttemptDeleteException(bubbleId, e);
+            }
+        } catch (SQLException e) {
+            throw new ImplementationException(e);
+        }
+    }
+
+    private void clearPersistenceSessionAndSyncronizeWithStore(HibernatePersistenceSessionMasterImpl persistenceSessionMaster) {
+        Map<BubbleId, BubbleObject> fullyInitializedBubbles = persistenceSessionMaster.getFullyInitializedBubbles();
+        List<StoreEntry> lazyLoaded = Lists.newArrayList();
+
+        // Finn alle modifiserte entries som kan være lazyloaded. De som er inserted eller deleted er ikke interessante
+        // Fjern alle readOnly entries
+        final Iterator<StoreEntry> iterator = storeCache.values().iterator();
+        while (iterator.hasNext()) {
+            final StoreEntry storeEntry = iterator.next();
+            if (!fullyInitializedBubbles.containsKey(storeEntry.getId())) {
+                StoreEntryState state = storeEntry.getState(level);
+                if (state==StoreEntryState.UNCHANGED || state==StoreEntryState.UPDATED) {
+                    // Objekt kan være lazyloaded og må legges inn i session igjen for å unngå lazyloading feil senere
+                    lazyLoaded.add(storeEntry);
+                }
+            }
+        }
+        boolean lazyLoadedBubblesAllowed = persistenceSessionMaster.isLazyLoadedBubblesAllowed();
+        persistenceSessionMaster.clear();
+        persistenceSessionMaster.setLazyLoadedBubblesAllowed(lazyLoadedBubblesAllowed);
+
+        // Attatch lazyloaded objekter til sessionen igjen.
+        for (StoreEntry storeEntry : lazyLoaded) {
+            persistenceSessionMaster.update(storeEntry.getPersistentBubbleObject());
         }
     }
 
@@ -616,7 +684,9 @@ public class StoreSessionServer extends AbstractStoreSession {
         // No-op; alle objekter hentes fra persistence session
     }
 
-    /** Gjort tilgjengelig For testing */
+    /**
+     * Gjort tilgjengelig For testing
+     */
     protected PersistenceSessionManager getPersistenceSessionManager() {
         return persistenceSessionManager;
     }

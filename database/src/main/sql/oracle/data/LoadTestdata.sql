@@ -8,17 +8,18 @@ insert into ParrentBubble values (1, 'Parrent 1');
 insert into ParrentBubble values (2, 'Parrent 2');
 insert into ParrentBubble values (3, 'Parrent 3');
 
+
 insert into ChildBubble values (1, 'Child 1.1',null);
 insert into ChildBubble values (2, 'Child 1.2',null);
 insert into ChildBubble values (3, 'Child 1.3',null);
 insert into ChildBubble values (4, 'Child 2.1',null);
 insert into ChildBubble values (5, 'Child 2.2',1);
 
-insert into ChildForParrent values(1,1,1);
-insert into ChildForParrent values(2,1,2);
-insert into ChildForParrent values(3,1,3);
-insert into ChildForParrent values(4,2,1);
-insert into ChildForParrent values(5,2,2);
+insert into ChildForParrent (id, parrentBubbleId, childBubbleId) values(1,1,1);
+insert into ChildForParrent (id, parrentBubbleId, childBubbleId) values(2,1,2);
+insert into ChildForParrent (id, parrentBubbleId, childBubbleId) values(3,1,3);
+insert into ChildForParrent (id, parrentBubbleId, childBubbleId) values(4,2,4);
+insert into ChildForParrent (id, parrentBubbleId, childBubbleId) values(5,2,5);
 
 
 

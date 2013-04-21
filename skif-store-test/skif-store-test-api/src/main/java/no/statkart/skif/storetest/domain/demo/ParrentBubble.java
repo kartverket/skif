@@ -66,7 +66,7 @@ public class ParrentBubble extends AbstractBubbleObject implements StoreTestBubb
         return childForParrents.add(cfp);
     }
 
-    public Set getChildBubbleIds() {
+    public Set<ChildBubbleId<ChildBubble>> getChildBubbleIds() {
         Set<ChildBubbleId<ChildBubble>> ids = new HashSet<ChildBubbleId<ChildBubble>>();
         for (ChildForParrent cfp : childForParrents) {
             ids.add(cfp.getChildBubbleId());

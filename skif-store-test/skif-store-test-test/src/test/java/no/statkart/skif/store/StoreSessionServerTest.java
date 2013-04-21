@@ -8,6 +8,7 @@ import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.exception.AttemptDeleteException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.persistence.VersionFinder;
@@ -39,6 +40,7 @@ import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.MemoryProfileUtil;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
+import org.testng.Assert;
 import org.testng.annotations.*;
 
 import java.util.*;
@@ -139,10 +141,10 @@ public class StoreSessionServerTest {
         enumKodelistManager.installStatic(BEnumKodeId.class);
         enumKodelistManager.installStatic(SEnumKodeId.class);
 
-        HibernatePersistenceSessionMasterImpl masterCurrent = new DefaultHibernatePersistenceSessionImplExt (
+        HibernatePersistenceSessionMasterImpl masterCurrent = new DefaultHibernatePersistenceSessionImplExt(
                 sessionFactoryManagerBundle.getBundle().get(0)
         );
-        HibernatePersistenceSessionMasterImpl masterOld = new DefaultHibernatePersistenceSessionImplExt (
+        HibernatePersistenceSessionMasterImpl masterOld = new DefaultHibernatePersistenceSessionImplExt(
                 sessionFactoryManagerBundle.getBundle().get(1)
         );
 
@@ -646,6 +648,7 @@ public class StoreSessionServerTest {
         TestBubbleId id = testBubbleIdFinder();
         // Dette kallet skal ikke gjøre select kall mot databasen da objekt allerede er lastet via finder
         BubbleObject bubbleObject = storeServer.get(id);
+        assertNotNull(bubbleObject);
     }
 
 
@@ -1018,7 +1021,7 @@ public class StoreSessionServerTest {
     public void testEvictAllAfterCommitRemovesAllObjectsReadOnly() {
         MemoryProfileUtil.setEnabled(false);
         MemoryProfileUtil.setUseMessageBox();
-       ParrentBubble Parent_1 = storeServer.get(ParrentBubbleId_1);
+        ParrentBubble Parent_1 = storeServer.get(ParrentBubbleId_1);
         // I JProfiler 'Record Memory'
         MemoryProfileUtil.promptAndWait("Enable Memory Record");
         ParrentBubble Parent_2 = storeServer.get(ParrentBubbleId_2);
@@ -1136,4 +1139,152 @@ public class StoreSessionServerTest {
         storeServer.rollbackTransaction();
     }
 
+    /**
+     * Tester forsøkvis sletting av boble som gir constraint feil ved sletting. Tester at endringer
+     * gjort før og etter attemptDelete kommer men når transaksjonen committes.
+     */
+    public void testAttemptDelete() {
+        // Opprett 1 parentbubble og 2 child bubbles
+        ParrentBubbleId<ParrentBubble> ParrentBubbleId_201 = new ParrentBubbleId<ParrentBubble>(201);
+        ParrentBubbleId<ParrentBubble> ParrentBubbleId_202 = new ParrentBubbleId<ParrentBubble>(202);
+        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<ChildBubble>(201);
+        ChildBubbleId<ChildBubble> ChildBubbleId_202 = new ChildBubbleId<ChildBubble>(202);
+
+        ParrentBubble parentBubble_201 = new ParrentBubble(ParrentBubbleId_201);
+        parentBubble_201.setText("Insert parrent 1");
+
+        ChildBubble childBubble_201 = new ChildBubble(ChildBubbleId_201);
+        childBubble_201.setText("Insert child 1");
+        parentBubble_201.addChild(ChildBubbleId_201, (long) 201);
+
+        ChildBubble childBubble_202 = new ChildBubble(ChildBubbleId_202);
+        childBubble_202.setText("Insert child 2");
+        childBubble_202.setTestBubbleId(new TestBubbleId<TestBubble>(2));
+
+        storeServer.beginTransaction();
+        storeServer.insert(childBubble_201);
+        storeServer.insert(parentBubble_201);
+        storeServer.insert(childBubble_202);
+        storeServer.commitTransaction();
+        storeServer.clear();
+
+
+        // Opprett parrent 202 og legg inn child 202, set text() i parent 201 og 202 samt forsøk å endre text i child 201 og deretter slett child 201
+        storeServer.beginTransaction();
+        ParrentBubble parentBubble_202 = new ParrentBubble(ParrentBubbleId_202);
+        parentBubble_202.setText("Insert parrent 2");
+        parentBubble_202.addChild(ChildBubbleId_202, (long) 202);
+        storeServer.insert(parentBubble_202);
+        childBubble_201 = storeServer.lock(childBubble_201.getId());
+        String NEW_TEXT = "Oppdatert ifm attemptDelete";
+        try {
+            parentBubble_201 = storeServer.lock(parentBubble_201.getId());
+            parentBubble_201.setText(NEW_TEXT);
+            childBubble_201.setText(NEW_TEXT);
+            storeServer.update(childBubble_201);
+            storeServer.update(parentBubble_201);
+
+            // Har nå endret noe i parent 201 og child 201
+            storeServer.attemptDelete(childBubble_201.getBubbleId());
+            Assert.fail("forventet exception");
+        } catch (AttemptDeleteException e) {
+            assertEquals(e.getBubbleId(), childBubble_201.getId());
+        }
+        // check at child 201 forsatt er låst og ikke er markert som slettet i Store
+        assertTrue(storeServer.isLocked(childBubble_201.getId()));
+        assertTrue(storeServer.getUpdatedIds().contains(childBubble_201.getId()));
+        assertThat(storeServer.getDeletedIds()).doesNotContain(childBubble_201.getId());
+        parentBubble_202.setText(NEW_TEXT);
+        storeServer.update(parentBubble_202);
+        storeServer.commitTransaction();
+        storeServer.clear();
+
+        assertEquals(storeServer.get(childBubble_201.getId()).getText(), NEW_TEXT);
+        ParrentBubble parentBubble_201_NY = storeServer.get(parentBubble_201.getId());
+        assertNotSame(parentBubble_201, parentBubble_201_NY);
+        assertEquals(parentBubble_201_NY.getText(), NEW_TEXT);
+
+        assertFalse(storeServer.isLocked(childBubble_201.getId()));
+        assertEquals(storeServer.get(childBubble_201.getId()).getText(), NEW_TEXT);
+
+    }
+
+    public void testAttemptDeleteManyCallsWithFail() {
+        int MAX_SAVEPOINTS = 1000;
+        ParrentBubbleId<ParrentBubble> ParrentBubbleId_201 = new ParrentBubbleId<ParrentBubble>(201);
+        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<ChildBubble>(201);
+
+        ParrentBubble parentBubble_201 = new ParrentBubble(ParrentBubbleId_201);
+        parentBubble_201.setText("Insert parrent 1");
+
+        ChildBubble childBubble_201 = new ChildBubble(ChildBubbleId_201);
+        childBubble_201.setText("Insert child 1");
+        parentBubble_201.addChild(ChildBubbleId_201, (long) 201);
+
+        storeServer.beginTransaction();
+        storeServer.insert(childBubble_201);
+        storeServer.insert(parentBubble_201);
+        storeServer.commitTransaction();
+        storeServer.clear();
+
+        storeServer.beginTransaction();
+        storeServer.lock(childBubble_201.getBubbleId());
+        for (int i = 1000; i < 1000+MAX_SAVEPOINTS; i++) {
+            ParrentBubble parentBubble = new ParrentBubble(new ParrentBubbleId(i));
+            parentBubble.setText("Insert parrent" + i);
+            storeServer.insert(parentBubble);
+            try {
+                storeServer.attemptDelete(childBubble_201.getBubbleId());
+                Assert.fail();
+            } catch (AttemptDeleteException e) {
+                // OK
+            }
+            parentBubble.setText("Updated parent " + i );
+            storeServer.update(parentBubble);
+        }
+        storeServer.commitTransaction();
+        storeServer.clear();
+        assertEquals(storeServer.get(new ParrentBubbleId<ParrentBubble>(1000)).getText(), "Updated parent " + 1000);
+        assertEquals(storeServer.get(new ParrentBubbleId<ParrentBubble>(1000 + MAX_SAVEPOINTS-1)).getText(),"Updated parent " + (1000 + MAX_SAVEPOINTS-1));
+    }
+
+    public void testAttemptDeleteManyCallsWithoutFail() {
+        int MAX_SAVEPOINTS = 10;
+        ParrentBubbleId<ParrentBubble> ParrentBubbleId_201 = new ParrentBubbleId<ParrentBubble>(201);
+        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<ChildBubble>(201);
+
+        ParrentBubble parentBubble_201 = new ParrentBubble(ParrentBubbleId_201);
+        parentBubble_201.setText("Insert parrent 1");
+
+        ChildBubble childBubble_201 = new ChildBubble(ChildBubbleId_201);
+        childBubble_201.setText("Insert child 1");
+        parentBubble_201.addChild(ChildBubbleId_201, (long) 201);
+
+        storeServer.beginTransaction();
+        storeServer.insert(childBubble_201);
+        storeServer.insert(parentBubble_201);
+        storeServer.commitTransaction();
+        storeServer.clear();
+
+        storeServer.beginTransaction();
+        storeServer.lock(childBubble_201.getBubbleId());
+        ParrentBubble previousParent= new ParrentBubble(new ParrentBubbleId(999));
+        previousParent.setText("Insert parrent" + 999);
+        storeServer.insert(previousParent);
+        for (int i = 1000; i < 1000+MAX_SAVEPOINTS; i++) {
+            ParrentBubble parentBubble = new ParrentBubble(new ParrentBubbleId(i));
+            parentBubble.setText("Insert parrent" + i);
+            storeServer.insert(parentBubble);
+            try {
+                storeServer.attemptDelete(previousParent.getId());
+            } catch (AttemptDeleteException e) {
+                Assert.fail();
+            }
+            parentBubble.setText("Updated parent " + i );
+            storeServer.update(parentBubble);
+            previousParent=parentBubble;
+        }
+        storeServer.commitTransaction();
+        storeServer.clear();
+    }
 }
