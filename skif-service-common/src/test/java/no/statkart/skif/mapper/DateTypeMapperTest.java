@@ -12,7 +12,7 @@ import java.sql.Date;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-@Test(enabled = true)
+@Test
 public class DateTypeMapperTest {
     private final DateTypeMapper dateTypeMapper = new DateTypeMapper();
 
