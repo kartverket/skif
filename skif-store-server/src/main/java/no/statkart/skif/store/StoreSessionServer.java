@@ -257,7 +257,6 @@ public class StoreSessionServer extends AbstractStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void attemptDelete(I bubbleId) throws AttemptDeleteException {
         Preconditions.checkState(level == 0, "level!=0");
         try {
-            OracleLogHelper.enableTraceVerbose();
             flush();
             HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
             Session session = persistenceSessionMaster.reserveSession();
