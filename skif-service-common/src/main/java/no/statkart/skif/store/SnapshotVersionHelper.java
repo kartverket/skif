@@ -41,19 +41,4 @@ public class SnapshotVersionHelper {
     public static Timestamp calcJustBeforeOf(Timestamp timestamp) {
         return subtract(timestamp, 1000);
     }
-
-    /**
-     * Beregner delete {@code SnapshotVersion} for {@code snapshotVersion}. Differanse er 100000 nanos.
-     */
-    public static SnapshotVersion calcDeleteOf(SnapshotVersion snapshotVersion) {
-        return SnapshotVersion.createInstance(calcDeleteOf(snapshotVersion.getTimestamp()));
-    }
-
-    /**
-     * Beregner delete {@code Timestamp} for {@code timestamp}. Differanse er 100000 nanos.
-     */
-    public static Timestamp calcDeleteOf(Timestamp timestamp) {
-        return subtract(timestamp, 100000);
-    }
-
 }
