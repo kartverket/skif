@@ -137,6 +137,9 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
             }
 
             //resourceManager.get().endAllocateConnectionsViaHibernateSession();
+        } catch (Exception e) { // Bevisst valg å la Error forbli ufanget
+            // SKIF-158: Spis exceptions som kommer inni her, siden abortService() blir kalt pga. en annen exception som det anses for viktigere å kaste videre
+            log.error("Ny exception ved abortService()", e);
         } finally {
             resourceManager.shutdown();
         }

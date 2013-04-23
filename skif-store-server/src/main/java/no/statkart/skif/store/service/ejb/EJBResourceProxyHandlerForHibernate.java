@@ -77,14 +77,17 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
         final ResourceManager resourceManager = resourceManagerProvider.get();
 
         try {
-        serviceRequestContext.setRollbackOnly();
-        if (serviceRequestContext.isNewTx()) {
-            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
-                resourceManager.rollback();
+            serviceRequestContext.setRollbackOnly();
+            if (serviceRequestContext.isNewTx()) {
+                if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
+                    resourceManager.rollback();
+                }
+                resourceManager.close();
             }
-            resourceManager.close();
-        }
-        //connectionManager.endAllocateConnectionsViaHibernateSession();
+            //connectionManager.endAllocateConnectionsViaHibernateSession();
+        } catch (Exception e) { // Bevisst valg å la Error forbli ufanget
+            // SKIF-158: Spis exceptions som kommer inni her, siden abortService() blir kalt pga. en annen exception som det anses for viktigere å kaste videre
+            log.error("Ny exception ved abortService()", e);
         } finally {
             resourceManager.shutdown();
         }
