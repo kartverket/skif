@@ -64,6 +64,6 @@ public class DateTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, Dat
         instance.set(source.getYear() > Integer.MIN_VALUE ? source.getYear() : 0, source.getMonth() > Integer.MIN_VALUE ? source.getMonth() - 1 : 0, source.getDay() > Integer.MIN_VALUE ? source.getDay() : 0, source.getHour() > Integer.MIN_VALUE ? source.getHour() : 0, source.getMinute() > Integer.MIN_VALUE ? source.getMinute() : 0, source.getSecond() > Integer.MIN_VALUE ? source.getSecond() : 0);
         instance.set(Calendar.MILLISECOND, source.getMillisecond() > Integer.MIN_VALUE ? source.getMillisecond() : 0);
 
-        return new Date(instance.getTimeInMillis());
+        return instance.getTime();
     }
 }
