@@ -23,7 +23,7 @@ public class RunOnRemoteServerTestServerModule extends TestServerModule {
     protected void configure() {
         super.configure();
         install(new RunOnServerServiceModule(moduleConfiguration));
-        bind(List.class).annotatedWith(Names.named("test")).to(ArrayList.class).in(Singleton.class);
+        bind(List.class).annotatedWith(Names.named("test")).to(ArrayList.class).in(Singleton.class); // OBS! Her er det kun bindingen fra @Named List som er singleton, ikke klassen ArrayList
 
     }
 }

@@ -72,8 +72,10 @@ public class RemoteServerModule extends ModuleWithStrategy<RemoteServerModuleStr
         bind(Configuration.class).toInstance(moduleConfiguration.getConfiguration());
         bind(ModuleConfiguration.class).toInstance(moduleConfiguration);
 
-        bind(LoginUserHolder.class).to(userLoginHolderClass).in(Singleton.class);
-        bind(ServerUrlHolder.class).to(serverUrlHolderClass).in(Singleton.class);
+        bind(LoginUserHolder.class).to(userLoginHolderClass);
+        bind(userLoginHolderClass).in(Singleton.class);
+        bind(ServerUrlHolder.class).to(serverUrlHolderClass);
+        bind(serverUrlHolderClass).in(Singleton.class);
 
         if (hostnameVerifierClass == null) {
             bind(HostnameVerifier.class).toProvider(Providers.<HostnameVerifier>of(null));

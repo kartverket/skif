@@ -27,7 +27,8 @@ public class ServiceChainFactories {
         TypeLiteral<F> factoryType = SkifUtil.typeLiteral(factory, service);
         TypeLiteral<FImpl> factoryImplType = SkifUtil.typeLiteral(factoryImpl, service);
 
-        binder.bind(factoryType).to(factoryImplType).in(Singleton.class);
+        binder.bind(factoryType).to(factoryImplType);
+        binder.bind(factoryImplType).in(Singleton.class);
     }
 
     /**
@@ -41,7 +42,8 @@ public class ServiceChainFactories {
         Multibinder<F> multibinder = Multibinder.newSetBinder(binder, factoryType);
         if (factoryImpl != null) {
             TypeLiteral<FImpl> factoryImplType = SkifUtil.typeLiteral(factoryImpl, service);
-            multibinder.addBinding().to(factoryImplType).in(Singleton.class);
+            multibinder.addBinding().to(factoryImplType);
+            binder.bind(factoryImplType).in(Singleton.class);
         }
 
     }

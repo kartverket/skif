@@ -56,7 +56,7 @@ public class SkifTestServerModule extends SkifModule {
 
         install(new ServerServiceModule(moduleConfiguration, new SkifTestGroupExServices().getServices()));
 
-        bind(List.class).annotatedWith(Names.named("SharedList")).to(ArrayList.class).in(Singleton.class);
+        bind(List.class).annotatedWith(Names.named("SharedList")).to(ArrayList.class).in(Singleton.class); // OBS! Her er det kun bindingen fra @Named List som er singleton, ikke klassen ArrayList
     }
 }
 

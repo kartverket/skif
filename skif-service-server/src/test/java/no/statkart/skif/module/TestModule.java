@@ -30,7 +30,7 @@ public class TestModule extends SkifModule {
     @Override
     protected void configure() {
         install(new SkifConfigurationModule(moduleConfiguration));
-        bind(List.class).annotatedWith(Names.named("test")).to(ArrayList.class).in(Singleton.class);
+        bind(List.class).annotatedWith(Names.named("test")).to(ArrayList.class).in(Singleton.class); // OBS! Her er det kun bindingen fra @Named List som er singleton, ikke klassen ArrayList
         configureModulename();
     }
 

@@ -24,6 +24,7 @@ public class ClientModule extends SkifModule {
     }
     @Override
     protected void configure() {
-        bind(ServiceContext.class).to(DefaultServiceContext.class).in(Singleton.class);
+        bind(ServiceContext.class).to(DefaultServiceContext.class);
+        bind(DefaultServiceContext.class).in(Singleton.class);
     }
 }

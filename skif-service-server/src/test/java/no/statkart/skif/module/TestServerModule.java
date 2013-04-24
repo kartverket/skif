@@ -30,7 +30,7 @@ public class TestServerModule extends TestModule {
     }
 
     protected void configureModulename() {
-        bind(List.class).annotatedWith(Names.named("test")).to(ArrayList.class).in(Singleton.class);
+        bind(List.class).annotatedWith(Names.named("test")).to(ArrayList.class).in(Singleton.class); // OBS! Her er det kun bindingen fra @Named List som er singleton, ikke klassen ArrayList
         bind(String.class).annotatedWith(Names.named("modulename")).toInstance("TestServerModule");
     }
 }

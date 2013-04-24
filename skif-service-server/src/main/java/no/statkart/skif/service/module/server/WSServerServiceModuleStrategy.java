@@ -77,10 +77,12 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
         // W2DAdapterWithServiceContextMapperProxyHandler refererer til Mapping som er bunnet til innerBinder. Må derfor selv bindes i innerBinder
         innerBinder.bind(typeLiteral(TerminatingProxyHandler.class, serviceWSIClass)).annotatedWith(WSServiceChain.class).to(typeLiteral(W2DAdapterWithServiceContextMapperProxyHandler.class, serviceWSIClass, serviceClass));
         // wsServiceChainFactoryClassForWSI refererer til TerminatingProxyHandler som er bunnet til innerBinder i innerBinder
-        innerBinder.bind(typeLiteral(WSServiceChainFactory.class, serviceWSIClass)).to(typeLiteral(wsServiceChainFactoryClassForWSI, serviceWSIClass)).in(Singleton.class);
+        innerBinder.bind(typeLiteral(WSServiceChainFactory.class, serviceWSIClass)).to(typeLiteral(wsServiceChainFactoryClassForWSI, serviceWSIClass));
+        innerBinder.bind(typeLiteral(wsServiceChainFactoryClassForWSI, serviceWSIClass)).in(Singleton.class);
         innerBinder.expose(typeLiteral(WSServiceChainFactory.class, serviceWSIClass));
 
-        outerBinder.bind(typeLiteral(WSServiceChainFactory.class, serviceClass)).to(typeLiteral(wsServiceChainFactoryClassForService, serviceClass)).in(Singleton.class);
+        outerBinder.bind(typeLiteral(WSServiceChainFactory.class, serviceClass)).to(typeLiteral(wsServiceChainFactoryClassForService, serviceClass));
+        outerBinder.bind(typeLiteral(wsServiceChainFactoryClassForService, serviceClass)).in(Singleton.class);
         outerBinder.bind(typeLiteral(TerminatingProxyHandler.class, serviceClass)).annotatedWith(WSServiceChain.class).to(typeLiteral(EJBCallProxyHandler.class, serviceClass));
     }
 

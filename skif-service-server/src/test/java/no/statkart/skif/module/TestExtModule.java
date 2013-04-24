@@ -23,7 +23,7 @@ public class TestExtModule extends SkifModule {
 
     @Override
     protected void configure() {
-        bind(List.class).annotatedWith(Names.named("testExt")).to(ArrayList.class).in(Singleton.class);
+        bind(List.class).annotatedWith(Names.named("testExt")).to(ArrayList.class).in(Singleton.class); // OBS! Her er det kun bindingen fra @Named List som er singleton, ikke klassen ArrayList
     }
 
     @Provides
