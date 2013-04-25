@@ -1,11 +1,13 @@
 package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
+import com.google.inject.Key;
 import com.google.inject.Provider;
 import no.statkart.skif.service.*;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.LoginUser;
+import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.service.scope.ServiceRequestScope;
@@ -41,16 +43,17 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
     protected final Provider<ServiceRequestScope> serviceRequestScopeProvider;
     protected final Provider<S> ejbServiceChainProvider;
     protected final EJBAttributesLookup<S> ejbAttributesLookup;
-
+    protected final Provider<Long> callIdProvider;
 
     @Inject
-    public EJBInterceptorSingleVm(Provider<SingleVmRemoteCallContext> singleVmRemoteCallContextProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceRequestScope> serviceRequestScopeProvider, Provider<ServiceContext> serviceContextProvider, @EJBServiceChain Provider<S> ejbServiceChainProvider, EJBAttributesLookup<S> ejbAttributesLookup) {
+    public EJBInterceptorSingleVm(Provider<SingleVmRemoteCallContext> singleVmRemoteCallContextProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceRequestScope> serviceRequestScopeProvider, Provider<ServiceContext> serviceContextProvider, @EJBServiceChain Provider<S> ejbServiceChainProvider, EJBAttributesLookup<S> ejbAttributesLookup, @CallId Provider<Long> callIdProvider) {
         this.singleVmRemoteCallContextProvider = singleVmRemoteCallContextProvider;
         this.serviceRequestContextProvider = serviceRequestContextProvider;
         this.serviceRequestScopeProvider = serviceRequestScopeProvider;
         this.serviceContextProvider = serviceContextProvider;
         this.ejbServiceChainProvider = ejbServiceChainProvider;
         this.ejbAttributesLookup = ejbAttributesLookup;
+        this.callIdProvider = callIdProvider;
     }
 
     @Override
@@ -77,10 +80,15 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
             serviceRequestContext = new ServiceRequestContext(txMode, beanManagedTransaction, txType);
             LoginUser loginUser = (LoginUser) contextData.get("credentials");
             final PrincipalImpl callerPrincipal = (loginUser==null) ? new PrincipalImpl(null) :  new PrincipalImpl(loginUser.getUsername());
+            serviceRequestContext.setCallId(callIdProvider.get());
             serviceRequestContext.setCallerPrincipal(callerPrincipal);
             serviceRequestContext.setServicename(method.getName());
         } else {
-            serviceRequestContext = new ServiceRequestContext(serviceRequestContextProvider.get(), txMode, false, txType);
+            ServiceRequestContext oldServiceRequestContext = serviceRequestContextProvider.get();
+            serviceRequestContext = new ServiceRequestContext(oldServiceRequestContext, txMode, false, txType);
+            serviceRequestContext.incNestedLevel();
+            serviceRequestContext.setCallId(callIdProvider.get());
+            serviceRequestContext.setParentCallId(oldServiceRequestContext.getCallId());
             serviceContext = CopyHelper.copy(serviceContextProvider.get());
         }
 

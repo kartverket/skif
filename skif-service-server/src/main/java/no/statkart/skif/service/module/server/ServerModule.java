@@ -4,9 +4,11 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
+import no.statkart.skif.service.CallIdProvider;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.ServiceRequestContext;
+import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 
@@ -39,6 +41,9 @@ public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy > {
         bindScope(ServiceRequestScoped.class, serviceRequestScope);
         bind(ServiceRequestScope.class).toInstance(serviceRequestScope);
         bind(ServiceRequestContext.class).in(ServiceRequestScoped.class);
+
+        // Binder opp provider av call id
+        bind(Long.class).annotatedWith(CallId.class).toProvider(CallIdProvider.class);
 
         // Standard bindinger som må være med
         bind(ServiceMode.class).toInstance(moduleConfiguration.getServiceMode());

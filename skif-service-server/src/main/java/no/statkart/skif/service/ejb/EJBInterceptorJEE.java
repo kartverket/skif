@@ -7,6 +7,7 @@ import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.service.*;
+import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.util.CopyHelper;
 import org.slf4j.Logger;
@@ -78,6 +79,7 @@ public abstract class EJBInterceptorJEE {
         ServiceContext serviceContext = CopyHelper.copy(injector.getInstance(ServiceContext.class));
         newServiceRequestContext.setCallerPrincipal(sessionContext.getCallerPrincipal());
         newServiceRequestContext.incNestedLevel();
+        newServiceRequestContext.setCallId(injector.getInstance(Key.get(Long.class, CallId.class)));
         newServiceRequestContext.setParentCallId(serviceRequestContext.getCallId());
 
         final ServiceRequestScope serviceRequestScope = injector.getInstance(ServiceRequestScope.class);

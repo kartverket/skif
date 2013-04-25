@@ -13,11 +13,14 @@ import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
+import no.statkart.skif.service.logging.DefaultServerCallLogger;
+import no.statkart.skif.service.logging.ServerCallLogger;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import no.statkart.skif.service.module.server.RunOnServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
+import no.statkart.skif.service.proxy.EjbLoggingProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.RuntimeExceptionProxyHandler;
 import no.statkart.skif.skiftest.service.SkifTestServiceContext;
@@ -56,6 +59,8 @@ public class SkifTestServerModule extends SkifModule {
 
         install(new ServerServiceModule(moduleConfiguration, new SkifTestGroupExServices().getServices()));
 
+        bind(ServerCallLogger.class).to(DefaultServerCallLogger.class);
+
         bind(List.class).annotatedWith(Names.named("SharedList")).to(ArrayList.class).in(Singleton.class); // OBS! Her er det kun bindingen fra @Named List som er singleton, ikke klassen ArrayList
     }
 }
@@ -81,10 +86,12 @@ class  AnnotatingEjbServiceChainFactorySpecification extends EJBServiceChainFact
  */
 class AnnotatingEjbServiceChainFactory<S> implements EJBServiceChainFactory<S> {
     private final Provider<ServiceRequestContext> serviceRequestContextProvider;
+    private final ServerCallLogger serverCallLogger;
 
     @Inject
-    public AnnotatingEjbServiceChainFactory(Provider<ServiceRequestContext> serviceRequestContextProvider) {
+    public AnnotatingEjbServiceChainFactory(Provider<ServiceRequestContext> serviceRequestContextProvider, ServerCallLogger serverCallLogger) {
         this.serviceRequestContextProvider = serviceRequestContextProvider;
+        this.serverCallLogger = serverCallLogger;
     }
 
     @Override
@@ -122,7 +129,7 @@ class AnnotatingEjbServiceChainFactory<S> implements EJBServiceChainFactory<S> {
             }
         };
         h.setChained(firstInChain);
-        return new RuntimeExceptionProxyHandler<S>()    .setChained(h);
+        return new RuntimeExceptionProxyHandler<S>().setChained(new EjbLoggingProxyHandler<S>(serverCallLogger).setChained(h));
     }
 }
 
