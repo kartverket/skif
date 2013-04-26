@@ -24,18 +24,6 @@ dependencies {
     testCompile project(':skif-config')
 }
 
-
-ideaModule {
-    doFirst {
-        //SKIF-239: legger inn vanlig driver + debugdriver inn i IntelliJ prosjektet for enkel manuell switching av rekkefølge på classpath.
-        project.dependencies {
-            provided libraries.ojdbc
-            provided libraries.ojdbc_g
-        }
-    }
-}
-
-
 task generateSchemaFromHibernate(type: JavaExec, dependsOn: configurations.runtime) {
     description = "Lager skjema og plasserer det modulroten"
 
