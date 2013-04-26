@@ -37,9 +37,3 @@ task jarSingleVm(type: Jar, dependsOn: project.tasks.warWeblogic.dependsOn) {
 artifacts {
     singlevm jarSingleVm
 }
-
-//trenger disse i IntelliJ
-project.idea.module {
-    scopes.get('PROVIDED', [plus: [configurations.weblogicProvided, configurations.singlevm], minus: []])
-    scopes.get('COMPILE', [plus: [configurations.weblogic], minus: []])
-}

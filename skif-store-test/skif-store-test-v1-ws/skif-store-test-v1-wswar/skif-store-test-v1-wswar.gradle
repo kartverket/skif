@@ -18,10 +18,3 @@ dependencies {
     weblogicProvided libraries['tools.jar']
     weblogicProvided libraries.weblogic
 }
-
-//trenger dette for IntelliJ
-project.idea.module {
-    scopes.get('PROVIDED', [plus: [configurations.weblogicProvided], minus: []])
-    scopes.get('COMPILE', [plus: [configurations.weblogic], minus: []])
-}
-

@@ -282,27 +282,27 @@ subprojects { Project project ->
                 }
             }
         }
+    }
 
-        tasks.ideaModule {
+    tasks.ideaModule {
 
-            // Plasserer weblogic avhengigheter til sist på classpath...
-            doFirst {
-                def weblogic_home = project.WEBLOGIC_HOME.replace('\\', '/').toLowerCase()
+        // Plasserer weblogic avhengigheter til sist på classpath...
+        doFirst {
+            def weblogic_home = project.WEBLOGIC_HOME.replace('\\', '/').toLowerCase()
 
-                project.idea.module.iml.withXml { provider ->
-                    def rootNode = provider.asNode()
-                    def node = rootNode.component.find {it.@name == 'NewModuleRootManager'}
+            project.idea.module.iml.withXml { provider ->
+                def rootNode = provider.asNode()
+                def node = rootNode.component.find {it.@name == 'NewModuleRootManager'}
 
-                    def weblogicNodes = node.orderEntry.findAll {
-                        it.@type.equals('module-library') && it.library.CLASSES.root.@url.findAll({ it.toLowerCase().contains(weblogic_home) }).size() > 0
-                    }
-
-                    weblogicNodes.each { node.remove it }
-                    weblogicNodes.each { node.append it }
+                def weblogicNodes = node.orderEntry.findAll {
+                    it.@type.equals('module-library') && it.library.CLASSES.root.@url.findAll({ it.toLowerCase().contains(weblogic_home) }).size() > 0
                 }
-            }
 
+                weblogicNodes.each { node.remove it }
+                weblogicNodes.each { node.append it }
+            }
         }
+
     }
 }
 
@@ -396,6 +396,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build99'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build105'
     }
 }
