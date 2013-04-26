@@ -21,6 +21,7 @@
     </root>
 
     <logger name="no.statkart.skif.service.logging.DefaultServerCallLogger" level="info"/>
+    <logger name="no.statkart.skif.service.logging.DefaultClientCallLogger" level="info"/>
 
     <!-- Hibernate -->
 
