@@ -91,6 +91,26 @@ public class AbstractStore implements Store {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<I> bubbleIds) {
+        return storeSession.getIgnoreMissing(bubbleIds);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<I> bubbleIds) {
+        return storeSession.getIgnoreMissing(bubbleIds);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<I> bubbleIds) {
+        return storeSession.getIgnoreMissing(bubbleIds);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+        storeSession.getIgnoreMissing(bubbleIds, bubbleObjects);
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(@Nullable I bubbleId) {
         if (bubbleId == null) return null;
         return storeSession.lock(bubbleId);
@@ -132,12 +152,12 @@ public class AbstractStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void register(BubbleTransfer transfer) {
+    public void register(BubbleTransfer transfer) {
         storeSession.register(transfer);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer transfer) {
+    public void registerTransfer(UnitOfWorkTransfer transfer) {
         Set<BubbleId<?>> ids = Sets.newHashSet();
         if (transfer.isShared()) {
             transfer = CopyHelper.copy(transfer);
@@ -150,7 +170,6 @@ public class AbstractStore implements Store {
                     throw new ImplementationException("Objekt er inneholdt to ganger i transfser: " + bubbleObject.getId());
                 }
                 insert(bubbleObject);
-                ids.add(bubbleObject.getId());
             }
             for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
                 if (ids.add(bubbleObject.getId())==false) {
@@ -194,7 +213,7 @@ public class AbstractStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll() {
+    public boolean evictAll() {
         return storeSession.evictAll();
     }
 

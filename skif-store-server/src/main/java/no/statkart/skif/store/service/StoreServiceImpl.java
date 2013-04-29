@@ -42,6 +42,15 @@ public class StoreServiceImpl implements StoreService {
         return bubbleObjects;
     }
 
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjectsIgnoreMissing(Collection<I> ids) {
+        final Collection<T> bubbleObjects = store.getIgnoreMissing(ids);
+        // TODO: Opptimaliser for bulk
+        for (T bubbleObject : bubbleObjects) {
+            store.ensureFullyLoaded(bubbleObject);
+        }
+        return bubbleObjects;
+    }
 
     @Override
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {

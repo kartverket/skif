@@ -3,10 +3,7 @@ package no.statkart.skif.store;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.Provider;
-import no.statkart.skif.exception.AttemptDeleteException;
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.NotLockedException;
-import no.statkart.skif.persistence.OracleLogHelper;
+import no.statkart.skif.exception.*;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
@@ -292,7 +289,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             final StoreEntry storeEntry = iterator.next();
             if (!fullyInitializedBubbles.containsKey(storeEntry.getId())) {
                 StoreEntryState state = storeEntry.getState(level);
-                if (state==StoreEntryState.UNCHANGED || state==StoreEntryState.UPDATED) {
+                if (state == StoreEntryState.UNCHANGED || state == StoreEntryState.UPDATED) {
                     // Objekt kan være lazyloaded og må legges inn i session igjen for å unngå lazyloading feil senere
                     lazyLoaded.add(storeEntry);
                 }
@@ -633,6 +630,29 @@ public class StoreSessionServer extends AbstractStoreSession {
         return entries;
     }
 
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntriesIgnoreMissing(int level, Set<I> bubbleIds, boolean refresh) {
+        if (refresh) {
+            throw new NotImplementedException();
+        }
+
+        Collection<? extends T> persistentBubbleObjects = Collections.emptySet();
+        Set<I> idsToLoad = new HashSet<I>(bubbleIds);
+        while (!idsToLoad.isEmpty()) {
+            try {
+                persistentBubbleObjects = persistenceSessionManager.get(idsToLoad);
+                break;
+            } catch (ObjectsNotFoundException e) {
+                idsToLoad.removeAll(e.getIdsNotFound());
+            }
+        }
+
+        Collection<StoreEntry> entries = new ArrayList<StoreEntry>(bubbleIds.size());
+        for (T originalBubbleObject : persistentBubbleObjects) {
+            entries.add(createEntry(level, originalBubbleObject));
+        }
+        return entries;
+    }
 
     public void registerWriteListener(StoreSessionWriteListener listener) {
         if (!writeListeners.contains(listener)) {

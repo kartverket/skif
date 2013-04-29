@@ -5,14 +5,13 @@ import com.google.common.collect.Maps;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.store.AbstractEntityComponent;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.exception.ObjectsNotFoundException;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.*;
+import org.hibernate.LockMode;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.criterion.Expression;
 import org.hibernate.engine.*;
@@ -284,9 +283,9 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             }
         }
         if (bubbleIds.size() != result.size()) {
-            //ids.removeAll(Store.convertObjectsToIds(result));
-            bubbleIds = null;  //TODO: Fix
-            throw new ImplementationException("Ikke alle objekter kunne finnes: " + bubbleIds);
+            Set<BubbleId<?>> ids = new HashSet<BubbleId<?>>(bubbleIds);
+            ids.removeAll(BubbleIds.asIds(result));
+            throw new ObjectsNotFoundException(ids);
         }
         return result;
     }

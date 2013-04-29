@@ -16,6 +16,7 @@ public interface WrappableStoreSession extends StoreSession {
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean undoEntry(int level, T bubbleObject);
     <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry loadEntry(int level, I bubbleId, boolean refresh);
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Set<I> bubbleIds, boolean refresh);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntriesIgnoreMissing(int level, Set<I> bubbleIds, boolean refresh);
     <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId);
     <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry  unlockEntry(int level, I bubbleId);
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId);

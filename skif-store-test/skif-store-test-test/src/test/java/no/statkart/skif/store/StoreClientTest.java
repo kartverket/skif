@@ -216,6 +216,11 @@ public class StoreClientTest {
         }
 
         @Override
+        public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjectsIgnoreMissing(Collection<I> ids) {
+            return getObjects(ids);
+        }
+
+        @Override
         public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
             throw new UnsupportedOperationException();
         }

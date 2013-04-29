@@ -85,6 +85,38 @@ public interface StoreSession {
      * @param bubbleObjects
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects);
+    
+    /**
+     * Henter objekter med spesifisert id. Metoden ignorerer om ikke alle objekter ble funnet.
+     *
+     * @param bubbleIds
+     * @return
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<I> bubbleIds);
+
+    /**
+     * Henter objekter med spesifisert id. Metoden ignorerer om ikke alle objekter ble funnet.
+     *
+     * @param bubbleIds
+     * @return
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<I> bubbleIds);
+
+    /**
+     * Henter objekter med spesifisert id. Metoden ignorerer om ikke alle objekter ble funnet.
+     *
+     * @param bubbleIds
+     * @return
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<I> bubbleIds);
+
+    /**
+     * Henter objekter med spesifisert id. Metoden ignorerer om ikke alle objekter ble funnet.
+     *
+     * @param bubbleIds
+     * @param bubbleObjects
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<I> bubbleIds, Collection<T> bubbleObjects);
 
     /**
      * Fjerner objektet fra sessionen. Objekter som har blitt endret fjernes ikke

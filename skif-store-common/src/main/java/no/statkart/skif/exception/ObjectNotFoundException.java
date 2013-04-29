@@ -2,28 +2,36 @@ package no.statkart.skif.exception;
 
 import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.store.BubbleId;
+import org.slf4j.Logger;
 
 /**
  * Angir at objekt med gitt id ikke finnes. Det kan f.eks være fordi det har blitt slettet.
  *
  * TODO: Er det riktig den buker BubbleId? Bør den flyttes til pakke store.excption
+ *
+ * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
+ * @since 2.0
  */
-public class ObjectNotFoundException extends FinderException {
+public class ObjectNotFoundException extends ObjectsNotFoundException {
     private static final long serialVersionUID = 1L;
 
-    private BubbleId notFoundId;
+    private final BubbleId<?> notFoundId;
 
-    public ObjectNotFoundException(BubbleId notFoundId) {
-        super(String.valueOf(notFoundId));
+    public ObjectNotFoundException(BubbleId<?> notFoundId) {
+        this(notFoundId, null);
+    }
+
+    public ObjectNotFoundException(BubbleId<?> notFoundId, Throwable cause) {
+        this(notFoundId, cause, null);
+    }
+
+    public ObjectNotFoundException(BubbleId<?> notFoundId, Throwable cause, Logger logger) {
+        super(notFoundId, cause, logger);
         this.notFoundId = notFoundId;
     }
 
-    public ObjectNotFoundException(BubbleId notFoundId, Throwable e) {
-        super(String.valueOf(notFoundId), e);
-        this.notFoundId = notFoundId;
-    }
-
-    public BubbleId getNotFoundId() {
+    public BubbleId<?> getNotFoundId() {
         return notFoundId;
     }
 }

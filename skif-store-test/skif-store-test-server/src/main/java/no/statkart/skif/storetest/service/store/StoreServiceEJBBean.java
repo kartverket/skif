@@ -43,6 +43,12 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjectsIgnoreMissing(Collection<I> ids) {
+        return serviceChain.getObjectsIgnoreMissing(ids);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
         return serviceChain.getVersions(id, start, end);
     }

@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.*;
 
@@ -121,22 +122,79 @@ public class MockupStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<I> bubbleIds) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        Collection<T> bubbleObjects;
+        if (bubbleIds instanceof Set) {
+            bubbleObjects = getOrdered((Set<I>) bubbleIds);
+        } else if (bubbleIds instanceof List) {
+            bubbleObjects = getOrdered((List<I>) bubbleIds);
+        } else {
+            checkNotNull(bubbleIds, "bubbleIds");
+            bubbleObjects = getOrdered(new ArrayList<I>(bubbleIds));
+        }
+        return bubbleObjects;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds) {
-        throw new NotImplementedException();
+        checkNotNull(bubbleIds, "bubbleIds");
+        LinkedHashSet<T> bubbleObjects = new LinkedHashSet<T>(bubbleIds.size());
+        getOrdered(bubbleIds, bubbleObjects);
+        return bubbleObjects;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds) {
-        throw new NotImplementedException();
+        checkNotNull(bubbleIds, "bubbleIds");
+        List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
+        getOrdered(bubbleIds, bubbleObjects);
+        return bubbleObjects;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
-        throw new NotImplementedException();
+        for (I bubbleId : bubbleIds) {
+            bubbleObjects.add(get(bubbleId));
+        }
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<I> bubbleIds) {
+        Collection<T> bubbleObjects;
+        if (bubbleIds instanceof Set) {
+            bubbleObjects = getIgnoreMissing((Set<I>) bubbleIds);
+        } else if (bubbleIds instanceof List) {
+            bubbleObjects = getIgnoreMissing((List<I>) bubbleIds);
+        } else {
+            checkNotNull(bubbleIds, "bubbleIds");
+            bubbleObjects = getIgnoreMissing(new ArrayList<I>(bubbleIds));
+        }
+        return bubbleObjects;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<I> bubbleIds) {
+        checkNotNull(bubbleIds, "bubbleIds");
+        Set<T> bubbleObjects = new HashSet<T>(bubbleIds.size());
+        getIgnoreMissing(bubbleIds, bubbleObjects);
+        return bubbleObjects;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<I> bubbleIds) {
+        checkNotNull(bubbleIds, "bubbleIds");
+        List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
+        getIgnoreMissing(bubbleIds, bubbleObjects);
+        return bubbleObjects;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+        for (I bubbleId : bubbleIds) {
+            try {
+                bubbleObjects.add(get(bubbleId));
+            } catch (ObjectNotFoundException ignore) {
+            }
+        }
     }
 
     @Override
@@ -191,7 +249,7 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll() {
+    public boolean evictAll() {
         throw new NotImplementedException();
     }
 
@@ -210,7 +268,7 @@ public class MockupStore implements Store {
     @Override
     public <T extends BubbleObject> void insert(T bubbleObject) {
         // Opprett BubbleId av riktig type hvis null
-        if (bubbleObject.getId()==null) {
+        if (bubbleObject.getId() == null) {
             final BubbleId<? extends BubbleObject> bubbleId = idService.getNextId(BubbleIds.getBubbleIdClass(bubbleObject.getClass()));
             bubbleObject.setId(bubbleId);
         }
@@ -323,13 +381,13 @@ public class MockupStore implements Store {
     }
 
     /**
-    * Finner alle BubbleIds som refereres til fra dette objektet og alle underkomponenter.
-    * <p/>
-    * Algoritmen tar høyde for at domenemodellen har doble eller sirkulære linker. Benytter derfor en {@code Stack} for å overkomme dette.
-    *
-    * @param object objektet som skal granskes
-    * @return alle id-er, inkludert potensielt objektets egen id
-    */
+     * Finner alle BubbleIds som refereres til fra dette objektet og alle underkomponenter.
+     * <p/>
+     * Algoritmen tar høyde for at domenemodellen har doble eller sirkulære linker. Benytter derfor en {@code Stack} for å overkomme dette.
+     *
+     * @param object objektet som skal granskes
+     * @return alle id-er, inkludert potensielt objektets egen id
+     */
     private static Set<BubbleId> findReferencedBubbleIds(Object object) {
         if (object == null) {
             return Collections.emptySet();

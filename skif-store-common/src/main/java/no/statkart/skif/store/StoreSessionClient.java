@@ -6,8 +6,6 @@ import no.statkart.skif.util.CopyHelper;
 
 import java.util.*;
 
-import static no.statkart.skif.guava.Preconditions.checkNotNull;
-
 /**
  * StoreSession som utgjør avsluttende ledd på klienten. Klassen anvender en {@link StoreService} for å hente
  * objekter fra server
@@ -34,27 +32,27 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry insertEntry(int level, T bubbleObject) {
-        if (level==0) {
+        if (level == 0) {
             throw new ImplementationException("Insert på klient må gjøres i en StoreUnitOfWork og sendes til server via getUnitOfWorkTransfer");
-        }  else {
+        } else {
             return super.insertEntry(level, bubbleObject);
         }
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry updateEntry(int level, T bubbleObject) {
-        if (level==0) {
+        if (level == 0) {
             throw new ImplementationException("Update på klient må gjøres i en StoreUnitOfWork og sendes til server via getUnitOfWorkTransfer");
-        }  else {
+        } else {
             return super.updateEntry(level, bubbleObject);
         }
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry deleteEntry(int level, T bubbleObject) {
-        if (level==0) {
+        if (level == 0) {
             throw new ImplementationException("Delete på klient må gjøres i en StoreUnitOfWork og sendes til server via getUnitOfWorkTransfer");
-        }  else {
+        } else {
             return super.deleteEntry(level, bubbleObject);
         }
     }
@@ -67,7 +65,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId) {
         StoreEntry storeEntry = storeCache.get(bubbleId);
-        return (storeEntry!=null && isLocked(storeEntry));
+        return (storeEntry != null && isLocked(storeEntry));
     }
 
     @Override
@@ -82,6 +80,18 @@ public class StoreSessionClient extends AbstractStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Set<I> bubbleIds, boolean refresh) {
         Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
         Collection<T> objects = storeService.getObjects(bubbleIds);
+        for (T bubbleObject : objects) {
+            StoreEntry entry = storeCache.register(level, bubbleObject);
+            result.add(entry);
+
+        }
+        return result;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntriesIgnoreMissing(int level, Set<I> bubbleIds, boolean refresh) {
+        Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
+        Collection<T> objects = storeService.getObjectsIgnoreMissing(bubbleIds);
         for (T bubbleObject : objects) {
             StoreEntry entry = storeCache.register(level, bubbleObject);
             result.add(entry);
@@ -145,11 +155,11 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
-    public void registerEntries(int level,  BubbleTransfer bubbleTransfer) {
+    public void registerEntries(int level, BubbleTransfer bubbleTransfer) {
         for (Object object : bubbleTransfer.getObjects().values()) {
             BubbleObject bubbleObject = (BubbleObject) object;
             StoreEntry entry = storeCache.get(bubbleObject.getId());
-            if (entry==null) {
+            if (entry == null) {
                 storeCache.register(level, bubbleObject, bubbleObject);
             } else {
                 // TODO: sjekk of object i transfer er nyere/låst

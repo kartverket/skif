@@ -60,6 +60,11 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntriesIgnoreMissing(int level, Set<I> bubbleIds, boolean refresh) {
+        return wrappedStoreSession.loadEntriesIgnoreMissing(level, bubbleIds, false);
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
         StoreEntry entry = wrappedStoreSession.lockEntry(level, bubbleId);
         modifiedMap.put(entry.getId(), entry);

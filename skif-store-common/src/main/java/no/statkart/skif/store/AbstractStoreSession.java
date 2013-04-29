@@ -207,6 +207,69 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<I> bubbleIds) {
+        Collection<T> bubbleObjects;
+        if (bubbleIds instanceof Set) {
+            bubbleObjects = getIgnoreMissing((Set<I>) bubbleIds);
+        } else if (bubbleIds instanceof List) {
+            bubbleObjects = getIgnoreMissing((List<I>) bubbleIds);
+        } else {
+            checkNotNull(bubbleIds, "bubbleIds");
+            bubbleObjects = getIgnoreMissing(new ArrayList<I>(bubbleIds));
+        }
+        return bubbleObjects;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<I> bubbleIds) {
+        Set<T> result = new HashSet<T>();
+        getIgnoreMissing(bubbleIds, result);
+        return result;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<I> bubbleIds) {
+        List<T> result = new ArrayList<T>();
+        getIgnoreMissing(bubbleIds, result);
+        return result;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+        checkNotNull(bubbleIds, "bubbleIds");
+        Set<I> missingBubbleIds = null;
+
+        for (I bubbleId : bubbleIds) {
+            final StoreEntry storeEntry = storeCache.get(bubbleId);
+            final BubbleObject bubbleObject = storeEntry == null ? null : storeEntry.getDerivedBubbleObjectCopyIfLocked(level, store);
+            if (bubbleObject != null) {
+                bubbleObjects.add((T) bubbleObject);
+            } else {
+                if (missingBubbleIds == null) {
+                    missingBubbleIds = new HashSet<I>(bubbleIds.size());
+                }
+                missingBubbleIds.add(bubbleId);
+            }
+        }
+
+        if (missingBubbleIds != null) {
+            if (missingBubbleIds.size() == 1) {
+                try {
+                    StoreEntry entry = loadEntry(level, missingBubbleIds.iterator().next(), false);
+                    bubbleObjects.add((T) entry.getDerivedBubbleObjectCopyIfLocked(level, store));
+                } catch (ObjectNotFoundException ignore) {
+                    // OK, så fantes den ikke, da.
+                }
+            } else {
+                Collection<StoreEntry> entries = loadEntriesIgnoreMissing(level, missingBubbleIds, false);
+                for (StoreEntry entry : entries) {
+                    bubbleObjects.add((T) entry.getDerivedBubbleObjectCopyIfLocked(level, store));
+                }
+            }
+        }
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry insertEntry(int level, T bubbleObject) {
         StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
         if (storeEntry == null) {

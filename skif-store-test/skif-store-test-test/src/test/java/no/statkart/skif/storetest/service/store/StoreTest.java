@@ -2,8 +2,8 @@ package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.exception.ObjectsNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.demo.*;
@@ -14,9 +14,11 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 import static org.testng.Assert.*;
 
 /**
@@ -256,4 +258,41 @@ public class StoreTest extends StoreTestTestCase {
         }
     }
 
+    /**
+     * Tester forsøk på henting av ikke-eksisterende objekt.
+     */
+    public void testObjectNotFoundException() {
+        final TestBubbleId<?> id = new TestBubbleId(-1L);
+        try {
+            store.get(id);
+            fail("Skulle fått exception");
+        } catch (ObjectNotFoundException e) {
+            e.printStackTrace();
+            assertEquals(e.getNotFoundId(), id);
+        }
+    }
+
+    /**
+     * Tester forsøk på henting av ikke-eksisterende objekt.
+     */
+    public void testObjectsNotFoundException() {
+        final List<TestBubbleId<?>> ids = Arrays.<TestBubbleId<?>>asList(new TestBubbleId(1L), new TestBubbleId(-1L));
+        try {
+            store.get(ids);
+            fail("Skulle fått exception");
+        } catch (ObjectsNotFoundException e) {
+            e.printStackTrace();
+            assertEquals(e.getIdsNotFound(), Collections.singleton(new TestBubbleId(-1L)));
+        }
+    }
+
+    /**
+     * Tester forsøk på ignorering av ikke-eksisterende objekt.
+     */
+    public void testIgnoreMissing() {
+        final List<TestBubbleId<?>> ids = Arrays.<TestBubbleId<?>>asList(new TestBubbleId(1L), new TestBubbleId(-1L));
+        List<TestBubble> bubbles = store.getIgnoreMissing(ids);
+        assertEquals(bubbles.size(), 1, "Antall objekter");
+        assertEquals(bubbles.get(0).getId(), new TestBubbleId(1L), "Uventet id");
+    }
 }
