@@ -1,38 +1,44 @@
 package no.statkart.skif.exception;
 
+import com.google.common.collect.ImmutableList;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 /**
+ * Exception for å signalisere at man forsøkte å låse én eller flere bobler som allerede var låst av noen andre.
  *
+ * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
+ * @since 2.0
  */
-public class LockedException extends OperationalException {
+public class LockedException extends ApplicationException {
     private static final long serialVersionUID = 1L;
 
     /**
      * Locks that could not be aquired
      */
-    private List<LockInfo> locksNotAquired = new ArrayList<LockInfo>();
+    private final List<? extends LockInfo<?>> locksNotAquired;
 
     /**
      * Cached list of ids not aquired. Derived from {@link #locksNotAquired}
      */
-    private transient List<LockKey> idsNotAcquired = null;
+    private transient List<? extends LockKey<?>> idsNotAcquired = null;
 
     /**
      * The principal who has this item locked
      */
-    private String lockedBy;
+    private final String lockedBy;
 
     /**
      * The principal who tries to lock objects
      */
-    private String owner;
+    private final String owner;
 
-    private Timestamp exceptionTime = new Timestamp(System.currentTimeMillis());
+    private final Timestamp exceptionTime = new Timestamp(System.currentTimeMillis());
 
     /**
      * Creates a lockInfo exception for a single lockInfo that could not be aquired
@@ -44,7 +50,7 @@ public class LockedException extends OperationalException {
         super("");
         this.owner = owner;
         this.lockedBy = lockInfo.getOwner();
-        this.locksNotAquired.add(lockInfo);
+        this.locksNotAquired = ImmutableList.of(lockInfo);
     }
 
     /**
@@ -60,7 +66,7 @@ public class LockedException extends OperationalException {
             throw new ImplementationException("LockedException cannot have empty collection of lockInfos, owner=" + owner + " lockInfos=" + lockInfos);
         }
         this.owner = owner;
-        locksNotAquired.addAll(lockInfos);
+        locksNotAquired = ImmutableList.copyOf(lockInfos);
         LockInfo first = lockInfos.iterator().next();
         this.lockedBy = first.getOwner();
     }
@@ -70,18 +76,19 @@ public class LockedException extends OperationalException {
      *
      * @return unmodifiable list of LockInfo
      */
-    public List<LockInfo> getLocksNotAquired() {
-        return Collections.unmodifiableList(locksNotAquired);
+    public List<? extends LockInfo<?>> getLocksNotAquired() {
+        return locksNotAquired;
     }
 
-    public List<LockKey> getIdsNotAquired() {
+    public List<? extends LockKey<?>> getIdsNotAquired() {
         if (idsNotAcquired == null) {
-            idsNotAcquired = new ArrayList<LockKey>(locksNotAquired.size());
+            ImmutableList.Builder<LockKey<?>> listBuilder = ImmutableList.builder();
             for (LockInfo lockInfo : locksNotAquired) {
-                idsNotAcquired.add(lockInfo.getLockKey());
+                listBuilder.add(lockInfo.getLockKey());
             }
+            idsNotAcquired = listBuilder.build();
         }
-        return Collections.unmodifiableList(idsNotAcquired);
+        return idsNotAcquired;
     }
 
 
@@ -108,12 +115,11 @@ public class LockedException extends OperationalException {
         buf.append("[");
         int max = Math.min(maxLocks, locksNotAquired.size());
         for (int i = 0; i < max; i++) {
-            LockInfo lockInfo = locksNotAquired.get(i);
             if (i != 0) buf.append(", ");
             buf.append(locksNotAquired.get(i));
         }
         if (locksNotAquired.size() > maxLocks) {
-            buf.append(", ...(" + locksNotAquired.size() + " i alt)");
+            buf.append(", ...(").append(locksNotAquired.size()).append(" i alt)");
         }
         buf.append("]");
         return buf.toString();
