@@ -89,7 +89,7 @@ public class StoreServerTest extends StoreTestMixedTestCase {
         });
         assertNotNull(testBubbleFromServer.getId());
 
-        // Oppdater ComponentWithExplicitId
+        // Oppdater EntityComponent
         Raz testBubbleFromServer2 = (Raz) server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
             Store storeOnServer;
@@ -141,7 +141,7 @@ public class StoreServerTest extends StoreTestMixedTestCase {
         });
         assertNotNull(testBubbleFromServer.getId());
 
-        // Oppdater ComponentWithExplicitId med ny ComponentWithExplicitId. Den opprinnelige EntiyComponent blir feilaktig liggende igjen.
+        // Oppdater EntityComponent med ny EntityComponent. Den opprinnelige EntiyComponent blir feilaktig liggende igjen.
         // TODO: Hibernate delete-orphan virker ikke!
         System.out.println("Denne blir liggende igjen: " + testBubbleFromServer.getRazEntityComponent().getId());
         Raz testBubbleFromServer2 = (Raz) server.runInTxRequiresNew(new RunOnServerMethod() {

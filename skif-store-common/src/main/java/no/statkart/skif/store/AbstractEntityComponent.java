@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-public abstract class AbstractEntityComponent implements ComponentWithExplicitId, Serializable {
+public abstract class AbstractEntityComponent implements EntityComponent, Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long pseudoId = null;
