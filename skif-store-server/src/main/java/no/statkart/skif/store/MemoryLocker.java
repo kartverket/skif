@@ -1,5 +1,6 @@
 package no.statkart.skif.store;
 
+import com.google.inject.Singleton;
 import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.locker.LockInfo;
@@ -23,6 +24,7 @@ import java.util.*;
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  */
+@Singleton
 public class MemoryLocker<T> implements DBLockerService<T>, DBLockerInTransactionService<T> {
     private static Logger log = LoggerFactory.getLogger(MemoryLocker.class);
 
