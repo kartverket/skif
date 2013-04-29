@@ -229,7 +229,7 @@ public class MockupStore implements Store {
 
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void registerTransfer(UnitOfWorkTransfer transfer) {
+    public void registerTransfer(UnitOfWorkTransfer transfer) {
         throw new NotImplementedException();
     }
 
@@ -458,7 +458,7 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void register(BubbleTransfer transfer) {
+    public void register(BubbleTransfer transfer) {
         throw new NotImplementedException();
     }
 
