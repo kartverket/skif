@@ -1,5 +1,7 @@
 package no.statkart.skif.service;
 
+import no.statkart.skif.service.scope.ServiceRequestScoped;
+
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import java.io.Serializable;
@@ -10,6 +12,7 @@ import java.security.Principal;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@ServiceRequestScoped
 public class ServiceRequestContext implements Serializable {
     private java.security.Principal callerPrincipal;
     private String servicename;
