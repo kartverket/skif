@@ -20,7 +20,11 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
+ * Baseklasse for tester som skal kjøre i tjenermodus. Injiserbare felter blir injisert med tjener-injektoren før hver
+ * testmetode, og nullstilt etter hvert kall.
+ *
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  * @since 2.1
  */
 public class SkifServerTestCase extends AbstractSkifTestCase implements IHookable {
@@ -89,40 +93,59 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
         Method testMethod = TestNGSupport.getMethod(callBack);
         final TestTransactionAttributeType txType = TestTransactionAttributesLookup.getAnnotation(testMethod);
         final RunOnServerService runOnServerService = getService(txType);
-        runOnServerService.run(new RunOnServerMethod() {
-            @Override
-            public Object run() {
-                SkifServerTestCase.this.injector = injector;
-                injector.injectMembers(SkifServerTestCase.this);
-                Injector savedClientInjector = clientInjector;
-                clientInjector = null;
-                try {
-                    callBack.runTestMethod(testResult);
-                    return null;
-                } finally {
-                    SkifServerTestCase.this.injector = null;
-                    clientInjector = savedClientInjector;
-                    resetInjectedMembers(SkifServerTestCase.this);
-                }
-            }
-
-            private void resetInjectedMembers(SkifServerTestCase testCase) {
-                final Set<InjectionPoint> injectionPoints = InjectionPoint.forInstanceMethodsAndFields(testCase.getClass());
-                for (InjectionPoint injectionPoint : injectionPoints) {
-                    final Member member = injectionPoint.getMember();
-                    if (member instanceof Field) {
-                        Field field = (Field) member;
-                        field.setAccessible(true);
-                        try {
-                            field.set(testCase, null);
-                        } catch (IllegalAccessException e) {
-                            throw new ImplementationException(e);
+        try {
+            runOnServerService.run(new RunOnServerMethod() {
+                @Override
+                public Object run() {
+                    SkifServerTestCase.this.injector = injector;
+                    injector.injectMembers(SkifServerTestCase.this);
+                    Injector savedClientInjector = clientInjector;
+                    clientInjector = null;
+                    try {
+                        callBack.runTestMethod(testResult);
+                        Throwable throwable = testResult.getThrowable();
+                        if (throwable != null) {
+                            throw new SkifServerTestCaseTestException(throwable);
                         }
-                    } else {
-                        throw new ImplementationException("ServerTestCase understøtter ikke bruk av method injection");
+                        return null;
+                    } finally {
+                        SkifServerTestCase.this.injector = null;
+                        clientInjector = savedClientInjector;
+                        resetInjectedMembers(SkifServerTestCase.this);
                     }
                 }
-            }
-        });
+
+                private void resetInjectedMembers(SkifServerTestCase testCase) {
+                    final Set<InjectionPoint> injectionPoints = InjectionPoint.forInstanceMethodsAndFields(testCase.getClass());
+                    for (InjectionPoint injectionPoint : injectionPoints) {
+                        final Member member = injectionPoint.getMember();
+                        if (member instanceof Field) {
+                            Field field = (Field) member;
+                            field.setAccessible(true);
+                            try {
+                                field.set(testCase, null);
+                            } catch (IllegalAccessException e) {
+                                throw new ImplementationException(e);
+                            }
+                        } else {
+                            throw new ImplementationException("ServerTestCase understøtter ikke bruk av method injection");
+                        }
+                    }
+                }
+            });
+        } catch (SkifServerTestCaseTestException ignore) {
+            // Denne exeption ble kastet bare for å rydde opp på tjenersiden. Skal ikke kastes videre.
+        }
+    }
+}
+
+/**
+ * Exception som kastes fra {@link RunOnServerMethod} dersom testen feilet, slik at eventuelle transaksjoner rulles
+ * tilbake fremfor å committes. Denne exception må fanges opp på klientsiden slik at den ikke kommer tilbake til TestNG.
+ * TestNG skal nemlig benytte den exception som ligger i {@link ITestResult}.
+ */
+class SkifServerTestCaseTestException extends RuntimeException {
+    SkifServerTestCaseTestException(Throwable t) {
+        super(t);
     }
 }
