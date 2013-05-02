@@ -1,5 +1,7 @@
 package no.statkart.skif.service.proxy;
 
+import no.statkart.skif.exception.ImplementationException;
+
 /**
  * @author Henrik Fredholm
  * @since 2.0
@@ -11,6 +13,6 @@ public abstract class TerminatingProxyHandler<S> extends ProxyHandler<S> {
     }
 
     public void  setChained(ProxyHandler<S> chained) {
-        throw new RuntimeException("Denne handler terminerer kjeden og kan ikke ha flere ledd");
+        throw new ImplementationException("This handler terminates the chain and can not be chained");
     }
 }

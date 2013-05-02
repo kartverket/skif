@@ -498,7 +498,7 @@ public class AutomagicTest {
 
             return xmlGregorianCalendar;
         } catch (DatatypeConfigurationException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         }
 
     }

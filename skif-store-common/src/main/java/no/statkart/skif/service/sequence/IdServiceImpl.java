@@ -2,6 +2,7 @@ package no.statkart.skif.service.sequence;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
@@ -77,7 +78,7 @@ public class IdServiceImpl implements IdService {
 
     public void setBlockSize(int blockSize) {
         if (blockSize <= 0)
-            throw new RuntimeException("Blocksize for sequence block allocation must be positive: " + blockSize);
+            throw new ImplementationException("Blocksize for sequence block allocation must be positive: " + blockSize);
         this.blockSize = blockSize;
     }
 

@@ -3,6 +3,7 @@ package no.statkart.skif.service.module.server;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleStrategy;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.annotation.Implementation;
@@ -84,7 +85,7 @@ public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
         try {
             return Class.forName(service.getName() + "Impl").asSubclass(service);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException("Could not find implementation class for service: " + service.getName(), e);
         }
     }
 

@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
 import com.google.inject.Singleton;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.locker.LockInfo;
@@ -49,7 +50,7 @@ public class MemoryLocker<T> implements DBLockerService<T>, DBLockerInTransactio
 
 
         if (owner == null) {
-            throw new RuntimeException("Cannot lock: " + key + ". User is null");
+            throw new ImplementationException("Cannot lock: " + key + ". User is null");
         }
         if (lock == null) {
             MemoryLocker.log.debug("Locking : " + key + " for user " + owner);

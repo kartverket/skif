@@ -1,5 +1,6 @@
 package no.statkart.skif.service.ws;
 
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;
 import no.statkart.skif.service.LoginUser;
@@ -48,9 +49,9 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         }
     }
 }

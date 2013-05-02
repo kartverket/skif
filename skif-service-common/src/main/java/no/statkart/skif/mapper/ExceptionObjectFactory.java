@@ -38,7 +38,7 @@ public class ExceptionObjectFactory extends DefaultObjectFactory {
         } catch (NoSuchMethodException e) {
             throw new MappingException("No known instantiation for exception class: " + targetClass);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException("Error in instantiating class " + targetClass.getName(), e);
+            throw new MappingException("Error in instantiating class " + targetClass.getName(), e);
         }
     }
 }

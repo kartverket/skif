@@ -2,6 +2,7 @@ package no.statkart.skif;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
+import no.statkart.skif.exception.ImplementationException;
 
 import java.lang.reflect.Type;
 
@@ -14,9 +15,9 @@ public class SkifUtil {
         try {
             return aClass.newInstance();
         } catch (InstantiationException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         }
     }
 
@@ -24,9 +25,9 @@ public class SkifUtil {
         try {
             return (T) classForName(className).newInstance();
         } catch (InstantiationException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         }
     }
 
@@ -34,7 +35,7 @@ public class SkifUtil {
         try {
             return (Class<? extends T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         }
     }
 

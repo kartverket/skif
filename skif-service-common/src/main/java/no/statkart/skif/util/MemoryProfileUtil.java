@@ -1,5 +1,7 @@
 package no.statkart.skif.util;
 
+import no.statkart.skif.exception.OperationalException;
+
 import javax.swing.*;
 import java.io.IOException;
 
@@ -26,7 +28,7 @@ public class MemoryProfileUtil {
                 try {
                     System.in.read();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new OperationalException(e);
                 }
             }
         }

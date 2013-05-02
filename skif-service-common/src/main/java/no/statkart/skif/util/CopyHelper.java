@@ -1,6 +1,9 @@
 package no.statkart.skif.util;
 
 
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.OperationalException;
+
 import java.io.*;
 
 /**
@@ -28,9 +31,9 @@ public class CopyHelper {
            ObjectInputStream ois = new ObjectInputStream(is);
           return (T)ois.readObject();
        } catch (IOException e) {
-           throw new RuntimeException(e);
+           throw new OperationalException(e);
        } catch (ClassNotFoundException e) {
-           throw new RuntimeException(e);
+           throw new ImplementationException(e);
        }
    }
 
@@ -48,7 +51,7 @@ public class CopyHelper {
          if( fos != null ) try {
             fos.close();
          } catch( IOException ioe ) {
-            throw new RuntimeException(ioe);
+            throw new OperationalException(ioe);
          }
       }
       in.close();

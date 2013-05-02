@@ -32,7 +32,7 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
 
     @Override
     public long allocateSequenceBlock(String sequenceName, int blockSize) {
-        if (blockSize <= 0) throw new RuntimeException("Blocksize må være positiv: " + blockSize);
+        if (blockSize <= 0) throw new ImplementationException("Block size must be positive: " + blockSize);
 
         Connection con = connectionProvider.get();
 
@@ -69,7 +69,7 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
             if (stmt != null) try {
                 stmt.close();
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                throw new OperationalException(e);
             }
         }
         return nextFreeNumber - 1;

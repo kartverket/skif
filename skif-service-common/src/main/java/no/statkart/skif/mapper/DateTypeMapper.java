@@ -1,5 +1,7 @@
 package no.statkart.skif.mapper;
 
+import no.statkart.skif.exception.ImplementationException;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -53,7 +55,7 @@ public class DateTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, Dat
         try {
             return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
         } catch (DatatypeConfigurationException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         }
     }
 

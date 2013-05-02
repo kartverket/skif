@@ -70,7 +70,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             con.commit();
             rollback = false;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new OperationalException(e);
         } finally {
             if (rollback) {
                 JDBCHelper.rollback(con);
@@ -126,7 +126,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             throw e;
         } catch (SQLException e) {
             rollback = true;
-            throw new RuntimeException(e);
+            throw new OperationalException(e);
         } finally {
             if (rollback) {
                 JDBCHelper.rollback(con);
@@ -157,7 +157,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             con.commit();
             rollback = false;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new OperationalException(e);
         } finally {
             JDBCHelper.close(stmt);
             if (rollback) {
@@ -229,7 +229,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             con.commit();
             rollback = false;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new OperationalException(e);
         } finally {
             if (rollback) {
                 JDBCHelper.rollback(con);
@@ -387,7 +387,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 con.rollback();
                 return null;
             } catch (SQLException e1) {
-                throw new RuntimeException(e1);
+                throw new OperationalException(e1);
             }
         } catch (SQLException e) {
             throw new OperationalException("Locking ids failed: " + lockKeys, e);

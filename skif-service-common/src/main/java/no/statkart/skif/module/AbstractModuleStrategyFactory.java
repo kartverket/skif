@@ -2,6 +2,7 @@ package no.statkart.skif.module;
 
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
+import no.statkart.skif.exception.ImplementationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +53,7 @@ public abstract class AbstractModuleStrategyFactory implements ModuleStrategyFac
             }
         }
         if (prototype==null) {
-            throw new RuntimeException("Fant ingen ModuleStrategy-prototype for module: " + moduleClass.getName());
+            throw new ImplementationException("Could not find ModuleStrategy prototype for module: " + moduleClass.getName());
         }
 
         return prototype.clone();

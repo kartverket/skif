@@ -2,16 +2,14 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.NotImplementedException;
-import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.exception.ObjectsNotFoundException;
+import no.statkart.skif.exception.*;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.*;
 import org.hibernate.LockMode;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.criterion.Expression;
 import org.hibernate.engine.*;
@@ -1355,7 +1353,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             }
             return lastResultForClass;
         } catch (MappingException e) {
-            throw new RuntimeException(e);
+            throw new ConfigurationException(e);
         }
     }
 

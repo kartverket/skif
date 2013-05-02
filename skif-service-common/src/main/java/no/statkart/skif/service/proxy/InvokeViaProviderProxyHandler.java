@@ -2,6 +2,7 @@ package no.statkart.skif.service.proxy;
 
 
 import com.google.inject.Provider;
+import no.statkart.skif.exception.ImplementationException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,9 +33,9 @@ public class InvokeViaProviderProxyHandler<S> extends TerminatingProxyHandler<S>
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new ImplementationException(e);
         }
     }
 }
