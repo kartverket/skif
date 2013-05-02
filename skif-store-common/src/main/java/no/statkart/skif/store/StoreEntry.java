@@ -185,7 +185,9 @@ public class StoreEntry {
     }
 
     public void abort(int level) {
-        clear(level);
+        state[level] = StoreEntryState.NULL;
+        bubbleObject[level] = null;
+        // Kan ikke nullstille locked, da opplåsing av objekt er en egen ting som skjer etter at denne metoden blir kalt
     }
 
     public void clear(int level) {
