@@ -167,19 +167,19 @@ public class AbstractStore implements Store {
             beginUnitOfWork();
             for (BubbleObject bubbleObject : transfer.getInsertedObjects()) {
                 if (ids.add(bubbleObject.getId())==false) {
-                    throw new ImplementationException("Objekt er inneholdt to ganger i transfser: " + bubbleObject.getId());
+                    throw new ImplementationException("Duplicate object in transfer: " + bubbleObject.getId());
                 }
                 insert(bubbleObject);
             }
             for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
                 if (ids.add(bubbleObject.getId())==false) {
-                    throw new ImplementationException("Objekt er inneholdt to ganger i transfser: " + bubbleObject.getId());
+                    throw new ImplementationException("Duplicate object in transfer: " + bubbleObject.getId());
                 }
                 update(bubbleObject);
             }
             for (BubbleObject bubbleObject : transfer.getDeletedObjects()) {
                 if (ids.add(bubbleObject.getId())==false) {
-                    throw new ImplementationException("Objekt er inneholdt to ganger i transfser: " + bubbleObject.getId());
+                    throw new ImplementationException("Duplicate object in transfer: " + bubbleObject.getId());
                 }
                 delete(bubbleObject);
             }

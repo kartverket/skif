@@ -82,7 +82,7 @@ public class QueryGenerator extends GenericQueryGenerator {
     public <T extends BubbleId> T executeQueryForBubbleId(Class<T> bubbleIdClass) {
         List<T> result = executeQueryForBubbleIdList(bubbleIdClass);
         if (result.size() != 1) {
-            throw new ImplementationException("Forventet en BubbleId. Fik " + result.size(), logger);
+            throw new ImplementationException("Expected BubbleId. Got " + result.size(), logger);
         }
         return result.get(0);
     }
@@ -97,7 +97,7 @@ public class QueryGenerator extends GenericQueryGenerator {
                 reader.readResult(resultSet, snapshotVersion);
             }
         } catch (SQLException e) {
-            throw new ImplementationException("Feil i spørring", e, logger);
+            throw new ImplementationException("Query failed", e, logger);
         } finally {
             JDBCHelper.close(resultSet, stmt);
         }
@@ -115,12 +115,12 @@ public class QueryGenerator extends GenericQueryGenerator {
                 result.add(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new ImplementationException("Feil i spørring", e, logger);
+            throw new ImplementationException("Query failed", e, logger);
         } finally {
             JDBCHelper.close(resultSet, stmt);
         }
         if (result.size() != 1) {
-            throw new ImplementationException("Forventet en rad. Fik " + result.size(), logger);
+            throw new ImplementationException("Expected one row, got " + result.size(), logger);
         }
         return result.get(0);
     }

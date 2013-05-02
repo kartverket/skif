@@ -31,7 +31,7 @@ public class DefaultResourceManager implements ResourceManager {
                 Key key = new Key(entry.name, type);
                 Entry existing = map.put(key, entry);
                 if (existing != null) {
-                    throw new ImplementationException("En resource har allerede blitt for key: " + key + " entry: " + entry);
+                    throw new ImplementationException("Duplicate resource for key: " + key + ", entry: " + entry + ", existing: " + existing);
                 }
             }
         }
@@ -39,7 +39,7 @@ public class DefaultResourceManager implements ResourceManager {
 
     private void checkIsStarted() {
         if (!started) {
-            throw new ImplementationException("Forsøk på uthenting av ressours før resource manager har blitt startet");
+            throw new ImplementationException("Attempted to use resource before resource manager had started");
         }
     }
 
@@ -48,7 +48,7 @@ public class DefaultResourceManager implements ResourceManager {
         setActive();
         Entry entry = map.get(new Key(type));
         if (entry == null) {
-            throw new ImplementationException("Fant ingen resource av type " + type);
+            throw new ImplementationException("Found no resource of type " + type);
         }
         entry.implementation.setActive();
         ensureTransactionStarted(entry);
@@ -62,7 +62,7 @@ public class DefaultResourceManager implements ResourceManager {
         Entry entry = map.get(key);
 
         if (entry == null) {
-            throw new ImplementationException("Fant ingen resource av type " + key.type);
+            throw new ImplementationException("Found no resource of type " + key.type);
         }
         entry.implementation.setActive();
         ensureTransactionStarted(entry);

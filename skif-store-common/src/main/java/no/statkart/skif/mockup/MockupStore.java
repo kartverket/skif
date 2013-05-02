@@ -438,9 +438,9 @@ public class MockupStore implements Store {
                                                 stack.push(component);
                                             }
                                         } catch (IllegalAccessException e) {
-                                            throw new ImplementationException("Kan ikke hente ut id-verdi fra objekt", e);
+                                            throw new ImplementationException("Could not get id from object", e);
                                         } catch (SecurityException e) {
-                                            throw new ImplementationException("Kan ikke hente ut id-verdi fra objekt", e);
+                                            throw new ImplementationException("Could not get id from object", e);
                                         }
                                     }
                                 }

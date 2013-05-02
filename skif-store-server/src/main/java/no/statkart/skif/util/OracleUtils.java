@@ -77,7 +77,7 @@ public class OracleUtils {
       }
 */
         else {
-            throw new ImplementationException("Kan ikke hente OracleConnection fra connection {" + con + "}");
+            throw new ImplementationException("Could not obtain OracleConnection from connection {" + con + "}");
         }
 
         return oracleConnection;

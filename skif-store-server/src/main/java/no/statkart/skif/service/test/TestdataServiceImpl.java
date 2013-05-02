@@ -63,7 +63,7 @@ public class TestdataServiceImpl implements TestdataService {
         MockupTransfer firstTransfer = snapshotTransfers.values().iterator().next();
         if (testsetExists(firstTransfer)) {
             if (!firstTransfer.getTestNumber().isNR_0()) {
-                throw new ImplementationException("Testsettet finnes allerede i databasen: " + firstTransfer.getTestNumber());
+                throw new ImplementationException("Testset already exists in database: " + firstTransfer.getTestNumber());
             }
         } else {
             for (Map.Entry<SnapshotVersion, MockupTransfer> entry : snapshotTransfers.entrySet()) {

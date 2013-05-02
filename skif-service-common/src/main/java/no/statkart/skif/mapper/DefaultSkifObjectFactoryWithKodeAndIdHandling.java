@@ -54,13 +54,13 @@ public class DefaultSkifObjectFactoryWithKodeAndIdHandling implements ObjectFact
                 }
 
             } catch (NoSuchMethodException e) {
-                throw new ImplementationException("Fant ikke konstruktøren", e);
+                throw new ImplementationException("Could not find constructor for target class", e);
             } catch (InvocationTargetException e) {
-                throw new ImplementationException(e);
+                throw new ImplementationException("Could not invoke constructor for target class", e);
             } catch (InstantiationException e) {
-                throw new ImplementationException(e);
+                throw new ImplementationException("Could not instantiate target class", e);
             } catch (IllegalAccessException e) {
-                throw new ImplementationException(e);
+                throw new ImplementationException("Could not access target class", e);
             }
         } else {
             retVal = target.newInstance();

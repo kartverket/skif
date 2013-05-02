@@ -39,7 +39,7 @@ public class ResourceManagerConfigurator {
     public void setStrategy(String strategy) {
         if (this.strategy!=null) {
             if (!compatible(strategy)) {
-                throw new ImplementationException("Forsøk på å sette inkompatible strategi:" + strategy);
+                throw new ImplementationException("Tried to set incompatible strategy:" + strategy);
             }
         }
         this.strategy = strategy;

@@ -128,7 +128,7 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
                                 throw new ImplementationException(e);
                             }
                         } else {
-                            throw new ImplementationException("ServerTestCase understøtter ikke bruk av method injection");
+                            throw new ImplementationException("ServerTestCase does not handle method injection");
                         }
                     }
                 }

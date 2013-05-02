@@ -33,7 +33,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry insertEntry(int level, T bubbleObject) {
         if (level == 0) {
-            throw new ImplementationException("Insert på klient må gjøres i en StoreUnitOfWork og sendes til server via getUnitOfWorkTransfer");
+            throw new ImplementationException("Insert on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer()");
         } else {
             return super.insertEntry(level, bubbleObject);
         }
@@ -42,7 +42,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry updateEntry(int level, T bubbleObject) {
         if (level == 0) {
-            throw new ImplementationException("Update på klient må gjøres i en StoreUnitOfWork og sendes til server via getUnitOfWorkTransfer");
+            throw new ImplementationException("Update on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer()");
         } else {
             return super.updateEntry(level, bubbleObject);
         }
@@ -51,7 +51,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry deleteEntry(int level, T bubbleObject) {
         if (level == 0) {
-            throw new ImplementationException("Delete på klient må gjøres i en StoreUnitOfWork og sendes til server via getUnitOfWorkTransfer");
+            throw new ImplementationException("Delete on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer()");
         } else {
             return super.deleteEntry(level, bubbleObject);
         }
@@ -59,7 +59,7 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public void commitUnitOfWork(Map<BubbleId<?>, StoreEntry> modified) {
-        throw new ImplementationException("Commit av UnitOfWork direkte mot server støttes ikke, men må gjøres via getUnitOfWorkTransfer");
+        throw new ImplementationException("Commit of UnitOfWork directly against server is not supported, but must be done via getUnitOfWorkTransfer()");
     }
 
     @Override
@@ -148,7 +148,7 @@ public class StoreSessionClient extends AbstractStoreSession {
                     }
                     break;
                 default:
-                    throw new ImplementationException("Objekt har blitt endret og kan ikke låses opp");
+                    throw new ImplementationException("Object has been changed and can not be unlocked");
             }
         }
         return storeEntry;

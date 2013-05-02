@@ -77,7 +77,7 @@ public class DefaultPersistenceSessionStrategy implements PersistenceSessionStra
                         return (T) handler;
                     }
                 }
-                throw new ImplementationException("Fant ingen implementasjon for interface:" + interfaceType);
+                throw new ImplementationException("Could not find implementation of interface: " + interfaceType);
             }
         }
     }

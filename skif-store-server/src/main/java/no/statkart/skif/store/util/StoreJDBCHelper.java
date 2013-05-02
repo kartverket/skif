@@ -22,13 +22,13 @@ public class StoreJDBCHelper extends JDBCHelper {
     }
 
 
-    public static void setBubbleId(PreparedStatement preparedStatement, int i, BubbleId<?> bubbleId, Class<? extends BubbleId> idClass) throws SQLException {
+    public static <I extends BubbleId<?>> void setBubbleId(PreparedStatement preparedStatement, int i, I bubbleId, Class<I> idClass) throws SQLException {
         Class valueType;
         if (bubbleId == null) {
             valueType = BubbleIds.getValueType(idClass);
         } else {
             if (!idClass.isInstance(bubbleId)) {
-                throw new ImplementationException("BubbleId " + bubbleId.getClass().getName() + " er ikke en instans av " + idClass);
+                throw new ImplementationException("BubbleId " + bubbleId.getClass().getName() + " is not an instance of " + idClass);
             }
             valueType = bubbleId.getValueType();
         }
@@ -46,7 +46,7 @@ public class StoreJDBCHelper extends JDBCHelper {
             // Tror ikke det er nødvendig å håndtere null spesielt her
             preparedStatement.setString(i, (String) value);
         } else {
-            throw new ImplementationException("Value type " + idValueType.getName() + " er ikke støttet");
+            throw new ImplementationException("Value type " + idValueType.getName() + " is not supported");
         }
 
     }
@@ -62,7 +62,7 @@ public class StoreJDBCHelper extends JDBCHelper {
             // Tror ikke det er nødvendig å håndtere null spesielt her
             preparedStatement.setString(i, (String) bubbleId.getValue());
         } else {
-            throw new ImplementationException("BubbleId " + bubbleId.getClass().getName() + " har en valuetype " + idValueType.getName() + " som ikke er støttet");
+            throw new ImplementationException("BubbleId " + bubbleId.getClass().getName() + " has unsupported value type " + idValueType.getName());
         }
 
     }
@@ -74,7 +74,7 @@ public class StoreJDBCHelper extends JDBCHelper {
         } else if (idValueType == String.class) {
             return resultSet.getString(i);
         } else {
-            throw new ImplementationException("Valuetype " + idValueType.getName() + " støttes ikke");
+            throw new ImplementationException("Value type " + idValueType.getName() + " is not supported");
         }
     }
 
@@ -84,7 +84,7 @@ public class StoreJDBCHelper extends JDBCHelper {
         } else if (idValueType == String.class) {
             return resultSet.getString(name);
         } else {
-            throw new ImplementationException("Valuetype " + idValueType.getName() + " støttes ikke");
+            throw new ImplementationException("Value type " + idValueType.getName() + " is not supported");
         }
     }
 

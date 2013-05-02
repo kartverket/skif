@@ -107,9 +107,9 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     public void unlock(BubbleId id) {
         String owner = serviceRequestContext.getUserName();
         if (insertedIds.contains(id)) {
-            throw new ImplementationException("Forsøkte å låse opp objekt som er inserted: " + id.toString());
+            throw new ImplementationException("Attempted to unlock inserted object: " + id.toString());
         } else if (modifiedIds.contains(id)) {
-            throw new ImplementationException("Forsøkte å låse opp objekt som er endret: " + id.toString());
+            throw new ImplementationException("Attempted to unlock modified object: " + id.toString());
         } else if (newLockIds.remove(id)) {
             getLockerService(id.getValueType()).unlock(createLockKey(id), owner);
             if (lockMap != null) {
@@ -263,9 +263,9 @@ public class TransactionalLockerStrategy implements LockerStrategy {
             Class<? extends BubbleId> idClass = Class.forName(lockKey.discriminator).asSubclass(BubbleId.class);
             return BubbleIds.createInstance(idClass, lockKey.keyValue, SnapshotVersion.CURRENT);
         } catch (ClassNotFoundException e) {
-            throw new ImplementationException("Class.forName feilet for klassen " + lockKey.discriminator + " i TransactionalLockerStrategy", e);
+            throw new ImplementationException("Class.forName failed for class " + lockKey.discriminator + " in TransactionalLockerStrategy", e);
         } catch (ClassCastException e) {
-            throw new ImplementationException("Class.forName returnerte ikke-bobleid-klasse for " + lockKey.discriminator + " i TransactionalLockerStrategy", e);
+            throw new ImplementationException("Class.forName returned non-bubbleid class for " + lockKey.discriminator + " in TransactionalLockerStrategy", e);
         }
     }
 

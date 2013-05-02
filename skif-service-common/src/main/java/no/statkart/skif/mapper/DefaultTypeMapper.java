@@ -674,7 +674,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                 }
 
             } else {
-                throw new ImplementationException("Ukjent protokoll: " + protocol);
+                throw new ImplementationException("Unknown protocol: " + protocol);
             }
         }
 

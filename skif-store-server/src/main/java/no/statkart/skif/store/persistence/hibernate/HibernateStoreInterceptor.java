@@ -60,7 +60,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
                     return false;
                 }
             } catch (ClassNotFoundException e) {
-                throw new ImplementationException("Klassen " + classname + "Id finnes ikke i classpath");
+                throw new ImplementationException("Class " + classname + "Id was not found in classpath");
             }
         }
         return false;
@@ -129,7 +129,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
     private void sjekkSnapshotVersjon(Serializable id) {
         if (id instanceof BubbleId) {
             if (((BubbleId) id).getSnapshotVersion() != snapshotVersionSeed.get()) {
-                throw new ImplementationException("id for instans har feil replicaVersjon", logger);
+                throw new ImplementationException("Id for instance has wrong SnapshotVersion", logger);
             }
         }
     }

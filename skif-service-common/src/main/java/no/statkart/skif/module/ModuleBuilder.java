@@ -384,11 +384,10 @@ public class ModuleBuilder {
     }
 
     private Module buildModule(Constructor<? extends SkifModule> constructor) {
-        SkifModule module = null;
+        SkifModule module;
         Object constructorParameter;
         if (constructorIsUsingModuleConfigurationParameter(constructor)) {
             constructorParameter = createModuleConfigurationForModule();
-
         } else {
             constructorParameter = createConfigurationForModule();
         }
@@ -396,11 +395,11 @@ public class ModuleBuilder {
         try {
             module = constructor.newInstance(constructorParameter);
         } catch (InstantiationException e) {
-            throw new ImplementationException(e);
+            throw new ImplementationException("Could not instantiate module", e);
         } catch (IllegalAccessException e) {
-            throw new ImplementationException(e);
+            throw new ImplementationException("Could not instantiate module", e);
         } catch (InvocationTargetException e) {
-            throw new ImplementationException(e);
+            throw new ImplementationException("Could not instantiate module", e);
         }
 
         return module;
@@ -462,16 +461,16 @@ public class ModuleBuilder {
         try {
             constructor = moduleClass.getConstructor(ModuleConfiguration.class);
             return constructor;
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ignored) {
         }
 
         try {
             constructor = moduleClass.getConstructor(Configuration.class);
             return constructor;
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ignored) {
         }
 
-        throw new ImplementationException("Fant ingen passende constructor for klasse: " + moduleClass.getName());
+        throw new ImplementationException("Could not find suitable constructor for class: " + moduleClass.getName());
     }
 
     private boolean constructorIsUsingModuleConfigurationParameter(Constructor<? extends SkifModule> constructor) {

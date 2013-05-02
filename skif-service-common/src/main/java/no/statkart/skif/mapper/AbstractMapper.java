@@ -593,7 +593,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
             } else if (DIRECTION.W2D == direction) {
                 candidateClass = candidate.getWsapiClass();
             } else {
-                throw new ImplementationException("Unknows direction: " + direction);
+                throw new ImplementationException("Unknown direction: " + direction);
             }
 
             if (candidateClass.isAssignableFrom(mappableClass)) {
@@ -645,7 +645,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
             } else if (DIRECTION.W2D == direction) {
                 mapperClass = candidate.getWsapiClass();
             } else {
-                throw new ImplementationException("Unknows direction: " + direction);
+                throw new ImplementationException("Unknown direction: " + direction);
             }
 
             candidateClass = mappableClass;

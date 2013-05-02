@@ -66,13 +66,13 @@ public class JaxWsServiceBuilder<T> {
         String portClassname = portClass.getCanonicalName();
         String endpointClassname = portClassname.replaceFirst("WSI$", "WS");
         if (portClassname.equals(endpointClassname)) {
-            throw new ImplementationException("Kunne ikke avlede JAX-WS Endpoint classname fra porttype classname:" + portClassname);
+            throw new ImplementationException("Could not deduce JAX-WS Endpoint class name from port class name:" + portClassname);
         }
         Class<? extends Service> endpointClass;
         try {
             endpointClass = (Class<? extends Service>) Class.forName(endpointClassname);
         } catch (ClassNotFoundException e) {
-            throw new ImplementationException("Fant ikke JAX-WS Endpoint klasse: " + endpointClassname);
+            throw new ImplementationException("JAX-WS Endpoint class not found: " + endpointClassname);
         }
         return endpointClass;
     }
@@ -81,13 +81,13 @@ public class JaxWsServiceBuilder<T> {
         String portClassname = portClass.getCanonicalName();
         String endpointClassname = portClassname + "WS";
         if (portClassname.equals(endpointClassname)) {
-            throw new ImplementationException("Kunne ikke avlede JAX-WS Endpoint classname fra porttype classname:" + portClassname);
+            throw new ImplementationException("Could not deduce JAX-WS Endpoint class name from port class name:" + portClassname);
         }
         Class<? extends Service> endpointClass;
         try {
             endpointClass = (Class<? extends Service>) Class.forName(endpointClassname);
         } catch (ClassNotFoundException e) {
-            throw new ImplementationException("Fant ikke JAX-WS Endpoint klasse: " + endpointClassname);
+            throw new ImplementationException("JAX-WS Endpoint class not found: " + endpointClassname);
         }
         return endpointClass;
     }
@@ -96,9 +96,9 @@ public class JaxWsServiceBuilder<T> {
         try {
             return endpointClass.newInstance();
         } catch (InstantiationException e) {
-            throw new ImplementationException("Kunne ikke opprette JAX-WS Endpoint klasse: " + endpointClass, e);
+            throw new ImplementationException("Could not instantiate JAX-WS Endpoint class: " + endpointClass, e);
         } catch (IllegalAccessException e) {
-            throw new ImplementationException("Kunne ikke opprette JAX-WS Endpoint klasse: " + endpointClass, e);
+            throw new ImplementationException("Could not instantiate JAX-WS Endpoint class: " + endpointClass, e);
         }
     }
 

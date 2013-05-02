@@ -547,7 +547,7 @@ public class GenericQueryGenerator {
             } else if (parameter instanceof java.sql.Struct) {
                 statement.setObject(i + 1, parameter, java.sql.Types.STRUCT);
             } else {
-                throw new ImplementationException("Kan ikke mappe parameter av type" + parameter.getClass() + " til bundet parameter", logger);
+                throw new ImplementationException("Can not map parameter of type " + parameter.getClass() + " to bind variable", logger);
             }
         }
 
@@ -597,8 +597,8 @@ public class GenericQueryGenerator {
 
         } catch (SQLException e) {
             String sql = (prepared) ? generator.createQueryString(parameters).toString() : generator.createStatement();
-            logger.error("Generisk count spørring feilet, SQL var: " + sql, e);
-            throw new ImplementationException("Feil ved spørring til databse: " + e.getMessage(), e, logger);
+            logger.error("Generic count query failed, SQL was: " + sql, e);
+            throw new ImplementationException("Error occured querying database: " + e.getMessage(), e, logger);
         } finally {
             if (prepared) {
                 JDBCHelper.close(result, pstmt);

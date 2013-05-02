@@ -104,7 +104,7 @@ public class StoreEntry {
 
     public void setStateAndCheckLocked(int level, StoreEntryState state) {
         if (this.locked[level] != true) {
-            throw new ImplementationException("Objekt har ikke blitt låst for StoreSession Level " + level + ": " + id);
+            throw new ImplementationException("Object not locked for StoreSession level " + level + ": " + id);
         }
         this.state[level] = state;
     }
@@ -132,7 +132,7 @@ public class StoreEntry {
      */
     public void setLocked(int level, BubbleObject bubbleObject) {
         if (this.locked[level] == true) {
-            throw new ImplementationException("Objekt er allerede låst for StoreSession Level " + level + ": " + bubbleObject.getId());
+            throw new ImplementationException("Object already locked for StoreSession level " + level + ": " + bubbleObject.getId());
         }
         makeStale(level);
         this.bubbleObject[level] = bubbleObject;
@@ -153,10 +153,10 @@ public class StoreEntry {
 
     public void setLocked(int level) {
         if (this.bubbleObject[level] == null) {
-            throw new ImplementationException("Objekt er ikke satt for StoreSession Level " + level + ": " + id);
+            throw new ImplementationException("Object does not exist in StoreSession level " + level + ": " + id);
         }
 //        if (this.locked[level] == true) {
-//            throw new ImplementationException("Objekt er allerede låst for StoreSession Level " + level + ": " + id);
+//            throw new ImplementationException("Object already locked for StoreSession level " + level + ": " + id);
 //        }
         this.locked[level] = true;
     }
@@ -168,7 +168,7 @@ public class StoreEntry {
     public void checkNotDerivedInstance(int level, BubbleObject bubbleObject) {
         for (int l = level - 1; l >= 0; l--) {
             if (bubbleObject == this.bubbleObject[l]) {
-                throw new ImplementationException("Forsøk på å oppdaterer StoreSession(level= " + level + ") med instans fra underliggende StoreSession(level=" + l + ") for id:" + id);
+                throw new ImplementationException("Attempt at updating StoreSession(level= " + level + ") with instance from lower StoreSession(level=" + l + ") for id:" + id);
             }
         }
     }

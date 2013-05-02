@@ -1,5 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate;
 
+import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
@@ -70,7 +71,7 @@ public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryB
 //              cfg.getEventListeners().setFlushEntityEventListeners(flushEntityStack);
 //          }
         } catch (MappingException e) {
-            throw new ImplementationException("Feil i hibernate mapping-filer: " + e.getMessage(), e, logger);
+            throw new ConfigurationException("Error in Hibernate mapping files: " + e.getMessage(), e, logger);
         }
         return cfg;
     }

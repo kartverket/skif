@@ -1,7 +1,6 @@
 package no.statkart.skif.mapper;
 
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.exception.ImplementationException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -164,7 +163,7 @@ public class WsapiMapTypeMapper<WsapiT, DomainT extends Map<Object, Collection>>
             try {
                 Object o = valueClass.newInstance();
                 if(!(o instanceof Collection)) {
-                    throw new ImplementationException("valueClass som har blitt satt på WsapiTypeMapper er ikke av typen java.util.Collection. Den er av typen " + o.getClass());
+                    throw new MappingException("valueClass that has been set on WsapiTypeMapper is not an implementation of java.util.Collection. The class is " + o.getClass());
                 }
                 return (Collection) o;
             } catch (InstantiationException e) {

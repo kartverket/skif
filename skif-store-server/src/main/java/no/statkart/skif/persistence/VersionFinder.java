@@ -60,7 +60,7 @@ public class VersionFinder {
                 retur.add(id);
             }
         } catch (SQLException e) {
-            throw new ImplementationException("Feil oppstod under kjøring av sql: " + sql + " med parametre " + tabellnavn + ", " + intervalStartValue + " og " + intervalEndValue, e);
+            throw new ImplementationException("Error executing sql: " + sql + " with parameters " + tabellnavn + ", " + intervalStartValue + " and " + intervalEndValue, e);
         } finally {
             JDBCHelper.close(resultSet, preparedStatement);
         }

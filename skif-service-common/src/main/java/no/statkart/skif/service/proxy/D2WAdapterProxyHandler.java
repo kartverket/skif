@@ -55,7 +55,7 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
                 return m;
             }
         }
-        throw new ImplementationException("Manglende metode i adaptor: " + method.getName());
+        throw new ImplementationException("No corresponding method in adaptee: " + method.getName());
     }
 
     @Override

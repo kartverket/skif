@@ -5,6 +5,7 @@ import no.statkart.skif.exception.ImplementationException;
 /**
  * @author Henrik Fredholm
  * @since 2.1
+ * @deprecated Denne ser ut til å ha en grov rekursjonsfeil i {@link #selected()}!
  */
 public class SwitchingResourceManager implements ResourceManager {
     private ResourceManager selected;
@@ -28,7 +29,7 @@ public class SwitchingResourceManager implements ResourceManager {
         if (selected!=hibernateBased && selected==null) {
             selected = hibernateBased;
         } else {
-            throw new ImplementationException("JDBC bassert ResourceManager har allerede blitt valgt");
+            throw new ImplementationException("JDBC based ResourceManager already chosen");
         }
     }
 

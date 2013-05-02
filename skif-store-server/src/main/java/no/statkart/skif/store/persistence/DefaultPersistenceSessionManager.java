@@ -49,7 +49,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
                 return persistenceSessionForSnapshot;
             }
         }
-        throw new ImplementationException("Fant ingen PersistenceSession for: " + snapshotVersion);
+        throw new ImplementationException("Could not find PersistenceSession for: " + snapshotVersion);
 
     }
 

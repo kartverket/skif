@@ -1,7 +1,8 @@
 package no.statkart.skif.exception;
 
+import org.slf4j.Logger;
+
 /**
- *
  * @author Henrik Fredholm
  * @since 2.0
  */
@@ -15,8 +16,16 @@ public class ConfigurationException extends ImplementationException {
         super(message, cause);
     }
 
+    public ConfigurationException(String message, Throwable cause, Logger logger) {
+        super(message, cause, logger);
+    }
+
     public ConfigurationException(String message) {
-        this(message, null);
+        super(message);
+    }
+
+    public ConfigurationException(String message, Logger logger) {
+        super(message, logger);
     }
 
     public ConfigurationException(Throwable cause) {

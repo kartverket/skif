@@ -90,10 +90,10 @@ public class UnitOfWorkTransfer implements Serializable {
 
     protected void checkIdClass(Class<? extends BubbleObject> bubbleClass, BubbleId<?> id) {
         if (id==null) {
-            throw new ImplementationException("Id kan ikke være null for klasse: " +  bubbleClass);
+            throw new ImplementationException("Id can not be null for class: " +  bubbleClass);
         }
         if (id.getType()!=bubbleClass) {
-            throw new ImplementationException("Instans av klasse :" + bubbleClass.getName() + " har id av ikke matchende idtype: " + id);
+            throw new ImplementationException("Instance of class " + bubbleClass.getName() + " has id of non-matching type " + id);
         }
     }
 
@@ -103,7 +103,7 @@ public class UnitOfWorkTransfer implements Serializable {
                 return;
             }
         }
-        throw new ImplementationException("Objektklasse kan ikke modifiseres med denne type transfer: " + bubbleClass.getName());
+        throw new ImplementationException("Objects of this class can not be modified with this type of transfer: " + bubbleClass.getName());
 
     }
 

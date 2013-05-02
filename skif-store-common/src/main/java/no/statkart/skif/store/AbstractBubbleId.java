@@ -5,7 +5,6 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ReflectionException;
 import no.statkart.skif.util.Reflection;
 
-import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,22 +51,22 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 //            }
         }
 
-        private Class calcIdValueType(Class type) {
+        private Class calcIdValueType(Class<?> type) {
             try {
                 Class<?> valueType = type.getMethod("getValue", (Class[]) null).getReturnType();
 
                 if (valueType==Object.class) {
-                    throw new ImplementationException("Klassens getValue() metode returnerer Object. Hadde forventet Long, String eller tilsvarende: " + type);
+                    throw new ImplementationException("Id class' getValue() method returns Object. Expected Long, String or similar: " + type);
                 }
                 return valueType;
             } catch (NoSuchMethodException e) {
-                throw new ImplementationException("Klassen har ingen getValue() metode. Dette burde egentlig ikke kunne skje: " + type);
+                throw new ImplementationException("Id class has no getValue() method: " + type);
             }
         }
     }
 
     // static Map of meta info for each BubbleId class
-    transient private static Map<Class, TypeInfo> typeInfoMap = new ConcurrentHashMap(100);
+    transient private static Map<Class, TypeInfo> typeInfoMap = new ConcurrentHashMap<Class, TypeInfo>(100);
 
     // Cached meta info for this instance.
     transient private TypeInfo typeInfo;

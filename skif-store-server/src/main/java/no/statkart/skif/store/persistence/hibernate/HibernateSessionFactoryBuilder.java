@@ -92,7 +92,7 @@ public abstract class HibernateSessionFactoryBuilder {
 
         final Integer previousIndex = bubbleClassDependencyIndex.put(clazz, nextOrderIndex);
         if (previousIndex !=null) {
-            throw new ImplementationException("Dependency index for BubbleObject er allerede definert:" + clazz.getName());
+            throw new ImplementationException("Dependency index for BubbleObject is already defined:" + clazz.getName());
         }
     }
 
@@ -208,7 +208,7 @@ public abstract class HibernateSessionFactoryBuilder {
                 }
                 sessionFactory = cfg.buildSessionFactory();
             } catch (HibernateException e) {
-                throw new ImplementationException("Feil ved initialisering av hibernate", e, logger);
+                throw new ImplementationException("Error initializing Hibernate", e, logger);
             } finally {
                 // Set ny SnapshotVersionSeedSeed slik at to factory instanser ikke ved et uheld blir satt opp med samme seed.
                 BubbleIdType.setSnapshotVersionSeedSeed(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
@@ -295,13 +295,13 @@ public abstract class HibernateSessionFactoryBuilder {
 
                     if (!fileRead) {
                         //If we get here, we didnt find a match in a file, not good.
-                        throw new ImplementationException("Fant ikke treff på klassenavnet til mappingfilen: " + file);
+                        throw new ImplementationException("No match for class name in mapping file: " + file);
                     }
                 } finally {
                     input.close();
                 }
             } catch (IOException ex) {
-                throw new ImplementationException(ex);
+                throw new OperationalException(ex);
             }
         }
     }
@@ -320,7 +320,7 @@ public abstract class HibernateSessionFactoryBuilder {
             } else if (protocol.equals("zip")) {
                 checkForFilesWithZipProtocol(files, resource);
             } else {
-                throw new ImplementationException("Ukjent protokoll: " + protocol);
+                throw new ImplementationException("Unknown protocol: " + protocol);
             }
 
         }

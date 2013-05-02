@@ -279,15 +279,15 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             switch (storeEntry.getDerivedState(level)) {
                 case NULL:
                 case UNCHANGED:
-                    throw new ImplementationException("Forsøk på å kalle insert for eksisterende objekt: " + bubbleObject.getId());
+                    throw new ImplementationException("Attempt at inserting existing object: " + bubbleObject.getId());
                 case INSERTED_DELETED:
                     storeEntry.setState(level, StoreEntryState.INSERTED);
                     break;
                 case DELETED_INSERTED:
                 case INSERTED:
-                    throw new ImplementationException("Forsøk på å kalle insert for objekt hvor insert allerede har blitt kaldt: " + bubbleObject.getId());
+                    throw new ImplementationException("Attempt at inserting inserted object: " + bubbleObject.getId());
                 case UPDATED:
-                    throw new ImplementationException("Forsøk på å kalle insert for objekt hvor update allerede har blitt kaldt: " + bubbleObject.getId());
+                    throw new ImplementationException("Attempt at inserting updated object: " + bubbleObject.getId());
                 case DELETED:
                     storeEntry.setState(level, StoreEntryState.DELETED_INSERTED);
                     break;
@@ -333,7 +333,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                     break;
                 case INSERTED_DELETED:
                 case DELETED:
-                    throw new ImplementationException("Forsøk på å kalle update for objekt hvor delete har blitt kaldt: " + bubbleObject.getId());
+                    throw new ImplementationException("Attempt at updating deleted object: " + bubbleObject.getId());
             }
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
 
@@ -375,7 +375,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                     break;
                 case DELETED:
                 case INSERTED_DELETED:
-                    throw new ImplementationException("Forsøk på å kalle update for objekt hvor delete har blitt kaldt: " + bubbleObject.getId());
+                    throw new ImplementationException("Attempt at updating deleted object: " + bubbleObject.getId());
             }
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
         }
@@ -392,13 +392,13 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean undoEntry(int level, T bubbleObject) {
         if (level == 0) {
-            throw new ImplementationException("Kan ikke undo på level 0");
+            throw new ImplementationException("Can't undo on level 0");
         }
 
         StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
 
         if (storeEntry == null) {
-            throw new ImplementationException("Forsøk på å kalle undo for objekt som ikke er knyttet til Store: " + bubbleObject.getId());
+            throw new ImplementationException("Attempt at undoing object not in Store: " + bubbleObject.getId());
         } else {
             ensureLocked(storeEntry);
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
@@ -464,7 +464,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         final StoreEntry storeEntry = modifiedMap.remove(bubbleId);
         markModified();
         if (storeEntry == null) {
-            throw new ImplementationException("BubbleId ikke modifisert i session: " + bubbleId);
+            throw new ImplementationException("BubbleId not modified in session: " + bubbleId);
         }
         modifiedMap.put(bubbleId, storeEntry);
     }
@@ -523,11 +523,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 entry.setState(level, StoreEntryState.INSERTED);
                 break;
             case UNCHANGED:
-                throw new ImplementationException("Forsøk på å kalle insert for eksisterende objekt: " + entry.getId());
+                throw new ImplementationException("Attempt at inserting existing object: " + entry.getId());
             case INSERTED:
-                throw new ImplementationException("Forsøk på å kalle insert for objekt hvor insert allerede har blitt kaldt: " + entry.getId());
+                throw new ImplementationException("Attempt at inserting inserted object: " + entry.getId());
             case UPDATED:
-                throw new ImplementationException("Forsøk på å kalle insert for objekt hvor update allerede har blitt kaldt: " + entry.getId());
+                throw new ImplementationException("Attempt at inserting updated object: " + entry.getId());
             case DELETED:
                 entry.setState(level, StoreEntryState.UPDATED);
                 break;
@@ -598,7 +598,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 break;
             case DELETED:
             case INSERTED_DELETED:
-                throw new ImplementationException("Forsøk på å kalle delete for objekt hvor delete har blitt kaldt: " + entry.getId());
+                throw new ImplementationException("Attempt at deleting deleted object: " + entry.getId());
         }
         BubbleObject oldInstance = entry.getBubbleObject(level);
         BubbleObject newInstance = entry.getBubbleObject(level + 1);

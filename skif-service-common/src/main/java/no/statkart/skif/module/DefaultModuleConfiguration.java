@@ -71,9 +71,9 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
             final ModuleStrategyFactory moduleStrategyFactory = strategyFactoryClass.newInstance();
             return moduleStrategyFactory;
         } catch (InstantiationException e) {
-            throw new ImplementationException("Kunne ikke opprettes ModuleStrategyFactory class: " + strategyFactoryClass.getName(), e);
+            throw new ImplementationException("Could not instantiate ModuleStrategyFactory class: " + strategyFactoryClass.getName(), e);
         } catch (IllegalAccessException e) {
-            throw new ImplementationException("Kunne ikke opprettes ModuleStrategyFactory class: " + strategyFactoryClass.getName(), e);
+            throw new ImplementationException("Could not instantiate ModuleStrategyFactory class: " + strategyFactoryClass.getName(), e);
         }
     }
 

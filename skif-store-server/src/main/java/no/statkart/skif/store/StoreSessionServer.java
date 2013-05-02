@@ -152,7 +152,7 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
-        throw new ImplementationException("Operasjon kun støttet i UnitOfWork. UnitOfWork er ikke aktiv. BubbleId: " + bubbleId);
+        throw new ImplementationException("Reordering is only supported in UnitOfWork. BubbleId: " + bubbleId);
     }
 
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
@@ -274,7 +274,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                 throw new AttemptDeleteException(bubbleId, e);
             }
         } catch (SQLException e) {
-            throw new ImplementationException(e);
+            throw new OperationalException("Error attempting delete", e);
         }
     }
 
@@ -482,7 +482,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                     }
                     break;
                 default:
-                    throw new ImplementationException("Objekt har blitt endret og kan ikke låses opp");
+                    throw new ImplementationException("Object has been changed and can not be unlocked");
             }
         }
         return storeEntry;

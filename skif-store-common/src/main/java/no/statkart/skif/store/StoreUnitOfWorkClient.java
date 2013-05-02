@@ -14,14 +14,14 @@ public class StoreUnitOfWorkClient extends StoreUnitOfWork {
 
     public WrappableStoreSession endUnitOfWork() {
         if (level != 1) {
-            throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork or abortUnitOfWork instead");
+            throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork() or abortUnitOfWork() instead");
         }
         if (isAccessedAfterGetTransfer()) {
-            throw new ImplementationException("Store was access beweeen calls to Store.getUnitOfWorkTransfer() and Store.endUnitOfWork() and may result in impropper commit.");
+            throw new ImplementationException("Store was access beweeen calls to Store.getUnitOfWorkTransfer() and Store.endUnitOfWork() and may result in impropper commit");
         }
 
         if (modifiedMap.size() > 0 && !getTransferHasBeenCalled) {
-            throw new ImplementationException("Store contains modified objects. Call getUnitOfWorkTransfer() before calling endUnitOfWork");
+            throw new ImplementationException("Store contains modified objects. Call getUnitOfWorkTransfer() before calling endUnitOfWork()");
         }
         for (StoreEntry storeEntry : modifiedMap.values()) {
             if (storeEntry.getLoadedByLevel() == level) {

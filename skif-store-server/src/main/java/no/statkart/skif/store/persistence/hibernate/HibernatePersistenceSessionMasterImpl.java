@@ -94,7 +94,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         SnapshotVersion previous = sessionFactoryDescriptor.getSnapshotVersion();
         if (snapshotVersion != previous) {
             if (reserveCount > 0) {
-                throw new ImplementationException("Sessionen er reservert. Kan ikke endre SnapshotVersion fra " + previous + " til " + snapshotVersion);
+                throw new ImplementationException("Session is reserved and can not change SnapshotVersion from " + previous + " to " + snapshotVersion);
             }
             flushAndClearLoadedObjects();
             sessionFactoryDescriptor.setSnapshotVersion(session(), snapshotVersion);
@@ -176,7 +176,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             if (reserveCount > 0) {
                 reserveCount--;
             } else {
-                throw new ImplementationException("Session er ikke reservert");
+                throw new ImplementationException("Session is not reserved");
             }
         }
     }
@@ -302,7 +302,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             checkEntityComponentsOnInsert(bubbleObject);
             session().save(bubbleObject);
         } catch (HibernateException e) {
-            throw new ImplementationException("Update feilet for " + bubbleObject, e);
+            throw new ImplementationException("Insert failed for " + bubbleObject, e);
         }
     }
 
@@ -321,9 +321,9 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject);
             session().update(bubbleObject); // Viktig at class-mapping inneholder 'select-before-update="true"'. Dette bør settes automatisk ved konfigurasjon av hibernate session factory.
         } catch (HibernateException e) {
-            throw new ImplementationException("Update feilet for " + bubbleObject, e);
+            throw new ImplementationException("Update failed for " + bubbleObject, e);
         } catch (SQLException e) {
-            throw new ImplementationException("Update feilet for " + bubbleObject, e);
+            throw new ImplementationException("Update failed for " + bubbleObject, e);
         }
     }
 
@@ -343,7 +343,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             exportedLazyLoadedBubbles.remove(bubbleObject.getId());
             session().delete(bubbleObject);
         } catch (HibernateException e) {
-            throw new ImplementationException("Delete feilet for " + bubbleObject, e);
+            throw new ImplementationException("Delete failed for " + bubbleObject, e);
         }
     }
 
@@ -417,7 +417,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             IdentityHashMap processedObjects = new IdentityHashMap();
             attachPersistenceCollectionWithSnapshotOfOldState(bubbleObject, existingBubble, processedObjects);
         } catch (HibernateException e) {
-            throw new ImplementationException("Kunne ikke legge på PersistenceCollection: " + bubbleObject.getId(), e);
+            throw new ImplementationException("Could not attach PersistenceCollection: " + bubbleObject.getId(), e);
         }
     }
 
@@ -539,7 +539,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             final AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) entry.getLoadedPersister();
 
             if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
-                throw new ImplementationException("Key må være en LiteralType");
+                throw new ImplementationException("Key must be LiteralType");
             }
 
             Map persistentCollection = CopyHelper.copy(mapInExistingObject);
@@ -566,7 +566,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             return persistentCollection;
         } else {
             // TODO: Alternativt returner eksisterende map. Kanskje det er greit?
-            throw new ImplementationException("Kan ikke tildele persistent shapshot. Eksisterende objekt har ikke map av type PersistentCollection");
+            throw new ImplementationException("Unable to attach persistent collection, as existing object has map that isn't PersistentCollection");
             //return collectionInOject;
         }
     }
@@ -585,7 +585,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             return persistentCollection;
         } else {
             // TODO: Alternativt returner eksisterende collection. Kanskje det er greit?
-            throw new ImplementationException("Kan ikke tildele persistent shapshot. Eksisterende objekt har ikke collection av type PersistentCollection");
+            throw new ImplementationException("Unable to attach persistent collection, as existing object has collection that isn't PersistentCollection");
             //return collectionInObject;
         }
     }
@@ -639,7 +639,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             IdentityHashMap processedObjects = new IdentityHashMap();
             checkEntityComponentsOnInsert(bubbleObject, processedObjects);
         } catch (HibernateException e) {
-            throw new ImplementationException("Kunne ikke legge på sjekke entity components: " + bubbleObject.getId(), e);
+            throw new ImplementationException("Could not check entity components for " + bubbleObject.getId(), e);
         }
     }
 
@@ -739,7 +739,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) session().getSessionFactory().getCollectionMetadata(collectionType.getRole());
 
         if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
-            throw new ImplementationException("Key må være en LiteralType");
+            throw new ImplementationException("Key must be LiteralType");
         }
 
         if (cascade) {
@@ -806,7 +806,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             EntityMetamodel entityMetamodel = persister.getEntityMetamodel();
             if (valueExisting != null && value == null) {
                 AbstractEntityComponent oldEntityComponent = (AbstractEntityComponent) valueExisting;
-                throw new ImplementationException("Forsøkte å nulle ut komponeent " + typeClass.getName() + " Id:" + oldEntityComponent.getId(), logger);
+                throw new ImplementationException("Attempt at setting entity component to null. Entity class: " + typeClass.getName() + " Id:" + oldEntityComponent.getId(), logger);
             }
 
             // Dersom komponentid er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk.
@@ -822,7 +822,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 final Long newId = entityComponent.getId();
 
                 if (!EqualsHelper.equals(oldId, newId)) {
-                    throw new ImplementationException("Forsøkte å sette komponent til " + typeClass.getName() + " Id:" + newId + ", gammel Id:" + oldId, logger);
+                    throw new ImplementationException("Attempt at replacing entity component. Entity class: " + typeClass.getName() + " New id:" + newId + ", Old id:" + oldId, logger);
                 }
             }
         }
@@ -854,7 +854,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                     for (Object o : collection) {
                         AbstractEntityComponent entityComponent = (AbstractEntityComponent) o;
                         if (entityComponent.getId() != null && !existingIds.contains(entityComponent.getId())) {
-                            throw new ImplementationException("Fant entity component " + typeClass.getName() + " Id:" + entityComponent.getId() + " i collection som ikke inneholdt den fra før", logger);
+                            throw new ImplementationException("Found entity component " + typeClass.getName() + " Id:" + entityComponent.getId() + " in collection that didn't contain it previously", logger);
                         }
                     }
                 }
@@ -877,7 +877,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         try {
             primitiveFields = blankUtIkkeFellesFelter(previousObject, currentObject.getClass());
         } catch (IllegalAccessException e) {
-            throw new ImplementationException("Kunne ikke blanke ut felter i fra-objekt som endrer type", e, logger);
+            throw new ImplementationException("Could not clear fields in initial object during type change", e, logger);
         }
 
         flush();
@@ -890,13 +890,13 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             final String dbTable = toEntityPersister.getTableName();
 
             if (fromEntityPersister.isMultiTable()) {
-                throw new ImplementationException("Kan ikke endre type fra " + previousObject.getClass() + " da denne spenner flere tabeller", logger);
+                throw new ImplementationException("Can not change type from " + previousObject.getClass() + " since it spans multiple tables", logger);
             }
             if (toEntityPersister.isMultiTable()) {
-                throw new ImplementationException("Kan ikke endre type til " + currentObject.getClass() + " da denne spenner flere tabeller", logger);
+                throw new ImplementationException("Can not change type to " + currentObject.getClass() + " since it spans multiple tables", logger);
             }
             if (!dbTable.equals(fromEntityPersister.getTableName())) {
-                throw new ImplementationException("Kan ikke endre type fra " + previousObject.getClass() + " til " + currentObject.getClass() + " da de ligger i forskjellige tabeller", logger);
+                throw new ImplementationException("Can not change type from " + previousObject.getClass() + " to " + currentObject.getClass() + " since they are stored in different tables", logger);
             }
 
             final String discriminatorColumn = toEntityPersister.getDiscriminatorColumnName();
@@ -930,7 +930,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             logger.debug(sqlString);
             int rows = statement.executeUpdate(sqlString);
             if (rows != 1) {
-                throw new ImplementationException("Ved endring av bobletype skulle antall oppdaterte rader vært 1, var " + rows, logger);
+                throw new ImplementationException("When changing type, the number of updated rows should be 1, but it turned out to be " + rows, logger);
             }
         } finally {
             JDBCHelper.close(statement);
@@ -1055,7 +1055,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         SnapshotVersion snapshotVersionInId = bubbleId.getSnapshotVersion();
 
         if (!snapshotVersionFromHolder.equals(snapshotVersionInId)) {
-            throw new ImplementationException("Id har feil SnapshotVersion for session:" + bubbleId);
+            throw new ImplementationException("Id has wrong SnapshotVersion for session:" + bubbleId);
         }
     }
 
@@ -1080,7 +1080,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                     allEntities.add(bubbleObject);
                 }
             } catch (HibernateException e) {
-                throw new ImplementationException(e);
+                throw new ImplementationException("Failed to load bubbles", e);
             }
         }
         return allEntities;
@@ -1180,12 +1180,12 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 fullyInitializedBubbles.put(bubble.getId(), bubble);
                 exportedLazyLoadedBubbles.remove(bubble.getId());
             } catch (HibernateException e) {
-                throw new ImplementationException("Kunne ikke initialisere lazy loaded associasjoner for: " + bubble.getId(), e);
+                throw new ImplementationException("Could not initialize lazy loaded association for: " + bubble.getId(), e);
             }
         } else {
             // Check that we got the same bubble
             if (initializedBubble != bubble)
-                throw new ImplementationException("Hibernate returnerte ny instans av allerede loaded bubble (dette burde ikke kunne skje): " + bubble.getId());
+                throw new ImplementationException("Hibernate returned new instance of already loaded bubble: " + bubble.getId());
         }
     }
 
@@ -1389,7 +1389,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     public void beginTransaction() {
         if (localTransaction != null) {
-            throw new ImplementationException("Lokal transaksjon har allerede blitt startet");
+            throw new ImplementationException("Local transaction already started");
         }
         localTransaction = session().beginTransaction();
     }
@@ -1401,7 +1401,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     public void rollback() {
         if (localTransaction == null) {
-            throw new ImplementationException("Lokal transaksjon har ikke blitt startet");
+            throw new ImplementationException("Local transaction not started");
         }
         localTransaction.rollback();
         localTransaction = null;
@@ -1411,7 +1411,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     @Override
     public void commit() {
         if (localTransaction == null) {
-            throw new ImplementationException("Lokal transaksjon har ikke blitt startet");
+            throw new ImplementationException("Local transaction not started");
         }
         localTransaction.commit();
         localTransaction = null;

@@ -17,7 +17,7 @@ public class JDBCHelper {
             try {
                 statement.close();
             } catch (SQLException e) {
-                throw new ImplementationException(e);
+                throw new ImplementationException("Error closing statement", e);
             }
         }
     }
@@ -28,7 +28,7 @@ public class JDBCHelper {
                 try {
                     resultSet.close();
                 } catch (SQLException e) {
-                    throw new ImplementationException(e);
+                    throw new ImplementationException("Error closing result set", e);
                 }
             }
         } finally {
@@ -36,7 +36,7 @@ public class JDBCHelper {
                 try {
                     statement.close();
                 } catch (SQLException e) {
-                    throw new ImplementationException(e);
+                    throw new ImplementationException("Error closing statement", e);
                 }
             }
         }
@@ -47,7 +47,7 @@ public class JDBCHelper {
         try {
             c.setAutoCommit(b);
         } catch (SQLException e) {
-            throw new ImplementationException(e);
+            throw new ImplementationException("Could not changing auto-commit setting", e);
         }
 
     }
@@ -57,7 +57,7 @@ public class JDBCHelper {
             try {
                 connection.rollback();
             } catch (SQLException e) {
-                throw new ImplementationException(e);
+                throw new ImplementationException("Error during rollback", e);
             }
         }
     }

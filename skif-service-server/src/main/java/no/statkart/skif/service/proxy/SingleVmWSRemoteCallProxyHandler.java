@@ -70,9 +70,9 @@ public class SingleVmWSRemoteCallProxyHandler<T, A extends ServiceWSI> extends A
         try {
             return Class.forName(name).asSubclass(ServiceWSI.class);
         } catch (ClassNotFoundException e) {
-            throw new ImplementationException("Fant ikke " + name + " for " + wsClientInterface.getName());
+            throw new ImplementationException("Could not find class " + name + " for " + wsClientInterface.getName());
         } catch (ClassCastException e) {
-            throw new ImplementationException(name + " er ikke en ServiceWSI");
+            throw new ImplementationException(name + " is not a subclass of ServiceWSI");
         }
     }
 

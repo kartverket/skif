@@ -176,10 +176,10 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             con.commit();
         } catch (RuntimeException e) {
             rollback = true;
-            throw new ImplementationException("Opplåsing av objekter feilet", e, logger);
+            throw new ImplementationException("Failed to unlock objects", e, logger);
         } catch (SQLException e) {
             rollback = true;
-            throw new ImplementationException("Opplåsing av objekter feilet", e, logger);
+            throw new ImplementationException("Failed to unlock objects", e, logger);
         } finally {
             if (rollback) {
                 JDBCHelper.rollback(con);

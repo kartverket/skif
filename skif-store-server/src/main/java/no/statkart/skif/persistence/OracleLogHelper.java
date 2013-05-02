@@ -96,7 +96,7 @@ public class OracleLogHelper {
      */
     public static void initHandler(String filename) {
         if (handler != null) {
-            throw new ImplementationException("Handler allerede satt");
+            throw new ImplementationException("Handler already set");
         }
         try {
             handler = new FileHandler(filename, true);

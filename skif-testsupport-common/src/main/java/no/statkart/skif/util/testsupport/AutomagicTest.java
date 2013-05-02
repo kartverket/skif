@@ -112,7 +112,7 @@ public class AutomagicTest {
                     }
                 }
             } else {
-                throw new ImplementationException("Ukjent protokoll: " + protocol);
+                throw new ImplementationException("Unknown protocol: " + protocol);
             }
         }
 
@@ -234,7 +234,7 @@ public class AutomagicTest {
             } else if (field.getType().equals(Boolean.TYPE)) {
                 retVal = true;
             } else {
-                throw new ImplementationException("Primitiv type " + field.getType() + " håndteres ikke");
+                throw new ImplementationException("Primitive type " + field.getType() + " not supported");
             }
         } else if (field.getType().getSimpleName().equals("String")) {
             if (clazz.toString().endsWith("KodeId")) {

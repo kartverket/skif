@@ -42,7 +42,7 @@ public class GeometriTilSdoStructMapper {
             GeometryConverter geometryConverter = new GeometryConverter(connection, new GeometryFactory(new PrecisionModel(precision), OracleUtils.getOracleIntSRID()));
             return geometryConverter.toSDO(geometry);
         } catch (Exception e) {
-            throw new ImplementationException("Feil ved transformasjon av JTS geometri til SDO STRUCT. JTS geometri er " + geometry.toText(), e);
+            throw new ImplementationException("Error during transformation of JTS geometry to SDO STRUCT. JTS geometry is " + geometry.toText(), e);
         }
     }
 

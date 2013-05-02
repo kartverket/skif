@@ -48,7 +48,7 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
             if (rs.next()) {
                 prevFreeNumber = rs.getLong(1);
             } else {
-                throw new ImplementationException("Fant ingen sekvens med sekvensnavn:" + sequenceName);
+                throw new ImplementationException("Found no sequence named:" + sequenceName);
             }
             JDBCHelper.close(rs, stmt);
 
@@ -60,11 +60,11 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
             int result = stmt.executeUpdate();
             if (result != 1) {
                 con.rollback();
-                throw new ImplementationException("Oppdatering av sekvens med sekvensnavn: " + sequenceName + "feilet. Forventet 1 oppdatering. Fikk: " + result);
+                throw new ImplementationException("Failed to update sequence named: " + sequenceName + ". Expected one update, got " + result);
             }
             commit(con);
         } catch (SQLException e) {
-            throw new OperationalException("Oppdatering av sekvens feilet: " + sequenceName, e);
+            throw new OperationalException("Failed to update sequence named: " + sequenceName, e);
         } finally {
             if (stmt != null) try {
                 stmt.close();

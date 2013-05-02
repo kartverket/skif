@@ -1,6 +1,7 @@
 package no.statkart.skif.persistence.jdbc;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.store.SnapshotVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class ConnectionManagerUsingFactory implements ConnectionManager {
         for (int i = 0; i < factories.length; i++) {
             ConnectionFactory factory = factories[i];
             if (factory.isSnapshotChangable()) {
-                throw new ImplementationException("Denne factory understøtter ikke Connections hvor SnapshotVersion kan endres");
+                throw new ImplementationException("ConnectionManager does not support ConnectionFactories where SnapshotVersion can be changed");
             }
         }
     }
@@ -54,7 +55,7 @@ public class ConnectionManagerUsingFactory implements ConnectionManager {
                 connections[i].setAutoCommit(false);
             }
         } catch (SQLException e) {
-            throw new ImplementationException(e);
+            throw new OperationalException("Could not open and initialize JDBC connection", e);
         }
     }
 
@@ -67,7 +68,7 @@ public class ConnectionManagerUsingFactory implements ConnectionManager {
             connections[i].close();
             connections[i] = null;
         } catch (SQLException e) {
-            throw new ImplementationException(e);
+            throw new OperationalException("Could not close JDBC connection", e);
         }
     }
 
@@ -82,7 +83,7 @@ public class ConnectionManagerUsingFactory implements ConnectionManager {
                 return connections[i];
             }
         }
-        throw new ImplementationException("Fant ingen factory for " + snapshotVersion);
+        throw new ImplementationException("Found no ConnectionFactory for " + snapshotVersion);
     }
 
     @Override
@@ -112,7 +113,7 @@ public class ConnectionManagerUsingFactory implements ConnectionManager {
             try {
                 connections[0].commit();
             } catch (SQLException e) {
-                throw new ImplementationException(e);
+                throw new OperationalException("Could not commit JDBC transaction", e);
             }
         }
     }
@@ -123,7 +124,7 @@ public class ConnectionManagerUsingFactory implements ConnectionManager {
             try {
                 connections[0].rollback();
             } catch (SQLException e) {
-                throw new ImplementationException(e);
+                throw new OperationalException("Could not roll back JDBC exception", e);
             }
         }
     }

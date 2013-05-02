@@ -29,7 +29,7 @@ public class ConnectionFactoryUsingJDBC extends AbstractConnectionFactory {
         try {
             Class.forName("oracle.jdbc.OracleDriver");
         } catch (ClassNotFoundException e) {
-            throw new ImplementationException(e);
+            throw new ImplementationException("Could not load JDBC driver", e);
         }
         Connection conn = DriverManager.getConnection(url, username, password);
         return conn;

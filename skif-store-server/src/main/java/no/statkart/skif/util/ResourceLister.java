@@ -41,7 +41,7 @@ public class ResourceLister implements Iterable<String> {
             } else if (classpathUrl.getProtocol().equals("zip")) {
                 listZip(classpathUrl, packagePath);
             } else {
-                throw new ImplementationException("Ukjent protokoll: " + classpathUrl.getProtocol());
+                throw new ImplementationException("Unknown protocol: " + classpathUrl.getProtocol());
             }
         }
     }

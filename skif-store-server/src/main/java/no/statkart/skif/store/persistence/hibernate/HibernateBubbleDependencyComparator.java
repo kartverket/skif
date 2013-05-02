@@ -42,7 +42,7 @@ public class HibernateBubbleDependencyComparator implements BubbleDependencyComp
         final BubbleId<?> bubbleId = bubbleObject.getId();
         final Integer index = bubbleClassDependencyIndex.get(bubbleId.getType());
         if (index==null) {
-            throw new ImplementationException("BubbleObject har ikke fått definert dependency index (må defineres alle BubbleObject subklasser via HibernateSessionFactoryBuilder): " + bubbleId.getType());
+            throw new ImplementationException("No dependency index defined for BubbleObject class (all subclasses must be specified in HibernateSessionFactoryBuilder): " + bubbleId.getType());
         }
         return index;
     }

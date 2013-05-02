@@ -31,14 +31,11 @@ public class W2DAdapterWithServiceContextMapperProxyHandler<T, A> extends W2DAda
     /**
      * Map først siste parameter fra Api Context objekt til intern ServiceContext2 objekt. Map deretter resterende
      * argumenter og returner disse.
-     * <p/>
-     * Kaster ImplementationException dersom siste parameter ikke er grunnbokcontext
      */
     protected Object[] mapArgs(Object[] args, Method m) {
         if (contextMapper != null) {
             if (args.length == 0) {
-                //Ingen GrunnbokContext. Denne er påkrevd så vi kaster exception
-                throw new ImplementationException("ServiceContext objekt mangler i parameterlisten for kallet!");
+                throw new ImplementationException("ServiceContext missing from argument list");
             }
             Object wsServiceContext = args[args.length - 1];
             contextMapper.setDomainServiceContextFromWSServiceContext(wsServiceContext);

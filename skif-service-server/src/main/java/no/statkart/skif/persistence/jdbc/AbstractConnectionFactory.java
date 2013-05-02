@@ -1,6 +1,7 @@
 package no.statkart.skif.persistence.jdbc;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.store.SnapshotVersion;
 
 import java.sql.Connection;
@@ -41,7 +42,7 @@ public abstract class AbstractConnectionFactory implements ConnectionFactory {
     @Override
     public void setSnapshotVersion(Connection connection, SnapshotVersion snapshotVersion) {
         if (setSnapshotOnSession) {
-            throw new ImplementationException("TODO: setting av snapshotversion er ikke implementert");
+            throw new NotImplementedException("Setting of snapshotVersion is not implemented"); // TODO
 //            connection.executeSQL("select snapshot_time.set_t(:timestamp) from dual").setTimestamp("timestamp", snapshotVersion.getTimestamp()).executeUpdate();
         }
     }

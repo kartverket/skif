@@ -84,7 +84,7 @@ public abstract class PreparedStatementExecutor {
                         readResult(resultSet);
                     }
                 } catch (SQLException e) {
-                    throw new ImplementationException("Spørring feilet : " + e.getMessage(), e, logger);
+                    throw new ImplementationException("Query failed: " + e.getMessage(), e, logger);
                 } finally {
                     JDBCHelper.close(resultSet, statement);
                 }
@@ -139,7 +139,7 @@ public abstract class PreparedStatementExecutor {
                         readResult(resultSet);
                     }
                 } catch (SQLException e) {
-                    throw new ImplementationException("Spørring feilet : " + e.getMessage(), e, logger);
+                    throw new ImplementationException("Query failed: " + e.getMessage(), e, logger);
                 } finally {
                     JDBCHelper.close(resultSet, statement);
                 }

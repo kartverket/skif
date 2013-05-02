@@ -55,7 +55,7 @@ public abstract class AbstractMockupFactory {
                 }
             }
         } catch (IllegalAccessException e) {
-            throw new ImplementationException("Kunne ikke hente ut felt(er)", e);
+            throw new ImplementationException("Could not access field(s)", e);
         }
 
         return ids;

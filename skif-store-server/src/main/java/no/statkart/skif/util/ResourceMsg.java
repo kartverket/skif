@@ -84,7 +84,7 @@ public abstract class ResourceMsg {
 
     private String getStringImpl(String key, Locale locale) {
         if (locale == null) {
-            throw new ImplementationException("locale kan ikke være NULL.");
+            throw new ImplementationException("Locale can not be null");
         }
         MissingResourceException firstException = null;
         initializeBundle(locale);
@@ -97,7 +97,7 @@ public abstract class ResourceMsg {
                 }
             }
         } catch (NullPointerException e) {
-            throw new ImplementationException("Etterspurt Locale er ikke i listen.");
+            throw new ImplementationException("Requested Locale is not in list");
         }
         logger.error("Resource key ('" + key + "') ikke funnet locale=" + locale);
         throw firstException;
