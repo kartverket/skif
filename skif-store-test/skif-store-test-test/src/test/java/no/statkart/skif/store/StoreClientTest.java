@@ -64,7 +64,6 @@ public class StoreClientTest {
         TestBubbleId<?> id = new TestBubbleId(1L);
 
         store.beginUnitOfWork();
-//        store.get(id);
         store.lock(id);
         Assert.assertTrue(store.isLocked(id), "Objektet ble ikke låst");
         store.getUnitOfWorkTransfer();
@@ -76,7 +75,6 @@ public class StoreClientTest {
         Assert.assertFalse(store.isLocked(id), "Objektet er fortsatt låst");
     }
 
-    @Test(groups = "broken")
     public void unlockOnAbortUnitOfWork() {
         Injector injector = createInjector();
         Store store = injector.getInstance(Store.class);
@@ -85,15 +83,15 @@ public class StoreClientTest {
         TestBubbleId<?> id = new TestBubbleId(1L);
 
         store.beginUnitOfWork();
-        store.get(id); // TODO: Skal være unødvendig
         store.lock(id);
 
-        Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke låst");
+        Assert.assertTrue(store.isLocked(id), "Objektet er ikke låst");
         Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke låst ordentlig");
 
         store.abortUnitOfWork();
 
-        Assert.assertFalse(storeService.isLocked(id), "Objektet ble ikke låst opp");
+        Assert.assertFalse(store.isLocked(id), "Objektet ble ikke låst opp");
+        Assert.assertFalse(storeService.isLocked(id), "Objektet ble ikke låst opp ordentlig");
     }
 
     public void dontUnlockOnCommitUnitOfWork() {
@@ -107,7 +105,6 @@ public class StoreClientTest {
 
         store.beginUnitOfWork();
 
-        store.get(id); // TODO: Skal være unødvendig
         store.lock(id);
 
         Assert.assertTrue(store.isLocked(id), "Objektet er ikke låst");

@@ -103,10 +103,10 @@ public class StoreUnitOfWork extends AbstractStoreSession {
 
     public WrappableStoreSession abortUnitOfWork() {
         for (StoreEntry storeEntry : modifiedMap.values()) {
-            storeEntry.abort(level);
             if (storeEntry.isLockedByLevel(level)) {
                 wrappedStoreSession.unlockEntry(level, storeEntry.getId());
             }
+            storeEntry.abort(level);
             if (storeEntry.getLoadedByLevel() == level) {
                 storeCache.remove(storeEntry.getId());
             }
