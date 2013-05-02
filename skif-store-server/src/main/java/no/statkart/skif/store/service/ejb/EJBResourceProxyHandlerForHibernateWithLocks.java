@@ -8,7 +8,6 @@ import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
-import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.store.LockerStrategy;
 import no.statkart.skif.store.StoreServer;
 import org.slf4j.Logger;
@@ -54,7 +53,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
         if (serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
             if (serviceMode == ServiceMode.SINGLE_VM) {
                 resourceManager.beginTransaction();
-            } else if (shouldUnlockForService()) {
+            } else {
                 Transaction t = weblogic.transaction.TransactionHelper.getTransactionHelper().getTransaction();
                 try {
                     t.registerSynchronization(new Synchronization() {
@@ -97,7 +96,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
             }
 
             // Dersom dette er ytterste metode i et transaksjonelt scope, skal alle låser frigis i transaksjonen
-            if (serviceRequestContext.isNewTx() && shouldUnlockForService()) {
+            if (serviceRequestContext.isNewTx()) {
                 lockerStrategyProvider.get().consumeAllLocks();
             }
 
@@ -106,7 +105,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
             }
 
             // Dersom dette er ytterste metode i et ikke-transaksjonelt scope, så skal de låser frigis som i scopet eksplisitt har blitt låst opp
-            if (!serviceRequestContext.isContinuation() && !serviceRequestContext.isTransactional() && shouldUnlockForService()) {
+            if (!serviceRequestContext.isContinuation() && !serviceRequestContext.isTransactional()) {
                 lockerStrategyProvider.get().releaseLocksOnNonTransactionalScopeCompletion();
             }
         }
@@ -132,7 +131,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
             }
 
             // Dersom er scope feiler, så skal alle låser tatt i løpet av det, frigis igjen.
-            if (!serviceRequestContext.isContinuation() && shouldUnlockForService()) {
+            if (!serviceRequestContext.isContinuation()) {
                 lockerStrategyProvider.get().releaseLocksOnRollback();
             }
 
@@ -143,14 +142,5 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
         } finally {
             resourceManager.shutdown();
         }
-    }
-
-    /**
-     * Sjekker om service er av typen som skal føre til opplåsing av låser.
-     *
-     * @return <code>true</code> dersom låser skal låses opp når tjenesten er ferdig, enten det er snakk om rollback eller commit
-     */
-    private boolean shouldUnlockForService() {
-        return !DBLockerService.class.isAssignableFrom(serviceType.getRawType());
     }
 }
