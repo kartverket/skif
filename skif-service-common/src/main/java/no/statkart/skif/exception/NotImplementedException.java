@@ -21,6 +21,6 @@ public class NotImplementedException extends ImplementationException {
     }
 
     public NotImplementedException() {
-        this("Funksjonalitet ikke implementert!");
+        this("Functionality not implemented");
     }
 }

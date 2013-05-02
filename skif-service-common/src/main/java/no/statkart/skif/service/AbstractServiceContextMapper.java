@@ -1,7 +1,7 @@
 package no.statkart.skif.service;
 
 import com.google.inject.Provider;
-import no.statkart.skif.exception.ValidationException;
+import no.statkart.skif.exception.ImplementationException;
 
 import java.util.Locale;
 
@@ -20,21 +20,21 @@ public abstract class AbstractServiceContextMapper<C> implements ServiceContextM
     protected Locale localeFromString(String locale) {
 
         if(locale == null) {
-            throw new ValidationException("Locale parameter må være satt på context!");
+            throw new ImplementationException("Locale parameter må være satt på context!");
         }
 
         String[] strings = locale.split("_");
 
         if(strings.length < 2){
-            throw new ValidationException("Locale parameter på context skal ha to eller tre deler, hver på to bokstaver, separert med _ Første del skal følge ISO-639, andre del skal følge ISO-3166, tredje ledd er språkvariant");
+            throw new ImplementationException("Locale parameter in context must have two or three parts, each made up of two letter, separated by _. First part is from ISO-639, second part from ISO-3166, while third part is variant");
         }
 
-        if(strings[0].toLowerCase() != strings[0]) {
-            throw new ValidationException("Første del av Locale på context skal følge standarden ISO-639 og være to små bokstaver", null);
+        if(!strings[0].toLowerCase().equals(strings[0])) {
+            throw new ImplementationException("First part of Locale in context must follow ISO-639 and consist of two lower case letters");
         }
 
-        if(strings[1].toUpperCase() != strings[1]) {
-            throw new ValidationException("Andre del av Locale på context skal følge standarden ISO-3166 og være to store bokstaver", null);
+        if(!strings[1].toUpperCase().equals(strings[1])) {
+            throw new ImplementationException("Second part of Locale in context must follow ISO-3166 and consist of two upper case letters");
         }
 
         //Språkvariant strings[2] kan inneholde både store og små bokstaver og må mappes hvis den er oppgitt.
@@ -44,7 +44,7 @@ public abstract class AbstractServiceContextMapper<C> implements ServiceContextM
         } else if( strings.length == 3){
             return new Locale(strings[0], strings[1], strings[2]);
         }
-        throw new ValidationException("Locale er ikke på formen 'no_NO' eller 'no_NO_NY', ingen mapping gjort", null);
+        throw new ImplementationException("Locale is not of the form 'no_NO' or 'no_NO_NY', can not map");
     }
 
 }
