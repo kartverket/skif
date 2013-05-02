@@ -92,7 +92,7 @@ public class MockupTest extends StoreTestTestCase {
     /**
      * Forsøk på å gjemme samme writeset flere ganger skal gi exeption
      */
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Testsettet finnes allerede i databasen: TestNumber.*" )
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Testset already exists in database: TestNumber.*" )
     public void testSaveSameWriteSetMultipleTimes() {
         MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 

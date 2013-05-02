@@ -136,7 +136,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         try {
             strategy.unlock(testId);
         } catch (ImplementationException e) {
-            Assert.assertTrue(e.getMessage().contains("Forsøkte å låse opp objekt som er endret"));
+            Assert.assertTrue(e.getMessage().contains("Attempted to unlock modified object"));
         }
 
         injector.getInstance(Key.get(dbLockerServiceTypeLiteral)).releaseAllLocks("ingroa");

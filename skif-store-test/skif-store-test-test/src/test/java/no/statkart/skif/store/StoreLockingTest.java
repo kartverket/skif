@@ -49,7 +49,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
                 clientStore.unlock(testBubble.getId());
                 Assert.fail("Nyinsertet objekt skal ikke kunne låses opp.");
             } catch (ImplementationException e) {
-                Assert.assertTrue(e.getMessage().startsWith("Objekt har blitt endret og kan ikke låses opp"), "Annen exception enn forventet: " + e.getMessage());
+                Assert.assertTrue(e.getMessage().startsWith("Object has been changed and can not be unlocked"), "Annen exception enn forventet: " + e.getMessage());
             }
 
             clientStore.lock(testBubble.getId());

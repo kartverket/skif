@@ -62,7 +62,7 @@ public class ComponentStealingTest extends StoreTest2TestCase {
             insertOnServer(bubble2);
             Assert.fail("Skulle fått exception her");
         } catch (ImplementationException e) {
-            Assert.assertTrue(e.getMessage().startsWith("Fant entity component"));
+            Assert.assertTrue(e.getMessage().startsWith("Found entity component"));
         }
 
         // Denne koden tester at boble2 blir slik den er forventet å bli dersom det er tillatt å stjele komponenter
@@ -108,7 +108,7 @@ public class ComponentStealingTest extends StoreTest2TestCase {
             updateOnServer(bubble2);
             Assert.fail("Skulle fått exception her");
         } catch (ImplementationException e) {
-            Assert.assertTrue(e.getMessage().startsWith("Fant entity component"));
+            Assert.assertTrue(e.getMessage().startsWith("Found entity component"));
         }
 
         // Denne koden tester at boble2 blir slik den er forventet å bli dersom det er tillatt å stjele komponenter

@@ -55,7 +55,7 @@ public class OrphanEntityTest extends StoreTest2TestCase {
             updateOnServer(bubble);
             Assert.fail("Skulle fått exception her");
         } catch (ImplementationException e) {
-            Assert.assertEquals(e.getMessage(), "Forsøkte å sette komponent til no.statkart.skif.storetest2.domain.entitycomponent.EntityComponent Id:null, gammel Id:" + orgComponentId);
+            Assert.assertEquals(e.getMessage(), "Attempt at replacing entity component. Entity class: no.statkart.skif.storetest2.domain.entitycomponent.EntityComponent New id:null, Old id:" + orgComponentId);
         }
 
         bubble = storeService.lock(bubble.getId());
@@ -65,7 +65,7 @@ public class OrphanEntityTest extends StoreTest2TestCase {
             updateOnServer(bubble);
             Assert.fail("Skulle fått exception her");
         } catch (ImplementationException e) {
-            Assert.assertEquals(e.getMessage(), "Forsøkte å nulle ut komponeent no.statkart.skif.storetest2.domain.entitycomponent.EntityComponent Id:" + orgComponentId);
+            Assert.assertEquals(e.getMessage(), "Attempt at setting entity component to null. Entity class: no.statkart.skif.storetest2.domain.entitycomponent.EntityComponent Id:" + orgComponentId);
         }
     }
 

@@ -71,7 +71,7 @@ public class LockingTest extends StoreTestTestCase {
         try {
             lockingTestService.loseALock();
         } catch (OperationalException e) {
-            assertTrue(e.getMessage().contains("Låsene ble borte under fullføring av brukstilfellet"));
+            assertTrue(e.getMessage().contains("Locks disappeared during service execution"));
         } finally {
             lockingTestService.releaseAllLocks();
         }

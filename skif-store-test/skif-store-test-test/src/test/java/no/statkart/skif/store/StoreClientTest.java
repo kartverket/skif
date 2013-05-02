@@ -128,7 +128,7 @@ public class StoreClientTest {
             store.commitUnitOfWork();
             Assert.fail("Skulle fått feilmelding");
         } catch (ImplementationException e) {
-            Assert.assertTrue(e.getMessage().contains("Commit av UnitOfWork direkte mot server støttes ikke"));
+            Assert.assertTrue(e.getMessage().contains("Commit of UnitOfWork directly against server is not supported"));
         }
     }
 
