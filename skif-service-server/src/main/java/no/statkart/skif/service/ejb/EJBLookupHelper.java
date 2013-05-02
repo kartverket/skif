@@ -97,7 +97,7 @@ public class EJBLookupHelper {
     public <T extends Object> T lookupEjb(Class<T> serviceClass) {
         Object ejb = ejbRegistry.get(serviceClass);
         if (ejb == null) {
-            throw new ConfigurationException("Fant ikke EJB for interface: " + serviceClass.getName()+ " Sjekk at tilhørende EJB'en har blitt registrert i skif-rammeverket via EJBRegistration klassen, f.eks via en servlet-listner i Web servicens web.xml");
+            throw new ConfigurationException("Could not find EJB for interface: " + serviceClass.getName()+ " Check that corresponding EJB has benn registred in SKIF via the EJBRegistration class, for instance by a servlet listener in the Web service's web.xml");
         }
         return (T) ejb;
     }

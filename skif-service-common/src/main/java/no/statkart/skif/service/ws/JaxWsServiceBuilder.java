@@ -129,14 +129,14 @@ public class JaxWsServiceBuilder<T> {
         Pattern pattern = Pattern.compile(".*://[^/]*/(.*)/service(/?.*)?");
         WebServiceClient annotation = wsClass.getAnnotation(WebServiceClient.class);
         if (annotation==null) {
-            throw new ConfigurationException("WebService har ikke noen @WebserviceClient annotation: " + wsClass.getName());
+            throw new ConfigurationException("WebService does not have a @WebserviceClient annotation: " + wsClass.getName());
         }
         Matcher m = pattern.matcher(annotation.targetNamespace());
         if (m.matches()) {
             String  contextPath = m.group(1);
             return "/" + contextPath  + "/" + wsClass.getSimpleName();
         }  else {
-            throw new ConfigurationException("WebService targetnamesspace følger ikke forventet mønster (http://adresse/fast/wsapi/service/...): " +  annotation.targetNamespace());
+            throw new ConfigurationException("WebService target namespace does not match expected pattern (http://address/.../service/...): " +  annotation.targetNamespace());
         }
     }
 

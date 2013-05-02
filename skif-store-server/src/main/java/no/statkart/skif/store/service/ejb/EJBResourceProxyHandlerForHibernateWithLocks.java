@@ -71,9 +71,9 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                         }
                     });
                 } catch (RollbackException e) {
-                    throw new OperationalException("Uventet feil ved registering av JTA callback", e);
+                    throw new OperationalException("Failed to register JTA callback", e);
                 } catch (SystemException e) {
-                    throw new OperationalException("Uventet feil ved registering av JTA callback", e);
+                    throw new OperationalException("Failed to register JTA callback", e);
                 }
             }
         }

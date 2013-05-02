@@ -316,11 +316,11 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
             } else if (clazz.equals(Map.class)) {
                 return new HashMap();
             } else {
-                throw new MappingException("Mapper har ikke kjenskap til implementerende klasse av den abstrakte typen " + clazz
+                throw new MappingException("No known implementation of abstract class " + clazz
                         .getName());
             }
         } else if (clazz.isInterface()) {
-            throw new MappingException("Mapper har ikke kjenskap til implementerende klasse av den abstrakte typen " + clazz
+            throw new MappingException("No known implementation of interface " + clazz
                     .getName());
         } else {
             return clazz.newInstance();
@@ -409,7 +409,7 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
             try {
                 entryField = sourceClass.getDeclaredField("entry");
             } catch (NoSuchFieldException e) {
-                throw new MappingException("Forventet felt entry ved mapping til map");
+                throw new MappingException("Expected field entry when mapping to map");
             }
             entryField.setAccessible(true);
             final ParameterizedType entryListType = (ParameterizedType) entryField.getGenericType();
@@ -419,14 +419,14 @@ public abstract class AbstractMapper implements InvocationHandler, BaseMapping {
             try {
                 keyField = entryClass.getDeclaredField("key");
             } catch (NoSuchFieldException e) {
-                throw new MappingException("Forventet felt key i entry-klasse ved mapping til map");
+                throw new MappingException("Expected field key in entry class when mapping to map");
             }
             keyField.setAccessible(true);
             final Field valueField;
             try {
                 valueField = entryClass.getDeclaredField("value");
             } catch (NoSuchFieldException e) {
-                throw new MappingException("Forventet felt value i entry-klasse ved mapping til map");
+                throw new MappingException("Excepted field value i entry class when mapping to map");
             }
             valueField.setAccessible(true);
 

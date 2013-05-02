@@ -34,7 +34,7 @@ public abstract class SkifWebService<T extends ServiceWSI> {
         }
         try {
             if (injector == null) {
-                throw new ConfigurationException("SKIF: Fant ikke injector for " + getClass().getName() + ": Sjekk at init() metoden setter injector hørende til modulen");
+                throw new ConfigurationException("No injector found for " + getClass().getName() + ": Check that the init() methods sets an injector for the module");
             }
             return getFactory(injector).getService(ctx, this.getClass());
         } catch (RuntimeException e) {

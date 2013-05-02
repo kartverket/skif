@@ -42,7 +42,7 @@ abstract class AbstractServiceExceptionTypeMapper<WsapiT extends ServiceExceptio
                 return entry.getKey();
             }
         }
-        throw new MappingException("Kunne ikke finne category for exception klasse: " + source.getClass().getName()); //skal ikke kunne forekomme
+        throw new MappingException("Could not find category for exception class: " + source.getClass().getName()); //skal ikke kunne forekomme
     }
 
     /**

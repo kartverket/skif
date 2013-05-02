@@ -113,7 +113,7 @@ public abstract class HibernateSessionFactoryBuilder {
         if (resourceName != null) {
             hbmResource.add(resourceName);
         } else {
-            throw new ConfigurationException("Fant ingen *.hbm.xml mappingfil for " + clazz.getName());
+            throw new ConfigurationException("Could not find *.hbm.xml mapping file for " + clazz.getName());
         }
         return this;
 
@@ -284,7 +284,7 @@ public abstract class HibernateSessionFactoryBuilder {
                             } else {
                                 if (!line.matches(".*<typedef class=\".*\".*")) {
                                     if(!className2resourceNameMap.get(className).equals(reducedFileName)){
-                                        throw new ConfigurationException("Klasse med navn:" + className + ", med angitt mapping i fil: "+reducedFileName+" har allerede blitt mappet i fil: " + className2resourceNameMap.get(className));
+                                        throw new ConfigurationException("Class named " + className + ", mapped in file "+reducedFileName+" has already been mapping in file " + className2resourceNameMap.get(className));
                                     }
                                 }
                             }

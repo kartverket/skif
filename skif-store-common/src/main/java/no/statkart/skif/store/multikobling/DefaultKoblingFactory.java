@@ -33,7 +33,7 @@ public class DefaultKoblingFactory<R,V, K extends Kobling<R,V>> implements Kobli
                 return (Constructor<K>) c;
             }
         }
-        throw new ConfigurationException("Fant ingen passende constructor for " + koblingClass);
+        throw new ConfigurationException("No matching constructor for " + koblingClass);
     }
 
     @Override

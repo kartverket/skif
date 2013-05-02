@@ -105,7 +105,7 @@ public class ServiceExceptionTypeMapper<WsapiT extends ServiceException, WsapiTI
                 throw new MappingException("Expected source to be derived from: " + SkifException.class);
             }
         } else {
-            throw new MappingException("TargetClas not a @WebFault! class:" + targetClass.getName());
+            throw new MappingException("TargetClass not a @WebFault class:" + targetClass.getName());
         }
     }
 

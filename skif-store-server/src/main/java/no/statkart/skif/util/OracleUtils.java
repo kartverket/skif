@@ -48,15 +48,15 @@ public class OracleUtils {
             try {
                 oracleConnection = (OracleConnection) ((JTSConnection) con).getConnection();
             } catch (SQLException e) {
-                throw new OperationalException("Feil oppstod ved uthenting av Oracle connection fra Weblogic JTSConnection", e);
+                throw new OperationalException("An error occured getting Oracle connection from Weblogic JTSConnection", e);
             } catch (RuntimeException e) {
-                throw new OperationalException("Feil oppstod ved uthenting av Oracle connection fra Weblogic JTSConnection. Check at Weblogic Connection Pool bruker korrekt driver (oracle.jdbc.OracleDriver)", e);
+                throw new OperationalException("An error occured getting Oracle connection from Weblogic JTSConnection. Check that Weblogic Connection Pool is using the correct driver (oracle.jdbc.OracleDriver)", e);
             }
         } else if (con instanceof PoolConnection) {
             try {
                 oracleConnection = (OracleConnection) ((PoolConnection) con).getVendorConnection();
             } catch (SQLException e) {
-                throw new OperationalException("Feil oppstod ved uthenting av Oracle connection fra Weblogic PoolConnection. Check at Weblogic Connection Pool bruker korrekt driver (oracle.jdbc.OracleDriver)", e);
+                throw new OperationalException("An error occured getting Oracle connection from Weblogic PoolConnection. Check that Weblogic Connection Pool is using the correct driver (oracle.jdbc.OracleDriver)", e);
             }
         } else if (con instanceof OracleConnection) {
             oracleConnection = (OracleConnection) con;

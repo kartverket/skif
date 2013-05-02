@@ -244,7 +244,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
             } else if (classMappings.containsKey(sourceClass)) {
                 retVal = classMappings.get(sourceClass);
             } else {
-                throw new MappingException("Kunne ikke mappe: " + sourceClass.toString() + ", fant ingen motsvarende klasse");
+                throw new MappingException("Can not map " + sourceClass.toString() + ", could not find corresponding class");
             }
         }
 
@@ -390,7 +390,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
             Class c = Class.forName(className);
             doNotMapTheseClasses.add(c);
         } catch (ClassNotFoundException e) {
-            throw new MappingException("Prøvde å legge inn ignorering av en klasse jeg ikke fant, for mapping-formål", e);
+            throw new MappingException("Tried to ignore unknown class for mapping", e);
         }
 
     }
@@ -427,7 +427,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                         targetCollection.add(mapping.d2w(next));
                     }
                 } else {
-                    throw new MappingException("Antar at det alltid er en felt med navn 'item' eller 'liste' på andre siden av en Collection. Det var visst feil...");
+                    throw new MappingException("Assumption that there is a field 'item' or 'liste' corresponding to a Collection failed");
                 }
             } else {
                 Collection<Method> sourceGetters = findGetters(source.getClass());
@@ -508,7 +508,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                         }
                     }
                 } else {
-                    throw new MappingException("Antar at det alltid er en List på den andre siden av en wsapi klasse som har et felt med navn 'item'. Det var visst feil...");
+                    throw new MappingException("Assumption that a List corresponds to wsapi field 'item' failed");
                 }
             } else if (checkHasField(source.getClass(), "liste")) {
                 if (target instanceof Collection) {
@@ -523,7 +523,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                         }
                     }
                 } else {
-                    throw new MappingException("Antar at det alltid er en List på den andre siden av en wsapi klasse som har et felt med navn 'liste'. Det var visst feil...");
+                    throw new MappingException("Assumption that a List corresponds to wsapi field 'liste' failed");
                 }
             } else if (source instanceof Collection && target instanceof Collection) {
                 Collection sourceCollection = (Collection) source;

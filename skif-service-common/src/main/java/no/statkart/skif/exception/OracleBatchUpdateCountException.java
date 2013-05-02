@@ -10,6 +10,6 @@ public class OracleBatchUpdateCountException extends OperationalException {
     private static final long serialVersionUID = 1L;
 
     public OracleBatchUpdateCountException(int actualCount, int expectedCount) {
-        super("Ikke alle updates førte til endring. Faktisk antall=" + actualCount + ". Forventet antall=" + expectedCount);
+        super("Not all updates caused a change. Actual number of rows changed=" + actualCount + ". Expected number of rows changed=" + expectedCount);
     }
 }

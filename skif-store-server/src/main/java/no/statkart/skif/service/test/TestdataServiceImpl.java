@@ -116,10 +116,10 @@ public class TestdataServiceImpl implements TestdataService {
                 statement.setTimestamp(1, transactionSnapshot.getTimestamp());
                 int rader = statement.executeUpdate();
                 if (rader != 1) {
-                    throw new OperationalException("Kunne ikke sette transaksjonstidspunkt. Feil antall rader oppdatert: " + rader);
+                    throw new OperationalException("Could not set transaction timestamp. Wrong number of rows updated: " + rader);
                 }
             } catch (SQLException e) {
-                throw new OperationalException("Kunne ikke sette transaksjonstidspunkt", e);
+                throw new OperationalException("Could not set transaction timestamp", e);
             } finally {
                 JDBCHelper.close(statement);
             }

@@ -226,7 +226,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         }
 
         if (consumedLocks != lockMap.size()) {
-            throw new OperationalException("Låsene ble borte under fullføring av brukstilfellet. Brukstilfellet har sannsynligvis blitt fullført på en annen tjener.");
+            throw new OperationalException("Locks disappeared during service execution. The service may have been completed on another server.");
         }
     }
 

@@ -337,7 +337,7 @@ public class AutomagicTest {
             }
             String reroutedPackageName = packageName.replace(packageName, finnBesteMatch(packageName));
             if (reroutedPackageName == null) {
-                throw new MappingException("Fant ikke match mellom pakkene for klassen: " + clazz.getName());
+                throw new MappingException("Found not match between packages for class: " + clazz.getName());
             }
 
             Class<?> aClass;
@@ -398,23 +398,23 @@ public class AutomagicTest {
 
     private Object generateConcreteKodeId(Class clazz) {
         if (clazz == null) {
-            throw new MappingException("Kan ikke generere id for NULL kasse");
+            throw new MappingException("Can not generate id for null class");
         }
 
         Object o;
         try {
             o = clazz.newInstance();
         } catch (InstantiationException e) {
-            throw new MappingException("Kan ikke instansiere klasse " + clazz.getName());
+            throw new MappingException("Can not instantiate class " + clazz.getName());
         } catch (IllegalAccessException e) {
-            throw new MappingException("Konstruktør kan ikke nås for " + clazz.getName());
+            throw new MappingException("Can not access constructor for " + clazz.getName());
         }
         return o;
     }
 
     private Object generateConcreteSubclassId(Class clazz, String inClazzName) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         if (inClazzName == null) {
-            throw new MappingException("Kan ikke generere id for NULL kasse");
+            throw new MappingException("Can not generate id for null class");
         }
         if (!isClassAbstract(clazz)) {
             return generateConcreteSubclass(clazz);
@@ -428,7 +428,7 @@ public class AutomagicTest {
 
     private Object generateConcreteSubclassId(String inClazzName) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         if (inClazzName == null) {
-            throw new MappingException("Kan ikke generere id for NULL kasse");
+            throw new MappingException("Can not generate id for null class");
         }
 
         //finn id for inClazzName
@@ -441,7 +441,7 @@ public class AutomagicTest {
     private Object generateConcreteSubclass(Class clazz) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         List<Class> subclasses = className2ListOfSubclasses.get(clazz.getName());
         if (subclasses == null) {
-            throw new MappingException("Fant ingen konkrete subklasser for klassen: " + clazz.getName());
+            throw new MappingException("Found no concrete subclass for class: " + clazz.getName());
         }
         Class subclass = subclasses.get(randomGenerator.nextInt(subclasses.size()));
         if (isClassAbstract(subclass)) {

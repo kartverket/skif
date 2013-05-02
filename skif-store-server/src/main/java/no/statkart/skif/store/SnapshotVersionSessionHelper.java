@@ -36,7 +36,7 @@ public class SnapshotVersionSessionHelper {
             sqlQuery.setTimestamp("timestamp", snapshotVersion.getTimestamp()).executeUpdate();
         } catch (SQLGrammarException e) {
             if (e.getErrorCode() == 904 && e.getSQLState().equals("42000") && e.getCause().getMessage().equals("ORA-00904: \"SNAPSHOT_TIME\".\"SET_T\": ugyldig identifikator\n")) {
-                throw new ConfigurationException("Databaseskjema støtter ikke historikk");
+                throw new ConfigurationException("Database schema does not support history");
             } else {
                 throw e;
             }
@@ -68,7 +68,7 @@ public class SnapshotVersionSessionHelper {
             return SnapshotVersion.createInstance((Timestamp) sqlQuery.uniqueResult());
         } catch (SQLGrammarException e) {
             if (e.getErrorCode() == 904 && e.getSQLState().equals("42000") && e.getCause().getMessage().equals("ORA-00904: \"SNAPSHOT_TIME\".\"GET_T\": ugyldig identifikator\n")) {
-                throw new ConfigurationException("Databaseskjema støtter ikke historikk");
+                throw new ConfigurationException("Database schema does not support history");
             } else {
                 throw e;
             }

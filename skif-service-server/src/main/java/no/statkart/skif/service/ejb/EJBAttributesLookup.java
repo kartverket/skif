@@ -57,7 +57,7 @@ public class EJBAttributesLookup<S> {
             c = getImplementationClass(type);
         }
         if (c == null) {
-            throw new no.statkart.skif.exception.ConfigurationException("Fant ingen klasse for service: " + type);
+            throw new no.statkart.skif.exception.ConfigurationException("No class for service found: " + type);
         }
         return c;
     }

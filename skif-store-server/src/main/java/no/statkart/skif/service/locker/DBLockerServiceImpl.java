@@ -209,7 +209,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             con.commit();
             rollback = false;
         } catch (SQLException e) {
-            throw new OperationalException("Sletting av alle låser for bruker feilet: " + owner, e);
+            throw new OperationalException("Deleting all locks for user failed: " + owner, e);
         } finally {
             JDBCHelper.close(stmt);
             if (rollback) {
@@ -313,7 +313,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             rs.next();
             return rs.getTimestamp(1);
         } catch (SQLException e) {
-            throw new OperationalException("Uventet feil ved lesing av SYSTIMESTAMP fra database", e);
+            throw new OperationalException("Error reading SYSTIMESTAMP from database", e);
         } finally {
             JDBCHelper.close(rs, stmt);
         }
@@ -351,7 +351,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             if (e.getErrorCode() == 1) {
                 return null;
             } else {
-                throw new OperationalException("Uventet låsefeil for lockKey: " + lockKey, e);
+                throw new OperationalException("Unexpected error locking lockKey: " + lockKey, e);
             }
         } finally {
             JDBCHelper.close(stmt);
@@ -390,7 +390,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 throw new RuntimeException(e1);
             }
         } catch (SQLException e) {
-            throw new OperationalException("Låsing av ider feilet: " + lockKeys, e);
+            throw new OperationalException("Locking ids failed: " + lockKeys, e);
         } finally {
             JDBCHelper.close(stmt);
         }
@@ -426,7 +426,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 return null;
             }
         } catch (SQLException e) {
-            throw new OperationalException("Søk etter lås for lockKey feilet: " + lockKey, e);
+            throw new OperationalException("Search for locks with lockKey failed: " + lockKey, e);
         } finally {
             JDBCHelper.close(rs, stmt);
         }
@@ -466,7 +466,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             }
             return new LockInfo<Long>(lockInfo.getLockKey(), lockInfo.getOwner(), expires, false);
         } catch (SQLException e) {
-            throw new OperationalException("Uventet låsefeil for id: " + lockInfo.getLockKey(), e);
+            throw new OperationalException("Unexpected error locking id: " + lockInfo.getLockKey(), e);
         } finally {
             JDBCHelper.close(stmt);
         }
@@ -503,7 +503,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             }
             return new LockInfo<Long>(lockInfo.getLockKey(), lockInfo.getOwner(), expires, true);
         } catch (SQLException e) {
-            throw new OperationalException("Uventet låsefeil for id: " + lockInfo.getLockKey(), e);
+            throw new OperationalException("Error locking id: " + lockInfo.getLockKey(), e);
         } finally {
             JDBCHelper.close(stmt);
         }
@@ -562,7 +562,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 }
             }
         } catch (SQLException e) {
-            throw new OperationalException("Lesing av låse feilet", e);
+            throw new OperationalException("Reading of locks failed", e);
         } finally {
             JDBCHelper.close(rs, stmt);
         }
@@ -663,9 +663,9 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             }
             return renewedLocks;
         } catch (BatchUpdateException e) {
-            throw new OperationalException("Låsing av objekter feilet", e);
+            throw new OperationalException("Error locking objects", e);
         } catch (SQLException e) {
-            throw new OperationalException("Låsing av objekter feilet", e);
+            throw new OperationalException("Error locking objects", e);
         } finally {
             JDBCHelper.close(ps);
         }
@@ -743,9 +743,9 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             }
             return timedoutLocks;
         } catch (BatchUpdateException e) {
-            throw new OperationalException("Låsing av objekter feilet", e);
+            throw new OperationalException("Error locking objects", e);
         } catch (SQLException e) {
-            throw new OperationalException("Låsing av objekter feilet", e);
+            throw new OperationalException("Error locking objects", e);
         } finally {
             JDBCHelper.close(ps);
         }
@@ -784,7 +784,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             logger.debug(buf.toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new OperationalException("Lesing av låse feilet", e);
+            throw new OperationalException("Error deleting locks", e);
         } finally {
             JDBCHelper.close(stmt);
         }
@@ -812,7 +812,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             }
             return locks;
         } catch (SQLException e) {
-            throw new OperationalException("Søk etter låser for bruker feilet: " + owner, e);
+            throw new OperationalException("Search for locks for user failed: " + owner, e);
         } finally {
             JDBCHelper.close(rs, stmt);
         }
@@ -834,7 +834,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
           logger.debug("SQL: PARAM 3=" + expires);
           stmt.executeUpdate();
        } catch( SQLException e ) {
-          throw new OperationalException("Endring av utløpstid for låse feilet for bruker: " + owner, e);
+          throw new OperationalException("Modifying lock expiration time for user failed: " + owner, e);
        } finally {
           JDBCHelper.close(rs, stmt);
        }

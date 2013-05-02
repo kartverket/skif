@@ -33,7 +33,7 @@ public class DBLockerInTransactionServiceImpl implements DBLockerInTransactionSe
             logger.debug("SQL: PARAM 1=" + owner);
             return stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new OperationalException("Sletting av alle låser for bruker feilet: " + owner, e);
+            throw new OperationalException("Deleting all locks for user failed: " + owner, e);
         } finally {
             JDBCHelper.close(stmt);
         }
