@@ -15,6 +15,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Tester {@link no.statkart.skif.store.multikobling.Multikobling} via {@link Multirefererende}.
@@ -133,5 +134,17 @@ public class MultikoblingTest extends StoreTest2TestCase {
         Assert.assertEquals(multirefererende.getMultikobling().get("B").size(), 1);
         Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().size(), 2);
         Assert.assertEquals(multirefererende.getMultikobling().getKoblinger(), ImmutableSet.of(new MultirefererendeKobling("A", "A1"), new MultirefererendeKobling("B", "B1")));
+    }
+
+    public void testFlereReferanser() {
+        Multirefererende multirefererende = new Multirefererende();
+
+        Set<String> a1 = multirefererende.getMultikobling().get("A");
+        Set<String> a2 = multirefererende.getMultikobling().get("A");
+
+        a1.add("A");
+
+        Assert.assertEquals(a1.size(), 1);
+        Assert.assertEquals(a2.size(), 1);
     }
 }
