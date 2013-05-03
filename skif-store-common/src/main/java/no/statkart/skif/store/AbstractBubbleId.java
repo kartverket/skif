@@ -74,10 +74,6 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     // Cache the class for faster access. This actually matters
     protected Class clazz = getClass();
 
-    public BubbleId<T> resolveInstance() {
-        return this;
-    }
-
     protected AbstractBubbleId() {
     }
 

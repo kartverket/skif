@@ -10,7 +10,6 @@ import java.io.Serializable;
 public interface BubbleId<T extends BubbleObject> extends Serializable{
     public Object getValue();
     public SnapshotVersion getSnapshotVersion();
-    public BubbleId<T> resolveInstance();
     public T createTypeInstance();
     public Class getBaseType();
     public Class<T> getType();

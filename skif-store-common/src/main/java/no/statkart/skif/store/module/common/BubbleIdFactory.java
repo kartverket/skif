@@ -17,12 +17,11 @@ public class BubbleIdFactory {
     }
 
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, Object idValue, SnapshotVersion snapshotVersion) {
-         I id = null;
         try {
             Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), SnapshotVersion.class);
             ctor.setAccessible(true);
-            id = ctor.newInstance(idValue, snapshotVersion);
-            return (I) id.resolveInstance();
+            I id = ctor.newInstance(idValue, snapshotVersion);
+            return id;
         } catch (InstantiationException e) {
             throw new ImplementationException(e);
         } catch (IllegalAccessException e) {

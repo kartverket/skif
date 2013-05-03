@@ -21,17 +21,15 @@ public class BubbleIds {
      * Oppretter en bubbleId instans av gitt type
      */
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, Object idValue, SnapshotVersion snapshotVersion) {
-        I id = null;
         try {
-
             Constructor<I> ctor = constructorMap.get(idClass);
             if (ctor == null) {
                 ctor = idClass.getDeclaredConstructor(idValue.getClass(), SnapshotVersion.class);
                 ctor.setAccessible(true);
                 constructorMap.putIfAbsent(idClass, ctor);
             }
-            id = ctor.newInstance(idValue, snapshotVersion);
-            return (I) id.resolveInstance();
+            I id = ctor.newInstance(idValue, snapshotVersion);
+            return id;
         } catch (InstantiationException e) {
             throw new ImplementationException(e);
         } catch (IllegalAccessException e) {
