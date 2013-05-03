@@ -1,16 +1,20 @@
 package no.statkart.skif.storetest2.multikobling;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest2.domain.multikobling.Multirefererende;
 import no.statkart.skif.storetest2.domain.multikobling.MultirefererendeId;
+import no.statkart.skif.storetest2.domain.multikobling.MultirefererendeKobling;
 import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacade;
 import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacadeFactory;
 import no.statkart.skif.storetest2.util.testsupport.StoreTest2TestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.HashSet;
 
 /**
  * Tester {@link no.statkart.skif.store.multikobling.Multikobling} via {@link Multirefererende}.
@@ -81,5 +85,53 @@ public class MultikoblingTest extends StoreTest2TestCase {
                 return null;
             }
         });
+    }
+
+    public void testAddAndReset() {
+        Multirefererende multirefererende = new Multirefererende();
+
+        multirefererende.getMultikobling().put("A", "A");
+        Assert.assertEquals(multirefererende.getMultikobling().get("A").size(), 1);
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().size(), 1);
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().iterator().next(), new MultirefererendeKobling("A", "A"));
+
+        multirefererende.getMultikobling().setKoblinger(new HashSet<MultirefererendeKobling>());
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().size(), 0);
+        Assert.assertEquals(multirefererende.getMultikobling().get("A").size(), 0);
+    }
+
+    public void testAddTwoAndClearOne() {
+        Multirefererende multirefererende = new Multirefererende();
+
+        multirefererende.getMultikobling().get("A").add("A1");
+        multirefererende.getMultikobling().get("B").add("B1");
+        Assert.assertEquals(multirefererende.getMultikobling().get("A").size(), 1);
+        Assert.assertEquals(multirefererende.getMultikobling().get("B").size(), 1);
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().size(), 2);
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger(), ImmutableSet.of(new MultirefererendeKobling("A", "A1"), new MultirefererendeKobling("B", "B1")));
+
+        multirefererende.getMultikobling().get("A").clear();
+        Assert.assertEquals(multirefererende.getMultikobling().get("A").size(), 0);
+        Assert.assertEquals(multirefererende.getMultikobling().get("B").size(), 1);
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().size(), 1);
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger(), ImmutableSet.of(new MultirefererendeKobling("B", "B1")));
+    }
+
+    public void testAddThreeAndRemoveOne() {
+        Multirefererende multirefererende = new Multirefererende();
+
+        multirefererende.getMultikobling().get("A").add("A1");
+        multirefererende.getMultikobling().get("A").add("A2");
+        multirefererende.getMultikobling().get("B").add("B1");
+        Assert.assertEquals(multirefererende.getMultikobling().get("A").size(), 2);
+        Assert.assertEquals(multirefererende.getMultikobling().get("B").size(), 1);
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().size(), 3);
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger(), ImmutableSet.of(new MultirefererendeKobling("A", "A1"), new MultirefererendeKobling("A", "A2"), new MultirefererendeKobling("B", "B1")));
+
+        multirefererende.getMultikobling().get("A").remove("A2");
+        Assert.assertEquals(multirefererende.getMultikobling().get("A").size(), 1);
+        Assert.assertEquals(multirefererende.getMultikobling().get("B").size(), 1);
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().size(), 2);
+        Assert.assertEquals(multirefererende.getMultikobling().getKoblinger(), ImmutableSet.of(new MultirefererendeKobling("A", "A1"), new MultirefererendeKobling("B", "B1")));
     }
 }
