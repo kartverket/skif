@@ -12,7 +12,7 @@ import no.statkart.skif.store.Store;
  * som builderen oppretter blir instansiert via en egen fritstående modul som forsyner MockupFacaden med
  * en egen {@code MockupStore}-instans, {@code TestNumer}-instans og {@code IdService}-instans for generering
  * av test id'er.
- *
+ * <p/>
  * Klassen er annotert med @Singleton slik at readTestSet gjenbrukes på tvers av tester. Tilsvarende må subklasser
  * annoteres med @Singleton side Guice ikke tar hensyn til annotasjoner på superklasser.
  *
@@ -57,48 +57,79 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
      *
      * @return mockupfacade
      */
-    public T getForReadTest() {
+    public T getReadMockupFacade() {
         return readFacadeProvider.get();
+    }
+
+    @Deprecated
+    public T getForReadTest() {
+        return getReadMockupFacade();
     }
 
     /**
      * Returnerer mockupfacade med testsett for tester som ikke endre på data i databasen og lagre testsettet
      * i databasen hvis det ikke allerede finnes.
-     * @return
+     *
+     * @return mockupfacade
      */
-    public T getForReadTestAndSaveData() {
-        final T readFacade = readFacadeProvider.get();
+    public T getReadMockupFacadeAndSaveData() {
+        final T readFacade = getReadMockupFacade();
         testdataService.saveAll(readFacade.getAllTransfers());
         return readFacade;
+    }
+
+    @Deprecated
+    public T getForReadTestAndSaveData() {
+        return getReadMockupFacadeAndSaveData();
     }
 
 
     /**
      * Returnerer mockupfacade med testsett for tester som endre på data. Hvert kall vil returnere en ny facade
-     * med et eget unikt datasett
+     * med et eget unikt datasett.
      *
      * @return mockupfacade
      */
-    public T getForWriteTest() {
+    public T getWriteMockupFacade() {
         return createFacade(testdataService.getNextTestNumber());
     }
 
+    @Deprecated
+    public T getForWriteTest() {
+        return getWriteMockupFacade();
+    }
 
 
     /**
-     * Returnerer mockupfacade med testsett for tester som endre på data og lagre testsettet til databaseb.
-     * Hvert kall vil returnere en ny facade med et eget unikt datasett
+     * Returnerer mockupfacade med testsett for tester som endre på data og lagrer testsettet til database.
+     * Hvert kall vil returnere en ny facade med et eget unikt datasett.
      *
      * @return mockupfacade
      */
-    public T getForWriteTestAndSaveData() {
-        final T writeFacade = getForWriteTest();
+    public T getWriteMockupFacadeAndSaveData() {
+        final T writeFacade = getWriteMockupFacade();
         testdataService.saveAll(writeFacade.getAllTransfers());
         return writeFacade;
     }
 
+    @Deprecated
+    public T getForWriteTestAndSaveData() {
+        return getWriteMockupFacadeAndSaveData();
+    }
 
-    private T createFacade(final TestNumber testNumber) {
+
+    /**
+     * Returnerer en tom mockupfacade for tester som ikke vil ha forhåndsgenererte data.
+     *
+     * @return mockupfacade
+     * @since 2.3.0
+     */
+    public T getEmptyMockupFacade() {
+        return createEmptyFacade(testdataService.getNextTestNumber());
+    }
+
+
+    private T createEmptyFacade(final TestNumber testNumber) {
         Module module = new AbstractModule() {
             @Override
             protected void configure() {
@@ -117,7 +148,13 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
         } else {
             injector = Guice.createInjector(module);
         }
-        T facade = injector.getInstance(mockupFacadeClass);
+
+        return injector.getInstance(mockupFacadeClass);
+    }
+
+    private T createFacade(TestNumber testNumber) {
+        T facade = createEmptyFacade(testNumber);
+
         facade.createAllMockups();
 
         // Reset snapshotversion til current slik at facaden alltid starter i samme tilstand

@@ -34,7 +34,7 @@ public class EndringFinderTest extends StoreTest2ServerTestCase {
     private EndringFinder endringFinder;
 
     public void findSisteEndringsnummer() {
-        mockupFacadeFactory.getForReadTestAndSaveData();
+        mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
         long sisteEndringsnummer = endringFinder.findSisteEndringsnummer();
 
@@ -42,7 +42,7 @@ public class EndringFinderTest extends StoreTest2ServerTestCase {
     }
 
     public void findSisteEndringsnummerForEier() {
-        mockupFacadeFactory.getForReadTestAndSaveData();
+        mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
         long sisteEndringsnummer = endringFinder.findSisteEndringsnummerForClass(EierEndring.class);
 
@@ -52,7 +52,7 @@ public class EndringFinderTest extends StoreTest2ServerTestCase {
     public void findEndringerEtterEndringsnummer() {
         final long endringsnummerFoer = endringFinder.findSisteEndringsnummer();
 
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         MockupTransfer mockupTransfer = mockupFacade.getTransfer();
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, mockupTransfer);
 
@@ -71,7 +71,7 @@ public class EndringFinderTest extends StoreTest2ServerTestCase {
     public void findEndringerEtterEndringsnummerForClass() {
         final long endringsnummerFoer = endringFinder.findSisteEndringsnummerForClass(EierEndring.class);
 
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         MockupTransfer mockupTransfer = mockupFacade.getTransfer();
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, mockupTransfer);
 

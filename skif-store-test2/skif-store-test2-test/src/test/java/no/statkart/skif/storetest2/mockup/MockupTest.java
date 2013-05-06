@@ -23,7 +23,7 @@ public class MockupTest extends StoreTest2TestCase {
 
     @Test(invocationCount = 2) // Kjør to ganger for å teste at readset bare forsøkes skrives ned én gang
     public void readSet() {
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForReadTestAndSaveData();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
         Eier eier = storeService.getObject(mockupFacade.getEierMockupFactory().getEier1Id());
 
@@ -32,7 +32,7 @@ public class MockupTest extends StoreTest2TestCase {
     }
 
     public void writeSet() {
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTestAndSaveData();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
         Eier eier = storeService.getObject(mockupFacade.getEierMockupFactory().getEier1Id());
 

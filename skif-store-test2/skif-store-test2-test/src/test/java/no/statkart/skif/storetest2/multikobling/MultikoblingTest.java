@@ -32,7 +32,7 @@ public class MultikoblingTest extends StoreTest2TestCase {
     private RunOnServerWithTxRequiresNewService runOnServerService;
 
     public void testPersistens() {
-        final StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        final StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
 
         final MultirefererendeId<?> id = mockupFacade.getIdService().getNextId(MultirefererendeId.class);
 

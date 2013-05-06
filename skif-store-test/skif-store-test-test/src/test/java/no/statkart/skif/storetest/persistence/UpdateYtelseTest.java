@@ -27,7 +27,7 @@ public class UpdateYtelseTest extends StoreTestMixedTestCase {
 
     public void test() {
         final List<TestBubbleId> ids = new ArrayList<TestBubbleId>();
-        final MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        final MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         final IdService idService = mockupFacade.getStore().getInstance(IdService.class);
 
         server.runInTxRequiresNew(new RunOnServerMethod() {

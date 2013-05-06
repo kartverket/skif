@@ -48,7 +48,7 @@ public class EndringManagerTest extends StoreTest2TestCase {
     public void antallEndringer() {
         final long antallEndringerFoer = endringsloggService.findSisteEndringsnummer();
 
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         MockupTransfer mockupTransfer = mockupFacade.getTransfer();
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, mockupTransfer);
         final int forventetAntall = mockupTransfer.getInsertedObjects().size();
@@ -61,7 +61,7 @@ public class EndringManagerTest extends StoreTest2TestCase {
     public void rekkefoelge() {
         final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer();
 
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         EierMockupFactory eierMockupFactory = mockupFacade.getEierMockupFactory();
         EiendomMockupFactory eiendomMockupFactory = mockupFacade.getEiendomMockupFactory();
 
@@ -89,7 +89,7 @@ public class EndringManagerTest extends StoreTest2TestCase {
     }
 
     public void insertUpdateDelete() {
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTestAndSaveData();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
 
         final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer();
 

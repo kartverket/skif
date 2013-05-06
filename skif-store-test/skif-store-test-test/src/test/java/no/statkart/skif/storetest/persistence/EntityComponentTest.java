@@ -48,7 +48,7 @@ public class EntityComponentTest extends SkifServerTestCase {
     }
 
     public void hashCodePersistentAcrossPersist() {
-        final MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        final MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
 
         BubbleWithComponents bubbleWithComponents = new BubbleWithComponents();
         bubbleWithComponents.setId(mockupFacade.getIdService().getNextId(BubbleWithComponentsId.class));

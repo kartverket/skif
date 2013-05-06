@@ -24,7 +24,7 @@ public class MockupServerTest extends StoreTestMixedTestCase {
 
             @Override
             public Object run() {
-                MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+                MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
 
                 testdataService.saveAll(mockupFacade.getAllTransfers());
 

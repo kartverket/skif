@@ -84,7 +84,7 @@ public class SubTypeTest extends StoreTestMixedTestCase {
     }
 
     public void insertPlusUpdateWithTypeChange() {
-        MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         IdService idService = mockupFacade.getStore().getInstance(IdService.class);
 
         final long idValue = (Long) idService.getNextIdValue(SubTypeWithPrimitiveId.class);
@@ -162,7 +162,7 @@ public class SubTypeTest extends StoreTestMixedTestCase {
     }
 
     public void insertPlusUpdateWithTypeChange2() {
-            MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
             IdService idService = mockupFacade.getStore().getInstance(IdService.class);
 
             final long idValue = (Long) idService.getNextIdValue(SubTypeWithPrimitiveId.class);

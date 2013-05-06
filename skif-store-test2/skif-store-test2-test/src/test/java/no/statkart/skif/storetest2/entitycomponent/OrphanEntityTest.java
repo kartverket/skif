@@ -35,7 +35,7 @@ public class OrphanEntityTest extends StoreTest2TestCase {
     private StoreService storeService;
 
     public void replaceOneToOne() {
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
 
         BubbleWithEntityComponents bubble = new BubbleWithEntityComponents();
         bubble.setId(mockupFacade.getIdService().getNextId(BubbleWithEntityComponentsId.class));
@@ -73,7 +73,7 @@ public class OrphanEntityTest extends StoreTest2TestCase {
      * Sjekker at én-til-én (teknisk sett mange-til-én) komponenter faktisk blir slettet når boblen blir det.
      */
     public void deleteOrphanOnDelete() {
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
 
         BubbleWithEntityComponents bubble = new BubbleWithEntityComponents();
         bubble.setId(mockupFacade.getIdService().getNextId(BubbleWithEntityComponentsId.class));

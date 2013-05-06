@@ -34,7 +34,7 @@ public class ComponentStealingTest extends StoreTest2TestCase {
     private StoreService storeService;
 
     public void testStealingOnInsert() {
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
 
         ListEntityComponent component1 = new ListEntityComponent();
         component1.setTextValue("C1");
@@ -75,7 +75,7 @@ public class ComponentStealingTest extends StoreTest2TestCase {
     }
 
     public void testStealingOnUpdate() {
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
 
         ListEntityComponent component1 = new ListEntityComponent();
         component1.setTextValue("C1");

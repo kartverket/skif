@@ -32,7 +32,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     private DBLockerService dbLockerService;
 
     public void testInsert() {
-        final MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        final MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         final IdService mockIdService = mockupFacade.getStore().getInstance(IdService.class);
 
         final TestBubble testBubble = new TestBubble(mockIdService.getNextId(TestBubbleId.class), "InsertTest");
@@ -87,7 +87,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     }
 
     public void testUpdate() {
-        final MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
+        final MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         final IdService mockIdService = mockupFacade.getStore().getInstance(IdService.class);
 
         final TestBubbleId<?> id = mockIdService.getNextId(TestBubbleId.class);
@@ -156,70 +156,70 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     }
 
     public void testDelete() {
-            final MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();
-            final IdService mockIdService = mockupFacade.getStore().getInstance(IdService.class);
+        final MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        final IdService mockIdService = mockupFacade.getStore().getInstance(IdService.class);
 
-            final TestBubbleId<?> id = mockIdService.getNextId(TestBubbleId.class);
+        final TestBubbleId<?> id = mockIdService.getNextId(TestBubbleId.class);
+
+        server.runInTxRequiresNew(new RunOnServerMethod() {
+            @Inject
+            private Store serverStore;
+
+            @Override
+            public Object run() {
+                TestBubble testBubble = new TestBubble(id, "DeleteTest");
+
+                serverStore.insert(testBubble);
+
+                return null;
+            }
+        });
+
+        Assert.assertFalse(clientStore.isLocked(id), "Ikke-slettet objekt skal ikke være låst.");
+        Assert.assertNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), id.getValue())), "Ikke-slettet objekt skal ikke være låst i lockerservice.");
+
+        clientStore.beginUnitOfWork();
+        try {
+            clientStore.get(id);
+            TestBubble testBubble = clientStore.lock(id);
+
+            Assert.assertTrue(clientStore.isLocked(id), "Ikke-slettet objekt skal være låst.");
+            Assert.assertNotNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), id.getValue())), "Ikke-slettet objekt skal være låst i lockerservice.");
+
+            clientStore.delete(testBubble);
+
+            Assert.assertTrue(clientStore.isLocked(id), "Slettet objekt skal være låst.");
+            Assert.assertNotNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), id.getValue())), "Slettet objekt skal være låst i lockerservice.");
+
+            final UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
 
             server.runInTxRequiresNew(new RunOnServerMethod() {
                 @Inject
                 private Store serverStore;
 
+                @Inject
+                private DBLockerService dbLockerService;
+
                 @Override
                 public Object run() {
-                    TestBubble testBubble = new TestBubble(id, "DeleteTest");
+                    Assert.assertTrue(serverStore.isLocked(id), "Slettet objekt skal allerede være låst på tjener.");
+                    Assert.assertNotNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), id.getValue())), "Slettet objekt skal fortsatt være låst i lockerservice.");
 
-                    serverStore.insert(testBubble);
+                    serverStore.registerTransfer(unitOfWorkTransfer);
+
+                    Assert.assertTrue(serverStore.isLocked(id), "Slettet objekt skal nå være låst på tjener.");
+                    Assert.assertNotNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), id.getValue())), "Slettet objekt skal fortsatt være låst i lockerservice.");
 
                     return null;
                 }
             });
 
-            Assert.assertFalse(clientStore.isLocked(id), "Ikke-slettet objekt skal ikke være låst.");
-            Assert.assertNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), id.getValue())), "Ikke-slettet objekt skal ikke være låst i lockerservice.");
+            clientStore.endUnitOfWork();
 
-            clientStore.beginUnitOfWork();
-            try {
-                clientStore.get(id);
-                TestBubble testBubble = clientStore.lock(id);
-
-                Assert.assertTrue(clientStore.isLocked(id), "Ikke-slettet objekt skal være låst.");
-                Assert.assertNotNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), id.getValue())), "Ikke-slettet objekt skal være låst i lockerservice.");
-
-                clientStore.delete(testBubble);
-
-                Assert.assertTrue(clientStore.isLocked(id), "Slettet objekt skal være låst.");
-                Assert.assertNotNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), id.getValue())), "Slettet objekt skal være låst i lockerservice.");
-
-                final UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
-
-                server.runInTxRequiresNew(new RunOnServerMethod() {
-                    @Inject
-                    private Store serverStore;
-
-                    @Inject
-                    private DBLockerService dbLockerService;
-
-                    @Override
-                    public Object run() {
-                        Assert.assertTrue(serverStore.isLocked(id), "Slettet objekt skal allerede være låst på tjener.");
-                        Assert.assertNotNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), id.getValue())), "Slettet objekt skal fortsatt være låst i lockerservice.");
-
-                        serverStore.registerTransfer(unitOfWorkTransfer);
-
-                        Assert.assertTrue(serverStore.isLocked(id), "Slettet objekt skal nå være låst på tjener.");
-                        Assert.assertNotNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), id.getValue())), "Slettet objekt skal fortsatt være låst i lockerservice.");
-
-                        return null;
-                    }
-                });
-
-                clientStore.endUnitOfWork();
-
-                Assert.assertFalse(clientStore.isLocked(testBubble.getId()), "Slettet objekt skal ikke lenger være låst.");
-                Assert.assertNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), testBubble.getId().getValue())), "Slettet objekt skal ikke være låst i lockerservice.");
-            } finally {
-                if (clientStore.inUnitOfWork()) clientStore.abortUnitOfWork();
-            }
+            Assert.assertFalse(clientStore.isLocked(testBubble.getId()), "Slettet objekt skal ikke lenger være låst.");
+            Assert.assertNull(dbLockerService.getLock(new LockKey<Long>(TestBubbleId.class.getName(), testBubble.getId().getValue())), "Slettet objekt skal ikke være låst i lockerservice.");
+        } finally {
+            if (clientStore.inUnitOfWork()) clientStore.abortUnitOfWork();
         }
+    }
 }

@@ -15,7 +15,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.SortedMap;
 
 /**
@@ -41,7 +40,7 @@ public class MockupTest extends StoreTestTestCase {
     public void testMockupBuilder() {
         MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 
-        MockupFacade readFacade = mockupFacadeBuilder.getForReadTest();
+        MockupFacade readFacade = mockupFacadeBuilder.getReadMockupFacade();
         Assert.assertTrue(readFacade.getTestNumber().isNR_0(), "readFacade har feil testnummer");
 
         Assert.assertEquals(injector.getInstance(MockupFacadeFactory.class), mockupFacadeBuilder, "MockupFacadeBuilder skal være singleton slik at read testsett gjenbrukes automatisk");
@@ -66,11 +65,11 @@ public class MockupTest extends StoreTestTestCase {
      */
     public void testSaveReadSet() {
         MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
-        MockupFacade readFacade = mockupFacadeBuilder.getForReadTestAndSaveData();
+        MockupFacade readFacade = mockupFacadeBuilder.getReadMockupFacadeAndSaveData();
         Assert.assertNotNull(store.get(readFacade.getFooMockupFactory().getFooIdGamleveien()));
 
         // Dette kall skal ikke gjemme readsett på nytt da det finnes fra før. Skal ikke feile heller
-        final MockupFacade readFacade2 = mockupFacadeBuilder.getForReadTest();
+        final MockupFacade readFacade2 = mockupFacadeBuilder.getReadMockupFacade();
         testdataService.saveAll(readFacade2.getAllTransfers());
         Assert.assertEquals(readFacade.getFooMockupFactory().getFooIdGamleveien(), readFacade.getFooMockupFactory().getFooIdGamleveien());
     }
@@ -78,8 +77,8 @@ public class MockupTest extends StoreTestTestCase {
     public void testCreateMultipleWriteSets()  {
         MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 
-        MockupFacade facade1 = mockupFacadeBuilder.getForWriteTestAndSaveData();
-        MockupFacade facade2 = mockupFacadeBuilder.getForWriteTestAndSaveData();
+        MockupFacade facade1 = mockupFacadeBuilder.getWriteMockupFacadeAndSaveData();
+        MockupFacade facade2 = mockupFacadeBuilder.getWriteMockupFacadeAndSaveData();
 
         final FooId<?> fooIdGamleveien1 = facade1.getFooMockupFactory().getFooIdGamleveien();
         final FooId<?> fooIdGamleveien2 = facade2.getFooMockupFactory().getFooIdGamleveien();
@@ -96,7 +95,7 @@ public class MockupTest extends StoreTestTestCase {
     public void testSaveSameWriteSetMultipleTimes() {
         MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 
-        MockupFacade facade = mockupFacadeBuilder.getForWriteTest();
+        MockupFacade facade = mockupFacadeBuilder.getWriteMockupFacade();
 
         testdataService.saveAll(facade.getAllTransfers());
         testdataService.saveAll(facade.getAllTransfers());
@@ -106,8 +105,8 @@ public class MockupTest extends StoreTestTestCase {
     public void testSaveWriteSetNumber() {
         MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 
-        MockupFacade facade1 = mockupFacadeBuilder.getForWriteTest();
-        MockupFacade facade2 = mockupFacadeBuilder.getForWriteTest();
+        MockupFacade facade1 = mockupFacadeBuilder.getWriteMockupFacade();
+        MockupFacade facade2 = mockupFacadeBuilder.getWriteMockupFacade();
 
         int number1 = facade1.getTestNumber().getNumber();
         int number2 = facade2.getTestNumber().getNumber();
@@ -120,7 +119,7 @@ public class MockupTest extends StoreTestTestCase {
         MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
         injector.getInstance(no.statkart.skif.service.test.TestdataService.class);
 
-        MockupFacade facade = mockupFacadeBuilder.getForWriteTest();
+        MockupFacade facade = mockupFacadeBuilder.getWriteMockupFacade();
         Foo foo = new Foo();
         foo.setNavn("foo-navn");
         foo.setNr(10);
@@ -151,9 +150,6 @@ public class MockupTest extends StoreTestTestCase {
             raz.setRazComponent(razComponent);
             raz.setRazEntityComponent(new RazEntityComponent("TestRaz"));
 
-            final List<Raz> razs = Collections.singletonList(raz);
-            final List<? extends BubbleObject> s = Collections.singletonList(raz);
-
             MockupTransfer transfer = new MockupTransfer(Collections.singletonList(raz), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(0,-1));
             testService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
         } finally {
@@ -173,9 +169,6 @@ public class MockupTest extends StoreTestTestCase {
             razComponent.setCompText("Bar");
             raz.setRazComponent(razComponent);
             raz.setRazEntityComponent(new RazEntityComponent("TestRaz"));
-
-            final List<Raz> razs = Collections.singletonList(raz);
-            final List<? extends BubbleObject> s = Collections.singletonList(raz);
 
             MockupTransfer transfer = new MockupTransfer(Collections.singletonList(raz), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(0, -1));
             testService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
