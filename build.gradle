@@ -306,18 +306,30 @@ subprojects { Project project ->
     }
 }
 
-idea.project {
-    jdkName = '1.6'
-    languageLevel = '1.6'
+afterEvaluate {
 
-    ipr {
-        //adding Perforce as default vcs by tinkering with the output *.ipr file before it's written out
-        withXml {
-            def node = it.asNode()
-            def component = node.appendNode('component', ['name': 'VcsDirectoryMappings'])
-            component.appendNode('mapping', ['directory': '', 'vcs': 'Perforce'])
+    idea.project {
+        jdkName = '1.6'
+        languageLevel = '1.6'
+
+        ipr {
+            //adding Perforce as default vcs by tinkering with the output *.ipr file before it's written out
+            withXml {
+                def node = it.asNode()
+                def component = node.appendNode('component', ['name': 'VcsDirectoryMappings'])
+                component.appendNode('mapping', ['directory': '', 'vcs': 'Perforce'])
+            }
         }
     }
+
+    // branch spesifike navn for prosjekt og workspace fil.
+    ideaWorkspace {
+        outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}.iws")
+    }
+    idea.project {
+        outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}.ipr")
+    }
+
 }
 
 //SKIF-266: versjon informasjon i distribusjon
