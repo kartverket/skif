@@ -5,7 +5,6 @@ import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
@@ -68,6 +67,20 @@ public abstract class AbstractMockupFacade {
 
     public SortedMap<SnapshotVersion, MockupTransfer> getAllTransfers() {
         return getTransfersBefore(SnapshotVersion.CURRENT);
+    }
+
+    /**
+     * @since 2.3.0
+     */
+    public SortedMap<SnapshotVersion, MockupTransfer> getAllTransfersForIds(Set<? extends BubbleId> ids) {
+        return getAllTransfersForIds(ids, SnapshotVersion.CURRENT);
+    }
+
+    /**
+     * @since 2.3.0
+     */
+    public SortedMap<SnapshotVersion, MockupTransfer> getAllTransfersForIds(Set<? extends BubbleId> ids, SnapshotVersion beforeSnapshotVersion) {
+        return store.getAllTransfersForIds(ids, beforeSnapshotVersion);
     }
 
     public SortedMap<SnapshotVersion, MockupTransfer> getTransfersBefore(SnapshotVersion beforeSnapshotVersion) {

@@ -245,12 +245,14 @@ public class MockupPersister {
         List<BubbleObject> deletedObjects = Lists.newArrayList();
         for (BubbleId id : ids) {
             BubbleObject bubbleObject = snapshot.get(id);
-            if (snapshotVersion.equals(insertedAtSnapshot.get(bubbleObject.getId()))) {
-                insertedObjects.add(bubbleObject);
-            } else if (snapshotVersion.equals(deletedAtSnapshot.get(bubbleObject.getId()))) {
-                deletedObjects.add(bubbleObject);
-            } else {
-                updatedObjects.add(bubbleObject);
+            if (bubbleObject != null) {
+                if (snapshotVersion.equals(insertedAtSnapshot.get(bubbleObject.getId()))) {
+                    insertedObjects.add(bubbleObject);
+                } else if (snapshotVersion.equals(deletedAtSnapshot.get(bubbleObject.getId()))) {
+                    deletedObjects.add(bubbleObject);
+                } else {
+                    updatedObjects.add(bubbleObject);
+                }
             }
         }
         return new MockupTransfer(insertedObjects, updatedObjects, deletedObjects, testNumber);

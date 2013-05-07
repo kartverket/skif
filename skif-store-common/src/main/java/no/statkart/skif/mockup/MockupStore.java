@@ -80,7 +80,14 @@ public class MockupStore implements Store {
         if (bubbleId == null) {
             return null;
         } else {
-            return bubbleId.getType().cast(mockupPersister.get(bubbleId, snapshotVersion));
+            if (bubbleId.getSnapshotVersion().equals(SnapshotVersion.CURRENT)) {
+                // Denne spesielle snapshotversion styres etter tidspunktet mockupstore befinner seg i.
+                return bubbleId.getType().cast(mockupPersister.get(bubbleId, snapshotVersion));
+            } else {
+                // Her kan det være aktuelt å forby id-er nyere enn gjeldende snapshotVersion, men det kan også være nyttig å ha det løst som dette.
+                BubbleId<?> currentBubbleId = bubbleId.asSnapshotVersionCurrent();
+                return bubbleId.getType().cast(mockupPersister.get(currentBubbleId, bubbleId.getSnapshotVersion()));
+            }
         }
     }
 
@@ -467,5 +474,52 @@ public class MockupStore implements Store {
 
     public SortedMap<SnapshotVersion, MockupTransfer> getTransfersBefore(SnapshotVersion beforeSnapshotVersion) {
         return mockupPersister.getTransfersBefore(beforeSnapshotVersion);
+    }
+
+    public SortedMap<SnapshotVersion, MockupTransfer> getAllTransfersForIds(Collection<? extends BubbleId> ids, SnapshotVersion beforeSnapshotVersion) {
+        Set<BubbleId> allReferencedIds = new HashSet<BubbleId>();
+
+        SortedMap<SnapshotVersion, MockupTransfer> allCompleteTransfers = mockupPersister.getTransfersBefore(beforeSnapshotVersion);
+        for (Map.Entry<SnapshotVersion, MockupTransfer> entry : allCompleteTransfers.entrySet()) {
+            MockupTransfer transfer = entry.getValue();
+            List<BubbleObject> allObjects = new ArrayList<BubbleObject>(ids.size());
+            for (BubbleObject bubbleObject : transfer.getInsertedObjects()) {
+                if (ids.contains(bubbleObject.getId())) {
+                    allObjects.add(bubbleObject);
+                }
+            }
+            for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
+                if (ids.contains(bubbleObject.getId())) {
+                    allObjects.add(bubbleObject);
+                }
+            }
+            for (BubbleObject bubbleObject : transfer.getDeletedObjects()) {
+                if (ids.contains(bubbleObject.getId())) {
+                    allObjects.add(bubbleObject);
+                }
+            }
+
+            SnapshotVersion previousSnapshotVersion = getSnapshotVersion();
+            try {
+                setSnapshotVersion(entry.getKey());
+                allReferencedIds.addAll(findLinkedBubbleIds(allObjects));
+            } finally {
+                setSnapshotVersion(previousSnapshotVersion);
+            }
+        }
+
+        SortedMap<SnapshotVersion, MockupTransfer> allTransfersForIds = new TreeMap<SnapshotVersion, MockupTransfer>();
+        for (SnapshotVersion snapshotVersion : allCompleteTransfers.keySet()) {
+            MockupTransfer transferForIds = mockupPersister.getTransferForIds(allReferencedIds, snapshotVersion);
+            if (!transferIsEmpty(transferForIds)) {
+                allTransfersForIds.put(snapshotVersion, transferForIds);
+            }
+        }
+
+        return allTransfersForIds;
+    }
+
+    private static boolean transferIsEmpty(MockupTransfer transfer) {
+        return transfer.getDeletedObjects().isEmpty() && transfer.getInsertedObjects().isEmpty() && transfer.getUpdatedObjects().isEmpty();
     }
 }

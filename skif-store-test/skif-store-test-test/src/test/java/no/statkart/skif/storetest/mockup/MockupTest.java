@@ -1,5 +1,7 @@
 package no.statkart.skif.storetest.mockup;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.MockupTransfer;
@@ -37,13 +39,13 @@ public class MockupTest extends StoreTestTestCase {
     /**
      * Tester opprettelse av mockup readsett og innhold
      */
-    public void testMockupBuilder() {
-        MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
+    public void testMockupFactory() {
+        MockupFacadeFactory mockupFacadeFactory = injector.getInstance(MockupFacadeFactory.class);
 
-        MockupFacade readFacade = mockupFacadeBuilder.getReadMockupFacade();
+        MockupFacade readFacade = mockupFacadeFactory.getReadMockupFacade();
         Assert.assertTrue(readFacade.getTestNumber().isNR_0(), "readFacade har feil testnummer");
 
-        Assert.assertEquals(injector.getInstance(MockupFacadeFactory.class), mockupFacadeBuilder, "MockupFacadeBuilder skal være singleton slik at read testsett gjenbrukes automatisk");
+        Assert.assertEquals(injector.getInstance(MockupFacadeFactory.class), mockupFacadeFactory, "MockupFacadeBuilder skal være singleton slik at read testsett gjenbrukes automatisk");
 
         MockupTransfer transfer = readFacade.getTransfer(SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
         Assert.assertEquals(1, transfer.getInsertedObjects().size(), "Antall inserts i transfer");
@@ -55,7 +57,7 @@ public class MockupTest extends StoreTestTestCase {
         Assert.assertEquals(1, transfer2.getUpdatedObjects().size(), "Antall updates i transfer2");
         Assert.assertEquals(0, transfer2.getDeletedObjects().size(), "Antall deletes i transfer2");
 
-        SortedMap<SnapshotVersion,MockupTransfer> allTransfers = readFacade.getAllTransfers();
+        SortedMap<SnapshotVersion, MockupTransfer> allTransfers = readFacade.getAllTransfers();
         Assert.assertEquals(5, allTransfers.size(), "Antall historiske transfers");
     }
 
@@ -74,7 +76,7 @@ public class MockupTest extends StoreTestTestCase {
         Assert.assertEquals(readFacade.getFooMockupFactory().getFooIdGamleveien(), readFacade.getFooMockupFactory().getFooIdGamleveien());
     }
 
-    public void testCreateMultipleWriteSets()  {
+    public void testCreateMultipleWriteSets() {
         MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 
         MockupFacade facade1 = mockupFacadeBuilder.getWriteMockupFacadeAndSaveData();
@@ -88,10 +90,11 @@ public class MockupTest extends StoreTestTestCase {
         Assert.assertNotSame(foo1, foo2);
         Assert.assertEquals(foo1.getNavn(), foo2.getNavn());
     }
+
     /**
      * Forsøk på å gjemme samme writeset flere ganger skal gi exeption
      */
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Testset already exists in database: TestNumber.*" )
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Testset already exists in database: TestNumber.*")
     public void testSaveSameWriteSetMultipleTimes() {
         MockupFacadeFactory mockupFacadeBuilder = injector.getInstance(MockupFacadeFactory.class);
 
@@ -150,7 +153,7 @@ public class MockupTest extends StoreTestTestCase {
             raz.setRazComponent(razComponent);
             raz.setRazEntityComponent(new RazEntityComponent("TestRaz"));
 
-            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(raz), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(0,-1));
+            MockupTransfer transfer = new MockupTransfer(Collections.singletonList(raz), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), new TestNumber(0, -1));
             testService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
         } finally {
             testService.deleteObject(123L, "Raz");
@@ -196,9 +199,33 @@ public class MockupTest extends StoreTestTestCase {
             Foo foo2 = CopyHelper.copy(foo);
 
             MockupTransfer transfer2 = new MockupTransfer(Collections.<BubbleObject>emptyList(), Collections.singletonList(foo2), Collections.<BubbleObject>emptyList(), new TestNumber(0, -2));
-            testService.saveSnapshotTransfer(SnapshotVersion.createInstance("2012-01-10 12:00:00"),  transfer2);
+            testService.saveSnapshotTransfer(SnapshotVersion.createInstance("2012-01-10 12:00:00"), transfer2);
         } finally {
             testService.deleteObject(123L, "Foo_H");
         }
+    }
+
+    public void testGetAllTransfersForIds() {
+        MockupFacadeFactory mockupFacadeFactory = injector.getInstance(MockupFacadeFactory.class);
+        MockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacade();
+
+        // Får her bare sjekket at det ikke kommer ut mer enn forventet. Grafen får ikke blitt særlig komplisert uten flere sammenkoblede historiske objekter.
+        FooId<?> idGamleveien = mockupFacade.getFooMockupFactory().getFooIdGamleveien();
+        SortedMap<SnapshotVersion, MockupTransfer> allTransfersForIds = mockupFacade.getAllTransfersForIds(Sets.newHashSet(idGamleveien));
+        Assert.assertEquals(allTransfersForIds.size(), 2, "Antall snapshots eller transfers");
+
+        SnapshotVersion firstSnapshot = SnapshotVersion.createInstance("2011-10-02 08:03:00.00");
+        MockupTransfer firstTransfer = allTransfersForIds.get(firstSnapshot);
+        Assert.assertNotNull(firstTransfer, "Første transfer");
+        Assert.assertEquals(firstTransfer.getInsertedObjects(), Lists.newArrayList(mockupFacade.getStore().get(idGamleveien.asSnapshotVersion(firstSnapshot))), "Inserted i første transfer");
+        Assert.assertEquals(firstTransfer.getUpdatedObjects(), Lists.newArrayList(), "Updated i første transfer");
+        Assert.assertEquals(firstTransfer.getDeletedObjects(), Lists.newArrayList(), "Deleted i første transfer");
+
+        SnapshotVersion secondSnapshot = SnapshotVersion.createInstance("2011-10-02 08:04:00.00");
+        MockupTransfer secondTransfer = allTransfersForIds.get(secondSnapshot);
+        Assert.assertNotNull(secondTransfer, "Andre transfer");
+        Assert.assertEquals(secondTransfer.getInsertedObjects(), Lists.newArrayList(), "Inserted i andre transfer");
+        Assert.assertEquals(secondTransfer.getUpdatedObjects(), Lists.newArrayList(mockupFacade.getStore().get(idGamleveien.asSnapshotVersion(secondSnapshot))), "Updated i andre transfer");
+        Assert.assertEquals(secondTransfer.getDeletedObjects(), Lists.newArrayList(), "Deleted i andre transfer");
     }
 }
