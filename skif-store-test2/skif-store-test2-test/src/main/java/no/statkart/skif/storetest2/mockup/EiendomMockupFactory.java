@@ -7,6 +7,7 @@ import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.storetest2.domain.eierskap.Eiendom;
 import no.statkart.skif.storetest2.domain.eierskap.EiendomId;
+import no.statkart.skif.storetest2.domain.eierskap.EiendomstypeKodeId;
 
 /**
  * Definerer mockuper for {@link Eiendom}.
@@ -31,10 +32,12 @@ public class EiendomMockupFactory extends AbstractMockupFactory {
     public void createAllMockups() {
         Eiendom eiendom1 = new Eiendom();
         eiendom1.setId(eiendom1Id);
+        eiendom1.setEiendomstypeKodeId(EiendomstypeKodeId.FAST);
         store.insert(eiendom1);
 
         Eiendom eiendom2 = new Eiendom();
         eiendom2.setId(eiendom2Id);
+        eiendom2.setEiendomstypeKodeId(EiendomstypeKodeId.FLYTENDE);
         store.insert(eiendom2);
     }
 

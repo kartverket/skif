@@ -46,9 +46,11 @@ import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
 import no.statkart.skif.storetest2.domain.eierskap.Eiendom;
+import no.statkart.skif.storetest2.domain.eierskap.EiendomstypeKodeId;
 import no.statkart.skif.storetest2.domain.eierskap.Eier;
 import no.statkart.skif.storetest2.domain.endringslogg.Endring;
 import no.statkart.skif.storetest2.domain.entitycomponent.BubbleWithEntityComponents;
+import no.statkart.skif.storetest2.domain.kodeliste.StoreTest2KodelisteLong;
 import no.statkart.skif.storetest2.domain.list.ListOfEntityComponents;
 import no.statkart.skif.storetest2.domain.multikobling.Multirefererende;
 import no.statkart.skif.storetest2.endringslogg.EndringManager;
@@ -137,7 +139,7 @@ public class StoreTest2ServerModule extends SkifModule {
     @Singleton
     EnumKodelisteManager provideEnumKodelisteManager() {
         EnumKodelisteManager enumKodelisteManager = new EnumKodelisteManager();
-//        enumKodelisteManager.installStatic(.class);
+        enumKodelisteManager.installStatic(EiendomstypeKodeId.class);
         return enumKodelisteManager;
     }
 
@@ -151,7 +153,7 @@ public class StoreTest2ServerModule extends SkifModule {
     @Singleton
     Collection<Class<? extends Kodeliste>> provideKodelisteClasses() {
         Collection<Class<? extends Kodeliste>> kodelisteClasses = new ArrayList<Class<? extends Kodeliste>>();
-//        kodelisteClasses.add(StoreTest2KodelisteLong.class);
+        kodelisteClasses.add(StoreTest2KodelisteLong.class);
         return kodelisteClasses;
     }
 

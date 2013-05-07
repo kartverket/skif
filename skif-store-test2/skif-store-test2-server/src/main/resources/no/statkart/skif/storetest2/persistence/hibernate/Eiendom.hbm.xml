@@ -7,6 +7,8 @@
         <id name="id" column="id" type="no.statkart.skif.storetest2.persistence.hibernate.type.EiendomIdType">
             <generator class="assigned"/>
         </id>
+
+        <property name="eiendomstypeKodeId" type="Eierskap_EiendomstypeKodeIdType" not-null="true"/>
     </class>
 
 </hibernate-mapping>

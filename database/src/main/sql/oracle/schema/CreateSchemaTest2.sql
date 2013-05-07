@@ -8,6 +8,7 @@ create table BubbleWithEntityComponents (
 
 create table Eiendom (
     id number(19,0) not null,
+    eiendomstypeKodeId number(5,0) not null,
     primary key (id)
 );
 

@@ -6,7 +6,6 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.util.CopyHelper;
 
 import java.util.*;
 
@@ -196,11 +195,8 @@ public class MockupPersister {
      * Objektene i transfer er kopier, slik at de ikke lenger er knyttet opp til denne Store og dermed kan puttes inn
      * i en ordentlig Store.
      * <p/>
-     * TODO: Pga effektivitet bør objektene ikke kopieres. Dersom de skal legges direkte inn i store kan transfer
-     * lage en kopi om nødvendig
-     * <p/>
-     * <p/>
-     * TODO: Transfer er ikke klar enda
+     * Pga effektivitet bør objektene ikke kopieres. Dersom de skal legges direkte inn i store kan transfer lage en kopi
+     * om nødvendig
      *
      * @param snapshotVersion tidspunkt som skal hentes ut
      * @return transfer med inserts, updates og deletes

@@ -8,6 +8,7 @@ import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.*;
+import no.statkart.skif.store.kodeliste.KodeId;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
@@ -71,7 +72,7 @@ public class MockupStore implements Store {
 
     @Override
     public void clear() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        throw new NotImplementedException();
     }
 
     @Override
@@ -224,7 +225,7 @@ public class MockupStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(@Nullable I bubbleId) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        throw new NotImplementedException();
     }
 
 
@@ -261,8 +262,11 @@ public class MockupStore implements Store {
 
     @Override
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
-        // TODO ?
-        throw new NotImplementedException();
+        LinkedHashMap<I, List<I>> versionsMap = new LinkedHashMap<I, List<I>>(ids.size());
+        for (I id : ids) {
+            versionsMap.put(id, getVersions(id, start, end));
+        }
+        return versionsMap;
     }
 
     @Override
@@ -416,38 +420,37 @@ public class MockupStore implements Store {
                     } else { //dersom ikke array
 
                         if (o instanceof BubbleId) {  //id
-                            ids.add((BubbleId) o);
-                        }
-
-                        if (o instanceof Iterable) {  //collections ol
+                            if (!(o instanceof KodeId)) { //koder skal ikke hentes ut i transfer
+                                ids.add((BubbleId) o);
+                            }
+                        } else if (o instanceof Iterable) {  //collections ol
                             for (Object objectIncollection : ((Iterable) o)) {
                                 stack.push(objectIncollection);
                             }
-                        }
-
-                        //sjekker felter
-                        visitedObjects.add(o);
-                        while (clazz != null && clazz != Object.class) {
-                            for (Field field : clazz.getDeclaredFields()) {
-                                if ((Modifier.TRANSIENT & field.getModifiers()) == 0) {
-                                    if (!field.getType().isPrimitive() && !field.getType().getName().startsWith("java.lang.")) {
-                                        try {
-                                            field.setAccessible(true);
-                                            Object component = field.get(o);
-                                            if (!stack.contains(component) && !visitedObjects.contains(component)) {
-                                                stack.push(component);
+                        } else {
+                            //sjekker felter
+                            visitedObjects.add(o);
+                            while (clazz != null && clazz != Object.class) {
+                                for (Field field : clazz.getDeclaredFields()) {
+                                    if (((Modifier.TRANSIENT | Modifier.STATIC) & field.getModifiers()) == 0) {
+                                        if (!field.getType().isPrimitive() && !field.getType().getName().startsWith("java.lang.")) {
+                                            try {
+                                                field.setAccessible(true);
+                                                Object component = field.get(o);
+                                                if (!stack.contains(component) && !visitedObjects.contains(component)) {
+                                                    stack.push(component);
+                                                }
+                                            } catch (IllegalAccessException e) {
+                                                throw new ImplementationException("Could not get id from object", e);
+                                            } catch (SecurityException e) {
+                                                throw new ImplementationException("Could not get id from object", e);
                                             }
-                                        } catch (IllegalAccessException e) {
-                                            throw new ImplementationException("Could not get id from object", e);
-                                        } catch (SecurityException e) {
-                                            throw new ImplementationException("Could not get id from object", e);
                                         }
                                     }
                                 }
+                                clazz = clazz.getSuperclass();
                             }
-                            clazz = clazz.getSuperclass();
                         }
-
                     }
                 }
 
