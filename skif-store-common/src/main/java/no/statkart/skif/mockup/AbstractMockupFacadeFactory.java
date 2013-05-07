@@ -30,6 +30,15 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
 
     private final Module[] extraModules;
 
+    /**
+     * Angir den snapshotversion som er default i {@link MockupStore}. For mockup-sett uten historikk bør dette være
+     * {@link SnapshotVersion#CURRENT}. For historikk kan man bruke {@link SnapshotVersion#START} eller et mer spesifikt
+     * tidspunkt.
+     *
+     * @since 2.3.0
+     */
+    private SnapshotVersion defaultSnapshotVersion = SnapshotVersion.CURRENT;
+
     protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService, Module... extraModules) {
         this(mockupFacadeClass, testdataService, TestIdServiceLong.class, extraModules);
     }
@@ -149,7 +158,11 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
             injector = Guice.createInjector(module);
         }
 
-        return injector.getInstance(mockupFacadeClass);
+        T facade = injector.getInstance(mockupFacadeClass);
+
+        facade.getStore().setSnapshotVersion(defaultSnapshotVersion);
+
+        return facade;
     }
 
     private T createFacade(TestNumber testNumber) {
@@ -161,5 +174,26 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
         facade.getStore().setSnapshotVersion(SnapshotVersion.CURRENT);
 
         return facade;
+    }
+
+    /**
+     * @return den {@link SnapshotVersion} som skal være standard i {@link MockupStore}
+     * @see #defaultSnapshotVersion
+     * @since 2.3.0
+     */
+    protected SnapshotVersion getDefaultSnapshotVersion() {
+        return defaultSnapshotVersion;
+    }
+
+    /**
+     * Setter standard {@link SnapshotVersion} for {@link MockupStore}. Denne metoden bør kalles fra konstruktøren og
+     * aldri mer. Det er kun en egen setter for ikke å overlesse konstruktøren med parametre.
+     *
+     * @param defaultSnapshotVersion den {@link SnapshotVersion} som skal være standard i {@link MockupStore}
+     * @see #defaultSnapshotVersion
+     * @since 2.3.0
+     */
+    protected void setDefaultSnapshotVersion(SnapshotVersion defaultSnapshotVersion) {
+        this.defaultSnapshotVersion = defaultSnapshotVersion;
     }
 }

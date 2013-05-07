@@ -44,8 +44,13 @@ public abstract class AbstractMockupFacade {
     public abstract List<? extends AbstractMockupFactory> getAllMockupFactories();
 
     public void createAllMockups() {
+        SnapshotVersion defaultSnapshotVersion = store.getSnapshotVersion();
         for (AbstractMockupFactory mockupFactory : getAllMockupFactories()) {
-            mockupFactory.createAllMockups();
+            try {
+                mockupFactory.createAllMockups();
+            } finally {
+                store.setSnapshotVersion(defaultSnapshotVersion);
+            }
         }
     }
 
