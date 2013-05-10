@@ -48,6 +48,7 @@ subprojects { Project project ->
     clean {
         delete 'gen'
     }
+    rootProject.ideaExtensions.ignorePaths += project.file('gen')
 
     propertyUtils.expandProjectProperties() //må ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
     //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
@@ -248,6 +249,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build105'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build108'
     }
 }
