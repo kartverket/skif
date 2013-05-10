@@ -1,3 +1,5 @@
+apply plugin: 'java'
+
 dependencies {
     compile project(':skif-service-server')
     compile project(':skif-service-test:skif-service-test-api')

@@ -1,3 +1,4 @@
+apply plugin: 'java'
 apply plugin: 'maven'
 
 configurations {
@@ -5,6 +6,8 @@ configurations {
 }
 
 dependencies {
+    compile libraries.slf4j_api
+    compile libraries.jsr305
     compile libraries.guice_for_client
     provided libraries.jaxws_rt
 

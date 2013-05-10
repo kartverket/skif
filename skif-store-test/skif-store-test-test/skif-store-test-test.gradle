@@ -1,3 +1,5 @@
+apply plugin: 'java'
+
 dependencies {
     compile project(':skif-store-test:skif-store-test-api')
     compile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')

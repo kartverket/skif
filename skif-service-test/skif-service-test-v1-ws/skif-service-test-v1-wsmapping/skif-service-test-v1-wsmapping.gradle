@@ -1,3 +1,5 @@
+apply plugin: 'java'
+
 dependencies {
     compile project(':skif-service-test:skif-service-test-api')
     compile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')

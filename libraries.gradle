@@ -1,0 +1,138 @@
+// Optional configuration of library versions to use.
+// Simply add version properties to your gradle-user.property file to use this feature.
+def libVersion(String name, String defaultValue) {
+    project.ext.properties.get('version.' + name, defaultValue) //development mode only
+}
+
+// build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
+// use. In that respect it serves a role similar to <dependencyManagement> in Maven
+def libraries = [
+
+        // Tools
+        'tools.jar': files("${System.getenv('JAVA_HOME')}/lib/tools.jar").stopExecutionIfEmpty(), //JAVA_HOME ikke satt??
+
+        // Database
+        ojdbc: "com.oracle:ojdbc6:${libVersion('oracle', '11.2.0.3.0')}@jar",
+        ojdbc_g: "com.oracle:ojdbc6_g:${libVersion('oracle', '11.2.0.3.0')}@jar",
+
+        // Logging
+        slf4j_api: "org.slf4j:slf4j-api:${libVersion('slf4j', '1.6.1')}@jar",
+        jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${libVersion('slf4j', '1.6.1')}@jar",
+        jul_to_slf4j: "org.slf4j:jul-to-slf4j:${libVersion('slf4j', '1.6.1')}@jar",
+        log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${libVersion('slf4j', '1.6.1')}@jar",
+        logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '0.9.28')}@jar",
+        logback_core: "ch.qos.logback:logback-core:${libVersion('logback', '0.9.28')}@jar",
+
+        // Guice med extensions
+        guice: "com.google.inject:guice:${libVersion('guice', '3.0')}",
+        guice_multibindings: "com.google.inject.extensions:guice-multibindings:${libVersion('guice', '3.0')}",
+        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${libVersion('guice', '3.0')}",
+        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${libVersion('guice', '3.0')}",
+        guice_grapher: "com.google.inject.extensions:guice-grapher:${libVersion('guice', '3.0')}",
+        // guice-servlet depends on servlet-api som her er provided via weblogic og derfor ikke skal være med her
+        guice_servlet: "com.google.inject.extensions:guice-servlet:${libVersion('guice', '3.0')}@jar",
+
+
+        // Utility libraries
+        guava: "com.google.guava:guava:11.0.2", //SKIF-128
+        jsr305: "com.google.code.findbugs:jsr305:1.3.9",
+
+        // Testing
+        testng: 'org.testng:testng:6.0.1',
+        mockito: 'org.mockito:mockito-all:1.9.5',
+        dbunit: 'org.dbunit:dbunit:2.4.8@jar',
+        unitils: 'org.unitils:unitils-core:3.1',
+        fest: 'org.easytesting:fest-assert-core:2.0M8',
+        reflections: 'org.reflections:reflections:0.9.8',
+
+        // JAXB
+        jaxb_impl: "com.sun.xml.bind:jaxb-impl:${libVersion('jaxb', '2.1.13')}",
+        jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${libVersion('jaxb', '2.1.13')}",
+
+        jts: "com.vividsolutions:jts:${libVersion('jts', '1.7.1')}",
+
+        // commons-lang - vurderes i SKIF-271
+
+]
+
+// SKIF-239: Mulighet for valg av ojdbc driver
+libraries.jdbc = Boolean.valueOf(System.getenv('ORA_DEBUG') ?: 'false') ? libraries.ojdbc_g : libraries.ojdbc
+
+// JAX-WS runtime for weblogic
+libraries.jaxws_rt = files(
+        files(isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.0.0.0_2-1-4.jar" :
+            "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.2.0.0_2-1-5.jar"),
+)
+
+boolean isWeblogic10310() {
+    new File("${WEBLOGIC_HOME}/utils/config/10.3.1.0/".toString()).exists()
+}
+
+// Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
+libraries.weblogic = files(
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
+        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.1.jar/" :
+            "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar/",
+        "${WEBLOGIC_HOME}/modules/javax.ejb_3.0.1.jar",
+        "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
+        "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
+        "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
+        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.5.1.0.jar" :
+            "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.7.0.0.jar",
+        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.6.0.0.jar" :
+            "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.9.0.0.jar",
+        libraries.jaxws_rt,
+        "${WEBLOGIC_HOME}/modules/com.bea.core.utils.wrapper_1.4.0.0.jar",
+        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.5.0.0.jar": "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.7.0.0.jar" ,
+)
+libraries.gt2 = [
+        'org.geotools:gt2-oracle-spatial:2.2.2-CUSTOM@jar',
+]
+
+
+//minimal bruk av guice
+libraries.guice_for_client = [
+        libraries.guice,
+        libraries.guice_multibindings,
+        libraries.guice_throwingproviders,
+        libraries.guice_assistedinject,
+]
+
+//for bruk på server
+libraries.guice_for_server = [
+        libraries.guice_for_client,
+        libraries.guice_servlet,
+]
+
+libraries.hibernate_3_2 = [
+        'antlr:antlr:2.7.6@jar',
+        'cglib:cglib-nodep:2.2@jar',
+        'dom4j:dom4j:1.4@jar',
+        'net.sf.ehcache:ehcache:1.2.3@jar',
+        'odmg:odmg:3.0@jar',
+        "org.hibernate:hibernate:3.2.6.GA-bubbleref-v2@jar",
+]
+
+libraries.hibernate_tools_3_2 = [
+        "org.hibernate:hibernate-tools:3.2.6.GA@jar",
+]
+
+libraries.hibernate_3_6 = [
+        'org.hibernate:hibernate-parent:3.6.10.Final',
+        'org.hibernate:hibernate-core:3.6.10.Final.bubbleref.v1',
+        'commons-collections:commons-collections:3.1',
+        'dom4j:dom4j:1.6.1@jar',
+        'org.hibernate:hibernate-commons-annotations:3.2.0.Final',
+        'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final',
+        'javax.transaction:jta:1.1',
+        'org.antlr:antlr:3.4@jar',
+        'net.sf.ehcache:ehcache-core:2.5.2',
+        'odmg:odmg:3.0@jar',
+        'javassist:javassist:3.12.1.GA',
+]
+
+subprojects {
+    project.ext.set('libraries', libraries) //eksponerer denne for alle prosjekter
+}
