@@ -1,13 +1,11 @@
 package no.statkart.skif.persistence.jdbc;
 
-import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import sun.awt.windows.ThemeReader;
 
 import java.sql.*;
 
