@@ -154,6 +154,9 @@ public class DefaultTypeMapper {
                 // Eller hvis det er collection på kildesiden, mens måltypen har felt som heter 'item' eller 'liste'.
             } else if (Collection.class.isAssignableFrom(sourceClass) && (checkHasField(targetType.getRawType(), "item") || checkHasField(targetType.getRawType(), "liste"))) {
                 retVal = targetType;
+                // Eller hvis det er array på kildesiden, mens måltypen har felt som heter 'item' eller 'liste'.
+            }  else if (sourceClass.isArray() && (checkHasField(targetType.getRawType(), "item") || checkHasField(targetType.getRawType(), "liste"))) {
+                retVal = targetType;
                 // Eller hvis det er map på kildesiden, mens måltypen har felt som heter 'entry'.
             } else if (Map.class.isAssignableFrom(sourceClass) && checkHasField(targetType.getRawType(), "entry")) {
                 retVal = targetType;
@@ -183,6 +186,8 @@ public class DefaultTypeMapper {
                     throw new MappingException("Unknown Collection type: " + retVal);
                 }
             }
+        } else if (targetType.isArray()) {
+            retVal = targetType;
         } else {
             // Antar ArrayList når ikke nærmere spesifisert
             retVal = TypeToken.of(ArrayList.class);
@@ -243,7 +248,22 @@ public class DefaultTypeMapper {
                 TypeToken<?> targetType = findTargetClass(source.getClass(), domainType);
                 Object alreadyMappedValue = mappedFields.getMappedValue(source, targetType.getRawType());
                 if (alreadyMappedValue == null) {
-                    target = targetType.getRawType().newInstance();
+                    if (targetType.isArray()) {
+                        Field field;
+                        if (checkHasField(source.getClass(), "item")) {
+                            field = source.getClass().getDeclaredField("item");
+                        } else if (checkHasField(source.getClass(), "liste")) {
+                            field = source.getClass().getDeclaredField("liste");
+                        } else {
+                            throw new MappingException("Assumption that there is a field 'item' or 'liste' corresponding to an Array failed");
+                        }
+                        field.setAccessible(true);
+                        Collection collection = (Collection) field.get(source);
+                        //noinspection ConstantConditions
+                        target = Array.newInstance(targetType.getComponentType().getRawType(), collection == null ? 0 :collection.size());
+                    } else {
+                        target = targetType.getRawType().newInstance();
+                    }
 
                     if (!doNotMapTheseClasses.contains(source.getClass())) {
                         mapCommonWsapiFields(source, target, targetType);
@@ -283,14 +303,15 @@ public class DefaultTypeMapper {
     protected void mapCommonDomainFields(Object source, Object target, TypeToken<?> targetType) throws ClassNotFoundException {
         try {
             if (source instanceof Collection) {
+                Collection sourceCollection = (Collection) source;
                 if (checkHasField(target.getClass(), "item")) {
                     Field targetField = target.getClass().getDeclaredField("item");
                     TypeToken<?> wsapiCollectionType = targetType.resolveType(targetField.getGenericType());
                     ParameterizedType wsapiParametrizedType = (ParameterizedType) wsapiCollectionType.getType();
                     Type wsapiElementType = wsapiParametrizedType.getActualTypeArguments()[0];
 
-                    List<Object> value = new ArrayList<Object>();
-                    for (Object o : (Collection) source) {
+                    List<Object> value = new ArrayList<Object>(sourceCollection.size());
+                    for (Object o : sourceCollection) {
                         value.add(mapping.d2w(o, wsapiElementType));
                     }
 
@@ -302,8 +323,8 @@ public class DefaultTypeMapper {
                     ParameterizedType wsapiParametrizedType = (ParameterizedType) wsapiCollectionType.getType();
                     Type wsapiElementType = wsapiParametrizedType.getActualTypeArguments()[0];
 
-                    List<Object> value = new ArrayList<Object>();
-                    for (Object o : (Collection) source) {
+                    List<Object> value = new ArrayList<Object>(sourceCollection.size());
+                    for (Object o : sourceCollection) {
                         value.add(mapping.d2w(o, wsapiElementType));
                     }
 
@@ -314,13 +335,42 @@ public class DefaultTypeMapper {
                     ParameterizedType wsapiParametrizedType = (ParameterizedType) wsapiCollectionType.getType();
                     Type wsapiElementType = wsapiParametrizedType.getActualTypeArguments()[0];
 
-                    Collection sourceCollection = (Collection) source;
                     Collection targetCollection = (Collection) target;
                     for (Object next : sourceCollection) {
                         targetCollection.add(mapping.d2w(next, wsapiElementType));
                     }
                 } else {
                     throw new MappingException("Assumption that there is a field 'item' or 'liste' corresponding to a Collection failed");
+                }
+            } else if (source.getClass().isArray()) {
+                if (checkHasField(target.getClass(), "item")) {
+                    Field targetField = target.getClass().getDeclaredField("item");
+                    TypeToken<?> wsapiCollectionType = targetType.resolveType(targetField.getGenericType());
+                    ParameterizedType wsapiParametrizedType = (ParameterizedType) wsapiCollectionType.getType();
+                    Type wsapiElementType = wsapiParametrizedType.getActualTypeArguments()[0];
+
+                    List<Object> value = new ArrayList<Object>(Array.getLength(source));
+                    for (int i = 0; i < Array.getLength(source); i++) {
+                        value.add(mapping.d2w(Array.get(source, i), wsapiElementType));
+                    }
+
+                    targetField.setAccessible(true);
+                    targetField.set(target, value);
+                } else if (checkHasField(target.getClass(), "liste")) {
+                    Field targetField = target.getClass().getDeclaredField("liste");
+                    TypeToken<?> wsapiCollectionType = targetType.resolveType(targetField.getGenericType());
+                    ParameterizedType wsapiParametrizedType = (ParameterizedType) wsapiCollectionType.getType();
+                    Type wsapiElementType = wsapiParametrizedType.getActualTypeArguments()[0];
+
+                    List<Object> value = new ArrayList<Object>(Array.getLength(source));
+                    for (int i = 0; i < Array.getLength(source); i++) {
+                        value.add(mapping.d2w(Array.get(source, i), wsapiElementType));
+                    }
+
+                    targetField.setAccessible(true);
+                    targetField.set(target, value);
+                } else {
+                    throw new MappingException("Assumption that there is a field 'item' or 'liste' corresponding to an Array failed");
                 }
             } else if (source instanceof Map) {
                 // Det skal ikke være noe arv som gjør at feltene ikke er umiddelbart tilgjengelig her
@@ -427,8 +477,25 @@ public class DefaultTypeMapper {
                             targetCollection.add(mapping.w2d(next, domainElementType));
                         }
                     }
+                } else if (targetType.isArray()) {
+                    //noinspection ConstantConditions
+                    Type domainElementType = targetType.getComponentType().getType();
+                    if (domainElementType instanceof TypeVariable) {
+                        TypeVariable typeVariable = (TypeVariable) domainElementType;
+                        // Må pakke ut TypeVariable, ellers feiler mapping på det senere.
+                        domainElementType = typeVariable.getBounds()[0];
+                    }
+
+                    item.setAccessible(true);
+                    Object o = item.get(source);
+                    if (o != null) {
+                        List c = (List) o;
+                        for (int i = 0; i < c.size(); i++) {
+                            Array.set(target, i, mapping.w2d(c.get(i), domainElementType));
+                        }
+                    }
                 } else {
-                    throw new MappingException("Assumption that a List corresponds to wsapi field 'item' failed");
+                    throw new MappingException("Assumption that a Collection or array corresponds to wsapi field 'item' failed");
                 }
             } else if (checkHasField(source.getClass(), "liste")) {
                 Field item = source.getClass().getDeclaredField("liste");
@@ -451,8 +518,25 @@ public class DefaultTypeMapper {
                             targetCollection.add(mapping.w2d(next, domainElementType));
                         }
                     }
+                } else if (targetType.isArray()) {
+                    //noinspection ConstantConditions
+                    Type domainElementType = targetType.getComponentType().getType();
+                    if (domainElementType instanceof TypeVariable) {
+                        TypeVariable typeVariable = (TypeVariable) domainElementType;
+                        // Må pakke ut TypeVariable, ellers feiler mapping på det senere.
+                        domainElementType = typeVariable.getBounds()[0];
+                    }
+
+                    item.setAccessible(true);
+                    Object o = item.get(source);
+                    if (o != null) {
+                        List c = (List) o;
+                        for (int i = 0; i < c.size(); i++) {
+                            Array.set(target, i, mapping.w2d(c.get(i), domainElementType));
+                        }
+                    }
                 } else {
-                    throw new MappingException("Assumption that a List corresponds to wsapi field 'liste' failed");
+                    throw new MappingException("Assumption that a Collection or array corresponds to wsapi field 'liste' failed");
                 }
             } else if (checkHasField(source.getClass(), "entry")) {
                 ParameterizedType parameterizedType = (ParameterizedType) targetType.getType();

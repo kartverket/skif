@@ -1,5 +1,6 @@
 package no.statkart.skif.util.testsupport;
 
+import com.google.common.reflect.TypeToken;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.MappingException;
 import org.slf4j.Logger;
@@ -197,7 +198,7 @@ public class AutomagicTest {
                         if (instance != null) {
                             field.set(o, instance);
                         } else {
-                            field.set(o, generateDummyValue(o.getClass(), field, fieldPath));
+                            field.set(o, generateDummyValue(o.getClass(), TypeToken.of(field.getGenericType()), field, fieldPath));
                         }
                     }
                 }
@@ -206,21 +207,21 @@ public class AutomagicTest {
         return o;
     }
 
-    protected Object generateDummyValue(Class<?> clazz, Field field, String fieldPath) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+    protected Object generateDummyValue(Class<?> clazz, TypeToken<?> type, Field field, String fieldPath) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         final Object retVal;
-        if (field.getType().isPrimitive()) {
-            if (field.getType().equals(Integer.TYPE)) {
+        if (type.getRawType().isPrimitive()) {
+            if (type.getRawType().equals(Integer.TYPE)) {
                 if (clazz.toString().endsWith("SnapshotVersion") || clazz.toString().endsWith("Timestamp")) {
                     //Må bruke SnapshotVersion.CURRENT.getNanos() (som er 0) pga EnumKodeId som kun kan være current.
                     retVal = 0;
                 } else {
                     retVal = randomGenerator.nextInt();
                 }
-            } else if (field.getType().equals(Float.TYPE)) {
+            } else if (type.getRawType().equals(Float.TYPE)) {
                 retVal = randomGenerator.nextFloat();
-            } else if (field.getType().equals(Double.TYPE)) {
+            } else if (type.getRawType().equals(Double.TYPE)) {
                 retVal = randomGenerator.nextDouble();
-            } else if (field.getType().equals(Long.TYPE)) {
+            } else if (type.getRawType().equals(Long.TYPE)) {
                 if (clazz.toString().endsWith("SnapshotVersion") || clazz.toString().endsWith("Timestamp")) {
                     //på grun av enumKodeId må vi bruke SnapshotVersion.CURRENT
                     retVal = 253370761200000L;
@@ -231,12 +232,12 @@ public class AutomagicTest {
                 } else {
                     retVal = randomGenerator.nextLong();
                 }
-            } else if (field.getType().equals(Boolean.TYPE)) {
+            } else if (type.getRawType().equals(Boolean.TYPE)) {
                 retVal = true;
             } else {
-                throw new ImplementationException("Primitive type " + field.getType() + " not supported");
+                throw new ImplementationException("Primitive type " + type.getRawType() + " not supported");
             }
-        } else if (field.getType().getSimpleName().equals("String")) {
+        } else if (type.getRawType().getSimpleName().equals("String")) {
             if (clazz.toString().endsWith("KodeId")) {
                 //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
                 retVal = "" + (randomGenerator.nextInt(1) + 1);
@@ -248,17 +249,17 @@ public class AutomagicTest {
             } else {
                 retVal = field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100);
             }
-        } else if (field.getType().isArray()) {
+        } else if (type.getRawType().isArray()) {
             throw new IllegalArgumentException("Støtte for array-felter er ikke implementert enda.");
-        } else if (field.getType().equals(XMLGregorianCalendar.class)) {
+        } else if (type.getRawType().equals(XMLGregorianCalendar.class)) {
             retVal = createXMLGregorianCalendar(field);
-        } else if (field.getType().equals(BigInteger.class)) {
+        } else if (type.getRawType().equals(BigInteger.class)) {
             retVal = BigInteger.ONE;
-        } else if (field.getType().equals(Boolean.class)) {
+        } else if (type.getRawType().equals(Boolean.class)) {
             retVal = Boolean.TRUE;
-        } else if (field.getType().equals(Integer.class)) {
+        } else if (type.getRawType().equals(Integer.class)) {
             retVal = randomGenerator.nextInt();
-        } else if (field.getType().equals(Long.class)) {
+        } else if (type.getRawType().equals(Long.class)) {
             if (clazz.toString().endsWith("KodeId")) {
                 retVal = Long.parseLong("" + randomGenerator.nextInt(1) + 1);
             } else if (clazz.toString().endsWith("SnapshotVersion") || clazz.toString().endsWith("Timestamp")) {
@@ -269,58 +270,56 @@ public class AutomagicTest {
             } else {
                 retVal = randomGenerator.nextLong();
             }
-        } else if (field.getType().equals(Float.class)) {
+        } else if (type.getRawType().equals(Float.class)) {
             retVal = randomGenerator.nextFloat();
-        } else if (field.getType().equals(Double.class)) {
+        } else if (type.getRawType().equals(Double.class)) {
             retVal = randomGenerator.nextDouble();
-        } else if (field.getType().equals(List.class)) {
+        } else if (type.getRawType().equals(List.class)) {
             ArrayList<Object> list = new ArrayList<Object>();
-            ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-            Class<?> genericClass = (Class<?>) genericType.getActualTypeArguments()[0];
-            Object instanceForList = generateInstanceForClass(genericClass);
+            ParameterizedType genericType = (ParameterizedType) type.getType();
+            TypeToken<?> genericElementType = TypeToken.of(genericType.getActualTypeArguments()[0]);
+            Object instanceForList = generateInstanceForClass(genericElementType.getRawType());
             if (instanceForList != null) {
                 list.add(instanceForList);
-            } else if (isClassAbstract(genericClass)) {
-                list.add(generateDummyData(generateConcreteSubclass(genericClass), fieldPath + "." + field.getName()));
+            } else if (isClassAbstract(genericElementType.getRawType())) {
+                list.add(generateDummyData(generateConcreteSubclass(genericElementType.getRawType()), fieldPath + "." + field.getName()));
             } else {
-                if (genericClass.getName().equals(String.class.getName())) {
+                if (genericElementType.getRawType().equals(String.class)) {
                     list.add(field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100));
                 } else {
-                    list.add(generateDummyData(createNewInstance(genericClass), fieldPath + "." + field.getName()));
+                    list.add(generateDummyValue(type.getRawType(), genericElementType, null, fieldPath + "." + field.getName()));
                 }
             }
             retVal = list;
-        } else if (isClassAbstract(field.getType())) {
-            if (field.getType().getName().startsWith("no.")) {
+        } else if (isClassAbstract(type.getRawType())) {
+            if (type.getRawType().getName().startsWith("no.")) {
                 if ("id".equalsIgnoreCase(field.getName())) {
                     //generere for abstrakt id
-                    retVal = generateDummyData(generateConcreteSubclassId(field.getType(), clazz.getName()), fieldPath + "." + field.getName());
+                    retVal = generateDummyData(generateConcreteSubclassId(type.getRawType(), clazz.getName()), fieldPath + "." + field.getName());
                 } else {
-                    retVal = generateDummyData(generateConcreteSubclass(field.getType()), fieldPath + "." + field.getName());
+                    retVal = generateDummyData(generateConcreteSubclass(type.getRawType()), fieldPath + "." + field.getName());
                 }
             } else {
-                logger.debug("Hopper over: " + field.getName() + ", som er av type: " + field.getType() + ", og abstrakt, i klasse " + clazz.getName());
+                logger.debug("Hopper over: " + field.getName() + ", som er av type: " + type.getRawType() + ", og abstrakt, i klasse " + clazz.getName());
                 retVal = null;
             }
+        } else if (field != null && field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("MatrikkelBubbleId")) {
+            Object o2 = generateConcreteSubclassId(clazz.getName());
+            generateDummyData(o2, fieldPath + "." + field.getName());
+            retVal = o2;
+        } else if (field != null && field.getName().equalsIgnoreCase("id") && type.getRawType().getName().endsWith("BubbleId")) {
+            Object o2 = generateConcreteSubclassId(clazz.getName());
+            generateDummyData(o2, fieldPath + "." + field.getName());
+            retVal = o2;
+        } else if (field != null && field.getName().endsWith("KodeId") && type.getRawType().getName().startsWith("no.")) {
+            Object o2 = generateConcreteKodeId(type.getRawType());
+            generateDummyData(o2, fieldPath + "." + field.getName());
+            retVal = o2;
         } else {
-            if (field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("MatrikkelBubbleId")) {
-                Object o2 = generateConcreteSubclassId(clazz.getName());
-                generateDummyData(o2, fieldPath + "." + field.getName());
-                retVal = o2;
-            } else if (field.getName().equalsIgnoreCase("id") && field.getType().getName().endsWith("BubbleId")) {
-                Object o2 = generateConcreteSubclassId(clazz.getName());
-                generateDummyData(o2, fieldPath + "." + field.getName());
-                retVal = o2;
-            } else if (field.getName().endsWith("KodeId") && field.getType().getName().startsWith("no.")) {
-                Object o2 = generateConcreteKodeId(field.getType());
-                generateDummyData(o2, fieldPath + "." + field.getName());
-                retVal = o2;
-            } else {
-                //recurse
-                Object o2 = createNewInstance(field.getType());
-                generateDummyData(o2, fieldPath + "." + field.getName());
-                retVal = o2;
-            }
+            //recurse
+            Object o2 = createNewInstance(type.getRawType());
+            generateDummyData(o2, fieldPath + "." + (field != null ? field.getName() : "()"));
+            retVal = o2;
         }
         return retVal;
     }

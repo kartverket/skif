@@ -17,6 +17,9 @@ public interface SkifTestMapping extends Mapping {
     public no.statkart.skif.skiftest.wsapi.domain.B d2w(B b);
     public B w2d(no.statkart.skif.skiftest.wsapi.domain.B b);
 
+    public no.statkart.skif.skiftest.wsapi.domain.C d2w(C c);
+    public C w2d(no.statkart.skif.skiftest.wsapi.domain.C c);
+
     public no.statkart.skif.skiftest.wsapi.domain.M d2w(M m);
     public M w2d(no.statkart.skif.skiftest.wsapi.domain.M m);
 

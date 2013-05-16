@@ -24,10 +24,11 @@ public class SkifTestMapper<M extends SkifTestMapping> extends AbstractMapper<M>
         useIdentityMapping(String.class);
         useIdentityMapping(Integer.class);
         useIdentityMapping(Long.class);
+        useIdentityMapping(Boolean.class);
 
         // Objekter
-        addMapper(new ATypeMapper(no.statkart.skif.skiftest.wsapi.domain.A.class, A.class));
-        addMapper(new BTypeMapper(no.statkart.skif.skiftest.wsapi.domain.B.class, B.class));
+        addMapper(new ATypeMapper<no.statkart.skif.skiftest.wsapi.domain.A, A>(no.statkart.skif.skiftest.wsapi.domain.A.class, A.class));
+        addMapper(new BTypeMapper<no.statkart.skif.skiftest.wsapi.domain.B, B>(no.statkart.skif.skiftest.wsapi.domain.B.class, B.class));
 
         // Lister
         addMapper(new WsapiListTypeMapper<no.statkart.skif.skiftest.wsapi.domain.AList, no.statkart.skif.skiftest.wsapi.domain.A, Set, A>(no.statkart.skif.skiftest.wsapi.domain.AList.class, no.statkart.skif.skiftest.wsapi.domain.A.class, Set.class, A.class));
