@@ -23,7 +23,7 @@ import java.util.zip.ZipInputStream;
  * </ul>
  * </p>
  * <p/>
- * <p>For å benytte klassen så setter man inn denne med {@link AbstractMapper#setDefaultMapper(AutomaticTypeMapper)}.
+ * <p>For å benytte klassen så setter man inn denne med {@link AbstractMapper#setDefaultMapper(no.statkart.skif.mapper.DefaultTypeMapper)}.
  * For å benytte DefaultTypeMapper må også en packageMapping legges inn. Ved bruk av addPackageMapping er det mulig å
  * mappe alle klasser i en pakke og subpakker til klasser i en annen pakke og subpakkker med samme navn.</p>
  * <p/>
@@ -37,36 +37,11 @@ import java.util.zip.ZipInputStream;
  * <p>Hensikten med defaultmapperen er at den skal benyttes ved "defaulting" som i en switch-statement. Dersom ingen annen typemapping
  * finnes så faller typemappingen tilbake til denne.</p>
  * <p/>
- * <p>Det er også mulig å benytte mapperen som en superklasse for implementasjon av
- * type-mappere på lik linje med f.eks. GrunnbokBorettInfoTypeMapper. Da vil default type mapperen håndtere felter med samme
- * navn, slik at man bare trenger å håndtere de spesielle feltene i subklassen. I disse tilfellen så legger man til den nye
- * type-mapper subklassen ved bruk av AbstractMapper sin addMapper-metode, som vanlig.</p>
- * <p/>
- * <p/>
- * <p>F.eks.
- * <blockquote><pre>
- * public class SpesiellTypeMapper extends DefaultTypeMapper<Beloep, no.statkart.grunnbok.borett.info.domain.Beloep> {
- * <p/>
- *   public SpesiellTypeMapper() {
- *       super(Beloep.class, no.statkart.grunnbok.borett.info.domain.Beloep.class);
- *   }
- * <p/>
- *   public void mapDomainObject(no.statkart.grunnbok.borett.info.domain.Beloep source, Beloep target) {
- *       super.mapDomainObject(source, target);//setter f.eks. verdiene i 3 felter som har samme feltnavn i begge klassene
- *       target.setAnnenVerdi(mapping.w2d(source.getVerdi());
- *   }
- * <p/>
- *   public void mapWsapiObject(Beloep source, no.statkart.grunnbok.borett.info.domain.Beloep target) {
- *       super.mapWsapiObject(source, target);//ditto
- *       target.setVerdi(mapping.d2w(source.getAnnenVerdi());
- *   }
- * }
- * </pre></blockquote></p>
  *
  * @author Steinar Hansen
  * @author Tor Egil R. Strand
  */
-public class DefaultTypeMapper implements AutomaticTypeMapper {
+public class DefaultTypeMapper {
     private Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
 
     private static Map<Method, Method> settersForGetters = new HashMap<Method, Method>();
@@ -116,21 +91,17 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
 
             List<Class> wsapiClasses = getClasses(wsapiPackage, recurse);
             List<Class> domainClasses = getClasses(domainPackage, recurse);
-            for (int i = 0; i < wsapiClasses.size(); i++) {
-                Class wsapiClass = wsapiClasses.get(i);
+            for (Class wsapiClass : wsapiClasses) {
                 String name = wsapiClass.getSimpleName();
-                for (int j = 0; j < domainClasses.size(); j++) {
-                    Class domainClass = domainClasses.get(j);
+                for (Class domainClass : domainClasses) {
                     if (isEquivalent(domainClass.getSimpleName(), name)) {
                         classMappings.put(wsapiClass, domainClass);
                     }
                 }
             }
-            for (int i = 0; i < domainClasses.size(); i++) {
-                Class domainClass = domainClasses.get(i);
+            for (Class domainClass : domainClasses) {
                 String name = domainClass.getSimpleName();
-                for (int j = 0; j < wsapiClasses.size(); j++) {
-                    Class wsapiClass = wsapiClasses.get(j);
+                for (Class wsapiClass : wsapiClasses) {
                     if (isEquivalent(name, wsapiClass.getSimpleName())) {
                         classMappings.put(domainClass, wsapiClass);
                     }
@@ -145,11 +116,7 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
     }
 
     protected boolean isEquivalent(String domainName, String wsapiName) {
-        if (wsapiName.equals(domainName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return wsapiName.equals(domainName);
     }
 
     public Mapping getMapping() {
@@ -239,7 +206,6 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
     }
 
 
-    @Override
     public final Object mapDomainObject(Object source, TypeToken<?> wsapiType) {
         Object target = null;
         if (!doNotMapTheseClasses.contains(source.getClass())) {
@@ -270,7 +236,6 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
     }
 
 
-    @Override
     public final Object mapWsapiObject(Object source, TypeToken<?> domainType) {
         Object target = null;
         if (!doNotMapTheseClasses.contains(source.getClass())) {
@@ -314,6 +279,7 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
 
     }
 
+    @SuppressWarnings("unchecked")
     protected void mapCommonDomainFields(Object source, Object target, TypeToken<?> targetType) throws ClassNotFoundException {
         try {
             if (source instanceof Collection) {
@@ -437,6 +403,7 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     protected void mapCommonWsapiFields(Object source, Object target, TypeToken<?> targetType) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
         try {
             if (checkHasField(source.getClass(), "item")) {
@@ -605,7 +572,6 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
         assert classLoader != null;
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
-//        List<File> dirs = new ArrayList<File>();
         Set<Class> classes = new HashSet<Class>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
@@ -663,14 +629,12 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
                     while ((ze = zip2.getNextEntry()) != null) {
                         String entryName = ze.getName();
                         if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
-                            Class _class;
-                            String className = null;
                             try {
-                                className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
+                                String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
                                 String classPackageName = className.substring(0, className.lastIndexOf("."));
                                 // Laster kun klasser som ligger under packageName
                                 if (classPackageName.contains(packageName)) {
-                                    _class = Class.forName(className);
+                                    Class _class = Class.forName(className);
                                     classes.add(_class);
                                 }
 
@@ -720,6 +684,7 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
             return classes;
         }
         File[] files = directory.listFiles();
+        //noinspection ConstantConditions
         for (File file : files) {
             String fileName = file.getName();
             if (file.isDirectory()) {
@@ -772,11 +737,6 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
         return getters;
     }
 
-    /**
-     * Spesiell håndtering av at feltet heter ett eller annet "feltnavn" på den ene siden og "feltnavnId" på den andre.
-     * I disse tilfellene så skal feltet som heter 'nesten' det samme returneres.
-     * TODO: Denne spesialhåndteringen bør flyttes til matrikkelen
-     */
     protected Method findSetterForGetter(Class<?> c, Method getter) {
 
         Method setter = settersForGetters.get(getter);
@@ -788,14 +748,11 @@ public class DefaultTypeMapper implements AutomaticTypeMapper {
 
         Method[] methods = c.getMethods();
         Method matched = null;
-        boolean nameMatch = false;
         for (Method method : methods) {
             if (method.getParameterTypes().length == 1) {
                 if (method.getName().equals(expectedSetterName)) {
-                    nameMatch = true;
                     matched = method;
-                } else if (!nameMatch && ((method.getName() + "Id").equals(expectedSetterName) || method.getName().equals(expectedSetterName + "Id"))) {
-                    matched = method;
+                    break;
                 }
             }
         }

@@ -5,8 +5,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.reflect.TypeToken;
 import no.statkart.skif.exception.ImplementationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.*;
@@ -16,9 +16,9 @@ import java.util.*;
  * @author Henrik Fredholm
  */
 public abstract class AbstractMapper<M extends Mapping> implements InvocationHandler {
-    private static Logger logger = LoggerFactory.getLogger(AbstractMapper.class);
+//    private static Logger logger = LoggerFactory.getLogger(AbstractMapper.class);
 
-    private AutomaticTypeMapper defaultMapper = null;
+    private DefaultTypeMapper defaultMapper = null;
 
     private static enum Direction {
         /**
@@ -61,12 +61,12 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         mappersByWsapiClass.put(typeMapper.getWsapiClass(), typeMapper);
     }
 
-    protected void setDefaultMapper(AutomaticTypeMapper typeMapper) {
+    protected void setDefaultMapper(DefaultTypeMapper typeMapper) {
         typeMapper.setMapping(thisMapping);
         defaultMapper = typeMapper;
     }
 
-    public AutomaticTypeMapper getDefaultMapper() {
+    public DefaultTypeMapper getDefaultMapper() {
         return defaultMapper;
     }
 
@@ -89,7 +89,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 int i = recurseLevel_w2d.get();
                 if (i == 0) {
                     if (defaultMapper != null) {
-                        ((DefaultTypeMapper) defaultMapper).clearMappedFields();
+                        defaultMapper.clearMappedFields();
                     }
                 }
                 recurseLevel_w2d.set(++i);
