@@ -17,7 +17,7 @@ import static org.testng.Assert.assertNotNull;
  */
 @Test
 public class SkifTestMappingD2WTest {
-    SkifTestMapper configuration = new SkifTestMapper();
+    SkifTestMapper<?> configuration = new SkifTestMapper();
     SkifTestMapping map = configuration.getMapping();
 
     public void testMapString() {
@@ -78,12 +78,12 @@ public class SkifTestMappingD2WTest {
      */
     public void testMapTestASet() {
         Set<A> source = new HashSet<A>();
-        AList target = new AList();
+        AList target;
         A a1 = new A("a1");
         A a2 = new A("a2");
         source.add(a1);
         source.add(a2);
-        target = map.d2w(source, target);
+        target = map.d2w(source);
         assertEquals(target.getItem().size(), 2);
         assertEquals(target.getItem().iterator().next().getClass(), no.statkart.skif.skiftest.wsapi.domain.A.class);
 

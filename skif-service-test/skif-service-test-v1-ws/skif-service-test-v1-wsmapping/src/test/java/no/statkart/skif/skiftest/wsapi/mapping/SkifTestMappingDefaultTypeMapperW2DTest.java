@@ -63,7 +63,7 @@ public class SkifTestMappingDefaultTypeMapperW2DTest {
 
     public void testMapAList() {
         AList source = new AList();
-        Set<A> target = new HashSet<A>();
+        Set<A> target;
 
         no.statkart.skif.skiftest.wsapi.domain.A a1 = new no.statkart.skif.skiftest.wsapi.domain.A();
         a1.setText("a1");
@@ -71,7 +71,7 @@ public class SkifTestMappingDefaultTypeMapperW2DTest {
         a2.setText("a2");
         source.getItem().add(a1);
         source.getItem().add(a2);
-        target = map.w2d(source, target);
+        target = map.w2d(source, HashSet.class);
         assertEquals(target.size(), 2);
         assertEquals(target.iterator().next().getClass(), A.class);
     }

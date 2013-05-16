@@ -17,16 +17,13 @@ public class SnapshotVersionTypeMapper extends AbstractStoreTestTypeMapper<no.st
 
     @Override
     public void mapDomainObject(SnapshotVersion source, no.statkart.skif.storetest.wsapi.domain.SnapshotVersion target) {
-        super.mapDomainObject(source, target);
-
-        Timestamp timestamp = source.getTimestamp();
+Timestamp timestamp = source.getTimestamp();
         target.setTime(map.d2w(timestamp.getTime()));
         target.setNanos(map.d2w(timestamp.getNanos()));
     }
 
     @Override
     public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion source, SnapshotVersion target) {
-        super.mapWsapiObject(source, target);
     }
 
     @Override

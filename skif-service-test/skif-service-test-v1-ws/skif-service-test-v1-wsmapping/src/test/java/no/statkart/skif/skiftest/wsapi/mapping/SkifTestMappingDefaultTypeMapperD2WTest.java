@@ -83,7 +83,7 @@ public class SkifTestMappingDefaultTypeMapperD2WTest {
         A a2 = new A("a2");
         source.add(a1);
         source.add(a2);
-        target = map.d2w(source, target);
+        target = map.d2w(source);
         assertEquals(target.getItem().size(), 2);
         assertEquals(target.getItem().iterator().next().getClass(), no.statkart.skif.skiftest.wsapi.domain.A.class);
 

@@ -39,15 +39,14 @@ public class D2WAdapterWithServiceContextMapperProxyHandler<T, A> extends D2WAda
      * Map alle argumenter til Web service objekter. Opprett deretter ApiContext objekt av riktig type og legg på som siste
      * parameter.
      */
-    protected Object[] mapArgs(Object[] args, Method m) {
-        Object[] mappedArgs = super.mapArgs(args, m);
+    protected Object[] mapArgs(Object[] args, Method method, Method m) {
+        Object[] mappedArgs = super.mapArgs(args, method, m);
         if (contextMapper != null) {
             Object wsServiceContext = contextMapper.createWSServiceContextFromDomainServiceContext();
             if (mappedArgs == null) {
                 mappedArgs = new Object[]{wsServiceContext};
             } else {
-                Object[] mappedArgsWithContext = null;
-                mappedArgsWithContext = new Object[mappedArgs.length + 1];
+                Object[] mappedArgsWithContext = new Object[mappedArgs.length + 1];
                 System.arraycopy(mappedArgs, 0, mappedArgsWithContext, 0, mappedArgs.length);
                 mappedArgsWithContext[mappedArgs.length] = wsServiceContext;
                 mappedArgs = mappedArgsWithContext;

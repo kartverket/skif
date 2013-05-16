@@ -23,16 +23,12 @@ public class SelectionPolygonTypeMapper extends AbstractStoreTestTypeMapper<no.s
 
     @Override
     public void mapDomainObject(SelectionPolygon source, no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon target) {
-        super.mapDomainObject(source, target);
-
         target.setPositions(createPositionList(source.getPolygon()));
     }
 
 
     @Override
     public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon source, SelectionPolygon target) {
-        super.mapWsapiObject(source, target);
-
         target.setPolygon(createPolygon(source.getPositions()));
 
     }

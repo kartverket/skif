@@ -17,9 +17,12 @@ public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.do
 
     @Override
     public void mapDomainObject(DomainT source, WsapiT target) {
-        super.mapDomainObject(source, target);
         target.setValue(source.getStringValue());
         target.setSnapshotVersion(map.d2w(source.getSnapshotVersion()));
+    }
+
+    @Override
+    public void mapWsapiObject(WsapiT source, DomainT target) {
     }
 
     @Override

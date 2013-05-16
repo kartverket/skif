@@ -32,4 +32,14 @@ public class IdentityExceptionTypeMapper<T extends Throwable> extends AbstractTy
     protected T getInitialWsapiObject(T source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         return source;
     }
+
+    @Override
+    public void mapDomainObject(T source, T target) {
+        // Ingenting å gjøre siden target == source
+    }
+
+    @Override
+    public void mapWsapiObject(T source, T target) {
+        // Ingenting å gjøre siden target == source
+    }
 }

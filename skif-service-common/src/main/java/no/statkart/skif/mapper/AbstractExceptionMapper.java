@@ -4,6 +4,8 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.PermissionDeniedException;
 import no.statkart.skif.exception.SkifException;
 
+import java.lang.reflect.Method;
+
 /**
  * @author Henrik Fredholm
  * @since 2.0
@@ -16,11 +18,6 @@ public abstract class AbstractExceptionMapper extends AbstractMapper {
         this.wrapD2WRuntimeExceptions = wrapD2WRuntimeExceptions;
     }
 
-    public AbstractExceptionMapper(Class<? extends Mapping> mappingClass, ObjectFactory wsapiObjectFactory, ObjectFactory domainObjectFactory, boolean mergeMapping, boolean wrapD2WRuntimeExceptions) {
-        super(mappingClass, wsapiObjectFactory, domainObjectFactory, mergeMapping);
-        this.wrapD2WRuntimeExceptions = wrapD2WRuntimeExceptions;
-    }
-
     /**
      * Wrap ukjente RuntimeExceptions i en ImplementationException. EJBAccessException er et untak, som skal gjøres om til PermissionDeniedException.
      *
@@ -28,7 +25,7 @@ public abstract class AbstractExceptionMapper extends AbstractMapper {
      * @return instans av mappet klasse
      */
     @Override
-    protected Object d2w(Object[] args) {
+    protected Object d2w(Method method, Object[] args) {
         if (args.length == 1 && !(args[0] instanceof SkifException)) {
             Throwable t = (Throwable) args[0];
 
@@ -36,14 +33,14 @@ public abstract class AbstractExceptionMapper extends AbstractMapper {
             if (t.getClass().getName().equals("javax.ejb.EJBAccessException")) {
                 PermissionDeniedException e = new PermissionDeniedException(t.getMessage(), t);
                 e.setStackTrace(t.getStackTrace());
-                return super.d2w(new Object[]{e});
+                return super.d2w(method, new Object[]{e});
             } else {
                 ImplementationException e = new ImplementationException(t.getMessage(), t);
                 e.setStackTrace(t.getStackTrace());
-                return super.d2w(new Object[]{e});
+                return super.d2w(method, new Object[]{e});
             }
         } else {
-            return super.d2w(args);
+            return super.d2w(method, args);
         }
     }
 

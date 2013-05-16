@@ -23,13 +23,7 @@ import java.util.Collection;
  */
 public interface StoreTestMapping extends Mapping {
     public StoreTestBubbleId<? extends StoreTestBubble> w2d(no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId source);
-    public no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId d2w(StoreTestBubbleId<? extends StoreTestBubble> source);
-
-    public StoreTestBubbleIdList d2w(Collection source, StoreTestBubbleIdList target);
-    public <T extends Collection> T w2d(StoreTestBubbleIdList source, T target);
-
-    public StoreTestBubbleList d2w(Collection source, StoreTestBubbleList target);
-    public <T extends Collection> T w2d(StoreTestBubbleList source, T target);
+    public no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId d2w(StoreTestBubbleId<?> source);
 
     public no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp d2w(Timestamp source);
     public Timestamp w2d(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp source);
@@ -52,18 +46,9 @@ public interface StoreTestMapping extends Mapping {
     public no.statkart.skif.storetest.domain.demo.BarFoosId<no.statkart.skif.storetest.domain.demo.BarFoos> w2d(no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId source);
     public no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId d2w(no.statkart.skif.storetest.domain.demo.BarFoosId<no.statkart.skif.storetest.domain.demo.BarFoos> source);
 
-    public BarFoosIdList d2w(Collection source, BarFoosIdList target);
-    public <T extends Collection> T w2d(BarFoosIdList source, T target);
-
     public no.statkart.skif.storetest.domain.demo.BarId<no.statkart.skif.storetest.domain.demo.Bar> w2d(no.statkart.skif.storetest.wsapi.domain.demo.BarId source);
     public no.statkart.skif.storetest.wsapi.domain.demo.BarId d2w(no.statkart.skif.storetest.domain.demo.BarId<no.statkart.skif.storetest.domain.demo.Bar> source);
 
-    public BarIdList d2w(Collection source, BarIdList target);
-    public <T extends Collection> T w2d(BarIdList source, T target);
-
     public no.statkart.skif.storetest.domain.demo.FooId<no.statkart.skif.storetest.domain.demo.Foo> w2d(no.statkart.skif.storetest.wsapi.domain.demo.FooId source);
     public no.statkart.skif.storetest.wsapi.domain.demo.FooId d2w(no.statkart.skif.storetest.domain.demo.FooId<no.statkart.skif.storetest.domain.demo.Foo> source);
-
-    public FooIdList d2w(Collection source, FooIdList target);
-    public <T extends Collection> T w2d(FooIdList source, T target);
 }

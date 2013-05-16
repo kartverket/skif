@@ -15,16 +15,12 @@ public class TimestampTypeMapper extends AbstractStoreTestTypeMapper<no.statkart
 
     @Override
     public void mapDomainObject(Timestamp source, no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp target) {
-        super.mapDomainObject(source, target);
-
         target.setTime(map.d2w(source.getTime()));
         target.setNanos(map.d2w(source.getNanos()));
     }
 
     @Override
     public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp source, Timestamp target) {
-        super.mapWsapiObject(source, target);
-
     }
 
     @Override

@@ -1,15 +1,13 @@
 package no.statkart.skif.mapper;
 
+import com.google.common.reflect.TypeToken;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.internal.util.InternalClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
@@ -25,7 +23,7 @@ import java.util.zip.ZipInputStream;
  * </ul>
  * </p>
  * <p/>
- * <p>For å benytte klassen så setter man inn denne med {@link AbstractMapper#setDefaultMapper(TypeMapper)}.
+ * <p>For å benytte klassen så setter man inn denne med {@link AbstractMapper#setDefaultMapper(AutomaticTypeMapper)}.
  * For å benytte DefaultTypeMapper må også en packageMapping legges inn. Ved bruk av addPackageMapping er det mulig å
  * mappe alle klasser i en pakke og subpakker til klasser i en annen pakke og subpakkker med samme navn.</p>
  * <p/>
@@ -68,20 +66,15 @@ import java.util.zip.ZipInputStream;
  * @author Steinar Hansen
  * @author Tor Egil R. Strand
  */
-public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<WsapiT, DomainT> {
+public class DefaultTypeMapper implements AutomaticTypeMapper {
     private Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
 
     private static Map<Method, Method> settersForGetters = new HashMap<Method, Method>();
-
-    private ObjectFactory domainObjectFactory;
-    private ObjectFactory wsapiObjectFactory;
 
     Mapping mapping;
 
     Map<String, String> wsapiPkg2domainPkg = new HashMap<String, String>();
     Map<String, String> domainPkg2wsapiPkg = new HashMap<String, String>();
-    private Class<WsapiT> wsapiClass;
-    private Class<DomainT> domainClass;
     private Map<Class, Class> classMappings = new HashMap<Class, Class>();
     private Set<Class> doNotMapTheseClasses = new HashSet<Class>();
     private final MappedFieldsTracker mappedFields = new MappedFieldsTracker();
@@ -98,8 +91,8 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
      * Denne metoden finner klasser i alle subpakker av de angitte pakkene, og mapper de opp mot hverandre gitt at navnene (SimpleName) på
      * klassene er de samme.
      *
-     * @param wsapiPackage     pakken til JAXB-klassene
-     * @param domainPackage    pakken til Hibernate-domene-klassene
+     * @param wsapiPackage  pakken til JAXB-klassene
+     * @param domainPackage pakken til Hibernate-domene-klassene
      */
     public void addPackageMapping(String wsapiPackage, String domainPackage) {
         addPackageMapping(wsapiPackage, domainPackage, true);
@@ -109,8 +102,8 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
      * Denne metoden finner klasser i alle subpakker av de angitte pakkene, med mindre recurse er satt til 'false', da leter den bare i den angitte pakken. og mapper de opp mot hverandre gitt at navnene (SimpleName) på
      * klassene er de samme.
      *
-     * @param wsapiPackage     pakken til JAXB-klassene
-     * @param domainPackage    pakken til Hibernate-domene-klassene
+     * @param wsapiPackage  pakken til JAXB-klassene
+     * @param domainPackage pakken til Hibernate-domene-klassene
      */
     public void addPackageMapping(String wsapiPackage, String domainPackage, boolean recurse) {
         try {
@@ -128,7 +121,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                 String name = wsapiClass.getSimpleName();
                 for (int j = 0; j < domainClasses.size(); j++) {
                     Class domainClass = domainClasses.get(j);
-                    if (isEquivalent(domainClass.getSimpleName(), name, domainClass, wsapiClass)) {
+                    if (isEquivalent(domainClass.getSimpleName(), name)) {
                         classMappings.put(wsapiClass, domainClass);
                     }
                 }
@@ -138,7 +131,7 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
                 String name = domainClass.getSimpleName();
                 for (int j = 0; j < wsapiClasses.size(); j++) {
                     Class wsapiClass = wsapiClasses.get(j);
-                    if (isEquivalent(name, wsapiClass.getSimpleName(), domainClass, wsapiClass)) {
+                    if (isEquivalent(name, wsapiClass.getSimpleName())) {
                         classMappings.put(domainClass, wsapiClass);
                     }
                 }
@@ -151,40 +144,13 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
         }
     }
 
-    protected boolean isEquivalent(String domainName, String wsapiName, Class myDomainClass, Class myWsapiClass) {
-        //Sjekk om wsapi-navn slutter på "Kode", da skal domainName slutte på "KodeId"
-        if (wsapiName.endsWith("Kode")) {
-            try {
-                Class enumClass = Class.forName("no.statkart.matrikkel.domene.Enum");
-                if (InternalClassUtils.isAssignable(myWsapiClass, enumClass)) {
-                    //Dette er en enum, enumer skal mappes til klasse som ender på KodeId.
-                    if (domainName.endsWith("KodeId")) {
-                        if (domainName.substring(0, domainName.length() - 2).equals(wsapiName)) {
-                            //Hvis klassenavnene med unntakt av Id er like så er disse klassene ekvivalente
-                            return true;
-                        }
-                    }
-                } else if (wsapiName.equals(domainName)) {
-                    //Dette er ikke en enum, og klassenavnene er like, så da er de ekvivalente.
-                    return true;
-                }
-            } catch (ClassNotFoundException e) {
-                //Dette kan skje, ikke gjør noe, vi vil ende opp med å returnere true eller false i bunn av metoden uansett.
-            }
-        } else if (wsapiName.equals(domainName)) {
+    protected boolean isEquivalent(String domainName, String wsapiName) {
+        if (wsapiName.equals(domainName)) {
             return true;
         } else {
             return false;
         }
-        return false;
     }
-
-
-    protected DefaultTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
-        this.wsapiClass = wsapiClass;
-        this.domainClass = domainClass;
-    }
-
 
     public Mapping getMapping() {
         return mapping;
@@ -194,86 +160,108 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
         this.mapping = mapping;
     }
 
-    @Override
-    public Class<WsapiT> getWsapiClass() {
-        return wsapiClass;
-    }
-
-    @Override
-    public Class<DomainT> getDomainClass() {
-        return domainClass;
-    }
-
-    @Override
-    public ObjectFactory getWsapiObjectFactory() {
-        return wsapiObjectFactory;
-    }
-
-    @Override
-    public void setWsapiObjectFactory(ObjectFactory factory) {
-        this.wsapiObjectFactory = factory;
-    }
-
-
-    @Override
-    public ObjectFactory getDomainObjectFactory() {
-        return domainObjectFactory;
-    }
-
-    @Override
-    public void setDomainObjectFactory(ObjectFactory factory) {
-        this.domainObjectFactory = factory;
-    }
-
     public void overrideClassMappings(Map<Class, Class> classMappings) {
         this.overrideClassMappings = classMappings;
     }
 
-    public Class findTargetClassFromSourceClass(Class sourceClass) throws ClassNotFoundException, NoSuchFieldException {
-        Class retVal = null;
+    public TypeToken<?> findTargetClass(Class sourceClass, TypeToken<?> targetType) throws ClassNotFoundException, NoSuchFieldException {
+        TypeToken<?> retVal = null;
         if (this.overrideClassMappings != null) {
-            retVal = this.overrideClassMappings.get(sourceClass);
+            retVal = TypeToken.of(this.overrideClassMappings.get(sourceClass));
         }
         if (retVal == null) {
-            //Hvis kildeklassen har et felt som heter 'item' så er dette en collection-klasse.
-            if (checkHasField(sourceClass, "item")) {
-                return Class.forName("java.util.ArrayList");
-                //Eller hvis kildeklassen har et felt som heter 'liste' så er dette en collection-klasse.
+            if (classMappings.containsKey(sourceClass)) {
+                retVal = TypeToken.of(classMappings.get(sourceClass));
+                // Hvis kildeklassen har et felt som heter 'item' så er dette en collection-klasse.
+            } else if (checkHasField(sourceClass, "item")) {
+                retVal = resolveCollection(targetType);
+                // Eller hvis kildeklassen har et felt som heter 'liste' så er dette en collection-klasse.
             } else if (checkHasField(sourceClass, "liste")) {
-                return Class.forName("java.util.ArrayList");
-            } else if (classMappings.containsKey(sourceClass)) {
-                retVal = classMappings.get(sourceClass);
+                retVal = resolveCollection(targetType);
+                // Eller hvis kildeklassen har et felt som heter 'entry' så er dette en map-klasse.
+            } else if (checkHasField(sourceClass, "entry")) {
+                retVal = resolveMap(targetType);
+                // Eller hvis det er collection på begge sider.
+            } else if (Collection.class.isAssignableFrom(sourceClass) && Collection.class.isAssignableFrom(targetType.getRawType())) {
+                retVal = targetType;
+                // Eller hvis det er collection på kildesiden, mens måltypen har felt som heter 'item' eller 'liste'.
+            } else if (Collection.class.isAssignableFrom(sourceClass) && (checkHasField(targetType.getRawType(), "item") || checkHasField(targetType.getRawType(), "liste"))) {
+                retVal = targetType;
+                // Eller hvis det er map på kildesiden, mens måltypen har felt som heter 'entry'.
+            } else if (Map.class.isAssignableFrom(sourceClass) && checkHasField(targetType.getRawType(), "entry")) {
+                retVal = targetType;
             } else {
                 throw new MappingException("Can not map " + sourceClass.toString() + ", could not find corresponding class");
             }
         }
 
+        if (!targetType.isAssignableFrom(retVal)) {
+            throw new MappingException("Wanted to map " + sourceClass + " to " + retVal + ", but requested class is " + targetType.getRawType());
+        }
+
+        return retVal;
+    }
+
+    private TypeToken<?> resolveCollection(TypeToken<?> targetType) {
+        TypeToken<?> retVal;
+        if (Collection.class.isAssignableFrom(targetType.getRawType())) {
+            // Det er angitt en spesiell type collection det skal mappes til
+            retVal = targetType;
+            if (retVal.getRawType().isInterface()) {
+                if (Set.class.isAssignableFrom(retVal.getRawType())) {
+                    retVal = retVal.getSubtype(HashSet.class);
+                } else if (List.class.isAssignableFrom(retVal.getRawType())) {
+                    retVal = retVal.getSubtype(ArrayList.class);
+                } else {
+                    throw new MappingException("Unknown Collection type: " + retVal);
+                }
+            }
+        } else {
+            // Antar ArrayList når ikke nærmere spesifisert
+            retVal = TypeToken.of(ArrayList.class);
+        }
+        return retVal;
+    }
+
+    private TypeToken<?> resolveMap(TypeToken<?> targetType) {
+        TypeToken<?> retVal;
+        if (Map.class.isAssignableFrom(targetType.getRawType())) {
+            // Det er angitt en spesiell type map det skal mappes til
+            retVal = targetType;
+            if (retVal.getRawType().isInterface()) {
+                retVal = retVal.getSubtype(HashMap.class);
+            }
+        } else {
+            // Antar HashMap når ikke nærmere spesifisert
+            retVal = TypeToken.of(HashMap.class);
+        }
         return retVal;
     }
 
 
     @Override
-    public final WsapiT mapDomainObject(DomainT source) {
-        WsapiT target = null;
+    public final Object mapDomainObject(Object source, TypeToken<?> wsapiType) {
+        Object target = null;
         if (!doNotMapTheseClasses.contains(source.getClass())) {
             try {
-                Class targetClass;
-                if (getWsapiClass() != null) {
-                    targetClass = getWsapiClass();
-                } else {
-                    targetClass = findTargetClassFromSourceClass(source.getClass());
-                }
-                Object alreadyMappedValue = mappedFields.getMappedValue(source, targetClass);
+                TypeToken<?> targetType = findTargetClass(source.getClass(), wsapiType);
+                Object alreadyMappedValue = mappedFields.getMappedValue(source, targetType.getRawType());
                 if (alreadyMappedValue == null) {
+                    target = targetType.getRawType().newInstance();
 
-                    target = getInitialWsapiObject(source);
-
-                    mapDomainObject(source, target);
+                    if (!doNotMapTheseClasses.contains(source.getClass())) {
+                        mapCommonDomainFields(source, target, wsapiType);
+                    }
                 } else {
-                    target = (WsapiT) alreadyMappedValue;
+                    target = alreadyMappedValue;
                 }
-            } catch (Exception e) {
-//                logger.error("Feilet under oppretting av target objekt med kildetype: " + source.getClass().getName(), e);
+            } catch (ClassNotFoundException e) {
+                throw new MappingException(e);
+            } catch (InstantiationException e) {
+                throw new MappingException(e);
+            } catch (IllegalAccessException e) {
+                throw new MappingException(e);
+            } catch (NoSuchFieldException e) {
                 throw new MappingException(e);
             }
 
@@ -283,36 +271,26 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
 
 
     @Override
-    public final DomainT mapWsapiObject(WsapiT source) {
-        DomainT target = null;
+    public final Object mapWsapiObject(Object source, TypeToken<?> domainType) {
+        Object target = null;
         if (!doNotMapTheseClasses.contains(source.getClass())) {
             try {
-                Class targetClass;
-                if (getDomainClass() != null) {
-                    targetClass = getDomainClass();
-                } else {
-                    targetClass = findTargetClassFromSourceClass(source.getClass());
-                }
-                Object alreadyMappedValue = mappedFields.getMappedValue(source, targetClass);
+                TypeToken<?> targetType = findTargetClass(source.getClass(), domainType);
+                Object alreadyMappedValue = mappedFields.getMappedValue(source, targetType.getRawType());
                 if (alreadyMappedValue == null) {
+                    target = targetType.getRawType().newInstance();
 
-                    target = getInitialDomainObject(source);
-
-                    mapWsapiObject(source, target);
+                    if (!doNotMapTheseClasses.contains(source.getClass())) {
+                        mapCommonWsapiFields(source, target, targetType);
+                    }
                 } else {
-                    target = (DomainT) alreadyMappedValue;
+                    target = alreadyMappedValue;
                 }
-
-
-            } catch (NoSuchMethodException e) {
-                throw new MappingException(e);
             } catch (InstantiationException e) {
                 throw new MappingException(e);
             } catch (NoSuchFieldException e) {
                 throw new MappingException(e);
             } catch (IllegalAccessException e) {
-                throw new MappingException(e);
-            } catch (InvocationTargetException e) {
                 throw new MappingException(e);
             } catch (ClassNotFoundException e) {
                 throw new MappingException(e);
@@ -321,69 +299,10 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
         return target;
     }
 
-    protected WsapiT getInitialWsapiObject(DomainT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchFieldException {
-        WsapiT target = null;
-        if (getWsapiClass() != null) {
-            target = wsapiObjectFactory.getInitialObject(source, getWsapiClass());
-        }
-        if (target == null) {
-            target = (WsapiT) wsapiObjectFactory.getInitialObject(source, findTargetClassFromSourceClass(source.getClass()));
-        }
-
-        if (target != null) {
-            mappedFields.put(source, target);
-        }
-
-        return target;
-    }
-
-    protected DomainT getInitialDomainObject(WsapiT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchFieldException {
-        DomainT target = null;
-
-        if (getDomainClass() != null) {
-            target = domainObjectFactory.getInitialObject(source, getDomainClass());
-        }
-        if (target == null) {
-            target = (DomainT) domainObjectFactory.getInitialObject(source, findTargetClassFromSourceClass(source.getClass()));
-        }
-
-        if (target != null) {
-            mappedFields.put(source, target);
-        }
-
-        return target;
-    }
-
-    @Override
-    public void mapDomainObject(DomainT source, WsapiT target) {
-        try {
-            if (!doNotMapTheseClasses.contains(source.getClass())) {
-                mapCommonDomainFields(source, target);
-            }
-        } catch (ClassNotFoundException e) {
-            throw new MappingException(e);
-        }
-    }
-
-    @Override
-    public void mapWsapiObject(WsapiT source, DomainT target) {
-        try {
-            if (!doNotMapTheseClasses.contains(source.getClass())) {
-                mapCommonWsapiFields(source, target);
-            }
-        } catch (ClassNotFoundException e) {
-            throw new MappingException(e);
-        } catch (NoSuchFieldException e) {
-            throw new MappingException(e);
-        } catch (IllegalAccessException e) {
-            throw new MappingException(e);
-        }
-    }
-
     /**
      * Metode for å angi en klasse som skal ignoreres ved mapping.
      *
-     * @param className    Fully qualified class name.
+     * @param className Fully qualified class name.
      */
     public void doNotMapThisClass(String className) {
         try {
@@ -395,39 +314,71 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
 
     }
 
-    protected void mapCommonDomainFields(DomainT source, WsapiT target) throws ClassNotFoundException {
+    protected void mapCommonDomainFields(Object source, Object target, TypeToken<?> targetType) throws ClassNotFoundException {
         try {
             if (source instanceof Collection) {
                 if (checkHasField(target.getClass(), "item")) {
                     Field targetField = target.getClass().getDeclaredField("item");
-                    ArrayList value = null;
-                    for (Object o : ((Collection) source)) {
-                        if (value == null) {
-                            value = new ArrayList();
-                        }
-                        value.add(mapping.d2w(o));
+                    TypeToken<?> wsapiCollectionType = targetType.resolveType(targetField.getGenericType());
+                    ParameterizedType wsapiParametrizedType = (ParameterizedType) wsapiCollectionType.getType();
+                    Type wsapiElementType = wsapiParametrizedType.getActualTypeArguments()[0];
+
+                    List<Object> value = new ArrayList<Object>();
+                    for (Object o : (Collection) source) {
+                        value.add(mapping.d2w(o, wsapiElementType));
                     }
+
                     targetField.setAccessible(true);
                     targetField.set(target, value);
                 } else if (checkHasField(target.getClass(), "liste")) {
                     Field targetField = target.getClass().getDeclaredField("liste");
-                    ArrayList value = null;
-                    for (Object o : ((Collection) source)) {
-                        if (value == null) {
-                            value = new ArrayList();
-                        }
-                        value.add(mapping.d2w(o));
+                    TypeToken<?> wsapiCollectionType = targetType.resolveType(targetField.getGenericType());
+                    ParameterizedType wsapiParametrizedType = (ParameterizedType) wsapiCollectionType.getType();
+                    Type wsapiElementType = wsapiParametrizedType.getActualTypeArguments()[0];
+
+                    List<Object> value = new ArrayList<Object>();
+                    for (Object o : (Collection) source) {
+                        value.add(mapping.d2w(o, wsapiElementType));
                     }
+
                     targetField.setAccessible(true);
                     targetField.set(target, value);
                 } else if (target instanceof Collection) {
+                    TypeToken<?> wsapiCollectionType = targetType.getSupertype((Class) Collection.class);
+                    ParameterizedType wsapiParametrizedType = (ParameterizedType) wsapiCollectionType.getType();
+                    Type wsapiElementType = wsapiParametrizedType.getActualTypeArguments()[0];
+
                     Collection sourceCollection = (Collection) source;
                     Collection targetCollection = (Collection) target;
                     for (Object next : sourceCollection) {
-                        targetCollection.add(mapping.d2w(next));
+                        targetCollection.add(mapping.d2w(next, wsapiElementType));
                     }
                 } else {
                     throw new MappingException("Assumption that there is a field 'item' or 'liste' corresponding to a Collection failed");
+                }
+            } else if (source instanceof Map) {
+                // Det skal ikke være noe arv som gjør at feltene ikke er umiddelbart tilgjengelig her
+                final Field entryField = targetType.getRawType().getDeclaredField("entry");
+                entryField.setAccessible(true);
+                List entryList = new ArrayList();
+                entryField.set(target, entryList);
+
+                ParameterizedType entryListType = (ParameterizedType) entryField.getGenericType(); // Dette er en List<?.Entry>. Vil ha tak i Class for ?.Entry
+                Class<?> entryClass = (Class) entryListType.getActualTypeArguments()[0];
+
+                Field keyField = entryClass.getDeclaredField("key");
+                keyField.setAccessible(true);
+                Field valueField = entryClass.getDeclaredField("value");
+                valueField.setAccessible(true);
+
+                Map<?, ?> sourceMap = (Map) source;
+                for (Map.Entry<?, ?> sourceEntry : sourceMap.entrySet()) {
+                    Object targetKey = mapping.d2w(sourceEntry.getKey(), keyField.getGenericType());
+                    Object targetValue = mapping.d2w(sourceEntry.getValue(), valueField.getGenericType());
+                    Object targetEntry = entryClass.newInstance();
+                    keyField.set(targetEntry, targetKey);
+                    valueField.set(targetEntry, targetValue);
+                    entryList.add(targetEntry);
                 }
             } else {
                 Collection<Method> sourceGetters = findGetters(source.getClass());
@@ -441,23 +392,14 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
 
                     if (targetSetter != null) {
                         Object source1 = sourceGetter.invoke(source);
-                        Class<?> targetType = targetSetter.getParameterTypes()[0];
+                        TypeToken<?> targetFieldType = targetType.resolveType(targetSetter.getGenericParameterTypes()[0]);
                         if (source1 != null) {
-                            Object value = mapping.d2w(source1, targetSetter.getGenericParameterTypes()[0]);
-                            if (value != null) {
-                                //Sjekk om source = Set og target = List, fordi da håndterer vi settingen spesielt
-                                if (List.class.isAssignableFrom(targetType) && value instanceof Set) {
-                                    List replaceSetWithThisList = new ArrayList((Set) value);
-                                    targetSetter.invoke(target, replaceSetWithThisList);
-                                } else {
-                                    //Dersom dette ikke er en spesialsituasjon, så prøver vi den vanlige måten, så får vi evt. en feil
-                                    targetSetter.invoke(target, value);
-                                }
-                            }
+                            Object value = mapping.d2w(source1, targetFieldType.getType());
+                            targetSetter.invoke(target, value);
                         } else {
                             //Dersom value = null, så kan vi fremdeles sette den i target.
                             //Med midre typen er primitiv, da lar vi den bare være
-                            if (!targetType.isPrimitive()) {
+                            if (!targetFieldType.getRawType().isPrimitive()) {
                                 targetSetter.invoke(target, new Object[]{null});
                             }
                         }
@@ -474,6 +416,8 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
             throw new MappingException(e);
         } catch (InvocationTargetException e) {
             throw new MappingException(e);
+        } catch (InstantiationException e) {
+            throw new MappingException(e);
         }
 
     }
@@ -484,52 +428,129 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
      * brukes videre i koden. Så dersom man ønsker å bytte ut target-property 'minProperty' med 'minAlternativeProperty',
      * så kan man gjøre det i en subklasse av DefaultTypeMapper se f.eks. {@link no.statkart.skif.mapper.RenamingDefaultTypeMapper}
      *
-     * @param sourceGetter    getter som brukes for å hente ut property fra source
-     * @param targetSetter    setter som i utgangspunktet skal brukes for å sette property på target
-     * @param targetClass     klassen som setteren skal være på
+     * @param sourceGetter getter som brukes for å hente ut property fra source
+     * @param targetSetter setter som i utgangspunktet skal brukes for å sette property på target
+     * @param targetClass  klassen som setteren skal være på
      * @return setter som benyttes videre istedenfor <code>targetSetter</code> (<code>null</code> for å fortsette å bruke <code>targetSetter</code>
      */
     protected Method overrideSetter(Method sourceGetter, Method targetSetter, Class targetClass) {
         return null;
     }
 
-    protected void mapCommonWsapiFields(WsapiT source, DomainT target) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+    protected void mapCommonWsapiFields(Object source, Object target, TypeToken<?> targetType) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
         try {
             if (checkHasField(source.getClass(), "item")) {
+                Field item = source.getClass().getDeclaredField("item");
+
                 if (target instanceof Collection) {
                     Collection targetCollection = (Collection) target;
+                    TypeToken<?> domainCollectionType = targetType.getSupertype((Class) Collection.class);
+                    ParameterizedType domainParametrizedType = (ParameterizedType) domainCollectionType.getType();
+                    Type domainElementType = domainParametrizedType.getActualTypeArguments()[0];
+                    if (domainElementType instanceof TypeVariable) {
+                        TypeVariable typeVariable = (TypeVariable) domainElementType;
+                        // Må pakke ut TypeVariable, ellers feiler mapping på det senere.
+                        domainElementType = typeVariable.getBounds()[0];
+                    }
 
-                    Field item = source.getClass().getDeclaredField("item");
                     item.setAccessible(true);
                     Object o = item.get(source);
                     if (o != null) {
                         for (Object next : ((Iterable) o)) {
-                            targetCollection.add(mapping.w2d(next));
+                            targetCollection.add(mapping.w2d(next, domainElementType));
                         }
                     }
                 } else {
                     throw new MappingException("Assumption that a List corresponds to wsapi field 'item' failed");
                 }
             } else if (checkHasField(source.getClass(), "liste")) {
+                Field item = source.getClass().getDeclaredField("liste");
+
                 if (target instanceof Collection) {
                     Collection targetCollection = (Collection) target;
+                    TypeToken<?> domainCollectionType = targetType.getSupertype((Class) Collection.class);
+                    ParameterizedType domainParametrizedType = (ParameterizedType) domainCollectionType.getType();
+                    Type domainElementType = domainParametrizedType.getActualTypeArguments()[0];
+                    if (domainElementType instanceof TypeVariable) {
+                        TypeVariable typeVariable = (TypeVariable) domainElementType;
+                        // Må pakke ut TypeVariable, ellers feiler mapping på det senere.
+                        domainElementType = typeVariable.getBounds()[0];
+                    }
 
-                    Field item = source.getClass().getDeclaredField("liste");
                     item.setAccessible(true);
                     Object o = item.get(source);
                     if (o != null) {
                         for (Object next : ((Iterable) o)) {
-                            targetCollection.add(mapping.w2d(next));
+                            targetCollection.add(mapping.w2d(next, domainElementType));
                         }
                     }
                 } else {
                     throw new MappingException("Assumption that a List corresponds to wsapi field 'liste' failed");
                 }
+            } else if (checkHasField(source.getClass(), "entry")) {
+                ParameterizedType parameterizedType = (ParameterizedType) targetType.getType();
+                Type targetKeyType = parameterizedType.getActualTypeArguments()[0];
+                Type targetValueType = parameterizedType.getActualTypeArguments()[1];
+                if (targetValueType instanceof TypeVariable) {
+                    TypeVariable typeVariable = (TypeVariable) targetValueType;
+                    // Må pakke ut TypeVariable, ellers feiler mapping på det senere.
+                    targetValueType = typeVariable.getBounds()[0];
+                }
+
+                // Det skal ikke være noe arv som gjør at feltene ikke er umiddelbart tilgjengelig her
+                Class<?> sourceClass = source.getClass();
+                final Field entryField;
+                try {
+                    entryField = sourceClass.getDeclaredField("entry");
+                } catch (NoSuchFieldException e) {
+                    throw new MappingException("Expected field entry when mapping to map");
+                }
+                entryField.setAccessible(true);
+                final ParameterizedType entryListType = (ParameterizedType) entryField.getGenericType();
+                final Class<?> entryClass = (Class<?>) entryListType.getActualTypeArguments()[0];
+
+                final Field keyField;
+                try {
+                    keyField = entryClass.getDeclaredField("key");
+                } catch (NoSuchFieldException e) {
+                    throw new MappingException("Expected field key in entry class when mapping to map");
+                }
+                keyField.setAccessible(true);
+                final Field valueField;
+                try {
+                    valueField = entryClass.getDeclaredField("value");
+                } catch (NoSuchFieldException e) {
+                    throw new MappingException("Excepted field value i entry class when mapping to map");
+                }
+                valueField.setAccessible(true);
+
+                List entryList = (List) entryField.get(source);
+                Map targetMap = (Map) target;
+                for (Object entry : entryList) {
+                    final Object key, value;
+                    if (targetKeyType != null) {
+                        key = mapping.w2d(keyField.get(entry), targetKeyType);
+                    } else {
+                        logger.warn("Vet ikke generisk type for key ved mapping fra " + sourceClass.getName());
+                        key = mapping.w2d(keyField.get(entry), Object.class);
+                    }
+                    if (targetValueType != null) {
+                        value = mapping.w2d(valueField.get(entry), targetValueType);
+                    } else {
+                        logger.warn("Vet ikke generisk type for value ved mapping fra " + sourceClass.getName());
+                        value = mapping.w2d(valueField.get(entry), Object.class);
+                    }
+                    targetMap.put(key, value);
+                }
             } else if (source instanceof Collection && target instanceof Collection) {
+                TypeToken<?> domainCollectionType = targetType.getSupertype((Class) Collection.class);
+                ParameterizedType domainParametrizedType = (ParameterizedType) domainCollectionType.getType();
+                Type domainElementType = domainParametrizedType.getActualTypeArguments()[0];
+
                 Collection sourceCollection = (Collection) source;
                 Collection targetCollection = (Collection) target;
                 for (Object next : sourceCollection) {
-                    targetCollection.add(mapping.w2d(next));
+                    targetCollection.add(mapping.w2d(next, domainElementType));
                 }
             } else {
                 Collection<Method> sourceGetters = findGetters(source.getClass());
@@ -543,23 +564,16 @@ public class DefaultTypeMapper<WsapiT, DomainT> implements AutomaticTypeMapper<W
 
                     if (targetSetter != null) {
                         Object source1 = sourceGetter.invoke(source);
-                        Class<?> targetType = targetSetter.getParameterTypes()[0];
+                        TypeToken<?> targetFieldType = targetType.resolveType(targetSetter.getGenericParameterTypes()[0]);
                         if (source1 != null) {
-                            Object value = mapping.w2d(source1, targetSetter.getGenericParameterTypes()[0]);
+                            Object value = mapping.w2d(source1, targetFieldType.getType());
                             if (value != null) {
-                                //Sjekk om source = List og target = Set, fordi da håndterer vi settingen spesielt
-                                if (Set.class.isAssignableFrom(targetType) && value instanceof List) {
-                                    Set replaceListWithThisSet = new HashSet((List) value);
-                                    targetSetter.invoke(target, replaceListWithThisSet);
-                                } else {
-                                    //Dersom dette ikke er en spesialsituasjon, så prøver vi den vanlige måten, så får vi evt. en feil
-                                    targetSetter.invoke(target, value);
-                                }
+                                targetSetter.invoke(target, value);
                             }
                         } else {
                             //Dersom value = null, så kan vi fremdeles sette den i target.
                             //Med midre typen er primitiv, da lar vi den bare være
-                            if (!targetType.isPrimitive()) {
+                            if (!targetFieldType.getRawType().isPrimitive()) {
                                 targetSetter.invoke(target, new Object[]{null});
                             }
                         }

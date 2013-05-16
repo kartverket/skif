@@ -24,20 +24,18 @@ public class KodelisteTransferTypeMapper<WsapiT extends no.statkart.skif.storete
 
     @Override
     public void mapDomainObject(DomainT source, WsapiT target) {
-        super.mapDomainObject(source, target);
         target.setKodelisteIds(map.d2w(source.getKodelisteIds(), KodelisteIdList.class));
         target.setObjects(map.d2w(source.getObjects().values(), StoreTestBubbleList.class));
     }
 
     @Override
     public void mapWsapiObject(WsapiT source, DomainT target) {
-        super.mapWsapiObject(source, target);
     }
 
     @Override
     protected DomainT getInitialDomainObject(WsapiT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        ArrayList kodelistIds = map.w2d(source.getKodelisteIds(), new ArrayList());
-        ArrayList objects = map.w2d(source.getObjects(), new ArrayList());
+        ArrayList kodelistIds = map.w2d(source.getKodelisteIds(), ArrayList.class);
+        ArrayList objects = map.w2d(source.getObjects(), ArrayList.class);
         Constructor<DomainT> constructor = getDomainClass().getConstructor(List.class, Collection[].class);
         DomainT domainT = constructor.newInstance(kodelistIds, new Collection[]{objects});
         return domainT;

@@ -7,10 +7,8 @@ import java.lang.reflect.InvocationTargetException;
  * @author Henrik Fredholm
  */
 public abstract class AbstractTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, DomainT> {
-    private ObjectFactory domainObjectFactory;
-    private ObjectFactory wsapiObjectFactory;
-    final Class<WsapiT> wsapiClass;
-    final Class<DomainT> domainClass;
+    private final Class<WsapiT> wsapiClass;
+    private final Class<DomainT> domainClass;
 
     protected AbstractTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
         this.wsapiClass = wsapiClass;
@@ -34,29 +32,8 @@ public abstract class AbstractTypeMapper<WsapiT, DomainT> implements TypeMapper<
     }
 
     @Override
-    public ObjectFactory getWsapiObjectFactory() {
-        return wsapiObjectFactory;
-    }
-
-    @Override
-    public void setWsapiObjectFactory(ObjectFactory factory) {
-        this.wsapiObjectFactory = factory;
-    }
-
-
-    @Override
-    public ObjectFactory getDomainObjectFactory() {
-        return domainObjectFactory;
-    }
-
-    @Override
-    public void setDomainObjectFactory(ObjectFactory factory) {
-        this.domainObjectFactory = factory;
-    }
-
-    @Override
     public final WsapiT mapDomainObject(DomainT source) {
-        WsapiT target = null;
+        WsapiT target;
         try {
             target = getInitialWsapiObject(source);
         } catch (InstantiationException e) {
@@ -75,7 +52,7 @@ public abstract class AbstractTypeMapper<WsapiT, DomainT> implements TypeMapper<
 
     @Override
     public final DomainT mapWsapiObject(WsapiT source) {
-        DomainT target = null;
+        DomainT target;
         try {
             target = getInitialDomainObject(source);
         } catch (InstantiationException e) {
@@ -92,24 +69,16 @@ public abstract class AbstractTypeMapper<WsapiT, DomainT> implements TypeMapper<
     }
 
     protected WsapiT getInitialWsapiObject(DomainT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        WsapiT target = wsapiObjectFactory.getInitialObject(source, getWsapiClass());
-        return target;
+        return wsapiClass.newInstance();
     }
 
     protected DomainT getInitialDomainObject(WsapiT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return domainObjectFactory.getInitialObject(source, getDomainClass());
+        return domainClass.newInstance();
     }
 
-    @Override
-    public void mapDomainObject(DomainT source, WsapiT target) {
-        // Dette er roten. Alle mappinger bør komme igjennom her
+    public abstract void mapDomainObject(DomainT source, WsapiT target);
 
-    }
-
-    @Override
-    public void mapWsapiObject(WsapiT source, DomainT target) {
-        // Dette er roten. Alle mappinger bør komme igjennom her
-    }
+    public abstract void mapWsapiObject(WsapiT source, DomainT target);
 
     /**
      * @return debug streng på formen <TypeMapperklasse>{<domeneklasse> <-> <apiklasse>}

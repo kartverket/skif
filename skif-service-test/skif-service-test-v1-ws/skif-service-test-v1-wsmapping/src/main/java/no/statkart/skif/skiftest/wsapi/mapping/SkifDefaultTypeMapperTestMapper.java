@@ -10,17 +10,7 @@ public class SkifDefaultTypeMapperTestMapper extends AbstractMapper {
     Class<? extends Mapping> mappingClass;
 
    public SkifDefaultTypeMapperTestMapper() {
-        this(SkifTestMapping.class, new DefaultObjectFactory(), new DefaultObjectFactory());
-    }
-
-    public SkifDefaultTypeMapperTestMapper(Class<? extends Mapping> mappingClass) {
-         this(mappingClass, new DefaultObjectFactory(), new DefaultObjectFactory());
-     }
-
-
-    @SuppressWarnings("unchecked")
-    public SkifDefaultTypeMapperTestMapper(Class<? extends Mapping> mappingClass, ObjectFactory wsapiObjectFactory, ObjectFactory domainObjectFactory) {
-        super(mappingClass , wsapiObjectFactory, domainObjectFactory, false);
+        super(SkifTestMapping.class);
 
         DefaultTypeMapper dtm = new DefaultTypeMapper();
         dtm.addPackageMapping("no.statkart.skif.skiftest.wsapi.domain","no.statkart.skif.skiftest.domain");

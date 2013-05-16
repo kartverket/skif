@@ -31,13 +31,10 @@ public class DateTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, Dat
 
     @Override
     public void mapDomainObject(Date source, XMLGregorianCalendar target) {
-        super.mapDomainObject(source, target);
-
     }
 
     @Override
     public void mapWsapiObject(XMLGregorianCalendar source, Date target) {
-        super.mapWsapiObject(source, target);
     }
 
     // Gir en kalender som er gregoriansk hele veien, uten noe skifte til juliansk

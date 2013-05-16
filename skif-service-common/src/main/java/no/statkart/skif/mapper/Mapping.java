@@ -18,24 +18,11 @@ import java.util.Collection;
  * </ul>
  * @author Henrik Fredholm
  */
-public interface Mapping extends BaseMapping {
-
-    public <T> T d2w(Object source, T target);
-    public <T> T w2d(Object source, T target);
-
+public interface Mapping {
     public <T> T d2w(Object source, Class<T> targetClass);
     public <T> T w2d(Object source, Class<T> targetClass);
     public Object d2w(Object source, Type targetClass);
     public Object w2d(Object source, Type targetClass);
-    public <T> T w2d(Object source, Class<T> targetClass, MapperInfo mapperInfo);
-
-    public <T> T d2w(Object source);
-    public <T> T w2d(Object source);
-
-    public Object[] d2w(Object[] source, Class<?>[] webServiceParameterTypes);
-    public Object[] w2d(Object[] source, Class<?>[] domainServiceParameterTypes);
-    public Object[] d2w(Object[] source, Type[] webServiceParameterTypes);
-    public Object[] w2d(Object[] source, Type[] domainServiceParameterTypes);
 
     public String d2w(String source);
     public String w2d(String source);

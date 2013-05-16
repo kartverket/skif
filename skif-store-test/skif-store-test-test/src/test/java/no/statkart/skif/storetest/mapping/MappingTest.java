@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.mapping;
 
 import no.statkart.skif.ServiceMode;
+import no.statkart.skif.mapper.AbstractMapper;
 import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
@@ -17,6 +18,7 @@ import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Set;
 
 import static org.testng.Assert.assertTrue;
 
@@ -81,7 +83,7 @@ public class MappingTest extends AutomagicTest {
 
 
     public void testDefaultTypeMapper(){
-                int abstrakte = 0;
+        int abstrakte = 0;
         int lister = 0;
         int hardkodet = 0;
         int feilet = 0;
@@ -108,8 +110,8 @@ public class MappingTest extends AutomagicTest {
 
                     Assert.assertNotNull(o2, "mockup var null");
                     Object o3;
-                    Object oTemp = mapping.w2d(o2);
-                    o3 = mapping.d2w(oTemp);
+                    Object oTemp = mapping.w2d(o2, Object.class);
+                    o3 = mapping.d2w(oTemp, Object.class);
                     ReflectionAssert.assertReflectionEquals(o3.getClass().getSimpleName() + " var ikke like", o2, o3, ReflectionComparatorMode.LENIENT_ORDER);
                 }
             } catch (Throwable e) {

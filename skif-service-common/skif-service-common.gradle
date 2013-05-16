@@ -9,6 +9,7 @@ dependencies {
     compile libraries.slf4j_api
     compile libraries.jsr305
     compile libraries.guice_for_client
+    compile libraries.guava
     provided libraries.jaxws_rt
 
     testCompile libraries.reflections
@@ -48,6 +49,7 @@ task assertDependencies() {
                     'org.slf4j',
                     'com.google.code.findbugs:jsr305',
                     'com.google.inject:guice',
+                    'com.google.guava:guava',
                     'com.google.inject.extensions:guice-',
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
 

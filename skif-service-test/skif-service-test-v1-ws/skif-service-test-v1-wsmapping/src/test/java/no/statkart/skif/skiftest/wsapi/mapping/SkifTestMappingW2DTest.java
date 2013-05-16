@@ -6,7 +6,6 @@ import no.statkart.skif.skiftest.domain.B;
 import no.statkart.skif.skiftest.wsapi.domain.AList;
 import org.testng.annotations.Test;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
@@ -18,7 +17,7 @@ import static org.testng.Assert.assertNotNull;
  */
 @Test
 public class SkifTestMappingW2DTest {
-    SkifTestMapper mapper = new SkifTestMapper();
+    SkifTestMapper<?> mapper = new SkifTestMapper();
     SkifTestMapping map = mapper.getMapping();
 
     public void testMapString() {
@@ -61,7 +60,7 @@ public class SkifTestMappingW2DTest {
 
     public void testMapAList() {
         AList source = new AList();
-        Set<A> target = new HashSet<A>();
+        Set<A> target;
 
         no.statkart.skif.skiftest.wsapi.domain.A a1 = new no.statkart.skif.skiftest.wsapi.domain.A();
         a1.setText("a1");
@@ -69,7 +68,8 @@ public class SkifTestMappingW2DTest {
         a2.setText("a2");
         source.getItem().add(a1);
         source.getItem().add(a2);
-        target = map.w2d(source, target);
+        //noinspection unchecked
+        target = map.w2d(source, Set.class);
         assertEquals(target.size(), 2);
         assertEquals(target.iterator().next().getClass(), no.statkart.skif.skiftest.domain.A.class);
     }

@@ -3,8 +3,9 @@ package no.statkart.skif.storetest.wsapi.mapping;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
+
+import java.util.List;
 
 /**
  * TypeMapper for Kodeliste i StoreTest applikasjonen.
@@ -45,7 +46,7 @@ public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi
         target.setKodeIdClass(calcDomainKodeIdClass(source.getKodeIdClass()));
         target.setNavn(map.w2d(source.getNavn()));
         target.setBeskrivelse(map.w2d(source.getBeskrivelse()));
-        map.w2d(source.getKodeIds(), target.getKodeIds());
+        target.setKodeIds(map.w2d(source.getKodeIds(), List.class));
     }
 
     private String calcWsapiKodeIdClassname(Class<? extends KodeId<?>> domainKodeIdClass) {

@@ -20,9 +20,12 @@ public class StoreTestBubbleIdTypeMapper<WsapiT extends no.statkart.skif.storete
 
     @Override
     public void mapDomainObject(DomainT source, WsapiT target) {
-        super.mapDomainObject(source, target);
         target.setValue(map.d2w(source.getStringValue()));
         target.setSnapshotVersion(map.d2w(source.getSnapshotVersion()));
+    }
+
+    @Override
+    public void mapWsapiObject(WsapiT source, DomainT target) {
     }
 
     @Override

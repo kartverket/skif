@@ -22,15 +22,15 @@ public class SkifTestExceptionMapper2 extends AbstractSkifTestExceptionMapper2 {
     }
 
     @Override
-    public <T extends Throwable, S extends Throwable> T d2w(S source) {
+    public Throwable d2w(Throwable source) {
         if (source instanceof no.statkart.skif.skiftest.exception.SimpleException) {
             //noinspection unchecked,ThrowableResultOfMethodCallIgnored
-            return (T) buildExternalSimpleException((no.statkart.skif.skiftest.exception.SimpleException) source);
+            return buildExternalSimpleException((no.statkart.skif.skiftest.exception.SimpleException) source);
         }
         if (source instanceof Error) {
-            return (T) source;
+            return source;
         } else if (source instanceof RuntimeException) {
-            return (T)source;
+            return source;
         }
 
         //feilmelding på kjent format (benyttes i tester)
@@ -45,10 +45,10 @@ public class SkifTestExceptionMapper2 extends AbstractSkifTestExceptionMapper2 {
 
 
     @Override
-    public <S extends Throwable, T extends Throwable> T w2d(S source) {
+    public Throwable w2d(Throwable source) {
         if (source instanceof SimpleException) {
             //noinspection ThrowableResultOfMethodCallIgnored,unchecked
-            return (T) buildInternalSimpleException((SimpleException) source);
+            return buildInternalSimpleException((SimpleException) source);
         }
 
         //feilmelding på kjent format (benyttes i tester)
