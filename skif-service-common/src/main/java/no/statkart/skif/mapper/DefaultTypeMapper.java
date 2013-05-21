@@ -384,13 +384,15 @@ public class DefaultTypeMapper {
 
                 Field keyField = entryClass.getDeclaredField("key");
                 keyField.setAccessible(true);
+                Type keyType = keyField.getGenericType();
                 Field valueField = entryClass.getDeclaredField("value");
                 valueField.setAccessible(true);
+                Type valueType = valueField.getGenericType();
 
                 Map<?, ?> sourceMap = (Map) source;
                 for (Map.Entry<?, ?> sourceEntry : sourceMap.entrySet()) {
-                    Object targetKey = mapping.d2w(sourceEntry.getKey(), keyField.getGenericType());
-                    Object targetValue = mapping.d2w(sourceEntry.getValue(), valueField.getGenericType());
+                    Object targetKey = mapping.d2w(sourceEntry.getKey(), keyType);
+                    Object targetValue = mapping.d2w(sourceEntry.getValue(), valueType);
                     Object targetEntry = entryClass.newInstance();
                     keyField.set(targetEntry, targetKey);
                     valueField.set(targetEntry, targetValue);
