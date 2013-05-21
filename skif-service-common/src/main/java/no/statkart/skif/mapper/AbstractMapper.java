@@ -14,6 +14,7 @@ import java.util.*;
 
 /**
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  */
 public abstract class AbstractMapper<M extends Mapping> implements InvocationHandler {
 //    private static Logger logger = LoggerFactory.getLogger(AbstractMapper.class);
