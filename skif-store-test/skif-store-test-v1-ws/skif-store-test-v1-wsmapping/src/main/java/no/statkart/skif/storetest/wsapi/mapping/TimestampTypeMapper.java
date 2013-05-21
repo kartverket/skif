@@ -14,19 +14,17 @@ public class TimestampTypeMapper extends AbstractStoreTestTypeMapper<no.statkart
     }
 
     @Override
-    public void mapDomainObject(Timestamp source, no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp target) {
-        target.setTime(map.d2w(source.getTime()));
-        target.setNanos(map.d2w(source.getNanos()));
+    public no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp mapDomainObject(Timestamp source) {
+        no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp target = createWsapiT();
+        target.setTime(getMapping().d2w(source.getTime()));
+        target.setNanos(getMapping().d2w(source.getNanos()));
+        return target;
     }
 
     @Override
-    public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp source, Timestamp target) {
-    }
-
-    @Override
-    protected Timestamp getInitialDomainObject(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Timestamp timestamp = new Timestamp(map.w2d(source.getTime()));
-        timestamp.setNanos(map.w2d(source.getNanos()));
+    public Timestamp mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp source) {
+        Timestamp timestamp = new Timestamp(getMapping().w2d(source.getTime()));
+        timestamp.setNanos(getMapping().w2d(source.getNanos()));
         return timestamp;
     }
 }

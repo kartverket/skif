@@ -4,42 +4,27 @@ import java.lang.reflect.InvocationTargetException;
 
 
 /**
+ * Slipper exception av angitt type uendret igjennom.
+ *
+ * @param <T> exception type som skal slippes tvert igjennom
  *
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  * @since 2.0
  */
-public class IdentityExceptionTypeMapper<T extends Throwable> extends AbstractTypeMapper<T, T> {
-    private Mapping mapping;
-
-    public Mapping getMapping() {
-        return mapping;
-    }
-
-    public void setMapping(Mapping mapping) {
-        this.mapping = mapping;
-    }
+public class IdentityExceptionTypeMapper<T extends Throwable> extends AbstractTypeMapper<T, T, Mapping> {
 
     public IdentityExceptionTypeMapper(Class<T> exceptionClass) {
-        super(exceptionClass, exceptionClass);
+        super(exceptionClass, exceptionClass, Mapping.class);
     }
 
     @Override
-    protected T getInitialDomainObject(T source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public T mapDomainObject(T source) {
         return source;
     }
 
     @Override
-    protected T getInitialWsapiObject(T source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public T mapWsapiObject(T source) {
         return source;
-    }
-
-    @Override
-    public void mapDomainObject(T source, T target) {
-        // Ingenting å gjøre siden target == source
-    }
-
-    @Override
-    public void mapWsapiObject(T source, T target) {
-        // Ingenting å gjøre siden target == source
     }
 }

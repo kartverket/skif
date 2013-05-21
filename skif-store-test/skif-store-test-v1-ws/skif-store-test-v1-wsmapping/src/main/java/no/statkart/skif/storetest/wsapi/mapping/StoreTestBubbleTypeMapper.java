@@ -13,14 +13,18 @@ public class StoreTestBubbleTypeMapper<WsapiT extends no.statkart.skif.storetest
     }
 
     @Override
-    public void mapDomainObject(DomainT source, WsapiT target) {
-        target.setId(map.d2w((StoreTestBubbleId) source.getId()));
-        target.setVersion(map.d2w(source.getVersion()));
+    public WsapiT mapDomainObject(DomainT source) {
+        WsapiT target = createWsapiT();
+        target.setId(getMapping().d2w((StoreTestBubbleId) source.getId()));
+        target.setVersion(getMapping().d2w(source.getVersion()));
+        return target;
     }
 
     @Override
-    public void mapWsapiObject(WsapiT source, DomainT target) {
-        target.setId(map.w2d(source.getId()));
-        target.setVersion(map.w2d(source.getVersion()));
+    public DomainT mapWsapiObject(WsapiT source) {
+        DomainT target = createDomainT();
+        target.setId(getMapping().w2d(source.getId()));
+        target.setVersion(getMapping().w2d(source.getVersion()));
+        return target;
     }
 }

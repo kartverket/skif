@@ -9,15 +9,13 @@ import java.util.*;
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  */
-public class  WsapiListTypeMapper<WsapiT, WsapiE, DomainT extends Collection, DomainE> extends AbstractTypeMapper<WsapiT, DomainT> {
+public class WsapiListTypeMapper<WsapiT, WsapiE, DomainT extends Collection, DomainE> extends AbstractTypeMapper<WsapiT, DomainT, Mapping> {
     private final Class<WsapiE> wsapiElementClass;
     private final Class<DomainE> domainElementClass;
     protected final Method getItemsMethod;
 
-    protected Mapping map;
-
     public WsapiListTypeMapper(Class<WsapiT> wsapiClass, Class<WsapiE> wsapiElementClass, Class<DomainT> domainClass, Class<DomainE> domainElementClass) {
-        super(wsapiClass, domainClass);
+        super(wsapiClass, domainClass, Mapping.class);
         this.wsapiElementClass = wsapiElementClass;
         this.domainElementClass = domainElementClass;
         try {
@@ -27,22 +25,15 @@ public class  WsapiListTypeMapper<WsapiT, WsapiE, DomainT extends Collection, Do
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Mapping getMapping() {
-        return map;
-    }
-
-    @Override
-    public void setMapping(Mapping mapping) {
-        map = mapping;
-    }
-
-    @Override
-    public void mapDomainObject(DomainT source, WsapiT target) {
+    public WsapiT mapDomainObject(DomainT source) {
+        WsapiT target = createWsapiT();
         List targetList=getList(target);
         for (Object sourceElement : source) {
-            targetList.add(map.d2w(sourceElement, wsapiElementClass));
+            targetList.add(getMapping().d2w(sourceElement, wsapiElementClass));
         }
+        return target;
     }
 
     private List getList(WsapiT target) {
@@ -56,24 +47,25 @@ public class  WsapiListTypeMapper<WsapiT, WsapiE, DomainT extends Collection, Do
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void mapWsapiObject(WsapiT source, DomainT target) {
+    public DomainT mapWsapiObject(WsapiT source) {
+        DomainT target = createDomainT();
         List sourceList=getList(source);
-        target.clear();
         for (Object sourceElement : sourceList) {
-            target.add(map.w2d(sourceElement, domainElementClass));
+            target.add(getMapping().w2d(sourceElement, domainElementClass));
         }
+        return target;
     }
 
-    @Override
-    protected DomainT getInitialDomainObject(WsapiT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    protected DomainT createDomainT() {
         Class<DomainT> domainClass = getDomainClass();
         if (Set.class.isAssignableFrom(domainClass)) {
             return domainClass.cast(new HashSet());
         } else if (List.class.isAssignableFrom(domainClass)) {
             return domainClass.cast(new ArrayList());
         } else {
-            return super.getInitialDomainObject(source);
+            return super.createDomainT();
         }
     }
 }
