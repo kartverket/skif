@@ -60,14 +60,22 @@ public class TestdataServiceImpl implements TestdataService {
     @Override
     public void saveAll(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers) {
         // Sjekk om testsettet allerede er skrevet til databasen ved å sjekke på om første id i transfer finnes
-        MockupTransfer firstTransfer = snapshotTransfers.values().iterator().next();
-        if (testsetExists(firstTransfer)) {
+        SnapshotVersion firstSnapshot = snapshotTransfers.firstKey();
+        MockupTransfer firstTransfer = snapshotTransfers.get(firstSnapshot);
+        if (testsetExists(firstSnapshot, firstTransfer)) {
             if (!firstTransfer.getTestNumber().isNR_0()) {
                 throw new ImplementationException("Testset already exists in database: " + firstTransfer.getTestNumber());
             }
         } else {
-            for (Map.Entry<SnapshotVersion, MockupTransfer> entry : snapshotTransfers.entrySet()) {
-                testdataService.saveSnapshotTransfer(entry.getKey(), entry.getValue());
+            try {
+                for (Map.Entry<SnapshotVersion, MockupTransfer> entry : snapshotTransfers.entrySet()) {
+                    testdataService.saveSnapshotTransfer(entry.getKey(), entry.getValue());
+                }
+            } catch (RuntimeException e) {
+                if (firstTransfer.getTestNumber().isNR_0()) {
+                    logger.error("Failed to write comlete read set! Other tests will fail until database is recreated!");
+                }
+                throw e;
             }
         }
     }
@@ -75,15 +83,12 @@ public class TestdataServiceImpl implements TestdataService {
     /**
      * Sjekker om testset allerede finnes i databasen ved å sjekk om første id i transfer
      * finnes i databasen.
-     *
-     * TODO: Burde bruke VersionFinder i stedet da første objekt i transfer kan være historisk slettet.
-     *
      */
-    private boolean testsetExists(MockupTransfer transfer) {
+    private boolean testsetExists(SnapshotVersion snapshot, MockupTransfer transfer) {
         BubbleObject bubbleObject = transfer.getInsertedObjects().iterator().next();
         boolean funnet;
         try {
-            store.get(bubbleObject.getBubbleId());
+            store.get(bubbleObject.getBubbleId().asSnapshotVersion(snapshot));
             funnet = true;
         } catch (ObjectNotFoundException e) {
             funnet = false;
@@ -96,8 +101,8 @@ public class TestdataServiceImpl implements TestdataService {
         setTransactionSnapshot(snapshotVersion);
         try {
             store.beginUnitOfWork();
-            store.lock(BubbleIds.asIds(transfer.getUpdatedObjects()));
-            store.lock(BubbleIds.asIds(transfer.getDeletedObjects()));
+            store.lock(BubbleIds.asBaseIds(transfer.getUpdatedObjects()));
+            store.lock(BubbleIds.asBaseIds(transfer.getDeletedObjects()));
             store.registerTransfer(transfer);
             store.commitUnitOfWork();
         } catch (RuntimeException e) {

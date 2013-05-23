@@ -38,7 +38,7 @@ public class MockupTest extends StoreTest2TestCase {
     }
 
     public void writeSet() {
-        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
 
         Eier eier = storeService.getObject(mockupFacade.getEierMockupFactory().getEier1Id());
 

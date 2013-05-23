@@ -66,4 +66,20 @@ public class BubbleIds {
         }
         return ids;
     }
+
+    public static List<BubbleId<?>> asBaseIds(Collection<? extends BubbleObject> bubbleObjects) {
+        List<BubbleId<?>> ids = new ArrayList<BubbleId<?>>(bubbleObjects.size());
+        for (BubbleObject bubbleObject : bubbleObjects) {
+            BubbleId<?> id = bubbleObject.getId();
+            // TODO: BubbleId eller AbstractBubbleId burde hatt en asBase-metode
+            if (id instanceof AbstractBubbleId) {
+                AbstractBubbleId bubbleId = (AbstractBubbleId) id;
+                Class<? extends BubbleId> baseIdType = bubbleId.getBaseIdType();
+                ids.add(BubbleIds.createInstance(baseIdType, bubbleId.getValue(), bubbleId.getSnapshotVersion()));
+            } else {
+                ids.add(id);
+            }
+        }
+        return ids;
+    }
 }
