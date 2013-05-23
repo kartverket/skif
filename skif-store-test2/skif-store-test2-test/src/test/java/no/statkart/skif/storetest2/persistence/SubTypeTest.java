@@ -1,16 +1,16 @@
-package no.statkart.skif.storetest.persistence;
+package no.statkart.skif.storetest2.persistence;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.service.RunOnServerMethod;
+import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
-import no.statkart.skif.storetest.mockup.MockupFacade;
-import no.statkart.skif.storetest.mockup.MockupFacadeFactory;
-import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
+import no.statkart.skif.storetest2.domain.subtype.*;
+import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacade;
+import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacadeFactory;
+import no.statkart.skif.storetest2.util.testsupport.StoreTest2TestCase;
 import no.statkart.skif.util.JDBCHelper;
 import org.junit.Assert;
 import org.testng.annotations.Test;
@@ -26,12 +26,12 @@ import java.sql.Statement;
  * @author Tor Egil R. Strand
  */
 @Test(groups = "singlevm-required")
-public class SubTypeTest extends StoreTestMixedTestCase {
+public class SubTypeTest extends StoreTest2TestCase {
     @Inject
-    private MockupFacadeFactory mockupFacadeFactory;
+    private StoreTest2MockupFacadeFactory mockupFacadeFactory;
 
     @Inject
-    private Store store;
+    private RunOnServerWithTxRequiresNewService server;
 
     public void likhet() {
         SubTypedBubbleId<?> subTypedBubbleId = new SubTypedBubbleId(1L);
@@ -44,17 +44,21 @@ public class SubTypeTest extends StoreTestMixedTestCase {
     }
 
     public void enkelLesetest() {
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        final StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+
+        server.run(new RunOnServerMethod() {
             @Inject
             private Store store;
 
             @Override
             public Object run() {
-                SubTypedBubbleId<?> idCurrent = new SubTypedBubbleId(3000L, SnapshotVersion.CURRENT);
+                Long idValue = mockupFacade.getSubTypedBubbleMockupFactory().getDifferentHistoricSubtypesId().getValue();
+
+                SubTypedBubbleId<?> idCurrent = new SubTypedBubbleId(idValue, SnapshotVersion.CURRENT);
                 SubTypedBubble current = store.get(idCurrent);
                 Assert.assertTrue("Ikke SubTypeWithCollection", current instanceof SubTypeWithCollection);
 
-                SubTypedBubbleId<?> idPast = new SubTypedBubbleId(3000L, SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
+                SubTypedBubbleId<?> idPast = new SubTypedBubbleId(idValue, SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
                 SubTypedBubble past = store.get(idPast);
                 Assert.assertTrue("Ikke SubTypeWithPrimitive", past instanceof SubTypeWithPrimitive);
 
@@ -64,17 +68,19 @@ public class SubTypeTest extends StoreTestMixedTestCase {
     }
 
     public void asSnapshotVersion() {
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        final StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+
+        server.run(new RunOnServerMethod() {
             @Inject
             private Store store;
 
             @Override
             public Object run() {
-                SubTypeWithCollectionId<?> idCurrent = new SubTypeWithCollectionId(3000L, SnapshotVersion.CURRENT);
+                SubTypeWithCollectionId<?> idCurrent = mockupFacade.getSubTypedBubbleMockupFactory().getDifferentHistoricSubtypesId();
                 SubTypedBubble current = store.get(idCurrent);
                 Assert.assertTrue("Ikke SubTypeWithCollection", current instanceof SubTypeWithCollection);
 
-                SubTypedBubbleId<?> idPast = (SubTypedBubbleId<?>) idCurrent.asSnapshotVersion(SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
+                SubTypedBubbleId<?> idPast = (SubTypedBubbleId) idCurrent.asSnapshotVersion(SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
                 SubTypedBubble past = store.get(idPast);
                 Assert.assertTrue("Ikke SubTypeWithPrimitive", past instanceof SubTypeWithPrimitive);
 
@@ -84,12 +90,12 @@ public class SubTypeTest extends StoreTestMixedTestCase {
     }
 
     public void insertPlusUpdateWithTypeChange() {
-        MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         IdService idService = mockupFacade.getStore().getInstance(IdService.class);
 
         final long idValue = (Long) idService.getNextIdValue(SubTypeWithPrimitiveId.class);
 
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        server.run(new RunOnServerMethod() {
             @Inject
             private Store store;
 
@@ -107,7 +113,7 @@ public class SubTypeTest extends StoreTestMixedTestCase {
             }
         });
 
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        server.run(new RunOnServerMethod() {
             @Inject
             private Store store;
 
@@ -127,7 +133,7 @@ public class SubTypeTest extends StoreTestMixedTestCase {
             }
         });
 
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        server.run(new RunOnServerMethod() {
             @Inject
             private Store store;
 
@@ -162,80 +168,80 @@ public class SubTypeTest extends StoreTestMixedTestCase {
     }
 
     public void insertPlusUpdateWithTypeChange2() {
-        MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
-            IdService idService = mockupFacade.getStore().getInstance(IdService.class);
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        IdService idService = mockupFacade.getStore().getInstance(IdService.class);
 
-            final long idValue = (Long) idService.getNextIdValue(SubTypeWithPrimitiveId.class);
+        final long idValue = (Long) idService.getNextIdValue(SubTypeWithPrimitiveId.class);
 
-            server.runInTxRequiresNew(new RunOnServerMethod() {
-                @Inject
-                private Store store;
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private Store store;
 
-                @Override
-                public Object run() {
-                    SubTypeWithCollectionId<?> id = new SubTypeWithCollectionId(idValue);
+            @Override
+            public Object run() {
+                SubTypeWithCollectionId<?> id = new SubTypeWithCollectionId(idValue);
 
-                    SubTypeWithCollection subTypeWithCollection = new SubTypeWithCollection();
-                    subTypeWithCollection.setId(id);
-                    subTypeWithCollection.getaEnumKoderIds().add(AEnumKodeId.IkkeOppgittId);
-                    subTypeWithCollection.setText("Inserted");
-                    store.insert(subTypeWithCollection);
+                SubTypeWithCollection subTypeWithCollection = new SubTypeWithCollection();
+                subTypeWithCollection.setId(id);
+                subTypeWithCollection.getTekster().add("Hoppsann");
+                subTypeWithCollection.setText("Inserted");
+                store.insert(subTypeWithCollection);
 
-                    return null;
+                return null;
+            }
+        });
+
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private Store store;
+
+            @Override
+            public Object run() {
+                SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId(idValue);
+                SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(idValue);
+
+                store.lock(withCollectionId);
+
+                SubTypeWithPrimitive subTypeWithPrimitive = new SubTypeWithPrimitive();
+                subTypeWithPrimitive.setId(withPrimitiveId);
+                subTypeWithPrimitive.setText("Updated");
+                subTypeWithPrimitive.setNum(8);
+                store.update(subTypeWithPrimitive);
+
+                return null;
+            }
+        });
+
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private Store store;
+
+            @Inject
+            private Provider<Connection> connectionProvider;
+
+            @Override
+            public Object run() {
+                SubTypedBubbleId<?> id = new SubTypedBubbleId<SubTypedBubble>(idValue);
+
+                SubTypedBubble subTypedBubble = store.get(id);
+                Assert.assertTrue("Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass(), subTypedBubble instanceof SubTypeWithPrimitive);
+
+                Connection connection = connectionProvider.get();
+                Statement statement = null;
+                ResultSet resultSet = null;
+                try {
+                    statement = connection.createStatement();
+                    resultSet = statement.executeQuery("select * from TekstForSubtype where subtypedid=" + idValue);
+
+                    Assert.assertFalse("Fant rader", resultSet.next());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    JDBCHelper.close(resultSet, statement);
                 }
-            });
 
-            server.runInTxRequiresNew(new RunOnServerMethod() {
-                @Inject
-                private Store store;
-
-                @Override
-                public Object run() {
-                    SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId(idValue);
-                    SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(idValue);
-
-                    store.lock(withCollectionId);
-
-                    SubTypeWithPrimitive subTypeWithPrimitive = new SubTypeWithPrimitive();
-                    subTypeWithPrimitive.setId(withPrimitiveId);
-                    subTypeWithPrimitive.setText("Updated");
-                    subTypeWithPrimitive.setNum(8);
-                    store.update(subTypeWithPrimitive);
-
-                    return null;
-                }
-            });
-
-            server.runInTxRequiresNew(new RunOnServerMethod() {
-                @Inject
-                private Store store;
-
-                @Inject
-                private Provider<Connection> connectionProvider;
-
-                @Override
-                public Object run() {
-                    SubTypedBubbleId<?> id = new SubTypedBubbleId<SubTypedBubble>(idValue);
-
-                    SubTypedBubble subTypedBubble = store.get(id);
-                    Assert.assertTrue("Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass(), subTypedBubble instanceof SubTypeWithPrimitive);
-
-                    Connection connection = connectionProvider.get();
-                    Statement statement = null;
-                    ResultSet resultSet = null;
-                    try {
-                        statement = connection.createStatement();
-                        resultSet = statement.executeQuery("select * from AKodeForSubtype where subtypedid=" + idValue);
-
-                        Assert.assertFalse("Fant rader", resultSet.next());
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    } finally {
-                        JDBCHelper.close(resultSet, statement);
-                    }
-
-                    return null;
-                }
-            });
-        }
+                return null;
+            }
+        });
+    }
 }

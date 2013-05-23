@@ -53,6 +53,7 @@ import no.statkart.skif.storetest2.domain.entitycomponent.BubbleWithEntityCompon
 import no.statkart.skif.storetest2.domain.kodeliste.StoreTest2KodelisteLong;
 import no.statkart.skif.storetest2.domain.list.ListOfEntityComponents;
 import no.statkart.skif.storetest2.domain.multikobling.Multirefererende;
+import no.statkart.skif.storetest2.domain.subtype.SubTypedBubble;
 import no.statkart.skif.storetest2.endringslogg.EndringManager;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
@@ -184,6 +185,7 @@ public class StoreTest2ServerModule extends SkifModule {
                 .addResource(ListOfEntityComponents.class)
                 .addResource(BubbleWithEntityComponents.class)
                 .addResource(Multirefererende.class)
+                .addResource(SubTypedBubble.class)
                 ;
 
 

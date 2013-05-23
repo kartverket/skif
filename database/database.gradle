@@ -1,9 +1,9 @@
+import java.sql.ResultSet
+
 apply plugin: 'sktools-dbtools-plugin'
 
-
-
 // properties for substituering
-def filterProperties  = [
+def filterProperties = [
         db_username: db_username,
         db_schema: db_username,
 ]
@@ -32,7 +32,7 @@ configureDatabasePlugin {
      * Toolset for SYSTEM-bruker
      */
     toolset(name: 'sa', type: 'oracle', prefix: 'sa') {
-        sqlTask('grant', sqlFile: 'src/main/sql/oracle/schema/GrantRole.sql', description:'Denne må kjøres en gang før du får tilstrekkelige privilegier til å kjøre dbInit')
+        sqlTask('grant', sqlFile: 'src/main/sql/oracle/schema/GrantRole.sql', description: 'Denne må kjøres en gang før du får tilstrekkelige privilegier til å kjøre dbInit')
 
         properties = filterProperties
 
@@ -49,7 +49,7 @@ configureDatabasePlugin {
 
         //hjelpefunksjon for eksekveringsrekkefølge dersom task blir kjørt
         def dependsOnIfExecuted = { def task, def dependent ->
-            gradle.taskGraph.whenReady { if (gradle.taskGraph.hasTask(dependent)) task.dependsOn(dependent)  }
+            gradle.taskGraph.whenReady { if (gradle.taskGraph.hasTask(dependent)) task.dependsOn(dependent) }
             return task
         }
 
@@ -58,7 +58,7 @@ configureDatabasePlugin {
 
         //tasker for historikk mekanikk
         sqlTask('updatePackageSnapshotTime', sqlFile: 'src/main/sql/oracle/historikk/UpdatePackageSnapshotTime.sql') {
-            dependsOn sqlTask('createSnapshotTrans', sqlFile: 'src/main/sql/oracle/historikk/CreateTemporaryTableSnapshotTrans.sql', failOnError:false) //feiler ikke dersom tabell allerede finnes fra før
+            dependsOn sqlTask('createSnapshotTrans', sqlFile: 'src/main/sql/oracle/historikk/CreateTemporaryTableSnapshotTrans.sql', failOnError: false) //feiler ikke dersom tabell allerede finnes fra før
         }
 
 
@@ -86,11 +86,118 @@ task dbInit {
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchemaTest2'])
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['tableSequence'])
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['loadTestdata'])
+    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: 'applyHistorikk')
 
 }
 
+task applyHistorikk {
+    def tables = ['SubTypedBubble', 'TekstForSubtype']
 
-apply from: 'genHistorikkTemplateTask.gradle'
-genHistorikkTemplate.config.oracleConvention = project.convention.plugins['db'].dbToolSets[''] //credentials til bruker med les tilgang til alle schema
-//GBOK-14: mulighet for ignorering av spesifike felt for tabeller
-genHistorikkTemplate.config.ignoredColumnNames = []
+    doLast {
+        groovy.sql.Sql sql = groovy.sql.Sql.newInstance("jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}", db_username, db_password, 'oracle.jdbc.OracleDriver')
+
+        println("connected to database: ${sql.connection.metaData.URL} [${sql.connection.metaData.userName}]")
+
+        def findColumnNames = { String schema, String tableName ->
+            def ret = []
+            def resultSet = sql.properties.connection.metaData.getColumns(null, schema, tableName.toUpperCase(), null)
+            while (resultSet.next()) {
+                ret.add(resultSet.getString('COLUMN_NAME'))
+            }
+            resultSet.close()
+//            println "${schema}.${tableName} -> ${ret.join(',')}"
+            return ret
+        }
+
+        def findPKColumnNames = { String schema, String tableName ->
+            def ret = []
+            def resultSet = sql.properties.connection.metaData.getPrimaryKeys(null, schema, tableName.toUpperCase())
+            while (resultSet.next()) {
+                ret[resultSet.getInt('KEY_SEQ') - 1] = resultSet.getString('COLUMN_NAME')
+            }
+            resultSet.close()
+//            println "!!!!!!!!PK ${schema}.${tableName} -> ${ret.join(',')}"
+            return ret
+        }
+
+        def findForeignKeys = { String schema, tableName ->
+            def ret = []
+            sql.query("select constraint_name from all_constraints where r_owner = '${schema}' and constraint_type = 'R' and table_name='${tableName.toUpperCase()}'".toString()) { ResultSet rs ->
+                while (rs.next()) {
+                    ret.add(rs.getString(1))
+                }
+            }
+            return ret
+        }
+
+        // Drop alle fremmednøkler på tabeller som skal få historikk (antar at ingen ikke-historiske tabeller har fremmednøkler til historiske tabeller)
+        tables.each { String tableName ->
+            findForeignKeys(db_username, tableName).each {
+                sql.execute("ALTER TABLE ${tableName} DROP CONSTRAINT ${it}".toString())
+            }
+        }
+
+        tables.each { String tableName ->
+            def pkColumns = findPKColumnNames(db_username, tableName)
+            def columnNames = findColumnNames(db_username, tableName)
+
+            sql.execute("ALTER TABLE ${tableName} DROP PRIMARY KEY DROP INDEX".toString())
+            sql.execute("ALTER TABLE ${tableName} RENAME TO ${tableName}_H".toString())
+            sql.execute("""
+                ALTER TABLE ${tableName}_H ADD (
+                    oppdateringsdato TIMESTAMP(6) DEFAULT sysdate NOT NULL,
+                    sluttdato TIMESTAMP(6) DEFAULT timestamp'9999-01-01 00:00:00.00' NOT NULL,
+                    versjonId NUMBER (19,0) DEFAULT 0 NOT NULL
+                 )""".toString())
+            sql.execute("ALTER TABLE ${tableName}_H ADD CONSTRAINT ${tableName}_UQ UNIQUE(${pkColumns.join(', ')}, sluttdato)".toString())
+            sql.execute("CREATE UNIQUE INDEX ${tableName}_IX ON  ${tableName}_H (${pkColumns.join(', ')}, oppdateringsdato, sluttdato)".toString())
+
+            sql.execute("CREATE OR REPLACE VIEW ${tableName} AS SELECT * FROM ${tableName}_H WHERE oppdateringsdato<=snapshot_time.get_t AND (snapshot_time.get_t<sluttdato OR sluttdato=snapshot_time.get_t_current)".toString());
+
+            sql.execute("""CREATE OR REPLACE TRIGGER T_${tableName} INSTEAD OF INSERT OR UPDATE OR DELETE ON ${tableName}
+ FOR EACH ROW
+  DECLARE
+    T_TRANS TIMESTAMP := SNAPSHOT_TIME.GET_T_TRANS();
+    T_END TIMESTAMP := SNAPSHOT_TIME.GET_T_CURRENT();
+    ANT NUMBER(10,0);
+    UPDATE_FEIL EXCEPTION;
+  BEGIN
+
+  IF snapshot_time.GeT_T() <> t_End THEN
+    RAISE_APPLICATION_ERROR(-20100, 'Modifikasjon mot historikk-data fungerer kun med t satt til t_CURRENT');
+  END IF;
+
+  IF INSERTING THEN
+    INSERT INTO ${tableName}_H
+        VALUES (${columnNames.collect {':NEW.' + it}.join(', ')}, T_TRANS, T_END, 1);
+  ELSIF UPDATING THEN
+    SELECT COUNT(*) INTO ANT FROM ${tableName}_H WHERE ${pkColumns.collect {it + '=:NEW.' + it}.join(' AND ')} AND SLUTTDATO = SNAPSHOT_TIME.GET_T_CURRENT();
+    IF ANT = 0 THEN
+      SELECT COUNT(*) INTO ANT FROM ${tableName}_H WHERE ${pkColumns.collect {it + '=:OLD.' + it}.join(' AND ')} AND SLUTTDATO = SNAPSHOT_TIME.GET_T_CURRENT();
+      IF ANT = 1 THEN
+        RAISE_APPLICATION_ERROR(-20003,'Det er ikke lov å endre primærnøkkelen på objekter i SKIF.');
+      ELSE
+        RAISE_APPLICATION_ERROR(-20002,'Det er ikke lov å kjøre update på noe som ikke har en current versjon! Skal ikke komme her da man ikke skal finne noe når man angir noe som ikke finnes!');
+      END IF;
+    ELSE
+      IF :OLD.OPPDATERINGSDATO < T_TRANS THEN
+        INSERT INTO ${tableName}_H VALUES (${columnNames.collect {':OLD.' + it}.join(',')}, :OLD.OPPDATERINGSDATO, T_TRANS, :OLD.VERSJONID);
+        UPDATE ${tableName}_H SET VERSJONID = :OLD.VERSJONID+1
+        WHERE ${pkColumns.collect {it + '=:OLD.' + it}.join(' AND ')} AND SLUTTDATO = T_END;
+      END IF;
+      UPDATE ${tableName}_H SET ${columnNames.collect {it + '=:NEW.' + it}.join(', ')}, OPPDATERINGSDATO=T_TRANS, SLUTTDATO=T_END, VERSJONID=VERSJONID
+        WHERE ${pkColumns.collect {it + '=:OLD.' + it}.join(' AND ')} AND SLUTTDATO = T_END;
+    END IF;
+  ELSIF DELETING THEN
+     IF :OLD.OPPDATERINGSDATO < T_TRANS THEN
+        INSERT INTO ${tableName}_H
+           VALUES (${columnNames.collect {':OLD.' + it}.join(', ')}, :OLD.OPPDATERINGSDATO, T_TRANS, :OLD.VERSJONID);
+     END IF;
+     DELETE FROM ${tableName}_H
+        WHERE ${pkColumns.collect {it + '=:OLD.' + it}.join(' AND ')} AND SLUTTDATO = T_END;
+  END IF;
+END T_${tableName};""".toString())
+
+        }
+    }
+}

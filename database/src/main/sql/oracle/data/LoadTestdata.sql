@@ -162,6 +162,3 @@ insert into BwlForBwl values (2204, 2201, null, null, null);
 insert into BubbleWithListComponent values (2202, 'component for 2201', 2201, 1, null, null, null);
 
 insert into BubbleWithListComponent2 values (2203, 'component for 2201', 2201, null, null, null);
-
-insert into SubTypedBubble_H (ID,class,text,num,oppdateringsdato,sluttdato,versjonId) values (3000,'SubTypeWithPrimitive','Text',1,snapshot_time.to_t('2011-10-02 08:00:00.00'),snapshot_time.to_t('2011-10-02 09:00:00.00'),1);
-insert into SubTypedBubble_H (ID,class,text,num,oppdateringsdato,sluttdato,versjonId) values (3000,'SubTypeWithCollection','Tekst',null,snapshot_time.to_t('2011-10-02 09:00:00.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),2);

@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.domain.demo;
+package no.statkart.skif.storetest2.domain.subtype;
 
 /**
  * Subtype med et primitivfelt.

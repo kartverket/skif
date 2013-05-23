@@ -17,11 +17,14 @@ public class StoreTest2MockupFacade extends AbstractMockupFacade {
     @Inject private EiendomMockupFactory eiendomMockupFactory;
     @Inject private EierMockupFactory eierMockupFactory;
 
+    @Inject private SubTypedBubbleMockupFactory subTypedBubbleMockupFactory;
+
     @Override
     public List<? extends AbstractMockupFactory> getAllMockupFactories() {
         return ImmutableList.of(
                 eiendomMockupFactory,
-                eierMockupFactory
+                eierMockupFactory,
+                subTypedBubbleMockupFactory
         );
     }
 
@@ -31,5 +34,9 @@ public class StoreTest2MockupFacade extends AbstractMockupFacade {
 
     public EierMockupFactory getEierMockupFactory() {
         return eierMockupFactory;
+    }
+
+    public SubTypedBubbleMockupFactory getSubTypedBubbleMockupFactory() {
+        return subTypedBubbleMockupFactory;
     }
 }

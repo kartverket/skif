@@ -1,8 +1,8 @@
-package no.statkart.skif.storetest.persistence.hibernate.type;
+package no.statkart.skif.storetest2.persistence.hibernate.type;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
-import no.statkart.skif.storetest.domain.demo.SubTypedBubbleId;
+import no.statkart.skif.storetest2.domain.subtype.SubTypedBubbleId;
 
 /**
  * @author Tor Egil R. Strand

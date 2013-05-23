@@ -65,6 +65,20 @@ create table MultirefererendeKobling (
     primary key (multirefererendeId, rolle, tekst)
 );
 
+create table SubTypedBubble (
+    id number(19,0) not null,
+    class varchar2(255 char) not null,
+    text varchar2(255 char),
+    num number(10,0),
+    primary key (id)
+);
+
+create table TekstForSubtype (
+    subtypedid number(19,0) not null,
+    tekst varchar2(255 char) not null,
+    primary key (subtypedid, tekst)
+);
+
 alter table BubbleWithEntityComponents
     add constraint FK3405730B705AD7C8
     foreign key (mainEntityComponent)
@@ -94,3 +108,8 @@ alter table MultirefererendeKobling
     add constraint FK_MULTIREFEREREND_KOBLING
     foreign key (multirefererendeId)
     references Multirefererende;
+
+alter table TekstForSubtype
+    add constraint FK31DBF85938AD5F10
+    foreign key (subtypedid)
+    references SubTypedBubble;

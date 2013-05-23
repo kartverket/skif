@@ -1,8 +1,7 @@
-package no.statkart.skif.storetest.domain.demo;
+package no.statkart.skif.storetest2.domain.subtype;
 
 import no.statkart.skif.store.AbstractBubbleObject;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
+import no.statkart.skif.storetest2.domain.StoreTest2Bubble;
 
 /**
  * Testbobleklasse for endring av subtype og andre subtyperelaterte ting.
@@ -10,7 +9,7 @@ import no.statkart.skif.storetest.domain.StoreTestBubble;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-public abstract class SubTypedBubble extends AbstractBubbleObject implements StoreTestBubble {
+public abstract class SubTypedBubble extends AbstractBubbleObject implements StoreTest2Bubble {
     private String text;
 
     @Override
