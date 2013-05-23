@@ -3,9 +3,13 @@ package no.statkart.skif.util.testsupport;
 import com.google.inject.Injector;
 import com.google.inject.spi.InjectionPoint;
 import no.statkart.skif.SkifModule;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleBuilder;
+import no.statkart.skif.service.LoginUser;
+import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.RunOnServerService;
 import no.statkart.skif.service.module.client.RunOnRemoteServerClientModule;
@@ -97,6 +101,8 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
             runOnServerService.run(new RunOnServerMethod() {
                 @Override
                 public Object run() {
+                    resetLogin();
+
                     SkifServerTestCase.this.injector = injector;
                     injector.injectMembers(SkifServerTestCase.this);
                     Injector savedClientInjector = clientInjector;
@@ -136,6 +142,20 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
         } catch (SkifServerTestCaseTestException ignore) {
             // Denne exeption ble kastet bare for å rydde opp på tjenersiden. Skal ikke kastes videre.
         }
+    }
+
+    /**
+     * Kalles før hver testmetode og bør brukes til å nullstille pålogget bruker. Overskriv denne metode hvis
+     * modulen ikke krever login eller krever annen form for login.
+     *
+     * @since 2.3.0
+     */
+    protected void resetLogin() {
+        LoginUserHolder userHolder = clientInjector.getInstance(LoginUserHolder.class);
+        Configuration configuration = clientInjector.getInstance(Configuration.class);
+        String username = configuration.getString(SkifConfigConstants.SERVER_USERNAME);
+        String password = configuration.getString(SkifConfigConstants.SERVER_PASSWORD);
+        userHolder.set(new LoginUser(username, password));
     }
 }
 
