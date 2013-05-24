@@ -270,6 +270,9 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     }
 
     private LockKey<?> createLockKey(BubbleId id) {
+        // Gjøre om til baseklassen, slik at ikke to kan låse samme objekt ved å bruke id-er fra forskjellige nivåer
+        id = id.asBase();
+
         if (id.getValue() instanceof Long) {
             return new LockKey<Long>(id.getClass().getName(), (Long) id.getValue());
         } else {

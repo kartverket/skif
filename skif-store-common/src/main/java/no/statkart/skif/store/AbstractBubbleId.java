@@ -119,6 +119,11 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         return asSnapshotVersion(SnapshotVersion.CURRENT);
     }
 
+    @Override
+    public BubbleId<? super T> asBase() {
+        return BubbleIds.createInstance(this.getBaseIdType(), getValue(), getSnapshotVersion());
+    }
+
     static TypeInfo getTypeInfo(Class clazz) {
         TypeInfo typeInfo = typeInfoMap.get(clazz);
         if (typeInfo == null) {

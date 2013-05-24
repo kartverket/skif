@@ -2,11 +2,16 @@ package no.statkart.skif.storetest2.locking;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.SkifConfigConstants;
+import no.statkart.skif.exception.LockedException;
+import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.store.LockerStrategy;
 import no.statkart.skif.storetest2.domain.subtype.SubTypeWithPrimitiveId;
 import no.statkart.skif.storetest2.domain.subtype.SubTypedBubbleId;
 import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacade;
 import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacadeFactory;
+import no.statkart.skif.storetest2.service.locker.DBLockerService;
 import no.statkart.skif.storetest2.util.testsupport.StoreTest2ServerTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -24,6 +29,12 @@ public class SubTypeLockingTest extends StoreTest2ServerTestCase {
 
     @Inject
     private Provider<LockerStrategy> lockerStrategyProvider;
+
+    @Inject
+    private DBLockerService dbLockerService;
+
+    @Inject
+    private Configuration configuration;
 
     public void testSubtypeLockSupertypeIsLocked() {
         StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
@@ -49,5 +60,23 @@ public class SubTypeLockingTest extends StoreTest2ServerTestCase {
 
         Assert.assertTrue(lockerStrategy.isLockedByCaller(new SubTypedBubbleId(idValue)), "Objektet ble ikke låst i det hele tatt");
         Assert.assertTrue(lockerStrategy.isLockedByCaller(new SubTypeWithPrimitiveId(idValue)), "Objektet er ikke låst som sin supertype");
+    }
+
+    public void testOtherLockDifferentType() {
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
+
+        Long idValue = (Long) mockupFacade.getIdService().getNextIdValue(SubTypedBubbleId.class);
+        long timeout = configuration.getLong(SkifConfigConstants.LOCK_TIMEOUT);
+
+        dbLockerService.lock(new LockKey<Long>(SubTypedBubbleId.class.getName(), idValue), "fiktivbruker", timeout);
+
+        LockerStrategy lockerStrategy = lockerStrategyProvider.get();
+
+        try {
+            lockerStrategy.lock(new SubTypeWithPrimitiveId(idValue));
+            Assert.fail("Skulle ikke fått låst dette objektet");
+        } catch (LockedException e) {
+            // Dette er det som skal skje
+        }
     }
 }
