@@ -98,11 +98,10 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
         final TestTransactionAttributeType txType = TestTransactionAttributesLookup.getAnnotation(testMethod);
         final RunOnServerService runOnServerService = getService(txType);
         try {
+            resetLogin();
             runOnServerService.run(new RunOnServerMethod() {
                 @Override
                 public Object run() {
-                    resetLogin();
-
                     SkifServerTestCase.this.injector = injector;
                     injector.injectMembers(SkifServerTestCase.this);
                     Injector savedClientInjector = clientInjector;
