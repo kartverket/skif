@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest2.domain.kodeliste.StoreTest2KodelisteLong" table="Kodeliste2"  lazy="true">
+        <!-- Her er det mulig å bruke *KodelisteStringIdType istedet hvis kodelistene skal ha streng baserte id'er -->
+        <id name="id" column="id" type="no.statkart.skif.storetest2.persistence.hibernate.type.kodeliste.StoreTest2KodelisteLongIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="kodeTypeNavn" column="kodeTypeNavn" type="string"/>
+        <property name="kodeIdClass" column="kodeIdClassname" type="org.hibernate.type.ClassType"/>
+
+        <map name="localizedFieldsMap" table="Kodeliste2Loc" lazy="true" fetch="join">
+            <key column="id"/>
+            <map-key type="string" column="lokale"/>
+            <composite-element class="no.statkart.skif.store.kodeliste.AbstractKodeliste$LocalizedFields">
+                <property name="navn" type="string" access="field"/>
+                <property name="beskrivelse" type="string" access="field"/>
+           </composite-element>
+        </map>
+
+    </class>
+
+</hibernate-mapping>

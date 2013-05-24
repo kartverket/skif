@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest2.domain.kodeliste.StoreTest2DbKode" table="StoreTest2DbKode" select-before-update="true" discriminator-value="abstract" lazy="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest2.persistence.hibernate.type.kodeliste.StoreTest2DbKodeIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <discriminator column="class" type="string"/>
+
+        <map name="localizedFieldsMap" table="StoreTest2DbKodeLoc" lazy="true" fetch="join">
+            <key column="id"/>
+            <map-key type="string" column="lokale"/>
+            <composite-element class="no.statkart.skif.store.kodeliste.Kode$LocalizedFields">
+                <property name="navn" type="string" access="field"/>
+                <property name="beskrivelse" type="string" access="field"/>
+           </composite-element>
+        </map>
+
+        <subclass name="no.statkart.skif.storetest2.domain.kode.AKode" discriminator-value="AKode" select-before-update="true" lazy="true"/>
+
+    </class>
+
+</hibernate-mapping>

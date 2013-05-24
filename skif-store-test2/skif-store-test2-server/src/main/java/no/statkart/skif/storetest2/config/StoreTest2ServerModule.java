@@ -50,6 +50,7 @@ import no.statkart.skif.storetest2.domain.eierskap.EiendomstypeKodeId;
 import no.statkart.skif.storetest2.domain.eierskap.Eier;
 import no.statkart.skif.storetest2.domain.endringslogg.Endring;
 import no.statkart.skif.storetest2.domain.entitycomponent.BubbleWithEntityComponents;
+import no.statkart.skif.storetest2.domain.kodeliste.StoreTest2DbKode;
 import no.statkart.skif.storetest2.domain.kodeliste.StoreTest2KodelisteLong;
 import no.statkart.skif.storetest2.domain.list.ListOfEntityComponents;
 import no.statkart.skif.storetest2.domain.multikobling.Multirefererende;
@@ -179,6 +180,8 @@ public class StoreTest2ServerModule extends SkifModule {
         HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest2/persistence/hibernate")
                 // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
                 .addResource(EnumKodeIdType.class)
+                .addResource(StoreTest2KodelisteLong.class)
+                .addResource(StoreTest2DbKode.class)
                 .addResource(Eiendom.class)
                 .addResource(Eier.class)
                 .addResource(Endring.class)

@@ -40,6 +40,21 @@ create table EntityComponent (
     primary key (id)
 );
 
+create table Kodeliste2 (
+    id number(19,0) not null,
+    kodeTypeNavn varchar2(255 char),
+    kodeIdClassname varchar2(255 char),
+    primary key (id)
+);
+
+create table Kodeliste2Loc (
+    id number(19,0) not null,
+    navn varchar2(255 char),
+    beskrivelse varchar2(255 char),
+    lokale varchar2(255 char) not null,
+    primary key (id, lokale)
+);
+
 create table ListEntityComponent (
     id number(19,0) not null,
     textValue varchar2(255 char),
@@ -63,6 +78,20 @@ create table MultirefererendeKobling (
     rolle varchar2(255 char) not null,
     tekst varchar2(255 char) not null,
     primary key (multirefererendeId, rolle, tekst)
+);
+
+create table StoreTest2DbKode (
+    id number(19,0) not null,
+    class varchar2(255 char) not null,
+    primary key (id)
+);
+
+create table StoreTest2DbKodeLoc (
+    id number(19,0) not null,
+    navn varchar2(255 char),
+    beskrivelse varchar2(255 char),
+    lokale varchar2(255 char) not null,
+    primary key (id, lokale)
 );
 
 create table SubTypedBubble (
@@ -99,6 +128,11 @@ alter table EntityComponent
     foreign key (bubbleId)
     references BubbleWithEntityComponents;
 
+alter table Kodeliste2Loc
+    add constraint FK77F93E506889CC0F
+    foreign key (id)
+    references Kodeliste2;
+
 alter table ListEntityComponent
     add constraint FK_LIST_OF_ENTITY_COMPONENTS
     foreign key (listOfEntityComponentsId)
@@ -108,6 +142,11 @@ alter table MultirefererendeKobling
     add constraint FK_MULTIREFEREREND_KOBLING
     foreign key (multirefererendeId)
     references Multirefererende;
+
+alter table StoreTest2DbKodeLoc
+    add constraint FKE2B172DE79AC50C8
+    foreign key (id)
+    references StoreTest2DbKode;
 
 alter table TekstForSubtype
     add constraint FK31DBF85938AD5F10
