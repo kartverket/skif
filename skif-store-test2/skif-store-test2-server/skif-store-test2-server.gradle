@@ -63,6 +63,7 @@ private List getAllHbmXmlPaths(def packageDir) {
 
     FileTree hbms = fileTree(packageDir) {
         include('*.hbm.xml')
+        include('kodeliste/*.hbm.xml')
     }
 
     List filenames = []
