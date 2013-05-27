@@ -2,7 +2,7 @@
 <xs:schema
         version="1.0"
         targetNamespace="http://skif.statkart.no/skiftest/wsapi/domain"
-        xmlns:corens="http://skif.statkart.no/skiftest/wsapi/domain"
+        xmlns:skiftestns="http://skif.statkart.no/skiftest/wsapi/domain"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
@@ -14,7 +14,7 @@
 
     <xs:complexType name="AList">
         <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="corens:A"/>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="skiftestns:A"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -31,17 +31,23 @@
         </xs:sequence>
     </xs:complexType>
 
-    <!--<xs:complexType name="C">-->
-    <!--<xs:sequence>-->
-    <!--<xs:element name="ints" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>-->
-    <!--<xs:element name="strings" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>-->
-    <!--<xs:element name="as" type="skiftestns:A" minOccurs="0" maxOccurs="unbounded"/>-->
-    <!--</xs:sequence>-->
-    <!--</xs:complexType>-->
+    <xs:complexType name="IntList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="C">
+        <xs:sequence>
+            <xs:element name="ints" type="skiftestns:IntList" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="strings" type="skiftestns:StringList" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="as" type="skiftestns:AList" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="M">
         <xs:sequence>
-            <xs:element name="mapOfAs" type="corens:AMap" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="mapOfAs" type="skiftestns:AMap" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -56,7 +62,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="key" nillable="true" type="xs:string"/>
-                        <xs:element name="value" type="corens:AList"/>
+                        <xs:element name="value" type="skiftestns:AList"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

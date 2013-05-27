@@ -7,21 +7,8 @@ import no.statkart.skif.mapper.Mapping;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class AbstractSkifTestTypeMapper<WsapiT, DomainT> extends AbstractTypeMapper<WsapiT,  DomainT> {
-    protected SkifTestMapping map;
-
+public abstract class AbstractSkifTestTypeMapper<WsapiT, DomainT> extends AbstractTypeMapper<WsapiT,  DomainT, SkifTestMapping> {
     protected AbstractSkifTestTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
-        super(wsapiClass, domainClass);
+        super(wsapiClass, domainClass, SkifTestMapping.class);
     }
-
-    @Override
-    public Mapping getMapping() {
-        return map;
-    }
-
-    @Override
-    public void setMapping(Mapping mapping) {
-        this.map = (SkifTestMapping) mapping;
-    }
-
 }

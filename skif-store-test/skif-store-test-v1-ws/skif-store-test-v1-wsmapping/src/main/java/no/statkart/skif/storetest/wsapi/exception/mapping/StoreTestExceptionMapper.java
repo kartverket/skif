@@ -37,11 +37,7 @@ public class StoreTestExceptionMapper extends AbstractExceptionMapper {
 
 
     public StoreTestExceptionMapper() {
-        this(new DefaultObjectFactory(), new DefaultObjectFactory());
-    }
-
-    public StoreTestExceptionMapper(ObjectFactory wsapiObjectFactory, ObjectFactory domainObjectFactory) {
-        super(StoreTestExceptionMapping.class, wsapiObjectFactory, domainObjectFactory, true, true);
+        super(StoreTestExceptionMapping.class, true);
         addMapptersForExceptionTypes();
     }
 
@@ -53,8 +49,8 @@ public class StoreTestExceptionMapper extends AbstractExceptionMapper {
 
     private void addMapptersForExceptionTypes() {
         addMapper(new ServiceExceptionTypeMapper(exceptionClassMap, ServiceException.class, no.statkart.skif.exception.SkifException.class, ServiceFaultInfo.class));
-        addMapperW2D(new IdentityExceptionTypeMapper(Error.class));
-        addMapperW2D(new IdentityExceptionTypeMapper(RuntimeException.class));
+        addMapper(new IdentityExceptionTypeMapper(Error.class));
+        addMapper(new IdentityExceptionTypeMapper(RuntimeException.class));
     }
 
 

@@ -13,20 +13,10 @@ import java.util.Map;
  * @author Steinar Hansen
  * @author Tor Egil R. Strand
  */
-public class RenamingDefaultTypeMapper<WsapiT, DomainT> extends DefaultTypeMapper<WsapiT, DomainT> {
+public class RenamingDefaultTypeMapper extends DefaultTypeMapper {
     private Logger logger = LoggerFactory.getLogger(RenamingDefaultTypeMapper.class);
     // Formatet på dette feltet er "wsapiFieldName:domainFieldName"
     protected Map<String, String> renamedFields;
-
-
-    public RenamingDefaultTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
-        super(wsapiClass, domainClass);
-    }
-
-    public RenamingDefaultTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass, Map<String, String> renamedFields) {
-        super(wsapiClass, domainClass);
-        this.renamedFields = renamedFields;
-    }
 
     @Override
     protected Method overrideSetter(Method sourceGetter, Method targetSetter, Class targetClass) {

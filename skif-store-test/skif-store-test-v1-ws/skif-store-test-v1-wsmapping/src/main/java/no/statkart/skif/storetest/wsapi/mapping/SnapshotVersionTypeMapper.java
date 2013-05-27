@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 
 /**
  * @author Roar Ingebrigtsen
+ * @author Tor Egil R. Strand
  * @since 2.0
  */
 public class SnapshotVersionTypeMapper extends AbstractStoreTestTypeMapper<no.statkart.skif.storetest.wsapi.domain.SnapshotVersion, SnapshotVersion> {
@@ -16,21 +17,16 @@ public class SnapshotVersionTypeMapper extends AbstractStoreTestTypeMapper<no.st
     }
 
     @Override
-    public void mapDomainObject(SnapshotVersion source, no.statkart.skif.storetest.wsapi.domain.SnapshotVersion target) {
-        super.mapDomainObject(source, target);
-
+    public no.statkart.skif.storetest.wsapi.domain.SnapshotVersion mapDomainObject(SnapshotVersion source) {
         Timestamp timestamp = source.getTimestamp();
-        target.setTime(map.d2w(timestamp.getTime()));
-        target.setNanos(map.d2w(timestamp.getNanos()));
+        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion target = new no.statkart.skif.storetest.wsapi.domain.SnapshotVersion();
+        target.setTime(getMapping().d2w(timestamp.getTime()));
+        target.setNanos(getMapping().d2w(timestamp.getNanos()));
+        return target;
     }
 
     @Override
-    public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion source, SnapshotVersion target) {
-        super.mapWsapiObject(source, target);
-    }
-
-    @Override
-    protected SnapshotVersion getInitialDomainObject(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public SnapshotVersion mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion source) {
         Timestamp timestamp = new Timestamp(source.getTime());
         timestamp.setNanos(source.getNanos());
         return SnapshotVersion.createInstance(timestamp);

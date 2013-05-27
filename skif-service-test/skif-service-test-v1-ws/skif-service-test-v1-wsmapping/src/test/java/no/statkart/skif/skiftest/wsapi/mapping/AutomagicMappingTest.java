@@ -76,7 +76,7 @@ public class AutomagicMappingTest extends AutomagicTest {
                     Assert.assertNotNull(o2, "mockup var null");
 
                     Object o3;
-                    o3 = mapping.d2w(mapping.w2d(o2));
+                    o3 = mapping.d2w(mapping.w2d(o2, Object.class), Object.class);
                     ReflectionAssert.assertReflectionEquals(o3.getClass().getSimpleName() + " var ikke like", o2, o3, ReflectionComparatorMode.LENIENT_ORDER);
                 }
             } catch (Throwable e) {

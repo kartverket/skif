@@ -4,10 +4,9 @@ import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  * @since 2.0
  */
 public class StoreTestBubbleIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId, DomainT extends StoreTestBubbleId> extends AbstractStoreTestTypeMapper<WsapiT,DomainT> {
@@ -19,18 +18,19 @@ public class StoreTestBubbleIdTypeMapper<WsapiT extends no.statkart.skif.storete
     }
 
     @Override
-    public void mapDomainObject(DomainT source, WsapiT target) {
-        super.mapDomainObject(source, target);
-        target.setValue(map.d2w(source.getStringValue()));
-        target.setSnapshotVersion(map.d2w(source.getSnapshotVersion()));
+    public WsapiT mapDomainObject(DomainT source) {
+        WsapiT target = createWsapiT();
+        target.setValue(getMapping().d2w(source.getStringValue()));
+        target.setSnapshotVersion(getMapping().d2w(source.getSnapshotVersion()));
+        return target;
     }
 
     @Override
-    protected DomainT getInitialDomainObject(WsapiT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        SnapshotVersion snapshotVersion = map.w2d(source.getSnapshotVersion());
+    public DomainT mapWsapiObject(WsapiT source) {
+        SnapshotVersion snapshotVersion = getMapping().w2d(source.getSnapshotVersion());
         Class idValueType = getIdValueType(getDomainClass());
         Object value= parseType(idValueType, source.getValue());
-        DomainT target = getDomainClass().getConstructor(idValueType, SnapshotVersion.class).newInstance(value, snapshotVersion);
+        DomainT target = BubbleIds.createInstance(getDomainClass(), value, snapshotVersion);
         return target;
     }
 

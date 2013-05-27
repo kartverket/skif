@@ -34,7 +34,7 @@ def libraries = [
 
 
         // Utility libraries
-        guava: "com.google.guava:guava:11.0.2", //SKIF-128
+        guava: "com.google.guava:guava:14.0.1", //SKIF-128
         jsr305: "com.google.code.findbugs:jsr305:1.3.9",
 
         // Testing

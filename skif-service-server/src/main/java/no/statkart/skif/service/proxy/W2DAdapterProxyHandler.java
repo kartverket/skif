@@ -2,13 +2,13 @@ package no.statkart.skif.service.proxy;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.service.annotation.WSServiceChain;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * Adapter proxy som adapterer domain interface T til webservice interface A ved å mappe metoder med samme navn til hverandre og transformere
@@ -61,7 +61,7 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
         Object[] mappedArgs;
 
         try {
-            mappedArgs = mapArgs(args, adapteeMethod);
+            mappedArgs = mapArgs(args, adapteeMethod, method);
             Object result = adapteeRoot.invoke(proxy, adapteeMethod,  mappedArgs);
             return map.d2w(result, method.getGenericReturnType());
         } catch (Throwable t) {
@@ -73,8 +73,13 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
         }
     }
 
-    protected Object[] mapArgs(Object[] args, Method m) {
-        Object[] mappedArgs = map.w2d(args, m.getGenericParameterTypes());
+    protected Object[] mapArgs(Object[] args, Method m, Method method) {
+        Object[] mappedArgs = new Object[args.length];
+        Type[] types = method.getGenericParameterTypes();
+        Type[] ts = m.getGenericParameterTypes();
+        for (int i = 0; i < args.length; i++) {
+            mappedArgs[i] = map.w2d(args[i], ts[i]);
+        }
         return mappedArgs;
     }
 }

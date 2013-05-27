@@ -2,8 +2,6 @@ package no.statkart.skif.skiftest.wsapi.exception.simple.mapping;
 
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.mapper.ExceptionMapping;
-import no.statkart.skif.mapper.MapperInfo;
-import no.statkart.skif.mapper.ObjectFactory;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.lang.reflect.Type;
@@ -19,6 +17,17 @@ import java.util.Date;
  * @since 2.0
  */
 public abstract class AbstractSkifTestExceptionMapper2 implements ExceptionMapping {
+
+    @Override
+    public <T> T d2w(Object source, Class<T> targetClass) {
+        throw new NotImplementedException("na");
+    }
+
+    @Override
+    public <T> T w2d(Object source, Class<T> targetClass) {
+        throw new NotImplementedException("na");
+    }
+
     @Override
     public Object d2w(Object source, Type targetClass) {
         throw new NotImplementedException("na");
@@ -30,107 +39,62 @@ public abstract class AbstractSkifTestExceptionMapper2 implements ExceptionMappi
     }
 
     @Override
-    public Object[] d2w(Object[] source, Type[] webServiceParameterTypes) {
-        throw new NotImplementedException("na");
-    }
-
-    @Override
-    public Object[] w2d(Object[] source, Type[] domainServiceParameterTypes) {
-        throw new NotImplementedException("na");
-    }
-
-    public <T> T d2w(Object source) {
-        throw new NotImplementedException("na");
-    }
-
-    public <T> T w2d(Object source) {
-        throw new NotImplementedException("na");
-    }
-
-
-    public <T> T d2w(Object source, Class<T> targetClass) {
-        throw new NotImplementedException("na");
-    }
-
-    public <T> T w2d(Object source, Class<T> targetClass) {
-        throw new NotImplementedException("na");
-    }
-
-    @Override
-    public <T> T w2d(Object source, Class<T> targetClass, MapperInfo mapperInfo) {
-        throw new NotImplementedException("na");
-    }
-
-
-    public Object[] d2w(Object[] source, Class<?>[] webServiceParameterTypes) {
-        throw new NotImplementedException("na");
-    }
-
-    public Object[] w2d(Object[] source, Class<?>[] domainServiceParameterTypes) {
-        throw new NotImplementedException("na");
-    }
-
     public String d2w(String source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public String w2d(String source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public Integer d2w(Integer source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public Integer w2d(Integer source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public Long d2w(Long source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public Long w2d(Long source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public Boolean d2w(Boolean source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public Boolean w2d(Boolean source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public XMLGregorianCalendar d2w(Date source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public Date w2d(XMLGregorianCalendar source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public BigDecimal d2w(BigDecimal source) {
         throw new NotImplementedException("na");
     }
 
+    @Override
     public BigDecimal w2d(BigDecimal source) {
-        throw new NotImplementedException("na");
-    }
-
-    public <T extends Object> T d2w(Object source, T target) {
-        throw new NotImplementedException("na");
-    }
-
-    public <T extends Object> T w2d(Object source, T target) {
-        throw new NotImplementedException("na");
-    }
-
-    public ObjectFactory getDomainObjectFactory() {
-        throw new NotImplementedException("na");
-    }
-
-    public ObjectFactory getWsapiObjectFactory() {
         throw new NotImplementedException("na");
     }
 }

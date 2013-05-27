@@ -12,13 +12,13 @@ public interface ExceptionMapping extends Mapping {
      * Fra internt til API ...
      * @return API object
      */
-    public <T extends Throwable, S extends Throwable> T d2w(S source);
+    public Throwable d2w(Throwable source);
 
     /**
      * Fra API til internt ...
      * @return domain object
      */
-    public <S extends Throwable, T extends Throwable> T w2d(S source);
+    public Throwable w2d(Throwable source);
 
 }
 

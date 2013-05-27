@@ -14,30 +14,10 @@ import java.util.GregorianCalendar;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public class DateTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, Date> {
+public class DateTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, Date, Mapping> {
 
     public DateTypeMapper() {
-        super(XMLGregorianCalendar.class, Date.class);
-    }
-
-    @Override
-    public Mapping getMapping() {
-        return null;
-    }
-
-    @Override
-    public void setMapping(Mapping mapping) {
-    }
-
-    @Override
-    public void mapDomainObject(Date source, XMLGregorianCalendar target) {
-        super.mapDomainObject(source, target);
-
-    }
-
-    @Override
-    public void mapWsapiObject(XMLGregorianCalendar source, Date target) {
-        super.mapWsapiObject(source, target);
+        super(XMLGregorianCalendar.class, Date.class, Mapping.class);
     }
 
     // Gir en kalender som er gregoriansk hele veien, uten noe skifte til juliansk
@@ -50,7 +30,7 @@ public class DateTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, Dat
     }
 
     @Override
-    protected XMLGregorianCalendar getInitialWsapiObject(Date source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public XMLGregorianCalendar mapDomainObject(Date source) {
         final GregorianCalendar gregorianCalendar = createPureGregorianCalendar(source);
         try {
             return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
@@ -60,7 +40,7 @@ public class DateTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, Dat
     }
 
     @Override
-    protected Date getInitialDomainObject(XMLGregorianCalendar source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Date mapWsapiObject(XMLGregorianCalendar source) {
         GregorianCalendar instance = new GregorianCalendar();
         instance.clear();
         instance.set(source.getYear() > Integer.MIN_VALUE ? source.getYear() : 0, source.getMonth() > Integer.MIN_VALUE ? source.getMonth() - 1 : 0, source.getDay() > Integer.MIN_VALUE ? source.getDay() : 0, source.getHour() > Integer.MIN_VALUE ? source.getHour() : 0, source.getMinute() > Integer.MIN_VALUE ? source.getMinute() : 0, source.getSecond() > Integer.MIN_VALUE ? source.getSecond() : 0);

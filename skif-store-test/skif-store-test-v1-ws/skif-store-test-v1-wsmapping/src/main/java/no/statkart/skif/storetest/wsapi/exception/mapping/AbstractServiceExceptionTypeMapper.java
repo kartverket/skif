@@ -16,23 +16,13 @@ import java.util.Map;
  * @author Leif Lislegård
  * @since 2.0
  */
-abstract class AbstractServiceExceptionTypeMapper<WsapiT extends ServiceException, DomainT extends SkifException> extends AbstractTypeMapper<WsapiT, DomainT> {
+abstract class AbstractServiceExceptionTypeMapper<WsapiT extends ServiceException, DomainT extends SkifException> extends AbstractTypeMapper<WsapiT, DomainT, StoreTestExceptionMapping> {
 
     private final Map<String, Class<DomainT>> exceptionClassMap;
-    private StoreTestExceptionMapping mapping;
 
     protected AbstractServiceExceptionTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass, Map<String, Class<DomainT>> exceptionClassMap) {
-        super(wsapiClass, domainClass);
+        super(wsapiClass, domainClass, StoreTestExceptionMapping.class);
         this.exceptionClassMap = exceptionClassMap;
-    }
-
-
-    public StoreTestExceptionMapping getMapping() {
-        return mapping;
-    }
-
-    public void setMapping(Mapping mapping) {
-        this.mapping = (StoreTestExceptionMapping) mapping;
     }
 
     protected String findCategory(DomainT source) {
@@ -46,7 +36,7 @@ abstract class AbstractServiceExceptionTypeMapper<WsapiT extends ServiceExceptio
     }
 
     /**
-     * Forsøker å finne intern domene-exception basert på {@link ServiceException#category}
+     * Forsøker å finne intern domene-exception basert på {@link ServiceFaultInfo#category}
      * @return den exceptionen som domenet kjenner til og som passer best.
      */
     protected Class<DomainT> findDomainClass(WsapiT source) {

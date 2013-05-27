@@ -3,15 +3,12 @@ package no.statkart.skif.service.proxy;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
-import no.statkart.skif.mapper.MapperInfo;
 import no.statkart.skif.mapper.Mapping;
-import no.statkart.skif.mapper.MappingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.xml.ws.WebFault;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * Adapter proxy som adapterer domain interface T til webservice interface A ved å mappe metoder med samme navn til hverandre og transformere
@@ -62,17 +59,11 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
     public Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         Method m = getMethod(method);
 
-        Object[] mappedArgs = mapArgs(args, m);
+        Object[] mappedArgs = mapArgs(args, method, m);
 
         try {
             Object result = adapteeRoot.invoke(proxy, m, mappedArgs);
-            MapperInfo annotation = method.getAnnotation(MapperInfo.class);
-            if(annotation != null) {
-                return map.w2d(result, method.getReturnType(), annotation);
-            } else {
-                return map.w2d(result, method.getGenericReturnType());
-            }
-
+            return map.w2d(result, method.getGenericReturnType());
         } catch (Throwable t) {
             if (exceptionMapping != null) {
                 //forventer kun exceptions definert for webservice api. Disse er da annotert med @WebFault
@@ -85,8 +76,15 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
         }
     }
 
-    protected Object[] mapArgs(Object[] args, Method m) {
-        Object[] mappedArgs = map.d2w(args, m.getGenericParameterTypes());
+    protected Object[] mapArgs(Object[] args, Method method, Method m) {
+        Object[] mappedArgs = new Object[args.length];
+        Type[] types = method.getGenericParameterTypes();
+        Type[] ts = m.getGenericParameterTypes();
+
+        for (int i = 0; i < args.length; i++) {
+            mappedArgs[i] = map.d2w(args[i], ts[i]);
+        }
+
         return mappedArgs;
     }
 }

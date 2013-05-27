@@ -3,8 +3,9 @@ package no.statkart.skif.storetest.wsapi.mapping;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeliste;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
+
+import java.util.List;
 
 /**
  * TypeMapper for Kodeliste i StoreTest applikasjonen.
@@ -30,22 +31,24 @@ public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi
     }
 
     @Override
-    public void mapDomainObject(DomainT source, WsapiT target) {
-        super.mapDomainObject(source, target);
+    public WsapiT mapDomainObject(DomainT source) {
+        WsapiT target = super.mapDomainObject(source);
         target.setKodeIdClass(calcWsapiKodeIdClassname(source.getKodeIdClass()));
-        target.setNavn(map.d2w(source.getNavn()));
-        target.setBeskrivelse(map.d2w(source.getBeskrivelse()));
-        target.setKodeIds(map.d2w(source.getKodeIds(), KodeIdList.class));
+        target.setNavn(getMapping().d2w(source.getNavn()));
+        target.setBeskrivelse(getMapping().d2w(source.getBeskrivelse()));
+        target.setKodeIds(getMapping().d2w(source.getKodeIds(), KodeIdList.class));
+        return target;
     }
 
 
     @Override
-    public void mapWsapiObject(WsapiT source, DomainT target) {
-        super.mapWsapiObject(source, target);
+    public DomainT mapWsapiObject(WsapiT source) {
+        DomainT target = super.mapWsapiObject(source);
         target.setKodeIdClass(calcDomainKodeIdClass(source.getKodeIdClass()));
-        target.setNavn(map.w2d(source.getNavn()));
-        target.setBeskrivelse(map.w2d(source.getBeskrivelse()));
-        map.w2d(source.getKodeIds(), target.getKodeIds());
+        target.setNavn(getMapping().w2d(source.getNavn()));
+        target.setBeskrivelse(getMapping().w2d(source.getBeskrivelse()));
+        target.setKodeIds(getMapping().w2d(source.getKodeIds(), List.class));
+        return target;
     }
 
     private String calcWsapiKodeIdClassname(Class<? extends KodeId<?>> domainKodeIdClass) {
@@ -53,12 +56,12 @@ public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi
         return  domainKodeIdClass.getName().replace(".domain", wsapiPackagePart).replace(".koder.", ".koder.Test");
     }
 
-    private Class<KodeId<?>> calcDomainKodeIdClass(String wsapiKodeIdClassname) {
+    private Class<? extends KodeId<?>> calcDomainKodeIdClass(String wsapiKodeIdClassname) {
         try {
             if (wsapiKodeIdClassname==null) return null;
             String replace = wsapiKodeIdClassname.replace(wsapiPackagePart, ".domain").replace(".koder.Test", ".koder.");
-            Class<?> kodeIdClass = Class.forName(replace);
-            return (Class<KodeId<?>>) kodeIdClass;
+            Class<? extends KodeId> kodeIdClass = Class.forName(replace).asSubclass(KodeId.class);
+            return (Class<? extends KodeId<?>>) kodeIdClass;
         } catch (ClassNotFoundException e) {
             throw new ImplementationException(e);
         }

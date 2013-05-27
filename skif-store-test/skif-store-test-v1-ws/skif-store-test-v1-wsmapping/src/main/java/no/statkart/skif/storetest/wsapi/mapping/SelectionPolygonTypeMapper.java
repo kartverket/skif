@@ -13,7 +13,8 @@ import java.util.List;
 
 /**
  * @author Roar Ingebrigtsen
- * @since 1.0
+ * @author Tor Egil R. Strand
+ * @since 2.0
  */
 public class SelectionPolygonTypeMapper extends AbstractStoreTestTypeMapper<no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon, SelectionPolygon> {
 
@@ -22,19 +23,18 @@ public class SelectionPolygonTypeMapper extends AbstractStoreTestTypeMapper<no.s
     }
 
     @Override
-    public void mapDomainObject(SelectionPolygon source, no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon target) {
-        super.mapDomainObject(source, target);
-
+    public no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon mapDomainObject(SelectionPolygon source) {
+        no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon target = createWsapiT();
         target.setPositions(createPositionList(source.getPolygon()));
+        return target;
     }
 
 
     @Override
-    public void mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon source, SelectionPolygon target) {
-        super.mapWsapiObject(source, target);
-
+    public SelectionPolygon mapWsapiObject(no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon source) {
+        SelectionPolygon target = createDomainT();
         target.setPolygon(createPolygon(source.getPositions()));
-
+        return target;
     }
 
     private PositionList createPositionList(Polygon polygon) {

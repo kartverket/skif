@@ -16,20 +16,21 @@ public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.do
     }
 
     @Override
-    public void mapDomainObject(DomainT source, WsapiT target) {
-        super.mapDomainObject(source, target);
+    public WsapiT mapDomainObject(DomainT source) {
+        WsapiT target = createWsapiT();
         target.setValue(source.getStringValue());
-        target.setSnapshotVersion(map.d2w(source.getSnapshotVersion()));
+        target.setSnapshotVersion(getMapping().d2w(source.getSnapshotVersion()));
+        return target;
     }
 
     @Override
-    protected DomainT getInitialDomainObject(WsapiT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public DomainT mapWsapiObject(WsapiT source) {
         DomainT target;
         Class valueType = BubbleIds.getValueType(getDomainClass());
         if (valueType == Long.class) {
-            target = BubbleIds.createInstance(getDomainClass(), Long.valueOf(map.w2d(source.getValue())), map.w2d(source.getSnapshotVersion()));
+            target = BubbleIds.createInstance(getDomainClass(), Long.valueOf(getMapping().w2d(source.getValue())), getMapping().w2d(source.getSnapshotVersion()));
         } else {
-            target = BubbleIds.createInstance(getDomainClass(), map.w2d(source.getValue()), map.w2d(source.getSnapshotVersion()));
+            target = BubbleIds.createInstance(getDomainClass(), getMapping().w2d(source.getValue()), getMapping().w2d(source.getSnapshotVersion()));
         }
         return target;
     }

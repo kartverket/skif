@@ -13,14 +13,16 @@ public class BTypeMapper<WsapiT extends no.statkart.skif.skiftest.wsapi.domain.B
     }
 
     @Override
-    public void mapDomainObject(DomainT source, WsapiT target) {
-        super.mapDomainObject(source, target);
-        target.setText(map.d2w(source.getText()));
+    public WsapiT mapDomainObject(DomainT source) {
+        WsapiT target = createWsapiT();
+        target.setText(getMapping().d2w(source.getText()));
+        return target;
     }
 
     @Override
-    public void mapWsapiObject(WsapiT source, DomainT target) {
-        super.mapWsapiObject(source, target);
-        target.setText(map.w2d(source.getText()));
+    public DomainT mapWsapiObject(WsapiT source) {
+        DomainT target = createDomainT();
+        target.setText(getMapping().w2d(source.getText()));
+        return target;
     }
 }

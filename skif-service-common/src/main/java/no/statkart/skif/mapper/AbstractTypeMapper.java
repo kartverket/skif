@@ -1,27 +1,46 @@
 package no.statkart.skif.mapper;
 
-import java.lang.reflect.InvocationTargetException;
-
 
 /**
+ * Bare veldig grunnleggende basisfunksjonalitet i forhold til
+ *
+ * @param <WsapiT>  klassen i WS-API-domenet
+ * @param <DomainT> klassen i Java-domenet
+ * @param <M>       mapping-interfacet denne mapperen benytter
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  */
-public abstract class AbstractTypeMapper<WsapiT, DomainT> implements TypeMapper<WsapiT, DomainT> {
-    private ObjectFactory domainObjectFactory;
-    private ObjectFactory wsapiObjectFactory;
-    final Class<WsapiT> wsapiClass;
-    final Class<DomainT> domainClass;
+public abstract class AbstractTypeMapper<WsapiT, DomainT, M extends Mapping> implements TypeMapper<WsapiT, DomainT> {
+    private final Class<WsapiT> wsapiClass;
+    private final Class<DomainT> domainClass;
+    private final Class<? extends M> mappingInterface;
 
-    protected AbstractTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
+    private M mapping;
+
+    /**
+     * @param wsapiClass       klassen i WS-API-domenet
+     * @param domainClass      klassen i Java-domenet
+     * @param mappingInterface mapping-interfacet denne mapperen benytter
+     */
+    protected AbstractTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass, Class<? extends M> mappingInterface) {
         this.wsapiClass = wsapiClass;
         this.domainClass = domainClass;
+        this.mappingInterface = mappingInterface;
     }
 
     @Override
-    public abstract Mapping getMapping();
+    public M getMapping() {
+        return mapping;
+    }
 
     @Override
-    public abstract void setMapping(Mapping mapping);
+    public void setMapping(Mapping mapping) {
+        try {
+            this.mapping = mappingInterface.cast(mapping);
+        } catch (ClassCastException e) {
+            throw new MappingException("Can not use mapper which requires mapping " + mappingInterface + " with mapping " + mapping, e);
+        }
+    }
 
     @Override
     public Class<WsapiT> getWsapiClass() {
@@ -33,82 +52,36 @@ public abstract class AbstractTypeMapper<WsapiT, DomainT> implements TypeMapper<
         return domainClass;
     }
 
-    @Override
-    public ObjectFactory getWsapiObjectFactory() {
-        return wsapiObjectFactory;
-    }
-
-    @Override
-    public void setWsapiObjectFactory(ObjectFactory factory) {
-        this.wsapiObjectFactory = factory;
-    }
-
-
-    @Override
-    public ObjectFactory getDomainObjectFactory() {
-        return domainObjectFactory;
-    }
-
-    @Override
-    public void setDomainObjectFactory(ObjectFactory factory) {
-        this.domainObjectFactory = factory;
-    }
-
-    @Override
-    public final WsapiT mapDomainObject(DomainT source) {
-        WsapiT target = null;
+    /**
+     * Hjelpemetode for å opprette klasse av typen WsapiT. Dette virker bare dersom WsapiT er default constructable.
+     *
+     * @return ny instans
+     * @throws MappingException dersom ny instans ikke kan opprettes
+     */
+    protected WsapiT createWsapiT() {
         try {
-            target = getInitialWsapiObject(source);
+            return wsapiClass.newInstance();
         } catch (InstantiationException e) {
-            throw new MappingException(e);
+            throw new MappingException("Could not create new instance of " + wsapiClass, e);
         } catch (IllegalAccessException e) {
-            throw new MappingException(e);
-        } catch (InvocationTargetException e) {
-            throw new MappingException(e);
-        } catch (NoSuchMethodException e) {
-            throw new MappingException(e);
+            throw new MappingException("Could not create new instance of " + wsapiClass, e);
         }
-        mapDomainObject(source, target);
-        return target;
     }
 
-
-    @Override
-    public final DomainT mapWsapiObject(WsapiT source) {
-        DomainT target = null;
+    /**
+     * Hjelpemetode for å opprette klasse av typen DomainT. Dette virker bare dersom DomainT er default constructable.
+     *
+     * @return ny instans
+     * @throws MappingException dersom ny instans ikke kan opprettes
+     */
+    protected DomainT createDomainT() {
         try {
-            target = getInitialDomainObject(source);
+            return domainClass.newInstance();
         } catch (InstantiationException e) {
-            throw new MappingException(e);
+            throw new MappingException("Could not create new instance of " + domainClass, e);
         } catch (IllegalAccessException e) {
-            throw new MappingException(e);
-        } catch (InvocationTargetException e) {
-            throw new MappingException(e);
-        } catch (NoSuchMethodException e) {
-            throw new MappingException(e);
+            throw new MappingException("Could not create new instance of " + domainClass, e);
         }
-        mapWsapiObject(source, target);
-        return target;
-    }
-
-    protected WsapiT getInitialWsapiObject(DomainT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        WsapiT target = wsapiObjectFactory.getInitialObject(source, getWsapiClass());
-        return target;
-    }
-
-    protected DomainT getInitialDomainObject(WsapiT source) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return domainObjectFactory.getInitialObject(source, getDomainClass());
-    }
-
-    @Override
-    public void mapDomainObject(DomainT source, WsapiT target) {
-        // Dette er roten. Alle mappinger bør komme igjennom her
-
-    }
-
-    @Override
-    public void mapWsapiObject(WsapiT source, DomainT target) {
-        // Dette er roten. Alle mappinger bør komme igjennom her
     }
 
     /**
