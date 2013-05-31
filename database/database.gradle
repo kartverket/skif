@@ -142,15 +142,19 @@ task applyHistorikk {
         tables.each { String tableName ->
             def pkColumns = findPKColumnNames(db_username, tableName)
             def columnNames = findColumnNames(db_username, tableName)
+            def filteredColumnNames = new ArrayList(columnNames)
+            boolean hasHistoryColumns = filteredColumnNames.removeAll(['OPPDATERINGSDATO', 'SLUTTDATO', 'VERSJONID'])
 
             sql.execute("ALTER TABLE ${tableName} DROP PRIMARY KEY DROP INDEX".toString())
             sql.execute("ALTER TABLE ${tableName} RENAME TO ${tableName}_H".toString())
-            sql.execute("""
-                ALTER TABLE ${tableName}_H ADD (
-                    oppdateringsdato TIMESTAMP(6) DEFAULT sysdate NOT NULL,
-                    sluttdato TIMESTAMP(6) DEFAULT timestamp'9999-01-01 00:00:00.00' NOT NULL,
-                    versjonId NUMBER (19,0) DEFAULT 0 NOT NULL
-                 )""".toString())
+            if (!hasHistoryColumns) {
+                sql.execute("""
+                    ALTER TABLE ${tableName}_H ADD (
+                        oppdateringsdato TIMESTAMP(6) DEFAULT sysdate NOT NULL,
+                        sluttdato TIMESTAMP(6) DEFAULT timestamp'9999-01-01 00:00:00.00' NOT NULL,
+                        versjonId NUMBER (19,0) DEFAULT 0 NOT NULL
+                     )""".toString())
+            }
             sql.execute("ALTER TABLE ${tableName}_H ADD CONSTRAINT ${tableName}_UQ UNIQUE(${pkColumns.join(', ')}, sluttdato)".toString())
             sql.execute("CREATE UNIQUE INDEX ${tableName}_IX ON  ${tableName}_H (${pkColumns.join(', ')}, oppdateringsdato, sluttdato)".toString())
 
@@ -170,8 +174,8 @@ task applyHistorikk {
   END IF;
 
   IF INSERTING THEN
-    INSERT INTO ${tableName}_H
-        VALUES (${columnNames.collect {':NEW.' + it}.join(', ')}, T_TRANS, T_END, 1);
+    INSERT INTO ${tableName}_H(${filteredColumnNames.collect {it}.join(', ')}, OPPDATERINGSDATO, SLUTTDATO, VERSJONID)
+                       VALUES (${filteredColumnNames.collect {':NEW.' + it}.join(', ')}, T_TRANS, T_END, 1);
   ELSIF UPDATING THEN
     SELECT COUNT(*) INTO ANT FROM ${tableName}_H WHERE ${pkColumns.collect {it + '=:NEW.' + it}.join(' AND ')} AND SLUTTDATO = SNAPSHOT_TIME.GET_T_CURRENT();
     IF ANT = 0 THEN
@@ -183,17 +187,18 @@ task applyHistorikk {
       END IF;
     ELSE
       IF :OLD.OPPDATERINGSDATO < T_TRANS THEN
-        INSERT INTO ${tableName}_H VALUES (${columnNames.collect {':OLD.' + it}.join(',')}, :OLD.OPPDATERINGSDATO, T_TRANS, :OLD.VERSJONID);
+        INSERT INTO ${tableName}_H(${filteredColumnNames.collect {it}.join(', ')}, OPPDATERINGSDATO, SLUTTDATO, VERSJONID)
+                           VALUES (${filteredColumnNames.collect {':OLD.' + it}.join(',')}, :OLD.OPPDATERINGSDATO, T_TRANS, :OLD.VERSJONID);
         UPDATE ${tableName}_H SET VERSJONID = :OLD.VERSJONID+1
         WHERE ${pkColumns.collect {it + '=:OLD.' + it}.join(' AND ')} AND SLUTTDATO = T_END;
       END IF;
-      UPDATE ${tableName}_H SET ${columnNames.collect {it + '=:NEW.' + it}.join(', ')}, OPPDATERINGSDATO=T_TRANS, SLUTTDATO=T_END, VERSJONID=VERSJONID
+      UPDATE ${tableName}_H SET ${filteredColumnNames.collect {it + '=:NEW.' + it}.join(', ')}, OPPDATERINGSDATO=T_TRANS, SLUTTDATO=T_END, VERSJONID=VERSJONID
         WHERE ${pkColumns.collect {it + '=:OLD.' + it}.join(' AND ')} AND SLUTTDATO = T_END;
     END IF;
   ELSIF DELETING THEN
      IF :OLD.OPPDATERINGSDATO < T_TRANS THEN
-        INSERT INTO ${tableName}_H
-           VALUES (${columnNames.collect {':OLD.' + it}.join(', ')}, :OLD.OPPDATERINGSDATO, T_TRANS, :OLD.VERSJONID);
+        INSERT INTO ${tableName}_H(${filteredColumnNames.collect {it}.join(', ')}, OPPDATERINGSDATO, SLUTTDATO, VERSJONID)
+                           VALUES (${filteredColumnNames.collect {':OLD.' + it}.join(', ')}, :OLD.OPPDATERINGSDATO, T_TRANS, :OLD.VERSJONID);
      END IF;
      DELETE FROM ${tableName}_H
         WHERE ${pkColumns.collect {it + '=:OLD.' + it}.join(' AND ')} AND SLUTTDATO = T_END;
