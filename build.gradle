@@ -242,6 +242,9 @@ subprojects { Project project ->
 
             useTestNG() {
                 excludeGroups('broken')
+                if (!project.hasProperty('includeSlow') || !project.getProperty('includeSlow').asBoolean()) {
+                    excludeGroups('slow')
+                }
                 if (singleVm) {
                     excludeGroups('server-required')
                 } else {
