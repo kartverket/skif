@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest2.domain.list;
 
-import no.statkart.skif.storetest2.domain.AbstractStoreTest2Bubble;
+import no.statkart.skif.storetest2.domain.AbstractStoreTest2BubbleWithHistory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public class ListOfEntityComponents extends AbstractStoreTest2Bubble {
+public class ListOfEntityComponents extends AbstractStoreTest2BubbleWithHistory {
     private static final long serialVersionUID = 1L;
 
     private List<ListEntityComponent> entityComponents = new ArrayList<ListEntityComponent>();

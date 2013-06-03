@@ -1,7 +1,9 @@
 package no.statkart.skif.storetest2.domain.entitycomponent;
 
 import no.statkart.skif.storetest2.domain.AbstractStoreTest2Bubble;
+import no.statkart.skif.storetest2.domain.AbstractStoreTest2BubbleWithHistory;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +13,7 @@ import java.util.Set;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public class BubbleWithEntityComponents extends AbstractStoreTest2Bubble {
+public class BubbleWithEntityComponents extends AbstractStoreTest2BubbleWithHistory {
     private static final long serialVersionUID = 1L;
 
     private EntityComponent mainEntityComponent;

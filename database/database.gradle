@@ -93,7 +93,12 @@ task dbInit {
 }
 
 task applyHistorikk {
-    def tables = ['Kodeliste2', 'Kodeliste2Loc', 'StoreTest2DbKode', 'StoreTest2DbKodeLoc']
+    def tables = [
+            'Kodeliste2', 'Kodeliste2Loc',
+            'StoreTest2DbKode', 'StoreTest2DbKodeLoc',
+            'BubbleWithEntityComponents', 'EntityComponent',
+            'ListOfEntityComponents', 'ListEntityComponent',
+    ]
 
     doLast {
         groovy.sql.Sql sql = groovy.sql.Sql.newInstance("jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}", db_username, db_password, 'oracle.jdbc.OracleDriver')

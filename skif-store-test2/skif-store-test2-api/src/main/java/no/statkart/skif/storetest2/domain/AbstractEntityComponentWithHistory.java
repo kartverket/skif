@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest2.domain.entitycomponent;
+package no.statkart.skif.storetest2.domain;
 
 import no.statkart.skif.store.AbstractEntityComponent;
 

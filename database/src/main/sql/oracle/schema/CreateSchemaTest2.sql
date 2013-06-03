@@ -2,6 +2,9 @@
 
 create table BubbleWithEntityComponents (
     id number(19,0) not null,
+    oppdateringsdato timestamp,
+    sluttdato timestamp,
+    versjonId number(19,0),
     mainEntityComponent number(19,0),
     primary key (id)
 );
@@ -34,6 +37,9 @@ create table Endring (
 
 create table EntityComponent (
     id number(19,0) not null,
+    oppdateringsdato timestamp,
+    sluttdato timestamp,
+    versjonId number(19,0),
     value varchar2(255 char),
     bubbleId number(19,0),
     primary key (id)
@@ -56,6 +62,9 @@ create table Kodeliste2Loc (
 
 create table ListEntityComponent (
     id number(19,0) not null,
+    oppdateringsdato timestamp,
+    sluttdato timestamp,
+    versjonId number(19,0),
     textValue varchar2(255 char),
     listOfEntityComponentsId number(19,0),
     listIndex number(10,0),
@@ -64,6 +73,9 @@ create table ListEntityComponent (
 
 create table ListOfEntityComponents (
     id number(19,0) not null,
+    oppdateringsdato timestamp,
+    sluttdato timestamp,
+    versjonId number(19,0),
     primary key (id)
 );
 
