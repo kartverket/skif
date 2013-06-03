@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest2.domain.entitycomponent;
 
-import no.statkart.skif.store.AbstractEntityComponent;
+import no.statkart.skif.storetest2.domain.AbstractEntityComponentWithHistory;
 
 /**
  * Generisk entity component for bruk både i én-til-én og én-til-mange, fortrinnsvis Set.
@@ -8,7 +8,9 @@ import no.statkart.skif.store.AbstractEntityComponent;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public class EntityComponent extends AbstractEntityComponent {
+public class EntityComponent extends AbstractEntityComponentWithHistory {
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private String value;
 

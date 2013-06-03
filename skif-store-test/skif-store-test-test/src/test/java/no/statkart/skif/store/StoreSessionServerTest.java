@@ -1209,6 +1209,7 @@ public class StoreSessionServerTest {
 
     }
 
+    @Test(groups = "slow")
     public void testAttemptDeleteManyCallsWithFail() {
         int MAX_SAVEPOINTS = 1000;
         ParrentBubbleId<ParrentBubble> ParrentBubbleId_201 = new ParrentBubbleId<ParrentBubble>(201);
@@ -1248,6 +1249,7 @@ public class StoreSessionServerTest {
         assertEquals(storeServer.get(new ParrentBubbleId<ParrentBubble>(1000 + MAX_SAVEPOINTS-1)).getText(),"Updated parent " + (1000 + MAX_SAVEPOINTS-1));
     }
 
+    @Test(groups = "slow")
     public void testAttemptDeleteManyCallsWithoutFail() {
         int MAX_SAVEPOINTS = 10;
         ParrentBubbleId<ParrentBubble> ParrentBubbleId_201 = new ParrentBubbleId<ParrentBubble>(201);

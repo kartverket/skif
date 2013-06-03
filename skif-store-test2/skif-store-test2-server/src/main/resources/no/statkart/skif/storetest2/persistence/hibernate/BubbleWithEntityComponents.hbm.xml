@@ -9,6 +9,10 @@
             <generator class="assigned"/>
         </id>
 
+        <property name="oppdateringsdato" type="timestamp"/>
+        <property name="sluttdato" type="timestamp"/>
+        <property name="versjonId"/>
+
         <many-to-one name="mainEntityComponent" class="no.statkart.skif.storetest2.domain.entitycomponent.EntityComponent" cascade="all"/>
 
         <set name="secondaryEntityComponents" cascade="all-delete-orphan,evict">
@@ -21,6 +25,10 @@
         <id name="id" column="id" unsaved-value="null">
             <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
         </id>
+
+        <property name="oppdateringsdato" type="timestamp"/>
+        <property name="sluttdato" type="timestamp"/>
+        <property name="versjonId"/>
 
         <property name="value"/>
     </class>
