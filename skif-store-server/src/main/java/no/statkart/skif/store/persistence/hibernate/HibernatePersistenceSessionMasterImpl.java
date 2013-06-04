@@ -441,12 +441,11 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         Type[] typesExisting = persisterExisting.getPropertyTypes();
         Object[] valuesExisting = persisterExisting.getPropertyValues(existingObject, EntityMode.POJO);
 
-        int commonLength = 0;
+        int commonLength;
         if (persister != persisterExisting) {
             // Beregn felles felter for object og existingObject
-            for (int i = 0; i < types.length && i < typesExisting.length; i++) {
-                if (!types[i].getName().equals(typesExisting[i].getName())) {
-                    commonLength = i;
+            for (commonLength = 0; commonLength < types.length && commonLength < typesExisting.length; commonLength++) {
+                if (!types[commonLength].getName().equals(typesExisting[commonLength].getName())) {
                     break;
                 }
             }
