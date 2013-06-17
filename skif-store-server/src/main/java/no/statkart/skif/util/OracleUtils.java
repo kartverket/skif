@@ -88,7 +88,7 @@ public class OracleUtils {
      *
      * @return
      */
-    public static int getOracleIntSRID() {
+    public int getOracleIntSRID() {
         return -1;
     }
 

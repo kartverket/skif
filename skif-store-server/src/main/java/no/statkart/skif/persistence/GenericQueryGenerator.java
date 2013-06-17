@@ -36,6 +36,8 @@ public class GenericQueryGenerator {
     private static Logger logger = LoggerFactory.getLogger(GenericQueryGenerator.class);
     protected Connection connection;
 
+    protected OracleUtils oracleUtils = new OracleUtils();
+
     private static abstract class TableOrInlineView {
 
         public boolean isTable() {
@@ -178,6 +180,10 @@ public class GenericQueryGenerator {
      */
     public void addSelection(String string) {
         addSelectionImpl(string, null, null);
+    }
+
+    public void setOracleUtils(OracleUtils oracleUtils) {
+        this.oracleUtils = oracleUtils;
     }
 
     /**
@@ -437,7 +443,7 @@ public class GenericQueryGenerator {
            if( where2 != null ) {
               buffer.append(where2);
            }
-           parameters.add(new GeometriTilSdoStructMapper(OracleUtils.getOracleConnection(connection)).createStruct(polygon));
+           parameters.add(new GeometriTilSdoStructMapper(oracleUtils.getOracleConnection(connection), oracleUtils).createStruct(polygon));
 
 
         } else {
@@ -608,12 +614,12 @@ public class GenericQueryGenerator {
         }
     }
 
-    private static Polygon instansierOgKopierPolygon(Polygon polygon) {
+    private Polygon instansierOgKopierPolygon(Polygon polygon) {
        //lager en ny instans av polygonet
 
        //nb: geometri-objekter må være opprettet med et geometryFactory som har SRID == -1 == OracleUtils.getOracleIntSRID()
 
-       GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), OracleUtils.getOracleIntSRID());
+       GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), oracleUtils.getOracleIntSRID());
        polygon = JTSUtils.kopierPolygon(polygon, geometryFactory);
 
        return polygon;
