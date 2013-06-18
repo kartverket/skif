@@ -93,6 +93,8 @@ public class StoreServiceTest extends StoreTestTestCase {
     public void testStoreGetFooFlereSnapshotVersions() {
         StoreService store = injector.getInstance(StoreService.class);
 
+        System.gc();
+
         ArrayList<FooId<Foo>> ids = new ArrayList<FooId<Foo>>();
         ids.add(new FooId<Foo>(100L, SnapshotVersion.CURRENT));
         ids.add(new FooId<Foo>(100L, SnapshotVersion.createInstance("2011-10-02 08:00:30.00")));
