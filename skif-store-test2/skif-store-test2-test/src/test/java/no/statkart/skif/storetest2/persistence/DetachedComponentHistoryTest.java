@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest2.persistence;
 
 import com.google.inject.Inject;
-import no.statkart.skif.persistence.OracleLogHelper;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.store.BubbleObject;
@@ -41,8 +40,6 @@ public class DetachedComponentHistoryTest extends StoreTest2TestCase {
      * Kjører update med umodifisert detached objekt. Det skal ikke blir generert historikk for dette.
      */
     public void testDettachedSetUpdate() {
-        OracleLogHelper.enableTraceVerbose();
-
         StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();// TODO: Bruke EmptyFacade når tilgjengelig
 
         // Først må vi objektet skrives ned i databasen
@@ -81,8 +78,6 @@ public class DetachedComponentHistoryTest extends StoreTest2TestCase {
      * Kjører update med umodifisert detached objekt. Det skal ikke blir generert historikk for dette.
      */
     public void testDettachedListUpdate() {
-        OracleLogHelper.enableTraceVerbose();
-
         StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getForWriteTest();// TODO: Bruke EmptyFacade når tilgjengelig
 
         // Først må vi objektet skrives ned i databasen
