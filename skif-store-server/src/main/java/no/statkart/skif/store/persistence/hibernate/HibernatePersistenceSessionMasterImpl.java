@@ -460,7 +460,9 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
             if (type.isEntityType()) {
                 if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
-                    attachPersistenceCollectionWithSnapshotOfOldState(value, valueExisting, processedObjects);
+                    if (valueExisting != null) { // Kan ikke attache hvis det ikke var noe der fra før. At det er greit sjekkes av checkForReplacedOrStolenEntityComponent()
+                        attachPersistenceCollectionWithSnapshotOfOldState(value, valueExisting, processedObjects);
+                    }
                 }
             } else if (type.isComponentType()) {
                 attachComponent(value, valueExisting, (AbstractComponentType) type, processedObjects);
