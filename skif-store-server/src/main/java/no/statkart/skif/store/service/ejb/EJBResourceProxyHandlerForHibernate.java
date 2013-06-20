@@ -62,10 +62,16 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
             if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
                 resourceManager.commit();
             }
-        }
 
-        resourceManager.close();
-        resourceManager.shutdown();
+            // Ved ytterste metode i et scope er det noen ekstra ting som skal gjøres
+            if (!serviceRequestContext.isContinuation()) {
+                resourceManager.close();
+                resourceManager.shutdown();
+            }
+        } else {
+            resourceManager.close();
+            resourceManager.shutdown();
+        }
         //connectionManager.endAllocateConnectionsViaHibernateSession();
     }
 
@@ -77,16 +83,19 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
         final ResourceManager resourceManager = resourceManagerProvider.get();
 
         try {
-        serviceRequestContext.setRollbackOnly();
-        if (serviceRequestContext.isNewTx()) {
-            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
-                resourceManager.rollback();
+            serviceRequestContext.setRollbackOnly();
+            if (serviceRequestContext.isNewTx()) {
+                if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
+                    resourceManager.rollback();
+                }
             }
             resourceManager.close();
-        }
-        //connectionManager.endAllocateConnectionsViaHibernateSession();
+            //connectionManager.endAllocateConnectionsViaHibernateSession();
         } finally {
-            resourceManager.shutdown();
+            if (!serviceRequestContext.isContinuation()) {
+                resourceManager.close();
+                resourceManager.shutdown();
+            }
         }
     }
 }

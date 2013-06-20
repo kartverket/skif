@@ -105,14 +105,21 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                 resourceManager.commit();
             }
 
-            // Dersom dette er ytterste metode i et ikke-transaksjonelt scope, så skal de låser frigis som i scopet eksplisitt har blitt låst opp
-            if (!serviceRequestContext.isContinuation() && !serviceRequestContext.isTransactional() && shouldUnlockForService()) {
-                lockerStrategyProvider.get().releaseLocksOnNonTransactionalScopeCompletion();
+            // Ved ytterste metode i et scope er det noen ekstra ting som skal gjøres
+            if (!serviceRequestContext.isContinuation()) {
+                resourceManager.close();
+                resourceManager.shutdown();
+
+                // Dersom dette er ytterste metode i et ikke-transaksjonelt scope, så skal de låser frigis som i scopet eksplisitt har blitt låst opp
+                if (!serviceRequestContext.isTransactional() && shouldUnlockForService()) {
+                    lockerStrategyProvider.get().releaseLocksOnNonTransactionalScopeCompletion();
+                }
             }
+        } else {
+            resourceManager.close();
+            resourceManager.shutdown();
         }
 
-        resourceManager.close();
-        resourceManager.shutdown();
         //resourceManager.get().endAllocateConnectionsViaHibernateSession();
     }
 
@@ -128,7 +135,6 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
                     resourceManager.rollback();
                 }
-                resourceManager.close();
             }
 
             // Dersom er scope feiler, så skal alle låser tatt i løpet av det, frigis igjen.
@@ -138,7 +144,10 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
 
             //resourceManager.get().endAllocateConnectionsViaHibernateSession();
         } finally {
-            resourceManager.shutdown();
+            if (!serviceRequestContext.isContinuation()) {
+                resourceManager.close();
+                resourceManager.shutdown();
+            }
         }
     }
 
