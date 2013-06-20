@@ -437,7 +437,6 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
         if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
         EntityPersister persister = (EntityPersister) classMetadata;
-        if (!persister.hasCollections()) return;
 
         Type[] types = persister.getPropertyTypes();
         Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
@@ -468,7 +467,9 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             if (type.isEntityType()) {
                 if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
                     checkForReplacedOrStolenEntityComponent((EntityType) type, value, valueExisting);
-                    attachPersistenceCollectionWithSnapshotOfOldState(value, valueExisting, processedObjects);
+                    if (valueExisting != null) { // Kan ikke attache hvis det ikke var noe der fra før. At det er greit sjekkes av checkForReplacedOrStolenEntityComponent()
+                        attachPersistenceCollectionWithSnapshotOfOldState(value, valueExisting, processedObjects);
+                    }
                 }
             } else if (type.isComponentType()) {
                 attachComponent(value, valueExisting, (AbstractComponentType) type, processedObjects);
@@ -596,17 +597,15 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         Type elementType = collectionPersister.getElementType();
         if (elementType.isEntityType()) {
             final EntityPersister elementPersister = ((AbstractCollectionPersister) collectionPersister).getElementPersister();
-            if (elementPersister.hasCollections()) {
-                Map<Serializable, Object> oldElementMap = Maps.newHashMap();
-                for (Object o : collectionInExistingObject) {
-                    oldElementMap.put(elementPersister.getIdentifier(o, EntityMode.POJO), o);
-                }
-                for (Object object : collectionInOject) {
-                    final Serializable identifier = elementPersister.getIdentifier(object, EntityMode.POJO);
-                    final Object valueExisting = oldElementMap.get(identifier);
-                    if (valueExisting != null) { // TODO: Dersom objektet ikke fantes før, så kan det vel ikke være noen collections som skal attaches?
-                        attachPersistenceCollectionWithSnapshotOfOldState(object, valueExisting, processedObjects);
-                    }
+            Map<Serializable, Object> oldElementMap = Maps.newHashMap();
+            for (Object o : collectionInExistingObject) {
+                oldElementMap.put(elementPersister.getIdentifier(o, EntityMode.POJO), o);
+            }
+            for (Object object : collectionInOject) {
+                final Serializable identifier = elementPersister.getIdentifier(object, EntityMode.POJO);
+                final Object valueExisting = oldElementMap.get(identifier);
+                if (valueExisting != null) { // TODO: Dersom objektet ikke fantes før, så kan det vel ikke være noen collections som skal attaches?
+                    attachPersistenceCollectionWithSnapshotOfOldState(object, valueExisting, processedObjects);
                 }
             }
         } else if (elementType.isComponentType()) {
