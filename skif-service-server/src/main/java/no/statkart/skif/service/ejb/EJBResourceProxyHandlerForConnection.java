@@ -50,11 +50,20 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
         final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
         final ResourceManager resourceManager = resourceManagerProvider.get();
 
-        if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
-            resourceManager.commit();
+        if (serviceRequestContext.isContainerManagedTransaction()) {
+            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
+                resourceManager.commit();
+            }
+
+            // Ved ytterste metode i et scope er det noen ekstra ting som skal gjøres
+            if (!serviceRequestContext.isContinuation()) {
+                resourceManager.close();
+                resourceManager.shutdown();
+            }
+        } else {
+            resourceManager.close();
+            resourceManager.shutdown();
         }
-        resourceManager.close();
-        resourceManager.shutdown();
     }
 
     @Override
@@ -70,13 +79,15 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
                 if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
                     resourceManager.rollback();
                 }
-                resourceManager.close();
             }
         } catch (Exception e) { // Bevisst valg å la Error forbli ufanget
             // SKIF-158: Spis exceptions som kommer inni her, siden abortService() blir kalt pga. en annen exception som det anses for viktigere å kaste videre
             log.error("Ny exception ved abortService()", e);
         } finally {
-            resourceManager.shutdown();
+            if (!serviceRequestContext.isContinuation()) {
+                resourceManager.close();
+                resourceManager.shutdown();
+            }
         }
     }
 }
