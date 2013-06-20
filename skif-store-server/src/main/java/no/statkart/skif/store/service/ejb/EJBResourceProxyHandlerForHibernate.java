@@ -62,10 +62,16 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
             if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
                 resourceManager.commit();
             }
-        }
 
-        resourceManager.close();
-        resourceManager.shutdown();
+            // Ved ytterste metode i et scope er det noen ekstra ting som skal gjøres
+            if (!serviceRequestContext.isContinuation()) {
+                resourceManager.close();
+                resourceManager.shutdown();
+            }
+        } else {
+            resourceManager.close();
+            resourceManager.shutdown();
+        }
         //connectionManager.endAllocateConnectionsViaHibernateSession();
     }
 
@@ -89,7 +95,10 @@ public class EJBResourceProxyHandlerForHibernate<S> extends EJBResourceProxyHand
             // SKIF-158: Spis exceptions som kommer inni her, siden abortService() blir kalt pga. en annen exception som det anses for viktigere å kaste videre
             log.error("Ny exception ved abortService()", e);
         } finally {
-            resourceManager.shutdown();
+            if (!serviceRequestContext.isContinuation()) {
+                resourceManager.close();
+                resourceManager.shutdown();
+            }
         }
     }
 }
