@@ -153,7 +153,7 @@ public class SkifTestCase  extends AbstractSkifTestCase {
      * Beregner konfigurasjonsnøkkel for testcase på basis av hvilke konfigurasjonsklasser testcasen bruker.
      */
     protected final String calcConfigurationKey() {
-        return getModuleClassname() + ":" + Arrays.toString(getConfigurationFilenames()) + ":" + getSingleVmServerModuleClassname() + ":" +  Arrays.toString(getSingleVmServerConfigurationFilenames()) + ":" + isSingleVm();
+        return super.calcConfigurationKey();
     }
 
     /**
