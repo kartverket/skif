@@ -210,10 +210,12 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
 
     @Override
     public void clear() {
-        for (PersistenceSessionForSnapshot persistenceSessionForSnapshot : bundle) {
-            persistenceSessionForSnapshot.getImplementation(PersistenceSessionMaster.class).clear();
+        for (int i = 0; i < bundle.length; i++) {
+            PersistenceSessionForSnapshot persistenceSessionForSnapshot = bundle[i];
+            if (active[i]) {
+                persistenceSessionForSnapshot.getImplementation(PersistenceSessionMaster.class).clear();
+            }
         }
-
     }
 
     @Override
@@ -221,6 +223,5 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
         for (PersistenceSessionForSnapshot persistenceSessionForSnapshot : bundle) {
             persistenceSessionForSnapshot.getImplementation(PersistenceSessionMaster.class).verifySessionIsEmpty();
         }
-
     }
 }
