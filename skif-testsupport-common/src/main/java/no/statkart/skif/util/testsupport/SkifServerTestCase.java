@@ -54,6 +54,12 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
         return getClientInjector().getInstance(txType.getServiceClass());
     }
 
+    @Override
+    protected String calcConfigurationKey() {
+        return super.calcConfigurationKey() + ":" +
+                serverModuleExtClass + ":" +
+                ejbServiceChainExtClass;
+    }
 
     @Override
     protected ModuleBuilder createReusableModuleBuilder() {
