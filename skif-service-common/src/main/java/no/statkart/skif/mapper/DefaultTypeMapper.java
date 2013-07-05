@@ -8,9 +8,13 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.*;
+import java.net.JarURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -669,39 +673,31 @@ public class DefaultTypeMapper {
                 if (e.isDirectory())
                     classes.addAll(findClasses(e, packageName));
             } else if (protocol.equals("jar")) {
-                String filepath = resource.getPath();
-                int idx = filepath.indexOf("!");
-                String parsedJarName = filepath.substring(0, idx);
-                if (resource != null) {
-                    URL resource2 = new URL(parsedJarName);
-                    ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
-                    try {
-                        ZipEntry ze;
-                        while ((ze = zip2.getNextEntry()) != null) {
-                            String entryName = ze.getName();
+                JarURLConnection jarURLConnection = (JarURLConnection) resource.openConnection();
+                JarFile jarFile = jarURLConnection.getJarFile();
+                Enumeration<JarEntry> jarEntries = jarFile.entries();
+                while (jarEntries.hasMoreElements()) {
+                    JarEntry ze = jarEntries.nextElement();
+                    String entryName = ze.getName();
 
-                            if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
-                                Class _class;
-                                String className;
-                                try {
-                                    className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-                                    String classPackageName = className.substring(0, className.lastIndexOf("."));
-                                    // Laster kun klasser som ligger under packageName
-                                    if (classPackageName.contains(packageName)) {
-                                        _class = Class.forName(className);
-                                        classes.add(_class);
-                                    }
-                                } catch (ExceptionInInitializerError e) {
-                                    // happen, for example, in classes, which depend on
-                                    // Spring to inject some beans, and which fail,
-                                    // if dependency is not fulfilled
-//                                    _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-                                    throw new MappingException(e);
-                                }
+                    if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
+                        Class _class;
+                        String className;
+                        try {
+                            className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
+                            String classPackageName = className.substring(0, className.lastIndexOf("."));
+                            // Laster kun klasser som ligger under packageName
+                            if (classPackageName.contains(packageName)) {
+                                _class = Class.forName(className);
+                                classes.add(_class);
                             }
+                        } catch (ExceptionInInitializerError e) {
+                            // happen, for example, in classes, which depend on
+                            // Spring to inject some beans, and which fail,
+                            // if dependency is not fulfilled
+//                                    _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
+                            throw new MappingException(e);
                         }
-                    } finally {
-                        zip2.close();
                     }
                 }
             } else if (protocol.equals("zip")) {
