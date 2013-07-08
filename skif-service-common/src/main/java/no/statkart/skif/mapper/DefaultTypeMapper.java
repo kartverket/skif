@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.lang.reflect.*;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -159,7 +158,7 @@ public class DefaultTypeMapper {
             } else if (Collection.class.isAssignableFrom(sourceClass) && (checkHasField(targetType.getRawType(), "item") || checkHasField(targetType.getRawType(), "liste"))) {
                 retVal = targetType;
                 // Eller hvis det er array på kildesiden, mens måltypen har felt som heter 'item' eller 'liste'.
-            }  else if (sourceClass.isArray() && (checkHasField(targetType.getRawType(), "item") || checkHasField(targetType.getRawType(), "liste"))) {
+            } else if (sourceClass.isArray() && (checkHasField(targetType.getRawType(), "item") || checkHasField(targetType.getRawType(), "liste"))) {
                 retVal = targetType;
                 // Eller hvis det er map på kildesiden, mens måltypen har felt som heter 'entry'.
             } else if (Map.class.isAssignableFrom(sourceClass) && checkHasField(targetType.getRawType(), "entry")) {
@@ -169,11 +168,73 @@ public class DefaultTypeMapper {
             }
         }
 
-        if (!targetType.isAssignableFrom(retVal)) {
+        if (!targetType.isAssignableFrom(retVal) && !assignableIdCollection(targetType, retVal)) {
             throw new MappingException("Wanted to map " + sourceClass + " to " + retVal + ", but requested class is " + targetType.getRawType());
         }
 
         return retVal;
+    }
+
+    /**
+     * Guava 14.1 klarer ikke å set at man kan si Set&lt;BubbleId&lt;?&gt;&gt ids = new HashSet&lt;BubbleId&lt;?&gt;&gt().
+     * Dette er en vanlig ting å gjøre i SKIF, så dette er en workaround.
+     *
+     * @param targetType typen til egenskap som skal settes
+     * @param valueType  typen til verdien som skal settes på feltet
+     * @return om man kan putte <code>retVal</code> i en <code>targetType</code>
+     */
+    private boolean assignableIdCollection(TypeToken<?> targetType, TypeToken<?> valueType) {
+        if (!targetType.getRawType().isAssignableFrom(valueType.getRawType())) {
+            return false;
+        }
+        // Fra nå av må alt være likt
+        if (!(targetType.getType() instanceof ParameterizedType && valueType.getType() instanceof ParameterizedType)) {
+            return false;
+        }
+        ParameterizedType parameterizedTargetType = (ParameterizedType) targetType.getType();
+        ParameterizedType parameterizedValueType = (ParameterizedType) valueType.getType();
+        return parametersEqual(parameterizedTargetType, parameterizedValueType);
+    }
+
+    private boolean parametersEqual(ParameterizedType parameterizedTargetType, ParameterizedType parameterizedValueType) {
+        Type[] targetParameterTypes = parameterizedTargetType.getActualTypeArguments();
+        Type[] valueParameterTypes = parameterizedValueType.getActualTypeArguments();
+        if (targetParameterTypes.length != valueParameterTypes.length) {
+            return false;
+        }
+        for (int i = 0; i < targetParameterTypes.length; i++) {
+            Type targetParameterType = targetParameterTypes[i];
+            Type valueParameterType = valueParameterTypes[i];
+
+            if (targetParameterType instanceof Class && valueParameterType instanceof Class) {
+                if (!targetParameterType.equals(valueParameterType)) return false;
+            } else if (targetParameterType instanceof ParameterizedType && valueParameterType instanceof ParameterizedType) {
+                if (!((ParameterizedType) targetParameterType).getRawType().equals(((ParameterizedType) valueParameterType).getRawType())) {
+                    return false;
+                }
+                if (!parametersEqual((ParameterizedType) targetParameterType, (ParameterizedType) valueParameterType)) {
+                    return false;
+                }
+            } else if (targetParameterType instanceof WildcardType && valueParameterType instanceof WildcardType) {
+                Type[] targetLowerBounds = ((WildcardType) targetParameterType).getLowerBounds();
+                Type[] valueLowerBounds = ((WildcardType) valueParameterType).getLowerBounds();
+                if (targetLowerBounds.length != 0 || valueLowerBounds.length != 0) {
+                    return false;
+                }
+                Type[] targetUpperBounds = ((WildcardType) targetParameterType).getUpperBounds();
+                Type[] valueUpperBounds = ((WildcardType) targetParameterType).getUpperBounds();
+                if (targetUpperBounds.length != 1 || valueUpperBounds.length != 1) {
+                    return false;
+                }
+                if (!targetUpperBounds[0].equals(Object.class) || !valueUpperBounds[0].equals(Object.class)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private TypeToken<?> resolveCollection(TypeToken<?> targetType) {
@@ -182,10 +243,10 @@ public class DefaultTypeMapper {
             // Det er angitt en spesiell type collection det skal mappes til
             retVal = targetType;
             if (retVal.getRawType().isInterface()) {
-                if (Set.class.isAssignableFrom(retVal.getRawType())) {
-                    retVal = retVal.getSubtype(HashSet.class);
-                } else if (List.class.isAssignableFrom(retVal.getRawType())) {
+                if (retVal.getRawType().equals(Collection.class) || List.class.isAssignableFrom(retVal.getRawType())) {
                     retVal = retVal.getSubtype(ArrayList.class);
+                } else if (Set.class.isAssignableFrom(retVal.getRawType())) {
+                    retVal = retVal.getSubtype(HashSet.class);
                 } else {
                     throw new MappingException("Unknown Collection type: " + retVal);
                 }
@@ -264,7 +325,7 @@ public class DefaultTypeMapper {
                         field.setAccessible(true);
                         Collection collection = (Collection) field.get(source);
                         //noinspection ConstantConditions
-                        target = Array.newInstance(targetType.getComponentType().getRawType(), collection == null ? 0 :collection.size());
+                        target = Array.newInstance(targetType.getComponentType().getRawType(), collection == null ? 0 : collection.size());
                     } else {
                         target = targetType.getRawType().newInstance();
                     }
