@@ -9,6 +9,7 @@ import no.statkart.skif.store.endringslogg.AbstractEndring;
 import no.statkart.skif.store.endringslogg.AbstractEndringManager;
 import no.statkart.skif.storetest2.domain.endringslogg.EiendomEndring;
 import no.statkart.skif.storetest2.domain.endringslogg.EierEndring;
+import no.statkart.skif.storetest2.domain.endringslogg.SubTypedBubbleEndring;
 
 import java.sql.Connection;
 import java.util.List;
@@ -26,6 +27,7 @@ public class EndringManager extends AbstractEndringManager {
         ImmutableList.Builder<Class<? extends AbstractEndring>> builder = ImmutableList.builder();
         builder.add(EierEndring.class);
         builder.add(EiendomEndring.class);
+        builder.add(SubTypedBubbleEndring.class);
         endringsklasser = builder.build();
     }
 

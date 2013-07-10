@@ -3,7 +3,7 @@ package no.statkart.skif.store.endringslogg;
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  * Baseklasse for endringer.
@@ -15,7 +15,7 @@ public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBub
     private static final long serialVersionUID = 1L;
 
     private Endringstype endringstype;
-    private Date endringstidspunkt;
+    private Timestamp endringstidspunkt;
     private String brukernavn;
 
     @Override
@@ -35,11 +35,11 @@ public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBub
         this.endringstype = endringstype;
     }
 
-    public Date getEndringstidspunkt() {
+    public Timestamp getEndringstidspunkt() {
         return endringstidspunkt;
     }
 
-    void setEndringstidspunkt(Date endringstidspunkt) {
+    public void setEndringstidspunkt(Timestamp endringstidspunkt) {
         this.endringstidspunkt = endringstidspunkt;
     }
 

@@ -12,6 +12,9 @@ import no.statkart.skif.storetest2.domain.eierskap.EierId;
 import no.statkart.skif.storetest2.domain.endringslogg.EiendomEndring;
 import no.statkart.skif.storetest2.domain.endringslogg.EierEndring;
 import no.statkart.skif.storetest2.domain.endringslogg.Endring;
+import no.statkart.skif.storetest2.domain.endringslogg.SubTypedBubbleEndring;
+import no.statkart.skif.storetest2.domain.subtype.SubTypeWithPrimitive;
+import no.statkart.skif.storetest2.domain.subtype.SubTypeWithPrimitiveId;
 import no.statkart.skif.storetest2.mockup.EiendomMockupFactory;
 import no.statkart.skif.storetest2.mockup.EierMockupFactory;
 import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacade;
@@ -121,5 +124,29 @@ public class EndringManagerTest extends StoreTest2TestCase {
         Assert.assertEquals(endringer.get(2).getEndringsnummer(), endringsnummerFoer + 3, "Endring 2 endringsnummer");
         Assert.assertEquals(endringer.get(2).getEndringstype(), Endringstype.Sletting, "Endring 2 endringstype");
         Assert.assertEquals(endringer.get(2).getEndretBubbleId(), eiendom2.getId(), "Endring 2 id");
+    }
+
+    /**
+     * Tester at endringer lages for supertype dersom subtypen ikke har egen endringstype.
+     *
+     * @since 2.3.0
+     */
+    public void subTypesSuperType() {
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
+
+        final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer();
+
+        SubTypeWithPrimitive subTypeWithPrimitive = new SubTypeWithPrimitive();
+        subTypeWithPrimitive.setId(mockupFacade.getIdService().getNextId(SubTypeWithPrimitiveId.class));
+        subTypeWithPrimitive.setNum(1);
+
+        MockupTransfer transfer = new MockupTransfer(Arrays.asList(subTypeWithPrimitive), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
+        testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
+
+        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, 10);
+
+        Assert.assertEquals(endringer.size(), 1, "Antall endringer");
+        Assert.assertEquals(endringer.get(0).getClass(), SubTypedBubbleEndring.class, "Endring 0 klasse");
+        Assert.assertEquals(endringer.get(0).getEndretBubbleId(), subTypeWithPrimitive.getId(), "Endring 0 id");
     }
 }

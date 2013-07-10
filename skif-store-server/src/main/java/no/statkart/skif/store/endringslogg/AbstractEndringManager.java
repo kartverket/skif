@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -29,12 +30,14 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
 
     private final Map<Class<? extends BubbleId>, Class<? extends AbstractEndring>> endringklasseMap;
     private final Provider<ServiceRequestContext> contextProvider;
+    private final Provider<Connection> connectionProvider;
 
     private final SequenceBlockAllocatorService sequenceBlockAllocatorService;
     private final String sequenceName;
 
     protected AbstractEndringManager(Collection<Class<? extends AbstractEndring>> endringsklasser, Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Configuration configuration) {
         this.contextProvider = contextProvider;
+        this.connectionProvider = connectionProvider;
 
         this.sequenceBlockAllocatorService = new DefaultSequenceBlockAllocatorServiceImpl(connectionProvider, configuration) {
             @Override
@@ -84,11 +87,22 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         return bubbleIdClass;
     }
 
+    /**
+     * Bestemmer hvilket tidspunkt som skal brukes for endringene. Standardoppførsel er å hente transaksjonstidspunkt
+     * fra databasen, noe som forutsetter at den har historikk.
+     *
+     * @return tidspunktet for endringene
+     * @since 2.3.0
+     */
+    protected Timestamp getEndringstidspunkt() {
+        return SnapshotVersionSessionHelper.getTransactionTime(connectionProvider.get());
+    }
+
     @Override
     public void onFinish(StoreServer storeServer) {
         ServiceRequestContext serviceRequestContext = contextProvider.get();
         String principal = serviceRequestContext.getCallerPrincipal().getName();
-        Date tidspunkt = new Date();
+        Timestamp tidspunkt = getEndringstidspunkt();
 
         List<AbstractEndring> endringer = new ArrayList<AbstractEndring>();
 
@@ -123,8 +137,8 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         }
     }
 
-    private AbstractEndring<?> createEndring(StoreServer storeServer, Date tidspunkt, String brukernavn, BubbleId<?> bubbleId, Endringstype endringstype) {
-        Class<? extends AbstractEndring> endringClass = endringklasseMap.get(bubbleId.getClass());
+    private AbstractEndring<?> createEndring(StoreServer storeServer, Timestamp tidspunkt, String brukernavn, BubbleId<?> bubbleId, Endringstype endringstype) {
+        Class<? extends AbstractEndring> endringClass = findEndringClassForIdClass(bubbleId);
         if (endringClass != null) {
             final AbstractEndring<?> endring;
 
@@ -147,6 +161,17 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         } else {
             return null;
         }
+    }
+
+    protected Class<? extends AbstractEndring> findEndringClassForIdClass(BubbleId<?> bubbleId) {
+        for (Class<?> idClass = bubbleId.getClass(); idClass != null; idClass = idClass.getSuperclass()) {
+            //noinspection SuspiciousMethodCalls
+            Class<? extends AbstractEndring> endringClass = endringklasseMap.get(idClass);
+            if (endringClass != null) {
+                return endringClass;
+            }
+        }
+        return null;
     }
 
     /**

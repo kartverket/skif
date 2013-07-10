@@ -1,13 +1,14 @@
 package no.statkart.skif.store;
 
 import no.statkart.skif.exception.ConfigurationException;
-import org.hibernate.Hibernate;
+import no.statkart.skif.exception.OperationalException;
+import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.type.TimestampType;
 
-import java.sql.Timestamp;
+import java.sql.*;
 
 import static no.statkart.skif.store.SnapshotVersionHelper.calcJustBeforeOf;
 
@@ -85,5 +86,23 @@ public class SnapshotVersionSessionHelper {
         sqlQuery.executeUpdate();
     }
 
-
+    /**
+     * Henter transaksjonstidspunktet i databasen.
+     *
+     * @param connection gjeldende databasesesjon
+     * @return transaksjonstidspunkt
+     */
+    public static Timestamp getTransactionTime(Connection connection) {
+        CallableStatement statement = null;
+        try {
+            statement = connection.prepareCall("{? = call snapshot_time.Get_T_Trans() }");
+            statement.registerOutParameter(1, Types.TIMESTAMP);
+            statement.executeUpdate();
+            return statement.getTimestamp(1);
+        } catch (SQLException e) {
+            throw new OperationalException(e);
+        } finally {
+            JDBCHelper.close(statement);
+        }
+    }
 }

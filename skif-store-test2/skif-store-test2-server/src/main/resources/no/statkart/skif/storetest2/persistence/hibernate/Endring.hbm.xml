@@ -20,6 +20,9 @@
         <subclass name="no.statkart.skif.storetest2.domain.endringslogg.EiendomEndring" discriminator-value="EiendomEndring" lazy="true">
             <property name="eiendomId" column="endretBubbleId" type="no.statkart.skif.storetest2.persistence.hibernate.type.EiendomIdType"/>
         </subclass>
+        <subclass name="no.statkart.skif.storetest2.domain.endringslogg.SubTypedBubbleEndring" discriminator-value="SubTypedBubbleEndring" lazy="true">
+            <property name="subTypedBubbleId" column="endretBubbleId" type="no.statkart.skif.storetest2.persistence.hibernate.type.SubTypedBubbleIdType"/>
+        </subclass>
     </class>
 
 </hibernate-mapping>
