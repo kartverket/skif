@@ -35,7 +35,7 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
     private final SequenceBlockAllocatorService sequenceBlockAllocatorService;
     private final String sequenceName;
 
-    protected AbstractEndringManager(Collection<Class<? extends AbstractEndring>> endringsklasser, Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Configuration configuration) {
+    protected AbstractEndringManager(Collection<? extends Class<? extends AbstractEndring>> endringsklasser, Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Configuration configuration) {
         this.contextProvider = contextProvider;
         this.connectionProvider = connectionProvider;
 
