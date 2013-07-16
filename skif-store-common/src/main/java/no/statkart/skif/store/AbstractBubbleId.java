@@ -147,6 +147,10 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         return getTypeInfo(type).valueType;
     }
 
+    public static Class<? extends BubbleObject> getType(Class<? extends BubbleId> idClass) {
+        return getTypeInfo(idClass).type;
+    }
+
     @Override
     public final int hashCode() {
         return value.hashCode();

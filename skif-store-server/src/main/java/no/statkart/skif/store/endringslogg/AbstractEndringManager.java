@@ -53,7 +53,7 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         }
     }
 
-    private static Class<? extends BubbleId> findIdClassForEndringClass(Class<? extends AbstractEndring> endringClass) {
+    public static Class<? extends BubbleId> findIdClassForEndringClass(Class<? extends AbstractEndring> endringClass) {
         TypeVariable<? extends Class<? extends AbstractEndring>>[] typeParameters = endringClass.getTypeParameters();
         if (typeParameters.length != 1) {
             throw new ImplementationException("Endringsklasse " + endringClass + " har ikke én og bare én typeparameter", logger);
