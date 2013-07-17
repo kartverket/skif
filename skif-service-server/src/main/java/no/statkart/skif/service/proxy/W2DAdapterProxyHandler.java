@@ -44,6 +44,12 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
         this.exceptionMapping = exceptionMapping;
     }
 
+    W2DAdapterProxyHandler(Class<A> adapteeClass, ProxyHandler<A> handler, Mapping map, ExceptionMapping exceptionMapping) {
+        super(adapteeClass, handler);
+        this.map = map;
+        this.exceptionMapping = exceptionMapping;
+    }
+
     @Override
     protected Method findMethod(Method method) throws NoSuchMethodException {
         for (Method m : adapteeClass.getMethods()) {
