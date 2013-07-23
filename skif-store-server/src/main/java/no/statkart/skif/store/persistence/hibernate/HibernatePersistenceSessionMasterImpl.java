@@ -330,19 +330,20 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     /**
      * Sletter objekt som har samme id som {@code bubbeObject} fra underliggende hibernate session. Ved senere kall til
-     * flush() vil endringene bli sendt til databasen. Dersom objektet inneholder endringer i forhold til de som ligger
-     * i databasen så vil disse endringene bli lagret først.
+     * flush() vil endringene bli sendt til databasen.
+     * <p/>
+     * Slettingen utføres med det objektet som ligger i Hibernate (det lastes eventuelt inn hvis det ikke allerede er
+     * lastet), ikke med det objektet som kommer inn, som kan være en annen detached instans.
      *
      * @param bubbleObject objekt som inneholder id for det objekt som skal slettes
-     * @return objekt som ble slettet. Hvis bubbleObject ikke er knyttet til sessionen vi dette være en annen instans
      */
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubbleObject) {
         try {
-            evictOtherInstanceFromHibernateSession(bubbleObject);
+            Object obj = getFromHibernateSessionOrLoad(bubbleObject.getId());
             fullyInitializedBubbles.remove(bubbleObject.getId());
             exportedLazyLoadedBubbles.remove(bubbleObject.getId());
-            session().delete(bubbleObject);
+            session().delete(obj);
         } catch (HibernateException e) {
             throw new ImplementationException("Delete failed for " + bubbleObject, e);
         }

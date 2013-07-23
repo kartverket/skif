@@ -220,7 +220,7 @@ public class StoreTest2ServerModule extends SkifModule {
             hibernatePropertiesCurrent = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
             hibernatePropertiesCurrent.setProperty(Environment.DATASOURCE, datasourceCurrent);
 
-            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE);
+            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE_OLD);
             hibernatePropertiesOld = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
             hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
         }
