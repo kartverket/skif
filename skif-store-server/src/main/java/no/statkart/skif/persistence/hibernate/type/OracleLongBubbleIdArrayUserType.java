@@ -1,22 +1,5 @@
 package no.statkart.skif.persistence.hibernate.type;
 
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.util.OracleUtils;
-import oracle.sql.ARRAY;
-import oracle.sql.ArrayDescriptor;
-import org.hibernate.HibernateException;
-import org.hibernate.type.descriptor.JdbcTypeNameMapper;
-import org.hibernate.usertype.UserType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.sql.*;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * En Hibernate {@code UserType} for persistering av collections via Oracle {@code oracle.sql.ARRAY}. Klassen brukes
  * hovedsakelig i forbindelse med spørringer med collections av vilkårlig stor størrelse.

@@ -5,7 +5,6 @@ import no.statkart.skif.util.OracleUtils;
 import oracle.sql.ARRAY;
 import oracle.sql.ArrayDescriptor;
 import org.hibernate.HibernateException;
-import org.hibernate.type.descriptor.JdbcTypeNameMapper;
 import org.hibernate.usertype.UserType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,29 +70,31 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
 
 
         if (value == null) {
-            if (log.isTraceEnabled()) {
-                log.trace(
-                        String.format(
-                                NULL_BIND_MSG_TEMPLATE,
-                                index,
-                                JdbcTypeNameMapper.getTypeName(Types.ARRAY)
-                        )
-                );
-            }
+            // TODO: Virker kun med Hibernate 3.6
+//            if (log.isTraceEnabled()) {
+//                log.trace(
+//                        String.format(
+//                                NULL_BIND_MSG_TEMPLATE,
+//                                index,
+//                                JdbcTypeNameMapper.getTypeName(Types.ARRAY)
+//                        )
+//                );
+//            }
             statement.setNull(index, SQL_TYPES[0], getOracleListType());
         } else {
             Object[] arrayValue = toArray((Collection<BubbleId>) value);
 
-            if (log.isTraceEnabled()) {
-                log.trace(
-                        String.format(
-                                BIND_MSG_TEMPLATE,
-                                index,
-                                JdbcTypeNameMapper.getTypeName(Types.ARRAY),
-                                extractLoggableRepresentation(Arrays.asList(arrayValue))
-                        )
-                );
-            }
+            // TODO: Virker kun med Hibernate 3.6
+//            if (log.isTraceEnabled()) {
+//                log.trace(
+//                        String.format(
+//                                BIND_MSG_TEMPLATE,
+//                                index,
+//                                JdbcTypeNameMapper.getTypeName(Types.ARRAY),
+//                                extractLoggableRepresentation(Arrays.asList(arrayValue))
+//                        )
+//                );
+//            }
 
             Connection con = OracleUtils.getOracleConnection(statement.getConnection());
             ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor(getOracleListType(), con);
