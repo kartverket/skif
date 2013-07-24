@@ -114,7 +114,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
+    public <T extends BubbleObject> T get(BubbleId<? extends T> bubbleId) {
         PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubbleId.getSnapshotVersion());
         return persistenceSessionForSnapshot.get(bubbleId);
     }
@@ -191,7 +191,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId) {
+    public <T extends BubbleObject> T refresh(BubbleId<? extends T> bubbleId) {
         PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubbleId.getSnapshotVersion());
         return persistenceSessionForSnapshot.refresh(bubbleId);
     }

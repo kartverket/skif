@@ -83,7 +83,7 @@ public class DefaultPersistenceSessionStrategy implements PersistenceSessionStra
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
+    public <T extends BubbleObject> T get(BubbleId<? extends T> bubbleId) {
         PersistenceSessionForSnapshot forBubbleId = getForBubbleId(bubbleId.getClass());
         return forBubbleId.get(bubbleId);
     }
@@ -125,7 +125,7 @@ public class DefaultPersistenceSessionStrategy implements PersistenceSessionStra
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId) {
+    public <T extends BubbleObject> T refresh(BubbleId<? extends T> bubbleId) {
         PersistenceSessionForSnapshot forBubbleId = getForBubbleId(bubbleId.getClass());
         return forBubbleId.refresh(bubbleId);
     }

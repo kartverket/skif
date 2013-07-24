@@ -210,7 +210,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @return en domeneboble av typen <code>MatrikkelBubbleObject</code>
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
+    public <T extends BubbleObject> T get(BubbleId<? extends T> bubbleId) {
         T bubble;
 
         checkSnapshotVersion(bubbleId);
@@ -1024,7 +1024,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId) {
+    public <T extends BubbleObject> T refresh(BubbleId<? extends T> bubbleId) {
         //TODO: På grunn av feilen beskrevet i SKIF-231 har vi valgt å ikke bruke refresh på session her inntil videre.
         evict(bubbleId);
         return get(bubbleId);

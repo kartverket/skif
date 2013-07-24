@@ -76,7 +76,7 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(@Nullable I bubbleId) {
+    public <T extends BubbleObject> T get(@Nullable BubbleId<? extends T> bubbleId) {
         if (bubbleId == null) {
             return null;
         } else {
@@ -206,7 +206,7 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(@Nullable I bubbleId) {
+    public <T extends BubbleObject> T lock(@Nullable BubbleId<? extends T> bubbleId) {
         return get(bubbleId);
     }
 

@@ -19,7 +19,7 @@ public interface StoreSession {
      * @param bubbleId
      * @return
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId);
+    <T extends BubbleObject> T get(BubbleId<? extends T> bubbleId);
 
     /**
      * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
@@ -182,7 +182,7 @@ public interface StoreSession {
     <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId);
 
 
-    <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I bubbleId);
+    <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId);
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I bubbleId);
 

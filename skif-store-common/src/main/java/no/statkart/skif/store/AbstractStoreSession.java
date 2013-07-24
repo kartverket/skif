@@ -52,7 +52,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public final <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
+    public final <T extends BubbleObject> T get(BubbleId<? extends T> bubbleId) {
 
         StoreEntry entry = storeCache.get(bubbleId);
         if (entry == null) {
@@ -470,7 +470,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public final <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I bubbleId) {
+    public final <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId) {
         StoreEntry entry = lockEntry(level, bubbleId);
         return (T) entry.getBubbleObject(level);
     }

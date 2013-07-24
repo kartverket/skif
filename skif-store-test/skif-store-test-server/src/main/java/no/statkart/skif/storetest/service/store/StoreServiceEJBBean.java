@@ -31,7 +31,7 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I ids) {
+    public <T extends BubbleObject> T getObject(BubbleId<? extends T> ids) {
         return serviceChain.getObject(ids);
     }
 
@@ -67,7 +67,7 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I id) throws LockedException {
+    public <T extends BubbleObject> T lock(BubbleId<? extends T> id) throws LockedException {
         return serviceChain.lock(id);
     }
 

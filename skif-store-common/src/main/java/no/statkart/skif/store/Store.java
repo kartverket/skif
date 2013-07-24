@@ -24,12 +24,11 @@ public interface Store {
      *
      * @param bubbleId id til objektet man ønsker å hente ut
      * @param <T>      typen til objektet man ønsker å hente ut
-     * @param <I>      id-typen til objektet man ønsker å hente ut
      * @return objektet
      * @throws no.statkart.skif.exception.ObjectNotFoundException
      *          dersom objektet ikke fins
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> T get(@Nullable I bubbleId);
+    <T extends BubbleObject> T get(@Nullable BubbleId<? extends T> bubbleId);
 
     /**
      * Henter mange objekter for gitte id-er. Returnerer {@link Set} eller {@link List} avhengig av hva man sendte inn.
@@ -193,14 +192,13 @@ public interface Store {
      *
      * @param bubbleId id til objektet man ønsker å låse
      * @param <T>      typen til objektet man ønsker å låse
-     * @param <I>      id-typen til objektet man ønsker å låse
      * @return objektet
      * @throws no.statkart.skif.exception.ObjectNotFoundException
      *          dersom objektet ikke fins
      * @throws no.statkart.skif.exception.LockedException
      *          dersom noen andre har låst objektet
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(@Nullable I bubbleId);
+    <T extends BubbleObject> T lock(@Nullable BubbleId<? extends T> bubbleId);
 
     /**
      * Låser og henter mange objekter for gitte id-er. Returnerer {@link Set} eller {@link List} avhengig av hva man sendte inn.

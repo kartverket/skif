@@ -25,7 +25,7 @@ public interface StoreService extends no.statkart.skif.store.service.StoreServic
      * @throws ObjectNotFoundException kastes hvis {@code id} ikke finnes
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I id) throws ObjectNotFoundException;
+    public <T extends BubbleObject> T getObject(BubbleId<? extends T> id) throws ObjectNotFoundException;
 
     /**
      * Henter en collecton av BubbleObjects av type {@code <T>} for {@code ids} av type {@code <I>}. Hvis
@@ -68,7 +68,7 @@ public interface StoreService extends no.statkart.skif.store.service.StoreServic
      * @throws LockedException kastes hvis objekt er låst av en annen bruker
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I id) throws LockedException;
+    public <T extends BubbleObject> T lock(BubbleId<? extends T> id) throws LockedException;
 
     /**
      * Låser opp BubbleObject av type {@code <T>} for {@code id} av type {@code <I>} dersom det er låst av kallende

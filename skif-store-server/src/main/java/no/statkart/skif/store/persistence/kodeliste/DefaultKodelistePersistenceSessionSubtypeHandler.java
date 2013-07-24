@@ -61,7 +61,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
+    public <T extends BubbleObject> T get(BubbleId<? extends T> bubbleId) {
         T bubble;
         if (bubbleId instanceof KodeId) {
             if (enumKodelisteManager.isEnumClass(KodeId.class.cast(bubbleId).getClass())) {
@@ -313,7 +313,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId) {
+    public <T extends BubbleObject> T refresh(BubbleId<? extends T> bubbleId) {
         T bubble = enumKodelisteManager.get(bubbleId);
         if (bubble == null) {
             persistenceSessionMaster.refresh(bubbleId);

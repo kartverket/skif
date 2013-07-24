@@ -111,7 +111,7 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
+    public <T extends BubbleObject> T get(BubbleId<? extends T> bubbleId) {
         SnapshotVersion previousVersion = delegate.setSnapshot(snapshotVersion);
         try {
             return delegate.get(bubbleId);
@@ -181,7 +181,7 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T refresh(I bubbleId) {
+    public <T extends BubbleObject> T refresh(BubbleId<? extends T> bubbleId) {
         SnapshotVersion previousVersion = delegate.setSnapshot(snapshotVersion);
         try {
             return delegate.refresh(bubbleId);

@@ -26,7 +26,7 @@ public class StoreServiceImpl implements StoreService {
     protected ServiceRequestContext serviceRequestContext;
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I id) {
+    public <T extends BubbleObject> T getObject(BubbleId<? extends T> id) {
         final T bubbleObject = store.get(id);
         store.ensureFullyLoaded(bubbleObject);
         return bubbleObject;
@@ -72,7 +72,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I id) throws LockedException {
+    public <T extends BubbleObject> T lock(BubbleId<? extends T> id) throws LockedException {
         final T bubbleObject = store.lock(id);
         store.ensureFullyLoaded(bubbleObject);
         return bubbleObject;

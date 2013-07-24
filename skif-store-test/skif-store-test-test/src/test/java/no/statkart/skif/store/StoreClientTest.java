@@ -199,7 +199,7 @@ public class StoreClientTest {
         }
 
         @Override
-        public <T extends BubbleObject, I extends BubbleId<? extends T>> T getObject(I id) {
+        public <T extends BubbleObject> T getObject(BubbleId<? extends T> id) {
             return createBubble(id);
         }
 
@@ -228,7 +228,7 @@ public class StoreClientTest {
         }
 
         @Override
-        public <T extends BubbleObject, I extends BubbleId<? extends T>> T lock(I id) {
+        public <T extends BubbleObject> T lock(BubbleId<? extends T> id) {
             T bubble = createBubble(id);
             lockedIds.add(id);
             return bubble;
