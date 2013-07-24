@@ -51,4 +51,12 @@ BEGIN
 END;
 /
 
+PROMPT dropping types for user @db_username@
+BEGIN
+  FOR i IN (SELECT object_name FROM all_objects where owner = '@db_username@' AND object_type = 'TYPE')
+    LOOP
+        EXECUTE IMMEDIATE('DROP TYPE "@db_schema@"."' || i.object_name || '" FORCE');
+    END LOOP;
+END;
+/
 PROMPT purge successfull!;

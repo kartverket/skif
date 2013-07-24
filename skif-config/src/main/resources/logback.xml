@@ -20,6 +20,7 @@
         <appender-ref ref="STDOUT"/>
     </root>
 
+    <logger name="org.hibernate.util.DTDEntityResolver" level="ERROR"/>
     <logger name="no.statkart.skif.service.logging.DefaultServerCallLogger" level="info"/>
     <logger name="no.statkart.skif.service.logging.DefaultClientCallLogger" level="info"/>
 

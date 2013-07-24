@@ -1,3 +1,7 @@
+-- Brukes for å sende array av Number eller String til databasen basert på Oracle Array extension for JDBC
+CREATE TYPE NUMBER_LIST_TYPE AS TABLE OF NUMBER(19,0);
+CREATE TYPE STRING_LIST_TYPE AS TABLE OF VARCHAR2(256);
+
 --Oppretter generelle tabeller
 
 create table TableSequence (
