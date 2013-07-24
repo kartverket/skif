@@ -418,12 +418,12 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(I bubbleId) {
+    public <I extends BubbleId<?>> boolean evict(I bubbleId) {
         return evictEntry(level, bubbleId);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll() {
+    public boolean evictAll() {
         return evictAllEntries(level);
     }
 
@@ -460,7 +460,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
+    public <I extends BubbleId<?>> void reorderModification(I bubbleId) {
         final StoreEntry storeEntry = modifiedMap.remove(bubbleId);
         markModified();
         if (storeEntry == null) {
@@ -476,7 +476,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public final <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I bubbleId) {
+    public final <I extends BubbleId<?>> void unlock(I bubbleId) {
         StoreEntry storeEntry = unlockEntry(level, bubbleId);
         removeModified(storeEntry);
     }

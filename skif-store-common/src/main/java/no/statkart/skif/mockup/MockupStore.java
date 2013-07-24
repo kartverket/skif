@@ -231,7 +231,7 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(@Nullable I bubbleId) {
+    public <I extends BubbleId<?>> void unlock(@Nullable I bubbleId) {
         throw new NotImplementedException();
     }
 
@@ -242,17 +242,17 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId) {
+    public <I extends BubbleId<?>> boolean isLocked(I bubbleId) {
         throw new NotImplementedException();
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(I bubbleId) {
+    public <I extends BubbleId<?>> boolean evict(I bubbleId) {
         throw new NotImplementedException();
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(Collection<I> bubbleIds) {
+    public <I extends BubbleId<?>> boolean evict(Collection<I> bubbleIds) {
         throw new NotImplementedException();
     }
 
@@ -302,7 +302,7 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
+    public <I extends BubbleId<?>> void reorderModification(I bubbleId) {
         throw new NotImplementedException();
     }
 

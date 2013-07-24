@@ -76,7 +76,7 @@ public interface StoreService extends no.statkart.skif.store.service.StoreServic
      * @param id BubbleId for objekt som skal låses opp
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I id);
+    public <I extends BubbleId<?>> void unlock(I id);
 
     /**
      * Rerturnerer true dersom objektet er låst av kallende bruker
@@ -84,5 +84,5 @@ public interface StoreService extends no.statkart.skif.store.service.StoreServic
      * @return
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I id);
+    public <I extends BubbleId<?>> boolean isLocked(I id);
 }

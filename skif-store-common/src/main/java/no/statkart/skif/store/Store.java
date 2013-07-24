@@ -273,10 +273,9 @@ public interface Store {
      * Sier opp låsen på et gitt objekt. Objektet må være uendret i {@link Store}.
      *
      * @param bubbleId id-en til objektet som skal låses opp
-     * @param <T>      typen til objektet som skal låses opp
      * @param <I>      id-typen til objektet som skal låses opp
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(@Nullable I bubbleId);
+    <I extends BubbleId<?>> void unlock(@Nullable I bubbleId);
 
     void register(BubbleTransfer transfer);
 
@@ -286,33 +285,30 @@ public interface Store {
      * Sjekker om et objekt er låst av gjeldende bruker.
      *
      * @param bubbleId id-en til objektet som skal sjekkes
-     * @param <T>      typen til objektet som skal sjekkes
      * @param <I>      id-type til objektet som skal sjekkes
      * @return <code>true</code> hvis objektet er låst av gjeldende bruke
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId);
+    <I extends BubbleId<?>> boolean isLocked(I bubbleId);
 
     /**
      * Kaster gitt objekt ut av Store. Dette kan være nødvendig i store operasjoner for å frigi minne. Objektet må være
      * uendret.
      *
      * @param bubbleId id-en til objektet som skal kastes ut av minnet
-     * @param <T>      typen til objektet som skal kastes ut av minnet
      * @param <I>      id-typen til objektet som skal kastes ut av minnet
      * @return <code>true</code> hvis objekter faktisk ble kastet ut
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(I bubbleId);
+    <I extends BubbleId<?>> boolean evict(I bubbleId);
 
     /**
      * Kaster gitte objekter ut av Store. Dette kan være nødvendig i store operasjoner for å frigi minne. Objektene må
      * være uendrede.
      *
      * @param bubbleIds id-ene til objektene som skal kastes ut av minnet
-     * @param <T>       den supertypen som er felles for objektet som skal kastes ut av minnet
      * @param <I>       den id-supertypen som er felles for objektene som skal kastes ut av minnet
      * @return noe uklart
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(Collection<I> bubbleIds);
+    <I extends BubbleId<?>> boolean evict(Collection<I> bubbleIds);
 
     /**
      * Kaster alle objekter ut av Store. Dette kan være nødvendig i store operasjoner for å frigi minne.
@@ -381,10 +377,9 @@ public interface Store {
      * Endrer boblens plass i oppdateringsrekkefølgen ved å flytte den til "nå".
      *
      * @param bubbleId id-en til boblen som skal omkronologiseres
-     * @param <T>      typen til boblen
      * @param <I>      id-typen til boblen
      */
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId);
+    public <I extends BubbleId<?>> void reorderModification(I bubbleId);
 
     /**
      * Sørger for at en boble er fullstendig initialisert.

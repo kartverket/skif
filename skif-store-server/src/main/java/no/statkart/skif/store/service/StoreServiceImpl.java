@@ -67,7 +67,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I id) {
+    public <I extends BubbleId<?>> boolean isLocked(I id) {
         return store.isLocked(id);
     }
 
@@ -79,7 +79,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I id) {
+    public <I extends BubbleId<?>> void unlock(I id) {
         store.unlock(id);
     }
 

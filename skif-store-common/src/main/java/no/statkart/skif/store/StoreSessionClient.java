@@ -63,7 +63,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId) {
+    public <I extends BubbleId<?>> boolean isLocked(I bubbleId) {
         StoreEntry storeEntry = storeCache.get(bubbleId);
         return (storeEntry != null && isLocked(storeEntry));
     }

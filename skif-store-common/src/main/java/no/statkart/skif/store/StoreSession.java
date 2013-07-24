@@ -124,14 +124,14 @@ public interface StoreSession {
      * @param bubbleId
      * @return  true hvis objektet ble fjernet
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(I bubbleId);
+    <I extends BubbleId<?>> boolean evict(I bubbleId);
 
     /**
      * Fjerner objektet fra sessionen. Objekter som har blitt endret fjernes ikke
      * TODO: Legge inn støtte til å kunne fjerne endret objekter etter flush/finishBatch har blitt kjørt
      * @return  true hvis objektet ble fjernet
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAll();
+    boolean evictAll();
 
     /**
      * Oppretter objektet i sessionen. Metoden kaster exception hvis objektet allerede er knyttet til sessionen eller
@@ -179,14 +179,14 @@ public interface StoreSession {
      *
      * @param bubbleId
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId);
+    <I extends BubbleId<?>> void reorderModification(I bubbleId);
 
 
     <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId);
 
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I bubbleId);
+    <I extends BubbleId<?>> void unlock(I bubbleId);
 
-    <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId);
+    <I extends BubbleId<?>> boolean isLocked(I bubbleId);
 
     <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
 

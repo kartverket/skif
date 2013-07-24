@@ -25,7 +25,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I bubbleId) {
+    public <I extends BubbleId<?>> boolean isLocked(I bubbleId) {
         return wrappedStoreSession.isLocked(bubbleId);
     }
 

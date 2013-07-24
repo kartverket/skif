@@ -235,12 +235,12 @@ public class StoreClientTest {
         }
 
         @Override
-        public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(I id) {
+        public <I extends BubbleId<?>> void unlock(I id) {
             lockedIds.remove(id);
         }
 
         @Override
-        public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(I id) {
+        public <I extends BubbleId<?>> boolean isLocked(I id) {
             return lockedIds.contains(id);
         }
     }

@@ -146,7 +146,7 @@ public class AbstractStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void unlock(@Nullable I bubbleId) {
+    public <I extends BubbleId<?>> void unlock(@Nullable I bubbleId) {
         if (bubbleId == null) return;
         storeSession.unlock(bubbleId);
     }
@@ -191,19 +191,19 @@ public class AbstractStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isLocked(@Nullable I bubbleId) {
+    public <I extends BubbleId<?>> boolean isLocked(@Nullable I bubbleId) {
         if (bubbleId == null) return false;
         return storeSession.isLocked(bubbleId);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(@Nullable I bubbleId) {
+    public <I extends BubbleId<?>> boolean evict(@Nullable I bubbleId) {
         if (bubbleId == null) return false;
         return storeSession.evict(bubbleId);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(Collection<I> bubbleIds) {
+    public <I extends BubbleId<?>> boolean evict(Collection<I> bubbleIds) {
         // TODO: Hva bør egentlig returneres her?
         boolean allWasEviced = true;
         for (I bubbleId : bubbleIds) {
@@ -248,7 +248,7 @@ public class AbstractStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void reorderModification(I bubbleId) {
+    public <I extends BubbleId<?>> void reorderModification(I bubbleId) {
         storeSession.reorderModification(bubbleId);
     }
 
