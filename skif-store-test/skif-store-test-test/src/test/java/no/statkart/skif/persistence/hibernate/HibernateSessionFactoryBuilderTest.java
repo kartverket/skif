@@ -8,6 +8,7 @@ import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
 import no.statkart.skif.storetest.TestHelper;
+import no.statkart.skif.storetest.domain.demo.Foo;
 import no.statkart.skif.storetest.domain.demo.TestEntity;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -24,6 +25,19 @@ import java.util.Properties;
 import static org.testng.Assert.*;
 
 /**
+ * Tester opprettelse og frigivelse av Hibernate SessionFactory og Session via HibernateSessionFactoryBuilder.
+ *
+ * I Oracle 10.2.0.3 har det tidligere vært et problem at  databasen løpe tør for database connections fordi databasen
+ * muligvis ikke frigir connections rask nok når sessions opprettes rask etter hverandre. Løsningen her var å
+ * legge inn en forsinkelse i Oracle's listener "(RATE_LIMIT=25)":
+ * <pre>
+ *    LISTENER =
+ *     (DESCRIPTION_LIST =
+ *       (DESCRIPTION =
+ *          (ADDRESS = (PROTOCOL = TCP)(HOST = WSFREHEN2)(PORT = 1521)(RATE_LIMIT=25))
+ *       )
+ *     )
+ * </pre>
  * @author Henrik Fredholm
  * @since 2.1
  */
@@ -38,7 +52,7 @@ public class HibernateSessionFactoryBuilderTest {
 
     public void testCreateFactorySessionAndConnection() throws SQLException, InterruptedException {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
-        sfbuilder.addResource(TestEntity.class);
+        sfbuilder.addResource(Foo.class);
         Properties hibernateProperties = TestHelper.createHibernatePropertiesSingleVm() ;
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties, null);
         assertNotNull(sf);
@@ -54,7 +68,7 @@ public class HibernateSessionFactoryBuilderTest {
         sf.close();
     }
 
-    @Test(invocationCount = 1/*200*/)
+    @Test(invocationCount = 200, groups="slow")
     public void testCreateFactorySessionAndConnectionMulti() throws SQLException, InterruptedException {
         testCreateFactorySessionAndConnection();
     }
@@ -73,7 +87,7 @@ public class HibernateSessionFactoryBuilderTest {
         sf.close();
     }
 
-    @Test(invocationCount = 1/*200*/)
+    @Test(invocationCount = 200, groups="slow")
     public void testCreateFactoryWithEntityMulti() throws SQLException {
         testCreateFactoryWithEntity();
     }
