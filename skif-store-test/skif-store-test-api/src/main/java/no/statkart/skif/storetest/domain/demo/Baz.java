@@ -5,6 +5,8 @@ import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.C2DbKodeId;
+import no.statkart.skif.storetest.domain.mockup.Foo;
+import no.statkart.skif.storetest.domain.mockup.FooId;
 
 /**
  * @author Henrik Fredholm

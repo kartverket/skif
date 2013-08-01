@@ -2,14 +2,16 @@ package no.statkart.skif.storetest.persistence;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.AbstractEntityComponent;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.domain.demo.BubbleWithComponents;
 import no.statkart.skif.storetest.domain.demo.BubbleWithComponentsComponent;
 import no.statkart.skif.storetest.domain.demo.BubbleWithComponentsId;
-import no.statkart.skif.storetest.mockup.MockupFacade;
-import no.statkart.skif.storetest.mockup.MockupFacadeFactory;
+import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
+import no.statkart.skif.storetest.mockupframework.MockupFacade;
+import no.statkart.skif.storetest.mockupframework.MockupFacadeFactory;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.testsupport.SkifServerTestCase;
 import org.testng.Assert;
@@ -28,7 +30,7 @@ import java.util.Collections;
 @Test
 public class EntityComponentTest extends SkifServerTestCase {
     @Inject
-    private MockupFacadeFactory mockupFacadeFactory;
+    private StoreTestMockupFacadeFactory mockupFacadeFactory;
 
     @Inject
     private StoreServer store;
@@ -48,10 +50,10 @@ public class EntityComponentTest extends SkifServerTestCase {
     }
 
     public void hashCodePersistentAcrossPersist() {
-        final MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        IdService idService = mockupFacadeFactory.getWriteMockupFacade().getIdService();
 
         BubbleWithComponents bubbleWithComponents = new BubbleWithComponents();
-        bubbleWithComponents.setId(mockupFacade.getIdService().getNextId(BubbleWithComponentsId.class));
+        bubbleWithComponents.setId(idService.getNextId(BubbleWithComponentsId.class));
 
         final BubbleWithComponentsComponent component = new BubbleWithComponentsComponent();
         bubbleWithComponents.setComponents(Collections.singleton(component));

@@ -8,8 +8,8 @@ import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.store.multikobling.DefaultKoblingFactory;
 import no.statkart.skif.store.multikobling.Kobling;
 import no.statkart.skif.store.multikobling.Multikobling;
-import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
-import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubbleId;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.multikobling.kobling.RettsstiftelsePersonRolle;
 import no.statkart.skif.storetest.domain.multikobling.kobling.RetttstiftelseTilPersonKobling;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
@@ -22,6 +22,10 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /**
+ * Tester multikobling.
+ * <p>
+ * Testene må kjøre i singleVm mode fordi det pt ikke er utviklet webservice støtte for  anvendte klasser
+ *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  * @since 2.1

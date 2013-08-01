@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.domain.demo;
 
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 
 /**
  * @author Tor Egil R. Strand

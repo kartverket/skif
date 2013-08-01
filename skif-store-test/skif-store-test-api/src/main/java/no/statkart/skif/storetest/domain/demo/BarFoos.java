@@ -2,6 +2,10 @@ package no.statkart.skif.storetest.domain.demo;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
+import no.statkart.skif.storetest.domain.mockup.Bar;
+import no.statkart.skif.storetest.domain.mockup.BarId;
+import no.statkart.skif.storetest.domain.mockup.Foo;
+import no.statkart.skif.storetest.domain.mockup.FooId;
 
 import java.util.Set;
 

@@ -4,6 +4,9 @@ import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.mapper.MapperInfo;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.demo.*;
+import no.statkart.skif.storetest.domain.mockup.BarId;
+import no.statkart.skif.storetest.domain.mockup.Foo;
+import no.statkart.skif.storetest.domain.mockup.FooId;
 
 import java.util.List;
 import java.util.Map;

@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.demo.TestBubble;
-import no.statkart.skif.storetest.domain.demo.TestBubbleId;
-import no.statkart.skif.storetest.mockup.MockupFacade;
-import no.statkart.skif.storetest.mockup.MockupFacadeFactory;
+import no.statkart.skif.storetest.domain.basic.Simple;
+import no.statkart.skif.storetest.domain.basic.SimpleId;
+import no.statkart.skif.storetest.mockupframework.MockupFacade;
+import no.statkart.skif.storetest.mockupframework.MockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.Test;
 
@@ -26,7 +26,7 @@ public class UpdateYtelseTest extends StoreTestMixedTestCase {
     private Store clientStore;
 
     public void test() {
-        final List<TestBubbleId> ids = new ArrayList<TestBubbleId>();
+        final List<SimpleId> ids = new ArrayList<SimpleId>();
         final MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         final IdService idService = mockupFacade.getStore().getInstance(IdService.class);
 
@@ -39,12 +39,12 @@ public class UpdateYtelseTest extends StoreTestMixedTestCase {
 
 
                 for (int i = 0; i < 1000; ++i) {
-                    TestBubbleId<?> id = idService.getNextId(TestBubbleId.class);
+                    SimpleId<?> id = idService.getNextId(SimpleId.class);
                     ids.add(id);
-                    TestBubble testBubble = new TestBubble();
-                    testBubble.setId(id);
-                    testBubble.setText(String.valueOf(i));
-                    store.insert(testBubble);
+                    Simple Simple = new Simple();
+                    Simple.setId(id);
+                    Simple.setText(String.valueOf(i));
+                    store.insert(Simple);
                 }
 
                 return null;
@@ -72,11 +72,11 @@ public class UpdateYtelseTest extends StoreTestMixedTestCase {
 //                    store.lock(ids);
                     store.get(ids);
 
-                    for (TestBubbleId id : ids) {
-                        TestBubble testBubble = new TestBubble();
-                        testBubble.setId(id);
-                        testBubble.setText(String.valueOf(j * 10000 + id.getValue()));
-                        store.update(testBubble);
+                    for (SimpleId id : ids) {
+                        Simple Simple = new Simple();
+                        Simple.setId(id);
+                        Simple.setText(String.valueOf(j * 10000 + id.getValue()));
+                        store.update(Simple);
                     }
 
                     return null;

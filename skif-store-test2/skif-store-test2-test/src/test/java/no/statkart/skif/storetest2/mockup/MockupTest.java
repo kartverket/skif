@@ -57,14 +57,14 @@ public class MockupTest extends StoreTest2TestCase {
     }
 
     public void getForEierId() {
-            StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacade();
-            MockupTransfer transferForIds = mockupFacade.getTransferForIds(ImmutableSet.of(mockupFacade.getEierMockupFactory().getEier1Id()));
+        StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacade();
+        MockupTransfer transferForIds = mockupFacade.getTransferForIds(ImmutableSet.of(mockupFacade.getEierMockupFactory().getEier1Id()));
 
-            Set<BubbleObject> expected = new HashSet<BubbleObject>();
-            expected.add(mockupFacade.getStore().get(mockupFacade.getEierMockupFactory().getEier1Id()));
-            expected.add(mockupFacade.getStore().get(mockupFacade.getEiendomMockupFactory().getEiendom1Id()));
-            expected.add(mockupFacade.getStore().get(mockupFacade.getEiendomMockupFactory().getEiendom2Id()));
+        Set<BubbleObject> expected = new HashSet<BubbleObject>();
+        expected.add(mockupFacade.getStore().get(mockupFacade.getEierMockupFactory().getEier1Id()));
+        expected.add(mockupFacade.getStore().get(mockupFacade.getEiendomMockupFactory().getEiendom1Id()));
+        expected.add(mockupFacade.getStore().get(mockupFacade.getEiendomMockupFactory().getEiendom2Id()));
 
-            Assert.assertEquals(transferForIds.getInsertedObjects(), expected);
-        }
+        Assert.assertEquals(transferForIds.getInsertedObjects(), expected);
+    }
 }

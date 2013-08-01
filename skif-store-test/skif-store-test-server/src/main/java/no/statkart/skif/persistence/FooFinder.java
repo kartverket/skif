@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.demo.Foo;
-import no.statkart.skif.storetest.domain.demo.FooId;
+import no.statkart.skif.storetest.domain.mockup.Foo;
+import no.statkart.skif.storetest.domain.mockup.FooId;
 import no.statkart.skif.util.JDBCHelper;
 
 import java.sql.PreparedStatement;

@@ -1,8 +1,8 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.store.kodeliste.KodeId;
-import no.statkart.skif.storetest.domain.demo.TestBubble;
-import no.statkart.skif.storetest.domain.demo.TestBubbleId;
+import no.statkart.skif.storetest.domain.standalone.TestBubble;
+import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
@@ -17,7 +17,7 @@ import static org.testng.Assert.assertSame;
 /**
  * @author Henrik Fredholm
  */
-@Test
+@Test(groups="broken")
 public class StoreTestMappingD2WTest {
     StoreTestMapper configuration = new StoreTestMapper();
     StoreTestMapping map = configuration.getMapping();

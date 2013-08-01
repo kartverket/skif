@@ -8,14 +8,12 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
-import no.statkart.skif.storetest.wsapi.domain.demo.BarFoosIdList;
-import no.statkart.skif.storetest.wsapi.domain.demo.BarIdList;
-import no.statkart.skif.storetest.wsapi.domain.demo.FooIdList;
+import no.statkart.skif.storetest.domain.mockup.Bar;
+import no.statkart.skif.storetest.domain.mockup.BarId;
+import no.statkart.skif.storetest.domain.mockup.Foo;
+import no.statkart.skif.storetest.domain.mockup.FooId;
 
 import java.sql.Timestamp;
-import java.util.Collection;
 
 /**
  * @author Henrik Fredholm
@@ -46,9 +44,9 @@ public interface StoreTestMapping extends Mapping {
     public no.statkart.skif.storetest.domain.demo.BarFoosId<no.statkart.skif.storetest.domain.demo.BarFoos> w2d(no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId source);
     public no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId d2w(no.statkart.skif.storetest.domain.demo.BarFoosId<no.statkart.skif.storetest.domain.demo.BarFoos> source);
 
-    public no.statkart.skif.storetest.domain.demo.BarId<no.statkart.skif.storetest.domain.demo.Bar> w2d(no.statkart.skif.storetest.wsapi.domain.demo.BarId source);
-    public no.statkart.skif.storetest.wsapi.domain.demo.BarId d2w(no.statkart.skif.storetest.domain.demo.BarId<no.statkart.skif.storetest.domain.demo.Bar> source);
+    public BarId<Bar> w2d(no.statkart.skif.storetest.wsapi.domain.demo.BarId source);
+    public no.statkart.skif.storetest.wsapi.domain.demo.BarId d2w(BarId<Bar> source);
 
-    public no.statkart.skif.storetest.domain.demo.FooId<no.statkart.skif.storetest.domain.demo.Foo> w2d(no.statkart.skif.storetest.wsapi.domain.demo.FooId source);
-    public no.statkart.skif.storetest.wsapi.domain.demo.FooId d2w(no.statkart.skif.storetest.domain.demo.FooId<no.statkart.skif.storetest.domain.demo.Foo> source);
+    public FooId<Foo> w2d(no.statkart.skif.storetest.wsapi.domain.demo.FooId source);
+    public no.statkart.skif.storetest.wsapi.domain.demo.FooId d2w(FooId<Foo> source);
 }

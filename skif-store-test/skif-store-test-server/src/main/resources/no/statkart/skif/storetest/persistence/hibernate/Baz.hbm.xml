@@ -12,7 +12,7 @@
       <many-to-one
           name="foo"
           column="fooId"
-          class="no.statkart.skif.storetest.domain.demo.Foo">
+          class="no.statkart.skif.storetest.domain.mockup.Foo">
           <meta attribute="bubble-ref"/>
        </many-to-one>
 

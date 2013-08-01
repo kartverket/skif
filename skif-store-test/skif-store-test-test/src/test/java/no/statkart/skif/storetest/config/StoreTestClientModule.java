@@ -28,6 +28,8 @@ import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
 
 /**
+ * Klientmodule for client-server tester som går mot StoreTestServer.
+ *
  * @author Henrik Fredholm
  */
 public class StoreTestClientModule extends SkifModule {

@@ -71,12 +71,12 @@ public class ConnectionManagerUsingJDBCTest {
         connectionManager.close();
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 1 /*200*/)
     public void testAllocateConnection_many() throws SQLException, InterruptedException {
         testAllocateConnection();
     }
 
-    @Test(invocationCount = 200)
+    @Test(invocationCount = 1 /*200*/)
     public void testAllocateConnection_many2() {
         // Se SKIF 215 hvis denne feiler
         try {

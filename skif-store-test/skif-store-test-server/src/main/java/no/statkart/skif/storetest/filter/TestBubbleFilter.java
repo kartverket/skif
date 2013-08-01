@@ -4,8 +4,8 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.StoreSessionReadListener;
 import no.statkart.skif.store.StoreSessionWriteListener;
-import no.statkart.skif.storetest.domain.demo.FilteredBubble;
-import no.statkart.skif.storetest.domain.demo.FilteredBubbleId;
+import no.statkart.skif.storetest.domain.standalone.FilteredBubble;
+import no.statkart.skif.storetest.domain.standalone.FilteredBubbleId;
 
 /**
  * Filtrerer objekter som er av typen FilteredBubble.

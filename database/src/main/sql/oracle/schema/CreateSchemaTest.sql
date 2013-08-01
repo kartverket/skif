@@ -1,36 +1,126 @@
--- Oppretter tabeller som brukes i det kaotiske storetest-testprosjektet
+-- Oppretter tabeller som brukes storetest-testprosjektet og som bruker mockup-rammeverket for opprettelse av testdatasett
 
-create table FilteredBubble (
-  id number(19,0) not null,
-  Text Varchar2(255),
-  filter number(1,0),
-  FilterText Varchar2(255),
-  Primary Key (Id)
+create table Simple (
+    id number(19,0) not null,
+    nr number(10,0),
+    text varchar2(255),
+    primary key (id)
 );
 
+create table BubbleWithRelation (
+    id number(19,0) not null,
+    nr number(10,0),
+    text varchar2(255),
+    simpleId number(19,0),
+    primary key (id)
+);
+alter table BubbleWithRelation add constraint FK_BubbleWithRelation_simpleId foreign key (simpleId) references Simple;
 
-create table ParrentBubble (
-  id number(19,0) not null,
-  Text Varchar2(255),
-  Primary Key (Id)
+create table BubbleWithFilter (
+    id number(19,0) not null,
+    nr number(10,0),
+    filter number(1,0),
+    filterText varchar2(255),
+    text varchar2(255),
+    primary key (id)
 );
 
-CREATE TABLE CHILDFORPARRENT(
-  id number (19,0) not null,
-  parrentBubbleId number(19,0) not null,
-  childBubbleId number(19,0) not null,
-  Primary Key (id)
+create table HistSimple_H (
+    id number(19,0) not null,
+    oppdateringsdato timestamp(6) not null,
+    sluttdato timestamp(6) not null,
+    versjonId number (19,0) not null,
+    nr number(10,0),
+    text varchar2(255),
+    primary key (id, sluttdato)
 );
+create view HistSimple as select * from HistSimple_H  where snapshot_time.t_between(oppdateringsdato, sluttdato)=1;
 
-create table ChildBubble(
-  id number(19,0) not null,
-  TEXT VARCHAR2(255),
-  TESTBUBBLEID number(19,0),
-  PRIMARY KEY (ID)
-) ;
+CREATE OR REPLACE TRIGGER HistSimple_TRIGGER
+INSTEAD OF INSERT OR UPDATE OR DELETE ON HistSimple
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF UPDATING THEN
+    IF :old.oppdateringsdato < t_Trans THEN
+        INSERT INTO HistSimple_H
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text);
 
-alter table ChildForParrent add constraint FK23723BEA16AF2FAB foreign key (parrentBubbleId) references ParrentBubble;
-ALTER TABLE CHILDFORPARRENT ADD CONSTRAINT FK_CHILDFORPARRENT_CHILD FOREIGN KEY (CHILDBUBBLEID) REFERENCES CHILDBUBBLE;
+        UPDATE HistSimple_H SET versjonId = :old.versjonId + 1 WHERE id= :new.id and sluttdato = t_End;
+    END IF;
+    UPDATE HistSimple_H
+    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.nr, text = :new.text
+    WHERE id = :new.id and sluttdato = t_End;
+  ELSIF INSERTING THEN
+    INSERT INTO HistSimple_H
+        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.text);
+  ELSIF DELETING THEN
+    IF :old.oppdateringsdato < t_Trans THEN
+        INSERT INTO HistSimple_H
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text);
+    END IF;
+    delete from HistSimple_H
+    WHERE id = :old.id and sluttdato = t_End;
+  END IF;
+END HistSimple_TRIGGER;
+/
+
+create table HistWithRelation_H (
+    id number(19,0) not null,
+    oppdateringsdato timestamp(6) not null,
+    sluttdato timestamp(6) not null,
+    versjonId number (19,0) not null,
+    nr number(10,0),
+    text varchar2(255),
+    histSimpleId number(19,0),    
+    primary key (id, sluttdato)
+);
+create view HistWithRelation as select * from HistWithRelation_H  where snapshot_time.t_between(oppdateringsdato, sluttdato)=1;
+
+CREATE OR REPLACE TRIGGER HistWithRelation_TRIGGER
+INSTEAD OF INSERT OR UPDATE OR DELETE ON HistWithRelation
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF UPDATING THEN
+    IF :old.oppdateringsdato < t_Trans THEN
+        INSERT INTO HistWithRelation_H
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.histSimpleId);
+
+        UPDATE HistWithRelation_H SET versjonId = :old.versjonId + 1 WHERE id= :new.id and sluttdato = t_End;
+    END IF;
+    UPDATE HistWithRelation_H
+    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.nr, text = :new.text, histSimpleId = :new.histSimpleId
+    WHERE id = :new.id and sluttdato = t_End;
+  ELSIF INSERTING THEN
+    INSERT INTO HistWithRelation_H
+        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.text, :new.histSimpleId);
+  ELSIF DELETING THEN
+    IF :old.oppdateringsdato < t_Trans THEN
+        INSERT INTO HistWithRelation_H
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.histSimpleId);
+    END IF;
+    delete from HistWithRelation_H
+    WHERE id = :old.id and sluttdato = t_End;
+  END IF;
+END HistWithRel_TRIGGER;
+/
+
+-- Denne map tabell brukes av StoreTest1ServiceTest
+create table TestMap (
+k varchar2(255) not null,
+v Varchar2(255),
+Primary Key (k)
+);
+--
+
+
+-- Gammel kode her fra ---
+
 
 create table BubbleWithComponents (
   id number(19,0) not null,
@@ -48,34 +138,7 @@ create index IDX_BWCComponent_bubbleId on BubbleWithComponentsComponent(bubbleId
 
 
 
-create table TestEntity (
-id number(19,0) not null,
-Text Varchar2(255),
-Primary Key (Id)
-);
 
-create table TestBubble(
-id number(19,0) not null,
-text varchar2(255),
-Primary Key (Id)
-);
-
-create table SelfBubble (
-id number(19,0) not null,
-text varchar2(255),
-refId number(19,0),
-
-Primary Key (Id)
-);
-alter table SelfBubble add constraint Self_FK foreign key (refId) references SelfBubble;
-
-
-
-create table TestMap (
-k varchar2(255) not null,
-v Varchar2(255),
-Primary Key (k)
-);
 
 create table AKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, primary key (id) );
 create table AKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
@@ -652,4 +715,92 @@ BEGIN
 
   END IF;
 END T_BubbleWithListComponent2;
+/
+
+-- Tabeller for relasjonstesting
+
+CREATE TABLE X1BOne_H (
+    id                   NUMBER(19,0) NOT NULL ENABLE,
+    oppdateringsdato     timestamp(6) not null,
+    sluttdato            timestamp(6) not null,
+    versjonId            number (19,0) not null,
+    nr                   number(10,0),
+    text                 VARCHAR2(255 BYTE),
+    PRIMARY KEY (ID, sluttdato)
+);
+create view X1BOne as select * from X1BOne_H  where snapshot_time.t_between(oppdateringsdato, sluttdato)=1;
+
+CREATE OR REPLACE TRIGGER X1BOne_TRIGGER
+INSTEAD OF INSERT OR UPDATE OR DELETE ON X1BOne
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF UPDATING THEN
+    IF :old.oppdateringsdato < t_Trans THEN
+        INSERT INTO X1BOne_H
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text);
+
+        UPDATE X1BOne_H SET versjonId = :old.versjonId + 1 WHERE id= :new.id and sluttdato = t_End;
+    END IF;
+    UPDATE X1BOne_H
+    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.nr, text = :new.text
+    WHERE id = :new.id and sluttdato = t_End;
+  ELSIF INSERTING THEN
+    INSERT INTO X1BOne_H
+        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.text);
+  ELSIF DELETING THEN
+    IF :old.oppdateringsdato < t_Trans THEN
+        INSERT INTO X1BOne_H
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text);
+    END IF;
+    delete from X1BOne_H
+    WHERE id = :old.id and sluttdato = t_End;
+  END IF;
+END X1BOne_TRIGGER;
+/
+
+CREATE TABLE X1A_H (
+    id                   NUMBER(19,0) NOT NULL ENABLE,
+    oppdateringsdato     timestamp(6) not null,
+    sluttdato            timestamp(6) not null,
+    versjonId            number (19,0) not null,
+    nr                   number(10,0),
+    text                 VARCHAR2(255 BYTE),
+    bId                  number(19,0) not null,
+
+    PRIMARY KEY (ID, sluttdato)
+);
+create view X1A as select * from X1A_H  where snapshot_time.t_between(oppdateringsdato, sluttdato)=1;
+
+CREATE OR REPLACE TRIGGER X1A_TRIGGER
+INSTEAD OF INSERT OR UPDATE OR DELETE ON X1A
+FOR EACH ROW
+DECLARE
+t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+BEGIN
+  IF UPDATING THEN
+    IF :old.oppdateringsdato < t_Trans THEN
+        INSERT INTO X1A_H
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.bId);
+
+        UPDATE X1A_H SET versjonId = :old.versjonId + 1 WHERE id= :new.id and sluttdato = t_End;
+    END IF;
+    UPDATE X1A_H
+    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.nr, text = :new.text, bId = :new.bId
+    WHERE id = :new.id and sluttdato = t_End;
+  ELSIF INSERTING THEN
+    INSERT INTO X1A_H
+        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.text, :new.bId);
+  ELSIF DELETING THEN
+    IF :old.oppdateringsdato < t_Trans THEN
+        INSERT INTO X1A_H
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.bId);
+    END IF;
+    delete from X1A_H
+    WHERE id = :old.id and sluttdato = t_End;
+  END IF;
+END X1A_TRIGGER;
 /

@@ -13,15 +13,13 @@ import org.unitils.reflectionassert.ReflectionAssert;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 /**
- * Mappingtest for SnapshotVersionMapping.
- * Testing with AutomagicTest shows that instanciation of the time and nano must be set correct and may fail if
- * random values is used.
- *
- * Tests mapping with valid values generated from: SnapshotVersion.CURRENT, OLD, START and
- * custom (ex. new SnapshotVersion("2009-11-12 22:18:50.320000005")).
+ * Tester mapping av SnapshotVersion. AutomagicTest støttes ikke da time og nano ikke kan bruke random verdier.
+ * Tester mapping av SnapshotVersion for CURRENT, OLD, START og custom (new SnapshotVersion("2009-11-12 22:18:50.320000005")).
+ * <p>
+ * Denne test kjører alltid i SingleVm uansett hvilken mode som er valgt i skif.properties.
  *
  * @author Jan Holmen
- * @since 3.0
+ * @since 2.0
  */
 @Test
 public class SnapshotVersionMappingTest extends StoreTestTestCase {
@@ -35,8 +33,6 @@ public class SnapshotVersionMappingTest extends StoreTestTestCase {
         moduleConfiguration.setStrategyFactory(new ClientModuleStrategyFactory());
         moduleConfiguration.setServiceMode(ServiceMode.SINGLE_VM);
     }
-
-
 
     public void testSnapshotVersionTypeMapper_Curent() {
         //generate test data

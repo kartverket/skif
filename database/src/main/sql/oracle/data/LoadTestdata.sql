@@ -1,12 +1,22 @@
 insert into TestEntity values (1, 'Text 1');
+
 insert into TestBubble values (1, 'Text 1');
 insert into TestBubble values (2, 'Text 2');
 
+insert into TestBubbleWithHistory_H (ID, oppdateringsdato, sluttdato, versjonId, nr, text) values (10, snapshot_time.to_t('2011-10-02 08:00:00.00'), snapshot_time.to_t('2011-10-02 08:01:00.00'), 1, 2200, 'KARTGATA');
+insert into TestBubbleWithHistory_H (ID, oppdateringsdato, sluttdato, versjonId, nr, text) values (10, snapshot_time.to_t('2011-10-02 08:01:00.00'), snapshot_time.to_t('2011-10-02 08:02:00.00'), 2, 2200, 'KARTVEGEN');
+insert into TestBubbleWithHistory_H (ID, oppdateringsdato, sluttdato, versjonId, nr, text) values (10, snapshot_time.to_t('2011-10-02 08:02:00.00'), snapshot_time.to_t('2011-10-02 08:03:00.00'), 3, 2200, 'KARTVEIEN');
+insert into TestBubbleWithHistory_H (ID, oppdateringsdato, sluttdato, versjonId, nr, text) values (10, snapshot_time.to_t('2011-10-02 08:03:00.00'), snapshot_time.to_t('2011-10-02 08:04:00.00'), 4, 2200, 'KART-VEIEN');
+insert into TestBubbleWithHistory_H (ID, oppdateringsdato, sluttdato, versjonId, nr, text) values (10, snapshot_time.to_t('2011-10-02 08:04:00.00'), snapshot_time.to_t('9999-01-01 00:00:00.00'), 5, 2200, 'KARTVEIEN');
+insert into TestBubbleWithHistory_H (ID, oppdateringsdato, sluttdato, versjonId, nr, text) values (11, snapshot_time.to_t('2011-10-02 08:03:00.00'),snapshot_time.to_t('2011-10-02 08:04:00.00'), 1, 2201, 'GAMMEL-VEIEN');
+insert into TestBubbleWithHistory_H (ID, oppdateringsdato, sluttdato, versjonId, nr, text) values (11, snapshot_time.to_t('2011-10-02 08:04:00.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'), 2, 2201, 'GAMMELVEIEN');
 
+insert into FilteredBubble values(1, 'Orginal 1',0,'Ufilterert');
+insert into FilteredBubble values(2, 'Orginal 2',1,'Filterert');
 
-insert into ParrentBubble values (1, 'Parrent 1');
-insert into ParrentBubble values (2, 'Parrent 2');
-insert into ParrentBubble values (3, 'Parrent 3');
+insert into ParentBubble values (1, 'Parent 1');
+insert into ParentBubble values (2, 'Parent 2');
+insert into ParentBubble values (3, 'Parent 3');
 
 
 insert into ChildBubble values (1, 'Child 1.1',null);
@@ -15,20 +25,11 @@ insert into ChildBubble values (3, 'Child 1.3',null);
 insert into ChildBubble values (4, 'Child 2.1',null);
 insert into ChildBubble values (5, 'Child 2.2',1);
 
-insert into ChildForParrent (id, parrentBubbleId, childBubbleId) values(1,1,1);
-insert into ChildForParrent (id, parrentBubbleId, childBubbleId) values(2,1,2);
-insert into ChildForParrent (id, parrentBubbleId, childBubbleId) values(3,1,3);
-insert into ChildForParrent (id, parrentBubbleId, childBubbleId) values(4,2,4);
-insert into ChildForParrent (id, parrentBubbleId, childBubbleId) values(5,2,5);
-
-
-
-
-
-
-insert into FilteredBubble values(1, 'Orginal 1',0,'Ufilterert');
-insert into FilteredBubble values(2, 'Orginal 2',1,'Filterert');
-
+insert into ChildForParent (id, parentBubbleId, childBubbleId) values(1,1,1);
+insert into ChildForParent (id, parentBubbleId, childBubbleId) values(2,1,2);
+insert into ChildForParent (id, parentBubbleId, childBubbleId) values(3,1,3);
+insert into ChildForParent (id, parentBubbleId, childBubbleId) values(4,2,4);
+insert into ChildForParent (id, parentBubbleId, childBubbleId) values(5,2,5);
 
 insert into AKode values(1, 'A1');
 insert into AKode values(2, 'A2');

@@ -14,7 +14,7 @@
             <many-to-one
                     name="foo"
                     column="fooId"
-                    class="no.statkart.skif.storetest.domain.demo.Foo"
+                    class="no.statkart.skif.storetest.domain.mockup.Foo"
                     access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor">
                 <meta attribute="bubble-ref"/>
             </many-to-one>

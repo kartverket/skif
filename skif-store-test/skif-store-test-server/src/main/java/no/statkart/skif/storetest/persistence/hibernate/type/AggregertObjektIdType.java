@@ -4,8 +4,6 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import no.statkart.skif.storetest.domain.demo.AggregertObjekt;
 import no.statkart.skif.storetest.domain.demo.AggregertObjektId;
-import no.statkart.skif.storetest.domain.demo.Bar;
-import no.statkart.skif.storetest.domain.demo.BarId;
 
 /**
  * @author Tor Egil R. Strand

@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.service.locking;
 
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.storetest.domain.demo.FooId;
+import no.statkart.skif.storetest.domain.mockup.FooId;
 
 /**
  * Inneholder metoder av den typen LockingTest trenger.

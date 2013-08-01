@@ -5,8 +5,8 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.StoreSessionFinishListener;
-import no.statkart.skif.storetest.domain.demo.FilteredBubble;
-import no.statkart.skif.storetest.domain.demo.FilteredBubbleId;
+import no.statkart.skif.storetest.domain.standalone.FilteredBubble;
+import no.statkart.skif.storetest.domain.standalone.FilteredBubbleId;
 
 import java.util.LinkedHashSet;
 
@@ -19,9 +19,6 @@ public class TestBubbleFinishFilter implements StoreSessionFinishListener {
     @Override
     public void onFinish(StoreServer storeServer) {
         LinkedHashSet<BubbleId<?>> insertedIds = storeServer.getInsertedIds();
-//        LinkedHashSet<BubbleId<?>> deletedIds = storeServer.getDeletedIds();
-//        LinkedHashSet<BubbleId<?>> updatedIds = storeServer.getUpdatedIds();
-//        LinkedHashSet<BubbleId<?>> lockedIds = storeServer.getLockedIds();  '
 
         for(BubbleId id : insertedIds){
             if(id instanceof FilteredBubbleId){
@@ -36,7 +33,5 @@ public class TestBubbleFinishFilter implements StoreSessionFinishListener {
                 }
             }
         }
-
-
     }
 }

@@ -2,12 +2,14 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 
 import junit.framework.TestCase;
-import no.statkart.skif.storetest.domain.demo.TestBubble;
+import no.statkart.skif.storetest.domain.standalone.TestBubble;
+import org.testng.annotations.Test;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
+@Test(groups="broken")
 public class StoreTestMappingW2DTest extends TestCase {
     StoreTestMapper mapper = new StoreTestMapper();
     StoreTestMapping map = mapper.getMapping();

@@ -45,12 +45,18 @@ import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceS
 import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
+import no.statkart.skif.storetest.domain.basic.*;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
+import no.statkart.skif.storetest.domain.mockup.Bar;
+import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.multikobling.Person;
 import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1A;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1BOne;
+import no.statkart.skif.storetest.domain.standalone.*;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
@@ -191,6 +197,12 @@ public class StoreTestServerModule extends SkifModule {
         // TODO: Hent directory fra moduleConfiguration
         HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate")
                 // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
+                .addResource(Simple.class)
+                .addResource(BubbleWithRelation.class)
+                .addResource(BubbleWithFilter.class)
+                .addResource(HistSimple.class)
+                .addResource(HistWithRelation.class)
+
                 .addResource(EnumKodeIdType.class)
                 .addResource(ADbKode.class)
                 .addResource(BDbKode.class)
@@ -200,7 +212,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(TestBubble.class)
                 .addResourceUseSameIndex(SelfBubble.class)   // Blir sortert sammen me TestBubble
                 .addResource(ChildBubble.class)
-                .addResource(ParrentBubble.class)
+                .addResource(ParentBubble.class)
                 .addResource(FilteredBubble.class)
                 .addResource(Foo.class)
                 .addResource(Baz.class)
@@ -208,15 +220,18 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(Bar.class)
                 .addResource(BarFoos.class)
                 .addResource(TestMap.class)
-                .addResource(TestEntity.class)
                 .addResource(AggregertObjekt.class)
                 .addResource(Person.class)
                 .addResource(Rettsstiftelse.class)
                 .addResource(BubbleWithList.class)
                 .addResource(BubbleWithComponents.class)
+
+                // Klasser for relasjonstesting
+                .addResource(X1BOne.class)
+//                .addResource(X1CMany.class)
+//                .addResource(X1DUnique.class)
+                .addResource(X1A.class)
                 ;
-
-
 
         Properties hibernatePropertiesCurrent;
         Properties hibernatePropertiesOld;

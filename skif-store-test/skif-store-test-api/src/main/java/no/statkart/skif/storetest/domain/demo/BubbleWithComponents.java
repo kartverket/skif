@@ -1,5 +1,7 @@
 package no.statkart.skif.storetest.domain.demo;
 
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
+
 import java.util.HashSet;
 import java.util.Set;
 

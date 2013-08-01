@@ -6,7 +6,8 @@ import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.LockerStrategy;
-import no.statkart.skif.storetest.domain.demo.FooId;
+import no.statkart.skif.storetest.domain.basic.SimpleId;
+import no.statkart.skif.storetest.domain.mockup.FooId;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 
 /**
@@ -37,7 +38,7 @@ public class LockingTestServiceImpl implements LockingTestService {
 
     @Override
     public void fail(int badNumber) {
-        lockerStrategy.lock(new FooId(100L));
+        lockerStrategy.lock(new SimpleId(100L));
         throw new ImplementationException("TestABC123");
     }
 
@@ -53,7 +54,7 @@ public class LockingTestServiceImpl implements LockingTestService {
 
     @Override
     public void loseALock() {
-        lockerStrategy.lock(new FooId(100L));
+        lockerStrategy.lock(new SimpleId(100L));
 
         // Frigi låsen uten av lockerStrategy får det med seg. Dette vil tilsvare at et annet, eller samme, brukstilfelle har fullført samtidig.
         lockerService.unlock(new LockKey<Long>(FooId.class.getName(), 100L), serviceRequestContext.getUserName());
