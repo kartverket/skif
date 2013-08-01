@@ -1,6 +1,7 @@
-package no.statkart.skif.storetest.domain.demo;
+package no.statkart.skif.storetest.domain;
 
 import no.statkart.skif.store.AbstractBubbleObject;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 import java.sql.Timestamp;
@@ -10,6 +11,12 @@ import java.sql.Timestamp;
  * @since 2.0
  */
 public class AbstractStoreTestBubble extends AbstractBubbleObject implements StoreTestBubble {
+    public AbstractStoreTestBubble(BubbleId<?> id) {
+        super(id);
+    }
+
+    public AbstractStoreTestBubble() {
+    }
 
     @Override
     public AbstractStoreTestBubbleId<?> getId() {

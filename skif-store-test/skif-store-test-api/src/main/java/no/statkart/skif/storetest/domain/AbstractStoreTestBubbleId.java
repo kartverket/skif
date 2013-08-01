@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.domain.demo;
+package no.statkart.skif.storetest.domain;
 
 import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.SnapshotVersion;

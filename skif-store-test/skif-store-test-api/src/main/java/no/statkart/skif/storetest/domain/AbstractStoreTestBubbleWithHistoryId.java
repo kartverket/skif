@@ -7,7 +7,7 @@ import no.statkart.skif.store.SnapshotVersion;
  * @since 2.0
  */
 
-public abstract class AbstractStoreTestBubbleWithHistoryId<T extends AbstractStoreTestBubbleWithHistory> extends AbstractStoreTestBubbleId<T>{
+public abstract class AbstractStoreTestBubbleWithHistoryId<T extends AbstractStoreTestBubbleWithHistory> extends AbstractStoreTestBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
     @Override
