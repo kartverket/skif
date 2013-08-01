@@ -20,9 +20,9 @@ public class X1A extends AbstractRelationTestBubble {
     private static final long serialVersionUID = 1L;
 
     private X1BOneId bId;
-    private Set<X1CMany> x1CManySet;
-    private X1DUnique x1DUnique;
-    private Set<X1EManyMany> x1EManyManySet;
+//    private Set<X1CMany> x1CManySet;
+//    private X1DUnique x1DUnique;
+//    private Set<X1EManyMany> x1EManyManySet;
 
     @Override
     public X1AId<?> getId() {
