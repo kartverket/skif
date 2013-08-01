@@ -9,7 +9,7 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
  * @since 2.0
  */
 
-public class AbstractStoreTestBubbleId<T extends AbstractStoreTestBubble> extends AbstractBubbleId<T> implements StoreTestBubbleId<T> {
+public abstract class AbstractStoreTestBubbleId<T extends AbstractStoreTestBubble> extends AbstractBubbleId<T> implements StoreTestBubbleId<T> {
 
     @Override
     public Long getValue() {
