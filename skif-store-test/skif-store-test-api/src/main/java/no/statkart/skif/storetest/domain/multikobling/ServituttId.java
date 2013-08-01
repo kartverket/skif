@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.multikobling;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubbleId;
 
 /**
  * @author Henrik Fredholm

@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain.multikobling;
 
 import no.statkart.skif.store.multikobling.Multikobling;
-import no.statkart.skif.storetest.domain.demo.AbstractStoreTestBubble;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.multikobling.kobling.RettsstiftelsePersonRolle;
 import no.statkart.skif.storetest.domain.multikobling.kobling.RetttstiftelseTilPersonKobling;
 
