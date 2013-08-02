@@ -916,6 +916,7 @@ public class StoreSessionServerTest {
         }
     }
 
+    @Test(groups="oracleLatest")   // Tidligere versjoner av oracle enn 11.2.0.3.0 gir ikke constraintfeil hvis objekter er i samme batch
     public void testReorderModificationNoReorder() {
         try {
             storeServer.beginTransaction();
@@ -944,7 +945,7 @@ public class StoreSessionServerTest {
             // storeServer.rescheduleModification(b_102.getId());
             storeServer.commitUnitOfWork();
             storeServer.flush();
-            fail();
+            fail("Skulle ha fått feil på flush: 'integritetsskranken (FREHEN_GB.SELF_FK) er overtrådt - hovednøkkel ikke funnet'");
         } catch (ConstraintViolationException e) {
         } finally {
             storeServer.rollbackTransaction();

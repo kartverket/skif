@@ -80,6 +80,10 @@ subprojects { Project project ->
                 if (!project.hasProperty('includeSlow') || !project.getProperty('includeSlow').asBoolean()) {
                     excludeGroups('slow')
                 }
+                // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
+                if (!project.hasProperty('includeOracleLatest') || !project.getProperty('includeOracleLatest').asBoolean()) {
+                    excludeGroups('oracleLatest')
+                }
                 if (singleVm) {
                     excludeGroups('server-required')
                 } else {
