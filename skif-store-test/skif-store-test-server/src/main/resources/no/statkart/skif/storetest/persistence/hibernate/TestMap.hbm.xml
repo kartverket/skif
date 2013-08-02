@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-   <class name="no.statkart.skif.storetest.domain.demo.TestMap">
+   <class name="no.statkart.skif.storetest.domain.basic.TestMap">
       <id name="k" column="k" type="string">
           <generator class="assigned"/>
       </id>

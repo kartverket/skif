@@ -6,6 +6,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
+ * Tester sekvensallokering for kode som kjører på klient
+ *
  * @author Roar Ingebrigtsen
  * @since 2.0
  */

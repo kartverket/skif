@@ -11,6 +11,8 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**
+ * Tester id allokering for kode som kjører på klient
+ *
  * @author Henrik Fredholm
  * @since 2.1
  */

@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 /**
- * Test som kjøre på server
+ * Tester id allokering for kode som kjører på serveren
  *
  * @author Henrik Fredholm
  * @since 2.1

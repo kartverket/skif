@@ -7,7 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test som kjøre på server
+ * Tester sekvensallokering for kode som kjører på server
  *
  * @author Henrik Fredholm
  * @since 2.3

@@ -6,6 +6,7 @@ import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.domain.mockup.BarId;
 import no.statkart.skif.storetest.domain.mockup.FooId;
+import no.statkart.skif.storetest.domain.mockup.RazId;
 import no.statkart.skif.storetest.domain.standalone.ChildBubbleId;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
 
@@ -46,7 +47,7 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new StoreTestBubbleIdTypeMapper<no.statkart.skif.storetest.wsapi.domain.demo.FooId, FooId>(no.statkart.skif.storetest.wsapi.domain.demo.FooId.class, FooId.class));
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId.class, no.statkart.skif.storetest.domain.demo.BarFoosId.class));
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.BazId.class, no.statkart.skif.storetest.domain.demo.BazId.class));
-        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.RazId.class, no.statkart.skif.storetest.domain.demo.RazId.class));
+        addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.RazId.class, RazId.class));
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.GeometricElementId.class, no.statkart.skif.storetest.domain.demo.GeometricElementId.class));
         addMapper(new StoreTestBubbleIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.ChildBubbleId.class, ChildBubbleId.class));
 

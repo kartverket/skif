@@ -52,6 +52,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 import no.statkart.skif.storetest.domain.mockup.Bar;
 import no.statkart.skif.storetest.domain.mockup.Foo;
+import no.statkart.skif.storetest.domain.mockup.Raz;
 import no.statkart.skif.storetest.domain.multikobling.Person;
 import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1A;

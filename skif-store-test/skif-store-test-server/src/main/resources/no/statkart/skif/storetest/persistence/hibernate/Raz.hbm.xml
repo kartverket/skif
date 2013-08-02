@@ -3,14 +3,14 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest.domain.demo.Raz" select-before-update="true">
+    <class name="no.statkart.skif.storetest.domain.mockup.Raz" select-before-update="true">
         <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.RazIdType">
             <generator class="assigned"/>
         </id>
 
         <property name="text"/>
 
-        <component name="razComponent" class="no.statkart.skif.storetest.domain.demo.RazComponent">
+        <component name="razComponent" class="no.statkart.skif.storetest.domain.mockup.RazComponent">
             <many-to-one
                     name="foo"
                     column="fooId"
@@ -30,7 +30,7 @@
         -->
     </class>
 
-    <class name="no.statkart.skif.storetest.domain.demo.RazEntityComponent" select-before-update="true">
+    <class name="no.statkart.skif.storetest.domain.mockup.RazEntityComponent" select-before-update="true">
         <id name="id" column="id" unsaved-value="null">
             <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
         </id>
