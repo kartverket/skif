@@ -56,6 +56,10 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
         return histSimpleMockupFactory;
     }
 
+    public HistWithRelationMockupFactory getHistWithRelationMockupFactory() {
+        return histWithRelationMockupFactory;
+    }
+
     public X1AMockupFactory getX1AMockupFactory() {
         return x1AMockupFactory;
     }

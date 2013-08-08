@@ -45,6 +45,8 @@ import static no.statkart.skif.guava.Preconditions.checkState;
  * @author Fedor Karpelevitch
  */
 public class ServiceRequestScope implements Scope {
+    public ServiceRequestScope() {
+    }
 
     private static final Provider<Object> SEEDED_KEY_PROVIDER =
             new Provider<Object>() {

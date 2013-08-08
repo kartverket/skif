@@ -16,6 +16,7 @@
 
         <property name="nr"/>
         <property name="text"/>
+        <property name="testSetNumber"/>
 
         <many-to-one
                 name="histSimple"

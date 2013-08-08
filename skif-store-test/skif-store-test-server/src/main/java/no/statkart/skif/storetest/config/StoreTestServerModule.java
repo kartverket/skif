@@ -41,6 +41,7 @@ import no.statkart.skif.store.persistence.*;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate;
+import no.statkart.skif.store.persistence.jdbc.ConnectionSelectorUsingHibernate;
 import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceSessionSubtypeHandler;
 import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.store.service.StoreService;
@@ -122,6 +123,7 @@ public class StoreTestServerModule extends SkifModule {
         bind(Connection.class).to(ConnectionForSnapshotVersion.class);
         bind(PersistenceSessionManager.class).toProvider(PersistenceSessionManagerProvider.class);
         bind(ConnectionForSnapshotVersion.class).toProvider(ConnectionForSnapshotVersionProvider.class);
+        bind(ConnectionSelector.class).to(ConnectionSelectorUsingHibernate.class);
 
         bind(SkifUtil.typeLiteral(DBLockerService.class, Long.class)).to(no.statkart.skif.storetest.service.locker.DBLockerService.class);
         bind(SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).to(no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class);
@@ -261,12 +263,11 @@ public class StoreTestServerModule extends SkifModule {
         }
 
         final HibernateStoreInterceptorFactory hibernateInterceptorFactory = new HibernateStoreInterceptorFactory();
-        HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle = new HibernateSessionFactoryManagerBundle(hibernateSessionFactoryBuilder,
+        HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle = new HibernateSessionFactoryManagerBundle(hibernateSessionFactoryBuilder, idServiceProvider,
                 new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernatePropertiesCurrent, hibernateInterceptorFactory),
                 new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernatePropertiesOld, hibernateInterceptorFactory)
         );
 
-        HighLowGenerator.setIdServiceProvider(idServiceProvider);
         return hibernateSessionFactoryManagerBundle;
 
     }

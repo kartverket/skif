@@ -32,6 +32,7 @@ create table HistSimple_H (
     versjonId number (19,0) not null,
     nr number(10,0),
     text varchar2(255),
+    testSetNumber number(10,0) not null,
     primary key (id, sluttdato)
 );
 create view HistSimple as select * from HistSimple_H  where snapshot_time.t_between(oppdateringsdato, sluttdato)=1;
@@ -46,20 +47,20 @@ BEGIN
   IF UPDATING THEN
     IF :old.oppdateringsdato < t_Trans THEN
         INSERT INTO HistSimple_H
-        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text);
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.testSetNumber);
 
         UPDATE HistSimple_H SET versjonId = :old.versjonId + 1 WHERE id= :new.id and sluttdato = t_End;
     END IF;
     UPDATE HistSimple_H
-    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.nr, text = :new.text
+    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.nr, text = :new.text, testSetNumber = :new.testSetNumber
     WHERE id = :new.id and sluttdato = t_End;
   ELSIF INSERTING THEN
     INSERT INTO HistSimple_H
-        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.text);
+        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.text, :new.testSetNumber);
   ELSIF DELETING THEN
     IF :old.oppdateringsdato < t_Trans THEN
         INSERT INTO HistSimple_H
-        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text);
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.testSetNumber);
     END IF;
     delete from HistSimple_H
     WHERE id = :old.id and sluttdato = t_End;
@@ -74,7 +75,8 @@ create table HistWithRelation_H (
     versjonId number (19,0) not null,
     nr number(10,0),
     text varchar2(255),
-    histSimpleId number(19,0),    
+    testSetNumber number(10,0) not null,
+    histSimpleId number(19,0),
     primary key (id, sluttdato)
 );
 create view HistWithRelation as select * from HistWithRelation_H  where snapshot_time.t_between(oppdateringsdato, sluttdato)=1;
@@ -89,20 +91,20 @@ BEGIN
   IF UPDATING THEN
     IF :old.oppdateringsdato < t_Trans THEN
         INSERT INTO HistWithRelation_H
-        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.histSimpleId);
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.testSetNumber, :old.histSimpleId);
 
         UPDATE HistWithRelation_H SET versjonId = :old.versjonId + 1 WHERE id= :new.id and sluttdato = t_End;
     END IF;
     UPDATE HistWithRelation_H
-    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.nr, text = :new.text, histSimpleId = :new.histSimpleId
+    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.nr, text = :new.text, testSetNumber = :new.testSetNumber, histSimpleId = :new.histSimpleId
     WHERE id = :new.id and sluttdato = t_End;
   ELSIF INSERTING THEN
     INSERT INTO HistWithRelation_H
-        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.text, :new.histSimpleId);
+        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.text, :new.testSetNumber, :new.histSimpleId);
   ELSIF DELETING THEN
     IF :old.oppdateringsdato < t_Trans THEN
         INSERT INTO HistWithRelation_H
-        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.histSimpleId);
+        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.testSetNumber, :old.histSimpleId);
     END IF;
     delete from HistWithRelation_H
     WHERE id = :old.id and sluttdato = t_End;

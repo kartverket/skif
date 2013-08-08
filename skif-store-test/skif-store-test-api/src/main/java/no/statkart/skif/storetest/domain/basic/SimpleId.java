@@ -29,6 +29,16 @@ public class SimpleId<T extends Simple> extends AbstractStoreTestBubbleId<T> {
     }
 
     @Override
+    public SimpleId<? super T> asSnapshotVersion(SnapshotVersion snapshotVersion) {
+        return (SimpleId<? super T>) super.asSnapshotVersion(snapshotVersion);
+    }
+
+    @Override
+    public SimpleId<? super T> asSnapshotVersion(BubbleId<?> bubbleId) {
+        return (SimpleId<? super T>) super.asSnapshotVersion(bubbleId);
+    }
+
+    @Override
     public SimpleId<? super T> asSnapshotVersionOld() {
         return (SimpleId<? super T>) super.asSnapshotVersionOld();
     }
@@ -37,4 +47,5 @@ public class SimpleId<T extends Simple> extends AbstractStoreTestBubbleId<T> {
     public SimpleId<? super T> asSnapshotVersionCurrent() {
         return (SimpleId<? super T>) super.asSnapshotVersionCurrent();
     }
+
 }

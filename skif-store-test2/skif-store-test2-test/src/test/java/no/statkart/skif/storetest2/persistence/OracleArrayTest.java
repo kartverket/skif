@@ -3,7 +3,7 @@ package no.statkart.skif.storetest2.persistence;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
-import no.statkart.skif.persistence.util.OracleArrayType;
+import no.statkart.skif.store.persistence.OracleArrayType;
 import no.statkart.skif.storetest2.domain.eierskap.Eier;
 import no.statkart.skif.storetest2.domain.eierskap.EierId;
 import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacade;

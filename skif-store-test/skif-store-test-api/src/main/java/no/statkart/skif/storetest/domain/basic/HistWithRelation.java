@@ -15,6 +15,7 @@ public class HistWithRelation extends AbstractStoreTestBubbleWithHistory {
 
     private long nr;
     private String text;
+    private int testSetNumber;
     private HistSimpleId<?> histSimpleId;
 
     public HistWithRelation() {
@@ -43,6 +44,14 @@ public class HistWithRelation extends AbstractStoreTestBubbleWithHistory {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public int getTestSetNumber() {
+        return testSetNumber;
+    }
+
+    public void setTestSetNumber(int testSetNumber) {
+        this.testSetNumber = testSetNumber;
     }
 
     public HistSimpleId<?> getHistSimpleId() {

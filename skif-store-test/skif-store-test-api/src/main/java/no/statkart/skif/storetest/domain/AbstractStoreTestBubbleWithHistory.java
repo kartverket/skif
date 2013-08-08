@@ -22,6 +22,14 @@ public abstract class AbstractStoreTestBubbleWithHistory extends AbstractStoreTe
         super(id);
     }
 
+
+    public boolean sameVersion(AbstractStoreTestBubbleWithHistory o) {
+        if (!this.getId().getValue().equals(o.getId().getValue())) return false;
+        if (!this.getOppdateringsdato().equals(o.getOppdateringsdato())) return false;
+        if (!this.getSluttdato().equals(o.getSluttdato())) return false;
+        return true;
+    }
+
     public Timestamp getOppdateringsdato() {
         return oppdateringsdato;
     }

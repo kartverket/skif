@@ -1,21 +1,19 @@
 package no.statkart.skif.standalone.util.testsupport;
 
+import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.service.sequence.IdService;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.*;
-import no.statkart.skif.storetest.domain.standalone.ChildBubble;
-import no.statkart.skif.storetest.domain.standalone.FilteredBubble;
-import no.statkart.skif.storetest.domain.standalone.ParentBubble;
-import no.statkart.skif.storetest.domain.standalone.SelfBubble;
-import no.statkart.skif.storetest.domain.standalone.TestBubble;
-import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
-import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistory;
+import no.statkart.skif.storetest.domain.basic.SimpleId;
+import no.statkart.skif.storetest.domain.standalone.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -28,13 +26,13 @@ import static org.testng.FileAssert.fail;
  */
 public class StandAloneTestHelper {
 
-    static String T1 = "2011-10-02 08:01:00.00";
+    public static String T1 = "2011-10-02 08:01:00.00";
     public static SnapshotVersion S1 = SnapshotVersion.createInstance(T1);
-    static String T2 = "2011-10-02 08:02:00.00";
+    public static String T2 = "2011-10-02 08:02:00.00";
     public static SnapshotVersion S2 = SnapshotVersion.createInstance(T2);
-    static String T3 = "2011-10-02 08:03:00.00";
+    public static String T3 = "2011-10-02 08:03:00.00";
     public static SnapshotVersion S3 = SnapshotVersion.createInstance(T3);
-    static String T4 = "2011-10-02 08:04:00.00";
+    public static String T4 = "2011-10-02 08:04:00.00";
     public static SnapshotVersion S4 = SnapshotVersion.createInstance(T4);
     public static SnapshotVersion CURRENT = SnapshotVersion.CURRENT;
     public static SnapshotVersion OLD = SnapshotVersion.OLD;
@@ -46,20 +44,20 @@ public class StandAloneTestHelper {
     }
 
     public static HibernateSessionFactoryManager createHibernateSessionFactorManagerWithSingleSessionNoHistory(HibernateSessionFactoryBuilder sessionFactoryBuilder, Properties hibernateProperties) {
-        return new HibernateSessionFactoryManager(sessionFactoryBuilder,
+        return new HibernateSessionFactoryManager(sessionFactoryBuilder, Providers.<IdService>of(null),
                 new HibernateSessionFactoryDescriptor("CURRENT(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), false, false, hibernateProperties, new HibernateStoreInterceptorFactory())
         );
     }
 
     public static HibernateSessionFactoryManagerBundle createHibernateSessionFactorManagerWithMultipleSessionsNoHistory(HibernateSessionFactoryBuilder sessionFactoryBuilder, Properties hibernateProperties) {
-        return new HibernateSessionFactoryManagerBundle(sessionFactoryBuilder,
+        return new HibernateSessionFactoryManagerBundle(sessionFactoryBuilder, Providers.<IdService>of(null),
                 new HibernateSessionFactoryDescriptor("CURRENT(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), false, false, hibernateProperties, new HibernateStoreInterceptorFactory()),
                 new HibernateSessionFactoryDescriptor("OLD(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), false, false, hibernateProperties, new HibernateStoreInterceptorFactory())
         );
     }
 
     public static HibernateSessionFactoryManagerBundle createHibernateSessionFactorManagerBundle(HibernateSessionFactoryBuilder sessionFactoryBuilder, Properties hibernateProperties) {
-        return new HibernateSessionFactoryManagerBundle(sessionFactoryBuilder,
+        return new HibernateSessionFactoryManagerBundle(sessionFactoryBuilder, Providers.<IdService>of(null),
                 new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernateProperties, new HibernateStoreInterceptorFactory()),
                 new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernateProperties, new HibernateStoreInterceptorFactory())
         );
@@ -118,10 +116,19 @@ public class StandAloneTestHelper {
         } finally {
             persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
         }
-
     }
 
-    public static void assertNotFound(Store store, TestBubbleId<TestBubble> bubbleId) {
+    // TODO: Flytte til egen finder for StoreTest
+    public static int countInDatabase(PersistenceSessionForSnapshot persistenceSessionForSnapshot, SimpleId<?> bubbleId) {
+        try {
+            Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
+            return hibernateSession.createQuery("select id from Simple where id=:id").setLong("id", bubbleId.getValue()).list().size();
+        } finally {
+            persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
+        }
+    }
+
+    public static void assertNotFound(Store store, BubbleId<?> bubbleId) {
         try {
             store.get(bubbleId);
             fail("Objekt skal ikke være i store");

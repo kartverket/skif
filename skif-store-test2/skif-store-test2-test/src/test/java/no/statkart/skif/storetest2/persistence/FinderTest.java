@@ -1,32 +1,10 @@
 package no.statkart.skif.storetest2.persistence;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
-import no.statkart.skif.persistence.util.OracleArrayType;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.persistence.PersistenceSession;
-import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.storetest2.domain.eierskap.Eier;
-import no.statkart.skif.storetest2.domain.eierskap.EierId;
-import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacade;
-import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacadeFactory;
 import no.statkart.skif.storetest2.util.testsupport.StoreTest2ServerTestCase;
-import no.statkart.skif.util.JDBCHelper;
-import no.statkart.skif.util.OracleUtils;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.mockito.Mock;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
 
 import static no.statkart.skif.storetest2.persistence.With.with;
 import static org.fest.assertions.api.Assertions.assertThat;

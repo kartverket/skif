@@ -1,16 +1,13 @@
 package no.statkart.skif.storetest.mockupframework;
 
 import com.google.inject.Inject;
-import no.statkart.skif.mockup.AbstractMockupFacade;
 import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.FooId;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.*;
 
 /**
  * MockupFactory for Foo-objekter med historikk. Denne MockupFactory brukes kun for isolert testing
@@ -41,20 +38,20 @@ public class FooMockupFactory extends AbstractMockupFactory {
     }
 
     public void createAllMockups() {
-        store.setSnapshotVersion("2011-10-02 08:00:00.00");
+        store.setSnapshotVersion(S0);
         store.insert(createFoo(fooIdKartveien, 2200, "KARTGATA"));
-        store.setSnapshotVersion("2011-10-02 08:01:00.00");
+        store.setSnapshotVersion(S1);
         store.update(createFoo(fooIdKartveien, 2200, "KARTVEGEN"));
-        store.setSnapshotVersion("2011-10-02 08:02:00.00");
+        store.setSnapshotVersion(S2);
         store.update(createFoo(fooIdKartveien, 2200, "KARTVEIEN"));
-        store.setSnapshotVersion("2011-10-02 08:03:00.00");
+        store.setSnapshotVersion(S3);
         store.update(createFoo(fooIdKartveien, 2200, "KART-VEIEN"));
-        store.setSnapshotVersion("2011-10-02 08:04:00.00");
+        store.setSnapshotVersion(S4);
         store.update(createFoo(fooIdKartveien, 2200, "KARTVEIEN"));
 
-        store.setSnapshotVersion("2011-10-02 08:03:00.00");
+        store.setSnapshotVersion(S3);
         store.insert(createFoo(fooIdGamleveien, 2201, "GAMMEL-VEIEN"));
-        store.setSnapshotVersion("2011-10-02 08:04:00.00");
+        store.setSnapshotVersion(S4);
         store.update(createFoo(fooIdGamleveien, 2201, "GAMMELVEIEN"));
     }
 

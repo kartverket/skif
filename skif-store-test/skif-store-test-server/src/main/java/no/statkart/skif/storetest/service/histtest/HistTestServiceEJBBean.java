@@ -6,6 +6,8 @@ import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.domain.basic.HistSimpleId;
+import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.mockup.BarId;
 import no.statkart.skif.storetest.domain.mockup.Foo;
@@ -13,6 +15,7 @@ import no.statkart.skif.storetest.domain.mockup.FooId;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,33 +33,38 @@ public class HistTestServiceEJBBean extends EJBTimedService implements HistTestS
     HistTestService serviceChain;
 
     @Override
-    public Set<FooId<?>> findFooIdsForNavn(String navn, SnapshotVersion snapshotVersion) {
-        return serviceChain.findFooIdsForNavn(navn, snapshotVersion);
+    public Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingJDBC(String text, int testsettNummer, SnapshotVersion snapshotVersion) {
+        return serviceChain.findHistSimpleIdsForTextUsingJDBC(text, testsettNummer, snapshotVersion);
     }
 
     @Override
-    public Set<BarFoosId<?>> findBarFoosIdsSomInneholderFooMedNavn(String navn, SnapshotVersion snapshotVersion) {
-        return serviceChain.findBarFoosIdsSomInneholderFooMedNavn(navn, snapshotVersion);
+    public Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingHibernate(String text, int testsettNummer, SnapshotVersion snapshotVersion) {
+        return serviceChain.findHistSimpleIdsForTextUsingHibernate(text, testsettNummer, snapshotVersion);
     }
 
     @Override
-    public Set<BarFoosId<?>> findBarFoosIdsMedBarOgFoo(String fooNavn, BarId<?> barId) {
-        return serviceChain.findBarFoosIdsMedBarOgFoo(fooNavn, barId);
+    public Set<HistWithRelationId<?>> findHistWithRelationIdsRelatedToHistSimpleWithText(String text, int testsettNummer, SnapshotVersion snapshotVersion) {
+        return serviceChain.findHistWithRelationIdsRelatedToHistSimpleWithText(text, testsettNummer, snapshotVersion);
     }
 
     @Override
-    public Set<FooId<Foo>> findFooIdsForNr(long nr) {
-        return serviceChain.findFooIdsForNr(nr);
+    public Set<HistWithRelationId<?>> findHistWithRelationIdsWithTextRelatedToHistSimpleId(String text, HistSimpleId<?> histSimpleId, SnapshotVersion snapshotVersion) {
+        return serviceChain.findHistWithRelationIdsWithTextRelatedToHistSimpleId(text, histSimpleId, snapshotVersion);
     }
 
     @Override
-    public List<BarId> findBarIdsAliveAtSnapshot(Set<BarId<?>> barIds, SnapshotVersion snapshotVersion) {
-        return serviceChain.findBarIdsAliveAtSnapshot(barIds, snapshotVersion);
+    public Map<HistSimpleId<?>, Set<HistWithRelationId<?>>> findHistWithRelationIdsWithTextRelatedToHistSimpleIds(String text, Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion) {
+        return serviceChain.findHistWithRelationIdsWithTextRelatedToHistSimpleIds(text, histSimpleIds, snapshotVersion);
     }
 
     @Override
-    public Map<FooId<?>, Set<BarId<?>>> findBarIdsForFooIds(Set<FooId<?>> fooIds, SnapshotVersion snapshotVersion) {
-        return serviceChain.findBarIdsForFooIds(fooIds, snapshotVersion);
+    public List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion) {
+        return serviceChain.findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(histSimpleIds, snapshotVersion);
+    }
+
+    @Override
+    public List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingOracleArray(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion) {
+        return serviceChain.findHistSimpleIdsAliveAtSnapshotUsingOracleArray(histSimpleIds, snapshotVersion);
     }
 
     @Override

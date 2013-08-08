@@ -16,5 +16,7 @@
 
         <property name="nr"/>
         <property name="text"/>
+        <property name="testSetNumber"/>
+
     </class>
 </hibernate-mapping>

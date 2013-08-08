@@ -13,6 +13,7 @@ public class HistSimple extends AbstractStoreTestBubbleWithHistory{
 
     private long nr;
     private String text;
+    private int testSetNumber;
 
     public HistSimple() {
     }
@@ -40,5 +41,13 @@ public class HistSimple extends AbstractStoreTestBubbleWithHistory{
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public int getTestSetNumber() {
+        return testSetNumber;
+    }
+
+    public void setTestSetNumber(int testSetNumber) {
+        this.testSetNumber = testSetNumber;
     }
 }

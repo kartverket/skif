@@ -4,6 +4,7 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.jdbc.ConnectionFactoryUsingJDBC;
+import no.statkart.skif.persistence.jdbc.ConnectionSelector;
 import no.statkart.skif.store.SnapshotVersion;
 
 import java.sql.*;
@@ -22,6 +23,7 @@ public class JDBCHelper {
         }
     }
 
+    @Deprecated // Unødvendig å angi resultSett sammen med Statement da ResultSett lukkes automatisk
     public static void close(ResultSet resultSet, Statement statement) {
         try {
             if (resultSet != null) {
@@ -41,6 +43,14 @@ public class JDBCHelper {
             }
         }
 
+    }
+
+    public static void close(Statement statement, ConnectionSelector connectionSelector) {
+        try {
+            close(statement);
+        } finally {
+            close(connectionSelector);
+        }
     }
 
     public static void setAutoCommit(Connection c, boolean b) {
@@ -70,5 +80,9 @@ public class JDBCHelper {
         String port = configuration.getString(SkifConfigConstants.DB_PORT);
         String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
         return new ConnectionFactoryUsingJDBC(url, username, password, false, snapshotVersion, setSnapshotOnSession);
+    }
+
+    public static void close(ConnectionSelector connectionSelector) {
+        if (connectionSelector!=null) connectionSelector.close();
     }
 }

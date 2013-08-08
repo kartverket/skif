@@ -104,4 +104,12 @@ public class SnapshotVersion implements Serializable, Comparable<SnapshotVersion
             }
         }
     }
+
+    public boolean between(Timestamp oppdateringsdato, Timestamp sluttdato) {
+        return this.between(SnapshotVersion.createInstance(oppdateringsdato), SnapshotVersion.createInstance(sluttdato));
+    }
+
+    public boolean between(SnapshotVersion oppdateringsdato, SnapshotVersion sluttdato) {
+        return this.compareTo(oppdateringsdato) >= 0 && this.compareTo(sluttdato) == -1;
+    }
 }

@@ -1,6 +1,9 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 
+import no.statkart.skif.service.sequence.IdService;
+
+import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,10 +14,10 @@ import java.util.List;
 public class HibernateSessionFactoryManagerBundle {
     final List<HibernateSessionFactoryManager> bundle = new ArrayList<HibernateSessionFactoryManager>(2);
 
-    public HibernateSessionFactoryManagerBundle(HibernateSessionFactoryBuilder builder, HibernateSessionFactoryDescriptor... descriptors) {
+    public HibernateSessionFactoryManagerBundle(HibernateSessionFactoryBuilder builder, Provider<IdService> idServiceProvider, HibernateSessionFactoryDescriptor... descriptors) {
         for (int i = 0; i < descriptors.length; i++) {
             HibernateSessionFactoryDescriptor hibernateSessionFactoryDescriptor = descriptors[i];
-            bundle.add(new HibernateSessionFactoryManager(builder, hibernateSessionFactoryDescriptor));
+            bundle.add(new HibernateSessionFactoryManager(builder, idServiceProvider, hibernateSessionFactoryDescriptor));
         }
     }
 
