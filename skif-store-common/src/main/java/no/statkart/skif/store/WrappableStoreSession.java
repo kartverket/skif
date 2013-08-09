@@ -28,6 +28,6 @@ public interface WrappableStoreSession extends StoreSession {
     void commitUnitOfWork(Map<BubbleId<?>, StoreEntry> modified);
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
-    <T extends BubbleObject, I extends BubbleId<? extends T>>  Map<I,List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end);
+    <T extends BubbleObject, I extends BubbleId<? extends T>>  Map<I,List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end);
 }
 

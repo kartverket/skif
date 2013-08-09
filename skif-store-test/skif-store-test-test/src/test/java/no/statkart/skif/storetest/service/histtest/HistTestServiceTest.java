@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.historikk;
+package no.statkart.skif.storetest.service.histtest;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;

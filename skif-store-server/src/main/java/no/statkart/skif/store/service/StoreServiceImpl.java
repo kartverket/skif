@@ -6,10 +6,7 @@ import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Henrik Fredholm
@@ -54,16 +51,13 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
-        return versionFinder.findBubbleIdsForInterval(id, start, end);
+        return store.getVersions(id, start, end);
     }
 
     @Override
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
-        Map<I, List<I>> retur = new HashMap<I, List<I>>();
-        for (I id : ids) {
-            retur.put(id, versionFinder.findBubbleIdsForInterval(id, start, end));
-        }
-        return retur;
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
+        // TODO fjern arraylist og bruk collection
+        return store.getVersionsForList(new ArrayList(ids), start, end);
     }
 
     @Override

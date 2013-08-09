@@ -34,7 +34,7 @@ public class VersionFinder {
                 " where id = ? and " +
                 "((? < sluttdato and sluttdato <= ?) " +                     // intervalStartValue < sluttdato <= endInterval
                 "or (? <= oppdateringsdato and oppdateringsdato < ?) " +              // intervalStartValue <= oppdateringsdato < endInterval
-                "or (oppdateringsdato < ? and ? < sluttdato))";                  // oppdateringsdato < intervalStartValue and intervalEndValue < sluttdato
+                "or (oppdateringsdato < ? and ? < sluttdato)) order by id, oppdateringsdato";                  // oppdateringsdato < intervalStartValue and intervalEndValue < sluttdato
 
 
         Timestamp intervalStartValue = getTimestampValue(start);
@@ -66,6 +66,7 @@ public class VersionFinder {
         }
         return retur;
     }
+
 
     private Timestamp getTimestampValue(SnapshotVersion snapshotVersion) {
         return snapshotVersion.getTimestamp();

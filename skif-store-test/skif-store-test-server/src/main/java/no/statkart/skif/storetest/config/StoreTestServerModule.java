@@ -142,7 +142,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager, Injector injector, BubbleDependencyComparator bubbleDependencyComparator, LockerStrategy lockerStrategy) {
+    StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager, Injector injector, BubbleDependencyComparator bubbleDependencyComparator, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy) {
         //ReadListener
         List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
         readListeners.add(new TestBubbleFilter());
@@ -151,7 +151,7 @@ public class StoreTestServerModule extends SkifModule {
         writeListeners.add(new AggregertObjektFilter());
         List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
         finishListeners.add(new TestBubbleFinishFilter());
-        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners), injector);
+        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, versionFinderProvider, lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners), injector);
         return storeServer;
     }
 

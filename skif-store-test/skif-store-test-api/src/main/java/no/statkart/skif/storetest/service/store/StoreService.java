@@ -57,7 +57,7 @@ public interface StoreService extends no.statkart.skif.store.service.StoreServic
      * @return map av fundne id'er
      */
     @Override
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end);
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end);
 
     /**
      * Låser BubbleObject av type {@code <T>} for {@code id} av type {@code <I>} for kallende bruker og returnerer

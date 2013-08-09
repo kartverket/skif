@@ -251,6 +251,9 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
 
+    /**
+     * @see StoreServer#attemptDelete
+     */
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void attemptDelete(I bubbleId) throws AttemptDeleteException {
         Preconditions.checkState(level == 0, "level!=0");
         try {
@@ -494,12 +497,19 @@ public class StoreSessionServer extends AbstractStoreSession {
         return versionFinderProvider.get().findBubbleIdsForInterval(id, start, end);
     }
 
+    /**
+     * @see StoreServer#getVersionsForList(java.util.Collection, SnapshotVersion, SnapshotVersion)
+     */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
         VersionFinder versionFinder = versionFinderProvider.get();
+
+        // Denne metode kan opptimaliseres, ved å først å sortere ids på basetype og så gjøre en list query basert på
+        // OracleArrayType for hver basetype.
         Map<I, List<I>> retur = new HashMap<I, List<I>>();
         for (I id : ids) {
-            retur.put(id, versionFinder.findBubbleIdsForInterval(id, start, end));
+            // Sliter litt med generics her. Vi passe litt på fordi dette kun er lovlig hvis <I> faktisk er en basetype dersom id kan skifte subtype.
+            retur.put((I)(BubbleId)id.asSnapshotVersionCurrent(), versionFinder.findBubbleIdsForInterval(id, start, end));
         }
         return retur;
     }

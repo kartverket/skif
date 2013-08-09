@@ -268,7 +268,7 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
         LinkedHashMap<I, List<I>> versionsMap = new LinkedHashMap<I, List<I>>(ids.size());
         for (I id : ids) {
             versionsMap.put(id, getVersions(id, start, end));

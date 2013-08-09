@@ -330,15 +330,35 @@ public interface Store {
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
 
     /**
-     * Finner historiske utgaver av gitte objekter.
+     * Finner alle versjoner for id'er for gitt interval {@code [start,end[}.
      *
-     * @param ids   id-ene til objektene man skal finne historikk for
-     * @param start tidligste tidspunkt man er interessert i
-     * @param end   seneste tidspunkt man er interessert i
-     * @param <I>   den id-supertypen som er felles for objektene
-     * @return key er id-en man sendte inn, value er liste med tidsspesifike id-er
+     * <P>Eksempel på bruk:
+     * <pre>
+     *     {@code Map<AId, List<AId>> result = storeService.getVersionForList(ImmutableList.<AId>of(ASubId.create(1), ASubId.create(2)), start, end)}
+     * </pre>
+     *
+     * @param ids collection med id'er man skal finne versjoner for.
+     * @param start starttidspunkt for interval
+     * @param end   slutttidspunkt for interval.
+     * @param <I>   Felles basetype for alle ids det skal finnes versjoner for.
+     * @return
      */
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end);
+
+
+    /**
+     * Finner historiske utgaver av gitte objekter for interval {@code [start,end[}.
+     *
+     * <P>Eksempel på bruk:
+     * <pre>
+     *     {@code Map<AId, List<AId>> result = storeService.getVersionForList(ImmutableList.<AId>of(ASubId.create(1), ASubId.create(2)), start, end)}
+     * </pre>
+     *
+     * @param ids   id-ene til objektene man skal finne historikk for. Id-enes snapshotversion blir ignorert
+     * @param start tidligste tidspunkt man er interessert i
+     * @param end   seneste tidspunkt man er interessert i (eksklusiv)
+     * @return key er id-en man sendte inn men med {@code SnapshotVersion.CURRENT}, value er sortert liste med tidsspesifike id-er
+     */
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end);
 
     /**
      * Legger en nyopprettet boble inn i Store. Dersom boblen ikke har fått tilordnet id, så genereres denne med

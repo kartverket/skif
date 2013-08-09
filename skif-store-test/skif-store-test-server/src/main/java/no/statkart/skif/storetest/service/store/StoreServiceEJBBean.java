@@ -55,7 +55,7 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
         return serviceChain.getVersionsForList(ids, start, end);
     }
 

@@ -226,7 +226,7 @@ public class StoreClientTest {
         }
 
         @Override
-        public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(List<I> ids, SnapshotVersion start, SnapshotVersion end) {
+        public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
             throw new UnsupportedOperationException();
         }
 
