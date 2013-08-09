@@ -9,6 +9,7 @@ import no.statkart.skif.store.Store;
 import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.Kodeliste;
+import no.statkart.skif.storetest.domain.basic.BubbleWithKode;
 import no.statkart.skif.storetest.domain.demo.Baz;
 import no.statkart.skif.storetest.domain.demo.BazId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
@@ -16,6 +17,8 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
+import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
+import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.hibernate.Session;
@@ -39,6 +42,8 @@ import static org.testng.AssertJUnit.assertNotNull;
 public class KodeTest extends StoreTestTestCase {
     @Inject
     Store store;
+    @Inject
+    StoreTestMockupFacadeFactory mockupFacadeFactory;
 
     public void testGetEnumKode() {
         AEnumKode aEnumKode = store.get(AEnumKodeId.KodeAId);
@@ -135,8 +140,10 @@ public class KodeTest extends StoreTestTestCase {
         //XStrDbKodeId.AId.equalTo(AEnumKodeId.KodeAId);
     }
 
-    public void testLoadBaz() {
-        Baz obj = store.get(new BazId<Baz>(502L));
+    public void testLoadBubbleWithKode() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+
+        BubbleWithKode obj = store.get(mockupFacade.getBubbleWithKodeMockupFactory().getBubbleWithKodeId1());
         Assert.assertEquals(obj.getTestAEnumKodeId(), AEnumKodeId.KodeAId);
         Assert.assertEquals(obj.getTestC2DbKodeId(), C2DbKodeId.C2BId);
     }

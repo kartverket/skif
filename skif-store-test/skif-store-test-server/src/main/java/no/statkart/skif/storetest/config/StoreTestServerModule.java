@@ -212,16 +212,25 @@ public class StoreTestServerModule extends SkifModule {
                 .addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class)
                 .addResource(XStrDbKode.class)
                 .addResource(StoreTestKodelisteLong.class)
+                .addResource(BubbleWithKode.class)
+
+                        // Klasser for relasjonstesting
+                .addResource(X1BOne.class)
+//                .addResource(X1CMany.class)
+//                .addResource(X1DUnique.class)
+                .addResource(X1A.class)
+
+
                 .addResource(TestBubble.class)
                 .addResourceUseSameIndex(SelfBubble.class)   // Blir sortert sammen me TestBubble
                 .addResource(ChildBubble.class)
                 .addResource(ParentBubble.class)
                 .addResource(FilteredBubble.class)
                 .addResource(Foo.class)
-                .addResource(Baz.class)
+//                .addResource(Baz.class)
                 .addResource(Raz.class)
-                .addResource(Bar.class)
-                .addResource(BarFoos.class)
+//                .addResource(Bar.class)
+//                .addResource(BarFoos.class)
                 .addResource(TestMap.class)
                 .addResource(AggregertObjekt.class)
                 .addResource(Person.class)
@@ -229,11 +238,6 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(BubbleWithList.class)
                 .addResource(BubbleWithComponents.class)
 
-                // Klasser for relasjonstesting
-                .addResource(X1BOne.class)
-//                .addResource(X1CMany.class)
-//                .addResource(X1DUnique.class)
-                .addResource(X1A.class)
                 ;
 
         Properties hibernatePropertiesCurrent;

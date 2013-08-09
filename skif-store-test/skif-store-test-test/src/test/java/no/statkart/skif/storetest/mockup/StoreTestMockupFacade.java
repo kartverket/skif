@@ -21,8 +21,11 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
     @Inject private SimpleMockupFactory simpleMockupFactory;
     @Inject private BubbleWithRelationMockupFactory bubbleWithRelationMockupFactory;
     @Inject private BubbleWithFilterMockupFactory bubbleWithFilterMockupFactory;
+    @Inject private BubbleWithKodeMockupFactory bubbleWithKodeMockupFactory;
+
     @Inject private HistSimpleMockupFactory histSimpleMockupFactory;
     @Inject private HistWithRelationMockupFactory histWithRelationMockupFactory;
+
 
     @Inject private X1AMockupFactory x1AMockupFactory;
     @Inject private X1BOneMockupFactory x1BOneMockupFactory;
@@ -33,6 +36,7 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
                 simpleMockupFactory,
                 bubbleWithRelationMockupFactory,
                 bubbleWithFilterMockupFactory,
+                bubbleWithKodeMockupFactory,
                 histSimpleMockupFactory,
                 histWithRelationMockupFactory,
                 x1AMockupFactory,
@@ -50,6 +54,10 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
     public BubbleWithFilterMockupFactory getBubbleWithFilterMockupFactory() {
         return bubbleWithFilterMockupFactory;
+    }
+
+    public BubbleWithKodeMockupFactory getBubbleWithKodeMockupFactory() {
+        return bubbleWithKodeMockupFactory;
     }
 
     public HistSimpleMockupFactory getHistSimpleMockupFactory() {

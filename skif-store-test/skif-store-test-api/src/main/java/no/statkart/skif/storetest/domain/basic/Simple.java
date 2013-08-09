@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 public class Simple extends AbstractStoreTestBubble {
     private static final long serialVersionUID = 1L;
 
-    private long nr;
+    private int nr;
     private String text;
 
     public Simple() {
@@ -37,11 +37,11 @@ public class Simple extends AbstractStoreTestBubble {
         return (SimpleId<?>) super.getId();
     }
 
-    public long getNr() {
+    public int getNr() {
         return nr;
     }
 
-    public void setNr(long nr) {
+    public void setNr(int nr) {
         this.nr = nr;
     }
 

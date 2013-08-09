@@ -25,6 +25,16 @@ create table BubbleWithFilter (
     primary key (id)
 );
 
+create table BubbleWithKode (
+    id number(19,0) not null,
+    nr number(10,0),
+    text varchar2(255),
+    testAEnumKodeId number(10,0) not null,
+    testC2DbKodeId number(19,0) not null,
+    primary key (id)
+);
+
+
 create table HistSimple_H (
     id number(19,0) not null,
     oppdateringsdato timestamp(6) not null,

@@ -23,6 +23,7 @@ import java.sql.Statement;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
+@Deprecated // Skrives om til å bruke andre objekter og mockupfactory
 @Test(groups = "singlevm-required")
 public class AggregertTest extends StoreTestMixedTestCase {
     @AfterMethod

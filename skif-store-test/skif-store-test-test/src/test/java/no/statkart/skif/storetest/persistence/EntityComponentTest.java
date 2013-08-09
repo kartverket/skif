@@ -27,7 +27,7 @@ import java.util.Collections;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-@Test
+@Deprecated // Skrives om til å bruke andre objekter og mockupfactory
 public class EntityComponentTest extends SkifServerTestCase {
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
