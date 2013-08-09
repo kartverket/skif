@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.domain.demo;
+package no.statkart.skif.storetest.domain.basic;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.storetest.domain.StoreTestBubble;

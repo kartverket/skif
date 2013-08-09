@@ -2,28 +2,15 @@ package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
 import no.statkart.skif.domain.SelectionPolygon;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.HistWithRelationFinder;
 import no.statkart.skif.persistence.HistSimpleFinder;
 import no.statkart.skif.persistence.GeometriFinder;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
+import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
-import no.statkart.skif.storetest.domain.demo.*;
-import no.statkart.skif.storetest.domain.mockup.Bar;
-import no.statkart.skif.storetest.domain.mockup.BarId;
-import no.statkart.skif.storetest.domain.mockup.Foo;
-import no.statkart.skif.storetest.domain.mockup.FooId;
-import no.statkart.skif.util.JDBCHelper;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 /**

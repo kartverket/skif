@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.demo.GeometricElementId;
+import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 
 import java.sql.Connection;
 import java.util.List;
