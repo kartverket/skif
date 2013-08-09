@@ -40,13 +40,4 @@ public interface StoreTestMapping extends Mapping {
 
     public no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId d2w(StoreTestKodeId<?> source);
     public StoreTestKodeId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId source);
-
-    public no.statkart.skif.storetest.domain.demo.BarFoosId<no.statkart.skif.storetest.domain.demo.BarFoos> w2d(no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId source);
-    public no.statkart.skif.storetest.wsapi.domain.demo.BarFoosId d2w(no.statkart.skif.storetest.domain.demo.BarFoosId<no.statkart.skif.storetest.domain.demo.BarFoos> source);
-
-    public BarId<Bar> w2d(no.statkart.skif.storetest.wsapi.domain.demo.BarId source);
-    public no.statkart.skif.storetest.wsapi.domain.demo.BarId d2w(BarId<Bar> source);
-
-    public FooId<Foo> w2d(no.statkart.skif.storetest.wsapi.domain.demo.FooId source);
-    public no.statkart.skif.storetest.wsapi.domain.demo.FooId d2w(FooId<Foo> source);
 }

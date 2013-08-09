@@ -7,7 +7,10 @@ import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon;
-import no.statkart.skif.storetest.wsapi.domain.demo.*;
+import no.statkart.skif.storetest.wsapi.domain.basic.GeometricElementIdList;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleId;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleIdList;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistWithRelationIdList;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -44,40 +47,54 @@ public class HistTestServiceWSBean extends SkifWebService<HistTestServiceWSI> im
 
     @Override
     @WebMethod
-    public FooIdList findFooIdsForNavn(@WebParam(name = "navn") String navn, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
-        return wsServiceChain.findFooIdsForNavn(navn, snapshotVersion, storeTestContext);
+    public HistSimpleIdList findHistSimpleIdsForTextUsingJDBC(@WebParam(name = "text") String text, @WebParam(name = "testSetNummer") int testSetNummer, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findHistSimpleIdsForTextUsingJDBC(text, testSetNummer, snapshotVersion,storeTestContext);
     }
 
     @Override
-    public BarFoosIdList findBarFoosIdsSomInneholderFooMedNavn(@WebParam(name = "navn") String navn, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
-        return wsServiceChain.findBarFoosIdsSomInneholderFooMedNavn(navn, snapshotVersion, storeTestContext);
+    @WebMethod
+    public HistSimpleIdList findHistSimpleIdsForTextUsingHibernate(@WebParam(name = "text") String text, @WebParam(name = "testSetNummer") int testSetNummer, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findHistSimpleIdsForTextUsingHibernate(text, testSetNummer, snapshotVersion,storeTestContext);
     }
 
     @Override
-    public BarFoosIdList findBarFoosIdsMedBarOgFoo(@WebParam(name = "fooNavn") String fooNavn, @WebParam(name = "barId") BarId barId, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
-        return wsServiceChain.findBarFoosIdsMedBarOgFoo(fooNavn, barId, storeTestContext);
+    @WebMethod
+    public HistWithRelationIdList findHistWithRelationIdsRelatedToHistSimpleWithText(@WebParam(name = "text") String text, @WebParam(name = "testSetNummer") int testSetNummer, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findHistWithRelationIdsRelatedToHistSimpleWithText(text, testSetNummer, snapshotVersion, storeTestContext);
     }
 
     @Override
-    public FooIdList findFooIdsForNr(@WebParam(name = "nr") long nr, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
-        return wsServiceChain.findFooIdsForNr(nr, storeTestContext);
+    @WebMethod
+    public HistWithRelationIdList findHistWithRelationIdsWithTextRelatedToHistSimpleId(@WebParam(name = "text") String text, @WebParam(name = "histSimpleId") HistSimpleId histSimpleId, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findHistWithRelationIdsWithTextRelatedToHistSimpleId(text, histSimpleId, snapshotVersion, storeTestContext);
     }
 
     @Override
-    public BarIdList findBarIdsAliveAtSnapshot(@WebParam(name = "barIds") BarIdList barIds, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name="storeTestContext") StoreTestContext storeTestContext) {
-        return wsServiceChain.findBarIdsAliveAtSnapshot(barIds, snapshotVersion, storeTestContext);
+    @WebMethod
+    public StoreTestBubbleIdListForStoreTestBubbleIdsMap findHistWithRelationIdsWithTextRelatedToHistSimpleIds(@WebParam(name = "text") String text, @WebParam(name = "histSimpleIds") HistSimpleIdList histSimpleIds, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findHistWithRelationIdsWithTextRelatedToHistSimpleIds(text, histSimpleIds, snapshotVersion, storeTestContext);
     }
 
     @Override
-    public StoreTestBubbleIdListForStoreTestBubbleIdsMap findBarIdsForFooIds(FooIdList fooIds, SnapshotVersion snapshotVersion, @WebParam(name="storeTestContext") StoreTestContext storeTestContext) {
-        return wsServiceChain.findBarIdsForFooIds(fooIds, snapshotVersion, storeTestContext);
+    @WebMethod
+    public HistSimpleIdList findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(@WebParam(name = "histSimpleIds") HistSimpleIdList histSimpleIds, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(histSimpleIds, snapshotVersion, storeTestContext);
     }
 
-    public GeometricElementIdList findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion, StoreTestContext storeTestContext) {
+    @Override
+    @WebMethod
+    public HistSimpleIdList findHistSimpleIdsAliveAtSnapshotUsingOracleArray(@WebParam(name = "histSimpleIds") HistSimpleIdList histSimpleIds, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findHistSimpleIdsAliveAtSnapshotUsingOracleArray(histSimpleIds, snapshotVersion,storeTestContext);
+    }
+
+    @Override
+    @WebMethod
+    public GeometricElementIdList findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
         return wsServiceChain.findGeometricElementsWithPointInSelectionPolygon(selectionPolygon, snapshotVersion, storeTestContext);
     }
 
     @Override
+    @WebMethod
     public GeometricElementIdList findGeometricElementsWithPolygonInSelectionPolygon(@WebParam(name = "selectionPolygon") SelectionPolygon selectionPolygon, @WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
         return wsServiceChain.findGeometricElementsWithPolygonInSelectionPolygon(selectionPolygon, snapshotVersion, storeTestContext);
     }

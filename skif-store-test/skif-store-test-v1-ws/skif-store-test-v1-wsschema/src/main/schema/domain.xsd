@@ -3,8 +3,11 @@
         version="1.0"
         targetNamespace="http://skif.statkart.no/storetest/wsapi/domain"
         xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
+        xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
+
+    <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
 
     <xs:complexType name="SnapshotVersion">
         <xs:sequence>
@@ -58,6 +61,25 @@
         <xs:sequence>
             <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="domainns:StoreTestBubble"/>
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="AbstractStoreTestBubbleWithHistoryId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="AbstractStoreTestBubbleWithHistory">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="oppdateringsdato" type="basetyperns:Timestamp" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="sluttdato" type="basetyperns:Timestamp" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="versjonId" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="StoreTestContext">

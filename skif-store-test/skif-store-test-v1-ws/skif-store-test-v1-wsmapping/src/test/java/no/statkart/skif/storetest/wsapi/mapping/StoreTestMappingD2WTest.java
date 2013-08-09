@@ -52,7 +52,7 @@ public class StoreTestMappingD2WTest {
     public void testMapTestBubble() {
         TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(10));
         testBubble.setText("test");
-        no.statkart.skif.storetest.wsapi.domain.demo.TestBubble target = map.d2w(testBubble, no.statkart.skif.storetest.wsapi.domain.demo.TestBubble.class);
+        no.statkart.skif.storetest.wsapi.domain.basic.Simple target = map.d2w(testBubble, no.statkart.skif.storetest.wsapi.domain.basic.Simple.class);
         assertEquals(target.getId().getValue(), "10");
         assertEquals(target.getText(), "test");
     }

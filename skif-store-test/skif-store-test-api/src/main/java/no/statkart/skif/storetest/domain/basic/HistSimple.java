@@ -11,7 +11,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
 public class HistSimple extends AbstractStoreTestBubbleWithHistory{
     private static final long serialVersionUID = 1L;
 
-    private long nr;
+    private int nr;
     private String text;
     private int testSetNumber;
 
@@ -27,11 +27,11 @@ public class HistSimple extends AbstractStoreTestBubbleWithHistory{
         return (HistSimpleId<?>) super.getId();
     }
 
-    public long getNr() {
+    public int getNr() {
         return nr;
     }
 
-    public void setNr(long nr) {
+    public void setNr(int nr) {
         this.nr = nr;
     }
 

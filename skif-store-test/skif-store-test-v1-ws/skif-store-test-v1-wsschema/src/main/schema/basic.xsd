@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/basic"
+        xmlns:basicns="http://skif.statkart.no/storetest/wsapi/domain/basic"
+        xmlns:demoKoderns="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"
+        xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
+        xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:import schemaLocation="demoKoder.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"/>
+    <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
+    <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
+
+    <!-- ================================================= -->
+    <!-- Basisklasser                                      -->
+    <!-- ================================================= -->
+
+    <xs:complexType name="SimpleId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SimpleIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:SimpleId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Simple">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithFilterId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithFilterIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:BubbleWithFilterId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithFilter">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="filter" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="filterText" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithKodeId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithKodeIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:BubbleWithKodeId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithKode">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="testAEnumKodeId" type="demoKoderns:TestAEnumKodeId" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="testC2DbKodeId" type="demoKoderns:TestC2DbKodeId" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithRelationId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithRelationIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:BubbleWithRelationId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithRelation">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="simpleId" type="basicns:SimpleId" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistSimpleId">
+        <xs:complexContent>
+            <xs:extension base="domainns:AbstractStoreTestBubbleWithHistoryId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistSimpleIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:HistSimpleId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HistSimple">
+        <xs:complexContent>
+            <xs:extension base="domainns:AbstractStoreTestBubbleWithHistory">
+                <xs:sequence>
+                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="testSetNumber" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistWithRelationId">
+        <xs:complexContent>
+            <xs:extension base="domainns:AbstractStoreTestBubbleWithHistoryId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistWithRelationIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:HistWithRelationId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HistWithRelation">
+        <xs:complexContent>
+            <xs:extension base="domainns:AbstractStoreTestBubbleWithHistory">
+                <xs:sequence>
+                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="testSetNumber" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="histSimpleId" type="basicns:HistSimpleId" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="GeometricElementId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="GeometricElementIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:GeometricElementId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="GeometricElement">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble"/>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

@@ -37,8 +37,8 @@ public class StoreTestMappingW2DTest extends TestCase {
 
 
     public void testMapTestBubble() {
-        no.statkart.skif.storetest.wsapi.domain.demo.TestBubble source = new no.statkart.skif.storetest.wsapi.domain.demo.TestBubble();
-        no.statkart.skif.storetest.wsapi.domain.demo.TestBubbleId sourceId = new no.statkart.skif.storetest.wsapi.domain.demo.TestBubbleId();
+        no.statkart.skif.storetest.wsapi.domain.basic.Simple source = new no.statkart.skif.storetest.wsapi.domain.basic.Simple();
+        no.statkart.skif.storetest.wsapi.domain.basic.SimpleId sourceId = new no.statkart.skif.storetest.wsapi.domain.basic.SimpleId();
         sourceId.setValue("10");
         source.setId(sourceId);
         source.setText("Test");
