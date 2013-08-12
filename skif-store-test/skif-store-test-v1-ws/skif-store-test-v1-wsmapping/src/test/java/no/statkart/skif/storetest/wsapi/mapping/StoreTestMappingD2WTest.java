@@ -1,8 +1,8 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.store.kodeliste.KodeId;
-import no.statkart.skif.storetest.domain.standalone.TestBubble;
-import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
+import no.statkart.skif.storetest.domain.basic.Simple;
+import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
@@ -17,7 +17,7 @@ import static org.testng.Assert.assertSame;
 /**
  * @author Henrik Fredholm
  */
-@Test(groups="broken")
+@Test
 public class StoreTestMappingD2WTest {
     StoreTestMapper configuration = new StoreTestMapper();
     StoreTestMapping map = configuration.getMapping();
@@ -50,9 +50,9 @@ public class StoreTestMappingD2WTest {
 
 
     public void testMapTestBubble() {
-        TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(10));
-        testBubble.setText("test");
-        no.statkart.skif.storetest.wsapi.domain.basic.Simple target = map.d2w(testBubble, no.statkart.skif.storetest.wsapi.domain.basic.Simple.class);
+        Simple simple = new Simple(new SimpleId<Simple>(10L));
+        simple.setText("test");
+        no.statkart.skif.storetest.wsapi.domain.basic.Simple target = map.d2w(simple, no.statkart.skif.storetest.wsapi.domain.basic.Simple.class);
         assertEquals(target.getId().getValue(), "10");
         assertEquals(target.getText(), "test");
     }
