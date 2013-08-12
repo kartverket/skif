@@ -2,6 +2,9 @@ package no.statkart.skif.storetest.service.txmanagement;
 
 import no.statkart.skif.exception.ValidationException;
 import no.statkart.skif.storetest.config.StoreTestServerModule;
+import no.statkart.skif.storetest.service.txbmt.BeanManagedTxAService;
+import no.statkart.skif.storetest.service.txcascade.ContainerManagedTxCMTCascadeService;
+import no.statkart.skif.storetest.service.txcmt.ContainerManagedTxAService;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
@@ -11,7 +14,6 @@ import static org.testng.Assert.*;
  * @author Henrik Fredholm
  * @since 2.0
  */
-@Test(groups="broken")
 public class StoreTestTxManagementTest extends SkifTestCase {
 
     public StoreTestTxManagementTest() {
@@ -107,7 +109,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
      * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen CMT ejb.
      * Siden kallet til den andre ejb feiler skal ingen av de to endringer commites.
      */
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testCascadedContainerManagedTxTest1_cascadedPut_rollback() {
         final ContainerManagedTxCMTCascadeService cascadeService = injector.getInstance(ContainerManagedTxCMTCascadeService.class);
 

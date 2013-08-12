@@ -8,12 +8,12 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
 /**
+ * Test av StoreTest1Service
  * @author Henrik Fredholm
  * @since 2.0
  */
 @Test
 public class StoreTest1ServiceTest extends StoreTestTestCase {
-
 
     /**
      * Test kall til metode som kalder andre metoder. Ingen metoder krever tx
