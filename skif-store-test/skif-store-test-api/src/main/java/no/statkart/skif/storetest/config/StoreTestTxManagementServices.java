@@ -1,9 +1,9 @@
 package no.statkart.skif.storetest.config;
 
 import no.statkart.skif.service.ServicesListing;
-import no.statkart.skif.storetest.service.txmanagement.BeanManagedTxAService;
-import no.statkart.skif.storetest.service.txmanagement.ContainerManagedTxAService;
-import no.statkart.skif.storetest.service.txmanagement.ContainerManagedTxCMTCascadeService;
+import no.statkart.skif.storetest.service.txbmt.BeanManagedTxAService;
+import no.statkart.skif.storetest.service.txcmt.ContainerManagedTxAService;
+import no.statkart.skif.storetest.service.txcascade.ContainerManagedTxCMTCascadeService;
 
 import java.util.ArrayList;
 import java.util.Collections;

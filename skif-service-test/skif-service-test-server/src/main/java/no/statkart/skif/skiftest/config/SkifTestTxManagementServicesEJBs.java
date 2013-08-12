@@ -1,9 +1,9 @@
 package no.statkart.skif.skiftest.config;
 
 import no.statkart.skif.service.ejb.EJBRegistration;
-import no.statkart.skif.skiftest.service.txmanagement.BeanManagedTxAService;
-import no.statkart.skif.skiftest.service.txmanagement.ContainerManagedTxAService;
-import no.statkart.skif.skiftest.service.txmanagement.ContainerManagedTxCMTCascadeService;
+import no.statkart.skif.skiftest.service.txbmt.BeanManagedTxAService;
+import no.statkart.skif.skiftest.service.txcmt.ContainerManagedTxAService;
+import no.statkart.skif.skiftest.service.txcascade.ContainerManagedTxCMTCascadeService;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBs;

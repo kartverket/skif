@@ -49,7 +49,6 @@ public class RunOnRemoteServerBuilder {
 
     /**
      * Returnerer en modul som kan settes sammen med andre Guice moduler
-     * @return
      */
     public ClientModule buildModule() {
           return (ClientModule) moduleBuilder.buildModule();
