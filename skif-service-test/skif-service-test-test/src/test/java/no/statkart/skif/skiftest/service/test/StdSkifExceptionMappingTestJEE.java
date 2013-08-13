@@ -75,7 +75,7 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
         try {
             service.nonMappedWSCall("simple.SimpleNonMappedException", "abc");
         } catch (Throwable t) {
-            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper.class.getName(), no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException.class.getName());
+            String expectedMessage = String.format("TypeMapper[no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper] could not map from %s to %s", no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException.class.getName(), Throwable.class.getName());
 
             assertEquals(t.getClass(), MappingException.class, "Forventet exception type");
             assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");

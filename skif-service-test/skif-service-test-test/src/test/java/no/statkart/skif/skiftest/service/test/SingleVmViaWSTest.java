@@ -18,7 +18,7 @@ import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.service.SkifTestServiceContext;
 import no.statkart.skif.skiftest.service.test2.Test2Service;
 import no.statkart.skif.skiftest.service.test3.Test3Service;
-import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestExceptionMapper2;
+import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestSimpleExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.Assert;
@@ -75,7 +75,7 @@ public class SingleVmViaWSTest extends SkifTestCase {
         protected void configure() {
             install(new RemoteServerModule(moduleConfiguration).setServiceContextClass(SkifTestServiceContext.class));
             install(new RemoteServiceModule(moduleConfiguration, new SkifTestGroup2Services().getServices(), new SkifTestMapper().getMapping()).
-                                setExceptionMapping(new SkifTestExceptionMapper2().getMapping()));
+                                setExceptionMapping(new SkifTestSimpleExceptionMapper().getMapping()));
         }
     }
 }

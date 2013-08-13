@@ -6,7 +6,7 @@ import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.exception.SimpleNonMappedException;
 import no.statkart.skif.skiftest.service.testex.TestExService;
-import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestExceptionMapper2;
+import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestSimpleExceptionMapper;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
@@ -71,7 +71,7 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
         try {
             service.nonMappedCall(no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException.class.getName(), "abc");
         } catch (Throwable t) {
-            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper2.class.getName(), no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException.class.getName());
+            String expectedMessage = String.format("TypeMapper[%s] could not map from %s to %s", SkifTestSimpleExceptionMapper.class.getName(), no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException.class.getName(), Throwable.class.getName());
 
             assertEquals(t.getClass(), MappingException.class, "Forventet exception type");
             assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
@@ -113,7 +113,7 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
         try {
             service.noTx(SimpleNonMappedException.class.getName(), "abc");
         } catch (Throwable t) {
-            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper2.class.getName(), SimpleNonMappedException.class.getName());
+            String expectedMessage = String.format("TypeMapper[%s] could not map from %s to %s", SkifTestSimpleExceptionMapper.class.getName(), SimpleNonMappedException.class.getName(), Throwable.class.getName());
 
             assertEquals(t.getClass(), SOAPFaultException.class, "Forventet exception type");
             assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
@@ -129,7 +129,7 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
         try {
             service.requiresTx(SimpleNonMappedException.class.getName(), "abc");
         } catch (Throwable t) {
-            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper2.class.getName(), SimpleNonMappedException.class.getName());
+            String expectedMessage = String.format("TypeMapper[%s] could not map from %s to %s", SkifTestSimpleExceptionMapper.class.getName(), SimpleNonMappedException.class.getName(), Throwable.class.getName());
 
             assertEquals(t.getClass(), SOAPFaultException.class, "Forventet exception type");
             assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
@@ -147,7 +147,7 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
         try {
             service.newTx(SimpleNonMappedException.class.getName(), "abc");
         } catch (Throwable t) {
-            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper2.class.getName(), SimpleNonMappedException.class.getName());
+            String expectedMessage = String.format("TypeMapper[%s] could not map from %s to %s", SkifTestSimpleExceptionMapper.class.getName(), SimpleNonMappedException.class.getName(), Throwable.class.getName());
 
             assertEquals(t.getClass(), SOAPFaultException.class, "Forventet exception type");
             assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
@@ -162,7 +162,7 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
         try {
             service.indirectRequiresTx(Arrays.asList("newTx"), SimpleNonMappedException.class.getName(), "");
         } catch (Throwable t) {
-            String expectedMessage = String.format("TypeMapper[%s] has no mapper for for class: %s", SkifTestExceptionMapper2.class.getName(), SimpleNonMappedException.class.getName());
+            String expectedMessage = String.format("TypeMapper[%s] could not map from %s to %s", SkifTestSimpleExceptionMapper.class.getName(), SimpleNonMappedException.class.getName(), Throwable.class.getName());
 
             assertEquals(t.getClass(), SOAPFaultException.class, "Forventet exception type");
             assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");

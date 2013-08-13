@@ -22,7 +22,7 @@ import no.statkart.skif.skiftest.config.SkifTestGroupExServices;
 import no.statkart.skif.skiftest.service.SkifTestServiceContext;
 import no.statkart.skif.skiftest.wsapi.SkifTestServiceContextMapper;
 import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
-import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestExceptionMapper2;
+import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestSimpleExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 
 /**
@@ -49,7 +49,7 @@ public class SkifTestClientModule extends SkifModule {
             install(new RemoteServerModule(moduleConfiguration).setServiceContextClass(SkifTestServiceContext.class));
             install(new RunOnServerRemoteServiceModule(moduleConfiguration));
             install(new RemoteServiceModule(moduleConfiguration, new SkifTestGroupExServices().getServices(), new SkifTestMapper().getMapping()).
-                    setExceptionMapping(new SkifTestExceptionMapper2().getMapping()));
+                    setExceptionMapping(new SkifTestSimpleExceptionMapper().getMapping()));
             RemoteServiceModule module = new RemoteServiceModule(moduleConfiguration, new SkifTestGroupABCDServices().getServices(), new SkifTestMapper().getMapping()).
                     setExceptionMapping(new SkifTestExceptionMapper().getMapping());
             // Kun for JEE mode

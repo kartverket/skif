@@ -16,7 +16,7 @@ import java.util.Date;
  * @author Leif Lislegård
  * @since 2.0
  */
-public abstract class AbstractSkifTestExceptionMapper2 implements ExceptionMapping {
+public abstract class AbstractSkifTestSimpeExceptionMapper implements ExceptionMapping {
 
     @Override
     public <T> T d2w(Object source, Class<T> targetClass) {

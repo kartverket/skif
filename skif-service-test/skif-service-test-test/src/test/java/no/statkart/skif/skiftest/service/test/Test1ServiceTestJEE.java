@@ -1,12 +1,11 @@
 package no.statkart.skif.skiftest.service.test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
+import com.google.common.collect.Lists;
+import com.google.inject.*;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.service.ServiceContextMapper;
+import no.statkart.skif.service.annotation.Call;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.DefaultModuleConfiguration;
@@ -21,6 +20,7 @@ import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.provider.ServiceProvider;
+import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.D2WAdapterWithServiceContextMapperProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;
@@ -34,6 +34,7 @@ import org.testng.annotations.Test;
 import javax.net.ssl.HostnameVerifier;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
@@ -84,6 +85,17 @@ public class Test1ServiceTestJEE {
 
                         // Bind ServiceProvider
                         bind(no.statkart.skif.skiftest.service.test1.Test1Service.class).toProvider(new TypeLiteral<ServiceProvider<no.statkart.skif.skiftest.service.test1.Test1Service>>(){});
+                        bind(new TypeLiteral<List<ChainedProxyHandler<Test1Service>>>(){}).annotatedWith(Call.class).toProvider(
+                                new Provider<List<ChainedProxyHandler<Test1Service>>>() {
+                                    @Inject
+                                    Injector injector;
+
+                                    @Override
+                                    public List<ChainedProxyHandler<Test1Service>> get() {
+                                        return Lists.newArrayList();
+                                    }
+                                });
+
                     }
                 });
 

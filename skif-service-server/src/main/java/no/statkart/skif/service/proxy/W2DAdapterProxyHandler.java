@@ -35,7 +35,7 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
     @Inject()
     public W2DAdapterProxyHandler(@WSServiceChain A adaptee, Mapping map) {
-      this(adaptee, map, null);
+        this(adaptee, map, null);
     }
 
     public W2DAdapterProxyHandler(A adaptee, Mapping map, ExceptionMapping exceptionMapping) {
@@ -53,7 +53,7 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
     @Override
     protected Method findMethod(Method method) throws NoSuchMethodException {
         for (Method m : adapteeClass.getMethods()) {
-            if (m.getName().equals(method.getName()))  {
+            if (m.getName().equals(method.getName())) {
                 return m;
             }
         }
@@ -68,7 +68,7 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
         try {
             mappedArgs = mapArgs(args, adapteeMethod, method);
-            Object result = adapteeRoot.invoke(proxy, adapteeMethod,  mappedArgs);
+            Object result = adapteeRoot.invoke(proxy, adapteeMethod, mappedArgs);
             return map.d2w(result, method.getGenericReturnType());
         } catch (Throwable t) {
             if (exceptionMapping != null) {
@@ -80,12 +80,15 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
     }
 
     protected Object[] mapArgs(Object[] args, Method m, Method method) {
-        Object[] mappedArgs = new Object[args.length];
-        Type[] types = method.getGenericParameterTypes();
-        Type[] ts = m.getGenericParameterTypes();
-        for (int i = 0; i < args.length; i++) {
-            mappedArgs[i] = map.w2d(args[i], ts[i]);
+        if (args != null) {
+            Object[] mappedArgs = new Object[args.length];
+            Type[] ts = m.getGenericParameterTypes();
+            for (int i = 0; i < args.length; i++) {
+                mappedArgs[i] = map.w2d(args[i], ts[i]);
+            }
+            return mappedArgs;
+        } else {
+            return null;
         }
-        return mappedArgs;
     }
 }

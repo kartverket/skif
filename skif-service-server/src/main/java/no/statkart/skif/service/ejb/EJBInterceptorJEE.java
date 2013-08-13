@@ -59,9 +59,9 @@ public abstract class EJBInterceptorJEE {
         } finally {
             if (logger.isDebugEnabled()) {
                 if (origTxMode == TxMode.NOT_IN_EJB) {
-                    logger.debug("END - {}\n" + invocationContext.getMethod());
+                    logger.debug("END - {}\n", invocationContext.getMethod());
                 } else {
-                    logger.debug("END - " + invocationContext.getMethod());
+                    logger.debug("END - {}", invocationContext.getMethod());
                 }
             }
         }

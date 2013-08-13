@@ -9,7 +9,7 @@ import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.skiftest.config.*;
 import no.statkart.skif.skiftest.wsapi.SkifTestServiceContextMapper;
 import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
-import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestExceptionMapper2;
+import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestSimpleExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 
 import javax.servlet.ServletContextEvent;
@@ -46,7 +46,7 @@ public class SkifTestWebServiceInjectorConfig implements ServletContextListener 
                 new WSServerServiceModule(configuration, new SkifTestGroupABCDServices().getServices(), mapping, classLoader)
                         .setExceptionMapping(new SkifTestExceptionMapper().getMapping()),
                 new WSServerServiceModule(configuration, new SkifTestGroupExServices().getServices(), mapping, classLoader).
-                        setExceptionMapping(new SkifTestExceptionMapper2().getMapping())
+                        setExceptionMapping(new SkifTestSimpleExceptionMapper().getMapping())
 
         );
     }

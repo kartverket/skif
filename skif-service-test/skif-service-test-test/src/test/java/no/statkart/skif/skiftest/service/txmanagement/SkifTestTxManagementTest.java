@@ -40,23 +40,31 @@ public class SkifTestTxManagementTest extends SkifTestCase {
         assertEquals(bmtServiceA.get("key1"), "multiValue1");
         assertEquals(bmtServiceA.get("key2"), "multiValue2");
         try {
+            // key3 skal bli satt selv om metoden kaster exception. Dette fordi metoden bruker BMT og gjør commit for hver put
             bmtServiceA.multiPut("key3", "multiValue3", null, "XXX");
+            fail("Forventet ValidationException");
         } catch (ValidationException e) {
-
+            // OK, forventet
         }
         assertEquals(bmtServiceA.get("key3"), "multiValue3");
     }
 
     @Test
     public void test() {
+        final BeanManagedTxAService bmtServiceA = injector.getInstance(BeanManagedTxAService.class);
+        bmtServiceA.clear();
+        bmtServiceA.put("key1", "value1");
+
         final ContainerManagedTxCMTCascadeService cascadeService = injector.getInstance(ContainerManagedTxCMTCascadeService.class);
         for (int i = 0; i < 100; i++) {
             try {
-//                bmtServiceA.put("key1", "value1");
+                // key3 skal ikke bli satt, da metoden kaster exception og bruker CMT {@code TransactionAttributeType.REQUIRED}
                 cascadeService.containerTest3("key1", "multiValue1", null, "multiValue2");
+                fail("Forventet ValidationException");
             } catch (ValidationException e) {
             }
         }
+        assertEquals(bmtServiceA.get("key1"), "value1");
 
     }
 
@@ -75,8 +83,11 @@ public class SkifTestTxManagementTest extends SkifTestCase {
         assertEquals(cmtServiceA.get("key1"), "multiValue1");
         assertEquals(cmtServiceA.get("key2"), "multiValue2");
         try {
+            // key3 skal ikke bli satt, da metoden kaster exception og bruker CMT {@code TransactionAttributeType.REQUIRED}
             cmtServiceA.multiPut("key3", "multiValue3", null, "XXX");
+            fail("Forventet ValidationException");
         } catch (ValidationException e) {
+            // Ok, forventet
 
         }
         assertEquals(cmtServiceA.get("key3"), null);

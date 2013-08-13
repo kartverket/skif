@@ -30,21 +30,22 @@ public class ModuleBuilder {
     private static Logger logger = LoggerFactory.getLogger(ModuleBuilder.class);
 
     /**
-     * Configuration instans som inneholder properties som settes programatisk på builderen. Hver module
-     * som builderen produserer får sin egen kopi av disse properties slik at senere endringer av disse properties
-     * ikke påvirker allerede produserte moduler. Properties satt programatisk kan ikke overstyres via systemproperties.
-     * Properties'ene blir ikke nullstilt automatisk for hvergang en module produseres, men beholder deres verdier.
-     * Det er mulig å nullstille dem manuelt.
+     * En {@code Configuration}-instans som inneholder de properties som settes programatisk på builderen. Hver module
+     * som builderen produserer får sin egen kopi av disse properties slik at senere endringer av builderens properties
+     * ikke påvirker allerede produserte moduler. Properties som settes programmatisk kan ikke overstyres på noen måte,
+     * heller ikke via systemproperties. Properties som settes på builderen nulstilles ikke når builderen produserer
+     * en modul, men det er mulig å nullstille dem manuelt.
      */
     private MapConfiguration builderConfiguration;
 
     /**
-     * Configuration instans som inneholder systemproperties og som overstyrer alle andre properties på nær de som har blitt
-     * satt programatisk direkte på builderen (dvs. <properties i {@code builderConfiguration}}. SystemConfiguration
+     * En {@code Configuration}-instans som inneholder systemproperties og som overstyrer alle andre properties på nær de som har blitt
+     * satt programatisk direkte på builderen (se {@link #builderConfiguration}). SystemConfiguration
      * brukes av alle moduler som produseres av builderen (inkl. singleVmServer-moduler) dersom den settes i
-     * constructoren når builderen opprettes. Moduler som deler Configuration instans bruker samme SystemConfiguration
-     * instans. Moduler som ikke deler Configuration instans bruker hver sin SystemConfiguration kopi. SingleVmServer
-     * moduler deler ikke Configuration instans med klienten har bruker derfor sin egen SystemConfiguration instans.
+     * constructoren når builderen opprettes. Moduler som deler {@code Configuration}-instans bruker samme
+     * {@code SystemConfiguration}-instans. Moduler som ikke deler {@code Configuration}-instans bruker hver sin
+     * SystemConfiguration kopi. SingleVmServer moduler deler for eksempel ikke {@code Configuration}-instans med
+     * klienter har derfor sin egen {@code SystemConfiguration}-instans.
      * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      */
     protected SystemConfiguration systemConfiguration;

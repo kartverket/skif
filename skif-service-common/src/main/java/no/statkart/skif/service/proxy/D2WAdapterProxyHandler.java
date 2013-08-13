@@ -85,13 +85,10 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
     protected Object[] mapArgs(Object[] args, Method method, Method m) {
         if (args != null) {
             Object[] mappedArgs = new Object[args.length];
-            Type[] types = method.getGenericParameterTypes();
             Type[] ts = m.getGenericParameterTypes();
-
             for (int i = 0; i < args.length; i++) {
                 mappedArgs[i] = map.d2w(args[i], ts[i]);
             }
-
             return mappedArgs;
         } else {
             return null;
