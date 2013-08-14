@@ -13,6 +13,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -63,7 +64,8 @@ public class HistTestServiceTest extends StoreTestTestCase {
         // Ta utgangspunkt i oppdateringsdato og sjekk at vi finner samme foo på nytt
         HistSimple histSimple = store.get(histSimpleId);
         assertEquals(histSimple.getText(), "KART-VEIEN");
-        Set<HistSimpleId<?>> ids2 = histTestService.findHistSimpleIdsForTextUsingJDBC("KART-VEIEN", mockupFacade.getTestNumber().getNumber(), SnapshotVersion.createInstance(histSimple.getOppdateringsdato()));
+        final Timestamp oppdateringsdato = histSimple.getOppdateringsdato();
+        Set<HistSimpleId<?>> ids2 = histTestService.findHistSimpleIdsForTextUsingJDBC("KART-VEIEN", mockupFacade.getTestNumber().getNumber(), SnapshotVersion.createInstance(oppdateringsdato));
         assertEquals(ids2.size(), 1);
         HistSimpleId<?> histSimpleId2 = ids2.iterator().next();
         HistSimple histSimple2 = store.get(histSimpleId2);

@@ -71,7 +71,8 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
         try {
             Object result = adapteeRoot.invoke(proxy, m, mappedArgs);
-            return map.w2d(result, method.getGenericReturnType());
+            final Object domainResult = map.w2d(result, method.getGenericReturnType());
+            return domainResult;
         } catch (Throwable t) {
             if (exceptionMapping != null) {
                 //forventer kun exceptions definert for webservice api. Disse er da annotert med @WebFault

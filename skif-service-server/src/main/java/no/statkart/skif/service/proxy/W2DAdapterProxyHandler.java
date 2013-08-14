@@ -71,7 +71,8 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
         try {
             mappedArgs = mapArgs(args, adapteeMethod, method);
             Object result = adapteeRoot.invoke(proxy, adapteeMethod, mappedArgs);
-            return map.d2w(result, method.getGenericReturnType());
+            final Object wsResult = map.d2w(result, method.getGenericReturnType());
+            return wsResult;
         } catch (Throwable t) {
             if (exceptionMapping != null) {
                 Throwable mappedException = exceptionMapping.d2w(t);

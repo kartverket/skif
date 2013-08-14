@@ -35,7 +35,8 @@ public abstract class AbstractStoreTestBubbleWithHistory extends AbstractStoreTe
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
-    private void setOppdateringsdato(Timestamp oppdateringsdato) {
+    @Deprecated // WS-mapping krever public
+    public void setOppdateringsdato(Timestamp oppdateringsdato) {
         this.oppdateringsdato = oppdateringsdato;
     }
 
@@ -44,7 +45,8 @@ public abstract class AbstractStoreTestBubbleWithHistory extends AbstractStoreTe
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
-    private void setSluttdato(Timestamp sluttdato) {
+    @Deprecated // WS-mapping krever public
+    public void setSluttdato(Timestamp sluttdato) {
         this.sluttdato = sluttdato;
     }
 
@@ -53,7 +55,8 @@ public abstract class AbstractStoreTestBubbleWithHistory extends AbstractStoreTe
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
-    private void setVersjonId(long versjonId) {
+    @Deprecated // WS-mapping krever public
+    public void setVersjonId(long versjonId) {
         this.versjonId = versjonId;
     }
 
