@@ -55,7 +55,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
         readFacadeProvider = new Provider<T>() {
             @Override
             public T get() {
-                return createFacade(AbstractMockupFacadeFactory.this.testdataService.getTestNumber_0());
+                return createFacade(AbstractMockupFacadeFactory.this.testdataService.getTestNumber0());
             }
         };
     }

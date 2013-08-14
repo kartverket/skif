@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
  * @author Tor Egil R. Strand
  * @since 2.1.1
  */
-@Test
+@Test(groups="singlevm-required")
 public class MockupFrameworkServerTest extends StoreTestMixedTestCase {
     public void testWriteSet() {
         server.runInTxRequiresNew(new RunOnServerMethod() {

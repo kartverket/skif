@@ -53,6 +53,12 @@ public class StoreServiceWSBean extends SkifWebService<StoreServiceWSI> implemen
 
     @Override
     @WebMethod
+    public StoreTestBubbleList getObjectsIgnoreMissing(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        return wsServiceChain.getObjectsIgnoreMissing(ids, context);
+    }
+
+    @Override
+    @WebMethod
     public StoreTestBubbleIdList getVersions(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         return wsServiceChain.getVersions(id, start, end, context);
     }

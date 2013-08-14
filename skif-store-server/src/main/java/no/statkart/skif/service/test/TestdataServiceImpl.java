@@ -48,7 +48,7 @@ public class TestdataServiceImpl implements TestdataService {
 
 
     @Override
-    public TestNumber getTestNumber_0() {
+    public TestNumber getTestNumber0() {
         return testNumberFactory.create(0);
     }
 

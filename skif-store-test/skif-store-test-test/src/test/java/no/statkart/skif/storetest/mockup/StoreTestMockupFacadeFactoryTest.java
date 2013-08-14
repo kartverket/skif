@@ -32,8 +32,8 @@ public class StoreTestMockupFacadeFactoryTest extends StoreTestTestCase {
     }
 
     private void checkMockupDataSet(StoreTestMockupFacade mockupFacade) {
-        X1A a1 = storeService.getObject(mockupFacade.getX1AMockupFactory().getA1Id());
-        Assert.assertEquals(a1.getId(), mockupFacade.getX1AMockupFactory().getA1Id());
-        Assert.assertEquals(a1.getNr(), 1);
+//        X1A a1 = storeService.getObject(mockupFacade.getX1AMockupFactory().getA1Id());
+//        Assert.assertEquals(a1.getId(), mockupFacade.getX1AMockupFactory().getA1Id());
+//        Assert.assertEquals(a1.getNr(), 1);
     }
 }

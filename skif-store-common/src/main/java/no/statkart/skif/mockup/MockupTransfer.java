@@ -13,7 +13,11 @@ import java.util.*;
  * @since 2.1
  */
 public class MockupTransfer extends UnitOfWorkTransfer {
-    private final TestNumber testNumber;
+    private TestNumber testNumber;
+
+    @Deprecated // WS-mapping
+    public MockupTransfer() {
+    }
 
     public MockupTransfer(List<? extends BubbleObject> inserts, List<? extends BubbleObject> updatedObjects, List<? extends BubbleObject> deletedObjects, TestNumber testNumber) {
         super(inserts, updatedObjects, deletedObjects);
@@ -22,5 +26,10 @@ public class MockupTransfer extends UnitOfWorkTransfer {
 
     public TestNumber getTestNumber() {
         return testNumber;
+    }
+
+    @Deprecated // WS-mapping
+    public void setTestNumber(TestNumber testNumber) {
+        this.testNumber = testNumber;
     }
 }

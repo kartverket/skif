@@ -26,10 +26,6 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
     @Inject private HistSimpleMockupFactory histSimpleMockupFactory;
     @Inject private HistWithRelationMockupFactory histWithRelationMockupFactory;
 
-
-    @Inject private X1AMockupFactory x1AMockupFactory;
-    @Inject private X1BOneMockupFactory x1BOneMockupFactory;
-
     @Override
     public List<? extends AbstractMockupFactory> getAllMockupFactories() {
         return ImmutableList.of(
@@ -38,9 +34,7 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
                 bubbleWithFilterMockupFactory,
                 bubbleWithKodeMockupFactory,
                 histSimpleMockupFactory,
-                histWithRelationMockupFactory,
-                x1AMockupFactory,
-                x1BOneMockupFactory
+                histWithRelationMockupFactory
         );
     }
 
@@ -66,13 +60,5 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
     public HistWithRelationMockupFactory getHistWithRelationMockupFactory() {
         return histWithRelationMockupFactory;
-    }
-
-    public X1AMockupFactory getX1AMockupFactory() {
-        return x1AMockupFactory;
-    }
-
-    public X1BOneMockupFactory getX1BOneMockupFactory() {
-        return x1BOneMockupFactory;
     }
 }

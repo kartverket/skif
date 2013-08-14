@@ -168,13 +168,18 @@ public class DefaultTypeMapper {
             }
         }
 
-        if (!targetType.isAssignableFrom(retVal) && !assignableIdCollection(targetType, retVal)) {
+        if (!assignableTypeVariable(targetType, retVal) && !targetType.isAssignableFrom(retVal) && !assignableIdCollection(targetType, retVal)) {
             throw new MappingException("Wanted to map " + sourceClass + " to " + retVal + ", but requested class is " + targetType.getRawType());
         }
 
         return retVal;
     }
-
+    /**
+     *
+     */
+    boolean assignableTypeVariable(TypeToken<?> targetType, TypeToken<?> valueType) {
+        return targetType.getType() instanceof TypeVariable && targetType.getRawType().isAssignableFrom(valueType.getRawType());
+    }
     /**
      * Guava 14.1 klarer ikke å set at man kan si Set&lt;BubbleId&lt;?&gt;&gt ids = new HashSet&lt;BubbleId&lt;?&gt;&gt().
      * Dette er en vanlig ting å gjøre i SKIF, så dette er en workaround.
@@ -262,11 +267,17 @@ public class DefaultTypeMapper {
 
     private TypeToken<?> resolveMap(TypeToken<?> targetType) {
         TypeToken<?> retVal;
-        if (Map.class.isAssignableFrom(targetType.getRawType())) {
+        final Class<?> targetRawType = targetType.getRawType();
+        if (Map.class.isAssignableFrom(targetRawType)) {
             // Det er angitt en spesiell type map det skal mappes til
             retVal = targetType;
-            if (retVal.getRawType().isInterface()) {
-                retVal = retVal.getSubtype(HashMap.class);
+            if (targetRawType.isInterface()) {
+                if (SortedMap.class.isAssignableFrom(targetRawType)) {
+                    retVal = retVal.getSubtype(TreeMap.class);
+                } else {
+                    // Antar HashMap
+                    retVal = retVal.getSubtype(HashMap.class);
+                }
             }
         } else {
             // Antar HashMap når ikke nærmere spesifisert
@@ -478,7 +489,11 @@ public class DefaultTypeMapper {
                         TypeToken<?> targetFieldType = targetType.resolveType(targetSetter.getGenericParameterTypes()[0]);
                         if (source1 != null) {
                             Object value = mapping.d2w(source1, targetFieldType.getType());
-                            targetSetter.invoke(target, value);
+                            try {
+                                targetSetter.invoke(target, value);
+                            } catch (IllegalArgumentException e) {
+                                throw new MappingException(String.format("Could not invoke setter %s for argument %s", targetSetter, value.getClass()), e);
+                            }
                         } else {
                             //Dersom value = null, så kan vi fremdeles sette den i target.
                             //Med midre typen er primitiv, da lar vi den bare være

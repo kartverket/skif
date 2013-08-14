@@ -30,8 +30,8 @@ public class TestdataServiceEJBBean extends EJBTimedService implements TestdataS
 
 
     @Override
-    public TestNumber getTestNumber_0() {
-        return service.getTestNumber_0();
+    public TestNumber getTestNumber0() {
+        return service.getTestNumber0();
     }
 
     @Override

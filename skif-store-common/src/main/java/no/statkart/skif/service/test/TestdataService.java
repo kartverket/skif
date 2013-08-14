@@ -16,7 +16,7 @@ public interface TestdataService {
      *
      * @return neste testnummer
      */
-    public TestNumber getTestNumber_0();
+    public TestNumber getTestNumber0();
 
     /**
      * Finner neste ledige testnummer.

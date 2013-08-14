@@ -15,7 +15,7 @@ public interface TestdataServiceWSI extends ServiceWSI {
     public TestNumber getNextTestNumber(@WebParam(name = "context") StoreTestContext context);
 
     /** @since 2.1 */
-    public TestNumber getTestNumber_0(@WebParam(name = "context") StoreTestContext context);
+    public TestNumber getTestNumber0(@WebParam(name = "context") StoreTestContext context);
 
     /** @since 2.1 */
     public void saveAll(@WebParam(name = "snapshotTransfers") MockupSnapshotMap snapshotTransfers, @WebParam(name = "context") StoreTestContext context);

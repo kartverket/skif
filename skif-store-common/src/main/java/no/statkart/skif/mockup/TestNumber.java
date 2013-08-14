@@ -10,8 +10,22 @@ import java.io.Serializable;
  * @since 2.1
  */
 public class TestNumber implements Serializable {
-    private final int offset;
-    private final int number;
+    private int offset;
+    private int number;
+
+
+    @Deprecated // WS-mapping
+    public TestNumber() {
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    @Deprecated // WS-mapping
+    public void setNumber(int number) {
+        this.number = number;
+    }
 
     public TestNumber(int offset, int number) {
         this.offset = offset;

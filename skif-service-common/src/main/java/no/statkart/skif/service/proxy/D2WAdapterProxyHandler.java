@@ -53,12 +53,14 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
     @Override
     protected Method findMethod(Method method) throws NoSuchMethodException {
-        for (Method m : adapteeClass.getMethods()) {
-            if (m.getName().equals(method.getName())) {
-                return m;
+        for (Class interfaceClass : adapteeClass.getInterfaces()) {
+            for (Method m : interfaceClass.getMethods()) {
+                if (m.getName().equals(method.getName())) {
+                    return m;
+                }
             }
         }
-        throw new ImplementationException("No corresponding method in adaptee: " + method.getName());
+        throw new ImplementationException("No corresponding method in adaptee: " + method.toGenericString());
     }
 
     @Override

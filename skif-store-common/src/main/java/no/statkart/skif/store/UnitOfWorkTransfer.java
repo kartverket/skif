@@ -24,15 +24,19 @@ public class UnitOfWorkTransfer implements Serializable {
     /**
      * Inserted objekter.
      */
-    private final List<BubbleObject> insertedObjects;
+    private  List<BubbleObject> insertedObjects;
     /**
      * Updated objekter
      */
-    private final List<BubbleObject> updatedObjects;
+    private  List<BubbleObject> updatedObjects;
     /**
      * Id'er for deleted objekter
      */
-    private final List<BubbleObject> deletedObjects;
+    private  List<BubbleObject> deletedObjects;
+
+    @Deprecated // WS-mapping
+    public UnitOfWorkTransfer() {
+    }
 
     public UnitOfWorkTransfer(List<? extends BubbleObject> insertedObjects, List<? extends BubbleObject> updatedObjects, List<? extends BubbleObject> deletedObjects) {
         this.insertedObjects = (List<BubbleObject>) insertedObjects;
@@ -111,5 +115,20 @@ public class UnitOfWorkTransfer implements Serializable {
         Set<Class<? extends BubbleObject>> allowedClasses =  Sets.newHashSet();
         allowedClasses.add(BubbleObject.class);
         return allowedClasses;
+    }
+
+    @Deprecated // WS-mapping
+    public void setInsertedObjects(List<BubbleObject> insertedObjects) {
+        this.insertedObjects = insertedObjects;
+    }
+
+    @Deprecated // WS-mapping
+    public void setUpdatedObjects(List<BubbleObject> updatedObjects) {
+        this.updatedObjects = updatedObjects;
+    }
+
+    @Deprecated // WS-mapping
+    public void setDeletedObjects(List<BubbleObject> deletedObjects) {
+        this.deletedObjects = deletedObjects;
     }
 }

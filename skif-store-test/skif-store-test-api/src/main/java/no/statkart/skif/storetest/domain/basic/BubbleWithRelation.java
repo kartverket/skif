@@ -19,7 +19,7 @@ import no.statkart.skif.storetest.domain.mockup.FooId;
 public class BubbleWithRelation extends AbstractStoreTestBubble {
     private static final long serialVersionUID = 1L;
 
-    private long nr;
+    private int nr;
     private String text;
     private SimpleId<?> simpleId;
 
@@ -35,11 +35,11 @@ public class BubbleWithRelation extends AbstractStoreTestBubble {
         return (BubbleWithRelationId<?>) super.getId();
     }
 
-    public long getNr() {
+    public int getNr() {
         return nr;
     }
 
-    public void setNr(long nr) {
+    public void setNr(int nr) {
         this.nr = nr;
     }
 

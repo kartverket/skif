@@ -44,8 +44,8 @@ public class TestdataServiceWSBean extends SkifWebService<TestdataServiceWSI> im
 
     /** @since 2.1 */
     @Override
-    public TestNumber getTestNumber_0(@WebParam(name = "context") StoreTestContext context) {
-        return wsServiceChain.getTestNumber_0(context);
+    public TestNumber getTestNumber0(@WebParam(name = "context") StoreTestContext context) {
+        return wsServiceChain.getTestNumber0(context);
     }
 
     /** @since 2.1 */

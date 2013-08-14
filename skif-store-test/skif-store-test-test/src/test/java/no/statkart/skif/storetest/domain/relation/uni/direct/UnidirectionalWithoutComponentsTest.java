@@ -26,8 +26,8 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
     public void testGetRelationToOne() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        X1AMockupFactory x1AMockupFactory = mockupFacade.getX1AMockupFactory();
-        X1BOneMockupFactory x1BOneMockupFactory = mockupFacade.getX1BOneMockupFactory();
+        X1AMockupFactory x1AMockupFactory = null; //mockupFacade.getX1AMockupFactory();
+        X1BOneMockupFactory x1BOneMockupFactory = null; // mockupFacade.getX1BOneMockupFactory();
 
         X1A a1 = store.get(x1AMockupFactory.getA1Id());
         assertNotNull(a1);
