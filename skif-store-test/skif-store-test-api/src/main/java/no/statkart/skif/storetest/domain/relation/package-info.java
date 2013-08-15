@@ -2,7 +2,7 @@
  * Test domeneklasser for testing av navigering og persistering av relasjoner mellom domeneobjekter.
  *
  * <P>Hibernate konfigureres via StoreTestServerModule og predifinerte testobjekter opprettes via
- * mockup-rammeverket.
+ * {@code }mockup-rammeverket.
  *
  * <P>Domeneklasser i denne pakken støtter ikke mapping til Web Services, endringslogg og validering.
  */

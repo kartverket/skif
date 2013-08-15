@@ -7,9 +7,7 @@ import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.storetest.domain.basic.BubbleWithFilter;
 import no.statkart.skif.storetest.domain.basic.BubbleWithFilterId;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1A;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1AId;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1BOneId;
+import no.statkart.skif.storetest.domain.relation.X1BOneMockupFactory;
 
 /**
  * @author Henrik Fredholm
@@ -19,7 +17,8 @@ import no.statkart.skif.storetest.domain.relation.uni.direct.X1BOneId;
 public class BubbleWithFilterMockupFactory extends AbstractMockupFactory {
     private final BubbleWithFilterId<?> obj1Id;
 
-    @Inject X1BOneMockupFactory x1BOneMockupFactory;
+    @Inject
+    X1BOneMockupFactory x1BOneMockupFactory;
 
     @Inject
     public BubbleWithFilterMockupFactory(MockupStore store, TestNumber testNumber) {

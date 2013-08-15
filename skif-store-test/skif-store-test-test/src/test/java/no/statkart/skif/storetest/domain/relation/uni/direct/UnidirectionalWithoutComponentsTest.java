@@ -2,10 +2,10 @@ package no.statkart.skif.storetest.domain.relation.uni.direct;
 
 import com.google.inject.Inject;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
-import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
-import no.statkart.skif.storetest.mockup.X1AMockupFactory;
-import no.statkart.skif.storetest.mockup.X1BOneMockupFactory;
+import no.statkart.skif.storetest.domain.relation.RelationMockupFacade;
+import no.statkart.skif.storetest.domain.relation.RelationMockupFacadeFactory;
+import no.statkart.skif.storetest.domain.relation.X1AMockupFactory;
+import no.statkart.skif.storetest.domain.relation.X1BOneMockupFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
@@ -18,16 +18,16 @@ import static org.testng.Assert.assertNotNull;
 @Test(groups = "singlevm-required")
 public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
     @Inject
-    StoreTestMockupFacadeFactory mockupFacadeFactory;
+    RelationMockupFacadeFactory mockupFacadeFactory;
 
     @Inject
     Store store;
 
 
     public void testGetRelationToOne() {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        X1AMockupFactory x1AMockupFactory = null; //mockupFacade.getX1AMockupFactory();
-        X1BOneMockupFactory x1BOneMockupFactory = null; // mockupFacade.getX1BOneMockupFactory();
+        RelationMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        X1AMockupFactory x1AMockupFactory = mockupFacade.getX1AMockupFactory();
+        X1BOneMockupFactory x1BOneMockupFactory = mockupFacade.getX1BOneMockupFactory();
 
         X1A a1 = store.get(x1AMockupFactory.getA1Id());
         assertNotNull(a1);

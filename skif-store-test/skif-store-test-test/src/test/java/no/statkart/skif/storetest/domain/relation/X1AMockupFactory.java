@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.mockup;
+package no.statkart.skif.storetest.domain.relation;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
