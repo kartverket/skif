@@ -52,7 +52,8 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
     @Override
     protected Method findMethod(Method method) throws NoSuchMethodException {
-        for (Class interfaceClass : adapteeClass.getInterfaces()) {
+        Class[] interfaces= adapteeClass.isInterface() ? (new Class[] {adapteeClass}) : adapteeClass.getInterfaces();
+        for (Class interfaceClass : interfaces) {
             for (Method m : interfaceClass.getMethods()) {
                 if (m.getName().equals(method.getName())) {
                     return m;

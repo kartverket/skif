@@ -1,5 +1,7 @@
 package no.statkart.skif.service.proxy;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
@@ -9,6 +11,8 @@ import javax.annotation.Nullable;
 import javax.xml.ws.WebFault;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Adapter proxy som adapterer domain interface T til webservice interface A ved å mappe metoder med samme navn til hverandre og transformere
@@ -53,7 +57,8 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
     @Override
     protected Method findMethod(Method method) throws NoSuchMethodException {
-        for (Class interfaceClass : adapteeClass.getInterfaces()) {
+        Class[] interfaces= adapteeClass.isInterface() ? (new Class[] {adapteeClass}) : adapteeClass.getInterfaces();
+        for (Class interfaceClass : interfaces) {
             for (Method m : interfaceClass.getMethods()) {
                 if (m.getName().equals(method.getName())) {
                     return m;
