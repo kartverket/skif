@@ -22,11 +22,11 @@ public class BubbleWithValueObjectMockupFactory extends AbstractMockupFactory {
     private final BubbleWithValueObjectId<?> withNullBeloepId;
     private final BubbleWithValueObjectId<?> withSharedBeloepId;
     private final BubbleWithValueObjectId<?> withBeloepSetId;
-    private final BeloepValueObject beloepNOK1WithOutText = new BeloepValueObject("NOK", 1, "");
+    private final BeloepValueObject beloepNOK1WithOutText = new BeloepValueObject("NOK", 1, null);
     private final BeloepValueObject beloepNOK1WithText = new BeloepValueObject("NOK", 1, "I have text");
-    private final BeloepValueObject beloepNOK1 = new BeloepValueObject("NOK", 1, "");
-    private final BeloepValueObject beloepDKK1 = new BeloepValueObject("DKK", 1, "");
-    private final BeloepValueObject beloepSKR1 = new BeloepValueObject("SKR", 1, "");
+    private final BeloepValueObject beloepNOK1 = new BeloepValueObject("NOK", 1, null);
+    private final BeloepValueObject beloepDKK1 = new BeloepValueObject("DKK", 1, null);
+    private final BeloepValueObject beloepSKR1 = new BeloepValueObject("SKR", 1, null);
 
     @Inject
     public BubbleWithValueObjectMockupFactory(MockupStore store, TestNumber testNumber) {

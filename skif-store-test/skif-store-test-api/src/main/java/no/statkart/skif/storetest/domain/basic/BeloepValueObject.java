@@ -3,6 +3,8 @@ package no.statkart.skif.storetest.domain.basic;
 import no.statkart.skif.guava.Preconditions;
 import no.statkart.skif.store.ValueObject;
 
+import javax.annotation.Nullable;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -10,18 +12,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Henrik Fredholm
  */
 public class BeloepValueObject implements ValueObject {
-    private String valuta="";
+    private String valuta;
     private int verdi;
-    private String kommentar="";
+    private String kommentar;
 
 
     public BeloepValueObject() {
     }
 
-    public BeloepValueObject(String valuta, int verdi, String kommentar) {
+    public BeloepValueObject(String valuta, int verdi, @Nullable String kommentar) {
         this.valuta = checkNotNull(valuta);
-        this.verdi = checkNotNull(verdi);
-        this.kommentar = checkNotNull(kommentar);
+        this.verdi = verdi;
+        this.kommentar = kommentar;
     }
 
     public String getValuta() {
@@ -43,6 +45,7 @@ public class BeloepValueObject implements ValueObject {
     }
 
 
+    @Nullable
     public String getKommentar() {
         return kommentar;
     }
@@ -82,5 +85,14 @@ public class BeloepValueObject implements ValueObject {
         int result = valuta.hashCode();
         result = 31 * result + verdi;
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "BeloepValueObject{" +
+                "valuta='" + valuta + '\'' +
+                ", verdi=" + verdi +
+                ", kommentar='" + kommentar + '\'' +
+                '}';
     }
 }

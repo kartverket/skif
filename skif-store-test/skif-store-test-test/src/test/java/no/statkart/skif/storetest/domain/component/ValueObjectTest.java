@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.domain.component;
 
 import com.google.inject.Inject;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 import no.statkart.skif.storetest.domain.basic.BubbleWithValueObject;
 import no.statkart.skif.storetest.mockup.BubbleWithValueObjectMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -10,6 +11,8 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
+
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.*;
@@ -88,11 +91,41 @@ public class ValueObjectTest extends StoreTestTestCase {
         assertThat(withBeloepSet.getBeloepSet()).containsExactly(valueObjectMockupFactory.getBeloepDKK1(), valueObjectMockupFactory.getBeloepNOK1());
         withBeloepSet.getBeloepSet().remove(valueObjectMockupFactory.getBeloepNOK1());
         withBeloepSet.getBeloepSet().add(valueObjectMockupFactory.getBeloepSKR1());
+
         store.update(withBeloepSet);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
         store.endUnitOfWork();
 
         final BubbleWithValueObject withBeloepSetChanged = store.get(valueObjectMockupFactory.getWithBeloepSetId());
         assertThat(withBeloepSet.getBeloepSet()).containsExactly(valueObjectMockupFactory.getBeloepDKK1(), valueObjectMockupFactory.getBeloepSKR1());
+    }
+
+    public void testUpdateKommentarInBeloepSet() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
+        store.beginUnitOfWork();
+        final BubbleWithValueObject bubbleWithBeloepSet = store.lock(valueObjectMockupFactory.getWithBeloepSetId());
+        assertThat(bubbleWithBeloepSet.getBeloepSet()).containsExactly(valueObjectMockupFactory.getBeloepDKK1(), valueObjectMockupFactory.getBeloepNOK1());
+
+        final BeloepValueObject dkkBeloep = findValuta(bubbleWithBeloepSet.getBeloepSet(), "DKR");
+        if (dkkBeloep!=null) {
+            bubbleWithBeloepSet.getBeloepSet().remove(dkkBeloep);
+            bubbleWithBeloepSet.getBeloepSet().add(dkkBeloep.withKommentar("Endret kommentar på DKR"));
+        }
+        store.update(bubbleWithBeloepSet);
+        storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
+        store.endUnitOfWork();
+
+        final BubbleWithValueObject withBeloepSetChanged = store.get(valueObjectMockupFactory.getWithBeloepSetId());
+        assertThat(withBeloepSetChanged.getBeloepSet()).containsExactly(valueObjectMockupFactory.getBeloepDKK1(), valueObjectMockupFactory.getBeloepNOK1());
+    }
+
+    private BeloepValueObject findValuta(Set<BeloepValueObject> withBeloepSet, String valuta) {
+        for (BeloepValueObject beloep : withBeloepSet) {
+            if (beloep.getValuta().equals(valuta)) {
+                return beloep;
+            }
+        }
+        return null;
     }
 }
