@@ -707,7 +707,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                     checkForReplacedOrStolenEntityComponent((EntityType) type, value, null);
                 }
             } else if (type.isComponentType()) {
-                checkEntityComponentsOnInsertInComponent(value, (AbstractComponentType) type, processedObjects);
+                checkEntityComponentsOnInsertInComponent(value, type, processedObjects);
             } else if (type.isCollectionType()) {
                 boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
                 if (value instanceof Map) {
@@ -726,15 +726,15 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         }
     }
 
-    protected void checkEntityComponentsOnInsertInComponent(Object component, AbstractComponentType componentType, IdentityHashMap processedObjects) {
+    protected void checkEntityComponentsOnInsertInComponent(Object component, Type componentType, IdentityHashMap processedObjects) {
         if (component != null) {
-            Type[] propertyTypes = componentType.getSubtypes();
-            Object[] properties = componentType.getPropertyValues(component, EntityMode.POJO);
+            Type[] propertyTypes = getSubtypes(componentType);
+            Object[] properties = getPropertyValues(componentType, component);
             boolean wasModified = false;
             for (int j = 0; j < properties.length; j++) {
                 Type propertyType = propertyTypes[j];
                 Object property = properties[j];
-                CascadeStyle cascadeStyle = componentType.getCascadeStyle(j);
+                CascadeStyle cascadeStyle = getCascadeStyle(componentType, j);
 
                 // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
                 if (propertyType.isEntityType()) {
@@ -762,7 +762,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 }
             }
             if (wasModified) {
-                componentType.setPropertyValues(component, properties, EntityMode.POJO);
+                setPropertyValues(componentType, component, properties);
             }
         }
     }
