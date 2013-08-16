@@ -203,6 +203,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(Simple.class)
                 .addResource(BubbleWithRelation.class)
                 .addResource(BubbleWithFilter.class)
+                .addResource(BubbleWithValueObject.class)
                 .addResource(HistSimple.class)
                 .addResource(HistWithRelation.class)
 

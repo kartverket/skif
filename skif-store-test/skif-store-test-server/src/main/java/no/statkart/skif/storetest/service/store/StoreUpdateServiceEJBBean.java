@@ -6,10 +6,13 @@ import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 import javax.annotation.Nullable;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import java.util.Collection;
 
@@ -26,12 +29,20 @@ public class StoreUpdateServiceEJBBean extends EJBTimedService implements StoreU
     private StoreUpdateService serviceChain;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T lockObject(@Nullable I bubbleId) throws ObjectNotFoundException {
         return serviceChain.lockObject(bubbleId);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockObjects(Collection<I> bubbleIds) {
-        return lockObjects(bubbleIds);
+        return serviceChain.lockObjects(bubbleIds);
     }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void saveTransfer(UnitOfWorkTransfer transfer) {
+        serviceChain.saveTransfer(transfer);
+    }
+
 }

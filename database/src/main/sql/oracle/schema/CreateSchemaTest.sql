@@ -34,6 +34,28 @@ create table BubbleWithKode (
     primary key (id)
 );
 
+create table BubbleWithValueObject (
+    id number(19,0) not null,
+    nr number(10,0),
+    text varchar2(255),
+    a_valuta varchar2(255),
+    a_verdi number(19,0),
+    a_kommentar varchar2(255),
+    b_valuta varchar2(255),
+    b_verdi number(19,0),
+    b_kommentar varchar2(255),
+    primary key (id)
+);
+
+create table BeloepVOSet (
+    ownerId number(19,0) not null,
+    valuta varchar2(255) not null,
+    verdi number(19,0) not null,
+    kommentar varchar2(255),
+    primary key (ownerId, valuta, verdi)
+);
+
+alter table BeloepVOSet add constraint FK_BeloepVOSet_ownerId foreign key (ownerId) references BubbleWithValueObject;
 
 create table HistSimple_H (
     id number(19,0) not null,

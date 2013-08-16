@@ -1,0 +1,22 @@
+package no.statkart.skif.storetest.domain.basic;
+
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
+import no.statkart.skif.storetest.domain.basic.BubbleWithRelation;
+
+/**
+ * @author Henrik Fredholm
+ * @since 2.3
+ */
+public class BubbleWithValueObjectId<T extends  BubbleWithValueObject> extends AbstractStoreTestBubbleId<T> {
+    private static final long serialVersionUID = 1L;
+
+    public  BubbleWithValueObjectId(Long value) {
+        super(value, SnapshotVersion.CURRENT);
+    }
+
+    public BubbleWithValueObjectId(Long value, SnapshotVersion snapshotVersion) {
+        super(value, snapshotVersion);
+    }
+
+}

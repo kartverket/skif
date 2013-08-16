@@ -13,10 +13,6 @@ import no.statkart.skif.storetest.domain.mockup.Bar;
 public class BubbleWithRelationId<T extends BubbleWithRelation> extends AbstractStoreTestBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
-    public Long getValue() {
-        return (Long) super.getValue();
-    }
-
     public BubbleWithRelationId(Long value) {
         super(value, SnapshotVersion.CURRENT);
     }

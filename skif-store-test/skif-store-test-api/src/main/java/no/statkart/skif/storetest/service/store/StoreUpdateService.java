@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.service.store;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.UnitOfWorkTransfer;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -19,4 +20,10 @@ public interface StoreUpdateService {
      * Låser en collection av {@code bubbleId}s for kallende bruker og returnerer tilhørende BubbleObject instanser
      */
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockObjects(Collection<I> bubbleIds);
+
+    /**
+     * Committer en transfer. Dette er en metode som en vanlig applikasjon normalt ikke vil implementere fordi det
+     * er ønseklig med brukstilfellespesifikk validering i forbindelse med oppdatering.
+     */
+    public void saveTransfer(UnitOfWorkTransfer transfer);
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false" >
+
+    <class name="no.statkart.skif.storetest.domain.basic.BubbleWithValueObject" select-before-update="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.BubbleWithValueObjectIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="nr"/>
+        <property name="text"/>
+        <component name="a" class="no.statkart.skif.storetest.domain.basic.BeloepValueObject" unique="true">
+            <property name="valuta" column="a_valuta"/>
+            <property name="verdi" column="a_verdi"/>
+            <property name="kommentar" column="a_kommentar"/>
+        </component>
+        <component name="b" class="no.statkart.skif.storetest.domain.basic.BeloepValueObject" unique="true">
+            <property name="valuta" column="b_valuta"/>
+            <property name="verdi" column="b_verdi"/>
+            <property name="kommentar" column="b_kommentar"/>
+        </component>
+        <set name="beloepSet" table="BeloepVOSet" cascade="all-delete-orphan">
+            <key column="ownerId"/>
+            <composite-element class="no.statkart.skif.storetest.domain.basic.BeloepValueObject">
+                <property name="valuta" not-null="true"/>
+                <property name="verdi" not-null="true"/>
+                <property name="kommentar"/>
+            </composite-element>
+        </set>
+
+    </class>
+</hibernate-mapping>

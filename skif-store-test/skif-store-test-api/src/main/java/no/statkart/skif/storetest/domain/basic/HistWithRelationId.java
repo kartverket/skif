@@ -13,10 +13,6 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 public class HistWithRelationId<T extends HistWithRelation> extends AbstractStoreTestBubbleWithHistoryId<T> {
     private static final long serialVersionUID = 1L;
 
-    public Long getValue() {
-        return (Long) super.getValue();
-    }
-
     public HistWithRelationId(Long value) {
         super(value, SnapshotVersion.CURRENT);
     }

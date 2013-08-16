@@ -8,8 +8,8 @@ import no.statkart.skif.util.JDBCHelper;
 
 import java.sql.*;
 
-import static no.statkart.skif.guava.Preconditions.checkArgument;
-import static no.statkart.skif.guava.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 
 /**
  * @author Henrik Fredholm

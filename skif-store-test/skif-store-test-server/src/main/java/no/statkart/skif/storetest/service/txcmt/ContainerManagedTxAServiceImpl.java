@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ValidationException;
-import no.statkart.skif.storetest.service.txcmt.ContainerManagedTxAService;
 import no.statkart.skif.util.JDBCHelper;
 
 import java.sql.*;

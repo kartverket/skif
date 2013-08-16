@@ -15,11 +15,6 @@ import no.statkart.skif.storetest.domain.mockup.Foo;
 public class SimpleId<T extends Simple> extends AbstractStoreTestBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public Long getValue() {
-        return (Long)super.getValue();
-    }
-
     public SimpleId(Long value) {
         super(value, SnapshotVersion.CURRENT);
     }

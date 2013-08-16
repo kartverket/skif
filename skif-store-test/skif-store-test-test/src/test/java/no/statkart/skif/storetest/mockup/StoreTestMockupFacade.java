@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFacade;
 import no.statkart.skif.mockup.AbstractMockupFactory;
+import no.statkart.skif.storetest.domain.basic.BubbleWithValueObject;
 import no.statkart.skif.storetest.domain.basic.HistSimple;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
     @Inject private BubbleWithRelationMockupFactory bubbleWithRelationMockupFactory;
     @Inject private BubbleWithFilterMockupFactory bubbleWithFilterMockupFactory;
     @Inject private BubbleWithKodeMockupFactory bubbleWithKodeMockupFactory;
+    @Inject private BubbleWithValueObjectMockupFactory bubbleWithValueObjectMockupFactory;
 
     @Inject private HistSimpleMockupFactory histSimpleMockupFactory;
     @Inject private HistWithRelationMockupFactory histWithRelationMockupFactory;
@@ -32,6 +34,7 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
                 simpleMockupFactory,
                 bubbleWithRelationMockupFactory,
                 bubbleWithFilterMockupFactory,
+                bubbleWithValueObjectMockupFactory,
                 bubbleWithKodeMockupFactory,
                 histSimpleMockupFactory,
                 histWithRelationMockupFactory
@@ -48,6 +51,10 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
     public BubbleWithFilterMockupFactory getBubbleWithFilterMockupFactory() {
         return bubbleWithFilterMockupFactory;
+    }
+
+    public BubbleWithValueObjectMockupFactory getBubbleWithValueObjectMockupFactory() {
+        return bubbleWithValueObjectMockupFactory;
     }
 
     public BubbleWithKodeMockupFactory getBubbleWithKodeMockupFactory() {
