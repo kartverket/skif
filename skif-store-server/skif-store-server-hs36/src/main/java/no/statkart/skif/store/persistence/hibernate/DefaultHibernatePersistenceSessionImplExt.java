@@ -128,6 +128,27 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         }
     }
 
+    @Override
+    protected CascadeStyle getCascadeStyle(Type componentType, int i){
+        return ((CompositeType)componentType).getCascadeStyle(i);
+    }
+
+    @Override
+    protected void setPropertyValues(Type componentType, Object component, Object[] properties) {
+        ((CompositeType)componentType).setPropertyValues(component, properties, EntityMode.POJO);
+    }
+
+
+    @Override
+    protected Object[] getPropertyValues(Type componentType, Object component) {
+        return ((CompositeType)componentType).getPropertyValues(component, EntityMode.POJO);
+    }
+
+    @Override
+    protected Type[] getSubtypes(Type componentType) {
+        return ((CompositeType)componentType).getSubtypes();
+    }
+
     protected boolean isSingleColumnType(Type type) {
         return type instanceof SingleColumnType;
 

@@ -473,7 +473,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                     }
                 }
             } else if (type.isComponentType()) {
-                attachComponent(value, valueExisting, (AbstractComponentType) type, processedObjects);
+                attachComponent(value, valueExisting, type, processedObjects);
             } else if (type.isCollectionType()) {
                 boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
                 if (valueExisting instanceof Map) {
@@ -493,17 +493,17 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         }
     }
 
-    protected void attachComponent(Object component, Object componentExisting, AbstractComponentType componentType, IdentityHashMap processedObjects) {
+    protected void attachComponent(Object component, Object componentExisting, Type componentType, IdentityHashMap processedObjects) {
         if (component != null && componentExisting != null) {
-            Type[] propertyTypes = componentType.getSubtypes();
-            Object[] properties = componentType.getPropertyValues(component, EntityMode.POJO);
-            Object[] propertiesExisting = componentType.getPropertyValues(componentExisting, EntityMode.POJO);
+            Type[] propertyTypes = getSubtypes(componentType);
+            Object[] properties = getPropertyValues(componentType, component);
+            Object[] propertiesExisting = getPropertyValues(componentType, componentExisting);
             boolean wasModified = false;
             for (int j = 0; j < properties.length; j++) {
                 Type propertyType = propertyTypes[j];
                 Object property = properties[j];
                 Object propertyExisting = propertiesExisting[j];
-                CascadeStyle cascadeStyle = componentType.getCascadeStyle(j);
+                CascadeStyle cascadeStyle = getCascadeStyle(componentType, j);
 
                 // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
                 if (propertyType.isEntityType()) {
@@ -523,17 +523,49 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                     }
                     wasModified = true;
                 } else if (propertyType.isComponentType()) {
-                    attachComponent(property, propertyExisting, (AbstractComponentType) propertyType, processedObjects);
+                    attachComponent(property, propertyExisting, propertyType, processedObjects);
                 } else if (!isSingleColumnType(propertyType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
                         && !(propertyType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
                     throw new NotImplementedException();
                 }
             }
             if (wasModified) {
-                componentType.setPropertyValues(component, properties, EntityMode.POJO);
+                setPropertyValues(componentType, component, properties);
             }
         }
     }
+
+    /**
+     * Typehieraki for component ser forskjelllig i Hibernate 3.2 og 3.6. Må derfor bruke hjelpemetoder til å caste
+     * riktig.
+     *
+     * @since 2.3
+     */
+    abstract protected CascadeStyle getCascadeStyle(Type componentType, int i);
+
+    /**
+     * Typehieraki for component ser forskjelllig i Hibernate 3.2 og 3.6. Må derfor bruke hjelpemetoder til å caste
+     * riktig.
+     *
+     * @since 2.3
+     */
+    abstract protected void setPropertyValues(Type componentType, Object component, Object[] properties);
+
+    /**
+     * Typehieraki for component ser forskjelllig i Hibernate 3.2 og 3.6. Må derfor bruke hjelpemetoder til å caste
+     * riktig.
+     *
+     * @since 2.3
+     */
+    abstract protected Object[] getPropertyValues(Type componentType, Object component);
+
+    /**
+     * Typehieraki for component ser forskjelllig i Hibernate 3.2 og 3.6. Må derfor bruke hjelpemetoder til å caste
+     * riktig.
+     *
+     * @since 2.3
+     */
+    abstract protected Type[] getSubtypes(Type componentType);
 
     protected Map attachPersitentMap(Map mapInObject, Map mapInExistingObject, IdentityHashMap processedObjects, boolean cascade) {
         if (mapInExistingObject instanceof PersistentCollection) {
