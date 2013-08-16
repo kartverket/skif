@@ -41,19 +41,14 @@ public class ValueObjectTest extends StoreTestTestCase {
         assertNull(withNullBeloeb.getB());
     }
 
-    public void testReadBubbleWithSharedBeloep() {
+    public void testReadBubbleWithSameBeloep() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
-        final BubbleWithValueObject withSharedBeloeb = store.get(valueObjectMockupFactory.getWithNullBeloepId());
+        final BubbleWithValueObject withSameBeloeb = store.get(valueObjectMockupFactory.getWithSameBeloepId());
         // Test at instaner ikke længre deles når de innleses via Store
-        assertEquals(withSharedBeloeb.getA().getValuta(), "NOK");
-        assertEquals(withSharedBeloeb.getA().getVerdi(), 1);
-        assertEquals(withSharedBeloeb.getA().getKommentar(), "");
-        assertEquals(withSharedBeloeb.getB().getValuta(), "NOK");
-        assertEquals(withSharedBeloeb.getB().getVerdi(), 1);
-        assertEquals(withSharedBeloeb.getB().getKommentar(), "");
-        assertEquals(withSharedBeloeb.getA(), withSharedBeloeb.getB());
-        assertNotSame(withSharedBeloeb.getA(), withSharedBeloeb.getB());
+        assertEquals(withSameBeloeb.getA(), valueObjectMockupFactory.getBeloepNOK1WithText());
+        assertEquals(withSameBeloeb.getB(), valueObjectMockupFactory.getBeloepNOK1WithText());
+        assertNotSame(withSameBeloeb.getA(), withSameBeloeb.getB());
     }
 
     /**
@@ -63,41 +58,43 @@ public class ValueObjectTest extends StoreTestTestCase {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
         final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
         store.beginUnitOfWork();
-        BubbleWithValueObject withSharedBeloeb = store.lock(valueObjectMockupFactory.getWithSharedBeloepId());
-        assertEquals(withSharedBeloeb.getA().getVerdi(), 1);
-        assertEquals(withSharedBeloeb.getA().getValuta(), "NOK");
-        assertEquals(withSharedBeloeb.getA().getKommentar(), "I have text");
-        assertEquals(withSharedBeloeb.getB().getVerdi(), 1);
-        assertEquals(withSharedBeloeb.getB().getValuta(), "NOK");
-        assertEquals(withSharedBeloeb.getB().getKommentar(), "I have text");
+        BubbleWithValueObject bubbleWithBeloeb = store.lock(valueObjectMockupFactory.getWithSameBeloepId());
 
-        withSharedBeloeb.setB(withSharedBeloeb.getB().withValuta("DKK").withKommentar("Changed valuta"));
-        store.update(withSharedBeloeb);
+        bubbleWithBeloeb.setB(bubbleWithBeloeb.getB().withValuta("DKK").withKommentar("Changed valuta"));
+        store.update(bubbleWithBeloeb);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
         store.endUnitOfWork();
 
-        BubbleWithValueObject withSharedBeloeb2 = store.get(valueObjectMockupFactory.getWithSharedBeloepId());
-        assertEquals(withSharedBeloeb.getA().getValuta(), "NOK");
-        assertEquals(withSharedBeloeb.getB().getVerdi(), 1);
-        assertEquals(withSharedBeloeb2.getB().getValuta(), "DKK");
-        assertEquals(withSharedBeloeb2.getB().getKommentar(), "Changed valuta");
+        BubbleWithValueObject withUpdatedBeloep = store.get(valueObjectMockupFactory.getWithSameBeloepId());
+        assertEquals(bubbleWithBeloeb.getA(), valueObjectMockupFactory.getBeloepNOK1WithText());
+        assertEquals(bubbleWithBeloeb.getB().getVerdi(), 1);
+        assertEquals(withUpdatedBeloep.getB().getValuta(), "DKK");
+        assertEquals(withUpdatedBeloep.getB().getKommentar(), "Changed valuta");
+    }
+
+    public void testReadBeloepSet() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
+        final BubbleWithValueObject withBeloepSet = store.get(valueObjectMockupFactory.getWithBeloepSetId());
+        assertThat(withBeloepSet.getBeloepSet()).containsOnly(valueObjectMockupFactory.getBeloepDKR1(), valueObjectMockupFactory.getBeloepNOK1());
     }
 
     public void testUpdateBeloepSet() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
         final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
         store.beginUnitOfWork();
-        final BubbleWithValueObject withBeloepSet = store.lock(valueObjectMockupFactory.getWithBeloepSetId());
-        assertThat(withBeloepSet.getBeloepSet()).containsExactly(valueObjectMockupFactory.getBeloepDKK1(), valueObjectMockupFactory.getBeloepNOK1());
-        withBeloepSet.getBeloepSet().remove(valueObjectMockupFactory.getBeloepNOK1());
-        withBeloepSet.getBeloepSet().add(valueObjectMockupFactory.getBeloepSKR1());
+        final BubbleWithValueObject bubbleWithBeloepSet = store.lock(valueObjectMockupFactory.getWithBeloepSetId());
+        final BeloepValueObject beloepNOK = findValuta(bubbleWithBeloepSet.getBeloepSet(), "NOK");
 
-        store.update(withBeloepSet);
+        bubbleWithBeloepSet.getBeloepSet().remove(beloepNOK);
+        bubbleWithBeloepSet.getBeloepSet().add(valueObjectMockupFactory.getBeloepSEK20());
+
+        store.update(bubbleWithBeloepSet);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
         store.endUnitOfWork();
 
-        final BubbleWithValueObject withBeloepSetChanged = store.get(valueObjectMockupFactory.getWithBeloepSetId());
-        assertThat(withBeloepSet.getBeloepSet()).containsExactly(valueObjectMockupFactory.getBeloepDKK1(), valueObjectMockupFactory.getBeloepSKR1());
+        final BubbleWithValueObject updatedBubble = store.get(valueObjectMockupFactory.getWithBeloepSetId());
+        assertThat(updatedBubble.getBeloepSet()).containsOnly(valueObjectMockupFactory.getBeloepDKR1(), valueObjectMockupFactory.getBeloepSEK20());
     }
 
     public void testUpdateKommentarInBeloepSet() {
@@ -105,19 +102,32 @@ public class ValueObjectTest extends StoreTestTestCase {
         final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithValueObject bubbleWithBeloepSet = store.lock(valueObjectMockupFactory.getWithBeloepSetId());
-        assertThat(bubbleWithBeloepSet.getBeloepSet()).containsExactly(valueObjectMockupFactory.getBeloepDKK1(), valueObjectMockupFactory.getBeloepNOK1());
+        final BeloepValueObject beloepNOK = findValuta(bubbleWithBeloepSet.getBeloepSet(), "NOK");
 
-        final BeloepValueObject dkkBeloep = findValuta(bubbleWithBeloepSet.getBeloepSet(), "DKR");
-        if (dkkBeloep!=null) {
-            bubbleWithBeloepSet.getBeloepSet().remove(dkkBeloep);
-            bubbleWithBeloepSet.getBeloepSet().add(dkkBeloep.withKommentar("Endret kommentar på DKR"));
-        }
+        bubbleWithBeloepSet.getBeloepSet().remove(beloepNOK);
+        bubbleWithBeloepSet.getBeloepSet().add(beloepNOK.withVerdi(20).withKommentar("changed"));
+
         store.update(bubbleWithBeloepSet);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
         store.endUnitOfWork();
 
-        final BubbleWithValueObject withBeloepSetChanged = store.get(valueObjectMockupFactory.getWithBeloepSetId());
-        assertThat(withBeloepSetChanged.getBeloepSet()).containsExactly(valueObjectMockupFactory.getBeloepDKK1(), valueObjectMockupFactory.getBeloepNOK1());
+        final BubbleWithValueObject updatedBubble = store.get(valueObjectMockupFactory.getWithBeloepSetId());
+        assertThat(updatedBubble.getBeloepSet()).containsOnly(valueObjectMockupFactory.getBeloepDKR1(), new BeloepValueObject("NOK", 20, "changed"));
+    }
+
+    public void testAddExistingToBeloepSet() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
+        store.beginUnitOfWork();
+        try {
+            final BubbleWithValueObject bubbleWithBeloepSet = store.lock(valueObjectMockupFactory.getWithBeloepSetId());
+            bubbleWithBeloepSet.getBeloepSet().add(new BeloepValueObject("NOK", 100, "Ekstra beløp i NOK"));
+            store.update(bubbleWithBeloepSet);
+            storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
+            fail("Forvented database constraint exception");
+        } catch (RuntimeException e) {
+            store.abortUnitOfWork();
+        }
     }
 
     private BeloepValueObject findValuta(Set<BeloepValueObject> withBeloepSet, String valuta) {
@@ -128,4 +138,5 @@ public class ValueObjectTest extends StoreTestTestCase {
         }
         return null;
     }
+
 }

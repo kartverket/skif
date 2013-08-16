@@ -20,20 +20,20 @@ import java.util.Set;
 @Singleton
 public class BubbleWithValueObjectMockupFactory extends AbstractMockupFactory {
     private final BubbleWithValueObjectId<?> withNullBeloepId;
-    private final BubbleWithValueObjectId<?> withSharedBeloepId;
+    private final BubbleWithValueObjectId<?> withSameBeloepId;
     private final BubbleWithValueObjectId<?> withBeloepSetId;
     private final BeloepValueObject beloepNOK1WithOutText = new BeloepValueObject("NOK", 1, null);
     private final BeloepValueObject beloepNOK1WithText = new BeloepValueObject("NOK", 1, "I have text");
     private final BeloepValueObject beloepNOK1 = new BeloepValueObject("NOK", 1, null);
-    private final BeloepValueObject beloepDKK1 = new BeloepValueObject("DKK", 1, null);
-    private final BeloepValueObject beloepSKR1 = new BeloepValueObject("SKR", 1, null);
+    private final BeloepValueObject beloepDKR1 = new BeloepValueObject("DKR", 1, null);
+    private final BeloepValueObject beloepSEK20 = new BeloepValueObject("SEK", 20, null);
 
     @Inject
     public BubbleWithValueObjectMockupFactory(MockupStore store, TestNumber testNumber) {
         super(store, testNumber);
 
         withNullBeloepId = getNextId();
-        withSharedBeloepId = getNextId();
+        withSameBeloepId = getNextId();
         withBeloepSetId = getNextId();
     }
 
@@ -45,8 +45,8 @@ public class BubbleWithValueObjectMockupFactory extends AbstractMockupFactory {
     public void createAllMockups() {
         store.insert(createBubbleWithKode(withNullBeloepId, 1, null, null, null));
         BeloepValueObject sharedBeloep = CopyHelper.copy(beloepNOK1WithText);
-        store.insert(createBubbleWithKode(withSharedBeloepId, 1, null, sharedBeloep, sharedBeloep));
-        store.insert(createBubbleWithKode(withBeloepSetId, 1, null, beloepNOK1, beloepDKK1, ImmutableSet.of(beloepNOK1, beloepDKK1)));
+        store.insert(createBubbleWithKode(withSameBeloepId, 1, null, sharedBeloep, sharedBeloep));
+        store.insert(createBubbleWithKode(withBeloepSetId, 1, null, beloepNOK1, beloepDKR1, ImmutableSet.of(beloepNOK1, beloepDKR1)));
     }
 
     private BubbleWithValueObject createBubbleWithKode(BubbleWithValueObjectId<?> id, int nr, String text, @Nullable BeloepValueObject a, @Nullable BeloepValueObject b) {
@@ -67,8 +67,8 @@ public class BubbleWithValueObjectMockupFactory extends AbstractMockupFactory {
         return withNullBeloepId;
     }
 
-    public BubbleWithValueObjectId<?> getWithSharedBeloepId() {
-        return withSharedBeloepId;
+    public BubbleWithValueObjectId<?> getWithSameBeloepId() {
+        return withSameBeloepId;
     }
 
     public BubbleWithValueObjectId<?> getWithBeloepSetId() {
@@ -87,11 +87,11 @@ public class BubbleWithValueObjectMockupFactory extends AbstractMockupFactory {
         return beloepNOK1;
     }
 
-    public BeloepValueObject getBeloepDKK1() {
-        return beloepDKK1;
+    public BeloepValueObject getBeloepDKR1() {
+        return beloepDKR1;
     }
 
-    public BeloepValueObject getBeloepSKR1() {
-        return beloepSKR1;
+    public BeloepValueObject getBeloepSEK20() {
+        return beloepSEK20;
     }
 }

@@ -52,7 +52,7 @@ create table BeloepVOSet (
     valuta varchar2(255) not null,
     verdi number(19,0) not null,
     kommentar varchar2(255),
-    primary key (ownerId, valuta, verdi)
+    primary key (ownerId, valuta)
 );
 
 alter table BeloepVOSet add constraint FK_BeloepVOSet_ownerId foreign key (ownerId) references BubbleWithValueObject;

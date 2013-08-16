@@ -14,10 +14,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class BeloepValueObject implements ValueObject {
     private String valuta;
     private int verdi;
+    @Nullable
     private String kommentar;
 
 
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
     public BeloepValueObject() {
+    }
+
+    public BeloepValueObject(String valuta, int verdi) {
+        this(valuta, verdi, null);
     }
 
     public BeloepValueObject(String valuta, int verdi, @Nullable String kommentar) {
@@ -75,6 +81,7 @@ public class BeloepValueObject implements ValueObject {
         BeloepValueObject that = (BeloepValueObject) o;
 
         if (verdi != that.verdi) return false;
+        if (kommentar != null ? !kommentar.equals(that.kommentar) : that.kommentar != null) return false;
         if (!valuta.equals(that.valuta)) return false;
 
         return true;
@@ -84,6 +91,7 @@ public class BeloepValueObject implements ValueObject {
     public int hashCode() {
         int result = valuta.hashCode();
         result = 31 * result + verdi;
+        result = 31 * result + (kommentar != null ? kommentar.hashCode() : 0);
         return result;
     }
 
