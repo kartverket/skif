@@ -9,7 +9,7 @@ def libVersion(String name, String defaultValue) {
 def libraries = [
 
         // Tools
-        'tools.jar': files("${System.getenv('JAVA_HOME')}/lib/tools.jar").stopExecutionIfEmpty(), //JAVA_HOME ikke satt??
+        'tools.jar': files("${JAVA_HOME}/lib/tools.jar").stopExecutionIfEmpty(), //JAVA_HOME ikke satt??
 
         // Database
         ojdbc: "com.oracle:ojdbc6:${libVersion('oracle', '11.2.0.3.0')}@jar",
@@ -56,37 +56,8 @@ def libraries = [
 ]
 
 // SKIF-239: Mulighet for valg av ojdbc driver
-libraries.jdbc = Boolean.valueOf(System.getenv('ORA_DEBUG') ?: 'false') ? libraries.ojdbc_g : libraries.ojdbc
+libraries.jdbc = ORA_DEBUG ? libraries.ojdbc_g : libraries.ojdbc
 
-// JAX-WS runtime for weblogic
-libraries.jaxws_rt = files(
-        files(isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.0.0.0_2-1-4.jar" :
-            "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.2.0.0_2-1-5.jar"),
-)
-
-boolean isWeblogic10310() {
-    new File("${WEBLOGIC_HOME}/utils/config/10.3.1.0/".toString()).exists()
-}
-
-// Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
-libraries.weblogic = files(
-        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
-        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
-        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
-        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.1.jar/" :
-            "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar/",
-        "${WEBLOGIC_HOME}/modules/javax.ejb_3.0.1.jar",
-        "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
-        "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
-        "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
-        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.5.1.0.jar" :
-            "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.7.0.0.jar",
-        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.6.0.0.jar" :
-            "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.9.0.0.jar",
-        libraries.jaxws_rt,
-        "${WEBLOGIC_HOME}/modules/com.bea.core.utils.wrapper_1.4.0.0.jar",
-        isWeblogic10310() ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.5.0.0.jar": "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.7.0.0.jar" ,
-)
 libraries.gt2 = [
         'org.geotools:gt2-oracle-spatial:2.2.2-CUSTOM@jar',
 ]
@@ -133,6 +104,76 @@ libraries.hibernate_3_6 = [
         'odmg:odmg:3.0@jar',
         'javassist:javassist:3.12.1.GA',
 ]
+
+
+// Oracle Weblogic dependencies
+
+final Map WEBLOGIC_VERSIONS = [
+        WL_10_3_1: '10.3.1',
+        WL_10_3_5: '10.3.5',
+        WL_10_3_6: '10.3.6',
+]
+ext.weblogicVersion = project.properties.get(WEBLOGIC_VERSION, WEBLOGIC_VERSIONS.WL_10_3_5)
+assert WEBLOGIC_VERSIONS.containsValue(weblogicVersion) //husk å utvide byggesystem med ny weblogic version..
+assert WEBLOGIC_HOME //WEBLOGIC_HOME maa vaere gitt
+
+// JAX-WS runtime for weblogic
+libraries.weblogic_jaxws_rt = files(
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.3.0.0_2-1-5.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.2.0.0_2-1-5.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.0.0.0_2-1-4.jar" : [],
+)
+
+// Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
+libraries.weblogic_client = files(
+        "${WEBLOGIC_HOME}/modules/javax.ejb_3.0.1.jar",
+        "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
+        "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
+
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.7.1.0.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.7.0.0.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.5.1.0.jar" : [],
+
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.10.0.0.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.9.0.0.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.6.0.0.jar" : [],
+
+        libraries.weblogic_jaxws_rt,
+)
+
+// Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
+libraries.weblogic_server = files(
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
+        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
+
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.1.jar" : [],
+
+        "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
+
+        libraries.weblogic_client,
+)
+
+libraries.weblogic = files(
+        libraries.weblogic_server,
+        libraries.weblogic_client,
+)
+
+// extra files for running skif project?
+libraries.weblogic += files(
+        "${WEBLOGIC_HOME}/modules/com.bea.core.utils.wrapper_1.4.0.0.jar",
+
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.7.0.0.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.7.0.0.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.5.0.0.jar" : [],
+)
+
+libraries.jaxws_rt = files(
+        libraries.weblogic_jaxws_rt,
+)
+
 
 subprojects {
     project.ext.set('libraries', libraries) //eksponerer denne for alle prosjekter

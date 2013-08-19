@@ -3,73 +3,105 @@
 @rem
 
 @echo off
+@mode con codepage select=865
+@mode con cols=180 lines=3000
 
 rem Setter hovedkatalog for prosjektet. PROJECT_ROOT inneholder '\' til slutt derfor må det stå en '.' til slutt
 rem %~dp0 is name of current script under NT
 set PROJECT_ROOT=%~dp0.
 
-rem les inn JAVA_HOME, ANT_HOME,  MAVEN_HOME og andre maskin/bruker spesifikke settings
+rem les inn JAVA_HOME, ANT_HOME, MAVEN_HOME og andre maskin/bruker spesifike settings
 if exist setEnv_personal.cmd call setEnv_personal.cmd
 
 
-rem Sjekk at JAVA_HOME er satt
-:checkJava
-if not defined JAVA_HOME goto noJavaHome
-goto javaHomeOk
-:noJavaHome
-echo JAVA_HOME environment variable er ikke satt. Har du glem å sette den i setEnv_personal.cmd?
-goto exit
 
-rem Hvis vi kommer her er JAVA_HOME satt
-:javaHomeOK
+rem .NET Setup (optional):
+@rem echo Setter path til .NET tools. Disse brukes for bygging av .NET test klienter
 
-rem Setup Java:
+if "%NUNIT_HOME%"=="" goto END_NUNIT_HOME
+:CONFIGURE_NUNIT_HOME
+  @echo NUNIT_HOME=%NUNIT_HOME%
+  set PATH=%NUNIT_HOME%\bin\net-2.0;%PATH%
+:END_NUNIT_HOME
+
+if "%MS_NET_HOME%"=="" goto END_MS_NET_HOME
+:CONFIGURE_MS_NET_HOME
+  @echo MS_NET_HOME=%MS_NET_HOME%
+  set PATH=%MS_NET_HOME%;%PATH%
+:END_MS_NET_HOME
+
+if "%MS_SDK_HOME%"=="" goto END_MS_SDK_HOME
+:CONFIGURE_MS_SDK_HOME
+  @echo MS_SDK_HOME=%MS_SDK_HOME%
+  set PATH=%MS_SDK_HOME%;%PATH%
+:END_MS_SDK_HOME
+
+
+rem Java Setup:
 @echo JAVA_HOME=%JAVA_HOME%
-set PATH=%JAVA_HOME%\bin;%PATH%
-set CLASSPATH=%JAVA_HOME%\lib\tools.jar;
+if not "%JAVA_HOME%"=="" goto CONFIGURE_JAVA_HOME
+  @echo   JAVA_HOME environment variable er ikke satt. Har du glem å sette den i setEnv_personal.cmd?
+  set ERROR=true
+  goto END_JAVA_HOME
+:CONFIGURE_JAVA_HOME
+  set PATH=%JAVA_HOME%\bin;%PATH%
+:END_JAVA_HOME
 
-rem Setup Gradle:
+
+rem Gradle Setup:
 @echo GRADLE_HOME=%GRADLE_HOME%
-set PATH=%GRADLE_HOME%\bin;%PATH%
-set GRADLE_OPTS=-XX:MaxPermSize=256m
+if not "%GRADLE_HOME%"=="" goto CONFIGURE_GRADLE_HOME
+  @echo   GRADLE_HOME environment variable er ikke satt. Har du glem å sette den i setEnv_personal.cmd?
+  set ERROR=true
+  goto END_GRADLE_HOME
+:CONFIGURE_GRADLE_HOME
+  set PATH=%GRADLE_HOME%\bin;%PATH%
+  set GRADLE_OPTS=-XX:MaxPermSize=256m
+:END_GRADLE_HOME
 
-rem Setup Groovy (Optional)
-if  not "%GROOVY_HOME%"=="" set PATH=%PATH%;%GROOVY_HOME%\bin
 
-@rem Setter path til .NET tools. Disse brukes for bygging av .NET test klienter
-REM set PATH=%PATH%;%MS_NET_HOME%;%MS_SDK_HOME%;%NUNIT_HOME%\bin\net-2.0
-
-@REM echo PATH=%PATH%
-
+rem Project Setup
 if "%ORG_GRADLE_PROJECT_version%"=="" (
    for /D %%P in (%PROJECT_ROOT%) do (
       set ORG_GRADLE_PROJECT_version=%%~nxP-SNAPSHOT
-      @echo Setter versjon til '%%~nxP-SNAPSHOT'
+      @echo Setter version til '%%~nxP-SNAPSHOT'
    )
 )
-
-if "%ORG_GRADLE_PROJECT_LOCALHOSTNAME%"=="" (
-   @echo Setter std maskinnavn
-   set ORG_GRADLE_PROJECT_LOCALHOSTNAME=%COMPUTERNAME%.statkart.no
+if "%ORA_DEBUG%"=="" (
+   set ORA_DEBUG=false
 )
 
-if "%ORG_GRADLE_PROJECT_MAVEN_REPO%"=="" (
+
+rem Weglogic Setup
+if "%WEBLOGIC_HOME%"=="" (
+  @echo   WEBLOGIC_HOME environment variable er ikke satt. Har du glem å sette den i setEnv_personal.cmd?
+  set ERROR=true
+)
+if "%WEBLOGIC_VERSION%"=="" (
+  @echo   WEBLOGIC_VERSION environment variable er ikke satt. Har du glem å sette den i setEnv_personal.cmd?
+  set ERROR=true
+)
+
+
+rem Maven Repo & Nexus Setup
+if "%MAVEN_REPO%"=="" (
    @echo Setter std Maven Repository for utvikling [felles]
-   set ORG_GRADLE_PROJECT_MAVEN_REPO=http://nexus.statkart.no:8090/nexus/content/groups/public/
+   set MAVEN_REPO=http://nexus.statkart.no:8090/nexus/content/groups/public/
 )
-
-if "%ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES%"=="" (
-   @echo Setter std Maven Repository for releases
-   set ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES=http://nexus.statkart.no:8090/nexus/content/repositories/releases/
+if "%REPO_UPLOAD_RELEASES%"=="" (
+   @echo Setter std Maven Repository for utvikling releases
+   set REPO_UPLOAD_RELEASES=http://admin:admin123@nexus.statkart.no:8090/nexus/content/repositories/releases/
    set ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES_USERNAME=admin
    set ORG_GRADLE_PROJECT_REPO_UPLOAD_RELEASES_PASSWORD=admin123
 )
 
-if "%ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS%"=="" (
-   @echo Setter std Maven Repository for snapshots
-   set ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS=http://nexus.statkart.no:8090/nexus/content/repositories/snapshots/
-   set ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS_USERNAME=admin
-   set ORG_GRADLE_PROJECT_REPO_UPLOAD_SNAPSHOTS_PASSWORD=admin123
+
+
+if defined ERROR (
+  color 04
+  echo.
+  echo Feil i oppsett!
+  goto exit
 )
 
 @gradle --version
