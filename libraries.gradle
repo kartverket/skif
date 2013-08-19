@@ -113,7 +113,7 @@ final Map WEBLOGIC_VERSIONS = [
         WL_10_3_5: '10.3.5',
         WL_10_3_6: '10.3.6',
 ]
-ext.weblogicVersion = project.properties.get(WEBLOGIC_VERSION, WEBLOGIC_VERSIONS.WL_10_3_5)
+ext.weblogicVersion = project.properties.get('WEBLOGIC_VERSION', WEBLOGIC_VERSIONS.WL_10_3_5)
 assert WEBLOGIC_VERSIONS.containsValue(weblogicVersion) //husk å utvide byggesystem med ny weblogic version..
 assert WEBLOGIC_HOME //WEBLOGIC_HOME maa vaere gitt
 
