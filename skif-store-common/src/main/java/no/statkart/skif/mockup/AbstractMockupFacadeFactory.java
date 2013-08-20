@@ -1,10 +1,17 @@
 package no.statkart.skif.mockup;
 
 import com.google.inject.*;
+import com.google.inject.name.Names;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.test.TestdataService;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.kodeliste.KodeId;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Baseklasse for opprettelse av mockupfacade-instanser. En faktisk implementasjon trenger bare implementere
@@ -29,6 +36,14 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     private final Class<? extends IdService> idServiceImplementationClass;
 
     private final Module[] extraModules;
+
+    /**
+     * Fyll inn id-klasser her for bobler som refereres til fra mockup-objekter, men som ikke selv er mockup-objekter.
+     * KodeId fylles inn som standard.
+     *
+     * @since 2.3.0
+     */
+    protected final Set<Class<? extends BubbleId>> ignoredIdClasses = new HashSet<Class<? extends BubbleId>>();
 
     /**
      * Angir den snapshotversion som er default i {@link MockupStore}. For mockup-sett uten historikk bør dette være
@@ -58,6 +73,8 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
                 return createFacade(AbstractMockupFacadeFactory.this.testdataService.getTestNumber0());
             }
         };
+
+        ignoredIdClasses.add(KodeId.class);
     }
 
     /**
@@ -145,6 +162,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
                 bind(TestNumber.class).toInstance(testNumber);
                 bind(IdService.class).to(idServiceImplementationClass);
                 bind(Store.class).to(MockupStore.class);
+                bind(new TypeLiteral<Collection<Class<? extends BubbleId>>>(){}).annotatedWith(Names.named("ignoredIdClasses")).toInstance(ignoredIdClasses);
             }
         };
 

@@ -3,12 +3,12 @@ package no.statkart.skif.mockup;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.*;
-import no.statkart.skif.store.kodeliste.KodeId;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
@@ -37,10 +37,12 @@ public class MockupStore implements Store {
     private SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
 
     private final MockupPersister mockupPersister;
+    private final Collection<Class<? extends BubbleId>> ignoredIdClasses;
 
     @Inject
-    public MockupStore(Injector injector, TestNumber testNumber, IdService idService) {
+    public MockupStore(Injector injector, TestNumber testNumber, IdService idService, @Named("ignoredIdClasses") Collection<Class<? extends BubbleId>> ignoredIdClasses) {
         this.injector = injector;
+        this.ignoredIdClasses = ignoredIdClasses;
         mockupPersister = new MockupPersister(this, testNumber);
         this.idService = idService;
     }
@@ -354,7 +356,7 @@ public class MockupStore implements Store {
         SnapshotVersion previousSnapshotVersion = getSnapshotVersion();
         Set<BubbleId> linkedIds;
         try {
-            linkedIds = findLinkedBubbleIds(get(ids));
+            linkedIds = findLinkedBubbleIds(get(ids), ignoredIdClasses);
         } finally {
             setSnapshotVersion(previousSnapshotVersion);
         }
@@ -364,10 +366,11 @@ public class MockupStore implements Store {
     /**
      * Finner alle id-ene til alle bobler referert til fra gitte bobleobjekter rekursivt.
      *
-     * @param bubbleObjects bobleobjekter søket skal starte med
+     * @param bubbleObjects    bobleobjekter søket skal starte med
+     * @param ignoredIdClasses id-klasser som ikke skal følges
      * @return id-ene, inkludert de til gitt bobleobjekter
      */
-    private Set<BubbleId> findLinkedBubbleIds(Collection<BubbleObject> bubbleObjects) {
+    private Set<BubbleId> findLinkedBubbleIds(Collection<BubbleObject> bubbleObjects, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
         Queue<BubbleObject> uncheckedObjects = new ArrayDeque<BubbleObject>(bubbleObjects);
         Set<BubbleObject> linkedObjects = new HashSet<BubbleObject>();
 
@@ -375,7 +378,7 @@ public class MockupStore implements Store {
             BubbleObject object = uncheckedObjects.remove();
             linkedObjects.add(object);
 
-            Set<BubbleId> referencedBubbleIds = findReferencedBubbleIds(object);
+            Set<BubbleId> referencedBubbleIds = findReferencedBubbleIds(object, ignoredIdClasses);
             Set<BubbleObject> referencedBubbles = get(referencedBubbleIds);
 
             referencedBubbles.removeAll(uncheckedObjects);
@@ -396,10 +399,11 @@ public class MockupStore implements Store {
      * <p/>
      * Algoritmen tar høyde for at domenemodellen har doble eller sirkulære linker. Benytter derfor en {@code Stack} for å overkomme dette.
      *
-     * @param object objektet som skal granskes
+     * @param object           objektet som skal granskes
+     * @param ignoredIdClasses id-klasser som ikke skal følges
      * @return alle id-er, inkludert potensielt objektets egen id
      */
-    private static Set<BubbleId> findReferencedBubbleIds(Object object) {
+    private static Set<BubbleId> findReferencedBubbleIds(Object object, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
         if (object == null) {
             return Collections.emptySet();
         } else {
@@ -427,8 +431,9 @@ public class MockupStore implements Store {
                     } else { //dersom ikke array
 
                         if (o instanceof BubbleId) {  //id
-                            if (!(o instanceof KodeId)) { //koder skal ikke hentes ut i transfer
-                                ids.add((BubbleId) o);
+                            BubbleId id = (BubbleId) o;
+                            if (!isIdOfClass(id, ignoredIdClasses)) {
+                                ids.add(id);
                             }
                         } else if (o instanceof Iterable) {  //collections ol
                             for (Object objectIncollection : ((Iterable) o)) {
@@ -467,6 +472,23 @@ public class MockupStore implements Store {
         }
     }
 
+    /**
+     * Sjekker om gitt {@link BubbleId} er en instans av en av de angitte bubbleid-klassene. Dette inkluderer av den er
+     * av en subtype av en av disse klassene.
+     *
+     * @param id id som skal sjekkes
+     * @param ignoredIdClasses id-klasser som id skal sjekkes mot
+     * @return <code>true</code> dersom den er en instans
+     */
+    private static boolean isIdOfClass(BubbleId id, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
+        for (Class<? extends BubbleId> clazz : ignoredIdClasses) {
+            if (clazz.isInstance(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void register(BubbleTransfer transfer) {
         throw new NotImplementedException();
@@ -502,7 +524,7 @@ public class MockupStore implements Store {
             SnapshotVersion previousSnapshotVersion = getSnapshotVersion();
             try {
                 setSnapshotVersion(entry.getKey());
-                allReferencedIds.addAll(findLinkedBubbleIds(allObjects));
+                allReferencedIds.addAll(findLinkedBubbleIds(allObjects, ignoredIdClasses));
             } finally {
                 setSnapshotVersion(previousSnapshotVersion);
             }
