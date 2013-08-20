@@ -4,8 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.mockup.TestNumber;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
@@ -17,11 +20,12 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
+import java.util.Set;
 import java.util.SortedMap;
 
 /**
  * Tester at mockup rammeverket virker fra klient.
- * <p>
+ * <p/>
  * Denne testen bruker en helt egen lille MockupFacadeFactory som inneholder begrenset antall klasser og
  * som ikke brukes for annen testing.
  *
@@ -143,7 +147,8 @@ public class MockupFrameworkTest extends StoreTestTestCase {
     }
 
     // TODO: Erstatte med full bruk av mockuprammeverk, slik at id blir unik
-    @Test(groups="broken") // Får Error in custom provider, com.google.inject.OutOfScopeException: Cannot access Key[type=no.statkart.skif.service.ServiceRequestContext, annotation=[none]] outside of a scoping block
+    @Test(groups = "broken")
+    // Får Error in custom provider, com.google.inject.OutOfScopeException: Cannot access Key[type=no.statkart.skif.service.ServiceRequestContext, annotation=[none]] outside of a scoping block
     public void testSaveRaz() {
         TestdataService testService = injector.getInstance(TestdataService.class);
 
@@ -232,5 +237,24 @@ public class MockupFrameworkTest extends StoreTestTestCase {
         Assert.assertEquals(secondTransfer.getInsertedObjects(), Lists.newArrayList(), "Inserted i andre transfer");
         Assert.assertEquals(secondTransfer.getUpdatedObjects(), Lists.newArrayList(mockupFacade.getStore().get(idGamleveien.asSnapshotVersion(secondSnapshot))), "Updated i andre transfer");
         Assert.assertEquals(secondTransfer.getDeletedObjects(), Lists.newArrayList(), "Deleted i andre transfer");
+    }
+
+    public void testGetAllTransfersForIdsWithSelector() {
+        MockupFacadeFactory mockupFacadeFactory = injector.getInstance(MockupFacadeFactory.class);
+        MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<MockupFacade>() {
+            @Override
+            public Set<? extends BubbleId> selectFrom(MockupFacade mockupFacade) {
+                return Collections.singleton(mockupFacade.getFooMockupFactory().getFooIdGamleveien());
+            }
+        });
+
+        store.get(mockupFacade.getFooMockupFactory().getFooIdGamleveien());
+
+        try {
+            store.get(mockupFacade.getFooMockupFactory().getFooIdKartveien());
+            Assert.fail("Skulle ikke funnet dette objektet");
+        } catch (ObjectNotFoundException e) {
+            // Korrekt
+        }
     }
 }

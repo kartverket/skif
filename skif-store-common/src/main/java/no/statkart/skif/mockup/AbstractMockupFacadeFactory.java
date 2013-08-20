@@ -127,7 +127,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
 
 
     /**
-     * Returnerer mockupfacade med testsett for tester som endre på data og lagrer testsettet til database.
+     * Returnerer mockupfacade med testsett for tester som endrer på data og lagrer testsettet til database.
      * Hvert kall vil returnere en ny facade med et eget unikt datasett.
      *
      * @return mockupfacade
@@ -141,6 +141,20 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     @Deprecated
     public T getForWriteTestAndSaveData() {
         return getWriteMockupFacadeAndSaveData();
+    }
+
+    /**
+     * Returnerer mockupfacade med testsett for tester som endrer på data. Kun mockupbobler med valgte id-er, og de
+     * bobler disse referer til rekursivt, lagres ned i databasen.
+     *
+     * @param selector    funksjonelt interface for angivelse av id-er for ønskede bobler
+     * @return mockupfacade
+     */
+    public T getWriteMockupFacadeAndSaveDateForIds(IdSelector<T> selector) {
+        final T writeFacade = getWriteMockupFacade();
+        Set<? extends BubbleId> ids = selector.selectFrom(writeFacade);
+        testdataService.saveAll(writeFacade.getAllTransfersForIds(ids));
+        return writeFacade;
     }
 
 
