@@ -755,7 +755,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                     }
                     wasModified = true;
                 } else if (propertyType.isComponentType()) {
-                    checkEntityComponentsOnInsertInComponent(property, (AbstractComponentType) propertyType, processedObjects);
+                    checkEntityComponentsOnInsertInComponent(property, propertyType, processedObjects);
                 } else if (!isSingleColumnType(propertyType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
                         && !(propertyType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
                     throw new NotImplementedException();
