@@ -153,7 +153,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 } else if (defaultMapper != null) {
                     target = defaultMapper.mapDomainObject(source, targetTypeToken);
                 } else {
-                    throw new MappingException(String.format("TypeMapper[%s] could not map from %s to %s", this.getClass().getName(), sourceTypeToken, targetTypeToken));
+                    throw new MappingException(String.format("Mapper[%s] could not map from %s to %s", this.getClass().getName(), sourceTypeToken, targetTypeToken));
                 }
             }
         }
@@ -190,7 +190,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 } else if (defaultMapper != null) {
                     target = defaultMapper.mapWsapiObject(source, targetTypeToken);
                 } else {
-                    throw new MappingException(String.format("TypeMapper[%s] could not map from %s to %s", this.getClass().getName(), sourceTypeToken, targetTypeToken));
+                    throw new MappingException(String.format("Mapper[%s] could not map from %s to %s", this.getClass().getName(), sourceTypeToken, targetTypeToken));
                 }
             }
         }
