@@ -4,7 +4,6 @@
 
 @echo off
 @mode con codepage select=865
-@mode con cols=180 lines=3000
 
 rem Setter hovedkatalog for prosjektet. PROJECT_ROOT inneholder '\' til slutt derfor må det stå en '.' til slutt
 rem %~dp0 is name of current script under NT

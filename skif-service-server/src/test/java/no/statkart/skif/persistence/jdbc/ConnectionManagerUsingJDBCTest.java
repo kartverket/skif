@@ -1,7 +1,7 @@
 package no.statkart.skif.persistence.jdbc;
 
 import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -29,7 +29,7 @@ public class ConnectionManagerUsingJDBCTest {
 
     @BeforeClass
     public void setUp() {
-        SkifConfiguration configuration = new SkifConfiguration();
+        SkifServerConfiguration configuration = new SkifServerConfiguration();
         username = configuration.getString(SkifConfigConstants.DB_USERNAME);
         password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
         String sid = configuration.getString(SkifConfigConstants.DB_SID);

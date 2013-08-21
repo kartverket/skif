@@ -3,7 +3,7 @@ package no.statkart.skif.skiftest.wsapi.service.test;
 import com.google.inject.*;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import no.statkart.skif.ServiceMode;
-import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifClientConfiguration;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -44,7 +44,7 @@ import static org.testng.Assert.fail;
 public class Test1ServiceWSTestJEE {
     private Injector injector;
 
-    private SkifTestConfigurationAccessor config = new SkifTestConfigurationAccessor(new SkifConfiguration());
+    private SkifTestConfigurationAccessor config = new SkifTestConfigurationAccessor(new SkifClientConfiguration());
 
     private ModuleConfiguration createClientConfiguration() {
         return new DefaultModuleConfiguration()

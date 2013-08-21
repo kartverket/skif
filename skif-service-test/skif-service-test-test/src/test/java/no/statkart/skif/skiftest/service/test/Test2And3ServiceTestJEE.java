@@ -2,7 +2,7 @@ package no.statkart.skif.skiftest.service.test;
 
 import com.google.inject.*;
 import no.statkart.skif.ServiceMode;
-import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifClientConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.mapper.IdentityMapper;
@@ -45,7 +45,7 @@ import static org.testng.Assert.assertEquals;
 public class Test2And3ServiceTestJEE {
     private Injector injector;
 
-    SkifTestConfigurationAccessor config  = new SkifTestConfigurationAccessor(new SkifConfiguration());
+    SkifTestConfigurationAccessor config  = new SkifTestConfigurationAccessor(new SkifClientConfiguration());
 
     private ModuleConfiguration createClientConfiguration() {
         return new DefaultModuleConfiguration()

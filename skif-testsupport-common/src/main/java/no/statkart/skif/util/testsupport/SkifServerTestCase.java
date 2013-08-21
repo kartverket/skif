@@ -4,8 +4,10 @@ import com.google.inject.Injector;
 import com.google.inject.spi.InjectionPoint;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.SkifClientConfiguration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.LoginUser;
@@ -84,14 +86,14 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
         if (configurationFilenames!=null) {
             builder.setConfiguration(new SkifConfiguration(configurationFilenames));
         } else {
-            builder.setConfiguration(new SkifConfiguration());
+            builder.setConfiguration(new SkifClientConfiguration());
         }
 
         String[] singleVmServerConfigurationFilenames = getSingleVmServerConfigurationFilenames();
         if (singleVmServerConfigurationFilenames!=null) {
             builder.setSingleVmServerConfiguration(new SkifConfiguration(singleVmServerConfigurationFilenames));
         } else {
-            builder.setSingleVmServerConfiguration(new SkifConfiguration());
+            builder.setSingleVmServerConfiguration(new SkifServerConfiguration());
         }
 
         return builder;

@@ -3,7 +3,7 @@ package no.statkart.skif.skiftest.service.test;
 import com.google.common.collect.Lists;
 import com.google.inject.*;
 import no.statkart.skif.ServiceMode;
-import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifClientConfiguration;
 import no.statkart.skif.service.ServiceContextMapper;
 import no.statkart.skif.service.annotation.Call;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
@@ -46,7 +46,7 @@ import static org.testng.Assert.assertEquals;
 @Test(groups = "server-required")
 public class Test1ServiceTestJEE {
     private Injector injector;
-    private SkifTestConfigurationAccessor config = new SkifTestConfigurationAccessor(new SkifConfiguration());
+    private SkifTestConfigurationAccessor config = new SkifTestConfigurationAccessor(new SkifClientConfiguration());
 
     private ModuleConfiguration createClientConfiguration() {
         return new DefaultModuleConfiguration()

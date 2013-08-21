@@ -3,7 +3,7 @@ package no.statkart.skif.service.module.client;
 import com.google.inject.Injector;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
 import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
@@ -37,7 +37,7 @@ public class RunOnRemoteServerBuilder {
         moduleBuilder.setSingleVm(true);
         moduleBuilder.setUseSharedServer(true);
         moduleBuilder.setModuleClass(RunOnRemoteServerClientModule.class);
-        moduleBuilder.setSingleVmServerConfiguration(new SkifConfiguration());
+        moduleBuilder.setSingleVmServerConfiguration(new SkifServerConfiguration());
         moduleBuilder.setSingleVmServerModuleClass(serverModuleClass);
         if(serverModuleExtClass!=null) {
             moduleBuilder.setSingleVmServerModuleExtClass(serverModuleExtClass);

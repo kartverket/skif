@@ -1,28 +1,20 @@
 package no.statkart.skif.util.testsupport;
 
-import com.google.inject.Injector;
 import com.google.inject.Module;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.SkifClientConfiguration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.config.SystemConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.ITestContext;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * Testcase klasse for skif baserte TestNG tester. Det overordnede ønske med denne klassen er å
@@ -126,7 +118,7 @@ public class SkifTestCase  extends AbstractSkifTestCase {
         if (configurationFilenames!=null) {
             builder.setConfiguration(new SkifConfiguration(configurationFilenames));
         } else {
-            builder.setConfiguration(new SkifConfiguration());
+            builder.setConfiguration(new SkifClientConfiguration());
         }
 
         String singleVmServerModuleClassname = getSingleVmServerModuleClassname();
@@ -138,7 +130,7 @@ public class SkifTestCase  extends AbstractSkifTestCase {
         if (singleVmServerConfigurationFilenames!=null) {
             builder.setSingleVmServerConfiguration(new SkifConfiguration(singleVmServerConfigurationFilenames));
         } else {
-            builder.setSingleVmServerConfiguration(new SkifConfiguration());
+            builder.setSingleVmServerConfiguration(new SkifServerConfiguration());
         }
 
 

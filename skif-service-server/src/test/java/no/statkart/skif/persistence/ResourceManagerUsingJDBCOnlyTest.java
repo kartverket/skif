@@ -1,6 +1,6 @@
 package no.statkart.skif.persistence;
 
-import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.persistence.jdbc.ConnectionManagerUsingFactory;
 import no.statkart.skif.store.SnapshotVersion;
@@ -22,7 +22,7 @@ public class ResourceManagerUsingJDBCOnlyTest {
 
     public void test() throws SQLException {
 
-        SkifConfiguration config = new SkifConfiguration();
+        SkifServerConfiguration config = new SkifServerConfiguration();
         ConnectionManagerUsingFactory managerUsingFactory = new ConnectionManagerUsingFactory(
                 createConnectionFactoryUsingJDBC(config, SnapshotVersion.CURRENT, false),
                 createConnectionFactoryUsingJDBC(config, SnapshotVersion.OLD, false)

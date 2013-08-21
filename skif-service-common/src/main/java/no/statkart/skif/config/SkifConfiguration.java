@@ -13,10 +13,6 @@ public class SkifConfiguration extends AbstractConfiguration {
 
     private final StackedConfiguration stackedConfiguration = new StackedConfiguration();
 
-    public SkifConfiguration() {
-        this("skif-default.properties", "skif.properties");
-    }
-
     public SkifConfiguration(String... configurationFiles) {
         stackedConfiguration.addConfiguration(new SystemConfiguration());
         for (int i = configurationFiles.length - 1; i >= 0; i--) {

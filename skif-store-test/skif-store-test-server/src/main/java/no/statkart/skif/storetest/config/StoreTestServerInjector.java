@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.config;
 
 import com.google.inject.Injector;
 import no.statkart.skif.ServerInjectorRegistry;
-import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
 
 
@@ -16,7 +16,7 @@ import no.statkart.skif.module.ModuleBuilder;
 public class StoreTestServerInjector {
     public static Injector getInjector() {
         ModuleBuilder moduleBuilder = new ModuleBuilder()
-                .setConfiguration(new SkifConfiguration())
+                .setConfiguration(new SkifServerConfiguration())
                 .setModuleClass(StoreTestServerModule.class);
         return ServerInjectorRegistry.getInjector("SkifTestServerModule", moduleBuilder);
     }

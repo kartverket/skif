@@ -7,7 +7,7 @@ import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.exception.AttemptDeleteException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
@@ -173,7 +173,7 @@ public class StoreSessionServerTest {
                 bind(SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).to(memoryLockerLongType);
                 bind(LockerStrategy.class).to(TransactionalLockerStrategy.class);
                 bind(TransactionalLockerStrategy.class).in(Singleton.class);
-                bind(Configuration.class).toInstance(new SkifConfiguration());
+                bind(Configuration.class).toInstance(new SkifServerConfiguration());
                 ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
                 serviceRequestContext.setCallerPrincipal(new PrincipalImpl("test"));
                 bind(ServiceRequestContext.class).toInstance(serviceRequestContext);
