@@ -1,166 +1,169 @@
 -- Oppretter tabeller som brukes i storetest2-testprosjektet. Her skal det brukes mockupdata via mockup-rammeverk.
 
-create table BubbleWithEntityComponents (
-    id number(19,0) not null,
-    oppdateringsdato timestamp,
-    sluttdato timestamp,
-    versjonId number(19,0),
-    mainEntityComponent number(19,0),
-    primary key (id)
+------------------------------------------------------------------------------------------------------------------------
+-- Tabeller (uten koblinger)
+------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE BubbleWithEntityComponents (
+    ID NUMBER(19,0) NOT NULL,
+    OPPDATERINGSDATO TIMESTAMP(6),
+    SLUTTDATO TIMESTAMP(6),
+    VERSJONID NUMBER(19,0),
+    MAINENTITYCOMPONENT NUMBER(19,0),
+    CONSTAINT PK_BUBBLEWITHENTITYCOMPONENTS PRIMARY KEY (ID)
 );
 
-create table Eiendom (
-    id number(19,0) not null,
-    eiendomstypeKodeId number(5,0) not null,
-    primary key (id)
+CREATE TABLE Eiendom (
+    ID NUMBER(19,0) NOT NULL,
+    EIENDOMSTYPEKODEID NUMBER(5,0) NOT NULL,
+    CONSTRAINT PK_EIENDOM PRIMARY KEY (ID)
 );
 
-create table EiendomForEier (
-    eierId number(19,0) not null,
-    eiendomId number(19,0) not null,
-    primary key (eierId, eiendomId)
+CREATE TABLE EiendomForEier (
+    EIERID NUMBER(19,0) NOT NULL,
+    EIENDOMID NUMBER(19,0) NOT NULL,
+    CONSTRAINT PK_EIENDOMFOREIER PRIMARY KEY (EIERID, EIENDOMID)
 );
 
-create table Eier (
-    id number(19,0) not null,
-    primary key (id)
+CREATE TABLE Eier (
+    ID NUMBER(19,0) NOT NULL,
+    CONSTRAINT PK_EIER PRIMARY KEY (ID)
 );
 
-create table Endring (
-    id number(19,0) not null,
-    class varchar2(255 char) not null,
-    endringstype number(3,0),
-    endringstidspunkt timestamp,
-    brukernavn varchar2(255 char),
-    endretBubbleId number(19,0),
-    primary key (id)
+CREATE TABLE Endring (
+    ID NUMBER(19,0) NOT NULL,
+    CLASS VARCHAR2(255 CHAR) NOT NULL,
+    ENDRINGSTYPE NUMBER(3,0),
+    ENDRINGSTIDSPUNKT TIMESTAMP(6),
+    BRUKERNAVN VARCHAR2(255 CHAR),
+    ENDRETBUBBLEID NUMBER(19,0),
+    CONSTRAINT PK_ENDRING PRIMARY KEY (ID)
 );
 
-create table EntityComponent (
-    id number(19,0) not null,
-    oppdateringsdato timestamp,
-    sluttdato timestamp,
-    versjonId number(19,0),
-    value varchar2(255 char),
-    bubbleId number(19,0),
-    primary key (id)
+CREATE TABLE EntityComponent (
+    ID NUMBER(19,0) NOT NULL,
+    OPPDATERINGSDATO TIMESTAMP(6),
+    SLUTTDATO TIMESTAMP(6),
+    VERSJONID NUMBER(19,0),
+    VALUE VARCHAR2(255 CHAR),
+    BUBBLEID NUMBER(19,0),
+    CONSTRAINT PK_ENTITYCOMPONENT PRIMARY KEY (ID)
 );
 
-create table Kodeliste2 (
-    id number(19,0) not null,
-    kodeTypeNavn varchar2(255 char),
-    kodeIdClassname varchar2(255 char),
-    primary key (id)
+CREATE TABLE Kodeliste2 (
+    ID NUMBER(19,0) NOT NULL,
+    KODETYPENAVN VARCHAR2(255 CHAR),
+    KODEIDCLASSNAME VARCHAR2(255 CHAR),
+    CONSTRAINT PK_KODELISTE2 PRIMARY KEY (ID)
 );
 
-create table Kodeliste2Loc (
-    id number(19,0) not null,
-    navn varchar2(255 char),
-    beskrivelse varchar2(255 char),
-    lokale varchar2(255 char) not null,
-    primary key (id, lokale)
+CREATE TABLE Kodeliste2Loc (
+    ID NUMBER(19,0) NOT NULL,
+    NAVN VARCHAR2(255 CHAR),
+    BESKRIVELSE VARCHAR2(255 CHAR),
+    LOKALE VARCHAR2(255 CHAR) NOT NULL,
+    CONSTRAINT PK_KODELISTE2LOC PRIMARY KEY (ID, LOKALE)
 );
 
-create table ListEntityComponent (
-    id number(19,0) not null,
-    oppdateringsdato timestamp,
-    sluttdato timestamp,
-    versjonId number(19,0),
-    textValue varchar2(255 char),
-    listOfEntityComponentsId number(19,0),
-    listIndex number(10,0),
-    primary key (id)
+--todo: navn som tilsier at denne er et vedheng (mange til en)
+CREATE TABLE ListEntityComponent (
+    ID NUMBER(19,0) NOT NULL,
+    OPPDATERINGSDATO TIMESTAMP(6),
+    SLUTTDATO TIMESTAMP(6),
+    VERSJONID NUMBER(19,0),
+    TEXTVALUE VARCHAR2(255 CHAR),
+    LISTOFENTITYCOMPONENTSID NUMBER(19,0),
+    LISTINDEX NUMBER(10,0),
+    CONSTRAINT PK_LISTENTITYCOMPONENT PRIMARY KEY (ID)
 );
 
-create table ListOfEntityComponents (
-    id number(19,0) not null,
-    oppdateringsdato timestamp,
-    sluttdato timestamp,
-    versjonId number(19,0),
-    primary key (id)
+CREATE TABLE ListOfEntityComponents (
+    ID NUMBER(19,0) NOT NULL,
+    OPPDATERINGSDATO TIMESTAMP(6),
+    SLUTTDATO TIMESTAMP(6),
+    VERSJONID NUMBER(19,0),
+    CONSTRAINT PK_LISTOFENTITYCOMPONENTS PRIMARY KEY (ID)
 );
 
-create table Multirefererende (
-    id number(19,0) not null,
-    primary key (id)
+CREATE TABLE Multirefererende (
+    ID NUMBER(19,0) NOT NULL,
+    CONSTRAINT PK_MULTIREFERERENDE PRIMARY KEY (ID)
 );
 
-create table MultirefererendeKobling (
-    multirefererendeId number(19,0) not null,
-    rolle varchar2(255 char) not null,
-    tekst varchar2(255 char) not null,
-    primary key (multirefererendeId, rolle, tekst)
+--todo: forbedret navn
+CREATE TABLE MultirefererendeKobling (
+    MULTIREFERERENDEID NUMBER(19,0) NOT NULL,
+    ROLLE VARCHAR2(255 CHAR) NOT NULL,
+    TEKST VARCHAR2(255 CHAR) NOT NULL,
+    CONSTRAINT PK_MULTIREFERERENDEKOBLING PRIMARY KEY (MULTIREFERERENDEID, ROLLE, TEKST)
 );
 
-create table StoreTest2DbKode (
-    id number(19,0) not null,
-    class varchar2(255 char) not null,
-    primary key (id)
+CREATE TABLE StoreTest2DbKode (
+    ID NUMBER(19,0) NOT NULL,
+    CLASS VARCHAR2(255 CHAR) NOT NULL,
+    CONSTRAINT PK_STORETEST2DBKODE PRIMARY KEY (ID)
 );
 
-create table StoreTest2DbKodeLoc (
-    id number(19,0) not null,
-    navn varchar2(255 char),
-    beskrivelse varchar2(255 char),
-    lokale varchar2(255 char) not null,
-    primary key (id, lokale)
+--todo: forbedret navn
+CREATE TABLE StoreTest2DbKodeLoc (
+    ID NUMBER(19,0) NOT NULL,
+    NAVN VARCHAR2(255 CHAR),
+    BESKRIVELSE VARCHAR2(255 CHAR),
+    LOKALE VARCHAR2(255 CHAR) NOT NULL,
+    CONSTRAINT PK_STORETEST2DBKODELOC PRIMARY KEY (ID, LOKALE)
 );
 
-create table SubTypedBubble (
-    id number(19,0) not null,
-    class varchar2(255 char) not null,
-    text varchar2(255 char),
-    num number(10,0),
-    primary key (id)
+CREATE TABLE SubTypedBubble (
+    ID NUMBER(19,0) NOT NULL,
+    CLASS VARCHAR2(255 CHAR) NOT NULL,
+    TEXT VARCHAR2(255 CHAR),
+    NUM NUMBER(10,0),
+    CONSTRAINT PK_SUBTYPEDBUBBLE PRIMARY KEY (ID)
 );
 
-create table TekstForSubtype (
-    subtypedid number(19,0) not null,
-    tekst varchar2(255 char) not null,
-    primary key (subtypedid, tekst)
+--todo: fobedret navn
+CREATE TABLE TekstForSubtype (
+    SUBTYPEDID NUMBER(19,0) NOT NULL,
+    TEKST VARCHAR2(255 CHAR) NOT NULL,
+    CONSTRAINT PK_TEKSTFORSUBTYPE PRIMARY KEY (SUBTYPEDID, TEKST)
 );
 
-alter table BubbleWithEntityComponents
-    add constraint FK3405730B705AD7C8
-    foreign key (mainEntityComponent)
-    references EntityComponent;
 
-alter table EiendomForEier
-    add constraint FKE3E20945AA81BF14
-    foreign key (eierId)
-    references Eier;
 
-alter table EiendomForEier
-    add constraint FK_Eier_Eiendom
-    foreign key (eiendomId)
-    references Eiendom;
+------------------------------------------------------------------------------------------------------------------------
+-- Koblinger
+------------------------------------------------------------------------------------------------------------------------
 
-alter table EntityComponent
-    add constraint FK_BUBBLE_WITH_ENTCOMPS
-    foreign key (bubbleId)
-    references BubbleWithEntityComponents;
+ALTER TABLE BUBBLEWITHENTITYCOMPONENTS ADD (
+  CONSTRAINT FK_BUBBLEWITHENTITYCOMPONENTS_1 FOREIGN KEY (MAINENTITYCOMPONENT) REFERENCES ENTITYCOMPONENT(ID)
+);
 
-alter table Kodeliste2Loc
-    add constraint FK77F93E506889CC0F
-    foreign key (id)
-    references Kodeliste2;
+ALTER TABLE EIENDOMFOREIER ADD (
+  CONSTRAINT FK_EIENDOMFOREIER_1 FOREIGN KEY (EIERID) REFERENCES EIER(ID),
+  CONSTRAINT FK_EIENDOMFOREIER_2 FOREIGN KEY (EIENDOMID) REFERENCES EIENDOM(ID)
+);
 
-alter table ListEntityComponent
-    add constraint FK_LIST_OF_ENTITY_COMPONENTS
-    foreign key (listOfEntityComponentsId)
-    references ListOfEntityComponents;
+ALTER TABLE ENTITYCOMPONENT ADD (
+  CONSTRAINT FK_ENTITYCOMPONENT FOREIGN KEY (BUBBLEID) REFERENCES BUBBLEWITHENTITYCOMPONENTS(ID)
+);
 
-alter table MultirefererendeKobling
-    add constraint FK_MULTIREFEREREND_KOBLING
-    foreign key (multirefererendeId)
-    references Multirefererende;
+ALTER TABLE KODELISTE2LOC ADD (
+  CONSTRAINT FK_KODELISTE2LOC_1 FOREIGN KEY (ID) REFERENCES KODELISTE2(ID)
+);
 
-alter table StoreTest2DbKodeLoc
-    add constraint FKE2B172DE79AC50C8
-    foreign key (id)
-    references StoreTest2DbKode;
+ALTER TABLE LISTENTITYCOMPONENT ADD (
+  CONSTRAINT FK_LISTENTITYCOMPONENT_1 FOREIGN KEY (LISTOFENTITYCOMPONENTSID) REFERENCES LISTOFENTITYCOMPONENTS(ID)
+);
 
-alter table TekstForSubtype
-    add constraint FK31DBF85938AD5F10
-    foreign key (subtypedid)
-    references SubTypedBubble;
+ALTER TABLE MULTIREFERERENDEKOBLING ADD (
+  CONSTRAINT FK_MULTIREFERERENDEKOBLING_1 FOREIGN KEY (MULTIREFERERENDEID) REFERENCES MULTIREFERERENDE(ID)
+);
+
+ALTER TABLE STORETEST2DBKODELOC ADD (
+  CONSTRAINT FK_STORETEST2DBKODELOC_1 FOREIGN KEY (ID) REFERENCES STORETEST2DBKODE(ID)
+);
+
+ALTER TABLE TEKSTFORSUBTYPE ADD (
+  CONSTRAINT FK_TEKSTFORSUBTYPE_1 FOREIGN KEY (SUBTYPEDID) REFERENCES SUBTYPEDBUBBLE(ID)
+);
+    
