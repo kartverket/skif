@@ -3,12 +3,12 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest2.domain.eierskap.Eier" select-before-update="true" lazy="true">
+    <class name="no.statkart.skif.storetest2.domain.eierskap.Eier" table="EIER" select-before-update="true" lazy="true">
         <id name="id" column="id" type="no.statkart.skif.storetest2.persistence.hibernate.type.EierIdType">
             <generator class="assigned"/>
         </id>
 
-        <set name="eiendommer" table="EiendomForEier">
+        <set name="eiendommer" table="EIENDOMFOREIER">
             <meta attribute="bubble-ref"/>
             <key column="eierId"/>
             <many-to-many class="no.statkart.skif.storetest2.domain.eierskap.Eiendom" column="eiendomId" foreign-key="FK_Eier_Eiendom"/>

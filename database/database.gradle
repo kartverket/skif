@@ -96,11 +96,11 @@ task dbInit {
 
 task applyHistorikk {
     def tables = [
-            'Kodeliste2', 'Kodeliste2Loc',
-            'StoreTest2DbKode', 'StoreTest2DbKodeLoc',
-            'BubbleWithEntityComponents', 'EntityComponent',
-            'ListOfEntityComponents', 'ListEntityComponent',
-            'SubTypedBubble', 'TekstForSubtype',
+            'KODELISTE2', 'KODELISTE2LOC',
+            'STORETEST2DBKODE', 'STORETEST2DBKODELOC',
+            'BUBBLE_W_ENTITY_COMPS', 'ENTITYCOMPONENT',
+            'LISTOFENTITYCOMPONENTS', 'LISTENTITYCOMPONENT',
+            'SUBTYPEDBUBBLE', 'TEKSTFORSUBTYPE',
     ]
 
     doLast {

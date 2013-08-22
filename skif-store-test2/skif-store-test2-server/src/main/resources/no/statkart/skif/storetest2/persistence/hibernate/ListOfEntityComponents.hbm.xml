@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest2.domain.list.ListOfEntityComponents" select-before-update="true" lazy="true">
+    <class name="no.statkart.skif.storetest2.domain.list.ListOfEntityComponents" table="LISTOFENTITYCOMPONENTS" select-before-update="true" lazy="true">
         <id name="id" column="id"
             type="no.statkart.skif.storetest2.persistence.hibernate.type.ListOfEntityComponentsIdType">
             <generator class="assigned"/>
@@ -20,7 +20,7 @@
         </list>
     </class>
 
-    <class name="no.statkart.skif.storetest2.domain.list.ListEntityComponent" select-before-update="true">
+    <class name="no.statkart.skif.storetest2.domain.list.ListEntityComponent" table="LISTOFENTITYCOMPONENTS__C" select-before-update="true">
         <id name="id" column="id" unsaved-value="null">
             <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
         </id>

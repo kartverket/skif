@@ -3,14 +3,14 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest2.domain.kodeliste.StoreTest2DbKode" table="StoreTest2DbKode" select-before-update="true" discriminator-value="abstract" lazy="true">
+    <class name="no.statkart.skif.storetest2.domain.kodeliste.StoreTest2DbKode" table="STORETEST2DBKODE" select-before-update="true" discriminator-value="abstract" lazy="true">
         <id name="id" column="id" type="no.statkart.skif.storetest2.persistence.hibernate.type.kodeliste.StoreTest2DbKodeIdType">
             <generator class="assigned"/>
         </id>
 
         <discriminator column="class" type="string"/>
 
-        <map name="localizedFieldsMap" table="StoreTest2DbKodeLoc" lazy="true" fetch="join">
+        <map name="localizedFieldsMap" table="STORETEST2DBKODELOC" lazy="true" fetch="join">
             <key column="id"/>
             <map-key type="string" column="lokale"/>
             <composite-element class="no.statkart.skif.store.kodeliste.Kode$LocalizedFields">

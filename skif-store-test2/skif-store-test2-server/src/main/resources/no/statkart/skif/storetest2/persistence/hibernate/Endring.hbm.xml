@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest2.domain.endringslogg.Endring" select-before-update="true" discriminator-value="abstract" lazy="true">
+    <class name="no.statkart.skif.storetest2.domain.endringslogg.Endring" table="ENDRING" select-before-update="true" discriminator-value="abstract" lazy="true">
         <id name="id" column="id" type="no.statkart.skif.storetest2.persistence.hibernate.type.EndringIdType">
             <generator class="assigned"/>
         </id>

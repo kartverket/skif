@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest2.domain.entitycomponent.BubbleWithEntityComponents" select-before-update="true" lazy="true">
+    <class name="no.statkart.skif.storetest2.domain.entitycomponent.BubbleWithEntityComponents" table="BUBBLE_W_ENTITY_COMPS" select-before-update="true" lazy="true">
         <id name="id" column="id"
             type="no.statkart.skif.storetest2.persistence.hibernate.type.BubbleWithEntityComponentsIdType">
             <generator class="assigned"/>
@@ -21,7 +21,7 @@
         </set>
     </class>
 
-    <class name="no.statkart.skif.storetest2.domain.entitycomponent.EntityComponent" select-before-update="true">
+    <class name="no.statkart.skif.storetest2.domain.entitycomponent.EntityComponent" table="ENTITY_COMPONENT" select-before-update="true">
         <id name="id" column="id" unsaved-value="null">
             <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
         </id>

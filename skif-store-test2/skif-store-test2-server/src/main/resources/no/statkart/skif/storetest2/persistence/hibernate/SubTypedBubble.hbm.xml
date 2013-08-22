@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest2.domain.subtype.SubTypedBubble" select-before-update="true" discriminator-value="abstract" lazy="true">
+    <class name="no.statkart.skif.storetest2.domain.subtype.SubTypedBubble" table="SUBTYPEDBUBBLE" select-before-update="true" discriminator-value="abstract" lazy="true">
         <id name="id" column="id" type="no.statkart.skif.storetest2.persistence.hibernate.type.SubTypedBubbleIdType">
             <generator class="assigned"/>
         </id>
@@ -16,7 +16,7 @@
             <property name="num"/>
         </subclass>
         <subclass name="no.statkart.skif.storetest2.domain.subtype.SubTypeWithCollection" discriminator-value="SubTypeWithCollection" lazy="true">
-            <set name="tekster" table="TekstForSubtype">
+            <set name="tekster" table="TEKSTFORSUBTYPE">
                 <key column="subtypedid"/>
                 <element column="tekst" type="string" not-null="true"/>
             </set>

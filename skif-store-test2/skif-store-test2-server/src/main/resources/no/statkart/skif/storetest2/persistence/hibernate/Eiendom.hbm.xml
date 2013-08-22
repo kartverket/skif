@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest2.domain.eierskap.Eiendom" select-before-update="true" lazy="true">
+    <class name="no.statkart.skif.storetest2.domain.eierskap.Eiendom" table="EIENDOM" select-before-update="true" lazy="true">
         <id name="id" column="id" type="no.statkart.skif.storetest2.persistence.hibernate.type.EiendomIdType">
             <generator class="assigned"/>
         </id>
