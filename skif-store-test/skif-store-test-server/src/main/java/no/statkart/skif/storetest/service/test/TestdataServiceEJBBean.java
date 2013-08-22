@@ -5,6 +5,7 @@ import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
@@ -49,6 +50,11 @@ public class TestdataServiceEJBBean extends EJBTimedService implements TestdataS
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer mockupTransfer) {
         service.saveSnapshotTransfer(snapshotVersion, mockupTransfer);
+    }
+
+    @Override
+    public boolean objectExists(BubbleId<?> id) {
+        return service.objectExists(id);
     }
 
     @Override

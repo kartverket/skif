@@ -130,4 +130,14 @@ public class TestdataServiceImpl implements TestdataService {
             }
         }
     }
+
+    @Override
+    public boolean objectExists(BubbleId<?> id) {
+        try {
+            store.get(id);
+            return true;
+        } catch (ObjectNotFoundException e) {
+            return false;
+        }
+    }
 }

@@ -2,6 +2,7 @@ package no.statkart.skif.service.test;
 
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.mockup.TestNumber;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 
 import java.util.SortedMap;
@@ -39,4 +40,15 @@ public interface TestdataService {
      * @param mockupTransfer transfer med alle objekter som endres på gitt tidspunkt
      */
     public void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer mockupTransfer);
+
+    /**
+     * Sjekker om objekt med gitt id finnes i databasen fra før. Klienter skal sende inn id til første objekt
+     * i et readmockupsett før den eventuel sender over en hel transfer.
+     *
+     * @param id    id til første objekt i mockupsett
+     * @return om (i alle fall deler av) mockupsettet allerede ligger i databasen
+     *
+     * @since 2.3.0
+     */
+    public boolean objectExists(BubbleId<?> id);
 }

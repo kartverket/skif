@@ -5,6 +5,7 @@ import com.google.inject.name.Names;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.kodeliste.KodeId;
@@ -12,6 +13,7 @@ import no.statkart.skif.store.kodeliste.KodeId;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedMap;
 
 /**
  * Baseklasse for opprettelse av mockupfacade-instanser. En faktisk implementasjon trenger bare implementere
@@ -100,8 +102,24 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
      */
     public T getReadMockupFacadeAndSaveData() {
         final T readFacade = getReadMockupFacade();
-        testdataService.saveAll(readFacade.getAllTransfers());
+        SortedMap<SnapshotVersion,MockupTransfer> allTransfers = readFacade.getAllTransfers();
+        if (!testsetExists(allTransfers)) {
+            testdataService.saveAll(allTransfers);
+        }
         return readFacade;
+    }
+
+    /**
+     * Spør tjeneren om det ser ut som om readtestsettet allerede er lagret.
+     *
+     * @param snapshotTransfers    tranfer for settet
+     * @return om settet finnes i databasen
+     */
+    private boolean testsetExists(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers) {
+        SnapshotVersion firstSnapshot = snapshotTransfers.firstKey();
+        MockupTransfer firstTransfer = snapshotTransfers.get(firstSnapshot);
+        BubbleObject bubbleObject = firstTransfer.getInsertedObjects().iterator().next();
+        return testdataService.objectExists(bubbleObject.getId().asSnapshotVersion(firstSnapshot));
     }
 
     @Deprecated
