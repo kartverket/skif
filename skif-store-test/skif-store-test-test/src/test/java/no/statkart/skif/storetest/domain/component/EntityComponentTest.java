@@ -182,8 +182,8 @@ public class EntityComponentTest extends StoreTestTestCase {
         store.abortUnitOfWork();
     }
 
-    @Test(enabled = false) // TODO: Det er pt ikke mulig å fjerne en entity component som en boble peker på. Avventer fix
-    public void testDeleteComponent() {
+    @Test(enabled = false) // TODO: Det er pt ikke mulig å fjerne en entity component som en boble peker på via update i detached mode. Avventer fix
+    public void testDeleteComponentViaUpdate() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         store.beginUnitOfWork();

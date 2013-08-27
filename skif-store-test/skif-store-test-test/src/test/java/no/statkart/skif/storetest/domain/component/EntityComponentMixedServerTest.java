@@ -274,6 +274,48 @@ public class EntityComponentMixedServerTest extends StoreTestMixedTestCase {
         assertFalse(existsInDatabase(Level1EntityComponent.class.getName(), bubbleWithLevel1Component.getLevel1Component().getId()));
     }
 
+    public void testDeleteBubbleWithComponentChangedToNullViaUpdateInAttachedState() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
+        final BubbleWithEntityComponent bubbleWithLevel1Component = store.get(mockupFactory.getWithNullLevel2Id());
+        server.runInTxRequiresNew(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                final BubbleWithEntityComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
+                bubbleWithLevel1Component.setLevel1Component(null);
+                if (flushing) store.flush();
+                store.update(bubbleWithLevel1Component);
+                return null;
+            }
+        });
+        assertTrue(existsInDatabase(BubbleWithEntityComponent.class.getName(), mockupFactory.getWithNullLevel2Id().getValue()));
+        assertFalse(existsInDatabase(Level1EntityComponent.class.getName(), bubbleWithLevel1Component.getLevel1Component().getId()));
+    }
+
+    @Test(enabled=false) // TODO: ikke mulig å slette via update i detached mode. Delete går bra fordi vi her bruker det opprinnelige objektet
+    public void testDeleteBubbleWithComponentChangedToNullViaUpdateInDetachedState() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
+        final BubbleWithEntityComponent bubbleWithLevel1Component = store.get(mockupFactory.getWithNullLevel2Id());
+        server.runInTxRequiresNew(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                store.beginUnitOfWork();
+                final BubbleWithEntityComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
+                bubbleWithLevel1Component.setLevel1Component(null);
+                store.update(bubbleWithLevel1Component);
+                store.commitUnitOfWork();
+                return null;
+            }
+        });
+        assertTrue(existsInDatabase(BubbleWithEntityComponent.class.getName(), mockupFactory.getWithNullLevel2Id().getValue()));
+        assertFalse(existsInDatabase(Level1EntityComponent.class.getName(), bubbleWithLevel1Component.getLevel1Component().getId()));
+    }
+
     public void testDeleteBubbleWithComponentChangedToNullInAttachedState() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
