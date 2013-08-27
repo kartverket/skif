@@ -29,7 +29,6 @@ import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
-import no.statkart.skif.service.sequence.HighLowGenerator;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
@@ -48,14 +47,11 @@ import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWit
 import no.statkart.skif.storetest2.domain.eierskap.Eiendom;
 import no.statkart.skif.storetest2.domain.eierskap.EiendomstypeKodeId;
 import no.statkart.skif.storetest2.domain.eierskap.Eier;
-import no.statkart.skif.storetest2.domain.endringslogg.Endring;
 import no.statkart.skif.storetest2.domain.entitycomponent.BubbleWithEntityComponents;
 import no.statkart.skif.storetest2.domain.kodeliste.StoreTest2DbKode;
 import no.statkart.skif.storetest2.domain.kodeliste.StoreTest2KodelisteLong;
 import no.statkart.skif.storetest2.domain.list.ListOfEntityComponents;
 import no.statkart.skif.storetest2.domain.multikobling.Multirefererende;
-import no.statkart.skif.storetest2.domain.subtype.SubTypedBubble;
-import no.statkart.skif.storetest2.endringslogg.EndringManager;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
@@ -132,7 +128,7 @@ public class StoreTest2ServerModule extends SkifModule {
         //ReadListener
         List<StoreSessionReadListener> readListeners = ImmutableList.of();
         List<StoreSessionWriteListener> writeListeners = ImmutableList.of();
-        List<StoreSessionFinishListener> finishListeners = ImmutableList.<StoreSessionFinishListener>of(injector.getInstance(EndringManager.class));
+        List<StoreSessionFinishListener> finishListeners = ImmutableList.of();
         StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, injector.getProvider(VersionFinder.class), lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners), injector);
         return storeServer;
     }
@@ -184,11 +180,9 @@ public class StoreTest2ServerModule extends SkifModule {
                 .addResource(StoreTest2DbKode.class)
                 .addResource(Eiendom.class)
                 .addResource(Eier.class)
-                .addResource(Endring.class)
                 .addResource(ListOfEntityComponents.class)
                 .addResource(BubbleWithEntityComponents.class)
                 .addResource(Multirefererende.class)
-                .addResource(SubTypedBubble.class)
                 ;
 
 

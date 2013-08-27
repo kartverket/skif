@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.config;
 
 import no.statkart.skif.service.ServicesListing;
+import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
 import no.statkart.skif.storetest.service.histtest.HistTestService;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
@@ -26,6 +27,7 @@ public class StoreTestStoreServices implements ServicesListing {
         modifiableList.add(KodelisteService.class);
         modifiableList.add(HistTestService.class);
         modifiableList.add(LockingTestService.class);
+        modifiableList.add(EndringsloggService.class);
 
         services = Collections.unmodifiableList(modifiableList);
      }

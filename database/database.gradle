@@ -101,6 +101,7 @@ task applyHistorikk {
             'BUBBLE_W_ENTITY_COMPS', 'ENTITY_COMPONENT',
             'LISTOFENTITYCOMPONENTS', 'LISTOFENTITYCOMPONENTS__C',
             'SUBTYPEDBUBBLE', 'TEKSTFORSUBTYPE',
+            'HISTSIMPLE', 'HISTWITHRELATION',
     ]
 
     doLast {

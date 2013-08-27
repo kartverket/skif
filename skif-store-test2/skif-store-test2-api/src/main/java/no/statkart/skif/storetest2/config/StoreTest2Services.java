@@ -2,7 +2,6 @@ package no.statkart.skif.storetest2.config;
 
 import com.google.common.collect.ImmutableList;
 import no.statkart.skif.service.ServicesListing;
-import no.statkart.skif.storetest2.service.endringslogg.EndringsloggService;
 
 import java.util.List;
 
@@ -17,8 +16,6 @@ public class StoreTest2Services implements ServicesListing {
 
     static {
         ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
-
-        builder.add(EndringsloggService.class);
 
         services = builder.build();
      }

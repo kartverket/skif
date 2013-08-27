@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest2.config;
 
 import no.statkart.skif.service.ejb.EJBRegistration;
-import no.statkart.skif.storetest2.service.endringslogg.EndringsloggService;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBs;
@@ -14,7 +13,6 @@ import javax.ejb.EJBs;
  * @since 2.2.0
  */
 @EJBs({
-        @EJB(name = "ejb/EndringloggServiceEJBBean", beanInterface = EndringsloggService.class)
 })
 public class StoreTest2ServicesEJBs extends EJBRegistration {
     public StoreTest2ServicesEJBs() {

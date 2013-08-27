@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.endringslogg.Endring" table="ENDRING" select-before-update="true" discriminator-value="abstract" lazy="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.endring.EndringIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <discriminator column="class" type="string"/>
+
+        <property name="endringstype" type="no.statkart.skif.store.persistence.hibernate.type.EndringstypeType"/>
+        <property name="endringstidspunkt"/>
+        <property name="brukernavn"/>
+
+        <subclass name="no.statkart.skif.storetest.domain.endringslogg.SimpleEndring" discriminator-value="SimpleEndring" lazy="true">
+            <property name="simpleId" column="endretBubbleId" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.SimpleIdType"/>
+        </subclass>
+        <subclass name="no.statkart.skif.storetest.domain.endringslogg.BubbleWithRelationEndring" discriminator-value="BubbleWithRelationEndring" lazy="true">
+            <property name="bubbleWithRelationId" column="endretBubbleId" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.BubbleWithRelationIdType"/>
+        </subclass>
+        <subclass name="no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring" discriminator-value="SubTypedBubbleEndring" lazy="true">
+            <property name="subTypedBubbleId" column="endretBubbleId" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.SubTypedBubbleIdType"/>
+        </subclass>
+    </class>
+
+</hibernate-mapping>

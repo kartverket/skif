@@ -1,10 +1,10 @@
 package no.statkart.skif.storetest.config;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
@@ -29,7 +29,6 @@ import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
-import no.statkart.skif.service.sequence.HighLowGenerator;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
@@ -49,9 +48,9 @@ import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWit
 import no.statkart.skif.storetest.domain.basic.*;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
+import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
-import no.statkart.skif.storetest.domain.mockup.Bar;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.Raz;
 import no.statkart.skif.storetest.domain.multikobling.Person;
@@ -59,6 +58,7 @@ import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1A;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1BOne;
 import no.statkart.skif.storetest.domain.standalone.*;
+import no.statkart.skif.storetest.endringslogg.EndringManager;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
@@ -143,14 +143,17 @@ public class StoreTestServerModule extends SkifModule {
     @Provides
     @ServiceRequestScoped
     StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager, Injector injector, BubbleDependencyComparator bubbleDependencyComparator, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy) {
-        //ReadListener
-        List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
-        readListeners.add(new TestBubbleFilter());
-        List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
-        writeListeners.add(new TestBubbleFilter());
-        writeListeners.add(new AggregertObjektFilter());
-        List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
-        finishListeners.add(new TestBubbleFinishFilter());
+        List<StoreSessionReadListener> readListeners = ImmutableList.<StoreSessionReadListener>of(
+                new TestBubbleFilter()
+        );
+        List<StoreSessionWriteListener> writeListeners = ImmutableList.<StoreSessionWriteListener>of(
+                new TestBubbleFilter(),
+                new AggregertObjektFilter()
+        );
+        List<StoreSessionFinishListener> finishListeners = ImmutableList.<StoreSessionFinishListener>of(
+                new TestBubbleFinishFilter(),
+                injector.getInstance(EndringManager.class)
+        );
         StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, versionFinderProvider, lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners), injector);
         return storeServer;
     }
@@ -206,6 +209,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(BubbleWithValueObject.class)
                 .addResource(HistSimple.class)
                 .addResource(HistWithRelation.class)
+                .addResourceWithSubclasses(SubTypedBubble.class, SubTypeWithPrimitive.class, SubTypeWithCollection.class)
 
                 .addResource(EnumKodeIdType.class)
                 .addResource(ADbKode.class)
@@ -239,6 +243,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(BubbleWithList.class)
                 .addResource(BubbleWithComponents.class)
 
+                .addResource(Endring.class)
                 ;
 
         Properties hibernatePropertiesCurrent;

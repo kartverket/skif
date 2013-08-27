@@ -119,21 +119,6 @@ CREATE TABLE StoreTest2DbKodeLoc (
     CONSTRAINT PK_STORETEST2DBKODELOC PRIMARY KEY (ID, LOKALE)
 );
 
-CREATE TABLE SubTypedBubble (
-    ID NUMBER(19,0) NOT NULL,
-    CLASS VARCHAR2(255 CHAR) NOT NULL,
-    TEXT VARCHAR2(255 CHAR),
-    NUM NUMBER(10,0),
-    CONSTRAINT PK_SUBTYPEDBUBBLE PRIMARY KEY (ID)
-);
-
---todo: fobedret navn
-CREATE TABLE TekstForSubtype (
-    SUBTYPEDID NUMBER(19,0) NOT NULL,
-    TEKST VARCHAR2(255 CHAR) NOT NULL,
-    CONSTRAINT PK_TEKSTFORSUBTYPE PRIMARY KEY (SUBTYPEDID, TEKST)
-);
-
 
 
 ------------------------------------------------------------------------------------------------------------------------

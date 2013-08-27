@@ -15,6 +15,6 @@ public class StoreTestMockupFacadeFactory extends AbstractMockupFacadeFactory<St
     @Inject
     public StoreTestMockupFacadeFactory(TestdataService testdataService) {
         super(StoreTestMockupFacade.class, testdataService);
-        setDefaultSnapshotVersion(SnapshotVersion.START);
+//        setDefaultSnapshotVersion(SnapshotVersion.START);
     }
 }
