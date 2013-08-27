@@ -1,10 +1,10 @@
-package no.statkart.skif.storetest2.persistence;
+package no.statkart.skif.storetest.persistence;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.persistence.jdbc.ConnectionSelector;
 import no.statkart.skif.store.persistence.jdbc.ConnectionSelectorUsingHibernate;
-import no.statkart.skif.storetest2.util.testsupport.StoreTest2ServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
 
 import java.sql.Connection;
 
@@ -15,7 +15,7 @@ import static org.testng.Assert.assertNotNull;
  *
  * @author Henrik Fredholm
  */
-public class ConnectionSelectorTest extends StoreTest2ServerTestCase {
+public class ConnectionSelectorTest extends StoreTestServerTestCase {
     @Inject
     Provider<ConnectionSelectorUsingHibernate> connectionSelectorProvider;
 

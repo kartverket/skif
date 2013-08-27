@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest2.persistence;
+package no.statkart.skif.storetest.persistence;
 
 import no.statkart.skif.store.SnapshotVersion;
 

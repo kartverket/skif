@@ -1,16 +1,11 @@
-package no.statkart.skif.storetest2.persistence;
+package no.statkart.skif.storetest.persistence;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.SessionSelector;
-import no.statkart.skif.storetest2.util.testsupport.StoreTest2ServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
 import org.hibernate.Session;
 
-import static no.statkart.skif.storetest2.persistence.With.with;
-import static org.mockito.Mockito.mock;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -18,7 +13,7 @@ import static org.testng.Assert.assertNotNull;
  *
  * @author Henrik Fredholm
  */
-public class SelectionSelectorTest extends StoreTest2ServerTestCase {
+public class SelectionSelectorTest extends StoreTestServerTestCase {
     @Inject
     Provider<SessionSelector> sessionSelectorProvider;
 

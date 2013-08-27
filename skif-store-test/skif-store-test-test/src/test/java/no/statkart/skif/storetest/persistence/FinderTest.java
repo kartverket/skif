@@ -1,13 +1,11 @@
-package no.statkart.skif.storetest2.persistence;
+package no.statkart.skif.storetest.persistence;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.storetest2.util.testsupport.StoreTest2ServerTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
 import org.hibernate.Session;
 
-import static no.statkart.skif.storetest2.persistence.With.with;
-import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 
@@ -16,14 +14,14 @@ import static org.testng.Assert.assertEquals;
  *
  * @author Henrik Fredholm
  */
-public class FinderTest extends StoreTest2ServerTestCase {
+public class FinderTest extends StoreTestServerTestCase {
     @Inject
     PersistenceSessionManager persistenceSessionManager;
 
     public void test() {
         final Session s = mock(Session.class);
         final H<Session> sessionH = new H<Session>(s);
-        with(new X(sessionH) {
+        With.with(new X(sessionH) {
             @Override
             void x() {
                 assertEquals(sessionH.get(), s);
