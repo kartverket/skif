@@ -9,9 +9,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * Eksempel på et ValueObject. Bemerk at dette objekt er immutable.
+ *
  * @author Henrik Fredholm
+ * @since 2.3
  */
 public class BeloepValueObject implements ValueObject {
+    private static final long serialVersionUID = 1L;
+
     private String valuta;
     private int verdi;
     @Nullable
@@ -37,6 +42,7 @@ public class BeloepValueObject implements ValueObject {
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
+    @Deprecated // WS-mapping
     public void setValuta(String valuta) {
         this.valuta = valuta;
     }
@@ -46,6 +52,7 @@ public class BeloepValueObject implements ValueObject {
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
+    @Deprecated // WS-mapping
     private void setVerdi(int verdi) {
         this.verdi = verdi;
     }
@@ -57,6 +64,7 @@ public class BeloepValueObject implements ValueObject {
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
+    @Deprecated // WS-mapping
     private void setKommentar(String kommentar) {
         this.kommentar = kommentar;
     }

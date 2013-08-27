@@ -5,8 +5,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFacade;
 import no.statkart.skif.mockup.AbstractMockupFactory;
-import no.statkart.skif.storetest.domain.basic.BubbleWithValueObject;
-import no.statkart.skif.storetest.domain.basic.HistSimple;
 
 import java.util.List;
 
@@ -27,6 +25,8 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
     @Inject private HistSimpleMockupFactory histSimpleMockupFactory;
     @Inject private HistWithRelationMockupFactory histWithRelationMockupFactory;
+    @Inject private BubbleWithCompositeComponentMockupFactory bubbleWithCompositeComponentMockupFactory;
+    @Inject private BubbleWithEntityComponentMockupFactory bubbleWithEntityComponentMockupFactory;
 
     @Inject private SubTypedBubbleMockupFactory subTypedBubbleMockupFactory;
 
@@ -40,7 +40,9 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
                 bubbleWithKodeMockupFactory,
                 histSimpleMockupFactory,
                 histWithRelationMockupFactory,
-                subTypedBubbleMockupFactory
+                subTypedBubbleMockupFactory,
+                bubbleWithCompositeComponentMockupFactory,
+                bubbleWithEntityComponentMockupFactory
         );
     }
 
@@ -75,4 +77,13 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
     public SubTypedBubbleMockupFactory getSubTypedBubbleMockupFactory() {
         return subTypedBubbleMockupFactory;
     }
+    
+    public BubbleWithCompositeComponentMockupFactory getBubbleWithCompositeComponentMockupFactory() {
+        return bubbleWithCompositeComponentMockupFactory;
+    }
+
+    public BubbleWithEntityComponentMockupFactory getBubbleWithEntityComponentMockupFactory() {
+        return bubbleWithEntityComponentMockupFactory;
+    }
 }
+

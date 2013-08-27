@@ -34,29 +34,6 @@ create table BubbleWithKode (
     primary key (id)
 );
 
-create table BubbleWithValueObject (
-    id number(19,0) not null,
-    nr number(10,0),
-    text varchar2(255),
-    a_valuta varchar2(255),
-    a_verdi number(19,0),
-    a_kommentar varchar2(255),
-    b_valuta varchar2(255),
-    b_verdi number(19,0),
-    b_kommentar varchar2(255),
-    primary key (id)
-);
-
-create table BeloepVOSet (
-    ownerId number(19,0) not null,
-    valuta varchar2(255) not null,
-    verdi number(19,0) not null,
-    kommentar varchar2(255),
-    primary key (ownerId, valuta)
-);
-
-alter table BeloepVOSet add constraint FK_BeloepVOSet_ownerId foreign key (ownerId) references BubbleWithValueObject;
-
 CREATE TABLE SubTypedBubble (
     ID NUMBER(19,0) NOT NULL,
     CLASS VARCHAR2(255 CHAR) NOT NULL,
@@ -88,6 +65,115 @@ create table HistWithRelation (
     histSimpleId number(19,0),
     CONSTRAINT PK_HISTWITHRELATION PRIMARY KEY (ID)
 );
+
+create table BubbleWithValueObject (
+    id number(19,0) not null,
+    nr number(10,0),
+    text varchar2(255),
+    a_valuta varchar2(255),
+    a_verdi number(19,0),
+    a_kommentar varchar2(255),
+    b_valuta varchar2(255),
+    b_verdi number(19,0),
+    b_kommentar varchar2(255),
+    primary key (id)
+);
+
+create table BeloepVOSet (
+    ownerId number(19,0) not null,
+    valuta varchar2(255) not null,
+    verdi number(19,0) not null,
+    kommentar varchar2(255),
+    primary key (ownerId, valuta)
+);
+
+alter table BeloepVOSet add constraint FK_BeloepVOSet_ownerId foreign key (ownerId) references BubbleWithValueObject;
+
+create table BubbleWithCompositeComponent (
+    id number(19,0) not null,
+    nr number(10,0),
+    text varchar2(255),
+    l1_text varchar2(255),
+    l1_valuta varchar2(255),
+    l1_verdi number(19,0),
+    l1_kommentar varchar2(255),
+    l2_text varchar2(255),
+    l2_valuta varchar2(255),
+    l2_verdi number(19,0),
+    l2_kommentar varchar2(255),
+    primary key (id)
+);
+
+create table CompositeL1BeloepVOSet (
+    ownerId number(19,0) not null,
+    valuta varchar2(255) not null,
+    verdi number(19,0) not null,
+    kommentar varchar2(255),
+    primary key (ownerId, valuta)
+);
+
+alter table CompositeL1BeloepVOSet add constraint FK_BubbleWithComp_Component_1 foreign key (ownerId) references BubbleWithCompositeComponent;
+
+create table CompositeL2BeloepVOSet (
+    ownerId number(19,0) not null,
+    valuta varchar2(255) not null,
+    verdi number(19,0) not null,
+    kommentar varchar2(255),
+    primary key (ownerId, valuta)
+);
+
+alter table CompositeL2BeloepVOSet add constraint FK_CompositeL2BeloepVOSet_owId foreign key (ownerId) references BubbleWithCompositeComponent;
+
+create table BubbleWithEntityComponent (
+    id number(19,0) not null,
+    nr number(10,0),
+    level1ComponentId number(19,0),
+    text varchar2(255),
+    primary key (id)
+);
+
+create table Level1EntityComponent (
+    id number(19,0) not null,
+    ownerId number(19,0) constraint Level1EComponent_ownerId_null not null initially deferred,
+    text varchar2(255),
+    valuta varchar2(255),
+    verdi number(19,0),
+    kommentar varchar2(255),
+    level2ComponentId number(19,0),
+    primary key (id)
+);
+alter table BubbleWithEntityComponent add constraint FK_BWithEntity_level1CompId foreign key (level1ComponentId) references Level1EntityComponent;
+
+create table EntityL1BeloepVOSet (
+    ownerId number(19,0) not null,
+    valuta varchar2(255) not null,
+    verdi number(19,0) not null,
+    kommentar varchar2(255),
+    primary key (ownerId, valuta)
+);
+alter table EntityL1BeloepVOSet add constraint FK_EntityL1BeloepVOSet_ownerId foreign key (ownerId) references Level1EntityComponent;
+
+create table Level2EntityComponent (
+    id number(19,0) not null,
+    ownerId number(19,0) constraint Level2EComponent_ownerId_null not null initially deferred,
+    text varchar2(255),
+    valuta varchar2(255),
+    verdi number(19,0),
+    kommentar varchar2(255),
+    primary key (id)
+);
+
+alter table Level1EntityComponent add constraint FK_Level1Entity_level2CompId foreign key (level2ComponentId) references Level2EntityComponent;
+
+create table EntityL2BeloepVOSet (
+    ownerId number(19,0) not null,
+    valuta varchar2(255) not null,
+    verdi number(19,0) not null,
+    kommentar varchar2(255),
+    primary key (ownerId, valuta)
+);
+alter table EntityL2BeloepVOSet add constraint FK_EntityL2BeloepVOSet_ownerId foreign key (ownerId) references Level2EntityComponent;
+
 
 -- Denne map tabell brukes av StoreTest1ServiceTest
 create table TestMap (

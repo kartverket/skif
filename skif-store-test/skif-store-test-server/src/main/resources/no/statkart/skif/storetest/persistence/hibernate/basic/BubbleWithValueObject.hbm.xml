@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false" >
 
-    <class name="no.statkart.skif.storetest.domain.basic.BubbleWithValueObject" select-before-update="true">
+    <class name="no.statkart.skif.storetest.domain.basic.BubbleWithValueObject" select-before-update="true" lazy="true">
         <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.BubbleWithValueObjectIdType">
             <generator class="assigned"/>
         </id>
@@ -20,12 +20,12 @@
             <property name="verdi" column="b_verdi"/>
             <property name="kommentar" column="b_kommentar"/>
         </component>
-        <set name="beloepSet" table="BeloepVOSet" cascade="all-delete-orphan">
+        <set name="beloepSet" table="BeloepVOSet" cascade="all-delete-orphan" lazy="true" batch-size="25">
             <key column="ownerId"/>
-            <composite-element class="no.statkart.skif.storetest.domain.basic.BeloepValueObject">
-                <property name="valuta" not-null="true"/>
+            <composite-element class="no.statkart.skif.storetest.domain.basic.BeloepValueObject" >
+                <property name="valuta" not-null="true" unique-key="" />
                 <property name="verdi" not-null="true"/>
-                <property name="kommentar"/>
+                <property name="kommentar" />
             </composite-element>
         </set>
 

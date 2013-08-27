@@ -2,12 +2,15 @@ package no.statkart.skif.store;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.*;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.util.CopyHelper;
+import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
 
@@ -389,9 +392,60 @@ public class StoreSessionServer extends AbstractStoreSession {
         for (Map.Entry<BubbleId<?>, StoreEntry> mapEntry : deleted) {
             modifiedSorted.put(mapEntry.getKey(), mapEntry.getValue());
         }
-        super.commitUnitOfWork(modifiedSorted);
 
+        //fixBatchingForBubblesWithEntityComponents(modifiedSorted);
+        super.commitUnitOfWork(modifiedSorted); // Gjøres av ovenstående istedet
     }
+
+    /**
+     * Løper igjennom alle bobler og grouperer {@code EntityComponent} objekter i boblene etter klasse slik at disse kan legges
+     * inn samlet i Hibernate før boblene. Dermed blir det mulig for Hibernate å batch sql for bobler og entitykomponenter.
+     *
+     * Algoritment deler først opp alle bobler i subgrupper {@link #bubbleDependencyComparator}
+     *
+     * @since 2.3
+     */
+    private void fixBatchingForBubblesWithEntityComponents(Map<BubbleId<?>, StoreEntry> modifiedSorted) {
+        List<Map<BubbleId<?>, StoreEntry>> modifiedSortedOfSameTypeList = createSublistsGoupedByClass(modifiedSorted);
+        for (Map<BubbleId<?>, StoreEntry> modifiedSortedOfSameType : modifiedSortedOfSameTypeList) {
+            fixBatchingForBubblesWithEntityComponentsForSameType(modifiedSortedOfSameType);
+            super.commitUnitOfWork(modifiedSortedOfSameType);
+        }
+    }
+
+    private List<Map<BubbleId<?>, StoreEntry>> createSublistsGoupedByClass(Map<BubbleId<?>, StoreEntry> modifiedSorted) {
+        BubbleObject previousBubble = null;
+        Map<BubbleId<?>, StoreEntry> currentMap = null;
+        List<Map<BubbleId<?>, StoreEntry>> modifiedSortedOfSameTypeList = Lists.newArrayList();
+        for (Map.Entry<BubbleId<?>, StoreEntry> entry : modifiedSorted.entrySet()) {
+            BubbleObject bubbleObject = entry.getValue().getBubbleObject(1);
+            if (previousBubble==null || bubbleDependencyComparator.compare(previousBubble,bubbleObject)!=0) {
+                previousBubble=bubbleObject;
+                currentMap = Maps.newLinkedHashMap();
+                modifiedSortedOfSameTypeList.add(currentMap);
+            }
+            currentMap.put(entry.getKey(), entry.getValue());
+        }
+        return modifiedSortedOfSameTypeList;
+    }
+
+    public void fixBatchingForBubblesWithEntityComponentsForSameType(Map<BubbleId<?>, StoreEntry> modified) throws HibernateException {
+        HibernatePersistenceSessionMasterImpl implementation = getPersistenceSessionManager().getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
+        List<Multimap<Class<? extends EntityComponent>, EntityComponent>> entityMap = Lists.newArrayList();
+        IdentityHashMap processedObjects = new IdentityHashMap();
+
+        for (Map.Entry<BubbleId<?>, StoreEntry> entry : modified.entrySet()) {
+            try {
+                // TODO: Dette er juks. Vil ikke virker for filtrerte bobler. Burde bruke getPersistentObject() istedet, men den er pt null på dette tidspunkt
+                BubbleObject bubbleObject = entry.getValue().getBubbleObject(1);
+                implementation.fixBatchingForObjectWithEntityComponents(bubbleObject, processedObjects, 0, entityMap);
+            } catch (HibernateException e) {
+                throw new ImplementationException("Could not check entity components for " + entry.getValue().getBubbleObject(0).getId(), e);
+            }
+        }
+        implementation.saveOrUpdateEntityComponentsInBubbles(entityMap);
+    }
+
 
     /**
      * Låser objekt og lager en kopi av objektet hvis låsingen skjer i en unit of work. Hvis låsingen skjer direkte
@@ -451,6 +505,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                 persistenceSessionManager.ensureFullyLoaded(derivedBubbleObject);
             }
             BubbleObject copy = CopyHelper.copy(derivedBubbleObject);
+            copy.register(store);
             storeEntry.setLocked(level, copy);
         }
         if (isNewLock) {
@@ -504,12 +559,12 @@ public class StoreSessionServer extends AbstractStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
         VersionFinder versionFinder = versionFinderProvider.get();
 
-        // Denne metode kan opptimaliseres, ved å først å sortere ids på basetype og så gjøre en list query basert på
-        // OracleArrayType for hver basetype.
+// Denne metode kan opptimaliseres, ved å først å sortere ids på basetype og så gjøre en list query basert på
+// OracleArrayType for hver basetype.
         Map<I, List<I>> retur = new HashMap<I, List<I>>();
         for (I id : ids) {
             // Sliter litt med generics her. Vi passe litt på fordi dette kun er lovlig hvis <I> faktisk er en basetype dersom id kan skifte subtype.
-            retur.put((I)(BubbleId)id.asSnapshotVersionCurrent(), versionFinder.findBubbleIdsForInterval(id, start, end));
+            retur.put((I) (BubbleId) id.asSnapshotVersionCurrent(), versionFinder.findBubbleIdsForInterval(id, start, end));
         }
         return retur;
     }

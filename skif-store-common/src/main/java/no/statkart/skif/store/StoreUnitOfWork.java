@@ -118,10 +118,26 @@ public class StoreUnitOfWork extends AbstractStoreSession {
 
     public WrappableStoreSession endUnitOfWork() {
         if (level != 1) {
-            throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork or abortUnitOfWork instead");
+            throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork() or abortUnitOfWork() instead");
+        }
+        if (isAccessedAfterGetTransfer()) {
+            throw new ImplementationException("Store was access beweeen calls to Store.getUnitOfWorkTransfer() and Store.endUnitOfWork() and may result in impropper commit");
         }
 
-        throw new UnsupportedOperationException();
+        if (modifiedMap.size() > 0 && !getTransferHasBeenCalled) {
+            throw new ImplementationException("Store contains modified objects. Call getUnitOfWorkTransfer() before calling endUnitOfWork()");
+        }
+        for (StoreEntry storeEntry : modifiedMap.values()) {
+            if (storeEntry.getLoadedByLevel() == level) {
+                storeCache.remove(storeEntry.getId());
+            } else {
+                storeEntry.clear(level);
+            }
+            storeEntry.lockCreatedByLevel=0;
+        }
+        modifiedMap.clear();
+        markModified();
+        return wrappedStoreSession;
     }
 
     public UnitOfWorkTransfer getUnitOfWorkTransfer() {

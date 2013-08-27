@@ -46,6 +46,8 @@ import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
 import no.statkart.skif.storetest.domain.basic.*;
+import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
@@ -210,6 +212,10 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(HistSimple.class)
                 .addResource(HistWithRelation.class)
                 .addResourceWithSubclasses(SubTypedBubble.class, SubTypeWithPrimitive.class, SubTypeWithCollection.class)
+
+                        // Components
+                .addResource(BubbleWithCompositeComponent.class)
+                .addResource(BubbleWithEntityComponent.class)
 
                 .addResource(EnumKodeIdType.class)
                 .addResource(ADbKode.class)

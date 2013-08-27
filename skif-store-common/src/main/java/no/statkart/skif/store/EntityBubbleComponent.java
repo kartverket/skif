@@ -7,5 +7,5 @@ import java.io.Serializable;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public interface EntityBubbleComponent<T extends BubbleObject> extends EntityComponent, BubbleComponent<T> {
+public interface EntityBubbleComponent<T extends BubbleObject> extends EntityComponentWithOwnerReferance<T>, BubbleComponent<T> {
 }

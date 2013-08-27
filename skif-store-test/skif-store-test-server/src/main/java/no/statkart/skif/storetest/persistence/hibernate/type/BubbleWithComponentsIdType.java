@@ -5,8 +5,8 @@ import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import no.statkart.skif.storetest.domain.demo.BubbleWithComponentsId;
 
 /**
- * @author Tor Egil R. Strand
- * @since 2.1
+ * @author Henrik Fredholm
+ * @since 2.3
  */
 public class BubbleWithComponentsIdType extends BubbleIdType {
     @Override

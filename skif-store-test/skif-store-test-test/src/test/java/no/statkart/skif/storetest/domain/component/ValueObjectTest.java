@@ -1,10 +1,12 @@
 package no.statkart.skif.storetest.domain.component;
 
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 import no.statkart.skif.storetest.domain.basic.BubbleWithValueObject;
+import no.statkart.skif.storetest.domain.basic.BubbleWithValueObjectId;
 import no.statkart.skif.storetest.mockup.BubbleWithValueObjectMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
@@ -77,6 +79,15 @@ public class ValueObjectTest extends StoreTestTestCase {
         final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
         final BubbleWithValueObject withBeloepSet = store.get(valueObjectMockupFactory.getWithBeloepSetId());
         assertThat(withBeloepSet.getBeloepSet()).containsOnly(valueObjectMockupFactory.getBeloepDKR1(), valueObjectMockupFactory.getBeloepNOK1());
+    }
+
+    public void testReadLazyBeloepSet() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
+
+        final ImmutableSet<BubbleWithValueObjectId<?>> of = ImmutableSet.of(valueObjectMockupFactory.getWithBeloepSetId(), valueObjectMockupFactory.getWithBeloepSetId2());
+        final Set<BubbleWithValueObject> bubbleWithValueObjects = store.get(of);
+        assertThat(bubbleWithValueObjects).hasSize(2);
     }
 
     public void testUpdateBeloepSet() {

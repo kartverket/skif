@@ -1,7 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
@@ -60,6 +60,8 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     protected Transaction localTransaction;
 
+    // TODO: Denne skal bort etter refaktor av fixBatchingForObjectWithEntityComponents. Bruker IdentityHashSet fordi det er mest logisk å bruke dette her.
+    private Set<EntityComponent> newlyInsertedComponents = Sets.newIdentityHashSet();
 
     /**
      * Bestemmer om Bubbler kan ha lazyloaded assosiasjoner som ikke er initialisert i det bubblen
@@ -691,7 +693,6 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
         if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
         EntityPersister persister = (EntityPersister) classMetadata;
-        if (!persister.hasCollections()) return;
 
         Type[] types = persister.getPropertyTypes();
         Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
@@ -833,11 +834,11 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      */
     private void checkForReplacedOrStolenEntityComponent(EntityType type, Object value, Object valueExisting) {
         Class typeClass = type.getReturnedClass();
-        if (AbstractEntityComponent.class.isAssignableFrom(typeClass)) {
+        if (EntityComponent.class.isAssignableFrom(typeClass)) {
             AbstractEntityPersister persister = (AbstractEntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(type.getName());
             EntityMetamodel entityMetamodel = persister.getEntityMetamodel();
             if (valueExisting != null && value == null) {
-                AbstractEntityComponent oldEntityComponent = (AbstractEntityComponent) valueExisting;
+                EntityComponent oldEntityComponent = (EntityComponent) valueExisting;
                 throw new ImplementationException("Attempt at setting entity component to null. Entity class: " + typeClass.getName() + " Id:" + oldEntityComponent.getId(), logger);
             }
 
@@ -845,16 +846,19 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             if (!(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned) && value != null) {
                 final Long oldId;
                 if (valueExisting != null) {
-                    AbstractEntityComponent oldEntityComponent = (AbstractEntityComponent) valueExisting;
+                    EntityComponent oldEntityComponent = (EntityComponent) valueExisting;
                     oldId = oldEntityComponent.getId();
                 } else {
                     oldId = null;
                 }
-                AbstractEntityComponent entityComponent = (AbstractEntityComponent) value;
-                final Long newId = entityComponent.getId();
+                EntityComponent entityComponent = (EntityComponent) value;
+                final Object newId = entityComponent.getId();
 
                 if (!EqualsHelper.equals(oldId, newId)) {
-                    throw new ImplementationException("Attempt at replacing entity component. Entity class: " + typeClass.getName() + " New id:" + newId + ", Old id:" + oldId, logger);
+                    // TODO: Har midlertidig lagt til et ekstra sjekk som håndtere at komponenten nettopp har fått id i fixBatchingForObjectWithEntityComponents() og derfor ikke er null
+                    if (!(oldId==null && newlyInsertedComponents.remove(entityComponent))) {
+                        throw new ImplementationException("Attempt at replacing entity component. Entity class: " + typeClass.getName() + " New id:" + newId + ", Old id:" + oldId, logger);
+                    }
                 }
             }
         }
@@ -872,7 +876,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     private void checkForStolenEntityComponent(Type elementType, Collection<?> collection, Collection<?> collectionExisting) {
         if (elementType.isEntityType()) {
             Class typeClass = elementType.getReturnedClass();
-            if (AbstractEntityComponent.class.isAssignableFrom(typeClass)) {
+            if (EntityComponent.class.isAssignableFrom(typeClass)) {
                 AbstractEntityPersister persister = (AbstractEntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(elementType.getName());
                 EntityMetamodel entityMetamodel = persister.getEntityMetamodel();
 
@@ -880,11 +884,11 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 if (!(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned)) {
                     Set<Object> existingIds = new HashSet<Object>();
                     for (Object o : collectionExisting) {
-                        existingIds.add(((AbstractEntityComponent) o).getId());
+                        existingIds.add(((EntityComponent) o).getId());
                     }
 
                     for (Object o : collection) {
-                        AbstractEntityComponent entityComponent = (AbstractEntityComponent) o;
+                        EntityComponent entityComponent = (EntityComponent) o;
                         if (entityComponent.getId() != null && !existingIds.contains(entityComponent.getId())) {
                             throw new ImplementationException("Found entity component " + typeClass.getName() + " Id:" + entityComponent.getId() + " in collection that didn't contain it previously", logger);
                         }
@@ -1463,5 +1467,80 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         Preconditions.checkState(persistenceContext.getCollectionEntries().size() == 0, "CollectionEnties er ikke tom");
         Preconditions.checkState(persistenceContext.getCollectionsByKey().size() == 0, "CollectionEnties er ikke tom");
         Preconditions.checkState(persistenceContext.getNullifiableEntityKeys().size() == 0, "NullifiableEntityKeys er ikke tom");
+    }
+
+    public void saveOrUpdateEntityComponentsInBubbles(List<Multimap<Class<? extends EntityComponent>, EntityComponent>> entityMap) {
+        newlyInsertedComponents.clear();
+        Session session = session();
+        // Nødvendig å legge inn med høyest nesting level først
+        for (int nestingLevel = entityMap.size() - 1; nestingLevel >= 0; nestingLevel--) {
+            Multimap<Class<? extends EntityComponent>, EntityComponent> classEntityComponentMultimap = entityMap.get(nestingLevel);
+            for (EntityComponent entityComponent : classEntityComponentMultimap.values()) {
+                if (entityComponent.getId() == null) {
+                    newlyInsertedComponents.add(entityComponent);
+                }
+                session.saveOrUpdate(entityComponent);
+
+            }
+        }
+    }
+
+    /**
+     * Finn entity components for object og legg disse inn i {@code groupedEntityComponents} som er sortert på level og klasse
+     *
+     * @since 2.3
+     */
+    public void fixBatchingForObjectWithEntityComponents(Object object, IdentityHashMap processedObjects, int levelKey, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> groupedEntityComponents) throws HibernateException {
+        if (object == null) return;
+
+        if (processedObjects.containsKey(object)) return;
+        processedObjects.put(object, null);
+
+        ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
+
+        if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
+        EntityPersister persister = (EntityPersister) classMetadata;
+
+        Type[] types = persister.getPropertyTypes();
+        Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
+        CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
+
+        for (int i = 0; i < types.length; i++) {
+            Type type = types[i];
+            Object value = values[i];
+            CascadeStyle cascadeStyle = cascadeStyles != null ? cascadeStyles[i] : null;
+
+            if (type.isEntityType()) {
+                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                    fixForBatchInsertUpdateOfEntityComponent((EntityType) type, value, processedObjects, levelKey, groupedEntityComponents);
+                }
+            } else if (type.isComponentType()) {
+//                checkEntityComponentsOnInsertInComponent(value, type, processedObjects);
+            } else if (type.isCollectionType()) {
+//                boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
+//                if (value instanceof Map) {
+//                    CollectionType collectionType = (CollectionType) type;
+//                    checkEntityComponentsInMapOnInsert((Map) value, collectionType, processedObjects, cascade);
+//                } else {
+//                    CollectionType collectionType = (CollectionType) type;
+//                    Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+//                    checkEntityComponentsInCollectionOnInsert((Collection) value, elementType, processedObjects, cascade);
+//                }
+            }
+        }
+    }
+
+
+    private void fixForBatchInsertUpdateOfEntityComponent(EntityType type, Object value, IdentityHashMap processedObjects, int levelKey, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> groupedEntityComponents) {
+        Class typeClass = type.getReturnedClass();
+        // TODO: mangler å opptimalisere på tvers av subklasser
+        if (value != null && EntityComponent.class.isAssignableFrom(typeClass)) {
+            EntityComponent component = (EntityComponent) value;
+            if (groupedEntityComponents.size() == levelKey) {
+                groupedEntityComponents.add(HashMultimap.<Class<? extends EntityComponent>, EntityComponent>create());
+            }
+            groupedEntityComponents.get(levelKey).put(component.getClass(), component);
+            fixBatchingForObjectWithEntityComponents(value, processedObjects, levelKey + 1, groupedEntityComponents);
+        }
     }
 }

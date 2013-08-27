@@ -107,4 +107,19 @@ public class StoreServer extends AbstractStore {
         return storeServerSession().getUpdatedIds();
 
     }
+
+    @Override
+    public UnitOfWorkTransfer getUnitOfWorkTransfer() {
+        // TODO: Kaste feil dersom  objekter er låst på level 0.
+        StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
+        return  storeUnitOfWork.getUnitOfWorkTransfer();
+    }
+
+    @Override
+    public void endUnitOfWork() {
+        StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
+        storeSession = storeUnitOfWork.endUnitOfWork();
+        // Nødvendig å kjøre clear() her slik at vi får lest inn objekter på nytt som har blitt oppdatert utenom innværende sesion
+        clear();
+    }
 }

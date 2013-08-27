@@ -112,6 +112,7 @@ public class StoreSessionClient extends AbstractStoreSession {
                 // Låst for underliggende level
                 BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
                 BubbleObject copy = CopyHelper.copy(derivedBubbleObject);
+                copy.register(store);
                 storeEntry.setLocked(level, copy);
             } else {
                 // Ikke låst, hent fra server
