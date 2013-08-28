@@ -1,9 +1,9 @@
 package no.statkart.skif.storetest.store;
 
 import com.google.inject.Inject;
+import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.FooId;
 import no.statkart.skif.storetest.domain.standalone.TestBubble;
@@ -22,6 +22,17 @@ import static org.testng.Assert.*;
  */
 @Test(groups = "singlevm-required")
 public class StoreIdAllocationTest extends StoreTestMixedTestCase {
+    /**
+     * Sørger for at denne testen ikke gjenbruker serveren fra en annen test. Dette slik at serveren starter uten noen
+     * id-sekvens, noe som ville ødelagt forutsetningene for testen.
+     *
+     * @return en ModuleBuilder fra createReusableModuleBuilder(), men ny hver gang
+     * @since 2.3.0
+     */
+    @Override
+    protected ModuleBuilder createModuleBuilder() {
+        return createReusableModuleBuilder();
+    }
 
     public static final FooId<Foo> FOO_ID_1002 = new FooId<Foo>(100L);
     @Inject
