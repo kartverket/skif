@@ -78,7 +78,7 @@ public class StandAloneTestHelper {
      * @return
      */
     public static HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilderWithHistory() {
-        return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate")
+        return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate32")
                 .addResource(TestBubbleWithHistory.class)
                 .addResource(TestBubble.class)
 //                .addResourceUseSameIndex(SelfBubble.class)   // Blir sortert sammen med TestBubble

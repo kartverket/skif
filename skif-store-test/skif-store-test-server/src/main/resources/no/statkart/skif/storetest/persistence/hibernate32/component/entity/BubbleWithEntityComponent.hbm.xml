@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent"
+           select-before-update="true" lazy="true">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest.persistence.hibernate.type.component.entity.BubbleWithEntityComponentIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="nr"/>
+        <property name="text"/>
+        <many-to-one
+                name="level1Component"
+                column="level1ComponentId"
+                class="no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent"
+                access="field"
+                fetch="join"
+                cascade="all">
+        </many-to-one>
+        <!-- bruker ikke all-delete-orphan / unique da dette ikke er støttet i 3.2 og vi trenger det ikke -->
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent" lazy="true"
+           select-before-update="true" >
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+        <many-to-one
+                name="owner"
+                column="ownerId"
+                class="no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent"
+                access="field"
+                cascade="none">
+
+        </many-to-one>
+
+        <property name="text"/>
+        <many-to-one
+                name="level2Component"
+                column="level2ComponentId"
+                class="no.statkart.skif.storetest.domain.component.entity.Level2EntityComponent"
+                access="field"
+                fetch="join"
+                cascade="all">
+
+        </many-to-one>
+
+        <component name="beloep" class="no.statkart.skif.storetest.domain.basic.BeloepValueObject" unique="true">
+            <property name="valuta"/>
+            <property name="verdi"/>
+            <property name="kommentar"/>
+        </component>
+        <set name="beloepSet" table="EntityL1BeloepVOSet" cascade="all-delete-orphan" lazy="true" batch-size="25">
+            <key column="ownerId"/>
+            <composite-element class="no.statkart.skif.storetest.domain.basic.BeloepValueObject">
+                <property name="valuta" not-null="true"/>
+                <property name="verdi" not-null="true"/>
+                <property name="kommentar"/>
+            </composite-element>
+        </set>
+    </class>
+    <class name="no.statkart.skif.storetest.domain.component.entity.Level2EntityComponent" lazy="true"
+           select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+
+        <many-to-one
+                name="owner"
+                column="ownerId"
+                class="no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent"
+                access="field"
+                cascade="none">
+        </many-to-one>
+
+        <property name="text"/>
+        <component name="beloep" class="no.statkart.skif.storetest.domain.basic.BeloepValueObject" unique="true">
+            <property name="valuta"/>
+            <property name="verdi"/>
+            <property name="kommentar"/>
+        </component>
+        <set name="beloepSet" table="EntityL2BeloepVOSet" cascade="all-delete-orphan" lazy="true"
+             batch-size="25">
+            <key column="ownerId"/>
+            <composite-element class="no.statkart.skif.storetest.domain.basic.BeloepValueObject">
+                <property name="valuta" not-null="true"/>
+                <property name="verdi" not-null="true"/>
+                <property name="kommentar"/>
+            </composite-element>
+        </set>
+    </class>
+</hibernate-mapping>

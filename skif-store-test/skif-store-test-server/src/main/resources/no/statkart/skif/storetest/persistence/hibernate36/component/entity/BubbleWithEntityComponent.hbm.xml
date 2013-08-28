@@ -21,7 +21,6 @@
                 unique="true"
                 cascade="all-delete-orphan">
         </many-to-one>
-        <!-- bruker ikke all-delete-orphan / unique da dette ikke er støttet i 3.2 og vi trenger det ikke -->
     </class>
 
     <class name="no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent" lazy="true"

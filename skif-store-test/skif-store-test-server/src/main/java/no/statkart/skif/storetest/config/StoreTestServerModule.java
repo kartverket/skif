@@ -203,7 +203,13 @@ public class StoreTestServerModule extends SkifModule {
         Configuration configuration = moduleConfiguration.getConfiguration();
 
         // TODO: Hent directory fra moduleConfiguration
-        HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate")
+        final String hibernateMappingDir;
+        if (configuration.getString("skif.hibernateVersion", "3.2").equals("3.6")) {
+            hibernateMappingDir = "no/statkart/skif/storetest/persistence/hibernate36";
+        } else {
+            hibernateMappingDir = "no/statkart/skif/storetest/persistence/hibernate32";
+        }
+        HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilderImpl(hibernateMappingDir)
                 // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
                 .addResource(Simple.class)
                 .addResource(BubbleWithRelation.class)

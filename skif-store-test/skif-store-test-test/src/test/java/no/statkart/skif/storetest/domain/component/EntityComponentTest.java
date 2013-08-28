@@ -30,7 +30,7 @@ import static org.testng.Assert.*;
  * @author Henrik Fredholm
  * @since 2.3
  */
-@Test
+@Test(groups = "hibernate36")
 public class EntityComponentTest extends StoreTestTestCase {
     @Inject
     Store store;

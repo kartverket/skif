@@ -89,6 +89,9 @@ subprojects { Project project ->
                 } else {
                     excludeGroups('singlevm-required')
                 }
+                if(!hibernateVersion.equals("3.6")) {
+                    excludeGroups('hibernate36')
+                }
                 listeners << 'org.testng.reporters.XMLReporter' // For Jenkins, siden Gradle ikke tar med default listerners som standard lenger
             }
 

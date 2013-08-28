@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.demo.AggregertObjekt" table="AggregertObjekt">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.AggregertObjektIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="tekst"/>
+
+        <list name="komponenter" cascade="all-delete-orphan" table="AggregertKomponent" access="field">
+            <key column="id"/>
+            <list-index column="indeks"/>
+            <composite-element class="no.statkart.skif.storetest.domain.demo.AggregertKomponent">
+                <parent name="aggregertObjekt"/>
+                <property name="noe"/>
+                <property name="annet"/>
+            </composite-element>
+        </list>
+
+        <join table="AggregertObjektMeta">
+            <key column="id"/>
+            <property name="sistOppdatertAv"/>
+            <property name="sistOppdatert"/>
+        </join>
+
+    </class>
+
+</hibernate-mapping>
