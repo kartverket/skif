@@ -9,7 +9,9 @@ allprojects {
     propertyUtils.assignPropertiesToProject(userProperties)
 
     //version kan bestemmes via env variabel og -P parameter
-    if (project.hasProperty('version')) { project.version = getProperty('version') }
+    if (project.hasProperty('version')) {
+        project.version = getProperty('version')
+    }
 
     defaultTasks 'build'
     group = 'no.statkart.skif'
@@ -89,8 +91,11 @@ subprojects { Project project ->
                 } else {
                     excludeGroups('singlevm-required')
                 }
-                if(!hibernateVersion.equals("3.6")) {
+                if (!hibernateVersion.equals("3.6")) {
                     excludeGroups('hibernate36')
+                }
+                if (!hibernateVersion.equals("3.2")) {
+                    excludeGroups('hibernate32')
                 }
                 listeners << 'org.testng.reporters.XMLReporter' // For Jenkins, siden Gradle ikke tar med default listerners som standard lenger
             }
@@ -140,7 +145,7 @@ subprojects { Project project ->
 
             project.idea.module.iml.withXml { provider ->
                 def rootNode = provider.asNode()
-                def node = rootNode.component.find {it.@name == 'NewModuleRootManager'}
+                def node = rootNode.component.find { it.@name == 'NewModuleRootManager' }
 
                 def weblogicNodes = node.orderEntry.findAll {
                     it.@type.equals('module-library') && it.library.CLASSES.root.@url.findAll({ it.toLowerCase().contains(weblogic_home) }).size() > 0
@@ -257,7 +262,6 @@ buildscript {
         logger.warn "warning: REPO_UPLOAD_RELEASES_PASSWORD not defined. Defaulting to default admin password"
     }
 
-
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Switch for tentativ utvikling mot lokalt maven repository
     // Se http://forums.gradle.org/gradle/topics/dependency_resolution_in_gradle_1_0_milestone_8 for teknisk beskrivelse.
@@ -279,6 +283,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.2-build108'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build183'
     }
 }
