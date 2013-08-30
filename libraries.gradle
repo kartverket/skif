@@ -92,7 +92,7 @@ libraries.hibernate_tools_3_2 = [
 
 libraries.hibernate_3_6 = [
         'org.hibernate:hibernate-parent:3.6.10.Final',
-        'org.hibernate:hibernate-core:3.6.10.Final.bubbleref.v1',
+        'org.hibernate:hibernate-core:3.6.10.Final.bubbleref.v2',
         'commons-collections:commons-collections:3.1',
         'dom4j:dom4j:1.6.1@jar',
         'org.hibernate:hibernate-commons-annotations:3.2.0.Final',

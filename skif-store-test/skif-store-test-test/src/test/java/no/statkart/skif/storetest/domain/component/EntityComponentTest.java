@@ -3,14 +3,16 @@ package no.statkart.skif.storetest.domain.component;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
-import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.service.test.TestdataService;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponentId;
 import no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.SetAaEntityComponent;
 import no.statkart.skif.storetest.mockup.BubbleWithEntityComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
@@ -21,6 +23,8 @@ import org.testng.annotations.Test;
 import java.util.Set;
 import java.util.SortedMap;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 import static org.fest.assertions.api.Fail.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.*;
 
@@ -41,6 +45,15 @@ public class EntityComponentTest extends StoreTestTestCase {
     @Inject
     TestdataService testdataService;
 
+
+    private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
+        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
+            @Override
+            public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
+                return mockupFacade.getBubbleWithEntityComponentMockupFactory().getAllIds(BubbleWithEntityComponentId.class);
+            }
+        });
+    }
 
     /**
      * Tester at Hibernate kan batch sql for opprettelse bobler som inneholder EntityComponents. Denne test må
@@ -109,12 +122,27 @@ public class EntityComponentTest extends StoreTestTestCase {
     }
 
     public void testSubstituteNullComponentWithNull() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithNullComponents = store.lock(mockupFactory.getWithNullComponentsId());
         assertNull(bubbleWithNullComponents.getLevel1Component());
         bubbleWithNullComponents.setLevel1Component(null);
+        store.update(bubbleWithNullComponents);
+        storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
+        store.endUnitOfWork();
+
+        final BubbleWithEntityComponent updatedBubble = store.get(mockupFactory.getWithNullComponentsId());
+        assertNull(updatedBubble.getLevel1Component());
+    }
+
+    public void testUpdateBubbleWithNonNullComponent() {
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
+        store.beginUnitOfWork();
+        final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
+        bubble.setText("Changed");
+        store.update(bubble);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
         store.endUnitOfWork();
 
@@ -123,7 +151,7 @@ public class EntityComponentTest extends StoreTestTestCase {
     }
 
     public void testSubstituteNullComponentWithNonNull() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNullComponentsId());
@@ -145,7 +173,7 @@ public class EntityComponentTest extends StoreTestTestCase {
      * implementasjon oppdages feilen kun ved persistering til serveren.
      */
     public void testMoveComponent() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
@@ -164,7 +192,7 @@ public class EntityComponentTest extends StoreTestTestCase {
     }
     
     public void testShareComponent() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNullComponentsId());
@@ -182,9 +210,8 @@ public class EntityComponentTest extends StoreTestTestCase {
         store.abortUnitOfWork();
     }
 
-    @Test(enabled = false) // TODO: Det er pt ikke mulig å fjerne en entity component som en boble peker på via update i detached mode. Avventer fix
     public void testDeleteComponentViaUpdate() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
@@ -198,9 +225,8 @@ public class EntityComponentTest extends StoreTestTestCase {
         assertNull(updatedBubble.getLevel1Component());
     }
 
-    @Test(enabled = false) // TODO: Det er pt ikke mulig å fjerne en entity component som en boble peker på. Avventer fix
     public void testDeleteComponentLevel1AndLevel2() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Components = store.lock(mockupFactory.getWithNonNullComponentsId());
@@ -211,7 +237,33 @@ public class EntityComponentTest extends StoreTestTestCase {
         store.endUnitOfWork();
 
         // TODO: skrive databasekode som sjekker at level1 og level2 komponeter er slettet.
-        final BubbleWithEntityComponent updatedBubble = store.lock(mockupFactory.getWithNullLevel2Id());
+        final BubbleWithEntityComponent updatedBubble = store.lock(mockupFactory.getWithNonNullComponentsId());
         assertNull(updatedBubble.getLevel1Component());
+    }
+
+    /**
+     * Tester at der er mulig å endre identen på entity componenter som ligger i et Set fordi identen ikke brukes
+     * i equals og hashCode som jo anvendes av Set.
+     *
+     * TODO: Dette eksempel muligvis kan gjøre bedre. Mangler å test at man faktisk får problemet hvis man bruker ident i equals og hashCode.
+     */
+    public void testChangeIdentOfEntityInSet() {
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
+        store.beginUnitOfWork();
+        final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneSetAaComponentsId2());
+        SetAaEntityComponent component = bubble.getAaComponents().iterator().next();
+        int newIdent = -component.getIdent();
+        component.setIdent(newIdent);
+        component.setText("Changed ident");
+        store.update(bubble);
+        storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
+        store.endUnitOfWork();
+
+        final BubbleWithEntityComponent updatedBubble = store.get(mockupFactory.getWithOneSetAaComponentsId2());
+        assertThat(updatedBubble.getAaComponents()).hasSize(1);
+        SetAaEntityComponent updatedComponent = updatedBubble.getAaComponents().iterator().next();
+        assertEquals(updatedComponent.getId(), component.getId());
+        assertEquals(updatedComponent.getIdent(), newIdent);
     }
 }

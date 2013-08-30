@@ -26,7 +26,6 @@ import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.*;
-import org.hibernate.util.EqualsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ import java.util.Collections;
  * @author Henrik Fredholm
  */
 public abstract class HibernatePersistenceSessionMasterImpl implements HibernatePersistenceSessionMaster {
-    private static Logger logger = LoggerFactory.getLogger(HibernatePersistenceSessionMasterImpl.class);
+    protected static Logger logger = LoggerFactory.getLogger(HibernatePersistenceSessionMasterImpl.class);
     private static final int CRITERIA_BATCH_POWER = 9;
     private static final String ID_KOLONNE_NAVN = "id";
 
@@ -61,7 +60,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     protected Transaction localTransaction;
 
     // TODO: Denne skal bort etter refaktor av fixBatchingForObjectWithEntityComponents. Bruker IdentityHashSet fordi det er mest logisk å bruke dette her.
-    private Set<EntityComponent> newlyInsertedComponents = Sets.newIdentityHashSet();
+    protected Set<EntityComponent> newlyInsertedComponents = Sets.newIdentityHashSet();
 
     /**
      * Bestemmer om Bubbler kan ha lazyloaded assosiasjoner som ikke er initialisert i det bubblen
@@ -383,7 +382,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         // en-etter-en.
         BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
         if (existingBubble != bubbleObject) {
-            // TOOD: Denne kan antageligvis tas bort
+            // TODO: Denne kan antageligvis tas bort
             ensureFullyLoaded(existingBubble);
             attachPersistenceCollectionWithSnapshotOfOldState(bubbleObject, existingBubble);
 
@@ -469,8 +468,8 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
             if (type.isEntityType()) {
                 if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
-                    checkForReplacedOrStolenEntityComponent((EntityType) type, value, valueExisting);
-                    if (valueExisting != null) { // Kan ikke attache hvis det ikke var noe der fra før. At det er greit sjekkes av checkForReplacedOrStolenEntityComponent()
+                    checkForReplacedOrStolenEntityComponentInV32((EntityType) type, value, valueExisting);
+                    if (valueExisting != null) { // Kan ikke attache hvis det ikke var noe der fra før. At det er greit sjekkes av checkForReplacedOrStolenEntityComponentInV32()
                         attachPersistenceCollectionWithSnapshotOfOldState(value, valueExisting, processedObjects);
                     }
                 }
@@ -510,7 +509,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
                 if (propertyType.isEntityType()) {
                     if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
-                        checkForReplacedOrStolenEntityComponent((EntityType) propertyType, property, propertyExisting);
+                        checkForReplacedOrStolenEntityComponentInV32((EntityType) propertyType, property, propertyExisting);
                         attachPersistenceCollectionWithSnapshotOfOldState(property, propertyExisting, processedObjects);
                     }
                 } else if (propertyType.isCollectionType()) {
@@ -705,7 +704,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
             if (type.isEntityType()) {
                 if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
-                    checkForReplacedOrStolenEntityComponent((EntityType) type, value, null);
+                    checkForReplacedOrStolenEntityComponentInV32((EntityType) type, value, null);
                 }
             } else if (type.isComponentType()) {
                 checkEntityComponentsOnInsertInComponent(value, type, processedObjects);
@@ -740,7 +739,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
                 if (propertyType.isEntityType()) {
                     if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
-                        checkForReplacedOrStolenEntityComponent((EntityType) propertyType, property, null);
+                        checkForReplacedOrStolenEntityComponentInV32((EntityType) propertyType, property, null);
                         checkEntityComponentsOnInsert(property, processedObjects);
                     }
                 } else if (propertyType.isCollectionType()) {
@@ -823,7 +822,9 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     /**
      * Sjekker om <code>value</code> er en entity component har blitt erstattet med en annen eller <code>null</code>,
-     * eller om entity component ser ut til å ha blitt stjålet.
+     * eller om entity component ser ut til å ha blitt stjålet. Dette er nødvendig i Hibernate 3.2 som ikke støtter
+     * automatisk sletting av entity componenter som har blitt orphan. I Hibernate 3.6 støttes dette for attached
+     * objekter og SKIF utvider støtten slik at det også virker for detached objekter.
      *
      * @param type          typen til feltet
      * @param value         nåværende verdi
@@ -832,37 +833,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      *                                 eller hvis entity component allerede har id
      * @since 2.2.0
      */
-    private void checkForReplacedOrStolenEntityComponent(EntityType type, Object value, Object valueExisting) {
-        Class typeClass = type.getReturnedClass();
-        if (EntityComponent.class.isAssignableFrom(typeClass)) {
-            AbstractEntityPersister persister = (AbstractEntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(type.getName());
-            EntityMetamodel entityMetamodel = persister.getEntityMetamodel();
-            if (valueExisting != null && value == null) {
-                EntityComponent oldEntityComponent = (EntityComponent) valueExisting;
-                throw new ImplementationException("Attempt at setting entity component to null. Entity class: " + typeClass.getName() + " Id:" + oldEntityComponent.getId(), logger);
-            }
-
-            // Dersom komponentid er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk.
-            if (!(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned) && value != null) {
-                final Long oldId;
-                if (valueExisting != null) {
-                    EntityComponent oldEntityComponent = (EntityComponent) valueExisting;
-                    oldId = oldEntityComponent.getId();
-                } else {
-                    oldId = null;
-                }
-                EntityComponent entityComponent = (EntityComponent) value;
-                final Object newId = entityComponent.getId();
-
-                if (!EqualsHelper.equals(oldId, newId)) {
-                    // TODO: Har midlertidig lagt til et ekstra sjekk som håndtere at komponenten nettopp har fått id i fixBatchingForObjectWithEntityComponents() og derfor ikke er null
-                    if (!(oldId==null && newlyInsertedComponents.remove(entityComponent))) {
-                        throw new ImplementationException("Attempt at replacing entity component. Entity class: " + typeClass.getName() + " New id:" + newId + ", Old id:" + oldId, logger);
-                    }
-                }
-            }
-        }
-    }
+    abstract protected void checkForReplacedOrStolenEntityComponentInV32(EntityType type, Object value, Object valueExisting);
 
     /**
      * Sjekker om <code>value</code> er en EntityComponent har blitt erstattet med en annen eller <code>null</code>.

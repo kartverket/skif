@@ -7,10 +7,7 @@ import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
-import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
-import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponentId;
-import no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent;
-import no.statkart.skif.storetest.domain.component.entity.Level2EntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.*;
 
 import java.util.Set;
 
@@ -23,6 +20,9 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
     private final BubbleWithEntityComponentId<?> withNullLevel2Id;
     private final BubbleWithEntityComponentId<?> withNonNullComponentsId;
     private final BubbleWithEntityComponentId<?> withNonNullComponentsId2;
+    private final BubbleWithEntityComponentId<?> withOneSetAaComponentsId2;
+
+    private int nextIdent= 100 * getTestNumber().getNumber()+1;  // Antar at vi ikke lager mer en 100 objekter per testset
 
 
     @Inject
@@ -33,6 +33,7 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
         withNullLevel2Id = getNextId();
         withNonNullComponentsId = getNextId();
         withNonNullComponentsId2 = getNextId();
+        withOneSetAaComponentsId2 = getNextId();
     }
 
     private BubbleWithEntityComponentId<?> getNextId() {
@@ -42,7 +43,6 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
     @Override
     public void createAllMockups() {
         int i=0;  // Angir logisk obj nr i testsett
-        int identOffset = 100 * getTestNumber().getNumber();
 
         store.insert(createBubbleWithEntityComponent(withNullComponentsId, ++i, "Obj " + i + " med null components", null));
         store.insert(createBubbleWithEntityComponent(
@@ -72,6 +72,10 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
                         )
                 )
         ));
+        store.insert(createBubbleWithEntityComponent(
+                withOneSetAaComponentsId2, ++i, "Obj " + i + " med 1 setAComponents", null,
+                ImmutableSet.of(new SetAaEntityComponent(getNextIdent(), "Entity som tilhører Obj "+ i))));
+
     }
 
     private Level1EntityComponent createLevel1Component(String text, BeloepValueObject beloep, Set<BeloepValueObject> beloepSet, Level2EntityComponent level2Component) {
@@ -100,6 +104,15 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
        return obj;
     }
 
+    private BubbleWithEntityComponent createBubbleWithEntityComponent(BubbleWithEntityComponentId<?> id, int nr, String text, Level1EntityComponent level1Component, Set<SetAaEntityComponent> setAEntityComponents) {
+        BubbleWithEntityComponent obj = new BubbleWithEntityComponent();
+        obj.setId(id);
+        obj.setNr(nr);
+        obj.setText(text);
+        obj.setLevel1Component(level1Component);
+        obj.setAaComponents(setAEntityComponents);
+        return obj;
+    }
     public BubbleWithEntityComponentId<?> getWithNullComponentsId() {
         return withNullComponentsId;
     }
@@ -114,5 +127,13 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
 
     public BubbleWithEntityComponentId<?> getWithNonNullComponentsId2() {
         return withNonNullComponentsId2;
+    }
+
+    public BubbleWithEntityComponentId<?> getWithOneSetAaComponentsId2() {
+        return withOneSetAaComponentsId2;
+    }
+
+    public int getNextIdent() {
+        return nextIdent++;
     }
 }

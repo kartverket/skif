@@ -174,6 +174,15 @@ create table EntityL2BeloepVOSet (
 );
 alter table EntityL2BeloepVOSet add constraint FK_EntityL2BeloepVOSet_ownerId foreign key (ownerId) references Level2EntityComponent;
 
+create table SetAaEntityComponent (
+  id number(19,0) not null,
+  ownerId number(19,0),
+  ident number(10,0) not null,
+  text varchar2(255),
+  primary key (id)
+);
+alter table SetAaEntityComponent add constraint FK_SetAaEntityComp_ownerId foreign key (ownerId) references BubbleWithEntityComponent;
+
 
 -- Denne map tabell brukes av StoreTest1ServiceTest
 create table TestMap (

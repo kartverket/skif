@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-@Test
+@Test(groups="hibernate32")
 public class OrphanEntityTest extends StoreTest2TestCase {
     @Inject
     private StoreTest2MockupFacadeFactory mockupFacadeFactory;

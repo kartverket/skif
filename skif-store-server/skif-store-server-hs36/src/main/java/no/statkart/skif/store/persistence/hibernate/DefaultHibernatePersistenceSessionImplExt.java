@@ -154,4 +154,5 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
 
     }
 
+    protected void checkForReplacedOrStolenEntityComponentInV32(EntityType type, Object value, Object valueExisting) { }
 }

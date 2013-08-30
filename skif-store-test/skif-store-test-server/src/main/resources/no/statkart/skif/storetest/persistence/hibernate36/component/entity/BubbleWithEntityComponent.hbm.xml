@@ -21,6 +21,10 @@
                 unique="true"
                 cascade="all-delete-orphan">
         </many-to-one>
+        <set name="aaComponents" lazy="true" cascade="all-delete-orphan,evict" batch-size="256" access="field">
+            <key column="ownerId"/>
+            <one-to-many class="no.statkart.skif.storetest.domain.component.entity.SetAaEntityComponent"/>
+        </set>
     </class>
 
     <class name="no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent" lazy="true"
@@ -93,4 +97,13 @@
             </composite-element>
         </set>
     </class>
+
+    <class name="no.statkart.skif.storetest.domain.component.entity.SetAaEntityComponent" lazy="true" select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+        <property name="ident"/>
+        <property name="text"/>
+    </class>
+
 </hibernate-mapping>

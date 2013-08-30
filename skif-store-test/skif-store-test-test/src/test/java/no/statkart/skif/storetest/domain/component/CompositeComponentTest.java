@@ -2,8 +2,11 @@ package no.statkart.skif.storetest.domain.component;
 
 
 import com.google.inject.Inject;
+import no.statkart.skif.mockup.IdSelector;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
+import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
 import no.statkart.skif.storetest.domain.component.composite.Level2CompositeComponent;
 import no.statkart.skif.storetest.mockup.BubbleWithCompositeComponentMockupFactory;
@@ -13,6 +16,8 @@ import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.hibernate.HibernateException;
 import org.testng.annotations.Test;
+
+import java.util.Set;
 
 import static org.testng.Assert.*;
 
@@ -29,6 +34,11 @@ public class CompositeComponentTest extends StoreTestTestCase {
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
+
+    private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
+        // TODO: lage et mindre testsett
+        return mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+    }
 
     public void testReadBubbleWithNullCompositeComponent() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -93,7 +103,7 @@ public class CompositeComponentTest extends StoreTestTestCase {
     }
 
     public void testSubstituteNullComponentWithNull() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithCompositeComponent bubbleWithNullComponents = store.lock(mockupFactory.getWithNullComponentsId());
@@ -105,8 +115,9 @@ public class CompositeComponentTest extends StoreTestTestCase {
         assertTrue(bubbleWithCompositeComponent.getLevel1Component().isNullComponent());
     }
 
+
     public void testSubstituteNullComponentWithNonNull() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNullComponentsId());
@@ -127,7 +138,7 @@ public class CompositeComponentTest extends StoreTestTestCase {
      * implementasjon oppdages feilen kun ved persistering til serveren.
      */
     public void testMoveComponent() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
@@ -154,7 +165,7 @@ public class CompositeComponentTest extends StoreTestTestCase {
      * implementasjon oppdages feilen kun ved persistering til serveren.
      */
     public void testMoveComponentLevel2() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
@@ -180,7 +191,7 @@ public class CompositeComponentTest extends StoreTestTestCase {
      * Tester at det ikke er mulig å dele en komponent
      */
     public void testShareComponent() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNullComponentsId());
@@ -198,7 +209,7 @@ public class CompositeComponentTest extends StoreTestTestCase {
         store.abortUnitOfWork();
     }
     public void testDeleteComponent() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
         store.beginUnitOfWork();
         final BubbleWithCompositeComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());

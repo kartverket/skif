@@ -1,18 +1,25 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.matrikkel.persistens.hibernate.bubbleref.BubbleRefIdPersister;
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.EntityComponent;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.engine.CascadeStyle;
 import org.hibernate.engine.CascadingAction;
+import org.hibernate.id.Assigned;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.AbstractComponentType;
+import org.hibernate.type.EntityType;
 import org.hibernate.type.NullableType;
 import org.hibernate.type.Type;
+import org.hibernate.util.EqualsHelper;
 
 import java.util.Collection;
 import java.util.IdentityHashMap;
@@ -129,4 +136,35 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         return type instanceof NullableType;
     }
 
+    protected void checkForReplacedOrStolenEntityComponentInV32(EntityType type, Object value, Object valueExisting) {
+        Class typeClass = type.getReturnedClass();
+        if (EntityComponent.class.isAssignableFrom(typeClass)) {
+            AbstractEntityPersister persister = (AbstractEntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(type.getName());
+            EntityMetamodel entityMetamodel = persister.getEntityMetamodel();
+            if (valueExisting != null && value == null) {
+                EntityComponent oldEntityComponent = (EntityComponent) valueExisting;
+                throw new ImplementationException("Attempt at setting entity component to null. Entity class: " + typeClass.getName() + " Id:" + oldEntityComponent.getId(), logger);
+            }
+
+            // Dersom komponentid er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk.
+            if (!(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned) && value != null) {
+                final Long oldId;
+                if (valueExisting != null) {
+                    EntityComponent oldEntityComponent = (EntityComponent) valueExisting;
+                    oldId = oldEntityComponent.getId();
+                } else {
+                    oldId = null;
+                }
+                EntityComponent entityComponent = (EntityComponent) value;
+                final Object newId = entityComponent.getId();
+
+                if (!EqualsHelper.equals(oldId, newId)) {
+                    // TODO: Har midlertidig lagt til et ekstra sjekk som håndtere at komponenten nettopp har fått id i fixBatchingForObjectWithEntityComponents() og derfor ikke er null
+                    if (!(oldId==null && newlyInsertedComponents.remove(entityComponent))) {
+                        throw new ImplementationException("Attempt at replacing entity component. Entity class: " + typeClass.getName() + " New id:" + newId + ", Old id:" + oldId, logger);
+                    }
+                }
+            }
+        }
+    }
 }

@@ -1,10 +1,12 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
+import com.google.common.collect.Sets;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 
 import javax.annotation.Nullable;
+import java.util.Set;
 
 /**
  * Boble som har entity komponenter nestede nivåer
@@ -20,6 +22,7 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
     /* En tekst som beskriver boblen */
     private String text;
     private Level1EntityComponent level1Component;
+    private Set<SetAaEntityComponent> aaComponents = Sets.newHashSet();
 
     public BubbleWithEntityComponent() {
     }
@@ -62,5 +65,13 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
     public void setLevel1Component(Level1EntityComponent level1Component) {
         this.level1Component = Components.checkSetComponentWithOwner(this.level1Component, level1Component);
         Components.setOwner(this.level1Component, this);
+    }
+
+    public Set<SetAaEntityComponent> getAaComponents() {
+        return aaComponents;
+    }
+
+    public void setAaComponents(Set<SetAaEntityComponent> aaComponents) {
+        this.aaComponents = aaComponents;
     }
 }
