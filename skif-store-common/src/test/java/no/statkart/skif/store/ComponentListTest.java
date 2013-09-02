@@ -271,6 +271,8 @@ public class ComponentListTest {
     }
 
     private static class Bubble extends AbstractBubbleObject {
+        private static final long serialVersionUID = 1L;
+
         private List<Component> components = new ArrayList<Component>();
 
         public List<Component> getComponents() {
@@ -279,6 +281,8 @@ public class ComponentListTest {
     }
 
     private static class Component implements BubbleComponent<Bubble> {
+        private static final long serialVersionUID = 1L;
+
         private Bubble owner;
         private String text;
 

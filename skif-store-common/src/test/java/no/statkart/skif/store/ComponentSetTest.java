@@ -132,6 +132,8 @@ public class ComponentSetTest {
     }
 
     private static class Bubble extends AbstractBubbleObject {
+        private static final long serialVersionUID = 1L;
+
         private Set<Component> components = new HashSet<Component>();
 
         public Set<Component> getComponents() {
@@ -140,6 +142,8 @@ public class ComponentSetTest {
     }
 
     private static class Component implements BubbleComponent<Bubble> {
+        private static final long serialVersionUID = 1L;
+
         private Bubble owner;
         private int number;
         private String text;
