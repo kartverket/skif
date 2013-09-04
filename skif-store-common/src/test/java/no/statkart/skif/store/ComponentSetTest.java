@@ -48,7 +48,7 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Sets.newHashSet(b), "aaComponents");
+        Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ComponentSetTest {
         componentSet.add(a);
 
         Assert.assertEquals(a.getOwner(), bubble, "a.owner");
-        Assert.assertEquals(bubble.getComponents(), Collections.singleton(a), "aaComponents");
+        Assert.assertEquals((Object) bubble.getComponents(), (Object) Collections.singleton(a), "aaComponents");
     }
 
     @Test
@@ -78,7 +78,7 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Sets.newHashSet(b), "aaComponents");
+        Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
 
     @Test
@@ -92,7 +92,7 @@ public class ComponentSetTest {
 
         Assert.assertEquals(a.getOwner(), bubble, "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Sets.newHashSet(a, b), "aaComponents");
+        Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(a, b), "aaComponents");
     }
 
     @Test
@@ -110,7 +110,7 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Sets.newHashSet(b), "aaComponents");
+        Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
 
     @Test
