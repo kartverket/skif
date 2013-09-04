@@ -1,0 +1,24 @@
+apply plugin: 'java'
+apply plugin: 'sktools-weblogic-wswar-plugin'
+
+sourceSets.weblogic {
+  java.srcDirs = ['src/main/java']
+  resources.srcDirs = []
+}
+
+
+warWeblogic {
+  from 'src/main/webapp'
+}
+
+
+dependencies {
+    compile project(':skif-wsversioning:skif-wsversioning-server')
+    compile project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsschema')
+    compile project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsmapping')
+
+    weblogicProvided libraries['tools.jar']
+    weblogicProvided libraries.weblogic
+
+    testCompile project(':skif-testsupport-common')
+}

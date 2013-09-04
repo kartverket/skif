@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/wsversioning/wsapi/v2/context"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:complexType name="WSVersioningContext">
+        <xs:sequence>
+            <xs:element name="clientVersion" type="xs:string"/>
+            <xs:element name="locale" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

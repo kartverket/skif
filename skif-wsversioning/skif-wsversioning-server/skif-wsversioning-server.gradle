@@ -1,0 +1,23 @@
+apply plugin: 'java'
+
+configurations {
+    client
+}
+
+dependencies {
+    compile project(':skif-wsversioning:skif-wsversioning-api')
+
+    //tester disse implementasjonene her..
+    if(hibernateVersion.equals("3.2")) {
+      compile project(':skif-store-server:skif-store-server-hs32')
+    } else if(hibernateVersion.equals("3.6")){
+      compile project(':skif-store-server:skif-store-server-hs36')
+    }
+
+    provided libraries.weblogic
+
+    testCompile project(':skif-testsupport-common')
+
+    //internal dependencies + optional deps to logging frameworks:
+    testCompile project(':skif-config')
+}

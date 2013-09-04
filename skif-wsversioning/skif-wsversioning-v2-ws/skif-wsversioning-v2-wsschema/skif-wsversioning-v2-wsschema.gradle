@@ -1,0 +1,25 @@
+apply plugin: 'java'
+apply plugin: 'sktools-xjc-plugin'
+
+sourceSets {
+  main {
+    xjc {
+      schema {
+        srcDir 'src/main/schema'
+        config.skDoc from: 'no.statkart.skif.wsversioning.wsapi.v2.domain', to: 'no.statkart.skif.wsversioning.domain'
+      }
+    }
+    resources.srcDirs = []
+  }
+}
+
+dependencies {
+    jaxb libraries.jaxb_xjc
+}
+
+//trenger dette for IntelliJ
+project.idea.module {
+    sourceDirs += sourceSets.main.xjc.schemas.collect { file("gen/main/xjc/${it.name}")}
+}
+
+

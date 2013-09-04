@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/wsversioning/wsapi/v1/domain"
+        xmlns:domainns="http://skif.statkart.no/wsversioning/wsapi/v1/domain"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <!--
+        Grunnleggende typer.
+    -->
+
+    <xs:complexType name="SnapshotVersion">
+        <xs:sequence>
+            <xs:element name="time" type="xs:long"/>
+            <xs:element name="nanos" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="WSVersioningBubbleId">
+        <xs:sequence>
+            <xs:element name="value" type="xs:long"/>
+            <xs:element name="snapshotVersion" type="domainns:SnapshotVersion"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="WSVersioningBubbleIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="domainns:WSVersioningBubbleId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="WSVersioningBubbleIdListForWSVersioningBubbleIdsMap">
+        <xs:annotation>
+            <xs:appinfo>
+                <IsDictionary
+                        xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                    true
+                </IsDictionary>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="key" nillable="true" type="domainns:WSVersioningBubbleId"/>
+                        <xs:element name="value" type="domainns:WSVersioningBubbleIdList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="WSVersioningBubble">
+        <xs:sequence>
+            <xs:element name="id" type="domainns:WSVersioningBubbleId"/>
+            <xs:element name="version" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="WSVersioningBubbleList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="domainns:WSVersioningBubble"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <!--
+        Selve domenet.
+    -->
+
+    <xs:complexType name="GateId">
+        <xs:complexContent>
+            <xs:extension base="domainns:WSVersioningBubbleId"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="GateIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="domainns:GateId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Gate">
+        <xs:complexContent>
+            <xs:extension base="domainns:WSVersioningBubble">
+                <xs:sequence>
+                    <xs:element name="gatenavn" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>
