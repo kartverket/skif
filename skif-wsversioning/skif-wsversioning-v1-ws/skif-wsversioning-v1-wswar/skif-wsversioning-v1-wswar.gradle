@@ -16,6 +16,7 @@ dependencies {
     compile project(':skif-wsversioning:skif-wsversioning-server')
     compile project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsschema')
     compile project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsmapping')
+    provided 'javax.servlet:servlet-api:2.4'
 
     weblogicProvided libraries['tools.jar']
     weblogicProvided libraries.weblogic
