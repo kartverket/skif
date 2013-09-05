@@ -22,4 +22,5 @@ dependencies {
     weblogicProvided libraries.weblogic
 
     testCompile project(':skif-testsupport-common')
+    testRuntime project(':skif-config')
 }
