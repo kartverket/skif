@@ -1,4 +1,4 @@
-package no.statkart.skif.wsversioning.wsapi.v2.server;
+package no.statkart.skif.wsversioning.wsapi.v2.service;
 
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -17,8 +17,6 @@ import no.statkart.skif.wsversioning.wsapi.v2.exception.mapping.WSVersioningExce
 import no.statkart.skif.wsversioning.wsapi.v2.mapping.WSVersioningMapper;
 import no.statkart.skif.wsversioning.wsapi.v2.mapping.WSVersioningMapping;
 import no.statkart.skif.wsversioning.wsapi.v2.mapping.WSVersioningServiceContextMapper;
-import no.statkart.skif.wsversioning.wsapi.v2.service.StoreServiceWSI;
-import no.statkart.skif.wsversioning.wsapi.v2.service.VegServiceWSI;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
