@@ -30,9 +30,6 @@ public class WSVersioningWebServiceInjectorConfig implements ServletContextListe
 
 
     public void createInjector() {
-        final Mapping mapping = new WSVersioningMapper().getMapping();
-
-
         ClassLoader classLoader = getClass().getClassLoader();
 
         Injector ejbServiceInjector = WSVersioningServerInjector.getInjector();
@@ -42,9 +39,7 @@ public class WSVersioningWebServiceInjectorConfig implements ServletContextListe
                 new ServletModule(),
                 new WSServerModule(configuration, classLoader),
 
-                new WSServerServiceModule(configuration, new WSVersioningServices().getServices(), mapping, classLoader)
-                        .setExceptionMapping(new WSVersioningExceptionMapper().getMapping())
-                        .setServiceContextMapperClass(WSVersioningServiceContextMapper.class)
+                new WSVersioningV2Module(configuration, classLoader)
         );
     }
 

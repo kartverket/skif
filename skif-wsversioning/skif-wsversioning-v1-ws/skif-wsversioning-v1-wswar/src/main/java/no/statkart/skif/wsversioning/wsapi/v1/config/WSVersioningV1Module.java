@@ -12,7 +12,7 @@ import no.statkart.skif.wsversioning.wsapi.v1.mapping.WSVersioningMapper;
 import no.statkart.skif.wsversioning.wsapi.v1.mapping.WSVersioningServiceContextMapper;
 
 /**
- * Modul som samler oppsett av servicer i V1.
+ * Modul som samler oppsett av webservicer i V1.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0

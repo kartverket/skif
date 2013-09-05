@@ -10,6 +10,7 @@ import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import no.statkart.skif.wsversioning.config.WSVersioningServerModule;
 import no.statkart.skif.wsversioning.config.WSVersioningServices;
+import no.statkart.skif.wsversioning.wsapi.v2.config.WSVersioningV2Module;
 import no.statkart.skif.wsversioning.wsapi.v2.context.WSVersioningContext;
 import no.statkart.skif.wsversioning.wsapi.v2.domain.*;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.ServiceException;
@@ -102,13 +103,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         protected void configure() {
             super.configure();
 
-            WSVersioningMapping mapping = new WSVersioningMapper().getMapping();
-
-            install(new WSServerServiceModule(moduleConfiguration, new WSVersioningServices().getServices(), mapping)
-                    .setClassWSIPackageMappings("service:wsapi.v2.service")
-                    .setExceptionMapping(new WSVersioningExceptionMapper().getMapping())
-                    .setServiceContextMapperClass(WSVersioningServiceContextMapper.class)
-            );
+            install(new WSVersioningV2Module(moduleConfiguration, getClass().getClassLoader()));
         }
     }
 }
