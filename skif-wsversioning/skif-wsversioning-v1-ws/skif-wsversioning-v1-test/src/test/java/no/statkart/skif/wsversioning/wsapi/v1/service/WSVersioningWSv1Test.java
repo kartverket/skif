@@ -33,7 +33,7 @@ public class WSVersioningWSv1Test extends SkifTestCase {
     }
 
     public void testFindAlleGater() throws ServiceException {
-        GateServiceWSI gateService = injector.getInstance(GateServiceWSI.class);
+        GateService gateService = injector.getInstance(GateService.class);
         WSVersioningContext context = createContext();
 
         GateIdList alleGater = gateService.findAlleGater(context);
@@ -42,7 +42,7 @@ public class WSVersioningWSv1Test extends SkifTestCase {
     }
 
     public void testStoreGetTjernslia() throws ServiceException {
-        StoreServiceWSI storeService = injector.getInstance(StoreServiceWSI.class);
+        StoreService storeService = injector.getInstance(StoreService.class);
 
         GateId gateId = new GateId();
         gateId.setValue(1);
@@ -84,7 +84,7 @@ public class WSVersioningWSv1Test extends SkifTestCase {
         @Override
         protected void configure() {
             install(new RemoteServerModule(moduleConfiguration));
-            install(new RemoteWSServiceModule(moduleConfiguration, Arrays.<Class<?>>asList(GateServiceWSI.class, StoreServiceWSI.class)));
+            install(new RemoteWSServiceModule(moduleConfiguration, Arrays.<Class<?>>asList(GateService.class, StoreService.class)));
         }
     }
 

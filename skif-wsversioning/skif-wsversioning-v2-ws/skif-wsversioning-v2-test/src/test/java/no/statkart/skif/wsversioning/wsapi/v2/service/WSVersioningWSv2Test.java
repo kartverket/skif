@@ -32,7 +32,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
     }
 
     public void testFindAlleVeger() throws ServiceException {
-        VegServiceWSI vegService = injector.getInstance(VegServiceWSI.class);
+        VegService vegService = injector.getInstance(VegService.class);
         WSVersioningContext context = createContext();
 
         VegIdList alleVeger = vegService.findAlleVeger(context);
@@ -41,7 +41,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
     }
 
     public void testStoreGetTjernslia() throws ServiceException {
-        StoreServiceWSI storeService = injector.getInstance(StoreServiceWSI.class);
+        StoreService storeService = injector.getInstance(StoreService.class);
 
         VegId vegId = new VegId();
         vegId.setValue(1);
@@ -83,7 +83,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         @Override
         protected void configure() {
             install(new RemoteServerModule(moduleConfiguration));
-            install(new RemoteWSServiceModule(moduleConfiguration, Arrays.<Class<?>>asList(VegServiceWSI.class, StoreServiceWSI.class)));
+            install(new RemoteWSServiceModule(moduleConfiguration, Arrays.<Class<?>>asList(VegService.class, StoreService.class)));
         }
     }
 

@@ -42,9 +42,13 @@ include 'skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wscompat
 include 'skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsschema'
 include 'skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsmapping'
 include 'skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wswar'
+include 'skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsclient'
+include 'skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-test'
 include 'skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsschema'
 include 'skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsmapping'
 include 'skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar'
+include 'skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsclient'
+include 'skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-test'
 include 'skif-wsversioning:skif-wsversioning-ear'
 
 

@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'sktools-weblogic-wsclient-plugin'
+
+dependencies {
+  weblogicProvided libraries.weblogic
+  weblogicProvided libraries['tools.jar']
+}
+
+weblogicWsClient {
+  webService {
+    baseWar { project(path: ':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar', configuration: 'weblogic') }
+    exceptionReusePackage 'no.statkart.skif.wsversioning.wsapi.v2.exception'
+  }
+}
+
+

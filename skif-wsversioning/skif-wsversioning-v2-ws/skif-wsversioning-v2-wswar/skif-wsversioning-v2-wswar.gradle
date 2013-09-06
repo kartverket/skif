@@ -20,7 +20,4 @@ dependencies {
 
     provided libraries['tools.jar']
     provided libraries.weblogic
-
-    testCompile project(':skif-testsupport-common')
-    testRuntime project(':skif-config')
 }

@@ -1,0 +1,13 @@
+apply plugin: 'java'
+
+dependencies {
+    compile project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsmapping')
+    compile project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsclient')
+
+    provided project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wswar')
+
+    provided libraries.weblogic
+
+    testCompile project(':skif-testsupport-common')
+    testRuntime project(':skif-config')
+}
