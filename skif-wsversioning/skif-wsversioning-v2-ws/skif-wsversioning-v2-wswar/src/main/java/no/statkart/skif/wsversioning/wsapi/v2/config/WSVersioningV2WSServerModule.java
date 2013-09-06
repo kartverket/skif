@@ -15,10 +15,10 @@ import no.statkart.skif.wsversioning.wsapi.v2.mapping.WSVersioningServiceContext
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-public class WSVersioningV2Module extends SkifModule {
+public class WSVersioningV2WSServerModule extends SkifModule {
     private final ClassLoader classLoader;
 
-    public WSVersioningV2Module(ModuleConfiguration moduleConfiguration, ClassLoader classLoader) {
+    public WSVersioningV2WSServerModule(ModuleConfiguration moduleConfiguration, ClassLoader classLoader) {
         super(moduleConfiguration);
         this.classLoader = classLoader;
     }

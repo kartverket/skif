@@ -4,7 +4,7 @@ import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
-import no.statkart.skif.wsversioning.config.WSVersioningServerInjector;
+import no.statkart.skif.wsversioning.config.WSVersioningServerV1Injector;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -26,14 +26,14 @@ public class WSVersioningWebServiceInjectorConfig implements ServletContextListe
     public void createInjector() {
         ClassLoader classLoader = getClass().getClassLoader();
 
-        Injector ejbServiceInjector = WSVersioningServerInjector.getInjector();
+        Injector ejbServiceInjector = WSVersioningServerV1Injector.getInjector();
         ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
         injector = ejbServiceInjector.createChildInjector(
                 new ServletModule(),
                 new WSServerModule(configuration, classLoader),
 
-                new WSVersioningV1Module(configuration, classLoader)
+                new WSVersioningV1WSServerModule(configuration, classLoader)
         );
     }
 

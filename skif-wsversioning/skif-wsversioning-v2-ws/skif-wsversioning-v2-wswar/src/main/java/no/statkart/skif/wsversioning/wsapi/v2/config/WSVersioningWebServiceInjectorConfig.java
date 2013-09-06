@@ -2,15 +2,9 @@ package no.statkart.skif.wsversioning.wsapi.v2.config;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
-import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
-import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.wsversioning.config.WSVersioningServerInjector;
-import no.statkart.skif.wsversioning.config.WSVersioningServices;
-import no.statkart.skif.wsversioning.wsapi.v2.exception.mapping.WSVersioningExceptionMapper;
-import no.statkart.skif.wsversioning.wsapi.v2.mapping.WSVersioningMapper;
-import no.statkart.skif.wsversioning.wsapi.v2.mapping.WSVersioningServiceContextMapper;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -39,7 +33,7 @@ public class WSVersioningWebServiceInjectorConfig implements ServletContextListe
                 new ServletModule(),
                 new WSServerModule(configuration, classLoader),
 
-                new WSVersioningV2Module(configuration, classLoader)
+                new WSVersioningV2WSServerModule(configuration, classLoader)
         );
     }
 

@@ -3,7 +3,7 @@ package no.statkart.skif.wsversioning.service;
 import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
-import no.statkart.skif.wsversioning.config.WSVersioningEJBInterceptorJEE;
+import no.statkart.skif.wsversioning.config.WSVersioningV1EJBInterceptorJEE;
 import no.statkart.skif.wsversioning.domain.VegId;
 
 import javax.ejb.Stateless;
@@ -16,8 +16,8 @@ import java.util.Set;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-@Stateless(name = "no.statkart.skif.wsversioning.service.GateServiceEJBBean")
-@Interceptors(WSVersioningEJBInterceptorJEE.class)
+@Stateless(name = "GateServiceEJBBean")
+@Interceptors(WSVersioningV1EJBInterceptorJEE.class)
 public class GateServiceEJBBean extends EJBTimedService implements GateService {
     @Inject
     @EJBServiceChain

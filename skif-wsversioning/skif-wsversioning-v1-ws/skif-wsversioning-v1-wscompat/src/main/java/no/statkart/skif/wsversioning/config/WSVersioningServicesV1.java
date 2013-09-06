@@ -3,7 +3,6 @@ package no.statkart.skif.wsversioning.config;
 import com.google.common.collect.ImmutableList;
 import no.statkart.skif.service.ServicesListing;
 import no.statkart.skif.wsversioning.service.StoreService;
-import no.statkart.skif.wsversioning.service.GateService;
 
 import java.util.List;
 

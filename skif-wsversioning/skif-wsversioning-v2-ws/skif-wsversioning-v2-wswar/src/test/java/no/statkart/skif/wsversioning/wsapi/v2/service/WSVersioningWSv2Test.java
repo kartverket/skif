@@ -6,18 +6,12 @@ import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteWSServiceModule;
-import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import no.statkart.skif.wsversioning.config.WSVersioningServerModule;
-import no.statkart.skif.wsversioning.config.WSVersioningServices;
-import no.statkart.skif.wsversioning.wsapi.v2.config.WSVersioningV2Module;
+import no.statkart.skif.wsversioning.wsapi.v2.config.WSVersioningV2WSServerModule;
 import no.statkart.skif.wsversioning.wsapi.v2.context.WSVersioningContext;
 import no.statkart.skif.wsversioning.wsapi.v2.domain.*;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.ServiceException;
-import no.statkart.skif.wsversioning.wsapi.v2.exception.mapping.WSVersioningExceptionMapper;
-import no.statkart.skif.wsversioning.wsapi.v2.mapping.WSVersioningMapper;
-import no.statkart.skif.wsversioning.wsapi.v2.mapping.WSVersioningMapping;
-import no.statkart.skif.wsversioning.wsapi.v2.mapping.WSVersioningServiceContextMapper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -103,7 +97,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         protected void configure() {
             super.configure();
 
-            install(new WSVersioningV2Module(moduleConfiguration, getClass().getClassLoader()));
+            install(new WSVersioningV2WSServerModule(moduleConfiguration, getClass().getClassLoader()));
         }
     }
 }

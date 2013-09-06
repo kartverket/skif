@@ -14,7 +14,7 @@ warWeblogic {
 configurations.weblogicProvided.extendsFrom configurations.provided
 
 dependencies {
-    compile project(':skif-wsversioning:skif-wsversioning-server')
+    compile project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wscompat')
     compile project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsschema')
     compile project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsmapping')
 

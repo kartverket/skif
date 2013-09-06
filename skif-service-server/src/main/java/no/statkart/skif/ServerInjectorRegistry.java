@@ -1,6 +1,7 @@
 package no.statkart.skif;
 
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.ejb.EJBLookupHelper;
@@ -14,6 +15,7 @@ import java.util.Map;
 /**
  * Klasse som holder på registrerte skif server injectors. Denne klasse gjør det mulig å ha mer
  * enn en server injector per applikasjon om ønskelig.
+ *
  * @author Henrik Fredholm
  * @since 2.0
  */
@@ -40,8 +42,8 @@ public class ServerInjectorRegistry {
 
     public static synchronized Injector getInjector(String configfile) {
         Injector injector = injectorMap.get(configfile);
-        if (injector==null) {
-           ModuleBuilder moduleBuilder = new ModuleBuilder()
+        if (injector == null) {
+            ModuleBuilder moduleBuilder = new ModuleBuilder()
                     .setConfigurationFilename(configfile);
             injector = createInjector(moduleBuilder);
         }
@@ -51,7 +53,7 @@ public class ServerInjectorRegistry {
     public static synchronized Injector getInjector(Class<? extends Configuration> configurationClass) {
         Injector injector = injectorMap.get(configurationClass.getName());
 
-        if (injector==null) {
+        if (injector == null) {
             final Configuration configuration = SkifUtil.newInstance(configurationClass);
             ModuleBuilder moduleBuilder = new ModuleBuilder()
                     .setConfiguration(configuration);
@@ -63,7 +65,7 @@ public class ServerInjectorRegistry {
 
     public static synchronized Injector getInjector(String key, ModuleBuilder moduleBuilder) {
         Injector injector = injectorMap.get(key);
-        if (injector==null) {
+        if (injector == null) {
             injector = createInjector(moduleBuilder);
             injectorMap.put(key, injector);
         }
@@ -75,5 +77,21 @@ public class ServerInjectorRegistry {
         return moduleBuilder.setServiceMode(ServiceMode.JEE).buildInjector();
     }
 
-
+    /**
+     * Oppretter en child-injector.
+     *
+     * @param key               unik identifikator
+     * @param parentInjector    injector å basere på
+     * @param modules           moduler som skal inngå i child-injector
+     * @return child-injector
+     * @since 2.4.0
+     */
+    public static synchronized Injector getInjector(String key, Injector parentInjector, Module... modules) {
+        Injector injector = injectorMap.get(key);
+        if (injector == null) {
+            injector = parentInjector.createChildInjector(modules);
+            injectorMap.put(key, injector);
+        }
+        return injector;
+    }
 }
