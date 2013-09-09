@@ -33,7 +33,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
 
     public void testFindAlleVeger() throws ServiceException {
         VegService vegService = injector.getInstance(VegService.class);
-        WSVersioningContext context = createContext();
+        WSVersioningContext context = createContext_2_1();
 
         VegIdList alleVeger = vegService.findAlleVeger(context);
         Assert.assertEquals(alleVeger.getItem().get(0).getValue(), 1, "Første vegId");
@@ -47,16 +47,41 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         vegId.setValue(1);
         vegId.setSnapshotVersion(createSnapshotVersionCurrent());
 
-        WSVersioningBubble bubble = storeService.getObject(vegId, createContext());
+        WSVersioningBubble bubble = storeService.getObject(vegId, createContext_2_1());
 
         Assert.assertTrue(bubble instanceof Veg, "bubble instanceof Veg");
 
         Veg veg = (Veg) bubble;
         Assert.assertEquals(veg.getId().getValue(), 1L, "Id");
         Assert.assertEquals(veg.getAdressenavn(), "Tjernslia", "Adressenavn");
+        Assert.assertEquals(veg.getAlternativtNavn(), "Tjernslien", "Alternativt navn");
     }
 
-    private WSVersioningContext createContext() {
+    public void testStoreGetTjernsliaOldVersion() throws ServiceException {
+        StoreService storeService = injector.getInstance(StoreService.class);
+
+        VegId vegId = new VegId();
+        vegId.setValue(1);
+        vegId.setSnapshotVersion(createSnapshotVersionCurrent());
+
+        WSVersioningBubble bubble = storeService.getObject(vegId, createContext_2_0());
+
+        Assert.assertTrue(bubble instanceof Veg, "bubble instanceof Veg");
+
+        Veg veg = (Veg) bubble;
+        Assert.assertEquals(veg.getId().getValue(), 1L, "Id");
+        Assert.assertEquals(veg.getAdressenavn(), "Tjernslia", "Adressenavn");
+        Assert.assertEquals(veg.getAlternativtNavn(), null, "Alternativt navn skal ikke finnes for denne versjonen");
+    }
+
+    private WSVersioningContext createContext_2_1() {
+        WSVersioningContext context = new WSVersioningContext();
+        context.setLocale(Locale.getDefault().toString());
+        context.setClientVersion("2.1");
+        return context;
+    }
+
+    private WSVersioningContext createContext_2_0() {
         WSVersioningContext context = new WSVersioningContext();
         context.setLocale(Locale.getDefault().toString());
         context.setClientVersion("2.0");

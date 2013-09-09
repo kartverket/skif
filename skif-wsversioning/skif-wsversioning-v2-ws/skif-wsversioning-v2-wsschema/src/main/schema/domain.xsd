@@ -86,6 +86,11 @@
             <xs:extension base="domainns:WSVersioningBubble">
                 <xs:sequence>
                     <xs:element name="adressenavn" type="xs:string"/>
+                    <xs:element name="alternativtNavn" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Kun i liksomversjon 2.1 angitt i tester</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

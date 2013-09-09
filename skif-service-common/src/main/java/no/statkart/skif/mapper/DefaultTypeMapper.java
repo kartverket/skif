@@ -44,7 +44,7 @@ import java.util.zip.ZipInputStream;
  * @author Steinar Hansen
  * @author Tor Egil R. Strand
  */
-public class DefaultTypeMapper {
+public class DefaultTypeMapper implements DefaultTypeMapping {
     private Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
 
     private static Map<Method, Method> settersForGetters = new HashMap<Method, Method>();
@@ -290,20 +290,23 @@ public class DefaultTypeMapper {
     }
 
 
-    public final Object mapDomainObject(Object source, TypeToken<?> wsapiType) {
-        Object target = null;
+    @Override
+    public final <DomainT> DomainT mapDomainObject(Object source, TypeToken<DomainT> wsapiType) {
+        DomainT target = null;
         if (!doNotMapTheseClasses.contains(source.getClass())) {
             try {
                 TypeToken<?> targetType = findTargetClass(source.getClass(), wsapiType);
                 Object alreadyMappedValue = mappedFields.getMappedValue(source, targetType.getRawType());
                 if (alreadyMappedValue == null) {
-                    target = targetType.getRawType().newInstance();
+                    //noinspection unchecked
+                    target = (DomainT) targetType.getRawType().newInstance();
 
                     if (!doNotMapTheseClasses.contains(source.getClass())) {
                         mapCommonDomainFields(source, target, wsapiType);
                     }
                 } else {
-                    target = alreadyMappedValue;
+                    //noinspection unchecked
+                    target = (DomainT) alreadyMappedValue;
                 }
             } catch (ClassNotFoundException e) {
                 throw new MappingException(e);
@@ -320,8 +323,9 @@ public class DefaultTypeMapper {
     }
 
 
-    public final Object mapWsapiObject(Object source, TypeToken<?> domainType) {
-        Object target = null;
+    @Override
+    public final <WsapiT> WsapiT mapWsapiObject(Object source, TypeToken<WsapiT> domainType) {
+        WsapiT target = null;
         if (!doNotMapTheseClasses.contains(source.getClass())) {
             try {
                 TypeToken<?> targetType = findTargetClass(source.getClass(), domainType);
@@ -338,17 +342,19 @@ public class DefaultTypeMapper {
                         }
                         field.setAccessible(true);
                         Collection collection = (Collection) field.get(source);
-                        //noinspection ConstantConditions
-                        target = Array.newInstance(targetType.getComponentType().getRawType(), collection == null ? 0 : collection.size());
+                        //noinspection ConstantConditions,unchecked
+                        target = (WsapiT) Array.newInstance(targetType.getComponentType().getRawType(), collection == null ? 0 : collection.size());
                     } else {
-                        target = targetType.getRawType().newInstance();
+                        //noinspection unchecked
+                        target = (WsapiT) targetType.getRawType().newInstance();
                     }
 
                     if (!doNotMapTheseClasses.contains(source.getClass())) {
                         mapCommonWsapiFields(source, target, targetType);
                     }
                 } else {
-                    target = alreadyMappedValue;
+                    //noinspection unchecked
+                    target = (WsapiT) alreadyMappedValue;
                 }
             } catch (InstantiationException e) {
                 throw new MappingException(e);

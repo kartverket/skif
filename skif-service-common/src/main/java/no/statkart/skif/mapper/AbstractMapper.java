@@ -16,7 +16,7 @@ import java.util.*;
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  */
-public abstract class AbstractMapper<M extends Mapping> implements InvocationHandler {
+public abstract class AbstractMapper<M extends Mapping> implements InvocationHandler, DefaultTypeMapped {
 //    private static Logger logger = LoggerFactory.getLogger(AbstractMapper.class);
 
     private DefaultTypeMapper defaultMapper = null;
@@ -121,6 +121,11 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         }
 
         return target;
+    }
+
+    @Override
+    public DefaultTypeMapping getDefaultTypeMapping() {
+        return getDefaultMapper();
     }
 
     protected Object d2w(Method method, Object[] args) {

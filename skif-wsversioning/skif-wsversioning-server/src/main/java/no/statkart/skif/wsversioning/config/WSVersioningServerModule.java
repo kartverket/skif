@@ -133,8 +133,8 @@ public class WSVersioningServerModule extends SkifServerModule {
     @Named("bubbles")
     protected Map<BubbleId<?>, BubbleObject> createBubbleMap() {
         ImmutableMap.Builder<BubbleId<?>, BubbleObject> builder = ImmutableMap.builder();
-        builder.put(new VegId(1L), new Veg(new VegId(1L), "Tjernslia"));
-        builder.put(new VegId(2L), new Veg(new VegId(2L), "Kartverksveien"));
+        builder.put(new VegId(1L), new Veg(new VegId(1L), "Tjernslia", "Tjernslien"));
+        builder.put(new VegId(2L), new Veg(new VegId(2L), "Kartverksveien", null));
         return builder.build();
     }
 

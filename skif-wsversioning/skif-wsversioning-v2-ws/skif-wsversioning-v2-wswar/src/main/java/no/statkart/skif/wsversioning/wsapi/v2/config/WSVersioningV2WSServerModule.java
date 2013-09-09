@@ -3,6 +3,7 @@ package no.statkart.skif.wsversioning.wsapi.v2.config;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.wsversioning.config.WSVersioningServices;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.mapping.WSVersioningExceptionMapper;
@@ -25,7 +26,7 @@ public class WSVersioningV2WSServerModule extends SkifModule {
 
     @Override
     protected void configure() {
-        final Mapping mapping = new WSVersioningMapper().getMapping();
+        final Mapping mapping = new WSVersioningMapper(getProvider(ServiceContext.class)).getMapping();
 
         install(new WSServerServiceModule(moduleConfiguration, new WSVersioningServices().getServices(), mapping, classLoader)
                 .setClassWSIPackageMappings("service:wsapi.v2.service")

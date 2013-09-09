@@ -10,13 +10,15 @@ public class Veg extends AbstractWSVersioningBubbleObject {
     private static final long serialVersionUID = 1L;
 
     private String adressenavn;
+    private String alternativtNavn;
 
     public Veg() {
     }
 
-    public Veg(VegId<?> id, String adressenavn) {
+    public Veg(VegId<?> id, String adressenavn, String alternativtNavn) {
         setId(id);
         this.adressenavn = adressenavn;
+        this.alternativtNavn = alternativtNavn;
     }
 
     @Override
@@ -30,5 +32,13 @@ public class Veg extends AbstractWSVersioningBubbleObject {
 
     public void setAdressenavn(String adressenavn) {
         this.adressenavn = adressenavn;
+    }
+
+    public String getAlternativtNavn() {
+        return alternativtNavn;
+    }
+
+    public void setAlternativtNavn(String alternativtNavn) {
+        this.alternativtNavn = alternativtNavn;
     }
 }
