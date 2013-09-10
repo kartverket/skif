@@ -1,42 +1,36 @@
-package no.statkart.skif.storetest2.domain;
-
-import no.statkart.skif.store.BubbleObjectWithHistory;
+package no.statkart.skif.store;
 
 import java.sql.Timestamp;
 
 /**
- * Baseklasse for bobler med historikk.
+ * Mulig baseklasse for bobler med historikk.
  *
  * @author Tor Egil R. Strand
- * @since 2.2.1
+ * @since 2.4.0
  */
-public class AbstractStoreTest2BubbleWithHistory extends AbstractStoreTest2Bubble implements BubbleObjectWithHistory {
+public class AbstractBubbleObjectWithHistory extends AbstractBubbleObject implements BubbleObjectWithHistory {
     private static final long serialVersionUID = 1L;
 
     private Timestamp oppdateringsdato;
     private Timestamp sluttdato;
-    private long versjonId;
 
+    @Override
     public Timestamp getOppdateringsdato() {
         return oppdateringsdato;
     }
 
-    // For Hibernate
+    @Override
     public void setOppdateringsdato(Timestamp oppdateringsdato) {
         this.oppdateringsdato = oppdateringsdato;
     }
 
+    @Override
     public Timestamp getSluttdato() {
         return sluttdato;
     }
 
-    // For Hibernate
+    @Override
     public void setSluttdato(Timestamp sluttdato) {
         this.sluttdato = sluttdato;
-    }
-
-    @Override
-    public AbstractStoreTest2BubbleWithHistoryId<?> getId() {
-        return (AbstractStoreTest2BubbleWithHistoryId<?>) super.getId();
     }
 }

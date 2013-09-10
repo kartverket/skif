@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.domain.standalone;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObjectWithHistory;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 import java.sql.Timestamp;
@@ -17,10 +18,9 @@ import java.sql.Timestamp;
  * @author Henrik Fredholm
  * @since 2.3
  */
-public class TestBubbleWithHistory extends AbstractBubbleObject implements StoreTestBubble {
+public class TestBubbleWithHistory extends AbstractBubbleObject implements StoreTestBubble, BubbleObjectWithHistory {
     private Timestamp oppdateringsdato;
     private Timestamp sluttdato;
-    private long versjonId;
     private String text = "";
 
     public TestBubbleWithHistory() {
@@ -59,14 +59,6 @@ public class TestBubbleWithHistory extends AbstractBubbleObject implements Store
 
     public void setSluttdato(Timestamp sluttdato) {
         this.sluttdato = sluttdato;
-    }
-
-    public long getVersjonId() {
-        return versjonId;
-    }
-
-    public void setVersjonId(long versjonId) {
-        this.versjonId = versjonId;
     }
 
     public String getText() {

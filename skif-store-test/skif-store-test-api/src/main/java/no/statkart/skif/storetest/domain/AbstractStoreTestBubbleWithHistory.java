@@ -1,5 +1,7 @@
 package no.statkart.skif.storetest.domain;
 
+import no.statkart.skif.store.BubbleObjectWithHistory;
+
 import java.sql.Timestamp;
 
 /**
@@ -8,7 +10,7 @@ import java.sql.Timestamp;
  * @author Henrik Fredholm
  * @since 2.3
  */
-public abstract class AbstractStoreTestBubbleWithHistory extends AbstractStoreTestBubble {
+public abstract class AbstractStoreTestBubbleWithHistory extends AbstractStoreTestBubble implements BubbleObjectWithHistory {
     private static final long serialVersionUID = 1L;
 
     private Timestamp oppdateringsdato;
@@ -48,16 +50,6 @@ public abstract class AbstractStoreTestBubbleWithHistory extends AbstractStoreTe
     @Deprecated // WS-mapping krever public
     public void setSluttdato(Timestamp sluttdato) {
         this.sluttdato = sluttdato;
-    }
-
-    public long getVersjonId() {
-        return versjonId;
-    }
-
-    @SuppressWarnings("UnusedDeclaration") // Hibernate
-    @Deprecated // WS-mapping krever public
-    public void setVersjonId(long versjonId) {
-        this.versjonId = versjonId;
     }
 
     @Override

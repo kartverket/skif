@@ -20,6 +20,6 @@ public interface BubbleObject extends Serializable {
     public void setId(BubbleId<?> id);
     public Store store();
     public void register(Store store);
-    public long getVersion();
-    public void setVersion(long version);
+    public long getVersjonId();
+    public void setVersjonId(long version);
 }

@@ -6,14 +6,15 @@ import static no.statkart.skif.guava.Preconditions.checkState;
 
 /**
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  * @since 2.0
  */
-public class AbstractBubbleObject implements BubbleObject, Serializable{
+public class AbstractBubbleObject implements BubbleObject, Serializable {
     private static final long serialVersionUID = 1L;
 
     protected transient Store store;
     protected BubbleId<?> id;
-    private long version = 0;
+    private long versjonId = 0;
 
     @Override
     public BubbleId<?> getBubbleId() {
@@ -36,16 +37,13 @@ public class AbstractBubbleObject implements BubbleObject, Serializable{
     }
 
 
-    public long getVersion() {
-        return version;
+    public long getVersjonId() {
+        return versjonId;
     }
 
-    public void setVersion(long version) {
-        this.version = version;
-    }
-
-    public void incremetVersion() {
-        version++;
+    @Deprecated // WS-mapping krever public, men man skal normal ikke bruke denne metoden
+    public void setVersjonId(long versjonId) {
+        this.versjonId = versjonId;
     }
 
 
@@ -76,7 +74,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable{
     public String toString() {
         return getClass().getSimpleName() +"{" +
                 "id=" + id +
-                ", version=" + version +
+                ", versjonId=" + versjonId +
                 '}';
     }
 }

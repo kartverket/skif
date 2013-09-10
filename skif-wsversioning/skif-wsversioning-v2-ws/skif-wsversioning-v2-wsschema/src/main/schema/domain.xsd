@@ -54,7 +54,7 @@
     <xs:complexType name="WSVersioningBubble">
         <xs:sequence>
             <xs:element name="id" type="domainns:WSVersioningBubbleId"/>
-            <xs:element name="version" type="xs:long"/>
+            <xs:element name="versjonId" type="xs:long"/>
         </xs:sequence>
     </xs:complexType>
 
