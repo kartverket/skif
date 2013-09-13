@@ -48,6 +48,7 @@ import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWit
 import no.statkart.skif.storetest.domain.basic.*;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
@@ -222,6 +223,7 @@ public class StoreTestServerModule extends SkifModule {
                         // Components
                 .addResource(BubbleWithCompositeComponent.class)
                 .addResource(BubbleWithEntityComponent.class)
+                .addResource(BubbleWithEntityInCompositeComponent.class)
 
                 .addResource(EnumKodeIdType.class)
                 .addResource(ADbKode.class)

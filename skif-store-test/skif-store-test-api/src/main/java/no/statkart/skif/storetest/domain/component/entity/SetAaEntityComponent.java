@@ -1,6 +1,14 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 import no.statkart.skif.store.AbstractEntityBubbleComponentWithOwner;
+import no.statkart.skif.store.Components;
+import no.statkart.skif.store.OwnerCheck;
+import no.statkart.skif.store.ValueObjects;
+import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
+
+import java.util.Set;
 
 /**
  * Entity som inngår i et set A som ligger i BubbleWithEntityComponent.
@@ -8,13 +16,16 @@ import no.statkart.skif.store.AbstractEntityBubbleComponentWithOwner;
  * <P>Komponenten har en ident {@code ident} som skal kunne endres mens komponenten inngår i et Set.
  *
  * @author Henrik Fredholm
- * @since 2.3
+ * @since 2.4
  */
 public class SetAaEntityComponent extends AbstractEntityBubbleComponentWithOwner<BubbleWithEntityComponent> {
     private Long id;
     private BubbleWithEntityComponent owner;
     private int ident;
     private String text;
+    private SetAaLevel1EntityComponent level1Component;
+    private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
+    private NestedEntityComponent nestedComponent;
 
     public SetAaEntityComponent() {
     }
@@ -22,6 +33,12 @@ public class SetAaEntityComponent extends AbstractEntityBubbleComponentWithOwner
     public SetAaEntityComponent(int ident, String text) {
         this.ident=ident;
         this.text = text;
+    }
+
+    public SetAaEntityComponent(int ident, String text, SetAaLevel1EntityComponent level1Component) {
+        setIdent(ident);
+        setText(text);
+        setLevel1Component(level1Component);
     }
 
     public Long getId() {
@@ -40,7 +57,17 @@ public class SetAaEntityComponent extends AbstractEntityBubbleComponentWithOwner
 
     @Override
     public void setOwner(BubbleWithEntityComponent owner) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        this.owner = Components.checkSetOwner(
+                this,
+                this.owner,
+                owner,
+                new OwnerCheck<BubbleWithEntityComponent, SetAaEntityComponent>() {
+                    public  boolean apply(BubbleWithEntityComponent owner, SetAaEntityComponent child) {
+                        return owner.getAaComponents().contains(child);
+                    }
+                }
+        );
+        this.owner = owner;
     }
 
     public int getIdent() {
@@ -57,5 +84,36 @@ public class SetAaEntityComponent extends AbstractEntityBubbleComponentWithOwner
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public SetAaLevel1EntityComponent getLevel1Component() {
+        return level1Component;
+    }
+
+    public void setLevel1Component(SetAaLevel1EntityComponent level1Component) {
+        this.level1Component = Components.checkSetComponentWithOwner(this.level1Component, level1Component);
+        Components.setOwner(this.level1Component, this);
+    }
+
+    public Set<BeloepValueObject> getBeloepSet() {
+        return beloepSet;
+    }
+
+    public void setBeloepSet(Set<BeloepValueObject> beloepSet) {
+        ValueObjects.setFrom(this.beloepSet, beloepSet);
+    }
+
+    public NestedEntityComponent getNestedComponent() {
+        return nestedComponent;
+    }
+
+    public void setNestedComponent(NestedEntityComponent nestedComponent) {
+        this.nestedComponent = nestedComponent;
+    }
+
+    public void removeHibernatePersistenceSet() {
+        beloepSet = Sets.newHashSet(beloepSet);
+        if (level1Component!=null)level1Component.removeHibernatePersistenceSet();
+        if (nestedComponent!=null)nestedComponent.removeHibernatePersistenceSet();
     }
 }

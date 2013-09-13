@@ -12,7 +12,7 @@ import java.util.List;
  * MockupFacade for StoreTest tester
  *
  * @author Henrik Fredholm
- * @since 2.3
+ * @since 2.4
  */
 @Singleton
 public class StoreTestMockupFacade extends AbstractMockupFacade {
@@ -27,6 +27,7 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
     @Inject private HistWithRelationMockupFactory histWithRelationMockupFactory;
     @Inject private BubbleWithCompositeComponentMockupFactory bubbleWithCompositeComponentMockupFactory;
     @Inject private BubbleWithEntityComponentMockupFactory bubbleWithEntityComponentMockupFactory;
+    @Inject private BubbleWithEntityInCompositeComponentMockupFactory bubbleWithEntityInCompositeComponentMockupFactory;
 
     @Inject private SubTypedBubbleMockupFactory subTypedBubbleMockupFactory;
 
@@ -42,7 +43,8 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
                 histWithRelationMockupFactory,
                 subTypedBubbleMockupFactory,
                 bubbleWithCompositeComponentMockupFactory,
-                bubbleWithEntityComponentMockupFactory
+                bubbleWithEntityComponentMockupFactory,
+                bubbleWithEntityInCompositeComponentMockupFactory
         );
     }
 
@@ -84,6 +86,10 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
     public BubbleWithEntityComponentMockupFactory getBubbleWithEntityComponentMockupFactory() {
         return bubbleWithEntityComponentMockupFactory;
+    }
+
+    public BubbleWithEntityInCompositeComponentMockupFactory getBubbleWithEntityInCompositeComponentMockupFactory() {
+        return bubbleWithEntityInCompositeComponentMockupFactory;
     }
 }
 

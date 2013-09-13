@@ -32,7 +32,7 @@ import static org.testng.Assert.*;
  *  Tester EntityCompontent i UnitOfWork på Klient for SingleVm og JEE mode
  *
  * @author Henrik Fredholm
- * @since 2.3
+ * @since 2.4
  */
 @Test(groups = "hibernate36")
 public class EntityComponentTest extends StoreTestTestCase {
@@ -251,7 +251,7 @@ public class EntityComponentTest extends StoreTestTestCase {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         store.beginUnitOfWork();
-        final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneSetAaComponentsId2());
+        final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetId());
         SetAaEntityComponent component = bubble.getAaComponents().iterator().next();
         int newIdent = -component.getIdent();
         component.setIdent(newIdent);
@@ -260,7 +260,7 @@ public class EntityComponentTest extends StoreTestTestCase {
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
         store.endUnitOfWork();
 
-        final BubbleWithEntityComponent updatedBubble = store.get(mockupFactory.getWithOneSetAaComponentsId2());
+        final BubbleWithEntityComponent updatedBubble = store.get(mockupFactory.getWithOneAaComponentInSetId());
         assertThat(updatedBubble.getAaComponents()).hasSize(1);
         SetAaEntityComponent updatedComponent = updatedBubble.getAaComponents().iterator().next();
         assertEquals(updatedComponent.getId(), component.getId());

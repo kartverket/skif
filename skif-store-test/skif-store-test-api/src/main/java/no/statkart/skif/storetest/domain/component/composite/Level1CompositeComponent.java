@@ -1,10 +1,8 @@
 package no.statkart.skif.storetest.domain.component.composite;
 
-import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import no.statkart.skif.store.CompositeBubbleComponent;
-import no.statkart.skif.store.CompositeComponentWithCollections;
-import no.statkart.skif.store.Components;
+import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
 import javax.annotation.Nullable;
@@ -12,16 +10,24 @@ import java.util.Set;
 
 /**
  * @author Henrik Fredholm
+ * @since 2.4
  */
 public class Level1CompositeComponent implements CompositeBubbleComponent<BubbleWithCompositeComponent>, CompositeComponentWithCollections {
     private BubbleWithCompositeComponent owner;
     private String text;
     private BeloepValueObject belop;
     private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
-    private EntityInCompositeComponent entity;
-    private Set<EntityInCompositeComponent> entitySet = Sets.newHashSet();
 
     private Level2CompositeComponent level2Component;
+
+    public Level1CompositeComponent() {
+    }
+
+    public Level1CompositeComponent(String text, BeloepValueObject beloep, ImmutableSet<BeloepValueObject> beloepSet ) {
+        setText(text);
+        setBelop(beloep);
+        setBeloepSet(beloepSet);
+    }
 
     @Override
     public BubbleWithCompositeComponent getOwner() {
@@ -34,9 +40,9 @@ public class Level1CompositeComponent implements CompositeBubbleComponent<Bubble
                this,
                this.owner,
                owner,
-               new Function<BubbleWithCompositeComponent, Level1CompositeComponent>() {
-                   public Level1CompositeComponent apply(BubbleWithCompositeComponent owner) {
-                       return owner.getLevel1Component();
+               new OwnerCheck<BubbleWithCompositeComponent, Level1CompositeComponent>() {
+                   public boolean apply(BubbleWithCompositeComponent owner, Level1CompositeComponent child) {
+                       return owner.getLevel1Component()==child;
                    }
                }
        );
@@ -56,7 +62,6 @@ public class Level1CompositeComponent implements CompositeBubbleComponent<Bubble
     public boolean isNullComponent() {
         return this.text == null
                 && this.belop == null
-                && this.entity == null
                 && this.level2Component.isNullComponent();
     }
 
@@ -81,23 +86,6 @@ public class Level1CompositeComponent implements CompositeBubbleComponent<Bubble
     }
 
     public void setBeloepSet(Set<BeloepValueObject> beloepSet) {
-        this.beloepSet = beloepSet;
+        ValueObjects.setFrom(this.beloepSet, beloepSet);
     }
-
-    public EntityInCompositeComponent getEntity() {
-        return entity;
-    }
-
-    public void setEntity(EntityInCompositeComponent entity) {
-        this.entity = entity;
-    }
-
-    public Set<EntityInCompositeComponent> getEntitySet() {
-        return entitySet;
-    }
-
-    public void setEntitySet(Set<EntityInCompositeComponent> entitySet) {
-        this.entitySet = entitySet;
-    }
-
 }

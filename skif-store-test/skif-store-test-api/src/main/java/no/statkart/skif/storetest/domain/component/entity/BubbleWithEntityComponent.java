@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
 import com.google.common.collect.Sets;
+import no.statkart.skif.store.ComponentSet;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
@@ -9,10 +10,10 @@ import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
- * Boble som har entity komponenter nestede nivåer
+ * Boble som har entity og set av entities i nestede nivåer.
  *
  * @author Henrik Fredholm
- * @since 2.3
+ * @since 2.4
  */
 public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
     private static final long serialVersionUID = 1L;
@@ -68,10 +69,23 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
     }
 
     public Set<SetAaEntityComponent> getAaComponents() {
-        return aaComponents;
+        return Components.get(this, aaComponents);
     }
 
     public void setAaComponents(Set<SetAaEntityComponent> aaComponents) {
-        this.aaComponents = aaComponents;
+        Components.setFrom(this, this.aaComponents, aaComponents);
+    }
+
+    /**
+     * Hjelpemetode som brukes i testing for av bobler i detatched state. Metoden fjerner al bruk av PersistenceSet
+     * i objektet slik at Hibernate ikke kan utnytte informasjon om hvilke elementer som er endret i settet mens
+     * objektet var detatched. Dette simulerer hvordan objektet vil se ut for Hibernate hvis det blir mappet via WS-mapping.
+     */
+    public void removeHibernatePersistenceSet() {
+        if (level1Component!=null) level1Component.removeHibernatePersistenceSet();
+        aaComponents = Sets.newHashSet(aaComponents);
+        for (SetAaEntityComponent aaComponent : aaComponents) {
+               aaComponent.removeHibernatePersistenceSet();
+        }
     }
 }

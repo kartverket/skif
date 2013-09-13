@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.mockup;
 
+import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -13,6 +14,7 @@ import java.util.Set;
 
 /**
  * @author Henrik Fredholm
+ * @since 2.4
  */
 @Singleton
 public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactory {
@@ -20,9 +22,11 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
     private final BubbleWithEntityComponentId<?> withNullLevel2Id;
     private final BubbleWithEntityComponentId<?> withNonNullComponentsId;
     private final BubbleWithEntityComponentId<?> withNonNullComponentsId2;
-    private final BubbleWithEntityComponentId<?> withOneSetAaComponentsId2;
+    private final BubbleWithEntityComponentId<?> withOneAaComponentInSetId;
+    private final BubbleWithEntityComponentId<?> withOneAaComponentWithNestedSetInSetId;
+    private final BubbleWithEntityComponentId<?> withOneAaComponentInSetAndNestedComponentsId;
 
-    private int nextIdent= 100 * getTestNumber().getNumber()+1;  // Antar at vi ikke lager mer en 100 objekter per testset
+    private int nextIdent = 100 * getTestNumber().getNumber() + 1;  // Antar at vi ikke lager mer en 100 objekter per testset
 
 
     @Inject
@@ -33,7 +37,9 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
         withNullLevel2Id = getNextId();
         withNonNullComponentsId = getNextId();
         withNonNullComponentsId2 = getNextId();
-        withOneSetAaComponentsId2 = getNextId();
+        withOneAaComponentInSetId = getNextId();
+        withOneAaComponentWithNestedSetInSetId = getNextId();
+        withOneAaComponentInSetAndNestedComponentsId = getNextId();
     }
 
     private BubbleWithEntityComponentId<?> getNextId() {
@@ -42,7 +48,7 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
 
     @Override
     public void createAllMockups() {
-        int i=0;  // Angir logisk obj nr i testsett
+        int i = 0;  // Angir logisk obj nr i testsett
 
         store.insert(createBubbleWithEntityComponent(withNullComponentsId, ++i, "Obj " + i + " med null components", null));
         store.insert(createBubbleWithEntityComponent(
@@ -73,9 +79,59 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
                 )
         ));
         store.insert(createBubbleWithEntityComponent(
-                withOneSetAaComponentsId2, ++i, "Obj " + i + " med 1 setAComponents", null,
-                ImmutableSet.of(new SetAaEntityComponent(getNextIdent(), "Entity som tilhører Obj "+ i))));
+                withOneAaComponentInSetId, ++i, "Obj " + i + " med 1 setAComponents", null,
+                ImmutableSet.of(createAaComponent(i))));
 
+        store.insert(createBubbleWithEntityComponent(
+                withOneAaComponentWithNestedSetInSetId, ++i, "Obj " + i + " med 1 setAComponents", null,
+                ImmutableSet.of(
+                        createAaComponent(i,
+                                new NestedEntityComponent(
+                                        "Nested level 1 component for obj " + i,
+                                        null,
+                                        // Dette er det nestede settet som inne holder et element
+                                        ImmutableSet.of(
+                                                new NestedEntityComponent(
+                                                        "Nested level 2 component in Set for obj " + i,
+                                                        new NestedEntityComponent("Nested level 3 component in Set for obj " + i),
+                                                        ImmutableSet.of(
+                                                                new NestedEntityComponent(
+                                                                        "Nested level 3 component in Set for obj " + i,
+                                                                        new NestedEntityComponent("Nested level 4 component in Set for obj " + i),
+                                                                        Sets.<NestedEntityComponent>newHashSet()
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                ))
+                )));
+
+        store.insert(createBubbleWithEntityComponent(
+                withOneAaComponentInSetAndNestedComponentsId, ++i, "Obj " + i + " med 1 setAComponent that has nested components", null,
+                ImmutableSet.of(
+                        new SetAaEntityComponent(
+                                getNextIdent(),
+                                "Entity som tilhører Obj " + i,
+                                new SetAaLevel1EntityComponent(
+                                        "Entity som tilhører Obj " + i,
+                                        new SetAaLevel2EntityComponent("Entity som tilhører Obj " + i)
+                                )
+                        )
+                )));
+    }
+
+    private SetAaEntityComponent createAaComponent(int i) {
+        return new SetAaEntityComponent(
+                getNextIdent(), "Entity som tilhører Obj " + i
+        );
+    }
+
+    private SetAaEntityComponent createAaComponent(int i, NestedEntityComponent nestedComponent) {
+        SetAaEntityComponent obj = new SetAaEntityComponent(
+                getNextIdent(), "Entity som tilhører Obj " + i
+        );
+        obj.setNestedComponent(nestedComponent);
+        return obj;
     }
 
     private Level1EntityComponent createLevel1Component(String text, BeloepValueObject beloep, Set<BeloepValueObject> beloepSet, Level2EntityComponent level2Component) {
@@ -101,7 +157,7 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
         obj.setNr(nr);
         obj.setText(text);
         obj.setLevel1Component(level1Component);
-       return obj;
+        return obj;
     }
 
     private BubbleWithEntityComponent createBubbleWithEntityComponent(BubbleWithEntityComponentId<?> id, int nr, String text, Level1EntityComponent level1Component, Set<SetAaEntityComponent> setAEntityComponents) {
@@ -113,6 +169,7 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
         obj.setAaComponents(setAEntityComponents);
         return obj;
     }
+
     public BubbleWithEntityComponentId<?> getWithNullComponentsId() {
         return withNullComponentsId;
     }
@@ -129,8 +186,17 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
         return withNonNullComponentsId2;
     }
 
-    public BubbleWithEntityComponentId<?> getWithOneSetAaComponentsId2() {
-        return withOneSetAaComponentsId2;
+    public BubbleWithEntityComponentId<?> getWithOneAaComponentInSetId() {
+        return withOneAaComponentInSetId;
+    }
+
+
+    public BubbleWithEntityComponentId<?> getWithOneAaComponentWithNestedSetInSetId() {
+        return withOneAaComponentWithNestedSetInSetId;
+    }
+
+    public BubbleWithEntityComponentId<?> getWithOneAaComponentInSetAndNestedComponentsId() {
+        return withOneAaComponentInSetAndNestedComponentsId;
     }
 
     public int getNextIdent() {

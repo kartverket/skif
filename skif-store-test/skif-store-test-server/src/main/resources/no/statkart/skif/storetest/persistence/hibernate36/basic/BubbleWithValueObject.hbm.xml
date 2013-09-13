@@ -20,7 +20,7 @@
             <property name="verdi" column="b_verdi"/>
             <property name="kommentar" column="b_kommentar"/>
         </component>
-        <set name="beloepSet" table="BeloepVOSet" cascade="all-delete-orphan" lazy="true" batch-size="25">
+        <set name="beloepSet" table="BeloepVOSet" cascade="all-delete-orphan" lazy="true" batch-size="25" access="field">
             <key column="ownerId"/>
             <composite-element class="no.statkart.skif.storetest.domain.basic.BeloepValueObject" >
                 <property name="valuta" not-null="true" unique-key="" />

@@ -11,19 +11,25 @@ import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 import java.util.Set;
 
 /**
- * EntityComponent som har {@code Level1EntityComponent} som owner.
+ * EntityComponent som har {@code SetAaLevel1EntityComponent} som owner.
  *
- * <P>Komponenten har en ident ved navn {@code ident} som kan endres.
  *
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class Level2EntityComponent implements EntityComponentWithOwnerReferance<Level1EntityComponent> {
+public class SetAaLevel2EntityComponent implements EntityComponentWithOwnerReferance<SetAaLevel1EntityComponent> {
     private Long id;
-    private Level1EntityComponent owner;
+    private SetAaLevel1EntityComponent owner;
     private String text;
-    private BeloepValueObject beloep;
     private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
+
+
+    public SetAaLevel2EntityComponent() {
+    }
+
+    public SetAaLevel2EntityComponent(String text) {
+        setText(text);
+    }
 
     public Long getId() {
         return id;
@@ -41,18 +47,18 @@ public class Level2EntityComponent implements EntityComponentWithOwnerReferance<
         this.id = id;
     }
     @Override
-    public Level1EntityComponent getOwner() {
+    public SetAaLevel1EntityComponent getOwner() {
         return owner;
     }
 
     @Override
-    public void setOwner(Level1EntityComponent owner) {
+    public void setOwner(SetAaLevel1EntityComponent owner) {
         this.owner = Components.checkSetOwner(
                 this,
                 this.owner,
                 owner,
-                new OwnerCheck<Level1EntityComponent, Level2EntityComponent>() {
-                    public boolean apply(Level1EntityComponent owner, Level2EntityComponent child) {
+                new OwnerCheck<SetAaLevel1EntityComponent, SetAaLevel2EntityComponent>() {
+                    public boolean apply(SetAaLevel1EntityComponent owner, SetAaLevel2EntityComponent child) {
                         return owner.getLevel2Component()==child;
                     }
                 }
@@ -67,14 +73,6 @@ public class Level2EntityComponent implements EntityComponentWithOwnerReferance<
         this.text = text;
     }
 
-    public BeloepValueObject getBeloep() {
-        return beloep;
-    }
-
-    public void setBeloep(BeloepValueObject beloep) {
-        this.beloep = beloep;
-    }
-
     public Set<BeloepValueObject> getBeloepSet() {
         return beloepSet;
     }
@@ -84,7 +82,6 @@ public class Level2EntityComponent implements EntityComponentWithOwnerReferance<
     }
 
     public void removeHibernatePersistenceSet() {
-        beloepSet=Sets.newHashSet(beloepSet);
-
+        beloepSet = Sets.newHashSet(beloepSet);
     }
 }

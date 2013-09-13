@@ -9,6 +9,7 @@ import no.statkart.skif.storetest.domain.component.composite.BubbleWithComposite
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
 import no.statkart.skif.storetest.domain.component.composite.Level2CompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponentId;
 import no.statkart.skif.storetest.mockup.BubbleWithCompositeComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
@@ -23,7 +24,7 @@ import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
- * @since 2.3
+ * @since 2.4
  */
 @Test
 public class CompositeComponentTest extends StoreTestTestCase {
@@ -36,8 +37,12 @@ public class CompositeComponentTest extends StoreTestTestCase {
 
 
     private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
-        // TODO: lage et mindre testsett
-        return mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
+            @Override
+            public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
+                return mockupFacade.getBubbleWithCompositeComponentMockupFactory().getAllIds(BubbleWithCompositeComponentId.class);
+            }
+        });
     }
 
     public void testReadBubbleWithNullCompositeComponent() {
@@ -50,13 +55,11 @@ public class CompositeComponentTest extends StoreTestTestCase {
         assertNull(bubbleWithNullComponents.getLevel1Component().getText());
         assertNull(bubbleWithNullComponents.getLevel1Component().getBelop());
         assertTrue(bubbleWithNullComponents.getLevel1Component().getBeloepSet().isEmpty());
-        assertNull(bubbleWithNullComponents.getLevel1Component().getEntity());
         assertTrue(bubbleWithNullComponents.getLevel1Component().isNullComponent());
         assertNotNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component());
         assertNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getText());
         assertNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getBelop());
         assertTrue(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getBeloepSet().isEmpty());
-        assertNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getEntity());
         assertTrue(bubbleWithNullComponents.getLevel1Component().getLevel2Component().isNullComponent());
     }
 
@@ -78,7 +81,6 @@ public class CompositeComponentTest extends StoreTestTestCase {
         assertNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getText());
         assertNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getBelop());
         assertTrue(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getBeloepSet().isEmpty());
-        assertNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getEntity());
     }
 
     public void testReadBubbleWithNonNullLevel1AndLevel2CompositeComponent() {
@@ -93,13 +95,11 @@ public class CompositeComponentTest extends StoreTestTestCase {
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getText());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getBelop());
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().getBeloepSet().isEmpty());
-//        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getEntity());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component());
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().isNullComponent());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getText());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getBelop());
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getBeloepSet().isEmpty());
-//        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getEntity(), null);
     }
 
     public void testSubstituteNullComponentWithNull() {

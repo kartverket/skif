@@ -1,5 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate;
 
+import com.google.common.collect.Multimap;
 import no.statkart.matrikkel.persistens.hibernate.bubbleref.BubbleRefIdPersister;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.EntityComponent;
@@ -24,6 +25,7 @@ import org.hibernate.util.EqualsHelper;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -136,7 +138,21 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         return type instanceof NullableType;
     }
 
-    protected void checkForReplacedOrStolenEntityComponentInV32(EntityType type, Object value, Object valueExisting) {
+    /**
+     * Sjekker om <code>value</code> er en entity component har blitt erstattet med en annen eller <code>null</code>,
+     * eller om entity component ser ut til å ha blitt stjålet. Dette er nødvendig i Hibernate 3.2 som ikke støtter
+     * automatisk sletting av entity componenter som har blitt orphan. I Hibernate 3.6 støttes dette for attached
+     * objekter og SKIF utvider støtten slik at det også virker for detached objekter.
+     *
+     * @param type          typen til feltet
+     * @param value         nåværende verdi
+     * @param valueExisting forrige verdi
+     * @throws ImplementationException dersom entity component har blitt byttet ut med en annen eller <code>null</code>
+     *                                 eller hvis entity component allerede har id
+     * @since 2.2.0
+     */
+    @Override
+    protected boolean collectOrphanEntityComponent(EntityType type, Object value, Object valueExisting, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) {
         Class typeClass = type.getReturnedClass();
         if (EntityComponent.class.isAssignableFrom(typeClass)) {
             AbstractEntityPersister persister = (AbstractEntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(type.getName());
@@ -166,5 +182,6 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                 }
             }
         }
+        return false;    // TODO: Dette er ikke riktig, fix
     }
 }

@@ -59,7 +59,12 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     protected Transaction localTransaction;
 
-    // TODO: Denne skal bort etter refaktor av fixBatchingForObjectWithEntityComponents. Bruker IdentityHashSet fordi det er mest logisk å bruke dette her.
+    /**
+     * Brukes til å identifisere entity components som er nye etter at de har fått tildelt id. For å få batching av
+     * bobler til å virke er det nødvendig at entities insertes før boblene insertes eller oppdateres.
+     * Derved får entity components tildelt id og boblen kan ikke lengre se at den er ny.
+     * Bruker IdentityHashSet fordi det er mest logisk å bruke dette en id for sammenlikning
+     */
     protected Set<EntityComponent> newlyInsertedComponents = Sets.newIdentityHashSet();
 
     /**
@@ -310,18 +315,30 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     /**
      * Oppdaterer underliggende hibernate session med verdiene fra {@code bubbleObject}. Dersom {@code bubbleObject} allerede er
-     * knyttet til sessionen returneres samme instans. Dersom {@code bubbleObject} ikke er knyttet til sessionen er det implementasjon
-     * avhengig om er {@code bubbleObject} eller en ny instans som vil bli knyttet til sessionen og returnert. Ved senere kall til flush() vil endringene
-     * bli sendt til databasen.
+     * knyttet til sessionen returneres samme instans. Dersom {@code bubbleObject} ikke er knyttet til sessionen kastes den gamle
+     * instansen og den nye knyttes til sessionen. I den forbindelse gjøres det et større rydde arbeide for å sikre at entity
+     * componenter som ikke lengre er i bruk blir slettet automatisk. Videre blir alle collections konvertert til
+     * PersistentCollections og snapshot fra opprinnelig objekt blir satt slik at Hibernate kan slette referanse som
+     * ikke lenger er en del av collectionen.
+     *
+     * Endringer blir først utført ved senere kall til flush()
      *
      * @param bubbleObject
      * @return oppdatert instans som er knyttet til underliggende hibernate session
      */
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubbleObject) {
+        List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents = Lists.newArrayList();
         try {
-            assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject);
-            session().update(bubbleObject); // Viktig at class-mapping inneholder 'select-before-update="true"'. Dette bør settes automatisk ved konfigurasjon av hibernate session factory.
+            assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject, orphanOneToOneEntityComponents);
+            Session session = session();
+            session.update(bubbleObject); // Viktig at class-mapping inneholder 'select-before-update="true"'. Dette bør settes automatisk ved konfigurasjon av hibernate session factory.
+            for (int i = orphanOneToOneEntityComponents.size() - 1; i >= 0; i--) {
+                Multimap<Class<? extends EntityComponent>, EntityComponent> multimap = orphanOneToOneEntityComponents.get(i);
+                for (EntityComponent orphanEntity : multimap.values()) {
+                    session.delete(orphanEntity);
+                }
+            }
         } catch (HibernateException e) {
             throw new ImplementationException("Update failed for " + bubbleObject, e);
         } catch (SQLException e) {
@@ -364,12 +381,13 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * Endelig sørges det for at Hibernates cache ikke inneholder et objekt med samme id, med mindre det også er
      * nøyaktig samme objekt (instans) som <i>bubbleObject</i>.
      *
-     * @param bubbleObject et objekt som kanskje er lastet gjennom hibernate tidligere i denne
-     *                     sesjonen
+     * @param bubbleObject                   et objekt som kanskje er lastet gjennom hibernate tidligere i denne
+     *                                       sesjonen
+     * @param orphanOneToOneEntityComponents
      * @throws HibernateException    dersom get() eller evict() på hibernate session feiler
      * @throws java.sql.SQLException dersom SQL feiler ved typeendring
      */
-    private void assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(BubbleObject bubbleObject) throws HibernateException, SQLException {
+    private void assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(BubbleObject bubbleObject, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException, SQLException {
         // Hibernate tillater ikke update på et objekt når et annet objekt med samme id finnes i hibernate sin cache
         // Vi må teste på dette og evt. kaste ut det gamle objektet fra hibernate sin cache. Dette kan testes ved å
         // slå opp objektet i hibernates interne cache slik at objektet ikke lastes fra databasen hvis det ikke allerede
@@ -384,7 +402,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         if (existingBubble != bubbleObject) {
             // TODO: Denne kan antageligvis tas bort
             ensureFullyLoaded(existingBubble);
-            attachPersistenceCollectionWithSnapshotOfOldState(bubbleObject, existingBubble);
+            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents(bubbleObject, existingBubble, orphanOneToOneEntityComponents);
 
             if (!(bubbleObject.getClass().isInstance(existingBubble))) {
                 changeType(bubbleObject, (BubbleObject) existingBubble);
@@ -415,10 +433,10 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * Sørger for at objektets collections alle er av typen PersisteneCollection og inneholder snapshot av gammel tilstand
      * i tillegg til ny tilstand.
      */
-    public void attachPersistenceCollectionWithSnapshotOfOldState(BubbleObject bubbleObject, BubbleObject existingBubble) {
+    public void attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents(BubbleObject bubbleObject, BubbleObject existingBubble, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) {
         try {
             IdentityHashMap processedObjects = new IdentityHashMap();
-            attachPersistenceCollectionWithSnapshotOfOldState(bubbleObject, existingBubble, processedObjects);
+            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntities(bubbleObject, existingBubble, processedObjects, 0, orphanOneToOneEntityComponents);
         } catch (HibernateException e) {
             throw new ImplementationException("Could not attach PersistenceCollection: " + bubbleObject.getId(), e);
         }
@@ -429,10 +447,10 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * i tillegg til ny tilstand. Hvis en assosiasjon er definert som cascade vil metoden bli kaldt rekursivt på de assosierte
      * objekter dersom de også finnes i existing object
      */
-    protected void attachPersistenceCollectionWithSnapshotOfOldState(Object object, Object existingObject, IdentityHashMap processedObjects) throws HibernateException {
+    protected void attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntities(Object object, Object existingObject, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
         if (object == null) return;
 
-        if (processedObjects.containsKey(object)) return;
+        if (processedObjects.containsKey(object)) return;   // TODO: Kaste exception her istedet eller ta bort?
         processedObjects.put(object, null);
 
         ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
@@ -465,36 +483,48 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             Object value = values[i];
             Object valueExisting = valuesExisting[i];
             CascadeStyle cascadeStyle = cascadeStyles != null ? cascadeStyles[i] : null;
-
-            if (type.isEntityType()) {
-                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
-                    checkForReplacedOrStolenEntityComponentInV32((EntityType) type, value, valueExisting);
-                    if (valueExisting != null) { // Kan ikke attache hvis det ikke var noe der fra før. At det er greit sjekkes av checkForReplacedOrStolenEntityComponentInV32()
-                        attachPersistenceCollectionWithSnapshotOfOldState(value, valueExisting, processedObjects);
-                    }
-                }
-            } else if (type.isComponentType()) {
-                attachComponent(value, valueExisting, type, processedObjects);
-            } else if (type.isCollectionType()) {
-                boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
-                if (valueExisting instanceof Map) {
-                    Map mapWithSnapshot = attachPersitentMap((Map) value, (Map) valueExisting, processedObjects, cascade);
-                    persister.setPropertyValue(object, i, mapWithSnapshot, EntityMode.POJO);
-                } else {
-                    CollectionType collectionType = (CollectionType) type;
-                    Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
-                    Collection collectionWithSnapshot = attachPersistentCollection((Collection) value, (Collection) valueExisting, elementType, processedObjects, cascade);
-                    persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
-                }
-            } else if (!isSingleColumnType(type) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
-                    && !(type instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
-                throw new NotImplementedException();
-                // TODO: Trenger et test eksempel for å skrive denne koden riktig
+            if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                // Dette er en opptimalisering. De elementer vi skal håndtere vil alltid ha satt cascade
+                attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForElement(i, object, processedObjects, nestingLevel, orphanOneToOneEntityComponents, persister, type, value, valueExisting, cascadeStyle);
             }
+        }
+
+        // TODO: håndter forskjellige felter her
+    }
+
+    private void attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForElement(int i, Object object, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents, EntityPersister persister, Type type, Object value, Object valueExisting, CascadeStyle cascadeStyle) {
+        if (!cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) return;
+
+        if (type.isEntityType()) {
+            EntityType entityType = (EntityType) type;
+            boolean isNew = collectOrphanEntityComponent(entityType, value, valueExisting, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+            if (isNew) {
+                checkForStolenEntity(entityType, (EntityComponent) value, processedObjects, newlyInsertedComponents);
+                checkForStolenEntitiesInObject(value, processedObjects, newlyInsertedComponents);
+            } else if (valueExisting != null) {
+                // Kan ikke attache collections i entity hvis det ikke var noe fra før
+                attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntities(value, valueExisting, processedObjects, nestingLevel + 1, orphanOneToOneEntityComponents);
+            }
+        } else if (type.isComponentType()) {
+            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForComponent(value, valueExisting, type, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+        } else if (type.isCollectionType()) {
+            if (valueExisting instanceof Map) {
+                Map mapWithSnapshot = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForMap((Map) value, (Map) valueExisting, processedObjects, true);
+                persister.setPropertyValue(object, i, mapWithSnapshot, EntityMode.POJO);
+            } else {
+                CollectionType collectionType = (CollectionType) type;
+                Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+                Collection collectionWithSnapshot = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection((Collection) value, (Collection) valueExisting, elementType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+                persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
+            }
+        } else if (!isSingleColumnType(type) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                && !(type instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+            throw new NotImplementedException();
+            // TODO: Trenger et test eksempel for å skrive denne koden riktig
         }
     }
 
-    protected void attachComponent(Object component, Object componentExisting, Type componentType, IdentityHashMap processedObjects) {
+    protected void attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForComponent(Object component, Object componentExisting, Type componentType, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) {
         if (component != null && componentExisting != null) {
             Type[] propertyTypes = getSubtypes(componentType);
             Object[] properties = getPropertyValues(componentType, component);
@@ -506,28 +536,34 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 Object propertyExisting = propertiesExisting[j];
                 CascadeStyle cascadeStyle = getCascadeStyle(componentType, j);
 
-                // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
-                if (propertyType.isEntityType()) {
-                    if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
-                        checkForReplacedOrStolenEntityComponentInV32((EntityType) propertyType, property, propertyExisting);
-                        attachPersistenceCollectionWithSnapshotOfOldState(property, propertyExisting, processedObjects);
+                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                    // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
+                    if (propertyType.isEntityType()) {
+                        EntityType entityType = (EntityType) propertyType;
+                        boolean isNew = collectOrphanEntityComponent(entityType, property, propertyExisting, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+                        if (isNew) {
+                            checkForStolenEntity(entityType, (EntityComponent) property, processedObjects, newlyInsertedComponents);
+                            checkForStolenEntitiesInObject(property, processedObjects, newlyInsertedComponents);
+                        } else if (propertyExisting != null) {
+                            // Kan ikke attache collections i entity hvis det ikke var noe fra før
+                            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntities(property, propertyExisting, processedObjects, nestingLevel + 1, orphanOneToOneEntityComponents);
+                        }
+                    } else if (propertyType.isCollectionType()) {
+                        // For hvert element
+                        if (propertyExisting instanceof Map) {
+                            properties[j] = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForMap((Map) property, (Map) propertyExisting, processedObjects, true);
+                        } else {
+                            CollectionType collectionType = (CollectionType) propertyType;
+                            Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+                            properties[j] = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection((Collection) property, (Collection) propertyExisting, elementType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+                        }
+                        wasModified = true;
+                    } else if (propertyType.isComponentType()) {
+                        attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForComponent(property, propertyExisting, propertyType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+                    } else if (!isSingleColumnType(propertyType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                            && !(propertyType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+                        throw new NotImplementedException();
                     }
-                } else if (propertyType.isCollectionType()) {
-                    // For hvert element
-                    boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
-                    if (propertyExisting instanceof Map) {
-                        properties[j] = attachPersitentMap((Map) property, (Map) propertyExisting, processedObjects, cascade);
-                    } else {
-                        CollectionType collectionType = (CollectionType) propertyType;
-                        Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
-                        properties[j] = attachPersistentCollection((Collection) property, (Collection) propertyExisting, elementType, processedObjects, cascade);
-                    }
-                    wasModified = true;
-                } else if (propertyType.isComponentType()) {
-                    attachComponent(property, propertyExisting, propertyType, processedObjects);
-                } else if (!isSingleColumnType(propertyType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
-                        && !(propertyType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
-                    throw new NotImplementedException();
                 }
             }
             if (wasModified) {
@@ -568,7 +604,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      */
     abstract protected Type[] getSubtypes(Type componentType);
 
-    protected Map attachPersitentMap(Map mapInObject, Map mapInExistingObject, IdentityHashMap processedObjects, boolean cascade) {
+    protected Map attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForMap(Map mapInObject, Map mapInExistingObject, IdentityHashMap processedObjects, boolean cascade) {
         if (mapInExistingObject instanceof PersistentCollection) {
             final CollectionEntry entry = ((SessionImpl) session()).getPersistenceContext().getCollectionEntry((PersistentCollection) mapInExistingObject);
             final AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) entry.getLoadedPersister();
@@ -606,17 +642,16 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         }
     }
 
-    protected Collection attachPersistentCollection(Collection collectionInObject, Collection collectionInExistingObject, Type elementType, IdentityHashMap processedObjects, boolean cascade) throws HibernateException {
+    protected Collection attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection(Collection collectionInObject, Collection collectionInExistingObject, Type elementType, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
         if (collectionInExistingObject instanceof PersistentCollection) {
+            // TODO: Hva hvis nytt objekt også er en PersistentCollection? Tør vi stole på at snapshot da er riktig og bruke denne direkte?
             Collection persistentCollection = CopyHelper.copy(collectionInExistingObject);
             persistentCollection.clear();
             if (collectionInObject != null) {
                 persistentCollection.addAll(collectionInObject);
             }
-            if (cascade) {
-                checkForStolenEntityComponent(elementType, collectionInObject, collectionInExistingObject);
-                cascadeAttachPersistenceCollections(persistentCollection, collectionInExistingObject, processedObjects);
-            }
+            checkForStolenEntityComponent(elementType, collectionInObject, collectionInExistingObject);
+            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollectionCascade(persistentCollection, collectionInExistingObject, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
             return persistentCollection;
         } else {
             // TODO: Alternativt returner eksisterende collection. Kanskje det er greit?
@@ -625,7 +660,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         }
     }
 
-    protected void cascadeAttachPersistenceCollections(Collection collectionInOject, Collection collectionInExistingObject, IdentityHashMap processedObjects) throws HibernateException {
+    protected void attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollectionCascade(Collection collectionInOject, Collection collectionInExistingObject, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
         CollectionEntry entry = ((SessionImpl) session()).getPersistenceContext().getCollectionEntry((PersistentCollection) collectionInExistingObject);
         final CollectionPersister collectionPersister = entry.getLoadedPersister();
         Type elementType = collectionPersister.getElementType();
@@ -639,7 +674,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 final Serializable identifier = elementPersister.getIdentifier(object, EntityMode.POJO);
                 final Object valueExisting = oldElementMap.get(identifier);
                 if (valueExisting != null) { // TODO: Dersom objektet ikke fantes før, så kan det vel ikke være noen collections som skal attaches?
-                    attachPersistenceCollectionWithSnapshotOfOldState(object, valueExisting, processedObjects);
+                    attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntities(object, valueExisting, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
                 }
             }
         } else if (elementType.isComponentType()) {
@@ -702,26 +737,25 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             Object value = values[i];
             CascadeStyle cascadeStyle = cascadeStyles != null ? cascadeStyles[i] : null;
 
-            if (type.isEntityType()) {
-                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
-                    checkForReplacedOrStolenEntityComponentInV32((EntityType) type, value, null);
+            if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                if (type.isEntityType()) {
+                    //checkForReplacedOrStolenEntityComponentInV32((EntityType) type, value, null);
+                } else if (type.isComponentType()) {
+                    checkEntityComponentsOnInsertInComponent(value, type, processedObjects);
+                } else if (type.isCollectionType()) {
+                    if (value instanceof Map) {
+                        CollectionType collectionType = (CollectionType) type;
+                        checkEntityComponentsInMapOnInsert((Map) value, collectionType, processedObjects, true);
+                    } else {
+                        CollectionType collectionType = (CollectionType) type;
+                        Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+                        checkEntityComponentsInCollectionOnInsert((Collection) value, elementType, processedObjects);
+                    }
+                } else if (!isSingleColumnType(type) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                        && !(type instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+                    throw new NotImplementedException();
+                    // TODO: Trenger et test eksempel for å skrive denne koden riktig
                 }
-            } else if (type.isComponentType()) {
-                checkEntityComponentsOnInsertInComponent(value, type, processedObjects);
-            } else if (type.isCollectionType()) {
-                boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
-                if (value instanceof Map) {
-                    CollectionType collectionType = (CollectionType) type;
-                    checkEntityComponentsInMapOnInsert((Map) value, collectionType, processedObjects, cascade);
-                } else {
-                    CollectionType collectionType = (CollectionType) type;
-                    Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
-                    checkEntityComponentsInCollectionOnInsert((Collection) value, elementType, processedObjects, cascade);
-                }
-            } else if (!isSingleColumnType(type) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
-                    && !(type instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
-                throw new NotImplementedException();
-                // TODO: Trenger et test eksempel for å skrive denne koden riktig
             }
         }
     }
@@ -736,29 +770,29 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 Object property = properties[j];
                 CascadeStyle cascadeStyle = getCascadeStyle(componentType, j);
 
-                // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
-                if (propertyType.isEntityType()) {
-                    if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
-                        checkForReplacedOrStolenEntityComponentInV32((EntityType) propertyType, property, null);
+                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                    // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
+                    if (propertyType.isEntityType()) {
+                        //checkForReplacedOrStolenEntityComponentInV32((EntityType) propertyType, property, null);
                         checkEntityComponentsOnInsert(property, processedObjects);
+                    } else if (propertyType.isCollectionType()) {
+                        // For hvert element
+                        if (property instanceof Map) {
+                            CollectionType collectionType = (CollectionType) propertyType;
+                            checkEntityComponentsInMapOnInsert((Map) property, collectionType, processedObjects, true);
+                        } else {
+                            CollectionType collectionType = (CollectionType) propertyType;
+                            Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+                            checkEntityComponentsInCollectionOnInsert((Collection) property, elementType, processedObjects);
+                        }
+                        wasModified = true;
+                    } else if (propertyType.isComponentType()) {
+                        checkEntityComponentsOnInsertInComponent(property, propertyType, processedObjects);
+                    } else if (!isSingleColumnType(propertyType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                            && !(propertyType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+                        throw new NotImplementedException();
+
                     }
-                } else if (propertyType.isCollectionType()) {
-                    // For hvert element
-                    boolean cascade = cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE);
-                    if (property instanceof Map) {
-                        CollectionType collectionType = (CollectionType) propertyType;
-                        checkEntityComponentsInMapOnInsert((Map) property, collectionType, processedObjects, cascade);
-                    } else {
-                        CollectionType collectionType = (CollectionType) propertyType;
-                        Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
-                        checkEntityComponentsInCollectionOnInsert((Collection) property, elementType, processedObjects, cascade);
-                    }
-                    wasModified = true;
-                } else if (propertyType.isComponentType()) {
-                    checkEntityComponentsOnInsertInComponent(property, propertyType, processedObjects);
-                } else if (!isSingleColumnType(propertyType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
-                        && !(propertyType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
-                    throw new NotImplementedException();
                 }
             }
             if (wasModified) {
@@ -792,48 +826,38 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         }
     }
 
-    private void checkEntityComponentsInCollectionOnInsert(Collection collectionInObject, Type elementType, IdentityHashMap processedObjects, boolean cascade) throws HibernateException {
-        if (cascade) {
-            checkForStolenEntityComponent(elementType, collectionInObject, Collections.emptyList());
+    private void checkEntityComponentsInCollectionOnInsert(Collection collectionInObject, Type elementType, IdentityHashMap processedObjects) throws HibernateException {
+        checkForStolenEntityComponent(elementType, collectionInObject, Collections.emptyList());
 
-            if (elementType.isEntityType()) {
-                for (Object object : collectionInObject) {
-                    checkEntityComponentsOnInsert(object, processedObjects);
-                }
-            } else if (elementType.isComponentType()) {
-                ComponentType componentType = (ComponentType) elementType;
-                Type[] propertyTypes = componentType.getSubtypes();
-                for (int i = 0; i < propertyTypes.length; i++) {
-                    if (propertyTypes[i].isCollectionType()) {
-                        // TODO: Her har vi en collection hvis elementer er av type component som inneholer et felt som er en collection
-                        // Utfordringen her er å match gamle og nye komponenter mot hverander i den overliggende
-                        // collection. For sett kan man bruke equals, men for lister er det ikke opplagt hva man
-                        // man skal bruke. Kanskje indexposisjon. Venter med å implementere støtte for dette til vi
-                        // har en konkret case.
-                        throw new NotImplementedException();
-                    }
-                }
-            } else if (!isSingleColumnType(elementType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
-                    && !(elementType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
-                throw new NotImplementedException();
+        if (elementType.isEntityType()) {
+            for (Object object : collectionInObject) {
+                checkEntityComponentsOnInsert(object, processedObjects);
             }
+        } else if (elementType.isComponentType()) {
+            ComponentType componentType = (ComponentType) elementType;
+            Type[] propertyTypes = componentType.getSubtypes();
+            for (int i = 0; i < propertyTypes.length; i++) {
+                if (propertyTypes[i].isCollectionType()) {
+                    // TODO: Her har vi en collection hvis elementer er av type component som inneholer et felt som er en collection
+                    // Utfordringen her er å match gamle og nye komponenter mot hverander i den overliggende
+                    // collection. For sett kan man bruke equals, men for lister er det ikke opplagt hva man
+                    // man skal bruke. Kanskje indexposisjon. Venter med å implementere støtte for dette til vi
+                    // har en konkret case.
+                    throw new NotImplementedException();
+                }
+            }
+        } else if (!isSingleColumnType(elementType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                && !(elementType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+            throw new NotImplementedException();
         }
     }
 
-    /**
-     * Sjekker om <code>value</code> er en entity component har blitt erstattet med en annen eller <code>null</code>,
-     * eller om entity component ser ut til å ha blitt stjålet. Dette er nødvendig i Hibernate 3.2 som ikke støtter
-     * automatisk sletting av entity componenter som har blitt orphan. I Hibernate 3.6 støttes dette for attached
-     * objekter og SKIF utvider støtten slik at det også virker for detached objekter.
-     *
-     * @param type          typen til feltet
-     * @param value         nåværende verdi
-     * @param valueExisting forrige verdi
-     * @throws ImplementationException dersom entity component har blitt byttet ut med en annen eller <code>null</code>
-     *                                 eller hvis entity component allerede har id
-     * @since 2.2.0
-     */
-    abstract protected void checkForReplacedOrStolenEntityComponentInV32(EntityType type, Object value, Object valueExisting);
+
+    protected abstract boolean collectOrphanEntityComponent(EntityType type, Object value, Object valueExisting, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents);
+
+    protected void checkForStolenEntity(EntityType type, EntityComponent component, IdentityHashMap processedObjects, Set<EntityComponent> newlyInsertedComponents) {
+        // TODO: Implement
+    }
 
     /**
      * Sjekker om <code>value</code> er en EntityComponent har blitt erstattet med en annen eller <code>null</code>.
@@ -851,7 +875,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 AbstractEntityPersister persister = (AbstractEntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(elementType.getName());
                 EntityMetamodel entityMetamodel = persister.getEntityMetamodel();
 
-                // Dersom komponentid er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk.
+                // Dersom komponentid er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk. // TODO: jo vi kan siden vi ved hvilke objekter som insertes, ligger i eget set
                 if (!(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned)) {
                     Set<Object> existingIds = new HashSet<Object>();
                     for (Object o : collectionExisting) {
@@ -1456,12 +1480,117 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         }
     }
 
+    public void checkForStolenEntityComponent(Object object, Set<EntityComponent> newlyInsertedComponents) throws HibernateException {
+        if (object == null) return;
+        if (object instanceof EntityComponent) {
+            if (!(((EntityComponent) object).getId() == null || newlyInsertedComponents.remove(object))) {
+                throw new ImplementationException("Attempt to reuse an entity component from another object. Entity class: " + object.getClass().getName() + " id:" + ((EntityComponent) object).getId());
+            }
+        }
+    }
+
+    /**
+     * Finn entity components for object og sjekk at disse alle er nye.
+     *
+     * @since 2.3
+     */
+    public void checkForStolenEntitiesInObject(Object object, IdentityHashMap processedObjects, Set<EntityComponent> newlyInsertedComponents) throws HibernateException {
+        if (object == null) return;
+
+        if (processedObjects.containsKey(object)) return;   // TODO: Denne kan antageligvis tas bort.
+        processedObjects.put(object, null);
+
+        ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
+        EntityPersister persister = (EntityPersister) classMetadata;
+
+        Type[] types = persister.getPropertyTypes();
+        Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
+        CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
+
+        for (int i = 0; i < types.length; i++) {
+            Type type = types[i];
+            Object value = values[i];
+            CascadeStyle cascadeStyle = cascadeStyles != null ? cascadeStyles[i] : null;
+            if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
+                if (type.isEntityType()) {
+                    checkForStolenEntityComponent(value, newlyInsertedComponents);
+                    checkForStolenEntitiesInObject(value, processedObjects, newlyInsertedComponents);
+                } else if (type.isComponentType()) {
+                    checkForStolenEntitiesInObject(value, processedObjects, newlyInsertedComponents);
+                } else if (type.isCollectionType()) {
+                    CollectionType collectionType = (CollectionType) type;
+                    if (value instanceof Map) {
+                        throw new NotImplementedException("TODO: implementeres ved behov");
+                        //checkEntityComponentsInMapOnInsert((Map) value, collectionType, processedObjects, cascade);
+                    } else {
+                        Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+                        checkEntityComponentsInCollectionOnInsert((Collection) value, elementType, processedObjects);
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkForStolenEntityInMap(Map mapInObject, CollectionType collectionType, IdentityHashMap processedObjects) {
+        AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) session().getSessionFactory().getCollectionMetadata(collectionType.getRole());
+
+        if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
+            throw new ImplementationException("Key must be LiteralType");
+        }
+
+        // Sjekk at det ikke er noen collections inni her
+        Type elementType = collectionPersister.getElementType();
+        if (elementType.isCollectionType()) {
+            throw new NotImplementedException("Map value kan ikke være collection");
+        } else if (elementType.isAssociationType()) {
+            EntityPersister entityPersister = collectionPersister.getElementPersister();
+            Type[] propertyTypes = entityPersister.getPropertyTypes();
+            for (int i = 0; i < propertyTypes.length; i++) {
+                Type propertyType = propertyTypes[i];
+                if (propertyType.isAssociationType() || propertyType.isComponentType()) {
+                    throw new NotImplementedException("Map value må være enkel verdi eller ett-nivå entity");
+                }
+            }
+        }
+    }
+
+    private void checkForStolenEntityInCollection(Collection collectionInObject, Type elementType, IdentityHashMap processedObjects, Set<EntityComponent> newlyInsertedComponents) throws HibernateException {
+        if (elementType.isEntityType()) {
+            for (Object object : collectionInObject) {
+                checkForStolenEntityComponent(object, newlyInsertedComponents);
+                checkForStolenEntitiesInObject(object, processedObjects, newlyInsertedComponents);
+            }
+        } else if (elementType.isComponentType()) {
+            ComponentType componentType = (ComponentType) elementType;
+            throw new NotImplementedException();
+//            Type[] propertyTypes = componentType.getSubtypes();
+//            for (int i = 0; i < propertyTypes.length; i++) {
+//                Type propertyType = propertyTypes[i];
+//                if (propertyType.isEntityType()) {
+//                    checkForStolenEntity(object, newlyInsertedComponents);
+//                    checkForStolenEntitiesInObject(object, processedObjects, newlyInsertedComponents);
+//                } else if (propertyType.isCollectionType()) {
+//                    Object value = null;
+//                    CollectionType collectionElementType = null;
+//                    if (value instanceof Map) {
+//                        checkForStolenEntityInMap((Map) value, collectionElementType, processedObjects, newlyInsertedComponents);
+//                    } else {
+//                        checkForStolenEntityInCollection((Collection) value, collectionElementType, processedObjects, newlyInsertedComponents);
+//                    }
+//                }
+//            }
+        } else if (!isSingleColumnType(elementType) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
+                && !(elementType instanceof CustomType)) { // CustomType har nok heller ingen collections i seg.
+            throw new NotImplementedException();
+        }
+    }
+
     /**
      * Finn entity components for object og legg disse inn i {@code groupedEntityComponents} som er sortert på level og klasse
      *
      * @since 2.3
      */
-    public void fixBatchingForObjectWithEntityComponents(Object object, IdentityHashMap processedObjects, int levelKey, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> groupedEntityComponents) throws HibernateException {
+    public void fixBatchingForObjectWithEntityComponents(Object object, IdentityHashMap processedObjects, int levelKey, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> batchGroupedEntityComponents) throws HibernateException {
         if (object == null) return;
 
         if (processedObjects.containsKey(object)) return;
@@ -1483,7 +1612,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
             if (type.isEntityType()) {
                 if (cascadeStyle != null && cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
-                    fixForBatchInsertUpdateOfEntityComponent((EntityType) type, value, processedObjects, levelKey, groupedEntityComponents);
+                    fixForBatchInsertUpdateOfEntityComponent((EntityType) type, value, processedObjects, levelKey, batchGroupedEntityComponents);
                 }
             } else if (type.isComponentType()) {
 //                checkEntityComponentsOnInsertInComponent(value, type, processedObjects);

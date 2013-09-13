@@ -2,30 +2,33 @@ package no.statkart.skif.storetest.domain.component.entity;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
-import no.statkart.skif.store.Components;
-import no.statkart.skif.store.EntityBubbleComponent;
-import no.statkart.skif.store.OwnerCheck;
-import no.statkart.skif.store.ValueObjects;
+import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
 import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
- * EntityComponent som har {@code BubbleWithEntityComponent} som owner
- *
- * <P>Komponenten har en ident ved navn {@code ident} som kan endres.
+ * EntityComponent som har {@code SetAaEntityComponent} som owner
  *
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEntityComponent> {
+public class SetAaLevel1EntityComponent implements EntityComponentWithOwnerReferance<SetAaEntityComponent> {
     private Long id;
-    private BubbleWithEntityComponent owner;
+    private SetAaEntityComponent owner;
     private String text;
-    private BeloepValueObject beloep;
+    private SetAaLevel2EntityComponent level2Component;
     private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
-    private Level2EntityComponent level2Component;
+
+
+    public SetAaLevel1EntityComponent() {
+
+    }
+    public SetAaLevel1EntityComponent(String text, SetAaLevel2EntityComponent level2Component) {
+        setText(text);
+        setLevel2Component(level2Component);
+    }
 
     public Long getId() {
         return id;
@@ -37,18 +40,18 @@ public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEn
     }
 
     @Override
-    public BubbleWithEntityComponent getOwner() {
+    public SetAaEntityComponent getOwner() {
         return owner;
     }
 
     @Override
-    public void setOwner(BubbleWithEntityComponent owner) {
+    public void setOwner(SetAaEntityComponent owner) {
         this.owner = Components.checkSetOwner(
                 this,
                 this.owner,
                 owner,
-                new OwnerCheck<BubbleWithEntityComponent, Level1EntityComponent>() {
-                    public boolean apply(BubbleWithEntityComponent owner, Level1EntityComponent child) {
+                new OwnerCheck<SetAaEntityComponent, SetAaLevel1EntityComponent>() {
+                    public boolean apply(SetAaEntityComponent owner, SetAaLevel1EntityComponent child) {
                         return owner.getLevel1Component()==child;
                     }
                 }
@@ -56,11 +59,11 @@ public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEn
     }
 
     @Nullable
-    public Level2EntityComponent getLevel2Component() {
+    public SetAaLevel2EntityComponent getLevel2Component() {
         return level2Component;
     }
 
-    public void setLevel2Component(@Nullable Level2EntityComponent level2Component) {
+    public void setLevel2Component(@Nullable SetAaLevel2EntityComponent level2Component) {
         this.level2Component = Components.checkSetComponentWithOwner(this.level2Component, level2Component);
         Components.setOwner(this.level2Component, this);
     }
@@ -74,15 +77,6 @@ public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEn
         this.text = text;
     }
 
-
-    public BeloepValueObject getBeloep() {
-        return beloep;
-    }
-
-    public void setBeloep(BeloepValueObject beloep) {
-        this.beloep = beloep;
-    }
-
     public Set<BeloepValueObject> getBeloepSet() {
         return beloepSet;
     }
@@ -92,8 +86,7 @@ public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEn
     }
 
     public void removeHibernatePersistenceSet() {
-        beloepSet = Sets.newHashSet(beloepSet);
         if (level2Component!=null) level2Component.removeHibernatePersistenceSet();
-
+        beloepSet = Sets.newHashSet(beloepSet);
     }
 }

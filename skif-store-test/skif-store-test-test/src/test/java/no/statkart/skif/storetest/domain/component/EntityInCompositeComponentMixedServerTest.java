@@ -1,0 +1,153 @@
+package no.statkart.skif.storetest.domain.component;
+
+
+import com.google.inject.Inject;
+import no.statkart.skif.mockup.IdSelector;
+import no.statkart.skif.service.RunOnServerMethod;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
+import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
+import no.statkart.skif.storetest.domain.component.composite.Level2CompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponentId;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponentId;
+import no.statkart.skif.storetest.mockup.BubbleWithCompositeComponentMockupFactory;
+import no.statkart.skif.storetest.mockup.BubbleWithEntityInCompositeComponentMockupFactory;
+import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
+import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
+import no.statkart.skif.storetest.service.store.StoreUpdateService;
+import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import org.hibernate.HibernateException;
+import org.testng.annotations.Test;
+
+import java.util.Set;
+
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.testng.Assert.*;
+
+/**
+ * Test av boble med composite component som inneholder entity component
+ * @author Henrik Fredholm
+ * @since 2.4
+ */
+@Test
+public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTestCase {
+    @Inject
+    Store store;
+    @Inject
+    StoreUpdateService storeUpdateService;
+    @Inject
+    StoreTestMockupFacadeFactory mockupFacadeFactory;
+
+
+    private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
+        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
+            @Override
+            public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
+                return mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory().getAllIds(BubbleWithEntityInCompositeComponentId.class);
+            }
+        });
+    }
+
+    public void testWriteTestSet1() {
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+    }
+
+    public void testReadBubbleWithNullCompositeComponent() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
+        final BubbleWithEntityInCompositeComponent bubbleWithNullComponents = store.get(mockupFactory.getWithNullComponentsId());
+        assertEquals(bubbleWithNullComponents.getText(), "Obj " + 1 + " med null components");
+        // Composite components som inneholder Set vil aldrig være null da de alltid vil ha et tomt Set i seg.
+        assertNotNull(bubbleWithNullComponents.getLevel1Component());
+        assertNull(bubbleWithNullComponents.getLevel1Component().getText());
+        assertNull(bubbleWithNullComponents.getLevel1Component().getEntity());
+        assertThat(bubbleWithNullComponents.getLevel1Component().getEntitySet()).isEmpty();
+        assertThat(bubbleWithNullComponents.getLevel1Component().getEntitySet()).isEmpty();
+        assertNotNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component());
+        assertNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getText());
+        assertNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getEntity());
+        assertTrue(bubbleWithNullComponents.getLevel1Component().getLevel2Component().isNullComponent());
+        assertThat(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getEntitySet()).isEmpty();
+    }
+
+    public void testReadBubbleWithNonNullLevel1AndNullLevel2CompositeComponent() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
+        final BubbleWithEntityInCompositeComponent bubbleWithNullLevel2Components = store.get(mockupFactory.getWithNullLevel2Id());
+
+        assertEquals(bubbleWithNullLevel2Components.getText(), "Obj 2 med null level2 component");
+        assertNotNull(bubbleWithNullLevel2Components.getLevel1Component());
+        assertFalse(bubbleWithNullLevel2Components.getLevel1Component().isNullComponent());
+        assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getText());
+        assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getEntity());
+        assertThat(bubbleWithNullLevel2Components.getLevel1Component().getEntitySet()).hasSize(1);
+
+        // Composite components som inneholder Set vil aldrig være null da de alltid vil ha en tomt Set.
+        assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component());
+        assertTrue(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().isNullComponent());
+        assertNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getText());
+        assertNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getEntity());
+        assertThat(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getEntitySet()).isEmpty();
+    }
+
+    public void testReadBubbleWithNonNullLevel1AndLevel2CompositeComponent() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
+        final BubbleWithEntityInCompositeComponent bubbleWithNonNullComponents = store.get(mockupFactory.getWithNonNullComponentsId());
+
+        assertEquals(bubbleWithNonNullComponents.getText(), "Obj 3 med level1 og level2 component");
+        assertNotNull(bubbleWithNonNullComponents.getLevel1Component());
+        assertFalse(bubbleWithNonNullComponents.getLevel1Component().isNullComponent());
+        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getText());
+        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getEntity());
+        assertThat(bubbleWithNonNullComponents.getLevel1Component().getEntitySet()).hasSize(1);
+        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component());
+        assertFalse(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().isNullComponent());
+        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getText());
+        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getEntity(), null);
+        assertThat(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getEntitySet()).hasSize(1);
+    }
+
+    public void testUpdateBubbleWithNonNullLevel1AndLevel2CompositeComponentNoChange() {
+        final StoreTestMockupFacade mockupFacade =getWriteMockupFacadeAndSaveDataForTestSet1();
+        final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
+
+        server.runInTxRequiresNew(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                store.beginUnitOfWork();
+                BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
+                store.update(bubble);
+                store.commitUnitOfWork();
+                return null;
+            }
+        });
+    }
+
+    public void testDeleteComponentInBubbleWithNonNullLevel1AndLevel2CompositeComponent() {
+        final StoreTestMockupFacade mockupFacade =getWriteMockupFacadeAndSaveDataForTestSet1();
+        final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
+
+        server.runInTxRequiresNew(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                store.beginUnitOfWork();
+                BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
+                bubble.getLevel1Component().getEntitySet().clear();
+                store.update(bubble);
+                store.commitUnitOfWork();
+                return null;
+            }
+        });
+    }
+
+}

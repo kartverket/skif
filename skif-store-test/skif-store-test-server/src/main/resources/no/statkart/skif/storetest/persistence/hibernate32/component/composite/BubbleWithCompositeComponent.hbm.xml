@@ -18,7 +18,7 @@
                 <property name="verdi" column="l1_verdi"/>
                 <property name="kommentar" column="l1_kommentar"/>
             </component>
-            <set name="beloepSet" table="CompositeL1BeloepVOSet" cascade="all-delete-orphan" lazy="false" batch-size="25">
+            <set name="beloepSet" table="CompositeL1BeloepVOSet" cascade="all-delete-orphan" lazy="false" batch-size="25" access="field">
                 <key column="ownerId"/>
                 <composite-element class="no.statkart.skif.storetest.domain.basic.BeloepValueObject">
                     <property name="valuta" not-null="true"/>
@@ -33,7 +33,7 @@
                     <property name="verdi" column="l2_verdi"/>
                     <property name="kommentar" column="l2_kommentar"/>
                 </component>
-                <set name="beloepSet" table="CompositeL2BeloepVOSet" cascade="all-delete-orphan" lazy="false" batch-size="25">
+                <set name="beloepSet" table="CompositeL2BeloepVOSet" cascade="all-delete-orphan" lazy="false" batch-size="25" access="field">
                     <key column="ownerId"/>
                     <composite-element class="no.statkart.skif.storetest.domain.basic.BeloepValueObject">
                         <property name="valuta" not-null="true"/>

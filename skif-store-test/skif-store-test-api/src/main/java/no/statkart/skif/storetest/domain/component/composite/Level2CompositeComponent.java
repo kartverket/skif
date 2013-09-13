@@ -1,24 +1,32 @@
 package no.statkart.skif.storetest.domain.component.composite;
 
-import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import no.statkart.skif.store.Components;
-import no.statkart.skif.store.CompositeComponent;
-import no.statkart.skif.store.CompositeComponentWithCollections;
+import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
 import java.util.Set;
 
 /**
  * @author Henrik Fredholm
+ * @since 2.4
  */
 public class Level2CompositeComponent implements CompositeComponent<Level1CompositeComponent>, CompositeComponentWithCollections {
     private Level1CompositeComponent owner;
     private String text;
     private BeloepValueObject belop;
     private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
-    private EntityInCompositeComponent entity;
-    private Set<EntityInCompositeComponent> entitySet = Sets.newHashSet();
+
+
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
+    public Level2CompositeComponent() {
+    }
+
+    public Level2CompositeComponent(String text, BeloepValueObject beloep, ImmutableSet<BeloepValueObject> beloepSet) {
+        setText(text);
+        setBelop(beloep);
+        setBeloepSet(beloepSet);
+    }
 
     @Override
     public Level1CompositeComponent getOwner() {
@@ -31,9 +39,9 @@ public class Level2CompositeComponent implements CompositeComponent<Level1Compos
                 this,
                 this.owner,
                 owner,
-                new Function<Level1CompositeComponent, Level2CompositeComponent>() {
-                    public Level2CompositeComponent apply(Level1CompositeComponent owner) {
-                        return owner.getLevel2Component();
+                new OwnerCheck<Level1CompositeComponent, Level2CompositeComponent>() {
+                    public boolean apply(Level1CompositeComponent owner, Level2CompositeComponent child) {
+                        return owner.getLevel2Component()==child;
                     }
                 }
         );
@@ -42,8 +50,7 @@ public class Level2CompositeComponent implements CompositeComponent<Level1Compos
     @Override
     public boolean isNullComponent() {
         return this.text==null
-                && this.belop==null
-                && this.entity==null;
+                && this.belop==null;
     }
 
     public String getText() {
@@ -67,22 +74,6 @@ public class Level2CompositeComponent implements CompositeComponent<Level1Compos
     }
 
     public void setBeloepSet(Set<BeloepValueObject> beloepSet) {
-        this.beloepSet = beloepSet;
-    }
-
-    public EntityInCompositeComponent getEntity() {
-        return entity;
-    }
-
-    public void setEntity(EntityInCompositeComponent entity) {
-        this.entity = entity;
-    }
-
-    public Set<EntityInCompositeComponent> getEntitySet() {
-        return entitySet;
-    }
-
-    public void setEntitySet(Set<EntityInCompositeComponent> entitySet) {
-        this.entitySet = entitySet;
+        ValueObjects.setFrom(this.beloepSet, beloepSet);
     }
 }

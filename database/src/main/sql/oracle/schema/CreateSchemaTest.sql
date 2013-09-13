@@ -129,6 +129,7 @@ create table BubbleWithEntityComponent (
     nr number(10,0),
     level1ComponentId number(19,0),
     text varchar2(255),
+    nestedComponentId number(19,0),
     primary key (id)
 );
 
@@ -174,15 +175,117 @@ create table EntityL2BeloepVOSet (
 );
 alter table EntityL2BeloepVOSet add constraint FK_EntityL2BeloepVOSet_ownerId foreign key (ownerId) references Level2EntityComponent;
 
-create table SetAaEntityComponent (
+create table SetAaEntityComp (
   id number(19,0) not null,
-  ownerId number(19,0),
+  ownerId number(19,0) constraint SetAaEntityComp_ownerId_null not null initially deferred,
   ident number(10,0) not null,
+  text varchar2(255),
+  level1ComponentId number(19,0),
+  nestedComponentId number(19,0),
+  primary key (id)
+);
+alter table SetAaEntityComp add constraint FK_SetAaEntityComp_ownerId foreign key (ownerId) references BubbleWithEntityComponent;
+
+create table SetAaEntityBeloepVOSet (
+  ownerId number(19,0) not null,
+  valuta varchar2(255) not null,
+  verdi number(19,0) not null,
+  kommentar varchar2(255),
+  primary key (ownerId, valuta)
+);
+alter table SetAaEntityBeloepVOSet add constraint FK_SetAaEntBeloepVOSet_ownerId foreign key (ownerId) references SetAaEntityComp;
+
+create table SetAaL1EntityComp (
+  id number(19,0) not null,
+  ownerId number(19,0) constraint SetAaL1EntityComp_ownerId_null not null initially deferred,
+  text varchar2(255),
+  level2ComponentId number(19,0),
+  primary key (id)
+);
+alter table SetAaL1EntityComp add constraint FK_SetAaL1EntComp_ownerId foreign key (ownerId) references SetAaEntityComp;
+alter table SetAaEntityComp add constraint FK_SetAaEntityComp_level1Id foreign key (level1ComponentId) references SetAaL1EntityComp;
+
+create table SetAaL1EntBeloepVOSet (
+  ownerId number(19,0) not null,
+  valuta varchar2(255) not null,
+  verdi number(19,0) not null,
+  kommentar varchar2(255),
+  primary key (ownerId, valuta)
+);
+alter table SetAaL1EntBeloepVOSet add constraint FK_SetAaL1EntBeloepVOSet_ownId foreign key (ownerId) references SetAaL1EntityComp;
+
+create table SetAaL2EntityComp (
+  id number(19,0) not null,
+  ownerId number(19,0) constraint SetAaL2EntityComp_ownerId_null not null initially deferred,
   text varchar2(255),
   primary key (id)
 );
-alter table SetAaEntityComponent add constraint FK_SetAaEntityComp_ownerId foreign key (ownerId) references BubbleWithEntityComponent;
+alter table SetAaL2EntityComp add constraint FK_SetAaL2EntComp_ownerId foreign key (ownerId) references SetAaL1EntityComp;
+alter table SetAaL1EntityComp add constraint FK_SetAaL1EntComp_level2Id foreign key (level2ComponentId) references SetAaL2EntityComp;
 
+create table SetAaL2EntBeloepVOSet (
+  ownerId number(19,0) not null,
+  valuta varchar2(255) not null,
+  verdi number(19,0) not null,
+  kommentar varchar2(255),
+  primary key (ownerId, valuta)
+);
+alter table SetAaL2EntBeloepVOSet add constraint FK_SetAaL2EntBeloepVOSet_ownId foreign key (ownerId) references SetAaL2EntityComp;
+
+create table NestedEntityComp (
+  id number(19,0) not null,
+  ownerId number(19,0), -- denne er null hvis objektet blir pekt på direkte fra en annet objekt istedet for å inngå i et sett
+  text varchar2(255),
+  nestedComponentId number(19,0),
+  primary key (id)
+);
+alter table NestedEntityComp add constraint FK_NestedEntityComp_nestedId foreign key (nestedComponentId) references NestedEntityComp;
+alter table NestedEntityComp add constraint FK_NestedEntityComp_ownerId foreign key (ownerId) references NestedEntityComp;
+
+
+create table BubbleWithEntInCompComponent (
+  id number(19,0) not null,
+  nr number(10,0),
+  text varchar2(255),
+  l1_text varchar2(255),
+  l1_entityId number(19,0),
+  l2_text varchar2(255),
+  l2_entityId number(19,0),
+  primary key (id)
+);
+
+create table L1EntInCompComponent (
+  id number(19,0) not null,
+  ownerId number(19,0) constraint L1EntInComp_ownerId_null not null initially deferred,
+  text varchar2(255),
+  primary key (id)
+);
+alter table L1EntInCompComponent add constraint FK_L1EntInComp_ownerId foreign key (ownerId) references BubbleWithEntInCompComponent;
+alter table BubbleWithEntInCompComponent add constraint FK_BubbleWithEntInComp_l1eId foreign key (l1_entityId) references L1EntInCompComponent;
+
+create table L1SetEntInCompComponent (
+  id number(19,0) not null,
+  ownerId number(19,0) constraint L1SetEntInComp_ownerId_null not null initially deferred,  -- Hibernate setter feltet til null før sletting. Kan derfor ikke bruke 'not null' direkte
+  text varchar2(255),
+  primary key (id)
+);
+alter table L1SetEntInCompComponent add constraint FK_L1SetEntInComp_ownerId foreign key (ownerId) references BubbleWithEntInCompComponent;
+
+create table L2EntInCompComponent (
+  id number(19,0) not null,
+  ownerId number(19,0) constraint L2EntInComp_ownerId_null not null initially deferred,
+  text varchar2(255),
+  primary key (id)
+);
+alter table BubbleWithEntInCompComponent add constraint FK_BubbleWithEntInComp_l2eId foreign key (l2_entityId) references L2EntInCompComponent;
+
+create table L2SetEntInCompComponent (
+  id number(19,0) not null,
+  ownerId number(19,0) constraint L2SetEntInComp_ownerId_null not null initially deferred,  -- Hibernate setter feltet til null før sletting. Kan derfor ikke bruke 'not null' direkte
+  text varchar2(255),
+  primary key (id)
+);
+alter table L2SetEntInCompComponent add constraint FK_L2SetEntInComp_ownerId foreign key (ownerId) references BubbleWithEntInCompComponent;
 
 -- Denne map tabell brukes av StoreTest1ServiceTest
 create table TestMap (
