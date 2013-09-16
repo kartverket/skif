@@ -138,50 +138,25 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         return type instanceof NullableType;
     }
 
-    /**
-     * Sjekker om <code>value</code> er en entity component har blitt erstattet med en annen eller <code>null</code>,
-     * eller om entity component ser ut til å ha blitt stjålet. Dette er nødvendig i Hibernate 3.2 som ikke støtter
-     * automatisk sletting av entity componenter som har blitt orphan. I Hibernate 3.6 støttes dette for attached
-     * objekter og SKIF utvider støtten slik at det også virker for detached objekter.
-     *
-     * @param type          typen til feltet
-     * @param value         nåværende verdi
-     * @param valueExisting forrige verdi
-     * @throws ImplementationException dersom entity component har blitt byttet ut med en annen eller <code>null</code>
-     *                                 eller hvis entity component allerede har id
-     * @since 2.2.0
-     */
     @Override
-    protected boolean collectOrphanEntityComponent(EntityType type, Object value, Object valueExisting, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) {
+    protected boolean isNewOrReplacedEntityComponent(EntityType type, Object value, Object valueExisting, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents, CascadeStyle cascadeStyle) {
         Class typeClass = type.getReturnedClass();
         if (EntityComponent.class.isAssignableFrom(typeClass)) {
-            AbstractEntityPersister persister = (AbstractEntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(type.getName());
-            EntityMetamodel entityMetamodel = persister.getEntityMetamodel();
-            if (valueExisting != null && value == null) {
-                EntityComponent oldEntityComponent = (EntityComponent) valueExisting;
-                throw new ImplementationException("Attempt at setting entity component to null. Entity class: " + typeClass.getName() + " Id:" + oldEntityComponent.getId(), logger);
-            }
-
-            // Dersom komponentid er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk.
-            if (!(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned) && value != null) {
-                final Long oldId;
-                if (valueExisting != null) {
-                    EntityComponent oldEntityComponent = (EntityComponent) valueExisting;
-                    oldId = oldEntityComponent.getId();
-                } else {
-                    oldId = null;
+            EntityComponent componentExisting = (EntityComponent) valueExisting;
+            EntityComponent component = (EntityComponent) value;
+            if (componentExisting != null) {
+                if (component == null) {
+                    throw new ImplementationException("Attempt at setting entity component to null. Entity class: " + typeClass.getName() + " Id:" + componentExisting.getId(), logger);
+                } else if (!componentExisting.getId().equals(component.getId())) {
+                    throw new ImplementationException("Attempt at replacing entity component. Entity class: " + typeClass.getName() + " New id:" + component.getId() + ", Old id:" + componentExisting.getId(), logger);
+                }else {
+                    // Eksisterende entity og ny entity har samme id
+                    return false;
                 }
-                EntityComponent entityComponent = (EntityComponent) value;
-                final Object newId = entityComponent.getId();
-
-                if (!EqualsHelper.equals(oldId, newId)) {
-                    // TODO: Har midlertidig lagt til et ekstra sjekk som håndtere at komponenten nettopp har fått id i fixBatchingForObjectWithEntityComponents() og derfor ikke er null
-                    if (!(oldId==null && newlyInsertedComponents.remove(entityComponent))) {
-                        throw new ImplementationException("Attempt at replacing entity component. Entity class: " + typeClass.getName() + " New id:" + newId + ", Old id:" + oldId, logger);
-                    }
-                }
+            } else {
+                return value != null;
             }
         }
-        return false;    // TODO: Dette er ikke riktig, fix
+        return false;
     }
 }

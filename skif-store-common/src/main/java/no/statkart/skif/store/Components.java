@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Hjelpeklasser for CompositeComponent med metoder som hjelper til med å implementere sjekk for setOwner() slik at
- * komponenter ikke kan deles.
+ * Hjelpeklasser for standardisert implementasjon av Component funksjonalitet for owner håndtering. Components bør delegere til disse metoder fremfor
+ * å implementere tilsvarende logikk selv.
  *
  * @author Henrik Fredholm
  * @since 2.4
@@ -30,7 +30,7 @@ public class Components {
      */
     @Nullable
     public static <C extends ComponentWithOwnerReference> C checkSetComponentWithOwner(@Nullable C thisComponent, @Nullable C component) {
-        if (thisComponent != null && component == null) {
+        if (thisComponent != null && component==null) {
             // Komponent fjernes fra owner
             thisComponent.setOwner(null);
         } else if (thisComponent == component) {

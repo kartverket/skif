@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
  * Denne klasse inneholder Hibernate 3.2.6 specifikk kode. Den skal integreres i superklassen
  * når SKIF støtter bubbleref for seneste versjon av hibernate
  *
@@ -66,7 +65,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         final SessionFactoryImplementor sessionFactory = sessionImpl.getFactory();
         ClassMetadata classMetadata = sessionFactory.getClassMetadata(object.getClass());
 
-        if (classMetadata==null) {
+        if (classMetadata == null) {
             Hibernate.initialize(object);
             return;
         }
@@ -80,7 +79,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         for (int i = 0; i < types.length; i++) {
             Type type = types[i];
             if (type.isEntityType()) {
-             // TODO: Opptimaliser Many-to-one-bubbleref trenger ikke initialiseres
+                // TODO: Opptimaliser Many-to-one-bubbleref trenger ikke initialiseres
                 Hibernate.initialize(values[i]);
 
                 if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE)) {
@@ -113,7 +112,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                     // TODO: Nåværende implementasjon håndtere kun et nivå av composite-elementer. Generaliser ved behov
                     Collection col = (Collection) values[i];
                     if (!col.isEmpty()) {
-                        CollectionPersister collectionPersister = sessionFactory.getCollectionPersister(((CollectionType)type).getRole());
+                        CollectionPersister collectionPersister = sessionFactory.getCollectionPersister(((CollectionType) type).getRole());
                         if (collectionPersister.getElementType() instanceof CompositeType) {
                             CompositeType compositeType = (CompositeType) collectionPersister.getElementType();
                             for (Iterator iterator = col.iterator(); iterator.hasNext(); ) {
@@ -123,7 +122,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                                     ensureInitialized(propertyValues[j], initializedObjects);
                                 }
                             }
-                        } else if (collectionPersister.getElementType() instanceof  AssociationType) {
+                        } else if (collectionPersister.getElementType() instanceof AssociationType) {
                             for (Iterator iterator = col.iterator(); iterator.hasNext(); ) {
                                 Object o = (Object) iterator.next();
                                 ensureInitialized(o, initializedObjects);
@@ -138,24 +137,24 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
     }
 
     @Override
-    protected CascadeStyle getCascadeStyle(Type componentType, int i){
-        return ((CompositeType)componentType).getCascadeStyle(i);
+    protected CascadeStyle getCascadeStyle(Type componentType, int i) {
+        return ((CompositeType) componentType).getCascadeStyle(i);
     }
 
     @Override
     protected void setPropertyValues(Type componentType, Object component, Object[] properties) {
-        ((CompositeType)componentType).setPropertyValues(component, properties, EntityMode.POJO);
+        ((CompositeType) componentType).setPropertyValues(component, properties, EntityMode.POJO);
     }
 
 
     @Override
     protected Object[] getPropertyValues(Type componentType, Object component) {
-        return ((CompositeType)componentType).getPropertyValues(component, EntityMode.POJO);
+        return ((CompositeType) componentType).getPropertyValues(component, EntityMode.POJO);
     }
 
     @Override
     protected Type[] getSubtypes(Type componentType) {
-        return ((CompositeType)componentType).getSubtypes();
+        return ((CompositeType) componentType).getSubtypes();
     }
 
     protected boolean isSingleColumnType(Type type) {
@@ -164,35 +163,25 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
     }
 
     @Override
-    protected boolean collectOrphanEntityComponent(EntityType type, Object value, Object valueExisting, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) {
+    protected boolean isNewOrReplacedEntityComponent(EntityType type, Object value, Object valueExisting, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents, CascadeStyle cascadeStyle) {
         Class typeClass = type.getReturnedClass();
         if (EntityComponent.class.isAssignableFrom(typeClass)) {
             EntityComponent componentExisting = (EntityComponent) valueExisting;
             EntityComponent component = (EntityComponent) value;
             if (componentExisting != null) {
-                if (component==null || !componentExisting.getId().equals(component.getId())) {
-                    // Eksisterende entity component har blitt satt til null eller byttet helt ut. Opprett entry i orphanOneToOneEntityComponents.
-                    while(orphanOneToOneEntityComponents.size()<=nestingLevel) {
-                        orphanOneToOneEntityComponents.add(HashMultimap.<Class<? extends EntityComponent>, EntityComponent>create());
+                if (component == null || !componentExisting.getId().equals(component.getId())) {
+                    if (cascadeStyle.hasOrphanDelete()) {
+                        addOrphanOneToOneEntityComponent(nestingLevel, (EntityComponent) valueExisting, orphanOneToOneEntityComponents);
                     }
-                    orphanOneToOneEntityComponents.get(nestingLevel).put(componentExisting.getClass(), componentExisting);
                     return true;
                 } else {
-                   // Eksisterende entity og ny entity har samme id
+                    // Eksisterende entity og ny entity har samme id
                     return false;
                 }
             } else {
-                return value!=null;
+                return value != null;
             }
         }
         return false;
-    }
-
-
-    private boolean isNewEntityComponent(EntityMetamodel entityMetamodel, EntityComponent component) {
-        // Dersom komponentid er assigned, så kan vi ikke detektere nye komponenter på denne måte . Slike id-er finnes i matrikkel historikk.
-        // TODO: Bruke samme metodikk som Hibernate til å bestemme om en entity er ny. Hibernate kan bruke andre felter enn id, f.eks et version felt to å avgjøre om en entity er ny.
-        // For å støtte batching kan det være at den nye komponenten allerede er inserted og derfor ikke lengre er ny
-        return !(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned) && component.getId()==null;
     }
 }

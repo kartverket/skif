@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.domain.component;
 
 
 import com.google.inject.Inject;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
@@ -20,6 +21,8 @@ import org.testng.annotations.Test;
 
 import java.util.Set;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.*;
 
 /**
@@ -149,12 +152,12 @@ public class CompositeComponentTest extends StoreTestTestCase {
         newBubble.setLevel1Component(existingLevel1Component);
         store.insert(newBubble);
         try {
-        storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-            fail();
-        } catch (HibernateException t) {
+            storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
+            failBecauseExceptionWasNotThrown(ImplementationException.class);
+        } catch (ImplementationException e) {
             // Burde ikke være HibernateException en en SKIF exception. Det vil det være i JEE mode
             // PS: vi får kun feil her fordi komponenten inneholder et sett.
-            // OK, forventet
+            assertThat(e).hasMessageContaining("Component contains a Collection that is null");
         }
         store.abortUnitOfWork();
     }
@@ -178,11 +181,11 @@ public class CompositeComponentTest extends StoreTestTestCase {
         store.insert(newBubble);
         try {
             storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-            fail();
-        } catch (HibernateException t) {
+            failBecauseExceptionWasNotThrown(ImplementationException.class);
+        } catch (ImplementationException e) {
             // Burde ikke være HibernateException en en SKIF exception. Det vil det være i JEE mode
             // PS: vi får kun feil her fordi komponenten inneholder et sett.
-            // OK, forventet
+            assertThat(e).hasMessageContaining("Component contains a Collection that is null");
         }
         store.abortUnitOfWork();
     }
@@ -208,19 +211,4 @@ public class CompositeComponentTest extends StoreTestTestCase {
         }
         store.abortUnitOfWork();
     }
-    public void testDeleteComponent() {
-        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
-        final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
-        store.beginUnitOfWork();
-        final BubbleWithCompositeComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
-        bubbleWithLevel1Component.setLevel1Component(null);
-        store.update(bubbleWithLevel1Component);
-        storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-        store.endUnitOfWork();
-
-        final BubbleWithCompositeComponent updatedBubble = store.lock(mockupFactory.getWithNullLevel2Id());
-        assertTrue(updatedBubble.getLevel1Component().isNullComponent());
-    }
-
-
 }

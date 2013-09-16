@@ -28,6 +28,12 @@ public class Level2CompositeComponent implements CompositeComponent<Level1Compos
         setBeloepSet(beloepSet);
     }
 
+    public void clear() {
+        setText(null);
+        setBelop(null);
+        beloepSet.clear();
+    }
+
     @Override
     public Level1CompositeComponent getOwner() {
         return owner;

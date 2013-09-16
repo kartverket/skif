@@ -8,6 +8,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
+import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
 import no.statkart.skif.storetest.domain.component.composite.Level2CompositeComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
@@ -113,7 +114,7 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         assertThat(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getEntitySet()).hasSize(1);
     }
 
-    public void testUpdateBubbleWithNonNullLevel1AndLevel2CompositeComponentNoChange() {
+    public void testUpdateBubbleWithNonNullLevel1AndLevel2CompositeComponentNoChangeInDetatcedState() {
         final StoreTestMockupFacade mockupFacade =getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
 
@@ -131,7 +132,7 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         });
     }
 
-    public void testDeleteComponentInBubbleWithNonNullLevel1AndLevel2CompositeComponent() {
+    public void testDeleteComponentInBubbleWithNonNullLevel1AndLevel2CompositeComponentInDetachedState() {
         final StoreTestMockupFacade mockupFacade =getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
 
@@ -149,5 +150,4 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
             }
         });
     }
-
 }

@@ -21,12 +21,21 @@ public class Level1CompositeComponent implements CompositeBubbleComponent<Bubble
     private Level2CompositeComponent level2Component;
 
     public Level1CompositeComponent() {
+        setLevel2Component(new Level2CompositeComponent());
     }
 
     public Level1CompositeComponent(String text, BeloepValueObject beloep, ImmutableSet<BeloepValueObject> beloepSet ) {
         setText(text);
         setBelop(beloep);
         setBeloepSet(beloepSet);
+        setLevel2Component(new Level2CompositeComponent());
+    }
+
+    public void clear() {
+        setText(null);
+        setBelop(null);
+        beloepSet.clear();
+        level2Component.clear();
     }
 
     @Override
@@ -62,7 +71,7 @@ public class Level1CompositeComponent implements CompositeBubbleComponent<Bubble
     public boolean isNullComponent() {
         return this.text == null
                 && this.belop == null
-                && this.level2Component.isNullComponent();
+                && Components.isNullComponent(this.level2Component);
     }
 
     public String getText() {

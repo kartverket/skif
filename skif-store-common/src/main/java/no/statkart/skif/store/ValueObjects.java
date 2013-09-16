@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
+ * Hjelpeklasser for standardisert implementasjon av ValueObject funksjonalitet.
+ *
  * @author Henrik Fredholm
  * @since 2.4
  */
