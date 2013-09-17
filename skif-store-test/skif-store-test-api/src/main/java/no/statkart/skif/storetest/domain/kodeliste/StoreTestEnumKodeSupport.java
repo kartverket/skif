@@ -7,6 +7,8 @@ import no.statkart.skif.store.kodeliste.*;
  * @since 2.1
  */
 public class StoreTestEnumKodeSupport<T extends StoreTestKode, I extends StoreTestKodeId<T>> extends EnumKodeSupport<T, I, StoreTestKodelisteLong, StoreTestKodelisteLongId<StoreTestKodelisteLong>> {
+    private static final long serialVersionUID = 1L;
+
     public StoreTestEnumKodeSupport(Class<I> kodeIdClass, long kodelisteIdValue, String resourceName) {
         super(kodeIdClass, new StoreTestKodelisteLongId<StoreTestKodelisteLong>(kodelisteIdValue), resourceName);
     }

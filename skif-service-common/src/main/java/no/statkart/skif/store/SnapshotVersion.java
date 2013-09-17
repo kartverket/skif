@@ -110,6 +110,7 @@ public class SnapshotVersion implements Serializable, Comparable<SnapshotVersion
     }
 
     public boolean between(SnapshotVersion oppdateringsdato, SnapshotVersion sluttdato) {
-        return this.compareTo(oppdateringsdato) >= 0 && this.compareTo(sluttdato) == -1;
+        return this.compareTo(oppdateringsdato) >= 0 &&
+                (this.compareTo(sluttdato) == -1 || (this.equals(SnapshotVersion.CURRENT) && sluttdato.equals(SnapshotVersion.CURRENT)));
     }
 }

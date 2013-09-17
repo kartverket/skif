@@ -54,6 +54,8 @@ import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
+import no.statkart.skif.storetest.domain.koder.HistorikkEnumKodeId;
+import no.statkart.skif.storetest.domain.koder.SimpleEnumKodeId;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.Raz;
 import no.statkart.skif.storetest.domain.multikobling.Person;
@@ -168,6 +170,9 @@ public class StoreTestServerModule extends SkifModule {
         enumKodelisteManager.installStatic(AEnumKodeId.class);
         enumKodelisteManager.installStatic(BEnumKodeId.class);
         enumKodelisteManager.installStatic(SEnumKodeId.class);
+
+        enumKodelisteManager.installStatic(SimpleEnumKodeId.class);
+        enumKodelisteManager.installStatic(HistorikkEnumKodeId.class);
         return enumKodelisteManager;
     }
 

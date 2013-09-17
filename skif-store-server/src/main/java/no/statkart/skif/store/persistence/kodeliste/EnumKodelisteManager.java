@@ -2,9 +2,12 @@ package no.statkart.skif.store.persistence.kodeliste;
 
 import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.BubbleObjectWithHistory;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.ResourceLister;
@@ -167,7 +170,36 @@ public class EnumKodelisteManager {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
         BubbleObject masterObject = nonLocalizedEnumCache.get(bubbleId.asSnapshotVersionCurrent());
 
+        if (masterObject instanceof BubbleObjectWithHistory) {
+            BubbleObjectWithHistory objectWithHistory = (BubbleObjectWithHistory) masterObject;
+            if (!bubbleId.getSnapshotVersion().between(objectWithHistory.getOppdateringsdato(), objectWithHistory.getSluttdato())) {
+                throw new ObjectNotFoundException(bubbleId);
+            }
+        }
+
         BubbleObject copyObject = CopyHelper.copy(masterObject);
+
+        copyObject.setId(bubbleId);
+        if (copyObject instanceof BubbleObjectWithHistory) {
+            // Dersom objektet kunne hentes ut, så er det ikke slettet enda. Dermed må sluttdato være current.
+            ((BubbleObjectWithHistory) copyObject).setSluttdato(SnapshotVersion.CURRENT.getTimestamp());
+        }
+
+        if (copyObject instanceof Kodeliste) {
+            Kodeliste kodeliste = (Kodeliste) copyObject;
+            if (BubbleObjectWithHistory.class.isAssignableFrom(kodeliste.getKodeClass())) {
+                // Må filtrer vekk id-er for kodeverdier som ikke fantes for kodelistens snapshotversion
+                List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
+                List<KodeId<?>> filteredKodeIds = new ArrayList<KodeId<?>>(kodeIds.size());
+                for (KodeId<?> kodeId : kodeIds) {
+                    BubbleObjectWithHistory kode = (BubbleObjectWithHistory) nonLocalizedEnumCache.get(kodeId);
+                    if (bubbleId.getSnapshotVersion().between(kode.getOppdateringsdato(), kode.getSluttdato())) {
+                        filteredKodeIds.add((KodeId) kodeId.asSnapshotVersion(bubbleId));
+                    }
+                }
+                kodeliste.setKodeIds(filteredKodeIds);
+            }
+        }
 
         Class<? extends T> bubbleType = bubbleId.getType();
 
