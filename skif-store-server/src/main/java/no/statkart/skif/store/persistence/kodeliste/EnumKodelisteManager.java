@@ -179,25 +179,27 @@ public class EnumKodelisteManager {
 
         BubbleObject copyObject = CopyHelper.copy(masterObject);
 
-        copyObject.setId(bubbleId);
-        if (copyObject instanceof BubbleObjectWithHistory) {
-            // Dersom objektet kunne hentes ut, så er det ikke slettet enda. Dermed må sluttdato være current.
-            ((BubbleObjectWithHistory) copyObject).setSluttdato(SnapshotVersion.CURRENT.getTimestamp());
-        }
+        if (copyObject != null) {
+            copyObject.setId(bubbleId);
+            if (copyObject instanceof BubbleObjectWithHistory) {
+                // Dersom objektet kunne hentes ut, så er det ikke slettet enda. Dermed må sluttdato være current.
+                ((BubbleObjectWithHistory) copyObject).setSluttdato(SnapshotVersion.CURRENT.getTimestamp());
+            }
 
-        if (copyObject instanceof Kodeliste) {
-            Kodeliste kodeliste = (Kodeliste) copyObject;
-            if (BubbleObjectWithHistory.class.isAssignableFrom(kodeliste.getKodeClass())) {
-                // Må filtrer vekk id-er for kodeverdier som ikke fantes for kodelistens snapshotversion
-                List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
-                List<KodeId<?>> filteredKodeIds = new ArrayList<KodeId<?>>(kodeIds.size());
-                for (KodeId<?> kodeId : kodeIds) {
-                    BubbleObjectWithHistory kode = (BubbleObjectWithHistory) nonLocalizedEnumCache.get(kodeId);
-                    if (bubbleId.getSnapshotVersion().between(kode.getOppdateringsdato(), kode.getSluttdato())) {
-                        filteredKodeIds.add((KodeId) kodeId.asSnapshotVersion(bubbleId));
+            if (copyObject instanceof Kodeliste) {
+                Kodeliste kodeliste = (Kodeliste) copyObject;
+                if (BubbleObjectWithHistory.class.isAssignableFrom(kodeliste.getKodeClass())) {
+                    // Må filtrer vekk id-er for kodeverdier som ikke fantes for kodelistens snapshotversion
+                    List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
+                    List<KodeId<?>> filteredKodeIds = new ArrayList<KodeId<?>>(kodeIds.size());
+                    for (KodeId<?> kodeId : kodeIds) {
+                        BubbleObjectWithHistory kode = (BubbleObjectWithHistory) nonLocalizedEnumCache.get(kodeId);
+                        if (bubbleId.getSnapshotVersion().between(kode.getOppdateringsdato(), kode.getSluttdato())) {
+                            filteredKodeIds.add((KodeId) kodeId.asSnapshotVersion(bubbleId));
+                        }
                     }
+                    kodeliste.setKodeIds(filteredKodeIds);
                 }
-                kodeliste.setKodeIds(filteredKodeIds);
             }
         }
 
