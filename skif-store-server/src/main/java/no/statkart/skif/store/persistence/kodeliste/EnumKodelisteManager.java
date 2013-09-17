@@ -180,7 +180,6 @@ public class EnumKodelisteManager {
         BubbleObject copyObject = CopyHelper.copy(masterObject);
 
         if (copyObject != null) {
-            copyObject.setId(bubbleId);
             if (copyObject instanceof BubbleObjectWithHistory) {
                 // Dersom objektet kunne hentes ut, så er det ikke slettet enda. Dermed må sluttdato være current.
                 ((BubbleObjectWithHistory) copyObject).setSluttdato(SnapshotVersion.CURRENT.getTimestamp());
@@ -195,7 +194,7 @@ public class EnumKodelisteManager {
                     for (KodeId<?> kodeId : kodeIds) {
                         BubbleObjectWithHistory kode = (BubbleObjectWithHistory) nonLocalizedEnumCache.get(kodeId);
                         if (bubbleId.getSnapshotVersion().between(kode.getOppdateringsdato(), kode.getSluttdato())) {
-                            filteredKodeIds.add((KodeId) kodeId.asSnapshotVersion(bubbleId));
+                            filteredKodeIds.add(kodeId);
                         }
                     }
                     kodeliste.setKodeIds(filteredKodeIds);

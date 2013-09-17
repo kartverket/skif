@@ -85,7 +85,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         } else {
             // bubbleId er en kodelisteId
             bubble = enumKodelisteManager.get(bubbleId);
-            if (bubble == null) {
+            if (bubble != null) {
+                // Kodeliste for EnumKode
+                if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
+                    setSnapshotVersionForEnumKodeliste(Kodeliste.class.cast(bubble), bubbleId.getSnapshotVersion());
+                }
+            } else {
                 // Kodeliste for DbKode. Har allerede riktig snapshot version
                 bubble = persistenceSessionMaster.get(bubbleId);
                 Kodeliste kodeliste = Kodeliste.class.cast(bubble);
@@ -201,6 +206,17 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     private void setSnapshotVersion(Kode kode, SnapshotVersion snapshotVersion) {
         kode.setId(kode.getId().asSnapshotVersion(snapshotVersion));
         kode.setKodelisteId((KodelisteId<?>) kode.getKodelisteId().asSnapshotVersion(snapshotVersion));
+    }
+
+    private void setSnapshotVersionForEnumKodeliste(Kodeliste kodeliste, SnapshotVersion snapshotVersion) {
+        kodeliste.setId(kodeliste.getId().asSnapshotVersion(snapshotVersion));
+        List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
+        List<KodeId<?>> newkodeIds = new ArrayList<KodeId<?>>(kodeIds.size());
+        for (KodeId<?> kodeId : kodeIds) {
+            newkodeIds.add((KodeId) kodeId.asSnapshotVersion(snapshotVersion));
+        }
+        kodeliste.setKodeIds(newkodeIds);
+        kodeliste.localize(serviceContext.getLocale().toString());
     }
 
 
