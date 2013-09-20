@@ -102,6 +102,7 @@ task applyHistorikk {
             'LISTOFENTITYCOMPONENTS', 'LISTOFENTITYCOMPONENTS__C',
             'SUBTYPEDBUBBLE', 'TEKSTFORSUBTYPE',
             'HISTSIMPLE', 'HISTWITHRELATION',
+            'HISTORISKDBKODE',
     ]
 
     doLast {

@@ -1,5 +1,27 @@
 -- Oppretter tabeller som brukes storetest-testprosjektet og som bruker mockup-rammeverket for opprettelse av testdatasett
 
+create table Kodeliste(
+    id number(19,0) not null,
+    kodeTypeNavn varchar2(64),
+    kodeIdClassname varchar2(255),
+    primary key(id)
+);
+create table KodelisteLoc (
+    id number(19,0) not null,
+    lokale varchar2(10) not null,
+    navn varchar2(64) not null,
+    beskrivelse varchar2(255) not null,
+    primary key (id, lokale)
+);
+alter table KodelisteLoc add constraint FK_KodelisteLoc foreign key (id) references Kodeliste;
+
+create table HistoriskDbKode (
+    id number(19,0) not null,
+    class varchar2(255) not null,
+    kodeverdi varchar2(10) not null,
+    primary key(id)
+);
+
 create table Simple (
     id number(19,0) not null,
     nr number(10,0),
@@ -336,10 +358,6 @@ alter table XStrKodeLoc add constraint FK_XStrKodeLoc foreign key (id) reference
 create table YStrKode ( id varchar2(10) not null, kodeVerdi varchar2(10) not null, primary key (id) );
 create table YStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
 alter table YStrKodeLoc add constraint FK_YStrKodeLoc foreign key (id) references YStrKode;
-
-create table Kodeliste( id number(19,0) not null, kodeTypeNavn varchar2(64), kodeIdClassname varchar2(255), primary key(id));
-create table KodelisteLoc ( id number(19,0) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
-alter table KodelisteLoc add constraint FK_TestKodelisteLoc foreign key (id) references Kodeliste;
 
 CREATE TABLE FOO_H (
     id                   NUMBER(19,0) NOT NULL ENABLE,

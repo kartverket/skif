@@ -55,7 +55,9 @@ import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 import no.statkart.skif.storetest.domain.koder.HistorikkEnumKodeId;
+import no.statkart.skif.storetest.domain.koder.HistoriskDbKode;
 import no.statkart.skif.storetest.domain.koder.SimpleEnumKodeId;
+import no.statkart.skif.storetest.domain.koder.SimpleLocalizedDbKode;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.Raz;
 import no.statkart.skif.storetest.domain.multikobling.Person;
@@ -230,7 +232,11 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(BubbleWithEntityComponent.class)
                 .addResource(BubbleWithEntityInCompositeComponent.class)
 
+                // Koder
                 .addResource(EnumKodeIdType.class)
+                .addResourceWithSubclasses(HistoriskDbKode.class, SimpleLocalizedDbKode.class)
+
+                // Gamle koder
                 .addResource(ADbKode.class)
                 .addResource(BDbKode.class)
                 .addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class)

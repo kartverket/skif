@@ -78,6 +78,8 @@ insert into Kodeliste values(10003, 'C1Kode', 'no.statkart.skif.storetest.domain
 insert into Kodeliste values(10004, 'C2Kode', 'no.statkart.skif.storetest.domain.demo.koder.C2DbKodeId');
 insert into Kodeliste values(10005, 'XStrDbKode', 'no.statkart.skif.storetest.domain.demo.koder.XStrDbKodeId');
 
+insert into Kodeliste values(10011, 'SimpleLocalizedDbKode', 'no.statkart.skif.storetest.domain.koder.SimpleLocalizedDbKodeId');
+
 insert into KodelisteLoc values(10001, 'no_NO',    'ADbKode-navn bokmål', 'Kodelistebeskrivelse for ADbKode bokmål');
 insert into KodelisteLoc values(10001, 'no_NO_NY', 'ADbKode-navn nynorsk', 'Kodelistebeskrivelse for ADbKode nynorsk');
 insert into KodelisteLoc values(10002, 'no_NO',    'BDbKode-navn bokmål', 'Kodelistebeskrivelse for BDbKode bokmål');
