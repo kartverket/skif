@@ -441,6 +441,57 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         }
     }
 
+    public void testMoveExistingComponentToSameBubbleInAttachedState() {
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
+        try {
+            server.runInTxRequiresNew(new RunOnServerMethod() {
+                @Inject
+                StoreServer store;
+
+                public Object run() {
+                    final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    Level1EntityComponent existingLevel1Component = bubbleWithEntityComponent.getLevel1Component();
+                    bubbleWithEntityComponent.setLevel1Component(null);
+                    store.update(bubbleWithEntityComponent);
+                    bubbleWithEntityComponent.setLevel1Component(existingLevel1Component);
+                    store.update(bubbleWithEntityComponent);
+                    return null;
+                }
+            });
+        } catch (IllegalStateException t) {
+            // OK, forventet
+            assertThat(t.getMessage()).startsWith("Attempt to assign component to a new owner");
+        }
+    }
+
+    public void testMoveExistingComponentToSameBubbleInDetachedState() {
+        final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
+        try {
+            server.runInTxRequiresNew(new RunOnServerMethod() {
+                @Inject
+                StoreServer store;
+
+                public Object run() {
+                    store.beginUnitOfWork();
+                    final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    Level1EntityComponent existingLevel1Component = bubbleWithEntityComponent.getLevel1Component();
+                    bubbleWithEntityComponent.setLevel1Component(null);
+                    store.update(bubbleWithEntityComponent);
+                    bubbleWithEntityComponent.setLevel1Component(existingLevel1Component);
+                    store.update(bubbleWithEntityComponent);
+                    store.commitUnitOfWork();
+                    store.flush();
+                    return null;
+                }
+            });
+        } catch (IllegalStateException t) {
+            // OK, forventet
+            assertThat(t.getMessage()).startsWith("Attempt to assign component to a new owner");
+        }
+    }
+
     public void testMoveExistingLevel2ComponentToExistingBubbleInAttachedState() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();

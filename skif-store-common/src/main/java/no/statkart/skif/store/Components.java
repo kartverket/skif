@@ -43,11 +43,8 @@ public class Components {
                     throw new IllegalStateException(String.format("Owner already has a component: owner=%s component=%s", thisComponent.getOwner(), component));
                 }
             }
-            // Owner har ingen komponent og får en ny component (som ikke kan ha annen owner eller ha eksisterende id)
+            // Owner har ingen komponent og får en ny component (som ikke kan ha owner satt, men kan gjerne ha id fra før)
             if (component.getOwner() != null) {
-                throw new IllegalStateException("Attempt to assign component to a new owner: component=" + component);
-            }
-            if (component instanceof EntityComponent && ((EntityComponent) component).getId() != null) {
                 throw new IllegalStateException("Attempt to assign component to a new owner: component=" + component);
             }
         }
