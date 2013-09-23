@@ -172,6 +172,8 @@ public class EntityComponentTest extends StoreTestTestCase {
      * kom med en gang når man forsøker å sette komponenten slik at feilfindingen blir enklere. I nårværende
      * implementasjon oppdages feilen kun ved persistering til serveren.
      */
+
+    @Test(groups = "broken")
     public void testMoveComponent() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
