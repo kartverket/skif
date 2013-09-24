@@ -4,10 +4,7 @@ import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.exception.OperationalException;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.BubbleObjectWithHistory;
-import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.ResourceLister;
@@ -62,7 +59,9 @@ public class EnumKodelisteManager {
         initializeLocalizedFields(kodeSupport, kodeliste);
         nonLocalizedEnumCache.put(kodeliste.getId(), kodeliste);
         for (Map.Entry<KodeId<?>, Kode> entry : koder.entrySet()) {
-            initializeLocalizedFields(kodeSupport, entry.getValue());
+            if (entry.getValue() instanceof Localizable) {
+                initializeLocalizedFields(kodeSupport, (Localizable) entry.getValue());
+            }
             nonLocalizedEnumCache.put(entry.getKey(), entry.getValue());
         }
         kodelisteIds.add(kodeliste.getId());
@@ -143,12 +142,12 @@ public class EnumKodelisteManager {
 
     }
 
-    private void initializeLocalizedFields(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Kode enumKode) {
+    private void initializeLocalizedFields(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Localizable enumKode) {
         Map<String, Properties> resourceProperties = getResourceProperties(kodeSupport.getResourceMsgName());
         for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
             Properties properties = entry.getValue();
-            String navn = properties.getProperty(kodeSupport.getKodeResourceKey(enumKode.getId()) + ".navn");
-            String beskrivelse = properties.getProperty(kodeSupport.getKodeResourceKey(enumKode.getId()) + ".beskrivelse");
+            String navn = properties.getProperty(kodeSupport.getKodeResourceKey((KodeId<?>) enumKode.getId()) + ".navn");
+            String beskrivelse = properties.getProperty(kodeSupport.getKodeResourceKey((KodeId<?>) enumKode.getId()) + ".beskrivelse");
 
             if (navn != null || beskrivelse != null) {
                 enumKode.setBeskrivelse(beskrivelse);

@@ -14,7 +14,7 @@
         <map name="localizedFieldsMap" table="CKodeLoc" lazy="true" fetch="join">
             <key column="id"/>
             <map-key type="string" column="lokale"/>
-            <composite-element class="no.statkart.skif.store.kodeliste.Kode$LocalizedFields">
+            <composite-element class="no.statkart.skif.storetest.domain.kodeliste.StoreTestKode$LocalizedFields">
                 <property name="navn" type="string" access="field"/>
                 <property name="beskrivelse" type="string" access="field"/>
            </composite-element>

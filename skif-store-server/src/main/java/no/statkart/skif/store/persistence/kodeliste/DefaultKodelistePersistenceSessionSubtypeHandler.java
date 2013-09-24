@@ -3,10 +3,7 @@ package no.statkart.skif.store.persistence.kodeliste;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.ServiceContext;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.Kodeliste;
@@ -72,14 +69,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
                     setSnapshotVersion(Kode.class.cast(bubble), bubbleId.getSnapshotVersion());
                 }
-                Kode.class.cast(bubble).localize(serviceContext.getLocale().toString());
             } else {
                 // Det er en DbKode
                 bubble = persistenceSessionMaster.get(bubbleId);
                 Kode dbKode = Kode.class.cast(bubble);
                 // Må sette kodelisteId på kode da denne ikke hentes fra databasen, men tas fra idklassen
                 dbKode.setKodelisteId(dbKode.getId().getKodelisteId());
-                dbKode.localize(serviceContext.getLocale().toString());
             }
         } else {
             // bubbleId er en kodelisteId
@@ -95,7 +90,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 Kodeliste kodeliste = Kodeliste.class.cast(bubble);
                 loadKodeIds(kodeliste);
             }
-            Kodeliste.class.cast(bubble).localize(serviceContext.getLocale().toString());
+        }
+        if (bubble instanceof Localizable) {
+            ((Localizable) bubble).localize(serviceContext.getLocale().toString());
         }
 
         return bubble;
@@ -229,7 +226,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 if (enumKodelisteManager.isEnumClass(KodeId.class.cast(bubbleId).getClass())) {
                     T bubble = enumKodelisteManager.get(bubbleId);
                     if (bubble != null) {
-                        Kode.class.cast(bubble).localize(serviceContext.getLocale().toString());
+                        if (bubble instanceof Localizable) {
+                            ((Localizable) bubble).localize(serviceContext.getLocale().toString());
+                        }
                         bubbles.add(bubble);
                     } else {
                         throw new ObjectNotFoundException(bubbleId);
@@ -251,7 +250,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         if (!dbKodeIds.isEmpty()) {
             Collection<? extends T> dbKoder = persistenceSessionMaster.get(dbKodeIds);
             for (T t : dbKoder) {
-                Kode.class.cast(t).localize(serviceContext.getLocale().toString());
+                if (t instanceof Localizable) {
+                    ((Localizable) t).localize(serviceContext.getLocale().toString());
+                }
             }
             bubbles.addAll(dbKoder);
         }
@@ -259,7 +260,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         if (!dbKodelisteIds.isEmpty()) {
             Collection<? extends T> dbKoderlister = persistenceSessionMaster.get(dbKodelisteIds);
             for (T t : dbKoderlister) {
-                Kodeliste.class.cast(t).localize(serviceContext.getLocale().toString());
+                if (t instanceof Localizable) {
+                    ((Localizable) t).localize(serviceContext.getLocale().toString());
+                }
             }
             bubbles.addAll(dbKoderlister);
         }
@@ -268,21 +271,21 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubble) {
-        if(!isEnumOrEnumKodeliste(bubble)) {
+        if (!isEnumOrEnumKodeliste(bubble)) {
             persistenceSessionMaster.insert(bubble);
         }
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubble) {
-        if(!isEnumOrEnumKodeliste(bubble)) {
+        if (!isEnumOrEnumKodeliste(bubble)) {
             persistenceSessionMaster.update(bubble);
         }
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubble) {
-        if(!isEnumOrEnumKodeliste(bubble)) {
+        if (!isEnumOrEnumKodeliste(bubble)) {
             persistenceSessionMaster.delete(bubble);
         }
     }
@@ -388,6 +391,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
      * Laster alle database baserte kodelister. Kodelistene kodeIds beregnes og lastes ikke. Dette må gjøres via
      * kall til {@link #loadKodeIds(no.statkart.skif.store.kodeliste.Kodeliste)}} eller
      * {@link #loadKodeIds(java.util.Collection)}
+     *
      * @return alle database kodelister
      */
     private Collection<Kodeliste> getDbKodelister() {

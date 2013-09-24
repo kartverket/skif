@@ -21,7 +21,6 @@ configureDatabasePlugin {
         sqlTask('createSchemaTest2', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest2.sql')
         sqlTask('tableSequence', sqlFile: 'src/main/sql/oracle/data/TableSequence.sql')
         sqlTask('loadTestdata', sqlFile: 'src/main/sql/oracle/data/LoadTestdata.sql')
-        sqlTask('loadStoreTest2Koder', sqlFile: 'src/main/sql/oracle/data/LoadStoreTest2Koder.sql')
 
         properties = project.properties
 
@@ -90,14 +89,11 @@ task dbInit {
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['tableSequence'])
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['loadTestdata'])
     dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: 'applyHistorikk')
-    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['loadStoreTest2Koder'])
 
 }
 
 task applyHistorikk {
     def tables = [
-            'KODELISTE2', 'KODELISTE2LOC',
-            'STORETEST2DBKODE', 'STORETEST2DBKODELOC',
             'BUBBLE_W_ENTITY_COMPS', 'ENTITY_COMPONENT',
             'LISTOFENTITYCOMPONENTS', 'LISTOFENTITYCOMPONENTS__C',
             'SUBTYPEDBUBBLE', 'TEKSTFORSUBTYPE',

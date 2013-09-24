@@ -373,8 +373,8 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             BDbKode bDbKodeNy = new BDbKode();
             bDbKodeNy.setId(new BDbKodeId(1234L, SnapshotVersion.CURRENT));
             bDbKodeNy.setKodeverdi("AAD12");
-            HashMap<String, Kode.LocalizedFields> localizedFieldsMap = new HashMap<String, Kode.LocalizedFields>();
-            Kode.LocalizedFields bokmaal = new Kode.LocalizedFields();
+            HashMap<String, BDbKode.LocalizedFields> localizedFieldsMap = new HashMap<String, BDbKode.LocalizedFields>();
+            BDbKode.LocalizedFields bokmaal = new BDbKode.LocalizedFields();
             bokmaal.beskrivelse = "Kodebeskrivelse ting for ny kode som er inserted. BOKMÅL";
             bokmaal.navn = "1234-Bokmål";
             localizedFieldsMap.put("no_NO", bokmaal);
@@ -396,7 +396,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 
         try {
             BDbKode dbKode = persistenceSessionManager.get(new BDbKodeId(1234L, SnapshotVersion.CURRENT));
-            Kode.LocalizedFields nynorsk = new Kode.LocalizedFields();
+            BDbKode.LocalizedFields nynorsk = new BDbKode.LocalizedFields();
             nynorsk.beskrivelse = "Kodebeskrivelse ting for ny kode som er inserted. NYNORSK";
             nynorsk.navn = "1234-Nynorsk";
             dbKode.getLocalizedFieldsMap().put("no_NO_NY", nynorsk);
