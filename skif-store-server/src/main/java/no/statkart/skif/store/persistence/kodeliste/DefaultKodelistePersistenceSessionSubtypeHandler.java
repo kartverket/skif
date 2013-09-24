@@ -183,7 +183,6 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                         }
                     }
                     addFilterKodeForSnapshot(kodeIds, kode);
-                    kodeIds.add(kode.getId());
                 }
             }
         } finally {
