@@ -143,9 +143,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         if (source != null) {
             TypeToken<?> targetTypeToken = TypeToken.of(targetType);
             TypeToken<?> sourceTypeToken = TypeToken.of(source.getClass());
-            if (useIdentityMapping.contains(source.getClass())) {
-                target = source;
-            } else if (sourceTypeToken.isArray() && targetTypeToken.isArray()) {
+            if (sourceTypeToken.isArray() && targetTypeToken.isArray()) {
                 int length = Array.getLength(source);
                 target = Array.newInstance(targetTypeToken.getComponentType().getRawType(), length);
                 for (int i = 0; i < length; ++i) {
@@ -155,6 +153,8 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 TypeMapper typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.D2W);
                 if (typeMapper != null) {
                     target = typeMapper.mapDomainObject(source);
+                } else if (useIdentityMapping.contains(source.getClass())) {
+                    target = source;
                 } else if (defaultMapper != null) {
                     target = defaultMapper.mapDomainObject(source, targetTypeToken);
                 } else {
@@ -180,9 +180,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         if (source != null) {
             TypeToken<?> targetTypeToken = TypeToken.of(targetType);
             TypeToken<?> sourceTypeToken = TypeToken.of(source.getClass());
-            if (useIdentityMapping.contains(source.getClass())) {
-                target = source;
-            } else if (sourceTypeToken.isArray() && targetTypeToken.isArray()) {
+            if (sourceTypeToken.isArray() && targetTypeToken.isArray()) {
                 int length = Array.getLength(source);
                 target = Array.newInstance(targetTypeToken.getComponentType().getRawType(), length);
                 for (int i = 0; i < length; ++i) {
@@ -192,6 +190,8 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 TypeMapper typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.W2D);
                 if (typeMapper != null) {
                     target = typeMapper.mapWsapiObject(source);
+                } else if (useIdentityMapping.contains(source.getClass())) {
+                    target = source;
                 } else if (defaultMapper != null) {
                     target = defaultMapper.mapWsapiObject(source, targetTypeToken);
                 } else {
@@ -226,6 +226,8 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                     candidates.add(entry.getValue());
                 }
             }
+        } else {
+            candidates = new ArrayList<TypeMapper<?, ?>>(candidates);
         }
 
         // Fjern mappere som ikke kan lage targetClass
