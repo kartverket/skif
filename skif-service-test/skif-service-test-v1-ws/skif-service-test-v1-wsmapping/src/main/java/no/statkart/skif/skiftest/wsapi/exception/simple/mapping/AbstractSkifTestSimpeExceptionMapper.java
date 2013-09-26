@@ -1,5 +1,6 @@
 package no.statkart.skif.skiftest.wsapi.exception.simple.mapping;
 
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.mapper.ExceptionMapping;
 
@@ -35,6 +36,16 @@ public abstract class AbstractSkifTestSimpeExceptionMapper implements ExceptionM
 
     @Override
     public Object w2d(Object source, Type targetClass) {
+        throw new NotImplementedException("na");
+    }
+
+    @Override
+    public <T> T d2w(Object source, TypeLiteral<T> targetType) {
+        throw new NotImplementedException("na");
+    }
+
+    @Override
+    public <T> T w2d(Object source, TypeLiteral<T> targetType) {
         throw new NotImplementedException("na");
     }
 

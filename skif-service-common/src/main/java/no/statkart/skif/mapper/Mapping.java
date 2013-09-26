@@ -1,5 +1,7 @@
 package no.statkart.skif.mapper;
 
+import com.google.inject.TypeLiteral;
+
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -21,8 +23,10 @@ import java.util.Collection;
 public interface Mapping {
     public <T> T d2w(Object source, Class<T> targetClass);
     public <T> T w2d(Object source, Class<T> targetClass);
-    public Object d2w(Object source, Type targetClass);
-    public Object w2d(Object source, Type targetClass);
+    public Object d2w(Object source, Type targetType);
+    public Object w2d(Object source, Type targetType);
+    public <T> T d2w(Object source, TypeLiteral<T> targetType);
+    public <T> T w2d(Object source, TypeLiteral<T> targetType);
 
     public String d2w(String source);
     public String w2d(String source);

@@ -4,9 +4,8 @@ package no.statkart.skif.mapper;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.*;
@@ -132,7 +131,11 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         if (args.length == 1) {
             return d2w(args[0], method.getGenericReturnType());
         } else if (args.length == 2) {
-            return d2w(args[0], (Type) args[1]);
+            if (args[1] instanceof TypeLiteral) {
+                return d2w(args[0], ((TypeLiteral) args[1]).getType());
+            } else {
+                return d2w(args[0], (Type) args[1]);
+            }
         } else {
             throw new ImplementationException("No such method: " + method.toString());
         }
@@ -169,7 +172,11 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         if (args.length == 1) {
             return w2d(args[0], method.getGenericReturnType());
         } else if (args.length == 2) {
-            return w2d(args[0], (Type) args[1]);
+            if (args[1] instanceof TypeLiteral) {
+                return w2d(args[0], ((TypeLiteral) args[1]).getType());
+            } else {
+                return w2d(args[0], (Type) args[1]);
+            }
         } else {
             throw new ImplementationException("No such method: " + method.toString());
         }
