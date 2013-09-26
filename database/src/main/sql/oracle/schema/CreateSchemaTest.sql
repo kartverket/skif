@@ -8,10 +8,10 @@ create table Kodeliste(
 );
 create table KodelisteLoc (
     id number(19,0) not null,
-    lokale varchar2(10) not null,
-    navn varchar2(64) not null,
-    beskrivelse varchar2(255) not null,
-    primary key (id, lokale)
+    locale varchar2(10) not null,
+    name varchar2(64) not null,
+    value varchar2(255) not null,
+    primary key (id, locale, name)
 );
 alter table KodelisteLoc add constraint FK_KodelisteLoc foreign key (id) references Kodeliste;
 
@@ -340,24 +340,20 @@ create index IDX_BWCComponent_bubbleId on BubbleWithComponentsComponent(bubbleId
 
 
 create table AKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, primary key (id) );
-create table AKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+create table AKodeLoc ( id number(19,0) not null, locale varchar2(10) not null, name varchar2(64) not null, value varchar2(255) not null, primary key (id, locale, name));
 alter table AKodeLoc add constraint FK_AKodeLoc foreign key (id) references AKode;
 
 create table BKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, primary key (id) );
-create table BKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+create table BKodeLoc ( id number(19,0) not null, locale varchar2(10) not null, name varchar2(64) not null, value varchar2(255) not null, primary key (id, locale, name));
 alter table BKodeLoc add constraint FK_BKodeLoc foreign key (id) references BKode;
 
 create table CKode ( id number(19,0) not null, kodeVerdi varchar2(10) not null, class varchar2(64) not null, primary key (id) );
-create table CKodeLoc ( id number(19,0) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+create table CKodeLoc ( id number(19,0) not null, locale varchar2(10) not null, name varchar2(64) not null, value varchar2(255) not null, primary key (id, locale, name));
 alter table CKodeLoc add constraint FK_CKodeLoc foreign key (id) references CKode;
 
 create table XStrKode ( id varchar2(10) not null, kodeVerdi varchar2(10) not null, primary key (id) );
-create table XStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
+create table XStrKodeLoc ( id varchar2(10) not null, locale varchar2(10) not null, name varchar2(64) not null, value varchar2(255) not null, primary key (id, locale, name));
 alter table XStrKodeLoc add constraint FK_XStrKodeLoc foreign key (id) references XStrKode;
-
-create table YStrKode ( id varchar2(10) not null, kodeVerdi varchar2(10) not null, primary key (id) );
-create table YStrKodeLoc ( id varchar2(10) not null, lokale varchar2(10) not null, navn varchar2(64) not null, beskrivelse varchar2(255) not null, primary key (id, lokale));
-alter table YStrKodeLoc add constraint FK_YStrKodeLoc foreign key (id) references YStrKode;
 
 CREATE TABLE FOO_H (
     id                   NUMBER(19,0) NOT NULL ENABLE,

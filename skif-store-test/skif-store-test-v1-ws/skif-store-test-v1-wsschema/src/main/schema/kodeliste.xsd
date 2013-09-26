@@ -4,10 +4,12 @@
         targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"
         xmlns:kodelistens="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"
         xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
+        xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
     <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
+    <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
 
     <xs:complexType name="KodeId">
         <xs:complexContent>
@@ -35,7 +37,7 @@
                 <xs:sequence>
                     <xs:element name="kodelisteId" type="kodelistens:KodelisteId"/>
                     <xs:element name="kodeverdi" type="xs:string"/>
-                    <xs:element name="beskrivelse" type="xs:string"/>
+                    <xs:element name="beskrivelse" type="basetyperns:LocalizedString"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -79,8 +81,8 @@
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
                     <xs:element name="kodeIdClass" type="xs:string"/>
-                    <xs:element name="navn" type="xs:string"/>
-                    <xs:element name="beskrivelse" type="xs:string"/>
+                    <xs:element name="navn" type="basetyperns:LocalizedString"/>
+                    <xs:element name="beskrivelse" type="basetyperns:LocalizedString"/>
                     <xs:element name="kodeIds" type="kodelistens:KodeIdList"/>
                 </xs:sequence>
             </xs:extension>

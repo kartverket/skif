@@ -33,26 +33,38 @@ insert into ChildForParent (id, parentBubbleId, childBubbleId) values(5,2,5);
 
 insert into AKode values(1, 'A1');
 insert into AKode values(2, 'A2');
-insert into AKodeLoc values(1, 'no_NO',    'A1-navn bokmål',  'Kodebeskrivelse for A1 bokmål');
-insert into AKodeLoc values(1, 'no_NO_NY', 'A1-navn nynorsk', 'Kodebeskrivelse for A1 nynorsk');
-insert into AKodeLoc values(2, 'no_NO',    'A2-navn bokmål',  'Kodebeskrivelse for A2 bokmål');
-insert into AKodeLoc values(2, 'no_NO_NY', 'A2-navn nynorsk', 'Kodebeskrivelse for A2 nynorsk');
+insert into AKodeLoc values(1, 'no_NO', 'navn', 'A1-navn bokmål');
+insert into AKodeLoc values(1, 'no_NO', 'beskrivelse', 'Kodebeskrivelse for A1 bokmål');
+insert into AKodeLoc values(1, 'no_NO_NY', 'navn', 'A1-navn nynorsk');
+insert into AKodeLoc values(1, 'no_NO_NY', 'beskrivelse', 'Kodebeskrivelse for A1 nynorsk');
+insert into AKodeLoc values(2, 'no_NO', 'navn', 'A2-navn bokmål');
+insert into AKodeLoc values(2, 'no_NO', 'beskrivelse', 'Kodebeskrivelse for A2 bokmål');
+insert into AKodeLoc values(2, 'no_NO_NY', 'navn', 'A2-navn nynorsk');
+insert into AKodeLoc values(2, 'no_NO_NY', 'beskrivelse', 'Kodebeskrivelse for A2 nynorsk');
 
 insert into BKode values(1, 'B1');
 insert into BKode values(2, 'B2');
-insert into BKodeLoc values(1, 'no_NO',    'B1-navn bokmål',  'Kodebeskrivelse for B1 bokmål');
-insert into BKodeLoc values(1, 'no_NO_NY', 'B1-navn nynorsk', 'Kodebeskrivelse for B1 nynorsk');
-insert into BKodeLoc values(2, 'no_NO',    'B2-navn bokmål',  'Kodebeskrivelse for B2 bokmål');
-insert into BKodeLoc values(2, 'no_NO_NY', 'B2-navn nynorsk', 'Kodebeskrivelse for B2 nynorsk');
+insert into BKodeLoc values(1, 'no_NO', 'navn', 'B1-navn bokmål');
+insert into BKodeLoc values(1, 'no_NO', 'beskrivelse', 'Kodebeskrivelse for B1 bokmål');
+insert into BKodeLoc values(1, 'no_NO_NY', 'navn', 'B1-navn nynorsk');
+insert into BKodeLoc values(1, 'no_NO_NY', 'beskrivelse', 'Kodebeskrivelse for B1 nynorsk');
+insert into BKodeLoc values(2, 'no_NO', 'navn', 'B2-navn bokmål');
+insert into BKodeLoc values(2, 'no_NO', 'beskrivelse', 'Kodebeskrivelse for B2 bokmål');
+insert into BKodeLoc values(2, 'no_NO_NY', 'navn', 'B2-navn nynorsk');
+insert into BKodeLoc values(2, 'no_NO_NY', 'beskrivelse', 'Kodebeskrivelse for B2 nynorsk');
 
 insert into CKode values(1, 'C1A',  'C1DbKode');
 insert into CKode values(2, 'C1B',  'C1DbKode');
 insert into CKode values(10, 'C2A', 'C2DbKode');
 insert into CKode values(11, 'C2B', 'C2DbKode');
-insert into CKodeLoc values(1, 'no_NO',     'C1A-navn bokmål',  'Kodebeskrivelse for C1A bokmål');
-insert into CKodeLoc values(1, 'no_NO_NY',  'C1A-navn nynorsk', 'Kodebeskrivelse for C1A nynorsk');
-insert into CKodeLoc values(2, 'no_NO',     'C1B-navn bokmål',  'Kodebeskrivelse for C1B bokmål');
-insert into CKodeLoc values(2, 'no_NO_NY',  'C1B-navn nynorsk', 'Kodebeskrivelse for C1B nynorsk');
+insert into CKodeLoc values(1, 'no_NO', 'navn', 'C1A-navn bokmål');
+insert into CKodeLoc values(1, 'no_NO', 'beskrivelse', 'Kodebeskrivelse for C1A bokmål');
+insert into CKodeLoc values(1, 'no_NO_NY', 'navn', 'C1A-navn nynorsk');
+insert into CKodeLoc values(1, 'no_NO_NY', 'beskrivelse', 'Kodebeskrivelse for C1A nynorsk');
+insert into CKodeLoc values(2, 'no_NO', 'navn', 'C1B-navn bokmål');
+insert into CKodeLoc values(2, 'no_NO', 'beskrivelse', 'Kodebeskrivelse for C1B bokmål');
+insert into CKodeLoc values(2, 'no_NO_NY', 'navn', 'C1B-navn nynorsk');
+insert into CKodeLoc values(2, 'no_NO_NY', 'beskrivelse', 'Kodebeskrivelse for C1B nynorsk');
 insert into CKodeLoc values(10, 'no_NO',    'C2A-navn bokmål',  'Kodebeskrivelse for C2A bokmål');
 insert into CKodeLoc values(10, 'no_NO_NY', 'C2A-navn nynorsk', 'Kodebeskrivelse for C2A nynorsk');
 insert into CKodeLoc values(11, 'no_NO',    'C2B-navn bokmål',  'Kodebeskrivelse for C2B bokmål');
@@ -60,17 +72,14 @@ insert into CKodeLoc values(11, 'no_NO_NY', 'C2B-navn nynorsk', 'Kodebeskrivelse
 
 insert into XstrKode values('A', 'X1');
 insert into XstrKode values('B', 'X2');
-insert into XstrKodeLoc values('A', 'no_NO',    'X1-navn bokmål',  'Kodebeskrivelse for X1 bokmål');
-insert into XstrKodeLoc values('A', 'no_NO_NY', 'X1-navn nynorsk', 'Kodebeskrivelse for X1 nynorsk');
-insert into XstrKodeLoc values('B', 'no_NO',    'X2-navn bokmål',  'Kodebeskrivelse for X2 bokmål');
-insert into XstrKodeLoc values('B', 'no_NO_NY', 'X2-navn nynorsk', 'Kodebeskrivelse for X2 nynorsk');
-
-insert into YstrKode values('A', 'Y1');
-insert into YstrKode values('B', 'Y2');
-insert into YstrKodeLoc values('A', 'no_NO',    'Y1-navn bokmål',  'Kodebeskrivelse for Y1 bokmål');
-insert into YstrKodeLoc values('A', 'no_NO_NY', 'Y1-navn nynorsk', 'Kodebeskrivelse for Y1 nynorsk');
-insert into YstrKodeLoc values('B', 'no_NO',    'Y2-navn bokmål',  'Kodebeskrivelse for Y2 bokmål');
-insert into YstrKodeLoc values('B', 'no_NO_NY', 'Y2-navn nynorsk', 'Kodebeskrivelse for Y2 nynorsk');
+insert into XstrKodeLoc values('A', 'no_NO', 'navn', 'X1-navn bokmål');
+insert into XstrKodeLoc values('A', 'no_NO', 'beskrivelse', 'Kodebeskrivelse for X1 bokmål');
+insert into XstrKodeLoc values('A', 'no_NO_NY', 'navn', 'X1-navn nynorsk');
+insert into XstrKodeLoc values('A', 'no_NO_NY', 'beskrivelse', 'Kodebeskrivelse for X1 nynorsk');
+insert into XstrKodeLoc values('B', 'no_NO', 'navn', 'X2-navn bokmål');
+insert into XstrKodeLoc values('B', 'no_NO', 'beskrivelse', 'Kodebeskrivelse for X2 bokmål');
+insert into XstrKodeLoc values('B', 'no_NO_NY', 'navn', 'X2-navn nynorsk');
+insert into XstrKodeLoc values('B', 'no_NO_NY', 'beskrivelse', 'Kodebeskrivelse for X2 nynorsk');
 
 insert into Kodeliste values(10001, 'AKode', 'no.statkart.skif.storetest.domain.demo.koder.ADbKodeId');
 insert into Kodeliste values(10002, 'BKode', 'no.statkart.skif.storetest.domain.demo.koder.BDbKodeId');
@@ -80,16 +89,26 @@ insert into Kodeliste values(10005, 'XStrDbKode', 'no.statkart.skif.storetest.do
 
 insert into Kodeliste values(10011, 'SimpleLocalizedDbKode', 'no.statkart.skif.storetest.domain.koder.SimpleLocalizedDbKodeId');
 
-insert into KodelisteLoc values(10001, 'no_NO',    'ADbKode-navn bokmål', 'Kodelistebeskrivelse for ADbKode bokmål');
-insert into KodelisteLoc values(10001, 'no_NO_NY', 'ADbKode-navn nynorsk', 'Kodelistebeskrivelse for ADbKode nynorsk');
-insert into KodelisteLoc values(10002, 'no_NO',    'BDbKode-navn bokmål', 'Kodelistebeskrivelse for BDbKode bokmål');
-insert into KodelisteLoc values(10002, 'no_NO_NY', 'BDbKode-navn nynorsk', 'Kodelistebeskrivelse for BDbKode nynorsk');
-insert into KodelisteLoc values(10003, 'no_NO',    'C1DbKode-navn bokmål', 'Kodelistebeskrivelse for C1DbKode bokmål');
-insert into KodelisteLoc values(10003, 'no_NO_NY', 'C1DbKode-navn nynorsk', 'Kodelistebeskrivelse for C1DbKode nynorsk');
-insert into KodelisteLoc values(10004, 'no_NO',    'C2DbKode-navn bokmål', 'Kodelistebeskrivelse for C2DbKode bokmål');
-insert into KodelisteLoc values(10004, 'no_NO_NY', 'C2DbKode-navn nynorsk', 'Kodelistebeskrivelse for C2DbKode nynorsk');
-insert into KodelisteLoc values(10005, 'no_NO',    'XStrDbKode-navn bokmål', 'Kodelistebeskrivelse for XStrDbKode bokmål');
-insert into KodelisteLoc values(10005, 'no_NO_NY', 'XStrDbKode-navn nynorsk', 'Kodelistebeskrivelse for XStrDbKode nynorsk');
+insert into KodelisteLoc values(10001, 'no_NO', 'navn', 'ADbKode-navn bokmål');
+insert into KodelisteLoc values(10001, 'no_NO', 'beskrivelse', 'Kodelistebeskrivelse for ADbKode bokmål');
+insert into KodelisteLoc values(10001, 'no_NO_NY', 'navn', 'ADbKode-navn nynorsk');
+insert into KodelisteLoc values(10001, 'no_NO_NY', 'beskrivelse', 'Kodelistebeskrivelse for ADbKode nynorsk');
+insert into KodelisteLoc values(10002, 'no_NO', 'navn', 'BDbKode-navn bokmål');
+insert into KodelisteLoc values(10002, 'no_NO', 'beskrivelse', 'Kodelistebeskrivelse for BDbKode bokmål');
+insert into KodelisteLoc values(10002, 'no_NO_NY', 'navn', 'BDbKode-navn nynorsk');
+insert into KodelisteLoc values(10002, 'no_NO_NY', 'beskrivelse', 'Kodelistebeskrivelse for BDbKode nynorsk');
+insert into KodelisteLoc values(10003, 'no_NO', 'navn', 'C1DbKode-navn bokmål');
+insert into KodelisteLoc values(10003, 'no_NO', 'beskrivelse', 'Kodelistebeskrivelse for C1DbKode bokmål');
+insert into KodelisteLoc values(10003, 'no_NO_NY', 'navn', 'C1DbKode-navn nynorsk');
+insert into KodelisteLoc values(10003, 'no_NO_NY', 'beskrivelse', 'Kodelistebeskrivelse for C1DbKode nynorsk');
+insert into KodelisteLoc values(10004, 'no_NO', 'navn', 'C2DbKode-navn bokmål');
+insert into KodelisteLoc values(10004, 'no_NO', 'beskrivelse', 'Kodelistebeskrivelse for C2DbKode bokmål');
+insert into KodelisteLoc values(10004, 'no_NO_NY', 'navn', 'C2DbKode-navn nynorsk');
+insert into KodelisteLoc values(10004, 'no_NO_NY', 'beskrivelse', 'Kodelistebeskrivelse for C2DbKode nynorsk');
+insert into KodelisteLoc values(10005, 'no_NO', 'navn', 'XStrDbKode-navn bokmål');
+insert into KodelisteLoc values(10005, 'no_NO', 'beskrivelse', 'Kodelistebeskrivelse for XStrDbKode bokmål');
+insert into KodelisteLoc values(10005, 'no_NO_NY', 'navn', 'XStrDbKode-navn nynorsk');
+insert into KodelisteLoc values(10005, 'no_NO_NY', 'beskrivelse', 'Kodelistebeskrivelse for XStrDbKode nynorsk');
 
 
 insert into FOO_H (ID,oppdateringsdato,sluttdato,versjonId,NR,NAVN) values (100,snapshot_time.to_t('2011-10-02 08:00:00.00'),snapshot_time.to_t('2011-10-02 08:01:00.00'),1,2200,'KARTGATA');

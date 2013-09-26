@@ -37,17 +37,16 @@ import java.util.*;
  */
 public class DefaultKodelistePersistenceSessionSubtypeHandler implements KodelistePersistenceSessionSubtypeHandler {
     private final EnumKodelisteManager enumKodelisteManager;
-    private final ServiceContext serviceContext;
     private final HibernatePersistenceSessionMaster persistenceSessionMaster;
 
     // TODO: Denne kunne sikkert bli beregnet utfra hibernate factory siden den vet hvilke klasser i hibernate som er kodelister
     private final Collection<Class<? extends Kodeliste>> kodelisteClasses;
 
+    // TODO: Slette serviceContext-parameter
     public DefaultKodelistePersistenceSessionSubtypeHandler(HibernatePersistenceSessionMaster persistenceSessionMaster, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, ServiceContext serviceContext) {
         this.persistenceSessionMaster = persistenceSessionMaster;
         this.enumKodelisteManager = enumKodelisteManager;
         this.kodelisteClasses = kodelisteClasses;
-        this.serviceContext = serviceContext;
 
     }
 
@@ -90,9 +89,6 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 Kodeliste kodeliste = Kodeliste.class.cast(bubble);
                 loadKodeIds(kodeliste);
             }
-        }
-        if (bubble instanceof Localizable) {
-            ((Localizable) bubble).localize(serviceContext.getLocale().toString());
         }
 
         return bubble;
@@ -211,7 +207,6 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
             newkodeIds.add((KodeId) kodeId.asSnapshotVersion(snapshotVersion));
         }
         kodeliste.setKodeIds(newkodeIds);
-        kodeliste.localize(serviceContext.getLocale().toString());
     }
 
 
@@ -226,9 +221,6 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 if (enumKodelisteManager.isEnumClass(KodeId.class.cast(bubbleId).getClass())) {
                     T bubble = enumKodelisteManager.get(bubbleId);
                     if (bubble != null) {
-                        if (bubble instanceof Localizable) {
-                            ((Localizable) bubble).localize(serviceContext.getLocale().toString());
-                        }
                         bubbles.add(bubble);
                     } else {
                         throw new ObjectNotFoundException(bubbleId);
@@ -239,7 +231,6 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
             } else {
                 T bubble = enumKodelisteManager.get(bubbleId);
                 if (bubble != null) {
-                    Kodeliste.class.cast(bubble).localize(serviceContext.getLocale().toString());
                     bubbles.add(bubble);
                 } else {
                     dbKodelisteIds.add(bubbleId);
@@ -250,20 +241,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         if (!dbKodeIds.isEmpty()) {
             Collection<? extends T> dbKoder = persistenceSessionMaster.get(dbKodeIds);
             for (T t : dbKoder) {
-                if (t instanceof Localizable) {
-                    ((Localizable) t).localize(serviceContext.getLocale().toString());
-                }
             }
             bubbles.addAll(dbKoder);
         }
 
         if (!dbKodelisteIds.isEmpty()) {
             Collection<? extends T> dbKoderlister = persistenceSessionMaster.get(dbKodelisteIds);
-            for (T t : dbKoderlister) {
-                if (t instanceof Localizable) {
-                    ((Localizable) t).localize(serviceContext.getLocale().toString());
-                }
-            }
             bubbles.addAll(dbKoderlister);
         }
         return bubbles;

@@ -4,19 +4,20 @@
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
     <class name="no.statkart.skif.storetest.domain.demo.koder.XStrDbKode" table="XStrKode" lazy="true">
-        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.XStrDbKodeIdType">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.XStrDbKodeIdType">
             <generator class="assigned"/>
         </id>
 
         <property name="kodeverdi"/>
 
-        <map name="localizedFieldsMap" table="XStrKodeLoc" lazy="true" fetch="join">
+        <map name="localizationMap" table="XStrKodeLoc" lazy="true" fetch="join">
             <key column="id"/>
-            <map-key type="string" column="lokale"/>
-            <composite-element class="no.statkart.skif.storetest.domain.kodeliste.StoreTestKode$LocalizedFields">
-                <property name="navn" type="string" access="field"/>
-                <property name="beskrivelse" type="string" access="field"/>
-           </composite-element>
+            <composite-map-key class="no.statkart.skif.store.localization.LocalizationMap$LocalizationKey">
+                <key-property name="locale"/>
+                <key-property name="name"/>
+            </composite-map-key>
+            <element column="value" type="java.lang.String"/>
         </map>
 
     </class>

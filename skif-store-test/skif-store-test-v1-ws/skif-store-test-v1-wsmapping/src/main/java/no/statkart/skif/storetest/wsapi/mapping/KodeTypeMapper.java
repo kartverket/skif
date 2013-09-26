@@ -1,7 +1,12 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
+import com.google.inject.TypeLiteral;
+import no.statkart.skif.store.localization.LocalizedString;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKode;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Henrik Fredholm
@@ -18,7 +23,7 @@ public class KodeTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.doma
         KodelisteId kodelisteId= getMapping().d2w(source.getKodelisteId());
         target.setKodelisteId(kodelisteId);
         target.setKodeverdi(getMapping().d2w(source.getKodeverdi()));
-        target.setBeskrivelse(getMapping().d2w(source.getBeskrivelse()));
+        target.setBeskrivelse(getMapping().d2w(source.getBeskrivelse().getAllTexts(), no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString.class));
         return target;
     }
 
@@ -27,7 +32,7 @@ public class KodeTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.doma
         DomainT target = super.mapWsapiObject(source);
         target.setKodeverdi(getMapping().w2d(source.getKodeverdi()));
         target.setKodelisteId(getMapping().w2d(source.getKodelisteId()));
-        target.setBeskrivelse(getMapping().w2d(source.getBeskrivelse()));
+        target.setBeskrivelse(new LocalizedString(getMapping().w2d(source.getBeskrivelse(), LocalizedString.MAP_TYPE)));
         return target;
     }
 }

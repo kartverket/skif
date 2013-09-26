@@ -1,9 +1,8 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.kodeliste.*;
+import no.statkart.skif.store.localization.LocalizedString;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 import java.util.List;
 
@@ -18,4 +17,9 @@ public interface StoreTestKodeliste extends StoreTestBubble, Kodeliste {
     // Java tillater ikke overskrivning av return type som kan føre til diamanthieraki
     //@Override
     //StoreTestKodelisteId<?> getId();
+
+    public abstract LocalizedString getNavn();
+    public abstract void setNavn(LocalizedString navn);
+    public abstract LocalizedString getBeskrivelse();
+    public abstract void setBeskrivelse(LocalizedString beskrivelse);
 }

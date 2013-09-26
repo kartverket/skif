@@ -4,8 +4,11 @@ import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.exception.OperationalException;
+import no.statkart.skif.internal.util.InternalLocaleUtils;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.*;
+import no.statkart.skif.store.localization.LocalizationMap;
+import no.statkart.skif.store.localization.Localized;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.ResourceLister;
 
@@ -56,11 +59,13 @@ public class EnumKodelisteManager {
         kodeliste.setId(kodeSupport.getKodelisteId());
         kodeliste.setKodeIdClass(enumKodeIdClass);
         kodeliste.setKodeIds(new ArrayList<KodeId<?>>(koder.keySet()));
-        initializeLocalizedFields(kodeSupport, kodeliste);
+        if (kodeliste instanceof Localized) {
+            initializeLocalizedFieldsForKodeliste(kodeSupport, (Localized) kodeliste);
+        }
         nonLocalizedEnumCache.put(kodeliste.getId(), kodeliste);
         for (Map.Entry<KodeId<?>, Kode> entry : koder.entrySet()) {
-            if (entry.getValue() instanceof Localizable) {
-                initializeLocalizedFields(kodeSupport, (Localizable) entry.getValue());
+            if (entry.getValue() instanceof Localized) {
+                initializeLocalizedFieldsForKode(kodeSupport, (Localized) entry.getValue());
             }
             nonLocalizedEnumCache.put(entry.getKey(), entry.getValue());
         }
@@ -125,37 +130,54 @@ public class EnumKodelisteManager {
         return propertyFiles;
     }
 
-    private void initializeLocalizedFields(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Kodeliste kodeliste) {
+    private void initializeLocalizedFieldsForKodeliste(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Localized kodeliste) {
         Map<String, Properties> resourceProperties = getResourceProperties(kodeSupport.getResourceMsgName());
-        for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
-            Properties properties = entry.getValue();
-            String navn = properties.getProperty(kodeSupport.getKodelisteResourceKey() + ".navn");
-            String beskrivelse = properties.getProperty(kodeSupport.getKodelisteResourceKey() + ".beskrivelse");
 
-            if (navn != null || beskrivelse != null) {
-                kodeliste.setNavn(navn);
-                kodeliste.setBeskrivelse(beskrivelse);
-                kodeliste.updateLocalized(entry.getKey());
+        Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<LocalizationMap.LocalizationKey, String>();
+
+        for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
+            Locale locale = InternalLocaleUtils.toLocale(entry.getKey());
+            Properties properties = entry.getValue();
+            String prefix = kodeSupport.getKodelisteResourceKey() + '.';
+
+            for (Map.Entry<Object, Object> propertyEntry : properties.entrySet()) {
+                // Det er bevisst at key castes og verdi toString-es
+                String key = (String) propertyEntry.getKey();
+
+                if (key.startsWith(prefix)) {
+                    String field = key.substring(prefix.length());
+                    String value = propertyEntry.getValue().toString();
+                    localizations.put(new LocalizationMap.LocalizationKey(field, locale), value);
+                }
             }
         }
-        kodeliste.localize(null);
 
+        kodeliste.setLocalizationMap(localizations);
     }
 
-    private void initializeLocalizedFields(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Localizable enumKode) {
+    private void initializeLocalizedFieldsForKode(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Localized enumKode) {
         Map<String, Properties> resourceProperties = getResourceProperties(kodeSupport.getResourceMsgName());
-        for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
-            Properties properties = entry.getValue();
-            String navn = properties.getProperty(kodeSupport.getKodeResourceKey((KodeId<?>) enumKode.getId()) + ".navn");
-            String beskrivelse = properties.getProperty(kodeSupport.getKodeResourceKey((KodeId<?>) enumKode.getId()) + ".beskrivelse");
 
-            if (navn != null || beskrivelse != null) {
-                enumKode.setBeskrivelse(beskrivelse);
-                enumKode.setNavn(navn);
-                enumKode.updateLocalized(entry.getKey());
+        Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<LocalizationMap.LocalizationKey, String>();
+
+        for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
+            Locale locale = InternalLocaleUtils.toLocale(entry.getKey());
+            Properties properties = entry.getValue();
+            String prefix = kodeSupport.getKodeResourceKey((KodeId<?>) enumKode.getId()) + '.';
+
+            for (Map.Entry<Object, Object> propertyEntry : properties.entrySet()) {
+                // Det er bevisst at key castes og verdi toString-es
+                String key = (String) propertyEntry.getKey();
+
+                if (key.startsWith(prefix)) {
+                    String field = key.substring(prefix.length());
+                    String value = propertyEntry.getValue().toString();
+                    localizations.put(new LocalizationMap.LocalizationKey(field, locale), value);
+                }
             }
         }
-        enumKode.localize(null);
+
+        enumKode.setLocalizationMap(localizations);
     }
 
     /**

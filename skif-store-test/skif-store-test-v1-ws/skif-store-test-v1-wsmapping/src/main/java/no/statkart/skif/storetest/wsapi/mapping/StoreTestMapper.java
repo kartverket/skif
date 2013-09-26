@@ -34,6 +34,7 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new TimestampTypeMapper());
         addMapper(new SnapshotVersionTypeMapper());
         addMapper(new SelectionPolygonTypeMapper());
+        addMapper(new LocaleMapper());
 
         // Alle Id'er
         addMapper(new StoreTestBubbleIdTypeMapper<no.statkart.skif.storetest.wsapi.domain.basic.SimpleId, SimpleId>(no.statkart.skif.storetest.wsapi.domain.basic.SimpleId.class, SimpleId.class));

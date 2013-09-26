@@ -2,19 +2,9 @@ package no.statkart.skif.store.kodeliste;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.Localizable;
-import no.statkart.skif.internal.util.InternalLocaleUtils;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * Superklasse for Koder.
- *
- * TODO: Generalisere LocalizedFields slik at det er mulig å angi flere felter i subklasser
- * TODO: Lage eget interface for localize metoden
  *
  * @author Henrik Fredholm
  * @since 2.1

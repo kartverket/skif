@@ -3,22 +3,23 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong" table="Kodeliste"  lazy="true">
+    <class name="no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong" table="Kodeliste" lazy="true">
         <!-- Her er det mulig å bruke *KodelisteStringIdType istedet hvis kodelistene skal ha streng baserte id'er -->
-        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.StoreTestKodelisteLongIdType">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.StoreTestKodelisteLongIdType">
             <generator class="assigned"/>
         </id>
 
         <property name="kodeTypeNavn" column="kodeTypeNavn" type="string"/>
         <property name="kodeIdClass" column="kodeIdClassname" type="org.hibernate.type.ClassType"/>
 
-        <map name="localizedFieldsMap" table="KodelisteLoc" lazy="true" fetch="join">
+        <map name="localizationMap" table="KodelisteLoc" lazy="true" fetch="join">
             <key column="id"/>
-            <map-key type="string" column="lokale"/>
-            <composite-element class="no.statkart.skif.store.kodeliste.AbstractKodeliste$LocalizedFields">
-                <property name="navn" type="string" access="field"/>
-                <property name="beskrivelse" type="string" access="field"/>
-           </composite-element>
+            <composite-map-key class="no.statkart.skif.store.localization.LocalizationMap$LocalizationKey">
+                <key-property name="locale"/>
+                <key-property name="name"/>
+            </composite-map-key>
+            <element column="value" type="java.lang.String"/>
         </map>
 
     </class>

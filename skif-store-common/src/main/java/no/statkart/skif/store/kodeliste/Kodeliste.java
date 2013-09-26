@@ -1,8 +1,6 @@
 package no.statkart.skif.store.kodeliste;
 
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.Localizable;
 
 import java.util.List;
 
@@ -11,7 +9,7 @@ import java.util.List;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public interface Kodeliste extends Localizable, BubbleObject {
+public interface Kodeliste extends BubbleObject {
     @Override
     KodelisteId<?> getId();
 
@@ -29,15 +27,4 @@ public interface Kodeliste extends Localizable, BubbleObject {
     boolean isEditerbar();
 
     void setEditerbar(boolean editerbar);
-
-    String getNavn();
-
-    void setNavn(String s);
-
-
-    String getBeskrivelse();
-
-    void setBeskrivelse(String s);
-
-
 }

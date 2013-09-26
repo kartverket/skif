@@ -1,23 +1,22 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.internal.util.InternalLocaleUtils;
-import no.statkart.skif.store.Localizable;
 import no.statkart.skif.store.kodeliste.Kode;
+import no.statkart.skif.store.localization.LocalizationMap;
+import no.statkart.skif.store.localization.Localized;
+import no.statkart.skif.store.localization.LocalizedString;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * @author Henrik Fredholm
  */
-public abstract class StoreTestKode extends Kode implements StoreTestBubble, Localizable {
+public abstract class StoreTestKode extends Kode implements StoreTestBubble, Localized {
+    private static final long serialVersionUID = 1L;
+
     private String kodeverdi;
 
-    private LocalizedFields localizedFields = new LocalizedFields();
-    private Map<String, LocalizedFields> localizedFieldsMap = new HashMap<String, LocalizedFields>();
+    private final LocalizationMap localizationMap = new LocalizationMap(this);
 
     public StoreTestKodeId<?> getId() {
         return (StoreTestKodeId<?>) super.getId();
@@ -31,68 +30,29 @@ public abstract class StoreTestKode extends Kode implements StoreTestBubble, Loc
         this.kodeverdi = kodeverdi;
     }
 
-    public String getNavn() {
-        return localizedFields.navn;
+    public LocalizedString getNavn() {
+        return localizationMap.localizedStringForField("navn");
     }
 
-    public void setNavn(String navn) {
-        localizedFields.navn = navn;
+    public void setNavn(LocalizedString navn) {
+        localizationMap.updateLocalizations("navn", navn);
     }
 
-    public String getBeskrivelse() {
-        return localizedFields.beskrivelse;
+    public LocalizedString getBeskrivelse() {
+        return localizationMap.localizedStringForField("beskrivelse");
     }
 
-    public void setBeskrivelse(String beskrivelse) {
-        this.localizedFields.beskrivelse = beskrivelse;
+    public void setBeskrivelse(LocalizedString beskrivelse) {
+        localizationMap.updateLocalizations("beskrivelse", beskrivelse);
     }
 
-    public Map<String, LocalizedFields> getLocalizedFieldsMap() {
-        return localizedFieldsMap;
+    @Override
+    public Map<LocalizationMap.LocalizationKey, String> getLocalizationMap() {
+        return localizationMap.getMap();
     }
 
-    public void setLocalizedFieldsMap(Map<String, LocalizedFields> localizedFieldsMap) {
-        this.localizedFieldsMap = localizedFieldsMap;
-    }
-
-    // TODO: Denne bør ligge i eget interface
-    public void localize(String localeString) {
-        localizedFields = null;
-        ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
-        Locale locale = InternalLocaleUtils.toLocale(localeString);
-        LocalizedFields fields;
-        while (true) {
-            fields = localizedFieldsMap.get(locale != null ? locale.toString() : "");
-
-            if (fields != null || locale == null) {
-                break;
-            }
-
-            locale = control.getFallbackLocale("", locale); // Første parameter kan ikke være null, men det ser ikke ut til at den brukes til noe
-        }
-        localizedFields = fields != null ? fields : new LocalizedFields();
-    }
-
-    public void updateLocalized(String localeString) {
-        LocalizedFields l = localizedFieldsMap.get(localeString);
-        if (l == null) {
-            l = new LocalizedFields();
-            localizedFieldsMap.put(localeString, l);
-        }
-        if (l != localizedFields) {
-            l.updateFrom(localizedFields);
-        }
-    }
-
-    public static class LocalizedFields implements no.statkart.skif.store.LocalizedFields {
-        private static final long serialVersionUID = 1L;
-
-        public String navn = "";
-        public String beskrivelse = "";
-
-        void updateFrom(LocalizedFields l) {
-            navn = l.navn;
-            beskrivelse = l.beskrivelse;
-        }
+    @Override
+    public void setLocalizationMap(Map<LocalizationMap.LocalizationKey, String> map) {
+        localizationMap.setMap(map);
     }
 }
