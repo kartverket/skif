@@ -2,7 +2,6 @@ package no.statkart.skif.storetest.domain;
 
 
 import com.google.inject.Inject;
-import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
@@ -10,8 +9,6 @@ import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.storetest.domain.basic.BubbleWithKode;
-import no.statkart.skif.storetest.domain.demo.Baz;
-import no.statkart.skif.storetest.domain.demo.BazId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
@@ -21,8 +18,6 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
