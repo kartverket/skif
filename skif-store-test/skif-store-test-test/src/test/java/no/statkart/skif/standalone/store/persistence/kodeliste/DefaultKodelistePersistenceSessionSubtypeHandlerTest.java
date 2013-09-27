@@ -5,7 +5,6 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodeId;
-import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
@@ -81,10 +80,6 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
         HibernatePersistenceSessionMasterImpl masterOld = new DefaultHibernatePersistenceSessionImplExt(
                 sessionFactoryManagerBundle.getBundle().get(1)
         );
-
-        Collection<Class<? extends Kodeliste>> kodelisteClasses = new ArrayList<Class<? extends Kodeliste>>();
-        kodelisteClasses.add(StoreTestKodelisteLong.class);
-        kodelisteClasses.add(StoreTestKodelisteString.class);
 
         return new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
