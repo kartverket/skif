@@ -2,11 +2,11 @@ package no.statkart.skif.store.persistence.kodeliste;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.store.*;
-import no.statkart.skif.store.kodeliste.Kode;
-import no.statkart.skif.store.kodeliste.KodeId;
-import no.statkart.skif.store.kodeliste.Kodeliste;
-import no.statkart.skif.store.kodeliste.KodelisteId;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import org.hibernate.Criteria;
@@ -38,13 +38,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     private final EnumKodelisteManager enumKodelisteManager;
     private final HibernatePersistenceSessionMaster persistenceSessionMaster;
 
-    // TODO: Denne kunne sikkert bli beregnet utfra hibernate factory siden den vet hvilke klasser i hibernate som er kodelister
-    private final Collection<Class<? extends Kodeliste>> kodelisteClasses;
-
-    public DefaultKodelistePersistenceSessionSubtypeHandler(HibernatePersistenceSessionMaster persistenceSessionMaster, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses) {
+    public DefaultKodelistePersistenceSessionSubtypeHandler(HibernatePersistenceSessionMaster persistenceSessionMaster, EnumKodelisteManager enumKodelisteManager) {
         this.persistenceSessionMaster = persistenceSessionMaster;
         this.enumKodelisteManager = enumKodelisteManager;
-        this.kodelisteClasses = kodelisteClasses;
 
     }
 
@@ -376,20 +372,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
      * @return alle database kodelister
      */
     private Collection<Kodeliste> getDbKodelister() {
-        Collection<Kodeliste> result = null;
         try {
+            Collection<Kodeliste> result;
             Session session = persistenceSessionMaster.reserveSession();
-
-            for (Class<? extends Kodeliste> kodelisteClass : kodelisteClasses) {
-                List<Kodeliste> list = session.createCriteria(kodelisteClass)
-                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                        .list();
-                if (result == null) {
-                    result = list;
-                } else {
-                    result.addAll(list);
-                }
-            }
+            result = session.createCriteria(AbstractKodeliste.class)
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .list();
             return result;
         } finally {
             persistenceSessionMaster.releaseSession();

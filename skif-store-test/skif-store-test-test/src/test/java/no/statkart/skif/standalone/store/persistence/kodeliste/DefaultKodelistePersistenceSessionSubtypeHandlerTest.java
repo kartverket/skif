@@ -89,11 +89,11 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
         return new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
                         masterCurrent,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelisteManager, kodelisteClasses)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelisteManager)
                 ),
                 new DefaultPersistenceSessionStrategy(
                         masterOld,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelisteManager, kodelisteClasses)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelisteManager)
                 )
         );
     }

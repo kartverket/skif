@@ -19,7 +19,6 @@ import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.ResourceManagerConfigurator;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.persistence.jdbc.*;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandlerForConnection;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
@@ -34,7 +33,6 @@ import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.*;
-import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
 import no.statkart.skif.store.persistence.*;
 import no.statkart.skif.store.persistence.hibernate.*;
@@ -48,7 +46,6 @@ import no.statkart.skif.storetest2.domain.eierskap.Eiendom;
 import no.statkart.skif.storetest2.domain.eierskap.EiendomstypeKodeId;
 import no.statkart.skif.storetest2.domain.eierskap.Eier;
 import no.statkart.skif.storetest2.domain.entitycomponent.BubbleWithEntityComponents;
-import no.statkart.skif.storetest2.domain.kodeliste.StoreTest2KodelisteLong;
 import no.statkart.skif.storetest2.domain.list.ListOfEntityComponents;
 import no.statkart.skif.storetest2.domain.multikobling.Multirefererende;
 import org.hibernate.Interceptor;
@@ -57,7 +54,6 @@ import org.hibernate.cfg.Environment;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -140,20 +136,6 @@ public class StoreTest2ServerModule extends SkifModule {
         return enumKodelisteManager;
     }
 
-    /**
-     * Angir hvilke kodeliste typer som finnes. Det er egentlig litt unødvendig å måtte angi det her siden
-     * den informasjon kan utledes fra hiberante factory.
-     *
-     * @return
-     */
-    @Provides
-    @Singleton
-    Collection<Class<? extends Kodeliste>> provideKodelisteClasses() {
-        Collection<Class<? extends Kodeliste>> kodelisteClasses = new ArrayList<Class<? extends Kodeliste>>();
-        kodelisteClasses.add(StoreTest2KodelisteLong.class);
-        return kodelisteClasses;
-    }
-
     @Provides
     HibernateInterceptorFactory provideHibernateInterceptorFactory() {
         return new HibernateInterceptorFactory() {
@@ -167,7 +149,7 @@ public class StoreTest2ServerModule extends SkifModule {
 
     @Provides
     @Singleton
-    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<HibernateInterceptorFactory> hibernateInterceptorFactoryProvider, Provider<IdService> idServiceProvider) {
+    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<IdService> idServiceProvider) {
 
         Configuration configuration = moduleConfiguration.getConfiguration();
 
@@ -228,16 +210,14 @@ public class StoreTest2ServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider, Provider<Collection<Class<? extends Kodeliste>>> kodelisteClassesProvider, ServiceContext serviceContext) {
+    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider) {
         final String strategy = resourceManagerConfiguratorProvider.get().getStrategy();
         if (strategy == ResourceManagerConfigurator.CONNECTION_ONLY) {
             return createResourceManagerForConnectionOnlyStrategy();
         } else {
             return createResourceManagerForHibernateStrategy(
                     hibernateSessionFactoryManagerBundleProvider.get(),
-                    enumKodelisteManagerProvider.get(),
-                    kodelisteClassesProvider.get(),
-                    serviceContext
+                    enumKodelisteManagerProvider.get()
             );
         }
 
@@ -270,7 +250,7 @@ public class StoreTest2ServerModule extends SkifModule {
         return resourceManager;
     }
 
-    ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, ServiceContext serviceContext) {
+    ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager) {
         HibernatePersistenceSessionMasterImpl persistenceSessionMasterCurrent = new DefaultHibernatePersistenceSessionImplExt(
                 hibernateSessionFactoryManagerBundle.getBundle().get(0)
         );
@@ -282,11 +262,11 @@ public class StoreTest2ServerModule extends SkifModule {
         PersistenceSessionManager persistenceSessionManager = new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
                         persistenceSessionMasterCurrent,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterCurrent, enumKodelisteManager, kodelisteClasses)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterCurrent, enumKodelisteManager)
                 ),
                 new DefaultPersistenceSessionStrategy(
                         persistenceSessionMasterOld,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterOld, enumKodelisteManager, kodelisteClasses)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterOld, enumKodelisteManager)
                 )
         );
 

@@ -19,7 +19,6 @@ import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.ResourceManagerConfigurator;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.persistence.jdbc.*;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandlerForConnection;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
@@ -34,7 +33,6 @@ import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.*;
-import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
 import no.statkart.skif.store.persistence.*;
 import no.statkart.skif.store.persistence.hibernate.*;
@@ -53,7 +51,6 @@ import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 import no.statkart.skif.storetest.domain.koder.HistorikkEnumKodeId;
 import no.statkart.skif.storetest.domain.koder.HistoriskDbKode;
 import no.statkart.skif.storetest.domain.koder.SimpleEnumKodeId;
@@ -178,21 +175,6 @@ public class StoreTestServerModule extends SkifModule {
         return enumKodelisteManager;
     }
 
-    /**
-     * Angir hvilke kodeliste typer som finnes. Det er egentlig litt unødvendig å måtte angi det her siden
-     * den informasjon kan utledes fra hiberante factory.
-     *
-     * @return
-     */
-    @Provides
-    @Singleton
-    Collection<Class<? extends Kodeliste>> provideKodelisteClasses() {
-        Collection<Class<? extends Kodeliste>> kodelisteClasses = new ArrayList<Class<? extends Kodeliste>>();
-        kodelisteClasses.add(StoreTestKodelisteLong.class);
-        kodelisteClasses.add(StoreTestKodelisteString.class);
-        return kodelisteClasses;
-    }
-
     @Provides
     HibernateInterceptorFactory provideHibernateInterceptorFactory() {
         return new HibernateInterceptorFactory() {
@@ -206,7 +188,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @Singleton
-    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<HibernateInterceptorFactory> hibernateInterceptorFactoryProvider, Provider<IdService> idServiceProvider) {
+    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<IdService> idServiceProvider) {
 
         Configuration configuration = moduleConfiguration.getConfiguration();
 
@@ -309,16 +291,14 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider, Provider<Collection<Class<? extends Kodeliste>>> kodelisteClassesProvider, ServiceContext serviceContext) {
+    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider) {
         final String strategy = resourceManagerConfiguratorProvider.get().getStrategy();
         if (strategy == ResourceManagerConfigurator.CONNECTION_ONLY) {
             return createResourceManagerForConnectionOnlyStrategy();
         } else {
             return createResourceManagerForHibernateStrategy(
                     hibernateSessionFactoryManagerBundleProvider.get(),
-                    enumKodelisteManagerProvider.get(),
-                    kodelisteClassesProvider.get(),
-                    serviceContext
+                    enumKodelisteManagerProvider.get()
             );
         }
 
@@ -351,7 +331,7 @@ public class StoreTestServerModule extends SkifModule {
         return resourceManager;
     }
 
-    ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, ServiceContext serviceContext) {
+    ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager) {
         Configuration configuration = moduleConfiguration.getConfiguration();
         Properties hibernatePropertiesCurrent;
         Properties hibernatePropertiesOld;
@@ -390,11 +370,11 @@ public class StoreTestServerModule extends SkifModule {
         PersistenceSessionManager persistenceSessionManager = new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
                         persistenceSessionMasterCurrent,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterCurrent, enumKodelisteManager, kodelisteClasses)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterCurrent, enumKodelisteManager)
                 ),
                 new DefaultPersistenceSessionStrategy(
                         persistenceSessionMasterOld,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterOld, enumKodelisteManager, kodelisteClasses)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterOld, enumKodelisteManager)
                 )
         );
 
