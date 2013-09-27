@@ -3,8 +3,6 @@ package no.statkart.skif.standalone.store.persistence.kodeliste;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.service.DefaultServiceContext;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.Kodeliste;
@@ -19,6 +17,8 @@ import no.statkart.skif.store.persistence.kodeliste.KodelistePersistenceSessionS
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
+import no.statkart.skif.storetest.domain.koder.HistoriskDbKode;
+import no.statkart.skif.storetest.domain.koder.SimpleLocalizedDbKode;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -55,8 +55,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 //        sessionFactoryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
         sessionFactoryBuilder.addResource(ADbKode.class);
         sessionFactoryBuilder.addResource(BDbKode.class);
-        sessionFactoryBuilder.addResource(XStrDbKode.class);
         sessionFactoryBuilder.addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class);
+        sessionFactoryBuilder.addResource(XStrDbKode.class);
+        sessionFactoryBuilder.addResourceWithSubclasses(HistoriskDbKode.class, SimpleLocalizedDbKode.class);
         sessionFactoryBuilder.addResource(StoreTestKodelisteLong.class);
 
 
@@ -68,16 +69,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
         sessionFactoryManagerBundle.close();
     }
 
-// Brukes av utkommenterte tester i bunn
-//    private PersistenceSessionManager createPersistenceSessionManager() {
-//        ServiceContext context = new DefaultServiceContext();
-//        context.setLocale(norsk);
-//
-//        return createPersistenceSessionManager(context);
-//    }
-
-
-    private PersistenceSessionManager createPersistenceSessionManager(ServiceContext context) {
+    private PersistenceSessionManager createPersistenceSessionManager() {
         EnumKodelisteManager enumKodelisteManager = new EnumKodelisteManager();
         enumKodelisteManager.installStatic(AEnumKodeId.class);
         enumKodelisteManager.installStatic(BEnumKodeId.class);
@@ -97,19 +89,17 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
         return new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
                         masterCurrent,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelisteManager, kodelisteClasses, context)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelisteManager, kodelisteClasses)
                 ),
                 new DefaultPersistenceSessionStrategy(
                         masterOld,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelisteManager, kodelisteClasses, context)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelisteManager, kodelisteClasses)
                 )
         );
     }
 
     public void testGetAEnumKode_NO() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             AEnumKode aEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KodeAId);
@@ -127,9 +117,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetBEnumKode_NO() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             BEnumKode bEnumKodeA = persistenceSessionManager.get(BEnumKodeId.KodeAId);
@@ -147,9 +135,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetSEnumKode_NO() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             SEnumKode sEnumKodeA = persistenceSessionManager.get(SEnumKodeId.KodeAId);
@@ -167,9 +153,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetEnumKode_NO_Old() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             AEnumKode aEnumKodeA = persistenceSessionManager.get((AEnumKodeId) AEnumKodeId.KodeAId.asSnapshotVersionOld());
@@ -182,9 +166,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetEnumKode_NO_NY() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norskNynorsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             AEnumKode aEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KodeAId);
@@ -198,9 +180,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetKodelisteForEnum_NO() {
-        ServiceContext context = new DefaultServiceContext();
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
-        context.setLocale(norsk);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             StoreTestKodelisteLong kodelisteForAEnumKode = persistenceSessionManager.get(AEnumKodeId.KODELISTE_ID);
@@ -223,9 +203,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetKodelisteForEnum_NO_Old() {
-        ServiceContext context = new DefaultServiceContext();
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
-        context.setLocale(norsk);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             StoreTestKodelisteLong kodelisteForEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KODELISTE_ID.asSnapshotVersionOld());
@@ -243,9 +221,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetKodelisteForEnumKode_NO_NY() {
-        ServiceContext context = new DefaultServiceContext();
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
-        context.setLocale(norskNynorsk);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             StoreTestKodelisteLong kodelisteForEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KODELISTE_ID);
@@ -256,9 +232,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetADbKode_NO() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             ADbKode aDbKodeA1 = persistenceSessionManager.get(ADbKodeId.A1Id);
@@ -277,9 +251,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetBDbKode_NO() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             BDbKode bDbKodeB1 = persistenceSessionManager.get(BDbKodeId.B1Id);
@@ -297,9 +269,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetC1DbKode_NO() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             C1DbKode c1DbKodeC1A = persistenceSessionManager.get(C1DbKodeId.C1AId);
@@ -318,9 +288,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 
 
     public void testGetXStrDbKode_NO() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             XStrDbKode xStrDbKodeA = persistenceSessionManager.get(XStrDbKodeId.AId);
@@ -339,9 +307,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 
 
     public void testGetKodelisteForDbKode_NO_NY() {
-        ServiceContext context = new DefaultServiceContext();
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
-        context.setLocale(norskNynorsk);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             StoreTestKodelisteLong kodelisteForADbKode = persistenceSessionManager.get(ADbKodeId.KODELISTE_ID);
@@ -354,13 +320,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testGetKodelister() {
-        ServiceContext context = new DefaultServiceContext();
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
-        context.setLocale(norskNynorsk);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             KodelistePersistenceSessionSubtypeHandler kodelisteSubtypeHandler = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(KodelistePersistenceSessionSubtypeHandler.class);
             Collection<KodelisteId<?>> kodelisteIds = kodelisteSubtypeHandler.getKodelisteIds();
+            assertEquals(kodelisteIds.size(), 9);
         } finally {
             persistenceSessionManager.close();
         }
@@ -368,9 +333,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
     public void testInsertDbKode() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             BDbKode bDbKodeNy = new BDbKode();
@@ -390,9 +353,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 
     @Test(dependsOnMethods = "testInsertDbKode")
     public void testUpdateDbKode() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             BDbKode dbKode = persistenceSessionManager.get(new BDbKodeId(1234L, SnapshotVersion.CURRENT));
@@ -409,9 +370,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 
     @Test(dependsOnMethods = "testUpdateDbKode")
     public void testDeleteDbKode() {
-        ServiceContext context = new DefaultServiceContext();
-        context.setLocale(norsk);
-        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager(context);
+        PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
             BDbKode dbKode = persistenceSessionManager.get(new BDbKodeId(1234L, SnapshotVersion.CURRENT));

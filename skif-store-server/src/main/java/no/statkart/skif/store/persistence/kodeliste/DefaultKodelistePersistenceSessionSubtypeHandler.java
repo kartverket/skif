@@ -2,7 +2,6 @@ package no.statkart.skif.store.persistence.kodeliste;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.KodeId;
@@ -42,8 +41,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     // TODO: Denne kunne sikkert bli beregnet utfra hibernate factory siden den vet hvilke klasser i hibernate som er kodelister
     private final Collection<Class<? extends Kodeliste>> kodelisteClasses;
 
-    // TODO: Slette serviceContext-parameter
-    public DefaultKodelistePersistenceSessionSubtypeHandler(HibernatePersistenceSessionMaster persistenceSessionMaster, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, ServiceContext serviceContext) {
+    public DefaultKodelistePersistenceSessionSubtypeHandler(HibernatePersistenceSessionMaster persistenceSessionMaster, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses) {
         this.persistenceSessionMaster = persistenceSessionMaster;
         this.enumKodelisteManager = enumKodelisteManager;
         this.kodelisteClasses = kodelisteClasses;

@@ -390,11 +390,11 @@ public class StoreTestServerModule extends SkifModule {
         PersistenceSessionManager persistenceSessionManager = new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
                         persistenceSessionMasterCurrent,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterCurrent, enumKodelisteManager, kodelisteClasses, serviceContext)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterCurrent, enumKodelisteManager, kodelisteClasses)
                 ),
                 new DefaultPersistenceSessionStrategy(
                         persistenceSessionMasterOld,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterOld, enumKodelisteManager, kodelisteClasses, serviceContext)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(persistenceSessionMasterOld, enumKodelisteManager, kodelisteClasses)
                 )
         );
 

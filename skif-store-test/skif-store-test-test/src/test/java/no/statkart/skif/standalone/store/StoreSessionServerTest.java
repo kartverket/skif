@@ -142,11 +142,11 @@ public class StoreSessionServerTest {
         return new DefaultPersistenceSessionManager(
                 new DefaultPersistenceSessionStrategy(
                         masterCurrent,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelistManager, kodelisteClasses, context)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelistManager, kodelisteClasses)
                 ),
                 new DefaultPersistenceSessionStrategy(
                         masterOld,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelistManager, kodelisteClasses, context)
+                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelistManager, kodelisteClasses)
                 )
         );
     }
