@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
  * at disse kan lokaliseres og tilpasses riktig SnapshotVersion uten å påvirke det globale objektet.
  * Manageren har ansvar for å hente opp lokaliserte verdi fra resourcefiler
  * <p/>
- * TODO: Vurder å introduserer en second level for ofte anvente lokale og snapshotversjoner. F.eks bokmål+CURRENT OG nynorks+CURRENT
  *
  * @author Henrik Fredholm
  * @since 2.1
@@ -36,7 +35,7 @@ public class EnumKodelisteManager {
     /**
      * Alle enum baserte koder og kodelister.
      */
-    private Map<BubbleId<?>, BubbleObject> nonLocalizedEnumCache = new HashMap<BubbleId<?>, BubbleObject>();
+    private Map<BubbleId<?>, BubbleObject> enumCache = new HashMap<BubbleId<?>, BubbleObject>();
     private Set<KodelisteId<?>> kodelisteIds = new HashSet<KodelisteId<?>>();
     private Set<Class<? extends KodeId>> enumClasses = new HashSet<Class<? extends KodeId>>();
 
@@ -62,12 +61,12 @@ public class EnumKodelisteManager {
         if (kodeliste instanceof Localized) {
             initializeLocalizedFieldsForKodeliste(kodeSupport, (Localized) kodeliste);
         }
-        nonLocalizedEnumCache.put(kodeliste.getId(), kodeliste);
+        enumCache.put(kodeliste.getId(), kodeliste);
         for (Map.Entry<KodeId<?>, Kode> entry : koder.entrySet()) {
             if (entry.getValue() instanceof Localized) {
                 initializeLocalizedFieldsForKode(kodeSupport, (Localized) entry.getValue());
             }
-            nonLocalizedEnumCache.put(entry.getKey(), entry.getValue());
+            enumCache.put(entry.getKey(), entry.getValue());
         }
         kodelisteIds.add(kodeliste.getId());
     }
@@ -189,7 +188,7 @@ public class EnumKodelisteManager {
      * @return koden, kodelisten, eller <code>null</code> hvis id ikke svarer til noen kjende kode eller kodeliste
      */
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
-        BubbleObject masterObject = nonLocalizedEnumCache.get(bubbleId.asSnapshotVersionCurrent());
+        BubbleObject masterObject = enumCache.get(bubbleId.asSnapshotVersionCurrent());
 
         if (masterObject instanceof BubbleObjectWithHistory) {
             BubbleObjectWithHistory objectWithHistory = (BubbleObjectWithHistory) masterObject;
@@ -213,7 +212,7 @@ public class EnumKodelisteManager {
                     List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
                     List<KodeId<?>> filteredKodeIds = new ArrayList<KodeId<?>>(kodeIds.size());
                     for (KodeId<?> kodeId : kodeIds) {
-                        BubbleObjectWithHistory kode = (BubbleObjectWithHistory) nonLocalizedEnumCache.get(kodeId);
+                        BubbleObjectWithHistory kode = (BubbleObjectWithHistory) enumCache.get(kodeId);
                         if (bubbleId.getSnapshotVersion().between(kode.getOppdateringsdato(), kode.getSluttdato())) {
                             filteredKodeIds.add(kodeId);
                         }
