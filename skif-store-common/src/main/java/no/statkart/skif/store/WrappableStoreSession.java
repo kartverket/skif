@@ -29,5 +29,7 @@ public interface WrappableStoreSession extends StoreSession {
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
     <T extends BubbleObject, I extends BubbleId<? extends T>>  Map<I,List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end);
+    int getLevel();
+    boolean inAttachedMode();
 }
 

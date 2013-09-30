@@ -1,6 +1,7 @@
 package no.statkart.skif.persistence.hibernate.type;
 
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.util.OracleUtils;
 import oracle.sql.ARRAY;
 import oracle.sql.ArrayDescriptor;
@@ -16,20 +17,23 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkState;
+
 /**
  * En Hibernate {@code UserType} for persistering av {@code BubbleId} collections via Oracle {@code oracle.sql.ARRAY}. Klassen brukes
  * hovedsakelig i forbindelse med spørringer hvor collections kan være  vilkårlig store. Alle BubbleId'er i en collectionen
- * må ha samme idValue type (Long eller String).
- *
+ * må ha samme idValue type (Long eller String). {@code SnapshotVersion} i id'er anvendes ikke, men må være satt på
+ * sessionen allerede. For å hindre feil sjekkes det at alle id'er inneholder samme snapshotversion.
+ * <p/>
  * <p>For å kunne bruke henholdsvis Number og String arrays i spørringer må Oracle skjemaet inneholde følgende definisjoner:
  * <pre>
  *    CREATE TYPE NUMBER_LIST_TYPE AS TABLE OF NUMBER;
  *    CREATE TYPE STRING_LIST_TYPE AS TABLE OF VARCHAR(255);
  * </pre>
  *
- * @see no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType
- * @sine 2.3
  * @author Henrik Fredholm
+ * @sine 2.3
+ * @see no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType
  */
 public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
     private static final Logger log = LoggerFactory.getLogger(OracleAbstractBubbleIdArrayUserType.class);
@@ -106,9 +110,18 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
 
     private Object[] toArray(Collection<? extends BubbleId> collection) {
         Object[] list = new Object[collection.size()];
-        int i=0;
-        for ( Iterator<? extends BubbleId> iterator = collection.iterator(); iterator.hasNext(); i++) {
-            list[i] = iterator.next().getValue();
+        int i = 0;
+        SnapshotVersion snapshotVersion = null;
+        for (Iterator<? extends BubbleId> iterator = collection.iterator(); iterator.hasNext(); i++) {
+            BubbleId bubbleId = iterator.next();
+            if (snapshotVersion == null) {
+                snapshotVersion = bubbleId.getSnapshotVersion();
+            } else {
+                if (snapshotVersion != bubbleId.getSnapshotVersion()) {
+                    throw new IllegalStateException(String.format("Collection contains multiple SnapshotVersions, expected %s for id %s", snapshotVersion, bubbleId));
+                }
+            }
+            list[i] = bubbleId.getValue();
         }
         return list;
     }

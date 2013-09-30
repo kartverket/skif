@@ -14,6 +14,7 @@ import no.statkart.skif.service.proxy.ChainedProxyHandler;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@SuppressWarnings("UnusedDeclaration") // Reflection
 public class ServerServiceModuleStrategySingleVm extends ServerServiceModuleStrategy {
     public ServerServiceModuleStrategySingleVm() {
         setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ServerCallServiceChainFactory.class));

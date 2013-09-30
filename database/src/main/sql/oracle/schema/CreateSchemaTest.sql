@@ -309,6 +309,25 @@ create table L2SetEntInCompComponent (
 );
 alter table L2SetEntInCompComponent add constraint FK_L2SetEntInComp_ownerId foreign key (ownerId) references BubbleWithEntInCompComponent;
 
+
+-- Tabeller for relasjonstesting
+
+create table X1BBOne (
+  id number(19,0) not null,
+  nr number(10,0),
+  text varchar2(255),
+  primary key (id)
+);
+
+create table X1AA (
+  id number(19,0) not null,
+  nr number(10,0),
+  text varchar2(255),
+  someBBId number(19,0),
+  primary key (id)
+);
+alter table X1AA add constraint FK_X1AA_someBBId foreign key (someBBId) references X1BBOne;
+
 -- Denne map tabell brukes av StoreTest1ServiceTest
 create table TestMap (
 k varchar2(255) not null,
@@ -908,90 +927,4 @@ BEGIN
 END T_BubbleWithListComponent2;
 /
 
--- Tabeller for relasjonstesting
 
-CREATE TABLE X1BOne_H (
-    id                   NUMBER(19,0) NOT NULL ENABLE,
-    oppdateringsdato     timestamp(6) not null,
-    sluttdato            timestamp(6) not null,
-    versjonId            number (19,0) not null,
-    nr                   number(10,0),
-    text                 VARCHAR2(255 BYTE),
-    PRIMARY KEY (ID, sluttdato)
-);
-create view X1BOne as select * from X1BOne_H  where snapshot_time.t_between(oppdateringsdato, sluttdato)=1;
-
-CREATE OR REPLACE TRIGGER X1BOne_TRIGGER
-INSTEAD OF INSERT OR UPDATE OR DELETE ON X1BOne
-FOR EACH ROW
-DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
-BEGIN
-  IF UPDATING THEN
-    IF :old.oppdateringsdato < t_Trans THEN
-        INSERT INTO X1BOne_H
-        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text);
-
-        UPDATE X1BOne_H SET versjonId = :old.versjonId + 1 WHERE id= :new.id and sluttdato = t_End;
-    END IF;
-    UPDATE X1BOne_H
-    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.nr, text = :new.text
-    WHERE id = :new.id and sluttdato = t_End;
-  ELSIF INSERTING THEN
-    INSERT INTO X1BOne_H
-        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.text);
-  ELSIF DELETING THEN
-    IF :old.oppdateringsdato < t_Trans THEN
-        INSERT INTO X1BOne_H
-        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text);
-    END IF;
-    delete from X1BOne_H
-    WHERE id = :old.id and sluttdato = t_End;
-  END IF;
-END X1BOne_TRIGGER;
-/
-
-CREATE TABLE X1A_H (
-    id                   NUMBER(19,0) NOT NULL ENABLE,
-    oppdateringsdato     timestamp(6) not null,
-    sluttdato            timestamp(6) not null,
-    versjonId            number (19,0) not null,
-    nr                   number(10,0),
-    text                 VARCHAR2(255 BYTE),
-    bId                  number(19,0) not null,
-
-    PRIMARY KEY (ID, sluttdato)
-);
-create view X1A as select * from X1A_H  where snapshot_time.t_between(oppdateringsdato, sluttdato)=1;
-
-CREATE OR REPLACE TRIGGER X1A_TRIGGER
-INSTEAD OF INSERT OR UPDATE OR DELETE ON X1A
-FOR EACH ROW
-DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
-BEGIN
-  IF UPDATING THEN
-    IF :old.oppdateringsdato < t_Trans THEN
-        INSERT INTO X1A_H
-        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.bId);
-
-        UPDATE X1A_H SET versjonId = :old.versjonId + 1 WHERE id= :new.id and sluttdato = t_End;
-    END IF;
-    UPDATE X1A_H
-    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.nr, text = :new.text, bId = :new.bId
-    WHERE id = :new.id and sluttdato = t_End;
-  ELSIF INSERTING THEN
-    INSERT INTO X1A_H
-        VALUES (:new.id, t_Trans,t_End, 1, :new.nr, :new.text, :new.bId);
-  ELSIF DELETING THEN
-    IF :old.oppdateringsdato < t_Trans THEN
-        INSERT INTO X1A_H
-        VALUES (:old.id, :old.oppdateringsdato, t_Trans, :old.versjonId, :old.nr, :old.text, :old.bId);
-    END IF;
-    delete from X1A_H
-    WHERE id = :old.id and sluttdato = t_End;
-  END IF;
-END X1A_TRIGGER;
-/

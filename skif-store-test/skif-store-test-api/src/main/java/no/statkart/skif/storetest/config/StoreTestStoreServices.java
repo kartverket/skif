@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.config;
 
 import no.statkart.skif.service.ServicesListing;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAFinderService;
 import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
 import no.statkart.skif.storetest.service.histtest.HistTestService;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;

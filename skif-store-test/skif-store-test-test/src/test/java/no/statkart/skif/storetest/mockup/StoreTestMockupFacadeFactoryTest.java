@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.mockup;
 
 import com.google.inject.Inject;
 import no.statkart.skif.store.service.StoreService;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1A;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1AA;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -18,7 +18,8 @@ public class StoreTestMockupFacadeFactoryTest extends StoreTestTestCase {
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
-    @Inject StoreService storeService;
+    @Inject
+    StoreService storeService;
 
     @Test(invocationCount = 2) // Kjør to ganger for å teste at readset bare forsøkes skrives ned én gang
     public void readSet() {
@@ -32,8 +33,8 @@ public class StoreTestMockupFacadeFactoryTest extends StoreTestTestCase {
     }
 
     private void checkMockupDataSet(StoreTestMockupFacade mockupFacade) {
-//        X1A a1 = storeService.getObject(mockupFacade.getX1AMockupFactory().getA1Id());
-//        Assert.assertEquals(a1.getId(), mockupFacade.getX1AMockupFactory().getA1Id());
-//        Assert.assertEquals(a1.getNr(), 1);
+        X1AA a1 = storeService.getObject(mockupFacade.getX1AAMockupFactory().getA1Id());
+        Assert.assertEquals(a1.getId(), mockupFacade.getX1AAMockupFactory().getA1Id());
+        Assert.assertEquals(a1.getNr(), 1);
     }
 }

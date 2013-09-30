@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.domain.relation;
 
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
 
 /**
@@ -7,7 +8,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
  * @author Henrik Fredholm
  * @since 2.3
  */
-public abstract class AbstractRelationTestBubble extends AbstractStoreTestBubbleWithHistory {
+public abstract class AbstractRelationTestBubble extends AbstractStoreTestBubble {
     private static final long serialVersionUID = 1L;
 
     private int nr;

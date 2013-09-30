@@ -1,6 +1,12 @@
 package no.statkart.skif.store;
 
+import com.google.common.collect.ImmutableSet;
+import no.statkart.skif.store.relation.cache.RelationName;
+import no.statkart.skif.store.relation.cache.StoreRelationCache;
+
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
 
 import static no.statkart.skif.guava.Preconditions.checkState;
 
@@ -55,7 +61,22 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
     public Store store() {
         return store;
     }
+    protected final boolean hasSnapshotVersionCurrentId() {
+        return id != null && id.getSnapshotVersion() == SnapshotVersion.CURRENT;
+    }
 
+    protected final <T extends BubbleId<?>> T onChangeRelation(RelationName relationName, T oldValue, T newValue) {
+        if (hasSnapshotVersionCurrentId() && store!=null && oldValue!=newValue) {
+            store.getInstance(StoreRelationCache.class).onChangeRelation(relationName, id, oldValue, newValue);
+        }
+        return newValue;
+    }
+
+    protected <T extends Set> T unwrapFinderResult(Map<? extends BubbleId<?>, T> mapOfResults) {
+        return mapOfResults.get(getId());
+    }
+
+    protected <T extends Set> T idAsSet() { return (T) ImmutableSet.of(getId()); }
 
     public final boolean equals(Object object) {
        if( this == object ) return true;

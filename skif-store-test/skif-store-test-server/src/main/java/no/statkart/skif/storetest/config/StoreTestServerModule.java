@@ -41,6 +41,8 @@ import no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate;
 import no.statkart.skif.store.persistence.jdbc.ConnectionSelectorUsingHibernate;
 import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceSessionSubtypeHandler;
 import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
+import no.statkart.skif.store.relation.cache.RelationCacheProxyHandler;
+import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
 import no.statkart.skif.storetest.domain.basic.*;
@@ -56,8 +58,8 @@ import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.Raz;
 import no.statkart.skif.storetest.domain.multikobling.Person;
 import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1A;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1BOne;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1AA;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne;
 import no.statkart.skif.storetest.domain.standalone.*;
 import no.statkart.skif.storetest.endringslogg.EndringManager;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
@@ -67,6 +69,7 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
 
+import javax.inject.Inject;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -107,6 +110,14 @@ public class StoreTestServerModule extends SkifModule {
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestStoreUpdateServices().getServices()));
         install(new ServerServiceModule(moduleConfiguration, new StoreTestTestServices().getServices()));
+
+        // DomainServiceFinder skal ha RelationCacheProxyHandler i CallServiceChain
+        ServerServiceModule domainServiceModule = new ServerServiceModule(moduleConfiguration, new StoreTestDomainFinderServices().getServices());
+        domainServiceModule.getStrategy(ServiceMode.SINGLE_VM).getCallServiceChainFactorySpecification().getCallServiceChainProxyHandlers().add(0, RelationCacheProxyHandler.class);
+        domainServiceModule.getStrategy(ServiceMode.JEE).getCallServiceChainFactorySpecification().getCallServiceChainProxyHandlers().add(0, RelationCacheProxyHandler.class);
+        install(domainServiceModule);
+
+
         bind(TestdataService.class).to(no.statkart.skif.storetest.service.test.TestdataService.class);
 
         {
@@ -139,6 +150,11 @@ public class StoreTestServerModule extends SkifModule {
 //            install(new ServerServiceModule(moduleConfiguration, new StoreTestTestServices().getServices()));
 //            bind(no.statkart.skif.service.test.TestdataService.class).to(no.statkart.skif.storetest.service.test.TestdataService.class);
 //        }
+    }
+
+    @Provides
+    StoreRelationCache provideStoreRelationCache(Store store) {
+        return store.getInstance(StoreRelationCache.class);
     }
 
     @Provides
@@ -227,10 +243,10 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(BubbleWithKode.class)
 
                         // Klasser for relasjonstesting
-                .addResource(X1BOne.class)
-//                .addResource(X1CMany.class)
-//                .addResource(X1DUnique.class)
-                .addResource(X1A.class)
+                .addResource(X1BBOne.class)
+//                .addResource(X1CCMany.class)
+//                .addResource(X1DDUnique.class)
+                .addResource(X1AA.class)
 
 
                 .addResource(TestBubble.class)

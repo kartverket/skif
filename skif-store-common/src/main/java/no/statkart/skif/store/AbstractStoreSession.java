@@ -618,4 +618,14 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     public void register(BubbleTransfer bubbleTransfer) {
         registerEntries(level, bubbleTransfer);
     }
+
+    @Override
+    public int getLevel() {
+        return level;
+    }
+
+    @Override
+    public boolean inAttachedMode() {
+        return false;
+    }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false" >
+
+    <class name="no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne" select-before-update="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.direct.X1BBOneIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <!-- historikk felter begin -->
+        <!--<property name="oppdateringsdato" type="timestamp" update="false" />-->
+        <!--<property name="sluttdato" type="timestamp" update="false"/>-->
+        <!--<property name="versjonId" type="long" update="false"/>-->
+        <!-- historikk felter end -->
+
+        <property name="nr"/>
+        <property name="text"/>
+    </class>
+</hibernate-mapping>

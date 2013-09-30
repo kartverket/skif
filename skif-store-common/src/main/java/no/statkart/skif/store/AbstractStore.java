@@ -5,6 +5,8 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.store.relation.cache.StoreRelationCache;
+import no.statkart.skif.store.relation.cache.StoreRelationCacheImpl;
 import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
@@ -19,6 +21,14 @@ public class AbstractStore implements Store {
     protected WrappableStoreSession storeSession;
     final private Injector injector;
 
+    final private StoreRelationCacheImpl storeRelactions = new StoreRelationCacheImpl() {
+        @Override
+        protected WrappableStoreSession getStoreSession() {
+            return storeSession;
+        }
+    };
+
+
     public AbstractStore(WrappableStoreSession storeSession, Injector injector) {
         this.injector = injector;
         this.storeSession = storeSession;
@@ -31,7 +41,11 @@ public class AbstractStore implements Store {
 
     @Override
     public <T> T getInstance(Class<T> type) {
-        return injector.getInstance(type);
+        if (type==StoreRelationCache.class) {
+            return (T)storeRelactions;
+        } else {
+            return injector.getInstance(type);
+        }
     }
 
     public <T> T getInstance(Key<T> key) {
@@ -275,6 +289,7 @@ public class AbstractStore implements Store {
     public void abortUnitOfWork() {
         // TODO: Bør sikre at denne alltid popper av et nivå av unit of work også selv om det kastes exception.
         storeSession = storeUnitOfWork().abortUnitOfWork();
+        storeRelactions.onAbortUnitOfWork();
     }
 
     @Override
@@ -282,6 +297,7 @@ public class AbstractStore implements Store {
         // TODO: Ikke sikker på at denne skal være her
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
         storeSession = storeUnitOfWork.endUnitOfWork();
+        storeRelactions.onCommitUnitOfWork();
     }
 
     @Override
@@ -292,5 +308,6 @@ public class AbstractStore implements Store {
     //@Override
     public void commitUnitOfWork() {
         storeSession = storeUnitOfWork().commitUnitOfWork();
+        storeRelactions.onCommitUnitOfWork();
     }
 }

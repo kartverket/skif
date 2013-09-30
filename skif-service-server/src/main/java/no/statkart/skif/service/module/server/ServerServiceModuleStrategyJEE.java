@@ -12,6 +12,8 @@ import no.statkart.skif.service.ejb.EJBCallProxyHandlerJEE;
  * @author Henrik Fredholm
  * @since 2.0
  */
+
+@SuppressWarnings("UnusedDeclaration") // Reflection
 public class ServerServiceModuleStrategyJEE extends ServerServiceModuleStrategy {
     public ServerServiceModuleStrategyJEE() {
         setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ServerCallServiceChainFactory.class));

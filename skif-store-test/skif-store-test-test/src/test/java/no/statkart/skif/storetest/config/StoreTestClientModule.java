@@ -14,12 +14,15 @@ import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.module.common.RunOnServerRemoteServiceModule;
+import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.StoreSessionClient;
+import no.statkart.skif.store.relation.cache.RelationCacheProxyHandler;
+import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
@@ -62,6 +65,13 @@ public class StoreTestClientModule extends SkifModule {
                 .setExceptionMapping(exceptionMapping)
                 .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
         );
+
+        // DomainServiceFinder skal ha RelationCacheProxyHandler i CallServiceChain
+        RemoteServiceModule domainServiceModule = new RemoteServiceModule(moduleConfiguration, new StoreTestDomainFinderServices().getServices(), mapping);
+        domainServiceModule.getStrategy(ServiceMode.SINGLE_VM).getCallServiceChainFactorySpecification().getCallServiceChainProxyHandlers().add(0, RelationCacheProxyHandler.class);
+        domainServiceModule.getStrategy(ServiceMode.JEE).getCallServiceChainFactorySpecification().getCallServiceChainProxyHandlers().add(0, RelationCacheProxyHandler.class);
+        install(domainServiceModule);
+
         bind(SequenceBlockAllocatorService.class).to(no.statkart.skif.storetest.service.id.SequenceBlockAllocatorService.class);
         bind(IdService.class).to(IdServiceImpl.class);
 
@@ -79,6 +89,11 @@ public class StoreTestClientModule extends SkifModule {
             bind(SkifUtil.typeLiteral(DBLockerService.class, Long.class)).to(no.statkart.skif.storetest.service.locker.DBLockerService.class);
             bind(SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).to(no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class);
         }
+    }
+
+    @Provides
+    StoreRelationCache provideStoreRelationCache(Store store) {
+        return store.getInstance(StoreRelationCache.class);
     }
 
     /*

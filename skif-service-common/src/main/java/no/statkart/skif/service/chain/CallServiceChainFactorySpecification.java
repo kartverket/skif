@@ -25,6 +25,10 @@ public class CallServiceChainFactorySpecification extends FactorySpecification<C
         callChainProxyHandlerClassList.add(callServiceChainProxyHandler);
     }
 
+    public ArrayList<Class<? extends ChainedProxyHandler>> getCallServiceChainProxyHandlers() {
+        return callChainProxyHandlerClassList;
+    }
+
     @Override
     public <S> void bindProxyHandlersForService(Binder binder, Class<S> service) {
         final List<TypeLiteral<? extends ChainedProxyHandler<S>>> callChainProxyHandlerTypeList = new ArrayList<TypeLiteral<? extends ChainedProxyHandler<S>>>(callChainProxyHandlerClassList.size());

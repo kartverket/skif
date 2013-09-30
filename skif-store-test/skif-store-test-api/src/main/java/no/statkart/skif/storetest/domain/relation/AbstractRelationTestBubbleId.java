@@ -1,6 +1,8 @@
 package no.statkart.skif.storetest.domain.relation;
 
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistoryId;
 
@@ -8,7 +10,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistoryId;
  * @author Henrik Fredholm
  * @since 2.3
  */
-public abstract class AbstractRelationTestBubbleId<T extends AbstractStoreTestBubbleWithHistory> extends AbstractStoreTestBubbleWithHistoryId<T> {
+public abstract class AbstractRelationTestBubbleId<T extends AbstractStoreTestBubble> extends AbstractStoreTestBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
     public AbstractRelationTestBubbleId(Long value) {

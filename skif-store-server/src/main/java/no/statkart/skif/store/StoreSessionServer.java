@@ -774,4 +774,9 @@ public class StoreSessionServer extends AbstractStoreSession {
     protected PersistenceSessionManager getPersistenceSessionManager() {
         return persistenceSessionManager;
     }
+
+    @Override
+    public boolean inAttachedMode() {
+        return true;
+    }
 }

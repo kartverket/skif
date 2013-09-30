@@ -5,6 +5,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFacade;
 import no.statkart.skif.mockup.AbstractMockupFactory;
+import no.statkart.skif.storetest.domain.relation.X1AAMockupFactory;
+import no.statkart.skif.storetest.domain.relation.X1BBOneMockupFactory;
 
 import java.util.List;
 
@@ -29,6 +31,10 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
     @Inject private BubbleWithEntityComponentMockupFactory bubbleWithEntityComponentMockupFactory;
     @Inject private BubbleWithEntityInCompositeComponentMockupFactory bubbleWithEntityInCompositeComponentMockupFactory;
 
+
+    @Inject private X1BBOneMockupFactory x1BBOneMockupFactory;
+    @Inject private X1AAMockupFactory x1AAMockupFactory;
+
     @Inject private SubTypedBubbleMockupFactory subTypedBubbleMockupFactory;
 
     @Override
@@ -41,10 +47,12 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
                 bubbleWithKodeMockupFactory,
                 histSimpleMockupFactory,
                 histWithRelationMockupFactory,
-                subTypedBubbleMockupFactory,
                 bubbleWithCompositeComponentMockupFactory,
                 bubbleWithEntityComponentMockupFactory,
-                bubbleWithEntityInCompositeComponentMockupFactory
+                bubbleWithEntityInCompositeComponentMockupFactory,
+                x1BBOneMockupFactory,
+                x1AAMockupFactory,
+                subTypedBubbleMockupFactory
         );
     }
 
@@ -90,6 +98,14 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
     public BubbleWithEntityInCompositeComponentMockupFactory getBubbleWithEntityInCompositeComponentMockupFactory() {
         return bubbleWithEntityInCompositeComponentMockupFactory;
+    }
+
+    public X1AAMockupFactory getX1AAMockupFactory() {
+        return x1AAMockupFactory;
+    }
+
+    public X1BBOneMockupFactory getX1BBOneMockupFactory() {
+        return x1BBOneMockupFactory;
     }
 }
 

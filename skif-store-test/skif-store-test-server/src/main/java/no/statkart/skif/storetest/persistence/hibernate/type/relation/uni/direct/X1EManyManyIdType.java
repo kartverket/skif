@@ -2,12 +2,11 @@ package no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.direc
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1AId;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1EManyManyId;
 
 /**
  * @author Henrik Fredholm
- * @since 2.3
+ * @since 2.4
  */
 public class X1EManyManyIdType extends BubbleIdType {
     @Override

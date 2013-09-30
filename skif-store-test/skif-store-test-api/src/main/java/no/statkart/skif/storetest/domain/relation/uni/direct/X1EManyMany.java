@@ -12,13 +12,4 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
 public class X1EManyMany extends AbstractStoreTestBubbleWithHistory {
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public X1CManyId<?> getId() {
-        return (X1CManyId<?>) super.getId();
-    }
-
-    public X1A findA() {
-        return null;
-    }
-
 }
