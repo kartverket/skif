@@ -94,6 +94,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
 
         store.getInstance(StoreRelationCache.class).setEnabled(true);
+        store.get(bbIds);
         Map<X1BBOneId<?>,Set<X1AAId<?>>> invSomeBBIds = x1AAFinderService.findInvSomeBBIds(bbIds);
 
 

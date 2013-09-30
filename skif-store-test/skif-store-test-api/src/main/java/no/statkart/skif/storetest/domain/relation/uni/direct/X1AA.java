@@ -4,6 +4,9 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.relation.cache.RelationName;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
+import no.statkart.skif.store.relation.cache.annotation.Cardinality;
+import no.statkart.skif.store.relation.cache.annotation.Relation;
+import no.statkart.skif.store.relation.cache.annotation.RelationType;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
 /**
@@ -38,6 +41,11 @@ public class X1AA extends AbstractRelationTestBubble {
         return someBBId;
     }
 
+    public X1BBOne getSomeBB() {
+        return store.get(someBBId);
+    }
+
+    @Relation(type = RelationType.DIRECT, cardinality = Cardinality.ONE, name="someBB")
     public void setSomeBBId(X1BBOneId<?> someBBId) {
         this.someBBId = onChangeRelation(X1AAFinderService.Role.someBB, this.someBBId, someBBId);
     }

@@ -72,8 +72,12 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
         return newValue;
     }
 
-    protected <T extends Set> T unwrapFinderResult(Map<? extends BubbleId<?>, T> mapOfResults) {
+    protected <T extends Set> T unwrap(Map<? extends BubbleId<?>, T> mapOfResults) {
         return mapOfResults.get(getId());
+    }
+
+    protected <T> T finder(Class<T> type) {
+        return store.getInstance(type);
     }
 
     protected <T extends Set> T idAsSet() { return (T) ImmutableSet.of(getId()); }

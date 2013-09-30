@@ -1,6 +1,5 @@
 package no.statkart.skif.storetest.domain.relation.uni.direct;
 
-import com.google.common.collect.ImmutableSet;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
 import java.util.Set;
@@ -23,6 +22,6 @@ public class X1BBOne extends AbstractRelationTestBubble {
     }
 
     public Set<X1AAId<?>> findInvSomeBBIds() {
-        return unwrapFinderResult(store.getInstance(X1AAFinderService.class).findInvSomeBBIds(idAsSet()));
+        return unwrap(finder(X1AAFinderService.class).findInvSomeBBIds(idAsSet()));
     }
 }

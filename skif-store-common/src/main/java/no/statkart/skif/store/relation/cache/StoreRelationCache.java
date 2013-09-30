@@ -41,7 +41,6 @@ public abstract class StoreRelationCache {
         if (enabled) {
             relationCache.onChangeRelation(getLevel(), inAttachedMode(), relationName, sourceId, oldValue, newValue);
         }
-
     }
 
     public Set getCachedIds(RelationName relationName, BubbleId<?> id) {
