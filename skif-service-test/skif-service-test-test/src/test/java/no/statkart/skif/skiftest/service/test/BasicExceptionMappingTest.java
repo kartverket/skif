@@ -3,6 +3,7 @@ package no.statkart.skif.skiftest.service.test;
 import com.google.inject.Inject;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.exception.SimpleNonMappedException;
@@ -71,20 +72,14 @@ public class BasicExceptionMappingTest extends SkifTestCase {
     }
 
     /**
-     * NoTx service kaster checked exception som ikke kan mappes av server. I JEE mode skal mapping rammeverket fange
-     * opp exception og kaste en SOAPmen siden mapping gjøres i SINGLE_VM
-     * mode vil exceptionen ikk
-     * kommer exceptionen over til klient likevel.
+     * NoTx service kaster checked exception som ikke kan mappes av server.
      */
     @Test
     public void testThrowNonMappedExceptionNoTx() throws SimpleException, SimpleNonMappedException {
         try {
             service.noTx(SimpleNonMappedException.class.getName(), "abc");
         } catch (Throwable t) {
-            if (injector.getInstance(Configuration.class).getBoolean(SkifConfigConstants.SINGLE_VM)) {
-                assertEquals(t.getClass(), SimpleNonMappedException.class);
-            } else {
-            }
+            assertEquals(t.getClass(), ImplementationException.class);
         }
     }
 

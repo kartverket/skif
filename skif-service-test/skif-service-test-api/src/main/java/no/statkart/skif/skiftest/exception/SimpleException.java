@@ -1,10 +1,12 @@
 package no.statkart.skif.skiftest.exception;
 
+import no.statkart.skif.exception.SkifException;
+
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class SimpleException extends Exception {
+public class SimpleException extends SkifException {
     private String infoField;
 
     public SimpleException(String message) {

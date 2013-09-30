@@ -4,6 +4,8 @@ import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.service.*;
 import no.statkart.skif.service.ejb.EJBCallProxyHandler;
 import no.statkart.skif.service.scope.ServiceRequestScope;
@@ -54,6 +56,12 @@ public abstract class SingleVmRemoteCallProxyHandler<S> extends TerminatingProxy
             args = copyArgs(args);
             Object result = ejbCallProxyHandler.invoke(proxy, method, args);
             return CopyHelper.copy(result);
+        } catch (Exception e) {
+            if (e instanceof SkifException) {
+                throw e;
+            } else {
+                throw new ImplementationException(e.getMessage(), e);
+            }
         } finally {
             serviceRequestScope.exit();
         }

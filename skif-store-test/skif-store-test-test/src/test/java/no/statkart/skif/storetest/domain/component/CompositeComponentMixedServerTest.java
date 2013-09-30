@@ -11,10 +11,7 @@ import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
-import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
-import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponentId;
 import no.statkart.skif.storetest.mockup.BubbleWithCompositeComponentMockupFactory;
-import no.statkart.skif.storetest.mockup.BubbleWithEntityInCompositeComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
@@ -26,7 +23,6 @@ import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.testng.Assert.*;
 
 /**
  * Test av boble med composite component
@@ -75,7 +71,7 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
                 }
             });
             failBecauseExceptionWasNotThrown(HibernateException.class);
-        } catch (HibernateException e) {
+        } catch (Exception e) {
             assertThat(e).hasMessageContaining("A collection with cascade=\"all-delete-orphan\" was no longer referenced by the owning entity instance");
         }
     }
@@ -131,7 +127,7 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
                 }
             });
             failBecauseExceptionWasNotThrown(HibernateException.class);
-        } catch (HibernateException e) {
+        } catch (Exception e) {
             assertThat(e).hasMessageContaining("A collection with cascade=\"all-delete-orphan\" was no longer referenced by the owning entity instance");
         }
 
