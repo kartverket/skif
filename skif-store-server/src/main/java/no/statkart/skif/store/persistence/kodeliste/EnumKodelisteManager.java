@@ -5,7 +5,10 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.internal.util.InternalLocaleUtils;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.BubbleObjectWithHistory;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.store.localization.LocalizationMap;
 import no.statkart.skif.store.localization.Localized;
@@ -51,7 +54,7 @@ public class EnumKodelisteManager {
      */
     public void installStatic(Class<? extends KodeId<?>> enumKodeIdClass) {
         enumClasses.add(enumKodeIdClass);
-        EnumKodeSupport kodeSupport = getKodeSupport(enumKodeIdClass);
+        EnumKodeSupport kodeSupport = getEnumKodeSupport(enumKodeIdClass);
         LinkedHashMap<KodeId<?>, Kode> koder = kodeSupport.getKoder();
 
         Kodeliste kodeliste = (Kodeliste) kodeSupport.getKodelisteId().createTypeInstance();
@@ -68,6 +71,25 @@ public class EnumKodelisteManager {
             }
             enumCache.put(entry.getKey(), entry.getValue());
         }
+        kodelisteIds.add(kodeliste.getId());
+    }
+
+    /**
+     * Installerer databasekode med statisk kodeliste.
+     *
+     * @param kodeIdClass id-klassen til kode-klassen
+     */
+    public void installDynamic(Class<? extends KodeId<?>> kodeIdClass) {
+        DynamicKodeSupport kodeSupport = getDynamicKodeSupport(kodeIdClass);
+
+        Kodeliste kodeliste = (Kodeliste) kodeSupport.getKodelisteId().createTypeInstance();
+        kodeliste.setId(kodeSupport.getKodelisteId());
+        kodeliste.setKodeIdClass(kodeIdClass);
+        kodeliste.setKodeIds(null); // Marker at dette må lastes senere
+        if (kodeliste instanceof Localized) {
+            initializeLocalizedFieldsForKodeliste(kodeSupport, (Localized) kodeliste);
+        }
+        enumCache.put(kodeliste.getId(), kodeliste);
         kodelisteIds.add(kodeliste.getId());
     }
 
@@ -129,7 +151,7 @@ public class EnumKodelisteManager {
         return propertyFiles;
     }
 
-    private void initializeLocalizedFieldsForKodeliste(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Localized kodeliste) {
+    private void initializeLocalizedFieldsForKodeliste(StaticKodelisteKodeSupport kodeSupport, Localized kodeliste) {
         Map<String, Properties> resourceProperties = getResourceProperties(kodeSupport.getResourceMsgName());
 
         Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<LocalizationMap.LocalizationKey, String>();
@@ -210,14 +232,16 @@ public class EnumKodelisteManager {
                 if (BubbleObjectWithHistory.class.isAssignableFrom(kodeliste.getKodeClass())) {
                     // Må filtrer vekk id-er for kodeverdier som ikke fantes for kodelistens snapshotversion
                     List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
-                    List<KodeId<?>> filteredKodeIds = new ArrayList<KodeId<?>>(kodeIds.size());
-                    for (KodeId<?> kodeId : kodeIds) {
-                        BubbleObjectWithHistory kode = (BubbleObjectWithHistory) enumCache.get(kodeId);
-                        if (bubbleId.getSnapshotVersion().between(kode.getOppdateringsdato(), kode.getSluttdato())) {
-                            filteredKodeIds.add(kodeId);
+                    if (kodeIds != null) { // Dersom null, så ligger kodene i databasen og skal ikke håndteres her
+                        List<KodeId<?>> filteredKodeIds = new ArrayList<KodeId<?>>(kodeIds.size());
+                        for (KodeId<?> kodeId : kodeIds) {
+                            BubbleObjectWithHistory kode = (BubbleObjectWithHistory) enumCache.get(kodeId);
+                            if (bubbleId.getSnapshotVersion().between(kode.getOppdateringsdato(), kode.getSluttdato())) {
+                                filteredKodeIds.add(kodeId);
+                            }
                         }
+                        kodeliste.setKodeIds(filteredKodeIds);
                     }
-                    kodeliste.setKodeIds(filteredKodeIds);
                 }
             }
         }
@@ -228,7 +252,7 @@ public class EnumKodelisteManager {
     }
 
 
-    private EnumKodeSupport<?, ?, ?, ?> getKodeSupport(Class<? extends KodeId> idClass) {
+    private EnumKodeSupport<?, ?, ?, ?> getEnumKodeSupport(Class<? extends KodeId> idClass) {
         try {
             Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
             kodeSupportField.setAccessible(true);
@@ -240,6 +264,19 @@ public class EnumKodelisteManager {
             throw new ImplementationException("KodeId klasse mangler static filed 'kodeSupport': " + idClass);
         }
     }
+
+    private DynamicKodeSupport<?, ?, ?> getDynamicKodeSupport(Class<? extends KodeId> idClass) {
+            try {
+                Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
+                kodeSupportField.setAccessible(true);
+                DynamicKodeSupport<?, ?, ?> kodeSupport = (DynamicKodeSupport<?, ?, ?>) kodeSupportField.get(null);
+                return kodeSupport;
+            } catch (NoSuchFieldException e) {
+                throw new ImplementationException("KodeId klasse mangler static field 'kodeSupport': " + idClass);
+            } catch (IllegalAccessException e) {
+                throw new ImplementationException("KodeId klasse mangler static filed 'kodeSupport': " + idClass);
+            }
+        }
 
     public Collection<KodelisteId<?>> getKodelisteIds() {
         return kodelisteIds;

@@ -60,12 +60,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                     throw new ObjectNotFoundException(bubbleId);
                 }
                 if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
-                    setSnapshotVersion(Kode.class.cast(bubble), bubbleId.getSnapshotVersion());
+                    setSnapshotVersion((Kode) bubble, bubbleId.getSnapshotVersion());
                 }
             } else {
                 // Det er en DbKode
                 bubble = persistenceSessionMaster.get(bubbleId);
-                Kode dbKode = Kode.class.cast(bubble);
+                Kode dbKode = (Kode) bubble;
                 // Må sette kodelisteId på kode da denne ikke hentes fra databasen, men tas fra idklassen
                 dbKode.setKodelisteId(dbKode.getId().getKodelisteId());
             }
@@ -77,10 +77,15 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
                     setSnapshotVersionForEnumKodeliste(Kodeliste.class.cast(bubble), bubbleId.getSnapshotVersion());
                 }
+                Kodeliste kodeliste = (Kodeliste) bubble;
+                if (kodeliste.getKodeIds() == null) {
+                    // Dette er et tegn på at kodelisten er statisk, men kodene ligger i databasen
+                    loadKodeIds(kodeliste);
+                }
             } else {
                 // Kodeliste for DbKode. Har allerede riktig snapshot version
                 bubble = persistenceSessionMaster.get(bubbleId);
-                Kodeliste kodeliste = Kodeliste.class.cast(bubble);
+                Kodeliste kodeliste = (Kodeliste) bubble;
                 loadKodeIds(kodeliste);
             }
         }
@@ -94,7 +99,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
      * bør {@link #loadKodeIds(java.util.Collection)} brukes istedet.
      */
     protected void loadKodeIds(Kodeliste kodeliste) {
-        if (!kodeliste.getKodeIds().isEmpty()) return;
+        if (kodeliste.getKodeIds() != null && !kodeliste.getKodeIds().isEmpty()) return;
 
         Class<? extends Kode> kodeClass = kodeliste.getKodeClass();
         try {
@@ -216,6 +221,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                     T bubble = enumKodelisteManager.get(bubbleId);
                     if (bubble != null) {
                         bubbles.add(bubble);
+                        if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
+                            setSnapshotVersion((Kode) bubble, bubbleId.getSnapshotVersion());
+                        }
                     } else {
                         throw new ObjectNotFoundException(bubbleId);
                     }
@@ -226,6 +234,15 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 T bubble = enumKodelisteManager.get(bubbleId);
                 if (bubble != null) {
                     bubbles.add(bubble);
+                    // Kodeliste for EnumKode
+                    if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
+                        setSnapshotVersionForEnumKodeliste(Kodeliste.class.cast(bubble), bubbleId.getSnapshotVersion());
+                    }
+                    Kodeliste kodeliste = (Kodeliste) bubble;
+                    if (kodeliste.getKodeIds() == null) {
+                        // Dette er et tegn på at kodelisten er statisk, men kodene ligger i databasen
+                        loadKodeIds(kodeliste);
+                    }
                 } else {
                     dbKodelisteIds.add(bubbleId);
                 }
@@ -235,12 +252,19 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         if (!dbKodeIds.isEmpty()) {
             Collection<? extends T> dbKoder = persistenceSessionMaster.get(dbKodeIds);
             for (T t : dbKoder) {
+                Kode dbKode = (Kode) t;
+                // Må sette kodelisteId på kode da denne ikke hentes fra databasen, men tas fra idklassen
+                dbKode.setKodelisteId(dbKode.getId().getKodelisteId());
             }
             bubbles.addAll(dbKoder);
         }
 
         if (!dbKodelisteIds.isEmpty()) {
             Collection<? extends T> dbKoderlister = persistenceSessionMaster.get(dbKodelisteIds);
+            for (T t : dbKoderlister) {
+                Kodeliste kodeliste = (Kodeliste) t;
+                loadKodeIds(kodeliste);
+            }
             bubbles.addAll(dbKoderlister);
         }
         return bubbles;

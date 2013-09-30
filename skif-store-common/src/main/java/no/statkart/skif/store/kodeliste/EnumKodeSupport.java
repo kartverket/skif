@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kodeliste, KLID extends KodelisteId<KL>> implements Serializable {
+public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kodeliste, KLID extends KodelisteId<KL>> implements Serializable, StaticKodelisteKodeSupport {
     private static final long serialVersionUID = 1L;
 
     private final Class<I> kodeIdClass;

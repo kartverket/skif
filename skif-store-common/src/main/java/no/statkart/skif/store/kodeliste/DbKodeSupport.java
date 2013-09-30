@@ -8,8 +8,6 @@ import no.statkart.skif.store.SnapshotVersion;
  * @since 2.1
  */
 public class DbKodeSupport<I extends KodeId, KL extends Kodeliste, KLID extends KodelisteId<KL>> {
-    private static final long serialVersionUID = 1L;
-
     private final Class<I> kodeIdClass;
     private final KLID kodelisteId;
 

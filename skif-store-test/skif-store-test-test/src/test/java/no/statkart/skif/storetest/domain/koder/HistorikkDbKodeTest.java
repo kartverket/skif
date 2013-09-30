@@ -8,6 +8,7 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.store.service.StoreService;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
@@ -50,6 +51,9 @@ public class HistorikkDbKodeTest extends StoreTestTestCase {
             UnitOfWorkTransfer insertTransfer = new UnitOfWorkTransfer(Arrays.<BubbleObject>asList(kodeForInsert), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList());
             updateService.saveTransfer(insertTransfer);
 
+            StoreTestKodelisteLong kodeliste1 = storeService.getObject(SimpleLocalizedDbKodeId.KODELISTE_ID);
+            Assert.assertEquals(kodeliste1.getKodeIds(), Arrays.asList(kodeId));
+
             List<SimpleLocalizedDbKodeId> postInsertVersions = storeService.getVersions(kodeId, SnapshotVersion.START, SnapshotVersion.CURRENT);
             Assert.assertEquals(postInsertVersions.size(), 1, "Antall historikkinnslag etter opprettelse");
 
@@ -68,6 +72,9 @@ public class HistorikkDbKodeTest extends StoreTestTestCase {
 
             UnitOfWorkTransfer deleteTransfer = new UnitOfWorkTransfer(Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), Arrays.<BubbleObject>asList(kodeForDelete));
             updateService.saveTransfer(deleteTransfer);
+
+            StoreTestKodelisteLong kodeliste2 = storeService.getObject(SimpleLocalizedDbKodeId.KODELISTE_ID);
+            Assert.assertEquals(kodeliste2.getKodeIds(), Arrays.asList());
 
             List<SimpleLocalizedDbKodeId> postDeleteVersions = storeService.getVersions(kodeId, SnapshotVersion.START, SnapshotVersion.CURRENT);
             Assert.assertEquals(postDeleteVersions.size(), 2, "Antall historikkinnslag etter sletting");

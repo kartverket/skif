@@ -18,6 +18,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 import no.statkart.skif.storetest.domain.koder.HistoriskDbKode;
 import no.statkart.skif.storetest.domain.koder.SimpleLocalizedDbKode;
+import no.statkart.skif.storetest.domain.koder.SimpleLocalizedDbKodeId;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -73,6 +74,8 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
         enumKodelisteManager.installStatic(AEnumKodeId.class);
         enumKodelisteManager.installStatic(BEnumKodeId.class);
         enumKodelisteManager.installStatic(SEnumKodeId.class);
+
+        enumKodelisteManager.installDynamic(SimpleLocalizedDbKodeId.class);
 
         HibernatePersistenceSessionMasterImpl masterCurrent = new DefaultHibernatePersistenceSessionImplExt(
                 sessionFactoryManagerBundle.getBundle().get(0)
