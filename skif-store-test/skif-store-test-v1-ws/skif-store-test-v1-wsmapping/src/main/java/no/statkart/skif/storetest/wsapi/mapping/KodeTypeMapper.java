@@ -20,8 +20,7 @@ public class KodeTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.doma
     @Override
     public WsapiT mapDomainObject(DomainT source) {
         WsapiT target = super.mapDomainObject(source);
-        KodelisteId kodelisteId= getMapping().d2w(source.getKodelisteId());
-        target.setKodelisteId(kodelisteId);
+        target.setKodelisteId(getMapping().d2w(source.getKodelisteId())); // Denne mappes kun ut, ikke inn
         target.setKodeverdi(getMapping().d2w(source.getKodeverdi()));
         target.setBeskrivelse(getMapping().d2w(source.getBeskrivelse().getAllTexts(), no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString.class));
         return target;
@@ -31,7 +30,6 @@ public class KodeTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.doma
     public DomainT mapWsapiObject(WsapiT source) {
         DomainT target = super.mapWsapiObject(source);
         target.setKodeverdi(getMapping().w2d(source.getKodeverdi()));
-        target.setKodelisteId(getMapping().w2d(source.getKodelisteId()));
         target.setBeskrivelse(new LocalizedString(getMapping().w2d(source.getBeskrivelse(), LocalizedString.MAP_TYPE)));
         return target;
     }

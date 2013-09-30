@@ -22,17 +22,14 @@ import java.util.*;
  * via Hibernate. For Kodelister gjelder tilsvarende. Hvis {@link EnumKodelisteManager} ikke inneholder instansen
  * for en kodelisteId da antas det at kodelisteinstansen skal hentes fra databasen.
  * <p/>
- * I den nåværende implementasjon er det litt forskjell på hvordan Kodelister og Koder fra EnumKodeManageren og Hibernate
- * håndteres. Koder og kodelister som hentes ut fra EnumKodelisteManageren må tilordnes riktig SnapshotVersion
- * og innhold i kodeliste må beregnes mht hvilke koder som skal med i kodelisten ut fra gitt SnapshotVersoin.
- * For kodelister og koder som hentes ut fra Hibnernate vil SnapshotVersion allerede være satt riktig. Men innhold i
- * kodelistene må forsatt beregnes.
- * <p/>
- * I alle tilfelle er det nødvendig å lokaliserer kodelister og koder til ønsket lokale.
+ * I den nåværende implementasjon er det litt forskjell på hvordan kodelistene fylles ut med sine koders id-er. For
+ * enumkoder så er kodeid-ene allerede fylt ut fra EnumKodelisteManager, men for databasekoder så må kodene lastes fra
+ * databasen med eksplisitt kall til Hibernate.
  * <p/>
  * TODO: Hadde vært fint om håndteringen av enum og database basert koder var mer likt hverandre.
  *
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  */
 public class DefaultKodelistePersistenceSessionSubtypeHandler implements KodelistePersistenceSessionSubtypeHandler {
     private final EnumKodelisteManager enumKodelisteManager;
@@ -53,30 +50,21 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     public <T extends BubbleObject> T get(BubbleId<? extends T> bubbleId) {
         T bubble;
         if (bubbleId instanceof KodeId) {
-            if (enumKodelisteManager.isEnumClass(KodeId.class.cast(bubbleId).getClass())) {
+            if (enumKodelisteManager.isEnumClass(bubbleId.getClass().asSubclass(KodeId.class))) {
                 // Det er en EnumKode
                 bubble = enumKodelisteManager.get(bubbleId);
                 if (bubble == null) {
                     throw new ObjectNotFoundException(bubbleId);
                 }
-                if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
-                    setSnapshotVersion((Kode) bubble, bubbleId.getSnapshotVersion());
-                }
             } else {
                 // Det er en DbKode
                 bubble = persistenceSessionMaster.get(bubbleId);
-                Kode dbKode = (Kode) bubble;
-                // Må sette kodelisteId på kode da denne ikke hentes fra databasen, men tas fra idklassen
-                dbKode.setKodelisteId(dbKode.getId().getKodelisteId());
             }
         } else {
             // bubbleId er en kodelisteId
             bubble = enumKodelisteManager.get(bubbleId);
             if (bubble != null) {
                 // Kodeliste for EnumKode
-                if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
-                    setSnapshotVersionForEnumKodeliste(Kodeliste.class.cast(bubble), bubbleId.getSnapshotVersion());
-                }
                 Kodeliste kodeliste = (Kodeliste) bubble;
                 if (kodeliste.getKodeIds() == null) {
                     // Dette er et tegn på at kodelisten er statisk, men kodene ligger i databasen
@@ -91,6 +79,56 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         }
 
         return bubble;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> get(Collection<I> bubbleIds) {
+        List<I> dbKodeIds = new ArrayList<I>();
+        List<I> dbKodelisteIds = new ArrayList<I>();
+        Set<T> bubbles = new HashSet<T>(bubbleIds.size());
+
+        for (I bubbleId : bubbleIds) {
+            if (bubbleId instanceof KodeId) {
+                if (enumKodelisteManager.isEnumClass(bubbleId.getClass().asSubclass(KodeId.class))) {
+                    T bubble = enumKodelisteManager.get(bubbleId);
+                    if (bubble != null) {
+                        bubbles.add(bubble);
+                    } else {
+                        throw new ObjectNotFoundException(bubbleId);
+                    }
+                } else {
+                    dbKodeIds.add(bubbleId);
+                }
+            } else {
+                T bubble = enumKodelisteManager.get(bubbleId);
+                if (bubble != null) {
+                    bubbles.add(bubble);
+                    // Kodeliste for EnumKode
+                    Kodeliste kodeliste = (Kodeliste) bubble;
+                    if (kodeliste.getKodeIds() == null) {
+                        // Dette er et tegn på at kodelisten er statisk, men kodene ligger i databasen
+                        loadKodeIds(kodeliste);
+                    }
+                } else {
+                    dbKodelisteIds.add(bubbleId);
+                }
+            }
+        }
+
+        if (!dbKodeIds.isEmpty()) {
+            Collection<? extends T> dbKoder = persistenceSessionMaster.get(dbKodeIds);
+            bubbles.addAll(dbKoder);
+        }
+
+        if (!dbKodelisteIds.isEmpty()) {
+            Collection<? extends T> dbKoderlister = persistenceSessionMaster.get(dbKodelisteIds);
+            for (T t : dbKoderlister) {
+                Kodeliste kodeliste = (Kodeliste) t;
+                loadKodeIds(kodeliste);
+            }
+            bubbles.addAll(dbKoderlister);
+        }
+        return bubbles;
     }
 
     /**
@@ -118,20 +156,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
             }
             kodeliste.setKodeIds(kodeIds);
         } finally {
-            persistenceSessionMaster.reserveSession();
+            persistenceSessionMaster.releaseSession();
         }
 
-    }
-
-    /**
-     * Legger til kode i kodelisten. Overskriv denne metode for å filtrerer koder bort som ikke skal være med for
-     * en gitt snapshot versjon, for eksempel basert på kodens gyldighetsdatoer.
-     *
-     * @param kodeIds Liste av kodeids som skal inngå i kodelisten
-     * @param t       kode som skal legges til
-     */
-    protected void addFilterKodeForSnapshot(List<KodeId<?>> kodeIds, Kode t) {
-        kodeIds.add(t.getId());
     }
 
     /**
@@ -188,117 +215,56 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         }
     }
 
+    /**
+     * Legger til kode i kodelisten. Overskriv denne metode for å filtrerer koder bort som ikke skal være med for
+     * en gitt snapshot versjon, for eksempel basert på kodens gyldighetsdatoer.
+     *
+     * @param kodeIds Liste av kodeids som skal inngå i kodelisten
+     * @param t       kode som skal legges til
+     */
+    protected void addFilterKodeForSnapshot(List<KodeId<?>> kodeIds, Kode t) {
+        kodeIds.add(t.getId());
+    }
+
     private Class<? extends Kode> getKodeBaseType(Kodeliste kodeliste) {
         Class<? extends KodeId<?>> kodeIdClass = kodeliste.getKodeIdClass();
         return (Class<? extends Kode>) BubbleIds.getBaseType(kodeIdClass);
     }
 
-    private void setSnapshotVersion(Kode kode, SnapshotVersion snapshotVersion) {
-        kode.setId(kode.getId().asSnapshotVersion(snapshotVersion));
-        kode.setKodelisteId((KodelisteId<?>) kode.getKodelisteId().asSnapshotVersion(snapshotVersion));
-    }
-
-    private void setSnapshotVersionForEnumKodeliste(Kodeliste kodeliste, SnapshotVersion snapshotVersion) {
-        kodeliste.setId(kodeliste.getId().asSnapshotVersion(snapshotVersion));
-        List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
-        List<KodeId<?>> newkodeIds = new ArrayList<KodeId<?>>(kodeIds.size());
-        for (KodeId<?> kodeId : kodeIds) {
-            newkodeIds.add((KodeId) kodeId.asSnapshotVersion(snapshotVersion));
-        }
-        kodeliste.setKodeIds(newkodeIds);
-    }
-
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> get(Collection<I> bubbleIds) {
-        List<I> dbKodeIds = new ArrayList<I>();
-        List<I> dbKodelisteIds = new ArrayList<I>();
-        Set<T> bubbles = new HashSet<T>(bubbleIds.size());
-
-        for (I bubbleId : bubbleIds) {
-            if (bubbleId instanceof KodeId) {
-                if (enumKodelisteManager.isEnumClass(KodeId.class.cast(bubbleId).getClass())) {
-                    T bubble = enumKodelisteManager.get(bubbleId);
-                    if (bubble != null) {
-                        bubbles.add(bubble);
-                        if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
-                            setSnapshotVersion((Kode) bubble, bubbleId.getSnapshotVersion());
-                        }
-                    } else {
-                        throw new ObjectNotFoundException(bubbleId);
-                    }
-                } else {
-                    dbKodeIds.add(bubbleId);
-                }
-            } else {
-                T bubble = enumKodelisteManager.get(bubbleId);
-                if (bubble != null) {
-                    bubbles.add(bubble);
-                    // Kodeliste for EnumKode
-                    if (!bubbleId.getSnapshotVersion().equals(bubble.getId().getSnapshotVersion())) {
-                        setSnapshotVersionForEnumKodeliste(Kodeliste.class.cast(bubble), bubbleId.getSnapshotVersion());
-                    }
-                    Kodeliste kodeliste = (Kodeliste) bubble;
-                    if (kodeliste.getKodeIds() == null) {
-                        // Dette er et tegn på at kodelisten er statisk, men kodene ligger i databasen
-                        loadKodeIds(kodeliste);
-                    }
-                } else {
-                    dbKodelisteIds.add(bubbleId);
-                }
-            }
-        }
-
-        if (!dbKodeIds.isEmpty()) {
-            Collection<? extends T> dbKoder = persistenceSessionMaster.get(dbKodeIds);
-            for (T t : dbKoder) {
-                Kode dbKode = (Kode) t;
-                // Må sette kodelisteId på kode da denne ikke hentes fra databasen, men tas fra idklassen
-                dbKode.setKodelisteId(dbKode.getId().getKodelisteId());
-            }
-            bubbles.addAll(dbKoder);
-        }
-
-        if (!dbKodelisteIds.isEmpty()) {
-            Collection<? extends T> dbKoderlister = persistenceSessionMaster.get(dbKodelisteIds);
-            for (T t : dbKoderlister) {
-                Kodeliste kodeliste = (Kodeliste) t;
-                loadKodeIds(kodeliste);
-            }
-            bubbles.addAll(dbKoderlister);
-        }
-        return bubbles;
-    }
-
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubble) {
-        if (!isEnumOrEnumKodeliste(bubble)) {
+        if (isEnumOrEnumKodeliste(bubble)) {
+            throw new ImplementationException(bubble.getId() + " can not be inserted");
+        } else {
             persistenceSessionMaster.insert(bubble);
         }
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubble) {
-        if (!isEnumOrEnumKodeliste(bubble)) {
+        if (isEnumOrEnumKodeliste(bubble)) {
+            throw new ImplementationException(bubble.getId() + " can not be updated");
+        } else {
             persistenceSessionMaster.update(bubble);
         }
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubble) {
-        if (!isEnumOrEnumKodeliste(bubble)) {
+        if (isEnumOrEnumKodeliste(bubble)) {
+            throw new ImplementationException(bubble.getId() + " can not be deleted");
+        } else {
             persistenceSessionMaster.delete(bubble);
         }
     }
 
     private <T extends BubbleObject, I extends BubbleId<? extends T>> boolean isEnumOrEnumKodeliste(T bubble) {
-        Class<? extends KodeId> clazz = null;
         if (bubble instanceof Kodeliste) {
-            clazz = ((Kodeliste) bubble).getKodeIdClass();  //sjekker felt som forteller id-klasse for kode implementasjon
+            return enumKodelisteManager.getKodelisteIds().contains((KodelisteId<?>) bubble.getId());
         } else if (bubble instanceof Kode) {
-            clazz = ((Kode) bubble).getId().getClass();
+            enumKodelisteManager.isEnumClass(((Kode) bubble).getId().getClass());
         }
-        return (clazz != null) && enumKodelisteManager.isEnumClass(clazz);
+        return false;
     }
 
     @Override

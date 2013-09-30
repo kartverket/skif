@@ -44,7 +44,6 @@ public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kod
         I id = BubbleIds.createInstance(kodeIdClass, idValue, SnapshotVersion.CURRENT);
         T kode = id.createTypeInstance();
         kode.setId(id);
-        kode.setKodelisteId(kodelisteId);
         addKode(kode);
         String key = getKodeName() + "." + kodeResourceKey;
         kodeResourceKeys.put(kode.getId(), key);

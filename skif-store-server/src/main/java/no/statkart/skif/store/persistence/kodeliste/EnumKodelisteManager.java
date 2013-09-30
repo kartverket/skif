@@ -27,10 +27,10 @@ import java.util.regex.Pattern;
  * Global kodeliste manager som håndterer EnumKoder og tilhørende kodelister. Manageren inneholder
  * en global map med alle EnumKoder og kodelister. Den gir alltid ut kopier av objektene sine slik
  * at disse kan lokaliseres og tilpasses riktig SnapshotVersion uten å påvirke det globale objektet.
- * Manageren har ansvar for å hente opp lokaliserte verdi fra resourcefiler
- * <p/>
+ * Manageren har ansvar for å hente opp lokaliserte verdi fra resourcefiler.
  *
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  * @since 2.1
  */
 @Singleton
@@ -229,19 +229,33 @@ public class EnumKodelisteManager {
 
             if (copyObject instanceof Kodeliste) {
                 Kodeliste kodeliste = (Kodeliste) copyObject;
-                if (BubbleObjectWithHistory.class.isAssignableFrom(kodeliste.getKodeClass())) {
-                    // Må filtrer vekk id-er for kodeverdier som ikke fantes for kodelistens snapshotversion
-                    List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
-                    if (kodeIds != null) { // Dersom null, så ligger kodene i databasen og skal ikke håndteres her
-                        List<KodeId<?>> filteredKodeIds = new ArrayList<KodeId<?>>(kodeIds.size());
-                        for (KodeId<?> kodeId : kodeIds) {
-                            BubbleObjectWithHistory kode = (BubbleObjectWithHistory) enumCache.get(kodeId);
+
+                kodeliste.setId(kodeliste.getId().asSnapshotVersion(bubbleId));
+
+                List<KodeId<?>> originalKodeIds = kodeliste.getKodeIds();
+                if (originalKodeIds != null) { // Dersom null, så ligger kodene i databasen og skal ikke håndteres her
+                    List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>(originalKodeIds.size());
+                    if (BubbleObjectWithHistory.class.isAssignableFrom(kodeliste.getKodeClass())) {
+                        // Må filtrer vekk id-er for kodeverdier som ikke fantes for kodelistens snapshotversion
+                        for (KodeId<?> originalKodeId : originalKodeIds) {
+                            BubbleObjectWithHistory kode = (BubbleObjectWithHistory) enumCache.get(originalKodeId);
                             if (bubbleId.getSnapshotVersion().between(kode.getOppdateringsdato(), kode.getSluttdato())) {
-                                filteredKodeIds.add(kodeId);
+                                kodeIds.add((KodeId) originalKodeId.asSnapshotVersion(bubbleId));
                             }
                         }
-                        kodeliste.setKodeIds(filteredKodeIds);
+
+                    } else {
+                        for (KodeId<?> originalKodeId : originalKodeIds) {
+                            kodeIds.add((KodeId) originalKodeId.asSnapshotVersion(bubbleId));
+                        }
                     }
+                    kodeliste.setKodeIds(kodeIds);
+                }
+            } else {
+                Kode kode = (Kode) copyObject;
+
+                if (!bubbleId.getSnapshotVersion().equals(kode.getId().getSnapshotVersion())) {
+                    kode.setId(kode.getId().asSnapshotVersion(bubbleId.getSnapshotVersion()));
                 }
             }
         }
@@ -250,7 +264,6 @@ public class EnumKodelisteManager {
 
         return bubbleType.cast(copyObject);
     }
-
 
     private EnumKodeSupport<?, ?, ?, ?> getEnumKodeSupport(Class<? extends KodeId> idClass) {
         try {
@@ -266,17 +279,17 @@ public class EnumKodelisteManager {
     }
 
     private DynamicKodeSupport<?, ?, ?> getDynamicKodeSupport(Class<? extends KodeId> idClass) {
-            try {
-                Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
-                kodeSupportField.setAccessible(true);
-                DynamicKodeSupport<?, ?, ?> kodeSupport = (DynamicKodeSupport<?, ?, ?>) kodeSupportField.get(null);
-                return kodeSupport;
-            } catch (NoSuchFieldException e) {
-                throw new ImplementationException("KodeId klasse mangler static field 'kodeSupport': " + idClass);
-            } catch (IllegalAccessException e) {
-                throw new ImplementationException("KodeId klasse mangler static filed 'kodeSupport': " + idClass);
-            }
+        try {
+            Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
+            kodeSupportField.setAccessible(true);
+            DynamicKodeSupport<?, ?, ?> kodeSupport = (DynamicKodeSupport<?, ?, ?>) kodeSupportField.get(null);
+            return kodeSupport;
+        } catch (NoSuchFieldException e) {
+            throw new ImplementationException("KodeId klasse mangler static field 'kodeSupport': " + idClass);
+        } catch (IllegalAccessException e) {
+            throw new ImplementationException("KodeId klasse mangler static filed 'kodeSupport': " + idClass);
         }
+    }
 
     public Collection<KodelisteId<?>> getKodelisteIds() {
         return kodelisteIds;
