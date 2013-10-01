@@ -619,10 +619,6 @@ public class GenericQueryGenerator {
     }
 
     private Polygon instansierOgKopierPolygon(Polygon polygon) {
-       //lager en ny instans av polygonet
-
-       //nb: geometri-objekter må være opprettet med et geometryFactory som har SRID == -1 == OracleUtils.getOracleIntSRID()
-
        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), srid);
        polygon = JTSUtils.kopierPolygon(polygon, geometryFactory);
 

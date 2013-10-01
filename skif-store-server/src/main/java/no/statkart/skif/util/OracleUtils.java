@@ -138,14 +138,4 @@ public class OracleUtils {
     }
 
 
-    /**
-     * Denne henter ut SRID-koden som brukes når vi lagrer geometri i databasen. Siden Spatial index metadata definerer koordinatsystemet som NULL så returneres -1.
-     *
-     * @return
-     */
-    public static int getOracleIntSRID() {
-        return -1;
-    }
-
-
 }
