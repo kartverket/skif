@@ -15,12 +15,12 @@ configureDatabasePlugin {
 
     toolset(name: '', type: 'oracle', prefix: '') {
         sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
-        sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql')
-        sqlTask('createSchemaTestStandAlone', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTestStandAlone.sql')
-        sqlTask('createSchemaTest', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest.sql')
-        sqlTask('createSchemaTest2', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest2.sql')
-        sqlTask('tableSequence', sqlFile: 'src/main/sql/oracle/data/TableSequence.sql')
-        sqlTask('loadTestdata', sqlFile: 'src/main/sql/oracle/data/LoadTestdata.sql')
+        sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql') { mustRunAfter 'purge', 'historikkUpdatePackageSnapshotTime' }
+        sqlTask('createSchemaTestStandAlone', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTestStandAlone.sql') { mustRunAfter 'createSchema' }
+        sqlTask('createSchemaTest', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest.sql') { mustRunAfter 'createSchema' }
+        sqlTask('createSchemaTest2', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest2.sql') { mustRunAfter 'createSchema' }
+        sqlTask('tableSequence', sqlFile: 'src/main/sql/oracle/data/TableSequence.sql') { mustRunAfter 'createSchema' }
+        sqlTask('loadTestdata', sqlFile: 'src/main/sql/oracle/data/LoadTestdata.sql') { mustRunAfter 'createSchema', 'createSchemaTestStandAlone', 'createSchemaTest', 'createSchemaTest2' }
 
         properties = project.properties
 
@@ -47,19 +47,13 @@ configureDatabasePlugin {
      * Template for tilleggelse av historikk
      */
     toolset(name: 'historikk', type: 'oracle', prefix: 'historikk') {
-
-        //hjelpefunksjon for eksekveringsrekkefølge dersom task blir kjørt
-        def dependsOnIfExecuted = { def task, def dependent ->
-            gradle.taskGraph.whenReady { if (gradle.taskGraph.hasTask(dependent)) task.dependsOn(dependent) }
-            return task
-        }
-
-        //kjøres før import
-        sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
-
         //tasker for historikk mekanikk
+        sqlTask('createSnapshotTrans', sqlFile: 'src/main/sql/oracle/historikk/CreateTemporaryTableSnapshotTrans.sql', failOnError: false) {
+            //feiler ikke dersom tabell allerede finnes fra før
+            mustRunAfter 'purge'
+        }
         sqlTask('updatePackageSnapshotTime', sqlFile: 'src/main/sql/oracle/historikk/UpdatePackageSnapshotTime.sql') {
-            dependsOn sqlTask('createSnapshotTrans', sqlFile: 'src/main/sql/oracle/historikk/CreateTemporaryTableSnapshotTrans.sql', failOnError: false) //feiler ikke dersom tabell allerede finnes fra før
+            dependsOn 'historikkCreateSnapshotTrans'
         }
 
 
@@ -79,20 +73,20 @@ configureDatabasePlugin {
 task dbInit {
     description = 'Purger schema, oppretter schema og fyller inn testdata'
 
-    int i = 0 //hacker til nytt lag av tasker da gradle 1.0 eksekverer dependencies i alfabetisk rekkefølge
-    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['purge'])
-    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets['historikk'].tasks['updatePackageSnapshotTime'])
-    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchema'])
-    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchemaTestStandAlone'])
-    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchemaTest'])
-    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['createSchemaTest2'])
-    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['tableSequence'])
-    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: dbToolSets[''].tasks['loadTestdata'])
-    dependsOn project.task(String.format('%s_step%02d', it.name, ++i), dependsOn: 'applyHistorikk')
+    dependsOn 'purge'
+    dependsOn 'historikkUpdatePackageSnapshotTime'
+    dependsOn 'createSchema'
+    dependsOn 'createSchemaTestStandAlone'
+    dependsOn 'createSchemaTest'
+    dependsOn 'createSchemaTest2'
+    dependsOn 'tableSequence'
+    dependsOn 'loadTestdata'
+    dependsOn 'applyHistorikk'
 
 }
 
-task applyHistorikk {
+task applyHistorikk() {
+    mustRunAfter 'loadTestdata', 'tableSequence'
     def tables = [
             'BUBBLE_W_ENTITY_COMPS', 'ENTITY_COMPONENT',
             'LISTOFENTITYCOMPONENTS', 'LISTOFENTITYCOMPONENTS__C',
