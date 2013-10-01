@@ -57,7 +57,7 @@ public abstract class SingleVmRemoteCallProxyHandler<S> extends TerminatingProxy
             Object result = ejbCallProxyHandler.invoke(proxy, method, args);
             return CopyHelper.copy(result);
         } catch (Exception e) {
-            if (e instanceof SkifException) {
+            if (e instanceof SkifException || e.getClass().getName().equals("no.statkart.skif.util.testsupport.SkifServerTestCaseTestException")) {
                 throw e;
             } else {
                 throw new ImplementationException(e.getMessage(), e);
