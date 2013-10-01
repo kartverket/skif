@@ -26,20 +26,20 @@ public class GeometriTilSdoStructMapper {
         this.connection = connection;
     }
 
-    //TODO: Flytt disse til property-fil eller statisk klasse
-    public static final int srid = -1;
-    public static final int precision = 100;
+    public STRUCT createStruct(Geometry geometry, int srid) {
+        return createStruct(geometry, srid, 100);
+    }
 
     /**
      * Lager en Oracle SDO STRUCT av en JTS geometri.
      */
-    public STRUCT createStruct(Geometry geometry) {
+    public STRUCT createStruct(Geometry geometry, int srid, int precision) {
         try {
             for (Coordinate coordinate : geometry.getCoordinates()) {
                 coordinate.z = Double.NaN;
             }
 
-            GeometryConverter geometryConverter = new GeometryConverter(connection, new GeometryFactory(new PrecisionModel(precision), OracleUtils.getOracleIntSRID()));
+            GeometryConverter geometryConverter = new GeometryConverter(connection, new GeometryFactory(new PrecisionModel(precision), srid));
             return geometryConverter.toSDO(geometry);
         } catch (Exception e) {
             throw new ImplementationException("Error during transformation of JTS geometry to SDO STRUCT. JTS geometry is " + geometry.toText(), e);
