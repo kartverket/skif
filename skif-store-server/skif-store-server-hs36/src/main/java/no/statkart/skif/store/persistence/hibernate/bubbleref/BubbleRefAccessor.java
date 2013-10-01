@@ -111,7 +111,7 @@ public class BubbleRefAccessor implements PropertyAccessor {
 
        @Override
        public Member getMember() {
-           return null;  // TODO
+           return method;
        }
 
        public Class getReturnType() {

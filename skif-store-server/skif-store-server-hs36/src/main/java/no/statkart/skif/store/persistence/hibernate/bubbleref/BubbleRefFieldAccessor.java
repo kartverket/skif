@@ -53,7 +53,7 @@ public class BubbleRefFieldAccessor implements PropertyAccessor {
 
        @Override
        public Member getMember() {
-           return null; // TODO
+           return field;
        }
 
        public Method getMethod() {

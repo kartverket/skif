@@ -132,7 +132,7 @@ public class BubbleRefConfiguration extends Configuration {
         return new BubbleRefMapping() {
             @Override
             public IdentifierGeneratorFactory getIdentifierGeneratorFactory() {
-                return null; // TODO
+                return BubbleRefConfiguration.this.getIdentifierGeneratorFactory();
             }
 
             /**
@@ -327,7 +327,7 @@ public class BubbleRefConfiguration extends Configuration {
             MetaAttribute attrib = prop.getMetaAttribute("bubble-ref");
             if (attrib != null) {
                 // Collection består av bubble-ref referanser
-                configureCollectionBubbleMapping(prop, persistentClass);
+                configureCollectionBubbleMapping(prop, persistentClass, mappings);
             } else {
                 // Sjekk om collection inneholder component mapping
                 Collection c = (Collection) prop.getValue();
@@ -347,10 +347,9 @@ public class BubbleRefConfiguration extends Configuration {
         }
     }
 
-    private void configureCollectionBubbleMapping(Property prop, PersistentClass persistentClass) throws MappingException {
+    private void configureCollectionBubbleMapping(Property prop, PersistentClass persistentClass, Mappings mappings) throws MappingException {
         Collection value = (Collection) prop.getValue();
         try {
-            Mappings mappings = null; // TODO
             if (value.getElement() instanceof ManyToOne)
                 value.setElement(new ManyToOneBubbleRef(mappings, (ManyToOne) value.getElement()));
             else if (value.getElement() instanceof OneToMany)
