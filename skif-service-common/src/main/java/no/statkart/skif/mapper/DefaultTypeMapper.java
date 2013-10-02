@@ -156,7 +156,7 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
                 retVal = resolveMap(targetType);
                 // Eller hvis det er collection på begge sider.
             } else if (Collection.class.isAssignableFrom(sourceClass) && Collection.class.isAssignableFrom(targetType.getRawType())) {
-                retVal = targetType;
+                retVal = resolveCollection(targetType);
                 // Eller hvis det er collection på kildesiden, mens måltypen har felt som heter 'item' eller 'liste'.
             } else if (Collection.class.isAssignableFrom(sourceClass) && (checkHasField(targetType.getRawType(), "item") || checkHasField(targetType.getRawType(), "liste"))) {
                 retVal = targetType;
