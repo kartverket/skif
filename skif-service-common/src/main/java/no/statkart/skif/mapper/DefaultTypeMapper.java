@@ -12,6 +12,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -47,7 +48,7 @@ import java.util.zip.ZipInputStream;
 public class DefaultTypeMapper implements DefaultTypeMapping {
     private Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
 
-    private static Map<Method, Method> settersForGetters = new HashMap<Method, Method>();
+    protected static final Map<Method, Method> settersForGetters = new ConcurrentHashMap<Method, Method>();
 
     Mapping mapping;
 
@@ -55,14 +56,10 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
     Map<String, String> domainPkg2wsapiPkg = new HashMap<String, String>();
     private Map<Class, Class> classMappings = new HashMap<Class, Class>();
     private Set<Class> doNotMapTheseClasses = new HashSet<Class>();
-    private final MappedFieldsTracker mappedFields = new MappedFieldsTracker();
+
     private Map<? extends Class<?>, ? extends Class<?>> overrideClassMappings;
 
     public DefaultTypeMapper() {
-    }
-
-    public void clearMappedFields() {
-        mappedFields.clear();
     }
 
     /**
@@ -296,17 +293,12 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
         if (!doNotMapTheseClasses.contains(source.getClass())) {
             try {
                 TypeToken<?> targetType = findTargetClass(source.getClass(), wsapiType);
-                Object alreadyMappedValue = mappedFields.getMappedValue(source, targetType.getRawType());
-                if (alreadyMappedValue == null) {
-                    //noinspection unchecked
-                    target = (DomainT) targetType.getRawType().newInstance();
+                //noinspection unchecked
+                target = (DomainT) targetType.getRawType().newInstance();
+                mapping.registerTarget(source, target);
 
-                    if (!doNotMapTheseClasses.contains(source.getClass())) {
-                        mapCommonDomainFields(source, target, wsapiType);
-                    }
-                } else {
-                    //noinspection unchecked
-                    target = (DomainT) alreadyMappedValue;
+                if (!doNotMapTheseClasses.contains(source.getClass())) {
+                    mapCommonDomainFields(source, target, wsapiType);
                 }
             } catch (ClassNotFoundException e) {
                 throw new MappingException(e);
@@ -329,32 +321,26 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
         if (!doNotMapTheseClasses.contains(source.getClass())) {
             try {
                 TypeToken<?> targetType = findTargetClass(source.getClass(), domainType);
-                Object alreadyMappedValue = mappedFields.getMappedValue(source, targetType.getRawType());
-                if (alreadyMappedValue == null) {
-                    if (targetType.isArray()) {
-                        Field field;
-                        if (checkHasField(source.getClass(), "item")) {
-                            field = source.getClass().getDeclaredField("item");
-                        } else if (checkHasField(source.getClass(), "liste")) {
-                            field = source.getClass().getDeclaredField("liste");
-                        } else {
-                            throw new MappingException("Assumption that there is a field 'item' or 'liste' corresponding to an Array failed");
-                        }
-                        field.setAccessible(true);
-                        Collection collection = (Collection) field.get(source);
-                        //noinspection ConstantConditions,unchecked
-                        target = (WsapiT) Array.newInstance(targetType.getComponentType().getRawType(), collection == null ? 0 : collection.size());
+                if (targetType.isArray()) {
+                    Field field;
+                    if (checkHasField(source.getClass(), "item")) {
+                        field = source.getClass().getDeclaredField("item");
+                    } else if (checkHasField(source.getClass(), "liste")) {
+                        field = source.getClass().getDeclaredField("liste");
                     } else {
-                        //noinspection unchecked
-                        target = (WsapiT) targetType.getRawType().newInstance();
+                        throw new MappingException("Assumption that there is a field 'item' or 'liste' corresponding to an Array failed");
                     }
-
-                    if (!doNotMapTheseClasses.contains(source.getClass())) {
-                        mapCommonWsapiFields(source, target, targetType);
-                    }
+                    field.setAccessible(true);
+                    Collection collection = (Collection) field.get(source);
+                    //noinspection ConstantConditions,unchecked
+                    target = (WsapiT) Array.newInstance(targetType.getComponentType().getRawType(), collection == null ? 0 : collection.size());
                 } else {
-                    //noinspection unchecked
-                    target = (WsapiT) alreadyMappedValue;
+                    target = (WsapiT) targetType.getRawType().newInstance();
+                }
+                mapping.registerTarget(source, target);
+
+                if (!doNotMapTheseClasses.contains(source.getClass())) {
+                    mapCommonWsapiFields(source, target, targetType);
                 }
             } catch (InstantiationException e) {
                 throw new MappingException(e);
@@ -893,7 +879,8 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
             Method getter = iterator.next();
             boolean match = false;
             for (Method idGetter : idGetters) {
-                if (!idGetter.equals(getter) && idGetter.getName().startsWith(getter.getName())) {
+                // Dersom det finnes en getter getFooId(), så skal ikke getteren getFoo() mappes. Men ikke luk ut getId() dersom det finnes en getIdAsFooId()
+                if (!idGetter.equals(getter) && idGetter.getName().startsWith(getter.getName()) && !getter.getName().endsWith("Id")) {
                     match = true;
                 }
             }
