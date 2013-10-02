@@ -16,7 +16,7 @@ import java.util.*;
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  */
-public abstract class AbstractMapper<M extends Mapping> implements InvocationHandler {
+public abstract class AbstractMapper<M extends Mapping> implements InvocationHandler, MappingBase {
 //    private static Logger logger = LoggerFactory.getLogger(AbstractMapper.class);
 
     private DefaultTypeMapper defaultMapper = null;
@@ -39,16 +39,16 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
     private final M thisMapping;
 
-    private final ThreadLocal<Integer> recurseLevel_w2d = new ThreadLocal<Integer>() {
+    private final ThreadLocal<Integer> recurseLevel = new ThreadLocal<Integer>() {
         @Override
         protected Integer initialValue() {
             return 0;
         }
     };
-    private final ThreadLocal<Integer> recurseLevel_d2w = new ThreadLocal<Integer>() {
+    private final ThreadLocal<MappedFieldsTracker> mappedFieldsTracker = new ThreadLocal<MappedFieldsTracker>() {
         @Override
-        protected Integer initialValue() {
-            return 0;
+        protected MappedFieldsTracker initialValue() {
+            return new MappedFieldsTracker();
         }
     };
 
@@ -80,6 +80,11 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
     }
 
     @Override
+    public void registerTarget(Object source, Object target) {
+        mappedFieldsTracker.get().put(source, target);
+    }
+
+    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object target;
 
@@ -87,33 +92,29 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
             //try/finally for å vedlikeholde en teller for hvor dypt i rekursjonsgrafen vi er.
             //Dersom vi er på toppen så kan vi clearMappedFields fra DefaultTypeMapper.
             try {
-                int i = recurseLevel_w2d.get();
-                if (i == 0) {
-                    if (defaultMapper != null) {
-                        defaultMapper.clearMappedFields();
-                    }
-                }
-                recurseLevel_w2d.set(++i);
+                int i = recurseLevel.get();
+                recurseLevel.set(++i);
                 target = w2d(method, args);
             } finally {
-                int i = recurseLevel_w2d.get();
-                recurseLevel_w2d.set(--i);
+                int i = recurseLevel.get();
+                recurseLevel.set(--i);
+                if (i == 0) {
+                    mappedFieldsTracker.get().clear();
+                }
             }
         } else if (method.getName().equals("d2w")) {
             //try/finally for å vedlikeholde en teller for hvor dypt i rekursjonsgrafen vi er.
             //Dersom vi er på toppen så kan vi clearMappedFields fra DefaultTypeMapper.
             try {
-                int i = recurseLevel_d2w.get();
-                if (i == 0) {
-                    if (defaultMapper != null) {
-                        ((DefaultTypeMapper) defaultMapper).clearMappedFields();
-                    }
-                }
-                recurseLevel_d2w.set(++i);
+                int i = recurseLevel.get();
+                recurseLevel.set(++i);
                 target = d2w(method, args);
             } finally {
-                int i = recurseLevel_d2w.get();
-                recurseLevel_d2w.set(--i);
+                int i = recurseLevel.get();
+                recurseLevel.set(--i);
+                if (i == 0) {
+                    mappedFieldsTracker.get().clear();
+                }
             }
         } else {
             target = method.invoke(this, args);
@@ -138,22 +139,27 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         if (source != null) {
             TypeToken<?> targetTypeToken = TypeToken.of(targetType);
             TypeToken<?> sourceTypeToken = TypeToken.of(source.getClass());
-            if (useIdentityMapping.contains(source.getClass())) {
-                target = source;
-            } else if (sourceTypeToken.isArray() && targetTypeToken.isArray()) {
-                int length = Array.getLength(source);
-                target = Array.newInstance(targetTypeToken.getComponentType().getRawType(), length);
-                for (int i = 0; i < length; ++i) {
-                    Array.set(target, i, thisMapping.d2w(Array.get(source, i), targetTypeToken.getComponentType().getType()));
-                }
-            } else {
-                TypeMapper typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.D2W);
-                if (typeMapper != null) {
-                    target = typeMapper.mapDomainObject(source);
-                } else if (defaultMapper != null) {
-                    target = defaultMapper.mapDomainObject(source, targetTypeToken);
+            MappedFieldsTracker tracker = mappedFieldsTracker.get();
+
+            target = tracker.getMappedValue(source, targetTypeToken.getRawType());
+            if (target == null) {
+                if (useIdentityMapping.contains(source.getClass())) {
+                    target = source;
+                } else if (sourceTypeToken.isArray() && targetTypeToken.isArray()) {
+                    int length = Array.getLength(source);
+                    target = Array.newInstance(targetTypeToken.getComponentType().getRawType(), length);
+                    for (int i = 0; i < length; ++i) {
+                        Array.set(target, i, thisMapping.d2w(Array.get(source, i), targetTypeToken.getComponentType().getType()));
+                    }
                 } else {
-                    throw new MappingException(String.format("Mapper[%s] could not map from %s to %s", this.getClass().getName(), sourceTypeToken, targetTypeToken));
+                    TypeMapper typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.D2W);
+                    if (typeMapper != null) {
+                        target = typeMapper.mapDomainObject(source);
+                    } else if (defaultMapper != null) {
+                        target = defaultMapper.mapDomainObject(source, targetTypeToken);
+                    } else {
+                        throw new MappingException(String.format("Mapper[%s] could not map from %s to %s", this.getClass().getName(), sourceTypeToken, targetTypeToken));
+                    }
                 }
             }
         }
@@ -175,22 +181,27 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         if (source != null) {
             TypeToken<?> targetTypeToken = TypeToken.of(targetType);
             TypeToken<?> sourceTypeToken = TypeToken.of(source.getClass());
-            if (useIdentityMapping.contains(source.getClass())) {
-                target = source;
-            } else if (sourceTypeToken.isArray() && targetTypeToken.isArray()) {
-                int length = Array.getLength(source);
-                target = Array.newInstance(targetTypeToken.getComponentType().getRawType(), length);
-                for (int i = 0; i < length; ++i) {
-                    Array.set(target, i, thisMapping.w2d(Array.get(source, i), targetTypeToken.getComponentType().getType()));
-                }
-            } else {
-                TypeMapper typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.W2D);
-                if (typeMapper != null) {
-                    target = typeMapper.mapWsapiObject(source);
-                } else if (defaultMapper != null) {
-                    target = defaultMapper.mapWsapiObject(source, targetTypeToken);
+            MappedFieldsTracker tracker = mappedFieldsTracker.get();
+
+            target = tracker.getMappedValue(source, targetTypeToken.getRawType());
+            if (target == null) {
+                if (useIdentityMapping.contains(source.getClass())) {
+                    target = source;
+                } else if (sourceTypeToken.isArray() && targetTypeToken.isArray()) {
+                    int length = Array.getLength(source);
+                    target = Array.newInstance(targetTypeToken.getComponentType().getRawType(), length);
+                    for (int i = 0; i < length; ++i) {
+                        Array.set(target, i, thisMapping.w2d(Array.get(source, i), targetTypeToken.getComponentType().getType()));
+                    }
                 } else {
-                    throw new MappingException(String.format("Mapper[%s] could not map from %s to %s", this.getClass().getName(), sourceTypeToken, targetTypeToken));
+                    TypeMapper typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.W2D);
+                    if (typeMapper != null) {
+                        target = typeMapper.mapWsapiObject(source);
+                    } else if (defaultMapper != null) {
+                        target = defaultMapper.mapWsapiObject(source, targetTypeToken);
+                    } else {
+                        throw new MappingException(String.format("Mapper[%s] could not map from %s to %s", this.getClass().getName(), sourceTypeToken, targetTypeToken));
+                    }
                 }
             }
         }

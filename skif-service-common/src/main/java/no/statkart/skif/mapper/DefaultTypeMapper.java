@@ -55,14 +55,10 @@ public class DefaultTypeMapper {
     Map<String, String> domainPkg2wsapiPkg = new HashMap<String, String>();
     private Map<Class, Class> classMappings = new HashMap<Class, Class>();
     private Set<Class> doNotMapTheseClasses = new HashSet<Class>();
-    private final MappedFieldsTracker mappedFields = new MappedFieldsTracker();
+
     private Map<? extends Class<?>, ? extends Class<?>> overrideClassMappings;
 
     public DefaultTypeMapper() {
-    }
-
-    public void clearMappedFields() {
-        mappedFields.clear();
     }
 
     /**
@@ -295,15 +291,11 @@ public class DefaultTypeMapper {
         if (!doNotMapTheseClasses.contains(source.getClass())) {
             try {
                 TypeToken<?> targetType = findTargetClass(source.getClass(), wsapiType);
-                Object alreadyMappedValue = mappedFields.getMappedValue(source, targetType.getRawType());
-                if (alreadyMappedValue == null) {
-                    target = targetType.getRawType().newInstance();
+                target = targetType.getRawType().newInstance();
+                mapping.registerTarget(source, target);
 
-                    if (!doNotMapTheseClasses.contains(source.getClass())) {
-                        mapCommonDomainFields(source, target, wsapiType);
-                    }
-                } else {
-                    target = alreadyMappedValue;
+                if (!doNotMapTheseClasses.contains(source.getClass())) {
+                    mapCommonDomainFields(source, target, wsapiType);
                 }
             } catch (ClassNotFoundException e) {
                 throw new MappingException(e);
@@ -325,30 +317,26 @@ public class DefaultTypeMapper {
         if (!doNotMapTheseClasses.contains(source.getClass())) {
             try {
                 TypeToken<?> targetType = findTargetClass(source.getClass(), domainType);
-                Object alreadyMappedValue = mappedFields.getMappedValue(source, targetType.getRawType());
-                if (alreadyMappedValue == null) {
-                    if (targetType.isArray()) {
-                        Field field;
-                        if (checkHasField(source.getClass(), "item")) {
-                            field = source.getClass().getDeclaredField("item");
-                        } else if (checkHasField(source.getClass(), "liste")) {
-                            field = source.getClass().getDeclaredField("liste");
-                        } else {
-                            throw new MappingException("Assumption that there is a field 'item' or 'liste' corresponding to an Array failed");
-                        }
-                        field.setAccessible(true);
-                        Collection collection = (Collection) field.get(source);
-                        //noinspection ConstantConditions
-                        target = Array.newInstance(targetType.getComponentType().getRawType(), collection == null ? 0 : collection.size());
+                if (targetType.isArray()) {
+                    Field field;
+                    if (checkHasField(source.getClass(), "item")) {
+                        field = source.getClass().getDeclaredField("item");
+                    } else if (checkHasField(source.getClass(), "liste")) {
+                        field = source.getClass().getDeclaredField("liste");
                     } else {
-                        target = targetType.getRawType().newInstance();
+                        throw new MappingException("Assumption that there is a field 'item' or 'liste' corresponding to an Array failed");
                     }
-
-                    if (!doNotMapTheseClasses.contains(source.getClass())) {
-                        mapCommonWsapiFields(source, target, targetType);
-                    }
+                    field.setAccessible(true);
+                    Collection collection = (Collection) field.get(source);
+                    //noinspection ConstantConditions
+                    target = Array.newInstance(targetType.getComponentType().getRawType(), collection == null ? 0 : collection.size());
                 } else {
-                    target = alreadyMappedValue;
+                    target = targetType.getRawType().newInstance();
+                }
+                mapping.registerTarget(source, target);
+
+                if (!doNotMapTheseClasses.contains(source.getClass())) {
+                    mapCommonWsapiFields(source, target, targetType);
                 }
             } catch (InstantiationException e) {
                 throw new MappingException(e);

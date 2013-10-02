@@ -18,7 +18,7 @@ import java.util.Collection;
  * </ul>
  * @author Henrik Fredholm
  */
-public interface Mapping {
+public interface Mapping extends MappingBase {
     public <T> T d2w(Object source, Class<T> targetClass);
     public <T> T w2d(Object source, Class<T> targetClass);
     public Object d2w(Object source, Type targetClass);

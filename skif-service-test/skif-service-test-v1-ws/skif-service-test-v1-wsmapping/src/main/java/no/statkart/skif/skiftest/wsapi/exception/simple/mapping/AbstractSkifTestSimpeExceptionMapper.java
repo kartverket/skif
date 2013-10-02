@@ -97,4 +97,8 @@ public abstract class AbstractSkifTestSimpeExceptionMapper implements ExceptionM
     public BigDecimal w2d(BigDecimal source) {
         throw new NotImplementedException("na");
     }
+
+    @Override
+    public void registerTarget(Object source, Object target) {
+    }
 }
