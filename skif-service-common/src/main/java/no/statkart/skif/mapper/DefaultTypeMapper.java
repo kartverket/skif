@@ -56,7 +56,7 @@ public class DefaultTypeMapper {
     private Map<Class, Class> classMappings = new HashMap<Class, Class>();
     private Set<Class> doNotMapTheseClasses = new HashSet<Class>();
     private final MappedFieldsTracker mappedFields = new MappedFieldsTracker();
-    private Map<Class, Class> overrideClassMappings;
+    private Map<? extends Class<?>, ? extends Class<?>> overrideClassMappings;
 
     public DefaultTypeMapper() {
     }
@@ -130,14 +130,17 @@ public class DefaultTypeMapper {
         this.mapping = mapping;
     }
 
-    public void overrideClassMappings(Map<Class, Class> classMappings) {
+    public void overrideClassMappings(Map<? extends Class<?>, ? extends Class<?>> classMappings) {
         this.overrideClassMappings = classMappings;
     }
 
     public TypeToken<?> findTargetClass(Class sourceClass, TypeToken<?> targetType) throws ClassNotFoundException, NoSuchFieldException {
         TypeToken<?> retVal = null;
         if (this.overrideClassMappings != null) {
-            retVal = TypeToken.of(this.overrideClassMappings.get(sourceClass));
+            Class<?> clazz = this.overrideClassMappings.get(sourceClass);
+            if (clazz != null) {
+                retVal = TypeToken.of(clazz);
+            }
         }
         if (retVal == null) {
             if (classMappings.containsKey(sourceClass)) {
