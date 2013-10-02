@@ -12,6 +12,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -47,7 +48,7 @@ import java.util.zip.ZipInputStream;
 public class DefaultTypeMapper {
     private Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
 
-    private static Map<Method, Method> settersForGetters = new HashMap<Method, Method>();
+    protected static final Map<Method, Method> settersForGetters = new ConcurrentHashMap<Method, Method>();
 
     Mapping mapping;
 
