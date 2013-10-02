@@ -875,7 +875,8 @@ public class DefaultTypeMapper {
             Method getter = iterator.next();
             boolean match = false;
             for (Method idGetter : idGetters) {
-                if (!idGetter.equals(getter) && idGetter.getName().startsWith(getter.getName())) {
+                // Dersom det finnes en getter getFooId(), så skal ikke getteren getFoo() mappes. Men ikke luk ut getId() dersom det finnes en getIdAsFooId()
+                if (!idGetter.equals(getter) && idGetter.getName().startsWith(getter.getName()) && !getter.getName().endsWith("Id")) {
                     match = true;
                 }
             }
