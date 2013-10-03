@@ -1,7 +1,5 @@
 package no.statkart.skif.store;
 
-import no.statkart.skif.exception.ConfigurationException;
-
 import java.sql.Timestamp;
 
 /**
@@ -26,19 +24,4 @@ public class SnapshotVersionHelper {
         return SnapshotVersion.createInstance(subtract(snapshotVersion.getTimestamp(), nanos));
     }
 
-    /**
-     * Beregner minste {@code SnapshotVersion} før {@code snapshotVersion}. Laveste oppløsning i databasen
-     * er 1000 nanos
-     */
-    public static SnapshotVersion calcJustBeforeOf(SnapshotVersion snapshotVersion) {
-        return SnapshotVersion.createInstance(calcJustBeforeOf(snapshotVersion.getTimestamp()));
-    }
-
-    /**
-     * Beregner minste {@code Timestamp} før {@code timestamp}. Laveste oppløsning i databasen
-     * er 1000 nanos
-     */
-    public static Timestamp calcJustBeforeOf(Timestamp timestamp) {
-        return subtract(timestamp, 1000);
-    }
 }

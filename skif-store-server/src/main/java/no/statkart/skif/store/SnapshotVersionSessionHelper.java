@@ -10,8 +10,6 @@ import org.hibernate.type.TimestampType;
 
 import java.sql.*;
 
-import static no.statkart.skif.store.SnapshotVersionHelper.calcJustBeforeOf;
-
 /**
  * @author Henrik Fredholm
  * @since 2.1
@@ -19,11 +17,6 @@ import static no.statkart.skif.store.SnapshotVersionHelper.calcJustBeforeOf;
 public class SnapshotVersionSessionHelper {
     // TODO: Virker ikke hvis Hibernate.TIMESTAMP brukes. Deprecated i 3.6.10
     private static TimestampType TIMESTAMP = new TimestampType();
-
-    public static void setSnapshotToJustBefore(Session session, SnapshotVersion snapshotVersion) {
-        final Timestamp timestamp = calcJustBeforeOf(snapshotVersion.getTimestamp());
-        session.createSQLQuery("select snapshot_time.set_t(:timestamp) from dual").setTimestamp("timestamp", timestamp).executeUpdate();
-    }
 
     /**
      * Setter SnapshotVersion på databasen.
