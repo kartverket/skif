@@ -1263,62 +1263,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @throws org.hibernate.HibernateException
      *
      */
-    // TODO: må gjøres abstract og flyttes til 3.2 implementasjon
-    protected void ensureInitialized(Object object, IdentityHashMap initializedObjects) throws HibernateException {
-        if (object == null) return;
-
-        if (initializedObjects.containsKey(object)) return;
-        initializedObjects.put(object, null);
-
-        ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
-
-        if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
-
-        EntityPersister persister = (EntityPersister) classMetadata;
-        Type[] types = persister.getPropertyTypes();
-        Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
-        CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
-
-        for (int i = 0; i < types.length; i++) {
-            Type type = types[i];
-            if (type.isEntityType()) {
-                Hibernate.initialize(values[i]);
-
-                if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE)) {
-                    ensureInitialized(values[i], initializedObjects);
-                }
-            } else if (type.isComponentType()) {
-                AbstractComponentType t = (AbstractComponentType) type;
-                Object component = values[i];
-                if (component != null) {
-                    Object[] componentProperties = t.getPropertyValues(component, EntityMode.POJO);
-                    for (int j = 0; j < componentProperties.length; j++) {
-                        // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
-                        Object componentProperty = componentProperties[j];
-                        Hibernate.initialize(componentProperty);
-                        if (componentProperty instanceof PersistentCollection) {
-                            // Initialiser hvert element
-                            for (Iterator iterator = ((Collection) componentProperty).iterator(); iterator.hasNext(); ) {
-                                Object o = iterator.next();
-                                ensureInitialized(o, initializedObjects);
-                            }
-                        } else {
-                            ensureInitialized(componentProperty, initializedObjects);
-                        }
-                    }
-                }
-            } else if (type.isAssociationType()) {
-                Hibernate.initialize(values[i]);
-                if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE)) {
-                    Collection col = (Collection) values[i];
-                    for (Iterator iterator = col.iterator(); iterator.hasNext(); ) {
-                        Object o = (Object) iterator.next();
-                        ensureInitialized(o, initializedObjects);
-                    }
-                }
-            }
-        }
-    }
+    protected abstract void ensureInitialized(Object object, IdentityHashMap initializedObjects) throws HibernateException;
 
     /**
      * SingleColumnType finnes ikke i 3.2.6 så her brukes test mot NullableType istedet
