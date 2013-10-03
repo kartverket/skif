@@ -21,6 +21,13 @@ create table HistoriskDbKode (
     kodeverdi varchar2(10) not null,
     primary key(id)
 );
+create table HistoriskDbKodeLoc (
+    id number(19,0) not null,
+    locale varchar2(10) not null,
+    name varchar2(64) not null,
+    value varchar2(255) not null,
+    primary key (id, locale, name)
+);
 
 create table Simple (
     id number(19,0) not null,
