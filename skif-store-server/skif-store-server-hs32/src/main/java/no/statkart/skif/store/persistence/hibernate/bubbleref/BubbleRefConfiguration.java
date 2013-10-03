@@ -205,7 +205,19 @@ public class BubbleRefConfiguration extends Configuration {
                 configureManyToOneBubbleMapping(prop, persistentClass, mapping);
             } else if (prop.getValue() instanceof Component) {
                 configureManyToOneBubbleMappingsForComponent((Component) prop.getValue(), persistentClass, mapping);
+            } else if (prop.getValue() instanceof Collection) {
+                configureManyToOneBubbleMappingsForCollection((Collection) prop.getValue(), persistentClass, mapping);
             }
+        }
+    }
+
+    /**
+     * Ser etter ManyToOne som skal gjøres om til ManyToOneBubbleRef inni collections (composite-element)
+     */
+    private void configureManyToOneBubbleMappingsForCollection(Collection collection, PersistentClass persistentClass, Mappings mappings) {
+        Value element = collection.getElement();
+        if (element instanceof Component) {
+            configureManyToOneBubbleMappingsForComponent((Component) element, persistentClass, mappings);
         }
     }
 
@@ -260,6 +272,8 @@ public class BubbleRefConfiguration extends Configuration {
             if (attrib != null && prop.getValue() instanceof ManyToOne) {
                 configureManyToOneBubbleMapping(prop, persistentClass, mapping);
                 type.getSubtypes()[i] = prop.getValue().getType(); // oppdater property array med ny type
+            } else if (prop.getValue() instanceof Component) {
+                configureManyToOneBubbleMappingsForComponent((Component) prop.getValue(), persistentClass, mapping);
             }
         }
     }
