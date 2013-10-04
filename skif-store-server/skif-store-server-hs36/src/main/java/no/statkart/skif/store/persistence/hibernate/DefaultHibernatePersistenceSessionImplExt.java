@@ -1,10 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import no.statkart.matrikkel.persistens.hibernate.bubbleref.BubbleRefIdPersister;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.EntityComponent;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
@@ -13,13 +10,10 @@ import org.hibernate.collection.PersistentCollection;
 import org.hibernate.engine.CascadeStyle;
 import org.hibernate.engine.CascadingAction;
 import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.id.Assigned;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
-import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
-import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.*;
 
 import java.util.Collection;
@@ -86,7 +80,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                     ensureInitialized(values[i], initializedObjects);
                 }
             } else if (type.isComponentType()) {
-                ComponentType t = (ComponentType) type;
+                CompositeType t = (CompositeType) type;
                 Object component = values[i];
                 if (component != null) {
                     Object[] componentProperties = t.getPropertyValues(component, EntityMode.POJO);
