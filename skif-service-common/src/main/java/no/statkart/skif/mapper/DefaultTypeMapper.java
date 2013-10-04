@@ -48,7 +48,37 @@ import java.util.zip.ZipInputStream;
 public class DefaultTypeMapper implements DefaultTypeMapping {
     private Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
 
-    protected static final Map<Method, Method> settersForGetters = new ConcurrentHashMap<Method, Method>();
+    /**
+     * Method husker klassen som definerer den, men vi trenger å huske hvilken klasse den ble hentet ut fra.
+     * @since 2.3.1
+     */
+    private static class GetterKey {
+        private final Class<?> clazz;
+        private final Method method;
+
+        public GetterKey(Class<?> clazz, Method method) {
+            this.clazz = clazz;
+            this.method = method;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            GetterKey getterKey = (GetterKey) o;
+
+            return clazz.equals(getterKey.clazz) && method.equals(getterKey.method);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = clazz.hashCode();
+            result = 31 * result + method.hashCode();
+            return result;
+        }
+    }
+    protected final Map<GetterKey, Method> settersForGetters = new ConcurrentHashMap<GetterKey, Method>();
 
     Mapping mapping;
 
@@ -127,6 +157,7 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
         this.mapping = mapping;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public void overrideClassMappings(Map<? extends Class<?>, ? extends Class<?>> classMappings) {
         this.overrideClassMappings = classMappings;
     }
@@ -360,6 +391,7 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
      *
      * @param className Fully qualified class name.
      */
+    @SuppressWarnings("UnusedDeclaration")
     public void doNotMapThisClass(String className) {
         try {
             Class c = Class.forName(className);
@@ -472,7 +504,7 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
             } else {
                 Collection<Method> sourceGetters = findGetters(source.getClass());
                 for (Method sourceGetter : sourceGetters) {
-                    Method targetSetter = findSetterForGetter(target.getClass(), sourceGetter);
+                    Method targetSetter = findSetterForGetter(target.getClass(), source.getClass(), sourceGetter);
 
                     Method overriddenSetter = overrideSetter(sourceGetter, targetSetter, target.getClass());
                     if (overriddenSetter != null) {
@@ -683,7 +715,7 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
             } else {
                 Collection<Method> sourceGetters = findGetters(source.getClass());
                 for (Method sourceGetter : sourceGetters) {
-                    Method targetSetter = findSetterForGetter(target.getClass(), sourceGetter);
+                    Method targetSetter = findSetterForGetter(target.getClass(), source.getClass(), sourceGetter);
 
                     Method overriddenSetter = overrideSetter(sourceGetter, targetSetter, target.getClass());
                     if (overriddenSetter != null) {
@@ -891,16 +923,17 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
         return getters;
     }
 
-    protected Method findSetterForGetter(Class<?> c, Method getter) {
+    protected Method findSetterForGetter(Class<?> targetClass, Class<?> sourceClass, Method getter) {
+        GetterKey key = new GetterKey(sourceClass, getter);
 
-        Method setter = settersForGetters.get(getter);
+        Method setter = settersForGetters.get(key);
         if (setter != null) {
             return setter;
         }
 
         String expectedSetterName = 's' + getter.getName().substring(1);
 
-        Method[] methods = c.getMethods();
+        Method[] methods = targetClass.getMethods();
         Method matched = null;
         for (Method method : methods) {
             if (method.getParameterTypes().length == 1) {
@@ -912,7 +945,7 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
         }
 
         if (matched != null) {
-            settersForGetters.put(getter, matched);
+            settersForGetters.put(key, matched);
         }
         return matched;
     }
