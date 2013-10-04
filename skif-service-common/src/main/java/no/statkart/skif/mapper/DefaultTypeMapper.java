@@ -896,7 +896,7 @@ public class DefaultTypeMapper {
         List<Method> getters = new ArrayList<Method>(methods.length / 2);
         List<Method> idGetters = new ArrayList<Method>(methods.length / 4);
         for (Method method : methods) {
-            if (!method.isBridge() && method.getName().startsWith("get")) {
+            if (!method.isBridge() && (method.getName().startsWith("get") || method.getName().startsWith("is"))) {
                 getters.add(method);
                 if (method.getName().endsWith("Id")) {
                     idGetters.add(method);
@@ -928,7 +928,13 @@ public class DefaultTypeMapper {
             return setter;
         }
 
-        String expectedSetterName = 's' + getter.getName().substring(1);
+        String getterName = getter.getName();
+        String expectedSetterName;
+        if (getterName.startsWith("is")) {
+            expectedSetterName = "set" + getterName.substring(2);
+        } else {
+            expectedSetterName = "set" + getterName.substring(3);
+        }
 
         Method[] methods = targetClass.getMethods();
         Method matched = null;
