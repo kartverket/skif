@@ -52,7 +52,7 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
      * Method husker klassen som definerer den, men vi trenger å huske hvilken klasse den ble hentet ut fra.
      * @since 2.3.1
      */
-    private static class GetterKey {
+    protected static class GetterKey {
         private final Class<?> clazz;
         private final Method method;
 
