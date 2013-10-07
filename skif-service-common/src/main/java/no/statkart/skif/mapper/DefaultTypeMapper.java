@@ -896,7 +896,7 @@ public class DefaultTypeMapper {
         List<Method> getters = new ArrayList<Method>(methods.length / 2);
         List<Method> idGetters = new ArrayList<Method>(methods.length / 4);
         for (Method method : methods) {
-            if (!method.isBridge() && (method.getName().startsWith("get") || method.getName().startsWith("is"))) {
+            if (!method.isBridge() && method.getParameterTypes().length == 0 && (method.getName().startsWith("get") || method.getName().startsWith("is"))) {
                 getters.add(method);
                 if (method.getName().endsWith("Id")) {
                     idGetters.add(method);
