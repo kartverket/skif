@@ -10,10 +10,10 @@ import java.lang.reflect.Method;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class AbstractExceptionMapper extends AbstractMapper {
+public abstract class AbstractExceptionMapper<M extends ExceptionMapping> extends AbstractMapper<M> {
     protected final boolean wrapD2WRuntimeExceptions;
 
-    public AbstractExceptionMapper(Class<? extends Mapping> mappingClass, boolean wrapD2WRuntimeExceptions) {
+    public AbstractExceptionMapper(Class<? extends M> mappingClass, boolean wrapD2WRuntimeExceptions) {
         super(mappingClass);
         this.wrapD2WRuntimeExceptions = wrapD2WRuntimeExceptions;
     }

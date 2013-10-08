@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.wsapi.exception.mapping;
 
 import no.statkart.skif.mapper.*;
-import no.statkart.skif.mapper.ObjectFactory;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 import no.statkart.skif.storetest.wsapi.exception.*;
 import java.util.LinkedHashMap;
@@ -13,7 +12,7 @@ import java.util.Map;
  * @author Leif Lislegård
  * @since 2.0
  */
-public class StoreTestExceptionMapper extends AbstractExceptionMapper {
+public class StoreTestExceptionMapper extends AbstractExceptionMapper<StoreTestExceptionMapping> {
 
     /**
      * Definisjon av hvordan man mapper tilbake til domenet basert på 'category'
