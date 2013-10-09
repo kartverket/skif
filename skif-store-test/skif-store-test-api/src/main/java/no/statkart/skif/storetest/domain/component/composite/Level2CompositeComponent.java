@@ -11,7 +11,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class Level2CompositeComponent implements CompositeComponent<Level1CompositeComponent>, CompositeComponentWithCollections {
+public class Level2CompositeComponent implements CompositeComponent<BubbleWithCompositeComponent, Level1CompositeComponent>, CompositeComponentWithCollections {
     private Level1CompositeComponent owner;
     private String text;
     private BeloepValueObject belop;
@@ -40,23 +40,19 @@ public class Level2CompositeComponent implements CompositeComponent<Level1Compos
     }
 
     @Override
+    public BubbleWithCompositeComponent getCompositeRootOwner() {
+        return getOwner().getCompositeRootOwner();
+    }
+
+    @Override
     public void setOwner(Level1CompositeComponent owner) {
-        this.owner = Components.checkSetOwner(
-                this,
-                this.owner,
-                owner,
-                new OwnerCheck<Level1CompositeComponent, Level2CompositeComponent>() {
-                    public boolean apply(Level1CompositeComponent owner, Level2CompositeComponent child) {
-                        return owner.getLevel2Component()==child;
-                    }
-                }
-        );
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     @Override
     public boolean isNullComponent() {
-        return this.text==null
-                && this.belop==null;
+        return this.text == null
+                && this.belop == null;
     }
 
     public String getText() {

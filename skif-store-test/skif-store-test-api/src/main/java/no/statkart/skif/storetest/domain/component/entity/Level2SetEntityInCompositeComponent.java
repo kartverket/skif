@@ -43,16 +43,7 @@ public class Level2SetEntityInCompositeComponent extends AbstractEntityBubbleCom
 
     @Override
     public void setOwner(BubbleWithEntityInCompositeComponent owner) {
-        this.owner = Components.checkSetOwner(
-                this,
-                this.owner,
-                owner,
-                new OwnerCheck<BubbleWithEntityInCompositeComponent, Level2SetEntityInCompositeComponent>() {
-                    public boolean apply(BubbleWithEntityInCompositeComponent owner, Level2SetEntityInCompositeComponent child) {
-                        return owner.getLevel1Component().getLevel2Component().getEntitySet().contains(child);
-                    }
-                }
-        );
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     public String getText() {

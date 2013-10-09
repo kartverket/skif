@@ -1,13 +1,21 @@
 package no.statkart.skif.storetest.domain.relation.uni.direct;
 
+import com.google.common.collect.Sets;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.Components;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.relation.cache.RelationName;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.store.relation.cache.annotation.Cardinality;
 import no.statkart.skif.store.relation.cache.annotation.Relation;
 import no.statkart.skif.store.relation.cache.annotation.RelationType;
+import no.statkart.skif.storetest.domain.component.entity.SetAaEntityComponent;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
+import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubbleId;
+
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * Klasse for å test unidireksjonelle relasjoner. Klasen har 3 forskjellige typer relasjoner
@@ -26,8 +34,8 @@ public class X1AA extends AbstractRelationTestBubble {
     private static final long serialVersionUID = 1L;
 
     private X1BBOneId<?> someBBId;
+    private Set<X1CCManyId<?>> someCCsIds= BubbleIds.newSet(this, X1AAFinderService.Role.someCCs);
 
-//    private Set<X1CCMany> someCCs;
 //    private X1DDUnique myUniqueDD;
 
 //    private Set<X1EManyMany> x1EManyManySet;
@@ -49,4 +57,29 @@ public class X1AA extends AbstractRelationTestBubble {
     public void setSomeBBId(X1BBOneId<?> someBBId) {
         this.someBBId = onChangeRelation(X1AAFinderService.Role.someBB, this.someBBId, someBBId);
     }
+
+
+    public Set<X1CCManyId<?>> getSomeCCsIds() {
+        return someCCsIds;
+    }
+
+    public <T extends Collection<? super X1CCManyId<?>>> T getSomeCCsIds(T targetCollection)  {
+        targetCollection.addAll(someCCsIds);
+        return targetCollection;
+    }
+
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
+    private Set<X1CCManyId<?>> getSomeCCsIdsSet() {
+        return BubbleIds.getDelegate(someCCsIds);
+    }
+
+    public void setSomeCCsIds(Set<X1CCManyId<?>> someCCsIds) {
+        BubbleIds.setFrom(this.someCCsIds, someCCsIds);
+    }
+
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
+    private void setSomeCCsIdsSet(Set<X1CCManyId<?>> someCCsIds) {
+        BubbleIds.setDelegate(this.someCCsIds, someCCsIds);
+    }
+
 }

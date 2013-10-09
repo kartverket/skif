@@ -1,6 +1,5 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
@@ -46,16 +45,7 @@ public class SetAaLevel1EntityComponent implements EntityComponentWithOwnerRefer
 
     @Override
     public void setOwner(SetAaEntityComponent owner) {
-        this.owner = Components.checkSetOwner(
-                this,
-                this.owner,
-                owner,
-                new OwnerCheck<SetAaEntityComponent, SetAaLevel1EntityComponent>() {
-                    public boolean apply(SetAaEntityComponent owner, SetAaLevel1EntityComponent child) {
-                        return owner.getLevel1Component()==child;
-                    }
-                }
-        );
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     @Nullable
@@ -64,8 +54,7 @@ public class SetAaLevel1EntityComponent implements EntityComponentWithOwnerRefer
     }
 
     public void setLevel2Component(@Nullable SetAaLevel2EntityComponent level2Component) {
-        this.level2Component = Components.checkSetComponentWithOwner(this.level2Component, level2Component);
-        Components.setOwner(this.level2Component, this);
+        this.level2Component = Components.checkSetComponent(this, this.level2Component, level2Component);
     }
 
 

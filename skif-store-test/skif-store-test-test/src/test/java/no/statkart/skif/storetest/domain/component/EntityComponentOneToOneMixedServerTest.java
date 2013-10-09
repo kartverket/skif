@@ -20,6 +20,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.fest.assertions.api.Assertions;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.testng.annotations.Test;
 
@@ -147,10 +148,10 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 }
             });
         } catch (ImplementationException t) {
-            assertThat(t).hasMessageStartingWith("Found entity component no.statkart.skif.storetest.domain.component.entity.Level2EntityComponent");
+            assertThat(t).hasMessageStartingWith("Found entity component that is not new. Class: no.statkart.skif.storetest.domain.component.entity.Level2EntityComponent");
         }
         final BubbleWithEntityComponent bubble1 = store.get(bubble1Original.getId());
-        assertEquals(bubble1Original.getLevel1Component().getLevel2Component().getId(),bubble1.getLevel1Component().getLevel2Component().getId() );
+        assertEquals(bubble1Original.getLevel1Component().getLevel2Component().getId(), bubble1.getLevel1Component().getLevel2Component().getId());
     }
 
 
@@ -388,7 +389,6 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         assertFalse(existsInDatabase(Level2EntityComponent.class.getName(), bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
 
-    @Test(groups = "broken")
     public void testMoveExistingComponentToNewBubbleInAttachedState() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
@@ -404,7 +404,6 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                     store.update(bubbleWithEntityComponent);
                     BubbleWithEntityComponent newBubble = new BubbleWithEntityComponent();
                     newBubble.setLevel1Component(existingLevel1Component);
-//                    failBecauseExceptionWasNotThrown(IllegalStateException.class);
                     return null;
                 }
             });
@@ -439,7 +438,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             });
         } catch (ImplementationException t) {
             // OK, forventet
-            assertThat(t.getMessage()).startsWith("Found entity component no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent");
+            assertThat(t.getMessage()).startsWith("Found entity component that is not new. Class: no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent");
         }
     }
 
@@ -494,7 +493,6 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         }
     }
 
-    @Test(groups = "broken")
     public void testMoveExistingLevel2ComponentToExistingBubbleInAttachedState() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
@@ -509,18 +507,19 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                     Level2EntityComponent existingLevel2Component = bubbleWithEntityComponents.getLevel1Component().getLevel2Component();
                     bubbleWithEntityComponents.getLevel1Component().setLevel2Component(null);
                     if (flushing) store.flush();
+                    // Her forsøker vi å overta eksisterende komponent
                     bubbleWithNullLevel2Component.getLevel1Component().setLevel2Component(existingLevel2Component);
-//                    failBecauseExceptionWasNotThrown(IllegalStateException.class);
                     return null;
                 }
             });
-        } catch (IllegalStateException t) {
+            failBecauseExceptionWasNotThrown(ImplementationException.class);
+        } catch (ImplementationException t) {
             // OK, forventet
-            assertThat(t.getMessage()).startsWith("Attempt to assign component to a new owner");
+            assertThat(t.getMessage()).startsWith("deleted object would be re-saved by cascade");
         }
     }
 
-    @Test(groups = "broken")
+    @Test(groups = "broken") // TODO: må få feil her.
     public void testMoveExistingLevel2ComponentToExistingBubbleInDetachedState() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
             @Override
@@ -541,10 +540,11 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                     Level2EntityComponent existingLevel2Component = bubbleWithEntityComponents.getLevel1Component().getLevel2Component();
                     bubbleWithEntityComponents.getLevel1Component().setLevel2Component(null);
                     bubbleWithNullLevel2Component.getLevel1Component().setLevel2Component(existingLevel2Component);
-//                    failBecauseExceptionWasNotThrown(IllegalStateException.class);
+                    store.commitUnitOfWork();
                     return null;
                 }
             });
+            failBecauseExceptionWasNotThrown(IllegalStateException.class);
         } catch (IllegalStateException t) {
             // OK, forventet
             assertThat(t.getMessage()).startsWith("Attempt to assign component to a new owner");

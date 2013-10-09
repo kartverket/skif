@@ -1,7 +1,9 @@
 package no.statkart.skif.store;
 
+import com.google.common.collect.Sets;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.relation.cache.RelationName;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -74,5 +76,24 @@ public class BubbleIds {
             ids.add(id.asBase());
         }
         return ids;
+    }
+
+    static public <O extends AbstractBubbleObject, E extends BubbleId<?>> AbstractBubbleIdIdSet<O, E> newSet(O owner, RelationName relationName) {
+        return new BubbleIdSet<O, E>(owner, relationName, Sets.<E>newHashSet());
+    }
+
+    @SuppressWarnings("unchecked")
+    static public <E extends BubbleId<?>> void setDelegate(Set<E> bubbleIds, Set<E> newElements) {
+        ((BubbleIdSet)bubbleIds).setDelegate(newElements);
+    }
+
+    @SuppressWarnings("unchecked")
+    static public <E extends BubbleId<?>> Set<E> getDelegate(Set<E> bubbleIds) {
+        return ((BubbleIdSet)bubbleIds).delegate();
+    }
+
+    static public <E extends BubbleId<?>> void setFrom(Collection<E> collection, Set<E> newElements) {
+        collection.clear();
+        collection.addAll(newElements);
     }
 }

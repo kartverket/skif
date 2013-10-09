@@ -47,16 +47,7 @@ public class Level2EntityComponent implements EntityComponentWithOwnerReferance<
 
     @Override
     public void setOwner(Level1EntityComponent owner) {
-        this.owner = Components.checkSetOwner(
-                this,
-                this.owner,
-                owner,
-                new OwnerCheck<Level1EntityComponent, Level2EntityComponent>() {
-                    public boolean apply(Level1EntityComponent owner, Level2EntityComponent child) {
-                        return owner.getLevel2Component()==child;
-                    }
-                }
-        );
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     public String getText() {

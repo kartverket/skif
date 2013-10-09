@@ -335,6 +335,16 @@ create table X1AA (
 );
 alter table X1AA add constraint FK_X1AA_someBBId foreign key (someBBId) references X1BBOne;
 
+create table X1CCMany (
+  id number(19,0) not null,
+  nr number(10,0),
+  text varchar2(255),
+  ownerId number(19,0),
+  primary key (id)
+);
+alter table X1CCMany add constraint FK_X1CCMany_ownerId foreign key (ownerId) references X1AA;
+
+
 -- Denne map tabell brukes av StoreTest1ServiceTest
 create table TestMap (
 k varchar2(255) not null,

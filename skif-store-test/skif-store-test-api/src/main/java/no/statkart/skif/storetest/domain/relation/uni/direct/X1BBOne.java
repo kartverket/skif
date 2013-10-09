@@ -24,4 +24,9 @@ public class X1BBOne extends AbstractRelationTestBubble {
     public Set<X1AAId<?>> findInvSomeBBIds() {
         return unwrap(finder(X1AAFinderService.class).findInvSomeBBIds(idAsSet()));
     }
+
+    public Set<X1AA> findInvSomeBB() {
+        return store.get(findInvSomeBBIds());
+    }
+
 }

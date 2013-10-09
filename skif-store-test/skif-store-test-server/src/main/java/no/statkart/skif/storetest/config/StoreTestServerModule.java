@@ -60,6 +60,7 @@ import no.statkart.skif.storetest.domain.multikobling.Person;
 import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1AA;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCMany;
 import no.statkart.skif.storetest.domain.standalone.*;
 import no.statkart.skif.storetest.endringslogg.EndringManager;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
@@ -244,7 +245,7 @@ public class StoreTestServerModule extends SkifModule {
 
                         // Klasser for relasjonstesting
                 .addResource(X1BBOne.class)
-//                .addResource(X1CCMany.class)
+                .addResource(X1CCMany.class)
 //                .addResource(X1DDUnique.class)
                 .addResource(X1AA.class)
 

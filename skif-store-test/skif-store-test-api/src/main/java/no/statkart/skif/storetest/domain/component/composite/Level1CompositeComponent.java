@@ -44,17 +44,13 @@ public class Level1CompositeComponent implements CompositeBubbleComponent<Bubble
     }
 
     @Override
+    public BubbleWithCompositeComponent getCompositeRootOwner() {
+        return owner;
+    }
+
+    @Override
     public void setOwner(BubbleWithCompositeComponent owner) {
-       this.owner = Components.checkSetOwner(
-               this,
-               this.owner,
-               owner,
-               new OwnerCheck<BubbleWithCompositeComponent, Level1CompositeComponent>() {
-                   public boolean apply(BubbleWithCompositeComponent owner, Level1CompositeComponent child) {
-                       return owner.getLevel1Component()==child;
-                   }
-               }
-       );
+         this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     @Nullable
@@ -63,8 +59,7 @@ public class Level1CompositeComponent implements CompositeBubbleComponent<Bubble
     }
 
     public void setLevel2Component(@Nullable Level2CompositeComponent level2Component) {
-        this.level2Component = Components.checkSetComponentWithOwner(this.level2Component, level2Component);
-        Components.setOwner(this.level2Component, this);
+        this.level2Component = Components.checkSetComponent(this, this.level2Component, level2Component);
     }
 
     @Override

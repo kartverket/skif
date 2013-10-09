@@ -53,16 +53,7 @@ public class SetAaLevel2EntityComponent implements EntityComponentWithOwnerRefer
 
     @Override
     public void setOwner(SetAaLevel1EntityComponent owner) {
-        this.owner = Components.checkSetOwner(
-                this,
-                this.owner,
-                owner,
-                new OwnerCheck<SetAaLevel1EntityComponent, SetAaLevel2EntityComponent>() {
-                    public boolean apply(SetAaLevel1EntityComponent owner, SetAaLevel2EntityComponent child) {
-                        return owner.getLevel2Component()==child;
-                    }
-                }
-        );
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     public String getText() {

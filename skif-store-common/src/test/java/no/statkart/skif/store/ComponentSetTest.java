@@ -19,14 +19,11 @@ public class ComponentSetTest {
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
         bubble.getComponents().add(a);
-        Components.setOwner(a, bubble);
         bubble.getComponents().add(b);
-        Components.setOwner(b, bubble);
 
-        ComponentSet<Bubble, Component> componentSet = new ComponentSet<Bubble, Component>(bubble, bubble.getComponents());
-        Assert.assertEquals(Sets.newHashSet(componentSet.iterator()), bubble.getComponents());
+        Assert.assertEquals(Sets.newHashSet(bubble.getComponents()), bubble.getComponents());
 
-        Iterator<Component> iterator = componentSet.iterator();
+        Iterator<Component> iterator = bubble.getComponents().iterator();
         iterator.next();
         iterator.remove();
 
@@ -39,12 +36,9 @@ public class ComponentSetTest {
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
         bubble.getComponents().add(a);
-        Components.setOwner(a, bubble);
         bubble.getComponents().add(b);
-        Components.setOwner(b, bubble);
 
-        ComponentSet<Bubble, Component> componentSet = new ComponentSet<Bubble, Component>(bubble, bubble.getComponents());
-        componentSet.removeAll(Collections.singleton(a));
+        bubble.getComponents().removeAll(Collections.singleton(a));
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
@@ -56,8 +50,7 @@ public class ComponentSetTest {
         Bubble bubble = new Bubble();
         Component a = new Component(1, "A");
 
-        ComponentSet<Bubble, Component> componentSet = new ComponentSet<Bubble, Component>(bubble, bubble.getComponents());
-        componentSet.add(a);
+        bubble.getComponents().add(a);
 
         Assert.assertEquals(a.getOwner(), bubble, "a.owner");
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Collections.singleton(a), "aaComponents");
@@ -69,12 +62,9 @@ public class ComponentSetTest {
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
         bubble.getComponents().add(a);
-        Components.setOwner(a, bubble);
         bubble.getComponents().add(b);
-        Components.setOwner(b, bubble);
 
-        ComponentSet<Bubble, Component> componentSet = new ComponentSet<Bubble, Component>(bubble, bubble.getComponents());
-        componentSet.remove(a);
+        bubble.getComponents().remove(a);
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
@@ -87,8 +77,7 @@ public class ComponentSetTest {
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
 
-        ComponentSet<Bubble, Component> componentSet = new ComponentSet<Bubble, Component>(bubble, bubble.getComponents());
-        componentSet.addAll(Arrays.asList(a, b));
+        bubble.getComponents().addAll(Arrays.asList(a, b));
 
         Assert.assertEquals(a.getOwner(), bubble, "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
@@ -101,12 +90,9 @@ public class ComponentSetTest {
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
         bubble.getComponents().add(a);
-        Components.setOwner(a, bubble);
         bubble.getComponents().add(b);
-        Components.setOwner(b, bubble);
 
-        ComponentSet<Bubble, Component> componentSet = new ComponentSet<Bubble, Component>(bubble, bubble.getComponents());
-        componentSet.retainAll(Collections.singleton(b));
+        bubble.getComponents().retainAll(Collections.singleton(b));
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
@@ -119,12 +105,9 @@ public class ComponentSetTest {
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
         bubble.getComponents().add(a);
-        Components.setOwner(a, bubble);
         bubble.getComponents().add(b);
-        Components.setOwner(b, bubble);
 
-        ComponentSet<Bubble, Component> componentSet = new ComponentSet<Bubble, Component>(bubble, bubble.getComponents());
-        componentSet.clear();
+        bubble.getComponents().clear();
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertNull(b.getOwner(), "b.owner");
@@ -134,7 +117,7 @@ public class ComponentSetTest {
     private static class Bubble extends AbstractBubbleObject {
         private static final long serialVersionUID = 1L;
 
-        private Set<Component> components = new HashSet<Component>();
+        private final Set<Component> components = Components.newSet(this);
 
         public Set<Component> getComponents() {
             return components;
@@ -160,8 +143,7 @@ public class ComponentSetTest {
 
         @Override
         public void setOwner(Bubble owner) {
-            // TODO Sjekking
-            this.owner = owner;
+            this.owner = Components.checkSetOwner(this, this.owner, owner);
         }
 
         @Override

@@ -7,6 +7,7 @@ import no.statkart.skif.mockup.AbstractMockupFacade;
 import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1AAMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1BBOneMockupFactory;
+import no.statkart.skif.storetest.domain.relation.X1CCManyMockupFactory;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
 
     @Inject private X1BBOneMockupFactory x1BBOneMockupFactory;
+    @Inject private X1CCManyMockupFactory x1CCManyMockupFactory;
     @Inject private X1AAMockupFactory x1AAMockupFactory;
 
     @Inject private SubTypedBubbleMockupFactory subTypedBubbleMockupFactory;
@@ -51,6 +53,7 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
                 bubbleWithEntityComponentMockupFactory,
                 bubbleWithEntityInCompositeComponentMockupFactory,
                 x1BBOneMockupFactory,
+                x1CCManyMockupFactory,
                 x1AAMockupFactory,
                 subTypedBubbleMockupFactory
         );
@@ -106,6 +109,10 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
     public X1BBOneMockupFactory getX1BBOneMockupFactory() {
         return x1BBOneMockupFactory;
+    }
+
+    public X1CCManyMockupFactory getX1CCManyMockupFactory() {
+        return x1CCManyMockupFactory;
     }
 }
 

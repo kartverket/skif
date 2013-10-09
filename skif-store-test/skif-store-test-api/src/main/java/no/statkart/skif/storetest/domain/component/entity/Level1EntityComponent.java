@@ -1,10 +1,8 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.store.EntityBubbleComponent;
-import no.statkart.skif.store.OwnerCheck;
 import no.statkart.skif.store.ValueObjects;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
@@ -43,16 +41,7 @@ public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEn
 
     @Override
     public void setOwner(BubbleWithEntityComponent owner) {
-        this.owner = Components.checkSetOwner(
-                this,
-                this.owner,
-                owner,
-                new OwnerCheck<BubbleWithEntityComponent, Level1EntityComponent>() {
-                    public boolean apply(BubbleWithEntityComponent owner, Level1EntityComponent child) {
-                        return owner.getLevel1Component()==child;
-                    }
-                }
-        );
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     @Nullable
@@ -61,8 +50,7 @@ public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEn
     }
 
     public void setLevel2Component(@Nullable Level2EntityComponent level2Component) {
-        this.level2Component = Components.checkSetComponentWithOwner(this.level2Component, level2Component);
-        Components.setOwner(this.level2Component, this);
+        this.level2Component = Components.checkSetComponent(this, this.level2Component, level2Component);
     }
 
 

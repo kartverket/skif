@@ -9,6 +9,7 @@ import no.statkart.skif.store.Store;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.storetest.domain.relation.X1AAMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1BBOneMockupFactory;
+import no.statkart.skif.storetest.domain.relation.X1CCManyMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
@@ -40,8 +41,11 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             @Override
             public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
                 return Sets.union(
-                        mockupFacade.getX1AAMockupFactory().getAllIds(X1AAId.class),
-                        mockupFacade.getX1BBOneMockupFactory().getAllIds(X1BBOneId.class)
+                        Sets.union(
+                                mockupFacade.getX1AAMockupFactory().getAllIds(X1AAId.class),
+                                mockupFacade.getX1BBOneMockupFactory().getAllIds(X1BBOneId.class)
+                        ),
+                        mockupFacade.getX1CCManyMockupFactory().getAllIds(X1CCManyId.class)
                 );
             }
         });
@@ -90,12 +94,12 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
 
-        ImmutableSet<X1BBOneId<?>>bbIds = ImmutableSet.of(x1BBOneMockupFactory.getB1Id(), x1BBOneMockupFactory.getB2Id(), x1BBOneMockupFactory.getB3Id());
+        ImmutableSet<X1BBOneId<?>> bbIds = ImmutableSet.of(x1BBOneMockupFactory.getB1Id(), x1BBOneMockupFactory.getB2Id(), x1BBOneMockupFactory.getB3Id());
         X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
 
         store.getInstance(StoreRelationCache.class).setEnabled(true);
         store.get(bbIds);
-        Map<X1BBOneId<?>,Set<X1AAId<?>>> invSomeBBIds = x1AAFinderService.findInvSomeBBIds(bbIds);
+        Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIds = x1AAFinderService.findInvSomeBBIds(bbIds);
 
 
         X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
@@ -114,18 +118,62 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         assertThat(b3InvSomeBBIds2).containsOnly(x1AAMockupFactory.getA2Id(), x1AAMockupFactory.getA3Id());
     }
 
-    public void testChangeRelation() {
+    public void testChangeSomeBBRelation() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
 
-        X1AA x1AA = store.get(x1AAMockupFactory.getA1Id());
-        x1AA.setSomeBBId(x1BBOneMockupFactory.getB2Id());
+        store.getInstance(StoreRelationCache.class).setEnabled(true);
+        X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
+        assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
 
+        X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
+        a2.setSomeBBId(b1.getId());
+        assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
     }
+
     public void testGetMany() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
+        X1CCManyMockupFactory x1CCManyMockupFactory = mockupFacade.getX1CCManyMockupFactory();
 
+        X1AA a1 = store.get(x1AAMockupFactory.getA1Id());
+        assertThat(a1.getSomeCCsIds()).hasSize(0);
+
+        X1AA a3 = store.get(x1AAMockupFactory.getA3Id());
+        assertThat(a3.getSomeCCsIds()).hasSize(2);
+        assertThat(a3.getSomeCCsIds()).containsOnly(x1CCManyMockupFactory.getC2Id(), x1CCManyMockupFactory.getC3Id());
     }
+
+    public void testGetInverseSomeCCsRelation() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
+        X1CCManyMockupFactory x1CCManyMockupFactory = mockupFacade.getX1CCManyMockupFactory();
+
+        ImmutableSet<X1CCManyId<?>> ccIds = ImmutableSet.of(x1CCManyMockupFactory.getC1Id(), x1CCManyMockupFactory.getC2Id(), x1CCManyMockupFactory.getC3Id());
+        X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
+        Map<X1CCManyId<?>, Set<X1AAId<?>>> invSomeCCsIdsMap = x1AAFinderService.findInvSomeCCsIds(ccIds);
+        assertThat(invSomeCCsIdsMap).hasSize(3);
+        assertThat(invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC1Id())).hasSize(0);
+        assertThat(invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC2Id())).containsOnly(x1AAMockupFactory.getA3Id());
+        assertThat(invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC3Id())).containsOnly(x1AAMockupFactory.getA3Id());
+    }
+
+
+    public void testChangeSomeCCsRelation() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
+        X1CCManyMockupFactory x1CCManyMockupFactory = mockupFacade.getX1CCManyMockupFactory();
+
+        store.getInstance(StoreRelationCache.class).setEnabled(true);
+        X1CCMany c1 = store.get(x1CCManyMockupFactory.getC1Id());
+        assertThat(c1.findInvSomeCCsIds()).isEmpty();
+
+        X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
+        a2.getSomeCCsIds().add(c1.getId());
+        assertThat(c1.findInvSomeCCsIds()).containsOnly(a2.getId());
+    }
+
 
     public void testGetUnique() {
 

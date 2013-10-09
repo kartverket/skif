@@ -41,16 +41,7 @@ public class Level2EntityInCompositeComponent implements EntityBubbleComponent<B
 
     @Override
     public void setOwner(BubbleWithEntityInCompositeComponent owner) {
-        this.owner = Components.checkSetOwner(
-                this,
-                this.owner,
-                owner,
-                new OwnerCheck<BubbleWithEntityInCompositeComponent, Level2EntityInCompositeComponent>() {
-                    public boolean apply(BubbleWithEntityInCompositeComponent owner, Level2EntityInCompositeComponent child) {
-                        return owner.getLevel1Component().getLevel2Component().getEntity() == child;
-                    }
-                }
-        );
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     public String getText() {

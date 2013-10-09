@@ -11,12 +11,17 @@ import java.util.Set;
 
 /**
  * @author Henrik Fredholm
+ * @since 2.4
  */
 public interface X1AAFinderService {
     public enum Role implements RelationName {
-        someBB
+        someBB,
+        someCCs
     }
 
     @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="someBB")
     Map<X1BBOneId<?>, Set<X1AAId<?>>> findInvSomeBBIds(Collection<X1BBOneId<?>> x1BBOneIds);
+
+    @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="someCCs")
+    Map<X1CCManyId<?>, Set<X1AAId<?>>> findInvSomeCCsIds(Collection<X1CCManyId<?>> x1CCManyIds);
 }

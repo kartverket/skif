@@ -56,7 +56,6 @@ public class BubbleWithCompositeComponent extends AbstractStoreTestBubble {
     }
 
     public void setLevel1Component(Level1CompositeComponent level1Component) {
-        this.level1Component = Components.checkSetComponentWithOwner(this.level1Component, level1Component);
-        Components.setOwner(this.level1Component, this);
+        this.level1Component = Components.checkSetComponent(this, this.level1Component, level1Component);
     }
 }

@@ -33,8 +33,8 @@ public class X1BBOneMockupFactory extends AbstractMockupFactory {
 
     @Override
     public void createAllMockups() {
-        store.insert(createObject(b1Id, 1, "Ingen A'er peper på denne"));
-        store.insert(createObject(b2Id, 2, "Kun en A peper på denne"));
+        store.insert(createObject(b1Id, 1, "Ingen A'er peker på denne"));
+        store.insert(createObject(b2Id, 2, "Kun en A peker på denne"));
         store.insert(createObject(b3Id, 3, "Flere A'er peker på denne"));
     }
 

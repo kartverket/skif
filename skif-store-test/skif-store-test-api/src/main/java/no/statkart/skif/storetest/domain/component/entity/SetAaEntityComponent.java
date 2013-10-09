@@ -1,10 +1,8 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import no.statkart.skif.store.AbstractEntityBubbleComponentWithOwner;
 import no.statkart.skif.store.Components;
-import no.statkart.skif.store.OwnerCheck;
 import no.statkart.skif.store.ValueObjects;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
@@ -57,17 +55,7 @@ public class SetAaEntityComponent extends AbstractEntityBubbleComponentWithOwner
 
     @Override
     public void setOwner(BubbleWithEntityComponent owner) {
-        this.owner = Components.checkSetOwner(
-                this,
-                this.owner,
-                owner,
-                new OwnerCheck<BubbleWithEntityComponent, SetAaEntityComponent>() {
-                    public  boolean apply(BubbleWithEntityComponent owner, SetAaEntityComponent child) {
-                        return owner.getAaComponents().contains(child);
-                    }
-                }
-        );
-        this.owner = owner;
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     public int getIdent() {
@@ -91,8 +79,7 @@ public class SetAaEntityComponent extends AbstractEntityBubbleComponentWithOwner
     }
 
     public void setLevel1Component(SetAaLevel1EntityComponent level1Component) {
-        this.level1Component = Components.checkSetComponentWithOwner(this.level1Component, level1Component);
-        Components.setOwner(this.level1Component, this);
+        this.level1Component = Components.checkSetComponent(this, this.level1Component, level1Component);
     }
 
     public Set<BeloepValueObject> getBeloepSet() {

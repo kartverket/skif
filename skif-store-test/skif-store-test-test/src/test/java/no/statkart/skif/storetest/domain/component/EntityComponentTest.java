@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.domain.component;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.service.test.TestdataService;
@@ -172,8 +173,6 @@ public class EntityComponentTest extends StoreTestTestCase {
      * kom med en gang når man forsøker å sette komponenten slik at feilfindingen blir enklere. I nårværende
      * implementasjon oppdages feilen kun ved persistering til serveren.
      */
-
-    @Test(groups = "broken")
     public void testMoveComponent() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
@@ -183,14 +182,17 @@ public class EntityComponentTest extends StoreTestTestCase {
         bubbleWithEntityComponent.setLevel1Component(null);
         store.update(bubbleWithEntityComponent);
         BubbleWithEntityComponent newBubble = new BubbleWithEntityComponent();
+        newBubble.setLevel1Component(existingLevel1Component);
         try {
-            newBubble.setLevel1Component(existingLevel1Component);
-            failBecauseExceptionWasNotThrown(IllegalStateException.class);
-        } catch (IllegalStateException t) {
+            store.insert(newBubble);
+            storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
+            failBecauseExceptionWasNotThrown(ImplementationException.class);
+        } catch (ImplementationException t) {
             // OK, forventet
-            assertTrue(t.getMessage().startsWith("Attempt to assign component to a new owner"));
+            assertTrue(t.getMessage().startsWith("Found entity component that is not new"));
+        } finally {
+            store.abortUnitOfWork();
         }
-        store.abortUnitOfWork();
     }
     
     public void testShareComponent() {

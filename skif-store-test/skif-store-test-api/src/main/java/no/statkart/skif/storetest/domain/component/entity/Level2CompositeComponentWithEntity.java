@@ -1,24 +1,22 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
-import com.google.common.collect.Sets;
 import no.statkart.skif.store.*;
 
-import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
- * En composite component som har {@code BubbleWithEntityInCompositeComponent} som owner og som inneholder
+ * En composite component som har {@code Level1CompositeComponentWithEntity} som owner. Inneholder
  * referanse til en entity og et sett av entities. Disse har også {@code BubbleWithEntityInCompositeComponent} som owner.
  *
  * @author Henrik Fredholm
  * @since 2.4
  *
  */
-public class Level2CompositeComponentWithEntity implements CompositeComponent<Level1CompositeComponentWithEntity>, CompositeComponentWithCollections {
+public class Level2CompositeComponentWithEntity implements CompositeComponent<BubbleWithEntityInCompositeComponent, Level1CompositeComponentWithEntity>, CompositeComponentWithCollections {
     private Level1CompositeComponentWithEntity owner;
     private String text;
     private Level2EntityInCompositeComponent entity;
-    private Set<Level2SetEntityInCompositeComponent> entitySet = Sets.newHashSet();
+    private Set<Level2SetEntityInCompositeComponent> entitySet = Components.newSet(this);
 
     @SuppressWarnings("UnusedDeclaration") //Hibernate
     public Level2CompositeComponentWithEntity() {
@@ -34,17 +32,13 @@ public class Level2CompositeComponentWithEntity implements CompositeComponent<Le
     }
 
     @Override
+    public BubbleWithEntityInCompositeComponent getCompositeRootOwner() {
+        return owner.getCompositeRootOwner();
+    }
+
+    @Override
     public void setOwner(Level1CompositeComponentWithEntity owner) {
-       this.owner = Components.checkSetOwner(
-               this,
-               this.owner,
-               owner,
-               new OwnerCheck<Level1CompositeComponentWithEntity, Level2CompositeComponentWithEntity>() {
-                   public boolean apply(Level1CompositeComponentWithEntity owner, Level2CompositeComponentWithEntity child) {
-                       return owner.getLevel2Component()==child;
-                   }
-               }
-       );
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     @Override
@@ -67,16 +61,24 @@ public class Level2CompositeComponentWithEntity implements CompositeComponent<Le
     }
 
     public void setEntity(Level2EntityInCompositeComponent entity) {
-        this.entity = Components.checkSetComponentWithOwner(this.entity, entity);
-        Components.setOwner(this.entity, this.getOwner().getOwner());
+        this.entity = Components.checkSetComponent(this.getCompositeRootOwner(), this.entity, entity);
     }
 
     public Set<Level2SetEntityInCompositeComponent> getEntitySet() {
-        return Components.get(this.getOwner().getOwner(), entitySet);
+        return entitySet;
     }
 
     public void setEntitySet(Set<Level2SetEntityInCompositeComponent> entitySet) {
-        Components.setFrom(this.getOwner().getOwner(), this.entitySet, entitySet);
+        Components.setFrom(this.entitySet, entitySet);
     }
 
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
+    private Set<Level2SetEntityInCompositeComponent> getEntitySetHibernate() {
+        return Components.getDelegate(entitySet);
+    }
+
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
+    private void setEntitySetHibernate(Set<Level2SetEntityInCompositeComponent> entitySet) {
+        Components.setDelegate(this.entitySet, entitySet);
+    }
 }

@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
 import com.google.common.collect.Sets;
-import no.statkart.skif.store.ComponentSet;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
@@ -23,7 +22,7 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
     /* En tekst som beskriver boblen */
     private String text;
     private Level1EntityComponent level1Component;
-    private Set<SetAaEntityComponent> aaComponents = Sets.newHashSet();
+    private final Set<SetAaEntityComponent> aaComponents = Components.newSet(this);
 
     public BubbleWithEntityComponent() {
     }
@@ -64,16 +63,26 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
     }
 
     public void setLevel1Component(Level1EntityComponent level1Component) {
-        this.level1Component = Components.checkSetComponentWithOwner(this.level1Component, level1Component);
-        Components.setOwner(this.level1Component, this);
+        this.level1Component = Components.checkSetComponent(this, this.level1Component, level1Component);
     }
 
     public Set<SetAaEntityComponent> getAaComponents() {
-        return Components.get(this, aaComponents);
+        return aaComponents;
+    }
+
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
+    private Set<SetAaEntityComponent> getAaComponentsSet() {
+        return Components.getDelegate(aaComponents);
+
     }
 
     public void setAaComponents(Set<SetAaEntityComponent> aaComponents) {
-        Components.setFrom(this, this.aaComponents, aaComponents);
+        Components.setFrom(this.aaComponents, aaComponents);
+    }
+
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
+    private void setAaComponentsSet(Set<SetAaEntityComponent> aaComponents) {
+        Components.setDelegate(this.aaComponents, aaComponents);
     }
 
     /**
@@ -83,7 +92,7 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
      */
     public void removeHibernatePersistenceSet() {
         if (level1Component!=null) level1Component.removeHibernatePersistenceSet();
-        aaComponents = Sets.newHashSet(aaComponents);
+        Components.setDelegate(aaComponents, Sets.newHashSet(aaComponents));
         for (SetAaEntityComponent aaComponent : aaComponents) {
                aaComponent.removeHibernatePersistenceSet();
         }

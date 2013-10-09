@@ -1,10 +1,8 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
-import com.google.common.collect.Sets;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.store.CompositeBubbleComponent;
 import no.statkart.skif.store.CompositeComponentWithCollections;
-import no.statkart.skif.store.OwnerCheck;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -20,7 +18,7 @@ public class Level1CompositeComponentWithEntity implements CompositeBubbleCompon
     private BubbleWithEntityInCompositeComponent owner;
     private String text;
     private Level1EntityInCompositeComponent entity;
-    private Set<Level1SetEntityInCompositeComponent> entitySet = Sets.newHashSet();
+    private final Set<Level1SetEntityInCompositeComponent> entitySet = Components.newSet(this);
 
     private Level2CompositeComponentWithEntity level2Component;
 
@@ -37,17 +35,13 @@ public class Level1CompositeComponentWithEntity implements CompositeBubbleCompon
     }
 
     @Override
+    public BubbleWithEntityInCompositeComponent getCompositeRootOwner() {
+        return owner;
+    }
+
+    @Override
     public void setOwner(BubbleWithEntityInCompositeComponent owner) {
-       this.owner = Components.checkSetOwner(
-               this,
-               this.owner,
-               owner,
-               new OwnerCheck<BubbleWithEntityInCompositeComponent, Level1CompositeComponentWithEntity>() {
-                   public boolean apply(BubbleWithEntityInCompositeComponent owner, Level1CompositeComponentWithEntity child) {
-                       return owner.getLevel1Component()==child;
-                   }
-               }
-       );
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     @Nullable
@@ -56,8 +50,7 @@ public class Level1CompositeComponentWithEntity implements CompositeBubbleCompon
     }
 
     public void setLevel2Component(@Nullable Level2CompositeComponentWithEntity level2Component) {
-        this.level2Component = Components.checkSetComponentWithOwner(this.level2Component, level2Component);
-        Components.setOwner(this.level2Component, this);
+        this.level2Component = Components.checkSetComponent(this, this.level2Component, level2Component);
     }
 
     @Override
@@ -81,16 +74,22 @@ public class Level1CompositeComponentWithEntity implements CompositeBubbleCompon
     }
 
     public void setEntity(Level1EntityInCompositeComponent entity) {
-        this.entity = Components.checkSetComponentWithOwner(this.entity, entity);
-        Components.setOwner(this.entity, this.getOwner());
+        this.entity = Components.checkSetComponent(this.getCompositeRootOwner(), this.entity, entity);
     }
 
     public Set<Level1SetEntityInCompositeComponent> getEntitySet() {
-        return Components.get(this.getOwner(), entitySet);
+        return entitySet;
     }
 
     public void setEntitySet(Set<Level1SetEntityInCompositeComponent> entitySet) {
-        Components.setFrom(this.getOwner(), this.entitySet, entitySet);
+        Components.setFrom(this.entitySet, entitySet);
     }
 
+    public Set<Level1SetEntityInCompositeComponent> getEntitySetHibernate() {
+        return Components.getDelegate(entitySet);
+    }
+
+    public void setEntitySetHibernate(Set<Level1SetEntityInCompositeComponent> entitySet) {
+        Components.setDelegate(this.entitySet, entitySet);
+    }
 }

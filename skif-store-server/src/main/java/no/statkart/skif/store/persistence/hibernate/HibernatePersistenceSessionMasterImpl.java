@@ -888,7 +888,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         if (component.getId() != null
                 && !newlyInsertedComponents.contains(component)
                 && !(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned)) {
-            throw new ImplementationException("Found entity component " + entityMetamodel.getEntityType().getReturnedClass().getName() + " Id:" + component.getId() + " that is not new", logger);
+            throw new ImplementationException("Found entity component that is not new. Class: " + entityMetamodel.getEntityType().getReturnedClass().getName() + " Id:" + component.getId(), logger);
         }
     }
 

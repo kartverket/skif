@@ -24,5 +24,11 @@
             <meta attribute="bubble-ref"/>
         </many-to-one>
 
+        <set name="someCCs" lazy="true" batch-size="256">
+            <meta attribute="bubble-ref"/>
+            <key column="ownerId" />
+            <one-to-many class="no.statkart.skif.storetest.domain.relation.uni.direct.X1CCMany"/>
+        </set>
+
     </class>
 </hibernate-mapping>

@@ -1,5 +1,6 @@
 package no.statkart.skif.store;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -8,5 +9,5 @@ import java.util.Collection;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-public interface ComponentCollection<O, E extends ComponentWithOwnerReference<O>> extends Collection<E> {
+public interface ComponentCollection<O, E extends ComponentWithOwnerReference<O>> extends Collection<E>, Serializable {
 }

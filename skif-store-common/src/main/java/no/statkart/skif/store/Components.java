@@ -1,10 +1,10 @@
 package no.statkart.skif.store;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import javax.annotation.Nullable;
-import javax.inject.Provider;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +20,7 @@ public class Components {
     /**
      * Hjelpemetode som sikre at komponent blir sjekket og satt riktig påeiende objekt.
      * <p/>
-     * <P>Eksempel på bruk:
+     * <P>Eksempel på implementasjon i eiende objekt:
      * <pre>
      *    public void setLevel1Component(Level1CompositeComponent level1Component) {
      *        this.level1Component = Components.checkSetComponentWithOwner(this.level1Component, level1Component);
@@ -29,7 +29,7 @@ public class Components {
      * </pre>
      */
     @Nullable
-    public static <C extends ComponentWithOwnerReference> C checkSetComponentWithOwner(@Nullable C thisComponent, @Nullable C component) {
+    public static <O, C extends ComponentWithOwnerReference<O>> C checkSetComponent(O owner, @Nullable C thisComponent, @Nullable C component) {
         if (thisComponent != null && component==null) {
             // Komponent fjernes fra owner
             thisComponent.setOwner(null);
@@ -48,21 +48,14 @@ public class Components {
                 throw new IllegalStateException("Attempt to assign component to a new owner: component=" + component);
             }
         }
+        setOwner(component, owner);
         return component;
     }
 
-    public static <O, C extends ComponentWithOwnerReference<O>> void setOwner(@Nullable C newComponent, O owner) {
+    static <O, C extends ComponentWithOwnerReference<O>> void setOwner(@Nullable C newComponent, O owner) {
         if (newComponent != null) {
             newComponent.setOwner(owner);
         }
-    }
-
-    public static boolean isNullComponent(Object thisComponent) {
-        return thisComponent == null || (thisComponent instanceof CompositeComponentWithCollections) && ((CompositeComponentWithCollections) thisComponent).isNullComponent();
-    }
-
-    public static boolean isNullComponent(CompositeComponentWithCollections thisComponent) {
-        return thisComponent == null || thisComponent.isNullComponent();
     }
 
     /**
@@ -71,24 +64,46 @@ public class Components {
      * <P>Eksempel på bruk:
      * <pre>
      *    public void setOwner(BubbleWithCompositeComponent owner) {
-     *       this.owner = Components.checkSetOwner(
-     *               this,
-     *               this.owner,
-     *               owner,
-     *               new OwnerCheck<BubbleWithCompositeComponent, Level1CompositeComponent>() {
-     *                   public boolean apply(BubbleWithCompositeComponent owner, Level1CompositeComponent child) {
-     *                      return owner.getLevel1Component()==child;
-     *                   }
-     *               }
-     *       );
+     *       this.owner = Components.checkSetOwner(this, this.owner, owner);
      *  }
      * </pre>
      */
     @Nullable
-    public static <O, C extends ComponentWithOwnerReference<O>> O checkSetOwner(C component, O currentComponentOwner, O newComponentOwner, OwnerCheck<O, C> ownerCheck) {
+    public static <O, C extends ComponentWithOwnerReference<O>> O checkSetOwner(C component, O currentComponentOwner, O newComponentOwner) {
         Preconditions.checkState(currentComponentOwner == null || currentComponentOwner == newComponentOwner || newComponentOwner == null, "Component already has another owner: %s", component);
-        Preconditions.checkState(newComponentOwner == null || ownerCheck.apply(newComponentOwner, component), "New owner does not point to component: owner=%s component=%s", newComponentOwner, component);
         return newComponentOwner;
+    }
+
+
+    /**
+     * Returnere true hvis {@code component} er null eller hvis componenten er en CompositeComponentWithCollections og {@code component.isNullComponent()} er true
+     */
+    public static boolean isNullComponent(Object component) {
+        return component == null || (component instanceof CompositeComponentWithCollections) && ((CompositeComponentWithCollections) component).isNullComponent();
+    }
+
+    /**
+     * Returnere true hvis {@code component} er null eller hvis componenten er en CompositeComponentWithCollections og {@code component.isNullComponent()} er true
+     */
+    public static boolean isNullComponent(CompositeComponentWithCollections thisComponent) {
+        return thisComponent == null || thisComponent.isNullComponent();
+    }
+
+
+    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(CompositeComponent<O,?> owner) {
+        return new CompositeComponentSet<O, E>(owner, Sets.<E>newHashSet());
+    }
+
+    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(O owner) {
+        return new ComponentSet<O, E>(owner, Sets.<E>newHashSet());
+    }
+
+    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentList<O, E> newList(CompositeComponent<O, ?> owner) {
+        return new CompositeComponentList<O, E>(owner, Lists.<E>newArrayList());
+    }
+
+    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentList<O, E> newList(O owner) {
+        return new ComponentList<O, E>(owner, Lists.<E>newArrayList());
     }
 
     static public <E extends Component> void setFrom(Collection<E> collection, Set<E> newElements) {
@@ -96,23 +111,22 @@ public class Components {
         collection.addAll(newElements);
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> void setFrom(O owner, Collection<E> collection, Set<E> newElements) {
-        for (E e : collection) {
-            e.setOwner(null);
-        }
-        collection.clear();
-        for (E newElement : newElements) {
-            if (collection.add(newElement)) {
-                newElement.setOwner(owner);
-            }
-        }
+    @SuppressWarnings("unchecked")
+    static public <E extends ComponentWithOwnerReference<?>> void setDelegate(Set<E> componentSet, Set<E> newElements) {
+        ((ComponentSet)componentSet).setDelegate(newElements);
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> Set<E> get(O owner, Set<E> internalSet) {
-        return new ComponentSet<O, E>(owner, internalSet);
+    static public <E extends ComponentWithOwnerReference<?>> Set<E> getDelegate(Set<E> componentSet) {
+        return ((ComponentSet)componentSet).delegate();
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> List<E> get(O owner, List<E> internalSet) {
-        return new ComponentList<O, E>(owner, internalSet);
+    @SuppressWarnings("unchecked")
+    static public <E extends ComponentWithOwnerReference<?>> void setDelegate(List<E> componentList, List<E> newElements) {
+        ((ComponentList)componentList).setDelegate(newElements);
+    }
+
+    @SuppressWarnings("unchecked")
+    static public <E extends ComponentWithOwnerReference<?>> List<E> getDelegate(List<E> componentList) {
+        return ((ComponentList)componentList).delegate();
     }
 }
