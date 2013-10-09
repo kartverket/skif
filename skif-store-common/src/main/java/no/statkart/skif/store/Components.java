@@ -94,16 +94,32 @@ public class Components {
         return new CompositeComponentSet<O, E>(owner, Sets.<E>newHashSet());
     }
 
+    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(CompositeComponent<O,?> owner, Set<E> set) {
+        return new CompositeComponentSet<O, E>(owner, set);
+    }
+
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(O owner) {
         return new ComponentSet<O, E>(owner, Sets.<E>newHashSet());
+    }
+
+    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(O owner, Set<E> set) {
+        return new ComponentSet<O, E>(owner, set);
     }
 
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentList<O, E> newList(CompositeComponent<O, ?> owner) {
         return new CompositeComponentList<O, E>(owner, Lists.<E>newArrayList());
     }
 
+    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentList<O, E> newList(CompositeComponent<O, ?> owner, List<E> list) {
+        return new CompositeComponentList<O, E>(owner, list);
+    }
+
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentList<O, E> newList(O owner) {
         return new ComponentList<O, E>(owner, Lists.<E>newArrayList());
+    }
+
+    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentList<O, E> newList(O owner, List<E> list) {
+        return new ComponentList<O, E>(owner, list);
     }
 
     static public <E extends Component> void setFrom(Collection<E> collection, Set<E> newElements) {
