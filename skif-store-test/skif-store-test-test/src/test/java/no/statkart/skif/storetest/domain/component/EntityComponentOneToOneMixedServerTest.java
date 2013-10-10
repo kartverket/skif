@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.component;
 
 
-import com.beust.jcommander.internal.Sets;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.IdSelector;
@@ -20,11 +19,9 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.fest.assertions.api.Assertions;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.testng.annotations.Test;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -519,7 +516,6 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         }
     }
 
-    @Test(groups = "broken") // TODO: må få feil her.
     public void testMoveExistingLevel2ComponentToExistingBubbleInDetachedState() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
             @Override
@@ -528,27 +524,29 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             }
         });
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
-        try {
-            server.runInTxRequiresNew(new RunOnServerMethod() {
-                @Inject
-                StoreServer store;
+        server.runInTxRequiresNew(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
 
-                public Object run() {
-                    store.beginUnitOfWork();
-                    final BubbleWithEntityComponent bubbleWithEntityComponents = store.lock(mockupFactory.getWithNonNullComponentsId());
-                    final BubbleWithEntityComponent bubbleWithNullLevel2Component = store.lock(mockupFactory.getWithNullLevel2Id());
-                    Level2EntityComponent existingLevel2Component = bubbleWithEntityComponents.getLevel1Component().getLevel2Component();
-                    bubbleWithEntityComponents.getLevel1Component().setLevel2Component(null);
-                    bubbleWithNullLevel2Component.getLevel1Component().setLevel2Component(existingLevel2Component);
+            public Object run() {
+                store.beginUnitOfWork();
+                final BubbleWithEntityComponent bubbleWithEntityComponents = store.lock(mockupFactory.getWithNonNullComponentsId());
+                final BubbleWithEntityComponent bubbleWithNullLevel2Component = store.lock(mockupFactory.getWithNullLevel2Id());
+                Level2EntityComponent existingLevel2Component = bubbleWithEntityComponents.getLevel1Component().getLevel2Component();
+                bubbleWithEntityComponents.getLevel1Component().setLevel2Component(null);
+                store.update(bubbleWithEntityComponents);
+                bubbleWithNullLevel2Component.getLevel1Component().setLevel2Component(existingLevel2Component);
+                store.update(bubbleWithNullLevel2Component);
+                try {
                     store.commitUnitOfWork();
-                    return null;
+                    failBecauseExceptionWasNotThrown(ImplementationException.class);
+                } catch (ImplementationException e) {
+                    assertThat(e).hasMessageStartingWith("Found entity component that is not new");
                 }
-            });
-            failBecauseExceptionWasNotThrown(IllegalStateException.class);
-        } catch (IllegalStateException t) {
-            // OK, forventet
-            assertThat(t.getMessage()).startsWith("Attempt to assign component to a new owner");
-        }
+                store.abortUnitOfWork();
+                return null;
+            }
+        });
     }
 
     public void testDeleteBubbleWithComponentUnchangedInAttachedState() {
