@@ -136,6 +136,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1CCManyMockupFactory x1CCManyMockupFactory = mockupFacade.getX1CCManyMockupFactory();
+        store.getInstance(StoreRelationCache.class).setEnabled(true);
 
         X1AA a1 = store.get(x1AAMockupFactory.getA1Id());
         assertThat(a1.getSomeCCsIds()).hasSize(0);
@@ -149,14 +150,15 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1CCManyMockupFactory x1CCManyMockupFactory = mockupFacade.getX1CCManyMockupFactory();
+        store.getInstance(StoreRelationCache.class).setEnabled(true);
 
         ImmutableSet<X1CCManyId<?>> ccIds = ImmutableSet.of(x1CCManyMockupFactory.getC1Id(), x1CCManyMockupFactory.getC2Id(), x1CCManyMockupFactory.getC3Id());
         X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
-        Map<X1CCManyId<?>, Set<X1AAId<?>>> invSomeCCsIdsMap = x1AAFinderService.findInvSomeCCsIds(ccIds);
+        Map<X1CCManyId<?>, X1AAId<?>> invSomeCCsIdsMap = x1AAFinderService.findInvSomeCCsIds(ccIds);
         assertThat(invSomeCCsIdsMap).hasSize(3);
-        assertThat(invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC1Id())).hasSize(0);
-        assertThat(invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC2Id())).containsOnly(x1AAMockupFactory.getA3Id());
-        assertThat(invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC3Id())).containsOnly(x1AAMockupFactory.getA3Id());
+        assertThat(invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC1Id())).isNull();
+        assertThat((X1AAId)invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC2Id())).isEqualTo(x1AAMockupFactory.getA3Id());
+        assertThat((X1AAId)invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC3Id())).isEqualTo(x1AAMockupFactory.getA3Id());
     }
 
 
@@ -167,11 +169,11 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
         store.getInstance(StoreRelationCache.class).setEnabled(true);
         X1CCMany c1 = store.get(x1CCManyMockupFactory.getC1Id());
-        assertThat(c1.findInvSomeCCsIds()).isEmpty();
+        assertThat(c1.findInvSomeCCsIds()).isNull();
 
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
         a2.getSomeCCsIds().add(c1.getId());
-        assertThat(c1.findInvSomeCCsIds()).containsOnly(a2.getId());
+        assertThat((X1AAId)c1.findInvSomeCCsIds()).isEqualTo(a2.getId());
     }
 
 

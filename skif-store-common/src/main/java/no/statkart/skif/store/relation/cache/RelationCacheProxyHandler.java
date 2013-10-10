@@ -4,17 +4,18 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.Store;
 
 import java.lang.reflect.Method;
 import java.util.*;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * ProxyHandler for caching av relasjoner. Denne proxyhandler legges i {@code CallServiceChain} på klient og server
  * for de services som implementerer invers domene finders.
  *
  * <P>Proxy-en har til oppgave å bruke cachet relasjoner der hvor de allerede finnes og hente opp og cache
- * etterspurte relasjoner som ikke finnes. Hvilke relasjoner som caches styres via {@link StoreRelationCache}
+ * etterspurte relasjoner som ikke finnes. Relasjonscaching  styres via {@link StoreRelationCache}
  *
  * @author Henrik Fredholm
  * @since 2.4
@@ -29,8 +30,11 @@ public class RelationCacheProxyHandler<S> extends ChainedProxyHandler<S> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         Object mapOfResults;
+        checkArgument(args.length==1, "Unexpected argument length: %d", args.length);
+        checkArgument(args[0] instanceof Collection, "Expected collection of bubble ids as argument");
         RelationName name = cache.getRelationNameReturnNullIfDisabled(method);
         if (name != null) {
             mapOfResults = useCaching(name, proxy, method, ((Collection<BubbleId<?>>) args[0]));
@@ -40,17 +44,18 @@ public class RelationCacheProxyHandler<S> extends ChainedProxyHandler<S> {
         return mapOfResults;
     }
 
-    protected Map<BubbleId<?>, Set<BubbleId<?>>> noCaching(Object proxy, Method method, Object[] args) throws Throwable {
-        return (Map<BubbleId<?>, Set<BubbleId<?>>>) chained.invoke(proxy,method, args);
+    @SuppressWarnings("unchecked")
+    protected Map<BubbleId<?>, Object> noCaching(Object proxy, Method method, Object[] args) throws Throwable {
+        return (Map<BubbleId<?>, Object>) chained.invoke(proxy,method, args);
     }
 
-    private Map<BubbleId<?>, Set<BubbleId<?>>> useCaching(RelationName name, Object proxy, Method method, Collection<BubbleId<?>> ids) throws Throwable {
-        Map<BubbleId<?>, Set<BubbleId<?>>> mapOfResults = Maps.newHashMapWithExpectedSize(ids.size());
+    private Map<BubbleId<?>, Object> useCaching(RelationName name, Object proxy, Method method, Collection<BubbleId<?>> ids) throws Throwable {
+        Map<BubbleId<?>, Object> mapOfResults = Maps.newHashMapWithExpectedSize(ids.size());
         List<BubbleId<?>> missingIds = null;
         for (BubbleId<?> id : ids) {
-            Set cachedIds = cache.getCachedIds(name, id);
-            if (cachedIds != null) {
-                mapOfResults.put(id, cachedIds);
+            RelationValueHolder cachedRelationValueHolder = cache.getRelationValue(name, id);
+            if (cachedRelationValueHolder != null) {
+                mapOfResults.put(id, cachedRelationValueHolder.getValue());
             } else {
                 if (missingIds == null) {
                     missingIds = new ArrayList<BubbleId<?>>();
@@ -60,14 +65,13 @@ public class RelationCacheProxyHandler<S> extends ChainedProxyHandler<S> {
         }
         if (missingIds != null) {
             Object[] args = {missingIds};
-            Map<BubbleId<?>, Set<BubbleId<?>>> uncachedMap = noCaching(proxy, method, args);
-            for (Map.Entry<BubbleId<?>, Set<BubbleId<?>>> entry : uncachedMap.entrySet()) {
-                Set<BubbleId<?>> updatedCachedSet = cache.setCachedIds(name, entry.getKey(), entry.getValue());
-                mapOfResults.put(entry.getKey(), updatedCachedSet);
+            Map<BubbleId<?>, Object> uncachedMap = noCaching(proxy, method, args);
+            for (Map.Entry<BubbleId<?>, Object> entry : uncachedMap.entrySet()) {
+                Object updatedCachedRelationValue = cache.setRelationValue(name, entry.getKey(), entry.getValue());
+                mapOfResults.put(entry.getKey(), updatedCachedRelationValue);
             }
         }
         return mapOfResults;
     }
-
 
 }

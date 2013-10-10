@@ -4,6 +4,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -21,13 +22,12 @@ public class X1CCMany extends AbstractRelationTestBubble {
         return (X1CCManyId<?>) super.getId();
     }
 
-    public Set<X1AAId<?>> findInvSomeCCsIds() {
+    public X1AAId<?> findInvSomeCCsIds() {
         return unwrap(finder(X1AAFinderService.class).findInvSomeCCsIds(idAsSet()));
     }
 
-    public Set<X1AA> findInvSomeCCs() {
+    @Nullable
+    public X1AA findInvSomeCCs() {
         return store.get(findInvSomeCCsIds());
     }
-
-
 }

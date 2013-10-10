@@ -72,7 +72,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
         return newValue;
     }
 
-    protected <T extends Set> T unwrap(Map<? extends BubbleId<?>, T> mapOfResults) {
+    protected <T> T unwrap(Map<? extends BubbleId<?>, T> mapOfResults) {
         return mapOfResults.get(getId());
     }
 

@@ -23,7 +23,8 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
     @Inject
     private Provider<SessionSelector> sessionSelectorProvider;
 
-    public Map<X1BBOneId<?>, Set<X1AAId<?>>> findInvSomeBBIds(Collection<X1BBOneId<?>> x1BBOneIds) {
+    @Override
+    public Map<X1BBOneId<?>, Set<X1AAId<?>>> findInvSomeBBIds(Collection<? extends X1BBOneId<?>> x1BBOneIds) {
         Map<X1BBOneId<?>, Set<X1AAId<?>>> result = Maps.newHashMapWithExpectedSize(x1BBOneIds.size());
         if (x1BBOneIds.isEmpty()) return result;
 
@@ -56,8 +57,8 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         return result;
     }
 
-    @Override
-    public Map<X1CCManyId<?>, Set<X1AAId<?>>> findInvSomeCCsIds(Collection<X1CCManyId<?>> x1CCManyIds) {
+//    @Override
+    public Map<X1CCManyId<?>, Set<X1AAId<?>>> findInvSomeCCsIds_NotUsed(Collection<? extends X1CCManyId<?>> x1CCManyIds) {
         Map<X1CCManyId<?>, Set<X1AAId<?>>> result = Maps.newHashMapWithExpectedSize(x1CCManyIds.size());
         if (x1CCManyIds.isEmpty()) return result;
 
@@ -91,4 +92,40 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         }
         return result;
     }
+
+    @Override
+    public Map<X1CCManyId<?>, X1AAId<?>> findInvSomeCCsIds(Collection<? extends X1CCManyId<?>> x1CCManyIds) {
+        Map<X1CCManyId<?>, X1AAId<?>> result = Maps.newHashMapWithExpectedSize(x1CCManyIds.size());
+        if (x1CCManyIds.isEmpty()) return result;
+
+        for (X1CCManyId<?> id : x1CCManyIds) {
+            result.put(id, null);
+        }
+
+
+        SnapshotVersion snapshotVersion = x1CCManyIds.iterator().next().getSnapshotVersion();
+        SessionSelector sessionSelector = sessionSelectorProvider.get();
+        PreparedStatement preparedStatement = null;
+        try {
+            Session session = sessionSelector.get(snapshotVersion);
+            SQLQuery query = session.createSQLQuery("select id, ownerId  from X1CCMany  where id in (select * from table(:idValues))");
+            query.setParameter("idValues", x1CCManyIds, new OracleLongBubbleIdArrayCustomType());
+            query.setFetchSize(Math.min(1000, x1CCManyIds.size()));
+            query.addScalar("id", Hibernate.LONG);
+            query.addScalar("ownerId", Hibernate.LONG);
+            ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
+
+            while (scroll.next()) {
+                Object[] next = scroll.get();
+                if (next[1] != null) {
+                    X1CCManyId<?> key = new X1CCManyId<X1CCMany>((Long) next[0], snapshotVersion);
+                    result.put(key, new X1AAId<X1AA>((Long) next[1], snapshotVersion));
+                }
+            }
+        } finally {
+            HibernateHelper.close(preparedStatement, sessionSelector);
+        }
+        return result;
+    }
+
 }

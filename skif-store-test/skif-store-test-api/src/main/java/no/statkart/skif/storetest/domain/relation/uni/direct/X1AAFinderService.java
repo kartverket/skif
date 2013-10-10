@@ -5,6 +5,7 @@ import no.statkart.skif.store.relation.cache.annotation.Relation;
 import no.statkart.skif.store.relation.cache.RelationName;
 import no.statkart.skif.store.relation.cache.annotation.RelationType;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -20,8 +21,8 @@ public interface X1AAFinderService {
     }
 
     @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="someBB")
-    Map<X1BBOneId<?>, Set<X1AAId<?>>> findInvSomeBBIds(Collection<X1BBOneId<?>> x1BBOneIds);
+    Map<X1BBOneId<?>, Set<X1AAId<?>>> findInvSomeBBIds(Collection<? extends X1BBOneId<?>> x1BBOneIds);
 
-    @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="someCCs")
-    Map<X1CCManyId<?>, Set<X1AAId<?>>> findInvSomeCCsIds(Collection<X1CCManyId<?>> x1CCManyIds);
+    @Relation(type= RelationType.INVERSE, cardinality= Cardinality.ONE, name="someCCs")
+    Map<X1CCManyId<?>, X1AAId<?>> findInvSomeCCsIds(Collection<? extends X1CCManyId<?>> x1CCManyIds);
 }

@@ -1,6 +1,7 @@
 package no.statkart.skif.store.relation.cache;
 
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.util.CopyHelper;
 
 import java.util.*;
 
@@ -36,7 +37,7 @@ public class RelationEntry {
         return relations[level] != null && relations[level].isMaterialised();
     }
 
-    public Set getCachedIds(int level) {
+    public Object getRelationValue(int level) {
         int i = level;
         while ((i >= 0) && relations[i] == null) {
             i--;
@@ -50,24 +51,24 @@ public class RelationEntry {
             }
             // j er materialisert, og skal brukes som startpunkt for videre materialisering
             while (j < i) {
-                relations[j + 1].materialise(new HashSet(relations[j].getValuesAsIds()));
+                relations[j + 1].materialise(CopyHelper.copy(relations[j].getRelation()));
             }
-            return relations[i].getValuesAsIds();
+            return relations[i].getRelation();
         }
     }
 
-    public Set setChachedIds(int level, Set ids) {
+    public Object setRelationValue(int level, Object relationValue) {
         for (int i = 0; i < level; i++) {
             if (relations[i] != null) {
-                relations[i].materialiseInto(ids);
+                relationValue = relations[i].applyOperations(relationValue);
             }
         }
         if (relations[level] != null) {
-            relations[level].materialise(ids);
+            relations[level].materialise(relationValue);
         } else {
-            relations[level] = new RelationTracker(true, ids);
+            relations[level] = new RelationTracker(true, relationValue);
         }
-        return relations[level].getValuesAsIds();
+        return relations[level].getRelation();
 
     }
 
@@ -77,7 +78,7 @@ public class RelationEntry {
                 if (relations[level-1]==null)  {
                     relations[level - 1] = relations[level];
                 } else  {
-                    relations[level].materialiseInto(relations[level-1]);
+                    relations[level].commitInto(relations[level - 1]);
                 }
             }
         }

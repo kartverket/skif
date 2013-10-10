@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -59,18 +58,18 @@ public class RelationCache {
         return inverseRelationEntry;
     }
 
-    public <T extends BubbleId<?>> Set getCachedIds(int level, RelationName relationName, BubbleId<?> bubbleId) {
+    public RelationValueHolder getRelationValue(int level, RelationName relationName, BubbleId<?> bubbleId) {
         RelationEntry inverseRelationEntry = getInverseRelation(relationName, bubbleId, false);
         if (inverseRelationEntry != null) {
-            return inverseRelationEntry.getCachedIds(level);
+            return new RelationValueHolder(inverseRelationEntry.getRelationValue(level));
         } else {
             return null;
         }
     }
 
-    public Set setCachedIds(int level, RelationName relationName, BubbleId<?> bubbleId, Set ids) {
+    public Object setRelationValue(int level, RelationName relationName, BubbleId<?> bubbleId, Object relationValue) {
         RelationEntry inverseRelationEntry = getInverseRelation(relationName, bubbleId, true);
-        return inverseRelationEntry.setChachedIds(level, ids);
+        return inverseRelationEntry.setRelationValue(level, relationValue);
     }
 
     public RelationName getRelationName(Method method) {

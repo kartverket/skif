@@ -4,7 +4,6 @@ import no.statkart.skif.store.*;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -43,14 +42,14 @@ public abstract class StoreRelationCache {
         }
     }
 
-    public Set getCachedIds(RelationName relationName, BubbleId<?> id) {
+    public RelationValueHolder getRelationValue(RelationName relationName, BubbleId<?> id) {
         checkState(enabled);
-        return relationCache.getCachedIds(getLevel(), relationName, id);
+        return relationCache.getRelationValue(getLevel(), relationName, id);
     }
 
-    public Set<BubbleId<?>> setCachedIds(RelationName relationName, BubbleId<?> id, Set ids) {
+    public Object setRelationValue(RelationName relationName, BubbleId<?> id, Object relationValue) {
         checkState(enabled);
-        return relationCache.setCachedIds(getLevel(), relationName, id, ids);
+        return relationCache.setRelationValue(getLevel(), relationName, id, relationValue);
     }
 
     public RelationName getRelationNameReturnNullIfDisabled(Method method) {
