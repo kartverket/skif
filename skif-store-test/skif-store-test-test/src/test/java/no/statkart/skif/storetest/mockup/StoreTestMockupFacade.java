@@ -8,6 +8,9 @@ import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1AAMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1BBOneMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1CCManyMockupFactory;
+import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponentMockupFactory;
+import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2BBOneMockupFactory;
+import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2CCManyMockupFactory;
 
 import java.util.List;
 
@@ -37,6 +40,10 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
     @Inject private X1CCManyMockupFactory x1CCManyMockupFactory;
     @Inject private X1AAMockupFactory x1AAMockupFactory;
 
+    @Inject private X2BBOneMockupFactory x2BBOneMockupFactory;
+    @Inject private X2CCManyMockupFactory x2CCManyMockupFactory;
+    @Inject private X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory;
+
     @Inject private SubTypedBubbleMockupFactory subTypedBubbleMockupFactory;
 
     @Override
@@ -55,6 +62,9 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
                 x1BBOneMockupFactory,
                 x1CCManyMockupFactory,
                 x1AAMockupFactory,
+                x2BBOneMockupFactory,
+                x2CCManyMockupFactory,
+                x2AAWithEntityComponentMockupFactory,
                 subTypedBubbleMockupFactory
         );
     }
@@ -113,6 +123,18 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
     public X1CCManyMockupFactory getX1CCManyMockupFactory() {
         return x1CCManyMockupFactory;
+    }
+
+    public X2BBOneMockupFactory getX2BBOneMockupFactory() {
+        return x2BBOneMockupFactory;
+    }
+
+    public X2CCManyMockupFactory getX2CCManyMockupFactory() {
+        return x2CCManyMockupFactory;
+    }
+
+    public X2AAWithEntityComponentMockupFactory getX2AAWithEntityComponentMockupFactory() {
+        return x2AAWithEntityComponentMockupFactory;
     }
 }
 

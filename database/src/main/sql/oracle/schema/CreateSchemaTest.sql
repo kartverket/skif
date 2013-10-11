@@ -344,6 +344,39 @@ create table X1CCMany (
 );
 alter table X1CCMany add constraint FK_X1CCMany_ownerId foreign key (ownerId) references X1AA;
 
+create table X2BBOne (
+  id number(19,0) not null,
+  nr number(10,0),
+  text varchar2(255),
+  primary key (id)
+);
+
+create table X2EntityComponentOne (
+  id number(19,0) not null,
+  ownerId number(19,0),
+  text varchar2(255),
+  someBBId number(19,0),
+  primary key (id)
+);
+alter table X2EntityComponentOne add constraint FK_X2EntityCompOne_someBBId foreign key (someBBId) references X2BBOne;
+
+create table X2AAWithEntComp (
+  id number(19,0) not null,
+  nr number(10,0),
+  text varchar2(255),
+  entityComponentOneId number(19,0),
+  primary key (id)
+);
+alter table X2AAWithEntComp add constraint FK_X2AA_entityComponentOneId foreign key (entityComponentOneId) references X2EntityComponentOne;
+
+create table X2CCMany (
+  id number(19,0) not null,
+  nr number(10,0),
+  text varchar2(255),
+  ownerId number(19,0),
+  primary key (id)
+);
+alter table X2CCMany add constraint FK_X2CCMany_ownerId foreign key (ownerId) references X2EntityComponentOne;
 
 -- Denne map tabell brukes av StoreTest1ServiceTest
 create table TestMap (

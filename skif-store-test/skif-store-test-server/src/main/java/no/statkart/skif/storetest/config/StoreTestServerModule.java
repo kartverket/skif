@@ -58,6 +58,9 @@ import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.Raz;
 import no.statkart.skif.storetest.domain.multikobling.Person;
 import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
+import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponent;
+import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2BBOne;
+import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2CCMany;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1AA;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCMany;
@@ -249,6 +252,9 @@ public class StoreTestServerModule extends SkifModule {
 //                .addResource(X1DDUnique.class)
                 .addResource(X1AA.class)
 
+                .addResource(X2BBOne.class)
+                .addResource(X2CCMany.class)
+                .addResource(X2AAWithEntityComponent.class)
 
                 .addResource(TestBubble.class)
                 .addResourceUseSameIndex(SelfBubble.class)   // Blir sortert sammen me TestBubble

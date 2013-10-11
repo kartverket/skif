@@ -1,18 +1,10 @@
 package no.statkart.skif.storetest.domain.relation.uni.direct;
 
-import com.google.common.collect.Sets;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.Components;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.relation.cache.RelationName;
-import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.store.relation.cache.annotation.Cardinality;
 import no.statkart.skif.store.relation.cache.annotation.Relation;
 import no.statkart.skif.store.relation.cache.annotation.RelationType;
-import no.statkart.skif.storetest.domain.component.entity.SetAaEntityComponent;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
-import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubbleId;
 
 import java.util.Collection;
 import java.util.Set;
@@ -21,7 +13,7 @@ import java.util.Set;
  * Klasse for å test unidireksjonelle relasjoner. Klasen har 3 forskjellige typer relasjoner
  * <ul>
  * <li>Enkelt relasjon {@link #getSomeBBId()} - med invers relasjon {@link X1BBOne#findInvSomeBBIds()}</li>
- * <li>Mange relasjon til {@code X1CCMany}: 'someCCs'(TODO) </li>
+ * <li>Mange relasjon til {@code X1CCMany}: 'someCCs' </li>
  * <li>En-til-en relasjon til {@code X1DDUnique}: 'myUniqueDD' (TODO</li>
  * </ul>
  * <p/>
@@ -34,7 +26,7 @@ public class X1AA extends AbstractRelationTestBubble {
     private static final long serialVersionUID = 1L;
 
     private X1BBOneId<?> someBBId;
-    private Set<X1CCManyId<?>> someCCsIds= BubbleIds.newSet(this, X1AAFinderService.Role.someCCs);
+    private final Set<X1CCManyId<?>> someCCsIds = BubbleIds.newSet(this, X1AAFinderService.Role.someCCs);
 
 //    private X1DDUnique myUniqueDD;
 
@@ -53,7 +45,7 @@ public class X1AA extends AbstractRelationTestBubble {
         return store.get(someBBId);
     }
 
-    @Relation(type = RelationType.DIRECT, cardinality = Cardinality.ONE, name="someBB")
+    @Relation(type = RelationType.DIRECT, cardinality = Cardinality.ONE, name = "someBB")
     public void setSomeBBId(X1BBOneId<?> someBBId) {
         this.someBBId = onChangeRelation(X1AAFinderService.Role.someBB, this.someBBId, someBBId);
     }
@@ -63,7 +55,7 @@ public class X1AA extends AbstractRelationTestBubble {
         return someCCsIds;
     }
 
-    public <T extends Collection<? super X1CCManyId<?>>> T getSomeCCsIds(T targetCollection)  {
+    public <T extends Collection<? super X1CCManyId<?>>> T getSomeCCsIds(T targetCollection) {
         targetCollection.addAll(someCCsIds);
         return targetCollection;
     }

@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.config;
 
 import no.statkart.skif.service.ServicesListing;
+import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponentFinderService;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAFinderService;
 import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
 import no.statkart.skif.storetest.service.histtest.HistTestService;
@@ -26,6 +27,7 @@ public class StoreTestDomainFinderServices implements ServicesListing {
         List<Class<?>> modifiableList = new ArrayList<Class<?>>();
         
         modifiableList.add(X1AAFinderService.class);
+        modifiableList.add(X2AAWithEntityComponentFinderService.class);
 
         services = Collections.unmodifiableList(modifiableList);
      }

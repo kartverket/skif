@@ -82,18 +82,26 @@ public class BubbleIds {
         return new BubbleIdSet<O, E>(owner, relationName, Sets.<E>newHashSet());
     }
 
+    static public <O extends ComponentWithOwnerReference<?>, E extends BubbleId<?>> AbstractBubbleIdIdSet<?, E> newSet(O owner, RelationName relationName, Set<E> set) {
+        return new ComponentBubbleIdSet<O,E>(owner, relationName, set);
+    }
+
+    static public <O extends ComponentWithOwnerReference<?>, E extends BubbleId<?>> AbstractBubbleIdIdSet<?, E> newSet(O owner, RelationName relationName) {
+        return new ComponentBubbleIdSet<O,E>(owner, relationName, Sets.<E>newHashSet());
+    }
+
     static public <O extends AbstractBubbleObject, E extends BubbleId<?>> AbstractBubbleIdIdSet<O, E> newSet(O owner, RelationName relationName, Set<E> set) {
         return new BubbleIdSet<O, E>(owner, relationName, set);
     }
 
     @SuppressWarnings("unchecked")
     static public <E extends BubbleId<?>> void setDelegate(Set<E> bubbleIds, Set<E> newElements) {
-        ((BubbleIdSet)bubbleIds).setDelegate(newElements);
+        ((AbstractBubbleIdIdSet)bubbleIds).setDelegate(newElements);
     }
 
     @SuppressWarnings("unchecked")
     static public <E extends BubbleId<?>> Set<E> getDelegate(Set<E> bubbleIds) {
-        return ((BubbleIdSet)bubbleIds).delegate();
+        return ((AbstractBubbleIdIdSet)bubbleIds).delegate();
     }
 
     static public <E extends BubbleId<?>> void setFrom(Collection<E> collection, Set<E> newElements) {

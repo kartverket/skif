@@ -33,7 +33,7 @@ public abstract class AbstractBubbleIdIdSet<O extends AbstractBubbleObject, E ex
     }
 
     protected void setDelegate(Set<E> newDelegate) {
-        delegate=newDelegate;
+        delegate = newDelegate;
     }
 
     @Override
@@ -50,16 +50,27 @@ public abstract class AbstractBubbleIdIdSet<O extends AbstractBubbleObject, E ex
     public boolean add(E element) {
         boolean added = super.add(element);
         if (added) {
-            getOwner().onChangeRelation(relationName, null, element);
+            O owner = getOwner();
+            if (owner != null) {
+                owner.onChangeRelation(relationName, null, element);
+            } else {
+                // TODO: Handle component not connected to owner
+            }
         }
         return added;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean remove(Object object) {
         boolean removed = super.remove(object);
         if (removed) {
-            getOwner().onChangeRelation(relationName, (E)object, null);
+            O owner = getOwner();
+            if (owner != null) {
+                owner.onChangeRelation(relationName, (E) object, null);
+            } else {
+                // TODO: Handle component not connected to owner
+            }
         }
         return removed;
     }
@@ -81,8 +92,12 @@ public abstract class AbstractBubbleIdIdSet<O extends AbstractBubbleObject, E ex
     @Override
     public void clear() {
         O owner = getOwner();
-        for (E e : delegate) {
-            owner.onChangeRelation(relationName, e, null);
+        if (owner != null) {
+            for (E e : delegate) {
+                owner.onChangeRelation(relationName, e, null);
+            }
+        } else {
+            // TODO: Handle component not connected to owner
         }
         super.clear();
     }
@@ -108,7 +123,12 @@ public abstract class AbstractBubbleIdIdSet<O extends AbstractBubbleObject, E ex
 
         @Override
         public void remove() {
-            getOwner().onChangeRelation(relationName, current, null);
+            O owner = getOwner();
+            if (owner != null) {
+                owner.onChangeRelation(relationName, current, null);
+            } else {
+                // TODO: Handle component not connected to owner
+            }
             super.remove();
         }
     }

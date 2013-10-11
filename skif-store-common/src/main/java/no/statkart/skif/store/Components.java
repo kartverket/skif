@@ -3,11 +3,14 @@ package no.statkart.skif.store;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import no.statkart.skif.store.relation.cache.RelationName;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Hjelpeklasser for standardisert implementasjon av Component funksjonalitet for owner håndtering. Components bør delegere til disse metoder fremfor
@@ -144,5 +147,28 @@ public class Components {
     @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> List<E> getDelegate(List<E> componentList) {
         return ((ComponentList)componentList).delegate();
+    }
+
+    public static AbstractBubbleObject getOwningBubble(ComponentWithOwnerReference<?> component) {
+        Object result=component;
+        do {
+            result = ((ComponentWithOwnerReference<?>)result).getOwner();
+            if (result==null) return null;
+        } while (result instanceof ComponentWithOwnerReference<?>);
+        return ((AbstractBubbleObject)result);
+    }
+
+    public static BubbleObject getOwningBubbleNullSafe(ComponentWithOwnerReference<?> component) {
+        return checkNotNull(getOwningBubble(component));
+    }
+
+    public static <T extends BubbleId<?>> T onChangeRelation(ComponentWithOwnerReference<?> component, RelationName relationName, T oldValue, T newValue) {
+        AbstractBubbleObject owningBubble = (AbstractBubbleObject) getOwningBubble(component);
+        if (owningBubble!=null) {
+          owningBubble.onChangeRelation(relationName, oldValue, newValue);
+        } else {
+            // TODO: Handle component not connected
+        }
+        return newValue;
     }
 }

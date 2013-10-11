@@ -5,7 +5,8 @@ import no.statkart.skif.store.relation.cache.RelationName;
 import java.util.Set;
 
 /**
- * Implementasjon av {@link no.statkart.skif.store.BubbleIdCollection} for wrapping av {@link java.util.Set}.
+ * Implementasjon av {@link no.statkart.skif.store.BubbleIdCollection} for wrapping av {@link java.util.Set} for bruk
+ * i bobler.
  *
  * @author Henrik Fredholm
  * @since 2.4.0
