@@ -18,7 +18,8 @@
                 column="entityComponentOneId"
                 class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2EntityComponentOne"
                 access="field"
-                fetch="join">
+                fetch="join"
+                cascade="all">
         </many-to-one>
 
     </class>
