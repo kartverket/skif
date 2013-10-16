@@ -6,13 +6,13 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-//import static java.lang.annotation.ElementType.TYPE;
-
 /**
  * @author Henrik Fredholm
+ * @deprecated mapperen kan finne denne informasjonen via reflection
  */
 @Target({FIELD, PARAMETER, METHOD})
 @Retention(RUNTIME)
+@Deprecated
 public @interface MapperInfo {
     Class[] value();
 }

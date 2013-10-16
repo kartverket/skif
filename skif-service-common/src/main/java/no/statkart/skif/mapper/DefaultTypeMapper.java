@@ -50,6 +50,7 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
 
     /**
      * Method husker klassen som definerer den, men vi trenger å huske hvilken klasse den ble hentet ut fra.
+     *
      * @since 2.3.1
      */
     protected static class GetterKey {
@@ -78,18 +79,30 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
             return result;
         }
     }
+
     protected final Map<GetterKey, Method> settersForGetters = new ConcurrentHashMap<GetterKey, Method>();
 
-    Mapping mapping;
+    protected Mapping mapping;
 
-    Map<String, String> wsapiPkg2domainPkg = new HashMap<String, String>();
-    Map<String, String> domainPkg2wsapiPkg = new HashMap<String, String>();
-    private Map<Class, Class> classMappings = new HashMap<Class, Class>();
-    private Set<Class> doNotMapTheseClasses = new HashSet<Class>();
+    protected Map<String, String> wsapiPkg2domainPkg = new HashMap<String, String>();
+    protected Map<String, String> domainPkg2wsapiPkg = new HashMap<String, String>();
+    protected Map<Class, Class> classMappings = new HashMap<Class, Class>();
+    protected Set<Class> doNotMapTheseClasses = new HashSet<Class>();
 
-    private Map<? extends Class<?>, ? extends Class<?>> overrideClassMappings;
+    protected Map<? extends Class<?>, ? extends Class<?>> overrideClassMappings;
+
+    /**
+     * Dummymetode siden {@link ConcurrentHashMap} ikke kan ha <code>null</code>-verdier.
+     * @since 2.3.1
+     */
+    protected final Method NO_METHOD;
 
     public DefaultTypeMapper() {
+        try {
+            NO_METHOD = getClass().getMethod("getMapping");
+        } catch (NoSuchMethodException e) {
+            throw new ImplementationException("Failed to initialize the dummy placeholder method");
+        }
     }
 
     /**
@@ -205,12 +218,14 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
 
         return retVal;
     }
+
     /**
      *
      */
     boolean assignableTypeVariable(TypeToken<?> targetType, TypeToken<?> valueType) {
         return targetType.getType() instanceof TypeVariable && targetType.getRawType().isAssignableFrom(valueType.getRawType());
     }
+
     /**
      * Guava 14.1 klarer ikke å set at man kan si Set&lt;BubbleId&lt;?&gt;&gt ids = new HashSet&lt;BubbleId&lt;?&gt;&gt().
      * Dette er en vanlig ting å gjøre i SKIF, så dette er en workaround.
@@ -895,17 +910,22 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
     }
 
     protected Collection<Method> findGetters(Class<?> c) {
-        Method[] methods = c.getMethods();
-        List<Method> getters = new ArrayList<Method>(methods.length / 2);
-        List<Method> idGetters = new ArrayList<Method>(methods.length / 4);
-        for (Method method : methods) {
-            if (!method.isBridge() && method.getParameterTypes().length == 0 && (method.getName().startsWith("get") || method.getName().startsWith("is"))) {
-                getters.add(method);
-                if (method.getName().endsWith("Id")) {
-                    idGetters.add(method);
+        List<Method> getters = new ArrayList<Method>();
+        List<Method> idGetters = new ArrayList<Method>();
+
+        for (Class<?> clazz = c; clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
+            Method[] methods = clazz.getDeclaredMethods();
+            for (Method method : methods) {
+                if (!method.isBridge() && method.getParameterTypes().length == 0 && (method.getName().startsWith("get") || method.getName().startsWith("is")) && method.getAnnotation(DontMap.class) == null) {
+                    method.setAccessible(true);
+                    getters.add(method);
+                    if (method.getName().endsWith("Id")) {
+                        idGetters.add(method);
+                    }
                 }
             }
         }
+
         Iterator<Method> iterator = getters.iterator();
         while (iterator.hasNext()) {
             Method getter = iterator.next();
@@ -926,9 +946,9 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
     protected Method findSetterForGetter(Class<?> targetClass, Class<?> sourceClass, Method getter) {
         GetterKey key = new GetterKey(sourceClass, getter);
 
-        Method setter = settersForGetters.get(key);
-        if (setter != null) {
-            return setter;
+        // Viktig å sjekke med containKey, for value kan være null
+        if (settersForGetters.get(key) == NO_METHOD) {
+            return null;
         }
 
         String getterName = getter.getName();
@@ -939,11 +959,11 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
             expectedSetterName = "set" + getterName.substring(3);
         }
 
-        Method[] methods = targetClass.getMethods();
         Method matched = null;
-        for (Method method : methods) {
-            if (method.getParameterTypes().length == 1) {
-                if (method.getName().equals(expectedSetterName)) {
+        for (Class<?> clazz = targetClass; clazz != null; clazz = clazz.getSuperclass()) {
+            Method[] methods = clazz.getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getParameterTypes().length == 1 && method.getName().equals(expectedSetterName) && method.getAnnotation(DontMap.class) == null) {
                     matched = method;
                     break;
                 }
@@ -951,7 +971,10 @@ public class DefaultTypeMapper implements DefaultTypeMapping {
         }
 
         if (matched != null) {
+            matched.setAccessible(true);
             settersForGetters.put(key, matched);
+        } else {
+            settersForGetters.put(key, NO_METHOD);
         }
         return matched;
     }
