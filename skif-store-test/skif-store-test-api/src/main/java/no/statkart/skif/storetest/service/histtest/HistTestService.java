@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.service.histtest;
 
 import no.statkart.skif.domain.SelectionPolygon;
-import no.statkart.skif.mapper.MapperInfo;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
@@ -56,7 +55,6 @@ public interface HistTestService {
      * Finner {@code HistWithRelation} objekter som har text lik {@code text} hørende til mockup testsett {@code testsettNumber}
      * og som er relatert til et {@code HistSimple} objekt med id lik {@code histSimpleId} for gitt tidspunkt {@code snapshotVersion}
      */
-    @MapperInfo({HistSimpleId.class, Set.class})
     public Map<HistSimpleId<?>,Set<HistWithRelationId<?>>> findHistWithRelationIdsWithTextRelatedToHistSimpleIds(String text, Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion);
 
     /**
