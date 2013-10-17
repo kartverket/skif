@@ -7,24 +7,22 @@ import no.statkart.skif.store.EntityComponent;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-import org.hibernate.collection.PersistentCollection;
 import org.hibernate.engine.CascadeStyle;
 import org.hibernate.engine.CascadingAction;
-import org.hibernate.id.Assigned;
+import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.EntityPersister;
-import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.type.AbstractComponentType;
+import org.hibernate.type.AssociationType;
+import org.hibernate.type.CollectionType;
 import org.hibernate.type.EntityType;
 import org.hibernate.type.NullableType;
 import org.hibernate.type.Type;
-import org.hibernate.util.EqualsHelper;
 
 import java.util.Collection;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -62,8 +60,14 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         if (initializedObjects.containsKey(object)) return;
         initializedObjects.put(object, null);
 
-        ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
+        final SessionImpl sessionImpl = (SessionImpl) session();
+        final SessionFactoryImplementor sessionFactory = sessionImpl.getFactory();
+        ClassMetadata classMetadata = sessionFactory.getClassMetadata(object.getClass());
 
+        if (classMetadata == null) {
+            Hibernate.initialize(object);
+            return;
+        }
         if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
 
         EntityPersister persister = (EntityPersister) classMetadata;
@@ -71,9 +75,14 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
         CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
 
+        ensureInitialized(types, values, sessionImpl, sessionFactory, cascadeStyles, initializedObjects);
+    }
+
+    private void ensureInitialized(Type[] types, Object[] values, SessionImpl sessionImpl, SessionFactoryImplementor sessionFactory, CascadeStyle[] cascadeStyles, IdentityHashMap initializedObjects) {
         for (int i = 0; i < types.length; i++) {
             Type type = types[i];
             if (type.isEntityType()) {
+                // TODO: Opptimaliser Many-to-one-bubbleref trenger ikke initialiseres
                 Hibernate.initialize(values[i]);
 
                 if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE)) {
@@ -84,28 +93,36 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                 Object component = values[i];
                 if (component != null) {
                     Object[] componentProperties = t.getPropertyValues(component, EntityMode.POJO);
-                    for (int j = 0; j < componentProperties.length; j++) {
-                        // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
-                        Object componentProperty = componentProperties[j];
-                        Hibernate.initialize(componentProperty);
-                        if (componentProperty instanceof PersistentCollection) {
-                            // Initialiser hvert element
-                            for (Iterator iterator = ((Collection) componentProperty).iterator(); iterator.hasNext(); ) {
-                                Object o = iterator.next();
-                                ensureInitialized(o, initializedObjects);
-                            }
-                        } else {
-                            ensureInitialized(componentProperty, initializedObjects);
-                        }
+                    Type[] componentTypes = t.getSubtypes();
+                    CascadeStyle[] componentCascadeStyles = new CascadeStyle[componentTypes.length];
+                    for (int j = 0; j < componentCascadeStyles.length; j++) {
+                        componentCascadeStyles[j] = t.getCascadeStyle(j);
                     }
+                    ensureInitialized(componentTypes, componentProperties, sessionImpl, sessionFactory, cascadeStyles, initializedObjects);
                 }
             } else if (type.isAssociationType()) {
                 Hibernate.initialize(values[i]);
                 if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE)) {
+                    // Initialisert collectionen og hvert element. Element kan være av typen composite eller association.
+                    // TODO: Nåværende implementasjon håndtere kun et nivå av composite-elementer. Generaliser ved behov
                     Collection col = (Collection) values[i];
-                    for (Iterator iterator = col.iterator(); iterator.hasNext(); ) {
-                        Object o = (Object) iterator.next();
-                        ensureInitialized(o, initializedObjects);
+                    if (!col.isEmpty()) {
+                        CollectionPersister collectionPersister = sessionFactory.getCollectionPersister(((CollectionType) type).getRole());
+                        if (collectionPersister.getElementType() instanceof AbstractComponentType) {
+                            AbstractComponentType compositeType = (AbstractComponentType) collectionPersister.getElementType();
+                            for (Object componentObject : col) {
+                                final Object[] propertyValues = compositeType.getPropertyValues(componentObject, sessionImpl);
+                                for (int j = 0; j < propertyValues.length; j++) {
+                                    ensureInitialized(propertyValues[j], initializedObjects);
+                                }
+                            }
+                        } else if (collectionPersister.getElementType() instanceof AssociationType) {
+                            for (Object o : col) {
+                                ensureInitialized(o, initializedObjects);
+                            }
+                        } else {
+                            // No-op
+                        }
                     }
                 }
             }

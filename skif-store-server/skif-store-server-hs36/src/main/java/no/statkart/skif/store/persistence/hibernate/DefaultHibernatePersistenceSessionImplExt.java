@@ -6,7 +6,6 @@ import no.statkart.skif.store.EntityComponent;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-import org.hibernate.collection.PersistentCollection;
 import org.hibernate.engine.CascadeStyle;
 import org.hibernate.engine.CascadingAction;
 import org.hibernate.engine.SessionFactoryImplementor;
@@ -18,7 +17,6 @@ import org.hibernate.type.*;
 
 import java.util.Collection;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -70,6 +68,10 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
         CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
 
+        ensureInitialized(types, values, sessionImpl, sessionFactory, cascadeStyles, initializedObjects);
+    }
+
+    private void ensureInitialized(Type[] types, Object[] values, SessionImpl sessionImpl, SessionFactoryImplementor sessionFactory, CascadeStyle[] cascadeStyles, IdentityHashMap initializedObjects) {
         for (int i = 0; i < types.length; i++) {
             Type type = types[i];
             if (type.isEntityType()) {
@@ -84,20 +86,12 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                 Object component = values[i];
                 if (component != null) {
                     Object[] componentProperties = t.getPropertyValues(component, EntityMode.POJO);
-                    for (int j = 0; j < componentProperties.length; j++) {
-                        // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
-                        Object componentProperty = componentProperties[j];
-                        Hibernate.initialize(componentProperty);
-                        if (componentProperty instanceof PersistentCollection) {
-                            // Initialiser hvert element
-                            for (Iterator iterator = ((Collection) componentProperty).iterator(); iterator.hasNext(); ) {
-                                Object o = iterator.next();
-                                ensureInitialized(o, initializedObjects);
-                            }
-                        } else {
-                            ensureInitialized(componentProperty, initializedObjects);
-                        }
+                    Type[] componentTypes = t.getSubtypes();
+                    CascadeStyle[] componentCascadeStyles = new CascadeStyle[componentTypes.length];
+                    for (int j = 0; j < componentCascadeStyles.length; j++) {
+                        componentCascadeStyles[j] = t.getCascadeStyle(j);
                     }
+                    ensureInitialized(componentTypes, componentProperties, sessionImpl, sessionFactory, cascadeStyles, initializedObjects);
                 }
             } else if (type.isAssociationType()) {
                 Hibernate.initialize(values[i]);
@@ -109,16 +103,14 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                         CollectionPersister collectionPersister = sessionFactory.getCollectionPersister(((CollectionType) type).getRole());
                         if (collectionPersister.getElementType() instanceof CompositeType) {
                             CompositeType compositeType = (CompositeType) collectionPersister.getElementType();
-                            for (Iterator iterator = col.iterator(); iterator.hasNext(); ) {
-                                Object componentObject = iterator.next();
+                            for (Object componentObject : col) {
                                 final Object[] propertyValues = compositeType.getPropertyValues(componentObject, sessionImpl);
                                 for (int j = 0; j < propertyValues.length; j++) {
                                     ensureInitialized(propertyValues[j], initializedObjects);
                                 }
                             }
                         } else if (collectionPersister.getElementType() instanceof AssociationType) {
-                            for (Iterator iterator = col.iterator(); iterator.hasNext(); ) {
-                                Object o = (Object) iterator.next();
+                            for (Object o : col) {
                                 ensureInitialized(o, initializedObjects);
                             }
                         } else {

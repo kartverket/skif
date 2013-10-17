@@ -462,7 +462,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
         CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
 
-        EntityPersister persisterExisting = (EntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(existingObject.getClass());
+        EntityPersister persisterExisting = (EntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(existingObject instanceof HibernateProxy ? existingObject.getClass().getSuperclass() : existingObject.getClass());
         Type[] typesExisting = persisterExisting.getPropertyTypes();
         Object[] valuesExisting = persisterExisting.getPropertyValues(existingObject, EntityMode.POJO);
 
