@@ -8,7 +8,7 @@ import no.statkart.skif.service.sequence.IdService;
 
 import java.util.*;
 
-import static no.statkart.skif.guava.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Henrik Fredholm

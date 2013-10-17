@@ -13,7 +13,7 @@ import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.*;
 import no.statkart.skif.internal.util.InternalConfigurationUtils;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.guava.Preconditions;
+import com.google.common.base.Preconditions;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

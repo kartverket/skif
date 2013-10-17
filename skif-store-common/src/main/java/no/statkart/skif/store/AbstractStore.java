@@ -12,7 +12,7 @@ import no.statkart.skif.util.CopyHelper;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static no.statkart.skif.guava.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Henrik Fredholm

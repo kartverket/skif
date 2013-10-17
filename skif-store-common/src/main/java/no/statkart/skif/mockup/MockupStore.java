@@ -16,7 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import static no.statkart.skif.guava.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * En slags {@link Store} som kan brukes for å navigere blant mockup-objekter. Alle id-er

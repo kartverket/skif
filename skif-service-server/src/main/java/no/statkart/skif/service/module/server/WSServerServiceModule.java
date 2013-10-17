@@ -6,7 +6,7 @@ import com.google.inject.PrivateModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.guava.Preconditions;
+import com.google.common.base.Preconditions;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;

@@ -9,7 +9,7 @@ import no.statkart.skif.util.ThreadLocalWithSuspend;
 import java.util.HashMap;
 import java.util.Map;
 
-import static no.statkart.skif.guava.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkState;
 
 //import com.google.inject.internal.Maps;
 

@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import static no.statkart.skif.guava.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * @author Henrik Fredholm

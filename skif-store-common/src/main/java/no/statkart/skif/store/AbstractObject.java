@@ -2,7 +2,7 @@ package no.statkart.skif.store;
 
 import java.io.Serializable;
 
-import static no.statkart.skif.guava.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * @author Henrik Fredholm

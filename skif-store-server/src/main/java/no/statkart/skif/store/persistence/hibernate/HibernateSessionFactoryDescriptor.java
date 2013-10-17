@@ -5,7 +5,7 @@ import com.google.inject.util.Providers;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.guava.Preconditions;
+import com.google.common.base.Preconditions;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.Interceptor;

@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.basic;
 
-import no.statkart.skif.guava.Preconditions;
+import com.google.common.base.Preconditions;
 import no.statkart.skif.store.ValueObject;
 
 import javax.annotation.Nullable;

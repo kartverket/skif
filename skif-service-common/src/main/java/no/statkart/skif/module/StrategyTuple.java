@@ -3,7 +3,7 @@ package no.statkart.skif.module;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.guava.Preconditions;
+import com.google.common.base.Preconditions;
 
 import javax.annotation.Nullable;
 import static no.statkart.skif.SkifConstants.*;

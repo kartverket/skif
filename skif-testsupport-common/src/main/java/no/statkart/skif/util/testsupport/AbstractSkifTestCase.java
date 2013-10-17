@@ -2,7 +2,7 @@ package no.statkart.skif.util.testsupport;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import no.statkart.skif.guava.Preconditions;
+import com.google.common.base.Preconditions;
 import no.statkart.skif.module.ModuleBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
