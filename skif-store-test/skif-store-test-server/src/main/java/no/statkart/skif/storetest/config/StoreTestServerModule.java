@@ -339,33 +339,6 @@ public class StoreTestServerModule extends SkifModule {
     }
 
     ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager, Collection<Class<? extends Kodeliste>> kodelisteClasses, ServiceContext serviceContext) {
-        Configuration configuration = moduleConfiguration.getConfiguration();
-        Properties hibernatePropertiesCurrent;
-        Properties hibernatePropertiesOld;
-        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
-            String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
-            String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
-            String sid = configuration.getString(SkifConfigConstants.DB_SID);
-            String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
-            String port = configuration.getString(SkifConfigConstants.DB_PORT);
-            String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
-
-            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties"));
-            hibernatePropertiesOld = hibernatePropertiesCurrent;
-            // TODO: Set properties fra konfigurasjon
-            //hibernateProperties.setProperty(Environment.USER, username);
-            //hibernateProperties.setProperty(Environment.PASS, password);
-            //hibernateProperties.setProperty(Environment.URL, url);
-        } else {
-            String datasourceCurrent = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelBok_DS");
-            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
-            hibernatePropertiesCurrent.setProperty(Environment.DATASOURCE, datasourceCurrent);
-
-            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelOld_DS");
-            hibernatePropertiesOld = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
-            hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
-        }
-
         HibernatePersistenceSessionMasterImpl persistenceSessionMasterCurrent = new DefaultHibernatePersistenceSessionImplExt(
                 hibernateSessionFactoryManagerBundle.getBundle().get(0)
         );
