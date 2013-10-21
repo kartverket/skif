@@ -7,9 +7,7 @@
 @rem * Gradle & Project Setup
 @rem *******************************************************************************************************************
 set JAVA_HOME=C:\Program Files\Java\jdk1.6.0_30
-set GRADLE_HOME=C:\bin\gradle-1.0
-set GRADLE_HOME=C:\bin\gradle-1.2
-set GRADLE_HOME=C:\bin\gradle-1.5
+set GRADLE_HOME=C:\bin\gradle-1.6
 
 @rem bestemmer bruk av debug JDBC driver for Oracle [SKIF-239]
 set ORA_DEBUG=false
