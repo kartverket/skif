@@ -1,4 +1,10 @@
-assert gradle.gradleVersion == '1.6'
+['1.6'].with {
+    if (!it.find { gradle.gradleVersion == it }) {
+        logger.warn "WARNING: Du benytter et nyere gradle enn hva byggesystemet er testet med ${it}"
+    }
+    assert it.find { gradle.gradleVersion >= it } //eldre versjoner fungerer ikke - nye versjoner testes på eget ansvar
+}
+
 
 apply plugin: 'sktools-filterproperties-plugin'
 
@@ -285,6 +291,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build230'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build232'
     }
 }
