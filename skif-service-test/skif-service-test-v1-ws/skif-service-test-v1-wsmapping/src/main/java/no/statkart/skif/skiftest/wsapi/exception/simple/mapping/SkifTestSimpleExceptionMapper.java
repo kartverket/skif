@@ -26,11 +26,6 @@ public class SkifTestSimpleExceptionMapper extends AbstractSkifTestSimpeExceptio
             //noinspection unchecked,ThrowableResultOfMethodCallIgnored
             return buildExternalSimpleException((no.statkart.skif.skiftest.exception.SimpleException) source);
         }
-        if (source instanceof Error) {
-            return source;
-        } else if (source instanceof RuntimeException) {
-            return source;
-        }
 
         //feilmelding på kjent format (benyttes i tester)
         throw new MappingException(String.format("TypeMapper[%s] could not map from %s to %s", this.getClass().getName(), source.getClass().getName(), Throwable.class.getName()));
@@ -48,6 +43,12 @@ public class SkifTestSimpleExceptionMapper extends AbstractSkifTestSimpeExceptio
         if (source instanceof SimpleException) {
             //noinspection ThrowableResultOfMethodCallIgnored,unchecked
             return buildInternalSimpleException((SimpleException) source);
+        }
+
+        if (source instanceof Error) {
+            return source;
+        } else if (source instanceof RuntimeException) {
+            return source;
         }
 
         //feilmelding på kjent format (benyttes i tester)

@@ -79,7 +79,11 @@ public class BasicExceptionMappingTest extends SkifTestCase {
         try {
             service.noTx(SimpleNonMappedException.class.getName(), "abc");
         } catch (Throwable t) {
-            assertEquals(t.getClass(), ImplementationException.class);
+            if (injector.getInstance(Configuration.class).getBoolean(SkifConfigConstants.SINGLE_VM)) {
+                assertEquals(t.getClass(), ImplementationException.class);
+            } else {
+                assertEquals(t.getClass(), javax.xml.ws.soap.SOAPFaultException.class);
+            }
         }
     }
 
