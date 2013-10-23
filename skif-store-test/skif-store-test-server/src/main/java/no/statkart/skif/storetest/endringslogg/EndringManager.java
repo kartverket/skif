@@ -1,12 +1,10 @@
 package no.statkart.skif.storetest.endringslogg;
 
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.StoreServer;
-import no.statkart.skif.store.endringslogg.AbstractEndring;
 import no.statkart.skif.store.endringslogg.AbstractEndringManager;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.endringslogg.SimpleEndring;
@@ -14,6 +12,8 @@ import no.statkart.skif.storetest.domain.endringslogg.BubbleWithRelationEndring;
 import no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,14 +25,14 @@ import java.util.List;
  * @since 2.2.0
  */
 public class EndringManager extends AbstractEndringManager<Endring> {
-    private static List<Class<? extends Endring>> endringsklasser;
+    private static final List<Class<? extends Endring>> endringsklasser;
 
     static {
-        ImmutableList.Builder<Class<? extends Endring>> builder = ImmutableList.builder();
+        ArrayList<Class<? extends Endring>> builder = new ArrayList<Class<? extends Endring>>();
         builder.add(SimpleEndring.class);
         builder.add(BubbleWithRelationEndring.class);
         builder.add(SubTypedBubbleEndring.class);
-        endringsklasser = builder.build();
+        endringsklasser = Collections.unmodifiableList(builder);
     }
 
     private final Provider<ServiceRequestContext> contextProvider;
