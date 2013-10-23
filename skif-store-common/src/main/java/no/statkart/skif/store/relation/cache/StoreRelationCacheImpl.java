@@ -1,6 +1,8 @@
 package no.statkart.skif.store.relation.cache;
 
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.Store;
 import no.statkart.skif.store.WrappableStoreSession;
 
 import javax.annotation.Nullable;
@@ -17,6 +19,10 @@ import static com.google.common.base.Preconditions.checkState;
  * @since 2.4
  */
 public abstract class StoreRelationCacheImpl extends StoreRelationCache{
+
+    public StoreRelationCacheImpl(Store store) {
+        super(store);
+    }
 
     public void onCommitUnitOfWork() {
         relationCache.onCommitUnitOfWork(getLevel()+1);

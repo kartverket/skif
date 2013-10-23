@@ -74,6 +74,7 @@ public class StoreTestClientModule extends SkifModule {
 
         bind(SequenceBlockAllocatorService.class).to(no.statkart.skif.storetest.service.id.SequenceBlockAllocatorService.class);
         bind(IdService.class).to(IdServiceImpl.class);
+        bind(Store.class).to(StoreClient.class);
 
         bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
 
@@ -113,9 +114,9 @@ public class StoreTestClientModule extends SkifModule {
 
     @Provides
     @Singleton
-    Store storeProvider(StoreService storeService, Injector injector) {
+    StoreClient storeProvider(StoreService storeService, Injector injector) {
         StoreSessionClient storeSession = new StoreSessionClient(storeService);
-        Store store = new StoreClient(storeSession, injector);
+        StoreClient store = new StoreClient(storeSession, injector);
         injector.injectMembers(store);
         return store;
     }

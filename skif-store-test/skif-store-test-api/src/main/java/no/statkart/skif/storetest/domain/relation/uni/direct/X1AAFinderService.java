@@ -24,5 +24,5 @@ public interface X1AAFinderService {
     Map<X1BBOneId<?>, Set<X1AAId<?>>> findInvSomeBBIds(Collection<? extends X1BBOneId<?>> x1BBOneIds);
 
     @Relation(type= RelationType.INVERSE, cardinality= Cardinality.ONE, name="someCCs")
-    Map<X1CCManyId<?>, X1AAId<?>> findInvSomeCCsIds(Collection<? extends X1CCManyId<?>> x1CCManyIds);
+    Map<X1CCManyId<?>, X1AAId<?>> findInvSomeCCsId(Collection<? extends X1CCManyId<?>> x1CCManyIds);
 }

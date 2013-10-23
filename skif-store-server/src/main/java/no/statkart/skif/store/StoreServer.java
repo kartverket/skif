@@ -4,6 +4,8 @@ import com.google.inject.Injector;
 import no.statkart.skif.exception.AttemptDeleteException;
 import no.statkart.skif.exception.ImplementationException;
 
+import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 
 /**
@@ -112,7 +114,7 @@ public class StoreServer extends AbstractStore {
     public UnitOfWorkTransfer getUnitOfWorkTransfer() {
         // TODO: Kaste feil dersom  objekter er låst på level 0.
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
-        return  storeUnitOfWork.getUnitOfWorkTransfer();
+        return storeUnitOfWork.getUnitOfWorkTransfer();
     }
 
     @Override
@@ -121,5 +123,13 @@ public class StoreServer extends AbstractStore {
         storeSession = storeUnitOfWork.endUnitOfWork();
         // Nødvendig å kjøre clear() her slik at vi får lest inn objekter på nytt som har blitt oppdatert utenom innværende sesion
         clear();
+    }
+
+    public void materialiseRequestedRelations(@Nullable BubbleObject bubbleObject) {
+        storeRelationCache.materialiseRequestedRelations(bubbleObject);
+    }
+
+    public void materialiseRequestedRelations(Collection<? extends BubbleObject> bubbleObjects) {
+        storeRelationCache.materialiseRequestedRelations(bubbleObjects);
     }
 }

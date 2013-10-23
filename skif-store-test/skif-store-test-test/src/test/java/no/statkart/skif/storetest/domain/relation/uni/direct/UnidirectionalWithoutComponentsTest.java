@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain.relation.uni.direct;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.store.BubbleId;
@@ -24,6 +24,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
+ * Tester kodepattern for unidireksjonelle relasjoner med tilhørede invers findere.
+ *
  * @author Henrik Fredholm
  */
 @Test(groups = "singlevm-required")
@@ -35,60 +37,70 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
-
     private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
         return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
             @Override
             public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
-                return Sets.union(
-                        Sets.union(
-                                mockupFacade.getX1AAMockupFactory().getAllIds(X1AAId.class),
-                                mockupFacade.getX1BBOneMockupFactory().getAllIds(X1BBOneId.class)
-                        ),
+                return ImmutableSet.copyOf(Iterables.concat(
+                        mockupFacade.getX1AAMockupFactory().getAllIds(X1AAId.class),
+                        mockupFacade.getX1BBOneMockupFactory().getAllIds(X1BBOneId.class),
                         mockupFacade.getX1CCManyMockupFactory().getAllIds(X1CCManyId.class)
-                );
+
+                ));
             }
         });
     }
 
+    /**
+     * Tester mockups for relasjon "X1AA ---someBB-> X1BBOne"
+     */
     public void testManyToOneMockups() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
 
+        // Sjekk at a1 peker på b2
         X1AA a1 = store.get(x1AAMockupFactory.getA1Id());
         assertNotNull(a1);
         assertEquals(a1.getSomeBBId(), x1BBOneMockupFactory.getB2Id());
 
-        // Sjekk at a2 og a3 peker på samme B
+        // Sjekk at a2 og a3 peker på b3
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
         assertNotNull(a2);
         assertEquals(a2.getSomeBBId(), x1BBOneMockupFactory.getB3Id());
-
         X1AA a3 = store.get(x1AAMockupFactory.getA2Id());
         assertNotNull(a3);
         assertEquals(a3.getSomeBBId(), x1BBOneMockupFactory.getB3Id());
     }
 
+    /**
+     * Tester uthenting av invers relasjon "X1AA ---someBB-> X1BBOne"
+     */
     public void testGetInverseManyToOneRelation() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
 
+        // Sjekk b1 invers-peker på ingen a-er
         X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
         Set<X1AAId<?>> b1InvSomeBBIds = b1.findInvSomeBBIds();
         assertThat(b1InvSomeBBIds).isEmpty();
 
+        // Sjekk b2 invers-peker på a1
         X1BBOne b2 = store.get(x1BBOneMockupFactory.getB2Id());
         Set<X1AAId<?>> b2InvSomeBBIds = b2.findInvSomeBBIds();
         assertThat(b2InvSomeBBIds).containsOnly(x1AAMockupFactory.getA1Id());
 
+        // Sjekk b3 invers-peker på a2 og a3
         X1BBOne b3 = store.get(x1BBOneMockupFactory.getB3Id());
         Set<X1AAId<?>> b3InvSomeBBIds = b3.findInvSomeBBIds();
         assertThat(b3InvSomeBBIds).containsOnly(x1AAMockupFactory.getA2Id(), x1AAMockupFactory.getA3Id());
     }
 
 
+    /**
+     * Tester uthenting og caching av invers relasjon "X1AA ---someBB-> X1BBOne"
+     */
     public void testGetCachedInverseManyToOneRelation() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
@@ -97,10 +109,15 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         ImmutableSet<X1BBOneId<?>> bbIds = ImmutableSet.of(x1BBOneMockupFactory.getB1Id(), x1BBOneMockupFactory.getB2Id(), x1BBOneMockupFactory.getB3Id());
         X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
 
+        // Relasjonscaching enables og invers relasjon for b1, b2 og b3 lastes inn
         store.getInstance(StoreRelationCache.class).setEnabled(true);
         store.get(bbIds);
         Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIds = x1AAFinderService.findInvSomeBBIds(bbIds);
+        // Last inn alle X1AA og X1BBOne objekter
+        store.get(ImmutableSet.copyOf(Iterables.concat(invSomeBBIds.values())));
+        store.get(invSomeBBIds.keySet());
 
+        // Her fra er invers relasjoner og tilhørende objekter lastet. Ikke flere serverkall.
 
         X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
         Set<X1AAId<?>> b1InvSomeBBIds = b1.findInvSomeBBIds();
@@ -118,21 +135,31 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         assertThat(b3InvSomeBBIds2).containsOnly(x1AAMockupFactory.getA2Id(), x1AAMockupFactory.getA3Id());
     }
 
+    /**
+     * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne"
+     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
+     */
     public void testChangeSomeBBRelation() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
 
+        // Sjekk at b1 ikke er invers relatert til a2.
         store.getInstance(StoreRelationCache.class).setEnabled(true);
         X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
         assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
 
+        // Her endres a2 til å peke på b1
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
         a2.setSomeBBId(b1.getId());
+
         assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
     }
 
-    public void testGetMany() {
+    /**
+     * Tester mockups for relasjon "X1AA ---someCCs-> X1CCMany"
+     */
+    public void testGetManyMockups() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1CCManyMockupFactory x1CCManyMockupFactory = mockupFacade.getX1CCManyMockupFactory();
@@ -146,6 +173,9 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         assertThat(a3.getSomeCCsIds()).containsOnly(x1CCManyMockupFactory.getC2Id(), x1CCManyMockupFactory.getC3Id());
     }
 
+    /**
+     * Tester uthenting  av invers relasjon "X1AA ---someCCs-> X1CCMany"
+     */
     public void testGetInverseSomeCCsRelation() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
@@ -154,7 +184,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
         ImmutableSet<X1CCManyId<?>> ccIds = ImmutableSet.of(x1CCManyMockupFactory.getC1Id(), x1CCManyMockupFactory.getC2Id(), x1CCManyMockupFactory.getC3Id());
         X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
-        Map<X1CCManyId<?>, X1AAId<?>> invSomeCCsIdsMap = x1AAFinderService.findInvSomeCCsIds(ccIds);
+        Map<X1CCManyId<?>, X1AAId<?>> invSomeCCsIdsMap = x1AAFinderService.findInvSomeCCsId(ccIds);
         assertThat(invSomeCCsIdsMap).hasSize(3);
         assertThat(invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC1Id())).isNull();
         assertThat((X1AAId)invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC2Id())).isEqualTo(x1AAMockupFactory.getA3Id());
@@ -162,20 +192,25 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
     }
 
 
+    /**
+     * Tester oppdatering av invers relasjon "X1AA ---someCCs-> X1CCMany"
+     * Oppdatere relasjonen  melom a2 og c1 slik at disse blir relaterte.
+     */
     public void testChangeSomeCCsRelation() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1CCManyMockupFactory x1CCManyMockupFactory = mockupFacade.getX1CCManyMockupFactory();
 
+        // Sjekk at c1 ikke er invers relatert til a2.
         store.getInstance(StoreRelationCache.class).setEnabled(true);
         X1CCMany c1 = store.get(x1CCManyMockupFactory.getC1Id());
         assertThat(c1.findInvSomeCCsIds()).isNull();
 
+        // Her endres a2 til å peke på c1
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
         a2.getSomeCCsIds().add(c1.getId());
         assertThat((X1AAId)c1.findInvSomeCCsIds()).isEqualTo(a2.getId());
     }
-
 
     public void testGetUnique() {
 

@@ -151,7 +151,7 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
 
         ImmutableSet<X2CCManyId<?>> ccIds = ImmutableSet.of(X2CCManyMockupFactory.getC1Id(), X2CCManyMockupFactory.getC2Id(), X2CCManyMockupFactory.getC3Id());
         X2AAWithEntityComponentFinderService X2AAWithEntityComponentFinderService = store.getInstance(X2AAWithEntityComponentFinderService.class);
-        Map<X2CCManyId<?>, X2AAWithEntityComponentId<?>> invSomeCCsIdsMap = X2AAWithEntityComponentFinderService.findInvSomeCCsIds(ccIds);
+        Map<X2CCManyId<?>, X2AAWithEntityComponentId<?>> invSomeCCsIdsMap = X2AAWithEntityComponentFinderService.findInvSomeCCsId(ccIds);
         assertThat(invSomeCCsIdsMap).hasSize(3);
         assertThat(invSomeCCsIdsMap.get(X2CCManyMockupFactory.getC1Id())).isNull();
         assertThat((X2AAWithEntityComponentId) invSomeCCsIdsMap.get(X2CCManyMockupFactory.getC2Id())).isEqualTo(X2AAWithEntityComponentMockupFactory.getA3Id());

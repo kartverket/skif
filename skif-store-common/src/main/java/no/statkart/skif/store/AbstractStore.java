@@ -21,7 +21,7 @@ public class AbstractStore implements Store {
     protected WrappableStoreSession storeSession;
     final private Injector injector;
 
-    final private StoreRelationCacheImpl storeRelactions = new StoreRelationCacheImpl() {
+    final protected StoreRelationCacheImpl storeRelationCache = new StoreRelationCacheImpl(this) {
         @Override
         protected WrappableStoreSession getStoreSession() {
             return storeSession;
@@ -42,7 +42,7 @@ public class AbstractStore implements Store {
     @Override
     public <T> T getInstance(Class<T> type) {
         if (type==StoreRelationCache.class) {
-            return (T)storeRelactions;
+            return (T) storeRelationCache;
         } else {
             return injector.getInstance(type);
         }
@@ -289,7 +289,7 @@ public class AbstractStore implements Store {
     public void abortUnitOfWork() {
         // TODO: Bør sikre at denne alltid popper av et nivå av unit of work også selv om det kastes exception.
         storeSession = storeUnitOfWork().abortUnitOfWork();
-        storeRelactions.onAbortUnitOfWork();
+        storeRelationCache.onAbortUnitOfWork();
     }
 
     @Override
@@ -297,7 +297,7 @@ public class AbstractStore implements Store {
         // TODO: Ikke sikker på at denne skal være her
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
         storeSession = storeUnitOfWork.endUnitOfWork();
-        storeRelactions.onCommitUnitOfWork();
+        storeRelationCache.onCommitUnitOfWork();
     }
 
     @Override
@@ -308,6 +308,6 @@ public class AbstractStore implements Store {
     //@Override
     public void commitUnitOfWork() {
         storeSession = storeUnitOfWork().commitUnitOfWork();
-        storeRelactions.onCommitUnitOfWork();
+        storeRelationCache.onCommitUnitOfWork();
     }
 }

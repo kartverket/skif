@@ -59,7 +59,7 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
     }
 
     @Override
-    public Map<X2CCManyId<?>, X2AAWithEntityComponentId<?>> findInvSomeCCsIds(Collection<? extends X2CCManyId<?>> ids) {
+    public Map<X2CCManyId<?>, X2AAWithEntityComponentId<?>> findInvSomeCCsId(Collection<? extends X2CCManyId<?>> ids) {
         Map<X2CCManyId<?>, X2AAWithEntityComponentId<?>> result = Maps.newHashMapWithExpectedSize(ids.size());
         if (ids.isEmpty()) return result;
 

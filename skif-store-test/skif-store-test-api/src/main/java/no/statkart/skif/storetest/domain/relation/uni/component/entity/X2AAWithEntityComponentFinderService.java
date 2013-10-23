@@ -23,5 +23,5 @@ public interface X2AAWithEntityComponentFinderService {
     Map<X2BBOneId<?>, Set<X2AAWithEntityComponentId<?>>> findInvSomeBBIds(Collection<? extends X2BBOneId<?>> x2BBOneIds);
 
     @Relation(type= RelationType.INVERSE, cardinality= Cardinality.ONE, name="someCCs")
-    Map<X2CCManyId<?>, X2AAWithEntityComponentId<?>> findInvSomeCCsIds(Collection<? extends X2CCManyId<?>> x2CCManyIds);
+    Map<X2CCManyId<?>, X2AAWithEntityComponentId<?>> findInvSomeCCsId(Collection<? extends X2CCManyId<?>> x2CCManyIds);
 }

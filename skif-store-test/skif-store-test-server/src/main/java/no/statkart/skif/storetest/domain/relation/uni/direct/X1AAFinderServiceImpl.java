@@ -94,7 +94,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
     }
 
     @Override
-    public Map<X1CCManyId<?>, X1AAId<?>> findInvSomeCCsIds(Collection<? extends X1CCManyId<?>> x1CCManyIds) {
+    public Map<X1CCManyId<?>, X1AAId<?>> findInvSomeCCsId(Collection<? extends X1CCManyId<?>> x1CCManyIds) {
         Map<X1CCManyId<?>, X1AAId<?>> result = Maps.newHashMapWithExpectedSize(x1CCManyIds.size());
         if (x1CCManyIds.isEmpty()) return result;
 
