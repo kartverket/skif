@@ -1,6 +1,5 @@
 package no.statkart.skif.storetest.domain.endringslogg;
 
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.basic.SubTypedBubbleId;
 
 /**
@@ -12,28 +11,5 @@ import no.statkart.skif.storetest.domain.basic.SubTypedBubbleId;
 public class SubTypedBubbleEndring<I extends SubTypedBubbleId<?>> extends Endring<I> {
     private static final long serialVersionUID = 1L;
 
-    private SubTypedBubbleId<?> subTypedBubbleId;
 
-    @Override
-    public SubTypedBubbleEndringId<?> getId() {
-        return (SubTypedBubbleEndringId<?>) super.getId();
-    }
-
-    @Override
-    public SubTypedBubbleId<?> getEndretBubbleId() {
-        return getSubTypedBubbleId();
-    }
-
-    @Override
-    protected void setEndretBubbleIdImpl(BubbleId<?> id) {
-        setSubTypedBubbleId((SubTypedBubbleId<?>) id);
-    }
-
-    public SubTypedBubbleId<?> getSubTypedBubbleId() {
-        return subTypedBubbleId;
-    }
-
-    public void setSubTypedBubbleId(SubTypedBubbleId<?> subTypedBubbleId) {
-        this.subTypedBubbleId = subTypedBubbleId;
-    }
 }

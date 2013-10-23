@@ -1,5 +1,6 @@
 package no.statkart.skif.store.endringslogg;
 
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
 
@@ -14,6 +15,7 @@ import java.sql.Timestamp;
 public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBubbleObject {
     private static final long serialVersionUID = 1L;
 
+    private I endretBubbleId;
     private Endringstype endringstype;
     private Timestamp endringstidspunkt;
 
@@ -42,16 +44,16 @@ public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBub
         this.endringstidspunkt = endringstidspunkt;
     }
 
-    public abstract BubbleId<?> getEndretBubbleId();
-
-    void setEndretBubbleId(BubbleId<?> id) {
-        setEndretBubbleIdImpl(id);
+    public BubbleId<?> getEndretBubbleId() {
+        return endretBubbleId;
     }
 
-    /**
-     * Alle implementasjoner må implementere denne og koble den til sitt korrekt typede felt.
-     *
-     * @param id    id til boblen endringen gjelder
-     */
-    protected abstract void setEndretBubbleIdImpl(BubbleId<?> id);
+    void setEndretBubbleId(I id) {
+        if (endretBubbleId == null) {
+            endretBubbleId = id;
+        } else {
+            throw new ImplementationException(String.format("Attempt to change immutable field %s", "endretBubbleId"));
+        }
+    }
+
 }
