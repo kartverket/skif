@@ -18,9 +18,8 @@ configureDatabasePlugin {
         sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql') { mustRunAfter 'purge', 'historikkUpdatePackageSnapshotTime' }
         sqlTask('createSchemaTestStandAlone', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTestStandAlone.sql') { mustRunAfter 'createSchema' }
         sqlTask('createSchemaTest', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest.sql') { mustRunAfter 'createSchema' }
-        sqlTask('createSchemaTest2', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest2.sql') { mustRunAfter 'createSchema' }
         sqlTask('tableSequence', sqlFile: 'src/main/sql/oracle/data/TableSequence.sql') { mustRunAfter 'createSchema' }
-        sqlTask('loadTestdata', sqlFile: 'src/main/sql/oracle/data/LoadTestdata.sql') { mustRunAfter 'createSchema', 'createSchemaTestStandAlone', 'createSchemaTest', 'createSchemaTest2' }
+        sqlTask('loadTestdata', sqlFile: 'src/main/sql/oracle/data/LoadTestdata.sql') { mustRunAfter 'createSchema', 'createSchemaTestStandAlone', 'createSchemaTest' }
 
         properties = project.properties
 
@@ -78,7 +77,6 @@ task dbInit {
     dependsOn 'createSchema'
     dependsOn 'createSchemaTestStandAlone'
     dependsOn 'createSchemaTest'
-    dependsOn 'createSchemaTest2'
     dependsOn 'tableSequence'
     dependsOn 'loadTestdata'
     dependsOn 'applyHistorikk'
@@ -88,8 +86,8 @@ task dbInit {
 task applyHistorikk() {
     mustRunAfter 'loadTestdata', 'tableSequence'
     def tables = [
-            'BUBBLE_W_ENTITY_COMPS', 'ENTITY_COMPONENT',
-            'LISTOFENTITYCOMPONENTS', 'LISTOFENTITYCOMPONENTS__C',
+            'HIST_BUBBLE_W_ENTITIES', 'HIST_ENTITY_COMPONENT',
+            'HIST_BUBBLE_W_LENTITIES', 'HIST_LENTITY_COMPONENT',
             'SUBTYPEDBUBBLE', 'TEKSTFORSUBTYPE',
             'HISTSIMPLE', 'HISTWITHRELATION',
             'HISTORISKDBKODE',

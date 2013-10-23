@@ -49,6 +49,8 @@ import no.statkart.skif.storetest.domain.basic.*;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
+import no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithEntityComponents;
+import no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithListEntityComponents;
 import no.statkart.skif.storetest.domain.demo.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
@@ -232,6 +234,9 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(BubbleWithCompositeComponent.class)
                 .addResource(BubbleWithEntityComponent.class)
                 .addResource(BubbleWithEntityInCompositeComponent.class)
+
+                .addResource(HistorikkBubbleWithEntityComponents.class)
+                .addResource(HistorikkBubbleWithListEntityComponents.class)
 
                 // Multikobling
                 .addResource(Multirefererende.class)

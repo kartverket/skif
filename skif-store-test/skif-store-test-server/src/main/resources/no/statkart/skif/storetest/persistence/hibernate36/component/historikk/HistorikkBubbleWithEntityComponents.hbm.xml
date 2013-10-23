@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithEntityComponents" table="HIST_BUBBLE_W_ENTITIES" select-before-update="true" lazy="true">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest.persistence.hibernate.type.component.historikk.BubbleWithEntityComponentsIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="oppdateringsdato" type="timestamp"/>
+        <property name="sluttdato" type="timestamp"/>
+        <property name="versjonId"/>
+
+        <many-to-one name="mainEntityComponent" class="no.statkart.skif.storetest.domain.component.historikk.HistorikkEntityComponent" cascade="all"/>
+
+        <set name="secondaryEntityComponents" cascade="all-delete-orphan,evict">
+            <key column="bubbleId" foreign-key="FK_BUBBLE_WITH_ENTCOMPS"/>
+            <one-to-many class="no.statkart.skif.storetest.domain.component.historikk.HistorikkEntityComponent"/>
+        </set>
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.component.historikk.HistorikkEntityComponent" table="HIST_ENTITY_COMPONENT" select-before-update="true">
+        <id name="id" column="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+
+        <property name="oppdateringsdato" type="timestamp"/>
+        <property name="sluttdato" type="timestamp"/>
+        <property name="versjonId"/>
+
+        <property name="value"/>
+    </class>
+
+</hibernate-mapping>
