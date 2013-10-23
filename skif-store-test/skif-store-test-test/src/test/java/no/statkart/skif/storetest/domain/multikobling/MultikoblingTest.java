@@ -1,16 +1,13 @@
-package no.statkart.skif.storetest2.multikobling;
+package no.statkart.skif.storetest.domain.multikobling;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest2.domain.multikobling.Multirefererende;
-import no.statkart.skif.storetest2.domain.multikobling.MultirefererendeId;
-import no.statkart.skif.storetest2.domain.multikobling.MultirefererendeKobling;
-import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacade;
-import no.statkart.skif.storetest2.mockup.StoreTest2MockupFacadeFactory;
-import no.statkart.skif.storetest2.util.testsupport.StoreTest2TestCase;
+import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
+import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
+import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -24,15 +21,15 @@ import java.util.Set;
  * @since 2.2.0
  */
 @Test
-public class MultikoblingTest extends StoreTest2TestCase {
+public class MultikoblingTest extends StoreTestTestCase {
     @Inject
-    private StoreTest2MockupFacadeFactory mockupFacadeFactory;
+    private StoreTestMockupFacadeFactory mockupFacadeFactory;
 
     @Inject
     private RunOnServerWithTxRequiresNewService runOnServerService;
 
     public void testPersistens() {
-        final StoreTest2MockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
 
         final MultirefererendeId<?> id = mockupFacade.getIdService().getNextId(MultirefererendeId.class);
 
