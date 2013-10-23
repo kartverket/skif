@@ -6,7 +6,7 @@
     <class name="no.statkart.skif.storetest.domain.multikobling.Multirefererende" table="MULTIREFERERENDE" select-before-update="true"
            lazy="true">
         <id name="id" column="id"
-            type="no.statkart.skif.storetest2.persistence.hibernate.type.MultirefererendeIdType">
+            type="no.statkart.skif.storetest.persistence.hibernate.type.multikobling.MultirefererendeIdType">
             <generator class="assigned"/>
         </id>
 
