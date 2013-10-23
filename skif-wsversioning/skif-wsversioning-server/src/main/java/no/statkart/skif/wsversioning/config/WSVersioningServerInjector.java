@@ -1,5 +1,6 @@
 package no.statkart.skif.wsversioning.config;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import no.statkart.skif.ServerInjectorRegistry;
 import no.statkart.skif.config.SkifServerConfiguration;
@@ -14,9 +15,13 @@ import no.statkart.skif.module.ModuleBuilder;
  */
 public class WSVersioningServerInjector {
     public static Injector getInjector() {
-        ModuleBuilder moduleBuilder = new ModuleBuilder()
-                .setConfiguration(new SkifServerConfiguration())
-                .setModuleClass(WSVersioningServerModule.class);
-        return ServerInjectorRegistry.getInjector("WSVersioningServerModule", moduleBuilder);
+        return ServerInjectorRegistry.getInjector("WSVersioningServerModule", new Supplier<ModuleBuilder>() {
+            @Override
+            public ModuleBuilder get() {
+                return new ModuleBuilder()
+                        .setConfiguration(new SkifServerConfiguration())
+                        .setModuleClass(WSVersioningServerModule.class);
+            }
+        });
     }
 }

@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.config;
 
 
+import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import no.statkart.skif.ServerInjectorRegistry;
 import no.statkart.skif.config.SkifServerConfiguration;
@@ -15,9 +16,13 @@ import no.statkart.skif.module.ModuleBuilder;
  */
 public class StoreTestServerInjector {
     public static Injector getInjector() {
-        ModuleBuilder moduleBuilder = new ModuleBuilder()
-                .setConfiguration(new SkifServerConfiguration())
-                .setModuleClass(StoreTestServerModule.class);
-        return ServerInjectorRegistry.getInjector("SkifTestServerModule", moduleBuilder);
+        return ServerInjectorRegistry.getInjector("SkifTestServerModule", new Supplier<ModuleBuilder>() {
+            @Override
+            public ModuleBuilder get() {
+                return new ModuleBuilder()
+                        .setConfiguration(new SkifServerConfiguration())
+                        .setModuleClass(StoreTestServerModule.class);
+            }
+        });
     }
 }

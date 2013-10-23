@@ -1,6 +1,7 @@
 package no.statkart.skif.skiftest.config;
 
 
+import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import no.statkart.skif.ServerInjectorRegistry;
 import no.statkart.skif.config.SkifServerConfiguration;
@@ -15,10 +16,14 @@ import no.statkart.skif.module.ModuleBuilder;
  */
 public class SkifTestTxManagementServerInjector {
     public static Injector getInjector() {
-        ModuleBuilder moduleBuilder = new ModuleBuilder()
-                // TODO: bør vi bruke skif-server-default.properteis
-                .setConfiguration(new SkifServerConfiguration())
-                .setModuleClass(SkifTestTxManagementServerModule.class);
-        return ServerInjectorRegistry.getInjector("StoreTestTxManagementServerModule", moduleBuilder);
+        return ServerInjectorRegistry.getInjector("StoreTestTxManagementServerModule", new Supplier<ModuleBuilder>() {
+            @Override
+            public ModuleBuilder get() {
+                return new ModuleBuilder()
+                        // TODO: bør vi bruke skif-server-default.properteis
+                        .setConfiguration(new SkifServerConfiguration())
+                        .setModuleClass(SkifTestTxManagementServerModule.class);
+            }
+        });
     }
 }

@@ -1,8 +1,7 @@
 package no.statkart.skif;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Injector;
-import com.google.inject.Module;
-import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.ejb.EJBLookupHelper;
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ import java.util.Map;
 public class ServerInjectorRegistry {
     private static Logger logger = LoggerFactory.getLogger(ServerInjectorRegistry.class);
 
-    public static final String DEFAULT_SERVER_CONFIG = "skif-server.configuration";
     private static final Map<Object, Injector> injectorMap = new HashMap<Object, Injector>();
 
     public static void init() {
@@ -36,37 +34,37 @@ public class ServerInjectorRegistry {
         }
     }
 
-    public static synchronized Injector getInjector() {
-        return getInjector("skif-server.configuration");
-    }
-
-    public static synchronized Injector getInjector(String configfile) {
-        Injector injector = injectorMap.get(configfile);
-        if (injector == null) {
-            ModuleBuilder moduleBuilder = new ModuleBuilder()
-                    .setConfigurationFilename(configfile);
-            injector = createInjector(moduleBuilder);
-        }
-        return injector;
-    }
-
-    public static synchronized Injector getInjector(Class<? extends Configuration> configurationClass) {
-        Injector injector = injectorMap.get(configurationClass.getName());
-
-        if (injector == null) {
-            final Configuration configuration = SkifUtil.newInstance(configurationClass);
-            ModuleBuilder moduleBuilder = new ModuleBuilder()
-                    .setConfiguration(configuration);
-            injector = createInjector(moduleBuilder);
-        }
-        return injector;
-
-    }
-
+    /**
+     * Henter ut en registrert injector, eller oppretter den fra en {@link ModuleBuilder} dersom den ikke eksisterer.
+     * ModuleBuilderen tvinges til JEE-modus.
+     *
+     * @param key                      unik identifikator
+     * @param moduleBuilder            modulebuilder
+     * @return injectoren
+     * @deprecated det er bedre å bruke {@link #getInjector(String, com.google.common.base.Supplier)} siden ModuleBuilder da kan opprettes kun ved behov
+     */
     public static synchronized Injector getInjector(String key, ModuleBuilder moduleBuilder) {
         Injector injector = injectorMap.get(key);
         if (injector == null) {
             injector = createInjector(moduleBuilder);
+            injectorMap.put(key, injector);
+        }
+        return injector;
+    }
+
+    /**
+     * Henter ut en registrert injector, eller oppretter den fra en {@link ModuleBuilder} dersom den ikke eksisterer.
+     * ModuleBuilderen besørges av
+     *
+     * @param key                      unik identifikator
+     * @param moduleBuilderSupplier    callback som kalles ved behov for å opprette ModuleBuilder
+     * @return injectoren
+     * @since 2.4.0
+     */
+    public static synchronized Injector getInjector(String key, Supplier<ModuleBuilder> moduleBuilderSupplier) {
+        Injector injector = injectorMap.get(key);
+        if (injector == null) {
+            injector = createInjector(moduleBuilderSupplier.get());
             injectorMap.put(key, injector);
         }
         return injector;
@@ -78,18 +76,17 @@ public class ServerInjectorRegistry {
     }
 
     /**
-     * Oppretter en child-injector.
+     * Oppretter en injector ved å kalle en supplier dersom den ikke allerede finnes.
      *
      * @param key               unik identifikator
-     * @param parentInjector    injector å basere på
-     * @param modules           moduler som skal inngå i child-injector
-     * @return child-injector
+     * @param supplier          callback som blir kalt dersom injectoren ikke er opprettet
+     * @return injector
      * @since 2.4.0
      */
-    public static synchronized Injector getInjector(String key, Injector parentInjector, Module... modules) {
+    public static synchronized Injector getInjectorCustom(String key, Supplier<Injector> supplier) {
         Injector injector = injectorMap.get(key);
         if (injector == null) {
-            injector = parentInjector.createChildInjector(modules);
+            injector = supplier.get();
             injectorMap.put(key, injector);
         }
         return injector;
