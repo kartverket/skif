@@ -15,13 +15,13 @@
         <property name="brukernavn"/>
 
         <subclass name="no.statkart.skif.storetest.domain.endringslogg.SimpleEndring" discriminator-value="SimpleEndring" lazy="true">
-            <property name="endretBubbleId" column="endretBubbleId" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.SimpleIdType"/>
+            <property name="endretBubbleId" column="endretBubbleId" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.SimpleIdType" access="field"/> <!-- workaround: mulig problem med generics; se kommentar i SKIF-369 -->
         </subclass>
         <subclass name="no.statkart.skif.storetest.domain.endringslogg.BubbleWithRelationEndring" discriminator-value="BubbleWithRelationEndring" lazy="true">
-            <property name="endretBubbleId" column="endretBubbleId" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.BubbleWithRelationIdType"/>
+            <property name="endretBubbleId" column="endretBubbleId" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.BubbleWithRelationIdType" access="field"/> <!-- workaround: mulig problem med generics; se kommentar i SKIF-369 -->
         </subclass>
         <subclass name="no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring" discriminator-value="SubTypedBubbleEndring" lazy="true">
-            <property name="endretBubbleId" column="endretBubbleId" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.SubTypedBubbleIdType"/>
+            <property name="endretBubbleId" column="endretBubbleId" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.SubTypedBubbleIdType" access="field"/> <!-- workaround: mulig problem med generics; se kommentar i SKIF-369 -->
         </subclass>
     </class>
 
