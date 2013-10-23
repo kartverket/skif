@@ -44,7 +44,7 @@ public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBub
         this.endringstidspunkt = endringstidspunkt;
     }
 
-    public BubbleId<?> getEndretBubbleId() {
+    public I getEndretBubbleId() {
         return endretBubbleId;
     }
 
