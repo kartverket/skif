@@ -16,7 +16,6 @@ public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBub
 
     private Endringstype endringstype;
     private Timestamp endringstidspunkt;
-    private String brukernavn;
 
     @Override
     public AbstractEndringId<?> getId() {
@@ -41,14 +40,6 @@ public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBub
 
     public void setEndringstidspunkt(Timestamp endringstidspunkt) {
         this.endringstidspunkt = endringstidspunkt;
-    }
-
-    public String getBrukernavn() {
-        return brukernavn;
-    }
-
-    void setBrukernavn(String brukernavn) {
-        this.brukernavn = brukernavn;
     }
 
     public abstract BubbleId<?> getEndretBubbleId();

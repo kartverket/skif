@@ -25,18 +25,16 @@ import java.util.*;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public abstract class AbstractEndringManager implements StoreSessionFinishListener {
+public abstract class AbstractEndringManager<I extends AbstractEndring> implements StoreSessionFinishListener {
     private final static Logger logger = LoggerFactory.getLogger(AbstractEndringManager.class);
 
-    private final Map<Class<? extends BubbleId>, Class<? extends AbstractEndring>> endringklasseMap;
-    private final Provider<ServiceRequestContext> contextProvider;
+    private final Map<Class<? extends BubbleId>, Class<? extends I>> endringklasseMap;
     private final Provider<Connection> connectionProvider;
 
     private final SequenceBlockAllocatorService sequenceBlockAllocatorService;
     private final String sequenceName;
 
-    protected AbstractEndringManager(Collection<? extends Class<? extends AbstractEndring>> endringsklasser, Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Configuration configuration) {
-        this.contextProvider = contextProvider;
+    protected AbstractEndringManager(Collection<Class<? extends I>> endringsklasser, Provider<Connection> connectionProvider, Configuration configuration) {
         this.connectionProvider = connectionProvider;
 
         this.sequenceBlockAllocatorService = new DefaultSequenceBlockAllocatorServiceImpl(connectionProvider, configuration) {
@@ -47,8 +45,8 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         };
         this.sequenceName = configuration.getString(SkifConfigConstants.ENDRINGSNUMMER_SEQUENCE_NAME);
 
-        endringklasseMap = new HashMap<Class<? extends BubbleId>, Class<? extends AbstractEndring>>(endringsklasser.size());
-        for (Class<? extends AbstractEndring> endringClass : endringsklasser) {
+        endringklasseMap = new HashMap<Class<? extends BubbleId>, Class<? extends I>>(endringsklasser.size());
+        for (Class<? extends I> endringClass : endringsklasser) {
             endringklasseMap.put(findIdClassForEndringClass(endringClass), endringClass);
         }
     }
@@ -100,27 +98,28 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
 
     @Override
     public void onFinish(StoreServer storeServer) {
-        ServiceRequestContext serviceRequestContext = contextProvider.get();
-        String principal = serviceRequestContext.getCallerPrincipal().getName();
         Timestamp tidspunkt = getEndringstidspunkt();
 
         List<AbstractEndring> endringer = new ArrayList<AbstractEndring>();
 
         for (BubbleId<?> bubbleId : storeServer.getInsertedIds()) {
-            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, Endringstype.Nyoppretting);
+            I endring = createEndring(bubbleId, Endringstype.Nyoppretting, tidspunkt);
             if (endring != null) {
+                decorateEndring(storeServer, endring);
                 endringer.add(endring);
             }
         }
         for (BubbleId<?> bubbleId : storeServer.getUpdatedIds()) {
-            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, Endringstype.Oppdatering);
+            I endring = createEndring(bubbleId, Endringstype.Oppdatering, tidspunkt);
             if (endring != null) {
+                decorateEndring(storeServer, endring);
                 endringer.add(endring);
             }
         }
         for (BubbleId<?> bubbleId : storeServer.getDeletedIds()) {
-            AbstractEndring<?> endring = createEndring(storeServer, tidspunkt, principal, bubbleId, Endringstype.Sletting);
+            I endring = createEndring(bubbleId, Endringstype.Sletting, tidspunkt);
             if (endring != null) {
+                decorateEndring(storeServer, endring);
                 endringer.add(endring);
             }
         }
@@ -137,10 +136,10 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         }
     }
 
-    private AbstractEndring<?> createEndring(StoreServer storeServer, Timestamp tidspunkt, String brukernavn, BubbleId<?> bubbleId, Endringstype endringstype) {
-        Class<? extends AbstractEndring> endringClass = findEndringClassForIdClass(bubbleId);
+    private I createEndring(BubbleId<?> bubbleId, Endringstype endringstype, Timestamp tidspunkt) {
+        Class<? extends I> endringClass = findEndringClassForIdClass(bubbleId);
         if (endringClass != null) {
-            final AbstractEndring<?> endring;
+            final I endring;
 
             try {
                 endring = endringClass.newInstance();
@@ -152,10 +151,7 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
 
             endring.setEndringstype(endringstype);
             endring.setEndringstidspunkt(tidspunkt);
-            endring.setBrukernavn(brukernavn);
             endring.setEndretBubbleId(bubbleId);
-
-            decorateEndring(storeServer, endring);
 
             return endring;
         } else {
@@ -163,10 +159,10 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
         }
     }
 
-    protected Class<? extends AbstractEndring> findEndringClassForIdClass(BubbleId<?> bubbleId) {
+    protected Class<? extends I> findEndringClassForIdClass(BubbleId<?> bubbleId) {
         for (Class<?> idClass = bubbleId.getClass(); idClass != null; idClass = idClass.getSuperclass()) {
             //noinspection SuspiciousMethodCalls
-            Class<? extends AbstractEndring> endringClass = endringklasseMap.get(idClass);
+            Class<? extends I> endringClass = endringklasseMap.get(idClass);
             if (endringClass != null) {
                 return endringClass;
             }
@@ -181,7 +177,7 @@ public abstract class AbstractEndringManager implements StoreSessionFinishListen
      * @param storeServer    store
      * @param endring        endringen som nettopp har blitt laget
      */
-    protected void decorateEndring(StoreServer storeServer, AbstractEndring<?> endring) {
+    protected void decorateEndring(StoreServer storeServer, I endring) {
     }
 
 }

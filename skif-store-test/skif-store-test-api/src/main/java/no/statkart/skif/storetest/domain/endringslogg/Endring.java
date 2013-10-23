@@ -12,4 +12,17 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
  */
 public abstract class Endring<I extends StoreTestBubbleId<?>> extends AbstractEndring<I> implements StoreTestBubble {
     private static final long serialVersionUID = 1L;
+
+    private String brukernavn;
+
+
+
+    public String getBrukernavn() {
+        return brukernavn;
+    }
+
+    public void setBrukernavn(String brukernavn) {
+        this.brukernavn = brukernavn;
+    }
+
 }
