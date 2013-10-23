@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.domain.multikobling.kobling;
+package no.statkart.skif.storetest.domain.multikobling_old.kobling;
 
 /**
  * Roller koblingen RetsstiftelseTilPersonKobling

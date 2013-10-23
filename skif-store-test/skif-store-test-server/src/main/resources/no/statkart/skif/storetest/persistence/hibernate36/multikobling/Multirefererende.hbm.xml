@@ -3,16 +3,16 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest2.domain.multikobling.Multirefererende" table="MULTIREFERERENDE" select-before-update="true"
+    <class name="no.statkart.skif.storetest.domain.multikobling.Multirefererende" table="MULTIREFERERENDE" select-before-update="true"
            lazy="true">
         <id name="id" column="id"
-            type="no.statkart.skif.storetest2.persistence.hibernate.type.MultirefererendeIdType">
+            type="no.statkart.skif.storetest.persistence.hibernate.type.multikobling.MultirefererendeIdType">
             <generator class="assigned"/>
         </id>
 
         <set name="koblinger" table="MULTIREFERERENDEKOBLING" cascade="all-delete-orphan">
             <key column="multirefererendeId" foreign-key="FK_MULTIREFEREREND_KOBLING" not-null="true"/>
-            <composite-element class="no.statkart.skif.storetest2.domain.multikobling.MultirefererendeKobling">
+            <composite-element class="no.statkart.skif.storetest.domain.multikobling.MultirefererendeKobling">
                 <property name="rolleWorkaround" column="ROLLE" not-null="true"/>
                 <property name="tekst" not-null="true"/>
             </composite-element>

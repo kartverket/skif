@@ -47,7 +47,6 @@ import no.statkart.skif.storetest2.domain.eierskap.EiendomstypeKodeId;
 import no.statkart.skif.storetest2.domain.eierskap.Eier;
 import no.statkart.skif.storetest2.domain.entitycomponent.BubbleWithEntityComponents;
 import no.statkart.skif.storetest2.domain.list.ListOfEntityComponents;
-import no.statkart.skif.storetest2.domain.multikobling.Multirefererende;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
@@ -161,7 +160,6 @@ public class StoreTest2ServerModule extends SkifModule {
                 .addResource(Eier.class)
                 .addResource(ListOfEntityComponents.class)
                 .addResource(BubbleWithEntityComponents.class)
-                .addResource(Multirefererende.class)
                 ;
 
 

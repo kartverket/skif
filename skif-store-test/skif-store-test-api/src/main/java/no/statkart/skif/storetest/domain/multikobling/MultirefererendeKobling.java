@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest2.domain.multikobling;
+package no.statkart.skif.storetest.domain.multikobling;
 
 import no.statkart.skif.store.multikobling.Kobling;
 
@@ -9,6 +9,8 @@ import no.statkart.skif.store.multikobling.Kobling;
  * @since 2.2.0
  */
 public class MultirefererendeKobling extends Kobling<String, String> {
+    private static final long serialVersionUID = 1L;
+
     private String tekst;
 
     public MultirefererendeKobling() {

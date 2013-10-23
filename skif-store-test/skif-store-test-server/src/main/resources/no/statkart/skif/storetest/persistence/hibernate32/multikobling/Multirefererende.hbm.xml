@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.multikobling.Multirefererende" table="MULTIREFERERENDE" select-before-update="true"
+           lazy="true">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest2.persistence.hibernate.type.MultirefererendeIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <set name="koblinger" table="MULTIREFERERENDEKOBLING" cascade="all-delete-orphan">
+            <key column="multirefererendeId" foreign-key="FK_MULTIREFEREREND_KOBLING" not-null="true"/>
+            <composite-element class="no.statkart.skif.storetest.domain.multikobling.MultirefererendeKobling">
+                <property name="rolleWorkaround" column="ROLLE" not-null="true"/>
+                <property name="tekst" not-null="true"/>
+            </composite-element>
+        </set>
+    </class>
+
+</hibernate-mapping>

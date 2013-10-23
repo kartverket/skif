@@ -76,20 +76,6 @@ CREATE TABLE ListOfEntityComponents__C (
 COMMENT ON TABLE LISTOFENTITYCOMPONENTS__C IS 'Element i liste av komponenter for bobble';
 
 
-CREATE TABLE Multirefererende (
-    ID NUMBER(19,0) NOT NULL,
-    CONSTRAINT PK_MULTIREFERERENDE PRIMARY KEY (ID)
-);
-
---todo: forbedret navn
-CREATE TABLE MultirefererendeKobling (
-    MULTIREFERERENDEID NUMBER(19,0) NOT NULL,
-    ROLLE VARCHAR2(255 CHAR) NOT NULL,
-    TEKST VARCHAR2(255 CHAR) NOT NULL,
-    CONSTRAINT PK_MULTIREFERERENDEKOBLING PRIMARY KEY (MULTIREFERERENDEID, ROLLE, TEKST)
-);
-
-
 
 
 ------------------------------------------------------------------------------------------------------------------------

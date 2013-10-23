@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.domain.multikobling;
+package no.statkart.skif.storetest.domain.multikobling_old;
 
 import no.statkart.skif.store.SnapshotVersion;
 

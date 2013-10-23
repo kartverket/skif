@@ -1,9 +1,9 @@
-package no.statkart.skif.storetest.domain.multikobling;
+package no.statkart.skif.storetest.domain.multikobling_old;
 
 import no.statkart.skif.store.multikobling.Multikobling;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
-import no.statkart.skif.storetest.domain.multikobling.kobling.RettsstiftelsePersonRolle;
-import no.statkart.skif.storetest.domain.multikobling.kobling.RetttstiftelseTilPersonKobling;
+import no.statkart.skif.storetest.domain.multikobling_old.kobling.RettsstiftelsePersonRolle;
+import no.statkart.skif.storetest.domain.multikobling_old.kobling.RetttstiftelseTilPersonKobling;
 
 import java.util.Set;
 

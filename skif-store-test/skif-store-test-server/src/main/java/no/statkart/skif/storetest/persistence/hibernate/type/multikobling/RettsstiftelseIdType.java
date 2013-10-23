@@ -2,8 +2,7 @@ package no.statkart.skif.storetest.persistence.hibernate.type.multikobling;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
-import no.statkart.skif.storetest.domain.mockup.FooId;
-import no.statkart.skif.storetest.domain.multikobling.RettsstiftelseId;
+import no.statkart.skif.storetest.domain.multikobling_old.RettsstiftelseId;
 
 /**
  * @author Henrik Fredholm

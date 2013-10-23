@@ -1,7 +1,6 @@
-package no.statkart.skif.storetest.domain.multikobling;
+package no.statkart.skif.storetest.domain.multikobling_old;
 
-import com.google.common.collect.HashMultimap;
-import no.statkart.skif.storetest.domain.multikobling.kobling.RettsstiftelsePersonRolle;
+import no.statkart.skif.storetest.domain.multikobling_old.kobling.RettsstiftelsePersonRolle;
 
 import java.util.Set;
 

@@ -1,8 +1,8 @@
-package no.statkart.skif.storetest2.persistence.hibernate.type;
+package no.statkart.skif.storetest.persistence.hibernate.type.multikobling;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
-import no.statkart.skif.storetest2.domain.multikobling.MultirefererendeId;
+import no.statkart.skif.storetest.domain.multikobling.MultirefererendeId;
 
 /**
  * @author Tor Egil R. Strand

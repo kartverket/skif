@@ -56,8 +56,9 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.koder.*;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.Raz;
-import no.statkart.skif.storetest.domain.multikobling.Person;
-import no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse;
+import no.statkart.skif.storetest.domain.multikobling.Multirefererende;
+import no.statkart.skif.storetest.domain.multikobling_old.Person;
+import no.statkart.skif.storetest.domain.multikobling_old.Rettsstiftelse;
 import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponent;
 import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2BBOne;
 import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2CCMany;
@@ -73,10 +74,8 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
 
-import javax.inject.Inject;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -229,10 +228,13 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(HistWithRelation.class)
                 .addResourceWithSubclasses(SubTypedBubble.class, SubTypeWithPrimitive.class, SubTypeWithCollection.class)
 
-                        // Components
+                // Components
                 .addResource(BubbleWithCompositeComponent.class)
                 .addResource(BubbleWithEntityComponent.class)
                 .addResource(BubbleWithEntityInCompositeComponent.class)
+
+                // Multikobling
+                .addResource(Multirefererende.class)
 
                 // Koder
                 .addResource(EnumKodeIdType.class)
@@ -246,7 +248,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(StoreTestKodelisteLong.class)
                 .addResource(BubbleWithKode.class)
 
-                        // Klasser for relasjonstesting
+                // Klasser for relasjonstesting
                 .addResource(X1BBOne.class)
                 .addResource(X1CCMany.class)
 //                .addResource(X1DDUnique.class)

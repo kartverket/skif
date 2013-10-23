@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-   <class name="no.statkart.skif.storetest.domain.multikobling.Person" lazy="true">
+   <class name="no.statkart.skif.storetest.domain.multikobling_old.Person" lazy="true">
       <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.multikobling.PersonIdType">
           <generator class="assigned"/>
       </id>

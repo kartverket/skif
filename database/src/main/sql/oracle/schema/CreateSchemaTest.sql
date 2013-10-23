@@ -316,6 +316,19 @@ create table L2SetEntInCompComponent (
 );
 alter table L2SetEntInCompComponent add constraint FK_L2SetEntInComp_ownerId foreign key (ownerId) references BubbleWithEntInCompComponent;
 
+CREATE TABLE Multirefererende (
+    ID NUMBER(19,0) NOT NULL,
+    CONSTRAINT PK_MULTIREFERERENDE PRIMARY KEY (ID)
+);
+
+--todo: forbedret navn
+CREATE TABLE MultirefererendeKobling (
+    MULTIREFERERENDEID NUMBER(19,0) NOT NULL,
+    ROLLE VARCHAR2(255 CHAR) NOT NULL,
+    TEKST VARCHAR2(255 CHAR) NOT NULL,
+    CONSTRAINT PK_MULTIREFERERENDEKOBLING PRIMARY KEY (MULTIREFERERENDEID, ROLLE, TEKST)
+);
+
 
 -- Tabeller for relasjonstesting
 

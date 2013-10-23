@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.domain.multikobling;
+package no.statkart.skif.storetest.domain.multikobling_old;
 
 import com.google.inject.Inject;
 import no.statkart.skif.store.BubbleIds;
@@ -10,8 +10,8 @@ import no.statkart.skif.store.multikobling.Kobling;
 import no.statkart.skif.store.multikobling.Multikobling;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
-import no.statkart.skif.storetest.domain.multikobling.kobling.RettsstiftelsePersonRolle;
-import no.statkart.skif.storetest.domain.multikobling.kobling.RetttstiftelseTilPersonKobling;
+import no.statkart.skif.storetest.domain.multikobling_old.kobling.RettsstiftelsePersonRolle;
+import no.statkart.skif.storetest.domain.multikobling_old.kobling.RetttstiftelseTilPersonKobling;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 

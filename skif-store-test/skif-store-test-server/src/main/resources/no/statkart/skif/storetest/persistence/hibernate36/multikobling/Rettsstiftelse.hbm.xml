@@ -3,7 +3,7 @@
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
-    <class name="no.statkart.skif.storetest.domain.multikobling.Rettsstiftelse" lazy="true" abstract="true">
+    <class name="no.statkart.skif.storetest.domain.multikobling_old.Rettsstiftelse" lazy="true" abstract="true">
         <id name="id" column="id"
             type="no.statkart.skif.storetest.persistence.hibernate.type.multikobling.RettsstiftelseIdType">
             <generator class="assigned"/>
@@ -13,12 +13,12 @@
 
         <set name="personKoblinger" table="Rettsstiftelse_Person_Kobling" cascade="all,delete-orphan">
             <key column="rettsstiftelseId"/>
-            <composite-element class="no.statkart.skif.storetest.domain.multikobling.kobling.RetttstiftelseTilPersonKobling">
+            <composite-element class="no.statkart.skif.storetest.domain.multikobling_old.kobling.RetttstiftelseTilPersonKobling">
                 <property name="rolleFix" column="rolle" />
                 <many-to-one
                       name="person"
                       column="personId"
-                      class="no.statkart.skif.storetest.domain.multikobling.Person"
+                      class="no.statkart.skif.storetest.domain.multikobling_old.Person"
                       access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
                       foreign-key="FK_Rettsstift_Person">
                    <meta attribute="bubble-ref"/>
@@ -26,10 +26,10 @@
             </composite-element>
         </set>
 
-        <subclass name="no.statkart.skif.storetest.domain.multikobling.Servitutt" discriminator-value="Servitutt" lazy="true">
+        <subclass name="no.statkart.skif.storetest.domain.multikobling_old.Servitutt" discriminator-value="Servitutt" lazy="true">
         </subclass>
 
-        <subclass name="no.statkart.skif.storetest.domain.multikobling.Pengeheftelse" discriminator-value="Pengeheftelse" lazy="true">
+        <subclass name="no.statkart.skif.storetest.domain.multikobling_old.Pengeheftelse" discriminator-value="Pengeheftelse" lazy="true">
         </subclass>
     </class>
 

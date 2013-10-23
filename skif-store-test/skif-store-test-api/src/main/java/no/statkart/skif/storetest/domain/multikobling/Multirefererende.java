@@ -1,15 +1,17 @@
-package no.statkart.skif.storetest2.domain.multikobling;
+package no.statkart.skif.storetest.domain.multikobling;
 
 import no.statkart.skif.store.multikobling.DefaultKoblingFactory;
 import no.statkart.skif.store.multikobling.Multikobling;
-import no.statkart.skif.storetest2.domain.AbstractStoreTest2Bubble;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 
 import java.util.Set;
 
 /**
  * Klasse for testing av {@link no.statkart.skif.store.multikobling.Multikobling}.
  */
-public class Multirefererende extends AbstractStoreTest2Bubble {
+public class Multirefererende extends AbstractStoreTestBubble {
+    private static final long serialVersionUID = 1L;
+
     private Multikobling<String, String, MultirefererendeKobling> multikobling = Multikobling.create(DefaultKoblingFactory.create(MultirefererendeKobling.class));
 
     @Override

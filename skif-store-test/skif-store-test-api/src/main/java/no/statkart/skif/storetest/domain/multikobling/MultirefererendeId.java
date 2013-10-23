@@ -1,7 +1,7 @@
-package no.statkart.skif.storetest2.domain.multikobling;
+package no.statkart.skif.storetest.domain.multikobling;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest2.domain.AbstractStoreTest2BubbleId;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 
 /**
  * Id for {@link Multirefererende}.
@@ -9,7 +9,9 @@ import no.statkart.skif.storetest2.domain.AbstractStoreTest2BubbleId;
  * @author Tor Egil R. String
  * @since 2.2.0
  */
-public class MultirefererendeId<T extends Multirefererende> extends AbstractStoreTest2BubbleId<T> {
+public class MultirefererendeId<T extends Multirefererende> extends AbstractStoreTestBubbleId<T> {
+    private static final long serialVersionUID = 1L;
+
     public MultirefererendeId(Long value) {
         super(value);
     }
