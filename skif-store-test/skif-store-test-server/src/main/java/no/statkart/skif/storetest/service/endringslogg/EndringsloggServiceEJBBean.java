@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.service.endringslogg;
 import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 
@@ -29,12 +30,12 @@ public class EndringsloggServiceEJBBean extends EJBTimedService implements Endri
     EndringsloggService serviceChain;
 
     @Override
-    public long findSisteEndringsnummer() {
-        return serviceChain.findSisteEndringsnummer();
+    public long findSisteEndringsnummer(SnapshotVersion snapshotVersion) {
+        return serviceChain.findSisteEndringsnummer(snapshotVersion);
     }
 
     @Override
-    public List<Endring> findEndringerEtterEndringsnummer(long endringsnummer, int maksAntall) {
-        return serviceChain.findEndringerEtterEndringsnummer(endringsnummer, maksAntall);
+    public <E extends Endring> List<E> findEndringerEtterEndringsnummer(long endringsnummer, Class<E> endringsklasse ,  int maksAntall, SnapshotVersion snapshotVersion) {
+        return serviceChain.findEndringerEtterEndringsnummer(endringsnummer, endringsklasse, maksAntall, snapshotVersion);
     }
 }

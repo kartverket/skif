@@ -49,7 +49,7 @@ public class EndringManagerTest extends StoreTestTestCase {
     private Store store;
 
     public void antallEndringer() {
-        final long antallEndringerFoer = endringsloggService.findSisteEndringsnummer();
+        final long antallEndringerFoer = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
 
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         MockupTransfer mockupTransfer = mockupFacade.getTransfer();
@@ -63,13 +63,13 @@ public class EndringManagerTest extends StoreTestTestCase {
         });
         final int forventetAntall = filteredObjects.size();
 
-        final long antallEndringerEtter = endringsloggService.findSisteEndringsnummer();
+        final long antallEndringerEtter = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
 
         Assert.assertEquals(antallEndringerEtter - antallEndringerFoer, forventetAntall);
     }
 
     public void rekkefoelge() {
-        final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer();
+        final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
 
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         SimpleMockupFactory simpleMockupFactory = mockupFacade.getSimpleMockupFactory();
@@ -83,7 +83,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(bubbleWithRelation1, simple1, simple2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
 
-        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, 10);
+        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, Endring.class, 10, SnapshotVersion.CURRENT);
 
         Assert.assertEquals(endringer.size(), 3, "Antall endringer");
 
@@ -101,7 +101,7 @@ public class EndringManagerTest extends StoreTestTestCase {
     public void insertUpdateDelete() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
 
-        final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer();
+        final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
 
         BubbleWithRelation bubbleWithRelation1 = store.lock(mockupFacade.getBubbleWithRelationMockupFactory().getBubbleWithRelationId1());
         Simple simple2 = store.lock(mockupFacade.getSimpleMockupFactory().getSimpleId2());
@@ -117,7 +117,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         MockupTransfer transfer = new MockupTransfer(Arrays.asList(simpleX), Arrays.asList(bubbleWithRelation1), Arrays.asList(simple2), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
 
-        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, 10);
+        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, Endring.class, 10, SnapshotVersion.CURRENT);
 
         Assert.assertEquals(endringer.size(), 3, "Antall endringer");
 
@@ -136,14 +136,15 @@ public class EndringManagerTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester at endringer lages for supertype dersom subtypen ikke har egen endringstype.
+     * Tester at endringer lages for supertype dersom subtypen ikke har egen endringstype. Tester også at
+     * endringer kan hentes ut via subtype
      *
      * @since 2.3.0
      */
     public void subTypesSuperType() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
 
-        final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer();
+        final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
 
         SubTypeWithPrimitive subTypeWithPrimitive = new SubTypeWithPrimitive();
         subTypeWithPrimitive.setId(mockupFacade.getIdService().getNextId(SubTypeWithPrimitiveId.class));
@@ -152,10 +153,17 @@ public class EndringManagerTest extends StoreTestTestCase {
         MockupTransfer transfer = new MockupTransfer(Arrays.asList(subTypeWithPrimitive), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
 
-        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, 10);
+        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, Endring.class, 10, SnapshotVersion.CURRENT);
+        List<SubTypedBubbleEndring> endringerSubtyped = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, SubTypedBubbleEndring.class, 10, SnapshotVersion.CURRENT);
 
         Assert.assertEquals(endringer.size(), 1, "Antall endringer");
+        Assert.assertEquals(endringerSubtyped.size(), 1, "Antall endringer hentet via subtype");
         Assert.assertEquals(endringer.get(0).getClass(), SubTypedBubbleEndring.class, "Endring 0 klasse");
+        Assert.assertEquals(endringerSubtyped.get(0).getClass(), SubTypedBubbleEndring.class, "Endring 0 klasse");
         Assert.assertEquals(endringer.get(0).getEndretBubbleId(), subTypeWithPrimitive.getId(), "Endring 0 id");
+        Assert.assertEquals(endringerSubtyped.get(0).getEndretBubbleId(), subTypeWithPrimitive.getId(), "Endring 0 id");
+
+        List<SimpleEndring> endringerSimple = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, SimpleEndring.class, 10, SnapshotVersion.CURRENT);
+        Assert.assertEquals(endringerSimple.size(), 0, "Antall simple endringer");
     }
 }

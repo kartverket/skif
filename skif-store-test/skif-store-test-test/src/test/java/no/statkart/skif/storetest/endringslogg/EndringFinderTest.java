@@ -44,7 +44,7 @@ public class EndringFinderTest extends StoreTestServerTestCase {
     public void findSisteEndringsnummer() {
         mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
-        long sisteEndringsnummer = endringFinder.findSisteEndringsnummer();
+        long sisteEndringsnummer = endringFinder.findSisteEndringsnummer(SnapshotVersion.CURRENT);
 
         assertTrue(sisteEndringsnummer > 0L, "Forventet at endringsnummer skulle være større enn 0 når i alle fall ett mockupsett er skrevet til databasen.");
     }
@@ -52,13 +52,13 @@ public class EndringFinderTest extends StoreTestServerTestCase {
     public void findSisteEndringsnummerForEier() {
         mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
-        long sisteEndringsnummer = endringFinder.findSisteEndringsnummerForClass(SimpleEndring.class);
+        long sisteEndringsnummer = endringFinder.findSisteEndringsnummerForClass(SimpleEndring.class, SnapshotVersion.CURRENT);
 
         assertTrue(sisteEndringsnummer > 0L, "Forventet at endringsnummer skulle være større enn 0 når i alle fall ett mockupsett er skrevet til databasen.");
     }
 
     public void findEndringerEtterEndringsnummer() {
-        final long endringsnummerFoer = endringFinder.findSisteEndringsnummer();
+        final long endringsnummerFoer = endringFinder.findSisteEndringsnummer(SnapshotVersion.CURRENT);
 
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         MockupTransfer mockupTransfer = mockupFacade.getTransfer();
@@ -72,18 +72,18 @@ public class EndringFinderTest extends StoreTestServerTestCase {
         });
         final int forventetAntall = filteredObjects.size();
 
-        List<Endring> endringer = endringFinder.findEndringerEtterEndringsnummer(endringsnummerFoer, 1);
+        List<Endring> endringer = endringFinder.findEndringerEtterEndringsnummer(endringsnummerFoer, 1, SnapshotVersion.CURRENT);
 
         assertEquals(endringer.size(), 1, "Antall endringer med begrensing 1");
 
         assertTrue(forventetAntall <= 1000, "Forventet antall endringer er større en grenseverdien for uthenting");
-        endringer = endringFinder.findEndringerEtterEndringsnummer(endringsnummerFoer, 1000);
+        endringer = endringFinder.findEndringerEtterEndringsnummer(endringsnummerFoer, 1000, SnapshotVersion.CURRENT);
 
         assertEquals(endringer.size(), forventetAntall, "Antall endringer");
     }
 
     public void findEndringerEtterEndringsnummerForClass() {
-        final long endringsnummerFoer = endringFinder.findSisteEndringsnummerForClass(SimpleEndring.class);
+        final long endringsnummerFoer = endringFinder.findSisteEndringsnummerForClass(SimpleEndring.class, SnapshotVersion.CURRENT);
 
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         MockupTransfer mockupTransfer = mockupFacade.getTransfer();
@@ -91,12 +91,12 @@ public class EndringFinderTest extends StoreTestServerTestCase {
 
         final int forventetAntall = mockupFacade.getSimpleMockupFactory().getAllIds(SimpleId.class).size();
 
-        List<SimpleEndring> endringer = endringFinder.findEndringerEtterEndringsnummerForClass(endringsnummerFoer, SimpleEndring.class, 1);
+        List<SimpleEndring> endringer = endringFinder.findEndringerEtterEndringsnummerForClass(endringsnummerFoer, SimpleEndring.class, 1, SnapshotVersion.CURRENT);
 
         assertEquals(endringer.size(), 1, "Antall endringer med begrensing 1");
 
         assertTrue(forventetAntall <= 1000, "Forventet antall endringer er større en grenseverdien for uthenting");
-        endringer = endringFinder.findEndringerEtterEndringsnummerForClass(endringsnummerFoer, SimpleEndring.class, 1000);
+        endringer = endringFinder.findEndringerEtterEndringsnummerForClass(endringsnummerFoer, SimpleEndring.class, 1000, SnapshotVersion.CURRENT);
 
         assertEquals(endringer.size(), forventetAntall, "Antall endringer");
     }

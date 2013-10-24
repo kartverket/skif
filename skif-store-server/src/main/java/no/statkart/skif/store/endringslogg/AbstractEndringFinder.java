@@ -1,13 +1,23 @@
 package no.statkart.skif.store.endringslogg;
 
+import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.persistence.SessionSelector;
+import no.statkart.skif.util.HibernateHelper;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Basisfunksjonalitet for å finne endringer.
@@ -21,17 +31,16 @@ import java.util.List;
 public abstract class AbstractEndringFinder<T extends AbstractEndring> {
     private final Class<T> endringsbaseklasse;
 
-    protected final Provider<Session> sessionProvider;
+    @Inject
+    private Provider<SessionSelector> sessionSelectorProvider;
 
     /**
      * @param endringsbaseklasse Den klassen som er roten i Hibernate-mappingen for endringer. Implementasjonens
      *                           konstruktør angir denne i sin konstruktør (tar den ikke inn som parameter) tilsvarende
      *                           som <code>T</code>.
-     * @param sessionProvider    provider av gjeldende Hibernate-session
      */
-    public AbstractEndringFinder(Class<T> endringsbaseklasse, Provider<Session> sessionProvider) {
+    public AbstractEndringFinder(Class<T> endringsbaseklasse) {
         this.endringsbaseklasse = endringsbaseklasse;
-        this.sessionProvider = sessionProvider;
     }
 
     /**
@@ -39,8 +48,8 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
      *
      * @return siste endringenummer
      */
-    public long findSisteEndringsnummer() {
-        return findSisteEndringsnummerForClass(endringsbaseklasse);
+    public long findSisteEndringsnummer(SnapshotVersion snapshotVersion) {
+        return findSisteEndringsnummerForClass(endringsbaseklasse, snapshotVersion);
     }
 
     /**
@@ -49,12 +58,17 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
      * @param endringsklasse tell kun endringer av denne klassen
      * @return siste endringenummer for endringsklassen
      */
-    public long findSisteEndringsnummerForClass(Class<? extends T> endringsklasse) {
-        Session session = sessionProvider.get();
-        Criteria criteria = session.createCriteria(endringsklasse);
-        criteria.setProjection(Projections.max("id"));
-        AbstractEndringId<?> endringId = (AbstractEndringId<?>) criteria.uniqueResult();
-        return endringId != null ? endringId.getValue() : 0L;
+    public long findSisteEndringsnummerForClass(Class<? extends T> endringsklasse, SnapshotVersion snapshotVersion) {
+        SessionSelector sessionSelector = sessionSelectorProvider.get();
+        try {
+            Session session = sessionSelector.get(snapshotVersion);
+            Criteria criteria = session.createCriteria(endringsklasse);
+            criteria.setProjection(Projections.max("id"));
+            AbstractEndringId<?> endringId = (AbstractEndringId<?>) criteria.uniqueResult();
+            return endringId != null ? endringId.getValue() : 0L;
+        } finally {
+            if (sessionSelector!=null) sessionSelector.close();
+        }
     }
 
     /**
@@ -64,8 +78,8 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
      * @param maksAntall     maksimalt antall endringer som skal hentes
      * @return endringene, sortert etter stigende endringsnummer
      */
-    public List<T> findEndringerEtterEndringsnummer(long endringsnummer, int maksAntall) {
-        return findEndringerEtterEndringsnummerForClass(endringsnummer, endringsbaseklasse, maksAntall);
+    public List<T> findEndringerEtterEndringsnummer(long endringsnummer, int maksAntall, SnapshotVersion snapshotVersion) {
+        return findEndringerEtterEndringsnummerForClass(endringsnummer, endringsbaseklasse, maksAntall, snapshotVersion);
     }
 
     /**
@@ -78,12 +92,18 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
      * @param <E>            tilsvarer <code>endringsklasse</code>
      * @return endringene, sortert etter stigende endringsnummer
      */
-    public <E extends T> List<E> findEndringerEtterEndringsnummerForClass(long endringsnummer, Class<E> endringsklasse, int maksAntall) {
-        Session session = sessionProvider.get();
-        Criteria criteria = session.createCriteria(endringsklasse);
-        criteria.add(Restrictions.gt("id", new AbstractEndringId(endringsnummer)));
-        criteria.addOrder(Order.asc("id"));
-        criteria.setMaxResults(maksAntall);
-        return criteria.list();
+    @SuppressWarnings("unchecked")
+    public <E extends T> List<E> findEndringerEtterEndringsnummerForClass(long endringsnummer, Class<E> endringsklasse, int maksAntall, SnapshotVersion snapshotVersion) {
+        SessionSelector sessionSelector = sessionSelectorProvider.get();
+        try {
+            Session session = sessionSelector.get(snapshotVersion);
+            Criteria criteria = session.createCriteria(endringsklasse);
+            criteria.add(Restrictions.gt("id", new AbstractEndringId(endringsnummer)));
+            //criteria.addOrder(Order.asc("id")); // trengs ikke da Endring er definert som organization index tabell
+            criteria.setMaxResults(maksAntall);
+            return criteria.list();
+        } finally {
+            if (sessionSelector!=null) sessionSelector.close();
+        }
     }
 }

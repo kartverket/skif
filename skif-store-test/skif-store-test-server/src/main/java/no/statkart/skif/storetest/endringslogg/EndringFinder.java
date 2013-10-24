@@ -15,11 +15,8 @@ import org.hibernate.Session;
  */
 @Singleton
 public class EndringFinder extends AbstractEndringFinder<Endring> {
-    /**
-     * @param sessionProvider provider av gjeldende Hibernate-session
-     */
     @Inject
-    public EndringFinder(Provider<Session> sessionProvider) {
-        super(Endring.class, sessionProvider);
+    public EndringFinder() {
+        super(Endring.class);
     }
 }

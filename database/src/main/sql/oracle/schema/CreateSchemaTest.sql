@@ -23,7 +23,7 @@ CREATE TABLE Endring (
     BRUKERNAVN VARCHAR2(255 CHAR),
     ENDRETBUBBLEID NUMBER(19,0),
     CONSTRAINT PK_ENDRING PRIMARY KEY (ID)
-);
+) organization index;
 
 create table HistoriskDbKode (
     id number(19,0) not null,
