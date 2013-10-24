@@ -166,7 +166,7 @@ libraries.weblogic = files(
 libraries.weblogic += files(
         "${WEBLOGIC_HOME}/modules/com.bea.core.utils.wrapper_1.4.0.0.jar",
 
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.7.0.0.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.8.0.0.jar" : [],
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.7.0.0.jar" : [],
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.5.0.0.jar" : [],
 )
