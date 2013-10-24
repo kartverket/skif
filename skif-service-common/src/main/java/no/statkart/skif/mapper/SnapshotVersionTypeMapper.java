@@ -2,6 +2,7 @@ package no.statkart.skif.mapper;
 
 import com.google.common.base.Joiner;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.SnapshotVersion;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
@@ -9,26 +10,29 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
- * Mapper mellom {@link Timestamp} og {@link XMLGregorianCalendar}.
+ * Mapper mellom {@link SnapshotVersion} og {@link javax.xml.datatype.XMLGregorianCalendar}.
  * Typen i XML-skjema skal være <code>xs:dateTime</code>.
  *
  * @author Tor Egil R. Strand
- * @since 2.3.0
+ * @since 2.4.0
  */
-public class TimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, Timestamp, Mapping> {
-    public TimestampTypeMapper() {
-        super(XMLGregorianCalendar.class, Timestamp.class, Mapping.class);
+public class SnapshotVersionTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, SnapshotVersion, Mapping> {
+    public SnapshotVersionTypeMapper() {
+        super(XMLGregorianCalendar.class, SnapshotVersion.class, Mapping.class);
     }
 
     @Override
-    public XMLGregorianCalendar mapDomainObject(Timestamp source) {
-        GregorianCalendar pureGregorianCalendar = createPureGregorianCalendar(source);
+    public XMLGregorianCalendar mapDomainObject(SnapshotVersion source) {
+        GregorianCalendar pureGregorianCalendar = createPureGregorianCalendar(source.getTimestamp());
         try {
             XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(pureGregorianCalendar);
-            xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(source.getNanos(), 9));
+            xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(source.getTimestamp().getNanos(), 9));
             return xmlGregorianCalendar;
         } catch (DatatypeConfigurationException e) {
             throw new ImplementationException(e);
@@ -36,7 +40,7 @@ public class TimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar
     }
 
     @Override
-    public Timestamp mapWsapiObject(XMLGregorianCalendar source) {
+    public SnapshotVersion mapWsapiObject(XMLGregorianCalendar source) {
         validate(source);
 
         GregorianCalendar instance = new GregorianCalendar();
@@ -44,13 +48,13 @@ public class TimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar
         instance.setTimeZone(source.getTimeZone(DatatypeConstants.FIELD_UNDEFINED));
         instance.set(source.getYear(), source.getMonth() - 1, source.getDay(), source.getHour(), source.getMinute(), source.getSecond());
 
-        Timestamp target = new Timestamp(instance.getTimeInMillis());
+        Timestamp timestamp = new Timestamp(instance.getTimeInMillis());
 
         if (source.getFractionalSecond() != null) {
-            target.setNanos(source.getFractionalSecond().scaleByPowerOfTen(9).intValue());
+            timestamp.setNanos(source.getFractionalSecond().scaleByPowerOfTen(9).intValue());
         }
 
-        return target;
+        return SnapshotVersion.createInstance(timestamp);
     }
 
     /**
@@ -61,7 +65,7 @@ public class TimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar
     private static void validate(XMLGregorianCalendar timestamp) {
         List<String> errorMsgs = new ArrayList<String>();
         if (timestamp.getEon() != null && timestamp.getEon().longValue() != 0)
-            errorMsgs.add("Timestamp can't span eons.");
+            errorMsgs.add("SnapshotVersion can't span eons.");
         if (timestamp.getYear() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Year is not specified.");
         if (timestamp.getMonth() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Month is not specified.");
         if (timestamp.getDay() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Day is not specified.");
@@ -71,7 +75,7 @@ public class TimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar
 
         if (!errorMsgs.isEmpty()) {
             String joined = Joiner.on(' ').join(errorMsgs);
-            throw new MappingException("Can't map timestamp: " + joined);
+            throw new MappingException("Can't map SnapshotVersion: " + joined);
         }
     }
 

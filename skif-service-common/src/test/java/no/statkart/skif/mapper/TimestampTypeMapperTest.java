@@ -19,6 +19,7 @@ import java.util.TimeZone;
  */
 @Test
 public class TimestampTypeMapperTest {
+    // Tilsvarende test finnes i SnapshotVersionTypeMapperTest
     public void testManyCombinations() {
         Random random = new Random(31415L); // Bruker fast seed, slik at testen skal være repeterbar
         TimestampTypeMapper mapper = new TimestampTypeMapper();
