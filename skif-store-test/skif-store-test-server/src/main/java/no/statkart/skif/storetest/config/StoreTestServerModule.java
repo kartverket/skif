@@ -117,10 +117,10 @@ public class StoreTestServerModule extends SkifModule {
         install(new ServerServiceModule(moduleConfiguration, new StoreTestTestServices().getServices()));
 
         // DomainServiceFinder skal ha RelationCacheProxyHandler i CallServiceChain
-        ServerServiceModule domainServiceModule = new ServerServiceModule(moduleConfiguration, new StoreTestDomainFinderServices().getServices());
-        domainServiceModule.getStrategy(ServiceMode.SINGLE_VM).getCallServiceChainFactorySpecification().getCallServiceChainProxyHandlers().add(0, RelationCacheProxyHandler.class);
-        domainServiceModule.getStrategy(ServiceMode.JEE).getCallServiceChainFactorySpecification().getCallServiceChainProxyHandlers().add(0, RelationCacheProxyHandler.class);
-        install(domainServiceModule);
+//        ServerServiceModule domainServiceModule = new ServerServiceModule(moduleConfiguration, new StoreTestDomainFinderServices().getServices());
+//        domainServiceModule.getStrategy(ServiceMode.SINGLE_VM).getCallServiceChainFactorySpecification().getCallServiceChainProxyHandlers().add(0, RelationCacheProxyHandler.class);
+//        domainServiceModule.getStrategy(ServiceMode.JEE).getCallServiceChainFactorySpecification().getCallServiceChainProxyHandlers().add(0, RelationCacheProxyHandler.class);
+//        install(domainServiceModule);
 
 
         bind(TestdataService.class).to(no.statkart.skif.storetest.service.test.TestdataService.class);

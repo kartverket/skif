@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.config;
 
 import no.statkart.skif.service.ServicesListing;
+import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
 import no.statkart.skif.storetest.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 
@@ -22,6 +23,8 @@ public class StoreTestLocalServices implements ServicesListing {
 
         modifiableList.add(DBLockerService.class);
         modifiableList.add(DBLockerInTransactionService.class);
+//        modifiableList.add(EndringsloggService.class);
+
 
         services = Collections.unmodifiableList(modifiableList);
      }

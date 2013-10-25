@@ -186,4 +186,123 @@
             <xs:extension base="domainns:StoreTestBubble"/>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="SubTypedBubbleId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SubTypedBubble">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="text" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Endringsklasse">
+        <xs:sequence>
+            <xs:element name="value" type="xs:string"/>
+        </xs:sequence>
+        <!--<xs:restriction base="xs:string">-->
+            <!--<xs:enumeration value="StoreTestBubble" />-->
+            <!--<xs:enumeration value="Simple" />-->
+            <!--<xs:enumeration value="SubTypedBubble" />-->
+            <!--<xs:enumeration value="X1AA" />-->
+            <!--<xs:enumeration value="X1BBOne" />-->
+            <!--<xs:enumeration value="X1CCMany" />-->
+        <!--</xs:restriction>-->
+    </xs:complexType>
+<!---->
+
+    <xs:complexType name="EndringId">
+        <xs:sequence>
+            <xs:element name="value" type="xs:string"/>
+            <xs:element name="snapshotVersion" type="domainns:SnapshotVersion"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Endring">
+        <xs:sequence>
+            <xs:element name="id" type="basicns:EndringId"/>
+            <xs:element name="versjonId" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="EndringList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:Endring"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithRelationEndring">
+        <xs:complexContent>
+            <xs:extension base="basicns:Endring">
+                <xs:sequence>
+                    <xs:element name="bubbleWithRelationId" type="basicns:BubbleWithRelationId" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+
+    </xs:complexType>
+
+    <xs:complexType name="SimpleEndring">
+        <xs:complexContent>
+            <xs:extension base="basicns:Endring">
+                <xs:sequence>
+                    <xs:element name="simpleId" type="basicns:SimpleId" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+
+    </xs:complexType>
+
+    <xs:complexType name="SubTypedBubbleEndring">
+        <xs:complexContent>
+            <xs:extension base="basicns:Endring">
+                <xs:sequence>
+                    <xs:element name="subTypedId" type="basicns:SubTypedBubbleId" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SubTypeWithPrimitiveId">
+        <xs:complexContent>
+            <xs:extension base="basicns:SubTypedBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SubTypeWithPrimitive">
+        <xs:complexContent>
+            <xs:extension base="basicns:SubTypedBubble">
+                <xs:sequence>
+                    <xs:element name="num" type="xs:int"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SubTypeWithCollectionId">
+        <xs:complexContent>
+            <xs:extension base="basicns:SubTypedBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="SubTypeWithCollection">
+        <xs:complexContent>
+            <xs:extension base="basicns:SubTypedBubble">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" name="tekster" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>

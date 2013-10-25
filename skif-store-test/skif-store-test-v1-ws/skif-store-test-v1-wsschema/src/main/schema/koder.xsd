@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/koder"
+        xmlns:demoKoderns="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"
+        xmlns:kodelistens="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"
+        xmlns:kodens="http://skif.statkart.no/storetest/wsapi/domain/koder"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:import schemaLocation="kodeliste.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"/>
+
+
+    <!--<xs:complexType name="StoreTestKodeId">-->
+        <!--<xs:complexContent>-->
+            <!--<xs:extension base="kodelistens:KodeId">-->
+            <!--</xs:extension>-->
+        <!--</xs:complexContent>-->
+    <!--</xs:complexType>-->
+
+    <!--<xs:complexType name="StoreTestKode">-->
+        <!--<xs:complexContent>-->
+            <!--<xs:extension base="kodelistens:Kode">-->
+            <!--</xs:extension>-->
+        <!--</xs:complexContent>-->
+    <!--</xs:complexType>-->
+
+
+    <!--<xs:complexType name="StoreTestEnumKodeId">-->
+        <!--<xs:complexContent>-->
+            <!--<xs:extension base="kodens:StoreTestKodeId">-->
+            <!--</xs:extension>-->
+        <!--</xs:complexContent>-->
+    <!--</xs:complexType>-->
+
+    <!--<xs:complexType name="StoreTestEnumKode">-->
+        <!--<xs:complexContent>-->
+            <!--<xs:extension base="kodens:StoreTestKode">-->
+            <!--</xs:extension>-->
+        <!--</xs:complexContent>-->
+    <!--</xs:complexType>-->
+
+
+    <xs:complexType name="SimpleEnumKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SimpleEnumKode">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistorikkEnumKodeId">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistorikkEnumKode">
+        <xs:complexContent>
+            <xs:extension base="kodelistens:Kode">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+</xs:schema>

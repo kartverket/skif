@@ -4,20 +4,20 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.exception.ObjectsNotFoundException;
+import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.sequence.IdService;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
+import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.testng.Assert.*;
 
@@ -33,7 +33,7 @@ public class StoreTest extends StoreTestTestCase {
     private Store store;
 
     public void testStoreGet() {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
 
         List<SimpleId> ids = new ArrayList<SimpleId>();
@@ -49,7 +49,7 @@ public class StoreTest extends StoreTestTestCase {
 
 
     public void testStoreGetOld() {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simpleId1Old = mockupFacade.getSimpleMockupFactory().getSimpleId1().asSnapshotVersionOld();
 
         Simple bubble = store.get(simpleId1Old);
@@ -284,7 +284,7 @@ public class StoreTest extends StoreTestTestCase {
      * Tester forsøk på henting av ikke-eksisterende objekt.
      */
     public void testObjectsNotFoundException() {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
         final List<SimpleId<?>> ids = Arrays.<SimpleId<?>>asList(simple1Id, new SimpleId(-1L));
         try {
@@ -302,8 +302,18 @@ public class StoreTest extends StoreTestTestCase {
     /**
      * Tester forsøk på ignorering av ikke-eksisterende objekt.
      */
+
+    private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
+        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
+            @Override
+            public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
+                return mockupFacade.getSimpleMockupFactory().getAllIds(SimpleId.class);
+            }
+        });
+    }
+
     public void testIgnoreMissing() {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
         final List<SimpleId<?>> ids = Arrays.<SimpleId<?>>asList(simple1Id, new SimpleId(-1L));
         List<Simple> bubbles = store.getIgnoreMissing(ids);

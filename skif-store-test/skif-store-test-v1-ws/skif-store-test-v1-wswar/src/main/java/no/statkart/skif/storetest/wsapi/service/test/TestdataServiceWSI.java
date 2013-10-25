@@ -24,4 +24,6 @@ public interface TestdataServiceWSI extends ServiceWSI {
     public void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context);
 
     public void deleteObject(@WebParam(name = "id") long id, @WebParam(name = "tableName") String tableName, @WebParam(name = "context") StoreTestContext context);
+
+    public boolean objectExists(@WebParam(name="id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context);
 }

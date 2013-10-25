@@ -64,4 +64,9 @@ public class TestdataServiceWSBean extends SkifWebService<TestdataServiceWSI> im
     public void deleteObject(@WebParam(name = "id") long id, @WebParam(name = "tableName") String tableName, @WebParam(name = "context") StoreTestContext context) {
         wsServiceChain.deleteObject(id, tableName, context);
     }
+
+    @Override
+    public boolean objectExists(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context) {
+        return wsServiceChain.objectExists(id,context);
+    }
 }

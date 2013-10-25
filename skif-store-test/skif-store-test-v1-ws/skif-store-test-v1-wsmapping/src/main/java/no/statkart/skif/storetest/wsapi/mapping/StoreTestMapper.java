@@ -4,9 +4,16 @@ import no.statkart.skif.mapper.*;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
+import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.basic.*;
+import no.statkart.skif.storetest.domain.koder.HistorikkEnumKode;
+import no.statkart.skif.storetest.domain.koder.HistorikkEnumKodeId;
+import no.statkart.skif.storetest.domain.koder.SimpleEnumKode;
+import no.statkart.skif.storetest.domain.koder.SimpleEnumKodeId;
+import no.statkart.skif.storetest.wsapi.domain.basic.Endringsklasse;
+import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId;
 
 /**
  * @author Henrik Fredholm
@@ -63,6 +70,8 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestC1DbKodeId.class, C1DbKodeId.class));
         addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestC2DbKodeId.class, C2DbKodeId.class));
         addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestXStrDbKodeId.class, XStrDbKodeId.class));
+        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.koder.SimpleEnumKodeId.class, SimpleEnumKodeId.class));
+        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.koder.HistorikkEnumKodeId.class, HistorikkEnumKodeId.class));
 
         // Kode
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKode.class, AEnumKode.class));
@@ -73,6 +82,8 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestC1DbKode.class, C1DbKode.class));
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestC2DbKode.class, C2DbKode.class));
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestXStrDbKode.class, XStrDbKode.class));
+        addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.koder.SimpleEnumKode.class, SimpleEnumKode.class));
+        addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.koder.HistorikkEnumKode.class, HistorikkEnumKode.class));
 
         addMapper(new KodelisteTransferTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer, KodelisteTransfer>(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer.class, KodelisteTransfer.class));
     }
