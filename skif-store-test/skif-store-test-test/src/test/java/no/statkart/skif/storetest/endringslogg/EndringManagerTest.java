@@ -2,17 +2,23 @@ package no.statkart.skif.storetest.endringslogg;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.mockup.MockupTransfer;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.endringslogg.Endringstype;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
+import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.basic.*;
-import no.statkart.skif.storetest.domain.endringslogg.BubbleWithRelationEndring;
-import no.statkart.skif.storetest.domain.endringslogg.Endring;
-import no.statkart.skif.storetest.domain.endringslogg.SimpleEndring;
-import no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring;
+import no.statkart.skif.storetest.domain.endringslogg.*;
 import no.statkart.skif.storetest.mockup.BubbleWithRelationMockupFactory;
 import no.statkart.skif.storetest.mockup.SimpleMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -24,10 +30,12 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tester {@link EndringManager} og, via den, {@link no.statkart.skif.store.endringslogg.AbstractEndringManager}.
@@ -165,5 +173,131 @@ public class EndringManagerTest extends StoreTestTestCase {
 
         List<SimpleEndring> endringerSimple = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, SimpleEndring.class, 10, SnapshotVersion.CURRENT);
         Assert.assertEquals(endringerSimple.size(), 0, "Antall simple endringer");
+    }
+
+
+    /**
+     * Tester uthenting av id-er gitt bobletype. Tester også at det ikke er mulig å hente ut id-er for supertype av
+     * basisklassene (f.eks StoreTestBubble).
+     *
+     * @since 2.4
+     */
+    public void testFindIdsEtterId() {
+        // Oppretter testset med 2 BubbleWitheRelation og 2 Simple objekter
+        final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        SimpleMockupFactory simpleMockupFactory = mockupFacade.getSimpleMockupFactory();
+        BubbleWithRelationMockupFactory bubbleWithRelationMockupFactory = mockupFacade.getBubbleWithRelationMockupFactory();
+
+        Simple simple1 = mockupFacade.getStore().get(simpleMockupFactory.getSimpleId1());
+        Simple simple2 = mockupFacade.getStore().get(simpleMockupFactory.getSimpleId2());
+        Simple simple3 = mockupFacade.getStore().get(simpleMockupFactory.getSimpleId3());
+        BubbleWithRelation bubbleWithRelation1 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId1());
+        BubbleWithRelation bubbleWithRelation2 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId2());
+
+        // Komponerer transfer manuelt slik at rekkefølgen er kjent
+        MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(simple1, simple2, simple3, bubbleWithRelation1, bubbleWithRelation2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
+        testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
+        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, Endring.class, 10, SnapshotVersion.CURRENT);
+        Assert.assertEquals(endringer.size(), 5, "Antall endringer");
+
+        List<BubbleId<Simple>> simpleIdsFromStart = endringsloggService.findIdsEtterId(null, Simple.class, 10, SnapshotVersion.CURRENT);
+        assertTrue(simpleIdsFromStart.size() > 0, "Antall SimpleId");
+
+        // Dette er juks. Vi vet ikke hvilke andre SimpleId som kan finnes i testdatabasen. Oppretter derfor en Id som er en mindre dem vi selv har lagt inn
+        SimpleId<?> simpleIdStart1 = new SimpleId<Simple>(simple1.getId().getValue() - 1);
+        List<SimpleId<?>> simpleIdsInTestFirstBatch = endringsloggService.findIdsEtterId(simpleIdStart1, Simple.class, 2, SnapshotVersion.CURRENT);
+        assertThat(simpleIdsInTestFirstBatch).containsExactly(simple1.getId(), simple2.getId());
+
+        SimpleId<?> simpleIdStart2 = simpleIdsInTestFirstBatch.get(simpleIdsInTestFirstBatch.size() - 1);
+        List<SimpleId<?>> simpleIdsInTestSecondBatch = endringsloggService.findIdsEtterId(simpleIdStart2, Simple.class, 2, SnapshotVersion.CURRENT);
+        assertThat(simpleIdsInTestSecondBatch).containsExactly(simple3.getId());
+
+        BubbleWithRelationId<BubbleWithRelation> bubbleWithRelationIdStart = new BubbleWithRelationId<BubbleWithRelation>(bubbleWithRelation1.getId().getValue() - 1);
+        List<BubbleWithRelationId<?>> bubbleWithRelationIdList = endringsloggService.findIdsEtterId(bubbleWithRelationIdStart, BubbleWithRelation.class, 2, SnapshotVersion.CURRENT);
+        assertThat(bubbleWithRelationIdList).containsExactly(bubbleWithRelation1.getId(), bubbleWithRelation2.getId());
+
+        try {
+            List<AbstractStoreTestBubbleId<?>> abstractStoreTestBubbleIdList = endringsloggService.findIdsEtterId(bubbleWithRelationIdStart, StoreTestBubble.class, 2, SnapshotVersion.CURRENT);
+            assertThat(abstractStoreTestBubbleIdList).containsExactly(bubbleWithRelation1.getId(), bubbleWithRelation2.getId());
+            failBecauseExceptionWasNotThrown(ImplementationException.class);
+        } catch (ImplementationException e) {
+            assertThat(e).hasMessageContaining("Klassefilter kan ikke være en abstrakt klasse");
+        }
+    }
+
+    /**
+     * Tester beregning av kontroll for gitt boble klasse. Tester også at det ikke er mulig å bruke supertype
+     * av boble basisklassene (f.eks StoreTestBubble).
+     */
+    public void testKontrollForRange() {
+        // Oppretter testset med 2 BubbleWitheRelation og 2 Simple objekter
+        final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        SimpleMockupFactory simpleMockupFactory = mockupFacade.getSimpleMockupFactory();
+        BubbleWithRelationMockupFactory bubbleWithRelationMockupFactory = mockupFacade.getBubbleWithRelationMockupFactory();
+
+        Simple simple1 = mockupFacade.getStore().get(simpleMockupFactory.getSimpleId1());
+        Simple simple2 = mockupFacade.getStore().get(simpleMockupFactory.getSimpleId2());
+        Simple simple3 = mockupFacade.getStore().get(simpleMockupFactory.getSimpleId3());
+        BubbleWithRelation bubbleWithRelation1 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId1());
+        BubbleWithRelation bubbleWithRelation2 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId2());
+
+        // Komponerer transfer manuelt slik at rekkefølgen er kjent
+        MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(simple1, simple2, simple3, bubbleWithRelation1, bubbleWithRelation2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
+        testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
+        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, Endring.class, 10, SnapshotVersion.CURRENT);
+        Assert.assertEquals(endringer.size(), 5, "Antall endringer");
+
+        // Dette er juks. Vi vet ikke hvilke andre SimpleId som kan finnes i testdatabasen. Oppretter derfor en Id som er en mindre dem vi selv har lagt inn
+        SimpleId<?> simpleIdStart1 = new SimpleId<Simple>(simple1.getId().getValue() - 1);
+        Kontroll<?> kontroll = endringsloggService.calcKontrollForRange(simpleIdStart1, null, Simple.class, SnapshotVersion.CURRENT);
+        assertEquals(kontroll.getAntall(), 3);
+
+        try {
+            Kontroll<?> kontroll2 = endringsloggService.calcKontrollForRange(simpleIdStart1, null, StoreTestBubble.class, SnapshotVersion.CURRENT);
+            assertEquals(kontroll.getAntall(), 3);
+            failBecauseExceptionWasNotThrown(ImplementationException.class);
+        } catch (ImplementationException e) {
+            assertThat(e).hasMessageContaining("Klassefilter kan ikke være en abstrakt klasse");
+        }
+    }
+
+    /**
+     * Tester beregning av kontroll for gitt boble klasse. Tester også at det ikke er mulig å bruke supertype
+     * av boble basisklassene (f.eks StoreTestBubble).
+     */
+    public void testKontrollForList() {
+        // Oppretter testset med 2 BubbleWitheRelation og 2 Simple objekter
+        final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        SimpleMockupFactory simpleMockupFactory = mockupFacade.getSimpleMockupFactory();
+        BubbleWithRelationMockupFactory bubbleWithRelationMockupFactory = mockupFacade.getBubbleWithRelationMockupFactory();
+
+        Simple simple1 = mockupFacade.getStore().get(simpleMockupFactory.getSimpleId1());
+        Simple simple2 = mockupFacade.getStore().get(simpleMockupFactory.getSimpleId2());
+        Simple simple3 = mockupFacade.getStore().get(simpleMockupFactory.getSimpleId3());
+        BubbleWithRelation bubbleWithRelation1 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId1());
+        BubbleWithRelation bubbleWithRelation2 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId2());
+
+        // Komponerer transfer manuelt slik at rekkefølgen er kjent
+        MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(simple1, simple2, simple3, bubbleWithRelation1, bubbleWithRelation2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
+        testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
+        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(endringsnummerFoer, Endring.class, 10, SnapshotVersion.CURRENT);
+        Assert.assertEquals(endringer.size(), 5, "Antall endringer");
+
+        // Dette er juks. Vi vet ikke hvilke andre SimpleId som kan finnes i testdatabasen. Oppretter derfor en Id som er en mindre dem vi selv har lagt inn
+        SimpleId<?> simpleIdStart1 = new SimpleId<Simple>(simple1.getId().getValue() - 1);
+        Collection<SimpleId<?>> simpleIds = ImmutableList.of(simple1.getId(), simple2.getId(), simple3.getId());
+        Kontroll<?> kontroll = endringsloggService.calcKontrollForList(simpleIds, Simple.class, SnapshotVersion.CURRENT);
+        assertEquals(kontroll.getAntall(), 3);
+
+        try {
+            Kontroll<?> kontroll2 = endringsloggService.calcKontrollForRange(simpleIdStart1, null, StoreTestBubble.class, SnapshotVersion.CURRENT);
+            assertEquals(kontroll.getAntall(), 3);
+            failBecauseExceptionWasNotThrown(ImplementationException.class);
+        } catch (ImplementationException e) {
+            assertThat(e).hasMessageContaining("Klassefilter kan ikke være en abstrakt klasse");
+        }
     }
 }

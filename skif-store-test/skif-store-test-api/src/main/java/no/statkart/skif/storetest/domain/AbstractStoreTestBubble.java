@@ -10,7 +10,7 @@ import java.sql.Timestamp;
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
-public class AbstractStoreTestBubble extends AbstractBubbleObject implements StoreTestBubble {
+public abstract class AbstractStoreTestBubble extends AbstractBubbleObject implements StoreTestBubble {
     public AbstractStoreTestBubble(BubbleId<?> id) {
         super(id);
     }
