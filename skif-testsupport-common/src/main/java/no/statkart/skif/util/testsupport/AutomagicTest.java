@@ -237,7 +237,7 @@ public class AutomagicTest {
             } else {
                 throw new ImplementationException("Primitive type " + type.getRawType() + " not supported");
             }
-        } else if (type.getRawType().getSimpleName().equals("String")) {
+        } else if (type.getRawType().equals(String.class)) {
             if (clazz.toString().endsWith("KodeId")) {
                 //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
                 retVal = "" + (randomGenerator.nextInt(1) + 1);
@@ -246,6 +246,9 @@ public class AutomagicTest {
                 retVal = "" + randomGenerator.nextInt();
             } else if (field.getName().equals("kodeIdClass")) {
                 retVal = "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId";
+            } else if (clazz.getName().endsWith("LocalizedString$Entry") && field.getName().equals("key")) {
+                // Locale
+                retVal = "no_NO";
             } else {
                 retVal = field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100);
             }
