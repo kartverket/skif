@@ -204,20 +204,22 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="Endringsklasse">
-        <xs:sequence>
-            <xs:element name="value" type="xs:string"/>
-        </xs:sequence>
-        <!--<xs:restriction base="xs:string">-->
-            <!--<xs:enumeration value="StoreTestBubble" />-->
-            <!--<xs:enumeration value="Simple" />-->
-            <!--<xs:enumeration value="SubTypedBubble" />-->
-            <!--<xs:enumeration value="X1AA" />-->
-            <!--<xs:enumeration value="X1BBOne" />-->
-            <!--<xs:enumeration value="X1CCMany" />-->
-        <!--</xs:restriction>-->
-    </xs:complexType>
-<!---->
+    <!--<xs:complexType name="Endringsklasse">-->
+        <!--<xs:sequence>-->
+            <!--<xs:element name="value" type="xs:string"/>-->
+        <!--</xs:sequence>-->
+    <!--</xs:complexType>-->
+    <xs:simpleType name="Endringsklasse">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Endring" />
+            <xs:enumeration value="SimpleEndring" />
+            <xs:enumeration value="SubTypedBubbleEndring" />
+            <xs:enumeration value="X1AAEndring" />
+            <xs:enumeration value="X1BBOneEndring" />
+            <xs:enumeration value="X1CCManyEndring" />
+        </xs:restriction>
+    </xs:simpleType>
+
 
     <xs:complexType name="EndringId">
         <xs:sequence>
@@ -269,6 +271,22 @@
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="Domeneklasse">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Simple" />
+            <xs:enumeration value="SubTypedBubble" />
+            <xs:enumeration value="X1AA" />
+            <xs:enumeration value="X1BBOne" />
+            <xs:enumeration value="X1CCMany" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="Kontroll">
+        <xs:sequence>
+            <xs:element name="antall" type="xs:long"/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="SubTypeWithPrimitiveId">

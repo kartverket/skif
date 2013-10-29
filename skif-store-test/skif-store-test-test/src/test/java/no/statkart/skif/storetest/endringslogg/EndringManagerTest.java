@@ -76,6 +76,10 @@ public class EndringManagerTest extends StoreTestTestCase {
         Assert.assertEquals(antallEndringerEtter - antallEndringerFoer, forventetAntall);
     }
 
+    public void testFindEndringerEtterEndringsnummer() {
+        List<Endring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, Endring.class, 10, SnapshotVersion.CURRENT);
+    }
+
     public void rekkefoelge() {
         final long endringsnummerFoer = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
 
@@ -175,6 +179,9 @@ public class EndringManagerTest extends StoreTestTestCase {
         Assert.assertEquals(endringerSimple.size(), 0, "Antall simple endringer");
     }
 
+    public void testFindIdsEtterId2() {
+        List<BubbleId<Simple>> simpleIdsFromStart = endringsloggService.findIdsEtterId(null, Simple.class, 10, SnapshotVersion.CURRENT);
+    }
 
     /**
      * Tester uthenting av id-er gitt bobletype. Tester også at det ikke er mulig å hente ut id-er for supertype av

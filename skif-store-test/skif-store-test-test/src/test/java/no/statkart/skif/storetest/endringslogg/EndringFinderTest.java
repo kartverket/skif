@@ -49,7 +49,7 @@ public class EndringFinderTest extends StoreTestServerTestCase {
         assertTrue(sisteEndringsnummer > 0L, "Forventet at endringsnummer skulle være større enn 0 når i alle fall ett mockupsett er skrevet til databasen.");
     }
 
-    public void findSisteEndringsnummerForEier() {
+    public void findSisteEndringsnummerForEndringsklasse() {
         mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
         long sisteEndringsnummer = endringFinder.findSisteEndringsnummerForClass(SimpleEndring.class, SnapshotVersion.CURRENT);
