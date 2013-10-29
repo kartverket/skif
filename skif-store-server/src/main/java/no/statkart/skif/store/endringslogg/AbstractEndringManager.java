@@ -4,16 +4,12 @@ import com.google.inject.Provider;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.sequence.DefaultSequenceBlockAllocatorServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -25,16 +21,19 @@ import java.util.*;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public abstract class AbstractEndringManager<I extends AbstractEndring> implements StoreSessionFinishListener {
+public abstract class AbstractEndringManager<E extends AbstractEndring> implements StoreSessionFinishListener {
     private final static Logger logger = LoggerFactory.getLogger(AbstractEndringManager.class);
 
-    private final Map<Class<? extends BubbleId>, Class<? extends I>> endringklasseMap;
+    private final AbstractEndringManagerConfiguration<?> endringManagerConfiguration;
+
     private final Provider<Connection> connectionProvider;
 
     private final SequenceBlockAllocatorService sequenceBlockAllocatorService;
     private final String sequenceName;
 
-    protected AbstractEndringManager(Collection<Class<? extends I>> endringsklasser, Provider<Connection> connectionProvider, Configuration configuration) {
+
+    protected AbstractEndringManager(AbstractEndringManagerConfiguration endringManagerConfiguration, Provider<Connection> connectionProvider, Configuration configuration) {
+        this.endringManagerConfiguration = endringManagerConfiguration;
         this.connectionProvider = connectionProvider;
 
         this.sequenceBlockAllocatorService = new DefaultSequenceBlockAllocatorServiceImpl(connectionProvider, configuration) {
@@ -44,46 +43,8 @@ public abstract class AbstractEndringManager<I extends AbstractEndring> implemen
             }
         };
         this.sequenceName = configuration.getString(SkifConfigConstants.ENDRINGSNUMMER_SEQUENCE_NAME);
-
-        endringklasseMap = new HashMap<Class<? extends BubbleId>, Class<? extends I>>(endringsklasser.size());
-        for (Class<? extends I> endringClass : endringsklasser) {
-            endringklasseMap.put(findIdClassForEndringClass(endringClass), endringClass);
-        }
     }
 
-    public static Class<? extends BubbleId> findIdClassForEndringClass(Class<? extends AbstractEndring> endringClass) {
-        TypeVariable<? extends Class<? extends AbstractEndring>>[] typeParameters = endringClass.getTypeParameters();
-        if (typeParameters.length != 1) {
-            throw new ImplementationException("Endringsklasse " + endringClass + " har ikke én og bare én typeparameter", logger);
-        }
-
-        Type[] bounds = typeParameters[0].getBounds();
-        if (bounds.length != 1) {
-            throw new ImplementationException("Endringsklasse " + endringClass + " typeparameter som ikke har én og bare én bound", logger);
-        }
-
-        final Class<? extends BubbleId> bubbleIdClass;
-        if (bounds[0] instanceof Class) {
-            Class<?> clazz = (Class) bounds[0];
-            try {
-                bubbleIdClass = clazz.asSubclass(BubbleId.class);
-            } catch (ClassCastException e) {
-                throw new ImplementationException("Endringsklasse " + endringClass + " har typeparameter " + clazz + " som ikke er BubbleId", logger);
-            }
-        } else if (bounds[0] instanceof ParameterizedType) {
-            ParameterizedType bound = (ParameterizedType) bounds[0];
-            Class<?> clazz = (Class) bound.getRawType();
-            try {
-                bubbleIdClass = clazz.asSubclass(BubbleId.class);
-            } catch (ClassCastException e) {
-                throw new ImplementationException("Endringsklasse " + endringClass + " har typeparameter " + clazz + " som ikke er BubbleId", logger);
-            }
-        } else {
-            throw new ImplementationException("Endringsklasse " + endringClass + " har typeparameter av ikke-støttet type " + bounds[0].getClass(), logger);
-        }
-
-        return bubbleIdClass;
-    }
 
     /**
      * Bestemmer hvilket tidspunkt som skal brukes for endringene. Standardoppførsel er å hente transaksjonstidspunkt
@@ -103,21 +64,21 @@ public abstract class AbstractEndringManager<I extends AbstractEndring> implemen
         List<AbstractEndring> endringer = new ArrayList<AbstractEndring>();
 
         for (BubbleId<?> bubbleId : storeServer.getInsertedIds()) {
-            I endring = createEndring(bubbleId, Endringstype.Nyoppretting, tidspunkt);
+            E endring = createEndring(bubbleId, Endringstype.Nyoppretting, tidspunkt);
             if (endring != null) {
                 decorateEndring(storeServer, endring);
                 endringer.add(endring);
             }
         }
         for (BubbleId<?> bubbleId : storeServer.getUpdatedIds()) {
-            I endring = createEndring(bubbleId, Endringstype.Oppdatering, tidspunkt);
+            E endring = createEndring(bubbleId, Endringstype.Oppdatering, tidspunkt);
             if (endring != null) {
                 decorateEndring(storeServer, endring);
                 endringer.add(endring);
             }
         }
         for (BubbleId<?> bubbleId : storeServer.getDeletedIds()) {
-            I endring = createEndring(bubbleId, Endringstype.Sletting, tidspunkt);
+            E endring = createEndring(bubbleId, Endringstype.Sletting, tidspunkt);
             if (endring != null) {
                 decorateEndring(storeServer, endring);
                 endringer.add(endring);
@@ -136,10 +97,10 @@ public abstract class AbstractEndringManager<I extends AbstractEndring> implemen
         }
     }
 
-    private I createEndring(BubbleId<?> bubbleId, Endringstype endringstype, Timestamp tidspunkt) {
-        Class<? extends I> endringClass = findEndringClassForIdClass(bubbleId);
+    private E createEndring(BubbleId<?> bubbleId, Endringstype endringstype, Timestamp tidspunkt) {
+        Class<? extends E> endringClass = findEndringClassForIdClass(bubbleId);
         if (endringClass != null) {
-            final I endring;
+            final E endring;
 
             try {
                 endring = endringClass.newInstance();
@@ -159,10 +120,10 @@ public abstract class AbstractEndringManager<I extends AbstractEndring> implemen
         }
     }
 
-    protected Class<? extends I> findEndringClassForIdClass(BubbleId<?> bubbleId) {
+    protected Class<? extends E> findEndringClassForIdClass(BubbleId<?> bubbleId) {
         for (Class<?> idClass = bubbleId.getClass(); idClass != null; idClass = idClass.getSuperclass()) {
             //noinspection SuspiciousMethodCalls
-            Class<? extends I> endringClass = endringklasseMap.get(idClass);
+            Class endringClass = endringManagerConfiguration.getEndringsklasser().get(idClass);
             if (endringClass != null) {
                 return endringClass;
             }
@@ -177,7 +138,7 @@ public abstract class AbstractEndringManager<I extends AbstractEndring> implemen
      * @param storeServer    store
      * @param endring        endringen som nettopp har blitt laget
      */
-    protected void decorateEndring(StoreServer storeServer, I endring) {
+    protected void decorateEndring(StoreServer storeServer, E endring) {
     }
 
 }

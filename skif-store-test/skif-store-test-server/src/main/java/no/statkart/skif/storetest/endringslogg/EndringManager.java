@@ -6,15 +6,10 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.endringslogg.AbstractEndringManager;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
-import no.statkart.skif.storetest.domain.endringslogg.SimpleEndring;
-import no.statkart.skif.storetest.domain.endringslogg.BubbleWithRelationEndring;
-import no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Genererer endringer for et utvalg objekter.
@@ -24,33 +19,29 @@ import java.util.List;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public class EndringManager extends AbstractEndringManager<Endring> {
-    private static final List<Class<? extends Endring>> endringsklasser;
-
-    static {
-        ArrayList<Class<? extends Endring>> builder = new ArrayList<Class<? extends Endring>>();
-        builder.add(SimpleEndring.class);
-        builder.add(BubbleWithRelationEndring.class);
-        builder.add(SubTypedBubbleEndring.class);
-        endringsklasser = Collections.unmodifiableList(builder);
-    }
+public class EndringManager<E extends Endring<AbstractStoreTestBubbleId<?>>> extends AbstractEndringManager<E> {
 
     private final Provider<ServiceRequestContext> contextProvider;
 
-
     @Inject
-    public EndringManager(Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Configuration configuration) {
-        super(endringsklasser, connectionProvider, configuration);
+    public EndringManager(EndringManagerConfiguration endringManagerConfiguration, Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Configuration skifConfiguration) {
+        super(endringManagerConfiguration, connectionProvider, skifConfiguration);
         this.contextProvider = contextProvider;
     }
 
     @Override
-    protected void decorateEndring(StoreServer storeServer, Endring endring) {
-        ServiceRequestContext serviceRequestContext = contextProvider.get();
-        String principal = serviceRequestContext.getCallerPrincipal().getName();
+    protected void decorateEndring(StoreServer storeServer, E endring) {
+        super.decorateEndring(storeServer, endring);
 
-        endring.setBrukernavn(principal);
+        boolean skalTildelesBrukernavn = true;
 
-        super.decorateEndring(storeServer, endring);    //To change body of overridden methods use File | Settings | File Templates.
+        if (skalTildelesBrukernavn) {
+            ServiceRequestContext serviceRequestContext = contextProvider.get();
+            String principal = serviceRequestContext.getCallerPrincipal().getName();
+
+            endring.setBrukernavn(principal);
+        }
+
     }
+
 }
