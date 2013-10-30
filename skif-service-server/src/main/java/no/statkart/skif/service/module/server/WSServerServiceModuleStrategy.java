@@ -36,7 +36,7 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
      * <br />
      * Skal være på formen {@code <intern>:<extern>}
      */
-    protected String[] classWSIPackageMappings = {"api:wsapi", "service:wsapi.service"};
+    protected String[] classWSIPackageMappings = {"api:wsapi", "service:wsapi.service","domain:wsapi.service.domain"};
 
 
     public Class<? extends WSServiceChainFactory> getWsServiceChainFactoryClassForWSI() {
