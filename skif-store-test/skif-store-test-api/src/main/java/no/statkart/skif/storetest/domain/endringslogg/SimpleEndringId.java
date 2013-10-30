@@ -9,6 +9,8 @@ import no.statkart.skif.store.SnapshotVersion;
  * @since 2.3.0
  */
 public class SimpleEndringId<T extends SimpleEndring> extends EndringId<T> {
+    private static final long serialVersionUID = 1L;
+
     public SimpleEndringId(Long value) {
         super(value);
     }
