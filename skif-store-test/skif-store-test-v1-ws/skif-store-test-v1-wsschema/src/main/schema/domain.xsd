@@ -16,6 +16,13 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="InverseRelation">
+        <xs:sequence>
+            <xs:element name="materialised" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Komentar: Definisjoner som må finnes for hver BubbleId subtype -->
     <xs:complexType name="StoreTestBubbleId">
         <xs:sequence>
             <xs:element name="value" type="xs:string"/>
@@ -28,6 +35,28 @@
             <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="domainns:StoreTestBubbleId"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:complexType name="StoreTestBubbleIdInverseRelation">
+        <xs:complexContent>
+            <xs:extension base="domainns:InverseRelation">
+                <xs:sequence>
+                    <xs:element name="cachedValue" type="domainns:StoreTestBubbleId"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="StoreTestBubbleIdListInverseRelation">
+        <xs:complexContent>
+            <xs:extension base="domainns:InverseRelation">
+                <xs:sequence>
+                    <xs:element name="cachedValue" type="domainns:StoreTestBubbleIdList"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Kommentar slutt -->
 
     <xs:complexType name="StoreTestBubbleIdListForStoreTestBubbleIdsMap">
         <xs:annotation>
@@ -134,5 +163,6 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
+
 
 </xs:schema>

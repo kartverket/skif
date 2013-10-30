@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.mapper.*;
+import no.statkart.skif.store.InverseRelation;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
@@ -58,6 +59,9 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new StoreTestBubbleIdTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteStringId, no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId>(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteStringId.class, no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId.class));
         addMapper(new KodelisteTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLong, StoreTestKodelisteLong>("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLong.class, StoreTestKodelisteLong.class));
         addMapper(new KodelisteTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteString, StoreTestKodelisteString>("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteString.class, StoreTestKodelisteString.class));
+
+        // Alle InverseRelations
+        addMapper(new InverseRelationTypeMapper<no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListInverseRelation, InverseRelation>(no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListInverseRelation.class, InverseRelation.class));
 
         // Non boble objekter
 
