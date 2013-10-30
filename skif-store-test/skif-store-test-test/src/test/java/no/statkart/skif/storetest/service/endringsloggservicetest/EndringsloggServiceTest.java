@@ -60,7 +60,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
 
     public void testCalcKontrollForRange(){
         List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0,SimpleEndring.class,1,SnapshotVersion.CURRENT);
-        SimpleId<?> tilId = endringer.get(0).getEndretBubbleId();
+        SimpleId<?> tilId = (SimpleId<?>) endringer.get(0).getEndretBubbleId();
         SimpleId<?> fraId = new SimpleId<Simple>(tilId.getValue()-1);
 
         Kontroll kontrollRange = endringsloggService.calcKontrollForRange(fraId, tilId, Simple.class, SnapshotVersion.CURRENT);
@@ -69,7 +69,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
 
     public void testCalcKontrollForList(){
         List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0,SimpleEndring.class,1,SnapshotVersion.CURRENT);
-        Kontroll kontrollList = endringsloggService.calcKontrollForList(ImmutableList.of(endringer.get(0).getEndretBubbleId()), Simple.class, SnapshotVersion.CURRENT);
+        Kontroll kontrollList = endringsloggService.calcKontrollForList(ImmutableList.of((SimpleId<?>)endringer.get(0).getEndretBubbleId()), Simple.class, SnapshotVersion.CURRENT);
         assertEquals(kontrollList.getAntall(), 1);
     }
 }

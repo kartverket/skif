@@ -51,4 +51,8 @@ public class SkifUtil {
         return (T) TypeLiteral.get(Types.newParameterizedType(rawType, types));
     }
 
+    public static <T> T cast(Class<? super T> c) {
+        return (T)c;
+    }
+
 }
