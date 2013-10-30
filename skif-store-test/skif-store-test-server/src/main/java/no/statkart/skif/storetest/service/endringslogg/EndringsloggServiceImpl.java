@@ -85,7 +85,7 @@ public class EndringsloggServiceImpl implements EndringsloggService {
                 criteria.add(Restrictions.gt("id", fraId));
             }
             if (tilId != null) {
-                criteria.add(Restrictions.le("id", fraId));
+                criteria.add(Restrictions.le("id", tilId));
             }
             K result = (K) new Kontroll<I>();
             result.setAntall((Long) criteria.uniqueResult());

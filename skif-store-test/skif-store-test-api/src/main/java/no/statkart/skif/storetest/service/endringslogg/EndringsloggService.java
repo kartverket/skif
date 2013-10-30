@@ -59,6 +59,7 @@ public interface EndringsloggService {
      * @return beregnet kontroll
      *
      * TODO: Vurdere å legge denne tjeneste i egen service KontrollService
+     * TODO: Må bestemme om range skal være inkl fraId eller eksl. fraId
      */
     public <K extends Kontroll, I extends StoreTestBubbleId<T>, T extends StoreTestBubble> K calcKontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId,  Class<T> klassefilter, SnapshotVersion snapshotVersion);
     /**
