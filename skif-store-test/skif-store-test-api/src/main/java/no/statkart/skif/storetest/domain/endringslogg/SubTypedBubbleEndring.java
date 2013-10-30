@@ -8,7 +8,7 @@ import no.statkart.skif.storetest.domain.basic.SubTypedBubbleId;
  * @author Tor Egil R. Strand
  * @since 2.3.0
  */
-public class SubTypedBubbleEndring extends Endring<SubTypedBubbleId<?>> {
+public class SubTypedBubbleEndring<I extends SubTypedBubbleId<?>> extends Endring<I> {
     private static final long serialVersionUID = 1L;
 
 

@@ -8,7 +8,7 @@ import no.statkart.skif.storetest.domain.basic.SimpleId;
  * @author Tor Egil R. Strand
  * @since 2.3.0
  */
-public class SimpleEndring extends Endring<SimpleId<?>> {
+public class SimpleEndring<I extends SimpleId<?>> extends Endring<I> {
     private static final long serialVersionUID = 1L;
 
 
