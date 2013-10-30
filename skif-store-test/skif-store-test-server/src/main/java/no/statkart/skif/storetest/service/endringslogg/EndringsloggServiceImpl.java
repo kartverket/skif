@@ -88,7 +88,7 @@ public class EndringsloggServiceImpl implements EndringsloggService {
                 criteria.add(Restrictions.le("id", tilId));
             }
             K result = (K) new Kontroll<I>();
-            result.setAntall((Long) criteria.uniqueResult());
+            result.setAntall(((Number)criteria.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();
@@ -106,7 +106,7 @@ public class EndringsloggServiceImpl implements EndringsloggService {
             criteria.setProjection(Projections.rowCount());
             criteria.add(Restrictions.sqlRestriction("id in (select * from table(?))",ids, new OracleLongBubbleIdArrayCustomType()));
             K result = (K) new Kontroll<I>();
-            result.setAntall((Long) criteria.uniqueResult());
+            result.setAntall(((Number)criteria.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();
