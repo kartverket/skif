@@ -1,5 +1,6 @@
 package no.statkart.skif;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import no.statkart.skif.exception.ImplementationException;
@@ -51,8 +52,8 @@ public class SkifUtil {
         return (T) TypeLiteral.get(Types.newParameterizedType(rawType, types));
     }
 
-    public static <T> T cast(Class<? super T> c) {
-        return (T)c;
+    public static <E> Class<E> classOf(TypeToken<E> type) {
+        return (Class<E>)type.getRawType();
     }
 
 }
