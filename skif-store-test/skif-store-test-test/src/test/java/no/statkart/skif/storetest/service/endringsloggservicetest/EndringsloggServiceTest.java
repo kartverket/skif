@@ -3,11 +3,9 @@ package no.statkart.skif.storetest.service.endringsloggservicetest;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
-import no.statkart.skif.SkifUtil;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.endringslogg.Kontroll;
 import no.statkart.skif.storetest.domain.endringslogg.SimpleEndring;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
@@ -18,7 +16,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-import static no.statkart.skif.SkifUtil.classOf;
+import static no.statkart.skif.SkifUtil.getType;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -53,7 +51,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     }
 
     public void testFindEndringerEtterEndringsnummer(){
-        List<SimpleEndring<?>> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, classOf(new TypeToken<SimpleEndring<?>>() {}),1,SnapshotVersion.CURRENT);
+        List<SimpleEndring<?>> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring<?>>() {}), 1, SnapshotVersion.CURRENT);
         assertEquals(endringer.size(),1);
     }
 
@@ -63,7 +61,8 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     }
 
     public void testCalcKontrollForRange(){
-        List<SimpleEndring<?>> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, classOf(new TypeToken<SimpleEndring<?>>() {}),1,SnapshotVersion.CURRENT);
+        List<SimpleEndring<?>> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring<?>>() {
+        }),1,SnapshotVersion.CURRENT);
         SimpleId<?> tilId = endringer.get(0).getEndretBubbleId();
         SimpleId<?> fraId = new SimpleId<Simple>(tilId.getValue()-1);
 
@@ -72,7 +71,8 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     }
 
     public void testCalcKontrollForList(){
-        List<SimpleEndring<?>> endringer = endringsloggService.findEndringerEtterEndringsnummer(0,classOf(new TypeToken<SimpleEndring<?>>() {}),1,SnapshotVersion.CURRENT);
+        List<SimpleEndring<?>> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring<?>>() {
+        }),1,SnapshotVersion.CURRENT);
         Kontroll kontrollList = endringsloggService.calcKontrollForList(ImmutableList.of(endringer.get(0).getEndretBubbleId()), Simple.class, SnapshotVersion.CURRENT);
         assertEquals(kontrollList.getAntall(), 1);
     }

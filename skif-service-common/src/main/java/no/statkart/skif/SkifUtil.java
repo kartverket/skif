@@ -52,7 +52,18 @@ public class SkifUtil {
         return (T) TypeLiteral.get(Types.newParameterizedType(rawType, types));
     }
 
-    public static <E> Class<E> classOf(TypeToken<E> type) {
+    /**
+     * Hjelpemetode for å hente ut Class for unbounded typer.
+     *
+     * <p>Eksempel på bruk:
+     * <pre>
+     *   SkifUtil.getType(new TypeToken<Simmple<?>>(){})
+     * </pre>
+     * Ovenstående vil returnere Class<Simple<?>>.
+     *
+     * @since 2.4
+     */
+    public static <E> Class<E> getType(TypeToken<E> type) {
         return (Class<E>)type.getRawType();
     }
 
