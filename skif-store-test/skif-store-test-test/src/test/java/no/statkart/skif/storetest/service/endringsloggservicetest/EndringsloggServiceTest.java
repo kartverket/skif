@@ -21,6 +21,6 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     final EndringsloggService endringsloggService = injector.getInstance(EndringsloggService.class);
         long endringsnr = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
         List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(1L,SimpleEndring.class,1,SnapshotVersion.CURRENT);
-        assertEquals(endringer.size(),0);
+        assertEquals(endringer.size(),1);
     }
 }

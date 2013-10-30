@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.wsapi.config;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
+import no.statkart.skif.ServiceMode;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
@@ -37,7 +38,6 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
 
         Injector ejbServiceInjector = StoreTestServerInjector.getInjector();
         ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
-
         injector = ejbServiceInjector.createChildInjector(
                 new ServletModule(),
                 new WSServerModule(configuration, classLoader),
@@ -60,8 +60,12 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class),
                 new WSServerServiceModule(configuration, new StoreTestSequenceBlockAllocatorServices().getServices(), mapping, classLoader)
                         .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                        .setServiceContextMapperClass(StoreTestServiceContextMapper.class),
+                new WSServerServiceModule(configuration, new StoreTestDomainFinderServices().getServices(), mapping, classLoader)
+                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
         );
+
     }
 
     @Override
