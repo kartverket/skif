@@ -16,12 +16,11 @@ def libraries = [
         ojdbc_g: "com.oracle:ojdbc6_g:${libVersion('oracle', '11.2.0.3.0')}@jar",
 
         // Logging
-        slf4j_api: "org.slf4j:slf4j-api:${libVersion('slf4j', '1.6.1')}@jar",
-        jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${libVersion('slf4j', '1.6.1')}@jar",
-        jul_to_slf4j: "org.slf4j:jul-to-slf4j:${libVersion('slf4j', '1.6.1')}@jar",
-        log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${libVersion('slf4j', '1.6.1')}@jar",
-        logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '0.9.28')}@jar",
-        logback_core: "ch.qos.logback:logback-core:${libVersion('logback', '0.9.28')}@jar",
+        slf4j_api: "org.slf4j:slf4j-api:${libVersion('slf4j', '1.6.1')}",
+        jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${libVersion('slf4j', '1.6.1')}",
+        jul_to_slf4j: "org.slf4j:jul-to-slf4j:${libVersion('slf4j', '1.6.1')}",
+        log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${libVersion('slf4j', '1.6.1')}",
+        logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '1.0.13')}",
 
         // Guice med extensions
         guice: "com.google.inject:guice:${libVersion('guice', '3.0')}",
