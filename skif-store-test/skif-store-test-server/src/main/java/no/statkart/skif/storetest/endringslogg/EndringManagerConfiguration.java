@@ -17,7 +17,7 @@ import no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring;
  * @since 2.4 - ny grunnbok sprint 28
  */
 @Singleton
-public class EndringManagerConfiguration<E extends Endring<?>> extends AbstractEndringManagerConfiguration<Endring> {
+public class EndringManagerConfiguration extends AbstractEndringManagerConfiguration<Endring> {
 
     public EndringManagerConfiguration() {
 
