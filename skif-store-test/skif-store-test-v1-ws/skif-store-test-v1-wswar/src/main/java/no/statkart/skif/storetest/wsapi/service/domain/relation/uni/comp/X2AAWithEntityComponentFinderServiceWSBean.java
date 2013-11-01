@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.wsapi.service.domain.relation.uni.component.entity;
+package no.statkart.skif.storetest.wsapi.service.domain.relation.uni.comp;
 
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
