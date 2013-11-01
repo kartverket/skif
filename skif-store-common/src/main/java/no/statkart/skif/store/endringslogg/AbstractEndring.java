@@ -12,16 +12,17 @@ import java.sql.Timestamp;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBubbleObject {
+public abstract class AbstractEndring<I extends AbstractEndringId<?>, EI extends BubbleId<?>> extends AbstractBubbleObject {
     private static final long serialVersionUID = 1L;
 
-    private I endretBubbleId;
+    private EI endretBubbleId;
     private Endringstype endringstype;
     private Timestamp endringstidspunkt;
 
     @Override
-    public AbstractEndringId<?> getId() {
-        return (AbstractEndringId<?>) super.getId();
+    @SuppressWarnings("unchecked")
+   public I getId() {
+        return (I) super.getId();
     }
 
     public long getEndringsnummer() {
@@ -44,11 +45,11 @@ public abstract class AbstractEndring<I extends BubbleId<?>> extends AbstractBub
         this.endringstidspunkt = endringstidspunkt;
     }
 
-    public I getEndretBubbleId() {
+    public EI getEndretBubbleId() {
         return endretBubbleId;
     }
 
-    void setEndretBubbleId(I id) {
+    void setEndretBubbleId(EI id) {
         if (endretBubbleId == null) {
             endretBubbleId = id;
         } else {

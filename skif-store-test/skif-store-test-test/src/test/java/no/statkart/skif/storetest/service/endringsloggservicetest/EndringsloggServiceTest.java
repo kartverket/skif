@@ -51,7 +51,8 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     }
 
     public void testFindEndringerEtterEndringsnummer(){
-        List<SimpleEndring<?>> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring<?>>() {}), 1, SnapshotVersion.CURRENT);
+//        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring>() {}), 1, SnapshotVersion.CURRENT);
+        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, SimpleEndring.class, 1, SnapshotVersion.CURRENT);
         assertEquals(endringer.size(),1);
     }
 
@@ -61,8 +62,8 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     }
 
     public void testCalcKontrollForRange(){
-        List<SimpleEndring<?>> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring<?>>() {
-        }),1,SnapshotVersion.CURRENT);
+//        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring>() { }),1,SnapshotVersion.CURRENT);
+        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, SimpleEndring.class, 1, SnapshotVersion.CURRENT);
         SimpleId<?> tilId = endringer.get(0).getEndretBubbleId();
         SimpleId<?> fraId = new SimpleId<Simple>(tilId.getValue()-1);
 
@@ -71,8 +72,8 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     }
 
     public void testCalcKontrollForList(){
-        List<SimpleEndring<?>> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring<?>>() {
-        }),1,SnapshotVersion.CURRENT);
+//        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring>() { }), 1, SnapshotVersion.CURRENT);
+        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, SimpleEndring.class, 1, SnapshotVersion.CURRENT);
         Kontroll kontrollList = endringsloggService.calcKontrollForList(ImmutableList.of(endringer.get(0).getEndretBubbleId()), Simple.class, SnapshotVersion.CURRENT);
         assertEquals(kontrollList.getAntall(), 1);
     }
