@@ -5,7 +5,6 @@ import no.statkart.skif.store.InverseRelation;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
-import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.basic.*;
@@ -13,8 +12,6 @@ import no.statkart.skif.storetest.domain.koder.HistorikkEnumKode;
 import no.statkart.skif.storetest.domain.koder.HistorikkEnumKodeId;
 import no.statkart.skif.storetest.domain.koder.SimpleEnumKode;
 import no.statkart.skif.storetest.domain.koder.SimpleEnumKodeId;
-import no.statkart.skif.storetest.wsapi.domain.basic.Endringsklasse;
-import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId;
 
 /**
  * @author Henrik Fredholm

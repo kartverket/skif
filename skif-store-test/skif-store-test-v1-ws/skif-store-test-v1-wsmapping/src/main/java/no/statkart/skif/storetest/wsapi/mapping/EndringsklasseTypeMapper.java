@@ -1,15 +1,12 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.AbstractTypeMapper;
 import no.statkart.skif.mapper.Mapping;
-import no.statkart.skif.storetest.domain.basic.SubTypedBubble;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.endringslogg.SimpleEndring;
 import no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1AA;
-import no.statkart.skif.storetest.wsapi.domain.basic.Endringsklasse;
+import no.statkart.skif.storetest.wsapi.endringslogg.Endringsklasse;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

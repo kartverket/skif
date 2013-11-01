@@ -2,19 +2,17 @@ package no.statkart.skif.storetest.wsapi.service.endringslogg;
 
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.domain.basic.Domeneklasse;
-import no.statkart.skif.storetest.wsapi.domain.basic.EndringList;
-import no.statkart.skif.storetest.wsapi.domain.basic.Endringsklasse;
-import no.statkart.skif.storetest.wsapi.domain.basic.Kontroll;
+import no.statkart.skif.storetest.wsapi.endringslogg.Domeneklasse;
+import no.statkart.skif.storetest.wsapi.endringslogg.EndringList;
+import no.statkart.skif.storetest.wsapi.endringslogg.Endringsklasse;
+import no.statkart.skif.storetest.wsapi.endringslogg.Kontroll;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.jws.WebMethod;
