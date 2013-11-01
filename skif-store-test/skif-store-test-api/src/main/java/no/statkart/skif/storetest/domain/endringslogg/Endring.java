@@ -1,6 +1,8 @@
 package no.statkart.skif.storetest.domain.endringslogg;
 
 import no.statkart.skif.store.endringslogg.AbstractEndring;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
+import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
@@ -18,11 +20,21 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
  * @author Henrik Fredholm
  * @since 2.2.0
  */
-public abstract class Endring<I extends StoreTestBubbleId<?>> extends AbstractEndring<I> implements StoreTestBubble {
+public abstract class Endring<I extends EndringId<?>, EI extends StoreTestBubbleId<?>> extends AbstractEndring<I, EI> implements StoreTestBubble {
     private static final long serialVersionUID = 1L;
 
     private String brukernavn;
 
+
+    @Override
+    public I getId() {
+        return super.getId();
+    }
+
+    @Override
+    public EI getEndretBubbleId() {
+        return super.getEndretBubbleId();
+    }
 
     public String getBrukernavn() {
         return brukernavn;
