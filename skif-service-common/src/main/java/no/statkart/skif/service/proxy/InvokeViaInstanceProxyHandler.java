@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
  * {@code ProxyHandler} for service {@code S} som sender kallet videre til instans av type {@code S}.
  * <p/>
  * Denne proxy handler krever at {@code S} blir opprettet før eller i det øyeblikk at proxy handleren
- * blir opprettet. Dersom opprettelsen av {@link S} først skal skje i det at en metode på S utføres
+ * blir opprettet. Dersom opprettelsen av {@code S} først skal skje i det at en metode på S utføres
  * bør {@link InvokeViaProviderProxyHandler} brukes i stedet
  *
  * @author Henrik Fredholm

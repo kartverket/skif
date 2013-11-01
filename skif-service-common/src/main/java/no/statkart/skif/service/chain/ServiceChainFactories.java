@@ -33,7 +33,7 @@ public class ServiceChainFactories {
 
     /**
      * Legger til {@code factoryImpl} til settet av ServiceChainFactory-klasser definert av
-     * klassen {@code factory} for {@code service}. Implementasjon anvender {@link @Multibinder}
+     * klassen {@code factory} for {@code service}. Implementasjon anvender {@link Multibinder}
      * til å definerer opp settet.
      */
     public static <S, F extends ServiceChainFactory<S>, FImpl extends F> void multibindFactory(Binder binder, Class<F> factory, Class<S> service, @Nullable Class<FImpl> factoryImpl) {

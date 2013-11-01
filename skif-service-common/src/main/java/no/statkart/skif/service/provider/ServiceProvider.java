@@ -20,7 +20,7 @@ import java.util.*;
  * <p/>
  * {@code CallServiceChainFactory}-listen spesifiseres via en Guice {@code Multibinder<CallServiceChainFactory>} binding
  * som gir tilbake et uordnet sett av {@code CallServiceChainFactory}-instanser. For å unngå å måtte sorterer
- * settet hvergang provideren opprettes brukes en singleton {@link OrderedCallServiceChainFactoryList<S>}-instans. Det
+ * settet hvergang provideren opprettes brukes en singleton {@link OrderedCallServiceChainFactoryList}-instans. Det
  * er greit å bruke en singleton instans her siden {@code CallServiceChainFactory}-settet er konstant for hver servicetype
  * [@code S}.
  * <p/>

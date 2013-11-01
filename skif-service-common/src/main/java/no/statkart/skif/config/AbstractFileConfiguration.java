@@ -11,8 +11,8 @@ import java.net.URL;
 /**
  * <p>Partial implementation of the <code>FileConfiguration</code> interface.
  * Developers of file based configuration may want to extend this class,
- * the two methods left to implement are <code>{@link FileConfiguration#load(java.io.Reader)}</code>
- * and <code>{@link FileConfiguration#save(java.io.Writer)}</code>.</p>
+ * the two methods left to implement are <code>FileConfiguration#load(java.io.Reader)</code>
+ * and <code>FileConfiguration#save(java.io.Writer)</code>.</p>
  * <p>This base class already implements a couple of ways to specify the location
  * of the file this configuration is based on. The following possibilities
  * exist:
