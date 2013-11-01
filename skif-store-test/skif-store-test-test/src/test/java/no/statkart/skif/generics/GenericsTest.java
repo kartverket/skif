@@ -1,16 +1,14 @@
 package no.statkart.skif.generics;
 
-import no.statkart.skif.generics.domain.*;
+import no.statkart.skif.generics.domain.AbstractStrutId;
+import no.statkart.skif.generics.domain.Strut;
+import no.statkart.skif.generics.domain.StrutId;
 import no.statkart.skif.generics.domain.impl.AStrut;
 import no.statkart.skif.generics.domain.impl.AStrutId;
-import no.statkart.skif.generics.domainList.*;
-import no.statkart.skif.generics.service.ItemService;
 import no.statkart.skif.generics.service.StrutService;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Demonstrasjon av generics
