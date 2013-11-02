@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.wsapi.service.domain.relation.uni.comp;
 
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.domain.basic.*;
+import no.statkart.skif.storetest.wsapi.domain.relation.*;
 
 import javax.jws.WebParam;
 
