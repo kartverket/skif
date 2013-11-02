@@ -4,10 +4,7 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.domain.basic.X1AAIdForX1CCManyIdMap;
-import no.statkart.skif.storetest.wsapi.domain.basic.X1AAIdListForX1BBOneIdMap;
-import no.statkart.skif.storetest.wsapi.domain.basic.X1BBOneIdList;
-import no.statkart.skif.storetest.wsapi.domain.basic.X1CCManyIdList;
+import no.statkart.skif.storetest.wsapi.domain.basic.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -43,13 +40,13 @@ public class X2AAWithEntityComponentFinderServiceWSBean extends SkifWebService<X
 
     @Override
     @WebMethod
-    public X1AAIdListForX1BBOneIdMap findInvSomeBBIds(@WebParam(name = "x1BBOneIds") X1BBOneIdList x1BBOneIds, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
-        return wsServiceChain.findInvSomeBBIds(x1BBOneIds,storeTestContext);
+    public X2AAWithEntityComponentIdListForX2BBOneIdMap findInvSomeBBIds(@WebParam(name = "x2BBOneIds") X1BBOneIdList x2BBOneIds, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findInvSomeBBIds(x2BBOneIds,storeTestContext);
     }
 
     @Override
     @WebMethod
-    public X1AAIdForX1CCManyIdMap findInvSomeCCsId(@WebParam(name = "x1CCManyIds") X1CCManyIdList x1CCManyIds, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
-        return wsServiceChain.findInvSomeCCsId(x1CCManyIds,storeTestContext);
+    public X2AAWithEntityComponentIdForX2CCManyIdMap findInvSomeCCsId(@WebParam(name = "x2CCManyIds") X1CCManyIdList x2CCManyIds, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) {
+        return wsServiceChain.findInvSomeCCsId(x2CCManyIds,storeTestContext);
     }
 }
