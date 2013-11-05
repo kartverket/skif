@@ -14,7 +14,7 @@ import org.testng.Assert;
  * @author Leif Lislegård
  * @since 1.0 - sprint 28
  */
-public class StoreTestMappingTestCase {
+public class StoreTestMappingTestContext {
 
     public final static Locale NORSK = new Locale("no", "NO");
 
@@ -22,7 +22,7 @@ public class StoreTestMappingTestCase {
     Locale locale;
 
 
-    public StoreTestMappingTestCase() {
+    public StoreTestMappingTestContext() {
         setLocale(NORSK);
     }
 

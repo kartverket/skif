@@ -19,17 +19,17 @@ import static org.testng.Assert.assertSame;
  * @author Henrik Fredholm
  */
 public class StoreTestMappingD2WTest {
-    private StoreTestMappingTestCase testCase;
+    private StoreTestMappingTestContext testContext;
 
     @BeforeMethod
     public void setUpTestCase() {
-        testCase = new StoreTestMappingTestCase();
+        testContext = new StoreTestMappingTestContext();
     }
 
 
     @Test
     public void testMapString() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         String source = "test";
         String target = map.d2w(source);
@@ -39,7 +39,7 @@ public class StoreTestMappingD2WTest {
 
     @Test
     public void testMapInteger() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         Integer source = 5;
         Integer target = map.d2w(source);
@@ -49,7 +49,7 @@ public class StoreTestMappingD2WTest {
 
     @Test
     public void testMapInt() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         int source = 5;
         int target = map.d2w(source);
@@ -65,7 +65,7 @@ public class StoreTestMappingD2WTest {
 
     @Test
     public void testMapTestBubble() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         Simple simple = new Simple(new SimpleId<Simple>(10L));
         simple.setText("test");
@@ -76,7 +76,7 @@ public class StoreTestMappingD2WTest {
 
     @Test
     public void testMapTestEnumkodelisteId() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         StoreTestKodelisteLongId<StoreTestKodelisteLong> enumKodelisteId = new StoreTestKodelisteLongId<StoreTestKodelisteLong>(1L);
         StoreTestBubbleId storeTestBubbleId = map.d2w(enumKodelisteId);
@@ -86,7 +86,7 @@ public class StoreTestMappingD2WTest {
 
     @Test
     public void testMapKodeLongId() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId wsapiKodeId = map.d2w(AEnumKodeId.KodeAId);
         StoreTestKodeId<?> domainKodeId = map.w2d(wsapiKodeId);
@@ -95,7 +95,7 @@ public class StoreTestMappingD2WTest {
 
     @Test
     public void testMapKodeStringId() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId wsapiKodeId = map.d2w(XStrDbKodeId.AId);
         StoreTestKodeId<?> domainKodeId = map.w2d(wsapiKodeId);
@@ -105,7 +105,7 @@ public class StoreTestMappingD2WTest {
 
     @Test
     public void testMapKodeString() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         XStrDbKode xStrDbKode = new XStrDbKode();
         xStrDbKode.setId(XStrDbKodeId.AId);
@@ -117,24 +117,24 @@ public class StoreTestMappingD2WTest {
 
     @Test
     public void testMapEnumKodelisteUtenKodeIds() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         StoreTestKodeliste kodeliste = new StoreTestKodelisteLong();
         kodeliste.setId(new StoreTestKodelisteLongId(1L));
         kodeliste.setKodeIdClass(AEnumKodeId.class);
-        kodeliste.setBeskrivelse(testCase.createDomainLocalizedString("Test beskrivelse"));
-        kodeliste.setNavn(testCase.createDomainLocalizedString("MyTestKodeliste"));
+        kodeliste.setBeskrivelse(testContext.createDomainLocalizedString("Test beskrivelse"));
+        kodeliste.setNavn(testContext.createDomainLocalizedString("MyTestKodeliste"));
 
         // Map domain->wsapi
         no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste target = map.d2w(kodeliste, no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class);
         assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId");
         assertEquals(target.getId().getValue(), "1" );
         assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class );
-        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiBeskrivelse = testCase.createWsapiLocalizedString("Test beskrivelse");
+        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiBeskrivelse = testContext.createWsapiLocalizedString("Test beskrivelse");
         assertEquals(target.getBeskrivelse().getEntry().size(), 1);
         assertEquals(target.getBeskrivelse().getEntry().get(0).getKey(), wsapiBeskrivelse.getEntry().get(0).getKey());
         assertEquals(target.getBeskrivelse().getEntry().get(0).getValue(), wsapiBeskrivelse.getEntry().get(0).getValue());
-        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiNavn = testCase.createWsapiLocalizedString("MyTestKodeliste");
+        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiNavn = testContext.createWsapiLocalizedString("MyTestKodeliste");
         assertEquals(target.getNavn().getEntry().size(), 1);
         assertEquals(target.getNavn().getEntry().get(0).getKey(), wsapiNavn.getEntry().get(0).getKey());
         assertEquals(target.getNavn().getEntry().get(0).getValue(), wsapiNavn.getEntry().get(0).getValue());
@@ -145,20 +145,20 @@ public class StoreTestMappingD2WTest {
         assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLong.class);
         assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), new Long(1));
-        testCase.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
-        testCase.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
+        testContext.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
+        testContext.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
         assertEquals(domainKodeliste.getKodeIds().size(), 0);
     }
 
     @Test
     public void testMapEnumKodelisteMedKodeIds() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         StoreTestKodeliste kodeliste = new StoreTestKodelisteLong();
         kodeliste.setId(new StoreTestKodelisteLongId(1L));
         kodeliste.setKodeIdClass(AEnumKodeId.class);
-        kodeliste.setBeskrivelse(testCase.createDomainLocalizedString("Test beskrivelse"));
-        kodeliste.setNavn(testCase.createDomainLocalizedString("MyTestKodeliste"));
+        kodeliste.setBeskrivelse(testContext.createDomainLocalizedString("Test beskrivelse"));
+        kodeliste.setNavn(testContext.createDomainLocalizedString("MyTestKodeliste"));
         List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
         kodeIds.add(AEnumKodeId.KodeAId);
         kodeIds.add(AEnumKodeId.KodeBId);
@@ -168,11 +168,11 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId");
         assertEquals(target.getId().getValue(), "1" );
         assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class );
-        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiBeskrivelse = testCase.createWsapiLocalizedString("Test beskrivelse");
+        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiBeskrivelse = testContext.createWsapiLocalizedString("Test beskrivelse");
         assertEquals(target.getBeskrivelse().getEntry().size(), 1);
         assertEquals(target.getBeskrivelse().getEntry().get(0).getKey(), wsapiBeskrivelse.getEntry().get(0).getKey());
         assertEquals(target.getBeskrivelse().getEntry().get(0).getValue(), wsapiBeskrivelse.getEntry().get(0).getValue());
-        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiNavn = testCase.createWsapiLocalizedString("MyTestKodeliste");
+        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiNavn = testContext.createWsapiLocalizedString("MyTestKodeliste");
         assertEquals(target.getNavn().getEntry().size(), 1);
         assertEquals(target.getNavn().getEntry().get(0).getKey(), wsapiNavn.getEntry().get(0).getKey());
         assertEquals(target.getNavn().getEntry().get(0).getKey(), wsapiNavn.getEntry().get(0).getKey());
@@ -189,8 +189,8 @@ public class StoreTestMappingD2WTest {
         assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLong.class);
         assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), new Long(1));
-        testCase.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
-        testCase.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
+        testContext.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
+        testContext.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
         assertEquals(domainKodeliste.getKodeIds().size(), 2);
         assertEquals(domainKodeliste.getKodeIds().get(0), AEnumKodeId.KodeAId);
         assertEquals(domainKodeliste.getKodeIds().get(1), AEnumKodeId.KodeBId);
@@ -198,24 +198,24 @@ public class StoreTestMappingD2WTest {
 
     @Test
     public void testMapDbKodelisteUtenKodeIds() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         StoreTestKodeliste kodeliste = new StoreTestKodelisteLong();
         kodeliste.setId(new StoreTestKodelisteLongId(1L));
         kodeliste.setKodeIdClass(ADbKodeId.class);
-        kodeliste.setBeskrivelse(testCase.createDomainLocalizedString("Test beskrivelse"));
-        kodeliste.setNavn(testCase.createDomainLocalizedString("MyTestKodeliste"));
+        kodeliste.setBeskrivelse(testContext.createDomainLocalizedString("Test beskrivelse"));
+        kodeliste.setNavn(testContext.createDomainLocalizedString("MyTestKodeliste"));
 
         // Map domain->wsapi
         no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste target = map.d2w(kodeliste, no.statkart.skif.storetest.wsapi.domain.kodeliste.Kodeliste.class);
         assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestADbKodeId");
         assertEquals(target.getId().getValue(), "1" );
         assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class );
-        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiBeskrivelse = testCase.createWsapiLocalizedString("Test beskrivelse");
+        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiBeskrivelse = testContext.createWsapiLocalizedString("Test beskrivelse");
         assertEquals(target.getBeskrivelse().getEntry().size(), 1);
         assertEquals(target.getBeskrivelse().getEntry().get(0).getKey(), wsapiBeskrivelse.getEntry().get(0).getKey());
         assertEquals(target.getBeskrivelse().getEntry().get(0).getValue(), wsapiBeskrivelse.getEntry().get(0).getValue());
-        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiNavn = testCase.createWsapiLocalizedString("MyTestKodeliste");
+        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiNavn = testContext.createWsapiLocalizedString("MyTestKodeliste");
         assertEquals(target.getNavn().getEntry().size(), 1);
         assertEquals(target.getNavn().getEntry().get(0).getKey(), wsapiNavn.getEntry().get(0).getKey());
         assertEquals(target.getNavn().getEntry().get(0).getValue(), wsapiNavn.getEntry().get(0).getValue());
@@ -226,20 +226,20 @@ public class StoreTestMappingD2WTest {
         assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLong.class);
         assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), new Long(1));
-        testCase.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
-        testCase.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
+        testContext.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
+        testContext.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
         assertEquals(domainKodeliste.getKodeIds().size(), 0);
     }
 
     @Test
     public void testMapDbKodelisteMedKodeIds() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         StoreTestKodeliste kodeliste = new StoreTestKodelisteLong();
         kodeliste.setId(new StoreTestKodelisteLongId(1L));
         kodeliste.setKodeIdClass(ADbKodeId.class);
-        kodeliste.setBeskrivelse(testCase.createDomainLocalizedString("Test beskrivelse"));
-        kodeliste.setNavn(testCase.createDomainLocalizedString("MyTestKodeliste"));
+        kodeliste.setBeskrivelse(testContext.createDomainLocalizedString("Test beskrivelse"));
+        kodeliste.setNavn(testContext.createDomainLocalizedString("MyTestKodeliste"));
 
         List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
         kodeIds.add(ADbKodeId.A1Id);
@@ -250,11 +250,11 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getKodeIdClass(), "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestADbKodeId");
         assertEquals(target.getId().getValue(), "1" );
         assertEquals(target.getId().getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class );
-        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiBeskrivelse = testCase.createWsapiLocalizedString("Test beskrivelse");
+        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiBeskrivelse = testContext.createWsapiLocalizedString("Test beskrivelse");
         assertEquals(target.getBeskrivelse().getEntry().size(), 1);
         assertEquals(target.getBeskrivelse().getEntry().get(0).getKey(), wsapiBeskrivelse.getEntry().get(0).getKey());
         assertEquals(target.getBeskrivelse().getEntry().get(0).getValue(), wsapiBeskrivelse.getEntry().get(0).getValue());
-        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiNavn = testCase.createWsapiLocalizedString("MyTestKodeliste");
+        no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString wsapiNavn = testContext.createWsapiLocalizedString("MyTestKodeliste");
         assertEquals(target.getNavn().getEntry().size(), 1);
         assertEquals(target.getNavn().getEntry().get(0).getKey(), wsapiNavn.getEntry().get(0).getKey());
         assertEquals(target.getNavn().getEntry().get(0).getValue(), wsapiNavn.getEntry().get(0).getValue());
@@ -265,8 +265,8 @@ public class StoreTestMappingD2WTest {
         assertEquals(domainKodeliste.getClass(), StoreTestKodelisteLong.class);
         assertEquals(domainKodeliste.getId().getClass(), StoreTestKodelisteLongId.class);
         assertEquals(domainKodeliste.getId().getValue(), new Long(1));
-        testCase.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
-        testCase.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
+        testContext.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
+        testContext.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
         assertEquals(domainKodeliste.getKodeIds().size(), 2);
         assertEquals(domainKodeliste.getKodeIds().get(0), ADbKodeId.A1Id);
         assertEquals(domainKodeliste.getKodeIds().get(1), ADbKodeId.A2Id);

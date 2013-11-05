@@ -3,7 +3,6 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 import junit.framework.TestCase;
 import no.statkart.skif.storetest.domain.basic.Simple;
-import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -12,16 +11,16 @@ import org.testng.annotations.Test;
  * @since 2.0
  */
 public class StoreTestMappingW2DTest extends TestCase {
-    private StoreTestMappingTestCase testCase;
+    private StoreTestMappingTestContext testContext;
 
     @BeforeMethod
     public void setUpTestCase() {
-        testCase = new StoreTestMappingTestCase();
+        testContext = new StoreTestMappingTestContext();
     }
 
     @Test
     public void testMapString() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         String source = "test";
         String target = map.w2d(source);
@@ -31,7 +30,7 @@ public class StoreTestMappingW2DTest extends TestCase {
 
     @Test
     public void testMapIntger() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         Integer source = 5;
         Integer target = map.w2d(source);
@@ -41,7 +40,7 @@ public class StoreTestMappingW2DTest extends TestCase {
 
     @Test
     public void testMapInt() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         int source = 5;
         int target = map.w2d(source);
@@ -52,7 +51,7 @@ public class StoreTestMappingW2DTest extends TestCase {
 
     @Test
     public void testMapSimple() {
-        final StoreTestMapping map = testCase.buildMapping();
+        final StoreTestMapping map = testContext.buildMapping();
 
         no.statkart.skif.storetest.wsapi.domain.basic.Simple source = new no.statkart.skif.storetest.wsapi.domain.basic.Simple();
         no.statkart.skif.storetest.wsapi.domain.basic.SimpleId sourceId = new no.statkart.skif.storetest.wsapi.domain.basic.SimpleId();
