@@ -27,7 +27,7 @@ import static org.testng.Assert.assertTrue;
  * @author Jan Holmen
  */
 // TODO Fix
-@Test(enabled = false)
+@Test(groups = "broken")
 public class MappingTest extends AutomagicTest {
 
     StoreTestMapper mapper = new StoreTestMapper();
