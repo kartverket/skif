@@ -1,16 +1,9 @@
-package no.statkart.skif.storetest.mapping;
+package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.ServiceMode;
-import no.statkart.skif.module.DefaultModuleConfiguration;
-import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
-import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
-import org.testng.annotations.BeforeClass;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.unitils.reflectionassert.ReflectionAssert;
-import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 /**
  * Tester mapping av SnapshotVersion. AutomagicTest støttes ikke da time og nano ikke kan bruke random verdier.
@@ -19,22 +12,22 @@ import org.unitils.reflectionassert.ReflectionComparatorMode;
  * Denne test kjører alltid i SingleVm uansett hvilken mode som er valgt i skif.properties.
  *
  * @author Jan Holmen
+ * @author Leif Lislegård
  * @since 2.0
  */
-@Test
-public class SnapshotVersionMappingTest extends StoreTestTestCase {
-    private StoreTestMapper testMapper = new StoreTestMapper();
-    private StoreTestMapping mapping = testMapper.getMapping();
+public class SnapshotVersionMappingTest {
+    private StoreTestMappingTestContext testContext;
 
-
-    @BeforeClass(alwaysRun = true)
-    public void setup() {
-        DefaultModuleConfiguration moduleConfiguration = new DefaultModuleConfiguration();
-        moduleConfiguration.setStrategyFactory(new ClientModuleStrategyFactory());
-        moduleConfiguration.setServiceMode(ServiceMode.SINGLE_VM);
+    @BeforeMethod(alwaysRun = true)
+    public void setUpTestCase() {
+        testContext = new StoreTestMappingTestContext();
     }
 
-    public void testSnapshotVersionTypeMapper_Curent() {
+
+    @Test
+    public void testSnapshotVersionTypeMapper_Current() {
+        final StoreTestMapping map = testContext.buildMapping();
+
         //generate test data
         long time = SnapshotVersion.CURRENT.getTimestamp().getTime();
         int nanos = SnapshotVersion.CURRENT.getTimestamp().getNanos();
@@ -44,11 +37,17 @@ public class SnapshotVersionMappingTest extends StoreTestTestCase {
         wsSnapshotVersion.setTime(time);
         wsSnapshotVersion.setNanos(nanos);
 
-        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsMappedSnapshotVersion = doMapping(wsSnapshotVersion);
-        ReflectionAssert.assertReflectionEquals(wsSnapshotVersion.getClass().getSimpleName() + " var ikke like", wsSnapshotVersion, wsMappedSnapshotVersion, ReflectionComparatorMode.LENIENT_ORDER);
+        //mapping
+        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsDoubleMappedSnapshotVersion = map.d2w(map.w2d(wsSnapshotVersion)); //dobbel mapping
+
+        //asserts
+        assertEquals(wsDoubleMappedSnapshotVersion, wsSnapshotVersion, "Dobbelt mappet objekt");
     }
 
+    @Test
     public void testSnapshotVersionTypeMapper_Old() {
+        final StoreTestMapping map = testContext.buildMapping();
+
         //generate test data
         long time = SnapshotVersion.OLD.getTimestamp().getTime();
         int nanos = SnapshotVersion.OLD.getTimestamp().getNanos();
@@ -58,12 +57,18 @@ public class SnapshotVersionMappingTest extends StoreTestTestCase {
         wsSnapshotVersion.setTime(time);
         wsSnapshotVersion.setNanos(nanos);
 
-        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsMappedSnapshotVersion = doMapping(wsSnapshotVersion);
-        ReflectionAssert.assertReflectionEquals(wsSnapshotVersion.getClass().getSimpleName() + " var ikke like", wsSnapshotVersion, wsMappedSnapshotVersion, ReflectionComparatorMode.LENIENT_ORDER);
+        //mapping
+        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsDoubleMappedSnapshotVersion = map.d2w(map.w2d(wsSnapshotVersion)); //dobbel mapping
+
+        //asserts
+        assertEquals(wsDoubleMappedSnapshotVersion, wsSnapshotVersion, "Dobbelt mappet objekt");
     }
 
 
+    @Test
     public void testSnapshotVersionTypeMapper_Start() {
+        final StoreTestMapping map = testContext.buildMapping();
+
         //generate test data
         long time = SnapshotVersion.START.getTimestamp().getTime();
         int nanos = SnapshotVersion.START.getTimestamp().getNanos();
@@ -73,11 +78,17 @@ public class SnapshotVersionMappingTest extends StoreTestTestCase {
         wsSnapshotVersion.setTime(time);
         wsSnapshotVersion.setNanos(nanos);
 
-        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsMappedSnapshotVersion = doMapping(wsSnapshotVersion);
-        ReflectionAssert.assertReflectionEquals(wsSnapshotVersion.getClass().getSimpleName() + " var ikke like", wsSnapshotVersion, wsMappedSnapshotVersion, ReflectionComparatorMode.LENIENT_ORDER);
+        //mapping
+        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsDoubleMappedSnapshotVersion = map.d2w(map.w2d(wsSnapshotVersion)); //dobbel mapping
+
+        //asserts
+        assertEquals(wsDoubleMappedSnapshotVersion, wsSnapshotVersion, "Dobbelt mappet objekt");
     }
 
+    @Test
     public void testSnapshotVersionTypeMapper_Custom_1() {
+        final StoreTestMapping map = testContext.buildMapping();
+
         //generate test data
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:01:30.00");
         long time = snapshotVersion.getTimestamp().getTime();
@@ -88,12 +99,18 @@ public class SnapshotVersionMappingTest extends StoreTestTestCase {
         wsSnapshotVersion.setTime(time);
         wsSnapshotVersion.setNanos(nanos);
 
-        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsMappedSnapshotVersion = doMapping(wsSnapshotVersion);
-        ReflectionAssert.assertReflectionEquals(wsSnapshotVersion.getClass().getSimpleName() + " var ikke like", wsSnapshotVersion, wsMappedSnapshotVersion, ReflectionComparatorMode.LENIENT_ORDER);
+        //mapping
+        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsDoubleMappedSnapshotVersion = map.d2w(map.w2d(wsSnapshotVersion)); //dobbel mapping
+
+        //asserts
+        assertEquals(wsDoubleMappedSnapshotVersion, wsSnapshotVersion, "Dobbelt mappet objekt");
     }
 
 
+    @Test
     public void testSnapshotVersionTypeMapper_Custom_2() {
+        final StoreTestMapping map = testContext.buildMapping();
+
         //generate test data
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 14:12:50.20");
         long time = snapshotVersion.getTimestamp().getTime();
@@ -103,11 +120,18 @@ public class SnapshotVersionMappingTest extends StoreTestTestCase {
         no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsSnapshotVersion = new no.statkart.skif.storetest.wsapi.domain.SnapshotVersion();
         wsSnapshotVersion.setTime(time);
         wsSnapshotVersion.setNanos(nanos);
-        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsMappedSnapshotVersion = doMapping(wsSnapshotVersion);
-        ReflectionAssert.assertReflectionEquals(wsSnapshotVersion.getClass().getSimpleName() + " var ikke like", wsSnapshotVersion, wsMappedSnapshotVersion, ReflectionComparatorMode.LENIENT_ORDER);
+
+        //mapping
+        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsDoubleMappedSnapshotVersion = map.d2w(map.w2d(wsSnapshotVersion)); //dobbel mapping
+
+        //asserts
+        assertEquals(wsDoubleMappedSnapshotVersion, wsSnapshotVersion, "Dobbelt mappet objekt");
     }
 
+    @Test
     public void testSnapshotVersionTypeMapper_Custom_3() {
+        final StoreTestMapping map = testContext.buildMapping();
+
         //generate test data
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2009-11-12 22:18:50.40");
         long time = snapshotVersion.getTimestamp().getTime();
@@ -118,11 +142,17 @@ public class SnapshotVersionMappingTest extends StoreTestTestCase {
         wsSnapshotVersion.setTime(time);
         wsSnapshotVersion.setNanos(nanos);
 
-        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsMappedSnapshotVersion = doMapping(wsSnapshotVersion);
-        ReflectionAssert.assertReflectionEquals(wsSnapshotVersion.getClass().getSimpleName() + " var ikke like", wsSnapshotVersion, wsMappedSnapshotVersion, ReflectionComparatorMode.LENIENT_ORDER);
+        //mapping
+        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsDoubleMappedSnapshotVersion = map.d2w(map.w2d(wsSnapshotVersion)); //dobbel mapping
+
+        //asserts
+        assertEquals(wsDoubleMappedSnapshotVersion, wsSnapshotVersion, "Dobbelt mappet objekt");
     }
 
+    @Test
     public void testSnapshotVersionTypeMapper_Custom_4() {
+        final StoreTestMapping map = testContext.buildMapping();
+
         //generate test data
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2009-11-12 22:18:50.320000005");
         long time = snapshotVersion.getTimestamp().getTime();
@@ -133,13 +163,18 @@ public class SnapshotVersionMappingTest extends StoreTestTestCase {
         wsSnapshotVersion.setTime(time);
         wsSnapshotVersion.setNanos(nanos);
 
-        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsMappedSnapshotVersion = doMapping( wsSnapshotVersion);
-        ReflectionAssert.assertReflectionEquals(wsSnapshotVersion.getClass().getSimpleName() + " var ikke like", wsSnapshotVersion, wsMappedSnapshotVersion, ReflectionComparatorMode.LENIENT_ORDER);
+        //mapping
+        no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsDoubleMappedSnapshotVersion = map.d2w(map.w2d(wsSnapshotVersion)); //dobbel mapping
+
+        //asserts
+        assertEquals(wsDoubleMappedSnapshotVersion, wsSnapshotVersion, "Dobbelt mappet objekt");
     }
 
-    private no.statkart.skif.storetest.wsapi.domain.SnapshotVersion doMapping( no.statkart.skif.storetest.wsapi.domain.SnapshotVersion wsSnapshotVersion) {
-        return mapping.d2w(mapping.w2d(wsSnapshotVersion));
-    }
 
+    public static void assertEquals(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion actual, no.statkart.skif.storetest.wsapi.domain.SnapshotVersion expected, String details) {
+        Assert.assertEquals(actual.getTime(), expected.getTime(), "Time for " + details);
+        Assert.assertEquals(actual.getNanos(), expected.getNanos(), "Nanos for " + details);
+        Assert.assertEquals(actual.getClass(), expected.getClass(), "Class for " + details);
+    }
 
 }
