@@ -71,7 +71,7 @@ subprojects { Project project ->
         properties filterProperties
     }
 
-    plugins.withType(JavaPlugin.class) {
+    plugins.withType(JavaPlugin) {
         project.apply plugin: 'sktools-provided-plugin'
 
         // Avhengigheter som trengs for testing (riktignok ikke alle overalt)
@@ -81,23 +81,31 @@ subprojects { Project project ->
             testCompile libraries.fest
         }
 
+        /**
+         * Testing via TestNG grupper. Se bruk av @Test(groups = "") i koden.
+         * Følgende parametere styrer hvilke grupper som blir kjørt:
+         *
+         * gradle test -DenableSlowTests=true tar også med tester som tar lang tid
+         * gradle test -PhibernateVersion=xx for hibernate versjon spesifike tester
+         * gradle test -DenableOracleLatest=true
+         * osv..
+         *
+         * -DignoreFailures=true stopper ikke eksekvering etter feilende modul og kjører videre. Kjekt for integrasjonstesting som ønsker å kjøre alle tester alltid.
+         */
         test {
-            boolean singleVm = Boolean.valueOf(rootProject.properties['single_vm'])
-            logger.debug "single_vm is set to ${singleVm} for ${project.path}"
+            ignoreFailures = gradle.startParameter.systemPropertiesArgs.get('ignoreFailures', 'false') == 'true' //Gradle feiler ikke dersom denne er true.
 
-            useTestNG() {
-                excludeGroups('broken')
-                if (!project.hasProperty('includeSlow') || !project.getProperty('includeSlow').asBoolean()) {
-                    excludeGroups('slow')
+            def enableSlowTests = Boolean.valueOf(gradle.startParameter.systemPropertiesArgs.get('enableSlowTests', 'false'));
+            def enableOracleLatest = Boolean.valueOf(gradle.startParameter.systemPropertiesArgs.get('enableOracleLatest', 'false'));
+
+            testFramework.options.with {
+
+                if (!enableSlowTests) {
+                    excludeGroups 'slow'
                 }
                 // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
-                if (!project.hasProperty('includeOracleLatest') || !project.getProperty('includeOracleLatest').asBoolean()) {
+                if (!enableOracleLatest) {
                     excludeGroups('oracleLatest')
-                }
-                if (singleVm) {
-                    excludeGroups('server-required')
-                } else {
-                    excludeGroups('singlevm-required')
                 }
                 if (!hibernateVersion.equals("3.6")) {
                     excludeGroups('hibernate36')
@@ -105,29 +113,56 @@ subprojects { Project project ->
                 if (!hibernateVersion.equals("3.2")) {
                     excludeGroups('hibernate32')
                 }
-                listeners << 'org.testng.reporters.XMLReporter' // For Jenkins, siden Gradle ikke tar med default listerners som standard lenger
             }
+
+            inputs.property 'enableSlowTests', enableSlowTests //trigger re-kjøring av test ved endring av parameter
+            inputs.property 'enableOracleLatest', enableOracleLatest //trigger re-kjøring av test ved endring av parameter
+            inputs.property 'hibernateVersion', hibernateVersion  //trigger re-kjøring av test ved endring av parameter
+
 
             jvmArgs '-Xmx1024m'
-            if (rootProject.hasProperty('test.remote.debug')) {
-                jvmArgs '-Xdebug'
-                jvmArgs '-Xnoagent'
-                jvmArgs '-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y'
-            }
-
             testLogging.showStandardStreams = true
+        }
+    }
 
-            //listening to test execution events
-            afterTest { descriptor, result ->
-                logger.lifecycle("${result.toString() == 'SUCCESS' ? ' Sucessfully tested' : 'Failed testing'} : ${descriptor.className}#${descriptor.name}")
-                if (result.resultType.name() == 'FAILURE') {
-                    logger.error("${result.exception}")
-                }
+    project.tasks.withType(Test) { //felles for alle test-tasks
+        def singleVm = Boolean.valueOf(rootProject.ext.properties['single_vm'])
+        logger.debug "single_vm is set to ${singleVm} for ${project.path}"
+
+        useTestNG() {  //benytter kun TestNG over alt
+            excludeGroups('broken')
+            if (singleVm) {
+                excludeGroups('server-required')
+            } else {
+                excludeGroups('singlevm-required')
             }
+
+//            listeners << 'org.uncommons.reportng.HTMLReporter' // Gradles innebygde rapport viser ikke skipped
+            listeners << 'org.testng.reporters.XMLReporter' // For Jenkins, siden Gradle 1.4+ ikke tar med default listeners som standard lenger
 
         }
 
+        systemProperties "org.uncommons.reportng.stylesheet": "${project.rootProject.file('all/test/report/reportng-1.1.3/stylesheets/hudsonesque.css')}"
+        systemProperties "org.uncommons.reportng.title": "${project.name} Report"
+
+
+        inputs.property 'singleVm', singleVm //trigger re-kjøring av test ved endring av parameter
+
+        if (rootProject.hasProperty('test.remote.debug')) {
+            jvmArgs '-Xdebug'
+            jvmArgs '-Xnoagent'
+            jvmArgs '-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y'
+        }
+
+        //listening to test execution events
+        afterTest { descriptor, result ->
+            logger.lifecycle("${result.toString() == 'SUCCESS' ? ' Sucessfully tested' : 'Failed testing'} : ${descriptor.className}#${descriptor.name}")
+            if (result.resultType.name() == 'FAILURE') {
+                logger.error("${result.exception}")
+            }
+        }
     }
+
 
     afterEvaluate {
         //kobler inn standard upload repositores ved bruk av maven plugin
