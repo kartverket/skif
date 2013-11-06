@@ -156,7 +156,7 @@ subprojects { Project project ->
 
         //listening to test execution events
         afterTest { descriptor, result ->
-            logger.lifecycle("${result.toString() == 'SUCCESS' ? ' Sucessfully tested' : 'Failed testing'} : ${descriptor.className}#${descriptor.name}")
+            logger.lifecycle("${result.toString() == 'SUCCESS' ? ' Successfully tested' : 'Failed testing'} : ${descriptor.className}#${descriptor.name}")
             if (result.resultType.name() == 'FAILURE') {
                 logger.error("${result.exception}")
             }
