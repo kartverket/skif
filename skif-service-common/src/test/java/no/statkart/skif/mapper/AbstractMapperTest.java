@@ -3,6 +3,7 @@ package no.statkart.skif.mapper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,7 @@ public class AbstractMapperTest {
                 new DateTypeMapper()
         );
 
-        TypeMapper<?, ?> closestTypeMapper = AbstractMapper.findClosestTypeMapper(typeMappers, Date.class, AbstractMapper.Direction.W2D);
+        TypeMapper<?, ?> closestTypeMapper = AbstractMapper.findClosestTypeMapper(typeMappers, XMLGregorianCalendar.class, Date.class, AbstractMapper.Direction.W2D);
 
         Assert.assertEquals(closestTypeMapper.getClass(), DateTypeMapper.class);
     }

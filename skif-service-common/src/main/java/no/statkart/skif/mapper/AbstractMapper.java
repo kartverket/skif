@@ -5,12 +5,13 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.reflect.TypeToken;
 import no.statkart.skif.exception.ImplementationException;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.*;
 import java.util.*;
+
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 /**
  * @author Henrik Fredholm
@@ -258,29 +259,37 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         } else if (candidates.size() == 1) {
             return candidates.get(0);
         } else {
-            return findClosestTypeMapper(candidates, sourceClass, direction);
+            return findClosestTypeMapper(candidates, sourceClass, targetClass, direction);
         }
     }
 
-    static TypeMapper<?, ?> findClosestTypeMapper(Collection<TypeMapper<?, ?>> candidates, Class mappableClass, Direction direction) {
+    static TypeMapper<?, ?> findClosestTypeMapper(Collection<TypeMapper<?, ?>> candidates, Class mappableClass, Class requestedClass, Direction direction) {
         //map with natural ordering of keys
         TreeMap<Integer, TypeMapper<?, ?>> signedCandidates = new TreeMap<Integer, TypeMapper<?, ?>>();
 
         for (TypeMapper<?, ?> candidate : candidates) {
-            final Class<?> mapperClass;
+            final Class<?> fromClass, toClass;
             Class<?> candidateClass;
             int weight = 0;
 
-            if (Direction.W2D == direction) {
-                mapperClass = candidate.getDomainClass();
-            } else if (Direction.D2W == direction) {
-                mapperClass = candidate.getWsapiClass();
+            if (Direction.D2W == direction) {
+                fromClass = candidate.getDomainClass();
+                toClass = candidate.getWsapiClass();
+            } else if (Direction.W2D == direction) {
+                fromClass = candidate.getWsapiClass();
+                toClass = candidate.getDomainClass();
             } else {
                 throw new ImplementationException("Invalid direction: " + direction);
             }
 
             candidateClass = mappableClass;
-            while (!mapperClass.equals(candidateClass) && !Object.class.equals(candidateClass)) {
+            while (!fromClass.equals(candidateClass) && !Object.class.equals(candidateClass)) {
+                weight++;
+                candidateClass = candidateClass.getSuperclass();
+            }
+
+            candidateClass = requestedClass;
+            while (!toClass.equals(candidateClass) && !Object.class.equals(candidateClass)) {
                 weight++;
                 candidateClass = candidateClass.getSuperclass();
             }
