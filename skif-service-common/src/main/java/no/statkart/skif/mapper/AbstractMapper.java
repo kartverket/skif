@@ -21,7 +21,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
     private DefaultTypeMapper defaultMapper = null;
 
-    private static enum Direction {
+    static enum Direction {
         /**
          * mapping from domain to webserivce classes
          */
@@ -262,7 +262,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         }
     }
 
-    private TypeMapper<?, ?> findClosestTypeMapper(Collection<TypeMapper<?, ?>> candidates, Class mappableClass, Direction direction) {
+    static TypeMapper<?, ?> findClosestTypeMapper(Collection<TypeMapper<?, ?>> candidates, Class mappableClass, Direction direction) {
         //map with natural ordering of keys
         TreeMap<Integer, TypeMapper<?, ?>> signedCandidates = new TreeMap<Integer, TypeMapper<?, ?>>();
 
@@ -271,9 +271,9 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
             Class<?> candidateClass;
             int weight = 0;
 
-            if (Direction.D2W == direction) {
+            if (Direction.W2D == direction) {
                 mapperClass = candidate.getDomainClass();
-            } else if (Direction.W2D == direction) {
+            } else if (Direction.D2W == direction) {
                 mapperClass = candidate.getWsapiClass();
             } else {
                 throw new ImplementationException("Invalid direction: " + direction);
