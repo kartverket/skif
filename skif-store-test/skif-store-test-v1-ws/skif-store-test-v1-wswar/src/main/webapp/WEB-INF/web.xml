@@ -8,6 +8,9 @@
         <listener-class>no.statkart.skif.storetest.config.StoreTestStoreServicesEJBs</listener-class>
     </listener>
     <listener>
+        <listener-class>no.statkart.skif.storetest.config.StoreTestDomainFinderServicesEJBs</listener-class>
+    </listener>
+    <listener>
         <listener-class>no.statkart.skif.storetest.config.StoreTestStoreUpdateServicesEJBs</listener-class>
     </listener>
     <listener>

@@ -3,6 +3,7 @@ package no.statkart.skif.skiftest.wsapi.service.id;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestTxManagementWebServiceInjectorConfig;
+import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -36,7 +37,7 @@ public class SequenceBlockAllocatorServiceWSBean extends SkifWebService<Sequence
 
 
     @Override
-    public long allocateSequenceBlock(@WebParam(name = "sequenceName") String sequenceName, @WebParam(name = "blockSize") int blockSize) {
+    public long allocateSequenceBlock(@WebParam(name = "sequenceName") String sequenceName, @WebParam(name = "blockSize") int blockSize) throws ServiceException {
         return wsServiceChain.allocateSequenceBlock(sequenceName, blockSize);
     }
 }

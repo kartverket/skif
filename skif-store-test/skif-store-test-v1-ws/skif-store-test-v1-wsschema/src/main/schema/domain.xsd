@@ -103,12 +103,20 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
-                    <xs:element name="oppdateringsdato" type="basetyperns:Timestamp" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="sluttdato" type="basetyperns:Timestamp" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="versjonId" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="oppdateringsdato" type="basetyperns:Timestamp" />
+                    <xs:element name="sluttdato" type="basetyperns:Timestamp" />
+                    <xs:element name="versjonId" type="xs:long" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="AbstractEntityComponentWithHistory">
+        <xs:sequence>
+            <xs:element name="oppdateringsdato" type="basetyperns:Timestamp" />
+            <xs:element name="sluttdato" type="basetyperns:Timestamp" />
+            <xs:element name="versjonId" type="xs:long" />
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="StoreTestContext">

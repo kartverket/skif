@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/component/composite"
+        xmlns:compositens="http://skif.statkart.no/storetest/wsapi/domain/component/composite"
+        xmlns:basicns="http://skif.statkart.no/storetest/wsapi/domain/basic"
+        xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
+        xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:import schemaLocation="demoKoder.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"/>
+    <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
+    <xs:import schemaLocation="basic.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basic"/>
+    <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
+
+
+    <xs:complexType name="BubbleWithCompositeComponentId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithCompositeComponentIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="compositens:BubbleWithCompositeComponentId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithCompositeComponent">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="nr" type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                    <!--xs:element name="level1Component" type="compositens:Level1CompositeComponent"/-->
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Level1CompositeComponent">
+        <xs:sequence>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
+            <xs:element name="belop" type="basicns:BeloepValueObject"/>
+            <xs:element name="level2Component" type="compositens:Level2CompositeComponent"/>
+
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Level2CompositeComponent">
+        <xs:sequence>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="belop" type="basicns:BeloepValueObject"/>
+            <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

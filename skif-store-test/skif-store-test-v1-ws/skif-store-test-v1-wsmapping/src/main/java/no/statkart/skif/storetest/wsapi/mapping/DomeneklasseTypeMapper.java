@@ -4,12 +4,13 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.AbstractTypeMapper;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
+import no.statkart.skif.storetest.domain.basic.BubbleWithRelation;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SubTypedBubble;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1AA;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCMany;
-import no.statkart.skif.storetest.wsapi.endringslogg.Domeneklasse;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.Domeneklasse;
 
 /**
  * Mapper WS enum {@code Domeneklasse }til {@code Class<? extends StoreTestBubble>}
@@ -36,6 +37,8 @@ public class DomeneklasseTypeMapper extends AbstractTypeMapper<Domeneklasse,Clas
                 return Simple.class;
             case SUB_TYPED_BUBBLE:
                 return SubTypedBubble.class;
+            case BUBBLE_WITH_RELATION:
+                return BubbleWithRelation.class;
             case X_1_AA:
                 return X1AA.class;
             case X_1_BB_ONE:

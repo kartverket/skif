@@ -4,6 +4,7 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
+import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -38,7 +39,7 @@ public class Test1ServiceWSBean extends SkifWebService<Test1ServiceWSI> implemen
 
     @Override
     @WebMethod
-    public String helloWorld(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) {
+    public String helloWorld(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) throws ServiceException {
 //        System.out.println("here : " + ctx.isUserInRole("Innsyn"));
 //        System.out.println("here : " + ctx.isUserInRole("Matrikkelfører"));
 //        System.out.println("here : " + ctx.isUserInRole("Posten"));
@@ -48,7 +49,7 @@ public class Test1ServiceWSBean extends SkifWebService<Test1ServiceWSI> implemen
 
     @Override
     @WebMethod
-    public String helloVersion(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) {
+    public String helloVersion(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) throws ServiceException {
         return wsServiceChain.helloVersion(message, skifTestContext);
     }
 }

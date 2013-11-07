@@ -22,6 +22,7 @@ import java.util.Set;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 /**
  * Tester kodepattern for unidireksjonelle relasjoner med tilhørede invers findere.
@@ -148,6 +149,8 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         store.getInstance(StoreRelationCache.class).setEnabled(true);
         X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
         assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
+        assertEquals(b1.getInvSomeBBIds().isMaterialised(), false);
+        assertNull(b1.getInvSomeBBIds().getCached());
 
         // Her endres a2 til å peke på b1
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());

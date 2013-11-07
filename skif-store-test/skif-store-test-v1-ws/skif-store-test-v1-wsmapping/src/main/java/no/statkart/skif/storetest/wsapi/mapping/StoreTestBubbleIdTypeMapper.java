@@ -50,4 +50,8 @@ public class StoreTestBubbleIdTypeMapper<WsapiT extends no.statkart.skif.storete
             return idValueType.cast(value);
         }
     }
+
+    public static  <WsapiT extends no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId, DomainT extends StoreTestBubbleId>  StoreTestBubbleIdTypeMapper<WsapiT, DomainT> create(Class<WsapiT> wsapiTClass, Class<DomainT> domainTClass) {
+        return new StoreTestBubbleIdTypeMapper<WsapiT, DomainT>(wsapiTClass, domainTClass);
+    }
 }

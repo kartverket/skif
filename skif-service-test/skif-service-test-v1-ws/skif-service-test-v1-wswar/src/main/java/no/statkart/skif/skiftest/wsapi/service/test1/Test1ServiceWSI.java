@@ -3,6 +3,7 @@ package no.statkart.skif.skiftest.wsapi.service.test1;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
+import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
 
 import javax.jws.WebParam;
 
@@ -11,7 +12,7 @@ import javax.jws.WebParam;
  * @since 2.0
  */
 public interface Test1ServiceWSI extends ServiceWSI {
-    public String helloWorld(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext);
+    public String helloWorld(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) throws ServiceException;
 
-    public String helloVersion(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext);
+    public String helloVersion(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext)throws ServiceException;
 }

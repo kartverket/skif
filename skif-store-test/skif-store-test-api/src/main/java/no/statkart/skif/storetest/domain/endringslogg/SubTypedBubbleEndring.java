@@ -11,6 +11,15 @@ import no.statkart.skif.storetest.domain.basic.SubTypedBubbleId;
 public class SubTypedBubbleEndring<I extends SubTypedBubbleEndringId<?>, EI extends SubTypedBubbleId<?>> extends Endring<I, EI> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("UnusedDeclaration") // Hibernate og AbstractEndringManager
+    public SubTypedBubbleEndring() {
+        super();
+    }
+
+    public SubTypedBubbleEndring(Long value) {
+        setId(new SubTypedBubbleEndringId<SubTypedBubbleEndring>(value));
+    }
+
 
     @Override
     public I getId() {

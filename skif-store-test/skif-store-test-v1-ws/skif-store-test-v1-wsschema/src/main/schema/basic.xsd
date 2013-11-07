@@ -34,8 +34,8 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
-                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="nr" type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -58,10 +58,10 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
-                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="filter" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="filterText" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="nr" type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                    <xs:element name="filter" type="xs:boolean"/>
+                    <xs:element name="filterText" type="xs:string"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -84,10 +84,10 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
-                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="testAEnumKodeId" type="demoKoderns:TestAEnumKodeId" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="testC2DbKodeId" type="demoKoderns:TestC2DbKodeId" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="nr" type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                    <xs:element name="testAEnumKodeId" type="demoKoderns:TestAEnumKodeId"/>
+                    <xs:element name="testC2DbKodeId" type="demoKoderns:TestC2DbKodeId"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -110,12 +110,53 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
-                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="simpleId" type="basicns:SimpleId" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="nr" type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                    <xs:element name="simpleId" type="basicns:SimpleId"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithValueObjectId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithValueObjectIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:BubbleWithValueObjectId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithValueObject">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="nr" type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                    <xs:element name="a" type="basicns:BeloepValueObject"/>
+                    <xs:element name="b" type="basicns:BeloepValueObject"/>
+                    <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BeloepValueObject">
+        <xs:sequence>
+            <xs:element name="valuta" type="xs:string"/>
+            <xs:element name="verdi" type="xs:int"/>
+            <xs:element name="kommentar" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BeloepValueObjectList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:BeloepValueObject"/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="HistSimpleId">
@@ -135,9 +176,9 @@
         <xs:complexContent>
             <xs:extension base="domainns:AbstractStoreTestBubbleWithHistory">
                 <xs:sequence>
-                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="testSetNumber" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="nr" type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                    <xs:element name="testSetNumber" type="xs:int"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -160,10 +201,10 @@
         <xs:complexContent>
             <xs:extension base="domainns:AbstractStoreTestBubbleWithHistory">
                 <xs:sequence>
-                    <xs:element name="nr" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="testSetNumber" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="histSimpleId" type="basicns:HistSimpleId" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="nr" type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                    <xs:element name="testSetNumber" type="xs:int"/>
+                    <xs:element name="histSimpleId" type="basicns:HistSimpleId"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -203,7 +244,6 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-
 
 
     <xs:complexType name="SubTypeWithPrimitiveId">

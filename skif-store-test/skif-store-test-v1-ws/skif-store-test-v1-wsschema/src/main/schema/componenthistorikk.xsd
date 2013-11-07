@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/component/historikk"
+        xmlns:historikkns="http://skif.statkart.no/storetest/wsapi/domain/component/historikk"
+        xmlns:basicns="http://skif.statkart.no/storetest/wsapi/domain/basic"
+        xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
+        xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:import schemaLocation="demoKoder.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"/>
+    <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
+    <xs:import schemaLocation="basic.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basic"/>
+    <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
+
+
+    <xs:complexType name="HistorikkBubbleWithEntityComponentsId">
+        <xs:complexContent>
+            <xs:extension base="domainns:AbstractStoreTestBubbleWithHistoryId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistorikkBubbleWithEntityComponentsIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item"
+                        type="historikkns:HistorikkBubbleWithEntityComponentsId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HistorikkBubbleWithEntityComponents">
+        <xs:complexContent>
+            <xs:extension base="domainns:AbstractStoreTestBubbleWithHistory">
+                <xs:sequence>
+                    <xs:element name="mainEntityComponent" type="historikkns:HistorikkEntityComponent"/>
+                    <xs:element name="secondaryEntityComponents" type="historikkns:HistorikkEntityComponent"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistorikkBubbleWithListEntityComponentsId">
+        <xs:complexContent>
+            <xs:extension base="domainns:AbstractStoreTestBubbleWithHistoryId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistorikkBubbleWithListEntityComponentsIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item"
+                        type="historikkns:HistorikkBubbleWithListEntityComponentsId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="HistorikkBubbleWithListEntityComponents">
+        <xs:complexContent>
+            <xs:extension base="domainns:AbstractStoreTestBubbleWithHistory">
+                <xs:sequence>
+                    <xs:element name="entityComponents" type="historikkns:HistorikkListEntityComponent"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistorikkEntityComponent">
+        <xs:complexContent>
+            <xs:extension base="domainns:AbstractEntityComponentWithHistory">
+                <xs:sequence>
+                    <xs:element name="id" type="xs:long"/>
+                    <xs:element name="value" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="HistorikkListEntityComponent">
+        <xs:complexContent>
+            <xs:extension base="domainns:AbstractEntityComponentWithHistory">
+                <xs:sequence>
+                    <xs:element name="id" type="xs:long"/>
+                    <xs:element name="value" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+</xs:schema>

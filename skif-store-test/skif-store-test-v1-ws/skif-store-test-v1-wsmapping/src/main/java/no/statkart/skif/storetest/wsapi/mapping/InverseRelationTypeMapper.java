@@ -37,6 +37,7 @@ public class InverseRelationTypeMapper<WsapiT extends no.statkart.skif.storetest
     public WsapiT mapDomainObject(DomainT source) {
         WsapiT target = createWsapiT();
         target.setMaterialised(source.isMaterialised());
+        // Det kan være at vi her bør lage en empty set hvis source er en liste type
         if (source.isMaterialised()) {
             setCachedValue(target, getMapping().d2w(source.getCached(), getCachedValueType()));
         }
@@ -72,5 +73,8 @@ public class InverseRelationTypeMapper<WsapiT extends no.statkart.skif.storetest
         } catch (InvocationTargetException e) {
             throw new ImplementationException(e);
         }
+    }
+    public static <WsapiT extends no.statkart.skif.storetest.wsapi.domain.InverseRelation, DomainT extends InverseRelation> InverseRelationTypeMapper<WsapiT,DomainT> create(Class<WsapiT> wsapiTClass, Class<DomainT> domainTClass) {
+        return new InverseRelationTypeMapper<WsapiT, DomainT>(wsapiTClass, domainTClass);
     }
 }

@@ -11,6 +11,14 @@ import no.statkart.skif.storetest.domain.basic.SimpleId;
 public class SimpleEndring<I extends SimpleEndringId<?>, EI extends SimpleId<?>> extends Endring<I, EI> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("UnusedDeclaration") // Hibernate og AbstractEndringManager
+    public SimpleEndring() {
+        super();
+    }
+
+    public SimpleEndring(Long value) {
+        setId(new SimpleEndringId<SimpleEndring>(value));
+    }
 
     @Override
     public I getId() {

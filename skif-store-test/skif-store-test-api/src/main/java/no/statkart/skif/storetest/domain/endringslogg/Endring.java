@@ -20,11 +20,18 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
  * @author Henrik Fredholm
  * @since 2.2.0
  */
-public abstract class Endring<I extends EndringId<?>, EI extends StoreTestBubbleId<?>> extends AbstractEndring<I, EI> implements StoreTestBubble {
+public class Endring<I extends EndringId<?>, EI extends StoreTestBubbleId<?>> extends AbstractEndring<I, EI> implements StoreTestBubble {
     private static final long serialVersionUID = 1L;
 
     private String brukernavn;
 
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
+    protected Endring() {
+    }
+
+    public Endring(long value) {
+        setId(new EndringId<Endring>(value));
+    }
 
     @Override
     public I getId() {

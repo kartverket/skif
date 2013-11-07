@@ -3,12 +3,11 @@ package no.statkart.skif.storetest.wsapi.mapping;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.AbstractTypeMapper;
 import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.storetest.domain.endringslogg.BubbleWithRelationEndring;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.endringslogg.SimpleEndring;
 import no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring;
-import no.statkart.skif.storetest.wsapi.endringslogg.Endringsklasse;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.Endringsklasse;
 
 /**
  * Mapper WS enum {@code Endringsklasse }til {@code Class<? extends Endring>}
@@ -37,6 +36,8 @@ public class EndringsklasseTypeMapper extends AbstractTypeMapper<Endringsklasse,
                 return SimpleEndring.class;
             case SUB_TYPED_BUBBLE_ENDRING:
                 return SubTypedBubbleEndring.class;
+            case BUBBLE_WITH_RELATION_ENDRING:
+                return BubbleWithRelationEndring.class;
 /*
             case X_1_AA:
                 return Endring.class;

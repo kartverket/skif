@@ -1,8 +1,11 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import com.google.inject.TypeLiteral;
+import no.statkart.skif.mapper.TypeMapper;
 import no.statkart.skif.store.localization.LocalizedString;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKode;
+import no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKode;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId;
 
 import java.util.Locale;
@@ -32,5 +35,9 @@ public class KodeTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.doma
         target.setKodeverdi(getMapping().w2d(source.getKodeverdi()));
         target.setBeskrivelse(new LocalizedString(getMapping().w2d(source.getBeskrivelse(), LocalizedString.MAP_TYPE)));
         return target;
+    }
+
+    public static <WsapiT extends no.statkart.skif.storetest.wsapi.domain.kodeliste.Kode, DomainT extends StoreTestKode> TypeMapper<WsapiT, DomainT> create(Class<WsapiT> wsapiTClass, Class<DomainT> domainTClass) {
+        return new KodeTypeMapper<WsapiT, DomainT>(wsapiTClass, domainTClass);
     }
 }

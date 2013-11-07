@@ -33,7 +33,7 @@ public abstract class AbstractEndring<I extends AbstractEndringId<?>, EI extends
         return endringstype;
     }
 
-    void setEndringstype(Endringstype endringstype) {
+    public void setEndringstype(Endringstype endringstype) {
         this.endringstype = endringstype;
     }
 
@@ -49,7 +49,7 @@ public abstract class AbstractEndring<I extends AbstractEndringId<?>, EI extends
         return endretBubbleId;
     }
 
-    void setEndretBubbleId(EI id) {
+    public void setEndretBubbleId(EI id) {
         if (endretBubbleId == null) {
             endretBubbleId = id;
         } else {

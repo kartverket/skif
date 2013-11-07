@@ -39,8 +39,8 @@
 
     <xs:complexType name="Position">
         <xs:sequence>
-            <xs:element name="x" type="xs:double" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="y" type="xs:double" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="x" type="xs:double" />
+            <xs:element name="y" type="xs:double" />
             <xs:element name="z" type="xs:double" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>

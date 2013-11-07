@@ -34,4 +34,8 @@ public class KodeIdTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.do
         }
         return target;
     }
+
+    public static <WsapiT extends no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId, DomainT extends StoreTestKodeId> KodeIdTypeMapper<WsapiT,DomainT> create(Class<WsapiT> wsapiTClass, Class<DomainT> domainTClass) {
+        return new KodeIdTypeMapper<WsapiT, DomainT>(wsapiTClass, domainTClass);
+    }
 }

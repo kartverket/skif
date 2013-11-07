@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/component/entity"
+        xmlns:entityns="http://skif.statkart.no/storetest/wsapi/domain/component/entity"
+        xmlns:basicns="http://skif.statkart.no/storetest/wsapi/domain/basic"
+        xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
+        xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:import schemaLocation="demoKoder.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"/>
+    <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
+    <xs:import schemaLocation="basic.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basic"/>
+    <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
+
+
+    <xs:complexType name="BubbleWithEntityComponentId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithEntityComponentIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="entityns:BubbleWithEntityComponentId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithEntityComponent">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="nr" type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                    <xs:element name="level1Component" type="entityns:Level1EntityComponent"/>
+                    <xs:element name="aaComponents" type="entityns:SetAaEntityComponentList"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithEntityInCompositeComponentId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithEntityInCompositeComponentIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="entityns:BubbleWithEntityInCompositeComponentId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithEntityInCompositeComponent">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="nr" type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                    <!--xs:element name="level1Component" type="entityns:Level1CompositeComponentWithEntity"/-->
+                    <xs:element name="aaComponents" type="entityns:SetAaEntityComponentList"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Level1CompositeComponentWithEntity">
+        <xs:sequence>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="entity" type="entityns:Level1EntityInCompositeComponent"/>
+            <xs:element name="entitySet" type="entityns:Level1SetEntityInCompositeComponentList"/>
+            <!--xs:element name="level2Component" type="entityns:Level2CompositeComponentWithEntity"/-->
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Level1EntityComponent">
+        <xs:sequence>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="belop" type="basicns:BeloepValueObject"/>
+            <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
+            <xs:element name="level2Component" type="entityns:Level2EntityComponent"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Level1EntityInCompositeComponent">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" nillable="true"/>
+            <xs:element name="text" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="Level1EntityInCompositeComponentList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="entityns:Level1EntityInCompositeComponent"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Level1SetEntityInCompositeComponent">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" nillable="true"/>
+            <xs:element name="text" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Level1SetEntityInCompositeComponentList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="entityns:Level1SetEntityInCompositeComponent"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Level2CompositeComponentWithEntity">
+        <xs:sequence>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="entity" type="entityns:Level2EntityInCompositeComponent"/>
+            <xs:element name="entitySet" type="entityns:Level2SetEntityInCompositeComponentList"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Level2EntityComponent">
+        <xs:sequence>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="belop" type="basicns:BeloepValueObject"/>
+            <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Level2EntityInCompositeComponent">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" nillable="true"/>
+            <xs:element name="text" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Level2SetEntityInCompositeComponent">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" nillable="true"/>
+            <xs:element name="text" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Level2SetEntityInCompositeComponentList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="entityns:Level2SetEntityInCompositeComponent"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="NestedEntityComponent">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" nillable="true"/>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="nestedComponent" type="entityns:NestedEntityComponent"/>
+            <xs:element name="nestedComponents" type="entityns:NestedEntityComponentList"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="NestedEntityComponentList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="entityns:NestedEntityComponent"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SetAaEntityComponent">
+        <xs:sequence>
+            <xs:element name="ident" type="xs:int"/>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="level1Component" type="entityns:SetAaLevel1EntityComponent"/>
+            <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
+            <!--xs:element name="nestedComponent" type="entityns:NestedEntityComponent"/-->
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SetAaEntityComponentList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="entityns:SetAaEntityComponent"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SetAaLevel1EntityComponent">
+        <xs:sequence>
+            <xs:element name="ident" type="xs:int"/>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="level2Component" type="entityns:SetAaLevel2EntityComponent"/>
+            <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SetAaLevel2EntityComponent">
+        <xs:sequence>
+            <xs:element name="ident" type="xs:int"/>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+</xs:schema>

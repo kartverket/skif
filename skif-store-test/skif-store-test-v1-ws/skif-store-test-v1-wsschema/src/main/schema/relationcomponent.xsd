@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/relation/uni/component/entity"
+        xmlns:relationcomponentns="http://skif.statkart.no/storetest/wsapi/domain/relation/uni/component/entity"
+        xmlns:basicns="http://skif.statkart.no/storetest/wsapi/domain/basic"
+        xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
+        xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+    <xs:import schemaLocation="demoKoder.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"/>
+    <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
+    <xs:import schemaLocation="basic.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basic"/>
+    <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
+
+
+    <xs:complexType name="X2AAWithEntityComponentId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="X2AAWithEntityComponentIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="relationcomponentns:X2AAWithEntityComponentId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="X2AAWithEntityComponent">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="entityComponentOne" type="relationcomponentns:X2EntityComponentOne"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="X2EntityComponentOne">
+        <xs:sequence>
+            <xs:element name="id"  type="xs:long" nillable="true"/>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="someBBId" type="relationcomponentns:X2BBOneId"/>
+            <xs:element name="someCCsIds" type="relationcomponentns:X2CCManyIdList"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="X2AAWithEntityComponentIdListForX2BBOneIdMap">
+        <xs:annotation>
+            <xs:appinfo>
+                <IsDictionary
+                        xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                    true
+                </IsDictionary>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="key" nillable="true" type="relationcomponentns:X2BBOneId"/>
+                        <xs:element name="value" type="relationcomponentns:X2AAWithEntityComponentIdList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="X2AAWithEntityComponentIdForX2CCManyIdMap">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="key" nillable="true" type="relationcomponentns:X2CCManyId"/>
+                        <xs:element name="value" type="relationcomponentns:X2AAWithEntityComponentId"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="X2BBOneId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="X2BBOneIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="relationcomponentns:X2BBOneId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="X2BBOne">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="X2CCManyId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="X2CCManyIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="relationcomponentns:X2CCManyId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="X2CCMany">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

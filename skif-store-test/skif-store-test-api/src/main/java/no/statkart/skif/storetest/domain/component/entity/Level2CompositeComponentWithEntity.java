@@ -39,7 +39,10 @@ public class Level2CompositeComponentWithEntity implements CompositeComponent<Bu
     @Override
     public void setOwner(Level1CompositeComponentWithEntity owner) {
         this.owner = Components.checkSetOwner(this, this.owner, owner);
+
     }
+
+
 
     @Override
     public boolean isNullComponent() {

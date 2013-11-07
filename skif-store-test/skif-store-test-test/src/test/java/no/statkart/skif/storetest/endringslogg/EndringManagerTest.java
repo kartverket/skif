@@ -101,7 +101,9 @@ public class EndringManagerTest extends StoreTestTestCase {
 
         Assert.assertEquals(endringer.get(0).getClass(), SimpleEndring.class, "Endring 0 klasse");
         Assert.assertEquals(endringer.get(0).getEndringsnummer(), endringsnummerFoer + 1, "Endring 0 endringsnummer");
+        Assert.assertEquals(endringer.get(0).getEndringstype(), Endringstype.Nyoppretting, "Endring 0 endringstype");
         Assert.assertEquals(endringer.get(0).getEndretBubbleId(), simple1.getId(), "Endring 0 id");
+
         Assert.assertEquals(endringer.get(1).getClass(), SimpleEndring.class, "Endring 1 klasse");
         Assert.assertEquals(endringer.get(1).getEndringsnummer(), endringsnummerFoer + 2, "Endring 1 endringsnummer");
         Assert.assertEquals(endringer.get(1).getEndretBubbleId(), simple2.getId(), "Endring 1 id");
@@ -229,7 +231,11 @@ public class EndringManagerTest extends StoreTestTestCase {
             assertThat(abstractStoreTestBubbleIdList).containsExactly(bubbleWithRelation1.getId(), bubbleWithRelation2.getId());
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
+            // Kommer i SingleVm mode
             assertThat(e).hasMessageContaining("Klassefilter kan ikke være en abstrakt klasse");
+        } catch (IllegalArgumentException e) {
+            // Kommer i JEE mode
+            assertThat(e).hasMessageContaining("StoreTestBubble");
         }
     }
 
@@ -267,6 +273,8 @@ public class EndringManagerTest extends StoreTestTestCase {
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
             assertThat(e).hasMessageContaining("Klassefilter kan ikke være en abstrakt klasse");
+        } catch (IllegalArgumentException e) {
+            assertThat(e).hasMessageContaining("StoreTestBubble");
         }
     }
 
@@ -305,6 +313,8 @@ public class EndringManagerTest extends StoreTestTestCase {
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
             assertThat(e).hasMessageContaining("Klassefilter kan ikke være en abstrakt klasse");
+        } catch (IllegalArgumentException e) {
+            assertThat(e).hasMessageContaining("StoreTestBubble");
         }
     }
 }

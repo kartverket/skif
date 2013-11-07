@@ -19,7 +19,10 @@ public abstract class RemoteServiceModuleStrategy extends ModuleStrategy {
      * <br />
      * Skal være på formen {@code <intern>:<extern>}
      */
-    protected String[] classWSPackageMappings = {"api:wsapi", "service:wsapi.service"};
+    protected String[] classWSPackageMappings = {"api:wsapi", "service:wsapi.service","domain:wsapi.service.domain",
+            // Midlertidig fix pga "SKIF-382 Håndtering av lange navne"
+            "domain.relation.uni.component.entity:wsapi.service.domain.relation.uni.comp"
+    };
 
     public CallServiceChainFactorySpecification getCallServiceChainFactorySpecification() {
         return callServiceChainFactorySpecification;

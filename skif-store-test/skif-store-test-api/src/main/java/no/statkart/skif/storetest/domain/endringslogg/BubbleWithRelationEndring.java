@@ -11,6 +11,14 @@ import no.statkart.skif.storetest.domain.basic.BubbleWithRelationId;
 public class BubbleWithRelationEndring<I extends BubbleWithRelationEndringId<?>, EI extends BubbleWithRelationId<?>> extends Endring<I, EI> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("UnusedDeclaration") // Hibernate og AbstractEndringManager
+    public BubbleWithRelationEndring() {
+        super();
+    }
+
+    public BubbleWithRelationEndring(Long value) {
+        setId(new BubbleWithRelationEndringId<BubbleWithRelationEndring>(value));
+    }
 
     @Override
     public I getId() {

@@ -9,6 +9,7 @@ import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.service.test.SkifTestClientModule;
 import no.statkart.skif.skiftest.wsapi.SkifTestServiceContextMapper;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
+import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 import no.statkart.skif.skiftest.wsapi.service.test1.Test1Service;
 import no.statkart.skif.util.testsupport.SkifTestCase;
@@ -33,7 +34,7 @@ public class RemoteWSServiceModuleTest extends SkifTestCase {
     }
 
     @Test
-    public void testTest1ServiceWSDirect() {
+    public void testTest1ServiceWSDirect() throws ServiceException {
         Test1Service test1Service = injector.getInstance(Test1Service.class);
 
         SkifTestContext context = new SkifTestContext();

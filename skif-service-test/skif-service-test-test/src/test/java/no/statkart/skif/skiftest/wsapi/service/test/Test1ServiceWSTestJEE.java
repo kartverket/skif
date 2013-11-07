@@ -16,6 +16,7 @@ import no.statkart.skif.service.module.common.WSRemoteServiceModule;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.service.ws.JaxWsServiceWithDynamicRequestContextProvider;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
+import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
 import no.statkart.skif.skiftest.wsapi.service.test1.Test1Service;
 import no.statkart.skif.skiftest.wsapi.service.test1.Test1ServiceWS;
 import no.statkart.skif.skiftest.wsapi.service.test2.Test2Service;
@@ -56,7 +57,7 @@ public class Test1ServiceWSTestJEE {
      * JAX-WS klient mot remote server med hvor Guice bindinger for Web Servicen konfigureres manuelt
      */
     @Test(groups = "server-required")
-    public void testJaxWsClientServiceCreateManually() {
+    public void testJaxWsClientServiceCreateManually() throws ServiceException {
         ModuleConfiguration clientCfg = createClientConfiguration();
 
         injector = Guice.createInjector(
@@ -184,7 +185,7 @@ public class Test1ServiceWSTestJEE {
      * JAX-WS klient mot remote server hvor Guice bindinger produseres hva en WSRemoteServiceModule
      */
     @Test(groups = "server-required")
-    public void testJaxWsClientServiceCreateUsingWSRemoteModule() {
+    public void testJaxWsClientServiceCreateUsingWSRemoteModule() throws ServiceException {
         ModuleConfiguration clientCfg = createClientConfiguration();
         final List<Class<? extends Object>> serviceClasses = Arrays.asList(Test1Service.class, Test2Service.class);
 
@@ -206,7 +207,7 @@ public class Test1ServiceWSTestJEE {
         assertEquals(instance.helloWorld("Henrik", skifTestContext), "Hello1: Henrik");
     }
 
-    private void callWSService() {
+    private void callWSService() throws ServiceException {
         final LoginUserHolder loginUserHolder = injector.getInstance(LoginUserHolder.class);
         loginUserHolder.set(new LoginUser(config.getUsername(), config.getPassword()));
         final ServerUrlHolder serverUrlHolder = injector.getInstance(ServerUrlHolder.class);

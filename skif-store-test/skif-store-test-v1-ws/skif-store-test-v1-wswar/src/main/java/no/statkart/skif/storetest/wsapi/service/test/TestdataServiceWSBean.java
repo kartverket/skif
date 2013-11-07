@@ -4,6 +4,7 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.*;
+import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -38,35 +39,35 @@ public class TestdataServiceWSBean extends SkifWebService<TestdataServiceWSI> im
 
     /** @since 2.1 */
     @Override
-    public TestNumber getNextTestNumber(@WebParam(name = "context") StoreTestContext context) {
+    public TestNumber getNextTestNumber(@WebParam(name = "context") StoreTestContext context) throws ServiceException {
         return wsServiceChain.getNextTestNumber(context);
     }
 
     /** @since 2.1 */
     @Override
-    public TestNumber getTestNumber0(@WebParam(name = "context") StoreTestContext context) {
+    public TestNumber getTestNumber0(@WebParam(name = "context") StoreTestContext context) throws ServiceException {
         return wsServiceChain.getTestNumber0(context);
     }
 
     /** @since 2.1 */
     @Override
-    public void saveAll(@WebParam(name = "snapshotTransfers") MockupSnapshotMap snapshotTransfers, @WebParam(name = "context") StoreTestContext context) {
+    public void saveAll(@WebParam(name = "snapshotTransfers") MockupSnapshotMap snapshotTransfers, @WebParam(name = "context") StoreTestContext context) throws ServiceException{
         wsServiceChain.saveAll(snapshotTransfers, context);
     }
 
     /** @since 2.1 */
     @Override
-    public void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context) {
+    public void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         wsServiceChain.saveSnapshotTransfer(snapshotVersion, mockupTransfer, context);
     }
 
     @Override
-    public void deleteObject(@WebParam(name = "id") long id, @WebParam(name = "tableName") String tableName, @WebParam(name = "context") StoreTestContext context) {
+    public void deleteObject(@WebParam(name = "id") long id, @WebParam(name = "tableName") String tableName, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         wsServiceChain.deleteObject(id, tableName, context);
     }
 
     @Override
-    public boolean objectExists(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context) {
+    public boolean objectExists(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context) throws ServiceException{
         return wsServiceChain.objectExists(id,context);
     }
 }

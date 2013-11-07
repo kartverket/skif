@@ -35,7 +35,7 @@ public class InverseRelation<T> implements Serializable, Cloneable {
     }
 
     @SuppressWarnings("UnusedDeclaration")// WS-Mapping
-    private InverseRelation() {
+    public InverseRelation() {
         this.owner = null;
         this.name = null;
     }

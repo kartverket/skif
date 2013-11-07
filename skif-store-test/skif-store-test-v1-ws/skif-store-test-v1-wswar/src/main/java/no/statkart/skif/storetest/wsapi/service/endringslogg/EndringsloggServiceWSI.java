@@ -5,10 +5,10 @@ import no.statkart.skif.storetest.wsapi.domain.SnapshotVersion;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.endringslogg.Domeneklasse;
-import no.statkart.skif.storetest.wsapi.endringslogg.EndringList;
-import no.statkart.skif.storetest.wsapi.endringslogg.Endringsklasse;
-import no.statkart.skif.storetest.wsapi.endringslogg.Kontroll;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.Domeneklasse;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.EndringList;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.Endringsklasse;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.Kontroll;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.jws.WebParam;
