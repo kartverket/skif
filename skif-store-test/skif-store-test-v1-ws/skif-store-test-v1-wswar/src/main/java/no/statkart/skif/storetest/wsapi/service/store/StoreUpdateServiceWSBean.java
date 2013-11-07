@@ -48,4 +48,11 @@ public class StoreUpdateServiceWSBean extends SkifWebService<StoreUpdateServiceW
     public StoreTestBubbleList lockObjects(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         return wsServiceChain.lockObjects(ids, context);
     }
+
+    @Override
+    @WebMethod
+    public void saveTransfer(@WebParam(name = "transfer") UnitOfWorkTransfer transfer, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        wsServiceChain.saveTransfer(transfer, context);
+    }
+
 }

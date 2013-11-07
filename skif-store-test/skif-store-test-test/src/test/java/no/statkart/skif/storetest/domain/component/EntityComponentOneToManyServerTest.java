@@ -17,6 +17,7 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.hibernate.Session;
 import org.testng.annotations.Test;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -473,4 +474,43 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
             }
         });
     }
+
+    /**
+     * Tester at CompositeComponent objekter kan opprettes fritstående
+     */
+    public void testCreateDetachedCompositeComponentWithEntityComponents() {
+        BubbleWithEntityInCompositeComponent b = new BubbleWithEntityInCompositeComponent();
+
+        // Opprett fritstående Level 2 component
+        Level2CompositeComponentWithEntity l2 = new Level2CompositeComponentWithEntity();
+        Level2EntityInCompositeComponent entity2 = new Level2EntityInCompositeComponent();
+        l2.setEntity(entity2);
+        l2.getEntitySet().add(new Level2SetEntityInCompositeComponent());
+        l2.getEntitySet().add(new Level2SetEntityInCompositeComponent());
+        assertNull(l2.getEntitySet().iterator().next().getOwner());
+
+        // Opprett fritstående Level 1 component og knytt level 1 og 2 sammen
+        Level1CompositeComponentWithEntity l1 = new Level1CompositeComponentWithEntity();
+        Level1EntityInCompositeComponent entity = new Level1EntityInCompositeComponent();
+        assertNull(entity.getOwner());
+        l1.setLevel2Component(l2);
+        assertNull(l2.getCompositeRootOwner());
+        l2.getEntitySet().add(new Level2SetEntityInCompositeComponent());
+        Iterator<Level2SetEntityInCompositeComponent> iterator = l2.getEntitySet().iterator();
+        iterator.next();
+        iterator.next();
+        assertNull(iterator.next().getOwner());
+        assertSame(l2.getOwner(), l1);
+        l1.setEntity(entity);
+        assertNull(entity.getOwner());
+
+        // Knytter l1 sammen med rootobjekt. Etterpå skal alle owners være satt.
+        b.setLevel1Component(l1);
+        assertSame(entity.getOwner(), b);
+        assertSame(b.getLevel1Component().getCompositeRootOwner(), b);
+        assertSame(b.getLevel1Component().getOwner(), b);
+        assertSame(b.getLevel1Component().getLevel2Component().getCompositeRootOwner(), b);
+        assertSame(b.getLevel1Component().getLevel2Component().getEntitySet().iterator().next().getOwner(), b);
+    }
 }
+

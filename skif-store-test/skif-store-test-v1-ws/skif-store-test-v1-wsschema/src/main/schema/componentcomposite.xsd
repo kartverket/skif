@@ -34,7 +34,7 @@
                 <xs:sequence>
                     <xs:element name="nr" type="xs:int"/>
                     <xs:element name="text" type="xs:string"/>
-                    <!--xs:element name="level1Component" type="compositens:Level1CompositeComponent"/-->
+                    <xs:element name="level1Component" type="compositens:Level1CompositeComponent"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

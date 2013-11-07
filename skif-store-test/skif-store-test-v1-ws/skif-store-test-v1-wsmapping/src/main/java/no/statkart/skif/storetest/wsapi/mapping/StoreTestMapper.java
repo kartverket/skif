@@ -42,6 +42,7 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         dtm.addPackageMapping("no.statkart.skif.storetest.wsapi.domain.component","no.statkart.skif.storetest.domain.component");
         dtm.addPackageMapping("no.statkart.skif.storetest.wsapi.domain.relation","no.statkart.skif.storetest.domain.relation");
         dtm.addPackageMapping("no.statkart.skif.storetest.wsapi.domain.endringslogg","no.statkart.skif.storetest.domain.endringslogg");
+        dtm.addPackageMapping("no.statkart.skif.storetest.wsapi.domain", "no.statkart.skif.store");
         dtm.addPackageMapping("no.statkart.skif.storetest.wsapi.domain", "no.statkart.skif.mockup");
         setDefaultMapper(dtm);
 

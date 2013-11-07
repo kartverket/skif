@@ -12,8 +12,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class Level1CompositeComponent implements CompositeBubbleComponent<BubbleWithCompositeComponent>, CompositeComponentWithCollections {
-    private BubbleWithCompositeComponent owner;
+public class Level1CompositeComponent extends  AbstractCompositeBubbleComponent<BubbleWithCompositeComponent> implements CompositeComponentWithCollections {
     private String text;
     private BeloepValueObject belop;
     private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
@@ -24,11 +23,16 @@ public class Level1CompositeComponent implements CompositeBubbleComponent<Bubble
         setLevel2Component(new Level2CompositeComponent());
     }
 
-    public Level1CompositeComponent(String text, BeloepValueObject beloep, ImmutableSet<BeloepValueObject> beloepSet ) {
+    public Level1CompositeComponent(String text, BeloepValueObject beloep, ImmutableSet<BeloepValueObject> beloepSet) {
         setText(text);
         setBelop(beloep);
         setBeloepSet(beloepSet);
         setLevel2Component(new Level2CompositeComponent());
+    }
+
+    @Override
+    public void onSetCompositeRootOwner() {
+        onSetCompositeRootOwner(level2Component);
     }
 
     public void clear() {
@@ -36,21 +40,6 @@ public class Level1CompositeComponent implements CompositeBubbleComponent<Bubble
         setBelop(null);
         beloepSet.clear();
         level2Component.clear();
-    }
-
-    @Override
-    public BubbleWithCompositeComponent getOwner() {
-        return owner;
-    }
-
-    @Override
-    public BubbleWithCompositeComponent getCompositeRootOwner() {
-        return owner;
-    }
-
-    @Override
-    public void setOwner(BubbleWithCompositeComponent owner) {
-         this.owner = Components.checkSetOwner(this, this.owner, owner);
     }
 
     @Nullable

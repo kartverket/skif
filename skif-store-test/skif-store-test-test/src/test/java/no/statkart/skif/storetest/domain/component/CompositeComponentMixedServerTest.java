@@ -11,6 +11,7 @@ import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
+import no.statkart.skif.storetest.domain.component.composite.Level2CompositeComponent;
 import no.statkart.skif.storetest.mockup.BubbleWithCompositeComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
@@ -202,6 +203,14 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
         });
         final BubbleWithCompositeComponent savedBubble = store.get(mockupFactory.getWithNullLevel2Id());
         assertThat(savedBubble.getLevel1Component().getBeloepSet()).isEmpty();
+    }
+
+    public void testCreateDetachedCompositeComponent() {
+        BubbleWithCompositeComponent b = new BubbleWithCompositeComponent();
+        Level1CompositeComponent l1 = new Level1CompositeComponent();
+        Level2CompositeComponent l2 = new Level2CompositeComponent();
+        l1.setLevel2Component(l2);
+        b.setLevel1Component(l1);
     }
 
 }

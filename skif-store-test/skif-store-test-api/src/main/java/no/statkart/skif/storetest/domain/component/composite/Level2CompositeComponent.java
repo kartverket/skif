@@ -22,6 +22,10 @@ public class Level2CompositeComponent implements CompositeComponent<BubbleWithCo
     public Level2CompositeComponent() {
     }
 
+    @Override
+    public void onSetCompositeRootOwner() {
+    }
+
     public Level2CompositeComponent(String text, BeloepValueObject beloep, ImmutableSet<BeloepValueObject> beloepSet) {
         setText(text);
         setBelop(beloep);

@@ -76,9 +76,9 @@ public class BubbleWithEntityInCompositeComponentMockupFactory extends AbstractM
         obj.setId(id);
         obj.setNr(nr);
         obj.setText(text);
+        level1CompositeComponent.setEntity(level1Entity);
+        level1CompositeComponent.setEntitySet(level1EntitySet);
         obj.setLevel1Component(level1CompositeComponent);
-        obj.getLevel1Component().setEntity(level1Entity);
-        obj.getLevel1Component().setEntitySet(level1EntitySet);
         return obj;
 
     }
@@ -88,12 +88,15 @@ public class BubbleWithEntityInCompositeComponentMockupFactory extends AbstractM
         obj.setId(id);
         obj.setNr(nr);
         obj.setText(text);
+
+        level2CompositeComponent.setEntity(level2Entity);
+        level2CompositeComponent.setEntitySet(level2EntitySet);
+
+        level1CompositeComponent.setLevel2Component(level2CompositeComponent);
+        level1CompositeComponent.setEntity(level1Entity);
+        level1CompositeComponent.setEntitySet(level1EntitySet);
+
         obj.setLevel1Component(level1CompositeComponent);
-        obj.getLevel1Component().setEntity(level1Entity);
-        obj.getLevel1Component().setEntitySet(level1EntitySet);
-        obj.getLevel1Component().setLevel2Component(level2CompositeComponent);
-        obj.getLevel1Component().getLevel2Component().setEntity(level2Entity);
-        obj.getLevel1Component().getLevel2Component().setEntitySet(level2EntitySet);
         return obj;
     }
 

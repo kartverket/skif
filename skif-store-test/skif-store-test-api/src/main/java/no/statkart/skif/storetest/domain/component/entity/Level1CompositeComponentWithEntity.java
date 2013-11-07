@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
+import no.statkart.skif.store.AbstractCompositeBubbleComponent;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.store.CompositeBubbleComponent;
 import no.statkart.skif.store.CompositeComponentWithCollections;
@@ -14,8 +15,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class Level1CompositeComponentWithEntity implements CompositeBubbleComponent<BubbleWithEntityInCompositeComponent>, CompositeComponentWithCollections {
-    private BubbleWithEntityInCompositeComponent owner;
+public class Level1CompositeComponentWithEntity extends AbstractCompositeBubbleComponent<BubbleWithEntityInCompositeComponent> implements CompositeComponentWithCollections {
     private String text;
     private Level1EntityInCompositeComponent entity;
     private final Set<Level1SetEntityInCompositeComponent> entitySet = Components.newSet(this);
@@ -30,18 +30,10 @@ public class Level1CompositeComponentWithEntity implements CompositeBubbleCompon
     }
 
     @Override
-    public BubbleWithEntityInCompositeComponent getOwner() {
-        return owner;
-    }
-
-    @Override
-    public BubbleWithEntityInCompositeComponent getCompositeRootOwner() {
-        return owner;
-    }
-
-    @Override
-    public void setOwner(BubbleWithEntityInCompositeComponent owner) {
-        this.owner = Components.checkSetOwner(this, this.owner, owner);
+    public void onSetCompositeRootOwner() {
+        onSetCompositeRootOwner(entity);
+        onSetCompositeRootOwner(entitySet);
+        onSetCompositeRootOwner(level2Component);
     }
 
     @Nullable

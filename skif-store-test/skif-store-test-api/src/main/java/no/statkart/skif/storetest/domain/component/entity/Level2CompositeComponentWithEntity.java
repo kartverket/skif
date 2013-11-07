@@ -12,8 +12,7 @@ import java.util.Set;
  * @since 2.4
  *
  */
-public class Level2CompositeComponentWithEntity implements CompositeComponent<BubbleWithEntityInCompositeComponent, Level1CompositeComponentWithEntity>, CompositeComponentWithCollections {
-    private Level1CompositeComponentWithEntity owner;
+public class Level2CompositeComponentWithEntity extends AbstractCompositeComponent<BubbleWithEntityInCompositeComponent, Level1CompositeComponentWithEntity> implements CompositeComponentWithCollections {
     private String text;
     private Level2EntityInCompositeComponent entity;
     private Set<Level2SetEntityInCompositeComponent> entitySet = Components.newSet(this);
@@ -27,21 +26,10 @@ public class Level2CompositeComponentWithEntity implements CompositeComponent<Bu
     }
 
     @Override
-    public Level1CompositeComponentWithEntity getOwner() {
-        return owner;
+    public void onSetCompositeRootOwner() {
+        onSetCompositeRootOwner(entity);
+        onSetCompositeRootOwner(entitySet);
     }
-
-    @Override
-    public BubbleWithEntityInCompositeComponent getCompositeRootOwner() {
-        return owner.getCompositeRootOwner();
-    }
-
-    @Override
-    public void setOwner(Level1CompositeComponentWithEntity owner) {
-        this.owner = Components.checkSetOwner(this, this.owner, owner);
-
-    }
-
 
 
     @Override

@@ -11,9 +11,9 @@ import no.statkart.skif.store.OwnerCheck;
  * @since 2.4
  */
 public class Level2EntityInCompositeComponent implements EntityBubbleComponent<BubbleWithEntityInCompositeComponent> {
+    private BubbleWithEntityInCompositeComponent owner;
     private Long id;
     private String text;
-    private BubbleWithEntityInCompositeComponent owner;
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
     public Level2EntityInCompositeComponent() {

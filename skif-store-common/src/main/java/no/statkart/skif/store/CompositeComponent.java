@@ -17,4 +17,6 @@ import java.io.Serializable;
  */
 public interface CompositeComponent<O, T> extends ComponentWithOwnerReference<T> {
    O getCompositeRootOwner();
+   void onSetCompositeRootOwner();
+
 }
