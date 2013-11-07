@@ -71,6 +71,34 @@ subprojects { Project project ->
         properties filterProperties
     }
 
+    def filterTestGroup = { Test test = test, String group, String value ->
+        test.with {
+            if (testFramework.class.simpleName == 'TestNGTestFramework') {
+                if (value == 'INCLUDE') {
+                    testFramework.options.includeGroups group
+                    logger.info "${test.name} configuration: including group '${group}'"
+                } else if (value == 'EXCLUDE') {
+                    testFramework.options.excludeGroups group
+                    logger.info "${test.name} configuration: excluding group '${group}'"
+                } else if (value == 'EXCLUDE_WHEN_NO_INCLUDES') {
+                    project.afterEvaluate {
+                        if (testFramework.options.includeGroups.isEmpty()) {
+                            testFramework.options.excludeGroups group
+                            logger.info "${test.name} configuration: excluding group '${group}'"
+                        } else {
+//                        logger.info "${test.name} configuration: ignoring group '${group}'"
+                        }
+                    }
+                } else {
+                    assert value == 'IGNORED' //feil ved ikke gyldig verdi for filtrering av tester
+                }
+            } else {
+                logger.warn "${test.name} configuration: unable to configure groups('${group}') for ${testFramework.class.simpleName}"
+            }
+        }
+    }
+
+
     plugins.withType(JavaPlugin) {
         project.apply plugin: 'sktools-provided-plugin'
 
@@ -81,66 +109,62 @@ subprojects { Project project ->
             testCompile libraries.fest
         }
 
+
         /**
          * Testing via TestNG grupper. Se bruk av @Test(groups = "") i koden.
          * Følgende parametere styrer hvilke grupper som blir kjørt:
          *
-         * gradle test -DenableSlowTests=true tar også med tester som tar lang tid
+         * gradle test -DfilterSlowTests=INCLUDE
+         * gradle test -DfilterOracleLatest=INCLUDE
          * gradle test -PhibernateVersion=xx for hibernate versjon spesifike tester
-         * gradle test -DenableOracleLatest=true
          * osv..
          *
+         * GBOK-2266: Tilpasset oppsett for downstream testing i Jenkins
+         * Dersom ingen test-oppsett spesifisert så eksluderes alle grupper.
+         * Dersom test-oppsett spesifiseres, kjøres kun spesifisert gruppe.
+         *  - På denne måten oppnås disjointe sett av tester slik man unngår å kjøre samme test to ganger i de ulike Jenkins jobbene.
+         *
+         * En har videre mulighet til ytterligere å spesifisere kombinasjoner av grupper.
+         * F.eks. vil gradle test -DfilterHistorikkTests=INCLUDE -DfilterSlowTests=EXCLUDE kjøre alle tester i gruppen historikk, men ikke de som også finnes i gruppen slow.
+         * Har man en test annotert med @Test(groups = "kreverHistorikk, slow") vil den testen da ikke kjøres.
+         *
          * -DignoreFailures=true stopper ikke eksekvering etter feilende modul og kjører videre. Kjekt for integrasjonstesting som ønsker å kjøre alle tester alltid.
+         *
+         * --info gir verbos logging av hvilke grupper som faktisk blir inkludert og ekskludert.
          */
         test {
             ignoreFailures = gradle.startParameter.systemPropertiesArgs.get('ignoreFailures', 'false') == 'true' //Gradle feiler ikke dersom denne er true.
 
-            def enableSlowTests = Boolean.valueOf(gradle.startParameter.systemPropertiesArgs.get('enableSlowTests', 'false'));
-            def enableOracleLatest = Boolean.valueOf(gradle.startParameter.systemPropertiesArgs.get('enableOracleLatest', 'false'));
+            def filterSlowTests = gradle.startParameter.systemPropertiesArgs.get('filterSlowTests', 'EXCLUDE_WHEN_NO_INCLUDES').toUpperCase(); //gruppen kan kombineres med andre
+            def filterOracleLatest = gradle.startParameter.systemPropertiesArgs.get('filterOracleLatest', 'EXCLUDE').toUpperCase();
 
-            testFramework.options.with {
+            filterTestGroup(it, 'slow', filterSlowTests)
+            filterTestGroup(it, 'oracleLatest', filterOracleLatest) // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
 
-                if (!enableSlowTests) {
-                    excludeGroups 'slow'
-                }
-                // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
-                if (!enableOracleLatest) {
-                    excludeGroups('oracleLatest')
-                }
-                if (!hibernateVersion.equals("3.6")) {
-                    excludeGroups('hibernate36')
-                }
-                if (!hibernateVersion.equals("3.2")) {
-                    excludeGroups('hibernate32')
-                }
-            }
-
-            inputs.property 'enableSlowTests', enableSlowTests //trigger re-kjøring av test ved endring av parameter
-            inputs.property 'enableOracleLatest', enableOracleLatest //trigger re-kjøring av test ved endring av parameter
-            inputs.property 'hibernateVersion', hibernateVersion  //trigger re-kjøring av test ved endring av parameter
+            filterTestGroup(it, 'hibernate36', hibernateVersion == '3.6' ? 'IGNORED' : 'EXCLUDE')
+            filterTestGroup(it, 'hibernate32', hibernateVersion == '3.2' ? 'IGNORED' : 'EXCLUDE')
 
 
             jvmArgs '-Xmx1024m'
             testLogging.showStandardStreams = true
+
+            inputs.property 'excludedGroups', testFramework.options.includeGroups //trigger re-kjøring av test ved endring av grupper
+            inputs.property 'includedGroups', testFramework.options.excludeGroups //trigger re-kjøring av test ved endring av grupper
         }
     }
 
-    project.tasks.withType(Test) { //felles for alle test-tasks
+    project.tasks.withType(Test) { Test test ->  //felles for alle test-tasks
         def singleVm = Boolean.valueOf(rootProject.ext.properties['single_vm'])
         logger.debug "single_vm is set to ${singleVm} for ${project.path}"
 
         useTestNG() {  //benytter kun TestNG over alt
-            excludeGroups('broken')
-            if (singleVm) {
-                excludeGroups('server-required')
-            } else {
-                excludeGroups('singlevm-required')
-            }
-
 //            listeners << 'org.uncommons.reportng.HTMLReporter' // Gradles innebygde rapport viser ikke skipped
             listeners << 'org.testng.reporters.XMLReporter' // For Jenkins, siden Gradle 1.4+ ikke tar med default listeners som standard lenger
-
         }
+
+        filterTestGroup(test, 'broken', 'EXCLUDE')
+        filterTestGroup(test, 'singlevm-required', singleVm ? 'IGNORED' : 'EXCLUDE')
+        filterTestGroup(test, 'server-required', singleVm ? 'EXCLUDE' : 'IGNORED')
 
         systemProperties "org.uncommons.reportng.stylesheet": "${project.rootProject.file('all/test/report/reportng-1.1.3/stylesheets/hudsonesque.css')}"
         systemProperties "org.uncommons.reportng.title": "${project.name} Report"
