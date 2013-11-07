@@ -12,7 +12,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.JDBCHelper;
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.sql.Connection;
@@ -25,7 +25,6 @@ import java.sql.Statement;
  *
  * @author Tor Egil R. Strand
  */
-@Test(groups = "singlevm-required")
 public class SubTypeTest extends StoreTestTestCase {
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
@@ -33,6 +32,7 @@ public class SubTypeTest extends StoreTestTestCase {
     @Inject
     private RunOnServerWithTxRequiresNewService server;
 
+    @Test(groups = { "singlevm-required" })
     public void likhet() {
         SubTypedBubbleId<?> subTypedBubbleId = new SubTypedBubbleId(1L);
         SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(1L);
@@ -43,6 +43,7 @@ public class SubTypeTest extends StoreTestTestCase {
         Assert.assertEquals(withPrimitiveId, withCollectionId);
     }
 
+    @Test(groups = { "singlevm-required" })
     public void enkelLesetest() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
@@ -56,17 +57,18 @@ public class SubTypeTest extends StoreTestTestCase {
 
                 SubTypedBubbleId<?> idCurrent = new SubTypedBubbleId(idValue, SnapshotVersion.CURRENT);
                 SubTypedBubble current = store.get(idCurrent);
-                Assert.assertTrue("Ikke SubTypeWithCollection", current instanceof SubTypeWithCollection);
+                Assert.assertTrue(current instanceof SubTypeWithCollection, "Ikke SubTypeWithCollection");
 
                 SubTypedBubbleId<?> idPast = new SubTypedBubbleId(idValue, SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
                 SubTypedBubble past = store.get(idPast);
-                Assert.assertTrue("Ikke SubTypeWithPrimitive", past instanceof SubTypeWithPrimitive);
+                Assert.assertTrue(past instanceof SubTypeWithPrimitive, "Ikke SubTypeWithPrimitive");
 
                 return null;
             }
         });
     }
 
+    @Test(groups = { "singlevm-required" })
     public void asSnapshotVersion() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
@@ -78,17 +80,18 @@ public class SubTypeTest extends StoreTestTestCase {
             public Object run() {
                 SubTypeWithCollectionId<?> idCurrent = mockupFacade.getSubTypedBubbleMockupFactory().getDifferentHistoricSubtypesId();
                 SubTypedBubble current = store.get(idCurrent);
-                Assert.assertTrue("Ikke SubTypeWithCollection", current instanceof SubTypeWithCollection);
+                Assert.assertTrue(current instanceof SubTypeWithCollection, "Ikke SubTypeWithCollection");
 
                 SubTypedBubbleId<?> idPast = (SubTypedBubbleId) idCurrent.asSnapshotVersion(SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
                 SubTypedBubble past = store.get(idPast);
-                Assert.assertTrue("Ikke SubTypeWithPrimitive", past instanceof SubTypeWithPrimitive);
+                Assert.assertTrue(past instanceof SubTypeWithPrimitive, "Ikke SubTypeWithPrimitive");
 
                 return null;
             }
         });
     }
 
+    @Test(groups = { "singlevm-required" })
     public void insertPlusUpdateWithTypeChange() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         IdService idService = mockupFacade.getStore().getInstance(IdService.class);
@@ -145,7 +148,7 @@ public class SubTypeTest extends StoreTestTestCase {
                 SubTypedBubbleId<?> id = new SubTypedBubbleId(idValue);
 
                 SubTypedBubble subTypedBubble = store.get(id);
-                Assert.assertTrue("Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass(), subTypedBubble instanceof SubTypeWithCollection);
+                Assert.assertTrue(subTypedBubble instanceof SubTypeWithCollection, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
 
                 Connection connection = connectionProvider.get();
                 Statement statement = null;
@@ -154,8 +157,8 @@ public class SubTypeTest extends StoreTestTestCase {
                     statement = connection.createStatement();
                     resultSet = statement.executeQuery("select num from subtypedbubble where id=" + idValue);
 
-                    Assert.assertTrue("Fant ingen rader", resultSet.next());
-                    Assert.assertNull("num er ikke nullet ut", resultSet.getObject(1));
+                    Assert.assertTrue(resultSet.next(), "Fant ingen rader");
+                    Assert.assertNull(resultSet.getObject(1), "num er ikke nullet ut");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 } finally {
@@ -167,6 +170,7 @@ public class SubTypeTest extends StoreTestTestCase {
         });
     }
 
+    @Test(groups = { "singlevm-required" })
     public void insertPlusUpdateWithTypeChange2() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         IdService idService = mockupFacade.getStore().getInstance(IdService.class);
@@ -224,7 +228,7 @@ public class SubTypeTest extends StoreTestTestCase {
                 SubTypedBubbleId<?> id = new SubTypedBubbleId<SubTypedBubble>(idValue);
 
                 SubTypedBubble subTypedBubble = store.get(id);
-                Assert.assertTrue("Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass(), subTypedBubble instanceof SubTypeWithPrimitive);
+                Assert.assertTrue(subTypedBubble instanceof SubTypeWithPrimitive, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
 
                 Connection connection = connectionProvider.get();
                 Statement statement = null;
@@ -233,7 +237,7 @@ public class SubTypeTest extends StoreTestTestCase {
                     statement = connection.createStatement();
                     resultSet = statement.executeQuery("select * from TekstForSubtype where subtypedid=" + idValue);
 
-                    Assert.assertFalse("Fant rader", resultSet.next());
+                    Assert.assertFalse(resultSet.next(), "Fant rader");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 } finally {
