@@ -1,16 +1,15 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 
-import junit.framework.TestCase;
 import no.statkart.skif.storetest.domain.basic.Simple;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.Assert;
+import org.testng.annotations.*;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class StoreTestMappingW2DTest extends TestCase {
+public class StoreTestMappingW2DTest {
     private StoreTestMappingTestContext testContext;
 
     @BeforeMethod
@@ -24,8 +23,8 @@ public class StoreTestMappingW2DTest extends TestCase {
 
         String source = "test";
         String target = map.w2d(source);
-        assertNotNull(target);
-        assertEquals(target, "test");
+        Assert.assertNotNull(target);
+        Assert.assertEquals(target, "test");
     }
 
     @Test
@@ -34,8 +33,8 @@ public class StoreTestMappingW2DTest extends TestCase {
 
         Integer source = 5;
         Integer target = map.w2d(source);
-        assertNotNull(target);
-        assertEquals(target, new Integer(5));
+        Assert.assertNotNull(target);
+        Assert.assertEquals(target, new Integer(5));
     }
 
     @Test
@@ -44,8 +43,8 @@ public class StoreTestMappingW2DTest extends TestCase {
 
         int source = 5;
         int target = map.w2d(source);
-        assertNotNull(target);
-        assertEquals(target, 5);
+        Assert.assertNotNull(target);
+        Assert.assertEquals(target, 5);
     }
 
 
@@ -59,8 +58,8 @@ public class StoreTestMappingW2DTest extends TestCase {
         source.setId(sourceId);
         source.setText("Test");
         Simple target = map.w2d(source, Simple.class);
-        assertEquals(target.getId().getValue(), new Long(10));
-        assertEquals(target.getText(), "Test");
+        Assert.assertEquals(target.getId().getValue(), new Long(10));
+        Assert.assertEquals(target.getText(), "Test");
     }
 }
 

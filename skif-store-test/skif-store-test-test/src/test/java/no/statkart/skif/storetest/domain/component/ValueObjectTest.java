@@ -12,14 +12,12 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.testng.Assert.*;
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.assertNotNull;
 
 /**
  * @author Henrik Fredholm
@@ -39,8 +37,8 @@ public class ValueObjectTest extends StoreTestTestCase {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
         final BubbleWithValueObject withNullBeloeb = store.get(valueObjectMockupFactory.getWithNullBeloepId());
-        assertNull(withNullBeloeb.getA());
-        assertNull(withNullBeloeb.getB());
+        Assert.assertNull(withNullBeloeb.getA());
+        Assert.assertNull(withNullBeloeb.getB());
     }
 
     public void testReadBubbleWithSameBeloep() {
@@ -48,9 +46,9 @@ public class ValueObjectTest extends StoreTestTestCase {
         final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
         final BubbleWithValueObject withSameBeloeb = store.get(valueObjectMockupFactory.getWithSameBeloepId());
         // Test at instaner ikke længre deles når de innleses via Store
-        assertEquals(withSameBeloeb.getA(), valueObjectMockupFactory.getBeloepNOK1WithText());
-        assertEquals(withSameBeloeb.getB(), valueObjectMockupFactory.getBeloepNOK1WithText());
-        assertNotSame(withSameBeloeb.getA(), withSameBeloeb.getB());
+        Assert.assertEquals(withSameBeloeb.getA(), valueObjectMockupFactory.getBeloepNOK1WithText());
+        Assert.assertEquals(withSameBeloeb.getB(), valueObjectMockupFactory.getBeloepNOK1WithText());
+        Assert.assertNotSame(withSameBeloeb.getA(), withSameBeloeb.getB());
     }
 
     /**
@@ -68,10 +66,10 @@ public class ValueObjectTest extends StoreTestTestCase {
         store.endUnitOfWork();
 
         BubbleWithValueObject withUpdatedBeloep = store.get(valueObjectMockupFactory.getWithSameBeloepId());
-        assertEquals(bubbleWithBeloeb.getA(), valueObjectMockupFactory.getBeloepNOK1WithText());
-        assertEquals(bubbleWithBeloeb.getB().getVerdi(), 1);
-        assertEquals(withUpdatedBeloep.getB().getValuta(), "DKK");
-        assertEquals(withUpdatedBeloep.getB().getKommentar(), "Changed valuta");
+        Assert.assertEquals(bubbleWithBeloeb.getA(), valueObjectMockupFactory.getBeloepNOK1WithText());
+        Assert.assertEquals(bubbleWithBeloeb.getB().getVerdi(), 1);
+        Assert.assertEquals(withUpdatedBeloep.getB().getValuta(), "DKK");
+        Assert.assertEquals(withUpdatedBeloep.getB().getKommentar(), "Changed valuta");
     }
 
     public void testReadBeloepSet() {
@@ -135,7 +133,7 @@ public class ValueObjectTest extends StoreTestTestCase {
             bubbleWithBeloepSet.getBeloepSet().add(new BeloepValueObject("NOK", 100, "Ekstra beløp i NOK"));
             store.update(bubbleWithBeloepSet);
             storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-            fail("Forvented database constraint exception");
+            Assert.fail("Forvented database constraint exception");
         } catch (RuntimeException e) {
             store.abortUnitOfWork();
         }

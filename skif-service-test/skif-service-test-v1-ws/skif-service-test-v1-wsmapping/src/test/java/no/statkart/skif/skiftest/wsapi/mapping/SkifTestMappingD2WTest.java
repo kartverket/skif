@@ -1,10 +1,9 @@
 package no.statkart.skif.skiftest.wsapi.mapping;
 
-import junit.framework.TestCase;
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
 import no.statkart.skif.skiftest.wsapi.domain.AList;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.util.HashSet;
 import java.util.Set;
