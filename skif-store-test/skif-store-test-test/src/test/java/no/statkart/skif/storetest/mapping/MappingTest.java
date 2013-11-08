@@ -10,6 +10,7 @@ import no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
 import no.statkart.skif.util.testsupport.AutomagicTest;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.unitils.reflectionassert.ReflectionAssert;
@@ -17,7 +18,6 @@ import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Set;
 
 import static org.testng.Assert.assertTrue;
 
