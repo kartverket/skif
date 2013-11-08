@@ -1,8 +1,6 @@
 package no.statkart.skif.skiftest.wsapi.mapping;
 
-import no.statkart.skif.mapper.AbstractMapper;
-import no.statkart.skif.mapper.DefaultTypeMapper;
-import no.statkart.skif.mapper.WsapiListTypeMapper;
+import no.statkart.skif.mapper.*;
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
 
@@ -21,15 +19,14 @@ public class SkifTestMapper<M extends SkifTestMapping> extends AbstractMapper<M>
     protected SkifTestMapper(Class<? extends M> mappingClass) {
         super(mappingClass);
 
-        DefaultTypeMapper defaultMapper = new DefaultTypeMapper();
-        defaultMapper.addPackageMapping("no.statkart.skif.skiftest.wsapi.domain", "no.statkart.skif.skiftest.domain");
-        setDefaultMapper(defaultMapper);
+        MappingResolver mappingResolver = new MappingResolver();
+        mappingResolver.addPackageMapping("no.statkart.skif.skiftest.wsapi.domain", "no.statkart.skif.skiftest.domain");
+        setMappingResolver(mappingResolver);
 
         // Klasser hvor objekter skal mappes til seg selv
-        useIdentityMapping(String.class);
-        useIdentityMapping(Integer.class);
-        useIdentityMapping(Long.class);
-        useIdentityMapping(Boolean.class);
+        addMapperFactory(new IdentityTypeMapperFactory().useIdentityMappingForBasicTypes());
+
+        addMapperFactory(new DefaultTypeMapperFactory());
 
         // Objekter
         addMapper(new ATypeMapper<no.statkart.skif.skiftest.wsapi.domain.A, A>(no.statkart.skif.skiftest.wsapi.domain.A.class, A.class));

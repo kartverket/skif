@@ -30,12 +30,12 @@ public abstract class AbstractSkifTestSimpeExceptionMapper implements ExceptionM
     }
 
     @Override
-    public Object d2w(Object source, Type targetClass) {
+    public Object d2w(Object source, Type sourceClass, Type targetClass) {
         throw new NotImplementedException("na");
     }
 
     @Override
-    public Object w2d(Object source, Type targetClass) {
+    public Object w2d(Object source, Type sourceClass, Type targetClass) {
         throw new NotImplementedException("na");
     }
 

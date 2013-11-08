@@ -6,25 +6,19 @@ import no.statkart.skif.mapper.*;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class SkifDefaultTypeMapperTestMapper extends AbstractMapper {
-    Class<? extends Mapping> mappingClass;
-
-   public SkifDefaultTypeMapperTestMapper() {
+public class SkifDefaultTypeMapperTestMapper extends AbstractMapper<SkifTestMapping> {
+    public SkifDefaultTypeMapperTestMapper() {
         super(SkifTestMapping.class);
 
-        DefaultTypeMapper dtm = new DefaultTypeMapper();
-        dtm.addPackageMapping("no.statkart.skif.skiftest.wsapi.domain","no.statkart.skif.skiftest.domain");
-        setDefaultMapper(dtm);
+        MappingResolver mappingResolver = new MappingResolver();
+        mappingResolver.addPackageMapping("no.statkart.skif.skiftest.wsapi.domain", "no.statkart.skif.skiftest.domain");
+        setMappingResolver(mappingResolver);
 
         // Klasser hvor objekter skal mappes til seg selv
-        useIdentityMapping(String.class);
-        useIdentityMapping(Integer.class);
-        useIdentityMapping(Long.class);
+        addMapperFactory(new IdentityTypeMapperFactory().useIdentityMappingForBasicTypes());
 
-    }
+        addMapperFactory(new CollectionMapperFactory());
 
-    @Override
-    public SkifTestMapping getMapping() {
-        return (SkifTestMapping) super.getMapping();
+        addMapperFactory(new DefaultTypeMapperFactory());
     }
 }

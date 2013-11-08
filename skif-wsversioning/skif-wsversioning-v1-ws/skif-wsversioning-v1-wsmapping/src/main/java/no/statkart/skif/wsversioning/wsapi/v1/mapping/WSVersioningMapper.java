@@ -1,9 +1,6 @@
 package no.statkart.skif.wsversioning.wsapi.v1.mapping;
 
-import com.google.common.collect.ImmutableMap;
-import no.statkart.skif.mapper.AbstractMapper;
-import no.statkart.skif.mapper.DefaultTypeMapper;
-import no.statkart.skif.wsversioning.domain.Veg;
+import no.statkart.skif.mapper.*;
 import no.statkart.skif.wsversioning.domain.VegId;
 
 /**
@@ -16,21 +13,20 @@ public class WSVersioningMapper extends AbstractMapper<WSVersioningMapping> {
     public WSVersioningMapper() {
         super(WSVersioningMapping.class);
 
-        // DefaultTypeMapper. Brukes for objekter som har samme properties i domenene
-        DefaultTypeMapper dtm = new DefaultTypeMapper();
-        dtm.addPackageMapping("no.statkart.skif.wsversioning.wsapi.v1.domain", "no.statkart.skif.wsversioning.domain");
+        MappingResolver mappingResolver = new MappingResolver();
+        mappingResolver.addPackageMapping("no.statkart.skif.wsversioning.wsapi.v1.domain", "no.statkart.skif.wsversioning.domain");
         /*dtm.overrideClassMappings(ImmutableMap.of(
                 no.statkart.skif.wsversioning.wsapi.v1.domain.Gate.class, Veg.class,
                 Veg.class, no.statkart.skif.wsversioning.wsapi.v1.domain.Gate.class
         ));*/
-        setDefaultMapper(dtm);
-
+        setMappingResolver(mappingResolver);
 
         // Klasser hvor objekter skal mappes til seg selv
-        useIdentityMapping(String.class);
-        useIdentityMapping(Integer.class);
-        useIdentityMapping(Long.class);
-        useIdentityMapping(Boolean.class);
+        addMapperFactory(new IdentityTypeMapperFactory().useIdentityMappingForBasicTypes());
+
+        addMapperFactory(new CollectionMapperFactory());
+
+        addMapperFactory(new DefaultTypeMapperFactory());
 
         addMapper(new SnapshotVersionTypeMapper());
 

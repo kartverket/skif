@@ -39,4 +39,6 @@
 
     <!-- end-hibernate -->
 
+    <logger name="no.statkart.skif.mapper" level="debug" additivity="true"/>
+
 </configuration>

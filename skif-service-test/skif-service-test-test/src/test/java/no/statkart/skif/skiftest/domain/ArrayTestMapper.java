@@ -11,14 +11,11 @@ public class ArrayTestMapper extends AbstractMapper<ArrayTestMapping> {
     public ArrayTestMapper(){
         super(ArrayTestMapping.class);
 
-        DefaultTypeMapper dtm = new DefaultTypeMapper();
-        dtm.addPackageMapping("no.statkart.skif.skiftest.domain.array2", "no.statkart.skif.skiftest.domain.array1");
+        MappingResolver mappingResolver = new MappingResolver();
+        mappingResolver.addPackageMapping("no.statkart.skif.skiftest.domain.array2", "no.statkart.skif.skiftest.domain.array1");
+        setMappingResolver(mappingResolver);
 
-        setDefaultMapper(dtm);
-
-        useIdentityMapping(String.class);
-        useIdentityMapping(Integer.class);
-        useIdentityMapping(Class.class);
-
+        addMapperFactory(new IdentityTypeMapperFactory().useIdentityMapping(String.class, Integer.TYPE, Class.class));
+        addMapperFactory(new DefaultTypeMapperFactory());
     }
 }

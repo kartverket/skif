@@ -6,19 +6,22 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  */
-public abstract class AbstractMapper<M extends Mapping> implements InvocationHandler, MappingBase, DefaultTypeMapped {
-//    private static Logger logger = LoggerFactory.getLogger(AbstractMapper.class);
+public abstract class AbstractMapper<M extends Mapping> implements InvocationHandler, MappingBase {
+    private static final Logger logger = LoggerFactory.getLogger(AbstractMapper.class);
 
-    private DefaultTypeMapper defaultMapper = null;
+    private MappingResolver mappingResolver = null;
 
     private static enum Direction {
         /**
@@ -31,10 +34,46 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         W2D
     }
 
+    private static class MapperKey {
+        private final TypeToken<?> wsapiType, domainType;
+
+        public MapperKey(TypeToken<?> wsapiType, TypeToken<?> domainType) {
+            this.wsapiType = wsapiType;
+            this.domainType = domainType;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            MapperKey mapperKey = (MapperKey) o;
+
+            return wsapiType.equals(mapperKey.wsapiType) && domainType.equals(mapperKey.domainType);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = wsapiType.hashCode();
+            result = 31 * result + domainType.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "MapperKey{" +
+                    "wsapiType=" + wsapiType +
+                    ", domainType=" + domainType +
+                    '}';
+        }
+    }
+
     private final ListMultimap<Class<?>, TypeMapper<?, ?>> mappersByDomainClass = ArrayListMultimap.create();
     private final ListMultimap<Class<?>, TypeMapper<?, ?>> mappersByWsapiClass = ArrayListMultimap.create();
 
-    private final Set<Class<?>> useIdentityMapping = new HashSet<Class<?>>();
+    private final List<TypeMapperFactory> typeMapperFactories = new ArrayList<TypeMapperFactory>();
+
+    private final Map<MapperKey, TypeMapper<?, ?>> mapperCache = new ConcurrentHashMap<MapperKey, TypeMapper<?, ?>>();
 
     private final M thisMapping;
 
@@ -61,17 +100,12 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         mappersByWsapiClass.put(typeMapper.getWsapiClass(), typeMapper);
     }
 
-    protected void setDefaultMapper(DefaultTypeMapper typeMapper) {
-        typeMapper.setMapping(thisMapping);
-        defaultMapper = typeMapper;
+    protected void addMapperFactory(TypeMapperFactory typeMapperFactory) {
+        typeMapperFactories.add(typeMapperFactory);
     }
 
-    public DefaultTypeMapper getDefaultMapper() {
-        return defaultMapper;
-    }
-
-    protected void useIdentityMapping(Class<?> c) {
-        useIdentityMapping.add(c);
+    protected void setMappingResolver(MappingResolver mappingResolver) {
+        this.mappingResolver = mappingResolver;
     }
 
     public M getMapping() {
@@ -123,97 +157,209 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         return target;
     }
 
-    @Override
-    public DefaultTypeMapping getDefaultTypeMapping() {
-        return getDefaultMapper();
-    }
-
     protected Object d2w(Method method, Object[] args) {
         if (args.length == 1) {
-            return d2w(args[0], method.getGenericReturnType());
+            return d2w(args[0], method.getGenericParameterTypes()[0], method.getGenericReturnType());
         } else if (args.length == 2) {
+            final Type toType;
             if (args[1] instanceof TypeLiteral) {
-                return d2w(args[0], ((TypeLiteral) args[1]).getType());
+                toType = ((TypeLiteral) args[1]).getType();
             } else {
-                return d2w(args[0], (Type) args[1]);
+                toType = (Type) args[1];
             }
+            return d2w(args[0], args[0].getClass(), toType);
+        } else if (args.length == 3) {
+            final Type fromType, toType;
+            if (args[1] instanceof TypeLiteral) {
+                fromType = ((TypeLiteral) args[1]).getType();
+            } else {
+                fromType = (Type) args[1];
+            }
+            if (args[2] instanceof TypeLiteral) {
+                toType = ((TypeLiteral) args[2]).getType();
+            } else {
+                toType = (Type) args[2];
+            }
+            return d2w(args[0], fromType, toType);
         } else {
             throw new ImplementationException("No such method: " + method.toString());
         }
     }
 
-    protected Object d2w(Object source, Type targetType) {
+    protected Object d2w(Object source, Type sourceType, Type targetType) {
         Object target = null;
         if (source != null) {
-            TypeToken<?> targetTypeToken = TypeToken.of(targetType);
-            TypeToken<?> sourceTypeToken = TypeToken.of(source.getClass());
+            TypeToken<?> targetTypeToken = resolveTarget(targetType);
+            TypeToken<?> sourceTypeToken = resolveSubClass(source, sourceType);
             MappedFieldsTracker tracker = mappedFieldsTracker.get();
 
             target = tracker.getMappedValue(source, targetTypeToken.getRawType());
             if (target == null) {
                 if (sourceTypeToken.isArray() && targetTypeToken.isArray()) {
                     int length = Array.getLength(source);
+                    //noinspection ConstantConditions
                     target = Array.newInstance(targetTypeToken.getComponentType().getRawType(), length);
                     for (int i = 0; i < length; ++i) {
-                        Array.set(target, i, thisMapping.d2w(Array.get(source, i), targetTypeToken.getComponentType().getType()));
+                        //noinspection ConstantConditions
+                        Array.set(target, i, thisMapping.d2w(Array.get(source, i), sourceTypeToken.getComponentType().getType(), targetTypeToken.getComponentType().getType()));
                     }
                 } else {
-                    TypeMapper typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.D2W);
-                    if (typeMapper != null) {
-                        target = typeMapper.mapDomainObject(source);
-                    } else if (useIdentityMapping.contains(source.getClass())) {
-                        target = source;
-                    } else if (defaultMapper != null) {
-                        target = defaultMapper.mapDomainObject(source, targetTypeToken);
+                    MapperKey mapperKey = new MapperKey(targetTypeToken, sourceTypeToken);
+                    TypeMapper typeMapper;
+                    if (mapperCache.containsKey(mapperKey)) {
+                        typeMapper = mapperCache.get(mapperKey);
                     } else {
+                        typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.D2W);
+                        if (typeMapper == null) {
+                            if (mappingResolver != null) {
+                                // Prøv å finne ut mer nøyaktig hva måltypen er
+                                targetTypeToken = mappingResolver.resolveTargetType(sourceTypeToken.getRawType(), targetTypeToken);
+                                logger.debug("Resolving {} for {} to {}", new Object[]{mapperKey.wsapiType, sourceType, targetTypeToken});
+                                mapperKey = new MapperKey(targetTypeToken, sourceTypeToken);
+                            }
+
+                            for (TypeMapperFactory typeMapperFactory : typeMapperFactories) {
+                                typeMapper = typeMapperFactory.createTypeMapper(targetTypeToken, sourceTypeToken);
+                                if (typeMapper != null) {
+                                    logger.debug("{} provided {} for mapping between {} and {}", new Object[]{typeMapperFactory, typeMapper, mapperKey.wsapiType, mapperKey.domainType});
+                                    typeMapper.setMapping(thisMapping);
+                                    break;
+                                }
+                            }
+                        } else {
+                            logger.debug("Using TypeMapper<{}, {}> for mapping between {} and {}", new Object[]{typeMapper.getWsapiClass(), typeMapper.getDomainClass(), mapperKey.wsapiType, mapperKey.domainType});
+                        }
+
+                        if (typeMapper != null) {
+                            mapperCache.put(mapperKey, typeMapper);
+                        }
+                    }
+                    if (typeMapper == null) {
                         throw new MappingException(String.format("Mapper[%s] could not map from %s to %s", this.getClass().getName(), sourceTypeToken, targetTypeToken));
                     }
+                    target = typeMapper.mapDomainObject(source);
                 }
             }
         }
         return target;
     }
 
+    /**
+     * Workaround for manglende funksjonalitet i Guava. Den takler ikke at man går fra KodeId&lt;?&gt; til AKodeId.
+     */
+    private static TypeToken<?> resolveSubClass(Object source, Type sourceType) {
+        if (sourceType instanceof TypeVariable) {
+            return TypeToken.of(source.getClass());
+        }
+        if (sourceType instanceof Class && ((Class) sourceType).isPrimitive()) {
+            return TypeToken.of(sourceType);
+        }
+
+        try {
+            return TypeToken.of(sourceType).getSubtype(source.getClass());
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().startsWith("No type mapping from")) {
+                return TypeToken.of(source.getClass());
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * Workaround for hvis target type er en type variable.
+     */
+    private static TypeToken<?> resolveTarget(Type targetType) {
+        if (targetType instanceof TypeVariable) {
+            TypeVariable typeVariable = (TypeVariable) targetType;
+            return TypeToken.of(typeVariable.getBounds()[0]);
+        } else {
+            return TypeToken.of(targetType);
+        }
+    }
+
     protected Object w2d(Method method, Object[] args) {
         if (args.length == 1) {
-            return w2d(args[0], method.getGenericReturnType());
+            return w2d(args[0], method.getGenericParameterTypes()[0], method.getGenericReturnType());
         } else if (args.length == 2) {
+            final Type toType;
             if (args[1] instanceof TypeLiteral) {
-                return w2d(args[0], ((TypeLiteral) args[1]).getType());
+                toType = ((TypeLiteral) args[1]).getType();
             } else {
-                return w2d(args[0], (Type) args[1]);
+                toType = (Type) args[1];
             }
+            return w2d(args[0], args[0].getClass(), toType);
+        } else if (args.length == 3) {
+            final Type fromType, toType;
+            if (args[1] instanceof TypeLiteral) {
+                fromType = ((TypeLiteral) args[1]).getType();
+            } else {
+                fromType = (Type) args[1];
+            }
+            if (args[2] instanceof TypeLiteral) {
+                toType = ((TypeLiteral) args[2]).getType();
+            } else {
+                toType = (Type) args[2];
+            }
+            return w2d(args[0], fromType, toType);
         } else {
             throw new ImplementationException("No such method: " + method.toString());
         }
     }
 
-    protected Object w2d(Object source, Type targetType) {
+    protected Object w2d(Object source, Type sourceType, Type targetType) {
         Object target = null;
         if (source != null) {
-            TypeToken<?> targetTypeToken = TypeToken.of(targetType);
-            TypeToken<?> sourceTypeToken = TypeToken.of(source.getClass());
+            TypeToken<?> targetTypeToken = resolveTarget(targetType);
+            TypeToken<?> sourceTypeToken = resolveSubClass(source, sourceType);
             MappedFieldsTracker tracker = mappedFieldsTracker.get();
 
             target = tracker.getMappedValue(source, targetTypeToken.getRawType());
             if (target == null) {
                 if (sourceTypeToken.isArray() && targetTypeToken.isArray()) {
                     int length = Array.getLength(source);
+                    //noinspection ConstantConditions
                     target = Array.newInstance(targetTypeToken.getComponentType().getRawType(), length);
                     for (int i = 0; i < length; ++i) {
-                        Array.set(target, i, thisMapping.w2d(Array.get(source, i), targetTypeToken.getComponentType().getType()));
+                        //noinspection ConstantConditions
+                        Array.set(target, i, thisMapping.w2d(Array.get(source, i), sourceTypeToken.getComponentType().getType(), targetTypeToken.getComponentType().getType()));
                     }
                 } else {
-                    TypeMapper typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.W2D);
-                    if (typeMapper != null) {
-                        target = typeMapper.mapWsapiObject(source);
-                    } else if (useIdentityMapping.contains(source.getClass())) {
-                        target = source;
-                    } else if (defaultMapper != null) {
-                        target = defaultMapper.mapWsapiObject(source, targetTypeToken);
+                    MapperKey mapperKey = new MapperKey(sourceTypeToken, targetTypeToken);
+                    TypeMapper typeMapper;
+                    if (mapperCache.containsKey(mapperKey)) {
+                        typeMapper = mapperCache.get(mapperKey);
                     } else {
+                        typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.W2D);
+                        if (typeMapper == null) {
+                            if (mappingResolver != null) {
+                                // Prøv å finne ut mer nøyaktig hva måltypen er
+                                targetTypeToken = mappingResolver.resolveTargetType(sourceTypeToken.getRawType(), targetTypeToken);
+                                logger.debug("Resolving {} for {} to {}", new Object[]{mapperKey.domainType, sourceType, targetTypeToken});
+                                mapperKey = new MapperKey(sourceTypeToken, targetTypeToken);
+                            }
+
+                            for (TypeMapperFactory typeMapperFactory : typeMapperFactories) {
+                                typeMapper = typeMapperFactory.createTypeMapper(sourceTypeToken, targetTypeToken);
+                                if (typeMapper != null) {
+                                    logger.debug("{} provided {} for mapping between {} and {}", new Object[]{typeMapperFactory, typeMapper, mapperKey.wsapiType, mapperKey.domainType});
+                                    typeMapper.setMapping(thisMapping);
+                                    break;
+                                }
+                            }
+                        } else {
+                            logger.debug("Using TypeMapper<{}, {}> for mapping between {} and {}", new Object[]{typeMapper.getWsapiClass(), typeMapper.getDomainClass(), mapperKey.wsapiType, mapperKey.domainType});
+                        }
+
+                        if (typeMapper != null) {
+                            mapperCache.put(mapperKey, typeMapper);
+                        }
+                    }
+                    if (typeMapper == null) {
                         throw new MappingException(String.format("Mapper[%s] could not map from %s to %s", this.getClass().getName(), sourceTypeToken, targetTypeToken));
                     }
+
+                    target = typeMapper.mapWsapiObject(source);
                 }
             }
         }
