@@ -58,6 +58,7 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new SnapshotVersionTypeMapper());
         addMapper(new SelectionPolygonTypeMapper());
         addMapper(new LocaleMapper());
+        addMapper(new LocalizedStringTypeMapper());
         addMapper(new EndringsklasseTypeMapper());
         addMapper(new DomeneklasseTypeMapper());
         addMapper(new EndringstypeTypeMapper());

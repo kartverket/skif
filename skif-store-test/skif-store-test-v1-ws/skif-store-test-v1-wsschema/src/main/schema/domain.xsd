@@ -105,7 +105,6 @@
                 <xs:sequence>
                     <xs:element name="oppdateringsdato" type="basetyperns:Timestamp" />
                     <xs:element name="sluttdato" type="basetyperns:Timestamp" />
-                    <xs:element name="versjonId" type="xs:long" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

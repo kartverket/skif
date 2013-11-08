@@ -38,8 +38,8 @@ public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi
     public WsapiT mapDomainObject(DomainT source) {
         WsapiT target = super.mapDomainObject(source);
         target.setKodeIdClass(calcWsapiKodeIdClassname(source.getKodeIdClass()));
-        target.setNavn(getMapping().d2w(source.getNavn().getAllTexts(), no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString.class));
-        target.setBeskrivelse(getMapping().d2w(source.getBeskrivelse().getAllTexts(), no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString.class));
+        target.setNavn(getMapping().d2w(source.getNavn(), no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString.class));
+        target.setBeskrivelse(getMapping().d2w(source.getBeskrivelse(), no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString.class));
         target.setKodeIds(getMapping().d2w(source.getKodeIds(), KodeIdList.class));
         return target;
     }
@@ -49,8 +49,8 @@ public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi
     public DomainT mapWsapiObject(WsapiT source) {
         DomainT target = super.mapWsapiObject(source);
         target.setKodeIdClass(calcDomainKodeIdClass(source.getKodeIdClass()));
-        target.setNavn(new LocalizedString(getMapping().w2d(source.getNavn(), LocalizedString.MAP_TYPE)));
-        target.setBeskrivelse(new LocalizedString((Map<Locale, String>) getMapping().w2d(source.getBeskrivelse(), LocalizedString.MAP_TYPE)));
+        target.setNavn(getMapping().w2d(source.getNavn(), LocalizedString.class));
+        target.setBeskrivelse(getMapping().w2d(source.getBeskrivelse(), LocalizedString.class));
         target.setKodeIds(getMapping().w2d(source.getKodeIds(), List.class));
         return target;
     }
