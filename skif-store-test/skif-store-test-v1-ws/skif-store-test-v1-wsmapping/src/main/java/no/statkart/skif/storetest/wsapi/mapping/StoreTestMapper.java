@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.mapper.*;
+import no.statkart.skif.mapping.InverseRelationTypeMapperFactory;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.storetest.domain.basic.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
@@ -24,6 +25,8 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         // Klasser hvor objekter skal mappes til seg selv
         addMapperFactory(new IdentityTypeMapperFactory().useIdentityMappingForBasicTypes());
 
+        addMapperFactory(new InverseRelationTypeMapperFactory());
+
         addMapperFactory(new CollectionMapperFactory());
 
         addMapperFactory(new DefaultTypeMapperFactory());
@@ -33,6 +36,7 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new SnapshotVersionTypeMapper());
         addMapper(new SelectionPolygonTypeMapper());
         addMapper(new LocaleMapper());
+        addMapper(new LocalizedStringTypeMapper());
 
         // Alle Id'er
         addMapper(new StoreTestBubbleIdTypeMapper<no.statkart.skif.storetest.wsapi.domain.basic.SimpleId, SimpleId>(no.statkart.skif.storetest.wsapi.domain.basic.SimpleId.class, SimpleId.class));
