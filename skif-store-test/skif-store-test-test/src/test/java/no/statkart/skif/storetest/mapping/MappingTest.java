@@ -10,7 +10,6 @@ import no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
 import no.statkart.skif.util.testsupport.AutomagicTest;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.unitils.reflectionassert.ReflectionAssert;
