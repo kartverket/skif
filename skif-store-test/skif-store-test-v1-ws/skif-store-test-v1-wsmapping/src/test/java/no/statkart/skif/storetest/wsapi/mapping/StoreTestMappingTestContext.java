@@ -9,10 +9,10 @@ import java.util.Map;
 import org.testng.Assert;
 
 /**
- * Ikke dokumentert
+ * Context for test fixture for testing av {@link StoreTestMapping}
  *
  * @author Leif Lislegård
- * @since 1.0 - sprint 28
+ * @since 2.4 - ny grunnbok sprint 28
  */
 public class StoreTestMappingTestContext {
 
