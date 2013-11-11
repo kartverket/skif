@@ -3,6 +3,7 @@ package no.statkart.skif.skiftest.wsapi.exception.simple.mapping;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.mapper.ExceptionMapping;
+import no.statkart.skif.mapper.MappingResolver;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.lang.reflect.Type;
@@ -111,5 +112,10 @@ public abstract class AbstractSkifTestSimpeExceptionMapper implements ExceptionM
 
     @Override
     public void registerTarget(Object source, Object target) {
+    }
+
+    @Override
+    public MappingResolver getMappingResolver() {
+        throw new NotImplementedException("na");
     }
 }

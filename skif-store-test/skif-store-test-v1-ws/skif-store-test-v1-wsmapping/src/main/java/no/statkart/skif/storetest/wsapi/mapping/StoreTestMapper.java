@@ -2,11 +2,10 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.mapper.*;
 import no.statkart.skif.mapping.InverseRelationTypeMapperFactory;
+import no.statkart.skif.mapping.KodeIdTypeMapperFactory;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.storetest.domain.basic.*;
 import no.statkart.skif.storetest.domain.demo.koder.*;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 
 /**
  * @author Henrik Fredholm
@@ -19,11 +18,27 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
 
         MappingResolver mappingResolver = new MappingResolver();
         mappingResolver.addPackageMapping("no.statkart.skif.storetest.wsapi.domain.basic", "no.statkart.skif.storetest.domain.basic");
+        mappingResolver.addPackageMapping("no.statkart.skif.storetest.wsapi.domain.demo", "no.statkart.skif.storetest.domain.demo");
         mappingResolver.addPackageMapping("no.statkart.skif.storetest.wsapi.domain", "no.statkart.skif.mockup");
+
+        MappingOverrideBuilder builder = new MappingOverrideBuilder();
+        // Disse klassene har av en eller annen grunn ikke samme navn i wsapi
+        builder.addBidirectional(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId.class, AEnumKodeId.class);
+        builder.addBidirectional(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestBEnumKodeId.class, BEnumKodeId.class);
+        builder.addBidirectional(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestSEnumKodeId.class, SEnumKodeId.class);
+        builder.addBidirectional(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestADbKodeId.class, ADbKodeId.class);
+        builder.addBidirectional(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestBDbKodeId.class, BDbKodeId.class);
+        builder.addBidirectional(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestC1DbKodeId.class, C1DbKodeId.class);
+        builder.addBidirectional(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestC2DbKodeId.class, C2DbKodeId.class);
+        builder.addBidirectional(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestXStrDbKodeId.class, XStrDbKodeId.class);
+        mappingResolver.overrideClassMappings(builder.build());
+
         setMappingResolver(mappingResolver);
 
         // Klasser hvor objekter skal mappes til seg selv
         addMapperFactory(new IdentityTypeMapperFactory().useIdentityMappingForBasicTypes());
+
+        addMapperFactory(new KodeIdTypeMapperFactory(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId.class));
 
         addMapperFactory(new InverseRelationTypeMapperFactory());
 
@@ -37,6 +52,7 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new SelectionPolygonTypeMapper());
         addMapper(new LocaleMapper());
         addMapper(new LocalizedStringTypeMapper());
+        addMapper(new ClassTypeMapper());
 
         // Alle Id'er
         addMapper(new StoreTestBubbleIdTypeMapper<no.statkart.skif.storetest.wsapi.domain.basic.SimpleId, SimpleId>(no.statkart.skif.storetest.wsapi.domain.basic.SimpleId.class, SimpleId.class));
@@ -49,22 +65,12 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
 
         addMapper(new StoreTestBubbleIdTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId, no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId>(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class, no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId.class));
         addMapper(new StoreTestBubbleIdTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteStringId, no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId>(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteStringId.class, no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId.class));
-        addMapper(new KodelisteTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLong, StoreTestKodelisteLong>("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLong.class, StoreTestKodelisteLong.class));
-        addMapper(new KodelisteTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteString, StoreTestKodelisteString>("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteString.class, StoreTestKodelisteString.class));
+//        addMapper(new KodelisteTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLong, StoreTestKodelisteLong>("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLong.class, StoreTestKodelisteLong.class));
+//        addMapper(new KodelisteTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteString, StoreTestKodelisteString>("wsapi", no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteString.class, StoreTestKodelisteString.class));
 
         // Non boble objekter
 
         // Non boble Lister
-
-        // KodeId
-        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId.class, AEnumKodeId.class));
-        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestBEnumKodeId.class, BEnumKodeId.class));
-        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestSEnumKodeId.class, SEnumKodeId.class));
-        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestADbKodeId.class, ADbKodeId.class));
-        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestBDbKodeId.class, BDbKodeId.class));
-        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestC1DbKodeId.class, C1DbKodeId.class));
-        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestC2DbKodeId.class, C2DbKodeId.class));
-        addMapper(new KodeIdTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestXStrDbKodeId.class, XStrDbKodeId.class));
 
         // Kode
         addMapper(new KodeTypeMapper(no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKode.class, AEnumKode.class));

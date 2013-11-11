@@ -108,6 +108,11 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         this.mappingResolver = mappingResolver;
     }
 
+    @Override
+    public MappingResolver getMappingResolver() {
+        return mappingResolver;
+    }
+
     public M getMapping() {
         return thisMapping;
     }
@@ -204,22 +209,28 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                         Array.set(target, i, thisMapping.d2w(Array.get(source, i), sourceTypeToken.getComponentType().getType(), targetTypeToken.getComponentType().getType()));
                     }
                 } else {
-                    MapperKey mapperKey = new MapperKey(targetTypeToken, sourceTypeToken);
+                    final TypeToken<?> resolvedTargetTypeToken;
+                    final MapperKey mapperKey;
+
+                    if (mappingResolver != null) {
+                        // Prøv å finne ut mer nøyaktig hva måltypen er
+                        resolvedTargetTypeToken = mappingResolver.resolveTargetType(sourceTypeToken.getRawType(), targetTypeToken);
+                        logger.debug("Resolving {} for {} to {}", new Object[]{targetTypeToken, sourceTypeToken, resolvedTargetTypeToken});
+                        mapperKey = new MapperKey(resolvedTargetTypeToken, sourceTypeToken);
+                    } else {
+                        resolvedTargetTypeToken = targetTypeToken;
+                        mapperKey = new MapperKey(targetTypeToken, sourceTypeToken);
+                    }
+
                     TypeMapper typeMapper;
                     if (mapperCache.containsKey(mapperKey)) {
                         typeMapper = mapperCache.get(mapperKey);
                     } else {
+                        // Bruker ikke resolvedTargetTypeToken her grunnet bakoverkompatibilitet
                         typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.D2W);
                         if (typeMapper == null) {
-                            if (mappingResolver != null) {
-                                // Prøv å finne ut mer nøyaktig hva måltypen er
-                                targetTypeToken = mappingResolver.resolveTargetType(sourceTypeToken.getRawType(), targetTypeToken);
-                                logger.debug("Resolving {} for {} to {}", new Object[]{mapperKey.wsapiType, sourceType, targetTypeToken});
-                                mapperKey = new MapperKey(targetTypeToken, sourceTypeToken);
-                            }
-
                             for (TypeMapperFactory typeMapperFactory : typeMapperFactories) {
-                                typeMapper = typeMapperFactory.createTypeMapper(targetTypeToken, sourceTypeToken);
+                                typeMapper = typeMapperFactory.createTypeMapper(resolvedTargetTypeToken, sourceTypeToken);
                                 if (typeMapper != null) {
                                     logger.debug("{} provided {} for mapping between {} and {}", new Object[]{typeMapperFactory, typeMapper, mapperKey.wsapiType, mapperKey.domainType});
                                     typeMapper.setMapping(thisMapping);
@@ -325,22 +336,28 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                         Array.set(target, i, thisMapping.w2d(Array.get(source, i), sourceTypeToken.getComponentType().getType(), targetTypeToken.getComponentType().getType()));
                     }
                 } else {
-                    MapperKey mapperKey = new MapperKey(sourceTypeToken, targetTypeToken);
+                    final TypeToken<?> resolvedTargetTypeToken;
+                    final MapperKey mapperKey;
+
+                    if (mappingResolver != null) {
+                        // Prøv å finne ut mer nøyaktig hva måltypen er
+                        resolvedTargetTypeToken = mappingResolver.resolveTargetType(sourceTypeToken.getRawType(), targetTypeToken);
+                        logger.debug("Resolving {} for {} to {}", new Object[]{targetTypeToken, sourceTypeToken, resolvedTargetTypeToken});
+                        mapperKey = new MapperKey(sourceTypeToken, resolvedTargetTypeToken);
+                    } else {
+                        resolvedTargetTypeToken = targetTypeToken;
+                        mapperKey = new MapperKey(sourceTypeToken, targetTypeToken);
+                    }
+
                     TypeMapper typeMapper;
                     if (mapperCache.containsKey(mapperKey)) {
                         typeMapper = mapperCache.get(mapperKey);
                     } else {
+                        // Bruker ikke resolvedTargetTypeToken her grunnet bakoverkompatibilitet
                         typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.W2D);
                         if (typeMapper == null) {
-                            if (mappingResolver != null) {
-                                // Prøv å finne ut mer nøyaktig hva måltypen er
-                                targetTypeToken = mappingResolver.resolveTargetType(sourceTypeToken.getRawType(), targetTypeToken);
-                                logger.debug("Resolving {} for {} to {}", new Object[]{mapperKey.domainType, sourceType, targetTypeToken});
-                                mapperKey = new MapperKey(sourceTypeToken, targetTypeToken);
-                            }
-
                             for (TypeMapperFactory typeMapperFactory : typeMapperFactories) {
-                                typeMapper = typeMapperFactory.createTypeMapper(sourceTypeToken, targetTypeToken);
+                                typeMapper = typeMapperFactory.createTypeMapper(sourceTypeToken, resolvedTargetTypeToken);
                                 if (typeMapper != null) {
                                     logger.debug("{} provided {} for mapping between {} and {}", new Object[]{typeMapperFactory, typeMapper, mapperKey.wsapiType, mapperKey.domainType});
                                     typeMapper.setMapping(thisMapping);

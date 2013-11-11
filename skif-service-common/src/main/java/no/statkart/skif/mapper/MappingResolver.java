@@ -111,12 +111,12 @@ public class MappingResolver {
         if (this.overrideClassMappings != null) {
             Class<?> clazz = this.overrideClassMappings.get(sourceClass);
             if (clazz != null) {
-                retVal = targetType.getSubtype(clazz);
+                retVal = getSubtype(targetType, clazz);
             }
         }
         if (retVal == null) {
             if (classMappings.containsKey(sourceClass)) {
-                retVal = targetType.getSubtype(classMappings.get(sourceClass));
+                retVal = getSubtype(targetType, classMappings.get(sourceClass));
             }
         }
 
@@ -126,6 +126,22 @@ public class MappingResolver {
         }
 
         return retVal;
+    }
+
+    /**
+     * Workaround for mangel i {@link TypeToken#getSubtype(Class)}.
+     */
+    protected <T> TypeToken<? extends T> getSubtype(TypeToken<T> typeToken, Class<?> subClass) {
+        try {
+            return typeToken.getSubtype(subClass);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().startsWith("No type mapping from")) {
+                //noinspection unchecked
+                return (TypeToken<? extends T>) TypeToken.of(subClass);
+            } else {
+                throw e;
+            }
+        }
     }
 
     /**

@@ -16,4 +16,9 @@ public interface MappingBase {
      * @param target    objekt det mappes til
      */
     void registerTarget(Object source, Object target);
+
+    /**
+     * Gir tilgang til {@link MappingResolver}, dersom angitt, slik at man kan finne ut hvilke klasser som tilsvarer hverandre.
+     */
+    MappingResolver getMappingResolver();
 }
