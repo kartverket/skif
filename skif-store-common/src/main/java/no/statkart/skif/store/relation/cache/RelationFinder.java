@@ -29,7 +29,7 @@ public class RelationFinder {
         Class finderServiceClass = SkifUtil.classForName(classname.substring(0, classname.length()-5));
         for (Method m : finderServiceClass.getDeclaredMethods()) {
             Relation annotation = m.getAnnotation(Relation.class);
-            if (annotation.name().equals(relationName.toString())) {
+            if (annotation != null && annotation.name().equals(relationName.toString())) {
                 foundMethod = m;
                 break;
             }
