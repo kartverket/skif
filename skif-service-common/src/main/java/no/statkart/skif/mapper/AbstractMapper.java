@@ -172,7 +172,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
             } else {
                 toType = (Type) args[1];
             }
-            return d2w(args[0], args[0].getClass(), toType);
+            return d2w(args[0], args[0] == null ? Object.class : args[0].getClass(), toType);
         } else if (args.length == 3) {
             final Type fromType, toType;
             if (args[1] instanceof TypeLiteral) {
@@ -299,7 +299,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
             } else {
                 toType = (Type) args[1];
             }
-            return w2d(args[0], args[0].getClass(), toType);
+            return w2d(args[0], args[0] == null ? Object.class : args[0].getClass(), toType);
         } else if (args.length == 3) {
             final Type fromType, toType;
             if (args[1] instanceof TypeLiteral) {
