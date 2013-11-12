@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.storetest.wsapi.mapping.testutils.StoreTestMappingTestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

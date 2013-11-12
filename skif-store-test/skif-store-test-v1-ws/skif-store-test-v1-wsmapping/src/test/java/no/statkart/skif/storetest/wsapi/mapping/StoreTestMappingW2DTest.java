@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.wsapi.mapping;
 
 
 import no.statkart.skif.storetest.domain.basic.Simple;
+import no.statkart.skif.storetest.wsapi.mapping.testutils.StoreTestMappingTestContext;
 import org.testng.Assert;
 import org.testng.annotations.*;
 

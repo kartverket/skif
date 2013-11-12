@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.wsapi.mapping;
+package no.statkart.skif.storetest.wsapi.mapping.testutils;
 
 import no.statkart.skif.store.localization.LocalizedString;
 
@@ -6,10 +6,12 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
+import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
+import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
 import org.testng.Assert;
 
 /**
- * Context for test fixture for testing av {@link StoreTestMapping}
+ * Context for test fixture for testing av {@link no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping}
  *
  * @author Leif Lislegård
  * @since 2.4 - ny grunnbok sprint 28

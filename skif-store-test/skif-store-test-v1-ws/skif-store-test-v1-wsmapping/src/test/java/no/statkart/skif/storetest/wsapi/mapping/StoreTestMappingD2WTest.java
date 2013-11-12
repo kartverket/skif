@@ -6,6 +6,7 @@ import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
+import no.statkart.skif.storetest.wsapi.mapping.testutils.StoreTestMappingTestContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
