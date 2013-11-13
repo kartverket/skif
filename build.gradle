@@ -19,6 +19,8 @@ allprojects {
     //version kan bestemmes via env variabel og -P parameter
     if (project.hasProperty('version')) {
         project.version = getProperty('version')
+    } else {
+        project.ext.set('version', 'unspecified')
     }
 
     defaultTasks 'build'
