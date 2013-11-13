@@ -262,20 +262,20 @@ afterEvaluate {
 allprojects {
     afterEvaluate {
         tasks.withType(Jar) {
-            it.manifest {
+            manifest {
                 attributes([
                         'Specification-Title': project.name,
                         'Specification-Vendor': 'Statens kartverk',
                         'Specification-Version': gradle.startParameter.projectProperties.get('version', "${version}"),
 
                         //misc build info
-                        'Build-By': System.getenv('USERNAME'),
-                        'Build-Machine': System.getenv('COMPUTERNAME'),
+                        'Build-By': "${System.getenv('USERNAME')}",
+                        'Build-Machine': "${System.getenv('COMPUTERNAME')}",
                         'Build-Repo': MAVEN_REPO,
 
                         'Implementation-Title': "${project.name} bygget for ${(version == null || version.contains('-SNAPSHOT') || version.contains('-build')) ? 'TEST' : 'Produksjon'}",
-                        'Implementation-Version': project.version,
                         'Implementation-Vendor': 'Statens kartverk',
+                        'Implementation-Version': project.version,
                 ])
             }
         }
