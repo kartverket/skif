@@ -230,18 +230,15 @@ subprojects { Project project ->
 
 afterEvaluate {
 
+    ideaExtensions {
+        vcs 'Perforce'
+    }
+
+
     idea.project {
         jdkName = '1.6'
         languageLevel = '1.6'
 
-        ipr {
-            //adding Perforce as default vcs by tinkering with the output *.ipr file before it's written out
-            withXml {
-                def node = it.asNode()
-                def component = node.appendNode('component', ['name': 'VcsDirectoryMappings'])
-                component.appendNode('mapping', ['directory': '', 'vcs': 'Perforce'])
-            }
-        }
     }
 
     // branch spesifike navn for prosjekt og workspace fil.
