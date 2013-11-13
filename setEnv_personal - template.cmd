@@ -12,6 +12,9 @@ set GRADLE_HOME=C:\bin\gradle-1.6
 @rem bestemmer bruk av debug JDBC driver for Oracle [SKIF-239]
 set ORA_DEBUG=false
 
+@rem bestemmer versjon for bygget (optional)
+@rem set ORG_GRADLE_PROJECT_version=trunk
+
 
 @rem *******************************************************************************************************************
 @rem * Weblogic Setup
