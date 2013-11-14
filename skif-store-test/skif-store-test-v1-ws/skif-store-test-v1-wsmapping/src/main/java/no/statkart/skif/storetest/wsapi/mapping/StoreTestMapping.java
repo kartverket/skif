@@ -1,20 +1,12 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.mapper.Mapping;
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId;
-import no.statkart.skif.storetest.domain.mockup.Bar;
-import no.statkart.skif.storetest.domain.mockup.BarId;
-import no.statkart.skif.storetest.domain.mockup.Foo;
-import no.statkart.skif.storetest.domain.mockup.FooId;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.sql.Timestamp;
 
 /**
  * @author Henrik Fredholm
@@ -23,9 +15,6 @@ import java.sql.Timestamp;
 public interface StoreTestMapping extends Mapping {
     public StoreTestBubbleId<? extends StoreTestBubble> w2d(no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId source);
     public no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId d2w(StoreTestBubbleId<?> source);
-
-    public no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp d2w(Timestamp source);
-    public Timestamp w2d(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp source);
 
     public no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId d2w(KodelisteId<?> source);
     public KodelisteId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId source);

@@ -9,27 +9,6 @@
     <!-- ================================================= -->
     <!-- Basisklasser                                      -->
     <!-- ================================================= -->
-    <xs:complexType name="Timestamp">
-        <xs:sequence>
-
-            <xs:element name="time" type="xs:long">
-                <xs:annotation>
-                    <xs:documentation>
-                        Time verdien inneholder ikke fraksjoner av sekunder. Oppgis i millisekunder. Se dokumentasjon
-                        for java.sql.Timestamp.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-
-            <xs:element name="nanos" type="xs:int">
-                <xs:annotation>
-                    <xs:documentation>
-                        Nanos verdien inneholder fraksjoner av sekunder. Inkludert millisekunder.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
 
     <xs:complexType name="SelectionPolygon">
         <xs:sequence>
