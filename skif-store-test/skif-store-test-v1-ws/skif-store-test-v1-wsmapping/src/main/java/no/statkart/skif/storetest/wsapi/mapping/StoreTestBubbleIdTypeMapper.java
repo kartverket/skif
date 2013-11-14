@@ -4,6 +4,8 @@ import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 /**
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
@@ -21,13 +23,13 @@ public class StoreTestBubbleIdTypeMapper<WsapiT extends no.statkart.skif.storete
     public WsapiT mapDomainObject(DomainT source) {
         WsapiT target = createWsapiT();
         target.setValue(getMapping().d2w(source.getStringValue()));
-        target.setSnapshotVersion(getMapping().d2w(source.getSnapshotVersion()));
+        target.setSnapshotVersion(getMapping().d2w(source.getSnapshotVersion(), XMLGregorianCalendar.class));
         return target;
     }
 
     @Override
     public DomainT mapWsapiObject(WsapiT source) {
-        SnapshotVersion snapshotVersion = getMapping().w2d(source.getSnapshotVersion());
+        SnapshotVersion snapshotVersion = getMapping().w2d(source.getSnapshotVersion(), SnapshotVersion.class);
         Class idValueType = getIdValueType(getDomainClass());
         Object value= parseType(idValueType, source.getValue());
         DomainT target = BubbleIds.createInstance(getDomainClass(), value, snapshotVersion);

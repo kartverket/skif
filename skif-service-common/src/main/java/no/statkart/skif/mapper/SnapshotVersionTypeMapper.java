@@ -87,4 +87,9 @@ public class SnapshotVersionTypeMapper extends AbstractTypeMapper<XMLGregorianCa
         calendar.setGregorianChange(new Date(Long.MIN_VALUE));
         return calendar;
     }
+
+    public static XMLGregorianCalendar mapXMLGregorianCalendar(SnapshotVersion snapshotVersion) {
+        return TimestampTypeMapper.mapXMLGregorianCalendar(snapshotVersion.getTimestamp());
+    }
+
 }

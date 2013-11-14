@@ -4,6 +4,8 @@ import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.wsversioning.domain.WSVersioningBubbleId;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 /**
  * Mapper for bobleid-er.
  * 
@@ -20,13 +22,13 @@ public class WSVersioningBubbleIdTypeMapper<WsapiT extends no.statkart.skif.wsve
     public WsapiT mapDomainObject(DomainT source) {
         WsapiT target = createWsapiT();
         target.setValue((Long) source.getValue());
-        target.setSnapshotVersion(getMapping().d2w(source.getSnapshotVersion()));
+        target.setSnapshotVersion(getMapping().d2w(source.getSnapshotVersion(), XMLGregorianCalendar.class));
         return target;
     }
 
     @Override
     public DomainT mapWsapiObject(WsapiT source) {
-        SnapshotVersion snapshotVersion = getMapping().w2d(source.getSnapshotVersion());
+        SnapshotVersion snapshotVersion = getMapping().w2d(source.getSnapshotVersion(), SnapshotVersion.class);
         DomainT target = BubbleIds.createInstance(getDomainClass(), source.getValue(), snapshotVersion);
         return target;
     }

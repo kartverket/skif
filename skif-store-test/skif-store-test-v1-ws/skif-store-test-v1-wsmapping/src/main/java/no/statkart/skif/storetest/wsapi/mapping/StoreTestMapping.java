@@ -13,6 +13,7 @@ import no.statkart.skif.storetest.domain.mockup.BarId;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.FooId;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.sql.Timestamp;
 
 /**
@@ -25,9 +26,6 @@ public interface StoreTestMapping extends Mapping {
 
     public no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp d2w(Timestamp source);
     public Timestamp w2d(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp source);
-
-    public no.statkart.skif.storetest.wsapi.domain.SnapshotVersion d2w(SnapshotVersion source);
-    public SnapshotVersion w2d(no.statkart.skif.storetest.wsapi.domain.SnapshotVersion source);
 
     public no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId d2w(KodelisteId<?> source);
     public KodelisteId<?> w2d(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteId source);

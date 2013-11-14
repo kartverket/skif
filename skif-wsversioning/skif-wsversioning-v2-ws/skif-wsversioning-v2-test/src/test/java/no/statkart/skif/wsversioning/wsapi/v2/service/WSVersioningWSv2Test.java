@@ -1,6 +1,7 @@
 package no.statkart.skif.wsversioning.wsapi.v2.service;
 
 import no.statkart.skif.SkifModule;
+import no.statkart.skif.mapper.SnapshotVersionTypeMapper;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
@@ -15,6 +16,7 @@ import no.statkart.skif.wsversioning.wsapi.v2.exception.ServiceException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -31,6 +33,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         setSingleVmServerModuleClass(ServerModule.class);
     }
 
+    @Test
     public void testFindAlleVeger() throws ServiceException {
         VegService vegService = injector.getInstance(VegService.class);
         WSVersioningContext context = createContext_2_1();
@@ -40,6 +43,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         Assert.assertEquals(alleVeger.getItem().get(1).getValue(), 2, "Andre vegId");
     }
 
+    @Test
     public void testStoreGetTjernslia() throws ServiceException {
         StoreService storeService = injector.getInstance(StoreService.class);
 
@@ -57,6 +61,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         Assert.assertEquals(veg.getAlternativtNavn(), "Tjernslien", "Alternativt navn");
     }
 
+    @Test
     public void testStoreGetTjernsliaOldVersion() throws ServiceException {
         StoreService storeService = injector.getInstance(StoreService.class);
 
@@ -88,10 +93,8 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         return context;
     }
 
-    private SnapshotVersion createSnapshotVersionCurrent() {
-        SnapshotVersion snapshotVersion = new SnapshotVersion();
-        snapshotVersion.setTime(253370761200000L);
-        return snapshotVersion;
+    private XMLGregorianCalendar createSnapshotVersionCurrent() {
+        return SnapshotVersionTypeMapper.mapXMLGregorianCalendar(no.statkart.skif.store.SnapshotVersion.CURRENT);
     }
 
     public static class ClientModule extends SkifModule {

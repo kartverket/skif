@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.WebServiceContext;
 
 /**
@@ -57,7 +58,7 @@ public class TestdataServiceWSBean extends SkifWebService<TestdataServiceWSI> im
 
     /** @since 2.1 */
     @Override
-    public void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+    public void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") XMLGregorianCalendar snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         wsServiceChain.saveSnapshotTransfer(snapshotVersion, mockupTransfer, context);
     }
 

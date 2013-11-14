@@ -9,13 +9,6 @@
 
     <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
 
-    <xs:complexType name="SnapshotVersion">
-        <xs:sequence>
-            <xs:element name="time" type="xs:long"/>
-            <xs:element name="nanos" type="xs:int"/>
-        </xs:sequence>
-    </xs:complexType>
-
     <xs:complexType name="InverseRelation">
         <xs:sequence>
             <xs:element name="materialised" type="xs:boolean"/>
@@ -26,7 +19,7 @@
     <xs:complexType name="StoreTestBubbleId">
         <xs:sequence>
             <xs:element name="value" type="xs:string"/>
-            <xs:element name="snapshotVersion" type="domainns:SnapshotVersion"/>
+            <xs:element name="snapshotVersion" type="xs:dateTime"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -163,7 +156,7 @@
             <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="key" nillable="true" type="domainns:SnapshotVersion"/>
+                        <xs:element name="key" nillable="true" type="xs:dateTime"/>
                         <xs:element name="value" type="domainns:MockupTransfer"/>
                     </xs:sequence>
                 </xs:complexType>

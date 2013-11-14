@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.WebServiceContext;
 
 /**
@@ -57,12 +58,12 @@ public class StoreServiceWSBean extends SkifWebService<StoreServiceWSI> implemen
     }
 
     @Override
-    public WSVersioningBubbleIdList getVersions(@WebParam(name="id") WSVersioningBubbleId id, @WebParam(name="start") SnapshotVersion start, @WebParam(name="end") SnapshotVersion end, @WebParam(name="context") WSVersioningContext context) throws ServiceException {
+    public WSVersioningBubbleIdList getVersions(@WebParam(name="id") WSVersioningBubbleId id, @WebParam(name="start") XMLGregorianCalendar start, @WebParam(name="end") XMLGregorianCalendar end, @WebParam(name="context") WSVersioningContext context) throws ServiceException {
         return wsServiceChain.getVersions(id, start, end, context);
     }
 
     @Override
-    public WSVersioningBubbleIdListForWSVersioningBubbleIdsMap getVersionsForList(@WebParam(name="ids") WSVersioningBubbleIdList ids, @WebParam(name="start") SnapshotVersion start, @WebParam(name="end") SnapshotVersion end, @WebParam(name="context") WSVersioningContext context) throws ServiceException {
+    public WSVersioningBubbleIdListForWSVersioningBubbleIdsMap getVersionsForList(@WebParam(name="ids") WSVersioningBubbleIdList ids, @WebParam(name="start") XMLGregorianCalendar start, @WebParam(name="end") XMLGregorianCalendar end, @WebParam(name="context") WSVersioningContext context) throws ServiceException {
         return wsServiceChain.getVersionsForList(ids, start, end, context);
     }
 

@@ -83,4 +83,10 @@ public class TimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar
         calendar.setGregorianChange(new Date(Long.MIN_VALUE));
         return calendar;
     }
+
+
+    public static XMLGregorianCalendar mapXMLGregorianCalendar(Timestamp timestamp) {
+        return new TimestampTypeMapper().mapDomainObject(timestamp);
+    }
+
 }

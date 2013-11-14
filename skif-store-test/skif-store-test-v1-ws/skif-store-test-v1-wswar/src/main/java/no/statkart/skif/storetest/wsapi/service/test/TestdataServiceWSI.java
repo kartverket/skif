@@ -5,6 +5,7 @@ import no.statkart.skif.storetest.wsapi.domain.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.jws.WebParam;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * @author Roar Ingebrigtsen
@@ -22,7 +23,7 @@ public interface TestdataServiceWSI extends ServiceWSI {
     public void saveAll(@WebParam(name = "snapshotTransfers") MockupSnapshotMap snapshotTransfers, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
     /** @since 2.1 */
-    public void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
+    public void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") XMLGregorianCalendar snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
     public void deleteObject(@WebParam(name = "id") long id, @WebParam(name = "tableName") String tableName, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
