@@ -304,7 +304,7 @@ public class StoreTestServerModule extends SkifModule {
             hibernatePropertiesCurrent = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
             hibernatePropertiesCurrent.setProperty(Environment.DATASOURCE, datasourceCurrent);
 
-            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelOld_DS");
+            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE_OLD, "no.statkart.matrikkel.persistens.MatrikkelOld_DS");
             hibernatePropertiesOld = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
             hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
         }
