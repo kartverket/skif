@@ -65,6 +65,10 @@
     <xs:complexType name="HistorikkEnumKode">
         <xs:complexContent>
             <xs:extension base="kodelistens:Kode">
+                <xs:sequence>
+                    <xs:element name="oppdateringsdato" type="xs:dateTime"/>
+                    <xs:element name="sluttdato" type="xs:dateTime"/>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

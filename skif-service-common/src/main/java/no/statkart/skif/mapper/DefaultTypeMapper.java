@@ -171,8 +171,8 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
             Method getter = iterator.next();
             boolean match = false;
             for (Method idGetter : idGetters) {
-                // Dersom det finnes en getter getFooId(), så skal ikke getteren getFoo() mappes. Men ikke luk ut getId() dersom det finnes en getIdAsFooId()
-                if (!idGetter.equals(getter) && idGetter.getName().startsWith(getter.getName()) && !getter.getName().endsWith("Id")) {
+                // Dersom det finnes en getter getFooId(), så skal ikke getteren getFoo() mappes.
+                if (!idGetter.equals(getter) && (idGetter.getName().equals(getter.getName() + "Id") || idGetter.getName().equals(getter.getName() + "Ids"))) {
                     match = true;
                 }
             }

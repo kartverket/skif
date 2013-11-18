@@ -12,6 +12,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import java.util.HashSet;
  * @author Tor Egil R. Strand
  * @since 2.2.1
  */
+@Test(groups = "singlevm-required")
 public class DetachedComponentHistoryTest extends StoreTestTestCase {
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;

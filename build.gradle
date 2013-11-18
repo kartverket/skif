@@ -150,6 +150,7 @@ subprojects { Project project ->
 
 
             jvmArgs '-Xmx1024m'
+//            jvmArgs '-Xmx1024m', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
             testLogging.showStandardStreams = true
 
             inputs.property 'excludedGroups', testFramework.options.includeGroups //trigger re-kjøring av test ved endring av grupper
@@ -351,6 +352,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build232'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build246'
     }
 }

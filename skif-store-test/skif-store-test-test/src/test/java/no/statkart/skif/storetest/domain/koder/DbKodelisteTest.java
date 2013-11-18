@@ -16,6 +16,7 @@ import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.JDBCHelper;
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,6 +34,7 @@ import java.util.Locale;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
+@Test(groups = "singlevm-required")
 public class DbKodelisteTest extends StoreTestTestCase {
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;

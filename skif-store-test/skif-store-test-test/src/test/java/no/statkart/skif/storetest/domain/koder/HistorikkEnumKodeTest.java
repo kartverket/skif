@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain.koder;
 
 import com.google.inject.Inject;
-import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.kodeliste.KodeId;
@@ -51,7 +51,7 @@ public class HistorikkEnumKodeTest extends StoreTestTestCase {
         try {
             store.get(HistorikkEnumKodeId.Kode2Id);
             Assert.fail("Skulle fått exception");
-        } catch (ObjectNotFoundException e) {
+        } catch (FinderException e) { // Egentlig ObjectNotFoundException
             // OK
         }
 

@@ -25,13 +25,13 @@ public class MultikoblingTest extends StoreTestTestCase {
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
 
-    @Inject
-    private RunOnServerWithTxRequiresNewService runOnServerService;
-
+    @Test(groups = "singlevm-required")
     public void testPersistens() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
 
         final MultirefererendeId<?> id = mockupFacade.getIdService().getNextId(MultirefererendeId.class);
+
+        RunOnServerWithTxRequiresNewService runOnServerService = injector.getInstance(RunOnServerWithTxRequiresNewService.class);
 
         runOnServerService.run(new RunOnServerMethod() {
             @Inject

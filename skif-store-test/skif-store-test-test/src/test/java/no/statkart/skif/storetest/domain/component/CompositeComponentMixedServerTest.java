@@ -31,7 +31,7 @@ import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrow
  * @author Henrik Fredholm
  * @since 2.4
  */
-@Test
+@Test(groups = "singlevm-required")
 public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
     @Inject
     Store store;

@@ -30,7 +30,7 @@ import java.util.List;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-@Test
+@Test(groups = "singlevm-required")
 public class HistorikkDbKodeTest extends StoreTestTestCase {
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;

@@ -35,7 +35,7 @@ import static org.testng.Assert.*;
  * @author Henrik Fredholm
  * @since 2.4
  */
-@Test
+@Test(groups = "singlevm-required")
 public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTestCase {
     @Inject
     Store store;

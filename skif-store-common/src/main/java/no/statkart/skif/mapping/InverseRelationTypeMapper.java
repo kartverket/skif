@@ -60,7 +60,7 @@ public class InverseRelationTypeMapper<WsapiT, DomainT extends InverseRelation> 
 
         try {
             materialisedProperty.getWriteMethod().invoke(target, source.isMaterialised());
-            valueProperty.getWriteMethod().invoke(target, getMapping().d2w(source.get(), valueProperty.getPropertyType()));
+            valueProperty.getWriteMethod().invoke(target, getMapping().d2w(source.getCached(), valueProperty.getPropertyType()));
         } catch (IllegalAccessException e) {
             throw new MappingException("Could not set fields on " + target.getClass(), e);
         } catch (InvocationTargetException e) {

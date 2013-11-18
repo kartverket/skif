@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 import java.util.Random;
@@ -53,5 +54,17 @@ public class TimestampTypeMapperTest {
         // Sjekk fra timestamp til XML
         XMLGregorianCalendar mappedXml = mapper.mapDomainObject(timestamp);
         Assert.assertEquals(mappedXml, xmlGregorianCalendar, "Feil ved mapping fra Timestamp til XML");
+    }
+
+    public void testParsing() throws DatatypeConfigurationException {
+        XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar();
+        xmlGregorianCalendar.setYear(2000);
+        xmlGregorianCalendar.setMonth(1);
+        xmlGregorianCalendar.setDay(1);
+        xmlGregorianCalendar.setHour(0);
+        xmlGregorianCalendar.setMinute(0);
+        xmlGregorianCalendar.setSecond(0);
+        xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(0, 9));
+        System.out.println(xmlGregorianCalendar.toXMLFormat());
     }
 }
