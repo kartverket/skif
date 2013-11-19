@@ -1,9 +1,7 @@
 package no.statkart.skif.standalone.store.persistence.jdbc;
 
-import no.statkart.skif.ConfigurationConverter;
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
+import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImplExt;
@@ -40,8 +38,7 @@ public class ConnectionManagerUsingHibernateTest {
     ConnectionManagerUsingHibernate connectionManager;
 
     public ConnectionManagerUsingHibernateTest() {
-        Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
-        hibernateProperties = ConfigurationConverter.getProperties(cfg);
+        hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm();
     }
 
     @BeforeClass

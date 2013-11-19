@@ -3,10 +3,8 @@ package no.statkart.skif.standalone.store;
 import com.google.inject.*;
 import com.google.inject.Guice;
 import com.google.inject.util.Providers;
-import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.exception.AttemptDeleteException;
 import no.statkart.skif.exception.ImplementationException;
@@ -97,8 +95,7 @@ public class StoreSessionServerTest {
     StoreServer storeServer;
 
     public StoreSessionServerTest() {
-        Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
-        hibernateProperties = ConfigurationConverter.getProperties(cfg);
+        hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm();
     }
 
     @BeforeClass

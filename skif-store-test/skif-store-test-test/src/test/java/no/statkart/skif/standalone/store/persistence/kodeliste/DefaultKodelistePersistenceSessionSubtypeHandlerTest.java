@@ -1,8 +1,6 @@
 package no.statkart.skif.standalone.store.persistence.kodeliste;
 
-import no.statkart.skif.ConfigurationConverter;
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.PropertiesConfiguration;
+import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.KodelisteId;
@@ -45,8 +43,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
     HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
 
     public DefaultKodelistePersistenceSessionSubtypeHandlerTest() {
-        Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
-        hibernateProperties = ConfigurationConverter.getProperties(cfg);
+        hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm();
     }
 
     @BeforeClass

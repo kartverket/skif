@@ -1,11 +1,9 @@
 package no.statkart.skif.standalone.store.persistence;
 
-import no.statkart.skif.ConfigurationConverter;
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.persistence.DefaultResourceManager;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.jdbc.ConnectionManager;
+import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
@@ -42,8 +40,7 @@ public class ResourceManagerUsingHibernateTest {
     ResourceManager resourceManager;
 
     public ResourceManagerUsingHibernateTest() {
-        Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
-        hibernateProperties = ConfigurationConverter.getProperties(cfg);
+        hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm();
     }
 
     @BeforeClass

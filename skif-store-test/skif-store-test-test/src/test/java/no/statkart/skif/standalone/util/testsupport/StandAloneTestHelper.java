@@ -2,8 +2,7 @@ package no.statkart.skif.standalone.util.testsupport;
 
 import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.PropertiesConfiguration;
+import no.statkart.skif.config.*;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
@@ -16,6 +15,7 @@ import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.standalone.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Environment;
 
 import java.util.Properties;
 
@@ -38,8 +38,22 @@ public class StandAloneTestHelper {
     public static SnapshotVersion OLD = SnapshotVersion.OLD;
 
     public static Properties createHibernatePropertiesSingleVm() {
-        Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties");
+        Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate.properties");
         Properties hibernateProperties = ConfigurationConverter.getProperties(cfg);
+
+        SkifConfiguration configuration = new SkifServerConfiguration();
+
+        String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
+        String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
+        String sid = configuration.getString(SkifConfigConstants.DB_SID);
+        String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
+        String port = configuration.getString(SkifConfigConstants.DB_PORT);
+        String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
+
+        hibernateProperties.setProperty(Environment.USER, username);
+        hibernateProperties.setProperty(Environment.PASS, password);
+        hibernateProperties.setProperty(Environment.URL, url);
+        hibernateProperties.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JDBCTransactionFactory");
         return hibernateProperties;
     }
 
@@ -87,7 +101,7 @@ public class StandAloneTestHelper {
                 .addResource(FilteredBubble.class)
                 .addResource(ChildBubble.class)
 //                .addResource(Foo.class)
-                  ;
+                ;
     }
 
 
