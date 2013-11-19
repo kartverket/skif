@@ -175,7 +175,7 @@ public abstract class HibernateSessionFactoryBuilder {
      * Viktige properties ved Datasource connection i JEE container er:
      * <ul>
      *     <li>hibernate.transaction.factory_class=org.hibernate.transaction.JTATransactionFactory</li>
-     *     <li>hibernate.connection.datasource=no.statkart.myapp.persistence.MyApp_DS</li>
+     *     <li>hibernate.connection.datasource=no.kartverket.mysystem.myapp.persistence.MyApp_DS</li>
      * </ul>
      *
      * @return

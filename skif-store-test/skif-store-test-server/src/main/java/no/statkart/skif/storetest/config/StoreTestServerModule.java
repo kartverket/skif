@@ -12,6 +12,7 @@ import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.config.SkifConfigConstants;
+import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.persistence.DefaultResourceManager;
@@ -300,13 +301,18 @@ public class StoreTestServerModule extends SkifModule {
             //hibernateProperties.setProperty(Environment.PASS, password);
             //hibernateProperties.setProperty(Environment.URL, url);
         } else {
-            String datasourceCurrent = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelBok_DS");
             hibernatePropertiesCurrent = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
-            hibernatePropertiesCurrent.setProperty(Environment.DATASOURCE, datasourceCurrent);
 
-            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE_OLD, "no.statkart.matrikkel.persistens.MatrikkelOld_DS");
+            //datasource kan settes enten via filtert property-fil, eller via skif-konfigurasjonen
+            if (configuration.containsKey(SkifConfigConstants.DB_DATASOURCE)) {
+                hibernatePropertiesCurrent.setProperty(Environment.DATASOURCE, configuration.getString(SkifConfigConstants.DB_DATASOURCE));  //denne skal ligge i default konfigurasjon (gradle.properties)
+            }
+
             hibernatePropertiesOld = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
-            hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
+            if (configuration.containsKey(SkifConfigConstants.DB_DATASOURCE_OLD)) {
+                hibernatePropertiesOld.setProperty(Environment.DATASOURCE, configuration.getString(SkifConfigConstants.DB_DATASOURCE_OLD));  //denne skal ligge i default konfigurasjon (gradle.properties)
+            }
+
         }
 
         final HibernateStoreInterceptorFactory hibernateInterceptorFactory = new HibernateStoreInterceptorFactory();
@@ -349,7 +355,9 @@ public class StoreTestServerModule extends SkifModule {
                     new ConnectionFactoryUsingJDBC(url, username, password, false, SnapshotVersion.CURRENT, false)
             );
         } else {
-            String datasource = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelBok_DS");
+            String datasource = configuration.getString(SkifConfigConstants.DB_DATASOURCE);
+            if (datasource == null || datasource.trim().isEmpty()) throw new ConfigurationException(String.format("Mangler verdi for %s", SkifConfigConstants.DB_DATASOURCE)); //denne skal ligge i default konfigurasjon (gradle.properties)
+
             connectionManager = new ConnectionManagerUsingFactory(
                     new ConnectionFactoryUsingDataSource(datasource, false, SnapshotVersion.CURRENT, false)
             );

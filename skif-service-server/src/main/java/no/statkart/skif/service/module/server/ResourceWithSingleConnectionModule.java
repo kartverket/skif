@@ -48,7 +48,7 @@ public class ResourceWithSingleConnectionModule extends SkifModule {
                     new ConnectionFactoryUsingJDBC(url, username, password, false, SnapshotVersion.CURRENT, false)
             );
         } else {
-            String datasource = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelBok_DS");
+            String datasource = configuration.getString(SkifConfigConstants.DB_DATASOURCE);
             connectionManager = new ConnectionManagerUsingFactory(
                     new ConnectionFactoryUsingDataSource(datasource, false, SnapshotVersion.CURRENT, false)
             );
