@@ -12,7 +12,6 @@ import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.persistence.DefaultResourceManager;
@@ -52,7 +51,9 @@ import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityCompon
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
 import no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithEntityComponents;
 import no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithListEntityComponents;
-import no.statkart.skif.storetest.domain.demo.*;
+import no.statkart.skif.storetest.domain.demo.AggregertObjekt;
+import no.statkart.skif.storetest.domain.demo.BubbleWithComponents;
+import no.statkart.skif.storetest.domain.demo.BubbleWithList;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
@@ -231,7 +232,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(HistWithRelation.class)
                 .addResourceWithSubclasses(SubTypedBubble.class, SubTypeWithPrimitive.class, SubTypeWithCollection.class)
 
-                // Components
+                        // Components
                 .addResource(BubbleWithCompositeComponent.class)
                 .addResource(BubbleWithEntityComponent.class)
                 .addResource(BubbleWithEntityInCompositeComponent.class)
@@ -239,14 +240,14 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(HistorikkBubbleWithEntityComponents.class)
                 .addResource(HistorikkBubbleWithListEntityComponents.class)
 
-                // Multikobling
+                        // Multikobling
                 .addResource(Multirefererende.class)
 
-                // Koder
+                        // Koder
                 .addResource(EnumKodeIdType.class)
                 .addResourceWithSubclasses(HistoriskDbKode.class, SimpleLocalizedDbKode.class)
 
-                // Gamle koder
+                        // Gamle koder
                 .addResource(ADbKode.class)
                 .addResource(BDbKode.class)
                 .addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class)
@@ -254,7 +255,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(StoreTestKodelisteLong.class)
                 .addResource(BubbleWithKode.class)
 
-                // Klasser for relasjonstesting
+                        // Klasser for relasjonstesting
                 .addResource(X1BBOne.class)
                 .addResource(X1CCMany.class)
 //                .addResource(X1DDUnique.class)
@@ -281,12 +282,15 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(BubbleWithList.class)
                 .addResource(BubbleWithComponents.class)
 
-                .addResource(Endring.class)
-                ;
+                .addResource(Endring.class);
+
+        PropertiesConfiguration hibernatePropertiesConfiguration = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate.properties");
 
         Properties hibernatePropertiesCurrent;
         Properties hibernatePropertiesOld;
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
+            hibernatePropertiesConfiguration.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JDBCTransactionFactory");
+
             String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
             String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
             String sid = configuration.getString(SkifConfigConstants.DB_SID);
@@ -294,25 +298,23 @@ public class StoreTestServerModule extends SkifModule {
             String port = configuration.getString(SkifConfigConstants.DB_PORT);
             String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
 
-            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-singlevm.properties"));
+            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
+
+            hibernatePropertiesCurrent.setProperty(Environment.USER, username);
+            hibernatePropertiesCurrent.setProperty(Environment.PASS, password);
+            hibernatePropertiesCurrent.setProperty(Environment.URL, url);
+
             hibernatePropertiesOld = hibernatePropertiesCurrent;
-            // TODO: Set properties fra konfigurasjon
-            //hibernateProperties.setProperty(Environment.USER, username);
-            //hibernateProperties.setProperty(Environment.PASS, password);
-            //hibernateProperties.setProperty(Environment.URL, url);
         } else {
-            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
+            hibernatePropertiesConfiguration.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JTATransactionFactory");
 
-            //datasource kan settes enten via filtert property-fil, eller via skif-konfigurasjonen
-            if (configuration.containsKey(SkifConfigConstants.DB_DATASOURCE)) {
-                hibernatePropertiesCurrent.setProperty(Environment.DATASOURCE, configuration.getString(SkifConfigConstants.DB_DATASOURCE));  //denne skal ligge i default konfigurasjon (gradle.properties)
-            }
+            String datasourceCurrent = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelBok_DS");
+            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
+            hibernatePropertiesCurrent.setProperty(Environment.DATASOURCE, datasourceCurrent);
 
-            hibernatePropertiesOld = ConfigurationConverter.getProperties(new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate-server.properties"));
-            if (configuration.containsKey(SkifConfigConstants.DB_DATASOURCE_OLD)) {
-                hibernatePropertiesOld.setProperty(Environment.DATASOURCE, configuration.getString(SkifConfigConstants.DB_DATASOURCE_OLD));  //denne skal ligge i default konfigurasjon (gradle.properties)
-            }
-
+            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE_OLD, "no.statkart.matrikkel.persistens.MatrikkelOld_DS");
+            hibernatePropertiesOld = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
+            hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
         }
 
         final HibernateStoreInterceptorFactory hibernateInterceptorFactory = new HibernateStoreInterceptorFactory();
@@ -351,22 +353,13 @@ public class StoreTestServerModule extends SkifModule {
             String port = configuration.getString(SkifConfigConstants.DB_PORT);
             String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
 
-            connectionManager = new ConnectionManagerUsingFactory(
-                    new ConnectionFactoryUsingJDBC(url, username, password, false, SnapshotVersion.CURRENT, false)
-            );
+            connectionManager = new ConnectionManagerUsingFactory(new ConnectionFactoryUsingJDBC(url, username, password, false, SnapshotVersion.CURRENT, false));
         } else {
-            String datasource = configuration.getString(SkifConfigConstants.DB_DATASOURCE);
-            if (datasource == null || datasource.trim().isEmpty()) throw new ConfigurationException(String.format("Mangler verdi for %s", SkifConfigConstants.DB_DATASOURCE)); //denne skal ligge i default konfigurasjon (gradle.properties)
-
-            connectionManager = new ConnectionManagerUsingFactory(
-                    new ConnectionFactoryUsingDataSource(datasource, false, SnapshotVersion.CURRENT, false)
-            );
+            String datasource = configuration.getString(SkifConfigConstants.DB_DATASOURCE, "no.statkart.matrikkel.persistens.MatrikkelBok_DS");
+            connectionManager = new ConnectionManagerUsingFactory(new ConnectionFactoryUsingDataSource(datasource, false, SnapshotVersion.CURRENT, false));
         }
 
-        ResourceManager resourceManager = new DefaultResourceManager(
-                new ResourceManager.Entry(connectionManager, ConnectionManager.class)
-        );
-        return resourceManager;
+        return new DefaultResourceManager(new ResourceManager.Entry(connectionManager, ConnectionManager.class));
     }
 
     ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager) {
