@@ -1,8 +1,10 @@
 package no.statkart.skif.mapper;
 
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimaps;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
@@ -441,7 +443,12 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
     static TypeMapper<?, ?> findClosestTypeMapper(Collection<TypeMapper<?, ?>> candidates, Class mappableClass, Class requestedClass, Direction direction) {
         //map with natural ordering of keys
-        TreeMap<Integer, TypeMapper<?, ?>> signedCandidates = new TreeMap<Integer, TypeMapper<?, ?>>();
+        ListMultimap<Integer, TypeMapper<?, ?>> signedCandidates = Multimaps.newListMultimap(new TreeMap<Integer, Collection<TypeMapper<?, ?>>>(), new Supplier<List<TypeMapper<?, ?>>>() {
+            @Override
+            public List<TypeMapper<?, ?>> get() {
+                return new ArrayList<TypeMapper<?, ?>>();
+            }
+        });
 
         for (TypeMapper<?, ?> candidate : candidates) {
             final Class<?> fromClass, toClass;
@@ -470,13 +477,16 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 candidateClass = candidateClass.getSuperclass();
             }
 
-            TypeMapper<?, ?> sibling = signedCandidates.put(weight, candidate);
-            if (sibling != null) {
-                throw new ImplementationException("Several defined mappers found for mapping of class of type " + mappableClass);
-            }
+            signedCandidates.put(weight, candidate);
         }
 
-        return signedCandidates.values().iterator().next();
+        Collection<TypeMapper<?, ?>> best = signedCandidates.asMap().values().iterator().next();
+
+        if (best.size() > 1) {
+            throw new ImplementationException("Several defined mappers found for mapping of class of type " + mappableClass);
+        }
+
+        return best.iterator().next();
     }
 
 }
