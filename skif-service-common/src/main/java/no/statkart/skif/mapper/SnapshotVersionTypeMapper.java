@@ -8,72 +8,50 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
- * Mapper mellom {@link SnapshotVersion} og {@link javax.xml.datatype.XMLGregorianCalendar}.
- * Typen i XML-skjema skal være <code>xs:dateTime</code>.
+ * Mapper mellom {@link SnapshotVersion} og en wrappet {@link javax.xml.datatype.XMLGregorianCalendar}.
+ * <p/>
+ * Typen i XML-skjema skal være:
+ * <pre>
+ * &lt;xs:complexType name="SnapshotVersion"&gt;
+ *    &lt;xs:sequence&gt;
+ *        &lt;xs:element name="timestamp" type="xs:dateTime"/&gt;
+ *    &lt;/xs:sequence&gt;
+ * &lt;/xs:complexType&gt;
+ * </pre>
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-public class SnapshotVersionTypeMapper<WsapiT> extends AbstractTypeMapper<WsapiT, SnapshotVersion, Mapping> {
-    private final PropertyDescriptor timestampProperty;
+public class SnapshotVersionTypeMapper<WsapiT> extends AbstractJavaDateTypeMapper<WsapiT, SnapshotVersion> {
 
     public SnapshotVersionTypeMapper(Class<WsapiT> wsSnapshotVersionClass) {
-        super(wsSnapshotVersionClass, SnapshotVersion.class, Mapping.class);
-
-        try {
-            timestampProperty = new PropertyDescriptor("timestamp", wsSnapshotVersionClass);
-        } catch (IntrospectionException e) {
-            throw new ImplementationException("Accessors for timestamp property not found", e);
-        }
+        super(wsSnapshotVersionClass, SnapshotVersion.class, "timestamp");
     }
 
     @Override
     public WsapiT mapDomainObject(SnapshotVersion source) {
         GregorianCalendar pureGregorianCalendar = createPureGregorianCalendar(source.getTimestamp());
-        try {
-            XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(pureGregorianCalendar);
-            xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(source.getTimestamp().getNanos(), 9));
+        XMLGregorianCalendar xmlGregorianCalendar = datatypeFactory.newXMLGregorianCalendar(pureGregorianCalendar);
+        xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(source.getTimestamp().getNanos(), 9));
 
-            WsapiT target = createWsapiT();
+        WsapiT target = wrap(xmlGregorianCalendar);
 
-            try {
-                timestampProperty.getWriteMethod().invoke(target, xmlGregorianCalendar);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Could not set timestamp", e);
-            } catch (InvocationTargetException e) {
-                throw new MappingException("Could not set timestamp", e);
-            }
-
-            return target;
-        } catch (DatatypeConfigurationException e) {
-            throw new ImplementationException(e);
-        }
+        return target;
     }
 
     @Override
     public SnapshotVersion mapWsapiObject(WsapiT source) {
         final XMLGregorianCalendar xmlGregorianCalendar;
 
-        try {
-            xmlGregorianCalendar = (XMLGregorianCalendar) timestampProperty.getReadMethod().invoke(source);
-        } catch (IllegalAccessException e) {
-            throw new MappingException("Could not get timestamp", e);
-        } catch (InvocationTargetException e) {
-            throw new MappingException("Could not get timestamp", e);
-        } catch (ClassCastException e) {
-            throw new MappingException("Could not get timestamp", e);
-        }
+        xmlGregorianCalendar = unwrap(source);
 
         validate(xmlGregorianCalendar);
 
@@ -113,13 +91,8 @@ public class SnapshotVersionTypeMapper<WsapiT> extends AbstractTypeMapper<WsapiT
         }
     }
 
-    // Gir en kalender som er gregoriansk hele veien, uten noe skifte til juliansk
-    private static GregorianCalendar createPureGregorianCalendar(Date date) {
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.clear();
-        calendar.setTime(date);
-        calendar.setGregorianChange(new Date(Long.MIN_VALUE));
-        return calendar;
+    public static <T> SnapshotVersionTypeMapper<T> create(Class<T> wsSnapshotVersionClass) {
+        return new SnapshotVersionTypeMapper<T>(wsSnapshotVersionClass);
     }
 
 }

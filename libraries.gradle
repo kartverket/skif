@@ -50,6 +50,8 @@ def libraries = [
 
         jts: "com.vividsolutions:jts:${libVersion('jts', '1.7.1')}",
 
+        jodatime: "joda-time:joda-time:${libVersion('jodatime', '2.3')}",
+
         // commons-lang - vurderes i SKIF-271
 
 ]

@@ -68,4 +68,37 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:complexType name="Timestamp">
+        <xs:sequence>
+            <xs:element name="timestamp" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LocalTime">
+        <xs:sequence>
+            <xs:element name="time" type="xs:time"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LocalDate">
+        <xs:sequence>
+            <xs:element name="date" type="xs:date"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LocalDateTime">
+        <xs:sequence>
+            <xs:element name="dateTime" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DatesAndTimes">
+        <xs:sequence>
+            <xs:element name="timestamp" type="skiftestns:Timestamp"/>
+            <xs:element name="localDate" type="skiftestns:LocalDate"/>
+            <xs:element name="localTime" type="skiftestns:LocalTime"/>
+            <xs:element name="localDateTime" type="skiftestns:LocalDateTime"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

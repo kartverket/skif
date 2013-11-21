@@ -96,8 +96,8 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
-                    <xs:element name="oppdateringsdato" type="xs:dateTime" />
-                    <xs:element name="sluttdato" type="xs:dateTime" />
+                    <xs:element name="oppdateringsdato" type="basetyperns:Timestamp" />
+                    <xs:element name="sluttdato" type="basetyperns:Timestamp" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -105,8 +105,8 @@
 
     <xs:complexType name="AbstractEntityComponentWithHistory">
         <xs:sequence>
-            <xs:element name="oppdateringsdato" type="xs:dateTime" />
-            <xs:element name="sluttdato" type="xs:dateTime" />
+            <xs:element name="oppdateringsdato" type="basetyperns:Timestamp" />
+            <xs:element name="sluttdato" type="basetyperns:Timestamp" />
             <xs:element name="versjonId" type="xs:long" />
         </xs:sequence>
     </xs:complexType>

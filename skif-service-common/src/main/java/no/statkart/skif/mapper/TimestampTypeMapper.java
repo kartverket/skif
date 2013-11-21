@@ -1,53 +1,63 @@
 package no.statkart.skif.mapper;
 
 import com.google.common.base.Joiner;
-import no.statkart.skif.exception.ImplementationException;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
- * Mapper mellom {@link Timestamp} og {@link XMLGregorianCalendar}.
- * Typen i XML-skjema skal være <code>xs:dateTime</code>.
+ * Mapper mellom {@link Timestamp} og wrappet {@link XMLGregorianCalendar}.
+ * <p/>
+ * Typen i XML-skjema skal være:
+ * <pre>
+ * &lt;xs:complexType name="SnapshotVersion"&gt;
+ *     &lt;xs:sequence&gt;
+ *         &lt;xs:element name="timestamp" type="xs:dateTime"/&gt;
+ *     &lt;/xs:sequence&gt;
+ * &lt;/xs:complexType&gt;
+ * </pre>
  *
  * @author Tor Egil R. Strand
  * @since 2.3.0
  */
-public class TimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, Timestamp, Mapping> {
-    public TimestampTypeMapper() {
-        super(XMLGregorianCalendar.class, Timestamp.class, Mapping.class);
+public class TimestampTypeMapper<WsapiT> extends AbstractJavaDateTypeMapper<WsapiT, Timestamp> {
+    public TimestampTypeMapper(Class<WsapiT> wsTimestampClass) {
+        super(wsTimestampClass, Timestamp.class, "timestamp");
     }
 
     @Override
-    public XMLGregorianCalendar mapDomainObject(Timestamp source) {
+    public WsapiT mapDomainObject(Timestamp source) {
         GregorianCalendar pureGregorianCalendar = createPureGregorianCalendar(source);
-        try {
-            XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(pureGregorianCalendar);
-            xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(source.getNanos(), 9));
-            return xmlGregorianCalendar;
-        } catch (DatatypeConfigurationException e) {
-            throw new ImplementationException(e);
-        }
+        XMLGregorianCalendar xmlGregorianCalendar = datatypeFactory.newXMLGregorianCalendar(pureGregorianCalendar);
+        xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(source.getNanos(), 9));
+
+        WsapiT target = wrap(xmlGregorianCalendar);
+
+        return target;
     }
 
     @Override
-    public Timestamp mapWsapiObject(XMLGregorianCalendar source) {
-        validate(source);
+    public Timestamp mapWsapiObject(WsapiT source) {
+        final XMLGregorianCalendar xmlGregorianCalendar;
+
+        xmlGregorianCalendar = unwrap(source);
+
+        validate(xmlGregorianCalendar);
 
         GregorianCalendar instance = new GregorianCalendar();
         instance.clear();
-        instance.setTimeZone(source.getTimeZone(DatatypeConstants.FIELD_UNDEFINED));
-        instance.set(source.getYear(), source.getMonth() - 1, source.getDay(), source.getHour(), source.getMinute(), source.getSecond());
+        instance.setTimeZone(xmlGregorianCalendar.getTimeZone(DatatypeConstants.FIELD_UNDEFINED));
+        instance.set(xmlGregorianCalendar.getYear(), xmlGregorianCalendar.getMonth() - 1, xmlGregorianCalendar.getDay(), xmlGregorianCalendar.getHour(), xmlGregorianCalendar.getMinute(), xmlGregorianCalendar.getSecond());
 
         Timestamp target = new Timestamp(instance.getTimeInMillis());
 
-        if (source.getFractionalSecond() != null) {
-            target.setNanos(source.getFractionalSecond().scaleByPowerOfTen(9).intValue());
+        if (xmlGregorianCalendar.getFractionalSecond() != null) {
+            target.setNanos(xmlGregorianCalendar.getFractionalSecond().scaleByPowerOfTen(9).intValue());
         }
 
         return target;
@@ -75,14 +85,8 @@ public class TimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar
         }
     }
 
-    // Gir en kalender som er gregoriansk hele veien, uten noe skifte til juliansk
-    private static GregorianCalendar createPureGregorianCalendar(Date date) {
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.clear();
-        calendar.setTime(date);
-        calendar.setGregorianChange(new Date(Long.MIN_VALUE));
-        return calendar;
+    public static <T> TimestampTypeMapper<T> create(Class<T> wsTimestampClass) {
+        return new TimestampTypeMapper<T>(wsTimestampClass);
     }
-
 
 }

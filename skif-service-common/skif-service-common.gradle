@@ -10,6 +10,7 @@ dependencies {
     compile libraries.jsr305
     compile libraries.guice_for_client
     compile libraries.guava
+    compile libraries.jodatime
     provided libraries.jaxws_rt
 
     testCompile libraries.reflections
@@ -46,6 +47,7 @@ task assertDependencies() {
     doFirst {
         configurations.runtime.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
             boolean godkjent = [
+                    'joda-time',
                     'org.slf4j',
                     'com.google.code.findbugs:jsr305',
                     'com.google.inject:guice',

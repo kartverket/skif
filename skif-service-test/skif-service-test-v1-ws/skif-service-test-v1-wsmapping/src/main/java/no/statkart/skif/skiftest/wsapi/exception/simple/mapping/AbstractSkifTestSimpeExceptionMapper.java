@@ -5,10 +5,8 @@ import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.MappingResolver;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * Conveniece klasse for test-implementasjon.
@@ -87,16 +85,6 @@ public abstract class AbstractSkifTestSimpeExceptionMapper implements ExceptionM
 
     @Override
     public Boolean w2d(Boolean source) {
-        throw new NotImplementedException("na");
-    }
-
-    @Override
-    public XMLGregorianCalendar d2w(Date source) {
-        throw new NotImplementedException("na");
-    }
-
-    @Override
-    public Date w2d(XMLGregorianCalendar source) {
         throw new NotImplementedException("na");
     }
 

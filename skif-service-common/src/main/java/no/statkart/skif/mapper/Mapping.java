@@ -2,11 +2,8 @@ package no.statkart.skif.mapper;
 
 import com.google.inject.TypeLiteral;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Collection;
 
 /**
  * Definerer mapping mellom Domain Objects og Web Service API Objects.
@@ -36,9 +33,6 @@ public interface Mapping extends MappingBase {
 
     public Boolean d2w(Boolean source);
     public Boolean w2d(Boolean source);
-
-    public XMLGregorianCalendar d2w(Date source);
-    public Date w2d(XMLGregorianCalendar source);
 
     public BigDecimal d2w(BigDecimal source);
     public BigDecimal w2d(BigDecimal source);

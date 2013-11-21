@@ -42,6 +42,11 @@ public class AutomagicMappingTest extends AutomagicTest {
         getDomainPkg().add("no.statkart.skif.skiftest.domain");
 
         getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.SkifTestContext");
+        getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.DatesAndTimes");
+        getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.LocalDate");
+        getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.LocalDateTime");
+        getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.LocalTime");
+        getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.Timestamp");
         getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.AMap"); // Denne automagiske greia takler ikke denne ute av kontekst pga. nøstet collection, men den tas som del av M.
 
         discoverClassHierarchy();

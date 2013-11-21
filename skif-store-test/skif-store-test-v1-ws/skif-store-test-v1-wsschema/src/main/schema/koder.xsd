@@ -3,11 +3,12 @@
         version="1.0"
         targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/koder"
         xmlns:demoKoderns="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"
+        xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
         xmlns:kodelistens="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"
-        xmlns:kodens="http://skif.statkart.no/storetest/wsapi/domain/koder"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
+    <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
     <xs:import schemaLocation="kodeliste.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"/>
 
 
@@ -66,8 +67,8 @@
         <xs:complexContent>
             <xs:extension base="kodelistens:Kode">
                 <xs:sequence>
-                    <xs:element name="oppdateringsdato" type="xs:dateTime"/>
-                    <xs:element name="sluttdato" type="xs:dateTime"/>
+                    <xs:element name="oppdateringsdato" type="basetyperns:Timestamp"/>
+                    <xs:element name="sluttdato" type="basetyperns:Timestamp"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
