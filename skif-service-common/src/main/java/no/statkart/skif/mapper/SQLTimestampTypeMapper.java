@@ -1,6 +1,7 @@
 package no.statkart.skif.mapper;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.NotImplementedException;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
@@ -63,7 +64,8 @@ public class SQLTimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalen
 
 
     public static XMLGregorianCalendar mapXMLGregorianCalendar(java.sql.Timestamp timestamp) {
-        return new TimestampTypeMapper().mapDomainObject(timestamp);
+        throw new NotImplementedException("Midlertidig fix for compile feil");
+        //return new TimestampTypeMapper(getWsapiClass()).mapDomainObject(timestamp);
     }
 
     // Gir en kalender som er gregoriansk hele veien, uten noe skifte til juliansk
