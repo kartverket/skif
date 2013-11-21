@@ -31,6 +31,7 @@
         <web-resource-collection>
             <web-resource-name>WebServices</web-resource-name>
             <url-pattern>/*</url-pattern>
+            <http-method>POST</http-method>
         </web-resource-collection>
         <auth-constraint>
             <role-name>grunnbokuser</role-name>
