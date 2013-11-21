@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema
+        version="1.0"
+        targetNamespace="http://skif.statkart.no/storetest/wsapi/service/testmapping"
+        xmlns="http://skif.statkart.no/storetest/wsapi/service/testmapping"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified">
+
+
+    <!-- ================================================= -->
+    <!-- Skjema for testing av mapping                     -->
+    <!-- ================================================= -->
+
+
+    <xs:complexType name="DateTimeDemo">
+        <xs:sequence>
+            <xs:element name="dateAndTime" type="xs:dateTime" minOccurs="0" />
+            <xs:element name="date" type="xs:date" minOccurs="0" />
+            <xs:element name="time" type="xs:time" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DateTimeImplList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="DateTimeDemo"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+
+</xs:schema>
