@@ -122,8 +122,4 @@ public class SnapshotVersionTypeMapper<WsapiT> extends AbstractTypeMapper<WsapiT
         return calendar;
     }
 
-    public static XMLGregorianCalendar mapXMLGregorianCalendar(SnapshotVersion snapshotVersion) {
-        return TimestampTypeMapper.mapXMLGregorianCalendar(snapshotVersion.getTimestamp());
-    }
-
 }

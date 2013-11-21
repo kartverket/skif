@@ -1,7 +1,6 @@
 package no.statkart.skif.wsversioning.wsapi.v2.service;
 
 import no.statkart.skif.SkifModule;
-import no.statkart.skif.mapper.SnapshotVersionTypeMapper;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
@@ -16,6 +15,8 @@ import no.statkart.skif.wsversioning.wsapi.v2.exception.ServiceException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Arrays;
 import java.util.Locale;
@@ -44,7 +45,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
     }
 
     @Test
-    public void testStoreGetTjernslia() throws ServiceException {
+    public void testStoreGetTjernslia() throws ServiceException, DatatypeConfigurationException {
         StoreService storeService = injector.getInstance(StoreService.class);
 
         VegId vegId = new VegId();
@@ -62,7 +63,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
     }
 
     @Test
-    public void testStoreGetTjernsliaOldVersion() throws ServiceException {
+    public void testStoreGetTjernsliaOldVersion() throws ServiceException, DatatypeConfigurationException {
         StoreService storeService = injector.getInstance(StoreService.class);
 
         VegId vegId = new VegId();
@@ -93,8 +94,17 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         return context;
     }
 
-    private XMLGregorianCalendar createSnapshotVersionCurrent() {
-        return SnapshotVersionTypeMapper.mapXMLGregorianCalendar(no.statkart.skif.store.SnapshotVersion.CURRENT);
+    private SnapshotVersion createSnapshotVersionCurrent() throws DatatypeConfigurationException {
+        XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar();
+        xmlGregorianCalendar.setYear(9999);
+        xmlGregorianCalendar.setMonth(1);
+        xmlGregorianCalendar.setDay(1);
+        xmlGregorianCalendar.setHour(0);
+        xmlGregorianCalendar.setMinute(0);
+        xmlGregorianCalendar.setSecond(0);
+        SnapshotVersion snapshotVersion = new SnapshotVersion();
+        snapshotVersion.setTimestamp(xmlGregorianCalendar);
+        return snapshotVersion;
     }
 
     public static class ClientModule extends SkifModule {
