@@ -4,14 +4,15 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.*;
+import no.statkart.skif.storetest.wsapi.domain.basetyper.SnapshotVersion;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import weblogic.jws.Policy;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.WebServiceContext;
 
 /**
@@ -60,13 +61,13 @@ public class StoreServiceWSBean extends SkifWebService<StoreServiceWSI> implemen
 
     @Override
     @WebMethod
-    public StoreTestBubbleIdList getVersions(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "start") XMLGregorianCalendar start, @WebParam(name = "end") XMLGregorianCalendar end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+    public StoreTestBubbleIdList getVersions(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         return wsServiceChain.getVersions(id, start, end, context);
     }
 
     @Override
     @WebMethod
-    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForList(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "start") XMLGregorianCalendar start, @WebParam(name = "end") XMLGregorianCalendar end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForList(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "start") SnapshotVersion start, @WebParam(name = "end") SnapshotVersion end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         return wsServiceChain.getVersionsForList(ids, start, end, context);
     }
 

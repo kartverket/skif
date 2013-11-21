@@ -10,6 +10,12 @@
     <!-- Basisklasser                                      -->
     <!-- ================================================= -->
 
+    <xs:complexType name="SnapshotVersion">
+        <xs:sequence>
+            <xs:element name="timestamp" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="SelectionPolygon">
         <xs:sequence>
             <xs:element name="positions" type="basetypens:PositionList"/>
@@ -18,8 +24,8 @@
 
     <xs:complexType name="Position">
         <xs:sequence>
-            <xs:element name="x" type="xs:double" />
-            <xs:element name="y" type="xs:double" />
+            <xs:element name="x" type="xs:double"/>
+            <xs:element name="y" type="xs:double"/>
             <xs:element name="z" type="xs:double" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
@@ -27,6 +33,12 @@
     <xs:complexType name="PositionList">
         <xs:sequence>
             <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basetypens:Position"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="StringList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 

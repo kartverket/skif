@@ -275,7 +275,7 @@
         <xs:complexContent>
             <xs:extension base="basicns:SubTypedBubble">
                 <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="unbounded" name="tekster" type="xs:string"/>
+                    <xs:element name="tekster" type="basetyperns:StringList"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

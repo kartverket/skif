@@ -8,6 +8,9 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -22,36 +25,67 @@ import java.util.List;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-public class SnapshotVersionTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, SnapshotVersion, Mapping> {
-    public SnapshotVersionTypeMapper() {
-        super(XMLGregorianCalendar.class, SnapshotVersion.class, Mapping.class);
+public class SnapshotVersionTypeMapper<WsapiT> extends AbstractTypeMapper<WsapiT, SnapshotVersion, Mapping> {
+    private final PropertyDescriptor timestampProperty;
+
+    public SnapshotVersionTypeMapper(Class<WsapiT> wsSnapshotVersionClass) {
+        super(wsSnapshotVersionClass, SnapshotVersion.class, Mapping.class);
+
+        try {
+            timestampProperty = new PropertyDescriptor("timestamp", wsSnapshotVersionClass);
+        } catch (IntrospectionException e) {
+            throw new ImplementationException("Accessors for timestamp property not found", e);
+        }
     }
 
     @Override
-    public XMLGregorianCalendar mapDomainObject(SnapshotVersion source) {
+    public WsapiT mapDomainObject(SnapshotVersion source) {
         GregorianCalendar pureGregorianCalendar = createPureGregorianCalendar(source.getTimestamp());
         try {
             XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(pureGregorianCalendar);
             xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(source.getTimestamp().getNanos(), 9));
-            return xmlGregorianCalendar;
+
+            WsapiT target = createWsapiT();
+
+            try {
+                timestampProperty.getWriteMethod().invoke(target, xmlGregorianCalendar);
+            } catch (IllegalAccessException e) {
+                throw new MappingException("Could not set timestamp", e);
+            } catch (InvocationTargetException e) {
+                throw new MappingException("Could not set timestamp", e);
+            }
+
+            return target;
         } catch (DatatypeConfigurationException e) {
             throw new ImplementationException(e);
         }
     }
 
     @Override
-    public SnapshotVersion mapWsapiObject(XMLGregorianCalendar source) {
-        validate(source);
+    public SnapshotVersion mapWsapiObject(WsapiT source) {
+        final XMLGregorianCalendar xmlGregorianCalendar;
+
+        try {
+            xmlGregorianCalendar = (XMLGregorianCalendar) timestampProperty.getReadMethod().invoke(source);
+        } catch (IllegalAccessException e) {
+            throw new MappingException("Could not get timestamp", e);
+        } catch (InvocationTargetException e) {
+            throw new MappingException("Could not get timestamp", e);
+        } catch (ClassCastException e) {
+            throw new MappingException("Could not get timestamp", e);
+        }
+
+        validate(xmlGregorianCalendar);
 
         GregorianCalendar instance = new GregorianCalendar();
         instance.clear();
-        instance.setTimeZone(source.getTimeZone(DatatypeConstants.FIELD_UNDEFINED));
-        instance.set(source.getYear(), source.getMonth() - 1, source.getDay(), source.getHour(), source.getMinute(), source.getSecond());
+        instance.setTimeZone(xmlGregorianCalendar.getTimeZone(DatatypeConstants.FIELD_UNDEFINED));
+        instance.set(xmlGregorianCalendar.getYear(), xmlGregorianCalendar.getMonth() - 1, xmlGregorianCalendar.getDay(), xmlGregorianCalendar.getHour(), xmlGregorianCalendar.getMinute(), xmlGregorianCalendar.getSecond());
 
         Timestamp timestamp = new Timestamp(instance.getTimeInMillis());
 
-        if (source.getFractionalSecond() != null) {
-            timestamp.setNanos(source.getFractionalSecond().scaleByPowerOfTen(9).intValue());
+        if (xmlGregorianCalendar.getFractionalSecond() != null) {
+            timestamp.setNanos(xmlGregorianCalendar.getFractionalSecond().scaleByPowerOfTen(9).intValue());
         }
 
         return SnapshotVersion.createInstance(timestamp);

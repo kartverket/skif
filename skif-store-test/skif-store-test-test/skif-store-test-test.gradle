@@ -19,3 +19,9 @@ dependencies {
     testCompile project(':skif-config')
 
 }
+
+task loadTestdata(type: JavaExec) {
+    classpath = configurations.testRuntime
+    maxHeapSize = '1024m'
+    main = 'no.statkart.skif.storetest.mockup.LoadTestdata'
+}

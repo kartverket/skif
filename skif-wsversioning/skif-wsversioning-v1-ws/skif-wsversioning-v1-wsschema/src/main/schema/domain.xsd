@@ -10,7 +10,7 @@
         Grunnleggende typer.
     -->
 
-    <!-- Denne er borte i V2 apiet -->
+    <!-- Denne er annerledes i V2 apiet -->
     <xs:complexType name="SnapshotVersion">
         <xs:sequence>
             <xs:element name="time" type="xs:long"/>

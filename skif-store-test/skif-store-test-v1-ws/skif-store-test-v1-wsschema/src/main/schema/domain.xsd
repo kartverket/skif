@@ -19,7 +19,7 @@
     <xs:complexType name="StoreTestBubbleId">
         <xs:sequence>
             <xs:element name="value" type="xs:string"/>
-            <xs:element name="snapshotVersion" type="xs:dateTime"/>
+            <xs:element name="snapshotVersion" type="basetyperns:SnapshotVersion"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -156,7 +156,7 @@
             <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="key" nillable="true" type="xs:dateTime"/>
+                        <xs:element name="key" nillable="true" type="basetyperns:SnapshotVersion"/>
                         <xs:element name="value" type="domainns:MockupTransfer"/>
                     </xs:sequence>
                 </xs:complexType>

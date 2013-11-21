@@ -152,6 +152,7 @@ libraries.weblogic_server = files(
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.1.jar" : [],
 
         "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
+        "${WEBLOGIC_HOME}/modules/ws.api_1.1.0.0.jar", // For eventuell testing av WS-Policy
 
         libraries.weblogic_client,
 )

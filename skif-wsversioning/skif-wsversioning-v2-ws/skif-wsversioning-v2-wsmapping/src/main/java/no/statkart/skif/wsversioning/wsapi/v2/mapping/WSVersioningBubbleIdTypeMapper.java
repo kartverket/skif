@@ -22,7 +22,7 @@ public class WSVersioningBubbleIdTypeMapper<WsapiT extends no.statkart.skif.wsve
     public WsapiT mapDomainObject(DomainT source) {
         WsapiT target = createWsapiT();
         target.setValue((Long) source.getValue());
-        target.setSnapshotVersion(getMapping().d2w(source.getSnapshotVersion(), XMLGregorianCalendar.class));
+        target.setSnapshotVersion(getMapping().d2w(source.getSnapshotVersion(), no.statkart.skif.wsversioning.wsapi.v2.domain.SnapshotVersion.class));
         return target;
     }
 

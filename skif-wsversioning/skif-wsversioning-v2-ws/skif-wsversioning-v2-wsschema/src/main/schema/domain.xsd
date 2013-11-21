@@ -10,10 +10,16 @@
         Grunnleggende typer.
     -->
 
+    <xs:complexType name="SnapshotVersion">
+        <xs:sequence>
+            <xs:element name="timestamp" type="xs:dateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="WSVersioningBubbleId">
         <xs:sequence>
             <xs:element name="value" type="xs:long"/>
-            <xs:element name="snapshotVersion" type="xs:dateTime"/>
+            <xs:element name="snapshotVersion" type="domainns:SnapshotVersion"/>
         </xs:sequence>
     </xs:complexType>
 

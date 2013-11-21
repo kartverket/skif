@@ -31,6 +31,7 @@ public class HistorikkEnumKodeId extends StoreTestEnumKodeId<HistorikkEnumKode> 
      */
     private static HistorikkEnumKodeId define(long idValue, String navn, SnapshotVersion innfort, SnapshotVersion utgatt) {
         HistorikkEnumKode historikkEnumKode = kodeSupport.defineKode(idValue, navn);
+        historikkEnumKode.setKodeverdi("-");
         historikkEnumKode.setOppdateringsdato(innfort.getTimestamp());
         historikkEnumKode.setSluttdato(utgatt.getTimestamp());
         return historikkEnumKode.getId();

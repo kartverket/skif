@@ -24,6 +24,7 @@ public class SimpleEnumKodeId extends StoreTestEnumKodeId<SimpleEnumKode> {
 
     private static SimpleEnumKodeId define(long idValue, String navn) {
         SimpleEnumKode simpleEnumKode = kodeSupport.defineKode(idValue, navn);
+        simpleEnumKode.setKodeverdi("-");
         return simpleEnumKode.getId();
     }
 

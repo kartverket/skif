@@ -5,6 +5,7 @@ import com.google.inject.Provider;
 import no.statkart.skif.mapper.*;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.wsversioning.domain.VegId;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.SnapshotVersion;
 
 /**
  * Mapper for WSVersioning-prosjektets V2-API.
@@ -30,7 +31,7 @@ public class WSVersioningMapper extends AbstractMapper<WSVersioningMapping> {
         addMapperFactory(new DefaultTypeMapperFactory());
 
 
-        addMapper(new SnapshotVersionTypeMapper());
+        addMapper(new SnapshotVersionTypeMapper<SnapshotVersion>(SnapshotVersion.class));
 
         // Alle Id-er
         addMapper(new WSVersioningBubbleIdTypeMapper<no.statkart.skif.wsversioning.wsapi.v2.domain.VegId, VegId>(no.statkart.skif.wsversioning.wsapi.v2.domain.VegId.class, VegId.class));
