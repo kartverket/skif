@@ -32,16 +32,16 @@ public class RelationCacheProxyHandler<S> extends ChainedProxyHandler<S> {
     @Override
     @SuppressWarnings("unchecked")
     protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
-        Object mapOfResults;
-        checkArgument(args.length==1, "Unexpected argument length: %d", args.length);
-        checkArgument(args[0] instanceof Collection, "Expected collection of bubble ids as argument");
+        Object result;
         RelationName name = cache.getRelationNameReturnNullIfDisabled(method);
         if (name != null) {
-            mapOfResults = useCaching(name, proxy, method, ((Collection<BubbleId<?>>) args[0]));
+            checkArgument(args.length==1, "Unexpected argument length: %d", args.length);
+            checkArgument(args[0] instanceof Collection, "Expected collection of bubble ids as argument");
+            result = useCaching(name, proxy, method, ((Collection<BubbleId<?>>) args[0]));
         } else {
-            mapOfResults = noCaching(proxy, method, args);
+            result = chained.invoke(proxy,method, args);
         }
-        return mapOfResults;
+        return result;
     }
 
     @SuppressWarnings("unchecked")
