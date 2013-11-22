@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.domain.basic.SimpleId;
 import no.statkart.skif.storetest.wsapi.domain.endringslogg.Endringstype;
 import no.statkart.skif.storetest.wsapi.domain.endringslogg.SimpleEndring;
@@ -46,7 +47,8 @@ public class EndringMappingTest {
         wsEndring.setEndringstype(Endringstype.SLETTING);
         wsEndring.setEndretBubbleId(new SimpleId());
         wsEndring.getEndretBubbleId().setValue("22");
-        wsEndring.setEndringstidspunkt(defaultTimeContext.buildXMLGregorianCalendar());
+        wsEndring.setEndringstidspunkt(new Timestamp());
+        wsEndring.getEndringstidspunkt().setTimestamp(defaultTimeContext.buildXMLGregorianCalendar());
 
         //mapping
         no.statkart.skif.storetest.domain.endringslogg.SimpleEndring mappedEndring = map.w2d(wsEndring, no.statkart.skif.storetest.domain.endringslogg.SimpleEndring.class);
@@ -64,8 +66,9 @@ public class EndringMappingTest {
         Assert.assertEquals(wsDoubleMappedEndring.getEndretBubbleId().getClass(), wsDoubleMappedEndring.getEndretBubbleId().getClass(), "endretBubble.class");
 
         Assert.assertNotNull(wsDoubleMappedEndring.getEndringstidspunkt(), "forventet instans for mappet endringstidspunkt");
-        Assert.assertEquals(wsDoubleMappedEndring.getEndringstidspunkt().toGregorianCalendar().getTime().toGMTString(), defaultTimeContext.date.toGMTString(), "endringstidspunkt as GMT string");
-        Assert.assertEquals(wsDoubleMappedEndring.getEndringstidspunkt(), wsEndring.getEndringstidspunkt(), "endringstidspunkt");
+        Assert.assertNotNull(wsDoubleMappedEndring.getEndringstidspunkt().getTimestamp(), "forventet instans for mappet endringstidspunkt");
+        Assert.assertEquals(wsDoubleMappedEndring.getEndringstidspunkt().getTimestamp().toGregorianCalendar().getTime().toGMTString(), defaultTimeContext.date.toGMTString(), "endringstidspunkt as GMT string");
+        Assert.assertEquals(wsDoubleMappedEndring.getEndringstidspunkt().getTimestamp(), wsEndring.getEndringstidspunkt().getTimestamp(), "endringstidspunkt");
 
     }
 

@@ -3,12 +3,12 @@
         version="1.0"
         targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/endringslogg"
         xmlns:endringsloggns="http://skif.statkart.no/storetest/wsapi/domain/endringslogg"
-        xmlns:basicns="http://skif.statkart.no/storetest/wsapi/domain/basic"
+        xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
         xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
 
-    <xs:import schemaLocation="basic.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basic"/>
+    <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>
     <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>
 
     <!-- ================================================= -->
@@ -40,6 +40,7 @@
         <xs:sequence>
             <xs:element name="endringsnummer" type="xs:long"/>
             <xs:element name="endringstype" type="endringsloggns:Endringstype"/>
+            <xs:element name="endringstidspunkt" type="basetyperns:Timestamp"/>
             <xs:element name="endretBubbleId" type="domainns:StoreTestBubbleId"/>
         </xs:sequence>
     </xs:complexType>
