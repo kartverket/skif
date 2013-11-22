@@ -14,7 +14,7 @@ import static no.statkart.skif.mapper.SQLTimestampTypeMapper.createPureGregorian
  * Typen i XML-skjema skal være {@code xs:date}.
  *
  * @author Leif Lislegård
- * @since 1.0 - ny grunnbok sprint 29
+ * @since 2.4 - ny grunnbok sprint 29
  */
 public class SQLDateTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, java.sql.Date, Mapping> {
     private final boolean mandatoryTimeZone = true;
