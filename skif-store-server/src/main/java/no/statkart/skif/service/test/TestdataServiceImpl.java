@@ -73,7 +73,7 @@ public class TestdataServiceImpl implements TestdataService {
                 }
             } catch (RuntimeException e) {
                 if (firstTransfer.getTestNumber().isNR_0()) {
-                    logger.error("Failed to write comlete read set! Other tests will fail until database is recreated!");
+                    logger.error("Failed to persist complete read set! Other tests might fail until database is recreated!");
                 }
                 throw e;
             }
