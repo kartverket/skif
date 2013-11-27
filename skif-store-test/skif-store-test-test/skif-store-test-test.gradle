@@ -20,8 +20,8 @@ dependencies {
 
 }
 
-task loadTestdata(type: JavaExec) {
-    classpath = configurations.testRuntime
+task loadMockupData(type: JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
     maxHeapSize = '1024m'
     main = 'no.statkart.skif.storetest.mockup.LoadTestdata'
 }
