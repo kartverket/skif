@@ -1,6 +1,12 @@
 apply plugin: 'java'
 apply plugin: 'sktools-xjc-plugin'
 
+configurations {
+    schemas {
+        description = 'Configuration for publishing schemas'
+    }
+}
+
 sourceSets {
   main {
     xjc {
@@ -22,4 +28,11 @@ project.idea.module {
     sourceDirs += sourceSets.main.xjc.schemas.collect { file("gen/main/xjc/${it.name}")}
 }
 
+task zipSchemas(type: Zip) {
+    classifier = 'schemas'
+    from 'src/main/schema'
+}
 
+artifacts {
+    schemas zipSchemas
+}

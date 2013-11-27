@@ -16,6 +16,7 @@ public class SimpleMockupFactory extends AbstractMockupFactory {
     private final SimpleId<?> simpleId1;
     private final SimpleId<?> simpleId2;
     private final SimpleId<?> simpleId3;
+    private final SimpleId<?> simpleId4;
 
 
     @Inject
@@ -25,6 +26,7 @@ public class SimpleMockupFactory extends AbstractMockupFactory {
         simpleId1 = getNextId();
         simpleId2 = getNextId();
         simpleId3 = getNextId();
+        simpleId4 = getNextId();
     }
 
     private SimpleId<?> getNextId() {
@@ -36,6 +38,7 @@ public class SimpleMockupFactory extends AbstractMockupFactory {
         store.insert(createSimple(simpleId1, 1, "Ingen BubbleWithRelation peker til denne"));
         store.insert(createSimple(simpleId2, 2, "En BubbleWithRelation (nr 1) peker til denne"));
         store.insert(createSimple(simpleId3, 3, "Flere BubbleWithRelation (nr 2 og 3) peker til denne"));
+        store.insert(createSimple(simpleId4, 4, null));
     }
 
     private Simple createSimple(SimpleId<?> aId, int nr, String text ) {

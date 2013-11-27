@@ -1,13 +1,19 @@
 apply plugin: 'sktools-weblogic-wswar-plugin'
 
+configurations {
+    schemas {
+        description = 'Configuration for consuming schemas'
+    }
+}
+
 sourceSets.weblogic {
-  java.srcDirs = ['src/main/java']
-  resources.srcDirs = []
+    java.srcDirs = ['src/main/java']
+    resources.srcDirs = []
 }
 
 
 warWeblogic {
-  from 'src/main/webapp'
+    from 'src/main/webapp'
 }
 
 
@@ -17,4 +23,26 @@ dependencies {
 
     weblogicProvided libraries['tools.jar']
     weblogicProvided libraries.weblogic
+
+    schemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
+}
+
+task zipWsdlsAndSchemas(type: Zip) { Task t ->
+    baseName = 'schemas'
+
+    project.tasks.withType(no.statkart.sktools.gradle.plugins.weblogic.wswar.WeblogicWsCompileTask).all { Task wwct ->
+        t.dependsOn wwct
+        t.from {
+            t.project.fileTree(dir: wwct.getGenDir(), includes: ['**/*.wsdl', '**/*schema1.xsd']).files
+        }
+    }
+
+    dependsOn configurations.schemas
+    from { configurations.schemas.files.collect { project.zipTree it } }
+
+    includeEmptyDirs = false
+}
+
+warWeblogic {
+    from zipWsdlsAndSchemas
 }
