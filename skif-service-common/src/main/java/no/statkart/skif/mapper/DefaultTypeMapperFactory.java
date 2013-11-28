@@ -14,9 +14,11 @@ import java.util.Set;
 public class DefaultTypeMapperFactory implements TypeMapperFactory {
     private final Set<Class<?>> doNotMapTheseClasses = new HashSet<Class<?>>();
 
+    private boolean failIfMissingDomainProperties = true;
+
     @Override
     public <WsapiT, DomainT> TypeMapper<WsapiT, DomainT> createTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
-        return new DefaultTypeMapper<WsapiT, DomainT, Mapping>(wsapiTypeToken, domainTypeToken, Mapping.class, doNotMapTheseClasses);
+        return new DefaultTypeMapper<WsapiT, DomainT, Mapping>(wsapiTypeToken, domainTypeToken, Mapping.class, doNotMapTheseClasses, failIfMissingDomainProperties);
     }
 
     /**
@@ -38,5 +40,19 @@ public class DefaultTypeMapperFactory implements TypeMapperFactory {
     public DefaultTypeMapperFactory doNotMapThisClass(Class<?> c) {
         doNotMapTheseClasses.add(c);
         return this;
+    }
+
+    public boolean isFailIfMissingDomainProperties() {
+        return failIfMissingDomainProperties;
+    }
+
+    /**
+     * Angir om det skal kastes en exception dersom det finnes en getter på wsapi-siden som ikke har tilsvarende setter
+     * på domene-siden. Dette er vanligvis en feil, og standardverdien er <code>true</code>.
+     *
+     * @param failIfMissingDomainProperties <code>true</code> for å skru på sjekk, <code>false</code> for å skru av.
+     */
+    public void setFailIfMissingDomainProperties(boolean failIfMissingDomainProperties) {
+        this.failIfMissingDomainProperties = failIfMissingDomainProperties;
     }
 }

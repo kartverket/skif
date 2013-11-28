@@ -2,6 +2,7 @@ package no.statkart.skif.mapper;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeToken;
+import no.statkart.skif.exception.ImplementationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +26,10 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
     }
 
     public DefaultTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<M> mappingInterface) {
-        this(wsapiTypeToken, domainTypeToken, mappingInterface, Collections.<Class<?>>emptySet());
+        this(wsapiTypeToken, domainTypeToken, mappingInterface, Collections.<Class<?>>emptySet(), false);
     }
 
-    public DefaultTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<M> mappingInterface, Set<Class<?>> doNotMapTheseClasses) {
+    public DefaultTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<M> mappingInterface, Set<Class<?>> doNotMapTheseClasses, boolean failIfMissingDomainProperties) {
         //noinspection unchecked
         super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), mappingInterface);
 
@@ -50,6 +51,8 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
 
                     builder.put(wsapiGetter, pmi);
                 }
+            } else if (failIfMissingDomainProperties) {
+                throw new ImplementationException("No corresponding domain setter for wsapi getter " + wsapiGetter.getName());
             }
         }
         wsapiToDomain = builder.build();
