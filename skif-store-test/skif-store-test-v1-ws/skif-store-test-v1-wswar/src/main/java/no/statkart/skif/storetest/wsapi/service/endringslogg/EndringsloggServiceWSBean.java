@@ -6,11 +6,7 @@ import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.domain.basetyper.SnapshotVersion;
-import no.statkart.skif.storetest.wsapi.domain.endringslogg.Domeneklasse;
-import no.statkart.skif.storetest.wsapi.domain.endringslogg.EndringList;
-import no.statkart.skif.storetest.wsapi.domain.endringslogg.Endringsklasse;
-import no.statkart.skif.storetest.wsapi.domain.endringslogg.Kontroll;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.annotation.PostConstruct;
@@ -50,31 +46,25 @@ public class EndringsloggServiceWSBean extends SkifWebService<EndringsloggServic
 
     @Override
     @WebMethod
-    public long findSisteEndringsnummer(@WebParam(name="snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name="storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
-        return wsServiceChain.findSisteEndringsnummer(snapshotVersion, storeTestContext);
+    public EndringId findSisteEndringId(@WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
+        return wsServiceChain.findSisteEndringId(storeTestContext);
     }
 
     @Override
     @WebMethod
-    public EndringList findEndringerEtterEndringsnummer(@WebParam(name = "endringsnummer") long endringsnummer, @WebParam(name="endringsklasse") Endringsklasse endringsklasse, @WebParam(name = "maksAntall") int maksAntall, @WebParam(name="snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name="storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
-        return wsServiceChain.findEndringerEtterEndringsnummer(endringsnummer, endringsklasse, maksAntall,snapshotVersion,storeTestContext);
+    public Endringer findEndringer(@WebParam(name = "id") EndringId id, @WebParam(name = "bobleklasse") Bobleklasse bobleklasse, @WebParam(name = "filter") String filter, @WebParam(name = "retunerBobler") ReturnerBobler retunerBobler, @WebParam(name = "maksAntall") int maksAntall, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
+        return wsServiceChain.findEndringer(id, bobleklasse, filter, retunerBobler, maksAntall, storeTestContext);
     }
 
     @Override
     @WebMethod
-    public StoreTestBubbleIdList findIdsEtterId(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name="domeneklasse") Domeneklasse domeneklasse, @WebParam(name = "maksAntall") int maksAntall, @WebParam(name="snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name="storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
-        return wsServiceChain.findIdsEtterId(id, domeneklasse, maksAntall, snapshotVersion, storeTestContext);
+    public Kontroll calcEndringskontroll(@WebParam(name = "id") EndringId id, @WebParam(name="bobleklasse") Bobleklasse bobleklasse, @WebParam(name="filter") String filter, @WebParam(name="maksAntall") int maksAntall, @WebParam(name="storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
+        return wsServiceChain.calcEndringskontroll(id, bobleklasse, filter, maksAntall, storeTestContext);
     }
 
     @Override
     @WebMethod
-    public Kontroll calcKontrollForRange(@WebParam(name = "fraId") StoreTestBubbleId fraId, @WebParam(name = "tilId") StoreTestBubbleId tilId, @WebParam(name="domeneklasse") Domeneklasse domeneklasse, @WebParam(name="snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name="storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
-        return wsServiceChain.calcKontrollForRange(fraId, tilId, domeneklasse, snapshotVersion, storeTestContext);
-    }
-
-    @Override
-    @WebMethod
-    public Kontroll calcKontrollForList(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name="domeneklasse") Domeneklasse domeneklasse, @WebParam(name="snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name="storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
-        return wsServiceChain.calcKontrollForList(ids, domeneklasse, snapshotVersion, storeTestContext);
+    public Kontroll calcObjektkontrollForList(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "bobleklasse") Bobleklasse bobleklasse, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
+        return wsServiceChain.calcObjektkontrollForList(ids, bobleklasse, storeTestContext);
     }
 }

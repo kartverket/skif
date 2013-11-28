@@ -23,8 +23,6 @@ public class StoreTestLocalServices implements ServicesListing {
 
         modifiableList.add(DBLockerService.class);
         modifiableList.add(DBLockerInTransactionService.class);
-//        modifiableList.add(EndringsloggService.class);
-
 
         services = Collections.unmodifiableList(modifiableList);
      }

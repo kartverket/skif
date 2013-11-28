@@ -58,6 +58,8 @@ public class SubTypeTest extends StoreTestTestCase {
                 SubTypedBubbleId<?> idCurrent = new SubTypedBubbleId(idValue, SnapshotVersion.CURRENT);
                 SubTypedBubble current = store.get(idCurrent);
                 Assert.assertTrue(current instanceof SubTypeWithCollection, "Ikke SubTypeWithCollection");
+                Assert.assertNotNull(((SubTypeWithCollection) current).getTekster());
+                Assert.assertTrue(((SubTypeWithCollection) current).getTekster().isEmpty());
 
                 SubTypedBubbleId<?> idPast = new SubTypedBubbleId(idValue, SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
                 SubTypedBubble past = store.get(idPast);

@@ -10,29 +10,31 @@ import no.statkart.skif.storetest.domain.basic.SubTypedBubble;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1AA;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCMany;
-import no.statkart.skif.storetest.wsapi.domain.endringslogg.Domeneklasse;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.Bobleklasse;
 
 /**
- * Mapper WS enum {@code Domeneklasse }til {@code Class<? extends StoreTestBubble>}
+ * Mapper WS enum {@code Bobleklasse }til {@code Class<? extends StoreTestBubble>}
  *
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class DomeneklasseTypeMapper extends AbstractTypeMapper<Domeneklasse,Class<? extends StoreTestBubble>,Mapping> {
+public class BobleklasseTypeMapper extends AbstractTypeMapper<Bobleklasse,Class<? extends StoreTestBubble>,Mapping> {
 
-    public DomeneklasseTypeMapper() {
-        super(Domeneklasse.class, (Class < Class <? extends StoreTestBubble>>)StoreTestBubble.class.getClass(), Mapping.class);
+    public BobleklasseTypeMapper() {
+        super(Bobleklasse.class, (Class < Class <? extends StoreTestBubble>>)StoreTestBubble.class.getClass(), Mapping.class);
     }
 
     @Override
-    public Domeneklasse mapDomainObject(Class<? extends StoreTestBubble> source) {
-        Domeneklasse endringsklasse = Domeneklasse.fromValue(source.getSimpleName());
-        return endringsklasse;
+    public Bobleklasse mapDomainObject(Class<? extends StoreTestBubble> source) {
+        Bobleklasse bobleklasse = Bobleklasse.fromValue(source.getSimpleName());
+        return bobleklasse;
     }
 
     @Override
-    public Class<? extends StoreTestBubble> mapWsapiObject(Domeneklasse source) {
+    public Class<? extends StoreTestBubble> mapWsapiObject(Bobleklasse source) {
         switch (source) {
+            case STORE_TEST_BUBBLE:
+                return StoreTestBubble.class;
             case SIMPLE:
                 return Simple.class;
             case SUB_TYPED_BUBBLE:

@@ -73,15 +73,15 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new LocaleMapper());
         addMapper(new LocalizedStringTypeMapper());
         addMapper(new ClassTypeMapper());
-        addMapper(new EndringsklasseTypeMapper());
-        addMapper(new DomeneklasseTypeMapper());
+        addMapper(new BobleklasseTypeMapper());
         addMapper(new EndringstypeTypeMapper());
+        addMapper(new ReturnerBoblerTypeMapper());
 
         // Endringer
-        addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.Endring.class, Endring.class));
-        addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.SimpleEndring.class, SimpleEndring.class));
-        addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.BubbleWithRelationEndring.class, BubbleWithRelationEndring.class));
-        addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.SubTypedBubbleEndring.class, SubTypedBubbleEndring.class));
+        //addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.Endring.class, Endring.class));
+//        addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.SimpleEndring.class, SimpleEndring.class));
+//        addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.BubbleWithRelationEndring.class, BubbleWithRelationEndring.class));
+//        addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.SubTypedBubbleEndring.class, SubTypedBubbleEndring.class));
 
         // En litt spesiell kode
         addMapper(new KodeTypeMapperFactory.KodeTypeMapper<no.statkart.skif.storetest.wsapi.domain.koder.HistorikkEnumKode, HistorikkEnumKode>(no.statkart.skif.storetest.wsapi.domain.koder.HistorikkEnumKode.class, HistorikkEnumKode.class) {

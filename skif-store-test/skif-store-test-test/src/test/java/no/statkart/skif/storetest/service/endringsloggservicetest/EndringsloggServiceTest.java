@@ -1,33 +1,34 @@
 package no.statkart.skif.storetest.service.endringsloggservicetest;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
-import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.endringslogg.AbstractEndringId;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-import no.statkart.skif.storetest.domain.endringslogg.Kontroll;
-import no.statkart.skif.storetest.domain.endringslogg.SimpleEndring;
+import no.statkart.skif.storetest.domain.endringslogg.*;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
+import no.statkart.skif.store.endringslogg.ReturnerBobler;
+import no.statkart.skif.storetest.service.nedlastning.NedlastningsService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
-import static no.statkart.skif.SkifUtil.getType;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 
 /**
- * Tester for {@link EndringsloggService}. Her testes at kall til EndringsloggService returnerer. Mer detaljert testing
+ * Tester for {@link EndringsloggService}. Her testes bare at kall til EndringsloggService returnerer. Mer detaljert testing
  * av endringsloggen finnes i {@link no.statkart.skif.storetest.endringslogg.EndringManagerTest}.
  *
- * Ved konstruksjon av endringslogg tester er det viktig å huske på at endrinsloggfunksjonaliteten går på tvers av test
- * datasett og rekkefølge på testsett kan varierer. Det er ikke garantert ReadTestSet kommer først.  Testene bør
- * derfor konstrueres på en slik måte at de fungere nå databasen inneholder mange test datasett.
+ * NB: Ved konstruksjon av endringslogg tester er det viktig å huske på at endrinsloggfunksjonaliteten går på tvers av test
+ * datasett og at rekkefølge på testsett kan varierer. Det er ikke garantert ReadTestSet kommer før først WriteTestSet.
+ * Testene bør derfor konstrueres på en slik måte at de fungere nå databasen inneholder mange test datasett med ukjendt
+ * rekkefølge.
  *
  * @author Thomas Berg
  * @author Henrik Fredholm
@@ -37,6 +38,10 @@ import static org.testng.Assert.assertTrue;
 public class EndringsloggServiceTest extends StoreTestTestCase {
     @Inject
     EndringsloggService endringsloggService;
+
+    @Inject
+    NedlastningsService nedlastningsService;
+
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
 
@@ -45,36 +50,46 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
         mockupFacadeFactory.getReadMockupFacadeAndSaveData();
     }
 
-    public void tesFindSisteEndringsnummer(){
-        long endringsnr = endringsloggService.findSisteEndringsnummer(SnapshotVersion.CURRENT);
-        assertTrue(endringsnr > 0);
+    public void testFindSisteEndringId(){
+        AbstractEndringId<?> sisteEndringId = endringsloggService.findSisteEndringId();
+        assertNotNull(sisteEndringId);
+        assertTrue(sisteEndringId.getValue() > 0);
     }
 
-    public void testFindEndringerEtterEndringsnummer(){
-//        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring>() {}), 1, SnapshotVersion.CURRENT);
-        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, SimpleEndring.class, 1, SnapshotVersion.CURRENT);
-        assertEquals(endringer.size(),1);
+    public void testFindEndringerUtenLastingAvEndretObjekter(){
+        Endringer<?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Aldri, 1);
+        assertEquals(endringer.getEndringList().size(),1);
     }
 
+    public void testFindEndringerMedLastingAvEndretObjekter() {
+        Endringer<?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Alltid, 1);
+        assertEquals(endringer.getEndringList().size(),1);
+    }
+
+    public void testCalcEndringskontroll(){
+        Kontroll kontroll = endringsloggService.calcEndringskontroll(null, Simple.class, null, 1);
+        assertEquals(kontroll.getAntall(),1);
+    }
+
+    public void testCalcObjectkontrollForList(){
+        Endringer<?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Alltid, 1);
+        List<SimpleId<?>> endretBubbleIds = (List)endringer.getEndretBubbleIds();
+        Kontroll kontroll = endringsloggService.calcObjektkontrollForList(endretBubbleIds, Simple.class);
+        assertEquals(kontroll.getAntall(),1);
+    }
     public void testFindIdsEtterId(){
-        List<SimpleId<?>> ids = endringsloggService.findIdsEtterId(null, Simple.class, 1, SnapshotVersion.CURRENT);
+        List<SimpleId<?>> ids = nedlastningsService.findIdsEtterId(null, Simple.class, null, 1);
         assertEquals(ids.size(),1);
     }
 
     public void testCalcKontrollForRange(){
-//        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring>() { }),1,SnapshotVersion.CURRENT);
-        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, SimpleEndring.class, 1, SnapshotVersion.CURRENT);
-        SimpleId<?> tilId = endringer.get(0).getEndretBubbleId();
-        SimpleId<?> fraId = new SimpleId<Simple>(tilId.getValue()-1);
-
-        Kontroll kontrollRange = endringsloggService.calcKontrollForRange(fraId, tilId, Simple.class, SnapshotVersion.CURRENT);
-        assertEquals(kontrollRange.getAntall(), 1);
+        Kontroll kontrollRange = nedlastningsService.calcObjektkontrollForRange(null, null, Simple.class, null);
+        assertTrue(kontrollRange.getAntall() > 0);
     }
 
     public void testCalcKontrollForList(){
-//        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, getType(new TypeToken<SimpleEndring>() { }), 1, SnapshotVersion.CURRENT);
-        List<SimpleEndring> endringer = endringsloggService.findEndringerEtterEndringsnummer(0, SimpleEndring.class, 1, SnapshotVersion.CURRENT);
-        Kontroll kontrollList = endringsloggService.calcKontrollForList(ImmutableList.of(endringer.get(0).getEndretBubbleId()), Simple.class, SnapshotVersion.CURRENT);
+        Endringer<?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Aldri, 1);
+        Kontroll kontrollList = endringsloggService.calcObjektkontrollForList(ImmutableList.of(endringer.getEndretBubbleIds().get(0)), Simple.class);
         assertEquals(kontrollList.getAntall(), 1);
     }
 

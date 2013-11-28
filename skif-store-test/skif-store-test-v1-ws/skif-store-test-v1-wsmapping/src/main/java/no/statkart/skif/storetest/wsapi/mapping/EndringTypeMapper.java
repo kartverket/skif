@@ -26,35 +26,21 @@ public class EndringTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.d
     @Override
     public WsapiT mapDomainObject(DomainT source) {
         WsapiT target = createWsapiT();
-        target.setEndringsnummer(source.getId().getValue());
+        target.setId(getMapping().d2w(source.getId(),no.statkart.skif.storetest.wsapi.domain.endringslogg.EndringId.class));
         target.setEndretBubbleId(getMapping().d2w(source.getEndretBubbleId()));
+        target.setEndringstidspunkt(getMapping().d2w(source.getEndringstidspunkt()));
         target.setEndringstype(getMapping().d2w(source.getEndringstype(), no.statkart.skif.storetest.wsapi.domain.endringslogg.Endringstype.class));
         return target;
     }
 
     @Override
     public DomainT mapWsapiObject(WsapiT source) {
-        DomainT domainT = createDomainT(source);
+        DomainT domainT = createDomainT();
         Class<? extends BubbleId<DomainT>> bubbleIdClass = BubbleIds.getBubbleIdClass(getDomainClass());
-        domainT.setId(BubbleIds.createInstance(bubbleIdClass, source.getEndringsnummer(), SnapshotVersion.CURRENT));
+        domainT.setId(getMapping().w2d(source.getId()));
         domainT.setEndretBubbleId(getMapping().w2d(source.getEndretBubbleId()));
         domainT.setEndringstype(getMapping().w2d(source.getEndringstype(), Endringstype.class));
-        return domainT;
-    }
-
-    private DomainT createDomainT(WsapiT source) {
-        DomainT domainT = null;
-        try {
-            domainT = getDomainClass().getConstructor(Long.class).newInstance(source.getEndringsnummer());
-        } catch (InstantiationException e) {
-            throw new MappingException(e);
-        } catch (IllegalAccessException e) {
-            throw new MappingException(e);
-        } catch (InvocationTargetException e) {
-            throw new MappingException(e);
-        } catch (NoSuchMethodException e) {
-            throw new MappingException(e);
-        }
+        domainT.setEndringstidspunkt(getMapping().w2d(source.getEndringstidspunkt()));
         return domainT;
     }
 

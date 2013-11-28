@@ -5,6 +5,7 @@ import no.statkart.skif.store.relation.cache.RelationName;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,6 +21,9 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
 
     protected transient Store store;
     protected BubbleId<?> id;
+    private Timestamp oppdateringsdato;
+
+    @Deprecated
     private long versjonId = 0;
 
     @Override
@@ -42,7 +46,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
         this.id = id;
     }
 
-
+    @Deprecated
     public long getVersjonId() {
         return versjonId;
     }

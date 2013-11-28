@@ -15,34 +15,67 @@
     <!-- Skjema for Endringslogg                           -->
     <!-- ================================================= -->
 
-    <xs:simpleType name="Endringsklasse">
+    <xs:simpleType name="Bobleklasse">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="Endring" />
-            <xs:enumeration value="SimpleEndring" />
-            <xs:enumeration value="SubTypedBubbleEndring" />
-            <xs:enumeration value="BubbleWithRelationEndring" />
-            <xs:enumeration value="X1AAEndring" />
-            <xs:enumeration value="X1BBOneEndring" />
-            <xs:enumeration value="X1CCManyEndring" />
+            <xs:enumeration value="StoreTestBubble"/>
+            <xs:enumeration value="Simple"/>
+            <xs:enumeration value="SubTypedBubble"/>
+            <xs:enumeration value="BubbleWithRelation"/>
+            <xs:enumeration value="X1AA"/>
+            <xs:enumeration value="X1BBOne"/>
+            <xs:enumeration value="X1CCMany"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="Kontroll">
+        <xs:sequence>
+            <xs:element name="antall" type="xs:long"/>
+            <xs:element name="idChecksum" type="xs:long"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:simpleType name="Endringstype">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="Nyoppretting" />
-            <xs:enumeration value="Oppdatering" />
-            <xs:enumeration value="Sletting" />
+            <xs:enumeration value="Nyoppretting"/>
+            <xs:enumeration value="Typeendring"/>
+            <xs:enumeration value="Oppdatering"/>
+            <xs:enumeration value="Sletting"/>
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="ReturnerBobler">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Aldri"/>
+            <xs:enumeration value="Alltid"/>
+            <xs:enumeration value="VedSlutt"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Endring -->
+
+    <xs:complexType name="EndringId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="EndringIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="endringsloggns:EndringId"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="Endring">
-        <xs:sequence>
-            <xs:element name="endringsnummer" type="xs:long"/>
-            <xs:element name="endringstype" type="endringsloggns:Endringstype"/>
-            <xs:element name="endringstidspunkt" type="basetyperns:Timestamp"/>
-            <xs:element name="endretBubbleId" type="domainns:StoreTestBubbleId"/>
-        </xs:sequence>
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="endringstype" type="endringsloggns:Endringstype"/>
+                    <xs:element name="endringstidspunkt" type="basetyperns:Timestamp"/>
+                    <xs:element name="endretBubbleId" type="domainns:StoreTestBubbleId"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="EndringList">
@@ -51,12 +84,35 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="Endringer">
+        <xs:sequence>
+            <xs:element name="endringList" type="endringsloggns:EndringList"/>
+            <xs:element name="alleEndringerFunnet" type="xs:boolean"/>
+            <xs:element name="sisteEndringIdProsessert" type="endringsloggns:EndringId" nillable="true"/>
+            <xs:element name="objects" type="domainns:StoreTestBubbleList"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithRelationEndringId">
+        <xs:complexContent>
+            <xs:extension base="endringsloggns:EndringId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="BubbleWithRelationEndring">
         <xs:complexContent>
             <xs:extension base="endringsloggns:Endring">
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
 
+
+    <xs:complexType name="SimpleEndringId">
+        <xs:complexContent>
+            <xs:extension base="endringsloggns:EndringId">
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="SimpleEndring">
@@ -67,28 +123,18 @@
 
     </xs:complexType>
 
+    <xs:complexType name="SubTypedBubbleEndringId">
+        <xs:complexContent>
+            <xs:extension base="endringsloggns:EndringId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="SubTypedBubbleEndring">
         <xs:complexContent>
             <xs:extension base="endringsloggns:Endring">
             </xs:extension>
         </xs:complexContent>
-    </xs:complexType>
-
-    <xs:simpleType name="Domeneklasse">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="Simple" />
-            <xs:enumeration value="SubTypedBubble" />
-            <xs:enumeration value="BubbleWithRelation" />
-            <xs:enumeration value="X1AA" />
-            <xs:enumeration value="X1BBOne" />
-            <xs:enumeration value="X1CCMany" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:complexType name="Kontroll">
-        <xs:sequence>
-            <xs:element name="antall" type="xs:long"/>
-        </xs:sequence>
     </xs:complexType>
 
 </xs:schema>

@@ -1,5 +1,7 @@
 package no.statkart.skif.service;
 
+import no.statkart.skif.store.SnapshotVersion;
+
 import java.util.Locale;
 
 /**
@@ -11,6 +13,7 @@ public class DefaultServiceContext implements ServiceContext {
 
     private String systemVersion="1.0";
     private Locale locale = new Locale("nb", "NO");
+    private SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
 
     @Override
     public String getSystemVersion() {
@@ -30,5 +33,13 @@ public class DefaultServiceContext implements ServiceContext {
     @Override
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public SnapshotVersion getSnapshotVersion() {
+        return snapshotVersion;
+    }
+
+    public void setSnapshotVersion(SnapshotVersion snapshotVersion) {
+        this.snapshotVersion = snapshotVersion;
     }
 }

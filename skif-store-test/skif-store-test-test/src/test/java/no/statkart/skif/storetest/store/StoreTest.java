@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.store;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.exception.ObjectNotFoundException;
@@ -7,10 +8,12 @@ import no.statkart.skif.exception.ObjectsNotFoundException;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
+import no.statkart.skif.storetest.domain.basic.SubTypeWithCollection;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
@@ -319,5 +322,15 @@ public class StoreTest extends StoreTestTestCase {
         List<Simple> bubbles = store.getIgnoreMissing(ids);
         assertEquals(bubbles.size(), 1, "Antall objekter");
         assertEquals(bubbles.get(0).getId(), simple1Id, "Uventet id");
+    }
+
+    public void  testHentObjectMedEmptyCollection() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        SubTypeWithCollection objectWithEmptyCollection = (SubTypeWithCollection)store.get(mockupFacade.getSubTypedBubbleMockupFactory().getDifferentHistoricSubtypesId().asSnapshotVersion(SnapshotVersion.createInstance("2011-10-02 09:00:00.00")));
+        assertNotNull(objectWithEmptyCollection.getTekster());
+        assertTrue(objectWithEmptyCollection.getTekster().isEmpty());
+        Collection<String> stringList = ImmutableList.of("a", "b");
+        objectWithEmptyCollection.getTekster().addAll(stringList);
+
     }
 }

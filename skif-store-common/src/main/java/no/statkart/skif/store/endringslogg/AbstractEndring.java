@@ -17,16 +17,13 @@ public abstract class AbstractEndring<I extends AbstractEndringId<?>, EI extends
 
     private EI endretBubbleId;
     private Endringstype endringstype;
+    @Deprecated
     private Timestamp endringstidspunkt;
 
     @Override
     @SuppressWarnings("unchecked")
    public I getId() {
         return (I) super.getId();
-    }
-
-    public long getEndringsnummer() {
-        return getId().getValue();
     }
 
     public Endringstype getEndringstype() {

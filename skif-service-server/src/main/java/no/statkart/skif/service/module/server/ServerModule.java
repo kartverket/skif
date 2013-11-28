@@ -1,5 +1,6 @@
 package no.statkart.skif.service.module.server;
 
+import com.google.inject.Provides;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -11,12 +12,13 @@ import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
+import no.statkart.skif.store.SnapshotVersion;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy > {
+public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy> {
     private Class<? extends ServiceContext> serviceContextClass = DefaultServiceContext.class;
 
     public ServerModule(ModuleConfiguration configuration) {
@@ -54,6 +56,12 @@ public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy > {
 
         // ServiceMode avhengige bindinger
         strategy.configure(binder());
+    }
+
+    @Provides
+    SnapshotVersion snapshotVersionProvider(ServiceContext serviceContext) {
+        // Kanskje vi bør bruke en ValueHolder i stedet og seed denne med initiell verdi fra serviceContext. Da blir det mulig å endre den underveis
+        return serviceContext.getSnapshotVersion();
     }
 
 }

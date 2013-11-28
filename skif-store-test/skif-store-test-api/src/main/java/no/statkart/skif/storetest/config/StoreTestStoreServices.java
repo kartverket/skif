@@ -6,6 +6,7 @@ import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
 import no.statkart.skif.storetest.service.histtest.HistTestService;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
+import no.statkart.skif.storetest.service.nedlastning.NedlastningsService;
 import no.statkart.skif.storetest.service.store.StoreService;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class StoreTestStoreServices implements ServicesListing {
         modifiableList.add(HistTestService.class);
         modifiableList.add(LockingTestService.class);
         modifiableList.add(EndringsloggService.class);
+        modifiableList.add(NedlastningsService.class);
 
         services = Collections.unmodifiableList(modifiableList);
      }

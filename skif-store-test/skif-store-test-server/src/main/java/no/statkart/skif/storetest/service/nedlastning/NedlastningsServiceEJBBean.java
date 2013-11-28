@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.service.endringslogg;
+package no.statkart.skif.storetest.service.nedlastning;
 
 import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
@@ -21,40 +21,40 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import java.util.Collection;
+import java.util.List;
 
 /**
- * EJB for {@link EndringsloggService}.
+ * EJB for {@link no.statkart.skif.storetest.service.endringslogg.EndringsloggService}.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
 @RolesAllowed("Innsyn")
-@Stateless(name = "EndringsloggServiceEJBBean")
+@Stateless(name = "NedlastningsServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-public class EndringsloggServiceEJBBean extends EJBTimedService implements EndringsloggService {
+public class NedlastningsServiceEJBBean extends EJBTimedService implements NedlastningsService {
     @Inject
     @EJBServiceChain
-    EndringsloggService serviceChain;
+    NedlastningsService serviceChain;
 
-    @Nullable
     @Override
-    public <I extends AbstractEndringId<?>> I  findSisteEndringId() {
-        return serviceChain.findSisteEndringId();
+    public <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> bobleklasse, @Nullable String filter, int maksAntall) {
+        return serviceChain.findIdsEtterId(id, bobleklasse, filter, maksAntall);
     }
 
     @Override
-    public <E extends Endringer<?>> E findEndringer(@Nullable EndringId<?> id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
-        return serviceChain.findEndringer(id, bobleklasse, filter, returnerBobler, maksAntall);
+    public <T extends BubbleObject> List<T> findObjekterEtterId(@Nullable BubbleId<? extends T> id, Class<T> bobleklasse, @Nullable String filter, int maksAntall) {
+        return serviceChain.findObjekterEtterId(id, bobleklasse, filter, maksAntall);
     }
 
     @Override
-    public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable EndringId<?> id, Class<T> bobleklasse, @Nullable String filter, int antall) {
-        return serviceChain.calcEndringskontroll(id, bobleklasse, filter, antall);
+    public <T extends StoreTestBubble> Kontroll calcObjektkontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId, Class<T> bobleklasse, @Nullable String filter) {
+        return serviceChain.calcObjektkontrollForRange(fraId, tilId, bobleklasse, filter);
     }
 
     @Override
-    public <T extends StoreTestBubble> Kontroll calcObjektkontrollForList(Collection<? extends BubbleId<?>> ids, Class<T> bobleklasse) {
+    public <I extends StoreTestBubbleId<? extends T>, T extends StoreTestBubble> Kontroll calcObjektkontrollForList(Collection<I> ids, Class<T> bobleklasse) {
         return serviceChain.calcObjektkontrollForList(ids, bobleklasse);
     }
 }

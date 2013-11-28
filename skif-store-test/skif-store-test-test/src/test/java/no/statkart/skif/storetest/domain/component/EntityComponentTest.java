@@ -101,6 +101,9 @@ public class EntityComponentTest extends StoreTestTestCase {
         final BubbleWithEntityComponent bubbleWithNullComponents = store.get(mockupFactory.getWithNullComponentsId());
         assertEquals(bubbleWithNullComponents.getText(), "Obj " + 1 + " med null components");
         assertNull(bubbleWithNullComponents.getLevel1Component());
+        assertNotNull(bubbleWithNullComponents.getAaComponents());
+        assertNotNull(bubbleWithNullComponents.getAaComponents());
+        assertTrue(bubbleWithNullComponents.getAaComponents().isEmpty());
     }
 
     public void testReadBubbleWithNonNullLevel1AndNullLevel2EntityComponent() {

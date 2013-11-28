@@ -2,16 +2,19 @@ package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
 import no.statkart.skif.domain.SelectionPolygon;
-import no.statkart.skif.persistence.HistWithRelationFinder;
-import no.statkart.skif.persistence.HistSimpleFinder;
 import no.statkart.skif.persistence.GeometriFinder;
+import no.statkart.skif.persistence.HistSimpleFinder;
+import no.statkart.skif.persistence.HistWithRelationFinder;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Henrik Fredholm

@@ -1,76 +1,70 @@
 package no.statkart.skif.storetest.service.endringslogg;
-
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.endringslogg.AbstractEndringId;
+import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.domain.endringslogg.Endring;
+import no.statkart.skif.storetest.domain.endringslogg.EndringId;
+import no.statkart.skif.storetest.domain.endringslogg.Endringer;
 import no.statkart.skif.storetest.domain.endringslogg.Kontroll;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.List;
 
 /**
- * Tjeneste for lesing av endringslogg.
+ * Tjeneste for lesing av endringslogg for bobler som er endret.
+ * <P/>
+ * Hvilke subtyper som støttes for filtrering av bobleklasser er implementasjonsavhengig og ikke alle subtyper vil
+ * nødvendigvis være støttet. Hvis en subtype ikke er støttet må supertypen brukes i stedet og ytereligere filtrering må
+ * skje på klienten etter at boblen har blitt lastet over på klienten.
+ * <P/>
+ * For noen bobleklasser kan det finnes spesifikke filtre som filtrerer yterligere hva som returneres. Filtre som ikke
+ * er relevant for en bobleklasse ignoreres mens filtre som er ukjente gir ImplementationException.
  *
- * @author Tor Egil R. Strand
- * @since 2.2.0
+ * @author Henrik Fredholm
+ * @since 2.4.0
  */
 public interface EndringsloggService {
     /**
-     * Finner siste endringsnummer totalt.
+     * Finner siste endringId uavhengig av bobleklasse og filter.
      *
-     * @return siste endringenummer
+     * @return endringId
      */
-    public long findSisteEndringsnummer(SnapshotVersion snapshotVersion);
+    @Nullable
+    public <I extends AbstractEndringId<?>> I findSisteEndringId();
 
     /**
-     * Henter alle endringer etter gitt endringsnummer. Endringen med gitt endringsnummer er ikke inkludert.
+     * Henter alle endringsobjekter etter gitt {@code id} for bobler av gitt type eller subtype. Endringsobjekter hørende til {@code id} er ikke inkludert.
      *
-     * @param endringsnummer endringsnummeret før første endring som skal hentes
-     * @param endringsklasse angir filter for endringsklasse
-     * @param maksAntall     maksimalt antall endringer som skal hentes
-     * @param snapshotVersion historisk tidspunkt for spørring
-     * @return endringene, sortert etter stigende endringsnummer
+     * @param id id før første id som skal hentes. Kan være null.
+     * @param bobleklasse bobleklasse eller subtype herav for endringer som skal hentes.
+     * @param filter boblespesifikt filter som kan reduserere yterligere hvilke endringer som returneres
+     * @param returnerBobler angir om metoden skal returnere bobler i tillegg til endringer.
+     * @param maksAntall maksimalt endringer som skal hentes.
+     * @return endringer som ble funnet med indikator for om det finnes fler endringer for gitt bobleklasse og filter
      */
-    public <E extends Endring> List<E> findEndringerEtterEndringsnummer(long endringsnummer, Class<E> endringsklasse, int maksAntall, SnapshotVersion snapshotVersion);
+    public <E extends Endringer<?>> E findEndringer(@Nullable EndringId<?> id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall);
 
     /**
-     * Henter alle id-er etter en gitt id.
+     * Beregner kontroll for endringsobjekter
      *
-     * @param id id før første id som skal hentes
-     * @param klassefilter angir filter for bobleklasse som skal hentes.
-     * @param maksAntall maksimalt antall endringer som skal hentes
-     * @param snapshotVersion historisk tidspunkt for spørring
-     * @return id-ene sortert i stigende rekkerføge
-     *
-     * TODO: Vurdere å legge denne tjeneste i egen service InitiellnedlastService
-     */
-    public <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> klassefilter, int maksAntall, SnapshotVersion snapshotVersion);
-
-    /**
-     * Beregner kontroll for bobler med id-er i intervall "]fraId, tilId]"
-     * @param fraId første id i intervall. Hvis null tas første id i systemet med i beregningen
-     * @param tilId siste id i intervall. Hvis null  tas siste id i systemet med i beregningen
-     * @param klassefilter angir filter for bobleklasse som skal inkluderes i beregningen.
-     * @param snapshotVersion historisk tidspunkt for spørring
+     * @param id id før første id som skal hentes, kan være null
+     * @param bobleklasse klasse som skal hentes. Hvilke bobleklasse som støttes er implementasjonsavhengig
+     * @param filter angir filter på endring
+     * @param antall     maksimalt antall endringer som skal hentes
      * @return beregnet kontroll
      *
-     * TODO: Vurdere å legge denne tjeneste i egen service KontrollService
-     * TODO: Må bestemme om range skal være inkl fraId eller eksl. fraId
      */
-    public <K extends Kontroll, I extends StoreTestBubbleId<T>, T extends StoreTestBubble> K calcKontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId,  Class<T> klassefilter, SnapshotVersion snapshotVersion);
+    public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable EndringId<?> id, Class<T> bobleklasse, @Nullable String filter, int antall);
+
     /**
      * Beregner kontroll for bobler med id-er i liste
      *
      * @param ids id-er som skal danne grunnlag for beregningen
-     * @param klassefilter angir filter for bobleklasse som skal inkluderes i beregningen.
-     * @param snapshotVersion historisk tidspunkt for spørring
+     * @param bobleklasse klasse som skal hentes. Hvilke bobleklasse som støttes er implementasjonsavhengig
      * @return beregnet kontroll
      *
-     * TODO: Vurdere å legge denne tjeneste i egen service KontrollService
      */
-    public <K extends Kontroll, I extends StoreTestBubbleId<? extends T>, T extends StoreTestBubble> K calcKontrollForList(Collection<I> ids,  Class<T> klassefilter,  SnapshotVersion snapshotVersion);
+    public <T extends StoreTestBubble> Kontroll calcObjektkontrollForList(Collection<? extends BubbleId<?>> ids, Class<T> bobleklasse);
 }
