@@ -91,9 +91,9 @@ public class InverseRelationTypeMapper<WsapiT, DomainT extends InverseRelation> 
             target.setMaterialised(materialised);
             target.setCached(getMapping().w2d(value, internalType));
         } catch (IllegalAccessException e) {
-            throw new MappingException("Could not read fields on " + target.getClass(), e);
+            throw new MappingException("Could not read fields on " + source.getClass(), e);
         } catch (InvocationTargetException e) {
-            throw new MappingException("Could not read fields on " + target.getClass(), e);
+            throw new MappingException("Could not read fields on " + source.getClass(), e);
         }
 
         return target;
