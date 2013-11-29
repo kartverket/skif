@@ -81,7 +81,7 @@ public class EJBLookupHelper {
         // TODO: Bruk logging 
         if (old == null) {
             if (logger.isInfoEnabled()) {
-                logger.info("Legger til ejb service for service class: " + serviceClass.getName() + " instans: " + ejbService);
+                logger.info("Adding EJB for service class: " + serviceClass.getName() + " instance: " + ejbService);
             }
         } else {
             // Service allerede allerede bunnet. Det er ok. Gjør ingen ting da.
@@ -97,7 +97,7 @@ public class EJBLookupHelper {
     public <T extends Object> T lookupEjb(Class<T> serviceClass) {
         Object ejb = ejbRegistry.get(serviceClass);
         if (ejb == null) {
-            throw new ConfigurationException("Could not find EJB for interface: " + serviceClass.getName()+ " Check that corresponding EJB has benn registred in SKIF via the EJBRegistration class, for instance by a servlet listener in the Web service's web.xml");
+            throw new ConfigurationException("Could not find EJB for interface: " + serviceClass.getName()+ " Check that corresponding EJB has been registered in SKIF by the EJBRegistration class; i.e. by a servlet listener in the Web service's web.xml");
         }
         return (T) ejb;
     }
