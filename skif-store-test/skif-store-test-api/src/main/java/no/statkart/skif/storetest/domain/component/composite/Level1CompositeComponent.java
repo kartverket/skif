@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class Level1CompositeComponent extends  AbstractCompositeBubbleComponent<BubbleWithCompositeComponent> implements CompositeComponentWithCollections {
     private String text;
-    private BeloepValueObject belop;
+    private BeloepValueObject beloep;
     private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
 
     private Level2CompositeComponent level2Component;
@@ -25,7 +25,7 @@ public class Level1CompositeComponent extends  AbstractCompositeBubbleComponent<
 
     public Level1CompositeComponent(String text, BeloepValueObject beloep, ImmutableSet<BeloepValueObject> beloepSet) {
         setText(text);
-        setBelop(beloep);
+        setBeloep(beloep);
         setBeloepSet(beloepSet);
         setLevel2Component(new Level2CompositeComponent());
     }
@@ -37,7 +37,7 @@ public class Level1CompositeComponent extends  AbstractCompositeBubbleComponent<
 
     public void clear() {
         setText(null);
-        setBelop(null);
+        setBeloep(null);
         beloepSet.clear();
         level2Component.clear();
     }
@@ -54,7 +54,7 @@ public class Level1CompositeComponent extends  AbstractCompositeBubbleComponent<
     @Override
     public boolean isNullComponent() {
         return this.text == null
-                && this.belop == null
+                && this.beloep == null
                 && Components.isNullComponent(this.level2Component);
     }
 
@@ -66,12 +66,12 @@ public class Level1CompositeComponent extends  AbstractCompositeBubbleComponent<
         this.text = text;
     }
 
-    public BeloepValueObject getBelop() {
-        return belop;
+    public BeloepValueObject getBeloep() {
+        return beloep;
     }
 
-    public void setBelop(BeloepValueObject belop) {
-        this.belop = belop;
+    public void setBeloep(BeloepValueObject beloep) {
+        this.beloep = beloep;
     }
 
     public Set<BeloepValueObject> getBeloepSet() {

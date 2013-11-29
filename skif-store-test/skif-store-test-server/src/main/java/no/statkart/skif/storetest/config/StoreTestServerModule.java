@@ -34,7 +34,6 @@ import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.*;
-import no.statkart.skif.store.endringslogg.Endring2DomainClassMapper;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
 import no.statkart.skif.store.persistence.*;
 import no.statkart.skif.store.persistence.hibernate.*;
@@ -72,7 +71,6 @@ import no.statkart.skif.storetest.domain.relation.uni.direct.X1AA;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCMany;
 import no.statkart.skif.storetest.domain.standalone.*;
-import no.statkart.skif.storetest.endringslogg.Endring2DomainClassMapperImpl;
 import no.statkart.skif.storetest.endringslogg.EndringManager;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
@@ -155,8 +153,6 @@ public class StoreTestServerModule extends SkifModule {
         bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
         bind(Session.class).toProvider(SessionProvider.class);
         bind(PersistenceSessionForSnapshot.class).toProvider(PersistenceSessionForSnapshotProvider.class);
-
-        bind(Endring2DomainClassMapper.class).to(Endring2DomainClassMapperImpl.class);
 
 
 //        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {

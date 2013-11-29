@@ -6,12 +6,12 @@ import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustom
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.endringslogg.Endring2DomainClassMapper;
 import no.statkart.skif.store.persistence.SessionSelector;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.endringslogg.Kontroll;
+import no.statkart.skif.storetest.endringslogg.EndringManagerConfiguration;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
@@ -35,7 +35,7 @@ public class NedlastningsServiceImpl implements NedlastningsService {
     private Provider<SessionSelector> sessionSelectorProvider;
 
     @Inject
-    Endring2DomainClassMapper endring2DomainClassMapper;
+    EndringManagerConfiguration endringManagerConfiguration;
 
     @Override
     public <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> bobleklasse, @Nullable String filter, int maksAntall) {
@@ -112,7 +112,7 @@ public class NedlastningsServiceImpl implements NedlastningsService {
     }
 
     private <T extends BubbleObject> void checkBobbleklasseGyldigForNedlasting(Class<T> bobleklasse) {
-        checkArgument(endring2DomainClassMapper.getEndringClass(bobleklasse)!=Endring.class, "Bobleklasse %s kan ikke brukes som filter for nedlastning. Bruk en mer spesifikk subklasse", bobleklasse);
+        checkArgument(endringManagerConfiguration.getEndringsklasse(bobleklasse)!=Endring.class, "Domainklasse %s kan ikke brukes som filter for nedlastning", bobleklasse.getSimpleName());
     }
 
 }

@@ -14,7 +14,7 @@ import java.util.Set;
 public class Level2CompositeComponent implements CompositeComponent<BubbleWithCompositeComponent, Level1CompositeComponent>, CompositeComponentWithCollections {
     private Level1CompositeComponent owner;
     private String text;
-    private BeloepValueObject belop;
+    private BeloepValueObject beloep;
     private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
 
 
@@ -28,13 +28,13 @@ public class Level2CompositeComponent implements CompositeComponent<BubbleWithCo
 
     public Level2CompositeComponent(String text, BeloepValueObject beloep, ImmutableSet<BeloepValueObject> beloepSet) {
         setText(text);
-        setBelop(beloep);
+        setBeloep(beloep);
         setBeloepSet(beloepSet);
     }
 
     public void clear() {
         setText(null);
-        setBelop(null);
+        setBeloep(null);
         beloepSet.clear();
     }
 
@@ -56,7 +56,7 @@ public class Level2CompositeComponent implements CompositeComponent<BubbleWithCo
     @Override
     public boolean isNullComponent() {
         return this.text == null
-                && this.belop == null;
+                && this.beloep == null;
     }
 
     public String getText() {
@@ -67,12 +67,12 @@ public class Level2CompositeComponent implements CompositeComponent<BubbleWithCo
         this.text = text;
     }
 
-    public BeloepValueObject getBelop() {
-        return belop;
+    public BeloepValueObject getBeloep() {
+        return beloep;
     }
 
-    public void setBelop(BeloepValueObject belop) {
-        this.belop = belop;
+    public void setBeloep(BeloepValueObject beloep) {
+        this.beloep = beloep;
     }
 
     public Set<BeloepValueObject> getBeloepSet() {

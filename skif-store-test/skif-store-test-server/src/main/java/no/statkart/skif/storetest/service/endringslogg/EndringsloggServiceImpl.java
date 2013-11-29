@@ -12,7 +12,6 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.endringslogg.AbstractEndring;
 import no.statkart.skif.store.endringslogg.AbstractEndringId;
-import no.statkart.skif.store.endringslogg.Endring2DomainClassMapper;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.store.persistence.SessionSelector;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
@@ -21,6 +20,7 @@ import no.statkart.skif.storetest.domain.endringslogg.EndringId;
 import no.statkart.skif.storetest.domain.endringslogg.Endringer;
 import no.statkart.skif.storetest.domain.endringslogg.Kontroll;
 import no.statkart.skif.storetest.endringslogg.EndringFinder;
+import no.statkart.skif.storetest.endringslogg.EndringManagerConfiguration;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -56,7 +56,7 @@ public class EndringsloggServiceImpl implements EndringsloggService {
     private Provider<SessionSelector> sessionSelectorProvider;
 
     @Inject
-    Endring2DomainClassMapper endring2DomainClassMapper;
+    EndringManagerConfiguration endringManagerConfiguration;
 
     @Inject
     Store store;
@@ -83,7 +83,7 @@ public class EndringsloggServiceImpl implements EndringsloggService {
     public <E extends Endringer<?>> E findEndringer(@Nullable EndringId<?> id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
         Endringer endringer = new Endringer();
 
-        Class<? extends AbstractEndring> endringClass = endring2DomainClassMapper.getEndringClass(bobleklasse);
+        Class<? extends AbstractEndring> endringClass = endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         maksAntall = Math.min(100000, maksAntall);
 
@@ -181,7 +181,7 @@ public class EndringsloggServiceImpl implements EndringsloggService {
 
     @Override
     public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable EndringId<?> id, Class<T> bobleklasse, @Nullable String filter, int antall) {
-        Class<? extends AbstractEndring> endringClass = endring2DomainClassMapper.getEndringClass(bobleklasse);
+        Class<? extends AbstractEndring> endringClass = endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         // TODO: Legge inn filter
         try {
@@ -230,6 +230,6 @@ public class EndringsloggServiceImpl implements EndringsloggService {
     }
 
     private <T extends BubbleObject> void checkEndringsklasseFinnes(Class<T> bobleklasse) {
-        endring2DomainClassMapper.getEndringClass(bobleklasse);
+        endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
     }
 }

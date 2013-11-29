@@ -6,6 +6,7 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.endringslogg.AbstractEndringManager;
+import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 
 import java.sql.Connection;
@@ -18,7 +19,7 @@ import java.sql.Connection;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public class EndringManager<E extends Endring> extends AbstractEndringManager<E> {
+public class EndringManager extends AbstractEndringManager<Endring> {
 
     private final Provider<ServiceRequestContext> contextProvider;
 
@@ -29,7 +30,7 @@ public class EndringManager<E extends Endring> extends AbstractEndringManager<E>
     }
 
     @Override
-    protected void decorateEndring(StoreServer storeServer, E endring) {
+    protected void decorateEndring(StoreServer storeServer, Endring endring) {
         super.decorateEndring(storeServer, endring);
 
         boolean skalTildelesBrukernavn = true;

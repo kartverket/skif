@@ -231,7 +231,7 @@ public class EndringManagerTest extends StoreTestTestCase {
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
             // Kommer i SingleVm mode
-            assertThat(e).hasMessageContaining("Bobleklasse interface no.statkart.skif.storetest.domain.StoreTestBubble kan ikke brukes som filter for nedlastning. Bruk en mer spesifikk subklasse");
+            assertThat(e).hasMessageContaining("Domainklasse StoreTestBubble kan ikke brukes som filter for nedlastning");
         } catch (IllegalArgumentException e) {
             // Kommer i JEE mode
             assertThat(e).hasMessageContaining("StoreTestBubble");
@@ -271,7 +271,7 @@ public class EndringManagerTest extends StoreTestTestCase {
             assertEquals(kontroll2.getAntall(), 3);
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
-            assertThat(e).hasMessageContaining("Bobleklasse interface no.statkart.skif.storetest.domain.StoreTestBubble kan ikke brukes som filter for nedlastning. Bruk en mer spesifikk subklasse");
+            assertThat(e).hasMessageContaining("Domainklasse StoreTestBubble kan ikke brukes som filter for nedlastning");
         } catch (IllegalArgumentException e) {
             assertThat(e).hasMessageContaining("StoreTestBubble");
         }
@@ -311,7 +311,7 @@ public class EndringManagerTest extends StoreTestTestCase {
             assertEquals(kontroll2.getAntall(), 3);
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
-            assertThat(e).hasMessageContaining("Bobleklasse interface no.statkart.skif.storetest.domain.StoreTestBubble kan ikke brukes som filter for nedlastning. Bruk en mer spesifikk subklasse");
+            assertThat(e).hasMessageContaining("Domainklasse StoreTestBubble kan ikke brukes som filter for nedlastning");
         } catch (IllegalArgumentException e) {
             assertThat(e).hasMessageContaining("StoreTestBubble");
         }

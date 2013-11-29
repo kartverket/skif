@@ -1,5 +1,6 @@
 package no.statkart.skif.store.endringslogg;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Provider;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
@@ -24,15 +25,14 @@ import java.util.*;
 public abstract class AbstractEndringManager<E extends AbstractEndring> implements StoreSessionFinishListener {
     private final static Logger logger = LoggerFactory.getLogger(AbstractEndringManager.class);
 
-    private final AbstractEndringManagerConfiguration<?> endringManagerConfiguration;
+    private final AbstractEndringManagerConfiguration<E> endringManagerConfiguration;
 
     private final Provider<Connection> connectionProvider;
 
     private final SequenceBlockAllocatorService sequenceBlockAllocatorService;
     private final String sequenceName;
 
-
-    protected AbstractEndringManager(AbstractEndringManagerConfiguration endringManagerConfiguration, Provider<Connection> connectionProvider, Configuration configuration) {
+    protected AbstractEndringManager(AbstractEndringManagerConfiguration<E> endringManagerConfiguration, Provider<Connection> connectionProvider, Configuration configuration) {
         this.endringManagerConfiguration = endringManagerConfiguration;
         this.connectionProvider = connectionProvider;
 
@@ -97,8 +97,8 @@ public abstract class AbstractEndringManager<E extends AbstractEndring> implemen
         }
     }
 
-    private E createEndring(BubbleId<?> bubbleId, Endringstype endringstype, Timestamp tidspunkt) {
-        Class<? extends E> endringClass = findEndringClassForIdClass(bubbleId);
+    private E createEndring(BubbleId<? extends BubbleObject> bubbleId, Endringstype endringstype, Timestamp tidspunkt) {
+        Class<? extends E> endringClass = findEndringClass(bubbleId);
         if (endringClass != null) {
             final E endring;
 
@@ -120,15 +120,8 @@ public abstract class AbstractEndringManager<E extends AbstractEndring> implemen
         }
     }
 
-    protected Class<? extends E> findEndringClassForIdClass(BubbleId<?> bubbleId) {
-        for (Class<?> idClass = bubbleId.getClass(); idClass != null; idClass = idClass.getSuperclass()) {
-            //noinspection SuspiciousMethodCalls
-            Class endringClass = endringManagerConfiguration.getEndringsklasser().get(idClass);
-            if (endringClass != null) {
-                return endringClass;
-            }
-        }
-        return null;
+    protected Class<? extends E> findEndringClass(BubbleId<? extends BubbleObject> bubbleId) {
+        return endringManagerConfiguration.findEndringClass(bubbleId.getType());
     }
 
     /**

@@ -10,13 +10,11 @@ import no.statkart.skif.storetest.domain.component.composite.BubbleWithComposite
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
 import no.statkart.skif.storetest.domain.component.composite.Level2CompositeComponent;
-import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponentId;
 import no.statkart.skif.storetest.mockup.BubbleWithCompositeComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import org.hibernate.HibernateException;
 import org.testng.annotations.Test;
 
 import java.util.Set;
@@ -56,12 +54,12 @@ public class CompositeComponentTest extends StoreTestTestCase {
         // Composite components som inneholder Set vil aldrig være null da de alltid vil ha en tomt Set.
         assertNotNull(bubbleWithNullComponents.getLevel1Component());
         assertNull(bubbleWithNullComponents.getLevel1Component().getText());
-        assertNull(bubbleWithNullComponents.getLevel1Component().getBelop());
+        assertNull(bubbleWithNullComponents.getLevel1Component().getBeloep());
         assertTrue(bubbleWithNullComponents.getLevel1Component().getBeloepSet().isEmpty());
         assertTrue(bubbleWithNullComponents.getLevel1Component().isNullComponent());
         assertNotNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component());
         assertNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getText());
-        assertNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getBelop());
+        assertNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getBeloep());
         assertTrue(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getBeloepSet().isEmpty());
         assertTrue(bubbleWithNullComponents.getLevel1Component().getLevel2Component().isNullComponent());
     }
@@ -76,13 +74,13 @@ public class CompositeComponentTest extends StoreTestTestCase {
         assertNotNull(bubbleWithNullLevel2Components.getLevel1Component());
         assertFalse(bubbleWithNullLevel2Components.getLevel1Component().isNullComponent());
         assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getText());
-        assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getBelop());
+        assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getBeloep());
         assertFalse(bubbleWithNullLevel2Components.getLevel1Component().getBeloepSet().isEmpty());
 //        assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getEntity());
         assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component());
         assertTrue(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().isNullComponent());
         assertNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getText());
-        assertNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getBelop());
+        assertNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getBeloep());
         assertTrue(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getBeloepSet().isEmpty());
     }
 
@@ -96,12 +94,12 @@ public class CompositeComponentTest extends StoreTestTestCase {
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component());
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().isNullComponent());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getText());
-        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getBelop());
+        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getBeloep());
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().getBeloepSet().isEmpty());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component());
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().isNullComponent());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getText());
-        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getBelop());
+        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getBeloep());
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getBeloepSet().isEmpty());
     }
 

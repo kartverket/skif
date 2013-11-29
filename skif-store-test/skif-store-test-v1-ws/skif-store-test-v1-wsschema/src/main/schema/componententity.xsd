@@ -79,7 +79,7 @@
     <xs:complexType name="Level1EntityComponent">
         <xs:sequence>
             <xs:element name="text" type="xs:string"/>
-            <xs:element name="belop" type="basicns:BeloepValueObject"/>
+            <xs:element name="beloep" type="basicns:BeloepValueObject"/>
             <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
             <xs:element name="level2Component" type="entityns:Level2EntityComponent"/>
         </xs:sequence>
@@ -123,7 +123,7 @@
     <xs:complexType name="Level2EntityComponent">
         <xs:sequence>
             <xs:element name="text" type="xs:string"/>
-            <xs:element name="belop" type="basicns:BeloepValueObject"/>
+            <xs:element name="beloep" type="basicns:BeloepValueObject"/>
             <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
         </xs:sequence>
     </xs:complexType>

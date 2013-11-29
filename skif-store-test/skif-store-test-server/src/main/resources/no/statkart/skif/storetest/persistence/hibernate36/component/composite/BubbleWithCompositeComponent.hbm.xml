@@ -13,7 +13,7 @@
 
         <component name="level1Component" class="no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent" unique="true">
             <property name="text" column="l1_text"/>
-            <component name="belop" class="no.statkart.skif.storetest.domain.basic.BeloepValueObject" unique="true">
+            <component name="beloep" class="no.statkart.skif.storetest.domain.basic.BeloepValueObject" unique="true">
                 <property name="valuta" column="l1_valuta"/>
                 <property name="verdi" column="l1_verdi"/>
                 <property name="kommentar" column="l1_kommentar"/>
@@ -28,7 +28,7 @@
             </set>
             <component name="level2Component" class="no.statkart.skif.storetest.domain.component.composite.Level2CompositeComponent" unique="true">
                 <property name="text" column="l2_text"/>
-                <component name="belop" class="no.statkart.skif.storetest.domain.basic.BeloepValueObject" unique="true">
+                <component name="beloep" class="no.statkart.skif.storetest.domain.basic.BeloepValueObject" unique="true">
                     <property name="valuta" column="l2_valuta"/>
                     <property name="verdi" column="l2_verdi"/>
                     <property name="kommentar" column="l2_kommentar"/>
