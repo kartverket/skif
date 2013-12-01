@@ -497,10 +497,17 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
         Collection<TypeMapper<?, ?>> best = signedCandidates.asMap().values().iterator().next();
 
-        if (best.size() > 1) {
-            throw new ImplementationException("Several defined mappers found for mapping of class of type " + mappableClass);
-        }
 
+        if (best.size() > 1) {
+            TypeMapper<?, ?> prev=null;
+            for (TypeMapper<?, ?> typeMapper : best) {
+                if (prev!=null && prev.getClass() !=typeMapper.getClass()) {
+                    throw new ImplementationException("Several defined mappers of different types found for mapping of class of type " + mappableClass);
+                }
+                prev = typeMapper;
+            }
+        }
+        // Returner den første, da der er den per definisjon vi ønsker når de er like.
         return best.iterator().next();
     }
 
