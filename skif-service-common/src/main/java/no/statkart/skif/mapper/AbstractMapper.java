@@ -228,23 +228,27 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                     if (mapperCache.containsKey(mapperKey)) {
                         typeMapper = mapperCache.get(mapperKey);
                     } else {
-                        // Bruker ikke resolvedTargetTypeToken her grunnet bakoverkompatibilitet
-                        typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.D2W);
-                        if (typeMapper == null) {
-                            for (TypeMapperFactory typeMapperFactory : typeMapperFactories) {
-                                typeMapper = typeMapperFactory.createTypeMapper(resolvedTargetTypeToken, sourceTypeToken);
-                                if (typeMapper != null) {
-                                    logger.debug("{} provided {} for mapping between {} and {}", new Object[]{typeMapperFactory, typeMapper, mapperKey.wsapiType, mapperKey.domainType});
-                                    typeMapper.setMapping(thisMapping);
-                                    break;
+                        try {
+                            // Bruker ikke resolvedTargetTypeToken her grunnet bakoverkompatibilitet
+                            typeMapper = findMapper(sourceTypeToken.getRawType(), targetTypeToken.getRawType(), Direction.D2W);
+                            if (typeMapper == null) {
+                                for (TypeMapperFactory typeMapperFactory : typeMapperFactories) {
+                                    typeMapper = typeMapperFactory.createTypeMapper(resolvedTargetTypeToken, sourceTypeToken);
+                                    if (typeMapper != null) {
+                                        logger.debug("{} provided {} for mapping between {} and {}", new Object[]{typeMapperFactory, typeMapper, mapperKey.wsapiType, mapperKey.domainType});
+                                        typeMapper.setMapping(thisMapping);
+                                        break;
+                                    }
                                 }
+                            } else {
+                                logger.debug("Using TypeMapper<{}, {}> for mapping between {} and {}", new Object[]{typeMapper.getWsapiClass(), typeMapper.getDomainClass(), mapperKey.wsapiType, mapperKey.domainType});
                             }
-                        } else {
-                            logger.debug("Using TypeMapper<{}, {}> for mapping between {} and {}", new Object[]{typeMapper.getWsapiClass(), typeMapper.getDomainClass(), mapperKey.wsapiType, mapperKey.domainType});
-                        }
 
-                        if (typeMapper != null) {
-                            mapperCache.put(mapperKey, typeMapper);
+                            if (typeMapper != null) {
+                                mapperCache.put(mapperKey, typeMapper);
+                            }
+                        } catch (RuntimeException e) {
+                            throw new MappingException("Error mapping from " + sourceTypeToken + " to " + targetTypeToken, e);
                         }
                     }
                     if (typeMapper == null) {
