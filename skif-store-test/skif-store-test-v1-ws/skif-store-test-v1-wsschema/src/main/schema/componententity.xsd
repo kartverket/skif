@@ -61,7 +61,6 @@
                     <xs:element name="nr" type="xs:int"/>
                     <xs:element name="text" type="xs:string"/>
                     <xs:element name="level1Component" type="entityns:Level1CompositeComponentWithEntity"/>
-                    <xs:element name="aaComponents" type="entityns:SetAaEntityComponentList"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -181,7 +180,6 @@
 
     <xs:complexType name="SetAaLevel1EntityComponent">
         <xs:sequence>
-            <xs:element name="ident" type="xs:int"/>
             <xs:element name="text" type="xs:string"/>
             <xs:element name="level2Component" type="entityns:SetAaLevel2EntityComponent"/>
             <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
@@ -190,7 +188,6 @@
 
     <xs:complexType name="SetAaLevel2EntityComponent">
         <xs:sequence>
-            <xs:element name="ident" type="xs:int"/>
             <xs:element name="text" type="xs:string"/>
             <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
         </xs:sequence>
