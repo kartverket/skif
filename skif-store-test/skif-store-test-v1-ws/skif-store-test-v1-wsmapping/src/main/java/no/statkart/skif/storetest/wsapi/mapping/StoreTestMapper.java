@@ -4,12 +4,7 @@ import no.statkart.skif.mapper.*;
 import no.statkart.skif.mapping.InverseRelationTypeMapperFactory;
 import no.statkart.skif.mapping.BubbleIdTypeMapperFactory;
 import no.statkart.skif.mapping.KodelisteTransferTypeMapper;
-import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.storetest.domain.demo.koder.*;
-import no.statkart.skif.storetest.domain.endringslogg.BubbleWithRelationEndring;
-import no.statkart.skif.storetest.domain.endringslogg.Endring;
-import no.statkart.skif.storetest.domain.endringslogg.SimpleEndring;
-import no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.domain.koder.HistorikkEnumKode;
 
@@ -68,7 +63,7 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
 
         // Basic domain types
         addMapper(TimestampTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp.class));
-        addMapper(SnapshotVersionTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.basetyper.SnapshotVersion.class));
+        addMapper(SnapshotVersionTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp.class));
         addMapper(new SelectionPolygonTypeMapper());
         addMapper(new LocaleMapper());
         addMapper(new LocalizedStringTypeMapper());

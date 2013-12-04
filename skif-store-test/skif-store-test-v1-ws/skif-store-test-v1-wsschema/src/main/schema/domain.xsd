@@ -19,7 +19,7 @@
     <xs:complexType name="StoreTestBubbleId">
         <xs:sequence>
             <xs:element name="value" type="xs:string"/>
-            <xs:element name="snapshotVersion" type="basetyperns:SnapshotVersion"/>
+            <xs:element name="snapshotVersion" type="basetyperns:Timestamp"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -96,8 +96,8 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
-                    <xs:element name="oppdateringsdato" type="basetyperns:Timestamp" />
-                    <xs:element name="sluttdato" type="basetyperns:Timestamp" />
+                    <xs:element name="oppdateringsdato" type="basetyperns:Timestamp"/>
+                    <xs:element name="sluttdato" type="basetyperns:Timestamp"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -105,9 +105,9 @@
 
     <xs:complexType name="AbstractEntityComponentWithHistory">
         <xs:sequence>
-            <xs:element name="oppdateringsdato" type="basetyperns:Timestamp" />
-            <xs:element name="sluttdato" type="basetyperns:Timestamp" />
-            <xs:element name="versjonId" type="xs:long" />
+            <xs:element name="oppdateringsdato" type="basetyperns:Timestamp"/>
+            <xs:element name="sluttdato" type="basetyperns:Timestamp"/>
+            <xs:element name="versjonId" type="xs:long"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -115,6 +115,7 @@
         <xs:sequence>
             <xs:element name="systemVersion" type="xs:string"/>
             <xs:element name="locale" type="xs:string"/>
+            <xs:element name="snapshotVersion" type="basetyperns:Timestamp"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -156,7 +157,7 @@
             <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="key" nillable="true" type="basetyperns:SnapshotVersion"/>
+                        <xs:element name="key" nillable="true" type="basetyperns:Timestamp"/>
                         <xs:element name="value" type="domainns:MockupTransfer"/>
                     </xs:sequence>
                 </xs:complexType>

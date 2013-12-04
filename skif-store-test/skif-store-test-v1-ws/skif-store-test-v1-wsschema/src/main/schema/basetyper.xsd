@@ -10,12 +10,6 @@
     <!-- Basisklasser                                      -->
     <!-- ================================================= -->
 
-    <xs:complexType name="SnapshotVersion">
-        <xs:sequence>
-            <xs:element name="timestamp" type="xs:dateTime"/>
-        </xs:sequence>
-    </xs:complexType>
-
     <xs:complexType name="Timestamp">
         <xs:sequence>
             <xs:element name="timestamp" type="xs:dateTime"/>
