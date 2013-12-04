@@ -4,7 +4,7 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.*;
-import no.statkart.skif.storetest.wsapi.domain.basetyper.SnapshotVersion;
+import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.annotation.PostConstruct;
@@ -59,7 +59,7 @@ public class TestdataServiceWSBean extends SkifWebService<TestdataServiceWSI> im
 
     /** @since 2.1 */
     @Override
-    public void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") SnapshotVersion snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+    public void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         wsServiceChain.saveSnapshotTransfer(snapshotVersion, mockupTransfer, context);
     }
 
