@@ -4,6 +4,7 @@ import com.google.inject.*;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.TestIdServiceLong;
 import no.statkart.skif.mockup.TestNumber;
+import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.service.StoreService;
@@ -38,7 +39,7 @@ public class StoreClientTest {
             @Provides
             @Singleton
             protected StoreClient provideStoreClient(StoreService storeService, Injector injector) {
-                StoreSessionClient storeSessionClient = new StoreSessionClient(storeService);
+                StoreSessionClient storeSessionClient = new StoreSessionClient(storeService, new DefaultServiceContext());
                 return new StoreClient(storeSessionClient, injector);
             }
         };

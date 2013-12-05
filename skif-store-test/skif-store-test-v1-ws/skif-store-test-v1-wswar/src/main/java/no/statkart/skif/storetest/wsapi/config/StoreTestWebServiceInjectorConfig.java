@@ -31,13 +31,11 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
 
 
     public void createInjector() {
-        final Mapping mapping = new StoreTestMapper().getMapping();
-
-
         ClassLoader classLoader = getClass().getClassLoader();
 
         Injector ejbServiceInjector = StoreTestServerInjector.getInjector();
-        ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
+        final ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
+        final Mapping mapping = ejbServiceInjector.getInstance(StoreTestMapper.class).getMapping();
         injector = ejbServiceInjector.createChildInjector(
                 new ServletModule(),
                 new WSServerModule(configuration, classLoader),

@@ -1,11 +1,15 @@
 package no.statkart.skif.mapping;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.*;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -19,16 +23,18 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class BubbleIdTypeMapperFactory implements TypeMapperFactory {
     private final Class<?> wsapiBaseClass;
+    private final Provider<SnapshotVersion> snapshotVersionProvider;
 
-    public BubbleIdTypeMapperFactory(Class<?> wsapiBaseClass) {
+    public BubbleIdTypeMapperFactory(Class<?> wsapiBaseClass, Provider<SnapshotVersion> snapshotVersionProvider) {
         this.wsapiBaseClass = wsapiBaseClass;
+        this.snapshotVersionProvider = snapshotVersionProvider;
     }
 
     @Override
     public <WsapiT, DomainT> TypeMapper createTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
         if (wsapiBaseClass.isAssignableFrom(wsapiTypeToken.getRawType()) && AbstractBubbleId.class.isAssignableFrom(domainTypeToken.getRawType())) {
             //noinspection unchecked
-            return new BubbleIdTypeMapper(wsapiTypeToken.getRawType(), domainTypeToken.getRawType());
+            return new BubbleIdTypeMapper(wsapiTypeToken.getRawType(), domainTypeToken.getRawType(), snapshotVersionProvider);
         }
         return null;
     }
@@ -39,15 +45,17 @@ public class BubbleIdTypeMapperFactory implements TypeMapperFactory {
      * @since 2.4.0
      */
     public static class BubbleIdTypeMapper<WsapiT, DomainT extends AbstractBubbleId> extends AbstractTypeMapper<WsapiT, DomainT, Mapping> {
-        private final PropertyDescriptor valueProperty;
-        private final PropertyDescriptor snapshotVersionProperty;
+        protected static final Logger logger = LoggerFactory.getLogger(BubbleIdTypeMapper.class);
 
-        public BubbleIdTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass) {
+        private final PropertyDescriptor valueProperty;
+        private final Provider<SnapshotVersion> snapshotVersionProvider;
+
+        public BubbleIdTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass, Provider<SnapshotVersion> snapshotVersionProvider) {
             super(wsapiClass, domainClass, Mapping.class);
+            this.snapshotVersionProvider = snapshotVersionProvider;
 
             try {
                 valueProperty = new PropertyDescriptor("value", wsapiClass);
-                snapshotVersionProperty = new PropertyDescriptor("snapshotVersion", wsapiClass);
             } catch (IntrospectionException e) {
                 throw new ImplementationException(wsapiClass + " is missing essential properties", e);
             }
@@ -55,10 +63,13 @@ public class BubbleIdTypeMapperFactory implements TypeMapperFactory {
 
         @Override
         public WsapiT mapDomainObject(DomainT source) {
+            if (!source.getSnapshotVersion().equals(snapshotVersionProvider.get())) {
+                throw new ImplementationException("Illegal request to map id with snapshot version (" + source.getSnapshotVersion() + ") different from context (" + snapshotVersionProvider.get() + ")");
+            }
+
             WsapiT target = createWsapiT();
             try {
                 valueProperty.getWriteMethod().invoke(target, source.getStringValue());
-                snapshotVersionProperty.getWriteMethod().invoke(target, getMapping().d2w(source.getSnapshotVersion(), snapshotVersionProperty.getPropertyType()));
             } catch (IllegalAccessException e) {
                 throw new MappingException("Unable to set properties on " + getWsapiClass(), e);
             } catch (InvocationTargetException e) {
@@ -72,10 +83,8 @@ public class BubbleIdTypeMapperFactory implements TypeMapperFactory {
             DomainT target;
 
             final String idValue;
-            final SnapshotVersion snapshotVersion;
             try {
                 idValue = (String) valueProperty.getReadMethod().invoke(source);
-                snapshotVersion = getMapping().w2d(snapshotVersionProperty.getReadMethod().invoke(source), SnapshotVersion.class);
             } catch (IllegalAccessException e) {
                 throw new MappingException("Unable to read properties on " + getWsapiClass(), e);
             } catch (InvocationTargetException e) {
@@ -83,6 +92,7 @@ public class BubbleIdTypeMapperFactory implements TypeMapperFactory {
             }
 
             Class valueType = BubbleIds.getValueType(getDomainClass());
+            SnapshotVersion snapshotVersion = snapshotVersionProvider.get();
             if (valueType == Long.class) {
                 target = BubbleIds.createInstance(getDomainClass(), Long.valueOf(idValue), snapshotVersion);
             } else {

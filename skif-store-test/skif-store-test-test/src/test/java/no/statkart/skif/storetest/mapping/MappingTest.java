@@ -1,9 +1,10 @@
 package no.statkart.skif.storetest.mapping;
 
+import com.google.inject.Provider;
 import no.statkart.skif.ServiceMode;
-import no.statkart.skif.mapper.AbstractMapper;
 import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId;
 import no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId;
@@ -29,7 +30,12 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = "broken")
 public class MappingTest extends AutomagicTest {
 
-    StoreTestMapper mapper = new StoreTestMapper();
+    StoreTestMapper mapper = new StoreTestMapper(new Provider<SnapshotVersion>() {
+        @Override
+        public SnapshotVersion get() {
+            return null;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+    });
     StoreTestMapping mapping = mapper.getMapping();
 
 

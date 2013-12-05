@@ -8,16 +8,17 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.module.common.RunOnServerRemoteServiceModule;
-import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.StoreSessionClient;
@@ -47,7 +48,7 @@ public class StoreTestClientModule extends SkifModule {
 
     @Override
     protected void configure() {
-        final StoreTestMapping mapping = new StoreTestMapper().getMapping();
+        final StoreTestMapping mapping = new StoreTestMapper(getProvider(SnapshotVersion.class)).getMapping();
         final StoreTestExceptionMapping exceptionMapping = new StoreTestExceptionMapper().getMapping();
 
         install(new RemoteServerModule(moduleConfiguration));
@@ -116,8 +117,8 @@ public class StoreTestClientModule extends SkifModule {
 
     @Provides
     @Singleton
-    StoreClient storeProvider(StoreService storeService, Injector injector) {
-        StoreSessionClient storeSession = new StoreSessionClient(storeService);
+    StoreClient storeProvider(StoreService storeService, Injector injector, ServiceContext serviceContext) {
+        StoreSessionClient storeSession = new StoreSessionClient(storeService, serviceContext);
         StoreClient store = new StoreClient(storeSession, injector);
         injector.injectMembers(store);
         return store;

@@ -1,6 +1,8 @@
 package no.statkart.skif.store;
 
+import com.google.common.collect.ArrayListMultimap;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.util.CopyHelper;
 
@@ -15,15 +17,17 @@ import java.util.*;
  */
 public class StoreSessionClient extends AbstractStoreSession {
     private final StoreService storeService;
+    private final ServiceContext serviceContext;
 
 
-    public StoreSessionClient(StoreService storeService) {
-        this(storeService, new StoreCache());
+    public StoreSessionClient(StoreService storeService, ServiceContext serviceContext) {
+        this(storeService, serviceContext, new StoreCache());
     }
 
-    public StoreSessionClient(StoreService storeService, StoreCache storeCache) {
+    public StoreSessionClient(StoreService storeService, ServiceContext serviceContextProvider, StoreCache storeCache) {
         super(0, storeCache);
         this.storeService = storeService;
+        this.serviceContext = serviceContextProvider;
     }
 
     protected boolean isLocked(StoreEntry storeEntry) {
@@ -70,33 +74,69 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry loadEntry(int level, I bubbleId, boolean refresh) {
-        T bubbleObject = storeService.getObject(bubbleId);
-        bubbleObject.register(store);
-        StoreEntry entry = storeCache.register(level, bubbleObject, bubbleObject);
-        return entry;
+        SnapshotVersion oldSnapshotVersion = serviceContext.getSnapshotVersion();
+        try {
+            serviceContext.setSnapshotVersion(bubbleId.getSnapshotVersion());
+            T bubbleObject = storeService.getObject(bubbleId);
+            bubbleObject.register(store);
+            StoreEntry entry = storeCache.register(level, bubbleObject, bubbleObject);
+            return entry;
+        } finally {
+            serviceContext.setSnapshotVersion(oldSnapshotVersion);
+        }
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Set<I> bubbleIds, boolean refresh) {
         Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
-        Collection<T> objects = storeService.getObjects(bubbleIds);
-        for (T bubbleObject : objects) {
-            StoreEntry entry = storeCache.register(level, bubbleObject);
-            result.add(entry);
 
+        ArrayListMultimap<SnapshotVersion, I> idsForVersions = ArrayListMultimap.create();
+        for (I bubbleId : bubbleIds) {
+            idsForVersions.put(bubbleId.getSnapshotVersion(), bubbleId);
         }
+
+        SnapshotVersion orgSnapshotVersion = serviceContext.getSnapshotVersion();
+        try {
+            for (Map.Entry<SnapshotVersion, Collection<I>> snapshotEntry : idsForVersions.asMap().entrySet()) {
+                serviceContext.setSnapshotVersion(snapshotEntry.getKey());
+                Collection<T> objects = storeService.getObjects(snapshotEntry.getValue());
+                for (T bubbleObject : objects) {
+                    StoreEntry entry = storeCache.register(level, bubbleObject);
+                    result.add(entry);
+
+                }
+            }
+        } finally {
+            serviceContext.setSnapshotVersion(orgSnapshotVersion);
+        }
+
         return result;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntriesIgnoreMissing(int level, Set<I> bubbleIds, boolean refresh) {
         Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
-        Collection<T> objects = storeService.getObjectsIgnoreMissing(bubbleIds);
-        for (T bubbleObject : objects) {
-            StoreEntry entry = storeCache.register(level, bubbleObject);
-            result.add(entry);
 
+        ArrayListMultimap<SnapshotVersion, I> idsForVersions = ArrayListMultimap.create();
+        for (I bubbleId : bubbleIds) {
+            idsForVersions.put(bubbleId.getSnapshotVersion(), bubbleId);
         }
+
+        SnapshotVersion orgSnapshotVersion = serviceContext.getSnapshotVersion();
+        try {
+            for (Map.Entry<SnapshotVersion, Collection<I>> snapshotEntry : idsForVersions.asMap().entrySet()) {
+                serviceContext.setSnapshotVersion(snapshotEntry.getKey());
+                Collection<T> objects = storeService.getObjectsIgnoreMissing(snapshotEntry.getValue());
+                for (T bubbleObject : objects) {
+                    StoreEntry entry = storeCache.register(level, bubbleObject);
+                    result.add(entry);
+
+                }
+            }
+        } finally {
+            serviceContext.setSnapshotVersion(orgSnapshotVersion);
+        }
+
         return result;
     }
 

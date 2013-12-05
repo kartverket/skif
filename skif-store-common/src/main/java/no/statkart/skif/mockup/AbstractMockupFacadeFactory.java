@@ -2,6 +2,7 @@ package no.statkart.skif.mockup;
 
 import com.google.inject.*;
 import com.google.inject.name.Names;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.BubbleId;
@@ -35,6 +36,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     private final Provider<T> readFacadeProvider;
 
     private final TestdataService testdataService;
+    private final Provider<ServiceContext> serviceContextProvider;
     private final Class<? extends IdService> idServiceImplementationClass;
 
     private final Module[] extraModules;
@@ -56,14 +58,15 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
      */
     private SnapshotVersion defaultSnapshotVersion = SnapshotVersion.CURRENT;
 
-    protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService, Module... extraModules) {
-        this(mockupFacadeClass, testdataService, TestIdServiceLong.class, extraModules);
+    protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService, Provider<ServiceContext> serviceContextProvider, Module... extraModules) {
+        this(mockupFacadeClass, testdataService, TestIdServiceLong.class, serviceContextProvider, extraModules);
     }
 
-    protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService, Class<? extends IdService> idServiceImplementationClass, Module... extraModules) {
+    protected AbstractMockupFacadeFactory(Class<T> mockupFacadeClass, TestdataService testdataService, Class<? extends IdService> idServiceImplementationClass, Provider<ServiceContext> serviceContextProvider, Module... extraModules) {
         this.mockupFacadeClass = mockupFacadeClass;
         this.testdataService = testdataService;
         this.idServiceImplementationClass = idServiceImplementationClass;
+        this.serviceContextProvider = serviceContextProvider;
         this.extraModules = extraModules;
 
         // Bruker her en Provider som oppretter readFacade første gang man ber om den. Må være lazy fordi testdataService ikke bør kalles
@@ -119,7 +122,15 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
         SnapshotVersion firstSnapshot = snapshotTransfers.firstKey();
         MockupTransfer firstTransfer = snapshotTransfers.get(firstSnapshot);
         BubbleObject bubbleObject = firstTransfer.getInsertedObjects().iterator().next();
-        return testdataService.objectExists(bubbleObject.getId().asSnapshotVersion(firstSnapshot));
+
+        ServiceContext serviceContext = serviceContextProvider.get();
+        SnapshotVersion orgSnapshotVersion = serviceContext.getSnapshotVersion();
+        try {
+            serviceContext.setSnapshotVersion(firstSnapshot);
+            return testdataService.objectExists(bubbleObject.getId().asSnapshotVersion(firstSnapshot));
+        } finally {
+            serviceContext.setSnapshotVersion(orgSnapshotVersion);
+        }
     }
 
     @Deprecated

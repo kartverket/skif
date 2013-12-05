@@ -1,9 +1,12 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import no.statkart.skif.mapper.*;
 import no.statkart.skif.mapping.InverseRelationTypeMapperFactory;
 import no.statkart.skif.mapping.BubbleIdTypeMapperFactory;
 import no.statkart.skif.mapping.KodelisteTransferTypeMapper;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.*;
 import no.statkart.skif.storetest.domain.koder.HistorikkEnumKode;
@@ -16,7 +19,8 @@ import java.sql.Timestamp;
  */
 public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
 
-    public StoreTestMapper() {
+    @Inject
+    public StoreTestMapper(Provider<SnapshotVersion> snapshotVersionProvider) {
         super(StoreTestMapping.class);
 
         MappingResolver mappingResolver = new MappingResolver();
@@ -52,7 +56,7 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         // Klasser hvor objekter skal mappes til seg selv
         addMapperFactory(new IdentityTypeMapperFactory().useIdentityMappingForBasicTypes());
 
-        addMapperFactory(new BubbleIdTypeMapperFactory(no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId.class));
+        addMapperFactory(new BubbleIdTypeMapperFactory(no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId.class, snapshotVersionProvider));
         addMapperFactory(new KodeTypeMapperFactory());
 
         addMapperFactory(new InverseRelationTypeMapperFactory());
