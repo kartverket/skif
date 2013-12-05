@@ -1,6 +1,5 @@
 package no.statkart.skif.store;
 
-import com.google.common.collect.ArrayListMultimap;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.service.StoreService;
@@ -122,14 +121,19 @@ public class StoreSessionClient extends AbstractStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntriesIgnoreMissing(int level, Set<I> bubbleIds, boolean refresh) {
         Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
 
-        ArrayListMultimap<SnapshotVersion, I> idsForVersions = ArrayListMultimap.create();
+        Map<SnapshotVersion, Collection<I>> idsForVersions = new HashMap<SnapshotVersion, Collection<I>>();
         for (I bubbleId : bubbleIds) {
-            idsForVersions.put(bubbleId.getSnapshotVersion(), bubbleId);
+            Collection<I> ids = idsForVersions.get(bubbleId.getSnapshotVersion());
+            if (ids == null) {
+                ids = new HashSet<I>();
+                idsForVersions.put(bubbleId.getSnapshotVersion(), ids);
+            }
+            ids.add(bubbleId);
         }
 
         SnapshotVersion orgSnapshotVersion = serviceContext.getSnapshotVersion();
         try {
-            for (Map.Entry<SnapshotVersion, Collection<I>> snapshotEntry : idsForVersions.asMap().entrySet()) {
+            for (Map.Entry<SnapshotVersion, Collection<I>> snapshotEntry : idsForVersions.entrySet()) {
                 serviceContext.setSnapshotVersion(snapshotEntry.getKey());
                 Collection<T> objects = storeService.getObjectsIgnoreMissing(snapshotEntry.getValue());
                 for (T bubbleObject : objects) {
