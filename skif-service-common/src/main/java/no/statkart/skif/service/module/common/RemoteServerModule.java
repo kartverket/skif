@@ -1,12 +1,14 @@
 package no.statkart.skif.service.module.common;
 
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.util.Providers;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.service.*;
 import no.statkart.skif.module.ModuleWithStrategy;
+import no.statkart.skif.service.*;
+import no.statkart.skif.store.SnapshotVersion;
 
 import javax.net.ssl.HostnameVerifier;
 
@@ -83,6 +85,12 @@ public class RemoteServerModule extends ModuleWithStrategy<RemoteServerModuleStr
             bind(HostnameVerifier.class).to(hostnameVerifierClass);
         }
         strategy.configure(binder());
+    }
+
+    @Provides
+    SnapshotVersion snapshotVersionProvider(ServiceContext serviceContext) {
+        // Kanskje vi bør bruke en ValueHolder i stedet og seed denne med initiell verdi fra serviceContext. Da blir det mulig å endre den underveis
+        return serviceContext.getSnapshotVersion();
     }
 
 }
