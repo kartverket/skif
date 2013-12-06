@@ -71,7 +71,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="StoreTestBubbleIdToSnapshotBubbleIdListMap">
+    <xs:complexType name="StoreTestBubbleIdToSnapshotBubbleIdsMap">
         <xs:annotation>
             <xs:appinfo>
                 <IsDictionary

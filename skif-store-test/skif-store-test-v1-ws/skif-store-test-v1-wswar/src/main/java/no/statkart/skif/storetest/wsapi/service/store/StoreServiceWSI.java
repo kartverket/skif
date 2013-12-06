@@ -18,7 +18,7 @@ public interface StoreServiceWSI extends ServiceWSI {
 
     public SnapshotVersionToStoreTestBubbleIdMap getVersions(StoreTestBubbleId id, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
 
-    public StoreTestBubbleIdToSnapshotBubbleIdListMap getVersionsForList(StoreTestBubbleIdList ids, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
+    public StoreTestBubbleIdToSnapshotBubbleIdsMap getVersionsForList(StoreTestBubbleIdList ids, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
 
     public StoreTestBubble lock(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
 

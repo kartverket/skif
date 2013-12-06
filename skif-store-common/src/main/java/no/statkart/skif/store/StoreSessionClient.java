@@ -23,10 +23,10 @@ public class StoreSessionClient extends AbstractStoreSession {
         this(storeService, serviceContext, new StoreCache());
     }
 
-    public StoreSessionClient(StoreService storeService, ServiceContext serviceContextProvider, StoreCache storeCache) {
+    public StoreSessionClient(StoreService storeService, ServiceContext serviceContext, StoreCache storeCache) {
         super(0, storeCache);
         this.storeService = storeService;
-        this.serviceContext = serviceContextProvider;
+        this.serviceContext = serviceContext;
     }
 
     protected boolean isLocked(StoreEntry storeEntry) {
