@@ -60,13 +60,13 @@ public class StoreServiceWSBean extends SkifWebService<StoreServiceWSI> implemen
 
     @Override
     @WebMethod
-    public StoreTestBubbleIdList getVersions(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "start") Timestamp start, @WebParam(name = "end") Timestamp end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+    public SnapshotVersionToStoreTestBubbleIdMap getVersions(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "start") Timestamp start, @WebParam(name = "end") Timestamp end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         return wsServiceChain.getVersions(id, start, end, context);
     }
 
     @Override
     @WebMethod
-    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForList(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "start") Timestamp start, @WebParam(name = "end") Timestamp end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+    public StoreTestBubbleIdToSnapshotBubbleIdListMap getVersionsForList(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "start") Timestamp start, @WebParam(name = "end") Timestamp end, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         return wsServiceChain.getVersionsForList(ids, start, end, context);
     }
 

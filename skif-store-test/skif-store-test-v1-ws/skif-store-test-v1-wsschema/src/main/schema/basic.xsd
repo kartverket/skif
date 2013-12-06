@@ -172,6 +172,27 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="HistSimpleIdToHistWithRelationIdsMap">
+        <xs:annotation>
+            <xs:appinfo>
+                <IsDictionary
+                        xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                    true
+                </IsDictionary>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="key" nillable="true" type="basicns:HistSimpleId"/>
+                        <xs:element name="value" type="basicns:HistWithRelationIdList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="HistSimple">
         <xs:complexContent>
             <xs:extension base="domainns:AbstractStoreTestBubbleWithHistory">

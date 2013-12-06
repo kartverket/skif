@@ -27,7 +27,8 @@ public class StoreSessionServer extends AbstractStoreSession {
     private final List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
     private final List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
     private final List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
-    private Provider<VersionFinder> versionFinderProvider;
+    private final Provider<VersionFinder> versionFinderProvider;
+    private final Provider<SnapshotVersion> snapshotVersionProvider;
     private final BubbleDependencyComparator bubbleDependencyComparator;
 
     private ModifiedCache modifiedCache;
@@ -117,19 +118,16 @@ public class StoreSessionServer extends AbstractStoreSession {
     private LockerStrategy lockerStrategy;
 
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerStrategy, bubbleDependencyComparator, null, null, null);
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, Provider<SnapshotVersion> snapshotVersionProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<? extends StoreSessionReadListener> readListeners, @Nullable List<? extends StoreSessionWriteListener> writeListeners, @Nullable List<? extends StoreSessionFinishListener> finishListeners) {
+        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, snapshotVersionProvider, lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners);
     }
 
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<? extends StoreSessionReadListener> readListeners, @Nullable List<? extends StoreSessionWriteListener> writeListeners, @Nullable List<? extends StoreSessionFinishListener> finishListeners) {
-        this(persistenceSessionManager, new StoreCache(), versionFinderProvider, lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners);
-    }
-
-    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<? extends StoreSessionReadListener> readListeners, @Nullable List<? extends StoreSessionWriteListener> writeListeners, @Nullable List<? extends StoreSessionFinishListener> finishListeners) {
+    public StoreSessionServer(PersistenceSessionManager persistenceSessionManager, StoreCache storeCache, Provider<VersionFinder> versionFinderProvider, Provider<SnapshotVersion> snapshotVersionProvider, LockerStrategy lockerStrategy, BubbleDependencyComparator bubbleDependencyComparator, @Nullable List<? extends StoreSessionReadListener> readListeners, @Nullable List<? extends StoreSessionWriteListener> writeListeners, @Nullable List<? extends StoreSessionFinishListener> finishListeners) {
         super(0, storeCache);
         this.persistenceSessionManager = persistenceSessionManager;
         this.lockerStrategy = lockerStrategy;
         this.versionFinderProvider = versionFinderProvider;
+        this.snapshotVersionProvider = snapshotVersionProvider;
         this.bubbleDependencyComparator = bubbleDependencyComparator;
         if (readListeners != null) {
             this.readListeners.addAll(readListeners);
@@ -564,7 +562,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         Map<I, List<I>> retur = new HashMap<I, List<I>>();
         for (I id : ids) {
             // Sliter litt med generics her. Vi passe litt på fordi dette kun er lovlig hvis <I> faktisk er en basetype dersom id kan skifte subtype.
-            retur.put((I) (BubbleId) id.asSnapshotVersionCurrent(), versionFinder.findBubbleIdsForInterval(id, start, end));
+            retur.put((I) (BubbleId) id.asSnapshotVersion(snapshotVersionProvider.get()), versionFinder.findBubbleIdsForInterval(id, start, end));
         }
         return retur;
     }

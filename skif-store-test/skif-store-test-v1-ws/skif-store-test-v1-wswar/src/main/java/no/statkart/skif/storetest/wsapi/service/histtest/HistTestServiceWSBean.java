@@ -3,14 +3,10 @@ package no.statkart.skif.storetest.wsapi.service.histtest;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdListForStoreTestBubbleIdsMap;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
-import no.statkart.skif.storetest.wsapi.domain.basic.GeometricElementIdList;
-import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleId;
-import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleIdList;
-import no.statkart.skif.storetest.wsapi.domain.basic.HistWithRelationIdList;
+import no.statkart.skif.storetest.wsapi.domain.basic.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.annotation.PostConstruct;
@@ -72,7 +68,7 @@ public class HistTestServiceWSBean extends SkifWebService<HistTestServiceWSI> im
 
     @Override
     @WebMethod
-    public StoreTestBubbleIdListForStoreTestBubbleIdsMap findHistWithRelationIdsWithTextRelatedToHistSimpleIds(@WebParam(name = "text") String text, @WebParam(name = "histSimpleIds") HistSimpleIdList histSimpleIds, @WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
+    public HistSimpleIdToHistWithRelationIdsMap findHistWithRelationIdsWithTextRelatedToHistSimpleIds(@WebParam(name = "text") String text, @WebParam(name = "histSimpleIds") HistSimpleIdList histSimpleIds, @WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
         return wsServiceChain.findHistWithRelationIdsWithTextRelatedToHistSimpleIds(text, histSimpleIds, snapshotVersion, storeTestContext);
     }
 

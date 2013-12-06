@@ -50,7 +50,28 @@
 
     <!-- Kommentar slutt -->
 
-    <xs:complexType name="StoreTestBubbleIdListForStoreTestBubbleIdsMap">
+    <xs:complexType name="SnapshotVersionToStoreTestBubbleIdMap">
+        <xs:annotation>
+            <xs:appinfo>
+                <IsDictionary
+                        xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+                    true
+                </IsDictionary>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="key" type="basetyperns:Timestamp"/>
+                        <xs:element name="value" type="domainns:StoreTestBubbleId"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="StoreTestBubbleIdToSnapshotBubbleIdListMap">
         <xs:annotation>
             <xs:appinfo>
                 <IsDictionary
@@ -64,7 +85,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="key" nillable="true" type="domainns:StoreTestBubbleId"/>
-                        <xs:element name="value" type="domainns:StoreTestBubbleIdList"/>
+                        <xs:element name="value" type="domainns:SnapshotVersionToStoreTestBubbleIdMap"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

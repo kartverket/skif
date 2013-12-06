@@ -5,6 +5,7 @@ import no.statkart.skif.exception.ImplementationException;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.TypeVariable;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -132,6 +133,11 @@ public class MappingResolver {
      * Workaround for mangel i {@link TypeToken#getSubtype(Class)}.
      */
     protected <T> TypeToken<? extends T> getSubtype(TypeToken<T> typeToken, Class<?> subClass) {
+        if (typeToken.getType() instanceof TypeVariable) {
+            TypeVariable typeVariable = (TypeVariable) typeToken.getType();
+            typeToken = (TypeToken<T>) TypeToken.of(typeVariable.getBounds()[0]);
+        }
+
         try {
             return typeToken.getSubtype(subClass);
         } catch (IllegalArgumentException e) {

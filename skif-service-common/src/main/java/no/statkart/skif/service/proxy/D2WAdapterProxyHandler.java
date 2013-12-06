@@ -2,6 +2,7 @@ package no.statkart.skif.service.proxy;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
@@ -76,7 +77,9 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
         try {
             Object result = adapteeRoot.invoke(proxy, m, mappedArgs);
-            final Object domainResult = map.w2d(result, m.getGenericReturnType(), method.getGenericReturnType());
+            TypeToken<?> fromTypeToken = TypeToken.of(adapteeClass).resolveType(m.getGenericReturnType());
+            TypeToken<?> toTypeToken = TypeToken.of(method.getDeclaringClass()).resolveType(method.getGenericReturnType());
+            final Object domainResult = map.w2d(result, fromTypeToken.getType(), toTypeToken.getType());
             return domainResult;
         } catch (Throwable t) {
             if (exceptionMapping != null) {

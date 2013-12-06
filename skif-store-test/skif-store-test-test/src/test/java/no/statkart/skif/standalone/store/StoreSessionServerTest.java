@@ -174,7 +174,7 @@ public class StoreSessionServerTest {
 
         lockerStrategy = fakeInjector.getInstance(LockerStrategy.class);
 
-        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), fakeInjector.getInstance(LockerStrategy.class), dependencyComparator, readListeners, writeListeners, finishListeners), fakeInjector);
+        storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), Providers.of(SnapshotVersion.CURRENT), fakeInjector.getInstance(LockerStrategy.class), dependencyComparator, readListeners, writeListeners, finishListeners), fakeInjector);
         deletePriviouslyWritenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
     }
 

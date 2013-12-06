@@ -16,9 +16,9 @@ public interface StoreServiceWSI extends ServiceWSI {
 
     public StoreTestBubbleList getObjectsIgnoreMissing(StoreTestBubbleIdList ids, StoreTestContext context) throws ServiceException;
 
-    public StoreTestBubbleIdList getVersions(StoreTestBubbleId id, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
+    public SnapshotVersionToStoreTestBubbleIdMap getVersions(StoreTestBubbleId id, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
 
-    public StoreTestBubbleIdListForStoreTestBubbleIdsMap getVersionsForList(StoreTestBubbleIdList ids, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
+    public StoreTestBubbleIdToSnapshotBubbleIdListMap getVersionsForList(StoreTestBubbleIdList ids, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
 
     public StoreTestBubble lock(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
 

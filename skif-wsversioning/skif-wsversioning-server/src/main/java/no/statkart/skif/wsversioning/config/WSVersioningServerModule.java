@@ -120,11 +120,11 @@ public class WSVersioningServerModule extends SkifServerModule {
 
     @Provides
     @ServiceRequestScoped
-    protected StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager, Injector injector, BubbleDependencyComparator bubbleDependencyComparator, Provider<VersionFinder> versionFinderProvider, LockerStrategy lockerStrategy) {
+    protected StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager, Injector injector, BubbleDependencyComparator bubbleDependencyComparator, Provider<VersionFinder> versionFinderProvider, Provider<SnapshotVersion> snapshotVersionProvider, LockerStrategy lockerStrategy) {
         List<StoreSessionReadListener> readListeners = ImmutableList.of();
         List<StoreSessionWriteListener> writeListeners = ImmutableList.of();
         List<StoreSessionFinishListener> finishListeners = ImmutableList.of();
-        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, versionFinderProvider, lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners), injector);
+        StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, versionFinderProvider, snapshotVersionProvider, lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners), injector);
         return storeServer;
     }
 

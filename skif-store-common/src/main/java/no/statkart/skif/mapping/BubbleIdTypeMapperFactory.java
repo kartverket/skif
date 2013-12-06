@@ -4,7 +4,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.*;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
