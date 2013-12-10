@@ -235,7 +235,10 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                     candidates.add(entry.getValue());
                 }
             }
+        } else {
+            candidates = new ArrayList<TypeMapper<?, ?>>(candidates);
         }
+
 
         // Fjern mappere som ikke kan lage targetClass
         for (Iterator<TypeMapper<?, ?>> iterator = candidates.iterator(); iterator.hasNext(); ) {
