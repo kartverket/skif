@@ -25,6 +25,7 @@ import java.util.Map;
  * to retain referential integrity of resulting object graph.
  *
  * @author dmitry.buzdin
+ * @author Tor Egil R. Strand
  */
 public class MappedFieldsTracker {
 
@@ -49,7 +50,7 @@ public class MappedFieldsTracker {
         Map<Integer, Object> alreadyMappedValues = mappedFields.get(src);
         if (alreadyMappedValues != null) {
             for (Object alreadyMappedValue : alreadyMappedValues.values()) {
-                if (alreadyMappedValue != null) {
+                if (alreadyMappedValue != null && destType.isAssignableFrom(alreadyMappedValue.getClass())) {
                     // Source value has already been mapped to the required destFieldType.
                     retVal = alreadyMappedValue;
                 }
