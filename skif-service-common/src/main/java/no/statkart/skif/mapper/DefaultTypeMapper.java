@@ -78,9 +78,29 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
         domainToWsapi = builder.build();
     }
 
+    /**
+     * Override denne dersom målklassen avhenger av hva kildeklassen er.
+     *
+     * @param source    kildeklassen
+     * @return initielt opprettet målklasse
+     */
+    protected WsapiT createWsapiT(DomainT source) {
+        return createWsapiT();
+    }
+
+    /**
+     * Override denne dersom målklassen avhenger av hva kildeklassen er.
+     *
+     * @param source    kildeklassen
+     * @return initielt opprettet målklasse
+     */
+    protected DomainT createDomainT(WsapiT source) {
+        return createDomainT();
+    }
+
     @Override
     public WsapiT mapDomainObject(DomainT source) {
-        WsapiT target = createWsapiT();
+        WsapiT target = createWsapiT(source);
 
         for (Map.Entry<Method, PropertyMappingInfo> entry : domainToWsapi.entrySet()) {
             Method getter = entry.getKey();
@@ -117,7 +137,7 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
 
     @Override
     public DomainT mapWsapiObject(WsapiT source) {
-        DomainT target = createDomainT();
+        DomainT target = createDomainT(source);
 
         for (Map.Entry<Method, PropertyMappingInfo> entry : wsapiToDomain.entrySet()) {
             Method getter = entry.getKey();
