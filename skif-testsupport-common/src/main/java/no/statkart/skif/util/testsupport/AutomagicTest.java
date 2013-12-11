@@ -186,11 +186,8 @@ public class AutomagicTest {
             for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext(); ) {
                 Field field = iterator.next();
                 field.setAccessible(true);
-                if (Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {
-                    //final static felter er virkelig konstante
-                    //Ingen vits å forsøke å sette et felt som er virkelig konstant
-                    continue;
-                } else {
+                //static felter har ingenting med mapping å gjøre
+                if (!Modifier.isStatic(field.getModifiers())) {
                     //Vi må 'kappe' referansegrafen et sted, og det gjøres enkelt (kanskje for enkelt) ved å si at når
                     //pakkestien blir lengre enn 10 pakker så traverserer vi ikke referansene lenger.
                     if (!(fieldPath.split("\\.").length > 10)) {
