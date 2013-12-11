@@ -21,8 +21,8 @@ import java.lang.reflect.InvocationTargetException;
  * @since 2.4.0
  */
 public class BubbleIdTypeMapperFactory implements TypeMapperFactory {
-    private final Class<?> wsapiBaseClass;
-    private final Provider<SnapshotVersion> snapshotVersionProvider;
+    protected final Class<?> wsapiBaseClass;
+    protected final Provider<SnapshotVersion> snapshotVersionProvider;
 
     public BubbleIdTypeMapperFactory(Class<?> wsapiBaseClass, Provider<SnapshotVersion> snapshotVersionProvider) {
         this.wsapiBaseClass = wsapiBaseClass;
