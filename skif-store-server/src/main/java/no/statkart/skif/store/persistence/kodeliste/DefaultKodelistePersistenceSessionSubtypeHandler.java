@@ -258,7 +258,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
             bubbles.addAll(dbKoder);
         }
 
-        if (!dbKodeIds.isEmpty()) {
+        if (!dbKodelisteIds.isEmpty()) {
             Collection<? extends T> dbKoderlister = persistenceSessionMaster.get(dbKodelisteIds);
             for (T t : dbKoderlister) {
                 Kodeliste.class.cast(t).localize(serviceContext.getLocale().toString());
