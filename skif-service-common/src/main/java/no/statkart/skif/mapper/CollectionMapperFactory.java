@@ -544,11 +544,13 @@ public class CollectionMapperFactory implements TypeMapperFactory {
 
             try {
                 List entryList = (List) entryField.get(source);
-                for (Object entry : entryList) {
-                    final Object key, value;
-                    key = mapping.w2d(keyField.get(entry), keyField.getGenericType(), domainKeyType);
-                    value = mapping.w2d(valueField.get(entry), valueField.getGenericType(), domainValueType);
-                    ((Map) target).put(key, value);
+                if (entryList != null) { // Tomme maps ser ut til å føre til dette
+                    for (Object entry : entryList) {
+                        final Object key, value;
+                        key = mapping.w2d(keyField.get(entry), keyField.getGenericType(), domainKeyType);
+                        value = mapping.w2d(valueField.get(entry), valueField.getGenericType(), domainValueType);
+                        ((Map) target).put(key, value);
+                    }
                 }
             } catch (IllegalAccessException e) {
                 throw new MappingException(e);
