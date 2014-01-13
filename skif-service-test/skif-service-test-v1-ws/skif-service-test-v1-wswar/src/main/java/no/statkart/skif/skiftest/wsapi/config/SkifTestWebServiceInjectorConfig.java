@@ -1,7 +1,6 @@
 package no.statkart.skif.skiftest.wsapi.config;
 
 import com.google.inject.Injector;
-import com.google.inject.servlet.ServletModule;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
@@ -38,7 +37,6 @@ public class SkifTestWebServiceInjectorConfig implements ServletContextListener 
         ModuleConfiguration  configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
         injector = ejbServiceInjector.createChildInjector(
-                new ServletModule(),
                 new WSServerModule(configuration, classLoader),
                 new WSServerServiceModule(configuration, new SkifTestGroup1Services().getServices(), mapping,classLoader ).setServiceContextMapperClass(SkifTestServiceContextMapper.class),
                 new WSServerServiceModule(configuration, new SkifTestGroup2Services().getServices(), mapping, classLoader)

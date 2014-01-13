@@ -75,7 +75,7 @@ libraries.guice_for_client = [
 //for bruk på server
 libraries.guice_for_server = [
         libraries.guice_for_client,
-        libraries.guice_servlet,
+//        libraries.guice_servlet,
 ]
 
 libraries.hibernate_3_2 = [

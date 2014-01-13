@@ -1,8 +1,6 @@
 package no.statkart.skif.storetest.wsapi.config;
 
 import com.google.inject.Injector;
-import com.google.inject.servlet.ServletModule;
-import no.statkart.skif.ServiceMode;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
@@ -14,8 +12,6 @@ import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Konfigurasjon av injector for Web service API. Må kalles fra en ServletContextListener i web.xml.
@@ -37,7 +33,6 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
         final ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
         final Mapping mapping = ejbServiceInjector.getInstance(StoreTestMapper.class).getMapping();
         injector = ejbServiceInjector.createChildInjector(
-                new ServletModule(),
                 new WSServerModule(configuration, classLoader),
 
                 // Services som ikke har ServiceContext

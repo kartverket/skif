@@ -1,7 +1,6 @@
 package no.statkart.skif.wsversioning.wsapi.v2.config;
 
 import com.google.inject.Injector;
-import com.google.inject.servlet.ServletModule;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
 import no.statkart.skif.wsversioning.config.WSVersioningServerInjector;
@@ -30,7 +29,6 @@ public class WSVersioningWebServiceInjectorConfig implements ServletContextListe
         ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
         injector = ejbServiceInjector.createChildInjector(
-                new ServletModule(),
                 new WSServerModule(configuration, classLoader),
 
                 new WSVersioningV2WSServerModule(configuration, classLoader)
