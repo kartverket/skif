@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 
 /**
- * En {@code ProxyHandler} som i {@code SINGLE_VM}-mode simulerer remote kall fra klient til server {@code singleVmServer}
+ * En abstract {@code ProxyHandler} som i {@code SINGLE_VM}-mode simulerer remote kall fra klient til server {@code singleVmServer}
  * i for service av type {@code <S>}. {@code ProxyHandler}en henter ut en {@code EJBProxyHandler<S>} fra serveren og
  * sender kall videre til denne.
  * <p/>

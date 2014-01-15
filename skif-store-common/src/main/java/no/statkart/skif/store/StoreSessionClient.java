@@ -16,17 +16,17 @@ import java.util.*;
  */
 public class StoreSessionClient extends AbstractStoreSession {
     private final StoreService storeService;
-    private final ServiceContext serviceContext;
+    private final SnapshotVersionContext snapshotVersionContext;
 
 
-    public StoreSessionClient(StoreService storeService, ServiceContext serviceContext) {
-        this(storeService, serviceContext, new StoreCache());
+    public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext) {
+        this(storeService, snapshotVersionContext, new StoreCache());
     }
 
-    public StoreSessionClient(StoreService storeService, ServiceContext serviceContext, StoreCache storeCache) {
+    public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext, StoreCache storeCache) {
         super(0, storeCache);
         this.storeService = storeService;
-        this.serviceContext = serviceContext;
+        this.snapshotVersionContext = snapshotVersionContext;
     }
 
     protected boolean isLocked(StoreEntry storeEntry) {
@@ -73,15 +73,15 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry loadEntry(int level, I bubbleId, boolean refresh) {
-        SnapshotVersion oldSnapshotVersion = serviceContext.getSnapshotVersion();
+        SnapshotVersion oldSnapshotVersion = snapshotVersionContext.getSnapshotVersion();
         try {
-            serviceContext.setSnapshotVersion(bubbleId.getSnapshotVersion());
+            snapshotVersionContext.setSnapshotVersion(bubbleId.getSnapshotVersion());
             T bubbleObject = storeService.getObject(bubbleId);
             bubbleObject.register(store);
             StoreEntry entry = storeCache.register(level, bubbleObject, bubbleObject);
             return entry;
         } finally {
-            serviceContext.setSnapshotVersion(oldSnapshotVersion);
+            snapshotVersionContext.setSnapshotVersion(oldSnapshotVersion);
         }
     }
 
@@ -99,10 +99,10 @@ public class StoreSessionClient extends AbstractStoreSession {
             ids.add(bubbleId);
         }
 
-        SnapshotVersion orgSnapshotVersion = serviceContext.getSnapshotVersion();
+        SnapshotVersion orgSnapshotVersion = snapshotVersionContext.getSnapshotVersion();
         try {
             for (Map.Entry<SnapshotVersion, Collection<I>> snapshotEntry : idsForVersions.entrySet()) {
-                serviceContext.setSnapshotVersion(snapshotEntry.getKey());
+                snapshotVersionContext.setSnapshotVersion(snapshotEntry.getKey());
                 Collection<T> objects = storeService.getObjects(snapshotEntry.getValue());
                 for (T bubbleObject : objects) {
                     StoreEntry entry = storeCache.register(level, bubbleObject);
@@ -111,7 +111,7 @@ public class StoreSessionClient extends AbstractStoreSession {
                 }
             }
         } finally {
-            serviceContext.setSnapshotVersion(orgSnapshotVersion);
+            snapshotVersionContext.setSnapshotVersion(orgSnapshotVersion);
         }
 
         return result;
@@ -131,10 +131,10 @@ public class StoreSessionClient extends AbstractStoreSession {
             ids.add(bubbleId);
         }
 
-        SnapshotVersion orgSnapshotVersion = serviceContext.getSnapshotVersion();
+        SnapshotVersion orgSnapshotVersion = snapshotVersionContext.getSnapshotVersion();
         try {
             for (Map.Entry<SnapshotVersion, Collection<I>> snapshotEntry : idsForVersions.entrySet()) {
-                serviceContext.setSnapshotVersion(snapshotEntry.getKey());
+                snapshotVersionContext.setSnapshotVersion(snapshotEntry.getKey());
                 Collection<T> objects = storeService.getObjectsIgnoreMissing(snapshotEntry.getValue());
                 for (T bubbleObject : objects) {
                     StoreEntry entry = storeCache.register(level, bubbleObject);
@@ -143,7 +143,7 @@ public class StoreSessionClient extends AbstractStoreSession {
                 }
             }
         } finally {
-            serviceContext.setSnapshotVersion(orgSnapshotVersion);
+            snapshotVersionContext.setSnapshotVersion(orgSnapshotVersion);
         }
 
         return result;

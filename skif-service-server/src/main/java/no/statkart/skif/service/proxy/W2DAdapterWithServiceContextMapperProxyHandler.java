@@ -11,12 +11,13 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 
 /**
+ * Mapping av parametre som kan inneholde et wsapi context objekt som siste parameter og som ikke skal mappes direkte.
+ *
  * @author Henrik Fredholm
- * @NotTheadSafe
  * @since 2.0
  */
 public class W2DAdapterWithServiceContextMapperProxyHandler<T, A> extends W2DAdapterProxyHandler<T, A> {
-    final ServiceContextMapper<Object> contextMapper;
+    protected final ServiceContextMapper<Object> contextMapper;
 
     @Inject()
     public W2DAdapterWithServiceContextMapperProxyHandler(@WSServiceChain A adaptee, Mapping map, @Nullable ServiceContextMapper<?> contextMapper) {
@@ -29,22 +30,29 @@ public class W2DAdapterWithServiceContextMapperProxyHandler<T, A> extends W2DAda
     }
 
     /**
-     * Map først siste parameter fra Api Context objekt til intern ServiceContext2 objekt. Map deretter resterende
-     * argumenter og returner disse.
+     * Mapper argumenter i args slik at de kan brukes som innput parametre til {@code doapiMethod}. Hvis {@code contextMapper}
+     * er satt så mappes siste parameter i {@code args} til et intern domain ServiceContext objekt. De resterende parameter
+     * mappes på standard vis via {@code map}.
+     *
+     * @param args argumenter som skal mappes
+     * @param wsapiMethod  wsapi metode som ble kallt. Inneholder informasjon om source parameter typer
+     * @param doapiMethod  doapi metode som skal kalles. Inneholder informasjon om target parameter typer.
+     * @param length antall parametre i [@code args} som skal mappes. Hvis {@code contextMapper} er satt bør verdien være
+     *              {@code args.length-1} ellers bør den være {@code args.length} slik at siste parameter også mappes på
+     *               standard vis.
+     * @return mappet parametre.
      */
-    protected Object[] mapArgs(Object[] args, Method m, Method method) {
+    protected Object[] mapArgs(@Nullable Object[] args, Method wsapiMethod, Method doapiMethod, int length) {
         if (contextMapper != null) {
-            if (args.length == 0) {
-                throw new ImplementationException("ServiceContext missing from argument list");
+            if (args == null || args.length == 0) {
+                throw new ImplementationException(String.format("Method '%s' must have at least one parameter. Is the context parameter missing in the definition of the Web Service method?", wsapiMethod));
             }
+
+            // Contextobjektet må mappes først siden det setter gjeldende snapshotVersion.
             Object wsServiceContext = args[args.length - 1];
-            contextMapper.setDomainServiceContextFromWSServiceContext(wsServiceContext);
-            Object[] argsWithoutContext = new Object[args.length - 1];
-            System.arraycopy(args, 0, argsWithoutContext, 0, argsWithoutContext.length);
-            Object[] mappedArgsWithoutContext = super.mapArgs(argsWithoutContext, m, method);
-            return mappedArgsWithoutContext;
-        } else {
-            return super.mapArgs(args, m, method);
+            contextMapper.setDomainServiceContextFromWSServiceContext(map, wsServiceContext);
         }
+        Object[] mappedArgs = super.mapArgs(args, wsapiMethod, doapiMethod, length);
+        return mappedArgs;
     }
 }

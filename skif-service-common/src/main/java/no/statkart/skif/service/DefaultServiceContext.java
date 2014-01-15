@@ -34,12 +34,4 @@ public class DefaultServiceContext implements ServiceContext {
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-
-    public SnapshotVersion getSnapshotVersion() {
-        return snapshotVersion;
-    }
-
-    public void setSnapshotVersion(SnapshotVersion snapshotVersion) {
-        this.snapshotVersion = snapshotVersion;
-    }
 }

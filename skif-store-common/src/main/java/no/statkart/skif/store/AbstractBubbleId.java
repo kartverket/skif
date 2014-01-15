@@ -3,8 +3,10 @@ package no.statkart.skif.store;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ReflectionException;
+import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.Reflection;
 
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,7 +57,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
             try {
                 Class<?> valueType = type.getMethod("getValue", (Class[]) null).getReturnType();
 
-                if (valueType==Object.class) {
+                if (valueType == Object.class) {
                     throw new ImplementationException("Id class' getValue() method returns Object. Expected Long, String or similar: " + type);
                 }
                 return valueType;
@@ -105,7 +107,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         return BubbleIds.createInstance(this.getBaseIdType(), getValue(), snapshotVersion);
     }
 
-    public BubbleId<? super T> asSnapshotVersion(BubbleId<?>  bubbleId) {
+    public BubbleId<? super T> asSnapshotVersion(BubbleId<?> bubbleId) {
         SnapshotVersion snapshotVersion = bubbleId.getSnapshotVersion();
         if (this.snapshotVersion.equals(snapshotVersion)) return this;
         return BubbleIds.createInstance(this.getBaseIdType(), getValue(), snapshotVersion);
@@ -383,4 +385,13 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
                 ", snapshotVersion=" + snapshotVersion +
                 '}';
     }
+
+    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        SnapshotVersion replaceWithSnapshotVersion = CopyHelper.getSnapshotVersion();
+        if (replaceWithSnapshotVersion !=null) {
+            this.snapshotVersion =  replaceWithSnapshotVersion;
+        }
+    }
+
 }

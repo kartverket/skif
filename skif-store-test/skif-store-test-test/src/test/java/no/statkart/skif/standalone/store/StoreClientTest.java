@@ -34,12 +34,18 @@ public class StoreClientTest {
                 bind(Store.class).to(StoreClient.class);
                 bind(StoreService.class).to(StoreClientTestStoreService.class);
                 bind(StoreClientTestStoreService.class).in(Singleton.class);
+                bind(SnapshotVersionContext.class).toInstance(SnapshotVersionContext.getInstance());
+            }
+
+            @Provides
+            protected SnapshotVersion providesSnapshotVersion(SnapshotVersionContext snapshotVersionContext) {
+                return snapshotVersionContext.getSnapshotVersion();
             }
 
             @Provides
             @Singleton
-            protected StoreClient provideStoreClient(StoreService storeService, Injector injector) {
-                StoreSessionClient storeSessionClient = new StoreSessionClient(storeService, new DefaultServiceContext());
+            protected StoreClient provideStoreClient(StoreService storeService, Injector injector, SnapshotVersionContext snapshotVersionContext) {
+                StoreSessionClient storeSessionClient = new StoreSessionClient(storeService, snapshotVersionContext);
                 return new StoreClient(storeSessionClient, injector);
             }
         };

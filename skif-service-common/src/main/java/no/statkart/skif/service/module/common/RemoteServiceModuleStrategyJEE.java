@@ -24,7 +24,14 @@ import java.util.regex.Pattern;
  * @since 2.0
  */
 public class RemoteServiceModuleStrategyJEE extends RemoteServiceModuleStrategy {
+    private final Class<? extends D2WAdapterProxyHandler> d2WAdapterProxyHandlerClass;
+
     public RemoteServiceModuleStrategyJEE() {
+        this(D2WAdapterWithServiceContextMapperProxyHandler.class);
+    }
+
+    public RemoteServiceModuleStrategyJEE(Class<? extends D2WAdapterProxyHandler> d2WAdapterProxyHandlerClass) {
+        this.d2WAdapterProxyHandlerClass = d2WAdapterProxyHandlerClass;
         setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ClientCallServiceChainFactoryJEE.class));
     }
 
@@ -33,9 +40,8 @@ public class RemoteServiceModuleStrategyJEE extends RemoteServiceModuleStrategy 
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-
     @Override
-    public <S> void bindService(Binder outerBinder, PrivateBinder innerBinder,  Class<S> service) {
+    public <S> void bindService(Binder outerBinder, PrivateBinder innerBinder, Class<S> service) {
         Class<?> webServiceClass = findWebServicePortClass(service);
         bindService(outerBinder, innerBinder, service, webServiceClass);
     }
@@ -83,7 +89,7 @@ public class RemoteServiceModuleStrategyJEE extends RemoteServiceModuleStrategy 
     protected <S,W> void bindService(Binder outerBinder, PrivateBinder innerBinder, Class<S> service, Class<W> webService) {
         TypeLiteral<ServiceProvider<S>> remoteServiceProviderType = SkifUtil.typeLiteral(ServiceProvider.class, service);
         TypeLiteral<TerminatingProxyHandler<S>> terminatingProxyHandlerType = SkifUtil.typeLiteral(TerminatingProxyHandler.class, service);
-        TypeLiteral<D2WAdapterProxyHandler<S,W>> d2WAdapterProxyHandlerType = SkifUtil.typeLiteral(D2WAdapterWithServiceContextMapperProxyHandler.class, service, webService);
+        TypeLiteral<D2WAdapterProxyHandler<S,W>> d2WAdapterProxyHandlerType = SkifUtil.typeLiteral(d2WAdapterProxyHandlerClass, service, webService);
         TypeLiteral<JaxWsServiceProvider<W>> jaxWsServiceProviderType = SkifUtil.typeLiteral(JaxWsServiceWithDynamicRequestContextProvider.class, webService);
 
         outerBinder.bind(service).toProvider(remoteServiceProviderType);

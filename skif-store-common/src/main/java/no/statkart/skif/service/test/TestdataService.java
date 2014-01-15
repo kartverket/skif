@@ -2,6 +2,7 @@ package no.statkart.skif.service.test;
 
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.mockup.TestNumber;
+import no.statkart.skif.service.annotation.SuppressSnapshotVersionMapping;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 
@@ -39,6 +40,7 @@ public interface TestdataService {
      * @param snapshotVersion tidspunkt for snapshot
      * @param mockupTransfer transfer med alle objekter som endres på gitt tidspunkt
      */
+    @SuppressSnapshotVersionMapping
     public void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer mockupTransfer);
 
     /**

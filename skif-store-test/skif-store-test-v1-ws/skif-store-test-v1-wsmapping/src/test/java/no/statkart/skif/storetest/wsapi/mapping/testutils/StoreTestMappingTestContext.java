@@ -1,18 +1,17 @@
 package no.statkart.skif.storetest.wsapi.mapping.testutils;
 
-import com.google.inject.Provider;
+import com.google.inject.util.Providers;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.localization.LocalizedString;
+import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
+import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
+import org.testng.Assert;
 
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
-
-import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
-import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
-import org.testng.Assert;
 
 /**
  * Context for test fixture for testing av {@link no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping}
@@ -26,13 +25,7 @@ public class StoreTestMappingTestContext {
 
     private final ServiceContext serviceContext = new DefaultServiceContext();
 
-    final StoreTestMapper configuration = new StoreTestMapper(new Provider<SnapshotVersion>() {
-        @Override
-        public SnapshotVersion get() {
-            return serviceContext.getSnapshotVersion();
-        }
-    });
-
+    final StoreTestMapper configuration = new StoreTestMapper(Providers.of(SnapshotVersion.CURRENT));
 
     public StoreTestMappingTestContext() {
         setLocale(NORSK);

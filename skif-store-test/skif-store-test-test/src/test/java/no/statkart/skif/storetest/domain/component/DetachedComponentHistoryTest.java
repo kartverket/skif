@@ -6,6 +6,7 @@ import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.component.historikk.*;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -36,7 +37,7 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
     private RunOnServerWithTxRequiresNewService serverService;
 
     @Inject
-    private ServiceContext serviceContext;
+    private SnapshotVersionContext snapshotVersionContext;
 
     /**
      * Kjører update med umodifisert detached objekt. Det skal ikke blir generert historikk for dette.
@@ -69,16 +70,15 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
 
         update(bubble2);
 
-        SnapshotVersion oldSnapshotVersion = serviceContext.getSnapshotVersion();
+        SnapshotVersion oldSnapshotVersion = snapshotVersionContext.setSnapshotVersion(id.getSnapshotVersion());
         try {
-            serviceContext.setSnapshotVersion(id.getSnapshotVersion());
             HistorikkBubbleWithEntityComponents bubble3 = storeService.getObject(id);
             Assert.assertEquals(bubble3.getVersjonId(), 2, "Feil versjonid");
             Assert.assertEquals(bubble3.getSecondaryEntityComponents().size(), 1, "Feil antall komponenter");
             Assert.assertEquals(bubble3.getSecondaryEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid på komponent");
             Assert.assertEquals(bubble3.getMainEntityComponent().getVersjonId(), 1, "Feil versjonid på komponent");
         } finally {
-            serviceContext.setSnapshotVersion(oldSnapshotVersion);
+            snapshotVersionContext.setSnapshotVersion(oldSnapshotVersion);
         }
     }
 
@@ -109,15 +109,14 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
 
         update(bubble2);
 
-        SnapshotVersion oldSnapshotVersion = serviceContext.getSnapshotVersion();
+        SnapshotVersion oldSnapshotVersion = snapshotVersionContext.setSnapshotVersion(id.getSnapshotVersion());
         try {
-            serviceContext.setSnapshotVersion(id.getSnapshotVersion());
             HistorikkBubbleWithListEntityComponents bubble3 = storeService.getObject(id);
             Assert.assertEquals(bubble3.getVersjonId(), 1, "Feil versjonid");
             Assert.assertEquals(bubble3.getEntityComponents().size(), 1, "Feil antall komponenter");
             Assert.assertEquals(bubble3.getEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid på komponent");
         } finally {
-            serviceContext.setSnapshotVersion(oldSnapshotVersion);
+            snapshotVersionContext.setSnapshotVersion(oldSnapshotVersion);
         }
     }
 

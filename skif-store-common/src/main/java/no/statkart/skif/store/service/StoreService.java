@@ -1,5 +1,6 @@
 package no.statkart.skif.store.service;
 
+import no.statkart.skif.service.annotation.SuppressSnapshotVersionMapping;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
@@ -52,6 +53,7 @@ public interface StoreService {
      * @param end   slutttidspunkt som avslutter intervallet og som ikke er inkludert
      * @return liste med id-er som ble funnet
      */
+    @SuppressSnapshotVersionMapping
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
 
     /**
@@ -64,6 +66,7 @@ public interface StoreService {
      * @param end   slutttidspunkt som avslutter intervallet og som ikke er inkludert
      * @return map av funnede id-er
      */
+    @SuppressSnapshotVersionMapping
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end);
 
     /**

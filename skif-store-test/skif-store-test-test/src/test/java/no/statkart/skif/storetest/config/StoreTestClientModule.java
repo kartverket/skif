@@ -8,7 +8,6 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
@@ -18,10 +17,8 @@ import no.statkart.skif.service.module.common.RunOnServerRemoteServiceModule;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.sequence.IdServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.Store;
-import no.statkart.skif.store.StoreClient;
-import no.statkart.skif.store.StoreSessionClient;
+import no.statkart.skif.store.*;
+import no.statkart.skif.store.module.common.RemoteServiceModuleStrategyWithServiceContextSVMapper;
 import no.statkart.skif.store.relation.cache.RelationCacheProxyHandler;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.store.service.StoreService;
@@ -43,7 +40,7 @@ public class StoreTestClientModule extends SkifModule {
 
     @Override
     protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
-        return new ClientModuleStrategyFactory();
+        return new ClientModuleStrategyFactory(RemoteServiceModuleStrategyWithServiceContextSVMapper.class);
     }
 
     @Override
@@ -117,8 +114,8 @@ public class StoreTestClientModule extends SkifModule {
 
     @Provides
     @Singleton
-    StoreClient storeProvider(StoreService storeService, Injector injector, ServiceContext serviceContext) {
-        StoreSessionClient storeSession = new StoreSessionClient(storeService, serviceContext);
+    StoreClient storeProvider(StoreService storeService, Injector injector, SnapshotVersionContext snapshotVersionContext) {
+        StoreSessionClient storeSession = new StoreSessionClient(storeService, snapshotVersionContext);
         StoreClient store = new StoreClient(storeSession, injector);
         injector.injectMembers(store);
         return store;

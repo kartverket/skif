@@ -3,6 +3,7 @@ package no.statkart.skif.store.module;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
+import no.statkart.skif.service.module.common.RemoteServiceModuleStrategy;
 import no.statkart.skif.store.module.server.ServerStoreModule;
 import no.statkart.skif.store.module.server.ServerStoreModuleStrategy;
 
@@ -12,6 +13,9 @@ import no.statkart.skif.store.module.server.ServerStoreModuleStrategy;
 public class StoreServerModuleStrategyFactory extends ServerModuleStrategyFactory {
     public StoreServerModuleStrategyFactory() {
         addStrategyForServerStoreModule();
+    }
+    public StoreServerModuleStrategyFactory(Class<? extends RemoteServiceModuleStrategy> remoteServiceModuleStrategyBaseClass) {
+        super(remoteServiceModuleStrategyBaseClass);
     }
 
     protected void addStrategyForServerStoreModule() {

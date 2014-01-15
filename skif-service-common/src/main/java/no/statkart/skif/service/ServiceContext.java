@@ -32,8 +32,4 @@ public interface ServiceContext extends Serializable {
     Locale getLocale();
 
     void setLocale(Locale locale);
-
-    SnapshotVersion getSnapshotVersion();
-
-    void setSnapshotVersion(SnapshotVersion snapshotVersion);
 }

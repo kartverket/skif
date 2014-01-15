@@ -44,14 +44,14 @@ public class HistTestServiceWSBean extends SkifWebService<HistTestServiceWSI> im
 
     @Override
     @WebMethod
-    public HistSimpleIdList findHistSimpleIdsForTextUsingJDBC(@WebParam(name = "text") String text, @WebParam(name = "testSetNummer") int testSetNummer, @WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
-        return wsServiceChain.findHistSimpleIdsForTextUsingJDBC(text, testSetNummer, snapshotVersion,storeTestContext);
+    public HistSimpleIdList findHistSimpleIdsForTextUsingJDBC(@WebParam(name = "text") String text, @WebParam(name = "testSetNummer") int testSetNummer, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
+        return wsServiceChain.findHistSimpleIdsForTextUsingJDBC(text, testSetNummer, storeTestContext);
     }
 
     @Override
     @WebMethod
-    public HistSimpleIdList findHistSimpleIdsForTextUsingHibernate(@WebParam(name = "text") String text, @WebParam(name = "testSetNummer") int testSetNummer, @WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
-        return wsServiceChain.findHistSimpleIdsForTextUsingHibernate(text, testSetNummer, snapshotVersion,storeTestContext);
+    public HistSimpleIdList findHistSimpleIdsForTextUsingHibernate(@WebParam(name = "text") String text, @WebParam(name = "testSetNummer") int testSetNummer, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
+        return wsServiceChain.findHistSimpleIdsForTextUsingHibernate(text, testSetNummer, storeTestContext);
     }
 
     @Override

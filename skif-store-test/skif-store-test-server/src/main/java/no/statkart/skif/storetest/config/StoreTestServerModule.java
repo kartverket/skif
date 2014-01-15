@@ -35,6 +35,7 @@ import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.module.StoreServerModuleStrategyFactory;
+import no.statkart.skif.store.module.common.RemoteServiceModuleStrategyWithServiceContextSVMapper;
 import no.statkart.skif.store.persistence.*;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
@@ -96,7 +97,7 @@ public class StoreTestServerModule extends SkifModule {
     @Override
     protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
         // Konfigurer EJBServiceChain til å bruke en factory som har en ProxyHandler for transaksjonshåndtering
-        ModuleStrategyFactory factory = new StoreServerModuleStrategyFactory();
+        ModuleStrategyFactory factory = new StoreServerModuleStrategyFactory(RemoteServiceModuleStrategyWithServiceContextSVMapper.class);
         StrategyTuple<ServerServiceModuleStrategy> prototype = factory.getPrototype(ServerServiceModule.class);
         prototype.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactorySpecification(EJBResourceProxyHandlerForHibernateWithLocks.class));
         prototype.getStrategy(ServiceMode.JEE).setEjbServiceChainFactorySpecification(new EJBServiceChainFactorySpecification(EJBResourceProxyHandlerForHibernateWithLocks.class));

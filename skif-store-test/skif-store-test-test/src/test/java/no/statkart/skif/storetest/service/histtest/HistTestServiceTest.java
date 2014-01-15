@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.*;
 import no.statkart.skif.domain.SelectionPolygon;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.basic.*;
 import no.statkart.skif.storetest.mockup.MockupSnapshots;
@@ -38,16 +38,15 @@ public class HistTestServiceTest extends StoreTestTestCase {
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
     @Inject
-    private ServiceContext serviceContext;
+    private SnapshotVersionContext snapshotVersionContext;
 
     @AfterMethod(alwaysRun = true)
     public void resetContext() {
-        serviceContext.setSnapshotVersion(SnapshotVersion.CURRENT);
+        snapshotVersionContext.setSnapshotVersion(SnapshotVersion.CURRENT);
     }
 
     public void findHistSimpleIdsForTextUsingJDBC() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        serviceContext.setSnapshotVersion(MockupSnapshots.S3_30);
         Set<HistSimpleId<?>> ids = histTestService.findHistSimpleIdsForTextUsingJDBC("KART-VEIEN", mockupFacade.getTestNumber().getNumber(), MockupSnapshots.S3_30);
         assertEquals(ids.size(), 1);
         final HistSimpleId<?> histSimpleId = ids.iterator().next();
@@ -57,7 +56,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
         HistSimple histSimple = store.get(histSimpleId);
         assertEquals(histSimple.getText(), "KART-VEIEN");
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance(histSimple.getOppdateringsdato());
-        serviceContext.setSnapshotVersion(snapshotVersion);
+        snapshotVersionContext.setSnapshotVersion(snapshotVersion);
         Set<HistSimpleId<?>> ids2 = histTestService.findHistSimpleIdsForTextUsingJDBC("KART-VEIEN", mockupFacade.getTestNumber().getNumber(), snapshotVersion);
         assertEquals(ids2.size(), 1);
         HistSimpleId<?> histSimpleId2 = ids2.iterator().next();
@@ -67,7 +66,6 @@ public class HistTestServiceTest extends StoreTestTestCase {
 
     public void findHistSimpleIdsForTextUsingHibernate() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        serviceContext.setSnapshotVersion(MockupSnapshots.S3_30);
         Set<HistSimpleId<?>> ids = histTestService.findHistSimpleIdsForTextUsingHibernate("KART-VEIEN", mockupFacade.getTestNumber().getNumber(), MockupSnapshots.S3_30);
         assertEquals(ids.size(), 1);
         final HistSimpleId<?> histSimpleId = ids.iterator().next();
@@ -78,7 +76,6 @@ public class HistTestServiceTest extends StoreTestTestCase {
         assertEquals(histSimple.getText(), "KART-VEIEN");
         final Timestamp oppdateringsdato = histSimple.getOppdateringsdato();
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance(oppdateringsdato);
-        serviceContext.setSnapshotVersion(snapshotVersion);
         Set<HistSimpleId<?>> ids2 = histTestService.findHistSimpleIdsForTextUsingJDBC("KART-VEIEN", mockupFacade.getTestNumber().getNumber(), snapshotVersion);
         assertEquals(ids2.size(), 1);
         HistSimpleId<?> histSimpleId2 = ids2.iterator().next();
@@ -88,7 +85,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
 
     public void findHistWithRelationIdsRelatedToHistSimpleWithText() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        serviceContext.setSnapshotVersion(MockupSnapshots.S2_01);
+        snapshotVersionContext.setSnapshotVersion(MockupSnapshots.S2_01);
         Set<HistWithRelationId<?>> histWithRelationIds = histTestService.findHistWithRelationIdsRelatedToHistSimpleWithText("GAMMELVEIEN", mockupFacade.getTestNumber().getNumber(), MockupSnapshots.S2_01);
         assertEquals(histWithRelationIds.size(), 1);
         HistWithRelationId<?> histWithRelationId = histWithRelationIds.iterator().next();
@@ -101,7 +98,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
 
     public void findHistWithRelationIdsWithTextRelatedToHistSimpleId() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        serviceContext.setSnapshotVersion(MockupSnapshots.S2_02);
+        snapshotVersionContext.setSnapshotVersion(MockupSnapshots.S2_02);
         Set<HistWithRelationId<?>> histWithRelationIds = histTestService.findHistWithRelationIdsWithTextRelatedToHistSimpleId("Gruppe A", mockupFacade.getHistSimpleMockupFactory().getHistSimpleId2().asSnapshotVersion(MockupSnapshots.S2_02), MockupSnapshots.S2_02);
         assertEquals(histWithRelationIds.size(), 1);
         HistWithRelationId<?> histWithRelationId = histWithRelationIds.iterator().next();
@@ -118,7 +115,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
                 mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1().asSnapshotVersion(MockupSnapshots.S2_02),
                 mockupFacade.getHistSimpleMockupFactory().getHistSimpleId2().asSnapshotVersion(MockupSnapshots.S2_02)
         );
-        serviceContext.setSnapshotVersion(MockupSnapshots.S2_02);
+        snapshotVersionContext.setSnapshotVersion(MockupSnapshots.S2_02);
         Map<HistSimpleId<?>, Set<HistWithRelationId<?>>> histWithRelationIdsMap = histTestService.findHistWithRelationIdsWithTextRelatedToHistSimpleIds("Gruppe A", histSimpleIds, MockupSnapshots.S2_02);
         assertEquals(histWithRelationIdsMap.size(), 1);
         final HistSimpleId<?> key = mockupFacade.getHistSimpleMockupFactory().getHistSimpleId2().asSnapshotVersion(MockupSnapshots.S2_02);
@@ -131,7 +128,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
                 mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1().asSnapshotVersion(MockupSnapshots.S1),
                 mockupFacade.getHistSimpleMockupFactory().getHistSimpleId2().asSnapshotVersion(MockupSnapshots.S1)
         );
-        serviceContext.setSnapshotVersion(MockupSnapshots.S1);
+        snapshotVersionContext.setSnapshotVersion(MockupSnapshots.S1);
         final List<HistSimpleId<?>> histSimpleIdsAliveAtSnapshot = histTestService.findHistSimpleIdsAliveAtSnapshotUsingOracleArray(histSimpleIds, MockupSnapshots.S1);
         assertEquals(histSimpleIdsAliveAtSnapshot.size(), 1);
         assertThat(histSimpleIdsAliveAtSnapshot).contains(mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1().asSnapshotVersion(MockupSnapshots.S1));
@@ -143,7 +140,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
                 mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1().asSnapshotVersion(MockupSnapshots.S1),
                 mockupFacade.getHistSimpleMockupFactory().getHistSimpleId2().asSnapshotVersion(MockupSnapshots.S1)
         );
-        serviceContext.setSnapshotVersion(MockupSnapshots.S1);
+        snapshotVersionContext.setSnapshotVersion(MockupSnapshots.S1);
         final List<HistSimpleId<?>> histSimpleIdsAliveAtSnapshot = histTestService.findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(histSimpleIds, MockupSnapshots.S1);
         assertEquals(histSimpleIdsAliveAtSnapshot.size(), 1);
         assertThat(histSimpleIdsAliveAtSnapshot).contains(mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1().asSnapshotVersion(MockupSnapshots.S1));
@@ -163,7 +160,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
         SelectionPolygon selectionPolygon = new SelectionPolygon(polygon);
 
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:05:30.00");
-        serviceContext.setSnapshotVersion(snapshotVersion);
+        snapshotVersionContext.setSnapshotVersion(snapshotVersion);
         List<GeometricElementId> ids = histTestService.findGeometricElementsWithPointInSelectionPolygon(selectionPolygon, snapshotVersion);
 
         assertEquals(ids.size(), 1);
@@ -183,7 +180,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
         SelectionPolygon selectionPolygon = new SelectionPolygon(polygon);
 
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:05:30.00");
-        serviceContext.setSnapshotVersion(snapshotVersion);
+        snapshotVersionContext.setSnapshotVersion(snapshotVersion);
         List<GeometricElementId> ids = histTestService.findGeometricElementsWithPolygonInSelectionPolygon(selectionPolygon, snapshotVersion);
 
         assertEquals(ids.size(), 1);

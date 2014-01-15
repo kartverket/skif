@@ -9,7 +9,7 @@ import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ClientCallServiceChainFactorySingleVm;
 import no.statkart.skif.service.provider.ServiceProvider;
 import no.statkart.skif.service.proxy.SingleVmRemoteCallProxyHandler;
-import no.statkart.skif.service.proxy.SingleVmViaWSWithApiContextRemoteCallProxyHandler;
+import no.statkart.skif.service.proxy.SingleVmViaWSWithServiceContextMapperRemoteCallProxyHandler;
 
 /**
  * Strategi for kjøring i SingleVM, men med serialisering via XML mellom klient og tjener.
@@ -21,7 +21,15 @@ import no.statkart.skif.service.proxy.SingleVmViaWSWithApiContextRemoteCallProxy
  * @since 2.3.0
  */
 public class RemoteServiceModuleStrategySingleVmXml extends RemoteServiceModuleStrategyJEE {
+    private final Class<? extends SingleVmRemoteCallProxyHandler> singleVmProxyHandlerImplClass;
+
     public RemoteServiceModuleStrategySingleVmXml() {
+        this(SingleVmViaWSWithServiceContextMapperRemoteCallProxyHandler.class);
+    }
+
+    public RemoteServiceModuleStrategySingleVmXml(Class<? extends SingleVmRemoteCallProxyHandler> singleVmProxyHandlerImplClass) {
+        this.singleVmProxyHandlerImplClass = singleVmProxyHandlerImplClass;
+
         // Overskriv det superklassen har satt
         setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ClientCallServiceChainFactorySingleVm.class));
     }
@@ -37,7 +45,7 @@ public class RemoteServiceModuleStrategySingleVmXml extends RemoteServiceModuleS
 
         TypeLiteral<ServiceProvider<S>> remoteServiceProviderType = SkifUtil.typeLiteral(ServiceProvider.class, service);
         TypeLiteral<SingleVmRemoteCallProxyHandler<S>> singleVmProxyHandlerType = SkifUtil.typeLiteral(SingleVmRemoteCallProxyHandler.class, service);
-        TypeLiteral<SingleVmViaWSWithApiContextRemoteCallProxyHandler<S, ?>> singleVmProxyHandlerImplType = SkifUtil.typeLiteral(SingleVmViaWSWithApiContextRemoteCallProxyHandler.class, service, webServiceClass);
+        TypeLiteral<SingleVmRemoteCallProxyHandler<S>> singleVmProxyHandlerImplType = SkifUtil.typeLiteral(singleVmProxyHandlerImplClass, service, webServiceClass);
 
         innerBinder.bind(singleVmProxyHandlerType).to(singleVmProxyHandlerImplType);
         innerBinder.expose(singleVmProxyHandlerType);

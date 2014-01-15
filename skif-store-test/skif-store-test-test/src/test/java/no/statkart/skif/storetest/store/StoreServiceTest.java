@@ -1,8 +1,8 @@
 package no.statkart.skif.storetest.store;
 
 import com.google.inject.Inject;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -27,7 +27,7 @@ public class StoreServiceTest extends StoreTestTestCase {
     private StoreService storeService;
 
     @Inject
-    private ServiceContext serviceContext;
+    private SnapshotVersionContext snapshotVersionContext;
 
     public void testStoreService() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -47,14 +47,14 @@ public class StoreServiceTest extends StoreTestTestCase {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1().asSnapshotVersionOld();
 
-        SnapshotVersion oldSnapshotVersion = serviceContext.getSnapshotVersion();
+        SnapshotVersion oldSnapshotVersion = snapshotVersionContext.getSnapshotVersion();
         try {
-            serviceContext.setSnapshotVersion(SnapshotVersion.OLD);
+            snapshotVersionContext.setSnapshotVersion(SnapshotVersion.OLD);
             Simple bubble = storeService.getObject(simple1Id);
             assertEquals(simple1Id, bubble.getId());
             assertEquals(bubble.getId().getSnapshotVersion(), SnapshotVersion.OLD);
         } finally {
-            serviceContext.setSnapshotVersion(oldSnapshotVersion);
+            snapshotVersionContext.setSnapshotVersion(oldSnapshotVersion);
         }
     }
 

@@ -5,6 +5,7 @@ import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
 import no.statkart.skif.service.module.server.WSServerServiceModule;
+import no.statkart.skif.service.proxy.W2DAdapterWithServiceContextSVMapperProxyHandler;
 import no.statkart.skif.storetest.config.*;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
@@ -47,7 +48,7 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class),
                 new WSServerServiceModule(configuration, new StoreTestStoreServices().getServices(), mapping, classLoader)
                         .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
-                        .setServiceContextMapperClass(StoreTestServiceContextMapper.class),
+                        .setServiceContextMapperClass(StoreTestServiceContextMapper.class, W2DAdapterWithServiceContextSVMapperProxyHandler.class),
                 new WSServerServiceModule(configuration, new StoreTestStoreUpdateServices().getServices(), mapping, classLoader)
                         .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class),

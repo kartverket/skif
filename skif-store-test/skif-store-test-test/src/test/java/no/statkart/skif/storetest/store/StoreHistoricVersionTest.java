@@ -2,8 +2,8 @@ package no.statkart.skif.storetest.store;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -13,7 +13,6 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class StoreHistoricVersionTest extends StoreTestTestCase {
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
     @Inject
-    ServiceContext serviceContext;
+    SnapshotVersionContext snapshotVersionContext;
 
     public void testFindHistSimpleIdsForIntervalSomInneholderAlleHeltTilCurrent() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -55,12 +54,12 @@ public class StoreHistoricVersionTest extends StoreTestTestCase {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final HistSimpleId<?> histSimpleId1Old = mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1().asSnapshotVersionOld();
         Collection<HistSimpleId<?>> ids1;
-        SnapshotVersion orgSnapshotVersion = serviceContext.getSnapshotVersion();
+        SnapshotVersion orgSnapshotVersion = snapshotVersionContext.getSnapshotVersion();
         try {
-            serviceContext.setSnapshotVersion(histSimpleId1Old.getSnapshotVersion());
+            snapshotVersionContext.setSnapshotVersion(histSimpleId1Old.getSnapshotVersion());
             ids1 = service.<HistSimpleId<?>>getVersions(histSimpleId1Old, S0, CURRENT);
         } finally {
-            serviceContext.setSnapshotVersion(orgSnapshotVersion);
+            snapshotVersionContext.setSnapshotVersion(orgSnapshotVersion);
         }
         Assert.assertEquals(ids1.size(), 5);
         assertThat(ids1).containsExactly(
@@ -147,12 +146,12 @@ public class StoreHistoricVersionTest extends StoreTestTestCase {
         final HistSimpleId<?> histSimpleId2Old = mockupFacade.getHistSimpleMockupFactory().getHistSimpleId2().asSnapshotVersionOld();
         final List<HistSimpleId<?>> ids = ImmutableList.of(histSimpleId1Old, histSimpleId2Old);
         final Map<HistSimpleId<?>, List<HistSimpleId<?>>> versionsForList;
-        final SnapshotVersion orgSnapshotVersion = serviceContext.getSnapshotVersion();
+        final SnapshotVersion orgSnapshotVersion = snapshotVersionContext.getSnapshotVersion();
         try {
-            serviceContext.setSnapshotVersion(SnapshotVersion.OLD);
+            snapshotVersionContext.setSnapshotVersion(SnapshotVersion.OLD);
             versionsForList = store.getVersionsForList(ids, S0, CURRENT);
         } finally {
-            serviceContext.setSnapshotVersion(orgSnapshotVersion);
+            snapshotVersionContext.setSnapshotVersion(orgSnapshotVersion);
         }
         assertThat(versionsForList).hasSize(2);
         assertThat(versionsForList.get(histSimpleId1Old.asSnapshotVersionOld())).containsExactly(

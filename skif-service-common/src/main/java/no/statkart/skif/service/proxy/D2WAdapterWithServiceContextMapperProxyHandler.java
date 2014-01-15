@@ -1,6 +1,7 @@
 package no.statkart.skif.service.proxy;
 
 import com.google.inject.Inject;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ServiceContextMapper;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.mapper.ExceptionMapping;
@@ -9,21 +10,21 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 
 /**
- * Adapter proxy som adapterer domain interface {@code T} til Web service interface {@code A} ved å mappe metoder med
- * samme navn til hverandre og transformere argumentene og resultatet vha et mappingobjekt {@link Mapping}. I tillegg
- * legger adapteren på et {@code ServiceContext} object som siste parameter i Web service kallet som instansieres vha
- * et {@code ServiceContextMapper<?>} objekt.
- * <p/>
+ * Proxy som adapterer java interface {@code T} til Web service interface {@code A} ved å mappe metoder med
+ * samme navn til hverandre og transformere argumentene og resultatet vha et mappingobjekt {@link Mapping}.
+ * I tillegg legger adapteren på et wsapi {@code ServiceContext} object som siste parameter i Web service kallet.
+ * Adapteren har et {@code ServiceContextMapper<?>} objekt som brukes til å lage {@code ServiceContext}
+ * objektet. slik at relevant context state blir lagt inn {@code ServiceContext}.
+ * <P/>
  * Adapteren har også exception håndtering dersom denne er tildelt og satt (ikke null).
  * Alle @{Exception}s annotert med {@WebFault} blir mappet over til korresponderende exceptions ihht til mapper.
  * All andre exceptions blir fanget og wrappet til {@link no.statkart.skif.exception.ImplementationException}.
  *
  * @author Henrik Fredholm
- * @NotTheadSafe
  * @since 2.0
  */
 public class D2WAdapterWithServiceContextMapperProxyHandler<T, A> extends D2WAdapterProxyHandler<T, A> {
-    final ServiceContextMapper<?> contextMapper;
+    private final ServiceContextMapper<?> contextMapper;
 
     @Inject()
     public D2WAdapterWithServiceContextMapperProxyHandler(A adaptee, Mapping map, @Nullable ServiceContextMapper<?> contextMapper) {
@@ -35,22 +36,28 @@ public class D2WAdapterWithServiceContextMapperProxyHandler<T, A> extends D2WAda
         this.contextMapper = contextMapper;
     }
 
+    protected ServiceContextMapper<?> getContextMapper() {
+        return contextMapper;
+    }
+
     /**
-     * Map alle argumenter til Web service objekter. Opprett deretter ApiContext objekt av riktig type og legg på som siste
-     * parameter.
+     * Map alle argumenter til Web service objekter. Opprett deretter ServiceContext objekt av riktig type og legg på som siste
+     * parameter i wsapi kall
      */
-    protected Object[] mapArgs(Object[] args, Method method, Method m) {
-        Object[] mappedArgs = super.mapArgs(args, method, m);
+    protected Object[] mapArgs(Object[] args, Method fromMethod, Method toMethod, int length) {
+        Object[] mappedArgs;
         if (contextMapper != null) {
-            Object wsServiceContext = contextMapper.createWSServiceContextFromDomainServiceContext();
-            if (mappedArgs == null) {
-                mappedArgs = new Object[]{wsServiceContext};
-            } else {
-                Object[] mappedArgsWithContext = new Object[mappedArgs.length + 1];
-                System.arraycopy(mappedArgs, 0, mappedArgsWithContext, 0, mappedArgs.length);
-                mappedArgsWithContext[mappedArgs.length] = wsServiceContext;
-                mappedArgs = mappedArgsWithContext;
+            mappedArgs = super.mapArgs(args, fromMethod, toMethod, length);
+            if (length+1!=mappedArgs.length) {
+                throw new ImplementationException(String.format("Wong number of method arguments for mapping '%s' to '%s'. Is the context parameter missing in the definition of the Web Service method?", fromMethod,toMethod));
             }
+            mappedArgs[length] = contextMapper.createWSServiceContextFromDomainServiceContext(map);
+        } else {
+            int argsLength = (args==null)? 0 : args.length;
+            if (argsLength!=length) {
+                throw new ImplementationException(String.format("Wong number of method arguments for mapping '%s' to '%s'. If the Web Service method has an additional context parameter, then a ContextMapper needs to be set for the service", fromMethod,toMethod));
+            }
+            mappedArgs = super.mapArgs(args, fromMethod, toMethod, length);
         }
         return mappedArgs;
     }

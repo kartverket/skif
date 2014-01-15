@@ -7,6 +7,7 @@ import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
+import no.statkart.skif.store.module.common.RemoteServiceModuleStrategyWithServiceContextSVMapper;
 import no.statkart.skif.storetest.config.StoreTestSequenceBlockAllocatorServices;
 import no.statkart.skif.storetest.config.StoreTestTxManagementServices;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
@@ -22,7 +23,7 @@ public class StoreTestTxManagementClientModule extends SkifModule {
 
         @Override
         protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
-            return new ClientModuleStrategyFactory();
+            return new ClientModuleStrategyFactory(RemoteServiceModuleStrategyWithServiceContextSVMapper.class);
         }
 
         @Override

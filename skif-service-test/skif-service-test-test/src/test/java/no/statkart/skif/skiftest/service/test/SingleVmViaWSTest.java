@@ -6,10 +6,7 @@ import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
-import no.statkart.skif.service.module.common.RemoteServerModule;
-import no.statkart.skif.service.module.common.RemoteServiceModule;
-import no.statkart.skif.service.module.common.RemoteServiceModuleStrategy;
-import no.statkart.skif.service.module.common.RemoteServiceModuleStrategySingleVmXml;
+import no.statkart.skif.service.module.common.*;
 import no.statkart.skif.skiftest.config.SkifTestGroup2Services;
 import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.domain.A;
@@ -67,6 +64,7 @@ public class SingleVmViaWSTest extends SkifTestCase {
             ClientModuleStrategyFactory clientModuleStrategyFactory = new ClientModuleStrategyFactory();
 
             clientModuleStrategyFactory.addPrototype(RemoteServiceModule.class, new StrategyTuple<RemoteServiceModuleStrategy>(null, RemoteServiceModuleStrategySingleVmXml.class));
+//            clientModuleStrategyFactory.addPrototype(RemoteServiceModule.class, new StrategyTuple<RemoteServiceModuleStrategy>(null, RemoteServiceModuleStrategySingleVmXmlWithSVMapping.class));
 
             return clientModuleStrategyFactory;
         }

@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFacadeFactory;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.storetest.service.test.TestdataService;
 
 /**
@@ -17,8 +18,8 @@ import no.statkart.skif.storetest.service.test.TestdataService;
 @Singleton
 public class MockupFacadeFactory extends AbstractMockupFacadeFactory<MockupFacade> {
     @Inject
-    public MockupFacadeFactory(TestdataService testdataService, Provider<ServiceContext> serviceContextProvider) {
-        super(MockupFacade.class, testdataService, serviceContextProvider);
+    public MockupFacadeFactory(TestdataService testdataService, SnapshotVersionContext snapshotVersionContext) {
+        super(MockupFacade.class, testdataService, snapshotVersionContext);
 
         setDefaultSnapshotVersion(SnapshotVersion.START);
     }

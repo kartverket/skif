@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.store.SnapshotVersion;
 
 import javax.annotation.Nullable;
 import javax.xml.ws.WebFault;
@@ -24,19 +25,18 @@ import java.util.Iterator;
  * {@link ImplementationException}.
  *
  * @author Henrik Fredholm
- * @NotTheadSafe
  * @since 2.0
  */
 public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
-    final Mapping map;
+    final protected Mapping map;
 
     /**
      * Optional mapping2 for exceptions. Can be <tt>null</tt> if not set.
      */
     @Inject(optional = true)
     @Nullable
-    final ExceptionMapping exceptionMapping;
+    final protected ExceptionMapping exceptionMapping;
 
 
     @Inject()
@@ -58,7 +58,7 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
     @Override
     protected Method findMethod(Method method) throws NoSuchMethodException {
-        Class[] interfaces= adapteeClass.isInterface() ? (new Class[] {adapteeClass}) : adapteeClass.getInterfaces();
+        Class[] interfaces = adapteeClass.isInterface() ? (new Class[]{adapteeClass}) : adapteeClass.getInterfaces();
         for (Class interfaceClass : interfaces) {
             for (Method m : interfaceClass.getMethods()) {
                 if (m.getName().equals(method.getName())) {
@@ -71,16 +71,26 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
     @Override
     public Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
-        Method m = getMethod(method);
-
-        Object[] mappedArgs = mapArgs(args, method, m);
-
+        Method toMethod = getMethod(method);
         try {
-            Object result = adapteeRoot.invoke(proxy, m, mappedArgs);
-            TypeToken<?> fromTypeToken = TypeToken.of(adapteeClass).resolveType(m.getGenericReturnType());
-            TypeToken<?> toTypeToken = TypeToken.of(method.getDeclaringClass()).resolveType(method.getGenericReturnType());
-            final Object domainResult = map.w2d(result, fromTypeToken.getType(), toTypeToken.getType());
-            return domainResult;
+            Object result = mapArgsAndInvokeMethod(proxy, method, args, toMethod);
+            return result;
+        } catch (Throwable t) {
+            throw t;
+        }
+    }
+
+    protected Object mapArgsAndInvokeMethod(Object proxy, Method method, Object[] args, Method toMethod) throws Throwable {
+        int length = args == null ? 0 : args.length;
+        Object[] mappedArgs = mapArgs(args, method, toMethod, length);
+        Object result = invokeMethodForMappedArgs(proxy, method, toMethod, mappedArgs);
+        return result;
+    }
+
+    protected Object invokeMethodForMappedArgs(Object proxy, Method method, Method toMethod, Object[] mappedArgs) throws Throwable {
+        try {
+            Object result = adapteeRoot.invoke(proxy, toMethod, mappedArgs);
+            return mapResult(method, toMethod, result);
         } catch (Throwable t) {
             if (exceptionMapping != null) {
                 //forventer kun exceptions definert for webservice api. Disse er da annotert med @WebFault
@@ -93,17 +103,32 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
         }
     }
 
-    protected Object[] mapArgs(Object[] args, Method method, Method m) {
+    protected Object mapResult(Method method, Method m, Object result) {
+        TypeToken<?> fromTypeToken = TypeToken.of(adapteeClass).resolveType(m.getGenericReturnType());
+        TypeToken<?> toTypeToken = TypeToken.of(method.getDeclaringClass()).resolveType(method.getGenericReturnType());
+        return map.w2d(result, fromTypeToken.getType(), toTypeToken.getType());
+    }
+
+    /**
+     * Mapper argumenter i args slik at de kan brukes som innput parametre til  metode {@code toMethod}.
+     * Det opprettes like mange parametre som det {@code toMethod} krever, men det mappes kun {@code length}
+     * antall argumenter fra {@code args}. Metoden er laget slik fordi {@code toMethod} kan ha en ekstra context
+     * parameter som det må settes plass av til og videre så kan {@code fromMethod} kan ha en {@code SnapshotVersion}
+     * parameter som skal mappes via context parameteren og derfor ikke skal mappes her.
+     */
+    protected Object[] mapArgs(Object[] args, Method fromMethod, Method toMethod, int length) {
+        Object[] mappedArgs;
         if (args != null) {
-            Object[] mappedArgs = new Object[args.length];
-            Type[] toTypes = m.getGenericParameterTypes();
-            Type[] fromTypes = method.getGenericParameterTypes();
-            for (int i = 0; i < args.length; i++) {
+            Type[] toTypes = toMethod.getGenericParameterTypes();
+            mappedArgs = new Object[toTypes.length];
+            Type[] fromTypes = fromMethod.getGenericParameterTypes();
+            for (int i = 0; i < length; i++) {
                 mappedArgs[i] = map.d2w(args[i], fromTypes[i], toTypes[i]);
             }
             return mappedArgs;
         } else {
-            return null;
+            mappedArgs = new Object[toMethod.getParameterTypes().length];
         }
+        return mappedArgs;
     }
 }

@@ -53,6 +53,8 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
+                    <xs:element name="nr"  type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
                     <xs:element name="someBBId" type="relationdirectns:X1BBOneId"/>
                     <xs:element name="someCCsIds" type="relationdirectns:X1CCManyIdList"/>
                 </xs:sequence>
@@ -112,6 +114,8 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
+                    <xs:element name="nr"  type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
                     <xs:element name="invSomeBBIds" type="relationdirectns:X1AAIdListInverseRelation"/>
                 </xs:sequence>
             </xs:extension>
@@ -136,6 +140,8 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
+                    <xs:element name="nr"  type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
                     <xs:element name="invSomeCCsId" type="relationdirectns:X1AAIdInverseRelation"/>
                 </xs:sequence>
             </xs:extension>

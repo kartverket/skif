@@ -10,12 +10,34 @@ import no.statkart.skif.service.module.common.RemoteWSServiceModule;
 import no.statkart.skif.service.module.common.RemoteWSServiceModuleStrategy;
 
 /**
+ * En ModuleStrategyFactory for klienter. Definerer strategier for :
+ * <ul>
+ *     <li>RemoteServerModule</li>
+ *     <li>RemoteServiceModule</li>
+ * </ul>
+ *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  * @since 2.0
  */
 public class ClientModuleStrategyFactory extends AbstractModuleStrategyFactory {
+    final Class<RemoteServiceModuleStrategy> remoteServiceModuleStrategyBaseClass;
+
+    /**
+     * Oppretter en factory for klienten som anvender standard innstillinger for SKIF service rammeverk
+     */
     public ClientModuleStrategyFactory() {
+        this(RemoteServiceModuleStrategy.class);
+    }
+
+    /**
+     * Oppretter en factory for klienten som anvender {@code remoteServiceModuleStrategyClass}  for konfigurasjon av
+     * services.
+     *
+     * @param remoteServiceModuleStrategyClass
+     */
+    public ClientModuleStrategyFactory(Class<? extends RemoteServiceModuleStrategy> remoteServiceModuleStrategyClass) {
+        this.remoteServiceModuleStrategyBaseClass = (Class<RemoteServiceModuleStrategy>) remoteServiceModuleStrategyClass;   // TODO: fix classcast
         addStrategyForRemoteServiceModule();
         addStrategyForRemoteServerModule();
     }
@@ -23,7 +45,7 @@ public class ClientModuleStrategyFactory extends AbstractModuleStrategyFactory {
     protected void addStrategyForRemoteServiceModule() {
         addPrototype(
                 RemoteServiceModule.class,
-                StrategyTuples.newStrategyTuple(RemoteServiceModuleStrategy.class));
+                StrategyTuples.newStrategyTuple(remoteServiceModuleStrategyBaseClass));
         addPrototype(
                 RemoteWSServiceModule.class,
                 StrategyTuples.newStrategyTuple(RemoteWSServiceModuleStrategy.class)

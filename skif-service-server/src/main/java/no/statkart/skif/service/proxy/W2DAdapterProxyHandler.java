@@ -12,25 +12,24 @@ import java.lang.reflect.Type;
 
 /**
  * Adapter proxy som adapterer domain interface T til webservice interface A ved å mappe metoder med samme navn til hverandre og transformere
- * argumentene og resultatet vha et mapping2 objekt
+ * argumentene og resultatet vha et {@code map} objekt
  * <p/>
  * Adapteren har også exception håndtering dersom denne er tildelt og satt (ikke null).
  * Mapperen får som rolle å holde styr på evt wrapping av exceptions. Et eksempel kan være å wrappe alle ikke skif exceptions i en {@link no.statkart.skif.exception.ImplementationException}.
  *
  * @author Henrik Fredholm
- * @NotTheadSafe
  * @since 2.0
  */
 public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
-    final Mapping map;
+    protected final Mapping map;
 
     /**
      * Optional mapping for exceptions. Can be <tt>null</tt> if not set.
      */
     @Inject(optional = true)
     @Nullable
-    final ExceptionMapping exceptionMapping;
+    final protected ExceptionMapping exceptionMapping;
 
 
     @Inject()
@@ -52,7 +51,7 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
     @Override
     protected Method findMethod(Method method) throws NoSuchMethodException {
-        Class[] interfaces= adapteeClass.isInterface() ? (new Class[] {adapteeClass}) : adapteeClass.getInterfaces();
+        Class[] interfaces = adapteeClass.isInterface() ? (new Class[]{adapteeClass}) : adapteeClass.getInterfaces();
         for (Class interfaceClass : interfaces) {
             for (Method m : interfaceClass.getMethods()) {
                 if (m.getName().equals(method.getName())) {
@@ -63,17 +62,28 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
         throw new ImplementationException("No corresponding method in adaptee: " + method.toGenericString());
     }
 
-
     @Override
     public Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
-        Method adapteeMethod = getMethod(method);
-        Object[] mappedArgs;
-
+        Method toMethod = getMethod(method);
         try {
-            mappedArgs = mapArgs(args, adapteeMethod, method);
-            Object result = adapteeRoot.invoke(proxy, adapteeMethod, mappedArgs);
-            final Object wsResult = map.d2w(result, adapteeMethod.getGenericReturnType(), method.getGenericReturnType());
-            return wsResult;
+            Object result = mapArgsAndInvokeMethod(proxy, method, args, toMethod);
+            return result;
+        } catch (Throwable t) {
+            throw t;
+        }
+    }
+
+    protected Object mapArgsAndInvokeMethod(Object proxy, Method method, Object[] args, Method toMethod) throws Throwable {
+        int length = toMethod.getParameterTypes().length;
+        Object[] mappedArgs = mapArgs(args, method, toMethod, length);
+        Object result = invokeMethodForMappedArgs(proxy, method, toMethod, mappedArgs);
+        return result;
+    }
+
+    protected Object invokeMethodForMappedArgs(Object proxy, Method method, Method toMethod, Object[] mappedArgs) throws Throwable {
+        try {
+            Object result = adapteeRoot.invoke(proxy, toMethod, mappedArgs);
+            return mapResult(method, toMethod, result);
         } catch (Throwable t) {
             if (exceptionMapping != null) {
                 Throwable mappedException = exceptionMapping.d2w(t);
@@ -83,12 +93,24 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
         }
     }
 
-    protected Object[] mapArgs(Object[] args, Method m, Method method) {
+    protected Object mapResult(Method method, Method toMethod, Object result) {
+        return map.d2w(result, toMethod.getGenericReturnType(), method.getGenericReturnType());
+    }
+
+    /**
+     * Mapper argumenter i args slik at de kan brukes som innput parametre til {@code doapiMethod}.
+     * Det opprettes like mange parametre som det {@code doapiMethod} krever, men det mappes kun {@code length}
+     * antall argumenter fra {@code args}. Metoden er laget slik fordi {@code wsapiMethod} kan ha en ekstra context
+     * parameter i forhold til {@code doapiMethod}. Videre så kan {@code doapiMethod} også ha
+     * parametre som mappes via context parameteren i {@code wsapiMethod}.
+     */
+    protected Object[] mapArgs(Object[] args, Method wsapiMethod, Method doapiMethod, int length) {
+        Object[] mappedArgs;
         if (args != null) {
-            Object[] mappedArgs = new Object[args.length];
-            Type[] toTypes = m.getGenericParameterTypes();
-            Type[] fromTypes = method.getGenericParameterTypes();
-            for (int i = 0; i < args.length; i++) {
+            mappedArgs = new Object[doapiMethod.getParameterTypes().length];
+            Type[] toTypes = doapiMethod.getGenericParameterTypes();
+            Type[] fromTypes = wsapiMethod.getGenericParameterTypes();
+            for (int i = 0; i < length; i++) {
                 mappedArgs[i] = map.w2d(args[i], fromTypes[i], toTypes[i]);
             }
             return mappedArgs;

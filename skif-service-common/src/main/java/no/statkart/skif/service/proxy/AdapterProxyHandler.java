@@ -10,15 +10,13 @@ import java.util.Map;
  * Adapter proxy som adaptere interface T til A. Default implementasjon
  * for {@link #invoke} mapper metoder med samme navn og argumenter til hverandre.
  * <p/>
- * TODO: Gjøre trådsikker
  *
  * @author Henrik Fredholm
- * @NotTheadSafe
  */
 public class AdapterProxyHandler<T, A> extends TerminatingProxyHandler<T> {
-    final ProxyHandler<A> adapteeRoot;
+    final protected ProxyHandler<A> adapteeRoot;
     final protected Map<Method, Method> methodCache = new HashMap<Method, Method>();
-    final Class adapteeClass;
+    final protected Class adapteeClass;
 
     public AdapterProxyHandler(A adaptee) {
         adapteeClass = adaptee.getClass();

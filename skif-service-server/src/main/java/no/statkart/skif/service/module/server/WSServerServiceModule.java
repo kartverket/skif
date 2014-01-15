@@ -12,12 +12,12 @@ import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.service.ServiceContextMapper;
+import no.statkart.skif.service.proxy.W2DAdapterProxyHandler;
+import no.statkart.skif.service.proxy.W2DAdapterWithServiceContextMapperProxyHandler;
 import no.statkart.skif.service.ws.ServiceWSI;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Henrik Fredholm
@@ -29,6 +29,8 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
     protected final Mapping mapping;
     protected ExceptionMapping exceptionMapping;
     protected Class<? extends ServiceContextMapper<?>> serviceContextMapperClass;
+    protected Class<? extends W2DAdapterProxyHandler> w2DAdapterProxyHandlerImplClass = W2DAdapterWithServiceContextMapperProxyHandler.class;
+
     /**
      * Package name mapping for strategi.
      * @see WSServerServiceModuleStrategy#classWSIPackageMappings
@@ -82,6 +84,16 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
     public WSServerServiceModule setServiceContextMapperClass(@Nullable Class<? extends ServiceContextMapper<?>> serviceContextMapperClass) {
         this.serviceContextMapperClass = serviceContextMapperClass;
         return this;
+    }
+
+    public WSServerServiceModule setServiceContextMapperClass(@Nullable Class<? extends ServiceContextMapper<?>> serviceContextMapperClass, Class<? extends W2DAdapterProxyHandler> w2DAdapterProxyHandlerImplClass) {
+        this.serviceContextMapperClass = serviceContextMapperClass;
+        this.w2DAdapterProxyHandlerImplClass = w2DAdapterProxyHandlerImplClass;
+        return this;
+    }
+
+    public Class<? extends W2DAdapterProxyHandler> getW2DAdapterProxyHandlerImplClass() {
+        return w2DAdapterProxyHandlerImplClass;
     }
 
     /**
@@ -144,7 +156,7 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
         for (Class<? extends Object> serviceClass : services) {
             Class<? extends ServiceWSI> serviceWSIClass = strategy.findWSIClass(serviceClass, classLoader);
             strategy.bindSkifWSInterceptorForService(outerBinder, innerBinder, serviceClass, serviceWSIClass);
-            strategy.bindWSServiceChainFactoryForService(outerBinder, innerBinder, serviceClass, serviceWSIClass);
+            strategy.bindWSServiceChainFactoryForService(outerBinder, innerBinder, serviceClass, serviceWSIClass, w2DAdapterProxyHandlerImplClass);
             strategy.bindService(outerBinder, innerBinder, serviceClass, serviceWSIClass) ;
         }
     }

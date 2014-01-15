@@ -13,6 +13,7 @@ import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
 
 /**
  * @author Henrik Fredholm
@@ -53,15 +54,16 @@ public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy> {
         bind(serviceContextClass).in(ServiceRequestScoped.class);
         bind(Configuration.class).toInstance(moduleConfiguration.getConfiguration());
         bind(ModuleConfiguration.class).toInstance(moduleConfiguration);
+        // SnapshotVersionContext er trådlokal så derfor binnes den opp med Singleton scope istedet for med ServiceRequest scope
+        bind(SnapshotVersionContext.class).toInstance(SnapshotVersionContext.getInstance());
 
         // ServiceMode avhengige bindinger
         strategy.configure(binder());
     }
 
     @Provides
-    SnapshotVersion snapshotVersionProvider(ServiceContext serviceContext) {
-        // Kanskje vi bør bruke en ValueHolder i stedet og seed denne med initiell verdi fra serviceContext. Da blir det mulig å endre den underveis
-        return serviceContext.getSnapshotVersion();
+    SnapshotVersion snapshotVersionProvider(SnapshotVersionContext snapshotVersionContext) {
+        return snapshotVersionContext.getSnapshotVersion();
     }
 
 }

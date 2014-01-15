@@ -32,6 +32,8 @@
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
                 <xs:sequence>
+                    <xs:element name="nr"  type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
                     <xs:element name="entityComponentOne" type="relationcomponentns:X2EntityComponentOne"/>
                 </xs:sequence>
             </xs:extension>
@@ -98,7 +100,10 @@
     <xs:complexType name="X2BBOne">
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
-
+                <xs:sequence>
+                    <xs:element name="nr"  type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -119,6 +124,10 @@
     <xs:complexType name="X2CCMany">
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="nr"  type="xs:int"/>
+                    <xs:element name="text" type="xs:string"/>
+                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

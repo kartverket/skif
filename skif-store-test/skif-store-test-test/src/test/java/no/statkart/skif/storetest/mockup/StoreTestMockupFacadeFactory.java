@@ -6,6 +6,7 @@ import no.statkart.skif.mockup.AbstractMockupFacadeFactory;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
 
 /**
  * MockupFacadeFactory for StoreTest tester
@@ -15,8 +16,8 @@ import no.statkart.skif.store.SnapshotVersion;
  */
 public class StoreTestMockupFacadeFactory extends AbstractMockupFacadeFactory<StoreTestMockupFacade> {
     @Inject
-    public StoreTestMockupFacadeFactory(TestdataService testdataService, Provider<ServiceContext> serviceContextProvider) {
-        super(StoreTestMockupFacade.class, testdataService, serviceContextProvider);
+    public StoreTestMockupFacadeFactory(TestdataService testdataService, SnapshotVersionContext snapshotVersionContext) {
+        super(StoreTestMockupFacade.class, testdataService, snapshotVersionContext);
 //        setDefaultSnapshotVersion(SnapshotVersion.START);
     }
 }

@@ -9,6 +9,7 @@ import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.service.*;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
 
 import javax.net.ssl.HostnameVerifier;
 
@@ -79,18 +80,19 @@ public class RemoteServerModule extends ModuleWithStrategy<RemoteServerModuleStr
         bind(ServerUrlHolder.class).to(serverUrlHolderClass);
         bind(serverUrlHolderClass).in(Singleton.class);
 
+        bind(SnapshotVersionContext.class).toInstance(SnapshotVersionContext.getInstance());
+
         if (hostnameVerifierClass == null) {
             bind(HostnameVerifier.class).toProvider(Providers.<HostnameVerifier>of(null));
         } else {
             bind(HostnameVerifier.class).to(hostnameVerifierClass);
         }
         strategy.configure(binder());
+
     }
 
     @Provides
-    SnapshotVersion snapshotVersionProvider(ServiceContext serviceContext) {
-        // Kanskje vi bør bruke en ValueHolder i stedet og seed denne med initiell verdi fra serviceContext. Da blir det mulig å endre den underveis
-        return serviceContext.getSnapshotVersion();
+    SnapshotVersion snapshotVersionProvider(SnapshotVersionContext snapshotVersionContext) {
+        return snapshotVersionContext.getSnapshotVersion();
     }
-
 }

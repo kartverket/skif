@@ -13,6 +13,7 @@ import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.ServiceContextMapper;
 import no.statkart.skif.module.ModuleWithStrategy;
+import no.statkart.skif.service.proxy.D2WAdapterProxyHandler;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -115,7 +116,7 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
         final RemoteServiceModuleStrategy strategy = getStrategy();
         for (Class<? extends Object> service : services) {
             strategy.bindCallServiceChainFactoryForService(outerBinder, innerBinder, service);
-            strategy.bindService(outerBinder,innerBinder, service);
+            strategy.bindService(outerBinder, innerBinder, service);
         }
     }
 

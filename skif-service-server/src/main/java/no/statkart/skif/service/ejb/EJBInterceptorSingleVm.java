@@ -30,8 +30,12 @@ import java.util.Map;
  * allerede er aktivt.
  * <p/>
  * Klassen vil i de fleste tilfeller opprette et nytt {@link ServiceRequestScope} slik at kallet utføres isolert. En
- * unntagelse er nå kallet kommer i kontext av en annen EJB og ny transaksjon ikke er på krevet. Normalt vil slike
+ * unntagelse er nå kallet kommer i kontekst av en annen EJB og ny transaksjon ikke er på krevet. Normalt vil slike
  * kall dog gå uten om denne klassen og utføres direkte på servicens {@code ImplementationServiceChain}.
+ * <p/>
+ * Kaller må også selv sørge for å sette {@code SnapshotVersion} i {@code SnapshotVersionContext} til ønsket verdi
+ * for kallet. Dette er løst slik for å gjøre det mulig at kall som ikke trenger ny transaksjon kontekst kan utføres
+ * direkte på servicens {@code ImplementationServiceChain}
  *
  * @author Henrik Fredholm
  * @since 2.0
