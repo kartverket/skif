@@ -204,7 +204,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             StoreTestKodelisteLong kodelisteForEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KODELISTE_ID.asSnapshotVersionOld());
             assertEquals(kodelisteForEnumKodeA.getKodeIdClass(), AEnumKodeId.class);
             assertEquals(kodelisteForEnumKodeA.getId(), AEnumKodeId.KODELISTE_ID.asSnapshotVersionOld());
-            assertThat(kodelisteForEnumKodeA.getKodeIds()).containsExactly(
+            assertThat(kodelisteForEnumKodeA.getKoderIds()).containsExactly(
                     (KodeId<?>)AEnumKodeId.IkkeOppgittId.asSnapshotVersionOld(),
                     (KodeId<?>)AEnumKodeId.KodeAId.asSnapshotVersionOld(),
                     (KodeId<?>)AEnumKodeId.KodeBId.asSnapshotVersionOld()
@@ -308,7 +308,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             StoreTestKodelisteLong kodelisteForADbKode = persistenceSessionManager.get(ADbKodeId.KODELISTE_ID);
             assertEquals(kodelisteForADbKode.getKodeIdClass(), ADbKodeId.class);
             assertEquals(kodelisteForADbKode.getBeskrivelse().getText(norskNynorsk), "Kodelistebeskrivelse for ADbKode nynorsk");
-            assertThat(kodelisteForADbKode.getKodeIds()).contains(ADbKodeId.A1Id, ADbKodeId.A2Id);
+            assertThat(kodelisteForADbKode.getKoderIds()).contains(ADbKodeId.A1Id, ADbKodeId.A2Id);
         } finally {
             persistenceSessionManager.close();
         }

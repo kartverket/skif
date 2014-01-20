@@ -52,7 +52,7 @@ public class HistorikkDbKodeTest extends StoreTestTestCase {
             updateService.saveTransfer(insertTransfer);
 
             StoreTestKodelisteLong kodeliste1 = storeService.getObject(SimpleLocalizedDbKodeId.KODELISTE_ID);
-            Assert.assertEquals(kodeliste1.getKodeIds(), Arrays.asList(kodeId));
+            Assert.assertEquals(kodeliste1.getKoderIds(), Arrays.asList(kodeId));
 
             List<SimpleLocalizedDbKodeId> postInsertVersions = storeService.getVersions(kodeId, SnapshotVersion.START, SnapshotVersion.CURRENT);
             Assert.assertEquals(postInsertVersions.size(), 1, "Antall historikkinnslag etter opprettelse");
@@ -74,7 +74,7 @@ public class HistorikkDbKodeTest extends StoreTestTestCase {
             updateService.saveTransfer(deleteTransfer);
 
             StoreTestKodelisteLong kodeliste2 = storeService.getObject(SimpleLocalizedDbKodeId.KODELISTE_ID);
-            Assert.assertEquals(kodeliste2.getKodeIds(), Arrays.asList());
+            Assert.assertEquals(kodeliste2.getKoderIds(), Arrays.asList());
 
             List<SimpleLocalizedDbKodeId> postDeleteVersions = storeService.getVersions(kodeId, SnapshotVersion.START, SnapshotVersion.CURRENT);
             Assert.assertEquals(postDeleteVersions.size(), 2, "Antall historikkinnslag etter sletting");

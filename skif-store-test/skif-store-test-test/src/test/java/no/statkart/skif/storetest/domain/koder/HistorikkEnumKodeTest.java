@@ -26,7 +26,7 @@ public class HistorikkEnumKodeTest extends StoreTestTestCase {
 
     public void kodelisteUtenHistorikk() {
         StoreTestKodelisteLong kodeliste = store.get(SimpleEnumKodeId.KODELISTE_ID);
-        List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
+        List<KodeId<?>> kodeIds = kodeliste.getKoderIds();
 
         Assert.assertEquals(kodeIds, Arrays.asList(SimpleEnumKodeId.IkkeOppgittId, SimpleEnumKodeId.KodeAId, SimpleEnumKodeId.KodeBId));
     }
@@ -35,15 +35,15 @@ public class HistorikkEnumKodeTest extends StoreTestTestCase {
         SnapshotVersion past = SnapshotVersion.createInstance("2012-09-10 00:00:00.0");
 
         StoreTestKodelisteLong kodelisteCurrent = store.get(HistorikkEnumKodeId.KODELISTE_ID.asSnapshotVersion(SnapshotVersion.CURRENT));
-        List<KodeId<?>> kodeIdsCurrent = kodelisteCurrent.getKodeIds();
+        List<KodeId<?>> kodeIdsCurrent = kodelisteCurrent.getKoderIds();
         Assert.assertEquals(kodeIdsCurrent, Arrays.asList(HistorikkEnumKodeId.Kode1Id, HistorikkEnumKodeId.Kode3Id), "Current");
 
         StoreTestKodelisteLong kodelistePast = store.get(HistorikkEnumKodeId.KODELISTE_ID.asSnapshotVersion(past));
-        List<KodeId<?>> kodeIdsPast = kodelistePast.getKodeIds();
+        List<KodeId<?>> kodeIdsPast = kodelistePast.getKoderIds();
         Assert.assertEquals(kodeIdsPast, Arrays.asList(HistorikkEnumKodeId.Kode1Id.asSnapshotVersion(past), HistorikkEnumKodeId.Kode2Id.asSnapshotVersion(past), HistorikkEnumKodeId.Kode3Id.asSnapshotVersion(past)), "Past");
 
         StoreTestKodelisteLong kodelisteVeryPast = store.get(HistorikkEnumKodeId.KODELISTE_ID.asSnapshotVersion(SnapshotVersion.START));
-        List<KodeId<?>> kodeIdsVeryPast = kodelisteVeryPast.getKodeIds();
+        List<KodeId<?>> kodeIdsVeryPast = kodelisteVeryPast.getKoderIds();
         Assert.assertEquals(kodeIdsVeryPast, Arrays.asList(HistorikkEnumKodeId.Kode1Id.asSnapshotVersion(SnapshotVersion.START), HistorikkEnumKodeId.Kode2Id.asSnapshotVersion(SnapshotVersion.START)), "Very past");
     }
 

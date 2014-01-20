@@ -1,6 +1,5 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.localization.LocalizedString;
@@ -8,8 +7,6 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeliste;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeIdList;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * TypeMapper for Kodeliste i StoreTest applikasjonen.
@@ -40,7 +37,7 @@ public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi
         target.setKodeIdClass(calcWsapiKodeIdClassname(source.getKodeIdClass()));
         target.setNavn(getMapping().d2w(source.getNavn(), no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString.class));
         target.setBeskrivelse(getMapping().d2w(source.getBeskrivelse(), no.statkart.skif.storetest.wsapi.domain.basetyper.LocalizedString.class));
-        target.setKodeIds(getMapping().d2w(source.getKodeIds(), KodeIdList.class));
+        target.setKoderIds(getMapping().d2w(source.getKoderIds(), KodeIdList.class));
         return target;
     }
 
@@ -51,7 +48,7 @@ public class KodelisteTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi
         target.setKodeIdClass(calcDomainKodeIdClass(source.getKodeIdClass()));
         target.setNavn(getMapping().w2d(source.getNavn(), LocalizedString.class));
         target.setBeskrivelse(getMapping().w2d(source.getBeskrivelse(), LocalizedString.class));
-        target.setKodeIds(getMapping().w2d(source.getKodeIds(), List.class));
+        target.setKoderIds(getMapping().w2d(source.getKoderIds(), List.class));
         return target;
     }
 

@@ -60,7 +60,7 @@ public class EnumKodelisteManager {
         Kodeliste kodeliste = (Kodeliste) kodeSupport.getKodelisteId().createTypeInstance();
         kodeliste.setId(kodeSupport.getKodelisteId());
         kodeliste.setKodeIdClass(enumKodeIdClass);
-        kodeliste.setKodeIds(new ArrayList<KodeId<?>>(koder.keySet()));
+        kodeliste.setKoderIds(new ArrayList<KodeId<?>>(koder.keySet()));
         if (kodeliste instanceof Localized) {
             initializeLocalizedFieldsForKodeliste(kodeSupport, (Localized) kodeliste);
         }
@@ -85,7 +85,7 @@ public class EnumKodelisteManager {
         Kodeliste kodeliste = (Kodeliste) kodeSupport.getKodelisteId().createTypeInstance();
         kodeliste.setId(kodeSupport.getKodelisteId());
         kodeliste.setKodeIdClass(kodeIdClass);
-        kodeliste.setKodeIds(null); // Marker at dette må lastes senere
+        kodeliste.setKoderIds(null); // Marker at dette må lastes senere
         if (kodeliste instanceof Localized) {
             initializeLocalizedFieldsForKodeliste(kodeSupport, (Localized) kodeliste);
         }
@@ -232,7 +232,7 @@ public class EnumKodelisteManager {
 
                 kodeliste.setId(kodeliste.getId().asSnapshotVersion(bubbleId));
 
-                List<KodeId<?>> originalKodeIds = kodeliste.getKodeIds();
+                List<KodeId<?>> originalKodeIds = kodeliste.getKoderIds();
                 if (originalKodeIds != null) { // Dersom null, så ligger kodene i databasen og skal ikke håndteres her
                     List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>(originalKodeIds.size());
                     if (BubbleObjectWithHistory.class.isAssignableFrom(kodeliste.getKodeClass())) {
@@ -249,7 +249,7 @@ public class EnumKodelisteManager {
                             kodeIds.add((KodeId) originalKodeId.asSnapshotVersion(bubbleId));
                         }
                     }
-                    kodeliste.setKodeIds(kodeIds);
+                    kodeliste.setKoderIds(kodeIds);
                 }
             } else {
                 Kode kode = (Kode) copyObject;

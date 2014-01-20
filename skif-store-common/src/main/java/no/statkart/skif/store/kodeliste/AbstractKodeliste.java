@@ -2,7 +2,6 @@ package no.statkart.skif.store.kodeliste;
 
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.store.AbstractBubbleObject;
-import no.statkart.skif.internal.util.InternalLocaleUtils;
 
 import java.util.*;
 
@@ -21,7 +20,7 @@ public abstract class AbstractKodeliste extends AbstractBubbleObject implements 
 
     private String kodeTypeNavn;
     private Class<? extends KodeId<?>> kodeIdClass;
-    private List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>();
+    private List<KodeId<?>> koderIds = new ArrayList<KodeId<?>>();
     private boolean editerbar;
 
     // Avledet felt
@@ -61,17 +60,17 @@ public abstract class AbstractKodeliste extends AbstractBubbleObject implements 
     }
 
     @Override
-    public List<KodeId<?>> getKodeIds() {
-        return kodeIds;
+    public List<KodeId<?>> getKoderIds() {
+        return koderIds;
     }
 
     @Override
-    public void setKodeIds(List<? extends KodeId<?>> kodeIds) {
-        this.kodeIds = (List) kodeIds;
+    public void setKoderIds(List<? extends KodeId<?>> koderIds) {
+        this.koderIds = (List) koderIds;
     }
 
     public List<Kode> getKoder() {
-        return store.get(kodeIds);
+        return store.get(koderIds);
     }
 
 

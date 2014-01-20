@@ -26,7 +26,7 @@ public class KodelisteFinder {
     }
 
     public Collection<? extends KodeId<?>> getKodeIds() {
-        return null; //kodelistePersister.getKodeIds();
+        return null; //kodelistePersister.getKoderIds();
     }
 
     public Collection<? extends BubbleObject> getAllKodelisterAndKoder() {

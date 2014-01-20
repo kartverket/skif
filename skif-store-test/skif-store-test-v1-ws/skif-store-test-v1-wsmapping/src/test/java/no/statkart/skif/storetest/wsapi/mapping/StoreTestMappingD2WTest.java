@@ -139,7 +139,7 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getNavn().getEntry().size(), 1);
         assertEquals(target.getNavn().getEntry().get(0).getKey(), wsapiNavn.getEntry().get(0).getKey());
         assertEquals(target.getNavn().getEntry().get(0).getValue(), wsapiNavn.getEntry().get(0).getValue());
-        assertEquals(target.getKodeIds().getItem().size(), 0);
+        assertEquals(target.getKoderIds().getItem().size(), 0);
 
         // Map wsapi->domain
         StoreTestKodelisteLong domainKodeliste = map.w2d(target, StoreTestKodelisteLong.class);
@@ -148,7 +148,7 @@ public class StoreTestMappingD2WTest {
         assertEquals(domainKodeliste.getId().getValue(), new Long(1));
         testContext.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         testContext.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
-        assertEquals(domainKodeliste.getKodeIds().size(), 0);
+        assertEquals(domainKodeliste.getKoderIds().size(), 0);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class StoreTestMappingD2WTest {
         kodeliste.setKodeIdClass(AEnumKodeId.class);
         kodeliste.setBeskrivelse(testContext.createDomainLocalizedString("Test beskrivelse"));
         kodeliste.setNavn(testContext.createDomainLocalizedString("MyTestKodeliste"));
-        List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
+        List<KodeId<?>> kodeIds = kodeliste.getKoderIds();
         kodeIds.add(AEnumKodeId.KodeAId);
         kodeIds.add(AEnumKodeId.KodeBId);
 
@@ -177,11 +177,11 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getNavn().getEntry().size(), 1);
         assertEquals(target.getNavn().getEntry().get(0).getKey(), wsapiNavn.getEntry().get(0).getKey());
         assertEquals(target.getNavn().getEntry().get(0).getKey(), wsapiNavn.getEntry().get(0).getKey());
-        assertEquals(target.getKodeIds().getItem().size(), 2);
-        no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId kodeId = target.getKodeIds().getItem().get(0);
+        assertEquals(target.getKoderIds().getItem().size(), 2);
+        no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId kodeId = target.getKoderIds().getItem().get(0);
         assertEquals(kodeId.getClass(), no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId.class);
         assertEquals(kodeId.getValue(), "1");
-        no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId kodeId2 = target.getKodeIds().getItem().get(1);
+        no.statkart.skif.storetest.wsapi.domain.kodeliste.KodeId kodeId2 = target.getKoderIds().getItem().get(1);
         assertEquals(kodeId2.getClass(), no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId.class);
         assertEquals(kodeId2.getValue(), "2");
 
@@ -192,9 +192,9 @@ public class StoreTestMappingD2WTest {
         assertEquals(domainKodeliste.getId().getValue(), new Long(1));
         testContext.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         testContext.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
-        assertEquals(domainKodeliste.getKodeIds().size(), 2);
-        assertEquals(domainKodeliste.getKodeIds().get(0), AEnumKodeId.KodeAId);
-        assertEquals(domainKodeliste.getKodeIds().get(1), AEnumKodeId.KodeBId);
+        assertEquals(domainKodeliste.getKoderIds().size(), 2);
+        assertEquals(domainKodeliste.getKoderIds().get(0), AEnumKodeId.KodeAId);
+        assertEquals(domainKodeliste.getKoderIds().get(1), AEnumKodeId.KodeBId);
     }
 
     @Test
@@ -220,7 +220,7 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getNavn().getEntry().size(), 1);
         assertEquals(target.getNavn().getEntry().get(0).getKey(), wsapiNavn.getEntry().get(0).getKey());
         assertEquals(target.getNavn().getEntry().get(0).getValue(), wsapiNavn.getEntry().get(0).getValue());
-        assertEquals(target.getKodeIds().getItem().size(), 0);
+        assertEquals(target.getKoderIds().getItem().size(), 0);
 
         // Map wsapi->domain
         StoreTestKodelisteLong domainKodeliste = map.w2d(target, StoreTestKodelisteLong.class);
@@ -229,7 +229,7 @@ public class StoreTestMappingD2WTest {
         assertEquals(domainKodeliste.getId().getValue(), new Long(1));
         testContext.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         testContext.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
-        assertEquals(domainKodeliste.getKodeIds().size(), 0);
+        assertEquals(domainKodeliste.getKoderIds().size(), 0);
     }
 
     @Test
@@ -242,7 +242,7 @@ public class StoreTestMappingD2WTest {
         kodeliste.setBeskrivelse(testContext.createDomainLocalizedString("Test beskrivelse"));
         kodeliste.setNavn(testContext.createDomainLocalizedString("MyTestKodeliste"));
 
-        List<KodeId<?>> kodeIds = kodeliste.getKodeIds();
+        List<KodeId<?>> kodeIds = kodeliste.getKoderIds();
         kodeIds.add(ADbKodeId.A1Id);
         kodeIds.add(ADbKodeId.A2Id);
 
@@ -259,7 +259,7 @@ public class StoreTestMappingD2WTest {
         assertEquals(target.getNavn().getEntry().size(), 1);
         assertEquals(target.getNavn().getEntry().get(0).getKey(), wsapiNavn.getEntry().get(0).getKey());
         assertEquals(target.getNavn().getEntry().get(0).getValue(), wsapiNavn.getEntry().get(0).getValue());
-        assertEquals(target.getKodeIds().getItem().size(), 2);
+        assertEquals(target.getKoderIds().getItem().size(), 2);
 
         // Map wsapi->domain
         StoreTestKodelisteLong domainKodeliste = map.w2d(target, StoreTestKodelisteLong.class);
@@ -268,9 +268,9 @@ public class StoreTestMappingD2WTest {
         assertEquals(domainKodeliste.getId().getValue(), new Long(1));
         testContext.assertEquals(domainKodeliste.getBeskrivelse(), "Test beskrivelse");
         testContext.assertEquals(domainKodeliste.getNavn(), "MyTestKodeliste");
-        assertEquals(domainKodeliste.getKodeIds().size(), 2);
-        assertEquals(domainKodeliste.getKodeIds().get(0), ADbKodeId.A1Id);
-        assertEquals(domainKodeliste.getKodeIds().get(1), ADbKodeId.A2Id);
+        assertEquals(domainKodeliste.getKoderIds().size(), 2);
+        assertEquals(domainKodeliste.getKoderIds().get(0), ADbKodeId.A1Id);
+        assertEquals(domainKodeliste.getKoderIds().get(1), ADbKodeId.A2Id);
     }
 
 }

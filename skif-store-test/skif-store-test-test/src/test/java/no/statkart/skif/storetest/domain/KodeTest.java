@@ -11,7 +11,6 @@ import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.basic.BubbleWithKode;
 import no.statkart.skif.storetest.domain.demo.koder.*;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
@@ -42,7 +41,7 @@ public class KodeTest extends StoreTestTestCase {
         Assert.assertEquals(aEnumKode.getId(), AEnumKodeId.KodeAId);
         Assert.assertEquals(aEnumKode.getKodelisteId(), AEnumKodeId.KODELISTE_ID);
         Kodeliste kodeliste = store.get(aEnumKode.getKodelisteId());
-        assertThat(kodeliste.getKodeIds()).containsExactly(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeAId, AEnumKodeId.KodeBId);
+        assertThat(kodeliste.getKoderIds()).containsExactly(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeAId, AEnumKodeId.KodeBId);
     }
 
 
@@ -51,7 +50,7 @@ public class KodeTest extends StoreTestTestCase {
         Assert.assertEquals(aEnumKode.getId(), AEnumKodeId.KodeAId.asSnapshotVersionOld());
         Assert.assertEquals(aEnumKode.getKodelisteId(), AEnumKodeId.KODELISTE_ID.asSnapshotVersionOld());
         Kodeliste kodeliste = store.get(aEnumKode.getKodelisteId());
-        assertThat(kodeliste.getKodeIds()).containsExactly(
+        assertThat(kodeliste.getKoderIds()).containsExactly(
                 (KodeId<?>)AEnumKodeId.IkkeOppgittId.asSnapshotVersionOld(),
                 (KodeId<?>)AEnumKodeId.KodeAId.asSnapshotVersionOld(),
                 (KodeId<?>)AEnumKodeId.KodeBId.asSnapshotVersionOld()
@@ -161,7 +160,7 @@ public class KodeTest extends StoreTestTestCase {
         StoreTestKodelisteLongId<?> kodelisteId1 = new StoreTestKodelisteLongId<StoreTestKodelisteLong>(1L);
         StoreTestKodelisteLong kodeliste = kodelisteId1.createTypeInstance();
         Assert.assertNull(kodeliste.getId());
-        Assert.assertEquals(kodeliste.getKodeIds().size(), 0);
+        Assert.assertEquals(kodeliste.getKoderIds().size(), 0);
     }
 
     public void testGetKode() {
@@ -171,7 +170,7 @@ public class KodeTest extends StoreTestTestCase {
 
     public void testGetLongKodeliste() {
         Kodeliste kodeliste = store.get(AEnumKodeId.KODELISTE_ID);
-        List<Kode> list = store.get(kodeliste.getKodeIds());
+        List<Kode> list = store.get(kodeliste.getKoderIds());
         Assert.assertNotNull(list);
     }
 
@@ -179,14 +178,14 @@ public class KodeTest extends StoreTestTestCase {
         Kodeliste kodeliste = store.get(SEnumKodeId.KODELISTE_ID);
         StoreTestKodelisteString storeTestEnumKodelisteString = store.get(SEnumKodeId.KODELISTE_ID);
         Assert.assertSame(kodeliste, storeTestEnumKodelisteString);
-        List<Kode> list = store.get(kodeliste.getKodeIds());
+        List<Kode> list = store.get(kodeliste.getKoderIds());
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 3);
     }
 
     public void testGetStringKode() {
         StoreTestKodelisteLong kodeliste = store.get(XStrDbKodeId.KODELISTE_ID);
-        List<Kode> list = store.get(kodeliste.getKodeIds());
+        List<Kode> list = store.get(kodeliste.getKoderIds());
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 2);
     }

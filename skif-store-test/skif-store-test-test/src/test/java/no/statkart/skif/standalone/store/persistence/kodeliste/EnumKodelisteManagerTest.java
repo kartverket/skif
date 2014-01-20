@@ -26,7 +26,7 @@ public class EnumKodelisteManagerTest {
         enumKodeManager.installStatic(BEnumKodeId.class);
 
         Kodeliste aKodeliste = enumKodeManager.get(AEnumKodeId.KODELISTE_ID);
-        assertThat(aKodeliste.getKodeIds()).containsExactly(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeAId, AEnumKodeId.KodeBId);
+        assertThat(aKodeliste.getKoderIds()).containsExactly(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeAId, AEnumKodeId.KodeBId);
 
         AEnumKode aEnumKode_A = enumKodeManager.get(AEnumKodeId.KodeAId);
         assertEquals(aEnumKode_A.getId(), AEnumKodeId.KodeAId);

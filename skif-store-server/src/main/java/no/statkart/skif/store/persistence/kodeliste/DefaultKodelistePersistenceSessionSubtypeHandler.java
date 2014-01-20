@@ -66,7 +66,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
             if (bubble != null) {
                 // Kodeliste for EnumKode
                 Kodeliste kodeliste = (Kodeliste) bubble;
-                if (kodeliste.getKodeIds() == null) {
+                if (kodeliste.getKoderIds() == null) {
                     // Dette er et tegn på at kodelisten er statisk, men kodene ligger i databasen
                     loadKodeIds(kodeliste);
                 }
@@ -105,7 +105,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                     bubbles.add(bubble);
                     // Kodeliste for EnumKode
                     Kodeliste kodeliste = (Kodeliste) bubble;
-                    if (kodeliste.getKodeIds() == null) {
+                    if (kodeliste.getKoderIds() == null) {
                         // Dette er et tegn på at kodelisten er statisk, men kodene ligger i databasen
                         loadKodeIds(kodeliste);
                     }
@@ -137,7 +137,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
      * bør {@link #loadKodeIds(java.util.Collection)} brukes istedet.
      */
     protected void loadKodeIds(Kodeliste kodeliste) {
-        if (kodeliste.getKodeIds() != null && !kodeliste.getKodeIds().isEmpty()) return;
+        if (kodeliste.getKoderIds() != null && !kodeliste.getKoderIds().isEmpty()) return;
 
         Class<? extends Kode> kodeClass = kodeliste.getKodeClass();
         try {
@@ -154,7 +154,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 }
                 addFilterKodeForSnapshot(kodeIds, t);
             }
-            kodeliste.setKodeIds(kodeIds);
+            kodeliste.setKoderIds(kodeIds);
         } finally {
             persistenceSessionMaster.releaseSession();
         }
@@ -174,7 +174,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         Set<Class<? extends Kode>> kodeBaseClasses = new HashSet<Class<? extends Kode>>();
 
         for (Kodeliste kodeliste : kodelister) {
-            if (kodeliste.getKodeIds().isEmpty()) {
+            if (kodeliste.getKoderIds().isEmpty()) {
                 Class<? extends Kode> kodeBaseType = getKodeBaseType(kodeliste);
                 kodeBaseClasses.add(kodeBaseType);
             }
@@ -209,8 +209,8 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         }
 
         for (Kodeliste kodeliste : kodelister) {
-            if (kodeliste.getKodeIds().isEmpty() && kodeIdsMap.containsKey(kodeliste.getId())) {
-                kodeliste.setKodeIds(kodeIdsMap.get(kodeliste.getId()));
+            if (kodeliste.getKoderIds().isEmpty() && kodeIdsMap.containsKey(kodeliste.getId())) {
+                kodeliste.setKoderIds(kodeIdsMap.get(kodeliste.getId()));
             }
         }
     }
@@ -343,7 +343,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         Collection<Kodeliste> kodelisterWithoutKodeIds = new ArrayList<Kodeliste>();
         for (Kodeliste kodeliste : kodelister) {
             result.add(kodeliste.getId());
-            if (kodeliste.getKodeIds().isEmpty()) {
+            if (kodeliste.getKoderIds().isEmpty()) {
                 kodelisterWithoutKodeIds.add(kodeliste);
             }
         }

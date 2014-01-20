@@ -19,9 +19,9 @@ public interface Kodeliste extends BubbleObject {
 
     void setKodeIdClass(Class<? extends KodeId<?>> kodeIdClass);
 
-    List<KodeId<?>> getKodeIds();
+    List<KodeId<?>> getKoderIds();
 
-    void setKodeIds(List<? extends KodeId<?>> kodeIds);
+    void setKoderIds(List<? extends KodeId<?>> kodeIds);
 
 
     boolean isEditerbar();
