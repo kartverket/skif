@@ -3,10 +3,7 @@ package no.statkart.skif.storetest.wsapi.mapping;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.mapper.*;
-import no.statkart.skif.mapping.InverseRelationTypeMapperFactory;
-import no.statkart.skif.mapping.BubbleIdTypeMapperFactory;
-import no.statkart.skif.mapping.KodelisteTransferTypeMapper;
-import no.statkart.skif.mapping.SnapshotBubbleIdTypeMapperFactory;
+import no.statkart.skif.mapping.*;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.*;
@@ -60,6 +57,7 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapperFactory(new SnapshotBubbleIdTypeMapperFactory());
         addMapperFactory(new BubbleIdTypeMapperFactory(no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId.class, snapshotVersionProvider));
         addMapperFactory(new KodeTypeMapperFactory());
+        addMapperFactory(new TransferTypeMapperFactory());
 
         addMapperFactory(new InverseRelationTypeMapperFactory());
 
@@ -102,7 +100,5 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
                 return target;
             }
         });
-
-        addMapper(new KodelisteTransferTypeMapper<no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer>(no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer.class));
     }
 }

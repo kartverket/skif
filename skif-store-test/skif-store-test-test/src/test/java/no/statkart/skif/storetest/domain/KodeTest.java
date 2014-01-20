@@ -8,6 +8,7 @@ import no.statkart.skif.store.Store;
 import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.Kodeliste;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.basic.BubbleWithKode;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteId;
@@ -193,8 +194,8 @@ public class KodeTest extends StoreTestTestCase {
 
     public void testGetKodelisteTransfer() {
         KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
-        KodelisteTransfer<StoreTestKodelisteId<?>> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
-        List<? extends StoreTestKodelisteId<?>> kodelisteIds = kodelisteTransfer.getKodelisteIds();
+        KodelisteTransfer<?> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
+        List<? extends KodelisteId> kodelisteIds = kodelisteTransfer.getKodelisteIds();
 
         assertThat(kodelisteIds).contains(
                 AEnumKodeId.KODELISTE_ID,
@@ -207,7 +208,7 @@ public class KodeTest extends StoreTestTestCase {
                 );
 
         store.register(kodelisteTransfer);
-        List list = store.get(kodelisteTransfer.getKodelisteIds());
+        List list = store.get(kodelisteIds);
 
         Assert.assertNotNull(kodelisteTransfer);
     }

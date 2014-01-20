@@ -22,12 +22,12 @@ public class KodelisteServiceEJBBean extends EJBTimedService implements Kodelist
     private KodelisteService serviceImpl;
 
     @Override
-    public <I extends KodelisteId<?>> KodelisteTransfer<I> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion) {
+    public KodelisteTransfer<? extends KodelisteId<?>> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion) {
         return serviceImpl.getKodeliste(kodeIdClassName, snapshotVersion);
     }
 
     @Override
-    public <I extends KodelisteId<?>> KodelisteTransfer<I> getKodelister(SnapshotVersion snapshotVersion) {
+    public KodelisteTransfer<? extends KodelisteId<?>> getKodelister(SnapshotVersion snapshotVersion) {
         return serviceImpl.getKodelister(snapshotVersion);
     }
 }

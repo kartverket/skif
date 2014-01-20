@@ -206,7 +206,7 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public void registerEntries(int level, BubbleTransfer bubbleTransfer) {
-        for (Object object : bubbleTransfer.getObjects().values()) {
+        for (Object object : bubbleTransfer.getBubbleObjects().values()) {
             BubbleObject bubbleObject = (BubbleObject) object;
             StoreEntry entry = storeCache.get(bubbleObject.getId());
             if (entry == null) {

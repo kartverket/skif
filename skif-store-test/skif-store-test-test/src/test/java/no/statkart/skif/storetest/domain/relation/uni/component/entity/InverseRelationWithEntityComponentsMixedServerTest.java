@@ -1,6 +1,5 @@
 package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
@@ -18,6 +17,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -65,7 +65,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     }
 
     private X2BBOne register(X2BBOne b) {
-        store.register(new BubbleTransfer(ImmutableMap.of(b.getId(), b)) {
+        store.register(new BubbleTransfer<Void>(null, Collections.singletonList(b)) {
         });
         store.cacheMaterialisedRelations(b);
         return store.get(b.getId());

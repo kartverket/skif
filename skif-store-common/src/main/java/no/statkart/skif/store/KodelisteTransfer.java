@@ -1,34 +1,27 @@
 package no.statkart.skif.store;
 
-import no.statkart.skif.store.kodeliste.Kode;
-import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 
-import java.awt.datatransfer.Transferable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
  * Transfer klasse for kodelister
  *
  * @author Henrik Fredholm
+ * @author Tor Egil R. Strand
  * @since 2.1
  */
-public class KodelisteTransfer<I extends KodelisteId> extends BubbleTransfer {
+public class KodelisteTransfer<I extends KodelisteId> extends BubbleTransfer<List<? extends I>> {
     private static final long serialVersionUID = 1L;
 
-    /** Sortert liste av alle kodelisteIds */
-    private List<? extends I> kodelisteIds = new ArrayList<I>();
-
-    public KodelisteTransfer(List<? extends I> kodelisteIds, Collection<? extends BubbleObject>... objects) {
-        for (Collection<? extends BubbleObject> objectList : objects) {
-            add(objectList);
-        }
-        this.kodelisteIds = kodelisteIds;
+    public KodelisteTransfer(List<? extends I> kodelisteIds, Iterable<? extends BubbleObject> objects) {
+        super(kodelisteIds, objects);
     }
 
+    /**
+     * Alternativ til {@link #getResult()}.
+     */
     public List<? extends I> getKodelisteIds() {
-        return kodelisteIds;
+        return getResult();
     }
 }

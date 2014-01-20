@@ -15,12 +15,12 @@ import java.util.Collection;
  */
 public class KodelisteServiceImpl extends no.statkart.skif.store.kodeliste.KodelisteServiceImpl implements KodelisteService {
     @Override
-    public <I extends KodelisteId<?>> KodelisteTransfer<I> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion) {
+    public KodelisteTransfer<? extends KodelisteId<?>> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion) {
         return super.getKodeliste(kodeIdClassName, snapshotVersion);
     }
 
     @Override
-    public <I extends KodelisteId<?>> KodelisteTransfer<I> getKodelister(SnapshotVersion snapshotVersion) {
+    public KodelisteTransfer<? extends KodelisteId<?>> getKodelister(SnapshotVersion snapshotVersion) {
         return super.getKodelister(snapshotVersion);
     }
 }

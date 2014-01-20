@@ -1,5 +1,6 @@
 package no.statkart.skif.store.kodeliste;
 
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.store.BubbleObject;
@@ -31,7 +32,7 @@ public class KodelisteServiceImpl implements KodelisteService {
     }
 
     @Override
-    public <I extends KodelisteId<?>> KodelisteTransfer<I> getKodelister(SnapshotVersion snapshotVersion) {
+    public KodelisteTransfer<? extends KodelisteId<?>> getKodelister(SnapshotVersion snapshotVersion) {
         List<KodelisteId<?>> kodelisteIds = getKodelisteSubtypeHandler(snapshotVersion).getKodelisteIds();
         List<Kodeliste> kodelisteList =store.get(kodelisteIds);
         List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>(kodelisteList.size() * 10);
@@ -39,12 +40,12 @@ public class KodelisteServiceImpl implements KodelisteService {
             kodeIds.addAll(kodeliste.getKodeIds());
         }
         List<Kode> koder = store.get(kodeIds);
-        KodelisteTransfer kodelisteTransfer = new KodelisteTransfer(kodelisteIds, kodelisteList, koder);
+        KodelisteTransfer<KodelisteId<?>> kodelisteTransfer = new KodelisteTransfer<KodelisteId<?>>(kodelisteIds, Iterables.concat(kodelisteList, koder));
         return kodelisteTransfer;
     }
 
     @Override
-    public <I extends KodelisteId<?>> KodelisteTransfer<I> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion) {
+    public KodelisteTransfer<? extends KodelisteId<?>> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion) {
         throw new NotImplementedException();
     }
 }

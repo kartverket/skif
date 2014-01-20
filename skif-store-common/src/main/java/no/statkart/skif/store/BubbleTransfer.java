@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
-import java.io.Serializable;
+import com.google.common.collect.Iterables;
+
 import java.util.*;
 
 /**
@@ -10,7 +11,7 @@ import java.util.*;
  * {@code BubbleTransfer} klassen er abstrakt og må subklasses for hver brukstilfelle.
  * Subklasser må definere en konstruktør som er ansvarlig for å legge inn alle objekter
  * som behøves i overførslen. Dette gjøres ved i konstruktøren å kalle
- * {@link #add(BubbleObject)} and {@link #add(Collection) add(BubbleObjects)} metodene.<p>
+ * {@link #add(BubbleObject)} and {@link #addAll(Iterable) add(BubbleObjects)} metodene.<p>
  * <p/>
  * Subklasser av <code>BubbleTransfer</code> bør definere tilgangsmetoder for å hent ut transfer objektets
  * hoved BubbleId'er. BubbleTransfer subklasser bør aldrig tilbyde tilgangsmetoder for å hente ut
@@ -46,40 +47,22 @@ import java.util.*;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public abstract class BubbleTransfer implements Serializable {
+public abstract class BubbleTransfer<T> extends Transfer<T> {
     private static final long serialVersionUID = 1L;
 
-    private Map objects = new LinkedHashMap(256);
-    private Set lockedIds = new HashSet();
+    private Set<BubbleId> lockedIds = new HashSet<BubbleId>();
 
-    public BubbleTransfer() {
+    public BubbleTransfer(T result) {
+        super(result);
     }
 
-    public BubbleTransfer(Map objects) {
-        this.objects = objects;
+    public BubbleTransfer(T result, Iterable<? extends BubbleObject> objects) {
+        super(result, objects);
     }
 
-    public BubbleTransfer(Map objects, Set lockedIds) {
-        this.lockedIds = lockedIds;
-        this.objects = objects;
-    }
-
-    /**
-     * Returns true if the transfer object is empty.
-     *
-     * @return true if the transfer is empty, otherwise false.
-     */
-    public final boolean isEmpty() {
-        return objects.isEmpty();
-    }
-
-    /**
-     * Get all bubble objects in this transfer.
-     *
-     * @return a set of all <code>BubbleObject</code>s in this transfer
-     */
-    public final Map getObjects() {
-        return Collections.unmodifiableMap(objects);
+    public BubbleTransfer(T result, Iterable<? extends BubbleObject> objects, Iterable<BubbleId> lockedIds) {
+        this(result, objects);
+        Iterables.addAll(this.lockedIds, lockedIds);
     }
 
     /**
@@ -87,33 +70,23 @@ public abstract class BubbleTransfer implements Serializable {
      *
      * @return a set og <code>BubbleId</code>s
      */
-    public final Set getLockedIds() {
+    public final Set<BubbleId> getLockedIds() {
         return Collections.unmodifiableSet(lockedIds);
-    }
-
-    /**
-     * Get an object from this transfer.
-     *
-     * @param id bubble id for the object
-     * @return a bubble object
-     */
-    public final BubbleObject getObject(BubbleId id) {
-        return (BubbleObject) objects.get(id);
     }
 
     /**
      * Legg til objekt som med sikkerhet ikke er blitt låst.
      */
     protected final void addUnlocked(BubbleObject bubbleObject) {
-        objects.put(bubbleObject.getId(), bubbleObject);
+        super.add(bubbleObject);
     }
 
     /**
-     * Legg til et objekt som kanskje er blitt låst. Om objektet er låst eller ikke sjekkes mot Spif.
+     * Legg til et objekt som kanskje er blitt låst. Om objektet er låst eller ikke sjekkes mot {@link no.statkart.skif.store.BubbleObject#store()}.
      */
-    protected final void add(BubbleObject bubbleObject) {
-        objects.put(bubbleObject.getId(), bubbleObject);
-        if (bubbleObject.store().isLocked(bubbleObject.getId())) {
+    public final void add(BubbleObject bubbleObject) {
+        super.add(bubbleObject);
+        if (bubbleObject.store() != null && bubbleObject.store().isLocked(bubbleObject.getId())) {
             lockedIds.add(bubbleObject.getId());
         }
     }
@@ -121,23 +94,16 @@ public abstract class BubbleTransfer implements Serializable {
     /**
      * Legg til en samling objekter som med sikkerhet ikke er blitt låst.
      */
-    protected final void addUnlocked(Collection<BubbleObject> bubbleObjects) {
-        for (BubbleObject bubbleObject : bubbleObjects) {
-            objects.put(bubbleObject.getId(), bubbleObject);
-        }
+    public final void addUnlocked(Iterable<? extends BubbleObject> bubbleObjects) {
+        super.addAll(bubbleObjects);
     }
 
     /**
-     * Legg til et objekt som kanskje er blitt låst. Om objektet er låst eller ikke sjekkes mot Spif.
+     * Legg til et objekt som kanskje er blitt låst. Om objektet er låst eller ikke sjekkes mot {@link no.statkart.skif.store.BubbleObject#store()}.
      */
-    protected final void add(Collection bubbleObjects) {
-        for (Iterator it = bubbleObjects.iterator(); it.hasNext(); ) {
-            BubbleObject bubbleRoot = (BubbleObject) it.next();
-            objects.put(bubbleRoot.getId(), bubbleRoot);
-            Store store = bubbleRoot.store();
-            if (store != null && store.isLocked(bubbleRoot.getId())) {
-                lockedIds.add(bubbleRoot.getId());
-            }
+    public final void addAll(Iterable<? extends BubbleObject> bubbleObjects) {
+        for (BubbleObject bubbleObject : bubbleObjects) {
+            add(bubbleObject);
         }
     }
 }
