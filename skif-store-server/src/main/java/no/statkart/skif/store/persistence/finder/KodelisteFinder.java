@@ -22,7 +22,7 @@ public class KodelisteFinder {
     }
 
     public Collection<? extends KodelisteId<?>> getKodelisteIds() {
-        return null; //kodelistePersister.getKodelisteIds();
+        return null; //kodelistePersister.getKodelisterIds();
     }
 
     public Collection<? extends KodeId<?>> getKodeIds() {

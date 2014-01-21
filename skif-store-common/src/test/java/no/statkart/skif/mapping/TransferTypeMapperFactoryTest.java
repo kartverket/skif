@@ -6,9 +6,12 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 import no.statkart.skif.mapper.*;
 import no.statkart.skif.store.*;
+import no.statkart.skif.store.kodeliste.KodelisteLong;
+import no.statkart.skif.store.kodeliste.KodelisteLongId;
 import org.fest.assertions.api.Assertions;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +66,33 @@ public class TransferTypeMapperFactoryTest {
         Assertions.assertThat(funnetIds).containsExactly(id1, id2);
     }
 
+    @Test
+    public void testKodeliste() {
+        Mapping mapping = new TransferTypeMapperFactoryTestMapper().getMapping();
+
+        List<DomainKodelisteId<?>> kodelisteIds = new ArrayList<DomainKodelisteId<?>>();
+        DomainKodelisteId<DomainKodeliste> kodelisteId = new DomainKodelisteId<DomainKodeliste>(1L);
+        kodelisteIds.add(kodelisteId);
+
+        List<DomainKodeliste> kodelister = new ArrayList<DomainKodeliste>();
+        DomainKodeliste kodeliste = new DomainKodeliste();
+        kodeliste.setId(kodelisteId);
+        kodelister.add(kodeliste);
+
+        KodelisteTransfer<DomainKodelisteId<?>> kodelisteTransfer = new KodelisteTransfer<DomainKodelisteId<?>>(kodelisteIds, kodelister);
+
+        ApiKodelisteTransfer apiKodelisteTransfer = mapping.d2w(kodelisteTransfer, ApiKodelisteTransfer.class);
+
+        Assertions.assertThat(apiKodelisteTransfer.getKodelisterIds().getItem()).containsExactly(new ApiKodelisteId("1"));
+        Assertions.assertThat(apiKodelisteTransfer.getBubbleObjects().getItem()).containsExactly(new ApiKodeliste(new ApiKodelisteId("1")));
+
+        KodelisteTransfer domeneKodelisteTransfer = mapping.w2d(apiKodelisteTransfer, KodelisteTransfer.class);
+
+        Assertions.assertThat(domeneKodelisteTransfer.getKodelisterIds()).containsExactly(kodelisteId);
+        Assertions.assertThat(domeneKodelisteTransfer.getBubbleObjects()).hasSize(1);
+        Assertions.assertThat(domeneKodelisteTransfer.getBubbleObjects().get(kodelisteId)).isNotNull();
+    }
+
     public static class TransferTypeMapperFactoryTestMapper extends AbstractMapper<Mapping> {
         public TransferTypeMapperFactoryTestMapper() {
             super(Mapping.class);
@@ -71,11 +101,14 @@ public class TransferTypeMapperFactoryTest {
             MappingOverrideBuilder mappingOverrideBuilder = new MappingOverrideBuilder();
             mappingOverrideBuilder.addBidirectional(ApiObject.class, DomainObject.class);
             mappingOverrideBuilder.addBidirectional(ApiObjectId.class, DomainObjectId.class);
+            mappingOverrideBuilder.addBidirectional(ApiKodeliste.class, DomainKodeliste.class);
+            mappingOverrideBuilder.addBidirectional(ApiKodelisteId.class, DomainKodelisteId.class);
             mappingResolver.overrideClassMappings(mappingOverrideBuilder.build());
             setMappingResolver(mappingResolver);
 
             addMapperFactory(new IdentityTypeMapperFactory().useIdentityMappingForBasicTypes());
             addMapperFactory(new BubbleIdTypeMapperFactory(ApiObjectId.class, Providers.of(SnapshotVersion.CURRENT)));
+            addMapperFactory(new BubbleIdTypeMapperFactory(ApiKodelisteId.class, Providers.of(SnapshotVersion.CURRENT)));
             addMapperFactory(new TransferTypeMapperFactory());
             addMapperFactory(new CollectionMapperFactory());
             addMapperFactory(new DefaultTypeMapperFactory());
@@ -266,5 +299,162 @@ public class TransferTypeMapperFactoryTest {
         public void setIds(ApiIdList ids) {
             this.ids = ids;
         }
+    }
+
+    public static class ApiKodelisteTransfer {
+        private ApiKodelisteList bubbleObjects;
+        private ApiKodelisteIdList kodelisterIds;
+
+        public ApiKodelisteList getBubbleObjects() {
+            return bubbleObjects;
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public void setBubbleObjects(ApiKodelisteList bubbleObjects) {
+            this.bubbleObjects = bubbleObjects;
+        }
+
+        public ApiKodelisteIdList getKodelisterIds() {
+            return kodelisterIds;
+        }
+
+        public void setKodelisterIds(ApiKodelisteIdList kodelisterIds) {
+            this.kodelisterIds = kodelisterIds;
+        }
+    }
+
+    public static class DomainKodeliste extends KodelisteLong {
+        private String text;
+
+        @Override
+        public DomainKodelisteId<?> getId() {
+            return (DomainKodelisteId<?>) super.getId();
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+    }
+
+    public static class DomainKodelisteId<T extends DomainKodeliste> extends KodelisteLongId<T> {
+        public DomainKodelisteId(Long value) {
+            super(value);
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public DomainKodelisteId(Long value, SnapshotVersion version) {
+            super(value, version);
+        }
+    }
+
+    public static class ApiKodelisteId {
+        private String value;
+
+        // Api-klasser har normal ikke kostruktører, men her har de det for å forenkle testing
+
+        @SuppressWarnings("UnusedDeclaration")
+        public ApiKodelisteId() {
+        }
+
+        public ApiKodelisteId(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        // Api-klasser har normal ikke equals og hashCode, men her har de det for å forenkle testing
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ApiKodelisteId that = (ApiKodelisteId) o;
+
+            return value.equals(that.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+    }
+
+    public static class ApiKodeliste {
+        private ApiKodelisteId id;
+
+        // Api-klasser har normal ikke kostruktører, men her har de det for å forenkle testing
+
+        @SuppressWarnings("UnusedDeclaration")
+        public ApiKodeliste() {
+        }
+
+        public ApiKodeliste(ApiKodelisteId id) {
+            this.id = id;
+        }
+
+        public ApiKodelisteId getId() {
+            return id;
+        }
+
+        public void setId(ApiKodelisteId id) {
+            this.id = id;
+        }
+        // Api-klasser har normal ikke equals og hashCode, men her har de det for å forenkle testing
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ApiKodeliste apiKodeliste = (ApiKodeliste) o;
+
+            return id.equals(apiKodeliste.id);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = id.hashCode();
+            return result;
+        }
+    }
+
+    public static class ApiKodelisteList {
+        private List<ApiKodeliste> item;
+
+        public List<ApiKodeliste> getItem() {
+            return item;
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public void setItem(List<ApiKodeliste> item) {
+            this.item = item;
+        }
+
+    }
+
+    public static class ApiKodelisteIdList {
+        private List<ApiKodelisteId> item;
+
+        public List<ApiKodelisteId> getItem() {
+            return item;
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public void setItem(List<ApiKodelisteId> item) {
+            this.item = item;
+        }
+
     }
 }

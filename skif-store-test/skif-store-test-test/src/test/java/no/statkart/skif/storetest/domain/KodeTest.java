@@ -194,7 +194,7 @@ public class KodeTest extends StoreTestTestCase {
     public void testGetKodelisteTransfer() {
         KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
         KodelisteTransfer<?> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
-        List<? extends KodelisteId> kodelisteIds = kodelisteTransfer.getKodelisteIds();
+        List<? extends KodelisteId> kodelisteIds = kodelisteTransfer.getKodelisterIds();
 
         assertThat(kodelisteIds).contains(
                 AEnumKodeId.KODELISTE_ID,
@@ -218,7 +218,7 @@ public class KodeTest extends StoreTestTestCase {
 //        KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
 //        List<Kode> objects = new ArrayList<Kode>();
 //        store.register(kodelisteTransfer.getObjects(), objects);
-//        KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisteIds()));
+//        KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisterIds()));
 //        BEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(BEnumKodeId.class, "B");
 //        assertSame(bKodeId, BEnumKodeId.KodeBId);
 //    }

@@ -2,7 +2,9 @@ package no.statkart.skif.mapping;
 
 import com.google.common.reflect.TypeToken;
 import no.statkart.skif.mapper.*;
+import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.Transfer;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -10,10 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 /**
  * TypeMapperFactory for {@link Transfer}.
@@ -27,6 +26,9 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
         if (domainTypeToken.getRawType().equals(Transfer.class)) {
             //noinspection unchecked
             return new TransferTypeMapper(wsapiTypeToken, domainTypeToken);
+        } else if (domainTypeToken.getRawType().equals(KodelisteTransfer.class)) {
+            //noinspection unchecked
+            return new KodelisteTransferTypeMapper(wsapiTypeToken, domainTypeToken);
         } else {
             return null;
         }
@@ -114,6 +116,92 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
             LinkedHashSet bubbleObjects = getMapping().w2d(bubbleObjectList, LinkedHashSet.class);
 
             return new Transfer<ResultT>(result, bubbleObjects);
+        }
+    }
+
+    // TODO: Det bør være mulig å generalisere vekk denne
+    private static class KodelisteTransferTypeMapper<WsapiT> extends AbstractTypeMapper<WsapiT, KodelisteTransfer<?>, Mapping> {
+        private final TypeToken<List<? extends KodelisteId>> resultTypeToken;
+        private final PropertyDescriptor bubbleObjectsProperty, kodelisterIdsProperty;
+
+        public KodelisteTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<KodelisteTransfer<?>> domainTypeToken) {
+            //noinspection unchecked
+            super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<KodelisteTransfer<?>>) domainTypeToken.getRawType(), Mapping.class);
+
+            Type domainType = domainTypeToken.getType();
+            if (domainType instanceof Class) {
+                // Isj
+                resultTypeToken = (TypeToken) TypeToken.of(Object.class);
+            } else {
+                ParameterizedType parameterizedType = (ParameterizedType) domainType;
+                //noinspection unchecked
+                resultTypeToken = (TypeToken) TypeToken.of(parameterizedType.getActualTypeArguments()[0]);
+            }
+
+            try {
+                bubbleObjectsProperty = new PropertyDescriptor("bubbleObjects", wsapiTypeToken.getRawType());
+            } catch (IntrospectionException e) {
+                throw new MappingException("Unable to find bubbleObjects on " + wsapiTypeToken.getRawType().getName(), e);
+            }
+            try {
+                kodelisterIdsProperty = new PropertyDescriptor("kodelisterIds", wsapiTypeToken.getRawType());
+            } catch (IntrospectionException e) {
+                throw new MappingException("Unable to find kodelisterIdsProperty on " + wsapiTypeToken.getRawType().getName(), e);
+            }
+        }
+
+        @Override
+        public WsapiT mapDomainObject(KodelisteTransfer<?> source) {
+            WsapiT target = createWsapiT();
+
+            Object kodelisterIds = getMapping().d2w(source.getKodelisterIds(), kodelisterIdsProperty.getPropertyType());
+            Object bubbleObjectList = getMapping().d2w(source.getBubbleObjects().values(), bubbleObjectsProperty.getPropertyType());
+
+            try {
+                bubbleObjectsProperty.getWriteMethod().invoke(target, bubbleObjectList);
+            } catch (IllegalAccessException e) {
+                throw new MappingException("Error during writing to " + bubbleObjectsProperty.getWriteMethod().toGenericString(), e);
+            } catch (InvocationTargetException e) {
+                throw new MappingException("Error during writing to " + bubbleObjectsProperty.getWriteMethod().toGenericString(), e);
+            }
+            
+            try {
+                kodelisterIdsProperty.getWriteMethod().invoke(target, kodelisterIds);
+            } catch (IllegalAccessException e) {
+                throw new MappingException("Error during writing to " + kodelisterIdsProperty.getWriteMethod().toGenericString(), e);
+            } catch (InvocationTargetException e) {
+                throw new MappingException("Error during writing to " + kodelisterIdsProperty.getWriteMethod().toGenericString(), e);
+            }
+
+            return target;
+        }
+
+        @Override
+        public KodelisteTransfer<?> mapWsapiObject(WsapiT source) {
+            Object kodelisteIdList;
+            Object bubbleObjectList;
+
+            try {
+                bubbleObjectList = bubbleObjectsProperty.getReadMethod().invoke(source);
+            } catch (IllegalAccessException e) {
+                throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
+            } catch (InvocationTargetException e) {
+                throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
+            }
+
+            LinkedHashSet bubbleObjects = getMapping().w2d(bubbleObjectList, LinkedHashSet.class);
+
+            try {
+                kodelisteIdList = kodelisterIdsProperty.getReadMethod().invoke(source);
+            } catch (IllegalAccessException e) {
+                throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
+            } catch (InvocationTargetException e) {
+                throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
+            }
+
+            List kodelisterIds = getMapping().w2d(kodelisteIdList, List.class);
+
+            return new KodelisteTransfer(kodelisterIds, bubbleObjects);
         }
     }
 }
