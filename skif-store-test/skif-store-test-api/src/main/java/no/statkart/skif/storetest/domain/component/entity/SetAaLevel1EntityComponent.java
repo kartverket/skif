@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class SetAaLevel1EntityComponent implements EntityComponentWithOwnerReferance<SetAaEntityComponent> {
+public class SetAaLevel1EntityComponent implements EntityComponentWithOwnerReference<SetAaEntityComponent> {
     private Long id;
     private SetAaEntityComponent owner;
     private String text;

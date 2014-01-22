@@ -1,11 +1,8 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.store.EntityComponent;
-import no.statkart.skif.store.EntityComponentWithOwnerReferance;
-import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
 import java.util.Set;
 

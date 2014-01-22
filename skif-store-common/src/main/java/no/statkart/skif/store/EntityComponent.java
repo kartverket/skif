@@ -15,7 +15,7 @@ package no.statkart.skif.store;
  * <P>SKIF-rammeverket støtter ikke deling av {@code EntityComponent}-er. En {@code EntityComponent}-instans kan derfor
  * kun være innehold i en boble en gang. Dvs en {@code EntityComponent}-instans kan kun være medlem av en collection
  * eller bli pekt på av et felt. SKIF-rammeverket forsøker etter beste evne å håndheve dette og har best støtte når
- * {@code EntityComponentWithOwnerReferance} implementeres.
+ * {@code EntityComponentWithOwnerReference} implementeres.
  *
  * <P>I inneværende implementasjon støttes ikke sletting av enkelt referanser til {@code EntityComponent} for Hibenate
  * 3.2.

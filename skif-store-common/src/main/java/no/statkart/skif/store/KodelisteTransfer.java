@@ -21,7 +21,7 @@ public class KodelisteTransfer<I extends KodelisteId> extends BubbleTransfer<Lis
     /**
      * Alternativ til {@link #getResult()}.
      */
-    public List<? extends I> getKodelisteIds() {
+    public List<? extends I> getKodelisterIds() {
         return getResult();
     }
 }

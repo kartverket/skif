@@ -31,7 +31,7 @@ public abstract class AbstractCompositeComponent<O, T> implements CompositeCompo
         }
     }
 
-    protected void onSetCompositeRootOwner(EntityComponentWithOwnerReferance<O> entityComponent) {
+    protected void onSetCompositeRootOwner(EntityComponentWithOwnerReference<O> entityComponent) {
         if (entityComponent!=null) entityComponent.setOwner(getCompositeRootOwner());
     }
 
@@ -41,9 +41,9 @@ public abstract class AbstractCompositeComponent<O, T> implements CompositeCompo
         }
     }
 
-    protected void onSetCompositeRootOwner(Collection<? extends EntityComponentWithOwnerReferance<O>> collectionWithOwnerReferance) {
+    protected void onSetCompositeRootOwner(Collection<? extends EntityComponentWithOwnerReference<O>> collectionWithOwnerReferance) {
         O compositeRootOwner = getCompositeRootOwner();
-        for (EntityComponentWithOwnerReferance<O> element : collectionWithOwnerReferance) {
+        for (EntityComponentWithOwnerReference<O> element : collectionWithOwnerReferance) {
             element.setOwner(compositeRootOwner);
         };
     }
