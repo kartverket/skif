@@ -7,6 +7,6 @@ package no.statkart.skif.store;
  * @author Henrik Fredholm
  * @since 2.3
  */
-public abstract class AbstractEntityComponentWithOwner<T> extends AbstractEntityComponent implements EntityComponentWithOwnerReferance<T> {
+public abstract class AbstractEntityComponentWithOwner<T> extends AbstractEntityComponent implements EntityComponentWithOwnerReference<T> {
     private static final long serialVersionUID = 1L;
 }

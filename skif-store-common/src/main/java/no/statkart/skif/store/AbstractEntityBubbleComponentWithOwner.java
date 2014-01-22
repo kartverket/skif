@@ -7,6 +7,6 @@ package no.statkart.skif.store;
  * @author Henrik Fredholm
  * @since 2.3
  */
-public abstract class AbstractEntityBubbleComponentWithOwner<T  extends BubbleObject> extends AbstractEntityComponent implements EntityBubbleComponent<T>, EntityComponentWithOwnerReferance<T> {
+public abstract class AbstractEntityBubbleComponentWithOwner<T  extends BubbleObject> extends AbstractEntityComponent implements EntityBubbleComponent<T>, EntityComponentWithOwnerReference<T> {
     private static final long serialVersionUID = 1L;
 }

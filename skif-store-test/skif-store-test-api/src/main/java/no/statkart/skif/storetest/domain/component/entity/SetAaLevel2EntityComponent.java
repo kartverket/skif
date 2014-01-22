@@ -1,10 +1,8 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import no.statkart.skif.store.Components;
-import no.statkart.skif.store.EntityComponentWithOwnerReferance;
-import no.statkart.skif.store.OwnerCheck;
+import no.statkart.skif.store.EntityComponentWithOwnerReference;
 import no.statkart.skif.store.ValueObjects;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
@@ -17,7 +15,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class SetAaLevel2EntityComponent implements EntityComponentWithOwnerReferance<SetAaLevel1EntityComponent> {
+public class SetAaLevel2EntityComponent implements EntityComponentWithOwnerReference<SetAaLevel1EntityComponent> {
     private Long id;
     private SetAaLevel1EntityComponent owner;
     private String text;
