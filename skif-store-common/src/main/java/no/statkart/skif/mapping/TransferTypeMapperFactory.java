@@ -161,11 +161,18 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
                 resultTypeToken = (TypeToken) TypeToken.of(parameterizedType.getActualTypeArguments()[0]);
             }
 
+            Constructor<DomainT> transferConstructor;
             try {
                 transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(resultTypeToken.getRawType(), Iterable.class);
-            } catch (NoSuchMethodException e) {
-                throw new MappingException("No suitable constructor for " + domainTypeToken.getRawType());
+            } catch (NoSuchMethodException ignore) {
+                try {
+                    // Første parameter er sannsynligvis Object pga. type erasure
+                    transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(Object.class, Iterable.class);
+                } catch (NoSuchMethodException e) {
+                    throw new MappingException("No suitable constructor for " + domainTypeToken.getRawType());
+                }
             }
+            this.transferConstructor = transferConstructor;
 
             try {
                 bubbleObjectsProperty = new PropertyDescriptor("bubbleObjects", wsapiTypeToken.getRawType());
