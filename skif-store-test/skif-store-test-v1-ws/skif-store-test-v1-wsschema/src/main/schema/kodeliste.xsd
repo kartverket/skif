@@ -112,8 +112,8 @@
 
     <xs:complexType name="KodelisteTransfer">
         <xs:sequence>
-            <xs:element name="KodelisteIds" type="kodelistens:KodelisteIdList"/>
-            <xs:element name="objects" type="domainns:StoreTestBubbleList"/>
+            <xs:element name="result" type="kodelistens:KodelisteIdList"/>
+            <xs:element name="bubbleObjects" type="domainns:StoreTestBubbleList"/>
         </xs:sequence>
     </xs:complexType>
 
