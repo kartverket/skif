@@ -1,18 +1,17 @@
 package no.statkart.skif.mapping;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.mapper.*;
-import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.Transfer;
-import no.statkart.skif.store.kodeliste.KodelisteId;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.lang.reflect.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 /**
  * TypeMapperFactory for {@link Transfer}.
@@ -23,34 +22,47 @@ import java.util.*;
 public class TransferTypeMapperFactory implements TypeMapperFactory {
     @Override
     public <WsapiT, DomainT> TypeMapper createTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
-        if (domainTypeToken.getRawType().equals(Transfer.class)) {
-            //noinspection unchecked
-            return new TransferTypeMapper(wsapiTypeToken, domainTypeToken);
-        } else if (domainTypeToken.getRawType().equals(KodelisteTransfer.class)) {
-            //noinspection unchecked
-            return new KodelisteTransferTypeMapper(wsapiTypeToken, domainTypeToken);
+        if (Transfer.class.isAssignableFrom(domainTypeToken.getRawType())) {
+            // Sjekk om result er inline eller ikke
+            try {
+                PropertyDescriptor resultProperty = new PropertyDescriptor("result", wsapiTypeToken.getRawType());
+                //noinspection unchecked
+                return new ExternalTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultProperty);
+            } catch (IntrospectionException e) {
+                //noinspection unchecked
+                return new InlineTransferTypeMapper(wsapiTypeToken, domainTypeToken);
+            }
         } else {
             return null;
         }
     }
 
-    public static class TransferTypeMapper<WsapiT, ResultT> extends AbstractTypeMapper<WsapiT, Transfer<ResultT>, Mapping> {
+    public static class InlineTransferTypeMapper<WsapiT, ResultT, DomainT extends Transfer<ResultT>> extends AbstractTypeMapper<WsapiT, DomainT, Mapping> {
         private final TypeToken<ResultT> resultTypeToken;
         private final DefaultTypeMapper<WsapiT, ResultT, Mapping> resultMapper;
         private final PropertyDescriptor bubbleObjectsProperty;
+        private final Constructor<DomainT> transferConstructor;
 
-        public TransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<Transfer<ResultT>> domainTypeToken) {
+        public InlineTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
             //noinspection unchecked
-            super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<Transfer<ResultT>>) domainTypeToken.getRawType(), Mapping.class);
+            super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), Mapping.class);
 
-            Type domainType = domainTypeToken.getType();
-            if (domainType instanceof Class) {
+            TypeToken<? super DomainT> transferTypeToken = domainTypeToken.getSupertype(Transfer.class);
+            Type transferType = transferTypeToken.getType();
+            if (transferType instanceof Class) {
                 // Isj
                 resultTypeToken = (TypeToken) TypeToken.of(Object.class);
             } else {
-                ParameterizedType parameterizedType = (ParameterizedType) domainType;
+                ParameterizedType parameterizedType = (ParameterizedType) transferType;
                 //noinspection unchecked
                 resultTypeToken = (TypeToken) TypeToken.of(parameterizedType.getActualTypeArguments()[0]);
+            }
+
+            try {
+                // Første parameter er Object pga. type erasure
+                transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(Object.class, Iterable.class);
+            } catch (NoSuchMethodException e) {
+                throw new MappingException("No suitable constructor for " + domainTypeToken.getRawType());
             }
 
             resultMapper = new DefaultTypeMapper<WsapiT, ResultT, Mapping>(wsapiTypeToken, resultTypeToken, Mapping.class, Collections.<Class<?>>emptySet(), true) {
@@ -83,7 +95,7 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
         }
 
         @Override
-        public WsapiT mapDomainObject(Transfer<ResultT> source) {
+        public WsapiT mapDomainObject(DomainT source) {
             WsapiT target = resultMapper.mapDomainObject(source.getResult());
 
             Object bubbleObjectList = getMapping().d2w(source.getBubbleObjects().values(), bubbleObjectsProperty.getPropertyType());
@@ -100,7 +112,7 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
         }
 
         @Override
-        public Transfer<ResultT> mapWsapiObject(WsapiT source) {
+        public DomainT mapWsapiObject(WsapiT source) {
             ResultT result = resultMapper.mapWsapiObject(source);
 
             Object bubbleObjectList;
@@ -115,27 +127,44 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
 
             LinkedHashSet bubbleObjects = getMapping().w2d(bubbleObjectList, LinkedHashSet.class);
 
-            return new Transfer<ResultT>(result, bubbleObjects);
+            try {
+                return transferConstructor.newInstance(result, bubbleObjects);
+            } catch (InstantiationException e) {
+                throw new MappingException(e);
+            } catch (IllegalAccessException e) {
+                throw new MappingException(e);
+            } catch (InvocationTargetException e) {
+                throw new MappingException(e);
+            }
         }
     }
 
-    // TODO: Det bør være mulig å generalisere vekk denne
-    private static class KodelisteTransferTypeMapper<WsapiT> extends AbstractTypeMapper<WsapiT, KodelisteTransfer<?>, Mapping> {
-        private final TypeToken<List<? extends KodelisteId>> resultTypeToken;
-        private final PropertyDescriptor bubbleObjectsProperty, kodelisterIdsProperty;
+    public static class ExternalTransferTypeMapper<WsapiT, ResultT, DomainT extends Transfer<ResultT>> extends AbstractTypeMapper<WsapiT, DomainT, Mapping> {
+        private final TypeToken<ResultT> resultTypeToken;
+        private final PropertyDescriptor bubbleObjectsProperty;
+        private final PropertyDescriptor resultProperty;
+        private final Constructor<DomainT> transferConstructor;
 
-        public KodelisteTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<KodelisteTransfer<?>> domainTypeToken) {
+        public ExternalTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<Transfer<ResultT>> domainTypeToken, PropertyDescriptor resultProperty) {
             //noinspection unchecked
-            super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<KodelisteTransfer<?>>) domainTypeToken.getRawType(), Mapping.class);
+            super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), Mapping.class);
+            this.resultProperty = resultProperty;
 
-            Type domainType = domainTypeToken.getType();
-            if (domainType instanceof Class) {
+            TypeToken<? super DomainT> transferTypeToken = domainTypeToken.getSupertype(Transfer.class);
+            Type transferType = transferTypeToken.getType();
+            if (transferType instanceof Class) {
                 // Isj
                 resultTypeToken = (TypeToken) TypeToken.of(Object.class);
             } else {
-                ParameterizedType parameterizedType = (ParameterizedType) domainType;
+                ParameterizedType parameterizedType = (ParameterizedType) transferType;
                 //noinspection unchecked
                 resultTypeToken = (TypeToken) TypeToken.of(parameterizedType.getActualTypeArguments()[0]);
+            }
+
+            try {
+                transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(resultTypeToken.getRawType(), Iterable.class);
+            } catch (NoSuchMethodException e) {
+                throw new MappingException("No suitable constructor for " + domainTypeToken.getRawType());
             }
 
             try {
@@ -143,18 +172,27 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
             } catch (IntrospectionException e) {
                 throw new MappingException("Unable to find bubbleObjects on " + wsapiTypeToken.getRawType().getName(), e);
             }
-            try {
-                kodelisterIdsProperty = new PropertyDescriptor("kodelisterIds", wsapiTypeToken.getRawType());
-            } catch (IntrospectionException e) {
-                throw new MappingException("Unable to find kodelisterIdsProperty on " + wsapiTypeToken.getRawType().getName(), e);
-            }
         }
 
         @Override
-        public WsapiT mapDomainObject(KodelisteTransfer<?> source) {
-            WsapiT target = createWsapiT();
+        public void setMapping(Mapping mapping) {
+            super.setMapping(mapping);
+        }
 
-            Object kodelisterIds = getMapping().d2w(source.getKodelisterIds(), kodelisterIdsProperty.getPropertyType());
+        @Override
+        public WsapiT mapDomainObject(DomainT source) {
+            WsapiT target = createWsapiT();
+            
+            Object targetResult = getMapping().d2w(source.getResult(), resultProperty.getPropertyType());
+
+            try {
+                resultProperty.getWriteMethod().invoke(target, targetResult);
+            } catch (IllegalAccessException e) {
+                throw new MappingException("Error during writing to " + resultProperty.getWriteMethod().toGenericString(), e);
+            } catch (InvocationTargetException e) {
+                throw new MappingException("Error during writing to " + resultProperty.getWriteMethod().toGenericString(), e);
+            }
+
             Object bubbleObjectList = getMapping().d2w(source.getBubbleObjects().values(), bubbleObjectsProperty.getPropertyType());
 
             try {
@@ -164,21 +202,22 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
             } catch (InvocationTargetException e) {
                 throw new MappingException("Error during writing to " + bubbleObjectsProperty.getWriteMethod().toGenericString(), e);
             }
-            
-            try {
-                kodelisterIdsProperty.getWriteMethod().invoke(target, kodelisterIds);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during writing to " + kodelisterIdsProperty.getWriteMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
-                throw new MappingException("Error during writing to " + kodelisterIdsProperty.getWriteMethod().toGenericString(), e);
-            }
 
             return target;
         }
 
         @Override
-        public KodelisteTransfer<?> mapWsapiObject(WsapiT source) {
-            Object kodelisteIdList;
+        public DomainT mapWsapiObject(WsapiT source) {
+            Object resultSource;
+            
+            try {
+                resultSource = resultProperty.getReadMethod().invoke(source);
+            } catch (IllegalAccessException e) {
+                throw new MappingException("Error during reading from " + resultProperty.getReadMethod().toGenericString(), e);
+            } catch (InvocationTargetException e) {
+                throw new MappingException("Error during reading from " + resultProperty.getReadMethod().toGenericString(), e);
+            }
+
             Object bubbleObjectList;
 
             try {
@@ -189,19 +228,18 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
                 throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
             }
 
+            ResultT result = (ResultT) getMapping().w2d(resultSource, TypeLiteral.get(resultTypeToken.getType()));
             LinkedHashSet bubbleObjects = getMapping().w2d(bubbleObjectList, LinkedHashSet.class);
 
             try {
-                kodelisteIdList = kodelisterIdsProperty.getReadMethod().invoke(source);
+                return transferConstructor.newInstance(result, bubbleObjects);
+            } catch (InstantiationException e) {
+                throw new MappingException(e);
             } catch (IllegalAccessException e) {
-                throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
+                throw new MappingException(e);
             } catch (InvocationTargetException e) {
-                throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
+                throw new MappingException(e);
             }
-
-            List kodelisterIds = getMapping().w2d(kodelisteIdList, List.class);
-
-            return new KodelisteTransfer(kodelisterIds, bubbleObjects);
         }
     }
 }

@@ -181,4 +181,10 @@ public class SkifTestCase  extends AbstractSkifTestCase {
 
     }
 
+    protected void setLogin(String username, String password) {
+        LoginUserHolder userHolder = injector.getInstance(LoginUserHolder.class);
+        userHolder.set(new LoginUser(username, password));
+    }
+
+
 }
