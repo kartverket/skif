@@ -23,7 +23,10 @@ import java.util.Set;
 public class BubbleWithEntityInCompositeComponentMockupFactory extends AbstractMockupFactory {
     private final BubbleWithEntityInCompositeComponentId<?> withNullComponentsId;
     private final BubbleWithEntityInCompositeComponentId<?> withNullLevel2Id;
+    private final BubbleWithEntityInCompositeComponentId<?> withNullLevel2Id2;
     private final BubbleWithEntityInCompositeComponentId<?> withNonNullComponentsId;
+    private final BubbleWithEntityInCompositeComponentId<?> withNonNullComponentsId2;
+    private final BubbleWithEntityInCompositeComponentId<?> withNonNullComponentsId3;
 
 
     @Inject
@@ -32,7 +35,10 @@ public class BubbleWithEntityInCompositeComponentMockupFactory extends AbstractM
 
         withNullComponentsId = getNextId();
         withNullLevel2Id = getNextId();
+        withNullLevel2Id2 = getNextId();
         withNonNullComponentsId = getNextId();
+        withNonNullComponentsId2 = getNextId();
+        withNonNullComponentsId3 = getNextId();
     }
 
     private BubbleWithEntityInCompositeComponentId<?> getNextId() {
@@ -52,7 +58,31 @@ public class BubbleWithEntityInCompositeComponentMockupFactory extends AbstractM
         ));
 
         store.insert(createBubbleWithValueComponent(
+                withNullLevel2Id2, ++i, "Obj " + i + " med null level2 component",
+                new Level1CompositeComponentWithEntity("Del av obj " + i),
+                new Level1EntityInCompositeComponent("EntityLevel1 i obj " + i),
+                ImmutableSet.of(new Level1SetEntityInCompositeComponent("EntityLevel1Set i obj " + i))
+        ));
+        store.insert(createBubbleWithValueComponent(
                 withNonNullComponentsId, ++i, "Obj " + i + " med level1 og level2 component",
+                new Level1CompositeComponentWithEntity("Level1 del av obj "),
+                new Level1EntityInCompositeComponent("EntityLevel1 i obj " + i),
+                ImmutableSet.of(new Level1SetEntityInCompositeComponent("EntityLevel1Set i obj " + i)),
+                new Level2CompositeComponentWithEntity("Level2 del a obj " + i),
+                new Level2EntityInCompositeComponent("EntityLevel2 i obj " + i),
+                ImmutableSet.of(new Level2SetEntityInCompositeComponent("EntityLevel2Set i obj " + i))
+        ));
+        store.insert(createBubbleWithValueComponent(
+                withNonNullComponentsId2, ++i, "Obj " + i + " med level1 og level2 component",
+                new Level1CompositeComponentWithEntity("Level1 del av obj "),
+                new Level1EntityInCompositeComponent("EntityLevel1 i obj " + i),
+                ImmutableSet.of(new Level1SetEntityInCompositeComponent("EntityLevel1Set i obj " + i)),
+                new Level2CompositeComponentWithEntity("Level2 del a obj " + i),
+                new Level2EntityInCompositeComponent("EntityLevel2 i obj " + i),
+                ImmutableSet.of(new Level2SetEntityInCompositeComponent("EntityLevel2Set i obj " + i))
+        ));
+        store.insert(createBubbleWithValueComponent(
+                withNonNullComponentsId3, ++i, "Obj " + i + " med level1 og level2 component",
                 new Level1CompositeComponentWithEntity("Level1 del av obj "),
                 new Level1EntityInCompositeComponent("EntityLevel1 i obj " + i),
                 ImmutableSet.of(new Level1SetEntityInCompositeComponent("EntityLevel1Set i obj " + i)),
