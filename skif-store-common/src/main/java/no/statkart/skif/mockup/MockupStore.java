@@ -372,7 +372,7 @@ public class MockupStore implements Store {
      */
     private Set<BubbleId> findLinkedBubbleIds(Collection<BubbleObject> bubbleObjects, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
         Queue<BubbleObject> uncheckedObjects = new ArrayDeque<BubbleObject>(bubbleObjects);
-        Set<BubbleObject> linkedObjects = new HashSet<BubbleObject>();
+        Set<BubbleObject> linkedObjects = new LinkedHashSet<BubbleObject>(); // Ønsker å bevare insert rekkefølgen
 
         while (!uncheckedObjects.isEmpty()) {
             BubbleObject object = uncheckedObjects.remove();
@@ -386,7 +386,7 @@ public class MockupStore implements Store {
             uncheckedObjects.addAll(referencedBubbles);
         }
 
-        Set<BubbleId> linkedIds = new HashSet<BubbleId>(linkedObjects.size());
+        Set<BubbleId> linkedIds = new LinkedHashSet<BubbleId>(linkedObjects.size());
         for (BubbleObject linkedObject : linkedObjects) {
             linkedIds.add(linkedObject.getId());
         }
@@ -499,7 +499,7 @@ public class MockupStore implements Store {
     }
 
     public SortedMap<SnapshotVersion, MockupTransfer> getAllTransfersForIds(Collection<? extends BubbleId> ids, SnapshotVersion beforeSnapshotVersion) {
-        Set<BubbleId> allReferencedIds = new HashSet<BubbleId>();
+        Set<BubbleId> allReferencedIds = new LinkedHashSet<BubbleId>(); // Ønsker å bevare rekkefølgen slik at den ikke avhenger av hashkoden til id-verdien
 
         SortedMap<SnapshotVersion, MockupTransfer> allCompleteTransfers = mockupPersister.getTransfersBefore(beforeSnapshotVersion);
         for (Map.Entry<SnapshotVersion, MockupTransfer> entry : allCompleteTransfers.entrySet()) {

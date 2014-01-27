@@ -35,7 +35,7 @@ import static org.testng.Assert.*;
  * @author Henrik Fredholm
  * @since 2.4
  */
-@Test(groups = "singlevm-required")
+@Test(groups = "singlevm-required,hibernate36")
 public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTestCase {
     @Inject
     Store store;
@@ -54,6 +54,18 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         });
     }
 
+    /**
+     * Tester persistering av mockup testset for BubbleWithEntityInCompositeComponent og herunder også "SKIF-428:
+     * Hibernate Batch insert ordering does not consider associations i composite components". Når testen kjøres må
+     * hibernate sql logging være slått på og man må manulet sjekket at sql inserts batches riktig. Testsettet
+     * består av:
+     *  - en BubbleWithEntityInCompositeComponent boble som ikke har relasjon til level1 og level2 entities
+     *  - to BubbleWithEntityInCompositeComponent bobler med relasjon til level1 entities
+     *  - tre BubbleWithEntityInCompositeComponent bobler med relasjon til level1 og level2 entities
+     * Dette testsett skal føre til at Hibernate produserer tre insert batchgrupper for
+     * BubbleWithEntityInCompositeComponent med henholdsvis en, to, og tre  BubbleWithEntityInCompositeComponent
+     * inserts. For updates skal Hibernate kun produsere en update batchgruppe som setter ownerId.
+     */
     public void testWriteTestSet1() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
     }
@@ -101,7 +113,7 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
         final BubbleWithEntityInCompositeComponent bubbleWithNonNullComponents = store.get(mockupFactory.getWithNonNullComponentsId());
 
-        assertEquals(bubbleWithNonNullComponents.getText(), "Obj 3 med level1 og level2 component");
+        assertEquals(bubbleWithNonNullComponents.getText(), "Obj 4 med level1 og level2 component");
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component());
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().isNullComponent());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getText());

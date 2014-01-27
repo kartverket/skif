@@ -61,6 +61,8 @@ public class EntityComponentTest extends StoreTestTestCase {
      * kjøres med hibernate sql og batch logging satt til debug og det er nødvendig manuelt å sjekke at all
      * sql blir batchet. Det som må sjekkes er at sql statements ikke forekommer ut av sekvens, dvs. at alle like sql
      * statements kommer rett etter hverandre og ingen andre steder.
+     *
+     * For å enable full batching må hibernate.order_updates=true og hibernate.order_inserts=true være satt
      */
     public void testBatchInsert() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();

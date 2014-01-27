@@ -35,7 +35,7 @@
     <logger name="no.statkart.skif.store.persistence.hibernate.type" level="trace" additivity="true"/-->
 
     <!-- Hibernate logging av batching -->
-    <!--<logger name="org.hibernate.jdbc.AbstractBatcher" level="info" additivity="true"/>-->
+    <!--<logger name="org.hibernate.jdbc.AbstractBatcher" level="debug" additivity="true"/>-->
 
     <!-- end-hibernate -->
 

@@ -10,6 +10,7 @@ import no.statkart.skif.store.Store;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -44,7 +45,7 @@ public abstract class AbstractMockupFactory {
     public abstract void createAllMockups();
 
     public <I extends BubbleId> Set<I> getAllIds(Class<I> idClass) {
-        Set<I> ids = new HashSet<I>();
+        Set<I> ids = new LinkedHashSet<I>(); // Ønsker å bevare rekkefølge samt gjøre funksjonen deterministisk (dvs at rekkefølgen ikke avhenger av hashkoden til id-veriden)
 
         try {
             Field[] fields = getClass().getDeclaredFields();
