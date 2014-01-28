@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public interface BubbleId<T extends BubbleObject> extends Serializable, Comparable<BubbleId<T>>{
+public interface BubbleId<T extends BubbleObject> extends Serializable, Comparable<Object>{
     public Object getValue();
     public SnapshotVersion getSnapshotVersion();
     public T createTypeInstance();

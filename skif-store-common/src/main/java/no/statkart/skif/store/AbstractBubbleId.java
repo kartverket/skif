@@ -210,7 +210,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * Comparable is implemented to support consistent ordering of id collections.
      * This is useful even if most id's are not instended for humans.
      */
-    public int compareTo(BubbleId<T> o) {
+    public int compareTo(Object o) {
         // Opptimalisering hvis value er Long
         AbstractBubbleId other = (AbstractBubbleId) o;
         if (value instanceof Long && other.value instanceof Long) {
