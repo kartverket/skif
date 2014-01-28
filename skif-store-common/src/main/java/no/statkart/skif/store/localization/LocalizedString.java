@@ -47,7 +47,7 @@ public class LocalizedString implements Serializable {
             locale = control.getFallbackLocale("", locale); // Første parameter kan ikke være null, men det ser ikke ut til at den brukes til noe
         }
 
-        return locale;
+        return locale != null ? locale : Locale.ROOT;
     }
 
     /**
