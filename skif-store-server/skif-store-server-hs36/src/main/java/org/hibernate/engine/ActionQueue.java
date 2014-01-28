@@ -36,6 +36,7 @@ import java.util.Set;
 
 import org.hibernate.EntityMode;
 import org.hibernate.type.ComponentType;
+import org.hibernate.type.CompositeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -736,8 +737,8 @@ public class ActionQueue {
                         break;
                     }
                 } else if (type.isComponentType() && value != null) {
-                    Object[] componentValues = ((ComponentType) type).getPropertyValues(value, EntityMode.POJO);
-                    Type[] componentTypes = ((ComponentType) type).getSubtypes();
+                    Object[] componentValues = ((CompositeType) type).getPropertyValues(value, EntityMode.POJO);
+                    Type[] componentTypes = ((CompositeType) type).getSubtypes();
                     Integer foundBatchNumberForType = findBatchNumber(latestBatchNumberForType, componentValues, componentTypes);
                     if (!foundBatchNumberForType.equals(latestBatchNumberForType)) {
                         latestBatchNumberForType = foundBatchNumberForType;
