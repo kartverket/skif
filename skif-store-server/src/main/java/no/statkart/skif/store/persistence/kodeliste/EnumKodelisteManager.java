@@ -157,7 +157,7 @@ public class EnumKodelisteManager {
         Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<LocalizationMap.LocalizationKey, String>();
 
         for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
-            Locale locale = InternalLocaleUtils.toLocale(entry.getKey());
+            Locale locale = toLocale(entry.getKey());
             Properties properties = entry.getValue();
             String prefix = kodeSupport.getKodelisteResourceKey() + '.';
 
@@ -182,7 +182,7 @@ public class EnumKodelisteManager {
         Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<LocalizationMap.LocalizationKey, String>();
 
         for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
-            Locale locale = InternalLocaleUtils.toLocale(entry.getKey());
+            Locale locale = toLocale(entry.getKey());
             Properties properties = entry.getValue();
             String prefix = kodeSupport.getKodeResourceKey((KodeId<?>) enumKode.getId()) + '.';
 
@@ -199,6 +199,14 @@ public class EnumKodelisteManager {
         }
 
         enumKode.setLocalizationMap(localizations);
+    }
+
+    private static Locale toLocale(String localeString) {
+        if (localeString == null || localeString.isEmpty()) {
+            return Locale.ROOT;
+        } else {
+            return InternalLocaleUtils.toLocale(localeString);
+        }
     }
 
     /**
