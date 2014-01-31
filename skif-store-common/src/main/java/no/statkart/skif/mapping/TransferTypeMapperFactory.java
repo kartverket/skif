@@ -3,15 +3,15 @@ package no.statkart.skif.mapping;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.mapper.*;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Transfer;
 
+import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
+import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 /**
  * TypeMapperFactory for {@link Transfer}.
@@ -23,14 +23,25 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
     @Override
     public <WsapiT, DomainT> TypeMapper createTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
         if (Transfer.class.isAssignableFrom(domainTypeToken.getRawType())) {
-            // Sjekk om result er inline eller ikke
-            try {
-                PropertyDescriptor resultProperty = new PropertyDescriptor("result", wsapiTypeToken.getRawType());
+            // Sjekk om transfer er inline eller ikke
+
+            TypeToken<?> transferTypeToken = ((TypeToken<? extends Transfer<?>>) domainTypeToken).getSupertype(Transfer.class);
+            Type transferType = transferTypeToken.getType();
+            final TypeToken<?> resultTypeToken;
+            if (transferType instanceof Class) {
+                // Isj
+                resultTypeToken = (TypeToken) TypeToken.of(Object.class);
+            } else {
+                ParameterizedType parameterizedType = (ParameterizedType) transferType;
+                resultTypeToken = TypeToken.of(parameterizedType.getActualTypeArguments()[0]);
+            }
+
+            if (BubbleId.class.isAssignableFrom(resultTypeToken.getRawType()) || Collection.class.isAssignableFrom(resultTypeToken.getRawType())) {
+
+                return new ExternalTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultTypeToken);
+            } else {
                 //noinspection unchecked
-                return new ExternalTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultProperty);
-            } catch (IntrospectionException e) {
-                //noinspection unchecked
-                return new InlineTransferTypeMapper(wsapiTypeToken, domainTypeToken);
+                return new InlineTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultTypeToken);
             }
         } else {
             return null;
@@ -43,20 +54,11 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
         private final PropertyDescriptor bubbleObjectsProperty;
         private final Constructor<DomainT> transferConstructor;
 
-        public InlineTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
+        public InlineTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, TypeToken<ResultT> resultTypeToken) {
             //noinspection unchecked
             super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), Mapping.class);
 
-            TypeToken<? super DomainT> transferTypeToken = domainTypeToken.getSupertype(Transfer.class);
-            Type transferType = transferTypeToken.getType();
-            if (transferType instanceof Class) {
-                // Isj
-                resultTypeToken = (TypeToken) TypeToken.of(Object.class);
-            } else {
-                ParameterizedType parameterizedType = (ParameterizedType) transferType;
-                //noinspection unchecked
-                resultTypeToken = (TypeToken) TypeToken.of(parameterizedType.getActualTypeArguments()[0]);
-            }
+            this.resultTypeToken = resultTypeToken;
 
             try {
                 // Første parameter er Object pga. type erasure
@@ -145,21 +147,10 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
         private final PropertyDescriptor resultProperty;
         private final Constructor<DomainT> transferConstructor;
 
-        public ExternalTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<Transfer<ResultT>> domainTypeToken, PropertyDescriptor resultProperty) {
+        public ExternalTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<Transfer<ResultT>> domainTypeToken, TypeToken<ResultT> resultTypeToken) {
             //noinspection unchecked
             super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), Mapping.class);
-            this.resultProperty = resultProperty;
-
-            TypeToken<? super DomainT> transferTypeToken = domainTypeToken.getSupertype(Transfer.class);
-            Type transferType = transferTypeToken.getType();
-            if (transferType instanceof Class) {
-                // Isj
-                resultTypeToken = (TypeToken) TypeToken.of(Object.class);
-            } else {
-                ParameterizedType parameterizedType = (ParameterizedType) transferType;
-                //noinspection unchecked
-                resultTypeToken = (TypeToken) TypeToken.of(parameterizedType.getActualTypeArguments()[0]);
-            }
+            this.resultTypeToken = resultTypeToken;
 
             Constructor<DomainT> transferConstructor;
             try {
@@ -174,10 +165,30 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
             }
             this.transferConstructor = transferConstructor;
 
+            PropertyDescriptor bubbleObjectsProperty = null;
+            List<PropertyDescriptor> resultPropertyCandidates = new ArrayList<PropertyDescriptor>(1);
             try {
-                bubbleObjectsProperty = new PropertyDescriptor("bubbleObjects", wsapiTypeToken.getRawType());
+                BeanInfo beanInfo = Introspector.getBeanInfo(getWsapiClass(), getWsapiClass().getSuperclass());
+                for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+                    if (propertyDescriptor.getName().equals("bubbleObjects")) {
+                        bubbleObjectsProperty = propertyDescriptor;
+                    } else {
+                        resultPropertyCandidates.add(propertyDescriptor);
+                    }
+                }
             } catch (IntrospectionException e) {
-                throw new MappingException("Unable to find bubbleObjects on " + wsapiTypeToken.getRawType().getName(), e);
+                throw new MappingException("Unable to introspect " + getWsapiClass());
+            }
+
+            if (bubbleObjectsProperty == null) {
+                throw new MappingException("Unable to find bubbleObjects on " + wsapiTypeToken.getRawType().getName());
+            }
+            this.bubbleObjectsProperty = bubbleObjectsProperty;
+
+            if (resultPropertyCandidates.size() == 1) {
+                resultProperty = resultPropertyCandidates.get(0);
+            } else {
+                throw new MappingException("Unable to find result property on " + wsapiTypeToken.getRawType().getName() + " (" + resultPropertyCandidates.size() + " candidates)");
             }
         }
 

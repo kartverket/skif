@@ -83,7 +83,7 @@ public class TransferTypeMapperFactoryTest {
 
         ApiKodelisteTransfer apiKodelisteTransfer = mapping.d2w(kodelisteTransfer, ApiKodelisteTransfer.class);
 
-        Assertions.assertThat(apiKodelisteTransfer.getResult().getItem()).containsExactly(new ApiKodelisteId("1"));
+        Assertions.assertThat(apiKodelisteTransfer.getKodelisterIds().getItem()).containsExactly(new ApiKodelisteId("1"));
         Assertions.assertThat(apiKodelisteTransfer.getBubbleObjects().getItem()).containsExactly(new ApiKodeliste(new ApiKodelisteId("1")));
 
         KodelisteTransfer domeneKodelisteTransfer = mapping.w2d(apiKodelisteTransfer, KodelisteTransfer.class);
@@ -303,7 +303,7 @@ public class TransferTypeMapperFactoryTest {
 
     public static class ApiKodelisteTransfer {
         private ApiKodelisteList bubbleObjects;
-        private ApiKodelisteIdList result;
+        private ApiKodelisteIdList kodelisterIds;
 
         public ApiKodelisteList getBubbleObjects() {
             return bubbleObjects;
@@ -314,12 +314,12 @@ public class TransferTypeMapperFactoryTest {
             this.bubbleObjects = bubbleObjects;
         }
 
-        public ApiKodelisteIdList getResult() {
-            return result;
+        public ApiKodelisteIdList getKodelisterIds() {
+            return kodelisterIds;
         }
 
-        public void setResult(ApiKodelisteIdList result) {
-            this.result = result;
+        public void setKodelisterIds(ApiKodelisteIdList kodelisterIds) {
+            this.kodelisterIds = kodelisterIds;
         }
     }
 
