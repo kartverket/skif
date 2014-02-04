@@ -5,13 +5,16 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.multikobling.Multikobling;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -143,5 +146,60 @@ public class MultikoblingTest extends StoreTestTestCase {
 
         Assert.assertEquals(a1.size(), 1);
         Assert.assertEquals(a2.size(), 1);
+    }
+
+    public void testClear() throws Exception {
+        Multirefererende multirefererende = new Multirefererende();
+        Multikobling<String, String, MultirefererendeKobling> multikobling = multirefererende.getMultikobling();
+        Set<String> aObjects = multikobling.get("A");
+        aObjects.add("Test");
+        aObjects.add("Test2"); // En ekstra pga. av mulighet for ConcurrentModificationException ved uheldig implementasjon av clear()
+        aObjects.clear();
+        Assert.assertTrue(aObjects.isEmpty());
+        Assert.assertTrue(multikobling.getKoblinger().isEmpty());
+    }
+
+    public void testRemoveFromIterator() throws Exception {
+        Multirefererende multirefererende = new Multirefererende();
+        Multikobling<String, String, MultirefererendeKobling> multikobling = multirefererende.getMultikobling();
+        Set<String> aObjects = multikobling.get("A");
+        aObjects.add("Test");
+        final Iterator<String> iterator = aObjects.iterator();
+        iterator.next();
+        iterator.remove();
+        Assert.assertTrue(aObjects.isEmpty());
+        Assert.assertTrue(multikobling.getKoblinger().isEmpty());
+    }
+
+    public void testRemove() throws Exception {
+        Multirefererende multirefererende = new Multirefererende();
+        Multikobling<String, String, MultirefererendeKobling> multikobling = multirefererende.getMultikobling();
+        Set<String> aObjects = multikobling.get("A");
+        aObjects.add("Test");
+        aObjects.remove("Test");
+        Assert.assertTrue(aObjects.isEmpty());
+        Assert.assertTrue(multikobling.getKoblinger().isEmpty());
+    }
+
+    public void testRemoveAll() throws Exception {
+        Multirefererende multirefererende = new Multirefererende();
+        Multikobling<String, String, MultirefererendeKobling> multikobling = multirefererende.getMultikobling();
+        Set<String> aObjects = multikobling.get("A");
+        Set<String> objs = new HashSet<String>();
+        objs.add("Test");
+        aObjects.addAll(objs);
+        aObjects.removeAll(objs);
+        Assert.assertTrue(aObjects.isEmpty());
+        Assert.assertTrue(multikobling.getKoblinger().isEmpty());
+    }
+
+    public void testRetainAll() throws Exception {
+        Multirefererende multirefererende = new Multirefererende();
+        Multikobling<String, String, MultirefererendeKobling> multikobling = multirefererende.getMultikobling();
+        Set<String> aObjects = multikobling.get("A");
+        aObjects.add("Test");
+        aObjects.retainAll(Collections.emptySet());
+        Assert.assertTrue(aObjects.isEmpty());
+        Assert.assertTrue(multikobling.getKoblinger().isEmpty());
     }
 }
