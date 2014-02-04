@@ -231,6 +231,8 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(BubbleWithRelation.class)
                 .addResource(BubbleWithFilter.class)
                 .addResource(BubbleWithValueObject.class)
+                .addResource(BubbleWithLocalDate.class)
+                .addResource(BubbleWithLocalDateTime.class)
                 .addResource(HistSimple.class)
                 .addResource(HistWithRelation.class)
                 .addResourceWithSubclasses(SubTypedBubble.class, SubTypeWithPrimitive.class, SubTypeWithCollection.class)

@@ -73,6 +73,18 @@ create table BubbleWithKode (
     primary key (id)
 );
 
+create table BubbleWithLocalDate (
+    id number(19,0) not null,
+    dato date not null,
+    primary key (id)
+);
+
+create table BubbleWithLocalDateTime (
+    id number(19,0) not null,
+    tidspunkt timestamp not null,
+    primary key (id)
+);
+
 CREATE TABLE SubTypedBubble (
     ID NUMBER(19,0) NOT NULL,
     CLASS VARCHAR2(255 CHAR) NOT NULL,

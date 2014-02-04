@@ -93,6 +93,52 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="BubbleWithLocalDateId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithLocalDateIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:BubbleWithLocalDateId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithLocalDate">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="dato" type="xs:date"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithLocalDateTimeId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithLocalDateTimeIdList">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:BubbleWithLocalDateTimeId"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithLocalDateTime">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="tidspunkt" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="BubbleWithRelationId">
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubbleId">
