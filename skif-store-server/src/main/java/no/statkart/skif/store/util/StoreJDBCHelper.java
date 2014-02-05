@@ -59,8 +59,11 @@ public class StoreJDBCHelper extends JDBCHelper {
                 preparedStatement.setLong(i, (Long) bubbleId.getValue());
             }
         } else if (idValueType == String.class) {
-            // Tror ikke det er nødvendig å håndtere null spesielt her
-            preparedStatement.setString(i, (String) bubbleId.getValue());
+            if (bubbleId == null) {
+                preparedStatement.setNull(i, Types.VARCHAR);
+            } else {
+                preparedStatement.setString(i, (String) bubbleId.getValue());
+            }
         } else {
             throw new ImplementationException("BubbleId " + bubbleId.getClass().getName() + " has unsupported value type " + idValueType.getName());
         }
