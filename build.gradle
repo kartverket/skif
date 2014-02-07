@@ -78,24 +78,24 @@ subprojects { Project project ->
             if (testFramework.class.simpleName == 'TestNGTestFramework') {
                 if (value == 'INCLUDE') {
                     testFramework.options.includeGroups group
-                    logger.info "${test.name} configuration: including group '${group}'"
+                    test.doFirst { logger.quiet "${test.name} configuration: including group '${group}'" }
                 } else if (value == 'EXCLUDE') {
                     testFramework.options.excludeGroups group
-                    logger.info "${test.name} configuration: excluding group '${group}'"
+                    test.doFirst { logger.quiet "${test.name} configuration: excluding group '${group}'" }
                 } else if (value == 'EXCLUDE_WHEN_NO_INCLUDES') {
                     project.afterEvaluate {
                         if (testFramework.options.includeGroups.isEmpty()) {
                             testFramework.options.excludeGroups group
-                            logger.info "${test.name} configuration: excluding group '${group}'"
+                            test.doFirst { logger.quiet "${test.name} configuration: excluding group '${group}'" }
                         } else {
-//                        logger.info "${test.name} configuration: ignoring group '${group}'"
+//                            logMessageWhenTask test "${test.name} configuration: ignoring group '${group}'"
                         }
                     }
                 } else {
                     assert value == 'IGNORED' //feil ved ikke gyldig verdi for filtrering av tester
                 }
             } else {
-                logger.warn "${test.name} configuration: unable to configure groups('${group}') for ${testFramework.class.simpleName}"
+                test.doFirst { logger.warn "${test.name} configuration: unable to configure groups('${group}') for ${testFramework.class.simpleName}" }
             }
         }
     }
