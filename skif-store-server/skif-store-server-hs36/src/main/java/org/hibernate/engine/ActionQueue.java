@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,8 +35,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import no.statkart.skif.exception.ImplementationException;
 import org.hibernate.EntityMode;
-import org.hibernate.type.ComponentType;
+import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.persister.entity.SingleTableEntityPersister;
 import org.hibernate.type.CompositeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +69,10 @@ import org.hibernate.type.Type;
  *
  * Modified to fix SKIF-428: Hibernate batch insert ordering does not consider associations i composite components. Changed lines
  * marked with MODIFIED SKIF-428 Start and End tag.
-
+ *
+ * Modified to fix SKIF-435: Endre org.hibernate.engine.ActionQueue til å bruke samme entity-name for subtyper persistert i samme tabell.
+ * Changed lines marked with MODIFIED SKIF-435 Start and End tag.
+ *
  * @author Steve Ebersole
  * @author Henrik Fredholm
  */
@@ -92,6 +99,18 @@ public class ActionQueue {
 
     private AfterTransactionCompletionProcessQueue afterTransactionProcesses;
     private BeforeTransactionCompletionProcessQueue beforeTransactionProcesses;
+
+    // MODIFIED SKIF-435 Start
+    private static final Field sqlInsertStringsField;
+    static {
+        try {
+            sqlInsertStringsField = AbstractEntityPersister.class.getDeclaredField("sqlInsertStrings");
+            sqlInsertStringsField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new ImplementationException(e);
+        }
+    }
+    // MODIFIED SKIF-435 End
 
     /**
      * Constructs an action queue bound to the given session.
@@ -650,6 +669,15 @@ public class ActionQueue {
                 // remove the current element from insertions. It will be added back later.
                 String entityName = action.getEntityName();
 
+                // MODIFIED SKIF-435 Start
+                // Denne endring sikre batching av inserts på tvers av subtyper dersom de har helt samme sql (bruker hashcode)
+                if (action.getPersister() instanceof SingleTableEntityPersister) {
+                    SingleTableEntityPersister persister = (SingleTableEntityPersister) action.getPersister();
+                    entityName = persister.getTableName() + getSqlInsertStringsHashCode(action.getPersister());
+                }
+                // MODIFIED SKIF-435 End
+
+
                 // the entity associated with the current action.
                 Object currentEntity = action.getInstance();
 
@@ -683,6 +711,16 @@ public class ActionQueue {
                 }
             }
         }
+
+        // MODIFIED SKIF-435 Start
+        private String getSqlInsertStringsHashCode(EntityPersister persister) {
+            try {
+                return String.valueOf(sqlInsertStringsField.get(persister).hashCode());
+            } catch (IllegalAccessException e) {
+                return "";
+            }
+        }
+        // MODIFIED SKIF-435 Start
 
         /**
          * Finds an acceptable batch for this entity to be a member as part of the {@link InsertActionSorter}
