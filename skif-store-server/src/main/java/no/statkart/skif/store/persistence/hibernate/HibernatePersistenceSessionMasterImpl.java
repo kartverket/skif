@@ -880,7 +880,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @param valueExisting forrige verdi
      * @throws ImplementationException hvis eksisterende component blir orphan (gjelder kun Hibernate 3.2)
      * @return              true hvis {@cde value} er ny eller erstatter {@code valueExisting}
-     * @since 2.2.0
+     * @since 2.4.0
      */
     protected abstract boolean isNewOrReplacedEntityComponent(EntityType type, Object value, Object valueExisting, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents, CascadeStyle cascadeStyle);
 

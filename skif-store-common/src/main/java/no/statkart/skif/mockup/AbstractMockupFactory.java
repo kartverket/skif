@@ -44,13 +44,30 @@ public abstract class AbstractMockupFactory {
      */
     public abstract void createAllMockups();
 
+    /**
+     * Finner alle definerte id-er for gitt klasse. Obs! Denne returnerer ikke for subklasser.
+     *
+     * @param idClass    id-klasse som skal finnes
+     * @return id-ene
+     */
     public <I extends BubbleId> Set<I> getAllIds(Class<I> idClass) {
+        return getAllIds(idClass, false);
+    }
+
+    /**
+     * Finner alle definerte id-er for gitt klasse.
+     *
+     * @param idClass            id-klasse som skal finnes
+     * @param includeSubTypes    om subklasser av gitt id-klasse også skal returneres
+     * @return id-ene
+     */
+    public <I extends BubbleId> Set<I> getAllIds(Class<I> idClass, boolean includeSubTypes) {
         Set<I> ids = new LinkedHashSet<I>(); // Ønsker å bevare rekkefølge samt gjøre funksjonen deterministisk (dvs at rekkefølgen ikke avhenger av hashkoden til id-veriden)
 
         try {
             Field[] fields = getClass().getDeclaredFields();
             for (Field field : fields) {
-                if (field.getType().equals(idClass)) {
+                if ((includeSubTypes && idClass.isAssignableFrom(field.getType())) || (!includeSubTypes && field.getType().equals(idClass))) {
                     field.setAccessible(true); // Foreldreklasser har tydeligvis ikke lov til å tukle med sine barns private deler, men det blåser vi i
                     ids.add(idClass.cast(field.get(this)));
                 }
