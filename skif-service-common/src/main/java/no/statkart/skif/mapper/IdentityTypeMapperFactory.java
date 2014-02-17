@@ -54,7 +54,7 @@ public class IdentityTypeMapperFactory implements TypeMapperFactory {
 
     @Override
     public <WsapiT, DomainT> TypeMapper<WsapiT, DomainT> createTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
-        if (useIdentityMapping.contains(wsapiTypeToken.getRawType()) && useIdentityMapping.contains(domainTypeToken.getRawType()) && wrappingEquals(wsapiTypeToken, domainTypeToken)) {
+        if (useIdentityMapping.contains(wsapiTypeToken.getRawType()) && useIdentityMapping.contains(domainTypeToken.getRawType()) && isRelated(wsapiTypeToken, domainTypeToken)) {
             final Class<?> clazz = wsapiTypeToken.getRawType();
 
             return new TypeMapper<WsapiT, DomainT>() {
@@ -98,8 +98,10 @@ public class IdentityTypeMapperFactory implements TypeMapperFactory {
     /**
      * Sjekker om to typer er like. Denne godtar vil si at <code>Integer == int</code>.
      */
-    private <WsapiT, DomainT> boolean wrappingEquals(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
+    private <WsapiT, DomainT> boolean isRelated(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
         if (wsapiTypeToken.equals(domainTypeToken)) {
+            return true;
+        } else if (wsapiTypeToken.isAssignableFrom(domainTypeToken) || domainTypeToken.isAssignableFrom(wsapiTypeToken)) { // Antar her at subklassen er en subklasse bare fordi instansen er det, ikke fordi feltet er slik
             return true;
         } else {
             // Det er viktig her å ikke gå ned på equals av rawType med mindre den ene eller andre siden er en primitiv type.
