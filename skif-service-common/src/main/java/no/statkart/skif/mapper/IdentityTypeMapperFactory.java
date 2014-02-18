@@ -4,7 +4,9 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Primitives;
 import com.google.common.reflect.TypeToken;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -20,6 +22,20 @@ public class IdentityTypeMapperFactory implements TypeMapperFactory {
     public IdentityTypeMapperFactory useIdentityMapping(Class<?>... c) {
         useIdentityMapping.addAll(Lists.newArrayList(c));
         return this;
+    }
+
+    /**
+     * Returnerer et map som kan brukes som mapping override i {@link MappingResolver}.
+     * @return et map som kan brukes fritt, siden det lages en ny ved hvert kall, og dermed heller ikke er "live"
+     */
+    public Map<Class<?>, Class<?>> getOverrideMappings() {
+        Map<Class<?>, Class<?>> overrides = new HashMap<Class<?>, Class<?>>(useIdentityMapping.size());
+        for (Class<?> c : useIdentityMapping) {
+            if (!c.isPrimitive()) {
+                overrides.put(c, c);
+            }
+        }
+        return overrides;
     }
 
     /**

@@ -1,5 +1,6 @@
 package no.statkart.skif.mapper;
 
+import com.google.common.primitives.Primitives;
 import com.google.common.reflect.TypeToken;
 import no.statkart.skif.exception.ImplementationException;
 
@@ -136,6 +137,11 @@ public class MappingResolver {
         if (typeToken.getType() instanceof TypeVariable) {
             TypeVariable typeVariable = (TypeVariable) typeToken.getType();
             typeToken = (TypeToken<T>) TypeToken.of(typeVariable.getBounds()[0]);
+        }
+
+        if (typeToken.getRawType().isPrimitive()) {
+            // Erstatt med ikke-primitiv
+            typeToken = (TypeToken<T>) TypeToken.of(Primitives.wrap(typeToken.getRawType()));
         }
 
         try {
