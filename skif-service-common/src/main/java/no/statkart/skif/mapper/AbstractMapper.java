@@ -36,7 +36,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         W2D
     }
 
-    private static class MapperKey {
+    protected static class MapperKey {
         private final TypeToken<?> wsapiType, domainType;
 
         public MapperKey(TypeToken<?> wsapiType, TypeToken<?> domainType) {
@@ -75,7 +75,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
     private final List<TypeMapperFactory> typeMapperFactories = new ArrayList<TypeMapperFactory>();
 
-    private final Map<MapperKey, TypeMapper<?, ?>> mapperCache = new ConcurrentHashMap<MapperKey, TypeMapper<?, ?>>();
+    protected final Map<MapperKey, TypeMapper<?, ?>> mapperCache = new ConcurrentHashMap<MapperKey, TypeMapper<?, ?>>();
 
     private final M thisMapping;
 
