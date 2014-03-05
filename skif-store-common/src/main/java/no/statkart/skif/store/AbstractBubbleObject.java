@@ -21,7 +21,6 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
 
     protected transient Store store;
     protected BubbleId<?> id;
-    private Timestamp oppdateringsdato;
 
     @Deprecated
     private long versjonId = 0;
