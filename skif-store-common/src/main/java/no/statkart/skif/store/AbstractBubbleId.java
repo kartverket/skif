@@ -28,7 +28,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     /**
      * Allows the object to exist in multiple versions in Store.
      */
-    private SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
+    private SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
 
     /**
      * Helper class that holds meta info for each subtype of this class. The meta info takes
