@@ -6,6 +6,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
@@ -106,11 +107,16 @@ public class CompositeComponentTest extends StoreTestTestCase {
     public void testSubstituteNullComponentWithNull() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
-        store.beginUnitOfWork();
-        final BubbleWithCompositeComponent bubbleWithNullComponents = store.lock(mockupFactory.getWithNullComponentsId());
-        bubbleWithNullComponents.setLevel1Component(null);
-        storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-        store.endUnitOfWork();
+
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
+        try {
+            final BubbleWithCompositeComponent bubbleWithNullComponents = store.lock(mockupFactory.getWithNullComponentsId());
+            bubbleWithNullComponents.setLevel1Component(null);
+            storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
+            store.endUnitOfWork(unitOfWork);
+        } finally {
+            store.closeUnitOfWork(unitOfWork);
+        }
 
         final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.get(mockupFactory.getWithNullComponentsId());
         assertTrue(bubbleWithCompositeComponent.getLevel1Component().isNullComponent());
@@ -120,13 +126,18 @@ public class CompositeComponentTest extends StoreTestTestCase {
     public void testSubstituteNullComponentWithNonNull() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
-        store.beginUnitOfWork();
-        final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNullComponentsId());
-        bubbleWithCompositeComponent.setLevel1Component(new Level1CompositeComponent());
-        bubbleWithCompositeComponent.getLevel1Component().setText("I am not null");
-        store.update(bubbleWithCompositeComponent);
-        storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-        store.endUnitOfWork();
+
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
+        try {
+            final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNullComponentsId());
+            bubbleWithCompositeComponent.setLevel1Component(new Level1CompositeComponent());
+            bubbleWithCompositeComponent.getLevel1Component().setText("I am not null");
+            store.update(bubbleWithCompositeComponent);
+            storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
+            store.endUnitOfWork(unitOfWork);
+        } finally {
+            store.closeUnitOfWork(unitOfWork);
+        }
 
         final BubbleWithCompositeComponent bubbleWithCompositeComponentSaved = store.get(mockupFactory.getWithNullComponentsId());
         assertFalse(bubbleWithCompositeComponentSaved.getLevel1Component().isNullComponent());
@@ -141,23 +152,27 @@ public class CompositeComponentTest extends StoreTestTestCase {
     public void testMoveComponent() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
-        store.beginUnitOfWork();
-        final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
-        Level1CompositeComponent existingLevel1Component = bubbleWithCompositeComponent.getLevel1Component();
-        bubbleWithCompositeComponent.setLevel1Component(null);
-        store.update(bubbleWithCompositeComponent);
-        BubbleWithCompositeComponent newBubble = new BubbleWithCompositeComponent();
-        newBubble.setLevel1Component(existingLevel1Component);
-        store.insert(newBubble);
+
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
-            storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-            failBecauseExceptionWasNotThrown(ImplementationException.class);
-        } catch (ImplementationException e) {
-            // Burde ikke være HibernateException en en SKIF exception. Det vil det være i JEE mode
-            // PS: vi får kun feil her fordi komponenten inneholder et sett.
-            assertThat(e).hasMessageContaining("Component contains a Collection that is null");
+            final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
+            Level1CompositeComponent existingLevel1Component = bubbleWithCompositeComponent.getLevel1Component();
+            bubbleWithCompositeComponent.setLevel1Component(null);
+            store.update(bubbleWithCompositeComponent);
+            BubbleWithCompositeComponent newBubble = new BubbleWithCompositeComponent();
+            newBubble.setLevel1Component(existingLevel1Component);
+            store.insert(newBubble);
+            try {
+                storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
+                failBecauseExceptionWasNotThrown(ImplementationException.class);
+            } catch (ImplementationException e) {
+                // Burde ikke være HibernateException en en SKIF exception. Det vil det være i JEE mode
+                // PS: vi får kun feil her fordi komponenten inneholder et sett.
+                assertThat(e).hasMessageContaining("Component contains a Collection that is null");
+            }
+        } finally {
+            store.closeUnitOfWork(unitOfWork);
         }
-        store.abortUnitOfWork();
     }
 
     /**
@@ -168,24 +183,28 @@ public class CompositeComponentTest extends StoreTestTestCase {
     public void testMoveComponentLevel2() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
-        store.beginUnitOfWork();
-        final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
-        Level2CompositeComponent existingLevel2Component = bubbleWithCompositeComponent.getLevel1Component().getLevel2Component();
-        bubbleWithCompositeComponent.getLevel1Component().setLevel2Component(null);
-        store.update(bubbleWithCompositeComponent);
-        BubbleWithCompositeComponent newBubble = new BubbleWithCompositeComponent();
-        newBubble.setLevel1Component(new Level1CompositeComponent());
-        newBubble.getLevel1Component().setLevel2Component(existingLevel2Component);
-        store.insert(newBubble);
+
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
-            storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-            failBecauseExceptionWasNotThrown(ImplementationException.class);
-        } catch (ImplementationException e) {
-            // Burde ikke være HibernateException en en SKIF exception. Det vil det være i JEE mode
-            // PS: vi får kun feil her fordi komponenten inneholder et sett.
-            assertThat(e).hasMessageContaining("Component contains a Collection that is null");
+            final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
+            Level2CompositeComponent existingLevel2Component = bubbleWithCompositeComponent.getLevel1Component().getLevel2Component();
+            bubbleWithCompositeComponent.getLevel1Component().setLevel2Component(null);
+            store.update(bubbleWithCompositeComponent);
+            BubbleWithCompositeComponent newBubble = new BubbleWithCompositeComponent();
+            newBubble.setLevel1Component(new Level1CompositeComponent());
+            newBubble.getLevel1Component().setLevel2Component(existingLevel2Component);
+            store.insert(newBubble);
+            try {
+                storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
+                failBecauseExceptionWasNotThrown(ImplementationException.class);
+            } catch (ImplementationException e) {
+                // Burde ikke være HibernateException en en SKIF exception. Det vil det være i JEE mode
+                // PS: vi får kun feil her fordi komponenten inneholder et sett.
+                assertThat(e).hasMessageContaining("Component contains a Collection that is null");
+            }
+        } finally {
+            store.closeUnitOfWork(unitOfWork);
         }
-        store.abortUnitOfWork();
     }
 
     /**
@@ -194,19 +213,23 @@ public class CompositeComponentTest extends StoreTestTestCase {
     public void testShareComponent() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
-        store.beginUnitOfWork();
-        final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNullComponentsId());
 
-        Level1CompositeComponent sharedLevel1Component = new Level1CompositeComponent();
-        bubbleWithCompositeComponent.setLevel1Component(sharedLevel1Component);
-
-        BubbleWithCompositeComponent newBubble = new BubbleWithCompositeComponent();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
-            newBubble.setLevel1Component(sharedLevel1Component);
-            fail();
-        } catch (IllegalStateException e) {
-            // forventet
+            final BubbleWithCompositeComponent bubbleWithCompositeComponent = store.lock(mockupFactory.getWithNullComponentsId());
+
+            Level1CompositeComponent sharedLevel1Component = new Level1CompositeComponent();
+            bubbleWithCompositeComponent.setLevel1Component(sharedLevel1Component);
+
+            BubbleWithCompositeComponent newBubble = new BubbleWithCompositeComponent();
+            try {
+                newBubble.setLevel1Component(sharedLevel1Component);
+                fail();
+            } catch (IllegalStateException e) {
+                // forventet
+            }
+        } finally {
+            store.closeUnitOfWork(unitOfWork);
         }
-        store.abortUnitOfWork();
     }
 }

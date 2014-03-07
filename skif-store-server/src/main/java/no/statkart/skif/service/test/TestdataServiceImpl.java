@@ -99,16 +99,14 @@ public class TestdataServiceImpl implements TestdataService {
     @Override
     public void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer transfer) {
         setTransactionSnapshot(snapshotVersion);
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
-            store.beginUnitOfWork();
             store.lock(BubbleIds.asBaseIds(transfer.getUpdatedObjects()));
             store.lock(BubbleIds.asBaseIds(transfer.getDeletedObjects()));
             store.registerTransfer(transfer);
-            store.commitUnitOfWork();
-        } catch (RuntimeException e) {
-            store.abortUnitOfWork();
-            throw e;
-
+            store.commitUnitOfWork(unitOfWork);
+        } finally {
+            store.closeUnitOfWork(unitOfWork);
         }
     }
 

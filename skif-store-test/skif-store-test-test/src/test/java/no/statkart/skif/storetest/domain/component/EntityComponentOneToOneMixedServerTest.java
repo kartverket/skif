@@ -9,6 +9,7 @@ import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponentId;
 import no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent;
@@ -100,11 +101,15 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
-                bubbleWithEntityComponent.setText("I am changed");
-                store.update(bubbleWithEntityComponent);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    bubbleWithEntityComponent.setText("I am changed");
+                    store.update(bubbleWithEntityComponent);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -131,16 +136,20 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 StoreServer store;
 
                 public Object run() {
-                    store.beginUnitOfWork();
-                    final BubbleWithEntityComponent bubble1 = store.lock(mockupFactory.getWithNonNullComponentsId());
-                    final BubbleWithEntityComponent bubble2 = store.lock(mockupFactory.getWithNullLevel2Id());
-                    Level2EntityComponent newLevel2Component = new Level2EntityComponent();
-                    newLevel2Component.setIdForTesting(bubble1.getLevel1Component().getLevel2Component().getId());
-                    newLevel2Component.setText("I am trying to steal an id");
-                    bubble2.getLevel1Component().setLevel2Component(newLevel2Component);
-                    store.update(bubble2);
-                    store.commitUnitOfWork();
-                    Assertions.failBecauseExceptionWasNotThrown(IllegalStateException.class);
+                    UnitOfWork unitOfWork = store.beginUnitOfWork();
+                    try {
+                        final BubbleWithEntityComponent bubble1 = store.lock(mockupFactory.getWithNonNullComponentsId());
+                        final BubbleWithEntityComponent bubble2 = store.lock(mockupFactory.getWithNullLevel2Id());
+                        Level2EntityComponent newLevel2Component = new Level2EntityComponent();
+                        newLevel2Component.setIdForTesting(bubble1.getLevel1Component().getLevel2Component().getId());
+                        newLevel2Component.setText("I am trying to steal an id");
+                        bubble2.getLevel1Component().setLevel2Component(newLevel2Component);
+                        store.update(bubble2);
+                        store.commitUnitOfWork(unitOfWork);
+                        Assertions.failBecauseExceptionWasNotThrown(IllegalStateException.class);
+                    } finally {
+                        store.closeUnitOfWork(unitOfWork);
+                    }
                     return null;
                 }
             });
@@ -180,11 +189,15 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithNullComponents = store.lock(mockupFactory.getWithNullComponentsId());
-                bubbleWithNullComponents.setLevel1Component(null);
-                store.update(bubbleWithNullComponents);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithNullComponents = store.lock(mockupFactory.getWithNullComponentsId());
+                    bubbleWithNullComponents.setLevel1Component(null);
+                    store.update(bubbleWithNullComponents);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -225,12 +238,16 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNullComponentsId());
-                bubbleWithEntityComponent.setLevel1Component(new Level1EntityComponent());
-                bubbleWithEntityComponent.getLevel1Component().setText("I am not null");
-                store.update(bubbleWithEntityComponent);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNullComponentsId());
+                    bubbleWithEntityComponent.setLevel1Component(new Level1EntityComponent());
+                    bubbleWithEntityComponent.getLevel1Component().setText("I am not null");
+                    store.update(bubbleWithEntityComponent);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -279,12 +296,16 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
-                bubbleWithEntityComponent.setLevel1Component(null);
-                bubbleWithEntityComponent.setText("I now have a null component");
-                store.update(bubbleWithEntityComponent);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    bubbleWithEntityComponent.setLevel1Component(null);
+                    bubbleWithEntityComponent.setText("I now have a null component");
+                    store.update(bubbleWithEntityComponent);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -341,12 +362,16 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
-                bubbleWithEntityComponent.getLevel1Component().setLevel2Component(null);
-                bubbleWithEntityComponent.setText("I now have a null level 2 component");
-                store.update(bubbleWithEntityComponent);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    bubbleWithEntityComponent.getLevel1Component().setLevel2Component(null);
+                    bubbleWithEntityComponent.setText("I now have a null level 2 component");
+                    store.update(bubbleWithEntityComponent);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -367,15 +392,19 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
-                Level2EntityComponent newComponent = new Level2EntityComponent();
-                newComponent.setText("I am a new level 2 component");
-                newComponent.setBeloepSet(bubbleWithEntityComponent.getLevel1Component().getLevel2Component().getBeloepSet());
-                bubbleWithEntityComponent.getLevel1Component().setLevel2Component(newComponent);
-                bubbleWithEntityComponent.setText("I now have a new level 2 component");
-                store.update(bubbleWithEntityComponent);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    Level2EntityComponent newComponent = new Level2EntityComponent();
+                    newComponent.setText("I am a new level 2 component");
+                    newComponent.setBeloepSet(bubbleWithEntityComponent.getLevel1Component().getLevel2Component().getBeloepSet());
+                    bubbleWithEntityComponent.getLevel1Component().setLevel2Component(newComponent);
+                    bubbleWithEntityComponent.setText("I now have a new level 2 component");
+                    store.update(bubbleWithEntityComponent);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -419,17 +448,21 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 StoreServer store;
 
                 public Object run() {
-                    store.beginUnitOfWork();
-                    final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
-                    Level1EntityComponent existingLevel1Component = bubbleWithEntityComponent.getLevel1Component();
-                    bubbleWithEntityComponent.setLevel1Component(null);
-                    store.update(bubbleWithEntityComponent);
-                    BubbleWithEntityComponent newBubble = new BubbleWithEntityComponent();
-                    newBubble.setLevel1Component(existingLevel1Component);
-                    store.insert(newBubble);
-                    store.commitUnitOfWork();
-                    store.flush();
-                    failBecauseExceptionWasNotThrown(IllegalStateException.class);
+                    UnitOfWork unitOfWork = store.beginUnitOfWork();
+                    try {
+                        final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
+                        Level1EntityComponent existingLevel1Component = bubbleWithEntityComponent.getLevel1Component();
+                        bubbleWithEntityComponent.setLevel1Component(null);
+                        store.update(bubbleWithEntityComponent);
+                        BubbleWithEntityComponent newBubble = new BubbleWithEntityComponent();
+                        newBubble.setLevel1Component(existingLevel1Component);
+                        store.insert(newBubble);
+                        store.commitUnitOfWork(unitOfWork);
+                        store.flush();
+                        failBecauseExceptionWasNotThrown(IllegalStateException.class);
+                    } finally {
+                        store.closeUnitOfWork(unitOfWork);
+                    }
                     return null;
                 }
             });
@@ -472,15 +505,19 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 StoreServer store;
 
                 public Object run() {
-                    store.beginUnitOfWork();
-                    final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
-                    Level1EntityComponent existingLevel1Component = bubbleWithEntityComponent.getLevel1Component();
-                    bubbleWithEntityComponent.setLevel1Component(null);
-                    store.update(bubbleWithEntityComponent);
-                    bubbleWithEntityComponent.setLevel1Component(existingLevel1Component);
-                    store.update(bubbleWithEntityComponent);
-                    store.commitUnitOfWork();
-                    store.flush();
+                    UnitOfWork unitOfWork = store.beginUnitOfWork();
+                    try {
+                        final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
+                        Level1EntityComponent existingLevel1Component = bubbleWithEntityComponent.getLevel1Component();
+                        bubbleWithEntityComponent.setLevel1Component(null);
+                        store.update(bubbleWithEntityComponent);
+                        bubbleWithEntityComponent.setLevel1Component(existingLevel1Component);
+                        store.update(bubbleWithEntityComponent);
+                        store.commitUnitOfWork(unitOfWork);
+                        store.flush();
+                    } finally {
+                        store.closeUnitOfWork(unitOfWork);
+                    }
                     return null;
                 }
             });
@@ -529,21 +566,24 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithEntityComponents = store.lock(mockupFactory.getWithNonNullComponentsId());
-                final BubbleWithEntityComponent bubbleWithNullLevel2Component = store.lock(mockupFactory.getWithNullLevel2Id());
-                Level2EntityComponent existingLevel2Component = bubbleWithEntityComponents.getLevel1Component().getLevel2Component();
-                bubbleWithEntityComponents.getLevel1Component().setLevel2Component(null);
-                store.update(bubbleWithEntityComponents);
-                bubbleWithNullLevel2Component.getLevel1Component().setLevel2Component(existingLevel2Component);
-                store.update(bubbleWithNullLevel2Component);
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
                 try {
-                    store.commitUnitOfWork();
-                    failBecauseExceptionWasNotThrown(ImplementationException.class);
-                } catch (ImplementationException e) {
-                    assertThat(e).hasMessageStartingWith("Found entity component that is not new");
+                    final BubbleWithEntityComponent bubbleWithEntityComponents = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    final BubbleWithEntityComponent bubbleWithNullLevel2Component = store.lock(mockupFactory.getWithNullLevel2Id());
+                    Level2EntityComponent existingLevel2Component = bubbleWithEntityComponents.getLevel1Component().getLevel2Component();
+                    bubbleWithEntityComponents.getLevel1Component().setLevel2Component(null);
+                    store.update(bubbleWithEntityComponents);
+                    bubbleWithNullLevel2Component.getLevel1Component().setLevel2Component(existingLevel2Component);
+                    store.update(bubbleWithNullLevel2Component);
+                    try {
+                        store.commitUnitOfWork(unitOfWork);
+                        failBecauseExceptionWasNotThrown(ImplementationException.class);
+                    } catch (ImplementationException e) {
+                        assertThat(e).hasMessageStartingWith("Found entity component that is not new");
+                    }
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
                 }
-                store.abortUnitOfWork();
                 return null;
             }
         });
@@ -576,10 +616,14 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
-                store.delete(bubbleWithLevel1Component);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
+                    store.delete(bubbleWithLevel1Component);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -617,11 +661,15 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
-                bubbleWithLevel1Component.setLevel1Component(null);
-                store.update(bubbleWithLevel1Component);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
+                    bubbleWithLevel1Component.setLevel1Component(null);
+                    store.update(bubbleWithLevel1Component);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -658,11 +706,15 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
-                bubbleWithLevel1Component.setLevel1Component(null);
-                store.delete(bubbleWithLevel1Component);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
+                    bubbleWithLevel1Component.setLevel1Component(null);
+                    store.delete(bubbleWithLevel1Component);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -698,10 +750,14 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Components = store.lock(mockupFactory.getWithNonNullComponentsId());
-                store.delete(bubbleWithLevel1AndLevel2Components);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Components = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    store.delete(bubbleWithLevel1AndLevel2Components);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -740,11 +796,15 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Components = store.lock(mockupFactory.getWithNonNullComponentsId());
-                bubbleWithLevel1AndLevel2Components.setLevel1Component(null);
-                store.delete(bubbleWithLevel1AndLevel2Components);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Components = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    bubbleWithLevel1AndLevel2Components.setLevel1Component(null);
+                    store.delete(bubbleWithLevel1AndLevel2Components);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -783,11 +843,15 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Components = store.lock(mockupFactory.getWithNonNullComponentsId());
-                bubbleWithLevel1AndLevel2Components.getLevel1Component().setLevel2Component(null);
-                store.delete(bubbleWithLevel1AndLevel2Components);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Components = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    bubbleWithLevel1AndLevel2Components.getLevel1Component().setLevel2Component(null);
+                    store.delete(bubbleWithLevel1AndLevel2Components);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -828,12 +892,16 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Components = store.lock(mockupFactory.getWithNonNullComponentsId());
-                bubbleWithLevel1AndLevel2Components.getLevel1Component().setLevel2Component(null);
-                bubbleWithLevel1AndLevel2Components.setLevel1Component(null);
-                store.delete(bubbleWithLevel1AndLevel2Components);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Components = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    bubbleWithLevel1AndLevel2Components.getLevel1Component().setLevel2Component(null);
+                    bubbleWithLevel1AndLevel2Components.setLevel1Component(null);
+                    store.delete(bubbleWithLevel1AndLevel2Components);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });

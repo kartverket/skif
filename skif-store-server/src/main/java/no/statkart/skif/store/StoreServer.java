@@ -92,22 +92,18 @@ public class StoreServer extends AbstractStore {
 
     public LinkedHashSet<BubbleId<?>> getDeletedIds() {
         return storeServerSession().getDeletedIds();
-
     }
 
     public LinkedHashSet<BubbleId<?>> getInsertedIds() {
         return storeServerSession().getInsertedIds();
-
     }
 
     public LinkedHashSet<BubbleId<?>> getLockedIds() {
         return storeServerSession().getLockedIds();
-
     }
 
     public LinkedHashSet<BubbleId<?>> getUpdatedIds() {
         return storeServerSession().getUpdatedIds();
-
     }
 
     @Override
@@ -118,7 +114,9 @@ public class StoreServer extends AbstractStore {
     }
 
     @Override
-    public void endUnitOfWork() {
+    public void endUnitOfWork(UnitOfWork unitOfWork) {
+        validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
+
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
         storeSession = storeUnitOfWork.endUnitOfWork();
         // Nødvendig å kjøre clear() her slik at vi får lest inn objekter på nytt som har blitt oppdatert utenom innværende sesion

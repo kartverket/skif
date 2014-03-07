@@ -314,12 +314,12 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public void beginUnitOfWork() {
+    public UnitOfWork beginUnitOfWork() {
         throw new NotImplementedException();
     }
 
     @Override
-    public void commitUnitOfWork() {
+    public void commitUnitOfWork(UnitOfWork unitOfWork) {
         throw new NotImplementedException();
     }
 
@@ -329,12 +329,17 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public void abortUnitOfWork() {
+    public void abortUnitOfWork(UnitOfWork unitOfWork) {
         throw new NotImplementedException();
     }
 
     @Override
-    public void endUnitOfWork() {
+    public void endUnitOfWork(UnitOfWork unitOfWork) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void closeUnitOfWork(UnitOfWork unitOfWork) {
         throw new NotImplementedException();
     }
 

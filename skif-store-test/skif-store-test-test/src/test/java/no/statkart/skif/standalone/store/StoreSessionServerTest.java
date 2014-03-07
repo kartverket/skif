@@ -599,33 +599,33 @@ public class StoreSessionServerTest {
 
     public void testBeginEndMultiLevelEmptyUnitOfWorks() {
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
-        storeServer.beginUnitOfWork();
-        storeServer.beginUnitOfWork();
-        storeServer.commitUnitOfWork();
-        storeServer.commitUnitOfWork();
-        storeServer.commitUnitOfWork();
+        UnitOfWork unitOfWork1 = storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork2 = storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork3 = storeServer.beginUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork3);
+        storeServer.commitUnitOfWork(unitOfWork2);
+        storeServer.commitUnitOfWork(unitOfWork1);
         storeServer.commitTransaction();
     }
 
     public void testInsertViaUOW() {
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
         TestBubble testBubble_100 = new TestBubble(TestBubbleId_101);
         testBubble_100.setText("Insert 1");
         storeServer.insert(testBubble_100);
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork);
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
     }
 
     public void testInsertViaUOW_Abort() {
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
         TestBubble testBubble_100 = new TestBubble(TestBubbleId_101);
         testBubble_100.setText("Insert 1");
         storeServer.insert(testBubble_100);
-        storeServer.abortUnitOfWork();
+        storeServer.abortUnitOfWork(unitOfWork);
         assertNotFound(storeServer, TestBubbleId_101);
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
@@ -635,13 +635,13 @@ public class StoreSessionServerTest {
         testInsert();
         storeServer.beginTransaction();
 
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         assertEquals(testBubble_101.getText(), "Insert 1");
         testBubble_101.setText("Update 1");
         storeServer.update(testBubble_101);
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Update 1");
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork);
 
         storeServer.commitTransaction();
         storeServer.evict(testBubble_101.getId());
@@ -652,13 +652,13 @@ public class StoreSessionServerTest {
         testInsert();
         storeServer.beginTransaction();
 
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         assertEquals(testBubble_101.getText(), "Insert 1");
         testBubble_101.setText("Update 1");
         storeServer.update(testBubble_101);
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Update 1");
-        storeServer.abortUnitOfWork();
+        storeServer.abortUnitOfWork(unitOfWork);
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Insert 1");
         storeServer.commitTransaction();
         storeServer.evict(testBubble_101.getId());
@@ -669,10 +669,10 @@ public class StoreSessionServerTest {
         testInsert();
         storeServer.beginTransaction();
 
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         storeServer.delete(testBubble_101);
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork);
 
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
@@ -682,11 +682,11 @@ public class StoreSessionServerTest {
         testInsert();
         storeServer.beginTransaction();
 
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
         TestBubble testBubble_101 = storeServer.lock(TestBubbleId_101);
         testBubble_101.setText("Deleted");
         storeServer.delete(testBubble_101);
-        storeServer.abortUnitOfWork();
+        storeServer.abortUnitOfWork(unitOfWork);
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "Insert 1");
 
         storeServer.commitTransaction();
@@ -696,11 +696,11 @@ public class StoreSessionServerTest {
     public void testInsertDeleteObjectInSameUnitOfWork() {
 
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
         storeServer.delete(testBubble1);
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork);
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
         assertNotFound(storeServer, TestBubbleId_101);
@@ -709,11 +709,11 @@ public class StoreSessionServerTest {
     public void testInsertDeleteObjectInSameUnitOfWork_Abort() {
 
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
         storeServer.delete(testBubble1);
-        storeServer.abortUnitOfWork();
+        storeServer.abortUnitOfWork(unitOfWork);
         assertNotFound(storeServer, TestBubbleId_101);
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
@@ -723,16 +723,16 @@ public class StoreSessionServerTest {
 
     public void testInsertDeleteObjectViaNestedUnitOfWork() {
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork1 = storeServer.beginUnitOfWork();
         TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");
         storeServer.insert(testBubble1);
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork2 = storeServer.beginUnitOfWork();
         TestBubble copy = CopyHelper.copy(testBubble1);
         storeServer.delete(copy);
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork2);
         assertSame(storeServer.get(TestBubbleId_101_CURRENT), copy);
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork1);
         assertNotFound(storeServer, TestBubbleId_101_CURRENT);
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
@@ -740,15 +740,15 @@ public class StoreSessionServerTest {
 
     public void testInsertDeleteObjectViaNestedUnitOfWork_AbortInner() {
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork1 = storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork2 = storeServer.beginUnitOfWork();
         TestBubble copy = CopyHelper.copy(testBubble1);
         storeServer.delete(copy);
-        storeServer.abortUnitOfWork();
+        storeServer.abortUnitOfWork(unitOfWork2);
         assertSame(storeServer.get(TestBubbleId_101), testBubble1);
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork1);
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "TestBubble 101");
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 1);
@@ -756,15 +756,15 @@ public class StoreSessionServerTest {
 
     public void testInsertDeleteObjectViaNestedUnitOfWork_AbortOuter() {
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork1 = storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork2 = storeServer.beginUnitOfWork();
         TestBubble copy = CopyHelper.copy(testBubble1);
         storeServer.delete(copy);
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork2);
         assertSame(storeServer.get(TestBubbleId_101), copy);
-        storeServer.abortUnitOfWork();
+        storeServer.abortUnitOfWork(unitOfWork1);
         assertNotFound(storeServer, TestBubbleId_101);
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
@@ -772,15 +772,15 @@ public class StoreSessionServerTest {
 
     public void testInsertDeleteObjectViaNestedUnitOfWork_AbortBoth() {
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork1 = storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork2 = storeServer.beginUnitOfWork();
         TestBubble copy = CopyHelper.copy(testBubble1);
         storeServer.delete(copy);
-        storeServer.abortUnitOfWork();
+        storeServer.abortUnitOfWork(unitOfWork2);
         assertSame(storeServer.get(TestBubbleId_101), testBubble1);
-        storeServer.abortUnitOfWork();
+        storeServer.abortUnitOfWork(unitOfWork1);
         assertNotFound(storeServer, TestBubbleId_101);
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
@@ -788,21 +788,21 @@ public class StoreSessionServerTest {
 
     public void testInsertUpdateDeleteObjectViaMultiNestedUnitOfWork() {
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork1 = storeServer.beginUnitOfWork();
         TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");
         storeServer.insert(testBubble1);
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork2 = storeServer.beginUnitOfWork();
         TestBubble testBubble2 = storeServer.get(testBubble1.getId());
         testBubble2.setText("TestBubble updated");
         storeServer.update(testBubble2);
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork3 = storeServer.beginUnitOfWork();
         TestBubble copy = storeServer.get(TestBubbleId_101);
         storeServer.delete(copy);
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork3);
         assertSame(storeServer.get(TestBubbleId_101_CURRENT), copy);
-        storeServer.commitUnitOfWork();
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork2);
+        storeServer.commitUnitOfWork(unitOfWork1);
         assertNotFound(storeServer, TestBubbleId_101_CURRENT);
         storeServer.commitTransaction();
         assertEquals(countInDatabase(persistenceSessionForSnapshot, TestBubbleId_101), 0);
@@ -810,21 +810,21 @@ public class StoreSessionServerTest {
 
     public void testInsertUpdateDeleteObjectViaMultiNestedUnitOfWork_AbortInnder() {
         storeServer.beginTransaction();
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork1 = storeServer.beginUnitOfWork();
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101, "TestBubble 101");
         storeServer.insert(testBubble1);
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork2 = storeServer.beginUnitOfWork();
         TestBubble testBubble2 = storeServer.get(testBubble1.getId());
         testBubble2.setText("TestBubble updated");
         storeServer.update(testBubble2);
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork3 = storeServer.beginUnitOfWork();
         TestBubble copy = storeServer.get(TestBubbleId_101);
         storeServer.delete(copy);
-        storeServer.abortUnitOfWork();
+        storeServer.abortUnitOfWork(unitOfWork3);
         assertSame(storeServer.get(TestBubbleId_101), testBubble2);
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "TestBubble updated");
-        storeServer.commitUnitOfWork();
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork2);
+        storeServer.commitUnitOfWork(unitOfWork1);
         assertSame(storeServer.get(TestBubbleId_101), testBubble2);
         assertEquals(storeServer.get(TestBubbleId_101).getText(), "TestBubble updated");
         storeServer.commitTransaction();
@@ -867,13 +867,13 @@ public class StoreSessionServerTest {
         // b_102 refererer b_101 og man bør derfor få referanse feil. Men dersom b_101 og b_102 er med i samme batch går det
         // greit likevel. Har derfor langt inn testBubble for å bryte batchen. For det skal virke må Store ikke
         // stokke om på rekkefølgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
-        storeServer.beginUnitOfWork();
+        UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
         storeServer.insert(b_102);
         storeServer.insert(testBubble);
         storeServer.insert(b_101);
         storeServer.insert(b_103);
         storeServer.reorderModification(b_102.getId());
-        storeServer.commitUnitOfWork();
+        storeServer.commitUnitOfWork(unitOfWork);
         storeServer.commitTransaction();
     }
 
@@ -924,7 +924,7 @@ public class StoreSessionServerTest {
             // b_102 refererer b_101 og man bør derfor få referanse feil. Men dersom b_101 og b_102 er med i samme batch går det
             // greit likevel. Har derfor langt inn testBubble for å bryte batchen. For det skal virke må Store ikke
             // stokke om på rekkefølgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
-            storeServer.beginUnitOfWork();
+            UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
             storeServer.insert(b_102);
             storeServer.insert(testBubble);
             storeServer.insert(b_101);
@@ -933,7 +933,7 @@ public class StoreSessionServerTest {
             logger.warn("Denne test forsøker å bryte integritetsskranke 'SELF_FK'. Hibernate (org.hibernate.util.JDBCExceptionReporter) logger en ERROR om dette, hvilket er ok.");
             // Uten denne går det ikke bra:
             // storeServer.rescheduleModification(b_102.getId());
-            storeServer.commitUnitOfWork();
+            storeServer.commitUnitOfWork(unitOfWork);
             storeServer.flush();
             fail("Skulle ha fått feil på flush: 'integritetsskranken (FREHEN_GB.SELF_FK) er overtrådt - hovednøkkel ikke funnet'");
         } catch (ConstraintViolationException e) {

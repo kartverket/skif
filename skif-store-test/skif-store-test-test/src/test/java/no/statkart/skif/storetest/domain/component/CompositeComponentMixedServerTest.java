@@ -8,6 +8,7 @@ import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
@@ -92,11 +93,15 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
                 StoreServer store;
 
                 public Object run() {
-                    store.beginUnitOfWork();
-                    final BubbleWithCompositeComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
-                    bubbleWithLevel1Component.setLevel1Component(null);
-                    store.update(bubbleWithLevel1Component);
-                    store.commitUnitOfWork();
+                    UnitOfWork unitOfWork = store.beginUnitOfWork();
+                    try {
+                        final BubbleWithCompositeComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
+                        bubbleWithLevel1Component.setLevel1Component(null);
+                        store.update(bubbleWithLevel1Component);
+                        store.commitUnitOfWork(unitOfWork);
+                    } finally {
+                        store.closeUnitOfWork(unitOfWork);
+                    }
                     return null;
                 }
             });
@@ -146,12 +151,16 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithCompositeComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
-                bubbleWithLevel1Component.setLevel1Component(null);
-                bubbleWithLevel1Component.setLevel1Component(new Level1CompositeComponent());
-                store.update(bubbleWithLevel1Component);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithCompositeComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
+                    bubbleWithLevel1Component.setLevel1Component(null);
+                    bubbleWithLevel1Component.setLevel1Component(new Level1CompositeComponent());
+                    store.update(bubbleWithLevel1Component);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -193,11 +202,15 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithCompositeComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
-                bubbleWithLevel1Component.getLevel1Component().clear();
-                store.update(bubbleWithLevel1Component);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithCompositeComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
+                    bubbleWithLevel1Component.getLevel1Component().clear();
+                    store.update(bubbleWithLevel1Component);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });

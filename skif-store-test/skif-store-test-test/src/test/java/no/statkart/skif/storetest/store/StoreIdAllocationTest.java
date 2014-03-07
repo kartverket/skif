@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.FooId;
 import no.statkart.skif.storetest.domain.standalone.TestBubble;
@@ -39,46 +40,48 @@ public class StoreIdAllocationTest extends StoreTestMixedTestCase {
     Store clientStore;
 
     public void testMixIdAllocation() {
-        TestBubble testBubbleOnClient = new TestBubble();
-        clientStore.beginUnitOfWork();
-        clientStore.insert(testBubbleOnClient);
+        UnitOfWork unitOfWork = clientStore.beginUnitOfWork();
+        try {
+            TestBubble testBubbleOnClient = new TestBubble();
+            clientStore.insert(testBubbleOnClient);
 
-        TestBubble testBubbleFromServer = (TestBubble) server.runInTxNotSupported(new RunOnServerMethod() {
-            @Inject
-            Store storeOnServer;
+            TestBubble testBubbleFromServer = (TestBubble) server.runInTxNotSupported(new RunOnServerMethod() {
+                @Inject
+                Store storeOnServer;
 
-            @Override
-            public Object run() {
-                TestBubble testBubbleOnServer = new TestBubble();
-                // TODO: Burde egentlig feile siden det gjøre en oppdatering og metoden ikke har transaksjonskontekst
-                storeOnServer.insert(testBubbleOnServer);
+                @Override
+                public Object run() {
+                    TestBubble testBubbleOnServer = new TestBubble();
+                    // TODO: Burde egentlig feile siden det gjøre en oppdatering og metoden ikke har transaksjonskontekst
+                    storeOnServer.insert(testBubbleOnServer);
 
-                return testBubbleOnServer;
-            }
-        });
-        assertFalse(testBubbleOnClient.getId().equals(testBubbleFromServer.getId()));
+                    return testBubbleOnServer;
+                }
+            });
+            assertFalse(testBubbleOnClient.getId().equals(testBubbleFromServer.getId()));
 
-        TestBubble testBubbleFromServer2 = (TestBubble) server.runInTxNotSupported(new RunOnServerMethod() {
-            @Inject
-            Store storeOnServer;
+            TestBubble testBubbleFromServer2 = (TestBubble) server.runInTxNotSupported(new RunOnServerMethod() {
+                @Inject
+                Store storeOnServer;
 
-            @Override
-            public Object run() {
-                TestBubble testBubbleOnServer = new TestBubble();
-                // TODO: Burde egentlig feile siden det gjøre en oppdatering og metoden ikke har transaksjonskontekst
-                storeOnServer.insert(testBubbleOnServer);
+                @Override
+                public Object run() {
+                    TestBubble testBubbleOnServer = new TestBubble();
+                    // TODO: Burde egentlig feile siden det gjøre en oppdatering og metoden ikke har transaksjonskontekst
+                    storeOnServer.insert(testBubbleOnServer);
 
-                return testBubbleOnServer;
-            }
-        });
-        // Test at sekvens på objekt opprettet på serveren er en større enn forrige server objekt
-        assertEquals(testBubbleFromServer.getId().getValue().longValue() + 1, testBubbleFromServer2.getId().getValue().longValue());
-        TestBubble testBubbleOnClient2 = new TestBubble();
-        clientStore.insert(testBubbleOnClient2);
-        // Test at sekvens på objekt opprettet på klientn er en større enn forrige server objekt
-        assertEquals(testBubbleOnClient.getId().getValue().longValue() + 1, testBubbleOnClient2.getId().getValue().longValue());
-
-        clientStore.abortUnitOfWork();
+                    return testBubbleOnServer;
+                }
+            });
+            // Test at sekvens på objekt opprettet på serveren er en større enn forrige server objekt
+            assertEquals(testBubbleFromServer.getId().getValue().longValue() + 1, testBubbleFromServer2.getId().getValue().longValue());
+            TestBubble testBubbleOnClient2 = new TestBubble();
+            clientStore.insert(testBubbleOnClient2);
+            // Test at sekvens på objekt opprettet på klientn er en større enn forrige server objekt
+            assertEquals(testBubbleOnClient.getId().getValue().longValue() + 1, testBubbleOnClient2.getId().getValue().longValue());
+        } finally {
+            clientStore.abortUnitOfWork(unitOfWork);
+        }
     }
 
 /*

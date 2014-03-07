@@ -10,6 +10,7 @@ import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponentId;
 import no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent;
@@ -25,7 +26,6 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.extractProperty;
 import static org.fest.assertions.api.Fail.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.*;
 
@@ -130,13 +130,13 @@ public class EntityComponentTest extends StoreTestTestCase {
     public void testSubstituteNullComponentWithNull() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithNullComponents = store.lock(mockupFactory.getWithNullComponentsId());
         assertNull(bubbleWithNullComponents.getLevel1Component());
         bubbleWithNullComponents.setLevel1Component(null);
         store.update(bubbleWithNullComponents);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-        store.endUnitOfWork();
+        store.endUnitOfWork(unitOfWork);
 
         final BubbleWithEntityComponent updatedBubble = store.get(mockupFactory.getWithNullComponentsId());
         assertNull(updatedBubble.getLevel1Component());
@@ -145,12 +145,12 @@ public class EntityComponentTest extends StoreTestTestCase {
     public void testUpdateBubbleWithNonNullComponent() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
         bubble.setText("Changed");
         store.update(bubble);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-        store.endUnitOfWork();
+        store.endUnitOfWork(unitOfWork);
 
         final BubbleWithEntityComponent updatedBubble = store.get(mockupFactory.getWithNullComponentsId());
         assertNull(updatedBubble.getLevel1Component());
@@ -159,13 +159,13 @@ public class EntityComponentTest extends StoreTestTestCase {
     public void testSubstituteNullComponentWithNonNull() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNullComponentsId());
         bubbleWithEntityComponent.setLevel1Component(new Level1EntityComponent());
         bubbleWithEntityComponent.getLevel1Component().setText("I am not null");
         store.update(bubbleWithEntityComponent);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-        store.endUnitOfWork();
+        store.endUnitOfWork(unitOfWork);
 
         final BubbleWithEntityComponent bubbleWithEntityComponentSaved = store.get(mockupFactory.getWithNullComponentsId());
         assertNotNull(bubbleWithEntityComponentSaved.getLevel1Component());
@@ -181,7 +181,7 @@ public class EntityComponentTest extends StoreTestTestCase {
     public void testMoveComponent() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNonNullComponentsId());
         Level1EntityComponent existingLevel1Component = bubbleWithEntityComponent.getLevel1Component();
         bubbleWithEntityComponent.setLevel1Component(null);
@@ -196,14 +196,14 @@ public class EntityComponentTest extends StoreTestTestCase {
             // OK, forventet
             assertTrue(t.getMessage().startsWith("Found entity component that is not new"));
         } finally {
-            store.abortUnitOfWork();
+            store.abortUnitOfWork(unitOfWork);
         }
     }
     
     public void testShareComponent() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithEntityComponent = store.lock(mockupFactory.getWithNullComponentsId());
 
         Level1EntityComponent sharedLevel1Component = new Level1EntityComponent();
@@ -216,18 +216,18 @@ public class EntityComponentTest extends StoreTestTestCase {
         } catch (IllegalStateException e) {
             // forventet
         }
-        store.abortUnitOfWork();
+        store.abortUnitOfWork(unitOfWork);
     }
 
     public void testDeleteComponentViaUpdate() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithLevel1Component = store.lock(mockupFactory.getWithNullLevel2Id());
         bubbleWithLevel1Component.setLevel1Component(null);
         store.update(bubbleWithLevel1Component);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-        store.endUnitOfWork();
+        store.endUnitOfWork(unitOfWork);
 
         // TODO: skrive databasekode som sjekker at level1 og level2 komponeter er slettet.
         final BubbleWithEntityComponent updatedBubble = store.lock(mockupFactory.getWithNullLevel2Id());
@@ -237,13 +237,13 @@ public class EntityComponentTest extends StoreTestTestCase {
     public void testDeleteComponentLevel1AndLevel2() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Components = store.lock(mockupFactory.getWithNonNullComponentsId());
         bubbleWithLevel1AndLevel2Components.getLevel1Component().setLevel2Component(null);
         bubbleWithLevel1AndLevel2Components.setLevel1Component(null);
         store.update(bubbleWithLevel1AndLevel2Components);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-        store.endUnitOfWork();
+        store.endUnitOfWork(unitOfWork);
 
         // TODO: skrive databasekode som sjekker at level1 og level2 komponeter er slettet.
         final BubbleWithEntityComponent updatedBubble = store.lock(mockupFactory.getWithNonNullComponentsId());
@@ -259,7 +259,7 @@ public class EntityComponentTest extends StoreTestTestCase {
     public void testChangeIdentOfEntityInSet() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetId());
         SetAaEntityComponent component = bubble.getAaComponents().iterator().next();
         int newIdent = -component.getIdent();
@@ -267,7 +267,7 @@ public class EntityComponentTest extends StoreTestTestCase {
         component.setText("Changed ident");
         store.update(bubble);
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-        store.endUnitOfWork();
+        store.endUnitOfWork(unitOfWork);
 
         final BubbleWithEntityComponent updatedBubble = store.get(mockupFactory.getWithOneAaComponentInSetId());
         assertThat(updatedBubble.getAaComponents()).hasSize(1);

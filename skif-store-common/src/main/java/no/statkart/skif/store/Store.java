@@ -414,18 +414,30 @@ public interface Store {
 
     /**
      * Starter en unit-of-work. Disse kan nøstes tre nivåer dypt.
+     *
+     * @return en slags referanse til startet unit-of-work, som må angis ved avslutting/avbryting av den
      */
-    void beginUnitOfWork();
+    UnitOfWork beginUnitOfWork();
 
     /**
      * Committer gjeldende unit-of-work ned på nivået under. Nivået under blir neste gjeldende nivå.
+     * <p/>
+     * Man må angi hvilken unit-of-work som skal committes, selv om det kun er gjeldende unit-of-work som kan committes.
+     * Dette for å sjekke at man committer den man tror man skal committe.
+     *
+     * @param unitOfWork    unit-of-work som skal committes
      */
-    void commitUnitOfWork();
+    void commitUnitOfWork(UnitOfWork unitOfWork);
 
     /**
-     * Avbryter gjeldende unit-of-work og returnerer til nivået under.
+     * Avbryter unit-of-work og returnerer til nivået under.
+     * <p/>
+     * Man må angi hvilken unit-of-work som skal avbrytes, selv om det kun er gjeldende unit-of-work som kan avbrytes.
+     * Dette for å sjekke at man avbryter den man tror man skal avbryte.
+     *
+     * @param unitOfWork    unit-of-work som skal avbrytes
      */
-    void abortUnitOfWork();
+    void abortUnitOfWork(UnitOfWork unitOfWork);
 
     /**
      * Henter ut transfer med alle endringer fra gjeldende unit-of-work.
@@ -437,8 +449,21 @@ public interface Store {
     /**
      * Avslutter gjeldende unit-of-work og returnerer til nivået under. Man må ha kalt {@link #getUnitOfWorkTransfer()}
      * først for å hente ut endringene, siden de ikke overføres til nivået under.
+     * <p/>
+     * Man må angi hvilken unit-of-work som skal avsluttes, selv om det kun er gjeldende unit-of-work som kan avsluttes.
+     * Dette for å sjekke at man avslutter den man tror man skal avslutte.
+     *
+     * @param unitOfWork    unit-of-work som skal avsluttes
      */
-    void endUnitOfWork();
+    void endUnitOfWork(UnitOfWork unitOfWork);
+
+    /**
+     * Sørger for at en unit-of-work er avsluttet. Har den ikke blitt avsluttet eller abortert allerede, så blir den
+     * abortert.
+     *
+     * @param unitOfWork    unit-of-work som skal tvinges avsluttet
+     */
+    void closeUnitOfWork(UnitOfWork unitOfWork);
 
     /**
      * Sjekker om man er i en unit-of-work.

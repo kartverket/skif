@@ -1,10 +1,7 @@
 package no.statkart.skif.storetest.domain.multikobling_old;
 
 import com.google.inject.Inject;
-import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.Store;
-import no.statkart.skif.store.UnitOfWorkTransfer;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.multikobling.DefaultKoblingFactory;
 import no.statkart.skif.store.multikobling.Kobling;
 import no.statkart.skif.store.multikobling.Multikobling;
@@ -38,54 +35,58 @@ public class MultikoblingTest extends StoreTestTestCase {
     public void test() {
         List<PersonId<?>> personIds = new ArrayList<PersonId<?>>();
         List<PengeheftelseId<?>> pengeheftelseIds = new ArrayList<PengeheftelseId<?>>();
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
 
-        for (int i = 0; i < 10; i++) {
-            final Person person = (Person) createBubble(PersonId.class);
-            store.insert(person);
-            final PersonId<?> personId = (PersonId<?>) person.getId();
-            personIds.add(personId);
+        try {
+            for (int i = 0; i < 10; i++) {
+                final Person person = (Person) createBubble(PersonId.class);
+                store.insert(person);
+                final PersonId<?> personId = (PersonId<?>) person.getId();
+                personIds.add(personId);
 
+            }
+
+            for (int i = 0; i < 5; i++) {
+                final Servitutt servitutt = (Servitutt) createBubble(ServituttId.class);
+                store.insert(servitutt);
+
+                servitutt.getRettighetshaverAktivIds().add(personIds.get(i));
+                servitutt.getRettighetshaverHistoriskIds().add(personIds.get(i + 5));
+
+                assertThat(servitutt.getPersonKoblinger()).contains(
+                        new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.RETTIGHETSHAVER_AKTIV, personIds.get(i)),
+                        new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.RETTIGHETSHAVER_HISTORISK, personIds.get(i + 5))
+                );
+                assertThat(servitutt.getRettighetshaverAktivIds().contains(personIds.get(i)));
+                assertThat(servitutt.getRettighetshaverHistoriskIds().contains(personIds.get(i + 5)));
+            }
+
+            for (int i = 0; i < 5; i++) {
+                final Pengeheftelse pengeheftelse = (Pengeheftelse) createBubble(PengeheftelseId.class);
+                store.insert(pengeheftelse);
+                final PengeheftelseId<?> pengeheftelseId = pengeheftelse.getId();
+                pengeheftelseIds.add(pengeheftelseId);
+
+                pengeheftelse.getPanthaverAktivIds().add(personIds.get(i));
+                pengeheftelse.getPanthaverAktivIds().add(personIds.get(i));
+                pengeheftelse.getPanthavereHistoriskIds().add(personIds.get(i + 5));
+
+                assertThat(pengeheftelse.getPersonKoblinger()).contains(
+                        new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.PANTHAVER_AKTIV, personIds.get(i)),
+                        new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.PANTHAVER_HISTORISK, personIds.get(i + 5))
+                );
+                assertThat(pengeheftelse.getPanthaverAktivIds().contains(personIds.get(i)));
+                assertThat(pengeheftelse.getPanthavereHistoriskIds().contains(personIds.get(i + 5)));
+
+            }
+
+
+            final Pengeheftelse pengeheftelse = store.get(pengeheftelseIds.get(2));
+            final UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+            store.endUnitOfWork(unitOfWork);
+        } finally {
+            store.closeUnitOfWork(unitOfWork);
         }
-
-        for (int i = 0; i < 5; i++) {
-            final Servitutt servitutt = (Servitutt) createBubble(ServituttId.class);
-            store.insert(servitutt);
-
-            servitutt.getRettighetshaverAktivIds().add(personIds.get(i));
-            servitutt.getRettighetshaverHistoriskIds().add(personIds.get(i + 5));
-
-            assertThat(servitutt.getPersonKoblinger()).contains(
-                    new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.RETTIGHETSHAVER_AKTIV, personIds.get(i)),
-                    new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.RETTIGHETSHAVER_HISTORISK, personIds.get(i + 5))
-            );
-            assertThat(servitutt.getRettighetshaverAktivIds().contains(personIds.get(i)));
-            assertThat(servitutt.getRettighetshaverHistoriskIds().contains(personIds.get(i + 5)));
-        }
-
-        for (int i = 0; i < 5; i++) {
-            final Pengeheftelse pengeheftelse = (Pengeheftelse) createBubble(PengeheftelseId.class);
-            store.insert(pengeheftelse);
-            final PengeheftelseId<?> pengeheftelseId = pengeheftelse.getId();
-            pengeheftelseIds.add(pengeheftelseId);
-
-            pengeheftelse.getPanthaverAktivIds().add(personIds.get(i));
-            pengeheftelse.getPanthaverAktivIds().add(personIds.get(i));
-            pengeheftelse.getPanthavereHistoriskIds().add(personIds.get(i + 5));
-
-            assertThat(pengeheftelse.getPersonKoblinger()).contains(
-                    new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.PANTHAVER_AKTIV, personIds.get(i)),
-                    new RetttstiftelseTilPersonKobling(RettsstiftelsePersonRolle.PANTHAVER_HISTORISK, personIds.get(i + 5))
-            );
-            assertThat(pengeheftelse.getPanthaverAktivIds().contains(personIds.get(i)));
-            assertThat(pengeheftelse.getPanthavereHistoriskIds().contains(personIds.get(i + 5)));
-
-        }
-
-
-        final Pengeheftelse pengeheftelse = store.get(pengeheftelseIds.get(2));
-        final UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
-        store.endUnitOfWork();
 
     }
 

@@ -56,11 +56,11 @@ public class StoreClientTest {
         Injector injector = createInjector();
         Store store = injector.getInstance(Store.class);
 
-        store.beginUnitOfWork();
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork1 = store.beginUnitOfWork();
+        UnitOfWork unitOfWork2 = store.beginUnitOfWork();
 
         try {
-            store.endUnitOfWork();
+            store.endUnitOfWork(unitOfWork2);
             Assert.fail("Skulle fått feilmelding");
         } catch (ImplementationException e) {
             Assert.assertTrue(e.getMessage().contains("In nested UnitOfWork"));
@@ -73,11 +73,11 @@ public class StoreClientTest {
 
         TestBubbleId<?> id = new TestBubbleId(1L);
 
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         store.lock(id);
         Assert.assertTrue(store.isLocked(id), "Objektet ble ikke låst");
         store.getUnitOfWorkTransfer();
-        store.endUnitOfWork();
+        store.endUnitOfWork(unitOfWork);
 
         // Simuler at tjeneren åpner alle låser for brukeren
         injector.getInstance(StoreClientTestStoreService.class).clearLocks();
@@ -92,13 +92,13 @@ public class StoreClientTest {
 
         TestBubbleId<?> id = new TestBubbleId(1L);
 
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         store.lock(id);
 
         Assert.assertTrue(store.isLocked(id), "Objektet er ikke låst");
         Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke låst ordentlig");
 
-        store.abortUnitOfWork();
+        store.abortUnitOfWork(unitOfWork);
 
         Assert.assertFalse(store.isLocked(id), "Objektet ble ikke låst opp");
         Assert.assertFalse(storeService.isLocked(id), "Objektet ble ikke låst opp ordentlig");
@@ -111,16 +111,16 @@ public class StoreClientTest {
 
         TestBubbleId<?> id = new TestBubbleId(1L);
 
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork1 = store.beginUnitOfWork();
 
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork2 = store.beginUnitOfWork();
 
         store.lock(id);
 
         Assert.assertTrue(store.isLocked(id), "Objektet er ikke låst");
         Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke låst ordentlig");
 
-        store.commitUnitOfWork();
+        store.commitUnitOfWork(unitOfWork2);
 
         Assert.assertTrue(store.isLocked(id), "Objektet ble låst opp");
         Assert.assertTrue(storeService.isLocked(id), "Objektet ble låst opp");
@@ -130,9 +130,9 @@ public class StoreClientTest {
         Injector injector = createInjector();
         Store store = injector.getInstance(Store.class);
 
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
-            store.commitUnitOfWork();
+            store.commitUnitOfWork(unitOfWork);
             Assert.fail("Skulle fått feilmelding");
         } catch (ImplementationException e) {
             Assert.assertTrue(e.getMessage().contains("Commit of UnitOfWork directly against server is not supported"));
@@ -150,9 +150,9 @@ public class StoreClientTest {
 
         Assert.assertSame(testBubble2, testBubble1, "Fikk to forskjellige objekter, altså ingen caching");
 
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         TestBubble testBubble3 = store.get(id);
-        store.abortUnitOfWork();
+        store.abortUnitOfWork(unitOfWork);
 
         Assert.assertSame(testBubble3, testBubble1, "Fikk to forskjellige objekter, altså ingen caching");
     }

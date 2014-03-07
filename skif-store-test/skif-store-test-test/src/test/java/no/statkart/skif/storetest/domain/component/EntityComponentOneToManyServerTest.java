@@ -8,6 +8,7 @@ import no.statkart.skif.service.test.TestdataService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.component.entity.*;
 import no.statkart.skif.storetest.mockup.BubbleWithEntityComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -99,13 +100,17 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetId());
-                SetAaEntityComponent newComponent = new SetAaEntityComponent(mockupFactory.getNextIdent(), "I am new");
-                bubble.getAaComponents().add(newComponent);
-                bubble.removeHibernatePersistenceSet();
-                store.update(bubble);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetId());
+                    SetAaEntityComponent newComponent = new SetAaEntityComponent(mockupFactory.getNextIdent(), "I am new");
+                    bubble.getAaComponents().add(newComponent);
+                    bubble.removeHibernatePersistenceSet();
+                    store.update(bubble);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -153,13 +158,17 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetId());
-                SetAaEntityComponent newComponent = new SetAaEntityComponent(mockupFactory.getNextIdent(), "I am new");
-                bubble.getAaComponents().add(newComponent);
-                bubble.removeHibernatePersistenceSet();
-                store.update(bubble);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetId());
+                    SetAaEntityComponent newComponent = new SetAaEntityComponent(mockupFactory.getNextIdent(), "I am new");
+                    bubble.getAaComponents().add(newComponent);
+                    bubble.removeHibernatePersistenceSet();
+                    store.update(bubble);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -202,12 +211,16 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetId());
-                bubble.getAaComponents().clear();
-                bubble.removeHibernatePersistenceSet();
-                store.update(bubble);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetId());
+                    bubble.getAaComponents().clear();
+                    bubble.removeHibernatePersistenceSet();
+                    store.update(bubble);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -251,13 +264,17 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetId());
-                SetAaEntityComponent component = bubble.getAaComponents().iterator().next();
-                component.setText("I am changed");
-                bubble.removeHibernatePersistenceSet();
-                store.update(bubble);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetId());
+                    SetAaEntityComponent component = bubble.getAaComponents().iterator().next();
+                    component.setText("I am changed");
+                    bubble.removeHibernatePersistenceSet();
+                    store.update(bubble);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -305,16 +322,20 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetAndNestedComponentsId());
-                SetAaEntityComponent componentInSet = bubble.getAaComponents().iterator().next();
-                SetAaLevel1EntityComponent newLevel1Component = new SetAaLevel1EntityComponent();
-                newLevel1Component.setText("I am new");
-                // Her blir opprinnelig level1 component gjort orphan
-                componentInSet.setLevel1Component(newLevel1Component);
-                bubble.removeHibernatePersistenceSet();
-                store.update(bubble);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetAndNestedComponentsId());
+                    SetAaEntityComponent componentInSet = bubble.getAaComponents().iterator().next();
+                    SetAaLevel1EntityComponent newLevel1Component = new SetAaLevel1EntityComponent();
+                    newLevel1Component.setText("I am new");
+                    // Her blir opprinnelig level1 component gjort orphan
+                    componentInSet.setLevel1Component(newLevel1Component);
+                    bubble.removeHibernatePersistenceSet();
+                    store.update(bubble);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -363,16 +384,20 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetAndNestedComponentsId());
-                SetAaEntityComponent componentInSet = bubble.getAaComponents().iterator().next();
-                SetAaLevel2EntityComponent newLevel2Component = new SetAaLevel2EntityComponent();
-                newLevel2Component.setText("I am new");
-                // Her blir opprinnelig level2 component gjort orphan
-                componentInSet.getLevel1Component().setLevel2Component(newLevel2Component);
-                bubble.removeHibernatePersistenceSet();
-                store.update(bubble);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentInSetAndNestedComponentsId());
+                    SetAaEntityComponent componentInSet = bubble.getAaComponents().iterator().next();
+                    SetAaLevel2EntityComponent newLevel2Component = new SetAaLevel2EntityComponent();
+                    newLevel2Component.setText("I am new");
+                    // Her blir opprinnelig level2 component gjort orphan
+                    componentInSet.getLevel1Component().setLevel2Component(newLevel2Component);
+                    bubble.removeHibernatePersistenceSet();
+                    store.update(bubble);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -433,22 +458,26 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentWithNestedSetInSetId());
-                NestedEntityComponent componentInNestedSet = bubble.getAaComponents().iterator().next().getNestedComponent().getNestedComponents().iterator().next();
-                NestedEntityComponent newComponent = new NestedEntityComponent("I am a new component inside Nested level 1 component");
-                // Her blir opprinnelig one-to-one component i Nested level 1 component gjort orphan
-                componentInNestedSet.setNestedComponent(newComponent);
-                // Her fjernes et element fra set i Nested level 1 component
-                NestedEntityComponent componentToRemove = componentInNestedSet.getNestedComponents().iterator().next();
-                componentInNestedSet.getNestedComponents().remove(componentToRemove);
-                // Her legges til et element fra set i Nested level 1 component
-                componentInNestedSet.getNestedComponents().add(
-                        new NestedEntityComponent("I am new element in set inside Nested Level 1 component")
-                );
-                bubble.removeHibernatePersistenceSet();
-                store.update(bubble);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    final BubbleWithEntityComponent bubble = store.lock(mockupFactory.getWithOneAaComponentWithNestedSetInSetId());
+                    NestedEntityComponent componentInNestedSet = bubble.getAaComponents().iterator().next().getNestedComponent().getNestedComponents().iterator().next();
+                    NestedEntityComponent newComponent = new NestedEntityComponent("I am a new component inside Nested level 1 component");
+                    // Her blir opprinnelig one-to-one component i Nested level 1 component gjort orphan
+                    componentInNestedSet.setNestedComponent(newComponent);
+                    // Her fjernes et element fra set i Nested level 1 component
+                    NestedEntityComponent componentToRemove = componentInNestedSet.getNestedComponents().iterator().next();
+                    componentInNestedSet.getNestedComponents().remove(componentToRemove);
+                    // Her legges til et element fra set i Nested level 1 component
+                    componentInNestedSet.getNestedComponents().add(
+                            new NestedEntityComponent("I am new element in set inside Nested Level 1 component")
+                    );
+                    bubble.removeHibernatePersistenceSet();
+                    store.update(bubble);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });

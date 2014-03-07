@@ -12,8 +12,6 @@ import no.statkart.skif.util.CopyHelper;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * @author Henrik Fredholm
  */
@@ -177,8 +175,8 @@ public class AbstractStore implements Store {
             transfer = CopyHelper.copy(transfer);
         }
 
+        UnitOfWork unitOfWork = beginUnitOfWork();
         try {
-            beginUnitOfWork();
             for (BubbleObject bubbleObject : transfer.getInsertedObjects()) {
                 if (ids.add(bubbleObject.getId())==false) {
                     throw new ImplementationException("Duplicate object in transfer: " + bubbleObject.getId());
@@ -197,10 +195,9 @@ public class AbstractStore implements Store {
                 }
                 delete(bubbleObject);
             }
-            commitUnitOfWork();
-        } catch (RuntimeException e) {
-            abortUnitOfWork();
-            throw e;
+            commitUnitOfWork(unitOfWork);
+        } finally {
+            closeUnitOfWork(unitOfWork);
         }
     }
 
@@ -275,9 +272,14 @@ public class AbstractStore implements Store {
     }
 
     @Override
-    public void beginUnitOfWork() {
-        // TODO: Burde lage en dummy UnitOfWork først som aldrig feiler slik at abortUnitOfWork popper riktig av stakken hvis storeSession.beginUnitOfWork() feiler
-        storeSession = storeSession.beginUnitOfWork();
+    public UnitOfWork beginUnitOfWork() {
+        // Oppretter alt først
+        StoreUnitOfWork storeUnitOfWork = storeSession.beginUnitOfWork();
+        UnitOfWork unitOfWork = new UnitOfWork(storeUnitOfWork);
+
+        // Så det som ikke kan feile
+        storeSession = storeUnitOfWork;
+        return unitOfWork;
     }
 
     @Override
@@ -286,14 +288,17 @@ public class AbstractStore implements Store {
     }
 
     @Override
-    public void abortUnitOfWork() {
-        // TODO: Bør sikre at denne alltid popper av et nivå av unit of work også selv om det kastes exception.
+    public void abortUnitOfWork(UnitOfWork unitOfWork) {
+        validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
+        // Hvis det kastes en exception her, så er løpet kjørt. Da må Store forkastes.
         storeSession = storeUnitOfWork().abortUnitOfWork();
         storeRelationCache.onAbortUnitOfWork();
     }
 
     @Override
-    public void endUnitOfWork() {
+    public void endUnitOfWork(UnitOfWork unitOfWork) {
+        validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
+
         // TODO: Ikke sikker på at denne skal være her
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
         storeSession = storeUnitOfWork.endUnitOfWork();
@@ -305,9 +310,59 @@ public class AbstractStore implements Store {
         return storeSession instanceof StoreUnitOfWork;
     }
 
-    //@Override
-    public void commitUnitOfWork() {
+    @Override
+    public void commitUnitOfWork(UnitOfWork unitOfWork) {
+        validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
+
         storeSession = storeUnitOfWork().commitUnitOfWork();
         storeRelationCache.onCommitUnitOfWork();
+    }
+
+    @Override
+    public void closeUnitOfWork(UnitOfWork unitOfWork) {
+        validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), true);
+        // Hvis det kastes en exception her, så er løpet kjørt. Da må Store forkastes.
+        if (isUnitOfWorkActive(unitOfWork.getUnitOfWork())) {
+            while (storeSession != unitOfWork.getUnitOfWork()) {
+                storeSession = storeUnitOfWork().abortUnitOfWork();
+                storeRelationCache.onAbortUnitOfWork();
+            }
+            storeSession = storeUnitOfWork().abortUnitOfWork();
+            storeRelationCache.onAbortUnitOfWork();
+        }
+    }
+
+    /**
+     * Sjekker at unit-of-work er gjeldende unit-of-work.
+     *
+     * @param storeUnitOfWork    unit-of-work sesjon
+     * @param ignoreInactive       om det er greit at unit-of-work ikke lenger er aktiv (for abort)
+     */
+    protected void validateUnitOfWorkCurrent(StoreUnitOfWork storeUnitOfWork, boolean ignoreInactive) {
+        if (storeUnitOfWork.store != this) {
+            throw new ImplementationException("UnitOfWork does not belong to this Store");
+        }
+        if (storeSession != storeUnitOfWork) {
+            // Dersom det er ok med inaktive unit-of-works, så må det sjekkes om den er aktiv
+            if (!ignoreInactive || isUnitOfWorkActive(storeUnitOfWork)) {
+                throw new ImplementationException("UnitOfWork is not current");
+            }
+        }
+    }
+
+    /**
+     * Sjekker om gitt unit-of-work er aktiv, men ikke nødvendigvis gjeldende.
+     *
+     * @return <code>true</code> dersom unit-of-work ligger i kjeden
+     */
+    protected boolean isUnitOfWorkActive(StoreUnitOfWork storeUnitOfWork) {
+        StoreSession session = storeSession;
+        while (session instanceof StoreUnitOfWork) {
+            if (session == storeUnitOfWork) {
+                return true;
+            }
+            session = ((StoreUnitOfWork) session).wrappedStoreSession;
+        }
+        return false;
     }
 }

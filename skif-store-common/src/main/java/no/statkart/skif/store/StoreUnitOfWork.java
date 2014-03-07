@@ -121,7 +121,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
             throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork() or abortUnitOfWork() instead");
         }
         if (isAccessedAfterGetTransfer()) {
-            throw new ImplementationException("Store was access beweeen calls to Store.getUnitOfWorkTransfer() and Store.endUnitOfWork() and may result in impropper commit");
+            throw new ImplementationException("Store was accessed between calls to Store.getUnitOfWorkTransfer() and Store.endUnitOfWork() and may result in improper commit");
         }
 
         if (modifiedMap.size() > 0 && !getTransferHasBeenCalled) {

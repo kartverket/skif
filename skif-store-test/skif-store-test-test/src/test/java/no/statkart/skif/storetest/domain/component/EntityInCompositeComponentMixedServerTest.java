@@ -7,22 +7,14 @@ import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
-import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
-import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
-import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
-import no.statkart.skif.storetest.domain.component.composite.Level2CompositeComponent;
-import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
-import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponentId;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponentId;
-import no.statkart.skif.storetest.mockup.BubbleWithCompositeComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.BubbleWithEntityInCompositeComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import org.hibernate.HibernateException;
 import org.testng.annotations.Test;
 
 import java.util.Set;
@@ -135,10 +127,14 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
-                store.update(bubble);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    store.update(bubble);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -153,11 +149,15 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
             StoreServer store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
-                bubble.getLevel1Component().getEntitySet().clear();
-                store.update(bubble);
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                try {
+                    BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    bubble.getLevel1Component().getEntitySet().clear();
+                    store.update(bubble);
+                    store.commitUnitOfWork(unitOfWork);
+                } finally {
+                    store.closeUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });

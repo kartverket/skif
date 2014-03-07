@@ -7,6 +7,7 @@ import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.storetest.domain.basic.Simple;
@@ -41,8 +42,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             Store store;
 
             public Object run() {
-                store.beginUnitOfWork();
-                store.commitUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
+                store.commitUnitOfWork(unitOfWork);
                 return null;
             }
         });
@@ -61,11 +62,11 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
-                store.beginUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
                 SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
                 Simple Simple = new Simple(simpleId, "Simple 101");
                 store.insert(Simple);
-                store.commitUnitOfWork();
+                store.commitUnitOfWork(unitOfWork);
                 assertSame(store.get(simpleId), Simple);
                 store.flush();
 
@@ -88,12 +89,12 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
-                store.beginUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
                 SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
                 Simple Simple = new Simple(simpleId, "Simple 101");
                 store.insert(Simple);
                 store.delete(Simple);
-                store.commitUnitOfWork();
+                store.commitUnitOfWork(unitOfWork);
                 assertNotFound(store, simpleId);
 
                 return null;
@@ -114,16 +115,16 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
-                store.beginUnitOfWork();
+                UnitOfWork unitOfWork1 = store.beginUnitOfWork();
                 SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
                 Simple simple = new Simple(simpleId, "Simple 101");
                 store.insert(simple);
-                store.beginUnitOfWork();
+                UnitOfWork unitOfWork2 = store.beginUnitOfWork();
                 Simple copy = CopyHelper.copy(simple);
                 store.delete(copy);
-                store.commitUnitOfWork();
+                store.commitUnitOfWork(unitOfWork2);
                 assertSame(store.get(simpleId), copy);
-                store.commitUnitOfWork();
+                store.commitUnitOfWork(unitOfWork1);
                 assertNotFound(store, simpleId);
 
                 return null;
@@ -168,12 +169,12 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
 
-                store.beginUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
                 SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
                 Simple simple = new Simple(simpleId, "Simple 101");
                 store.insert(simple);
                 store.undo(simple);
-                store.commitUnitOfWork();
+                store.commitUnitOfWork(unitOfWork);
                 assertNotFound(store, simpleId);
 
                 return null;
@@ -216,7 +217,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
 
-                store.beginUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
                 SimpleId<?> simpleId = mockupFacade.getSimpleMockupFactory().getSimpleId1();
                 Simple simple = store.lock(simpleId);
                 store.update(simple);
@@ -226,7 +227,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 assertEquals(store.get(simpleId).getText(), simple.getText());
                 store.undo(simple);
                 assertEquals(store.get(simpleId).getText(), orgText);
-                store.abortUnitOfWork();
+                store.abortUnitOfWork(unitOfWork);
 
                 return null;
             }
@@ -270,13 +271,13 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
 
-                store.beginUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
                 SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
                 Simple simple = new Simple(simpleId, "Simple 101");
                 store.insert(simple);
                 store.undo(simple);
                 store.insert(simple);
-                store.abortUnitOfWork();
+                store.abortUnitOfWork(unitOfWork);
 
                 return null;
             }
@@ -294,7 +295,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
                 final SimpleId<?> id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
 
-                store.beginUnitOfWork();
+                UnitOfWork unitOfWork = store.beginUnitOfWork();
 
                 Simple Simple = store.get(id);
                 assertNotNull(Simple);
@@ -304,7 +305,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 assertNotNull(Simples.iterator().next());
                 assertEquals(Simples.iterator().next(), Simple);
 
-                store.abortUnitOfWork();
+                store.abortUnitOfWork(unitOfWork);
 
                 return null;
             }

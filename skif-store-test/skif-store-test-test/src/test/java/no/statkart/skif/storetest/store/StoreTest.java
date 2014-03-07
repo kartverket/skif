@@ -3,18 +3,15 @@ package no.statkart.skif.storetest.store;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.FinderException;
-import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.exception.ObjectsNotFoundException;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.basic.SubTypeWithCollection;
-import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
@@ -233,15 +230,15 @@ public class StoreTest extends StoreTestTestCase {
      * Tester insert object med automatisk tildeling av id
      */
     public void testManuellAllokeringAvId() {
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
-            store.beginUnitOfWork();
             Simple Simple1 = new Simple();
             final SimpleId<?> nextId = store.getInstance(IdService.class).getNextId(SimpleId.class);
             assertNotNull(nextId.getValue());
             Simple1.setId(nextId);
             store.insert(Simple1);
         } finally {
-            store.abortUnitOfWork();
+            store.abortUnitOfWork(unitOfWork);
         }
     }
 
@@ -249,8 +246,8 @@ public class StoreTest extends StoreTestTestCase {
      * Tester insert object med automatisk tildeling av id
      */
     public void testAutomatiskTilordningAvIdViaInsert() {
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
-            store.beginUnitOfWork();
             Simple simple1 = new Simple();
             simple1.setText("Insert Automatisk 1");
             assertNull(simple1.getId());
@@ -262,7 +259,7 @@ public class StoreTest extends StoreTestTestCase {
             assertNotNull(simple2.getId());
             assertFalse(simple1.getId().equals(simple2.getId()));
         } finally {
-            store.abortUnitOfWork();
+            store.closeUnitOfWork(unitOfWork);
         }
     }
 
