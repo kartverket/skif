@@ -2,6 +2,7 @@ package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.kodeliste.KodeId;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -12,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,15 +37,13 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     private Class<? extends KodeId> enumClass;
-    private static final Class[] INTEGER_ARG = new Class[]{int.class};
-    private Method method;
     private Object[] values = new Object[125]; // cached Enum values
 
 
     public void setParameterValues(Properties parameters) {
         String enumClassName = parameters.getProperty("enumClassName");
         try {
-            enumClass = (Class<? extends KodeId>) Class.forName(enumClassName);
+            enumClass = Class.forName(enumClassName).asSubclass(KodeId.class);
             if (!KodeId.class.isAssignableFrom(enumClass)) {
                 throw new MappingException("Enumklasse implementerer ikke interface EnumKodeId: " + enumClass.getName());
             }
@@ -55,13 +53,14 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     public Object getInstance(int code) throws HibernateException {
+        SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
         if (code < values.length) {
             if (values[code] == null) {
-                values[code] = BubbleIds.createInstance(enumClass, new Long(code), SnapshotVersion.CURRENT);
+                values[code] = BubbleIds.createInstance(enumClass, (long) code, snapshotVersion);
             }
             return values[code];
         } else {
-            return BubbleIds.createInstance(enumClass, new Long(code), SnapshotVersion.CURRENT);
+            return BubbleIds.createInstance(enumClass, (long) code, snapshotVersion);
         }
     }
 
@@ -78,9 +77,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     public boolean equals(Object x, Object y) throws HibernateException {
-        if(x == null && y != null) return false;
-
-        return x == null || x.equals(y);
+        return !(x == null && y != null) && (x == null || x.equals(y));
     }
 
     public int hashCode(Object x) throws HibernateException {

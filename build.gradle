@@ -1,4 +1,4 @@
-['1.6'].with {
+['1.6','1.10'].with {
     if (!it.find { gradle.gradleVersion == it }) {
         logger.warn "WARNING: Du benytter et nyere gradle enn hva byggesystemet er testet med ${it}"
     }
@@ -352,6 +352,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build246'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build304'
     }
 }
