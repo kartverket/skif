@@ -323,7 +323,7 @@ public class StoreTestServerModule extends SkifModule {
         }
 
         final HibernateStoreInterceptorFactory hibernateInterceptorFactory = new HibernateStoreInterceptorFactory();
-        HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle = new HibernateSessionFactoryManagerBundle(hibernateSessionFactoryBuilder, idServiceProvider,
+        HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle = new DefaultHibernateSessionFactoryManagerBundle(hibernateSessionFactoryBuilder, idServiceProvider,
                 new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernatePropertiesCurrent, hibernateInterceptorFactory),
                 new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernatePropertiesOld, hibernateInterceptorFactory)
         );

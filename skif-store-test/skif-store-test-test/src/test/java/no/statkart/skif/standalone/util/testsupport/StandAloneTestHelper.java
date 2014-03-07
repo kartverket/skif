@@ -64,14 +64,14 @@ public class StandAloneTestHelper {
     }
 
     public static HibernateSessionFactoryManagerBundle createHibernateSessionFactorManagerWithMultipleSessionsNoHistory(HibernateSessionFactoryBuilder sessionFactoryBuilder, Properties hibernateProperties) {
-        return new HibernateSessionFactoryManagerBundle(sessionFactoryBuilder, Providers.<IdService>of(null),
+        return new DefaultHibernateSessionFactoryManagerBundle(sessionFactoryBuilder, Providers.<IdService>of(null),
                 new HibernateSessionFactoryDescriptor("CURRENT(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), false, false, hibernateProperties, new HibernateStoreInterceptorFactory()),
                 new HibernateSessionFactoryDescriptor("OLD(NON-HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), false, false, hibernateProperties, new HibernateStoreInterceptorFactory())
         );
     }
 
     public static HibernateSessionFactoryManagerBundle createHibernateSessionFactorManagerBundle(HibernateSessionFactoryBuilder sessionFactoryBuilder, Properties hibernateProperties) {
-        return new HibernateSessionFactoryManagerBundle(sessionFactoryBuilder, Providers.<IdService>of(null),
+        return new DefaultHibernateSessionFactoryManagerBundle(sessionFactoryBuilder, Providers.<IdService>of(null),
                 new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernateProperties, new HibernateStoreInterceptorFactory()),
                 new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernateProperties, new HibernateStoreInterceptorFactory())
         );
