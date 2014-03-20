@@ -60,7 +60,7 @@ public class ParentBubble extends AbstractBubbleObject implements StoreTestBubbl
     }
 
 
-    public void addChild(ChildBubbleId<ChildBubble> childId, Long id) {
+    public void addChild(ChildBubbleId<?> childId, Long id) {
         addChildForParrent(new ChildForParent(childId, id));
     }
 
@@ -69,8 +69,8 @@ public class ParentBubble extends AbstractBubbleObject implements StoreTestBubbl
         return childForParents.add(cfp);
     }
 
-    public Set<ChildBubbleId<ChildBubble>> getChildBubbleIds() {
-        Set<ChildBubbleId<ChildBubble>> ids = new HashSet<ChildBubbleId<ChildBubble>>();
+    public Set<ChildBubbleId<?>> getChildBubbleIds() {
+        Set<ChildBubbleId<?>> ids = new HashSet<ChildBubbleId<?>>();
         for (ChildForParent cfp : childForParents) {
             ids.add(cfp.getChildBubbleId());
         }
