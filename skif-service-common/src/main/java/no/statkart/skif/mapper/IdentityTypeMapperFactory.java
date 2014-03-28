@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Primitives;
 import com.google.common.reflect.TypeToken;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -50,6 +52,8 @@ public class IdentityTypeMapperFactory implements TypeMapperFactory {
      * <ul>Double og double</ul>
      * <ul>Character og char</ul>
      * <ul>String</ul>
+     * <ul>BigInteger</ul>
+     * <ul>BigDecimal</ul>
      * </li>
      *
      * @return <code>this</code>
@@ -64,7 +68,9 @@ public class IdentityTypeMapperFactory implements TypeMapperFactory {
                 Float.class, Float.TYPE,
                 Double.class, Double.TYPE,
                 Character.class, Character.TYPE,
-                String.class
+                String.class,
+                BigInteger.class,
+                BigDecimal.class
         );
     }
 
