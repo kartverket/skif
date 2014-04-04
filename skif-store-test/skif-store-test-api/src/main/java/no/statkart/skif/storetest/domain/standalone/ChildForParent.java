@@ -13,12 +13,12 @@ import java.io.Serializable;
 public class ChildForParent implements Serializable { //extends AbstractObject{
     private Long id;
     private ParentBubble parentBubble;
-    private ChildBubbleId<ChildBubble> childBubbleId;
+    private ChildBubbleId<?> childBubbleId;
 
     public ChildForParent() {
     }
 
-    public ChildForParent(ChildBubbleId<ChildBubble> childBubbleId, Long id) {
+    public ChildForParent(ChildBubbleId<?> childBubbleId, Long id) {
         this.childBubbleId = childBubbleId;
         this.id = id;
     }
@@ -31,7 +31,7 @@ public class ChildForParent implements Serializable { //extends AbstractObject{
         this.id = id;
     }
 
-    public ChildBubbleId<ChildBubble> getChildBubbleId() {
+    public ChildBubbleId<?> getChildBubbleId() {
         return childBubbleId;
     }
 

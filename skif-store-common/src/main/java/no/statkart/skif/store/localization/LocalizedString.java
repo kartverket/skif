@@ -34,7 +34,7 @@ public class LocalizedString implements Serializable {
      * @param locale locale søket skal starte med
      * @return locale som faktisk har definert verdi for dette feltet (kan være <code>null</code> dersom ingen verdier er definert)
      */
-    // LocaleFallbackTest tester denne funksjonaliteten
+    // LocaleFallbackTest tester denne funksjonaliteten direkte, altså ikke via denne metoden
     public Locale getLocale(Locale locale) {
         ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
         while (true) {
@@ -58,20 +58,7 @@ public class LocalizedString implements Serializable {
      * @return lokalisert tekst
      */
     public String getText(Locale locale) {
-        ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
-        String text;
-
-        while (true) {
-            text = localizations.get(locale);
-
-            if (text != null || locale == null) {
-                break;
-            }
-
-            locale = control.getFallbackLocale("", locale); // Første parameter kan ikke være null, men det ser ikke ut til at den brukes til noe
-        }
-
-        return text;
+        return localizations.get(getLocale(locale));
     }
 
     public String setText(Locale locale, String text) {
