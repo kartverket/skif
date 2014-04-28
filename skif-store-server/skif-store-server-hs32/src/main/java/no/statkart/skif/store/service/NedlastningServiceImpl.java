@@ -21,7 +21,7 @@ import java.util.List;
  * @author Tor Egil R. Strand
  * @since 2.5.0
  */
-// OBS! Det er en kopi av denne i hs3.2
+// OBS! Orginalen til denne ligger i hs3.6
 public abstract class NedlastningServiceImpl implements NedlastningService {
     protected final Provider<SnapshotVersion> snapshotVersionProvider;
 
