@@ -1,11 +1,8 @@
-package no.statkart.skif.storetest.service.nedlastning;
+package no.statkart.skif.store.service;
 
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.domain.endringslogg.Kontroll;
+import no.statkart.skif.store.Kontroll;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -22,53 +19,54 @@ import java.util.List;
  * er relevant for en bobleklasse ignoreres mens filtre som er ukjente gir ImplementationException.
  *
  * @author Henrik Fredholm
- * @since 2.4
+ * @author Tor Egil R. Strand
+ * @since 2.5.0
  *
  */
-public interface NedlastningsService {
+public interface NedlastningService {
     /**
      * Henter et antall id-er etter en gitt id for bobler av en gitt type eller subtype.
      *
      * @param id id før første id som skal hentes. Kan være null.
-     * @param bobleklasse bobleklasse eller subtype herav som skal hentes.
+     * @param domainklasse domainklasse eller subtype herav som skal hentes.
      * @param filter boblespesifikt filter som kan reduserere yterligere hvilke id-er som returneres
      * @param maksAntall maksimalt objekter som skal hentes.
-     * @return id-ene sortert i stigende rekkerføge; tomt liste hvis alle id-er har blitt hentet for gitt bobleklasse og filter
+     * @return id-ene sortert i stigende rekkerføge; tomt liste hvis alle id-er har blitt hentet for gitt domainklasse og filter
      *
      */
-    public <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> bobleklasse,  @Nullable String filter, int maksAntall);
+    public <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> domainklasse, @Nullable String filter, int maksAntall);
 
     /**
      * Henter et antall bobler etter en gitt id for bobler av en gitt type eller subtype
      *
      * @param id id før første boble som skal hentes. Kan være null.
-     * @param bobleklasse bobleklasse eller subtype herav som skal hentes.
+     * @param domainklasse domainklasse eller subtype herav som skal hentes.
      * @param filter boblespesifikt filter som kan reduserere yterligere hvilke id-er som returneres
      * @param maksAntall maksimalt objekter som skal hentes.
-     * @return bobler sortert i stigende rekkerføge; tomt liste hvis alle bobler har blitt hentet for gitt bobleklasse og filter
+     * @return bobler sortert i stigende rekkerføge; tomt liste hvis alle bobler har blitt hentet for gitt domainklasse og filter
      *
      */
-    public <T extends BubbleObject> List<T> findObjekterEtterId(@Nullable BubbleId<? extends T> id, Class<T> bobleklasse,  @Nullable String filter, int maksAntall);
+    public <T extends BubbleObject> List<T> findObjekterEtterId(@Nullable BubbleId<? extends T> id, Class<T> domainklasse, @Nullable String filter, int maksAntall);
 
     /**
      * Beregner kontroll for bobler med id-er i intervall "]fraId, tilId]"
      *
      * @param fraId første id i intervall. Hvis null tas første id med i beregningen
      * @param tilId siste id i intervall. Hvis null tas siste id  med i beregningen
-     * @param bobleklasse angir filter for bobleklasse som skal inkluderes i beregningen.
+     * @param domainklasse angir filter for domainklasse som skal inkluderes i beregningen.
      * @param filter boblespesifikt filter som kan reduserere yterligere hvilke id-er som returneres
      * @return beregnet kontroll
      *
      */
-    public <T extends StoreTestBubble> Kontroll calcObjektkontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId,  Class<T> bobleklasse, @Nullable String filter);
+    public <T extends BubbleObject> Kontroll calcObjektkontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId, Class<T> domainklasse, @Nullable String filter);
 
     /**
      * Beregner kontroll for bobler med id-er i liste
      *
      * @param ids id-er som skal danne grunnlag for beregningen
-     * @param bobleklasse angir bobleklasse som skal danne grunnlag for beregningen.
+     * @param domainklasse angir domainklasse som skal danne grunnlag for beregningen.
      * @return beregnet kontroll
      *
      */
-    public <I extends StoreTestBubbleId<? extends T>, T extends StoreTestBubble> Kontroll calcObjektkontrollForList(Collection<I> ids,  Class<T> bobleklasse);
+    public <I extends BubbleId<? extends T>, T extends BubbleObject> Kontroll calcObjektkontrollForList(Collection<I> ids, Class<T> domainklasse);
 }

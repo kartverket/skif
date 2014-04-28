@@ -1,17 +1,14 @@
-package no.statkart.skif.storetest.domain.endringslogg;
+package no.statkart.skif.store;
 
-import no.statkart.skif.store.endringslogg.AbstractEndring;
-import no.statkart.skif.store.endringslogg.AbstractKontroll;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
+import java.io.Serializable;
 
 /**
  * Baseklasse for alle kontroll objekter i StoreTest-prosjektet.
  *
  * @author Henrik Fredholm
- * @since 2.4
+ * @since 2.5.0
  */
-public class Kontroll extends AbstractKontroll {
+public class Kontroll implements Serializable {
     private static final long serialVersionUID = 1L;
     private long antall;
     private long idChecksum;

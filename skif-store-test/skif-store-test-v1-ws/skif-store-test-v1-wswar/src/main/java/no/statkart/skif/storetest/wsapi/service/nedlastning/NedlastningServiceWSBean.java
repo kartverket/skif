@@ -9,7 +9,6 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.endringslogg.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-import no.statkart.skif.storetest.wsapi.service.endringslogg.EndringsloggServiceWSI;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -24,18 +23,18 @@ import javax.xml.ws.WebServiceContext;
  * @since 2.4
  */
 @WebService(
-        name = "NedlastningsService",
-        serviceName = "NedlastningsServiceWS",
+        name = "NedlastningService",
+        serviceName = "NedlastningServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/nedlastning")
-public class NedlastningsServiceWSBean extends SkifWebService<NedlastningsServiceWSI> implements NedlastningsServiceWSI {
+public class NedlastningServiceWSBean extends SkifWebService<NedlastningServiceWSI> implements NedlastningServiceWSI {
 
     @Resource
     private WebServiceContext ctx;
 
-    private NedlastningsServiceWSI wsServiceChain;
+    private NedlastningServiceWSI wsServiceChain;
 
-    public NedlastningsServiceWSBean() {
-        super(NedlastningsServiceWSI.class);
+    public NedlastningServiceWSBean() {
+        super(NedlastningServiceWSI.class);
     }
 
     @PostConstruct

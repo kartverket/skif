@@ -5,6 +5,7 @@ import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.Kontroll;
 import no.statkart.skif.store.endringslogg.AbstractEndringId;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
@@ -12,7 +13,6 @@ import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.domain.endringslogg.EndringId;
 import no.statkart.skif.storetest.domain.endringslogg.Endringer;
-import no.statkart.skif.storetest.domain.endringslogg.Kontroll;
 
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
@@ -24,19 +24,19 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * EJB for {@link no.statkart.skif.storetest.service.endringslogg.EndringsloggService}.
+ * EJB for {@link NedlastningService}.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
 @RolesAllowed("Innsyn")
-@Stateless(name = "NedlastningsServiceEJBBean")
+@Stateless(name = "NedlastningServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-public class NedlastningsServiceEJBBean extends EJBTimedService implements NedlastningsService {
+public class NedlastningServiceEJBBean extends EJBTimedService implements NedlastningService {
     @Inject
     @EJBServiceChain
-    NedlastningsService serviceChain;
+    NedlastningService serviceChain;
 
     @Override
     public <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> bobleklasse, @Nullable String filter, int maksAntall) {
@@ -49,12 +49,12 @@ public class NedlastningsServiceEJBBean extends EJBTimedService implements Nedla
     }
 
     @Override
-    public <T extends StoreTestBubble> Kontroll calcObjektkontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId, Class<T> bobleklasse, @Nullable String filter) {
+    public <T extends BubbleObject> Kontroll calcObjektkontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId, Class<T> bobleklasse, @Nullable String filter) {
         return serviceChain.calcObjektkontrollForRange(fraId, tilId, bobleklasse, filter);
     }
 
     @Override
-    public <I extends StoreTestBubbleId<? extends T>, T extends StoreTestBubble> Kontroll calcObjektkontrollForList(Collection<I> ids, Class<T> bobleklasse) {
+    public <I extends BubbleId<? extends T>, T extends BubbleObject> Kontroll calcObjektkontrollForList(Collection<I> ids, Class<T> bobleklasse) {
         return serviceChain.calcObjektkontrollForList(ids, bobleklasse);
     }
 }

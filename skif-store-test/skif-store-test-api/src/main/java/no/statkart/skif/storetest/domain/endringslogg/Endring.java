@@ -21,7 +21,7 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
  * @author Henrik Fredholm
  * @since 2.2.0
  */
-public class Endring<I extends AbstractEndringId<?>, EI extends StoreTestBubbleId<?>> extends AbstractEndring<I, EI> implements StoreTestBubble {
+public abstract class Endring<I extends AbstractEndringId<?>, EI extends StoreTestBubbleId<?>> extends AbstractEndring<I, EI> implements StoreTestBubble {
     private static final long serialVersionUID = 1L;
 
     private String brukernavn;

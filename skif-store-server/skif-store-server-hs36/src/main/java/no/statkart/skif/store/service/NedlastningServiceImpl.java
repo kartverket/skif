@@ -1,19 +1,14 @@
-package no.statkart.skif.storetest.service.nedlastning;
+package no.statkart.skif.store.service;
 
-import com.google.inject.Inject;
+import com.google.common.base.Preconditions;
 import com.google.inject.Provider;
 import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.*;
+import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.store.persistence.SessionSelector;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.domain.endringslogg.Endring;
-import no.statkart.skif.storetest.domain.endringslogg.Kontroll;
-import no.statkart.skif.storetest.endringslogg.EndringManagerConfiguration;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
@@ -21,34 +16,40 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 /**
  * @author Henrik Fredholm
- * @since 2.4
+ * @author Tor Egil R. Strand
+ * @since 2.5.0
  */
-public class NedlastningsServiceImpl implements NedlastningsService {
-    @Inject
-    Provider<SnapshotVersion> snapshotVersionProvider;
+public abstract class NedlastningServiceImpl implements NedlastningService {
+    protected final Provider<SnapshotVersion> snapshotVersionProvider;
 
-    @Inject
-    private Provider<SessionSelector> sessionSelectorProvider;
+    protected final Provider<SessionSelector> sessionSelectorProvider;
 
-    @Inject
-    EndringManagerConfiguration endringManagerConfiguration;
+    protected final EndringManagerConfiguration<?> endringManagerConfiguration;
+
+    protected final Store store;
+
+    protected NedlastningServiceImpl(Provider<SnapshotVersion> snapshotVersionProvider, Provider<SessionSelector> sessionSelectorProvider, EndringManagerConfiguration<?> endringManagerConfiguration, Store store) {
+        this.snapshotVersionProvider = snapshotVersionProvider;
+        this.sessionSelectorProvider = sessionSelectorProvider;
+        this.endringManagerConfiguration = endringManagerConfiguration;
+        this.store = store;
+    }
 
     @Override
-    public <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> bobleklasse, @Nullable String filter, int maksAntall) {
-        checkBobbleklasseGyldigForNedlasting(bobleklasse);
+    public <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> domainklasse, @Nullable String filter, int maksAntall) {
+        checkBobbleklasseGyldigForNedlasting(domainklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            Criteria criteria = session.createCriteria(bobleklasse);
+            Criteria criteria = session.createCriteria(domainklasse);
             criteria.setMaxResults(maksAntall);
             criteria.setProjection(Projections.id());
             if (id != null) {
                 criteria.add(Restrictions.gt("id", id));
             }
+            criteria.addOrder(Order.asc("id"));
             return (List<I>) criteria.list();
         } finally {
             if (sessionSelector != null) sessionSelector.close();
@@ -56,29 +57,30 @@ public class NedlastningsServiceImpl implements NedlastningsService {
     }
 
     @Override
-    public <T extends BubbleObject> List<T> findObjekterEtterId(@Nullable BubbleId<? extends T> id, Class<T> bobleklasse, @Nullable String filter, int maksAntall) {
-        checkBobbleklasseGyldigForNedlasting(bobleklasse);
+    public <T extends BubbleObject> List<T> findObjekterEtterId(@Nullable BubbleId<? extends T> id, Class<T> domainklasse, @Nullable String filter, int maksAntall) {
+        checkBobbleklasseGyldigForNedlasting(domainklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            Criteria criteria = session.createCriteria(bobleklasse);
+            Criteria criteria = session.createCriteria(domainklasse);
             criteria.setMaxResults(maksAntall);
             if (id != null) {
                 criteria.add(Restrictions.gt("id", id));
             }
-            return (List<T>) criteria.list();
+            criteria.addOrder(Order.asc("id"));
+            return (List) store.getOrdered(BubbleIds.asIds(criteria.list()));
         } finally {
             if (sessionSelector != null) sessionSelector.close();
         }
     }
 
     @Override
-    public <T extends StoreTestBubble> Kontroll calcObjektkontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId, Class<T> bobleklasse, @Nullable String filter) {
-        checkBobbleklasseGyldigForNedlasting(bobleklasse);
+    public <T extends BubbleObject> Kontroll calcObjektkontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId, Class<T> domainklasse, @Nullable String filter) {
+        checkBobbleklasseGyldigForNedlasting(domainklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            Criteria criteria = session.createCriteria(bobleklasse);
+            Criteria criteria = session.createCriteria(domainklasse);
             criteria.setProjection(Projections.rowCount());
             if (fraId != null) {
                 criteria.add(Restrictions.gt("id", fraId));
@@ -95,12 +97,12 @@ public class NedlastningsServiceImpl implements NedlastningsService {
     }
 
     @Override
-    public <I extends StoreTestBubbleId<? extends T>, T extends StoreTestBubble> Kontroll calcObjektkontrollForList(Collection<I> ids, Class<T> bobleklasse) {
-        checkBobbleklasseGyldigForNedlasting(bobleklasse);
+    public <I extends BubbleId<? extends T>, T extends BubbleObject> Kontroll calcObjektkontrollForList(Collection<I> ids, Class<T> domainklasse) {
+        checkBobbleklasseGyldigForNedlasting(domainklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            Criteria criteria = session.createCriteria(bobleklasse);
+            Criteria criteria = session.createCriteria(domainklasse);
             criteria.setProjection(Projections.rowCount());
             criteria.add(Restrictions.sqlRestriction("id in (select * from table(?))", ids, new OracleLongBubbleIdArrayCustomType()));
             Kontroll result = new Kontroll();
@@ -111,8 +113,8 @@ public class NedlastningsServiceImpl implements NedlastningsService {
         }
     }
 
-    private <T extends BubbleObject> void checkBobbleklasseGyldigForNedlasting(Class<T> bobleklasse) {
-        checkArgument(endringManagerConfiguration.getEndringsklasse(bobleklasse)!=Endring.class, "Domainklasse %s kan ikke brukes som filter for nedlastning", bobleklasse.getSimpleName());
+    private <T extends BubbleObject> void checkBobbleklasseGyldigForNedlasting(Class<T> domainklasse) {
+        Class<?> endringsklasse = endringManagerConfiguration.getEndringsklasse(domainklasse);
+        Preconditions.checkArgument(!domainklasse.isInterface() && endringsklasse != null, "Domainklasse %s kan ikke brukes som filter for nedlastning", domainklasse.getSimpleName());
     }
-
 }

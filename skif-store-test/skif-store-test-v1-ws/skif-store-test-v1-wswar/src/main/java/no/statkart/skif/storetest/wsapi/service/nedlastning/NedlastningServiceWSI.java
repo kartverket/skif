@@ -14,7 +14,7 @@ import javax.jws.WebParam;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public interface NedlastningsServiceWSI extends ServiceWSI {
+public interface NedlastningServiceWSI extends ServiceWSI {
     public StoreTestBubbleIdList findIdsEtterId(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "Bobleklasse") Bobleklasse bobleklasse, @WebParam(name = "filter") String filter,  @WebParam(name = "maksAntall") int maksAntall, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException;
 
     public StoreTestBubbleList findObjekterEtterId(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "Bobleklasse") Bobleklasse bobleklasse, @WebParam(name = "filter") String filter,  @WebParam(name = "maksAntall") int maksAntall, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException;

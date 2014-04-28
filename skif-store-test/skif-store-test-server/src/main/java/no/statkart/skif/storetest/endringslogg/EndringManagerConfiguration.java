@@ -19,7 +19,6 @@ import no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring;
  * @author Henrik Fredholm
  * @since 2.4
  */
-@Singleton
 public class EndringManagerConfiguration extends AbstractEndringManagerConfiguration<Endring> {
 
     public EndringManagerConfiguration() {

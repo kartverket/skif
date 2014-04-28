@@ -1,13 +1,13 @@
 package no.statkart.skif.storetest.service.endringslogg;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.Kontroll;
 import no.statkart.skif.store.endringslogg.AbstractEndringId;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.domain.endringslogg.EndringId;
 import no.statkart.skif.storetest.domain.endringslogg.Endringer;
-import no.statkart.skif.storetest.domain.endringslogg.Kontroll;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

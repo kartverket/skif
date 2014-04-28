@@ -1,6 +1,5 @@
 package no.statkart.skif.store.endringslogg;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Provider;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
@@ -25,14 +24,14 @@ import java.util.*;
 public abstract class AbstractEndringManager<E extends AbstractEndring> implements StoreSessionFinishListener {
     private final static Logger logger = LoggerFactory.getLogger(AbstractEndringManager.class);
 
-    private final AbstractEndringManagerConfiguration<E> endringManagerConfiguration;
+    private final EndringManagerConfiguration<E> endringManagerConfiguration;
 
     private final Provider<Connection> connectionProvider;
 
     private final SequenceBlockAllocatorService sequenceBlockAllocatorService;
     private final String sequenceName;
 
-    protected AbstractEndringManager(AbstractEndringManagerConfiguration<E> endringManagerConfiguration, Provider<Connection> connectionProvider, Configuration configuration) {
+    protected AbstractEndringManager(EndringManagerConfiguration<E> endringManagerConfiguration, Provider<Connection> connectionProvider, Configuration configuration) {
         this.endringManagerConfiguration = endringManagerConfiguration;
         this.connectionProvider = connectionProvider;
 

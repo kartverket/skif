@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.service.endringsloggservicetest;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
+import no.statkart.skif.store.Kontroll;
 import no.statkart.skif.store.endringslogg.AbstractEndringId;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
@@ -9,7 +10,7 @@ import no.statkart.skif.storetest.domain.endringslogg.*;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
-import no.statkart.skif.storetest.service.nedlastning.NedlastningsService;
+import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -40,7 +41,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     EndringsloggService endringsloggService;
 
     @Inject
-    NedlastningsService nedlastningsService;
+    NedlastningService nedlastningService;
 
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
@@ -78,12 +79,12 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
         assertEquals(kontroll.getAntall(),1);
     }
     public void testFindIdsEtterId(){
-        List<SimpleId<?>> ids = nedlastningsService.findIdsEtterId(null, Simple.class, null, 1);
+        List<SimpleId<?>> ids = nedlastningService.findIdsEtterId(null, Simple.class, null, 1);
         assertEquals(ids.size(),1);
     }
 
     public void testCalcKontrollForRange(){
-        Kontroll kontrollRange = nedlastningsService.calcObjektkontrollForRange(null, null, Simple.class, null);
+        Kontroll kontrollRange = nedlastningService.calcObjektkontrollForRange(null, null, Simple.class, null);
         assertTrue(kontrollRange.getAntall() > 0);
     }
 

@@ -2,6 +2,7 @@ package no.statkart.skif.store.endringslogg;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Maps;
+import com.google.inject.Singleton;
 import no.statkart.skif.inject.Holder;
 import no.statkart.skif.inject.HolderImpl;
 import no.statkart.skif.store.BubbleId;
@@ -19,7 +20,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public abstract class AbstractEndringManagerConfiguration<E extends AbstractEndring> {
+@Singleton
+public abstract class AbstractEndringManagerConfiguration<E extends AbstractEndring> implements EndringManagerConfiguration<E> {
     final BiMap<Class<? extends E>, Class<? extends BubbleObject>> biMapEndring2Domain;
 
     private final ConcurrentMap<Class<? extends BubbleObject>, Holder<Class<? extends E>>> cache = Maps.newConcurrentMap();
@@ -28,24 +30,29 @@ public abstract class AbstractEndringManagerConfiguration<E extends AbstractEndr
         this.biMapEndring2Domain = biMapEndring2Domain;
     }
 
+    @Override
     public final Class<? extends BubbleObject> getDomainklasse(Class<? extends E> endringklasse) {
         return biMapEndring2Domain.get(endringklasse);
     }
 
+    @Override
     public final Class<? extends BubbleObject> getDomainklasseNullSafe(Class<? extends E> endringklasse) {
         return checkNotNull(getDomainklasse(endringklasse), "Fant ingen domeneklasse hørende til endringsklasse %s", endringklasse.getName());
     }
 
+    @Override
     public final Class<? extends E> getEndringsklasse(Class<? extends BubbleObject> domainklasse) {
         return biMapEndring2Domain.inverse().get(domainklasse);
 
     }
 
+    @Override
     public final Class<? extends E> getEndringsklasseNullSafe(Class<? extends BubbleObject> domainklasse) {
         return checkNotNull(getEndringsklasse(domainklasse), "Domainklasse %s kan ikke brukes som filter", domainklasse.getSimpleName());
     }
 
-    protected Class<? extends E> findEndringClass(Class<? extends BubbleObject> domainklasse) {
+    @Override
+    public Class<? extends E> findEndringClass(Class<? extends BubbleObject> domainklasse) {
         Holder<Class<? extends E>> endringsklasseHolder = cache.get(domainklasse);
         if (endringsklasseHolder == null) {
             endringsklasseHolder = new HolderImpl<Class<? extends E>>();

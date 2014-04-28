@@ -73,6 +73,7 @@ import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCMany;
 import no.statkart.skif.storetest.domain.standalone.*;
 import no.statkart.skif.storetest.endringslogg.EndringManager;
+import no.statkart.skif.storetest.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
@@ -154,7 +155,6 @@ public class StoreTestServerModule extends SkifModule {
         bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
         bind(Session.class).toProvider(SessionProvider.class);
         bind(PersistenceSessionForSnapshot.class).toProvider(PersistenceSessionForSnapshotProvider.class);
-
 
 //        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
 //            install(new ServerServiceModule(moduleConfiguration, new StoreTestTestServices().getServices()));

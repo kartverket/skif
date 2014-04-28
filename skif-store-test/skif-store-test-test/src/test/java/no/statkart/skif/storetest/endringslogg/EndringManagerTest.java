@@ -6,10 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.MockupTransfer;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.Store;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.endringslogg.AbstractEndringId;
 import no.statkart.skif.store.endringslogg.Endringstype;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
@@ -22,7 +19,7 @@ import no.statkart.skif.storetest.mockup.SimpleMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
-import no.statkart.skif.storetest.service.nedlastning.NedlastningsService;
+import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
 import no.statkart.skif.storetest.service.test.TestdataService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
@@ -34,7 +31,6 @@ import java.util.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -54,7 +50,7 @@ public class EndringManagerTest extends StoreTestTestCase {
     private EndringsloggService endringsloggService;
 
     @Inject
-    private NedlastningsService nedlastningsService;
+    private NedlastningService nedlastningService;
 
     @Inject
     private Store store;
@@ -209,24 +205,24 @@ public class EndringManagerTest extends StoreTestTestCase {
         Endringer<?> endringer = endringsloggService.findEndringer(endringIdFoer,StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
         Assert.assertEquals(endringer.getEndringList().size(), 5, "Antall endringer");
 
-        List<BubbleId<Simple>> simpleIdsFromStart = nedlastningsService.findIdsEtterId(null, Simple.class, null,  10);
+        List<BubbleId<Simple>> simpleIdsFromStart = nedlastningService.findIdsEtterId(null, Simple.class, null,  10);
         assertTrue(simpleIdsFromStart.size() > 0, "Antall SimpleId");
 
         // Dette er juks. Vi vet ikke hvilke andre SimpleId som kan finnes i testdatabasen. Oppretter derfor en Id som er en mindre dem vi selv har lagt inn
         SimpleId<?> simpleIdStart1 = new SimpleId<Simple>(simple1.getId().getValue() - 1);
-        List<SimpleId<?>> simpleIdsInTestFirstBatch = nedlastningsService.findIdsEtterId(simpleIdStart1, Simple.class, null, 2);
+        List<SimpleId<?>> simpleIdsInTestFirstBatch = nedlastningService.findIdsEtterId(simpleIdStart1, Simple.class, null, 2);
         assertThat(simpleIdsInTestFirstBatch).containsExactly(simple1.getId(), simple2.getId());
 
         SimpleId<?> simpleIdStart2 = simpleIdsInTestFirstBatch.get(simpleIdsInTestFirstBatch.size() - 1);
-        List<SimpleId<?>> simpleIdsInTestSecondBatch = nedlastningsService.findIdsEtterId(simpleIdStart2, Simple.class, null, 2);
+        List<SimpleId<?>> simpleIdsInTestSecondBatch = nedlastningService.findIdsEtterId(simpleIdStart2, Simple.class, null, 2);
         assertThat(simpleIdsInTestSecondBatch).containsExactly(simple3.getId());
 
         BubbleWithRelationId<BubbleWithRelation> bubbleWithRelationIdStart = new BubbleWithRelationId<BubbleWithRelation>(bubbleWithRelation1.getId().getValue() - 1);
-        List<BubbleWithRelationId<?>> bubbleWithRelationIdList = nedlastningsService.findIdsEtterId(bubbleWithRelationIdStart, BubbleWithRelation.class, null, 2);
+        List<BubbleWithRelationId<?>> bubbleWithRelationIdList = nedlastningService.findIdsEtterId(bubbleWithRelationIdStart, BubbleWithRelation.class, null, 2);
         assertThat(bubbleWithRelationIdList).containsExactly(bubbleWithRelation1.getId(), bubbleWithRelation2.getId());
 
         try {
-            List<AbstractStoreTestBubbleId<?>> abstractStoreTestBubbleIdList = nedlastningsService.findIdsEtterId(bubbleWithRelationIdStart, StoreTestBubble.class, null, 2);
+            List<AbstractStoreTestBubbleId<?>> abstractStoreTestBubbleIdList = nedlastningService.findIdsEtterId(bubbleWithRelationIdStart, StoreTestBubble.class, null, 2);
             assertThat(abstractStoreTestBubbleIdList).containsExactly(bubbleWithRelation1.getId(), bubbleWithRelation2.getId());
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
@@ -263,11 +259,11 @@ public class EndringManagerTest extends StoreTestTestCase {
 
         // Dette er juks. Vi vet ikke hvilke andre SimpleId som kan finnes i testdatabasen. Oppretter derfor en Id som er en mindre dem vi selv har lagt inn
         SimpleId<?> simpleIdStart1 = new SimpleId<Simple>(simple1.getId().getValue() - 1);
-        Kontroll kontroll = nedlastningsService.calcObjektkontrollForRange(simpleIdStart1, null, Simple.class, null);
+        Kontroll kontroll = nedlastningService.calcObjektkontrollForRange(simpleIdStart1, null, Simple.class, null);
         assertEquals(kontroll.getAntall(), 3);
 
         try {
-            Kontroll kontroll2 = nedlastningsService.calcObjektkontrollForRange(simpleIdStart1, null, StoreTestBubble.class, null);
+            Kontroll kontroll2 = nedlastningService.calcObjektkontrollForRange(simpleIdStart1, null, StoreTestBubble.class, null);
             assertEquals(kontroll2.getAntall(), 3);
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
@@ -303,11 +299,11 @@ public class EndringManagerTest extends StoreTestTestCase {
         // Dette er juks. Vi vet ikke hvilke andre SimpleId som kan finnes i testdatabasen. Oppretter derfor en Id som er en mindre dem vi selv har lagt inn
         SimpleId<?> simpleIdStart1 = new SimpleId<Simple>(simple1.getId().getValue() - 1);
         Collection<SimpleId<?>> simpleIds = ImmutableList.of(simple1.getId(), simple2.getId(), simple3.getId());
-        Kontroll kontroll = nedlastningsService.calcObjektkontrollForList(simpleIds, Simple.class);
+        Kontroll kontroll = nedlastningService.calcObjektkontrollForList(simpleIds, Simple.class);
         assertEquals(kontroll.getAntall(), 3);
 
         try {
-            Kontroll kontroll2 = nedlastningsService.calcObjektkontrollForRange(simpleIdStart1, null, StoreTestBubble.class, null);
+            Kontroll kontroll2 = nedlastningService.calcObjektkontrollForRange(simpleIdStart1, null, StoreTestBubble.class, null);
             assertEquals(kontroll2.getAntall(), 3);
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
