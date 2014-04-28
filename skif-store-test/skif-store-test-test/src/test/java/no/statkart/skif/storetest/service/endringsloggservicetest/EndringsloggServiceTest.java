@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import no.statkart.skif.store.Kontroll;
 import no.statkart.skif.store.endringslogg.AbstractEndringId;
+import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.endringslogg.*;

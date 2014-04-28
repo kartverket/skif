@@ -7,9 +7,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.store.*;
-import no.statkart.skif.store.endringslogg.AbstractEndringId;
-import no.statkart.skif.store.endringslogg.Endringstype;
-import no.statkart.skif.store.endringslogg.ReturnerBobler;
+import no.statkart.skif.store.endringslogg.*;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.basic.*;
@@ -95,7 +93,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
 
         Endringer<?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
-        List<? extends Endring<?, ?>> endringList = endringer.getEndringList();
+        List<? extends AbstractEndring<?,?>> endringList = endringer.getEndringList();
 
         Assert.assertEquals(endringList.size(), 3, "Antall endringer");
         Assert.assertEquals(endringList.get(0).getClass(), SimpleEndring.class, "Endring 0 klasse");
@@ -130,7 +128,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
 
         Endringer<? >endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class,null, ReturnerBobler.Aldri, 10);
-        List<? extends Endring<?, ?>> endringList = endringer.getEndringList();
+        List<? extends AbstractEndring<?, ?>> endringList = endringer.getEndringList();
 
         Assert.assertEquals(endringList.size(), 3, "Antall endringer");
         Assert.assertEquals(endringList.get(0).getClass(), SimpleEndring.class, "Endring 0 klasse");

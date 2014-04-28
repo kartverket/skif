@@ -9,10 +9,8 @@ import no.statkart.skif.store.Kontroll;
 import no.statkart.skif.store.endringslogg.AbstractEndringId;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.domain.endringslogg.EndringId;
-import no.statkart.skif.storetest.domain.endringslogg.Endringer;
+import no.statkart.skif.store.endringslogg.Endringer;
+import no.statkart.skif.storetest.domain.endringslogg.Endring;
 
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
@@ -44,17 +42,17 @@ public class EndringsloggServiceEJBBean extends EJBTimedService implements Endri
     }
 
     @Override
-    public <E extends Endringer<?>> E findEndringer(@Nullable EndringId<?> id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
+    public Endringer<Endring<?,?>> findEndringer(@Nullable AbstractEndringId<?> id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
         return serviceChain.findEndringer(id, bobleklasse, filter, returnerBobler, maksAntall);
     }
 
     @Override
-    public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable EndringId<?> id, Class<T> bobleklasse, @Nullable String filter, int antall) {
+    public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable AbstractEndringId<?> id, Class<T> bobleklasse, @Nullable String filter, int antall) {
         return serviceChain.calcEndringskontroll(id, bobleklasse, filter, antall);
     }
 
     @Override
-    public <T extends StoreTestBubble> Kontroll calcObjektkontrollForList(Collection<? extends BubbleId<?>> ids, Class<T> bobleklasse) {
+    public <T extends BubbleObject> Kontroll calcObjektkontrollForList(Collection<? extends BubbleId<?>> ids, Class<T> bobleklasse) {
         return serviceChain.calcObjektkontrollForList(ids, bobleklasse);
     }
 }

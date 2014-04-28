@@ -12,7 +12,7 @@ import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.domain.endringslogg.EndringId;
-import no.statkart.skif.storetest.domain.endringslogg.Endringer;
+import no.statkart.skif.store.endringslogg.Endringer;
 
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
