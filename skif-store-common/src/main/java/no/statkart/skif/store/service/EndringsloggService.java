@@ -24,7 +24,7 @@ import java.util.Collection;
  * @author Henrik Fredholm
  * @since 2.5.0
  */
-public interface EndringsloggService<E extends AbstractEndring<?, ?>, EI extends AbstractEndringId<?>> {
+public interface EndringsloggService<E extends AbstractEndring<?, ?>, EI extends AbstractEndringId> {
     /**
      * Finner siste endringId uavhengig av bobleklasse og filter.
      *
@@ -43,7 +43,7 @@ public interface EndringsloggService<E extends AbstractEndring<?, ?>, EI extends
      * @param maksAntall maksimalt endringer som skal hentes.
      * @return endringer som ble funnet med indikator for om det finnes fler endringer for gitt bobleklasse og filter
      */
-    public Endringer<E> findEndringer(@Nullable AbstractEndringId<?> id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall);
+    public Endringer<E> findEndringer(@Nullable EI id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall);
 
     /**
      * Beregner kontroll for endringsobjekter
@@ -55,7 +55,7 @@ public interface EndringsloggService<E extends AbstractEndring<?, ?>, EI extends
      * @return beregnet kontroll
      *
      */
-    public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable AbstractEndringId<?> id, Class<T> bobleklasse, @Nullable String filter, int antall);
+    public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable EI id, Class<T> bobleklasse, @Nullable String filter, int antall);
 
     /**
      * Beregner kontroll for bobler med id-er i liste

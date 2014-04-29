@@ -8,5 +8,5 @@ import no.statkart.skif.storetest.domain.endringslogg.EndringId;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-public interface EndringsloggService extends no.statkart.skif.store.service.EndringsloggService<Endring<?,?>, EndringId<?>> {
+public interface EndringsloggService extends no.statkart.skif.store.service.EndringsloggService<Endring<?,?>, EndringId> {
 }

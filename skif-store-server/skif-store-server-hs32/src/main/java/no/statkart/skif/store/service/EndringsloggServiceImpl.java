@@ -1,5 +1,6 @@
 package no.statkart.skif.store.service;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
@@ -11,6 +12,7 @@ import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
@@ -18,7 +20,6 @@ import org.hibernate.metadata.ClassMetadata;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import static no.statkart.skif.util.HibernateHelper.*;
@@ -29,8 +30,10 @@ import static no.statkart.skif.util.HibernateHelper.*;
  * @since 2.5.0
  */
 // OBS! Originalen ligger i hs 3.6
-public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends AbstractEndringId<?>> implements EndringsloggService<E, EI> {
+public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends AbstractEndringId> implements EndringsloggService<E, EI> {
     private static final int LIMIT = 1000;
+
+    private final Class<EI> endringIdClass;
 
     private final Provider<SnapshotVersion> snapshotVersionProvider;
 
@@ -40,7 +43,8 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
 
     private final Provider<SessionSelector> sessionSelectorProvider;
 
-    protected EndringsloggServiceImpl(Provider<SnapshotVersion> snapshotVersionProvider, EndringManagerConfiguration<?> endringManagerConfiguration, Store store, Provider<SessionSelector> sessionSelectorProvider) {
+    protected EndringsloggServiceImpl(Class<EI> endringIdClass, Provider<SnapshotVersion> snapshotVersionProvider, EndringManagerConfiguration<?> endringManagerConfiguration, Store store, Provider<SessionSelector> sessionSelectorProvider) {
+        this.endringIdClass = endringIdClass;
         this.snapshotVersionProvider = snapshotVersionProvider;
         this.endringManagerConfiguration = endringManagerConfiguration;
         this.store = store;
@@ -59,25 +63,22 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
         }
     }
 
-    private <I extends AbstractEndringId<?>> I findSisteEndringId(Session session) {
-        Criteria criteria = session.createCriteria(AbstractEndring.class);
-        criteria.setProjection(Projections.max("id"));
-        I endringId = (I) criteria.uniqueResult();
-        return endringId;
-    }
-
     @Override
-    public Endringer<E> findEndringer(@Nullable AbstractEndringId<?> id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
+    public Endringer<E> findEndringer(@Nullable EI id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
+        Preconditions.checkNotNull(bobleklasse, "domainKlasse er obligatorisk");
+        Preconditions.checkNotNull(returnerBobler, "returnerBobler er obligatorisk");
+
         Endringer<E> endringer = new Endringer<E>();
 
         Class<? extends AbstractEndring> endringClass = endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         maksAntall = Math.min(100000, maksAntall);
+        id = setIfNull(id);
 
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            AbstractEndringId<?> sisteEndringId = findSisteEndringId(session);
-            if (sisteEndringId == null || sisteEndringId.equals(id)) {
+            EI sisteEndringId = findSisteEndringId(session);
+            if (sisteEndringId.equals(id)) {
                 // Ingen nye endringer
                 endringer.setAlleEndringerFunnet(true);
                 endringer.setSisteEndringIdProsessert(sisteEndringId);
@@ -85,10 +86,8 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
             } else if (returnerBobler == ReturnerBobler.Aldri) {
                 // Finn endringer, objekter skal ikke returneres
                 Criteria criteria = session.createCriteria(endringClass);
-                if (id != null) {
-                    criteria.add(Restrictions.gt("id", id));
-                }
-                //criteria.addOrder(Order.asc("id")); // trengs ikke da Endring er definert som organization index tabell
+                criteria.add(Restrictions.gt("id", id));
+                criteria.addOrder(Order.asc("id"));
                 criteria.setMaxResults(maksAntall);
                 List<E> endringList = criteria.list();
                 boolean alleEndringerFunnet = endringList.size() < maksAntall;
@@ -97,16 +96,18 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
                 endringer.setSisteEndringIdProsessert(alleEndringerFunnet ? sisteEndringId : endringList.get(maksAntall - 1).getId());
             } else if (returnerBobler == ReturnerBobler.Alltid) {
                 int oensketAntallEndringer = Math.min(LIMIT, maksAntall);
-                AbstractEndringId<?> fromId = id;
                 List<E> accumulatedEndringer = null;
-                LinkedHashSet<BubbleId<?>> accumulatedEndretIds = Sets.newLinkedHashSet();
+                Collection<BubbleId<?>> accumulatedEndretIds = Sets.newLinkedHashSet();
                 while (oensketAntallEndringer > 0 && !endringer.isAlleEndringerFunnet()) {
                     // Finn endringer
                     Criteria criteria = session.createCriteria(endringClass);
-                    if (fromId != null) {
-                        criteria.add(Restrictions.gt("id", fromId));
+                    if(endringer.getSisteEndringIdProsessert() == null){
+                        criteria.add(Restrictions.gt("id", id));
+                    }   else {
+                        criteria.add(Restrictions.gt("id",endringer.getSisteEndringIdProsessert()));
                     }
-                    //criteria.addOrder(Order.asc("id")); // trengs ikke da Endring er definert som organization index tabell
+
+                    criteria.addOrder(Order.asc("id"));
                     criteria.setMaxResults(oensketAntallEndringer);
 
                     List<E> endringList = criteria.list();
@@ -126,20 +127,31 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
                         }
                     }
                     if (!accumulatedEndretIds.isEmpty()) {
-                        store.evict(endretIds);
+                        store.evict(accumulatedEndretIds);   //Det er greit å evicte ids som ikke finnes i store
                     }
-                    store.get(endretIds);
-                    accumulatedEndretIds.addAll(endretIds);
+                    //Noen objekter kan ha blitt fjernet på et senere tidspunkt, må derfor bruke getIgnoreMissing
+                    List<BubbleObject> bubbleObjects = store.getIgnoreMissing(endretIds);
 
-                    // Fikk vi alle endringer
+                    //Kan ikke putte endretId rett inn i accumulatedEndretIds, siden noen endretId kan ha blitt fjernet
+                    for (BubbleObject object : bubbleObjects) {
+                        if (!accumulatedEndretIds.contains(object.getId())) {
+                            accumulatedEndretIds.add(object.getId());
+                        }
+                    }
+
+                    // Fikk vi alle endringer?
                     if (endringList.size() < oensketAntallEndringer) {
+                        if (!accumulatedEndringer.isEmpty()) {
+                            endringer.setSisteEndringIdProsessert(accumulatedEndringer.get(accumulatedEndringer.size() - 1).getId());
+                        }
                         // Kanskje, må sjekke at endringsnummeret ikke har endret seg
-                        AbstractEndringId<?> nytSisteEndringId = findSisteEndringId(session);
-                        if (nytSisteEndringId.equals(sisteEndringId)) {
+                        EI nytSisteEndringId = findSisteEndringId(session);
+                        if (nytSisteEndringId.equals(sisteEndringId) || endringList.isEmpty()) {
                             // Det har ikke kommet nye endringer. Stopper her.
                             endringer.setAlleEndringerFunnet(true);
                             endringer.setEndringList(accumulatedEndringer);
-                            ArrayList endretObjects = new ArrayList(accumulatedEndretIds.size());
+                            endringer.setSisteEndringIdProsessert(sisteEndringId);
+                            List endretObjects = new ArrayList(accumulatedEndretIds.size());
                             store.getOrdered(accumulatedEndretIds, endretObjects);
                             endringer.setObjects(endretObjects);
                         } else {
@@ -147,17 +159,18 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
                             oensketAntallEndringer = oensketAntallEndringer - endringList.size();
                         }
                     } else {
-                        // Har ikke plass til flere endringer
+                        // Har ikke plass til flere endringer, kanskje det finnes flere
                         endringer.setAlleEndringerFunnet(false);
                         endringer.setEndringList(accumulatedEndringer);
-                        ArrayList endretObjects = new ArrayList(accumulatedEndretIds.size());
+                        endringer.setSisteEndringIdProsessert(accumulatedEndringer.get(accumulatedEndringer.size() - 1).getId());
+                        List endretObjects = new ArrayList(accumulatedEndretIds.size());
                         store.getOrdered(accumulatedEndretIds, endretObjects);
                         endringer.setObjects(endretObjects);
                         oensketAntallEndringer = 0;
                     }
                 }
             } else {
-                throw new NotImplementedException("Kommer senere");
+                throw new NotImplementedException("Denne opsjon er ikke implementert. Kommer senere");
             }
         } finally {
             if (sessionSelector != null) sessionSelector.close();
@@ -166,9 +179,10 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
     }
 
     @Override
-    public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable AbstractEndringId<?> id, Class<T> bobleklasse, @Nullable String filter, int antall) {
+    public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable EI id, Class<T> bobleklasse, @Nullable String filter, int antall) {
         Class<? extends AbstractEndring> endringClass = endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
+        id = setIfNull(id);
         // TODO: Legge inn filter
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
@@ -179,12 +193,9 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
             String sql = "select count(id) from (select * from (select t.id from " + tableName + " t where t.id>:id" + discriminatorSql + ") where rownum <=:antall)";
 
             Query query = session.createSQLQuery(sql)
+                    .setParameter("id", 0L)
                     .setParameter("antall", antall);
-            if (id == null) {
-                query.setParameter("id", 0L);
-            } else {
-                query.setParameter("id", id);
-            }
+
             Kontroll result = new Kontroll();
             result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
             return result;
@@ -207,12 +218,28 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
 
             Query query = session.createSQLQuery(sql)
                     .setParameter("ids", ids, new OracleLongBubbleIdArrayCustomType());
+
             Kontroll result = new Kontroll();
             result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();
         }
+    }
+
+    private EI findSisteEndringId(Session session) {
+        Criteria criteria = session.createCriteria(AbstractEndring.class);
+        criteria.setProjection(Projections.max("id"));
+        EI endringId = (EI) criteria.uniqueResult();
+        endringId = setIfNull(endringId);
+        return endringId;
+    }
+
+    private EI setIfNull(EI id) {
+        if (id == null) {
+            id = BubbleIds.createInstance(endringIdClass, 0L, SnapshotVersionContext.getInstance().getSnapshotVersion());
+        }
+        return id;
     }
 
     private <T extends BubbleObject> void checkEndringsklasseFinnes(Class<T> bobleklasse) {
