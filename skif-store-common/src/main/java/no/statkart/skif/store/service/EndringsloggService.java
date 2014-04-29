@@ -24,14 +24,14 @@ import java.util.Collection;
  * @author Henrik Fredholm
  * @since 2.5.0
  */
-public interface EndringsloggService<E extends AbstractEndring<?, ?>> {
+public interface EndringsloggService<E extends AbstractEndring<?, ?>, EI extends AbstractEndringId<?>> {
     /**
      * Finner siste endringId uavhengig av bobleklasse og filter.
      *
      * @return endringId
      */
     @Nullable
-    public <I extends AbstractEndringId<?>> I findSisteEndringId();
+    public EI findSisteEndringId();
 
     /**
      * Henter alle endringsobjekter etter gitt {@code id} for bobler av gitt type eller subtype. Endringsobjekter hørende til {@code id} er ikke inkludert.

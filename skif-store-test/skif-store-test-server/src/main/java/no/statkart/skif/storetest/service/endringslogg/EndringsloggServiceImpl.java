@@ -6,6 +6,7 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.persistence.SessionSelector;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
+import no.statkart.skif.storetest.domain.endringslogg.EndringId;
 import no.statkart.skif.storetest.endringslogg.EndringManagerConfiguration;
 
 /**
@@ -14,7 +15,7 @@ import no.statkart.skif.storetest.endringslogg.EndringManagerConfiguration;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public class EndringsloggServiceImpl extends no.statkart.skif.store.service.EndringsloggServiceImpl<Endring<?,?>> implements EndringsloggService {
+public class EndringsloggServiceImpl extends no.statkart.skif.store.service.EndringsloggServiceImpl<Endring<?,?>, EndringId<?>> implements EndringsloggService {
 
     @Inject
     public EndringsloggServiceImpl(Provider<SnapshotVersion> snapshotVersionProvider, EndringManagerConfiguration endringManagerConfiguration, Store store, Provider<SessionSelector> sessionSelectorProvider) {

@@ -11,6 +11,7 @@ import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
+import no.statkart.skif.storetest.domain.endringslogg.EndringId;
 
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
@@ -37,7 +38,7 @@ public class EndringsloggServiceEJBBean extends EJBTimedService implements Endri
 
     @Nullable
     @Override
-    public <I extends AbstractEndringId<?>> I  findSisteEndringId() {
+    public EndringId<?> findSisteEndringId() {
         return serviceChain.findSisteEndringId();
     }
 

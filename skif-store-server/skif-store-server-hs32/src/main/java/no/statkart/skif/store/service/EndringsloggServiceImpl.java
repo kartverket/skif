@@ -29,7 +29,7 @@ import static no.statkart.skif.util.HibernateHelper.*;
  * @since 2.5.0
  */
 // OBS! Originalen ligger i hs 3.6
-public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>> implements EndringsloggService<E> {
+public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends AbstractEndringId<?>> implements EndringsloggService<E, EI> {
     private static final int LIMIT = 1000;
 
     private final Provider<SnapshotVersion> snapshotVersionProvider;
@@ -49,7 +49,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>> implements
 
     @Nullable
     @Override
-    public <I extends AbstractEndringId<?>> I findSisteEndringId() {
+    public EI findSisteEndringId() {
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
