@@ -33,6 +33,7 @@ public class SkifTestCaseStandAloneModuleReuseTest extends SkifTestCase {
         loginCount++;
     }
 
+    @Test(dependsOnMethods = "testInjectorReused") // Må kjøres etter testene nedenfor, ellers kan de komme ut av tellingen
     public void testDefaultServiceMode() {
         assertNull(isSingleVm());
     }
