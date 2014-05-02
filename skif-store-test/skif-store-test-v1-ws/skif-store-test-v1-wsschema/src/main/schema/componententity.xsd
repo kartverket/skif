@@ -77,6 +77,7 @@
 
     <xs:complexType name="Level1EntityComponent">
         <xs:sequence>
+            <xs:element name="id" type="xs:long" nillable="true"/>
             <xs:element name="text" type="xs:string"/>
             <xs:element name="beloep" type="basicns:BeloepValueObject"/>
             <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
@@ -121,6 +122,7 @@
 
     <xs:complexType name="Level2EntityComponent">
         <xs:sequence>
+            <xs:element name="id" type="xs:long" nillable="true"/>
             <xs:element name="text" type="xs:string"/>
             <xs:element name="beloep" type="basicns:BeloepValueObject"/>
             <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
