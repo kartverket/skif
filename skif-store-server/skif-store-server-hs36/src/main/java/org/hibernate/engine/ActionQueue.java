@@ -28,12 +28,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import no.statkart.skif.exception.ImplementationException;
 import org.hibernate.EntityMode;
@@ -715,7 +710,7 @@ public class ActionQueue {
         // MODIFIED SKIF-435 Start
         private String getSqlInsertStringsHashCode(EntityPersister persister) {
             try {
-                return String.valueOf(sqlInsertStringsField.get(persister).hashCode());
+                return String.valueOf(Arrays.deepHashCode((Object[]) sqlInsertStringsField.get(persister)));
             } catch (IllegalAccessException e) {
                 return "";
             }
