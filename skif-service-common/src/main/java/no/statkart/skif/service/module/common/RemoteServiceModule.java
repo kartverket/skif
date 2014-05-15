@@ -6,6 +6,7 @@ import com.google.inject.PrivateModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 import com.google.common.base.Preconditions;
+import no.statkart.skif.ServiceMode;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -13,6 +14,8 @@ import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.ServiceContextMapper;
 import no.statkart.skif.module.ModuleWithStrategy;
+import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
+import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.D2WAdapterProxyHandler;
 
 import java.util.Collection;
@@ -75,6 +78,28 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
      */
     public RemoteServiceModule setClassWSPackageMappings(String... classWSPackageMappings) {
         this.classWSPackageMappings = classWSPackageMappings;
+        return this;
+    }
+
+    /**
+     * Legger på de samme kallkjedeproxyleddene for SingleVM og JEE-modus.
+     *
+     * @param callServiceChainProxyHandlers proxyledd
+     * @since 2.5.0
+     */
+    public RemoteServiceModule appendCallServiceChainProxyHandlers(Class<? extends ChainedProxyHandler>... callServiceChainProxyHandlers) {
+        CallServiceChainFactorySpecification jeeCallServiceChainFactorySpecification = getStrategy(ServiceMode.JEE).getCallServiceChainFactorySpecification();
+        for (Class<? extends ChainedProxyHandler> callServiceChainProxyHandler : callServiceChainProxyHandlers) {
+            jeeCallServiceChainFactorySpecification.appendCallServiceChainProxyHandler(callServiceChainProxyHandler);
+        }
+
+        if (moduleConfiguration.getServiceMode().equals(ServiceMode.SINGLE_VM)) {
+            CallServiceChainFactorySpecification singleVmCallServiceChainFactorySpecification = getStrategy(ServiceMode.SINGLE_VM).getCallServiceChainFactorySpecification();
+            for (Class<? extends ChainedProxyHandler> callServiceChainProxyHandler : callServiceChainProxyHandlers) {
+                singleVmCallServiceChainFactorySpecification.appendCallServiceChainProxyHandler(callServiceChainProxyHandler);
+            }
+        }
+
         return this;
     }
 
