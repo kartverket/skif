@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.storetest.domain.relation.X1AAMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1BBOneMockupFactory;
@@ -242,7 +243,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         StoreRelationCache storeRelationCache = store.getInstance(StoreRelationCache.class);
         boolean enabled = storeRelationCache.isEnabled();
         storeRelationCache.setEnabled(true);
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
             X1AA a = new X1AA();
             store.insert(a);
@@ -255,7 +256,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             Set<X1AAId<?>> invSomeBBIds = b.findInvSomeBBIds();
             assertThat(invSomeBBIds).containsExactly(a.getId());
         } finally {
-            store.abortUnitOfWork();
+            unitOfWork.close();
             storeRelationCache.setEnabled(enabled);
         }
     }
@@ -264,11 +265,12 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         StoreRelationCache storeRelationCache = store.getInstance(StoreRelationCache.class);
         boolean enabled = storeRelationCache.isEnabled();
         storeRelationCache.setEnabled(true);
-        store.beginUnitOfWork();
+        UnitOfWork unitOfWork1 = store.beginUnitOfWork();
         try {
             store.beginUnitOfWork();
             X1AAId<?> aId;
             X1BBOneId<?> bId;
+            UnitOfWork unitOfWork2 = store.beginUnitOfWork();
             try {
                 X1AA a = new X1AA();
                 store.insert(a);
@@ -279,8 +281,9 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
                 bId = b.getId();
 
                 a.setSomeBBId(b.getId());
+                store.commitUnitOfWork(unitOfWork2);
             } finally {
-                store.commitUnitOfWork();
+                unitOfWork2.close();
             }
 
             X1AA a = store.get(aId);
@@ -289,7 +292,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             Set<X1AAId<?>> invSomeBBIds = b.findInvSomeBBIds();
             assertThat(invSomeBBIds).containsExactly(a.getId());
         } finally {
-            store.abortUnitOfWork();
+            unitOfWork1.close();
             storeRelationCache.setEnabled(enabled);
         }
     }
