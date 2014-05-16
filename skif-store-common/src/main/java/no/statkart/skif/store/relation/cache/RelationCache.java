@@ -1,6 +1,7 @@
 package no.statkart.skif.store.relation.cache;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.relation.cache.annotation.Relation;
@@ -8,8 +9,10 @@ import no.statkart.skif.store.relation.cache.annotation.RelationType;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -27,7 +30,6 @@ public class RelationCache {
         addId(level, inAttachedMode, relationName, newValue, sourceId);
     }
 
-    @Nullable
     private <T extends BubbleId<?>> void removeId(int level, boolean inAttachedMode, RelationName relationName, @Nullable T value, BubbleId<?> sourceId) {
         if (value != null) {
             RelationEntry inverseRelationEntry = getInverseRelation(relationName, value, !inAttachedMode);
@@ -38,7 +40,6 @@ public class RelationCache {
     }
 
 
-    @Nullable
     private <T extends BubbleId<?>> void addId(int level, boolean inAttachedMode, RelationName relationName, @Nullable T value, BubbleId<?> sourceId) {
         if (value != null) {
             RelationEntry inverseRelationEntry = getInverseRelation(relationName, value, !inAttachedMode);
@@ -85,9 +86,7 @@ public class RelationCache {
     }
 
     public void onCommitUnitOfWork(int level) {
-        Iterator<Map.Entry<Key,RelationEntry>> iterator = inverseRelationMap.entrySet().iterator();
-        while ( iterator.hasNext()) {
-            Map.Entry<Key, RelationEntry> mapElement = iterator.next();
+        for (Map.Entry<Key, RelationEntry> mapElement : inverseRelationMap.entrySet()) {
             RelationEntry entry = mapElement.getValue();
             entry.commitEntry(level);
         }
@@ -103,6 +102,21 @@ public class RelationCache {
                 iterator.remove();
             }
         }
+    }
+
+    public Collection<BubbleId<?>> findNonMaterialized(RelationName relationName, Collection<BubbleId<?>> ids) {
+        Set<BubbleId<?>> missingIds = Sets.newHashSet();
+        for (BubbleId<?> bubbleId : ids) {
+            RelationEntry inverseRelationEntry = getInverseRelation(relationName, bubbleId, false);
+            if (inverseRelationEntry == null) {
+                missingIds.add(bubbleId);
+            } else {
+                if (!inverseRelationEntry.isMaterialized(0)) {
+                    missingIds.add(bubbleId);
+                }
+            }
+        }
+        return missingIds;
     }
 
     static class Key {
@@ -121,10 +135,7 @@ public class RelationCache {
 
             Key key = (Key) o;
 
-            if (!id.equals(key.id)) return false;
-            if (!name.equals(key.name)) return false;
-
-            return true;
+            return id.equals(key.id) && name.equals(key.name);
         }
 
         @Override

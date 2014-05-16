@@ -1,7 +1,9 @@
 package no.statkart.skif.store.relation.cache;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.store.BubbleId;
 
@@ -51,19 +53,9 @@ public class RelationCacheProxyHandler<S> extends ChainedProxyHandler<S> {
 
     private Map<BubbleId<?>, Object> useCaching(RelationName name, Object proxy, Method method, Collection<BubbleId<?>> ids) throws Throwable {
         Map<BubbleId<?>, Object> mapOfResults = Maps.newHashMapWithExpectedSize(ids.size());
-        List<BubbleId<?>> missingIds = null;
-        for (BubbleId<?> id : ids) {
-            RelationValueHolder cachedRelationValueHolder = cache.getRelationValue(name, id);
-            if (cachedRelationValueHolder != null) {
-                mapOfResults.put(id, cachedRelationValueHolder.getValue());
-            } else {
-                if (missingIds == null) {
-                    missingIds = new ArrayList<BubbleId<?>>();
-                }
-                missingIds.add(id);
-            }
-        }
-        if (missingIds != null) {
+
+        Collection<BubbleId<?>> missingIds = cache.findNonMaterialized(name, ids);
+        if (!missingIds.isEmpty()) {
             Object[] args = {missingIds};
             Map<BubbleId<?>, Object> uncachedMap = noCaching(proxy, method, args);
             for (Map.Entry<BubbleId<?>, Object> entry : uncachedMap.entrySet()) {
@@ -71,6 +63,19 @@ public class RelationCacheProxyHandler<S> extends ChainedProxyHandler<S> {
                 mapOfResults.put(entry.getKey(), updatedCachedRelationValue);
             }
         }
+
+        Set<BubbleId<?>> restIds = Sets.newHashSet(ids);
+        restIds.removeAll(mapOfResults.keySet());
+
+        for (BubbleId<?> id : ids) {
+            RelationValueHolder cachedRelationValueHolder = cache.getRelationValue(name, id);
+            if (cachedRelationValueHolder != null) {
+                mapOfResults.put(id, cachedRelationValueHolder.getValue());
+            } else {
+                throw new ImplementationException("There were still unmaterialized relations");
+            }
+        }
+
         return mapOfResults;
     }
 
