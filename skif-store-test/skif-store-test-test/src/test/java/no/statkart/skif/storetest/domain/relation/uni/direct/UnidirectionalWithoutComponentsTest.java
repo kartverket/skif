@@ -160,6 +160,29 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
     }
 
     /**
+     * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne"
+     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
+     */
+    public void testChangeSomeBBRelation2() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
+        X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
+
+        // Sjekk at b1 ikke er invers relatert til a2.
+        store.getInstance(StoreRelationCache.class).setEnabled(true);
+        X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
+//        assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
+        assertEquals(b1.getInvSomeBBIds().isMaterialised(), false);
+        assertNull(b1.getInvSomeBBIds().getCached());
+
+        // Her endres a2 til å peke på b1
+        X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
+        a2.setSomeBBId(b1.getId());
+
+        assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
+    }
+
+    /**
      * Tester mockups for relasjon "X1AA ---someCCs-> X1CCMany"
      */
     public void testGetManyMockups() {
@@ -213,6 +236,62 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
         a2.getSomeCCsIds().add(c1.getId());
         assertThat((X1AAId)c1.findInvSomeCCsIds()).isEqualTo(a2.getId());
+    }
+
+    public void testNewObjects() {
+        StoreRelationCache storeRelationCache = store.getInstance(StoreRelationCache.class);
+        boolean enabled = storeRelationCache.isEnabled();
+        storeRelationCache.setEnabled(true);
+        store.beginUnitOfWork();
+        try {
+            X1AA a = new X1AA();
+            store.insert(a);
+
+            X1BBOne b = new X1BBOne();
+            store.insert(b);
+
+            a.setSomeBBId(b.getId());
+
+            Set<X1AAId<?>> invSomeBBIds = b.findInvSomeBBIds();
+            assertThat(invSomeBBIds).containsExactly(a.getId());
+        } finally {
+            store.abortUnitOfWork();
+            storeRelationCache.setEnabled(enabled);
+        }
+    }
+
+    public void testNewObjectsDifferentLevels() {
+        StoreRelationCache storeRelationCache = store.getInstance(StoreRelationCache.class);
+        boolean enabled = storeRelationCache.isEnabled();
+        storeRelationCache.setEnabled(true);
+        store.beginUnitOfWork();
+        try {
+            store.beginUnitOfWork();
+            X1AAId<?> aId;
+            X1BBOneId<?> bId;
+            try {
+                X1AA a = new X1AA();
+                store.insert(a);
+                aId = a.getId();
+
+                X1BBOne b = new X1BBOne();
+                store.insert(b);
+                bId = b.getId();
+
+                a.setSomeBBId(b.getId());
+            } finally {
+                store.commitUnitOfWork();
+            }
+
+            X1AA a = store.get(aId);
+            X1BBOne b = store.get(bId);
+
+            Set<X1AAId<?>> invSomeBBIds = b.findInvSomeBBIds();
+            assertThat(invSomeBBIds).containsExactly(a.getId());
+        } finally {
+            store.abortUnitOfWork();
+            storeRelationCache.setEnabled(enabled);
+        }
     }
 
     public void testGetUnique() {
