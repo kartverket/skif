@@ -267,7 +267,6 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         storeRelationCache.setEnabled(true);
         UnitOfWork unitOfWork1 = store.beginUnitOfWork();
         try {
-            store.beginUnitOfWork();
             X1AAId<?> aId;
             X1BBOneId<?> bId;
             UnitOfWork unitOfWork2 = store.beginUnitOfWork();
