@@ -138,6 +138,6 @@ public abstract class StoreRelationCache {
 
     public Collection<BubbleId<?>> findNonMaterialized(RelationName relationName, Collection<BubbleId<?>> ids) {
         checkState(enabled);
-        return relationCache.findNonMaterialized(relationName, ids);
+        return relationCache.findNonMaterialized(getLevel(), relationName, ids);
     }
 }

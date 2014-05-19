@@ -104,14 +104,14 @@ public class RelationCache {
         }
     }
 
-    public Collection<BubbleId<?>> findNonMaterialized(RelationName relationName, Collection<BubbleId<?>> ids) {
+    public Collection<BubbleId<?>> findNonMaterialized(int level, RelationName relationName, Collection<BubbleId<?>> ids) {
         Set<BubbleId<?>> missingIds = Sets.newHashSet();
         for (BubbleId<?> bubbleId : ids) {
             RelationEntry inverseRelationEntry = getInverseRelation(relationName, bubbleId, false);
             if (inverseRelationEntry == null) {
                 missingIds.add(bubbleId);
             } else {
-                if (!inverseRelationEntry.isMaterialized(0)) {
+                if (!inverseRelationEntry.isMaterialized(level)) {
                     missingIds.add(bubbleId);
                 }
             }
