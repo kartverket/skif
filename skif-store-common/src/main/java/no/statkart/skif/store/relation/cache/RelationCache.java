@@ -111,7 +111,13 @@ public class RelationCache {
             if (inverseRelationEntry == null) {
                 missingIds.add(bubbleId);
             } else {
-                if (!inverseRelationEntry.isMaterialized(level)) {
+                boolean materialized = false;
+                for (int i = level; i >= 0; --i) {
+                    if (inverseRelationEntry.isMaterialized(i)) {
+                        materialized = true;
+                    }
+                }
+                if (!materialized) {
                     missingIds.add(bubbleId);
                 }
             }
