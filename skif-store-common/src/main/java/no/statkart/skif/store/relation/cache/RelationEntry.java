@@ -52,6 +52,7 @@ public class RelationEntry {
             // j er materialisert, og skal brukes som startpunkt for videre materialisering
             while (j < i) {
                 relations[j + 1].materialise(CopyHelper.copy(relations[j].getRelation()));
+                j++;
             }
             return relations[i].getRelation();
         }
