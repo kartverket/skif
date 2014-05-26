@@ -400,7 +400,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         // en-etter-en.
         BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
         if (existingBubble != bubbleObject) {
-            ensureFullyLoaded(existingBubble); // TODO: Denne kan antageligvis tas bort
+            ensureFullyLoaded(existingBubble); // Denne er viktig fordi hibernate håndterer lazyloading under attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents
             attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents(bubbleObject, existingBubble, orphanOneToOneEntityComponents);
 
             if (!(bubbleObject.getClass().isInstance(existingBubble))) {
@@ -1096,6 +1096,11 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> refresh(Collection<I> bubbleIds) {
+        // TODO: Det er raskere å gjøre en evict etterfulgt av en get, men dette er egentlig problematisk da objektreferansen til
+        // boblen blir skiftet ut. Da er det bedre å iterere over allerede lastede bobler å gjøre en refresh. Men hvorfor ta denne metode
+        // en collection av id-er når refresh tar en boble som argument?. Per i dag er denne metode ikke i bruk så det har ikke
+        // som mye å si.
+
         for (I bubbleId : bubbleIds) {
             evict(bubbleId);
         }
@@ -1105,6 +1110,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     @Override
     public <T extends BubbleObject> void refresh(T bubble) {
         session().refresh(bubble);
+        fullyInitializedBubbles.remove(bubble.getId());
     }
 
     @Override
