@@ -400,7 +400,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         // en-etter-en.
         BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
         if (existingBubble != bubbleObject) {
-            ensureFullyLoaded(existingBubble); // Denne er viktig fordi hibernate håndterer lazyloading under attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents
+            ensureFullyLoaded(existingBubble); // TODO: Håndter lazy loaded collections. Må pt kalle ensureFullyLoaded fordi attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents pt ikke håndtere lazyloaded collections.
             attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents(bubbleObject, existingBubble, orphanOneToOneEntityComponents);
 
             if (!(bubbleObject.getClass().isInstance(existingBubble))) {
