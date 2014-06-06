@@ -4,7 +4,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Tester at fallback locale virker.
@@ -14,17 +13,55 @@ import java.util.ResourceBundle;
  */
 @Test
 public class LocaleFallbackTest {
-    public void fallbackNorsk() {
-        ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
+    public void fallbackNynorsk1() {
+        Locale locale = new Locale("ny", "NO");
+        Assert.assertEquals(locale.toString(), "ny_NO", "locale");
 
-        Locale locale = new Locale("no", "NO", "ny");
-        Assert.assertEquals(locale.toString(), "no_NO_ny", "locale");
-
-        Locale fallback1 = control.getFallbackLocale("", locale);
+        Locale fallback1 = LocaleFallbackUtil.getFallbackLocale(locale);
         Assert.assertNotNull(fallback1, "fallback 1");
         Assert.assertEquals(fallback1.toString(), "no_NO", "fallback 1");
 
-        Locale fallback2 = control.getFallbackLocale("", fallback1);
-        Assert.assertNull(fallback2, "fallback 2");
+        Locale fallback2 = LocaleFallbackUtil.getFallbackLocale(fallback1);
+        Assert.assertNotNull(fallback2, "fallback 2");
+        Assert.assertEquals(fallback2.toString(), "", "fallback 2");
+    }
+
+    public void fallbackNynorsk2() {
+        Locale locale = new Locale("no", "NO", "NY");
+        Assert.assertEquals(locale.toString(), "no_NO_NY", "locale");
+
+        Locale fallback1 = LocaleFallbackUtil.getFallbackLocale(locale);
+        Assert.assertNotNull(fallback1, "fallback 1");
+        Assert.assertEquals(fallback1.toString(), "no_NO", "fallback 1");
+
+        Locale fallback2 = LocaleFallbackUtil.getFallbackLocale(fallback1);
+        Assert.assertNotNull(fallback2, "fallback 2");
+        Assert.assertEquals(fallback2.toString(), "", "fallback 2");
+    }
+
+    public void fallbackBokmaal1() {
+        Locale locale = new Locale("nb", "NO");
+        Assert.assertEquals(locale.toString(), "nb_NO", "locale");
+
+        Locale fallback1 = LocaleFallbackUtil.getFallbackLocale(locale);
+        Assert.assertNotNull(fallback1, "fallback 1");
+        Assert.assertEquals(fallback1.toString(), "no_NO", "fallback 1");
+
+        Locale fallback2 = LocaleFallbackUtil.getFallbackLocale(fallback1);
+        Assert.assertNotNull(fallback2, "fallback 2");
+        Assert.assertEquals(fallback2.toString(), "", "fallback 2");
+    }
+
+    public void fallbackBokmaal2() {
+        Locale locale = new Locale("no", "NO", "B");
+        Assert.assertEquals(locale.toString(), "no_NO_B", "locale");
+
+        Locale fallback1 = LocaleFallbackUtil.getFallbackLocale(locale);
+        Assert.assertNotNull(fallback1, "fallback 1");
+        Assert.assertEquals(fallback1.toString(), "no_NO", "fallback 1");
+
+        Locale fallback2 = LocaleFallbackUtil.getFallbackLocale(fallback1);
+        Assert.assertNotNull(fallback2, "fallback 2");
+        Assert.assertEquals(fallback2.toString(), "", "fallback 2");
     }
 }
