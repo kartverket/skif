@@ -1,6 +1,5 @@
 package no.statkart.skif.store.endringslogg;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Provider;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
@@ -59,40 +58,46 @@ public abstract class AbstractEndringManager<E extends AbstractEndring> implemen
 
     @Override
     public void onFinish(StoreServer storeServer) {
-        Timestamp tidspunkt = getEndringstidspunkt();
+        LinkedHashSet<BubbleId<?>> insertedIds = storeServer.getInsertedIds();
+        LinkedHashSet<BubbleId<?>> updatedIds = storeServer.getUpdatedIds();
+        LinkedHashSet<BubbleId<?>> deletedIds = storeServer.getDeletedIds();
 
-        List<AbstractEndring> endringer = new ArrayList<AbstractEndring>();
+        if (insertedIds.size() > 0 || updatedIds.size() > 0 || deletedIds.size() > 0) {
+            Timestamp tidspunkt = getEndringstidspunkt();
 
-        for (BubbleId<?> bubbleId : storeServer.getInsertedIds()) {
-            E endring = createEndring(bubbleId, Endringstype.Nyoppretting, tidspunkt);
-            if (endring != null) {
-                decorateEndring(storeServer, endring);
-                endringer.add(endring);
-            }
-        }
-        for (BubbleId<?> bubbleId : storeServer.getUpdatedIds()) {
-            E endring = createEndring(bubbleId, Endringstype.Oppdatering, tidspunkt);
-            if (endring != null) {
-                decorateEndring(storeServer, endring);
-                endringer.add(endring);
-            }
-        }
-        for (BubbleId<?> bubbleId : storeServer.getDeletedIds()) {
-            E endring = createEndring(bubbleId, Endringstype.Sletting, tidspunkt);
-            if (endring != null) {
-                decorateEndring(storeServer, endring);
-                endringer.add(endring);
-            }
-        }
+            List<AbstractEndring> endringer = new ArrayList<AbstractEndring>();
 
-        final int antall = endringer.size();
-        if (antall > 0) {
-            long nr = sequenceBlockAllocatorService.allocateSequenceBlock(sequenceName, antall) - antall + 1;
-            for (AbstractEndring endring : endringer) {
-                Class<? extends BubbleId<? extends AbstractEndring>> idClass = BubbleIds.getBubbleIdClass(endring.getClass());
-                BubbleId<? extends AbstractEndring> id = BubbleIds.createInstance(idClass, nr++, SnapshotVersion.CURRENT);
-                endring.setId(id);
-                storeServer.insert(endring);
+            for (BubbleId<?> bubbleId : insertedIds) {
+                E endring = createEndring(bubbleId, Endringstype.Nyoppretting, tidspunkt);
+                if (endring != null) {
+                    decorateEndring(storeServer, endring);
+                    endringer.add(endring);
+                }
+            }
+            for (BubbleId<?> bubbleId : updatedIds) {
+                E endring = createEndring(bubbleId, Endringstype.Oppdatering, tidspunkt);
+                if (endring != null) {
+                    decorateEndring(storeServer, endring);
+                    endringer.add(endring);
+                }
+            }
+            for (BubbleId<?> bubbleId : deletedIds) {
+                E endring = createEndring(bubbleId, Endringstype.Sletting, tidspunkt);
+                if (endring != null) {
+                    decorateEndring(storeServer, endring);
+                    endringer.add(endring);
+                }
+            }
+
+            final int antall = endringer.size();
+            if (antall > 0) {
+                long nr = sequenceBlockAllocatorService.allocateSequenceBlock(sequenceName, antall) - antall + 1;
+                for (AbstractEndring endring : endringer) {
+                    Class<? extends BubbleId<? extends AbstractEndring>> idClass = BubbleIds.getBubbleIdClass(endring.getClass());
+                    BubbleId<? extends AbstractEndring> id = BubbleIds.createInstance(idClass, nr++, SnapshotVersion.CURRENT);
+                    endring.setId(id);
+                    storeServer.insert(endring);
+                }
             }
         }
     }
