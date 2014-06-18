@@ -1,10 +1,10 @@
 package no.statkart.skif.store.localization;
 
-import com.google.inject.TypeLiteral;
-import no.statkart.skif.service.ServiceContext;
-
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * En streng som kan være lokalisert på et vilkårlig antall språk.
@@ -14,8 +14,6 @@ import java.util.*;
  */
 public class LocalizedString implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    public static final TypeLiteral<Map<Locale, String>> MAP_TYPE = new TypeLiteral<Map<Locale, String>>() {};
 
     private final Map<Locale, String> localizations;
 
@@ -36,18 +34,17 @@ public class LocalizedString implements Serializable {
      */
     // LocaleFallbackTest tester denne funksjonaliteten direkte, altså ikke via denne metoden
     public Locale getLocale(Locale locale) {
-        ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
-        while (true) {
+        while (locale != null && !locale.equals(Locale.ROOT)) {
             boolean funnet = localizations.containsKey(locale);
 
-            if (funnet || locale == null) {
+            if (funnet) {
                 break;
             }
 
-            locale = control.getFallbackLocale("", locale); // Første parameter kan ikke være null, men det ser ikke ut til at den brukes til noe
+            locale = LocaleFallbackUtil.getFallbackLocale(locale);
         }
 
-        return locale != null ? locale : Locale.ROOT;
+        return locale;
     }
 
     /**
