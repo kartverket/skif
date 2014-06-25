@@ -7,8 +7,6 @@ import oracle.jdbc.OracleConnection;
 import org.hibernate.jdbc.ConnectionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import weblogic.jdbc.wrapper.JTSConnection;
-import weblogic.jdbc.wrapper.PoolConnection;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -51,7 +49,7 @@ public class OracleUtils {
      * @return OracleConnection for en JDBC connection
      */
     public static OracleConnection getOracleConnection(Connection con) {
-        OracleConnection oracleConnection = null;
+        OracleConnection oracleConnection;
 
         if (con instanceof ConnectionForSnapshotVersion) {
             ConnectionForSnapshotVersion connectionForSnapshotVersion = ConnectionForSnapshotVersion.class.cast(con);
@@ -66,41 +64,10 @@ public class OracleUtils {
 
         con = unwrapc3p0Connection(con);
 
-        if (con instanceof weblogic.jdbc.wrapper.JTSConnection) {
-            //Når vi kjører på tjeneren vil vår oracle connection være wrappet i en weblogic-connection fra connection pool
-            try {
-                oracleConnection = (OracleConnection) ((JTSConnection) con).getConnection();
-            } catch (SQLException e) {
-                throw new OperationalException("An error occured getting Oracle connection from Weblogic JTSConnection", e);
-            } catch (RuntimeException e) {
-                throw new OperationalException("An error occured getting Oracle connection from Weblogic JTSConnection. Check that Weblogic Connection Pool is using the correct driver (oracle.jdbc.OracleDriver)", e);
-            }
-        } else if (con instanceof PoolConnection) {
-            try {
-                oracleConnection = (OracleConnection) ((PoolConnection) con).getVendorConnection();
-            } catch (SQLException e) {
-                throw new OperationalException("An error occured getting Oracle connection from Weblogic PoolConnection. Check that Weblogic Connection Pool is using the correct driver (oracle.jdbc.OracleDriver)", e);
-            }
-        } else if (con instanceof OracleConnection) {
-            oracleConnection = (OracleConnection) con;
-        }
-/*
-      // Kommenteres inn dersom du bruker Jdbmonitor verktøyet.
-      else if ( con instanceof com.jdbmonitor.driver.jdbc.v3.Connection3) {
-         com.jdbmonitor.driver.jdbc.v3.Connection3 connection3 = ((com.jdbmonitor.driver.jdbc.v3.Connection3) con);
-         try {
-            Field f = connection3.getClass().getDeclaredField("realConnection");
-            f.setAccessible(true);
-            oracleConnection = (OracleConnection)f.get(connection3);
-         } catch( NoSuchFieldException e ) {
-            throw new RuntimeException(e);
-         } catch( IllegalAccessException e ) {
-            throw new RuntimeException(e);
-         }
-      }
-*/
-        else {
-            throw new ImplementationException("Could not obtain OracleConnection from connection {" + con + "}");
+        try {
+            oracleConnection = con.unwrap(OracleConnection.class);
+        } catch (SQLException e) {
+            throw new OperationalException("An error occured getting Oracle connection from Weblogic JTSConnection", e);
         }
 
         return oracleConnection;
