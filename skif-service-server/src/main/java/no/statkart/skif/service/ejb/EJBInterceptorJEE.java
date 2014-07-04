@@ -4,7 +4,6 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.service.*;
 import no.statkart.skif.service.annotation.CallId;
@@ -12,7 +11,6 @@ import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.util.CopyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import weblogic.transaction.BeginNotificationListener;
 
 import javax.annotation.Resource;
 import javax.ejb.NoSuchObjectLocalException;
@@ -21,15 +19,23 @@ import javax.ejb.Timer;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 /**
- * @author Henrik Fredholm
+ * Baseklasse for integrasjon mellom JEE og Guice, samt SKIFs custom scopes.
  */
 public abstract class EJBInterceptorJEE {
     private static Logger logger = LoggerFactory.getLogger(EJBInterceptorJEE.class);
+
     @Resource
     private SessionContext sessionContext;
 
+    @Resource(mappedName = "java:comp/TransactionSynchronizationRegistry")
+    private TransactionSynchronizationRegistry transactionSynchronizationRegistry;
+
+    /**
+     * Prosjektene må implementere denne til å returnere sin server-injector.
+     */
     protected abstract Injector getInjector();
 
     @AroundInvoke
@@ -87,6 +93,7 @@ public abstract class EJBInterceptorJEE {
         serviceRequestScope.enter();
         try {
             serviceRequestScope.seed(ServiceRequestContext.class, newServiceRequestContext);
+            serviceRequestScope.seed(TransactionSynchronizationRegistry.class, transactionSynchronizationRegistry);
             if (serviceContext != null) {
                 serviceRequestScope.seed((Class<ServiceContext>) serviceContext.getClass(), serviceContext);
             }

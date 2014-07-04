@@ -132,14 +132,6 @@ libraries.weblogic_client = files(
         "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
         "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
 
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.7.1.0.jar" : [],
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.7.0.0.jar" : [],
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/com.bea.core.transaction_2.5.1.0.jar" : [],
-
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.10.0.0.jar" : [],
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.9.0.0.jar" : [],
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/com.bea.core.datasource6_1.6.0.0.jar" : [],
-
         libraries.weblogic_jaxws_rt,
 )
 
@@ -162,15 +154,6 @@ libraries.weblogic_server = files(
 libraries.weblogic = files(
         libraries.weblogic_server,
         libraries.weblogic_client,
-)
-
-// extra files for running skif project?
-libraries.weblogic += files(
-        "${WEBLOGIC_HOME}/modules/com.bea.core.utils.wrapper_1.4.0.0.jar",
-
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.8.0.0.jar" : [],
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.7.0.0.jar" : [],
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/com.bea.core.resourcepool_1.5.0.0.jar" : [],
 )
 
 libraries.jaxws_rt = files(

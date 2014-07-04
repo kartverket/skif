@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.ServiceMode;
-import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
@@ -16,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import javax.transaction.*;
 
 /**
- * @author Henrik Fredholm
- * @author Tor Egil R. Strand
  * @since 2.1
  */
 public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResourceProxyHandler<S> {
@@ -29,15 +26,17 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
     private final Provider<ServiceMode> serviceModeProvider;
     private final Provider<LockerStrategy> lockerStrategyProvider;
     private final Provider<StoreServer> storeServerProvider;
+    private final Provider<TransactionSynchronizationRegistry> transactionSynchronizationRegistryProvider;
 
     @Inject
-    public EJBResourceProxyHandlerForHibernateWithLocks(TypeLiteral<S> serviceType, Provider<ResourceManager> resourceManagerProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceMode> serviceModeProvider, Provider<LockerStrategy> lockerStrategyProvider, Provider<StoreServer> storeServerProvider) {
+    public EJBResourceProxyHandlerForHibernateWithLocks(TypeLiteral<S> serviceType, Provider<ResourceManager> resourceManagerProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceMode> serviceModeProvider, Provider<LockerStrategy> lockerStrategyProvider, Provider<StoreServer> storeServerProvider, Provider<TransactionSynchronizationRegistry> transactionSynchronizationRegistryProvider) {
         this.serviceType = serviceType;
         this.resourceManagerProvider = resourceManagerProvider;
         this.serviceRequestContextProvider = serviceRequestContextProvider;
         this.serviceModeProvider = serviceModeProvider;
         this.lockerStrategyProvider = lockerStrategyProvider;
         this.storeServerProvider = storeServerProvider;
+        this.transactionSynchronizationRegistryProvider = transactionSynchronizationRegistryProvider;
     }
 
 
@@ -54,26 +53,19 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
             if (serviceMode == ServiceMode.SINGLE_VM) {
                 resourceManager.beginTransaction();
             } else {
-                Transaction t = weblogic.transaction.TransactionHelper.getTransactionHelper().getTransaction();
-                try {
-                    t.registerSynchronization(new Synchronization() {
-                        @Override
-                        public void beforeCompletion() {
-                            // Ingenting å gjøre
-                        }
+                transactionSynchronizationRegistryProvider.get().registerInterposedSynchronization(new Synchronization() {
+                    @Override
+                    public void beforeCompletion() {
+                        // Ingenting å gjøre
+                    }
 
-                        @Override
-                        public void afterCompletion(int status) {
-                            if (status != Status.STATUS_COMMITTED) {
-                                lockerStrategyProvider.get().releaseLocksOnRollback();
-                            }
+                    @Override
+                    public void afterCompletion(int status) {
+                        if (status != Status.STATUS_COMMITTED) {
+                            lockerStrategyProvider.get().releaseLocksOnRollback();
                         }
-                    });
-                } catch (RollbackException e) {
-                    throw new OperationalException("Failed to register JTA callback", e);
-                } catch (SystemException e) {
-                    throw new OperationalException("Failed to register JTA callback", e);
-                }
+                    }
+                });
             }
         }
 
