@@ -8,14 +8,13 @@ import java.util.Locale;
 /**
  * Tester at fallback locale virker.
  *
- * @author Tor Egil R. Strand
  * @since 2.4.0
  */
 @Test
 public class LocaleFallbackTest {
     public void fallbackNynorsk1() {
-        Locale locale = new Locale("ny", "NO");
-        Assert.assertEquals(locale.toString(), "ny_NO", "locale");
+        Locale locale = new Locale("nn", "NO");
+        Assert.assertEquals(locale.toString(), "nn_NO", "locale");
 
         Locale fallback1 = LocaleFallbackUtil.getFallbackLocale(locale);
         Assert.assertNotNull(fallback1, "fallback 1");

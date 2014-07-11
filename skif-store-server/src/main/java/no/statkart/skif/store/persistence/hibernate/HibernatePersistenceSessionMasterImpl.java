@@ -617,6 +617,10 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     protected Map attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForMap(Map mapInObject, Map mapInExistingObject, IdentityHashMap processedObjects, boolean cascade) {
         if (mapInExistingObject instanceof PersistentCollection) {
+            if (mapInObject instanceof PersistentCollection && !((PersistentCollection) mapInObject).wasInitialized()) {
+                // Hvis map ikke er initialisert, er det heller ikke gjort endringer på den
+                return CopyHelper.copy(mapInExistingObject);
+            }
             final CollectionEntry entry = ((SessionImpl) session()).getPersistenceContext().getCollectionEntry((PersistentCollection) mapInExistingObject);
             final AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) entry.getLoadedPersister();
 
@@ -655,15 +659,20 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     protected Collection attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection(Collection collectionInObject, Collection collectionInExistingObject, Type elementType, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
         if (collectionInExistingObject instanceof PersistentCollection) {
-            // TODO: Hva hvis nytt objekt også er en PersistentCollection? Tør vi stole på at snapshot da er riktig og bruke denne direkte?
-            Collection persistentCollection = CopyHelper.copy(collectionInExistingObject);
-            persistentCollection.clear();
-            if (collectionInObject != null) {
-                persistentCollection.addAll(collectionInObject);
+            if (collectionInObject instanceof PersistentCollection && !((PersistentCollection) collectionInObject).wasInitialized()) {
+                // Hvis collection ikke er initialisert, er det heller ikke gjort endringer på den
+                return CopyHelper.copy(collectionInExistingObject);
+            } else {
+                Collection persistentCollection = CopyHelper.copy(collectionInExistingObject);
+                persistentCollection.clear();
+                if (collectionInObject != null) {
+                    //noinspection unchecked
+                    persistentCollection.addAll(collectionInObject);
+                }
+                checkForStolenEntityComponent(elementType, collectionInObject, collectionInExistingObject);
+                attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollectionCascade(persistentCollection, collectionInExistingObject, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+                return persistentCollection;
             }
-            checkForStolenEntityComponent(elementType, collectionInObject, collectionInExistingObject);
-            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollectionCascade(persistentCollection, collectionInExistingObject, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
-            return persistentCollection;
         } else {
             // TODO: Alternativt returner eksisterende collection. Kanskje det er greit?
             throw new ImplementationException("Unable to attach persistent collection, as existing object has collection that isn't PersistentCollection");
