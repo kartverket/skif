@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
@@ -42,18 +43,14 @@ public class ReattachmentTest extends StoreTestServerTestCase {
         HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
         persistenceSessionMaster.setLazyLoadedBubblesAllowed(true);
 
-        store.beginUnitOfWork();
-        boolean ok = false;
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
             BubbleWithEntityComponent bubble = store.lock(id);
 
             store.update(bubble);
-            store.commitUnitOfWork();
-            ok = true;
+            store.commitUnitOfWork(unitOfWork);
         } finally {
-            if (!ok) {
-                store.abortUnitOfWork();
-            }
+            unitOfWork.close();
         }
     }
 }
