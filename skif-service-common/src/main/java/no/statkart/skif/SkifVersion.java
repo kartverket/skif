@@ -24,14 +24,9 @@ public class SkifVersion {
         return COMMON.getVersion();
     }
 
-    public static boolean isProductionVersion() {
-        return COMMON.isProductionVersion();
-    }
 
 
-
-
-    static class SkifVersionImpl {
+    public static class SkifVersionImpl {
         private final Class forModuleClass;
 
         SkifVersionImpl(Class forModule) {
@@ -44,11 +39,6 @@ public class SkifVersion {
 
         public String getVersion() {
             return forModuleClass.getPackage().getImplementationVersion();
-        }
-
-        public boolean isProductionVersion() {
-            String implementationTitle = "" + forModuleClass.getPackage().getImplementationTitle();
-            return implementationTitle.contains("Produksjon");
         }
 
     }
