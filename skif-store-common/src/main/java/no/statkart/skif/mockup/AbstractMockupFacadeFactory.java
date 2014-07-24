@@ -128,6 +128,9 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
         }
     }
 
+    /**
+     * @see #getReadMockupFacadeAndSaveData
+     */
     @Deprecated
     public T getForReadTestAndSaveData() {
         return getReadMockupFacadeAndSaveData();
@@ -135,8 +138,8 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
 
 
     /**
-     * Returnerer mockupfacade med testsett for tester som endre på data. Hvert kall vil returnere en ny facade
-     * med et eget unikt datasett.
+     * Returnerer mockupfacade med testsett med egne eller endrede data.
+     * Hvert kall returnerer en ny facade med et nye objekt-instanser i datasett.
      *
      * @return mockupfacade
      */
@@ -144,6 +147,9 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
         return createFacade(testdataService.getNextTestNumber());
     }
 
+    /**
+     * @see #getWriteMockupFacade
+     */
     @Deprecated
     public T getForWriteTest() {
         return getWriteMockupFacade();
@@ -162,6 +168,9 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
         return writeFacade;
     }
 
+    /**
+     * @see #getWriteMockupFacadeAndSaveData
+     */
     @Deprecated
     public T getForWriteTestAndSaveData() {
         return getWriteMockupFacadeAndSaveData();
