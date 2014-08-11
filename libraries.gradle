@@ -175,7 +175,7 @@ libraries.weblogic += files(
 
 libraries.jaxws_rt = files(
         libraries.weblogic_jaxws_rt,
-).stopExecutionIfEmpty()
+)
 
 
 subprojects {
