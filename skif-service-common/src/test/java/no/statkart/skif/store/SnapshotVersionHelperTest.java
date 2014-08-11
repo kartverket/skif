@@ -4,11 +4,11 @@ import org.testng.annotations.Test;
 
 import java.sql.Timestamp;
 
+import static no.statkart.skif.store.SnapshotVersionHelper.adjust;
 import static no.statkart.skif.store.SnapshotVersionHelper.subtract;
 import static org.testng.Assert.assertEquals;
 
 /**
- * @author Henrik Fredholm
  * @since 2.1
  */
 @Test
@@ -47,6 +47,30 @@ public class SnapshotVersionHelperTest {
         Timestamp t4 = subtract(t2, 6);
         assertEquals(t4.getTime(), 10002113);
         assertEquals(t4.getNanos(),113999989);
+    }
+
+    public void testAdjust1() {
+        Timestamp t1 = new Timestamp(999);
+        Timestamp t2 = adjust(t1, 1000000);
+        assertEquals(t2.getTime(), 1000);
+        assertEquals(t2.getNanos(), 0);
+    }
+
+    public void testAdjust2() {
+        Timestamp t1 = new Timestamp(1000);
+        Timestamp t2 = adjust(t1, -1000000);
+        assertEquals(t2.getTime(), 999);
+        assertEquals(t2.getNanos(), 999000000);
+    }
+
+    public void testAdjust3() {
+        Timestamp t1 = new Timestamp(999);
+        assertEquals(t1.getTime(), 999);
+        assertEquals(t1.getNanos(), 999000000);
+        Timestamp t2 = adjust(t1, 1000000);
+        Timestamp t3 = adjust(t2, -1000000);
+        assertEquals(t3.getTime(), 999);
+        assertEquals(t3.getNanos(), 999000000);
     }
 
 }
