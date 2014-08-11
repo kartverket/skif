@@ -16,8 +16,6 @@ dependencies {
     testCompile libraries.reflections
 }
 
-println sourceSets.main.compileClasspath.asPath
-
 task testJar(type: Jar) {
     classifier = 'tests'
     from sourceSets.test.output
