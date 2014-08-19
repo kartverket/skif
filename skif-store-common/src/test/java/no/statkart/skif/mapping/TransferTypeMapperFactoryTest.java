@@ -11,10 +11,7 @@ import no.statkart.skif.store.kodeliste.KodelisteLongId;
 import org.fest.assertions.api.Assertions;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Tor Egil R. Strand
@@ -51,7 +48,7 @@ public class TransferTypeMapperFactoryTest {
 
         Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly(id1, id2);
 
-        Set<DomainObjectId<?>> funnetIds = new HashSet<DomainObjectId<?>>(2);
+        Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<DomainObjectId<?>>(2);
         Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
         for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
             DomainObject domainObject = (DomainObject) bubbleObject;
