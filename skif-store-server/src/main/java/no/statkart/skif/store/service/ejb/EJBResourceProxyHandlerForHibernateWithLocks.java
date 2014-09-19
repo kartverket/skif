@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.ServiceMode;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
@@ -26,17 +27,17 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
     private final Provider<ServiceMode> serviceModeProvider;
     private final Provider<LockerStrategy> lockerStrategyProvider;
     private final Provider<StoreServer> storeServerProvider;
-    private final Provider<TransactionSynchronizationRegistry> transactionSynchronizationRegistryProvider;
+    private final Provider<TransactionManager> transactionManagerProvider;
 
     @Inject
-    public EJBResourceProxyHandlerForHibernateWithLocks(TypeLiteral<S> serviceType, Provider<ResourceManager> resourceManagerProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceMode> serviceModeProvider, Provider<LockerStrategy> lockerStrategyProvider, Provider<StoreServer> storeServerProvider, Provider<TransactionSynchronizationRegistry> transactionSynchronizationRegistryProvider) {
+    public EJBResourceProxyHandlerForHibernateWithLocks(TypeLiteral<S> serviceType, Provider<ResourceManager> resourceManagerProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceMode> serviceModeProvider, Provider<LockerStrategy> lockerStrategyProvider, Provider<StoreServer> storeServerProvider, Provider<TransactionManager> transactionManagerProvider) {
         this.serviceType = serviceType;
         this.resourceManagerProvider = resourceManagerProvider;
         this.serviceRequestContextProvider = serviceRequestContextProvider;
         this.serviceModeProvider = serviceModeProvider;
         this.lockerStrategyProvider = lockerStrategyProvider;
         this.storeServerProvider = storeServerProvider;
-        this.transactionSynchronizationRegistryProvider = transactionSynchronizationRegistryProvider;
+        this.transactionManagerProvider = transactionManagerProvider;
     }
 
 
@@ -53,19 +54,25 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
             if (serviceMode == ServiceMode.SINGLE_VM) {
                 resourceManager.beginTransaction();
             } else {
-                transactionSynchronizationRegistryProvider.get().registerInterposedSynchronization(new Synchronization() {
-                    @Override
-                    public void beforeCompletion() {
-                        // Ingenting å gjøre
-                    }
-
-                    @Override
-                    public void afterCompletion(int status) {
-                        if (status != Status.STATUS_COMMITTED) {
-                            lockerStrategyProvider.get().releaseLocksOnRollback();
+                try {
+                    transactionManagerProvider.get().getTransaction().registerSynchronization(new Synchronization() {
+                        @Override
+                        public void beforeCompletion() {
+                            // Ingenting å gjøre
                         }
-                    }
-                });
+
+                        @Override
+                        public void afterCompletion(int status) {
+                            if (status != Status.STATUS_COMMITTED) {
+                                lockerStrategyProvider.get().releaseLocksOnRollback();
+                            }
+                        }
+                    });
+                } catch (RollbackException e) {
+                    log.warn("Can't register syncronization, transaction already rollback only", e);
+                } catch (SystemException e) {
+                    throw new ImplementationException("Could not get transaction or register syncronization", e);
+                }
             }
         }
 
