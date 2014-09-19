@@ -8,9 +8,7 @@ dependencies {
     compile project(':skif-store-test:skif-store-test-api')
 
     //tester disse implementasjonene her..
-    if(hibernateVersion.equals("3.2")) {
-      compile project(':skif-store-server:skif-store-server-hs32')
-    } else if(hibernateVersion.equals("3.6")){
+    if(hibernateVersion.equals("3.6")){
       compile project(':skif-store-server:skif-store-server-hs36')
     }
 

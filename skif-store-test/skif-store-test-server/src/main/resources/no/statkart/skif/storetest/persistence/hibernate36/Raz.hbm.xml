@@ -22,12 +22,7 @@
             <property name="compText"/>
         </component>
 
-        <!-- Hibernate 3.2.6 versjon -->
-        <many-to-one name="razEntityComponent" column="razEntityComponentId" cascade="all"/>
-
-        <!-- Hibernate 3.6.10 versjon
         <many-to-one name="razEntityComponent" column="razEntityComponentId" unique="true" cascade="all-delete-orphan"/>
-        -->
     </class>
 
     <class name="no.statkart.skif.storetest.domain.mockup.RazEntityComponent" select-before-update="true">

@@ -13,6 +13,7 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ConfigurationException;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.persistence.DefaultResourceManager;
@@ -220,10 +221,11 @@ public class StoreTestServerModule extends SkifModule {
 
         // TODO: Hent directory fra moduleConfiguration
         final String hibernateMappingDir;
-        if (configuration.getString("skif.hibernateVersion", "3.2").equals("3.6")) {
+        String hibernateVersion = configuration.getString("skif.hibernateVersion", "3.6");
+        if (hibernateVersion.equals("3.6")) {
             hibernateMappingDir = "no/statkart/skif/storetest/persistence/hibernate36";
         } else {
-            hibernateMappingDir = "no/statkart/skif/storetest/persistence/hibernate32";
+            throw new ImplementationException("Ukjent hibernate-versjon: " + hibernateVersion);
         }
         HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilderImpl(hibernateMappingDir)
                 // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først

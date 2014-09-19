@@ -17,9 +17,6 @@ package no.statkart.skif.store;
  * eller bli pekt på av et felt. SKIF-rammeverket forsøker etter beste evne å håndheve dette og har best støtte når
  * {@code EntityComponentWithOwnerReference} implementeres.
  *
- * <P>I inneværende implementasjon støttes ikke sletting av enkelt referanser til {@code EntityComponent} for Hibenate
- * 3.2.
- *
  * @author Tor Egil R. Strand
  * @author Henrik Fredholm
  * @since 2.2.0

@@ -78,19 +78,6 @@ libraries.guice_for_server = [
 //        libraries.guice_servlet,
 ]
 
-libraries.hibernate_3_2 = [
-        'antlr:antlr:2.7.6@jar',
-        'cglib:cglib-nodep:2.2@jar',
-        'dom4j:dom4j:1.4@jar',
-        'net.sf.ehcache:ehcache:1.2.3@jar',
-        'odmg:odmg:3.0@jar',
-        "org.hibernate:hibernate:3.2.6.GA-bubbleref-v2@jar",
-]
-
-libraries.hibernate_tools_3_2 = [
-        "org.hibernate:hibernate-tools:3.2.6.GA@jar",
-]
-
 libraries.hibernate_3_6 = [
         'org.hibernate:hibernate-parent:3.6.10.Final',
 //        files("c:/dev/skif/hibernate-core-3.6.10.Final.bubbleref.v5.jar"),  // Brukes istedet for den under ifm lokal testing av ny versjon
