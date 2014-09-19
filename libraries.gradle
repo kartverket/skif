@@ -98,7 +98,6 @@ libraries.hibernate_3_6 = [
 // Oracle Weblogic dependencies
 
 final Map WEBLOGIC_VERSIONS = [
-        WL_10_3_1: '10.3.1',
         WL_10_3_5: '10.3.5',
         WL_10_3_6: '10.3.6',
 ]
@@ -110,7 +109,6 @@ assert WEBLOGIC_HOME //WEBLOGIC_HOME maa vaere gitt
 libraries.weblogic_jaxws_rt = files(
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.3.0.0_2-1-5.jar" : [],
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.2.0.0_2-1-5.jar" : [],
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.0.0.0_2-1-4.jar" : [],
 )
 
 // Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
@@ -130,7 +128,6 @@ libraries.weblogic_server = files(
 
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar" : [],
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar" : [],
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_1 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.1.jar" : [],
 
         "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
         "${WEBLOGIC_HOME}/modules/ws.api_1.1.0.0.jar", // For eventuell testing av WS-Policy
