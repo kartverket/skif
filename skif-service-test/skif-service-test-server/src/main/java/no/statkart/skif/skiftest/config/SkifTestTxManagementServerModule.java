@@ -45,8 +45,6 @@ public class SkifTestTxManagementServerModule extends SkifModule {
                 .appendEJBServiceChainProxyHandler(EJBCounterProxyHandler.class);
         install(serverServiceModule);
 
-        install(new ServerServiceModule(moduleConfiguration, new SkifTestSequenceBlockAllocatorServices().getServices()));
-
         install(new ResourceWithSingleConnectionModule(moduleConfiguration));
     }
 
