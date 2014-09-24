@@ -21,9 +21,6 @@
         <listener-class>no.statkart.skif.skiftest.config.SkifTestTxManagementServicesEJBs</listener-class>
     </listener>
     <listener>
-        <listener-class>no.statkart.skif.skiftest.config.SkifTestSequenceBlockAllocatorServicesEJBs</listener-class>
-    </listener>
-    <listener>
         <listener-class>no.statkart.skif.skiftest.wsapi.config.SkifTestTxManagementWebServiceInjectorConfig</listener-class>
     </listener>
 

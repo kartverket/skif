@@ -37,7 +37,6 @@ public class SkifTestTxManagementWebServiceInjectorConfig implements ServletCont
         ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
         List<Class<?>> services = new ArrayList<Class<?>>(new SkifTestTxManagementServices().getServices());
-        services.addAll(new SkifTestSequenceBlockAllocatorServices().getServices());
         injector = ejbServiceInjector.createChildInjector(
                 new WSServerModule(configuration, classLoader),
                 new WSServerServiceModule(configuration, services, mapping, classLoader)
