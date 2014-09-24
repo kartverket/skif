@@ -6,7 +6,6 @@ import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
-import no.statkart.skif.skiftest.config.SkifTestSequenceBlockAllocatorServices;
 import no.statkart.skif.skiftest.config.SkifTestTxManagementServices;
 import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
@@ -29,8 +28,6 @@ public class SkifTestTxManagementClientModule extends SkifModule {
         protected void configure() {
             install(new RemoteServerModule(moduleConfiguration));
             install(new RemoteServiceModule(moduleConfiguration, new SkifTestTxManagementServices().getServices(), new SkifTestMapper().getMapping()).
-                    setExceptionMapping(new SkifTestExceptionMapper().getMapping()));
-            install(new RemoteServiceModule(moduleConfiguration, new SkifTestSequenceBlockAllocatorServices().getServices(), new SkifTestMapper().getMapping()).
                     setExceptionMapping(new SkifTestExceptionMapper().getMapping()));
         }
     }
