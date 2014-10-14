@@ -42,7 +42,7 @@ allprojects {
             println '...initializing MAVEN_LOCAL_FOR_PROJECT'
             mavenLocal()
         }
-        mavenRepo name: 'public', url: MAVEN_REPO
+        maven { name = 'public'; url = MAVEN_REPO }
 
         if (!MAVEN_LOCAL_FOR_PROJECT) {
             mavenLocal()
@@ -343,7 +343,7 @@ buildscript {
             println '...initializing MAVEN_LOCAL_FOR_BUILDSYSTEM'
             mavenLocal()
         }
-        mavenRepo name: 'public', url: MAVEN_REPO
+        maven { name = 'public'; url = MAVEN_REPO }
 
         if (!MAVEN_LOCAL_FOR_BUILDSYSTEM) {
             mavenLocal()
