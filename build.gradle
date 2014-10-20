@@ -1,8 +1,6 @@
-['1.6','1.10'].with {
-    if (!it.find { gradle.gradleVersion == it }) {
-        logger.warn "WARNING: Du benytter et nyere gradle enn hva byggesystemet er testet med ${it}"
-    }
-    assert it.find { gradle.gradleVersion >= it } //eldre versjoner fungerer ikke - nye versjoner testes på eget ansvar
+assert GradleVersion.version('1.6').compareTo(GradleVersion.current()) <= 0 //lowest gradle version supported
+if (!['1.6', '1.10'].findAll { gradle.gradleVersion == it }) {
+    logger.warn "WARNING: Du benytter en annen versjon av Gradle enn hva byggesystemet er testet med: ${gradle.gradleVersion}"
 }
 
 
