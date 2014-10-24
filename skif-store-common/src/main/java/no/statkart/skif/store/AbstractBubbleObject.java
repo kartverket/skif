@@ -5,7 +5,6 @@ import no.statkart.skif.store.relation.cache.RelationName;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,6 +19,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
     private static final long serialVersionUID = 1L;
 
     protected transient Store store;
+    private transient boolean flushed = false;
     protected BubbleId<?> id;
 
     @Deprecated
@@ -43,6 +43,16 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
 
     public void setId(BubbleId<?> id ) {
         this.id = id;
+    }
+
+    @Override
+    public void setFlushed(boolean flushed) {
+        this.flushed = flushed;
+    }
+
+    @Override
+    public boolean isFlushed() {
+        return flushed;
     }
 
     @Deprecated

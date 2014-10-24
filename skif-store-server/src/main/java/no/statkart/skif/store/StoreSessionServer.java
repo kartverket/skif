@@ -169,6 +169,9 @@ public class StoreSessionServer extends AbstractStoreSession {
                 // Kan ikke entry for UnitOfWork må kunne gjøre en unlock ved abort
                 evicted = false;
             } else {
+                if (storeEntry.getBubbleObject(0).isFlushed()) {
+                    throw new ImplementationException("Attempted to evict modified, flushed, non-updated bubble!");
+                }
                 StoreEntry evictedEntry = storeCache.remove(bubbleId);
                 // TODO: marker evictedEntry som stale
                 evicted = evictedEntry != null;
@@ -191,6 +194,9 @@ public class StoreSessionServer extends AbstractStoreSession {
                     // Kan ikke entry for UnitOfWork må kunne gjøre en unlock ved abort
                     allWasEvicted = false;
                 } else {
+                    if (storeEntry.getBubbleObject(0).isFlushed()) {
+                        throw new ImplementationException("Attempted to evict modified, flushed, non-updated bubble!");
+                    }
                     iterator.remove();
                     // TODO: marker evictedEntry som stale
                     persistenceSessionManager.evict(storeEntry.getId());
@@ -219,6 +225,13 @@ public class StoreSessionServer extends AbstractStoreSession {
 
         // TODO: Optimaliser bort flush ved å la onFinish returnere true hvis finishListener endret state.
         flush();
+
+        for (StoreEntry storeEntry : storeCache.values()) {
+            if (storeEntry.getBubbleObject(0).isFlushed() && (storeEntry.getState(0) == StoreEntryState.NULL || storeEntry.getState(0) == StoreEntryState.UNCHANGED)) {
+                throw new ImplementationException("Modified object not updated!");
+            }
+            storeEntry.getBubbleObject(0).setFlushed(false);
+        }
 
         // Må endre state for alle modifiserte objekter
         for (StoreEntry storeEntry : modifiedMap.values()) {

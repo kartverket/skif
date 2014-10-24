@@ -22,4 +22,10 @@ public interface BubbleObject extends Serializable {
     public void register(Store store);
     public long getVersjonId();
     public void setVersjonId(long version);
+
+    /**
+     * SKIF internal use only!
+     */
+    void setFlushed(boolean flushed);
+    boolean isFlushed();
 }
