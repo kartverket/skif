@@ -1,18 +1,13 @@
 package no.statkart.skif.persistence;
 
-import com.google.inject.Provider;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.util.OracleUtils;
 import oracle.jdbc.OracleConnection;
 import oracle.sql.STRUCT;
 import org.geotools.data.oracle.sdo.GeometryConverter;
-
-import javax.inject.Inject;
-import java.sql.Connection;
 
 /**
  * @author Roar Ingebrigtsen

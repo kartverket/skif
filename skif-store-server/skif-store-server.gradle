@@ -6,6 +6,7 @@ dependencies {
     compile project(':skif-service-server')
 
     compile libraries.jodatime
+    compile libraries.jts
 
     // Sett hibernateVersion i gradle.properties
     // Scope er provided, ein må sjølv inkludere skif-store-server:skif-store-server-hs32 eller skif-store-server:skif-store-server-hs36 i sitt prosjekt
@@ -39,4 +40,5 @@ def deployer = uploadArchives.repositories.mavenDeployer
 
 [installer, deployer]*.pom*.whenConfigured { pom ->
     pom.dependencies.findAll { dep -> dep.groupId == 'joda-time' }.each { it.optional = true }  //optional avhengighet for joda-time [SKIF-472]
+    pom.dependencies.findAll { dep -> dep.groupId == 'com.vividsolutions' && dep.artifactId == 'jts' }.each { it.optional = true }  //optional avhengighet for jts [SKIF-472]
 }

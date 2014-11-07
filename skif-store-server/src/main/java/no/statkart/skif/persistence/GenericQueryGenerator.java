@@ -1,15 +1,11 @@
 package no.statkart.skif.persistence;
 
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import no.statkart.skif.domain.JTSUtils;
 import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import no.statkart.skif.util.JDBCHelper;
-import no.statkart.skif.util.OracleUtils;
+import oracle.sql.STRUCT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -435,20 +431,23 @@ public class GenericQueryGenerator {
             }
             buffer.append(where1).append(buffer_);
             parameters.addAll(list);
+
         } else if( parameter instanceof SelectionPolygon ) {
-           SelectionPolygon selectionPolygon = (SelectionPolygon) parameter;
-           Polygon polygon = selectionPolygon.getPolygon();
-           polygon = instansierOgKopierPolygon(polygon);
+            OracleSDOStructBuilder sdoStructBuilder = OracleSDOStructBuilder
+                    .from((SelectionPolygon) parameter)
+                    .setConnection(connection)
+                    .setSrid(srid);
 
-           if( prefix ) {
-              buffer.append(" " + operator + " ");
-           }
-           buffer.append("mdsys.sdo_relate(").append(where1).append(",?,'mask=anyinteract')='TRUE'");
-           if( where2 != null ) {
-              buffer.append(where2);
-           }
-           parameters.add(new GeometriTilSdoStructMapper(OracleUtils.getOracleConnection(connection)).createStruct(polygon, srid));
+            if (prefix) {
+                buffer.append(" ").append(operator).append(" ");
+            }
+            buffer.append("mdsys.sdo_relate(").append(where1).append(",?,'mask=anyinteract')='TRUE'");
+            if (where2 != null) {
+                buffer.append(where2);
+            }
 
+            Object struct = sdoStructBuilder.build();
+            parameters.add(struct);
 
         } else {
 
@@ -616,13 +615,6 @@ public class GenericQueryGenerator {
                 JDBCHelper.close(result, stmt);
             }
         }
-    }
-
-    private Polygon instansierOgKopierPolygon(Polygon polygon) {
-       GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FIXED), srid);
-       polygon = JTSUtils.kopierPolygon(polygon, geometryFactory);
-
-       return polygon;
     }
 
 
