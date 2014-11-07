@@ -37,7 +37,9 @@ def libraries = [
         jsr305: "com.google.code.findbugs:jsr305:1.3.9",
 
         // Testing
-        testng: 'org.testng:testng:6.8.8',
+        testng: dependencies.create('org.testng:testng:6.8.8') {
+            exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
+        },
         mockito: 'org.mockito:mockito-all:1.9.5',
         dbunit: 'org.dbunit:dbunit:2.4.8@jar',
         unitils: 'org.unitils:unitils-core:3.1',
