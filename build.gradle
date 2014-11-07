@@ -191,16 +191,15 @@ subprojects { Project project ->
     }
 
 
-    afterEvaluate {
-        //kobler inn standard upload repositores ved bruk av maven plugin
-        if (plugins.hasPlugin('maven')) {
-            uploadArchives.repositories.mavenDeployer {
-                repository(url: uri(REPO_UPLOAD_RELEASES)) {
-                    authentication([userName: REPO_UPLOAD_RELEASES_USERNAME, password: REPO_UPLOAD_RELEASES_PASSWORD])
-                }
+    //kobler inn standard upload repositores ved bruk av maven plugin
+    plugins.withType(MavenPlugin) {
+        project.uploadArchives.repositories.mavenDeployer {
+            repository(url: uri(REPO_UPLOAD_RELEASES)) {
+                authentication([userName: REPO_UPLOAD_RELEASES_USERNAME, password: REPO_UPLOAD_RELEASES_PASSWORD])
             }
         }
     }
+
 
     project.idea.module {
         // Får Idea til å legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)
