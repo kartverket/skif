@@ -1,19 +1,16 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionSeed;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.module.common.BubbleIdFactory;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.collection.PersistentCollection;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
 
 /**
@@ -80,6 +77,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      */
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
+        flagFlushed(entity);
         return false;
     }
 
@@ -88,6 +86,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      */
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
+        flagFlushed(entity);
         return false;
     }
 
@@ -96,34 +95,13 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      */
     public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
+        flagFlushed(entity);
     }
 
-    /**
-     * Gjør ingenting
-     */
-    public void preFlush(Iterator iterator) throws CallbackException {
-    }
-
-    /**
-     * Gjør ingenting
-     */
-    public void postFlush(Iterator iterator) throws CallbackException {
-    }
-
-    /**
-     * Gjør ingenting
-     */
-    public Boolean isUnsaved(Object o) {
-        //Retur av null gjør at Hibernate bruker default oppførsel
-        return null;
-    }
-
-    /**
-     * Gjør ingenting
-     */
-    public int[] findDirty(Object o, Serializable serializable, Object[] objects, Object[] objects1, String[] strings, Type[] types) {
-        //Retur av null gjør at Hibernate bruker default oppførsel
-        return null;
+    @Override
+    public void onCollectionUpdate(Object collection, Serializable key) throws CallbackException {
+        PersistentCollection persistentCollection = (PersistentCollection) collection;
+        flagFlushed(persistentCollection.getOwner());
     }
 
     private void sjekkSnapshotVersjon(Serializable id) {
@@ -131,6 +109,16 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
             if (((BubbleId) id).getSnapshotVersion() != snapshotVersionSeed.get()) {
                 throw new ImplementationException("Id for instance has wrong SnapshotVersion", logger);
             }
+        }
+    }
+
+    private void flagFlushed(Object entity) {
+        if (entity instanceof AbstractBubbleObject) {
+            AbstractBubbleObject bubbleObject = (AbstractBubbleObject) entity;
+            bubbleObject.setFlushed(true);
+        } else if (entity instanceof ComponentWithOwnerReference) {
+            ComponentWithOwnerReference componentWithOwnerReference = (ComponentWithOwnerReference) entity;
+            flagFlushed(componentWithOwnerReference.getOwner());
         }
     }
 }

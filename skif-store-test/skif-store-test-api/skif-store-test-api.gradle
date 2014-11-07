@@ -2,6 +2,8 @@ apply plugin: 'java'
 
 dependencies {
     compile project(':skif-store-common')
+    compile libraries.jts //optional dependency for geometri funksjonalitet
+    compile libraries.jodatime //optional dependency for jodatime funksjonalitet
 
     testCompile project(':skif-testsupport-common')
 
