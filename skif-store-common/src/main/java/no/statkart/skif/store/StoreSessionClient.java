@@ -166,6 +166,7 @@ public class StoreSessionClient extends AbstractStoreSession {
             } else {
                 // Ikke låst, hent fra server
                 BubbleObject lockedBubbleObject = storeService.lock(bubbleId);
+                lockedBubbleObject.register(store);
                 // TODO: fjern allerede leste versjoner hvis timestamp/versjon er eldre
                 storeEntry.setLocked(level, lockedBubbleObject);
                 storeEntry.setLockCreatedByLevel(level);
