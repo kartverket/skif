@@ -206,6 +206,7 @@ public class KodeTest extends StoreTestTestCase {
                 C2DbKodeId.KODELISTE_ID
                 );
 
+        store.evictAll(); // Sørg for å ha en ren Store, ellers blir det en situasjon SKIF-477 ikke tar høyde for
         store.register(kodelisteTransfer);
         List list = store.get(kodelisteIds);
 
