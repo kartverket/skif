@@ -60,7 +60,7 @@ public abstract class BubbleTransfer<T> extends Transfer<T> {
         super(result, objects);
     }
 
-    public BubbleTransfer(T result, Iterable<? extends BubbleObject> objects, Iterable<BubbleId> lockedIds) {
+    public BubbleTransfer(T result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId> lockedIds) {
         this(result, objects);
         Iterables.addAll(this.lockedIds, lockedIds);
     }
