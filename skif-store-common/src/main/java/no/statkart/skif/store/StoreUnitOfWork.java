@@ -191,7 +191,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
-    public void registerEntries(int level, BubbleTransfer bubbleTransfer) {
+    public void registerEntries(int level, BubbleTransfer<?> bubbleTransfer) {
         wrappedStoreSession.registerEntries(level, bubbleTransfer);
     }
 }

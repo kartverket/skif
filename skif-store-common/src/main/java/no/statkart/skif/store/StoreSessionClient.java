@@ -206,14 +206,32 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
-    public void registerEntries(int level, BubbleTransfer bubbleTransfer) {
-        for (Object object : bubbleTransfer.getBubbleObjects().values()) {
-            BubbleObject bubbleObject = (BubbleObject) object;
+    public void registerEntries(int level, BubbleTransfer<?> bubbleTransfer) {
+        Set<BubbleId> lockedIds = bubbleTransfer.getLockedIds();
+        for (BubbleObject bubbleObject : bubbleTransfer.getBubbleObjects().values()) {
             StoreEntry entry = storeCache.get(bubbleObject.getId());
             if (entry == null) {
-                storeCache.register(level, bubbleObject, bubbleObject);
+                entry = storeCache.register(level, null, bubbleObject);
+                if (lockedIds.contains(bubbleObject.getId())) {
+                    entry.setBubbleObject(0, null);
+                    entry.setLocked(level, bubbleObject);
+                    entry.setLockCreatedByLevel(level);
+                }
             } else {
-                // TODO: sjekk of object i transfer er nyere/låst
+                // TODO: Finne ut hva som skal skje dersom objektet allerede er låst, enten på dette nivå eller et lavere
+                int lockLevel = entry.calcLockLevelStartingFrom(level);
+                if (lockLevel < 0) {
+                    // Objektet er ikke låst på klienten
+                    if (lockedIds.contains(bubbleObject.getId())) {
+                        bubbleObject.register(store);
+                        entry.setLocked(level, bubbleObject);
+                        entry.setLockCreatedByLevel(level);
+                    } else {
+                        throw new ImplementationException("Undefined behavior");
+                    }
+                } else {
+                    throw new ImplementationException("Undefined behavior");
+                }
             }
         }
     }
