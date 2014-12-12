@@ -87,10 +87,6 @@ public class StoreUnitOfWork extends AbstractStoreSession {
         return wrappedStoreSession.evictAllEntries(level);
     }
 
-    public void register(BubbleTransfer bubbleTransfer) {
-        wrappedStoreSession.register(bubbleTransfer);
-    }
-
     @Override
     public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
         wrappedStoreSession.ensureFullyLoaded(bubbleObject);
