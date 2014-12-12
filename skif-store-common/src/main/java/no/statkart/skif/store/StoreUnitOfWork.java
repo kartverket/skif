@@ -3,10 +3,7 @@ package no.statkart.skif.store;
 import com.google.common.collect.Lists;
 import no.statkart.skif.exception.ImplementationException;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Henrik Fredholm
@@ -98,13 +95,15 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     public WrappableStoreSession abortUnitOfWork() {
-        for (StoreEntry storeEntry : modifiedMap.values()) {
+        Iterator<StoreEntry> iterator = storeCache.values().iterator();
+        while (iterator.hasNext()) {
+            StoreEntry storeEntry = iterator.next();
             storeEntry.abort(level);
             if (storeEntry.isLockedByLevel(level)) {
                 wrappedStoreSession.unlockEntry(level, storeEntry.getId());
             }
             if (storeEntry.getLoadedByLevel() == level) {
-                storeCache.remove(storeEntry.getId());
+                iterator.remove();
             }
         }
         modifiedMap.clear();
@@ -123,9 +122,11 @@ public class StoreUnitOfWork extends AbstractStoreSession {
         if (modifiedMap.size() > 0 && !getTransferHasBeenCalled) {
             throw new ImplementationException("Store contains modified objects. Call getUnitOfWorkTransfer() before calling endUnitOfWork()");
         }
-        for (StoreEntry storeEntry : modifiedMap.values()) {
+        Iterator<StoreEntry> iterator = storeCache.values().iterator();
+        while (iterator.hasNext()) {
+            StoreEntry storeEntry = iterator.next();
             if (storeEntry.getLoadedByLevel() == level) {
-                storeCache.remove(storeEntry.getId());
+                iterator.remove();
             } else {
                 storeEntry.clear(level);
             }
