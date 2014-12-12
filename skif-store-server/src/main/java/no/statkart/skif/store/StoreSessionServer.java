@@ -553,6 +553,11 @@ public class StoreSessionServer extends AbstractStoreSession {
                 default:
                     throw new ImplementationException("Object has been changed and can not be unlocked");
             }
+        } else {
+            // SKIF-480: Skal klienten kunne låse opp ting, så må server-store være villig til å låse opp objekter den ikke kjenner til.
+            if (lockerStrategy.isLockedByCaller(bubbleId)) {
+                lockerStrategy.unlock(bubbleId);
+            }
         }
         return storeEntry;
     }
