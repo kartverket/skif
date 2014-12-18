@@ -92,7 +92,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
 
         public LinkedHashSet<BubbleId<?>> getUpdatedIds() {
-            if (lockedIds == null) calc();
+            if (updatedIds == null) calc();
             return updatedIds;
         }
     }
