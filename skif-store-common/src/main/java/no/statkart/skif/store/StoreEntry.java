@@ -179,7 +179,7 @@ public class StoreEntry {
             lockCreatedByLevel = level - 1;
         }
         if (loadedByLevel==level) {
-            lockCreatedByLevel = level - 1;
+            loadedByLevel = level - 1;
         }
         clear(level);
     }
