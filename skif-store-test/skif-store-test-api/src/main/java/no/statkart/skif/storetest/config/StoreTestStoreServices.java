@@ -1,16 +1,15 @@
 package no.statkart.skif.storetest.config;
 
+import com.google.common.collect.ImmutableList;
 import no.statkart.skif.service.ServicesListing;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAFinderService;
 import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
+import no.statkart.skif.storetest.service.exceptiontest.ExceptionTestService;
 import no.statkart.skif.storetest.service.histtest.HistTestService;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
 import no.statkart.skif.storetest.service.store.StoreService;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,17 +22,16 @@ public class StoreTestStoreServices implements ServicesListing {
     private static final List<Class<?>> services;
 
     static {
-        List<Class<?>> modifiableList = new ArrayList<Class<?>>();
-        
-        modifiableList.add(StoreService.class);
-        modifiableList.add(KodelisteService.class);
-        modifiableList.add(HistTestService.class);
-        modifiableList.add(LockingTestService.class);
-        modifiableList.add(EndringsloggService.class);
-        modifiableList.add(NedlastningService.class);
-
-        services = Collections.unmodifiableList(modifiableList);
-     }
+        services = ImmutableList.of(
+                StoreService.class,
+                KodelisteService.class,
+                HistTestService.class,
+                LockingTestService.class,
+                ExceptionTestService.class,
+                EndringsloggService.class,
+                NedlastningService.class
+        );
+    }
 
     @Override
     public List<Class<?>> getServices() {

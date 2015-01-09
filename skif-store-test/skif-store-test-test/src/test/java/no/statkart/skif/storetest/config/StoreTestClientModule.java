@@ -46,7 +46,7 @@ public class StoreTestClientModule extends SkifModule {
     @Override
     protected void configure() {
         final StoreTestMapping mapping = new StoreTestMapper(getProvider(SnapshotVersion.class)).getMapping();
-        final StoreTestExceptionMapping exceptionMapping = new StoreTestExceptionMapper().getMapping();
+        final StoreTestExceptionMapping exceptionMapping = new StoreTestExceptionMapper(mapping).getMapping();
 
         install(new RemoteServerModule(moduleConfiguration));
         install(new RunOnServerRemoteServiceModule(moduleConfiguration));

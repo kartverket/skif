@@ -38,7 +38,7 @@ public class LockedException extends ApplicationException {
      */
     private final String owner;
 
-    private final Timestamp exceptionTime = new Timestamp(System.currentTimeMillis());
+    private final Timestamp exceptionTime;
 
     /**
      * Creates a lockInfo exception for a single lockInfo that could not be aquired
@@ -51,6 +51,7 @@ public class LockedException extends ApplicationException {
         this.owner = owner;
         this.lockedBy = lockInfo.getOwner();
         this.locksNotAquired = ImmutableList.of(lockInfo);
+        exceptionTime = new Timestamp(System.currentTimeMillis());
     }
 
     /**
@@ -69,6 +70,22 @@ public class LockedException extends ApplicationException {
         locksNotAquired = ImmutableList.copyOf(lockInfos);
         LockInfo first = lockInfos.iterator().next();
         this.lockedBy = first.getOwner();
+        exceptionTime = new Timestamp(System.currentTimeMillis());
+    }
+
+    /**
+     * For mapping.
+     */
+    public <T> LockedException(String owner, Collection<LockInfo<T>> lockInfos, Timestamp exceptionTime) {
+        super("");
+        if (lockInfos.isEmpty()) {
+            throw new ImplementationException("LockedException cannot have empty collection of lockInfos, owner=" + owner + " lockInfos=" + lockInfos);
+        }
+        this.owner = owner;
+        locksNotAquired = ImmutableList.copyOf(lockInfos);
+        LockInfo first = lockInfos.iterator().next();
+        this.lockedBy = first.getOwner();
+        this.exceptionTime = exceptionTime;
     }
 
     /**
@@ -97,6 +114,14 @@ public class LockedException extends ApplicationException {
      */
     public String getLockedBy() {
         return lockedBy;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public Timestamp getExceptionTime() {
+        return exceptionTime;
     }
 
     public String getMessage() {

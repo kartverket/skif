@@ -87,10 +87,7 @@ public class DServiceWSBean extends SkifWebService<DServiceWSI> implements DServ
             elementList.getItem().add(element);
             detail.setStackTraceElements(elementList);
             info.setExceptionDetail(detail);
-            info.setFeilkode("feilkode");
-            info.setFeilkodebeskrivelse("beskrivelse");
             info.setStackTraceText("stracktraceText");
-            info.setCategory(SkifTestExceptionMapper.Feilkode.Kategori.SERVICE_SYSTEM_IMPLEMENTATION_EXCEPTION.value);
             throw new ServiceException(message, info);
 
         } else if (exceptionClass.equals("simple.SimpleNonMappedException")) {

@@ -18,4 +18,8 @@ public class AttemptDeleteException extends ApplicationException {
     public BubbleId getBubbleId() {
         return bubbleId;
     }
+
+    public void setBubbleId(BubbleId bubbleId) {
+        this.bubbleId = bubbleId;
+    }
 }

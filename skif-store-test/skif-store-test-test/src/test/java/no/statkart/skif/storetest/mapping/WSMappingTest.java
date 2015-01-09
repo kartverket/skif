@@ -82,7 +82,7 @@ public class WSMappingTest extends StoreTestTestCase {
         @Override
         protected void configure() {
             final StoreTestMapping mapping = new StoreTestMapper(getProvider(SnapshotVersion.class)).getMapping();
-            final StoreTestExceptionMapping exceptionMapping = new StoreTestExceptionMapper().getMapping();
+            final StoreTestExceptionMapping exceptionMapping = new StoreTestExceptionMapper(mapping).getMapping();
 
             install(new RemoteServerModule(moduleConfiguration));
             install(new RemoteServiceModule(moduleConfiguration, new StoreTestGroup1Services().getServices(), mapping).setExceptionMapping(exceptionMapping));

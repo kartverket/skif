@@ -35,32 +35,12 @@
                 <gdoc:doc><![CDATA[
                         Generell feilmelding for alle hånterte feil ifra systemet.
 
-                        Alle feil har en utfyllt feilkode og feilkodebeskrivelse.
-
                         For klassifisering av feil, se {@link #category} feltet.
                     ]]>
                 </gdoc:doc>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="feilkode" type="xs:string">
-                <xs:annotation>
-                    <xs:appinfo>
-                        <jaxb:property>
-                            <jaxb:javadoc><![CDATA[Kort kode for feil. Er i hovedsak tiltenkt applikasjonsfeil.]]></jaxb:javadoc>
-                        </jaxb:property>
-                    </xs:appinfo>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="feilkodebeskrivelse" type="xs:string">
-                <xs:annotation>
-                    <xs:appinfo>
-                        <jaxb:property>
-                            <jaxb:javadoc><![CDATA[Tekstlig beskrivelse av {@link #feilkode feilkode}.]]></jaxb:javadoc>
-                        </jaxb:property>
-                    </xs:appinfo>
-                </xs:annotation>
-            </xs:element>
             <xs:element name="category" type="xs:string">
                 <xs:annotation>
                     <xs:appinfo>
@@ -129,15 +109,6 @@
                                   </li>
                                 </ul>
                             ]]></jaxb:javadoc>
-                        </jaxb:property>
-                    </xs:appinfo>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="properties" type="ExceptionProperties">
-                <xs:annotation>
-                    <xs:appinfo>
-                        <jaxb:property>
-                            <jaxb:javadoc><![CDATA[Eventuelle utvidede properties kan komme her..]]></jaxb:javadoc>
                         </jaxb:property>
                     </xs:appinfo>
                 </xs:annotation>
@@ -237,26 +208,14 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="ExceptionProperties">
-        <xs:annotation>
-            <xs:appinfo>
-                <gdoc:doc><![CDATA[  ]]></gdoc:doc>
-                <IsDictionary
-                        xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
-                    true
-                </IsDictionary>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="key" type="xs:string"/>
-                        <xs:element name="value" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
+    <xs:complexType name="SimpleFaultInfo">
+        <xs:complexContent>
+            <xs:extension base="ServiceFaultInfo">
+                <xs:sequence>
+                    <xs:element name="infoField" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
 </xs:schema>

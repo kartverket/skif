@@ -417,19 +417,13 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 throw new MappingException("Invalid direction: " + direction);
         }
 
-        // Finn mappere som kan gå fra sourceClass
-        List<TypeMapper<?, ?>> candidates = mapOfMappers.get(sourceClass);
-        if (candidates == null || candidates.isEmpty()) {
-            // Ingen som kan gå fra sourceClass, så finn de som kan mapper superklasser av sourceClass
-            candidates = new ArrayList<TypeMapper<?, ?>>();
+        // Finn mappere som kan gå fra sourceClass eller en superklasse av dette
+        List<TypeMapper<?, ?>> candidates = new ArrayList<TypeMapper<?, ?>>();
 
-            for (Map.Entry<Class<?>, TypeMapper<?, ?>> entry : mapOfMappers.entries()) {
-                if (entry.getKey().isAssignableFrom(sourceClass)) {
-                    candidates.add(entry.getValue());
-                }
+        for (Map.Entry<Class<?>, TypeMapper<?, ?>> entry : mapOfMappers.entries()) {
+            if (entry.getKey().isAssignableFrom(sourceClass)) {
+                candidates.add(entry.getValue());
             }
-        } else {
-            candidates = new ArrayList<TypeMapper<?, ?>>(candidates);
         }
 
         // Fjern mappere som ikke kan lage targetClass
@@ -462,7 +456,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
     static TypeMapper<?, ?> findClosestTypeMapper(Collection<TypeMapper<?, ?>> candidates, Class mappableClass, Class requestedClass, Direction direction) {
         //map with natural ordering of keys
-        ListMultimap<Integer, TypeMapper<?, ?>> signedCandidates = Multimaps.newListMultimap(new TreeMap<Integer, Collection<TypeMapper<?, ?>>>(), new Supplier<List<TypeMapper<?, ?>>>() {
+        ListMultimap<TypeMapperMatch, TypeMapper<?, ?>> signedCandidates = Multimaps.newListMultimap(new TreeMap<TypeMapperMatch, Collection<TypeMapper<?, ?>>>(), new Supplier<List<TypeMapper<?, ?>>>() {
             @Override
             public List<TypeMapper<?, ?>> get() {
                 return new ArrayList<TypeMapper<?, ?>>();
@@ -472,7 +466,8 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         for (TypeMapper<?, ?> candidate : candidates) {
             final Class<?> fromClass, toClass;
             Class<?> candidateClass;
-            int weight = 0;
+            int fromDistance = 0;
+            int toDistance = 0;
 
             if (Direction.D2W == direction) {
                 fromClass = candidate.getDomainClass();
@@ -486,26 +481,26 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
             candidateClass = mappableClass;
             while (!fromClass.equals(candidateClass) && !Object.class.equals(candidateClass)) {
-                weight++;
+                fromDistance++;
                 candidateClass = candidateClass.getSuperclass();
             }
 
             candidateClass = requestedClass;
             while (!toClass.equals(candidateClass) && !Object.class.equals(candidateClass)) {
-                weight++;
+                toDistance++;
                 candidateClass = candidateClass.getSuperclass();
             }
 
-            signedCandidates.put(weight, candidate);
+            signedCandidates.put(new TypeMapperMatch(fromDistance, toDistance), candidate);
         }
 
         Collection<TypeMapper<?, ?>> best = signedCandidates.asMap().values().iterator().next();
 
 
         if (best.size() > 1) {
-            TypeMapper<?, ?> prev=null;
+            TypeMapper<?, ?> prev = null;
             for (TypeMapper<?, ?> typeMapper : best) {
-                if (prev!=null && prev.getClass() !=typeMapper.getClass()) {
+                if (prev != null && prev.getClass() != typeMapper.getClass()) {
                     throw new ImplementationException("Several defined mappers of different types found for mapping of class of type " + mappableClass);
                 }
                 prev = typeMapper;
@@ -515,4 +510,46 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         return best.iterator().next();
     }
 
+    /**
+     * Typemappere rangeres etter hvor fra match de er. Først og fremst foretrekkes den typemapper som er nærmest
+     * klassen det mappes fra. Dersom det her blir uavgjort mellom to typemappere på dette punktet, så velges den
+     * typemapper som mapper til det som er nærmest ønsket klasse (SKIF-383). Det er allrede på forhånd sikret at
+     * typemapper mapper fra (en superklasse av) klassen som skal mappes, til (en subtype av) klassen det skal mappes
+     * til.
+     */
+    private static class TypeMapperMatch implements Comparable<TypeMapperMatch> {
+        private final int fromDistance;
+        private final int toDistance;
+
+        private TypeMapperMatch(int fromDistance, int toDistance) {
+            this.fromDistance = fromDistance;
+            this.toDistance = toDistance;
+        }
+
+        @Override
+        public int compareTo(TypeMapperMatch o) {
+            int relasjon = Integer.compare(fromDistance, o.fromDistance);
+            if (relasjon == 0) {
+                relasjon = Integer.compare(toDistance, o.toDistance);
+            }
+            return relasjon;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            TypeMapperMatch that = (TypeMapperMatch) o;
+
+            return fromDistance == that.fromDistance && toDistance == that.toDistance;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = fromDistance;
+            result = 31 * result + toDistance;
+            return result;
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.wsapi.config;
 
 import com.google.inject.Injector;
-import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
 import no.statkart.skif.service.module.server.WSServerServiceModule;
@@ -9,7 +8,9 @@ import no.statkart.skif.service.proxy.W2DAdapterWithServiceContextSVMapperProxyH
 import no.statkart.skif.storetest.config.*;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
+import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapping;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
+import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -32,31 +33,32 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
 
         Injector ejbServiceInjector = StoreTestServerInjector.getInjector();
         final ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
-        final Mapping mapping = ejbServiceInjector.getInstance(StoreTestMapper.class).getMapping();
+        final StoreTestMapping mapping = ejbServiceInjector.getInstance(StoreTestMapper.class).getMapping();
+        final StoreTestExceptionMapping exceptionMapping = new StoreTestExceptionMapper(mapping).getMapping();
         injector = ejbServiceInjector.createChildInjector(
                 new WSServerModule(configuration, classLoader),
 
                 // Services som ikke har ServiceContext
                 new WSServerServiceModule(configuration, new StoreTestGroup1Services().getServices(), mapping, classLoader)
-                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping()),
+                        .setExceptionMapping(exceptionMapping),
                 new WSServerServiceModule(configuration, new StoreTestTxManagementServices().getServices(), mapping, classLoader)
-                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping()),
+                        .setExceptionMapping(exceptionMapping),
 
                 // Services som har ServiceContext
                 new WSServerServiceModule(configuration, new StoreTestTestServices().getServices(), mapping, classLoader)
-                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                        .setExceptionMapping(exceptionMapping)
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class),
                 new WSServerServiceModule(configuration, new StoreTestStoreServices().getServices(), mapping, classLoader)
-                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                        .setExceptionMapping(exceptionMapping)
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class, W2DAdapterWithServiceContextSVMapperProxyHandler.class),
                 new WSServerServiceModule(configuration, new StoreTestStoreUpdateServices().getServices(), mapping, classLoader)
-                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                        .setExceptionMapping(exceptionMapping)
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class),
                 new WSServerServiceModule(configuration, new StoreTestSequenceBlockAllocatorServices().getServices(), mapping, classLoader)
-                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                        .setExceptionMapping(exceptionMapping)
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class),
                 new WSServerServiceModule(configuration, new StoreTestDomainFinderServices().getServices(), mapping, classLoader)
-                        .setExceptionMapping(new StoreTestExceptionMapper().getMapping())
+                        .setExceptionMapping(exceptionMapping)
                         .setServiceContextMapperClass(StoreTestServiceContextMapper.class)
         );
 

@@ -21,4 +21,8 @@ public class SimpleException extends SkifException {
     public String getInfoField() {
         return infoField;
     }
+
+    public void setInfoField(String infoField) {
+        this.infoField = infoField;
+    }
 }
