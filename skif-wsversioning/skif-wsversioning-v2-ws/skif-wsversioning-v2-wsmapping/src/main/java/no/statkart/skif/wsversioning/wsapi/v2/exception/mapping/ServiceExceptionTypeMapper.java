@@ -1,19 +1,18 @@
 package no.statkart.skif.wsversioning.wsapi.v2.exception.mapping;
 
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ServerException;
 import no.statkart.skif.exception.SkifException;
+import no.statkart.skif.mapper.AbstractTypeMapper;
 import no.statkart.skif.mapper.MappingException;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.ExceptionDetail;
-import no.statkart.skif.wsversioning.wsapi.v2.exception.ExceptionProperties;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.ServiceException;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.ServiceFaultInfo;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.StackTraceElementList;
 
-import javax.xml.ws.WebFault;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -25,18 +24,26 @@ import java.util.Stack;
  * @author Tor Egil R. Strand
  * @since 2.0
  */
-public class ServiceExceptionTypeMapper<WsapiT extends ServiceException, WsapiTInfo extends ServiceFaultInfo, DomainT extends SkifException> extends AbstractServiceExceptionTypeMapper<WsapiT, DomainT> {
+public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceException, SkifException, WSVersioningExceptionMapping> {
+    private final Field causeField;
 
-    private Class<WsapiTInfo> wsapiFaultInfoClass;
+    private final Map<String, Class<? extends SkifException>> exceptionClassMap;
 
-    public ServiceExceptionTypeMapper(Map<String, Class<? extends DomainT>> exceptionClassMap, Class<WsapiT> wsapiClass, Class<DomainT> domainClass, Class<WsapiTInfo> wsapiFaultInfoClass) {
-        super(wsapiClass, domainClass, exceptionClassMap);
-        this.wsapiFaultInfoClass = wsapiFaultInfoClass;
+    public ServiceExceptionTypeMapper(Map<String, Class<? extends SkifException>> exceptionClassMap) {
+        super(ServiceException.class, SkifException.class, WSVersioningExceptionMapping.class);
+        this.exceptionClassMap = exceptionClassMap;
+
+        try {
+            causeField = Throwable.class.getDeclaredField("cause");
+            causeField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new ImplementationException("Could not look-up cause field", e);
+        }
     }
 
 
     @Override
-    public DomainT mapWsapiObject(WsapiT source) {
+    public SkifException mapWsapiObject(ServiceException source) {
         ExceptionDetail rootExceptionDetail = source.getFaultInfo().getExceptionDetail();
         Stack<ExceptionDetail> stack = new Stack<ExceptionDetail>();
         {
@@ -52,31 +59,11 @@ public class ServiceExceptionTypeMapper<WsapiT extends ServiceException, WsapiTI
             ExceptionDetail exceptionDetail = stack.pop();
             cause = createServerException(exceptionDetail, cause);
         }
-        DomainT target = createDomainException(source, rootExceptionDetail, cause);
+        SkifException target = getMapping().w2d(source.getFaultInfo(), SkifException.class);
+        setCause(target, cause);
         target.setStackTrace(generateStackTraceElements(rootExceptionDetail.getStackTraceElements()));
 
-        ServiceFaultInfo faultInfo = source.getFaultInfo();
-        target.setFeilkode(faultInfo.getFeilkode());
-        target.setFeilkodebeskrivelse(faultInfo.getFeilkodebeskrivelse());
-
         return target;
-    }
-
-    private DomainT createDomainException(WsapiT source, ExceptionDetail rootExceptionDetail, Throwable cause) {
-        Class<? extends DomainT> domainClass = findDomainClass(source);
-        try {
-            Constructor<? extends DomainT> tConstructor = domainClass.getDeclaredConstructor(String.class, Throwable.class);
-            tConstructor.setAccessible(true);
-            return tConstructor.newInstance(rootExceptionDetail.getMessage(), cause);
-        } catch (NoSuchMethodException e) {
-            throw new MappingException("Could not find requested constructor for " + domainClass);
-        } catch (InstantiationException e) {
-            throw new MappingException("Could not instantiate " + domainClass);
-        } catch (IllegalAccessException e) {
-            throw new MappingException("Could not instantiate " + domainClass);
-        } catch (InvocationTargetException e) {
-            throw new MappingException("Could not instantiate " + domainClass);
-        }
     }
 
     private Throwable createServerException(ExceptionDetail exceptionDetail, Throwable cause) {
@@ -88,47 +75,12 @@ public class ServiceExceptionTypeMapper<WsapiT extends ServiceException, WsapiTI
 
 
     @Override
-    public WsapiT mapDomainObject(DomainT source) {
-        try {
-            WsapiTInfo faultInfo = wsapiFaultInfoClass.newInstance();
-            faultInfo.setCategory(findCategory(source));
-            faultInfo.setFeilkode(source.getFeilkode());
-            faultInfo.setFeilkodebeskrivelse(source.getFeilkodebeskrivelse());
-            faultInfo.setStackTraceText(generateStacktraceString(source));
-            faultInfo.setExceptionDetail(generateExceptionDetail(source));
-            faultInfo.setProperties(new ExceptionProperties());
-            return createWsException(source, faultInfo);
-        } catch (InstantiationException e) {
-            throw new MappingException(e);
-        } catch (IllegalAccessException e) {
-            throw new MappingException(e);
-        }
-    }
-
-
-    protected WsapiT createWsException(DomainT source, WsapiTInfo faultInfo) {
-        Class<WsapiT> targetClass = getWsapiClass();
-
-        if (targetClass.getAnnotation(WebFault.class) != null) {
-            if (source instanceof SkifException) {
-                try {
-                    Constructor<WsapiT> constructor = targetClass.getConstructor(String.class, ServiceFaultInfo.class, Throwable.class);
-                    return constructor.newInstance(source.getMessage(), faultInfo, source.getCause());
-                } catch (NoSuchMethodException e) {
-                    throw new MappingException("Could not find requested constructor for " + targetClass);
-                } catch (InvocationTargetException e) {
-                    throw new MappingException("Could not instantiate " + targetClass);
-                } catch (InstantiationException e) {
-                    throw new MappingException("Could not instantiate " + targetClass);
-                } catch (IllegalAccessException e) {
-                    throw new MappingException("Could not instantiate " + targetClass);
-                }
-            } else {
-                throw new MappingException("Expected source to be derived from: " + SkifException.class);
-            }
-        } else {
-            throw new MappingException("TargetClass not a @WebFault class:" + targetClass.getName());
-        }
+    public ServiceException mapDomainObject(SkifException source) {
+        ServiceFaultInfo faultInfo = getMapping().d2w(source, ServiceFaultInfo.class);
+        faultInfo.setCategory(findCategory(source));
+        faultInfo.setExceptionDetail(generateExceptionDetail(source));
+        faultInfo.setStackTraceText(generateStacktraceString(source));
+        return new ServiceException(source.getMessage(), faultInfo, source);
     }
 
 
@@ -172,7 +124,7 @@ public class ServiceExceptionTypeMapper<WsapiT extends ServiceException, WsapiTI
         }
     }
 
-    private StackTraceElementList generateStackTraceElements(StackTraceElement[] stackTrace) {
+    private StackTraceElementList generateStackTraceElements(java.lang.StackTraceElement[] stackTrace) {
         StackTraceElementList list = new StackTraceElementList();
         for (int i = 0; i < stackTrace.length; i++) {
             StackTraceElement sourceElement = stackTrace[i];
@@ -193,5 +145,30 @@ public class ServiceExceptionTypeMapper<WsapiT extends ServiceException, WsapiTI
         return sw.toString();
     }
 
+
+    private String findCategory(SkifException source) {
+        Class<? extends SkifException> sourceClass = source.getClass();
+        for (Map.Entry<String, Class<? extends SkifException>> entry : exceptionClassMap.entrySet()) {
+            if (entry.getValue().isAssignableFrom(sourceClass)) {
+                return entry.getKey();
+            }
+        }
+        throw new MappingException("Could not find category for exception class: " + source.getClass().getName()); //skal ikke kunne forekomme
+    }
+
+
+    /**
+     * cause kan kun settes én gang via {@code Throwable}s grensesnitt. I SkifException-hierarkiet blir cause satt til
+     * {@code null} av diverse konstruktører som går hit og dit. {@link Throwable#initCause(Throwable)} vil derfor feile.
+     * Mappingen har ingen måte å sende inn en cause som kan benyttes når underliggende mappere mappers selve exception,
+     * dersom må det dessverre hackes litt.
+     */
+    private void setCause(Throwable throwable, Throwable cause) {
+        try {
+            causeField.set(throwable, cause);
+        } catch (IllegalAccessException e) {
+            throw new MappingException("Could not set cause", e);
+        }
+    }
 
 }

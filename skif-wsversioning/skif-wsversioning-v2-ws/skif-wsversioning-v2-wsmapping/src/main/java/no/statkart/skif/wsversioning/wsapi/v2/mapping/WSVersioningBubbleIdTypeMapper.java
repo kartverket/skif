@@ -3,6 +3,7 @@ package no.statkart.skif.wsversioning.wsapi.v2.mapping;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.wsversioning.domain.WSVersioningBubbleId;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.Timestamp;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -22,7 +23,7 @@ public class WSVersioningBubbleIdTypeMapper<WsapiT extends no.statkart.skif.wsve
     public WsapiT mapDomainObject(DomainT source) {
         WsapiT target = createWsapiT();
         target.setValue((Long) source.getValue());
-        target.setSnapshotVersion(getMapping().d2w(source.getSnapshotVersion(), no.statkart.skif.wsversioning.wsapi.v2.domain.SnapshotVersion.class));
+        target.setSnapshotVersion(getMapping().d2w(source.getSnapshotVersion(), Timestamp.class));
         return target;
     }
 

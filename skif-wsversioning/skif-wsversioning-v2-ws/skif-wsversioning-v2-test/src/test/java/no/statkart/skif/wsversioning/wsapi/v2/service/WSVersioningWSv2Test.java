@@ -94,7 +94,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         return context;
     }
 
-    private SnapshotVersion createSnapshotVersionCurrent() throws DatatypeConfigurationException {
+    private Timestamp createSnapshotVersionCurrent() throws DatatypeConfigurationException {
         XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar();
         xmlGregorianCalendar.setYear(9999);
         xmlGregorianCalendar.setMonth(1);
@@ -102,7 +102,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         xmlGregorianCalendar.setHour(0);
         xmlGregorianCalendar.setMinute(0);
         xmlGregorianCalendar.setSecond(0);
-        SnapshotVersion snapshotVersion = new SnapshotVersion();
+        Timestamp snapshotVersion = new Timestamp();
         snapshotVersion.setTimestamp(xmlGregorianCalendar);
         return snapshotVersion;
     }

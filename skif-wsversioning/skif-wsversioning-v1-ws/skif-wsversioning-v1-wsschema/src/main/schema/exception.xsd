@@ -4,12 +4,15 @@
         elementFormDefault="qualified"
         targetNamespace="http://skif.statkart.no/wsversioning/wsapi/v1/exception"
         xmlns="http://skif.statkart.no/wsversioning/wsapi/v1/exception"
+        xmlns:domainns="http://skif.statkart.no/wsversioning/wsapi/v1/domain"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:gdoc="http://grunnbok.statkart.no/tools/gdoc"
         xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
         jaxb:extensionBindingPrefixes="gdoc"
         jaxb:version="2.1"
         >
+
+    <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/wsversioning/wsapi/v1/domain"/>
 
     <xs:annotation>
         <xs:appinfo>
@@ -35,32 +38,12 @@
                 <gdoc:doc><![CDATA[
                         Generell feilmelding for alle hånterte feil ifra systemet.
 
-                        Alle feil har en utfyllt feilkode og feilkodebeskrivelse.
-
                         For klassifisering av feil, se {@link #category} feltet.
                     ]]>
                 </gdoc:doc>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="feilkode" type="xs:string">
-                <xs:annotation>
-                    <xs:appinfo>
-                        <jaxb:property>
-                            <jaxb:javadoc><![CDATA[Kort kode for feil. Er i hovedsak tiltenkt applikasjonsfeil.]]></jaxb:javadoc>
-                        </jaxb:property>
-                    </xs:appinfo>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="feilkodebeskrivelse" type="xs:string">
-                <xs:annotation>
-                    <xs:appinfo>
-                        <jaxb:property>
-                            <jaxb:javadoc><![CDATA[Tekstlig beskrivelse av {@link #feilkode feilkode}.]]></jaxb:javadoc>
-                        </jaxb:property>
-                    </xs:appinfo>
-                </xs:annotation>
-            </xs:element>
             <xs:element name="category" type="xs:string">
                 <xs:annotation>
                     <xs:appinfo>
@@ -129,15 +112,6 @@
                                   </li>
                                 </ul>
                             ]]></jaxb:javadoc>
-                        </jaxb:property>
-                    </xs:appinfo>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="properties" type="ExceptionProperties">
-                <xs:annotation>
-                    <xs:appinfo>
-                        <jaxb:property>
-                            <jaxb:javadoc><![CDATA[Eventuelle utvidede properties kan komme her..]]></jaxb:javadoc>
                         </jaxb:property>
                     </xs:appinfo>
                 </xs:annotation>
@@ -237,26 +211,57 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="ExceptionProperties">
-        <xs:annotation>
-            <xs:appinfo>
-                <gdoc:doc><![CDATA[  ]]></gdoc:doc>
-                <IsDictionary
-                        xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
-                    true
-                </IsDictionary>
-            </xs:appinfo>
-        </xs:annotation>
+    <xs:complexType name="AttemptDeleteFaultInfo">
+        <xs:complexContent>
+            <xs:extension base="ServiceFaultInfo">
+                <xs:sequence>
+                    <xs:element name="bubbleId" type="domainns:WSVersioningBubbleId"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="LockedFaultInfo">
+        <xs:complexContent>
+            <xs:extension base="ServiceFaultInfo">
+                <xs:sequence>
+                    <xs:element name="locksNotAquired" type="LockNotAquiredList"/>
+                    <xs:element name="owner" type="xs:string"/>
+                    <xs:element name="exceptionTime" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="LockNotAquired">
         <xs:sequence>
-            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="lockKey">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="key" type="xs:string"/>
-                        <xs:element name="value" type="xs:string"/>
+                        <xs:element name="discriminator" type="xs:string"/>
+                        <xs:element name="keyValue" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="owner" type="xs:string"/>
+            <xs:element name="expires" type="xs:dateTime"/>
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LockNotAquiredList">
+        <xs:sequence>
+            <xs:element name="item" type="LockNotAquired" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ObjectsNotFoundFaultInfo">
+        <xs:complexContent>
+            <xs:extension base="ServiceFaultInfo">
+                <xs:sequence>
+                    <xs:element name="idsNotFound" type="domainns:WSVersioningBubbleIdList"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
 </xs:schema>
