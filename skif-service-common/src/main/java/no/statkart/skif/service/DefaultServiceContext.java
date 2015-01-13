@@ -13,7 +13,6 @@ public class DefaultServiceContext implements ServiceContext {
 
     private String systemVersion="1.0";
     private Locale locale = new Locale("nb", "NO");
-    private SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
 
     @Override
     public String getSystemVersion() {
