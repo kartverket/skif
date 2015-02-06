@@ -4,14 +4,16 @@ if (!['1.6', '1.10'].findAll { gradle.gradleVersion == it }) {
 }
 
 
-apply plugin: 'sktools-filterproperties-plugin'
+apply plugin: 'sktools-properties-plugin'
+apply plugin: 'sktools-filter-resources-plugin'
 
 //user properties
 Map userProperties = propertyUtils.fromFile('gradle-user.properties') << gradle.startParameter.projectProperties
 propertyUtils.assignPropertiesToProject(userProperties)
 
 allprojects {
-    apply plugin: 'sktools-filterproperties-plugin'
+//    apply plugin: 'sktools-properties-plugin'
+    apply plugin: 'sktools-filter-resources-plugin'
     propertyUtils.assignPropertiesToProject(userProperties)
 
     //version kan bestemmes via env variabel og -P parameter
@@ -64,8 +66,7 @@ subprojects { Project project ->
     //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
 
     // TODO: Denne skal egentlig kun brukes på skif-config mener Henrik. Rett opp dette når filtrering er fjernet fra andre moduler.
-    apply plugin: 'sktools-filterproperties-plugin'
-    project.filterProperties {
+    project.filterResources {
         Map filterProperties = propertyUtils.fromFile("${project.name}-filter.properties") << gradle.startParameter.projectProperties
         propertyUtils.expandProperties(filterProperties)
         properties filterProperties
@@ -346,6 +347,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build304'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.3-build15'
     }
 }
