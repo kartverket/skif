@@ -57,8 +57,6 @@ public class StdSkifExceptionMappingTest extends SkifTestCase {
             assertInstanceOf(e, ImplementationException.class, "mapped exception class");
             assertEquals(e.getMessage(), "abc noTx");
             assertNull(e.getCause());
-            assertEquals(e.getFeilkode(), "feilkode");
-            assertEquals(e.getFeilkodebeskrivelse(), "feilkodebeskrivelse");
             final StackTraceElement stackTraceElement = e.getStackTrace()[0];
             assertEquals(stackTraceElement.getClassName(), "no.statkart.skif.skiftest.service.testd.DServiceImpl");
             assertEquals(stackTraceElement.getFileName(), "DServiceImpl.java");
@@ -83,8 +81,6 @@ public class StdSkifExceptionMappingTest extends SkifTestCase {
             assertInstanceOf(e, FinderException.class, "mapped exception class");
             assertEquals(e.getMessage(), "abc noTx");
 //            assertNull(e.getCause());
-//            assertEquals(e.getFeilkode(), "feilkode");
-//            assertEquals(e.getFeilkodebeskrivelse(), "feilkodebeskrivelse");
 //            final StackTraceElement stackTraceElement = e.getStackTrace()[0];
 //            assertEquals(stackTraceElement.getClassName(), "no.statkart.skif.skiftest.service.testd.DServiceImpl");
 //            assertEquals(stackTraceElement.getFileName(), "DServiceImpl.java");
@@ -109,8 +105,6 @@ public class StdSkifExceptionMappingTest extends SkifTestCase {
             assertInstanceOf(e, ImplementationException.class, "mapped exception class");
             assertEquals(e.getMessage(), "abc noTx");
             assertTrue(e.getCause().getClass()==RuntimeException.class || e.getCause().getClass()==ServerException.class);
-            assertEquals(e.getFeilkode(), "IE000");
-            assertEquals(e.getFeilkodebeskrivelse(), "Implementasjonsfeil");
 
             final StackTraceElement stackTraceElement = e.getStackTrace()[0];
             assertEquals(stackTraceElement.getClassName(), "no.statkart.skif.service.proxy.RuntimeExceptionProxyHandler");

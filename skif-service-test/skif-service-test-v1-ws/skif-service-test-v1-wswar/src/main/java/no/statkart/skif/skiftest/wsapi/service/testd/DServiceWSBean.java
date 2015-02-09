@@ -2,6 +2,7 @@ package no.statkart.skif.skiftest.wsapi.service.testd;
 
 import com.google.inject.Injector;
 import no.statkart.skif.SkifUtil;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
 import no.statkart.skif.skiftest.wsapi.domain.StringList;
@@ -81,7 +82,7 @@ public class DServiceWSBean extends SkifWebService<DServiceWSI> implements DServ
             element.setFileName(stElement.getFileName());
             element.setLineNumber(100);
             element.setMethodName("nonMappedCall");
-            detail.setClassName(this.getClass().getName());
+            detail.setClassName(ImplementationException.class.getName());
             detail.setMessage(message);
             StackTraceElementList elementList = new StackTraceElementList();
             elementList.getItem().add(element);

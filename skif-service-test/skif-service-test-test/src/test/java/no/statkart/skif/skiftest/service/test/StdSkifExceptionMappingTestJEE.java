@@ -127,8 +127,6 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
             assertInstanceOf(e, ImplementationException.class, "mapped exception class");
             assertEquals(e.getMessage(), "abc");
             assertTrue(e.getCause().getClass()==RuntimeException.class || e.getCause().getClass()==ServerException.class);
-            assertEquals(e.getFeilkode(), "IE000");
-            assertEquals(e.getFeilkodebeskrivelse(), "Implementasjonsfeil");
 
             // Server mapper automatisk ukjendte exception ved å wrapped dem i en  ImplementationException først.
             // Stacktrace settes til det samme som opprindelig exception slik at det er enklet å se hvor feilen opprindelig forekom

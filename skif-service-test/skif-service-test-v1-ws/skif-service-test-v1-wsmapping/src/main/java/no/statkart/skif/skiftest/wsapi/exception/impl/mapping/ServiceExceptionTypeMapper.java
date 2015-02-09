@@ -60,7 +60,7 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
             cause = createServerException(exceptionDetail, cause);
         }
         SkifException target = getMapping().w2d(source.getFaultInfo(), SkifException.class);
-//        target.initCause(cause);
+        setCause(target, cause);
         target.setStackTrace(generateStackTraceElements(rootExceptionDetail.getStackTraceElements()));
 
         return target;
