@@ -10,8 +10,11 @@ warWeblogic {
 }
 
 dependencies {
-    weblogicCompile project(':skif-service-test:skif-service-test-server')
+    weblogicCompile project(':skif-service-server')
+    weblogicCompile project(':skif-service-test:skif-service-test-api')
+// Havner tydeligvis på compile classpath   weblogicRuntime project(':skif-service-test:skif-service-test-server')
     weblogicCompile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
+    weblogicCompile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
     weblogicProvided libraries['tools.jar']
     weblogicProvided libraries.weblogic

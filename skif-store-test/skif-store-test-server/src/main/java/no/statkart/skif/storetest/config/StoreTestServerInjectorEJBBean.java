@@ -1,4 +1,4 @@
-package no.statkart.skif.skiftest.config;
+package no.statkart.skif.storetest.config;
 
 
 import com.google.common.base.Supplier;
@@ -7,6 +7,8 @@ import no.statkart.skif.ServerInjectorRegistry;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
 
+import javax.ejb.Stateless;
+
 
 /**
  * Definere hvilken injector som skal brukes intern i serveren og hvordan denne konfigureres opp.
@@ -14,15 +16,16 @@ import no.statkart.skif.module.ModuleBuilder;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class SkifTestTxManagementServerInjector {
-    public static Injector getInjector() {
-        return ServerInjectorRegistry.getInjector("StoreTestTxManagementServerModule", new Supplier<ModuleBuilder>() {
+@Stateless
+public class StoreTestServerInjectorEJBBean implements StoreTestServerInjector {
+    @Override
+    public Injector getInjector() {
+        return ServerInjectorRegistry.getInjector("SkifTestServerModule", new Supplier<ModuleBuilder>() {
             @Override
             public ModuleBuilder get() {
                 return new ModuleBuilder()
-                        // TODO: bør vi bruke skif-server-default.properteis
                         .setConfiguration(new SkifServerConfiguration())
-                        .setModuleClass(SkifTestTxManagementServerModule.class);
+                        .setModuleClass(StoreTestServerModule.class);
             }
         });
     }

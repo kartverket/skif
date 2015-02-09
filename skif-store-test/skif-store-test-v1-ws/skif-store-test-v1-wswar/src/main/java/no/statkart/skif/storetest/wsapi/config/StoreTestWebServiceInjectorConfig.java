@@ -12,6 +12,7 @@ import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapp
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
 
+import javax.ejb.EJB;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -23,6 +24,9 @@ import javax.servlet.ServletContextListener;
 public class StoreTestWebServiceInjectorConfig implements ServletContextListener {
     private static volatile Injector injector;
 
+    @EJB
+    private StoreTestServerInjector storeTestServerInjector;
+
     public static Injector getWebServiceInjector() {
         return injector;
     }
@@ -31,7 +35,7 @@ public class StoreTestWebServiceInjectorConfig implements ServletContextListener
     public void createInjector() {
         ClassLoader classLoader = getClass().getClassLoader();
 
-        Injector ejbServiceInjector = StoreTestServerInjector.getInjector();
+        Injector ejbServiceInjector = storeTestServerInjector.getInjector();
         final ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
         final StoreTestMapping mapping = ejbServiceInjector.getInstance(StoreTestMapper.class).getMapping();
         final StoreTestExceptionMapping exceptionMapping = new StoreTestExceptionMapper(mapping).getMapping();

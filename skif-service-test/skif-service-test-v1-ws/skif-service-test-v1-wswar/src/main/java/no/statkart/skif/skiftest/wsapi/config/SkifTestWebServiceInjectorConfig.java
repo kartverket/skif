@@ -11,6 +11,7 @@ import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionM
 import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestSimpleExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 
+import javax.ejb.EJB;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -21,6 +22,9 @@ import javax.servlet.ServletContextListener;
  */
 public class SkifTestWebServiceInjectorConfig implements ServletContextListener {
     private static volatile Injector injector;
+
+    @EJB
+    private SkifTestServerInjector skifTestServerInjector;
 
     public static Injector getWebServiceInjector() {
         return injector;
@@ -33,7 +37,7 @@ public class SkifTestWebServiceInjectorConfig implements ServletContextListener 
 
         ClassLoader classLoader = getClass().getClassLoader();
 
-        Injector ejbServiceInjector = SkifTestServerInjector.getInjector();
+        Injector ejbServiceInjector = skifTestServerInjector.getInjector();
         ModuleConfiguration  configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
         injector = ejbServiceInjector.createChildInjector(

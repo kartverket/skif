@@ -18,8 +18,13 @@ warWeblogic {
 
 
 dependencies {
-    weblogicCompile project(':skif-store-test:skif-store-test-server')
+    if(hibernateVersion.equals("3.6")){
+        weblogicCompile project(':skif-store-server:skif-store-server-hs36')
+    }
+    weblogicCompile project(':skif-store-test:skif-store-test-api')
+// Havner tydeligvis på compile classpath   weblogicRuntime project(':skif-store-test:skif-store-test-server')
     weblogicCompile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
+    weblogicCompile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
     weblogicProvided libraries['tools.jar']
     weblogicProvided libraries.weblogic
