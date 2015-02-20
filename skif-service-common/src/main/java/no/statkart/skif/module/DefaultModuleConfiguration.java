@@ -14,7 +14,6 @@ import no.statkart.skif.exception.ImplementationException;
 public class DefaultModuleConfiguration implements ModuleConfiguration {
     private ModuleStrategyFactory strategyFactory;
     private Configuration configuration;
-    private ServiceMode serviceMode;
 
     public DefaultModuleConfiguration() {
         this(null, null);
@@ -45,15 +44,17 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
 
     @Override
     public ServiceMode getServiceMode() {
-        if (serviceMode!=null) return serviceMode;
-        final boolean isSingleVm = configuration.getBoolean(SkifConfigConstants.SINGLE_VM, false);
-        return isSingleVm ? ServiceMode.SINGLE_VM : ServiceMode.JEE;
+        String serviceModeStr = configuration.getString(SkifConfigConstants.SERVICE_MODE);
+        if (serviceModeStr != null) {
+            return ServiceMode.valueOf(serviceModeStr);
+        } else {
+            return configuration.getBoolean(SkifConfigConstants.SINGLE_VM, false) ? ServiceMode.SINGLE_VM : ServiceMode.JEE;
+        }
 
     }
 
     public DefaultModuleConfiguration setServiceMode(ServiceMode serviceMode) {
-        this.serviceMode=null;
-        configuration.setProperty(SkifConfigConstants.SINGLE_VM, String.valueOf(serviceMode==ServiceMode.SINGLE_VM));
+        configuration.setProperty(SkifConfigConstants.SERVICE_MODE, serviceMode.name());
         return this;
     }
 

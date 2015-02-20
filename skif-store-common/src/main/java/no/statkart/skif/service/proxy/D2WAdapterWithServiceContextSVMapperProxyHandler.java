@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class D2WAdapterWithServiceContextSVMapperProxyHandler<T, A> extends D2WAdapterWithServiceContextMapperProxyHandler {
+public class D2WAdapterWithServiceContextSVMapperProxyHandler<T, A> extends D2WAdapterWithServiceContextMapperProxyHandler<T, A> {
     final SnapshotVersionArgumentListAnalyser snapshotVersionArgumentListAnalyser = new SnapshotVersionArgumentListAnalyser();
     final SnapshotVersionContext snapshotVersionContext;
 
@@ -40,6 +40,11 @@ public class D2WAdapterWithServiceContextSVMapperProxyHandler<T, A> extends D2WA
 
     public D2WAdapterWithServiceContextSVMapperProxyHandler(A adaptee, Mapping map, ServiceContextMapper<?> contextMapper, @Nullable ExceptionMapping exceptionMapping, SnapshotVersionContext snapshotVersionContext) {
         super(adaptee, map, contextMapper, exceptionMapping);
+        this.snapshotVersionContext = snapshotVersionContext;
+    }
+
+    public D2WAdapterWithServiceContextSVMapperProxyHandler(Class<A> adapteeClass, ProxyHandler<A> handler, Mapping map, ExceptionMapping exceptionMapping, ServiceContextMapper<?> contextMapper, SnapshotVersionContext snapshotVersionContext) {
+        super(adapteeClass, handler, map, exceptionMapping, contextMapper);
         this.snapshotVersionContext = snapshotVersionContext;
     }
 

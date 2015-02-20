@@ -1,6 +1,7 @@
 package no.statkart.skif.service.proxy;
 
 import com.google.inject.Inject;
+import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.service.ServiceContextMapper;
 import no.statkart.skif.service.annotation.WSServiceChain;
@@ -27,6 +28,11 @@ public class W2DAdapterWithServiceContextSVMapperProxyHandler<T, A> extends W2DA
     public W2DAdapterWithServiceContextSVMapperProxyHandler(@WSServiceChain A adaptee, Mapping map, @Nullable ServiceContextMapper<?> contextMapper, SnapshotVersionContext snapshotVersionContext) {
         super(adaptee, map,contextMapper);
         this.snapshotVersionContext=snapshotVersionContext;
+    }
+
+    public W2DAdapterWithServiceContextSVMapperProxyHandler(Class<A> adapteeClass, ProxyHandler<A> handler, Mapping map, ExceptionMapping exceptionMapping, ServiceContextMapper<?> contextMapper, SnapshotVersionContext snapshotVersionContext) {
+        super(adapteeClass, handler, map, exceptionMapping, contextMapper);
+        this.snapshotVersionContext = snapshotVersionContext;
     }
 
     protected Object mapArgsAndInvokeMethod(Object proxy, Method method, Object[] args, Method toMethod) throws Throwable {

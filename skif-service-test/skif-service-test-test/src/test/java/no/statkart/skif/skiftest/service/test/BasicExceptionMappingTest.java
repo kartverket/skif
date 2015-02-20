@@ -1,9 +1,11 @@
 package no.statkart.skif.skiftest.service.test;
 
 import com.google.inject.Inject;
+import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.mapper.MappingException;
 import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.exception.SimpleNonMappedException;
@@ -79,8 +81,11 @@ public class BasicExceptionMappingTest extends SkifTestCase {
         try {
             service.noTx(SimpleNonMappedException.class.getName(), "abc");
         } catch (Throwable t) {
-            if (injector.getInstance(Configuration.class).getBoolean(SkifConfigConstants.SINGLE_VM)) {
+            ServiceMode serviceMode = injector.getInstance(ServiceMode.class);
+            if (serviceMode == ServiceMode.SINGLE_VM) {
                 assertEquals(t.getClass(), ImplementationException.class);
+            } else if (serviceMode == ServiceMode.SINGLE_VM_XML) {
+                assertEquals(t.getClass(), MappingException.class);
             } else {
                 assertEquals(t.getClass(), javax.xml.ws.soap.SOAPFaultException.class);
             }

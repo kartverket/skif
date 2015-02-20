@@ -226,16 +226,21 @@ public class ModuleBuilder {
 
 
     public ServiceMode getServiceMode() {
-        return getCompositeConfiguration().getBoolean(SINGLE_VM, false) ? ServiceMode.SINGLE_VM : ServiceMode.JEE;
+        String serviceModeStr = getCompositeConfiguration().getString(SERVICE_MODE);
+        if (serviceModeStr != null) {
+            return ServiceMode.valueOf(serviceModeStr);
+        } else {
+            return getCompositeConfiguration().getBoolean(SINGLE_VM, false) ? ServiceMode.SINGLE_VM : ServiceMode.JEE;
+        }
     }
 
     public ModuleBuilder setServiceMode(ServiceMode serviceMode) {
-        builderConfiguration.setProperty(SINGLE_VM, String.valueOf(serviceMode == ServiceMode.SINGLE_VM));
+        builderConfiguration.setProperty(SERVICE_MODE, serviceMode.name());
         return this;
     }
 
     public ModuleBuilder setSingleVm(boolean isSingleVm) {
-        builderConfiguration.setProperty(SINGLE_VM, isSingleVm);
+        setServiceMode(isSingleVm ? ServiceMode.SINGLE_VM : ServiceMode.JEE);
         return this;
     }
 
@@ -420,14 +425,16 @@ public class ModuleBuilder {
     }
 
     private boolean isSingleVmModuleRequired() {
-        return getServiceMode() == ServiceMode.SINGLE_VM && getCompositeConfiguration().containsKey(SINGLE_VM_SERVER_MODULE_CLASS);
+        ServiceMode serviceMode = getServiceMode();
+        return (serviceMode == ServiceMode.SINGLE_VM || serviceMode == ServiceMode.SINGLE_VM_XML) && getCompositeConfiguration().containsKey(SINGLE_VM_SERVER_MODULE_CLASS);
     }
 
     private ModuleConfiguration createModuleConfigurationForModule() {
         // Lag en kopi av compo
         CompositeConfiguration c = createCompositeConfigurationForModule();
         ModuleConfiguration moduleConfiguration = new DefaultModuleConfiguration(c, moduleStrategyFactory);
-        if (getServiceMode() == ServiceMode.SINGLE_VM && getSingleVmServerModuleClassname() != null) {
+        ServiceMode serviceMode = getServiceMode();
+        if ((serviceMode == ServiceMode.SINGLE_VM || serviceMode == ServiceMode.SINGLE_VM_XML) && getSingleVmServerModuleClassname() != null) {
             Injector singleVmServerInjector = getSingleVmServerInjector();
             moduleConfiguration.getConfiguration().setProperty(SkifConfigConstants.SINGLE_VM_SERVER_INJECTOR, singleVmServerInjector);
         }

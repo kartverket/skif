@@ -5,5 +5,17 @@ package no.statkart.skif;
  * @since 2.0
  */
 public enum ServiceMode {
-    JEE, SINGLE_VM
+    /**
+     * Full server-client-modus.
+     */
+    JEE,
+
+    /**
+     * Single-VM-modus med Serializable-marshalling.
+     */
+    SINGLE_VM,
+    /**
+     * Single-VM-modus med mapping til og fra JAXB-klasser.
+     */
+    SINGLE_VM_XML,
 }

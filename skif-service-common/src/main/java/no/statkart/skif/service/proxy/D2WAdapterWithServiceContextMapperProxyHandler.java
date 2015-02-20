@@ -36,6 +36,11 @@ public class D2WAdapterWithServiceContextMapperProxyHandler<T, A> extends D2WAda
         this.contextMapper = contextMapper;
     }
 
+    public D2WAdapterWithServiceContextMapperProxyHandler(Class<A> adapteeClass, ProxyHandler<A> handler, Mapping map, ExceptionMapping exceptionMapping, ServiceContextMapper<?> contextMapper) {
+        super(adapteeClass, handler, map, exceptionMapping);
+        this.contextMapper = contextMapper;
+    }
+
     protected ServiceContextMapper<?> getContextMapper() {
         return contextMapper;
     }

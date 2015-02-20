@@ -155,8 +155,10 @@ subprojects { Project project ->
     }
 
     project.tasks.withType(Test) { Test test ->  //felles for alle test-tasks
-        def singleVm = Boolean.valueOf(rootProject.ext.properties['single_vm'])
+        def singleVm = rootProject.ext.properties['service_mode'] == 'SINGLE_VM'
+        def server = rootProject.ext.properties['service_mode'] == 'JEE'
         logger.debug "single_vm is set to ${singleVm} for ${project.path}"
+        logger.debug "server is set to ${server} for ${project.path}"
 
         useTestNG() {  //benytter kun TestNG over alt
 //            listeners << 'org.uncommons.reportng.HTMLReporter' // Gradles innebygde rapport viser ikke skipped
@@ -165,7 +167,7 @@ subprojects { Project project ->
 
         filterTestGroup(test, 'broken', 'EXCLUDE')
         filterTestGroup(test, 'singlevm-required', singleVm ? 'IGNORED' : 'EXCLUDE')
-        filterTestGroup(test, 'server-required', singleVm ? 'EXCLUDE' : 'IGNORED')
+        filterTestGroup(test, 'server-required', server ? 'IGNORED' : 'EXCLUDE')
 
         systemProperties "org.uncommons.reportng.stylesheet": "${project.rootProject.file('all/test/report/reportng-1.1.3/stylesheets/hudsonesque.css')}"
         systemProperties "org.uncommons.reportng.title": "${project.name} Report"

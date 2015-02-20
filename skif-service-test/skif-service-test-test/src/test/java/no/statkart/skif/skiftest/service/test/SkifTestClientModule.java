@@ -55,7 +55,8 @@ public class SkifTestClientModule extends SkifModule {
             // Kun for JEE mode
             module.getStrategy(ServiceMode.JEE).setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ClientCallServiceChainFactoryJEE.class, ClientLoggingProxyHandler.class));
             install(module);
-            install(new RemoteServiceModule(moduleConfiguration, new SkifTestGroup1Services().getServices(), new SkifTestMapper().getMapping()).setServiceContextMapperClass(SkifTestServiceContextMapper.class));
+            install(new RemoteServiceModule(moduleConfiguration, new SkifTestGroup1Services().getServices(), new SkifTestMapper().getMapping()).setServiceContextMapperClass(SkifTestServiceContextMapper.class).
+                    setExceptionMapping(new SkifTestExceptionMapper().getMapping()));
         }
     }
 

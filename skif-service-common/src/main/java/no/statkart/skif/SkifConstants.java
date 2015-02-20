@@ -6,7 +6,6 @@ package no.statkart.skif;
  */
 public interface SkifConstants {
     public static final String JEE_POSTFIX = "JEE";
-    public static final String SINGEL_VM_POSTFIX = "SingleVm";
-
-
+    public static final String SINGLE_VM_POSTFIX = "SingleVm";
+    public static final String SINGLE_VM_XML_POSTFIX = "SingleVmXml";
 }

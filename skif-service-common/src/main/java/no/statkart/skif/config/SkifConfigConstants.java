@@ -8,6 +8,7 @@ public class SkifConfigConstants {
 
     public final static String SINGLE_VM_SERVER_INJECTOR = "skif.single_vm_serverInjector";
     public final static String SINGLE_VM = "skif.single_vm";
+    public final static String SERVICE_MODE = "skif.service_mode";
     public static final String MODULE_CLASS = "skif.module_class";
     public static final String MODULE_EXT_CLASS = "skif.module_ext_class";
     public static final String MODULE_STRATEGY_FACTORY_CLASS = "skif.module_strategy_factory_class";

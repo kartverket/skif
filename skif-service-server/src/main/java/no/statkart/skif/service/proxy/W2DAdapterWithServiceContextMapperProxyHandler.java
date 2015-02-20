@@ -29,6 +29,11 @@ public class W2DAdapterWithServiceContextMapperProxyHandler<T, A> extends W2DAda
         this.contextMapper = (ServiceContextMapper<Object>) contextMapper;
     }
 
+    public W2DAdapterWithServiceContextMapperProxyHandler(Class<A> adapteeClass, ProxyHandler<A> handler, Mapping map, ExceptionMapping exceptionMapping, ServiceContextMapper<?> contextMapper) {
+        super(adapteeClass, handler, map, exceptionMapping);
+        this.contextMapper = (ServiceContextMapper<Object>) contextMapper;
+    }
+
     /**
      * Mapper argumenter i args slik at de kan brukes som innput parametre til {@code doapiMethod}. Hvis {@code contextMapper}
      * er satt så mappes siste parameter i {@code args} til et intern domain ServiceContext objekt. De resterende parameter

@@ -64,7 +64,7 @@ public class StrategyTupleTest {
     public void testNewStrategyConfigElementWithNoSingleVmClassOnClasspath() {
         StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<RemoteServiceModuleStrategy>(AnotherStrategy.class);
         assertEquals(tuple.getStrategyClassName(ServiceMode.JEE), AnotherStrategyJEE.class.getName());
-        assertEquals(tuple.getStrategyClassName(ServiceMode.SINGLE_VM), AnotherStrategy.class.getName() + SkifConstants.SINGEL_VM_POSTFIX);
+        assertEquals(tuple.getStrategyClassName(ServiceMode.SINGLE_VM), AnotherStrategy.class.getName() + SkifConstants.SINGLE_VM_POSTFIX);
 
         assertNotNull(tuple.getStrategy(ServiceMode.JEE));
         assertSame(tuple.getStrategy(ServiceMode.JEE).getClass(), AnotherStrategyJEE.class);

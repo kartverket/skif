@@ -12,6 +12,7 @@ import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreClient;
+import no.statkart.skif.store.module.common.RemoteServiceModuleStrategyWithServiceContextSVMapperSingleVmXml;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.storetest.config.*;
 import no.statkart.skif.storetest.domain.basic.HistSimple;
@@ -74,7 +75,8 @@ public class WSMappingTest extends StoreTestTestCase {
         protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
             ClientModuleStrategyFactory clientModuleStrategyFactory = new ClientModuleStrategyFactory();
 
-            clientModuleStrategyFactory.addPrototype(RemoteServiceModule.class, new StrategyTuple<RemoteServiceModuleStrategy>(null, RemoteServiceModuleStrategySingleVmXmlWithServiceContextSVMapper.class));
+            // Kjører dermed på en måte alltid i SINGLE_VM_XML-modus (det finnes kanskje en bedre måte å gjøre dette på)
+            clientModuleStrategyFactory.addPrototype(RemoteServiceModule.class, new StrategyTuple<RemoteServiceModuleStrategy>(null, RemoteServiceModuleStrategyWithServiceContextSVMapperSingleVmXml.class, RemoteServiceModuleStrategyWithServiceContextSVMapperSingleVmXml.class));
 
             return clientModuleStrategyFactory;
         }

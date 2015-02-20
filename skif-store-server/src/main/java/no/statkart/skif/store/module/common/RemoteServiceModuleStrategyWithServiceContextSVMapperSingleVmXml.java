@@ -1,5 +1,6 @@
-package no.statkart.skif.service.module.common;
+package no.statkart.skif.store.module.common;
 
+import no.statkart.skif.service.module.common.RemoteServiceModuleStrategySingleVmXml;
 import no.statkart.skif.service.proxy.SingleVmViaWSWithServiceContextSVMapperRemoteCallProxyHandler;
 
 /**
@@ -11,8 +12,8 @@ import no.statkart.skif.service.proxy.SingleVmViaWSWithServiceContextSVMapperRem
  * @author Henrik Fredholm
  * @since 2.4.0
  */
-public class RemoteServiceModuleStrategySingleVmXmlWithServiceContextSVMapper extends RemoteServiceModuleStrategySingleVmXml {
-    public RemoteServiceModuleStrategySingleVmXmlWithServiceContextSVMapper() {
+public class RemoteServiceModuleStrategyWithServiceContextSVMapperSingleVmXml extends RemoteServiceModuleStrategySingleVmXml {
+    public RemoteServiceModuleStrategyWithServiceContextSVMapperSingleVmXml() {
         super(SingleVmViaWSWithServiceContextSVMapperRemoteCallProxyHandler.class);
     };
 }
