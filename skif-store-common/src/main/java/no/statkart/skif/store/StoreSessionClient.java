@@ -218,7 +218,6 @@ public class StoreSessionClient extends AbstractStoreSession {
                     entry.setLockCreatedByLevel(level);
                 }
             } else {
-                // TODO: Finne ut hva som skal skje dersom objektet allerede er låst, enten på dette nivå eller et lavere
                 int lockLevel = entry.calcLockLevelStartingFrom(level);
                 if (lockLevel < 0) {
                     // Objektet er ikke låst på klienten
@@ -227,11 +226,11 @@ public class StoreSessionClient extends AbstractStoreSession {
                         entry.setLocked(level, bubbleObject);
                         entry.setLockCreatedByLevel(level);
                     } else {
+                        // TODO: Hva skal skje dersom objektet ikke er låst
                         throw new ImplementationException("Undefined behavior");
                     }
-                } else {
-                    throw new ImplementationException("Undefined behavior");
                 }
+                // Hvis objektet er allerede låst, så ignoreres den innkommende kopien
             }
         }
     }
