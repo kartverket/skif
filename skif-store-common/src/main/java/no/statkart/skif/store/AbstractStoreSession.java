@@ -199,7 +199,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             for (int i = 0; i < bubbleObjectsFound.size(); i++) {
                 if (bubbleObjectsFound.get(i) == null) {
                     final StoreEntry storeEntry = storeEntryMap.get(orderedBubbleIds.get(i));
-                    bubbleObjectsFound.set(i, (T) storeEntry.getBubbleObject(level));
+                    bubbleObjectsFound.set(i, (T) storeEntry.getDerivedBubbleObjectCopyIfLocked(level, store));
                 }
             }
         }
