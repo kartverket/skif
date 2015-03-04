@@ -12,6 +12,16 @@
 
         <property name="kodeverdi"/>
 
+        <!-- For øyeblikket er alle StoreTest-koder lokalisert, siden de var det i forrige revisjon. Mapper derfor lokaliseringen allerede her. -->
+        <map name="localizationMap" table="HistoriskDbKodeLoc" lazy="true" fetch="join">
+            <key column="id"/>
+            <composite-map-key class="no.statkart.skif.store.localization.LocalizationMap$LocalizationKey">
+                <key-property name="locale" type="no.statkart.skif.store.persistence.hibernate.type.LocaleType"/>
+                <key-property name="name"/>
+            </composite-map-key>
+            <element column="value" type="java.lang.String"/>
+        </map>
+
         <subclass name="no.statkart.skif.storetest.domain.koder.SimpleLocalizedDbKode" discriminator-value="SimpleLocalizedDbKode">
         </subclass>
     </class>
