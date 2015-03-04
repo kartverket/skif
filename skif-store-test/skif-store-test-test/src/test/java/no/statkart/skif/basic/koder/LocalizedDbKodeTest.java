@@ -49,7 +49,7 @@ public class LocalizedDbKodeTest extends StoreTestTestCase {
 
         testdataService.saveAll(mockupFacade.getAllTransfers());
 
-        SimpleLocalizedDbKode insertedKode = storeService.getObject(kodeId);
+        SimpleLocalizedDbKode insertedKode = storeService.lock(kodeId);
         Assert.assertEquals(insertedKode.getBeskrivelse().getText(Locale.ROOT), "Test" + testNumber.getNumber(), "Inserted beskrivelse ROOT");
         Assert.assertEquals(insertedKode.getBeskrivelse().getText(norsk), "Test" + testNumber.getNumber(), "Inserted beskrivelse norsk");
 
@@ -59,8 +59,10 @@ public class LocalizedDbKodeTest extends StoreTestTestCase {
         insertedKode.setBeskrivelse(beskrivelse);
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, new MockupTransfer(Collections.<BubbleObject>emptyList(), Arrays.asList(insertedKode), Collections.<BubbleObject>emptyList(), testNumber));
 
-        SimpleLocalizedDbKode updatedKode = storeService.getObject(kodeId);
+        SimpleLocalizedDbKode updatedKode = storeService.lock(kodeId);
         Assert.assertEquals(insertedKode.getBeskrivelse().getText(Locale.ROOT), "Updated" + testNumber.getNumber(), "Updated beskrivelse ROOT");
         Assert.assertEquals(insertedKode.getBeskrivelse().getText(norsk), "Oppdatert" + testNumber.getNumber(), "Updated beskrivelse norsk");
+
+        testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, new MockupTransfer(Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), Arrays.asList(updatedKode), testNumber));
     }
 }
