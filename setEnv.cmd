@@ -16,7 +16,7 @@ if exist setEnv_personal.cmd call setEnv_personal.cmd
 : Window title
 if "%TITLE%"=="" (
    for /D %%P in (%PROJECT_ROOT%) do (
-      set TITLE=SktoolsKode - %%~nxP
+      set TITLE=SKIF - %%~nxP
    )
 )
 title %TITLE%
