@@ -2,13 +2,13 @@ package no.statkart.skif.storetest.domain;
 
 
 import com.google.inject.Inject;
-import no.statkart.skif.store.KodelisteTransfer;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.Store;
+import no.statkart.skif.mockup.TestNumber;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.kodeliste.KodelisteId;
+import no.statkart.skif.store.localization.LocalizedString;
 import no.statkart.skif.storetest.domain.basic.BubbleWithKode;
 import no.statkart.skif.storetest.domain.demo.koder.*;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
@@ -17,13 +17,18 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
+import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static org.fest.assertions.api.Assertions.*;
+import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
@@ -33,6 +38,8 @@ import static org.fest.assertions.api.Assertions.*;
 public class KodeTest extends StoreTestTestCase {
     @Inject
     Store store;
+    @Inject
+    private StoreUpdateService updateService;
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
@@ -159,7 +166,7 @@ public class KodeTest extends StoreTestTestCase {
     public void testCreateInstance() {
         StoreTestKodelisteLongId<?> kodelisteId1 = new StoreTestKodelisteLongId<StoreTestKodelisteLong>(1L);
         StoreTestKodelisteLong kodeliste = kodelisteId1.createTypeInstance();
-        Assert.assertNull(kodeliste.getId());
+        assertNull(kodeliste.getId());
         Assert.assertEquals(kodeliste.getKoderIds().size(), 0);
     }
 
@@ -211,6 +218,56 @@ public class KodeTest extends StoreTestTestCase {
         List list = store.get(kodelisteIds);
 
         Assert.assertNotNull(kodelisteTransfer);
+    }
+
+    /**
+     * Tester opprettelse og sletting av koder og tilhørende oppdatering av kodeliste. Testen viser
+     * dagens rammeverk pt ikke støtter automatisk oppdatering av kodelisten på klient.
+     *
+     * TODO: Videre viser testen at inneværende versjon av SKIF ved store.register ikke refresher eksterende objekter
+     */
+    public void testInsertUpdateAndDeleteDbKode() {
+        TestNumber testNumber = mockupFacadeFactory.getWriteMockupFacade().getTestNumber();
+        Locale norsk = new Locale("no", "NO");
+        LocalizedString localizedNavn = new LocalizedString();
+        localizedNavn.setText(norsk, "Testkode");
+
+        KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
+        KodelisteTransfer<?> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
+        store.register(kodelisteTransfer);
+
+        // Opprett en kode og test at den er med i ny kodeliste fra server
+        C1DbKode c1DbKodeNew = new C1DbKode();
+        c1DbKodeNew.setKodeverdi("NEW-" + testNumber.getNumber());
+        c1DbKodeNew.setNavn(localizedNavn);
+        UnitOfWork unitOfWork = store.beginUnitOfWork();
+        store.insert(c1DbKodeNew);
+        assertEquals(c1DbKodeNew.getKodelisteId(), C1DbKodeId.KODELISTE_ID);
+        // TODO: Endre kodeliste til å bruke inversrelasjon slik at idlisten blir oppdatert automatisk på klient
+        assertFalse(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet ikke at cachet kodelisten på klient  blir oppdatert automatisk når nye koder legges til");
+        updateService.saveTransfer(store.getUnitOfWorkTransfer());
+        unitOfWork.close();
+
+        kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
+        // TODO: store.register virker ikke når objekter finnes fra før. Denne linje kan tas vekk nå det er fixet
+        store.evictAll();
+        store.register(kodelisteTransfer);
+        assertTrue(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet at kodeliste fra server har blitt oppdatert automatisk når nye koder har blitt lagt til");
+
+        // Slett koden og test at er fjernet i kodelisten fra server.
+        unitOfWork = store.beginUnitOfWork();
+        CDbKode c1DbKodeToDelete = store.lock(c1DbKodeNew.getId());
+        store.delete(c1DbKodeToDelete);
+        // TODO: Endre kodeliste til å bruke inversrelasjon slik at idlisten blir oppdatert automatisk på klient
+        assertTrue(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet ikke at cachet kodelisten på klient  blir oppdatert automatisk når koder fjernes");
+        updateService.saveTransfer(store.getUnitOfWorkTransfer());
+        unitOfWork.close();
+
+        kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
+        // TODO: store.register virker ikke når objekter finnes fra før. Denne linje kan tas vekk nå det er fixet
+        store.evictAll();
+        store.register(kodelisteTransfer);
+        assertFalse(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet at kodeliste fra server har blitt oppdatert automatisk når koder fjernes");
     }
 
 //    public void testKodeIdLookup() {

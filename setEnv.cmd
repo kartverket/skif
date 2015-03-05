@@ -9,9 +9,17 @@ rem Setter hovedkatalog for prosjektet. PROJECT_ROOT inneholder '\' til slutt de
 rem %~dp0 is name of current script under NT
 set PROJECT_ROOT=%~dp0.
 
-rem les inn JAVA_HOME, ANT_HOME, MAVEN_HOME og andre maskin/bruker spesifike settings
+rem les inn JAVA_HOME, GRADLE_HOME, MAVEN_HOME og andre maskin/bruker spesifike settings
 if exist setEnv_personal.cmd call setEnv_personal.cmd
 
+
+: Window title
+if "%TITLE%"=="" (
+   for /D %%P in (%PROJECT_ROOT%) do (
+      set TITLE=SKIF - %%~nxP
+   )
+)
+title %TITLE%
 
 
 rem .NET Setup (optional):

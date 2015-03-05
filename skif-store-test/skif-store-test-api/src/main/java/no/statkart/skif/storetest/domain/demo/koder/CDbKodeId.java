@@ -32,7 +32,7 @@ public class CDbKodeId<T extends CDbKode> extends StoreTestDbKodeId<T> {
     public boolean equals(Object id) {
         if (this==id) return true;
         // Todo: Tror ikke denne er helt riktig C1DbKodeId(1) skal ikke være lik C2DbKodeId(1).
-        return (id!=null && id instanceof CDbKodeId && ((CDbKodeId) id).getValue().equals((((CDbKodeId) id).getValue())) && this.getSnapshotVersion()==((CDbKodeId) id).getSnapshotVersion());
+        return (id!=null && id instanceof CDbKodeId && this.getValue().equals((((CDbKodeId) id).getValue())) && this.getSnapshotVersion()==((CDbKodeId) id).getSnapshotVersion());
     }
 
     @Override
