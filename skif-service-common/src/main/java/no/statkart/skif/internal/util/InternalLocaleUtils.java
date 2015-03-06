@@ -5,8 +5,12 @@ import java.util.Locale;
 /**
  * SKIF-271:
  * Implementasjon hentet ifra Apache Commons Lang 3.1
+ * <p/>
+ * SKIF-462:
+ * Tilpasset med støtte for Locale.ROOT, som representeres som tom streng.
  *
  * @author Leif Lislegård
+ * @author Tor Egil R. Strand
  * @since 2.2
  */
 public class InternalLocaleUtils {
@@ -18,6 +22,7 @@ public class InternalLocaleUtils {
      * locale object from it.</p>
      *
      * <pre>
+     *   LocaleUtils.toLocale("")           = new Locale("", "") // SKIF
      *   LocaleUtils.toLocale("en")         = new Locale("en", "")
      *   LocaleUtils.toLocale("en_GB")      = new Locale("en", "GB")
      *   LocaleUtils.toLocale("en_GB_xxx")  = new Locale("en", "GB", "xxx")   (#)
@@ -43,6 +48,9 @@ public class InternalLocaleUtils {
             return null;
         }
         int len = str.length();
+        if (len == 0) {
+            return Locale.ROOT;
+        }
         if (len != 2 && len != 5 && len < 7) {
             throw new IllegalArgumentException("Invalid locale format: " + str);
         }
