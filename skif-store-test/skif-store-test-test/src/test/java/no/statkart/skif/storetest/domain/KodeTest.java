@@ -234,6 +234,8 @@ public class KodeTest extends StoreTestTestCase {
 
         KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
         KodelisteTransfer<?> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
+        // TODO: store.register virker ikke når objekter finnes fra før. Denne linje kan tas vekk nå det er fixet
+        store.evictAll();
         store.register(kodelisteTransfer);
 
         // Opprett en kode og test at den er med i ny kodeliste fra server
