@@ -688,7 +688,18 @@ public class StoreSessionServer extends AbstractStoreSession {
         for (StoreSessionReadListener readListener : readListeners) {
             bubbleObject = readListener.onRegister(bubbleObject);
         }
-        return storeCache.register(level, persistentBubbleObject, bubbleObject);
+
+        StoreEntry entry = storeCache.register(level, persistentBubbleObject, bubbleObject);
+
+        if (level > 0) {
+            // Dersom vi er i en unit-of-work på server, så må/bør vi sjekke låsetilstanden til objektet.
+            boolean locked = lockerStrategy.isLockedByCaller(bubbleObject.getId());
+            if (locked) {
+                lockEntry(entry, 0, false); // level er 0 fordi låsen var der fra før
+            }
+        }
+
+        return entry;
     }
 
     @Override

@@ -225,4 +225,35 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
             clientStore.closeUnitOfWork(unitOfWork);
         }
     }
+
+    /**
+     * Tester at StoreSessionServer tar seg bryet med å hente låsinformasjon fra databasen ved vanlig get, dersom man er i unit-of-work.
+     */
+    public void testGetLocked() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+
+        clientStore.lock(simpleId1);
+
+        server.runInTxRequiresNew(new RunOnServerMethod() {
+            @Inject
+            private Store serverStore;
+
+            @Override
+            public Object run() {
+                UnitOfWork unitOfWork = serverStore.beginUnitOfWork();
+                try {
+                    Simple simple = serverStore.get(simpleId1);
+
+                    serverStore.update(simple);
+
+                    serverStore.abortUnitOfWork(unitOfWork);
+                } finally {
+                    unitOfWork.close();
+                }
+
+                return null;
+            }
+        });
+    }
 }
