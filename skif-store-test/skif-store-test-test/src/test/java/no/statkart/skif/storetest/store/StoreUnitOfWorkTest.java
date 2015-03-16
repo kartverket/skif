@@ -311,4 +311,37 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             }
         });
     }
+
+    public void testEndUnitOfWork() {
+        UnitOfWork unitOfWork;
+
+        Store store = injector.getInstance(Store.class);// Klient-store
+
+        StoreTestMockupFacadeFactory mockupFacadeFactory = injector.getInstance(StoreTestMockupFacadeFactory.class);
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+
+        unitOfWork = store.beginUnitOfWork();
+        try {
+            Simple simple = store.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+            store.update(simple);
+            store.endUnitOfWork(unitOfWork);
+            fail("No exception");
+        } catch (ImplementationException e) {
+            assertTrue(e.getMessage().contains("Store contains modified objects"));
+        } finally {
+            unitOfWork.close();
+        }
+
+        store.evictAll();
+
+        unitOfWork = store.beginUnitOfWork();
+        try {
+            store.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+            store.endUnitOfWork(unitOfWork);
+        } finally {
+            unitOfWork.close();
+        }
+
+        store.evictAll();
+    }
 }
