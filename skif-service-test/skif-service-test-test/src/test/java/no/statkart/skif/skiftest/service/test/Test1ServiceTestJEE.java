@@ -23,7 +23,7 @@ import no.statkart.skif.service.provider.ServiceProvider;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.D2WAdapterWithServiceContextMapperProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
-import no.statkart.skif.service.ws.JaxWsServiceWithDynamicRequestContextProvider;
+import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.skiftest.service.SkifTestServiceContext;
 import no.statkart.skif.skiftest.service.test1.Test1Service;
 import no.statkart.skif.skiftest.wsapi.SkifTestServiceContextMapper;
@@ -69,7 +69,7 @@ public class Test1ServiceTestJEE {
                         requireBinding(ServerUrlHolder.class);
                         requireBinding(HostnameVerifier.class);
                         // Bind Web Service interface
-                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceWithDynamicRequestContextProvider<no.statkart.skif.skiftest.wsapi.service.test1.Test1Service>>() {
+                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceProvider<no.statkart.skif.skiftest.wsapi.service.test1.Test1Service>>() {
                         });
 
                         bind(new TypeLiteral<ServiceContextMapper<?>>(){}).to(SkifTestServiceContextMapper.class);

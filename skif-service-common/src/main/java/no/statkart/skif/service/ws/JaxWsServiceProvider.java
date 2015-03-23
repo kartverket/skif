@@ -17,14 +17,14 @@ import javax.net.ssl.HostnameVerifier;
  * @see JaxWsServicePool
  */
 @Singleton
-public class JaxWsServiceWithDynamicRequestContextProvider<S> implements Provider<S> {
+public class JaxWsServiceProvider<S> implements Provider<S> {
     private final TypeLiteral<S> type;
     private final JaxWsServicePool<S> pool;
     private final LoginUserHolder loginUserHolder;
     private final ServerUrlHolder serverUrlHolder;
 
     @Inject
-    public JaxWsServiceWithDynamicRequestContextProvider(TypeLiteral<S> type, LoginUserHolder loginUserHolder, ServerUrlHolder serverUrlHolder, @Nullable HostnameVerifier hostnameVerifier) {
+    public JaxWsServiceProvider(TypeLiteral<S> type, LoginUserHolder loginUserHolder, ServerUrlHolder serverUrlHolder, @Nullable HostnameVerifier hostnameVerifier) {
         this.type = type;
         this.loginUserHolder = loginUserHolder;
         this.serverUrlHolder = serverUrlHolder;

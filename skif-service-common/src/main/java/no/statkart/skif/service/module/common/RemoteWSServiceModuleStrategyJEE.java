@@ -3,7 +3,7 @@ package no.statkart.skif.service.module.common;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.service.ws.JaxWsServiceWithDynamicRequestContextProvider;
+import no.statkart.skif.service.ws.JaxWsServiceProvider;
 
 /**
  * Kobler umappede webservice-kall opp mot JAX-WS-kjeden.
@@ -23,7 +23,7 @@ public class RemoteWSServiceModuleStrategyJEE extends RemoteWSServiceModuleStrat
 
     @Override
     public <S> void bindService(Binder outerBinder, Class<S> service) {
-        TypeLiteral<JaxWsServiceWithDynamicRequestContextProvider<S>> jaxWsServiceProviderType = SkifUtil.typeLiteral(JaxWsServiceWithDynamicRequestContextProvider.class, service);
+        TypeLiteral<JaxWsServiceProvider<S>> jaxWsServiceProviderType = SkifUtil.typeLiteral(JaxWsServiceProvider.class, service);
         outerBinder.bind(service).toProvider(jaxWsServiceProviderType);
     }
 }

@@ -13,7 +13,7 @@ import no.statkart.skif.service.ServerUrlHolder;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.WSRemoteServiceModule;
-import no.statkart.skif.service.ws.JaxWsServiceWithDynamicRequestContextProvider;
+import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
 import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
 import no.statkart.skif.skiftest.wsapi.service.test1.Test1Service;
@@ -129,7 +129,7 @@ public class Test1ServiceWSTestJEE {
                         requireBinding(LoginUserHolder.class);
                         requireBinding(ServerUrlHolder.class);
                         requireBinding(HostnameVerifier.class);
-                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceWithDynamicRequestContextProvider<Test1Service>>() {
+                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceProvider<Test1Service>>() {
                         });
                     }
                 });
@@ -154,7 +154,7 @@ public class Test1ServiceWSTestJEE {
                 new AbstractModule() {
                     @Override
                     protected void configure() {
-                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceWithDynamicRequestContextProvider<Test1Service>>() {
+                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceProvider<Test1Service>>() {
                         });
                     }
                 });

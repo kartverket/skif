@@ -4,7 +4,7 @@ import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.service.ws.JaxWsServiceWithDynamicRequestContextProvider;
+import no.statkart.skif.service.ws.JaxWsServiceProvider;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class WSRemoteServiceModule extends SkifModule {
     @Override
     protected void configure() {
         for (Class<?> serviceClass : serviceClasses) {
-            bind(serviceClass).toProvider(typeLiteral(JaxWsServiceWithDynamicRequestContextProvider.class, serviceClass));
+            bind(serviceClass).toProvider(typeLiteral(JaxWsServiceProvider.class, serviceClass));
         }
     }
 }
