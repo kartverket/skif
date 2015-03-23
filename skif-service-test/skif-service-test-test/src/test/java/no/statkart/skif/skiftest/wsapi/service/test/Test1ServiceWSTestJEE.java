@@ -13,7 +13,6 @@ import no.statkart.skif.service.ServerUrlHolder;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.WSRemoteServiceModule;
-import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.service.ws.JaxWsServiceWithDynamicRequestContextProvider;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
 import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
@@ -130,7 +129,7 @@ public class Test1ServiceWSTestJEE {
                         requireBinding(LoginUserHolder.class);
                         requireBinding(ServerUrlHolder.class);
                         requireBinding(HostnameVerifier.class);
-                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceProvider<Test1Service>>() {
+                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceWithDynamicRequestContextProvider<Test1Service>>() {
                         });
                     }
                 });
@@ -140,8 +139,10 @@ public class Test1ServiceWSTestJEE {
 
     /**
      * JAX-WS klient mot remote server hvor Guice binding av Web Servicen konfigureres manuelt vha en JAX-WS provider som
-     * støtter dynamisk endringer username, password og url
-     * som
+     * støtter dynamisk endringer username, password og url.
+     * <p/>
+     * Da testen ble skrevet fantes det alternativer. Nå er dette eneste måten å gjøre dette på, og de andre testene er
+     * endret, men denne tester noe de ikke tester og dermed beholdt.
      */
     @Test(groups = "server-required")
     public void testJaxWsClientServiceCreateUsingProviderWithDynamicRequestContext() throws Exception {

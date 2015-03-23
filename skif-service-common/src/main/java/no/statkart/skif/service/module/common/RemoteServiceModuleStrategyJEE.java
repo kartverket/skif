@@ -11,7 +11,6 @@ import no.statkart.skif.service.provider.ServiceProvider;
 import no.statkart.skif.service.proxy.D2WAdapterProxyHandler;
 import no.statkart.skif.service.proxy.D2WAdapterWithServiceContextMapperProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
-import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.service.ws.JaxWsServiceWithDynamicRequestContextProvider;
 
 import java.util.ArrayList;
@@ -90,7 +89,7 @@ public class RemoteServiceModuleStrategyJEE extends RemoteServiceModuleStrategy 
         TypeLiteral<ServiceProvider<S>> remoteServiceProviderType = SkifUtil.typeLiteral(ServiceProvider.class, service);
         TypeLiteral<TerminatingProxyHandler<S>> terminatingProxyHandlerType = SkifUtil.typeLiteral(TerminatingProxyHandler.class, service);
         TypeLiteral<D2WAdapterProxyHandler<S,W>> d2WAdapterProxyHandlerType = SkifUtil.typeLiteral(d2WAdapterProxyHandlerClass, service, webService);
-        TypeLiteral<JaxWsServiceProvider<W>> jaxWsServiceProviderType = SkifUtil.typeLiteral(JaxWsServiceWithDynamicRequestContextProvider.class, webService);
+        TypeLiteral<JaxWsServiceWithDynamicRequestContextProvider<W>> jaxWsServiceProviderType = SkifUtil.typeLiteral(JaxWsServiceWithDynamicRequestContextProvider.class, webService);
 
         outerBinder.bind(service).toProvider(remoteServiceProviderType);
         outerBinder.bind(webService).toProvider(jaxWsServiceProviderType);

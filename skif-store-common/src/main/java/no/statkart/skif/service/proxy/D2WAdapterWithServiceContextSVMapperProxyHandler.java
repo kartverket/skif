@@ -1,6 +1,8 @@
 package no.statkart.skif.service.proxy;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.service.ServiceContextMapper;
@@ -34,12 +36,12 @@ public class D2WAdapterWithServiceContextSVMapperProxyHandler<T, A> extends D2WA
     final SnapshotVersionContext snapshotVersionContext;
 
     @Inject()
-    public D2WAdapterWithServiceContextSVMapperProxyHandler(A adaptee, Mapping map, @Nullable ServiceContextMapper<?> contextMapper, SnapshotVersionContext snapshotVersionContext) {
-        this(adaptee, map, contextMapper, null, snapshotVersionContext);
+    public D2WAdapterWithServiceContextSVMapperProxyHandler(Provider<A> adapteeProvider, TypeLiteral<A> aType, Mapping map, @Nullable ServiceContextMapper<?> contextMapper, SnapshotVersionContext snapshotVersionContext) {
+        this(adapteeProvider, aType, map, contextMapper, null, snapshotVersionContext);
     }
 
-    public D2WAdapterWithServiceContextSVMapperProxyHandler(A adaptee, Mapping map, ServiceContextMapper<?> contextMapper, @Nullable ExceptionMapping exceptionMapping, SnapshotVersionContext snapshotVersionContext) {
-        super(adaptee, map, contextMapper, exceptionMapping);
+    public D2WAdapterWithServiceContextSVMapperProxyHandler(Provider<A> adapteeProvider, TypeLiteral<A> aType, Mapping map, ServiceContextMapper<?> contextMapper, @Nullable ExceptionMapping exceptionMapping, SnapshotVersionContext snapshotVersionContext) {
+        super(adapteeProvider, aType, map, contextMapper, exceptionMapping);
         this.snapshotVersionContext = snapshotVersionContext;
     }
 

@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  * @since 2.0
  */
 public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<S> {
-    private final S jaxwsInstance;
+    private final JaxWsServicePool<S> jaxwsPool;
     private final LoginUserHolder loginUserHolder;
     private final ServerUrlHolder serverUrlHolder;
     private final String webServiceContextPath;
@@ -23,8 +23,8 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
     private String currentServerUrl;
 
 
-    public JaxWsRequestContextProxyHandler(S jaxwsInstance, LoginUserHolder loginUserHolder, ServerUrlHolder serverUrlHolder, String webServiceContextPath) {
-        this.jaxwsInstance = jaxwsInstance;
+    public JaxWsRequestContextProxyHandler(JaxWsServicePool<S> jaxwsPool, LoginUserHolder loginUserHolder, ServerUrlHolder serverUrlHolder, String webServiceContextPath) {
+        this.jaxwsPool = jaxwsPool;
         this.loginUserHolder = loginUserHolder;
         this.serverUrlHolder = serverUrlHolder;
         this.webServiceContextPath = webServiceContextPath;
@@ -32,19 +32,21 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
 
     @Override
     protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
-        if (currentLoginUser != loginUserHolder.get() || currentServerUrl != serverUrlHolder.get()) {
-            BindingProvider bindings = (BindingProvider) jaxwsInstance;
-            currentLoginUser = loginUserHolder.get();
-            if (currentLoginUser != null) {
-                bindings.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, currentLoginUser.getUsername());
-                bindings.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, currentLoginUser.getPassword());
-            }
-            currentServerUrl = serverUrlHolder.get();
-            String serviceEndpointUrl = currentServerUrl + webServiceContextPath;
-            bindings.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceEndpointUrl);
-        }
+        S jaxwsInstance = jaxwsPool.get();
 
         try {
+            if (currentLoginUser != loginUserHolder.get() || currentServerUrl != serverUrlHolder.get()) {
+                BindingProvider bindings = (BindingProvider) jaxwsInstance;
+                currentLoginUser = loginUserHolder.get();
+                if (currentLoginUser != null) {
+                    bindings.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, currentLoginUser.getUsername());
+                    bindings.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, currentLoginUser.getPassword());
+                }
+                currentServerUrl = serverUrlHolder.get();
+                String serviceEndpointUrl = currentServerUrl + webServiceContextPath;
+                bindings.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceEndpointUrl);
+            }
+
             return method.invoke(jaxwsInstance, args);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();

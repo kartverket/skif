@@ -4,26 +4,26 @@ import com.google.common.collect.Lists;
 import com.google.inject.*;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.SkifClientConfiguration;
-import no.statkart.skif.service.ServiceContextMapper;
-import no.statkart.skif.service.annotation.Call;
-import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
-import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.mapper.IdentityMapper;
-import no.statkart.skif.service.ServerUrlHolder;
+import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.module.DefaultModuleConfiguration;
+import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
+import no.statkart.skif.service.ServerUrlHolder;
+import no.statkart.skif.service.ServiceContextMapper;
+import no.statkart.skif.service.annotation.Call;
 import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.chain.ClientCallServiceChainFactoryJEE;
 import no.statkart.skif.service.chain.ServiceChainFactories;
-import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.provider.ServiceProvider;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.D2WAdapterWithServiceContextMapperProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
-import no.statkart.skif.service.ws.JaxWsServiceProvider;
+import no.statkart.skif.service.ws.JaxWsServiceWithDynamicRequestContextProvider;
 import no.statkart.skif.skiftest.service.SkifTestServiceContext;
 import no.statkart.skif.skiftest.service.test1.Test1Service;
 import no.statkart.skif.skiftest.wsapi.SkifTestServiceContextMapper;
@@ -32,7 +32,6 @@ import no.statkart.skif.util.testsupport.SkifTestConfigurationAccessor;
 import org.testng.annotations.Test;
 
 import javax.net.ssl.HostnameVerifier;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,7 +69,7 @@ public class Test1ServiceTestJEE {
                         requireBinding(ServerUrlHolder.class);
                         requireBinding(HostnameVerifier.class);
                         // Bind Web Service interface
-                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceProvider<no.statkart.skif.skiftest.wsapi.service.test1.Test1Service>>() {
+                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceWithDynamicRequestContextProvider<no.statkart.skif.skiftest.wsapi.service.test1.Test1Service>>() {
                         });
 
                         bind(new TypeLiteral<ServiceContextMapper<?>>(){}).to(SkifTestServiceContextMapper.class);

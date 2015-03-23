@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
@@ -40,12 +42,12 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
 
 
     @Inject()
-    public D2WAdapterProxyHandler(A adaptee, Mapping map) {
-        this(adaptee, map, null);
+    public D2WAdapterProxyHandler(Provider<A> adapteeProvider, TypeLiteral<A> aType, Mapping map) {
+        this(adapteeProvider, aType, map, null);
     }
 
-    public D2WAdapterProxyHandler(A adaptee, Mapping map, ExceptionMapping exceptionMapping) {
-        super(adaptee);
+    public D2WAdapterProxyHandler(Provider<A> adapteeProvider, TypeLiteral<A> aType, Mapping map, ExceptionMapping exceptionMapping) {
+        super(adapteeProvider, (Class<A>) aType.getRawType());
         this.map = map;
         this.exceptionMapping = exceptionMapping;
     }

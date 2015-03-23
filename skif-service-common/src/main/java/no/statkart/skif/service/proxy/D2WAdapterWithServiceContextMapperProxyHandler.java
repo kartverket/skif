@@ -1,6 +1,8 @@
 package no.statkart.skif.service.proxy;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ServiceContextMapper;
 import no.statkart.skif.mapper.Mapping;
@@ -27,12 +29,12 @@ public class D2WAdapterWithServiceContextMapperProxyHandler<T, A> extends D2WAda
     private final ServiceContextMapper<?> contextMapper;
 
     @Inject()
-    public D2WAdapterWithServiceContextMapperProxyHandler(A adaptee, Mapping map, @Nullable ServiceContextMapper<?> contextMapper) {
-        this(adaptee, map, contextMapper, null);
+    public D2WAdapterWithServiceContextMapperProxyHandler(Provider<A> adapteeProvider, TypeLiteral<A> aType, Mapping map, @Nullable ServiceContextMapper<?> contextMapper) {
+        this(adapteeProvider, aType, map, contextMapper, null);
     }
 
-    public D2WAdapterWithServiceContextMapperProxyHandler(A adaptee, Mapping map, ServiceContextMapper<?> contextMapper, @Nullable ExceptionMapping exceptionMapping) {
-        super(adaptee, map, exceptionMapping);
+    public D2WAdapterWithServiceContextMapperProxyHandler(Provider<A> adapteeProvider, TypeLiteral<A> aType, Mapping map, ServiceContextMapper<?> contextMapper, @Nullable ExceptionMapping exceptionMapping) {
+        super(adapteeProvider, aType, map, exceptionMapping);
         this.contextMapper = contextMapper;
     }
 

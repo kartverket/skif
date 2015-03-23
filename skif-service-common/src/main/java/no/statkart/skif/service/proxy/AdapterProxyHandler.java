@@ -1,5 +1,6 @@
 package no.statkart.skif.service.proxy;
 
+import com.google.inject.Provider;
 import no.statkart.skif.exception.ConfigurationException;
 
 import java.lang.reflect.Method;
@@ -21,6 +22,11 @@ public class AdapterProxyHandler<T, A> extends TerminatingProxyHandler<T> {
     public AdapterProxyHandler(A adaptee) {
         adapteeClass = adaptee.getClass();
         adapteeRoot = new InvokeViaInstanceProxyHandler<A>(adaptee);
+    }
+
+    public AdapterProxyHandler(Provider<A> adaptee, Class<A> adapteeClass) {
+        this.adapteeClass = adapteeClass;
+        adapteeRoot = new InvokeViaProviderProxyHandler<A>(adaptee);
     }
 
     public AdapterProxyHandler(Class<A> adapteeClass, ProxyHandler<A> handler) {
