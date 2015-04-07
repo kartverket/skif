@@ -21,7 +21,7 @@ import static com.google.common.base.Preconditions.checkState;
  * relasjonen hentes ut fra trackeren.
  *
  * <P>Trackeren kan håndtere både One og Many relasjoner. Når trackeren er materialiset så vil {@code holder} for One relasjoner
- * være en peker til en BubbleId eller null. og for Many relasjoner vil {@code holder} peke på et Set.
+ * være en peker til en BubbleId eller null. For Many relasjoner vil {@code holder} peke på et Set.
  *
  * @author Henrik Fredholm
  * @since 2.4

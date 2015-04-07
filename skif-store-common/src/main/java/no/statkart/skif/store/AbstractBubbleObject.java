@@ -74,15 +74,9 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
     public Store store() {
         return store;
     }
+
     protected final boolean hasSnapshotVersionCurrentId() {
         return id != null && id.getSnapshotVersion() == SnapshotVersion.CURRENT;
-    }
-
-    protected final <T extends BubbleId<?>> T onChangeRelation(RelationName relationName, T oldValue, T newValue) {
-        if (hasSnapshotVersionCurrentId() && store!=null && oldValue!=newValue) {
-            store.getInstance(StoreRelationCache.class).onChangeRelation(relationName, id, oldValue, newValue);
-        }
-        return newValue;
     }
 
     protected <T> T unwrap(Map<? extends BubbleId<?>, T> mapOfResults) {

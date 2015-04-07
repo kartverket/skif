@@ -11,10 +11,17 @@ import java.util.Set;
 /**
  * Abstract implementasjon av {@link ComponentCollection} for wrapping av {@link java.util.Set}.
  *
+ * Bemerk: I definisjonen av denne klassen burde {@code <O>} egentlig extende både {@code BubbleObject} og
+ * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da må subklassen {@link ComponentBubbleIdSet}
+ * eksplisitt angi den eidende bobleklassen i tillegg til den direkte eiende klassen og det blir og det blir veldig
+ * tungvingt. Har derfor istedet valgt å lage en package private hjelpemetode {@link BubbleIds#onChangeRelationImpl}
+ * som kun krever at {@code owner} er av type BubbleObject.
+ *
  * @author Henrik Fredholm
  * @since 2.4.0
  */
-public abstract class AbstractBubbleIdIdSet<O extends AbstractBubbleObject, E extends BubbleId<?>> extends ForwardingSet<E> implements BubbleIdCollection<O, E> {
+@Deprecated
+public abstract class AbstractBubbleIdIdSet<O extends BubbleObject, E extends BubbleId<?>> extends ForwardingSet<E> implements BubbleIdCollection<O, E> {
     private static final long serialVersionUID = 1L;
     protected final RelationName relationName;
     protected Set<E> delegate;
@@ -51,11 +58,7 @@ public abstract class AbstractBubbleIdIdSet<O extends AbstractBubbleObject, E ex
         boolean added = super.add(element);
         if (added) {
             O owner = getOwner();
-            if (owner != null) {
-                owner.onChangeRelation(relationName, null, element);
-            } else {
-                // TODO: Handle component not connected to owner
-            }
+            BubbleIds.onChangeRelationImpl(owner, relationName, null, element);
         }
         return added;
     }
@@ -66,11 +69,7 @@ public abstract class AbstractBubbleIdIdSet<O extends AbstractBubbleObject, E ex
         boolean removed = super.remove(object);
         if (removed) {
             O owner = getOwner();
-            if (owner != null) {
-                owner.onChangeRelation(relationName, (E) object, null);
-            } else {
-                // TODO: Handle component not connected to owner
-            }
+            BubbleIds.onChangeRelationImpl(owner, relationName, (E) object, null);
         }
         return removed;
     }
@@ -92,12 +91,8 @@ public abstract class AbstractBubbleIdIdSet<O extends AbstractBubbleObject, E ex
     @Override
     public void clear() {
         O owner = getOwner();
-        if (owner != null) {
-            for (E e : delegate) {
-                owner.onChangeRelation(relationName, e, null);
-            }
-        } else {
-            // TODO: Handle component not connected to owner
+        for (E e : delegate) {
+            BubbleIds.onChangeRelationImpl(owner, relationName, e, null);
         }
         super.clear();
     }
@@ -124,11 +119,7 @@ public abstract class AbstractBubbleIdIdSet<O extends AbstractBubbleObject, E ex
         @Override
         public void remove() {
             O owner = getOwner();
-            if (owner != null) {
-                owner.onChangeRelation(relationName, current, null);
-            } else {
-                // TODO: Handle component not connected to owner
-            }
+            BubbleIds.onChangeRelationImpl(owner, relationName, current, null);
             super.remove();
         }
     }

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import no.statkart.skif.store.relation.cache.RelationName;
+import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -33,7 +34,7 @@ public class Components {
      */
     @Nullable
     public static <O, C extends ComponentWithOwnerReference<O>> C checkSetComponent(O owner, @Nullable C thisComponent, @Nullable C component) {
-        if (thisComponent != null && component==null) {
+        if (thisComponent != null && component == null) {
             // Komponent fjernes fra owner
             thisComponent.setOwner(null);
         } else if (thisComponent == component) {
@@ -58,6 +59,13 @@ public class Components {
     static <O, C extends ComponentWithOwnerReference<O>> void setOwner(@Nullable C newComponent, O owner) {
         if (newComponent != null) {
             newComponent.setOwner(owner);
+            if (newComponent instanceof InverseRelationParticipation) {
+                BubbleObject owningBubble = getOwningBubble(newComponent);
+                StoreRelationCache relationCache = BubbleIds.getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull(owningBubble);
+                if (relationCache != null) {
+                    relationCache.updateAdded(owningBubble.getBubbleId(), (InverseRelationParticipation) newComponent);
+                }
+            }
         }
     }
 
@@ -93,11 +101,11 @@ public class Components {
     }
 
 
-    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(CompositeComponent<O,?> owner) {
+    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(CompositeComponent<O, ?> owner) {
         return new CompositeComponentSet<O, E>(owner, Sets.<E>newHashSet());
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(CompositeComponent<O,?> owner, Set<E> set) {
+    static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(CompositeComponent<O, ?> owner, Set<E> set) {
         return new CompositeComponentSet<O, E>(owner, set);
     }
 
@@ -132,43 +140,34 @@ public class Components {
 
     @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> void setDelegate(Set<E> componentSet, Set<E> newElements) {
-        ((ComponentSet)componentSet).setDelegate(newElements);
+        ((ComponentSet) componentSet).setDelegate(newElements);
     }
 
     static public <E extends ComponentWithOwnerReference<?>> Set<E> getDelegate(Set<E> componentSet) {
-        return ((ComponentSet)componentSet).delegate();
+        return ((ComponentSet) componentSet).delegate();
     }
 
     @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> void setDelegate(List<E> componentList, List<E> newElements) {
-        ((ComponentList)componentList).setDelegate(newElements);
+        ((ComponentList) componentList).setDelegate(newElements);
     }
 
     @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> List<E> getDelegate(List<E> componentList) {
-        return ((ComponentList)componentList).delegate();
+        return ((ComponentList) componentList).delegate();
     }
 
-    public static AbstractBubbleObject getOwningBubble(ComponentWithOwnerReference<?> component) {
+    public static BubbleObject getOwningBubble(ComponentWithOwnerReference<?> component) {
         Object result=component;
         do {
-            result = ((ComponentWithOwnerReference<?>)result).getOwner();
-            if (result==null) return null;
+            result = ((ComponentWithOwnerReference<?>) result).getOwner();
+            if (result == null) return null;
         } while (result instanceof ComponentWithOwnerReference<?>);
-        return ((AbstractBubbleObject)result);
+        return ((BubbleObject) result);
     }
 
     public static BubbleObject getOwningBubbleNullSafe(ComponentWithOwnerReference<?> component) {
         return checkNotNull(getOwningBubble(component));
     }
 
-    public static <T extends BubbleId<?>> T onChangeRelation(ComponentWithOwnerReference<?> component, RelationName relationName, T oldValue, T newValue) {
-        AbstractBubbleObject owningBubble = (AbstractBubbleObject) getOwningBubble(component);
-        if (owningBubble!=null) {
-          owningBubble.onChangeRelation(relationName, oldValue, newValue);
-        } else {
-            // TODO: Handle component not connected
-        }
-        return newValue;
-    }
 }

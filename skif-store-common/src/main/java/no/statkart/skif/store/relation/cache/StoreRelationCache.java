@@ -5,10 +5,12 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.*;
 
 import javax.annotation.Nullable;
+import javax.inject.Provider;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -23,6 +25,12 @@ public abstract class StoreRelationCache {
     protected RelationCache relationCache = new RelationCache();
     protected boolean enabled;
     protected final Store store;
+    protected final Provider<RelationCacheRegistry> cacheRegistryProvider = new Provider<RelationCacheRegistry>() {
+        @Override
+        public RelationCacheRegistry get() {
+            return store.getInstance(RelationCacheRegistry.class);
+        }
+    };
 
     protected StoreRelationCache(Store store) {
         this.store = store;
@@ -46,20 +54,28 @@ public abstract class StoreRelationCache {
         this.enabled = enabled;
     }
 
-    public <T extends BubbleId<?>> void onChangeRelation(RelationName relationName, BubbleId<?> sourceId, @Nullable T oldValue, @Nullable T newValue) {
+    public RelationStrategy getStrategy(Method method) {
+        if (enabled) {
+            return cacheRegistryProvider.get().getStrategy(method);
+        } else {
+            return null;
+        }
+    }
+
+    public <E> void onChangeRelation(RelationName relationName, BubbleId<?> sourceId, @Nullable E oldValue, @Nullable E newValue) {
         if (enabled) {
             relationCache.onChangeRelation(getLevel(), inAttachedMode(), relationName, sourceId, oldValue, newValue);
         }
     }
 
-    public RelationValueHolder getRelationValue(RelationName relationName, BubbleId<?> id) {
+    public <E> RelationValueHolder getRelationValue(RelationName relationName, E value) {
         checkState(enabled);
-        return relationCache.getRelationValue(getLevel(), relationName, id);
+        return relationCache.getRelationValue(getLevel(), relationName, value);
     }
 
-    public Object setRelationValue(RelationName relationName, BubbleId<?> id, Object relationValue) {
+    public <E> Object setRelationValue(RelationName relationName, E value, Object relationValue) {
         checkState(enabled);
-        return relationCache.setRelationValue(getLevel(), relationName, id, relationValue);
+        return relationCache.setRelationValue(getLevel(), relationName, value, relationValue);
     }
 
     public RelationName getRelationNameReturnNullIfDisabled(Method method) {
@@ -136,8 +152,39 @@ public abstract class StoreRelationCache {
         }
     }
 
-    public Collection<BubbleId<?>> findNonMaterialized(RelationName relationName, Collection<BubbleId<?>> ids) {
+    public <T> Collection<T> findNonMaterialized(RelationName relationName, Collection<T> ids) {
         checkState(enabled);
         return relationCache.findNonMaterialized(getLevel(), relationName, ids);
     }
+
+    public void updateRemoved(BubbleId<?> owningBubbleId, InverseRelationParticipation oldInstance) {
+        InverseRelationCollector collector = new InverseRelationCollector();
+        oldInstance.collectInverseRelationValues(collector);
+        for (Map.Entry<RelationName, Object> entry : collector.entrySet()) {
+            Object inverseValue = entry.getValue();
+            if (inverseValue instanceof Collection) {
+                for (Object v : (Collection) inverseValue) {
+                    onChangeRelation(entry.getKey(), owningBubbleId, v, null);
+                }
+            } else {
+                onChangeRelation(entry.getKey(), owningBubbleId, inverseValue, null);
+            }
+        }
+    }
+
+    public void updateAdded(BubbleId<?> owningBubbleId, InverseRelationParticipation newInstance) {
+        InverseRelationCollector collector = new InverseRelationCollector();
+        newInstance.collectInverseRelationValues(collector);
+        for (Map.Entry<RelationName, Object> entry : collector.entrySet()) {
+            Object inverseValue = entry.getValue();
+            if (inverseValue instanceof Collection) {
+                for (Object v : (Collection) inverseValue) {
+                    onChangeRelation(entry.getKey(), owningBubbleId, null, v);
+                }
+            } else {
+                onChangeRelation(entry.getKey(), owningBubbleId, null, inverseValue);
+            }
+        }
+    }
+
 }

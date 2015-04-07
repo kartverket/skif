@@ -30,5 +30,8 @@
             <one-to-many class="no.statkart.skif.storetest.domain.relation.uni.direct.X1CCMany"/>
         </set>
 
+        <property name="uniqueOnX1AA"/>
+        <property name="nonUniqueOnX1AA"/>
+
     </class>
 </hibernate-mapping>

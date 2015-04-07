@@ -1,12 +1,12 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
 import com.google.common.collect.Sets;
-import no.statkart.skif.store.Components;
-import no.statkart.skif.store.EntityBubbleComponent;
-import no.statkart.skif.store.ValueObjects;
+import no.statkart.skif.store.*;
+import no.statkart.skif.store.relation.cache.RelationName;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -17,7 +17,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEntityComponent> {
+public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEntityComponent>, InverseRelationParticipation {
     private Long id;
     private BubbleWithEntityComponent owner;
     private String text;
@@ -28,6 +28,11 @@ public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEn
     public Long getId() {
         return id;
     }
+
+    @Override
+    public void collectInverseRelationValues(InverseRelationCollector collector) {
+    }
+
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
     private void setId(Long id) {

@@ -1,5 +1,9 @@
 package no.statkart.skif.store;
 
+import no.statkart.skif.store.relation.cache.RelationName;
+
+import java.util.Map;
+
 /**
  * Interface som angir at et domeneobjekt er en komponent som har en tilbakepeker til det eiende objektet
  *

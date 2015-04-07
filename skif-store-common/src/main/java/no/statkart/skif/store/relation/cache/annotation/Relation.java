@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.*;
 @BindingAnnotation
 @Retention(RUNTIME)
 public @interface Relation {
-    RelationType type() default RelationType.DIRECT;
+    RelationType type() default RelationType.INVERSE;
     Cardinality cardinality();
     String name();
 }

@@ -1,16 +1,10 @@
 package no.statkart.skif.store.persistence;
 
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.util.OracleUtils;
-import oracle.jdbc.OracleConnection;
-import oracle.sql.ARRAY;
-import oracle.sql.ArrayDescriptor;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * En hjelpeklasse for å opprette Oracle ARRAYs fra Collections.
@@ -34,6 +28,7 @@ import java.util.Iterator;
  *    ResultSet resultSet = statement.executeQuery();
  * </pre>
  *
+ * @deprecated use OracleArrayConverter
  * @author frehen
  */
 public class OracleArrayType {
@@ -41,77 +36,33 @@ public class OracleArrayType {
     public static final String ORACLE_DATE_LIST_TYPE = "DATE_LIST_TYPE";
     public static final String ORACLE_STRING_LIST_TYPE = "STRING_LIST_TYPE";
 
+    /**
+     * @deprecated use OracleArrayNumberConverter
+     */
     public static Object getOracleNumberArray(Connection sqlConnection, Collection<? extends Number> objects) {
-        try {
-            final Connection oracleConnection = OracleUtils.getOracleConnection(sqlConnection);
-            ArrayDescriptor oracleArrayDescriptor = ArrayDescriptor.createDescriptor(ORACLE_NUMBER_LIST_TYPE, oracleConnection, true, true);
-            ARRAY array = new ARRAY(oracleArrayDescriptor, oracleConnection, objects.toArray());
-            array.setAutoIndexing(true);
-            return array;
-        } catch (SQLException e) {
-            if(e.getErrorCode() == 17074 && e.getMessage().contains(ORACLE_NUMBER_LIST_TYPE)) {
-                throw new RuntimeException(ORACLE_NUMBER_LIST_TYPE + " is not defined in schema, create it by running the following command: CREATE TYPE " + ORACLE_NUMBER_LIST_TYPE + " AS AS TABLE OF NUMBER;", e);
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
+        return new OracleArrayNumberConverter().toArray(sqlConnection, objects);
     }
 
+
+    /**
+     * @deprecated use OracleArrayStringConverter
+     */
     public static Object getOracleStringArray(Connection sqlConnection, Collection<? extends String> objects) {
-        try {
-            final Connection oracleConnection = OracleUtils.getOracleConnection(sqlConnection);
-            ArrayDescriptor oracleArrayDescriptor = ArrayDescriptor.createDescriptor(ORACLE_STRING_LIST_TYPE, oracleConnection, true, true);
-            ARRAY array = new ARRAY(oracleArrayDescriptor, oracleConnection, objects.toArray());
-            array.setAutoIndexing(true);
-            return array;
-        } catch (SQLException e) {
-            if(e.getErrorCode() == 17074 && e.getMessage().contains(ORACLE_STRING_LIST_TYPE)) {
-                throw new RuntimeException(ORACLE_STRING_LIST_TYPE + " is not defined in schema", e);
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
+        return new OracleArrayStringConverter().toArray(sqlConnection, objects);
     }
 
+
+    /**
+     * @deprecated use OracleArrayDateConverter
+     */
     public static Object getOracleDateArray(Connection sqlConnection, Collection<? extends Date> objects) {
-        try {
-            final OracleConnection oracleConnection = OracleUtils.getOracleConnection(sqlConnection);
-            ArrayDescriptor oracleArrayDescriptor = ArrayDescriptor.createDescriptor(ORACLE_DATE_LIST_TYPE, oracleConnection, true, true);
-            ARRAY array = new ARRAY(oracleArrayDescriptor, oracleConnection, objects.toArray());
-            array.setAutoIndexing(true);
-            return array;
-        } catch (SQLException e) {
-            if(e.getErrorCode() == 17074 && e.getMessage().contains(ORACLE_DATE_LIST_TYPE)) {
-                throw new RuntimeException(ORACLE_DATE_LIST_TYPE + " is not defined in schema", e);
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
+        return new OracleArrayDateConverter().toArray(sqlConnection, objects);
     }
 
+    /**
+     * @deprecated use OracleArrayBubbleIdConverter
+     */
     public static Object getOracleBubbleIdArray(Connection sqlConnection, Collection<? extends BubbleId<?>> ids) {
-        try {
-            final OracleConnection oracleConnection = OracleUtils.getOracleConnection(sqlConnection);
-            ArrayDescriptor oracleArrayDescriptor = ArrayDescriptor.createDescriptor(ORACLE_NUMBER_LIST_TYPE, oracleConnection, true, true);
-            ARRAY array = new ARRAY(oracleArrayDescriptor, oracleConnection, toArray(ids));
-            array.setAutoIndexing(true);
-            return array;
-        } catch (SQLException e) {
-            if(e.getErrorCode() == 17074 && e.getMessage().contains(ORACLE_NUMBER_LIST_TYPE)) {
-                throw new RuntimeException(ORACLE_NUMBER_LIST_TYPE + " is not defined in schema, create it by running the following command: CREATE TYPE " + ORACLE_NUMBER_LIST_TYPE + " AS AS TABLE OF NUMBER;", e);
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
+        return new OracleArrayLongBubbleIdConverter().toArray(sqlConnection, ids);
     }
-
-    private static Object[] toArray(Collection<? extends BubbleId<?>> ids) {
-        Object[] list = new Object[ids.size()];
-        int i=0;
-        for ( Iterator<? extends BubbleId> iterator = ids.iterator(); iterator.hasNext(); i++) {
-            list[i] = iterator.next().getValue();
-        }
-        return list;
-    }
-
 }

@@ -1,5 +1,6 @@
 package no.statkart.skif.store;
 
+import com.google.common.base.Preconditions;
 import no.statkart.skif.store.relation.cache.RelationName;
 
 import java.util.Set;
@@ -11,13 +12,14 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4.0
  */
-public class BubbleIdSet<O extends AbstractBubbleObject, E extends BubbleId<?>> extends AbstractBubbleIdIdSet<O,E> {
+@Deprecated
+public class BubbleIdSet<O extends BubbleObject&InverseRelationParticipation, E extends BubbleId<?>> extends AbstractBubbleIdIdSet<O,E> {
     private static final long serialVersionUID = 1L;
     private final O owner;
 
     public BubbleIdSet(O owner, RelationName relationName, Set<E> delegate) {
         super(relationName, delegate);
-        this.owner = owner;
+        this.owner = Preconditions.checkNotNull(owner);
 
     }
 

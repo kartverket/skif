@@ -38,6 +38,7 @@ import java.util.Collection;
  * @author Henrik Fredholm
  * @author Oddbjørn Kvalsund
  * @author Maciej Zalewski <maciej.zalewski.mz@gmail.com>
+ * @deprecated
  */
 public abstract class AbstractOracleArrayUserType implements UserType {
     public static final String ORACLE_NUMBER_LIST_TYPE = "NUMBER_LIST_TYPE";
@@ -93,6 +94,7 @@ public abstract class AbstractOracleArrayUserType implements UserType {
             if(value.getClass() == ARRAY.class){
                 statement.setArray(index,(Array) value);
             }else{
+                //String[] values = ((Collection<String>)value).toArray(new String[0]); // TODO: Kan dette gjøres mer effektiv?
                 statement.setArray(index, new ARRAY(ad, con, value));
             }
         }

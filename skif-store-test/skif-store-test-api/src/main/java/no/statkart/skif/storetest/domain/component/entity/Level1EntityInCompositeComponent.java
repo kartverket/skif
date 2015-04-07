@@ -1,8 +1,12 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
+import no.statkart.skif.store.InverseRelationCollector;
+import no.statkart.skif.store.InverseRelationParticipation;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.store.EntityBubbleComponent;
-import no.statkart.skif.store.OwnerCheck;
+import no.statkart.skif.store.relation.cache.RelationName;
+
+import java.util.Map;
 
 /**
  * En entity som inngår i en composite component og som har som har {@code BubbleWithEntityInCompositeComponent} som owner.
@@ -10,7 +14,7 @@ import no.statkart.skif.store.OwnerCheck;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class Level1EntityInCompositeComponent implements EntityBubbleComponent<BubbleWithEntityInCompositeComponent> {
+public class Level1EntityInCompositeComponent implements EntityBubbleComponent<BubbleWithEntityInCompositeComponent>, InverseRelationParticipation {
     private Long id;
     private String text;
     private BubbleWithEntityInCompositeComponent owner;
@@ -18,6 +22,11 @@ public class Level1EntityInCompositeComponent implements EntityBubbleComponent<B
     @SuppressWarnings("UnusedDeclaration") // Hibernate
     public Level1EntityInCompositeComponent() {
     }
+
+    @Override
+    public void collectInverseRelationValues(InverseRelationCollector collector) {
+    }
+
 
     @Override
     public Long getId() {

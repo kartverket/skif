@@ -18,7 +18,6 @@ import java.util.*;
 public class AbstractStore implements Store {
     protected WrappableStoreSession storeSession;
     final private Injector injector;
-
     final protected StoreRelationCacheImpl storeRelationCache = new StoreRelationCacheImpl(this) {
         @Override
         protected WrappableStoreSession getStoreSession() {
@@ -32,6 +31,11 @@ public class AbstractStore implements Store {
         this.storeSession = storeSession;
     }
 
+    @Override
+    public StoreRelationCache getRelationCache() {
+        return storeRelationCache;
+    }
+
     protected StoreUnitOfWork storeUnitOfWork() {
         if (storeSession instanceof StoreUnitOfWork) return (StoreUnitOfWork) storeSession;
         throw new ImplementationException("Not in UnitOfWork");
@@ -39,11 +43,7 @@ public class AbstractStore implements Store {
 
     @Override
     public <T> T getInstance(Class<T> type) {
-        if (type==StoreRelationCache.class) {
-            return (T) storeRelationCache;
-        } else {
-            return injector.getInstance(type);
-        }
+        return injector.getInstance(type);
     }
 
     public <T> T getInstance(Key<T> key) {
@@ -178,19 +178,19 @@ public class AbstractStore implements Store {
         UnitOfWork unitOfWork = beginUnitOfWork();
         try {
             for (BubbleObject bubbleObject : transfer.getInsertedObjects()) {
-                if (ids.add(bubbleObject.getId())==false) {
+                if (ids.add(bubbleObject.getId()) == false) {
                     throw new ImplementationException("Duplicate object in transfer: " + bubbleObject.getId());
                 }
                 insert(bubbleObject);
             }
             for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
-                if (ids.add(bubbleObject.getId())==false) {
+                if (ids.add(bubbleObject.getId()) == false) {
                     throw new ImplementationException("Duplicate object in transfer: " + bubbleObject.getId());
                 }
                 update(bubbleObject);
             }
             for (BubbleObject bubbleObject : transfer.getDeletedObjects()) {
-                if (ids.add(bubbleObject.getId())==false) {
+                if (ids.add(bubbleObject.getId()) == false) {
                     throw new ImplementationException("Duplicate object in transfer: " + bubbleObject.getId());
                 }
                 delete(bubbleObject);
@@ -266,7 +266,7 @@ public class AbstractStore implements Store {
 
     @Override
     public <T extends BubbleObject> void ensureFullyLoaded(@Nullable T bubbleObject) {
-        if (bubbleObject!=null) {
+        if (bubbleObject != null) {
             storeSession.ensureFullyLoaded(bubbleObject);
         }
     }
@@ -335,8 +335,8 @@ public class AbstractStore implements Store {
     /**
      * Sjekker at unit-of-work er gjeldende unit-of-work.
      *
-     * @param storeUnitOfWork    unit-of-work sesjon
-     * @param ignoreInactive       om det er greit at unit-of-work ikke lenger er aktiv (for abort)
+     * @param storeUnitOfWork unit-of-work sesjon
+     * @param ignoreInactive  om det er greit at unit-of-work ikke lenger er aktiv (for abort)
      */
     protected void validateUnitOfWorkCurrent(StoreUnitOfWork storeUnitOfWork, boolean ignoreInactive) {
         if (storeUnitOfWork.store != this) {

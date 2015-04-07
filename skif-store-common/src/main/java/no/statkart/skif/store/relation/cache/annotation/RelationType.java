@@ -7,6 +7,6 @@ package no.statkart.skif.store.relation.cache.annotation;
  * @since 2.4
  */
 public enum RelationType {
-    DIRECT,
-    INVERSE
+    INVERSE,
+    INDEX
 }

@@ -33,7 +33,7 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * @author Henrik Fredholm
  * @sine 2.3
- * @see no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType
+ * @deprecated use OracleLongBubbleIdArrayUserType
  */
 public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
     private static final Logger log = LoggerFactory.getLogger(OracleAbstractBubbleIdArrayUserType.class);

@@ -1,5 +1,7 @@
 package no.statkart.skif.store;
 
+import no.statkart.skif.store.relation.cache.StoreRelationCache;
+
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
@@ -480,4 +482,6 @@ public interface Store {
      * @return en eller annen implementasjon av servicen
      */
     <S> S getInstance(Class<S> serviceClass);
+
+    StoreRelationCache getRelationCache();
 }

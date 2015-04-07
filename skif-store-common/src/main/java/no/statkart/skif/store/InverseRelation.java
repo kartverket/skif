@@ -98,7 +98,7 @@ public class InverseRelation<T> implements Serializable, Cloneable {
             checkState(isMaterialised(), "Bubble not registered in Store and cached relation value was not materialised");
             return cached;
         } else {
-            StoreRelationCache relationCache = checkNotNull(owner.store().getInstance(StoreRelationCache.class));
+            StoreRelationCache relationCache = checkNotNull(owner.store().getRelationCache());
             return (T) owner.unwrap(relationCache.getRelationFinder(name, owner.store).call(owner.idAsSet()));
         }
     }

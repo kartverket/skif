@@ -9,6 +9,8 @@ import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.*;
+import no.statkart.skif.store.relation.cache.StoreRelationCache;
+import no.statkart.skif.store.relation.cache.StoreRelationCacheImpl;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
@@ -29,6 +31,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class MockupStore implements Store {
     private final Injector injector;
     protected IdService idService;
+    final protected StoreRelationCache storeRelationCache = new StoreRelationCacheImpl(this) {
+        @Override
+        protected WrappableStoreSession getStoreSession() {
+            throw new UnsupportedOperationException("MockupStore støtter ikke operasjon på StoreRelationCache");
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+            throw new UnsupportedOperationException("MockupStore støtter ikke operasjon på StoreRelationCache");
+        }
+    };
 
     /**
      * {@link SnapshotVersion} objekter skal legges inn/oppdateres/slettes på. Standardverdien er
@@ -45,6 +58,11 @@ public class MockupStore implements Store {
         this.ignoredIdClasses = ignoredIdClasses;
         mockupPersister = new MockupPersister(this, testNumber);
         this.idService = idService;
+    }
+
+    @Override
+    public StoreRelationCache getRelationCache() {
+        return storeRelationCache;
     }
 
     /**

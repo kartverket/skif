@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false" >
+
+    <class name="no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef" select-before-update="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.basic.BubbleWithAnyBubbleRefIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="nr"/>
+        <property name="anyId" type="no.statkart.skif.store.persistence.hibernate.type.AnyBubbleIdType">
+            <column name="anyId"/>
+            <column name="anyIdClass"/>
+        </property>
+
+        <property name="someIdent" type="no.statkart.skif.store.persistence.hibernate.type.AnyConcatenatedFieldsType">
+            <column name="someIdentValue"/>
+            <column name="someIdentClass"/>
+        </property>
+    </class>
+</hibernate-mapping>

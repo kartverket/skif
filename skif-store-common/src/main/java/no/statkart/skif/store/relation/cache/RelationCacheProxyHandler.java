@@ -9,14 +9,16 @@ import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.store.BubbleId;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * ProxyHandler for caching av relasjoner. Denne proxyhandler legges i {@code CallServiceChain} på klient og server
  * for de services som implementerer invers domene finders.
- *
+ * <p/>
  * <P>Proxy-en har til oppgave å bruke cachet relasjoner der hvor de allerede finnes og hente opp og cache
  * etterspurte relasjoner som ikke finnes. Relasjonscaching  styres via {@link StoreRelationCache}
  *
@@ -36,20 +38,18 @@ public class RelationCacheProxyHandler<S> extends ChainedProxyHandler<S> {
     @SuppressWarnings("unchecked")
     protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         Object result;
-        RelationName name = cacheProvider.get().getRelationNameReturnNullIfDisabled(method);
-        if (name != null) {
-            checkArgument(args.length==1, "Unexpected argument length: %d", args.length);
-            checkArgument(args[0] instanceof Collection, "Expected collection of bubble ids as argument");
-            result = useCaching(name, proxy, method, ((Collection<BubbleId<?>>) args[0]));
+        RelationStrategy strategy = cacheProvider.get().getStrategy(method);
+        if (strategy != null) {
+            result = strategy.invokeMethod(cacheProvider.get(), chained, proxy, method, args);
         } else {
-            result = chained.invoke(proxy,method, args);
+            result = chained.invoke(proxy, method, args);
         }
         return result;
     }
 
     @SuppressWarnings("unchecked")
     protected Map<BubbleId<?>, Object> noCaching(Object proxy, Method method, Object[] args) throws Throwable {
-        return (Map<BubbleId<?>, Object>) chained.invoke(proxy,method, args);
+        return (Map<BubbleId<?>, Object>) chained.invoke(proxy, method, args);
     }
 
     private Map<BubbleId<?>, Object> useCaching(RelationName name, Object proxy, Method method, Collection<BubbleId<?>> ids) throws Throwable {

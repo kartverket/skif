@@ -63,6 +63,8 @@ public class X1AAMockupFactory extends AbstractMockupFactory {
         a.setText(text);
         a.setSomeBBId(someBBId);
         a.setSomeCCsIds(ccManyIds);
+        a.setUniqueOnX1AA(String.format("Unique: [%d,%d]", getTestNumber().getNumber(), nr));
+        a.setNonUniqueOnX1AA(String.format("NonUnique: [%d,%d]", getTestNumber().getNumber(), nr/2 ));
         return a;
     }
 

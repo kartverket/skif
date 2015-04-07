@@ -1,5 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
+import com.google.common.base.Preconditions;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.KodeId;
@@ -46,7 +47,7 @@ public abstract class BubbleIdType implements UserType {
     /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
     private SnapshotVersionSeed snapshotVersionSeed = snapshotVersionSeedSeed;
 
-    private Class idValueType;
+    protected final Class idValueType;
 
     public BubbleIdType() {
         idValueType = BubbleIds.getValueType(returnedClass());
@@ -54,6 +55,17 @@ public abstract class BubbleIdType implements UserType {
             SQL_TYPES = new int[]{Types.BIGINT};
         } else {
             SQL_TYPES = new int[]{Types.VARCHAR};
+        }
+    }
+
+    protected BubbleIdType(int[] SQL_TYPES) {
+        this.SQL_TYPES= SQL_TYPES;
+        if (SQL_TYPES[0]== Types.BIGINT) {
+            idValueType=Long.class;
+        } else if (SQL_TYPES[0]== Types.VARCHAR) {
+            idValueType=String.class;
+        } else {
+            throw new ImplementationException("SQL type " + Types.VARCHAR + " is not supported as id type for BubbleId");
         }
     }
 
@@ -185,28 +197,5 @@ public abstract class BubbleIdType implements UserType {
     public Object createId(Object value) {
         BubbleId id = (BubbleId) createPrototypeId(value, snapshotVersionSeed.get());
         return id;
-    }
-
-    /**
-     * Oppretter id med den spesifisert verdi. Id classen blir av den type metoden {@link
-     * #returnedClass()} spesifisere
-     *
-     * @param value
-     */
-    private Object createIdOld(Long value) {
-        try {
-            //Opprett id av riktig type
-            Constructor ctor = returnedClass().getConstructor(new Class[]{Long.class, SnapshotVersion.class});
-            BubbleId id = (BubbleId) ctor.newInstance(new Object[]{value, snapshotVersionSeed.get()});
-            return id;
-        } catch (NoSuchMethodException e) {
-            throw new ImplementationException(e);
-        } catch (InstantiationException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException(e);
-        } catch (InvocationTargetException e) {
-            throw new ImplementationException(e);
-        }
     }
 }

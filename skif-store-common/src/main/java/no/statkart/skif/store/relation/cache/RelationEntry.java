@@ -6,8 +6,9 @@ import no.statkart.skif.util.CopyHelper;
 import java.util.*;
 
 /**
- * Denne klasse holder på styr på hvilke objekter som inngår i en invers relasjon for gitt unit-of-work, relasjon og objekt.
- * Klassen anvender et array av {@code RelationTracker}s hvor index i array svarer til unit-of-work level.
+ * Denne klasse holder på styr på hvilke objekter som inngår i en invers relasjon for gitt unit-of-work, relasjon og
+ * verdi (bubbleId eller verdi). Klassen anvender et array av {@code RelationTracker}s hvor index i array
+ * svarer til unit-of-work level.
  *
  * @author Henrik Fredholm
  * @since 2.4

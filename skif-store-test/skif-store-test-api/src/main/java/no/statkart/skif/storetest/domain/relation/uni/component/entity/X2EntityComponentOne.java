@@ -1,25 +1,28 @@
 package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 
-import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.Components;
-import no.statkart.skif.store.EntityBubbleComponent;
-import no.statkart.skif.store.relation.cache.annotation.Cardinality;
-import no.statkart.skif.store.relation.cache.annotation.Relation;
-import no.statkart.skif.store.relation.cache.annotation.RelationType;
+import no.statkart.skif.store.*;
+import no.statkart.skif.store.relation.cache.RelationName;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class X2EntityComponentOne implements EntityBubbleComponent<X2AAWithEntityComponent> {
+public class X2EntityComponentOne implements EntityBubbleComponent<X2AAWithEntityComponent>, InverseRelationParticipation {
     private Long id;
     private String text;
     private X2AAWithEntityComponent owner;
     private X2BBOneId<?> someBBId;
-    private final Set<X2CCManyId<?>> someCCsIds= BubbleIds.newSet(this, X2AAWithEntityComponentFinderService.Role.someCCs);
+    private final Set<X2CCManyId<?>> someCCsIds= Bubbles.newSet(this, X2AAWithEntityComponentFinderService.Role.someCCs);
+
+    @Override
+    public void collectInverseRelationValues(InverseRelationCollector collector) {
+        collector.put(X2AAWithEntityComponentFinderService.Role.someBB, someBBId);
+        collector.put(X2AAWithEntityComponentFinderService.Role.someCCs, someCCsIds);
+    }
 
     @Override
     public Long getId() {
@@ -57,9 +60,8 @@ public class X2EntityComponentOne implements EntityBubbleComponent<X2AAWithEntit
         return Components.getOwningBubbleNullSafe(this).store().get(someBBId);
     }
 
-    @Relation(type = RelationType.DIRECT, cardinality = Cardinality.ONE, name="someBB")
     public void setSomeBBId(X2BBOneId<?> someBBId) {
-        this.someBBId = Components.onChangeRelation(this, X2AAWithEntityComponentFinderService.Role.someBB, this.someBBId, someBBId);
+        this.someBBId = BubbleIds.onChangeRelation(this, X2AAWithEntityComponentFinderService.Role.someBB, this.someBBId, someBBId);
     }
 
     public Set<X2CCManyId<?>> getSomeCCsIds() {
@@ -73,16 +75,16 @@ public class X2EntityComponentOne implements EntityBubbleComponent<X2AAWithEntit
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
     private Set<X2CCManyId<?>> getSomeCCsIdsSet() {
-        return BubbleIds.getDelegate(someCCsIds);
+        return Bubbles.getDelegate(someCCsIds);
     }
 
     public void setSomeCCsIds(Set<X2CCManyId<?>> someCCsIds) {
-        BubbleIds.setFrom(this.someCCsIds, someCCsIds);
+        Bubbles.setFrom(this.someCCsIds, someCCsIds);
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
     private void setSomeCCsIdsSet(Set<X2CCManyId<?>> someCCsIds) {
-        BubbleIds.setDelegate(this.someCCsIds, someCCsIds);
+        Bubbles.setDelegate(this.someCCsIds, someCCsIds);
     }
 
 }

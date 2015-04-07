@@ -94,7 +94,7 @@ public class StoreTestClientModule extends SkifModule {
 
     @Provides
     StoreRelationCache provideStoreRelationCache(Store store) {
-        return store.getInstance(StoreRelationCache.class);
+        return store.getRelationCache();
     }
 
     /*

@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.store.relation.cache.StoreRelationCache;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
@@ -94,7 +94,7 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         ImmutableSet<X2BBOneId<?>> bbIds = ImmutableSet.of(X2BBOneMockupFactory.getB1Id(), X2BBOneMockupFactory.getB2Id(), X2BBOneMockupFactory.getB3Id());
         X2AAWithEntityComponentFinderService X2AAWithEntityComponentFinderService = store.getInstance(X2AAWithEntityComponentFinderService.class);
 
-        store.getInstance(StoreRelationCache.class).setEnabled(true);
+        store.getRelationCache().setEnabled(true);
         store.get(bbIds);
         Map<X2BBOneId<?>, Set<X2AAWithEntityComponentId<?>>> invSomeBBIds = X2AAWithEntityComponentFinderService.findInvSomeBBIds(bbIds);
 
@@ -120,7 +120,7 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2BBOneMockupFactory X2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
 
-        store.getInstance(StoreRelationCache.class).setEnabled(true);
+        store.getRelationCache().setEnabled(true);
         X2BBOne b1 = store.get(X2BBOneMockupFactory.getB1Id());
         assertThat(b1.findInvSomeBBIds()).doesNotContain(X2AAWithEntityComponentMockupFactory.getA2Id());
 
@@ -129,11 +129,32 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
     }
 
+    public void testChangeSomeBBRelationWithDisconnectedComponent() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
+        X2BBOneMockupFactory X2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
+
+        store.getRelationCache().setEnabled(true);
+        UnitOfWork unitOfWork = null;
+        try {
+            unitOfWork = store.beginUnitOfWork();
+            X2BBOne b1 = store.get(X2BBOneMockupFactory.getB1Id());
+            assertThat(b1.findInvSomeBBIds()).doesNotContain(X2AAWithEntityComponentMockupFactory.getA2Id());
+            X2AAWithEntityComponent a2 = store.get(X2AAWithEntityComponentMockupFactory.getA2Id());
+            X2EntityComponentOne aNewComponent = new X2EntityComponentOne();
+            aNewComponent.setSomeBBId(b1.getId());
+            a2.setEntityComponentOne(aNewComponent);
+            assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
+        } finally {
+            unitOfWork.close();
+        }
+    }
+
     public void testGetMany() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2CCManyMockupFactory X2CCManyMockupFactory = mockupFacade.getX2CCManyMockupFactory();
-        store.getInstance(StoreRelationCache.class).setEnabled(true);
+        store.getRelationCache().setEnabled(true);
 
         X2AAWithEntityComponent a1 = store.get(X2AAWithEntityComponentMockupFactory.getA1Id());
         assertThat(a1.getEntityComponentOne().getSomeCCsIds()).hasSize(0);
@@ -147,7 +168,7 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2CCManyMockupFactory X2CCManyMockupFactory = mockupFacade.getX2CCManyMockupFactory();
-        store.getInstance(StoreRelationCache.class).setEnabled(true);
+        store.getRelationCache().setEnabled(true);
 
         ImmutableSet<X2CCManyId<?>> ccIds = ImmutableSet.of(X2CCManyMockupFactory.getC1Id(), X2CCManyMockupFactory.getC2Id(), X2CCManyMockupFactory.getC3Id());
         X2AAWithEntityComponentFinderService X2AAWithEntityComponentFinderService = store.getInstance(X2AAWithEntityComponentFinderService.class);
@@ -163,7 +184,7 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2CCManyMockupFactory X2CCManyMockupFactory = mockupFacade.getX2CCManyMockupFactory();
 
-        store.getInstance(StoreRelationCache.class).setEnabled(true);
+        store.getRelationCache().setEnabled(true);
         X2CCMany c1 = store.get(X2CCManyMockupFactory.getC1Id());
         assertThat(c1.findInvSomeCCsIds()).isNull();
 

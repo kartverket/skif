@@ -4,14 +4,19 @@ import com.google.common.collect.Sets;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.relation.cache.RelationName;
+import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Hjelpeklasse for generisk funksjonalitet for BubbleId som er uavhengig av BubbleId implementasjonsklasse
+ * Hjelpeklasse for generisk funksjonalitet for BubbleId som er uavhengig av BubbleId implementasjonsklasse.
+ *
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -61,6 +66,7 @@ public class BubbleIds {
         return SkifUtil.classForName(bubbleClass.getName() + "Id");
     }
 
+    @Deprecated
     public static List<BubbleId<?>> asIds(Collection<? extends BubbleObject> bubbleObjects) {
         List<BubbleId<?>> ids = new ArrayList<BubbleId<?>>(bubbleObjects.size());
         for (BubbleObject bubbleObject : bubbleObjects) {
@@ -69,6 +75,7 @@ public class BubbleIds {
         return ids;
     }
 
+    @Deprecated
     public static List<BubbleId<?>> asBaseIds(Collection<? extends BubbleObject> bubbleObjects) {
         List<BubbleId<?>> ids = new ArrayList<BubbleId<?>>(bubbleObjects.size());
         for (BubbleObject bubbleObject : bubbleObjects) {
@@ -78,34 +85,74 @@ public class BubbleIds {
         return ids;
     }
 
-    static public <O extends AbstractBubbleObject, E extends BubbleId<?>> AbstractBubbleIdIdSet<O, E> newSet(O owner, RelationName relationName) {
-        return new BubbleIdSet<O, E>(owner, relationName, Sets.<E>newHashSet());
-    }
-
-    static public <O extends ComponentWithOwnerReference<?>, E extends BubbleId<?>> AbstractBubbleIdIdSet<?, E> newSet(O owner, RelationName relationName, Set<E> set) {
-        return new ComponentBubbleIdSet<O,E>(owner, relationName, set);
-    }
-
-    static public <O extends ComponentWithOwnerReference<?>, E extends BubbleId<?>> AbstractBubbleIdIdSet<?, E> newSet(O owner, RelationName relationName) {
-        return new ComponentBubbleIdSet<O,E>(owner, relationName, Sets.<E>newHashSet());
-    }
-
-    static public <O extends AbstractBubbleObject, E extends BubbleId<?>> AbstractBubbleIdIdSet<O, E> newSet(O owner, RelationName relationName, Set<E> set) {
-        return new BubbleIdSet<O, E>(owner, relationName, set);
-    }
-
     @SuppressWarnings("unchecked")
+    @Deprecated
     static public <E extends BubbleId<?>> void setDelegate(Set<E> bubbleIds, Set<E> newElements) {
-        ((AbstractBubbleIdIdSet)bubbleIds).setDelegate(newElements);
+        ((AbstractBubbleIdIdSet) bubbleIds).setDelegate(newElements);
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     static public <E extends BubbleId<?>> Set<E> getDelegate(Set<E> bubbleIds) {
-        return ((AbstractBubbleIdIdSet)bubbleIds).delegate();
+        return ((AbstractBubbleIdIdSet) bubbleIds).delegate();
     }
 
+    @Deprecated
     static public <E extends BubbleId<?>> void setFrom(Collection<E> collection, Set<E> newElements) {
         collection.clear();
         collection.addAll(newElements);
+    }
+
+    @Deprecated
+    static public <O extends BubbleObject & InverseRelationParticipation, E extends BubbleId<?>> AbstractBubbleIdIdSet<O, E> newSet(O owner, RelationName relationName) {
+        return new BubbleIdSet<O, E>(owner, relationName, Sets.<E>newHashSet());
+    }
+
+    @Deprecated
+    static public <O extends BubbleObject & InverseRelationParticipation, E extends BubbleId<?>> AbstractBubbleIdIdSet<O, E> newSet(O owner, RelationName relationName, Set<E> set) {
+        return new BubbleIdSet<O, E>(owner, relationName, set);
+    }
+
+    @Deprecated
+    static public <O extends ComponentWithOwnerReference<?> & InverseRelationParticipation, E extends BubbleId<?>> AbstractBubbleIdIdSet<?, E> newSet(O owner, RelationName relationName, Set<E> set) {
+        return new ComponentBubbleIdSet<O, E>(owner, relationName, set);
+    }
+
+    @Deprecated
+    static public <O extends ComponentWithOwnerReference<?> & InverseRelationParticipation, E extends BubbleId<?>> AbstractBubbleIdIdSet<?, E> newSet(O owner, RelationName relationName) {
+        return new ComponentBubbleIdSet<O, E>(owner, relationName, Sets.<E>newHashSet());
+    }
+
+
+    @Deprecated
+    static final <O extends BubbleObject, T extends BubbleId<?>> void onChangeRelationImpl(O owner, RelationName relationName, T oldValue, T newValue) {
+        if (owner != null) {
+            if (oldValue != newValue && owner.store() != null && owner.getId().getSnapshotVersion() == SnapshotVersion.CURRENT) {
+                owner.store().getRelationCache().onChangeRelation(relationName, owner.getId(), oldValue, newValue);
+            }
+        }
+    }
+
+    @Deprecated
+    public static final <O extends BubbleObject & InverseRelationParticipation, T extends BubbleId<?>> T onChangeRelation(O owner, RelationName relationName, T oldValue, T newValue) {
+        onChangeRelationImpl(owner, relationName, oldValue, newValue);
+        return newValue;
+    }
+
+    @Deprecated
+    public static <T extends BubbleId<?>> T onChangeRelation(ComponentWithOwnerReference<?> component, RelationName relationName, T oldValue, T newValue) {
+        BubbleObject owningBubble = Components.getOwningBubble(component);
+        BubbleIds.onChangeRelationImpl(owningBubble,relationName, oldValue, newValue);
+        return newValue;
+    }
+
+    @Deprecated
+    public static StoreRelationCache getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull(BubbleObject owningBubble) {
+        if (owningBubble != null && owningBubble.store() != null) {
+            StoreRelationCache relationCache = owningBubble.store().getRelationCache();
+            return relationCache.isEnabled() ? relationCache : null;
+        } else {
+            return null;
+        }
     }
 }

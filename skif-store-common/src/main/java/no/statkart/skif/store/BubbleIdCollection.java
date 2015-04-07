@@ -9,5 +9,6 @@ import java.util.Collection;
  * @author Henrik Fredholm
  * @since 2.4.0
  */
+@Deprecated
 public interface BubbleIdCollection<O extends BubbleObject, E extends BubbleId<?>> extends Collection<E>, Serializable {
 }

@@ -74,7 +74,6 @@ import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCMany;
 import no.statkart.skif.storetest.domain.standalone.*;
 import no.statkart.skif.storetest.endringslogg.EndringManager;
-import no.statkart.skif.storetest.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
@@ -165,7 +164,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     StoreRelationCache provideStoreRelationCache(Store store) {
-        return store.getInstance(StoreRelationCache.class);
+        return store.getRelationCache();
     }
 
     @Provides
@@ -231,6 +230,7 @@ public class StoreTestServerModule extends SkifModule {
                 // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
                 .addResource(Simple.class)
                 .addResource(BubbleWithRelation.class)
+                .addResource(BubbleWithAnyBubbleRef.class)
                 .addResource(BubbleWithFilter.class)
                 .addResource(BubbleWithValueObject.class)
                 .addResource(BubbleWithLocalDate.class)

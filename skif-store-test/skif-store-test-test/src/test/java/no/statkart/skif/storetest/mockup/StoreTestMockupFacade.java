@@ -25,6 +25,7 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
     @Inject private SimpleMockupFactory simpleMockupFactory;
     @Inject private BubbleWithRelationMockupFactory bubbleWithRelationMockupFactory;
+    @Inject private BubbleWithAnyBubbleRefMockupFactory bubbleWithAnyBubbleRefMockupFactory;
     @Inject private BubbleWithFilterMockupFactory bubbleWithFilterMockupFactory;
     @Inject private BubbleWithKodeMockupFactory bubbleWithKodeMockupFactory;
     @Inject private BubbleWithValueObjectMockupFactory bubbleWithValueObjectMockupFactory;
@@ -51,6 +52,7 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
         return ImmutableList.of(
                 simpleMockupFactory,
                 bubbleWithRelationMockupFactory,
+                bubbleWithAnyBubbleRefMockupFactory,
                 bubbleWithFilterMockupFactory,
                 bubbleWithValueObjectMockupFactory,
                 bubbleWithKodeMockupFactory,
@@ -73,10 +75,13 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
         return simpleMockupFactory;
     }
 
+    public BubbleWithAnyBubbleRefMockupFactory getBubbleWithAnyBubbleRefMockupFactory() {
+        return bubbleWithAnyBubbleRefMockupFactory;
+    }
+
     public BubbleWithRelationMockupFactory getBubbleWithRelationMockupFactory() {
         return bubbleWithRelationMockupFactory;
     }
-
     public BubbleWithFilterMockupFactory getBubbleWithFilterMockupFactory() {
         return bubbleWithFilterMockupFactory;
     }

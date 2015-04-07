@@ -5,6 +5,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import no.statkart.skif.exception.ImplementationException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 
 /**
@@ -65,6 +66,23 @@ public class SkifUtil {
      */
     public static <E> Class<E> getType(TypeToken<E> type) {
         return (Class<E>)type.getRawType();
+    }
+
+    public static <T> T newInstance(String className, Object arg) {
+        try {
+            Class<? extends T> aClass = (Class<? extends T>) Class.forName(className);
+            return aClass.getConstructor(arg.getClass()).newInstance(arg);
+        } catch (ClassNotFoundException e) {
+            throw new ImplementationException(e);
+        } catch (InvocationTargetException e) {
+            throw new ImplementationException(e);
+        } catch (NoSuchMethodException e) {
+            throw new ImplementationException(e);
+        } catch (InstantiationException e) {
+            throw new ImplementationException(e);
+        } catch (IllegalAccessException e) {
+            throw new ImplementationException(e);
+        }
     }
 
 }

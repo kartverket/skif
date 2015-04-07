@@ -39,4 +39,16 @@ public class X1AAFinderServiceEJBBean extends EJBTimedService implements X1AAFin
     public Map<X1CCManyId<?>, X1AAId<?>> findInvSomeCCsId(Collection<? extends X1CCManyId<?>> x1CCManyIds) {
         return serviceChain.findInvSomeCCsId(x1CCManyIds);
     }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @Override
+    public Map<String, X1AAId<?>> findX1AAIdsForUniqueOnX1AA(Collection<String> textValues) {
+        return serviceChain.findX1AAIdsForUniqueOnX1AA(textValues);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @Override
+    public Map<String, Set<X1AAId<?>>> findX1AAIdsForNonUniqueOnX1AA(Collection<String> textValues) {
+        return serviceChain.findX1AAIdsForNonUniqueOnX1AA(textValues);
+    }
 }

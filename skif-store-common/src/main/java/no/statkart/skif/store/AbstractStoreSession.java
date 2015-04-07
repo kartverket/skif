@@ -5,6 +5,7 @@ import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.NotLockedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
+import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
 import java.util.*;
 
@@ -66,7 +67,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         return bubble;
     }
 
-    protected  void addModified(StoreEntry storeEntry) {
+    protected void addModified(StoreEntry storeEntry) {
         modifiedMap.put(storeEntry.getId(), storeEntry);
         markModified();
     }
@@ -295,19 +296,32 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             }
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
         }
+        StoreRelationCache relationCache = store.getRelationCache();
         BubbleObject oldInstance = storeEntry.getBubbleObject(level);
         if (oldInstance != bubbleObject) {
             bubbleObject.register(store);
-            // TODO: Make oldInstance stale
+            // Det bør ikke være gjort noen endringer via det gamle objektet siden det ble fjernet. Trenger derfor
+            // ikke å fjerne relasjoner på nytt (eksisterende relasjoner ble fjernet da objektet ble deleted.
+            //if (relationCache.isEnabled()) {
+            //    if (oldInstance!=null && oldInstance instanceof InverseRelationParticipation) {
+            //        relationCache.updateRemoved(oldInstance.getBubbleId(), (InverseRelationParticipation)oldInstance);
+            //    }
+            //}
+        }
+        if (relationCache.isEnabled()) {
+            if (bubbleObject instanceof InverseRelationParticipation) {
+                relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+            }
         }
         onInsertEntry(level, storeEntry, bubbleObject);
-        storeEntry.setLocked(level);       // TODO: fix
+        storeEntry.setLocked(level);       // TODO: fix - (HF: usikker på hva som skal fikses her. Kanskje vi bare kan slette denne kommentar?)
         return storeEntry;
     }
 
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry updateEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry updateEntry(int level, T
+            bubbleObject) {
         StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
 
 
@@ -342,7 +356,17 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         BubbleObject oldInstance = storeEntry.getBubbleObject(level);
         if (oldInstance != bubbleObject) {
             bubbleObject.register(store);
-            // TODO: Make oldInstance stale
+            // TODO: Make oldInstance stale in order to detect continued usage of oldInstance
+
+            StoreRelationCache relationCache = store.getRelationCache();
+            if (relationCache.isEnabled()) {
+                if (oldInstance != null && oldInstance instanceof InverseRelationParticipation) {
+                    relationCache.updateRemoved(oldInstance.getBubbleId(), (InverseRelationParticipation) oldInstance);
+                }
+                if (bubbleObject instanceof InverseRelationParticipation) {
+                    relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+                }
+            }
         }
 
         onUpdateEntry(level, storeEntry, bubbleObject);
@@ -351,7 +375,8 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry deleteEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry deleteEntry(int level, T
+            bubbleObject) {
         StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
 
 
@@ -380,10 +405,22 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             }
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
         }
+        StoreRelationCache relationCache = store.getRelationCache();
         T oldInstance = (T) storeEntry.getDerivedBubbleObject(level);
         if (oldInstance != bubbleObject) {
             bubbleObject.register(store);
-            // TODO marker oldInstance som stale
+            // TODO: Make oldInstance stale in order to detect continued usage of oldInstance
+
+            if (relationCache.isEnabled()) {
+                if (oldInstance != null && oldInstance instanceof InverseRelationParticipation) {
+                    relationCache.updateRemoved(oldInstance.getBubbleId(), (InverseRelationParticipation) oldInstance);
+                }
+            }
+        }
+        if (relationCache.isEnabled()) {
+            if (bubbleObject instanceof InverseRelationParticipation) {
+                relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+            }
         }
         onDeleteEntry(level, storeEntry, bubbleObject);
         storeEntry.setLocked(level);       // TODO: fix
@@ -403,6 +440,10 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         } else {
             ensureLocked(storeEntry);
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
+            StoreRelationCache relationCache = store.getRelationCache();
+            if (relationCache.isEnabled()) {
+                throw new UnsupportedOperationException("Attempt at undoing an object while StoreRelationCache is enabled: " + bubbleObject.getId());
+            }
 
             BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
             if (derivedBubbleObject == null) {

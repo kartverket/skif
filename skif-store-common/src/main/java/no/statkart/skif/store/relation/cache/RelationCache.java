@@ -17,7 +17,8 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Klasse for caching av invers relasjoner i Store.
+ * Klasse for caching av invers relasjoner i Store. Invers relasjonen kan enten være fra en bobleId eller et
+ * value objekt som brukes index key (f.eks en streng).
  *
  * @author Henrik Fredholm
  * @since 2.4
@@ -25,14 +26,14 @@ import static com.google.common.base.Preconditions.checkState;
 public class RelationCache {
     Map<Key, RelationEntry> inverseRelationMap = Maps.newHashMap();
 
-    public <T extends BubbleId<?>> void onChangeRelation(int level, boolean inAttachedMode, RelationName relationName, BubbleId<?> sourceId, @Nullable T oldValue, @Nullable T newValue) {
-        removeId(level, inAttachedMode, relationName, oldValue, sourceId);
-        addId(level, inAttachedMode, relationName, newValue, sourceId);
+    public <E> void onChangeRelation(int level, boolean inAttachedMode, RelationName relationName, BubbleId<?> sourceId, @Nullable E oldInverseValue, @Nullable E newInverseValue) {
+        removeId(level, inAttachedMode, relationName, oldInverseValue, sourceId);
+        addId(level, inAttachedMode, relationName, newInverseValue, sourceId);
     }
 
-    private <T extends BubbleId<?>> void removeId(int level, boolean inAttachedMode, RelationName relationName, @Nullable T value, BubbleId<?> sourceId) {
-        if (value != null) {
-            RelationEntry inverseRelationEntry = getInverseRelation(relationName, value, !inAttachedMode);
+    private <E> void removeId(int level, boolean inAttachedMode, RelationName relationName, @Nullable E inverseValue, BubbleId<?> sourceId) {
+        if (inverseValue != null) {
+            RelationEntry inverseRelationEntry = getInverseRelation(relationName, inverseValue, !inAttachedMode);
             if (inverseRelationEntry != null) {
                 inverseRelationEntry.removeId(level, sourceId);
             }
@@ -40,17 +41,17 @@ public class RelationCache {
     }
 
 
-    private <T extends BubbleId<?>> void addId(int level, boolean inAttachedMode, RelationName relationName, @Nullable T value, BubbleId<?> sourceId) {
-        if (value != null) {
-            RelationEntry inverseRelationEntry = getInverseRelation(relationName, value, !inAttachedMode);
+    private <E> void addId(int level, boolean inAttachedMode, RelationName relationName, @Nullable E inverseValue, BubbleId<?> sourceId) {
+        if (inverseValue != null) {
+            RelationEntry inverseRelationEntry = getInverseRelation(relationName, inverseValue, !inAttachedMode);
             if (inverseRelationEntry != null) {
                 inverseRelationEntry.addId(level, sourceId);
             }
         }
     }
 
-    private <T extends BubbleId<?>> RelationEntry getInverseRelation(RelationName relationName, T value, boolean create) {
-        Key key = new Key(relationName, value);
+    private <E> RelationEntry getInverseRelation(RelationName relationName, E inverseValue, boolean create) {
+        Key key = new Key(relationName, inverseValue);
         RelationEntry inverseRelationEntry = inverseRelationMap.get(key);
         if (inverseRelationEntry == null && create) {
             inverseRelationEntry = new RelationEntry();
@@ -59,8 +60,8 @@ public class RelationCache {
         return inverseRelationEntry;
     }
 
-    public RelationValueHolder getRelationValue(int level, RelationName relationName, BubbleId<?> bubbleId) {
-        RelationEntry inverseRelationEntry = getInverseRelation(relationName, bubbleId, false);
+    public <E> RelationValueHolder getRelationValue(int level, RelationName relationName, E inverseValue) {
+        RelationEntry inverseRelationEntry = getInverseRelation(relationName, inverseValue, false);
         if (inverseRelationEntry != null) {
             return new RelationValueHolder(inverseRelationEntry.getRelationValue(level));
         } else {
@@ -68,8 +69,8 @@ public class RelationCache {
         }
     }
 
-    public Object setRelationValue(int level, RelationName relationName, BubbleId<?> bubbleId, Object relationValue) {
-        RelationEntry inverseRelationEntry = getInverseRelation(relationName, bubbleId, true);
+    public <E> Object setRelationValue(int level, RelationName relationName, E inverseValue, Object relationValue) {
+        RelationEntry inverseRelationEntry = getInverseRelation(relationName, inverseValue, true);
         return inverseRelationEntry.setRelationValue(level, relationValue);
     }
 
@@ -104,12 +105,12 @@ public class RelationCache {
         }
     }
 
-    public Collection<BubbleId<?>> findNonMaterialized(int level, RelationName relationName, Collection<BubbleId<?>> ids) {
-        Set<BubbleId<?>> missingIds = Sets.newHashSet();
-        for (BubbleId<?> bubbleId : ids) {
-            RelationEntry inverseRelationEntry = getInverseRelation(relationName, bubbleId, false);
+    public <E> Collection<E> findNonMaterialized(int level, RelationName relationName, Collection<E> inverseValues) {
+        Set<E> missingInverseValues = Sets.newHashSet();
+        for (E inverseValue : inverseValues) {
+            RelationEntry inverseRelationEntry = getInverseRelation(relationName, inverseValue, false);
             if (inverseRelationEntry == null) {
-                missingIds.add(bubbleId);
+                missingInverseValues.add(inverseValue);
             } else {
                 boolean materialized = false;
                 for (int i = level; i >= 0; --i) {
@@ -118,20 +119,20 @@ public class RelationCache {
                     }
                 }
                 if (!materialized) {
-                    missingIds.add(bubbleId);
+                    missingInverseValues.add(inverseValue);
                 }
             }
         }
-        return missingIds;
+        return missingInverseValues;
     }
 
     static class Key {
         private final RelationName name;
-        private final Object id;
+        private final Object inverseValue;
 
-        Key(RelationName name, Object id) {
+        Key(RelationName name, Object inverseValue) {
             this.name = name;
-            this.id = id;
+            this.inverseValue = inverseValue;
         }
 
         @Override
@@ -141,13 +142,13 @@ public class RelationCache {
 
             Key key = (Key) o;
 
-            return id.equals(key.id) && name.equals(key.name);
+            return inverseValue.equals(key.inverseValue) && name.equals(key.name);
         }
 
         @Override
         public int hashCode() {
             int result = name.hashCode();
-            result = 31 * result + id.hashCode();
+            result = 31 * result + inverseValue.hashCode();
             return result;
         }
     }

@@ -1,5 +1,6 @@
 package no.statkart.skif.persistence.hibernate.type;
 
+import no.statkart.skif.store.persistence.OracleArrayStringConverter;
 import org.hibernate.MappingException;
 import org.hibernate.type.CustomType;
 
@@ -10,18 +11,18 @@ import org.hibernate.type.CustomType;
  * <p/>
  * <strong>Eksempel på bruk:</strong>
  * <pre>
- *    Collection<EierId<?>> eierIds = getEierIds();
- *    SQLQuery query = session.createSQLQuery("select {e.*} from Eier {e} where e.id in (select * from table(:idValues))");
+ *    Collection<String> stringValues = ...;
+ *    SQLQuery query = session.createSQLQuery("select {e.*} from Eier {e} where e.someText in (select * from table(:stringValues))");
  *    query.addEntity("e", Eier.class);
- *    query.setParameter("idValues", eierIds, new OracleLongBubbleIdArrayCustomType());
+ *    query.setParameter("stringValues", stringIds, new OracleStringArrayCustomType());
  *    List<Eier> eiers = query.list();
  * </pre>
  *
  * @since 2.3
  * @author Henrik Fredholm
  */
-public class OracleStringBubbleIdArrayCustomType extends CustomType {
-    public OracleStringBubbleIdArrayCustomType() throws MappingException {
-        super(new OracleStringBubbleIdArrayUserType());
+public class OracleArrayStringCustomType extends CustomType {
+    public OracleArrayStringCustomType() throws MappingException {
+        super(new OracleArrayUserType<OracleArrayStringConverter, String>(new OracleArrayStringConverter()));
     }
 }

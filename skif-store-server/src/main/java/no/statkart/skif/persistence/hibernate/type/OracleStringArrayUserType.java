@@ -5,6 +5,7 @@ package no.statkart.skif.persistence.hibernate.type;
  *
  * @since 2.3
  * @author Henrik Fredholm
+ * @deprecated use OracleArrayStringCustomType
  */
 
 public class OracleStringArrayUserType extends AbstractOracleArrayUserType {

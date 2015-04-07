@@ -9,6 +9,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.UnitOfWork;
+import no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.basic.SubTypeWithCollection;
@@ -328,6 +329,13 @@ public class StoreTest extends StoreTestTestCase {
         assertTrue(objectWithEmptyCollection.getTekster().isEmpty());
         Collection<String> stringList = ImmutableList.of("a", "b");
         objectWithEmptyCollection.getTekster().addAll(stringList);
-
     }
+
+    public void  testHentBubbleViaAnyBubbleRef() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        BubbleWithAnyBubbleRef bubbleWithAnyBubbleRef = store.get(mockupFacade.getBubbleWithAnyBubbleRefMockupFactory().getBubbleWithAnyBubbleRefId1());
+        assertEquals(bubbleWithAnyBubbleRef.getAnyId(), mockupFacade.getSimpleMockupFactory().getSimpleId2());
+        assertEquals(store.get(bubbleWithAnyBubbleRef.getAnyId()).getId(),mockupFacade.getSimpleMockupFactory().getSimpleId2());
+    }
+
 }

@@ -17,7 +17,9 @@ import java.util.Set;
 public interface X1AAFinderService {
     public enum Role implements RelationName {
         someBB,
-        someCCs
+        someCCs,
+        uniqueOnX1AA,
+        nonUniqueOnX1AA
     }
 
     @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="someBB")
@@ -25,4 +27,11 @@ public interface X1AAFinderService {
 
     @Relation(type= RelationType.INVERSE, cardinality= Cardinality.ONE, name="someCCs")
     Map<X1CCManyId<?>, X1AAId<?>> findInvSomeCCsId(Collection<? extends X1CCManyId<?>> x1CCManyIds);
+
+    @Relation(type= RelationType.INVERSE, cardinality= Cardinality.ONE, name="uniqueOnX1AA")
+    public Map<String, X1AAId<?>> findX1AAIdsForUniqueOnX1AA(Collection<String> textValues);
+
+    @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="nonUniqueOnX1AA")
+    public Map<String, Set<X1AAId<?>>> findX1AAIdsForNonUniqueOnX1AA(Collection<String> textValues);
+
 }
