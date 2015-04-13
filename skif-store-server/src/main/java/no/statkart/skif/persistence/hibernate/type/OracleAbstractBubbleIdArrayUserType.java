@@ -32,7 +32,7 @@ import static com.google.common.base.Preconditions.checkState;
  * </pre>
  *
  * @author Henrik Fredholm
- * @sine 2.3
+ * @since 2.3
  * @deprecated use OracleLongBubbleIdArrayUserType
  */
 public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
@@ -74,7 +74,6 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
 
 
         if (value == null) {
-            // TODO: Virker kun med Hibernate 3.6
 //            if (log.isTraceEnabled()) {
 //                log.trace(
 //                        String.format(
@@ -88,7 +87,6 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
         } else {
             Object[] arrayValue = toArray((Collection<BubbleId>) value);
 
-            // TODO: Virker kun med Hibernate 3.6
 //            if (log.isTraceEnabled()) {
 //                log.trace(
 //                        String.format(
