@@ -12,10 +12,6 @@ import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 
-/**
- * @author Roar Ingebrigtsen
- * @since 2.0
- */
 public class SkifServerModule extends SkifModule {
     public SkifServerModule(ModuleConfiguration configuration) {
         super(configuration);
@@ -34,7 +30,5 @@ public class SkifServerModule extends SkifModule {
     @Override
     protected void configure() {
         install(new ServerModule(moduleConfiguration));
-        // TODO: Fjern nedenstående. Tror ikke den brukes. Litt usikker på om hele modulen kan fjernes eller flyttes til test
-        //install(new ResourceModuleSingleConnection(moduleConfiguration));
     }
 }
