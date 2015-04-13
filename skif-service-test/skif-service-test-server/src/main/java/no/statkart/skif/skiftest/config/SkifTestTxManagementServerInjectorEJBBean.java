@@ -24,7 +24,6 @@ public class SkifTestTxManagementServerInjectorEJBBean implements SkifTestTxMana
             @Override
             public ModuleBuilder get() {
                 return new ModuleBuilder()
-                        // TODO: bør vi bruke skif-server-default.properteis
                         .setConfiguration(new SkifServerConfiguration())
                         .setModuleClass(SkifTestTxManagementServerModule.class);
             }
