@@ -2,6 +2,7 @@ package no.statkart.skif.service.ws;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.InvalidUserException;
+import no.statkart.skif.exception.PermissionDeniedException;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;
 import no.statkart.skif.service.LoginUser;
@@ -12,7 +13,6 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.AccessDeniedException;
 
 /**
  * Setter innstillinger på web service for hvert kall, siden web servicen-stubben gjenbrukes.
@@ -62,7 +62,7 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
                 if (responseCode == 401) {
                     throw new InvalidUserException("HTTP 401 Unauthorized");
                 } else if (responseCode == 402) {
-                    throw new AccessDeniedException("HTTP 403 Forbidden");
+                    throw new PermissionDeniedException("HTTP 403 Forbidden");
                 }
             }
 
