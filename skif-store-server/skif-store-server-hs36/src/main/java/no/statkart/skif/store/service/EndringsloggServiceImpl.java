@@ -133,7 +133,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
 
                     for (BubbleObject object : bubbleObjects) {
                         accumulatedBubbleObjects.put(object.getId(), object);
-                        }
+                    }
 
                     // Fikk vi alle endringer?
                     if (endringList.size() < oensketAntallEndringer) {
