@@ -1,14 +1,18 @@
 package no.statkart.skif.service.ws;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.InvalidUserException;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.handler.MessageContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.AccessDeniedException;
 
 /**
  * Setter innstillinger på web service for hvert kall, siden web servicen-stubben gjenbrukes.
@@ -47,7 +51,22 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
 
             return method.invoke(jaxwsInstance, args);
         } catch (InvocationTargetException e) {
-            throw e.getTargetException();
+            Throwable exception = e.getTargetException();
+
+            // JAX-WS har ingen direkte måte å si at HTTP BASIC autentisering mislykkes (det er utenfor SOAP standarden).
+            // Det kastes en intern exceptiontype, men den varierer ut fra implementasjonen. Teksten i den kan jo også
+            // endre seg. Sjekker derfor HTTP-statuskoden direkte dersom det kastes en exception i det hele tatt.
+            if (exception instanceof WebServiceException) {
+                BindingProvider bindings = (BindingProvider) jaxwsInstance;
+                Integer responseCode = (Integer) bindings.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE);
+                if (responseCode == 401) {
+                    throw new InvalidUserException("HTTP 401 Unauthorized");
+                } else if (responseCode == 402) {
+                    throw new AccessDeniedException("HTTP 403 Forbidden");
+                }
+            }
+
+            throw exception;
         } catch (IllegalArgumentException e) {
             throw new ImplementationException(e);
         } catch (IllegalAccessException e) {
