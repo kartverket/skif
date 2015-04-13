@@ -56,8 +56,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
-        // TODO fjern arraylist og bruk collection
-        return store.getVersionsForList(new ArrayList(ids), start, end);
+        return store.getVersionsForList(ids, start, end);
     }
 
     @Override
