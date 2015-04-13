@@ -57,8 +57,7 @@ public class EJBLookupHelper {
         } catch (NameNotFoundException e) {
             // Ignore
         } catch (NamingException e) {
-            // TODO: uncomment
-            //throw new SkifConfigurationException(e);
+            throw new ImplementationException(e);
         }
         return foundEJBServices;
     }
@@ -78,11 +77,8 @@ public class EJBLookupHelper {
 
     public void addEjb(Class<? extends Object> serviceClass, Object ejbService) {
         Object old = ejbRegistry.putIfAbsent(serviceClass, ejbService);
-        // TODO: Bruk logging 
         if (old == null) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Adding EJB for service class: " + serviceClass.getName() + " instance: " + ejbService);
-            }
+            logger.info("Adding EJB for service class: {} instance: {}", serviceClass.getName(), ejbService);
         } else {
             // Service allerede allerede bunnet. Det er ok. Gjør ingen ting da.
         }
