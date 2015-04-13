@@ -1,13 +1,10 @@
 package no.statkart.skif.exception;
 
-import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.store.BubbleId;
 import org.slf4j.Logger;
 
 /**
  * Angir at objekt med gitt id ikke finnes. Det kan f.eks være fordi det har blitt slettet.
- *
- * TODO: Er det riktig den buker BubbleId? Bør den flyttes til pakke store.excption
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
