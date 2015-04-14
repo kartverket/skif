@@ -61,7 +61,7 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
                 Integer responseCode = (Integer) bindings.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE);
                 if (responseCode == 401) {
                     throw new InvalidUserException("HTTP 401 Unauthorized");
-                } else if (responseCode == 402) {
+                } else if (responseCode == 403) {
                     throw new PermissionDeniedException("HTTP 403 Forbidden");
                 }
             }
