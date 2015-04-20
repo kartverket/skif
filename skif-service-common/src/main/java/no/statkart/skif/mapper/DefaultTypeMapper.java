@@ -174,7 +174,6 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
 
     protected Collection<Method> findGetters(Class<?> c) {
         List<Method> getters = new ArrayList<Method>();
-        List<Method> idGetters = new ArrayList<Method>();
 
         for (Class<?> clazz = c; clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
             Method[] methods = clazz.getDeclaredMethods();
@@ -182,27 +181,10 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
                 if (!method.isBridge() && method.getParameterTypes().length == 0 && (method.getName().startsWith("get") || method.getName().startsWith("is")) && method.getAnnotation(DontMap.class) == null) {
                     method.setAccessible(true);
                     getters.add(method);
-                    if (method.getName().endsWith("Id")) {
-                        idGetters.add(method);
-                    }
                 }
             }
         }
 
-        Iterator<Method> iterator = getters.iterator();
-        while (iterator.hasNext()) {
-            Method getter = iterator.next();
-            boolean match = false;
-            for (Method idGetter : idGetters) {
-                // Dersom det finnes en getter getFooId(), så skal ikke getteren getFoo() mappes.
-                if (!idGetter.equals(getter) && (idGetter.getName().equals(getter.getName() + "Id") || idGetter.getName().equals(getter.getName() + "Ids"))) {
-                    match = true;
-                }
-            }
-            if (match) {
-                iterator.remove();
-            }
-        }
         return getters;
     }
 
