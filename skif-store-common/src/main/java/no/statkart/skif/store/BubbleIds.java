@@ -66,6 +66,9 @@ public class BubbleIds {
         return SkifUtil.classForName(bubbleClass.getName() + "Id");
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#asIds}
+     */
     @Deprecated
     public static List<BubbleId<?>> asIds(Collection<? extends BubbleObject> bubbleObjects) {
         List<BubbleId<?>> ids = new ArrayList<BubbleId<?>>(bubbleObjects.size());
@@ -75,6 +78,9 @@ public class BubbleIds {
         return ids;
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#asBaseIds}
+     */
     @Deprecated
     public static List<BubbleId<?>> asBaseIds(Collection<? extends BubbleObject> bubbleObjects) {
         List<BubbleId<?>> ids = new ArrayList<BubbleId<?>>(bubbleObjects.size());
@@ -85,45 +91,69 @@ public class BubbleIds {
         return ids;
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#setDelegate}
+     */
     @SuppressWarnings("unchecked")
     @Deprecated
     static public <E extends BubbleId<?>> void setDelegate(Set<E> bubbleIds, Set<E> newElements) {
         ((AbstractBubbleIdIdSet) bubbleIds).setDelegate(newElements);
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#getDelegate}
+     */
     @SuppressWarnings("unchecked")
     @Deprecated
     static public <E extends BubbleId<?>> Set<E> getDelegate(Set<E> bubbleIds) {
         return ((AbstractBubbleIdIdSet) bubbleIds).delegate();
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#setFrom}
+     */
     @Deprecated
     static public <E extends BubbleId<?>> void setFrom(Collection<E> collection, Set<E> newElements) {
         collection.clear();
         collection.addAll(newElements);
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#newSet}
+     */
     @Deprecated
     static public <O extends BubbleObject & InverseRelationParticipation, E extends BubbleId<?>> AbstractBubbleIdIdSet<O, E> newSet(O owner, RelationName relationName) {
         return new BubbleIdSet<O, E>(owner, relationName, Sets.<E>newHashSet());
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#newSet}
+     */
     @Deprecated
     static public <O extends BubbleObject & InverseRelationParticipation, E extends BubbleId<?>> AbstractBubbleIdIdSet<O, E> newSet(O owner, RelationName relationName, Set<E> set) {
         return new BubbleIdSet<O, E>(owner, relationName, set);
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#onChangeRelationImpl}
+     */
     @Deprecated
-    static public <O extends ComponentWithOwnerReference<?> & InverseRelationParticipation, E extends BubbleId<?>> AbstractBubbleIdIdSet<?, E> newSet(O owner, RelationName relationName, Set<E> set) {
+    static public <O extends ComponentWithOwnerReference<?> & InverseRelationParticipation, E extends BubbleId<?>> AbstractBubbleIdIdSet<?, E> onChangeRelationImpl(O owner, RelationName relationName, Set<E> set) {
         return new ComponentBubbleIdSet<O, E>(owner, relationName, set);
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#onChangeRelationImpl}
+     */
     @Deprecated
-    static public <O extends ComponentWithOwnerReference<?> & InverseRelationParticipation, E extends BubbleId<?>> AbstractBubbleIdIdSet<?, E> newSet(O owner, RelationName relationName) {
+    static public <O extends ComponentWithOwnerReference<?> & InverseRelationParticipation, E extends BubbleId<?>> AbstractBubbleIdIdSet<?, E> onChangeRelationImpl(O owner, RelationName relationName) {
         return new ComponentBubbleIdSet<O, E>(owner, relationName, Sets.<E>newHashSet());
     }
 
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#onChangeRelationImpl}
+     */
     @Deprecated
     static final <O extends BubbleObject, T extends BubbleId<?>> void onChangeRelationImpl(O owner, RelationName relationName, T oldValue, T newValue) {
         if (owner != null) {
@@ -133,12 +163,18 @@ public class BubbleIds {
         }
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#onChangeRelation}
+     */
     @Deprecated
     public static final <O extends BubbleObject & InverseRelationParticipation, T extends BubbleId<?>> T onChangeRelation(O owner, RelationName relationName, T oldValue, T newValue) {
         onChangeRelationImpl(owner, relationName, oldValue, newValue);
         return newValue;
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#onChangeRelation}
+     */
     @Deprecated
     public static <T extends BubbleId<?>> T onChangeRelation(ComponentWithOwnerReference<?> component, RelationName relationName, T oldValue, T newValue) {
         BubbleObject owningBubble = Components.getOwningBubble(component);
@@ -146,6 +182,9 @@ public class BubbleIds {
         return newValue;
     }
 
+    /**
+     * @deprecated Metoden er flyttet til {@link Bubbles#getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull}
+     */
     @Deprecated
     public static StoreRelationCache getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull(BubbleObject owningBubble) {
         if (owningBubble != null && owningBubble.store() != null) {

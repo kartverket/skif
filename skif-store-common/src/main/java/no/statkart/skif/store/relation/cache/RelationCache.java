@@ -126,6 +126,11 @@ public class RelationCache {
         return missingInverseValues;
     }
 
+    public void evictAll() {
+        // TODO: Dersom relasjonscachen inneholder endringer blir nedenstående feil. Løsningen må utvides til alltid å ta vare på endringene. Krever endringer mer omfattende endringer i RelationTracker så det tas senere
+        inverseRelationMap.clear();
+    }
+
     static class Key {
         private final RelationName name;
         private final Object inverseValue;

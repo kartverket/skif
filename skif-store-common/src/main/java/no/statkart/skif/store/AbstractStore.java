@@ -12,6 +12,8 @@ import no.statkart.skif.util.CopyHelper;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static com.google.common.base.Preconditions.checkState;
+
 /**
  * @author Henrik Fredholm
  */
@@ -225,7 +227,16 @@ public class AbstractStore implements Store {
 
     @Override
     public boolean evictAll() {
-        return storeSession.evictAll();
+        boolean allEvicted = storeSession.evictAll();
+        if (storeRelationCache.isEnabled()) {
+            if (allEvicted) {
+                storeRelationCache.evictAll();
+            } else {
+                // TODO: Evict av cachet relasjoner støttes ennå ikke når Store inneholder endrede objekter. Best ikke å gjøre noe slik at cachen ikke mister endringer på relasjoner.
+            }
+
+        }
+        return allEvicted;
     }
 
     @Override

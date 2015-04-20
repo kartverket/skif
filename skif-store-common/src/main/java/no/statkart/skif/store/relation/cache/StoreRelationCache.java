@@ -51,6 +51,9 @@ public abstract class StoreRelationCache {
     }
 
     public void setEnabled(boolean enabled) {
+        if (enabled==false) {
+            relationCache.evictAll();
+        }
         this.enabled = enabled;
     }
 
@@ -187,4 +190,7 @@ public abstract class StoreRelationCache {
         }
     }
 
+    public void evictAll() {
+        relationCache.evictAll();
+    }
 }

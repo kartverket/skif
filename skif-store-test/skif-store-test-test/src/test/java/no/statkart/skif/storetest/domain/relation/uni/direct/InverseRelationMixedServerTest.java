@@ -5,7 +5,10 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.RunOnServerMethod;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleTransfer;
+import no.statkart.skif.store.StoreClient;
+import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.storetest.domain.relation.X1AAMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1BBOneMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -220,4 +223,66 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
         X1BBOne b3 = getBBOne(x1BBOneMockupFactory.getB3Id(), Action.REQUEST, Action.LOAD);
         assertThat(b3.getInvSomeBBIds().get()).containsOnly(x1AAMockupFactory.getA2Id(), x1AAMockupFactory.getA3Id());
     }
+
+    /**
+     * Tester at beregning av invers relasjoner blir korrekt når relation caching er disabled og invers relasjonen
+     * endres på serveren utenom klienten
+     */
+    public void testUpdateRelationsOnServerWithRelationCachingOnClientDisabled() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
+        final X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
+        ImmutableSet<X1BBOneId<?>> x1BBOneIds = ImmutableSet.of(x1BBOneMockupFactory.getB1Id(), x1BBOneMockupFactory.getB1Id());
+        store.get(x1BBOneIds);
+        assertThat(store.getRelationCache().isEnabled()).isEqualTo(false);
+        assertThat(store.get(x1BBOneMockupFactory.getB1Id()).findInvSomeBBIds()).isEmpty();
+        assertThat(store.get(x1BBOneMockupFactory.getB2Id()).findInvSomeBBIds()).containsOnly(x1AAMockupFactory.getA1Id());
+        updateAA(x1AAMockupFactory.getA1Id(), x1BBOneMockupFactory.getB1Id());
+        assertThat(store.get(x1BBOneMockupFactory.getB1Id()).findInvSomeBBIds()).containsOnly(x1AAMockupFactory.getA1Id());
+        assertThat(store.get(x1BBOneMockupFactory.getB2Id()).findInvSomeBBIds()).isEmpty();
+    }
+
+    /**
+     * Tester at beregning av invers relasjoner blir korrekt når relation caching er enabled og inversrelasjonen
+     * endres på serveren utenom klienten - dersom man kaller Store.evictAll() før invers relasjonen beregnes.
+     */
+    public void testUpdateRelationsOnServerWithCachingOnClientEnabled() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
+        final X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
+        ImmutableSet<X1BBOneId<?>> x1BBOneIds = ImmutableSet.of(x1BBOneMockupFactory.getB1Id(), x1BBOneMockupFactory.getB1Id());
+        store.get(x1BBOneIds);
+        try {
+            store.getRelationCache().setEnabled(true);
+            assertThat(store.getRelationCache().isEnabled()).isEqualTo(true);
+            assertThat(store.get(x1BBOneMockupFactory.getB1Id()).findInvSomeBBIds()).isEmpty();
+            assertThat(store.get(x1BBOneMockupFactory.getB2Id()).findInvSomeBBIds()).containsOnly(x1AAMockupFactory.getA1Id());
+            updateAA(x1AAMockupFactory.getA1Id(), x1BBOneMockupFactory.getB1Id());
+            store.evictAll(); // Uten denne feiler koden fordi relasjoner som er endret på serveren er cachet på klienten
+            assertThat(store.get(x1BBOneMockupFactory.getB1Id()).findInvSomeBBIds()).containsOnly(x1AAMockupFactory.getA1Id());
+            assertThat(store.get(x1BBOneMockupFactory.getB2Id()).findInvSomeBBIds()).isEmpty();
+        } finally {
+            store.getRelationCache().setEnabled(false);
+            assertThat(store.getRelationCache().isEnabled()).isEqualTo(false);
+        }
+    }
+
+    /**
+     * Hjelpemetode som oppdatere relasjon fra X1AA til X1BBOne på serveren uten om klienten. Metoden kjører
+     * i en egen transaksjon.
+     */
+    private void updateAA(final X1AAId<?> aId, final X1BBOneId<?> bbOneId) {
+        server.runInTxRequiresNew(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                X1AA a = store.lock(aId);
+                a.setSomeBBId(bbOneId);
+                store.update(a);
+                return null;
+            }
+        });
+    }
+
 }
