@@ -64,7 +64,7 @@ public class X1AA extends AbstractRelationTestBubble implements InverseRelationP
     }
 
     public void setSomeBBId(X1BBOneId<?> someBBId) {
-        this.someBBId = BubbleIds.onChangeRelation(this, X1AAFinderService.Role.someBB, this.someBBId, someBBId);
+        this.someBBId = Bubbles.onChangeRelation(this, X1AAFinderService.Role.someBB, this.someBBId, someBBId);
     }
 
 

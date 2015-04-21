@@ -170,4 +170,11 @@ public class Components {
         return checkNotNull(getOwningBubble(component));
     }
 
+    public static <E> E onChangeRelation(ComponentWithOwnerReference<?> component, RelationName relationName, E oldValue, E newValue) {
+        BubbleObject owningBubble = Components.getOwningBubble(component);
+        Bubbles.onChangeRelationImpl(owningBubble, relationName, oldValue, newValue);
+        return newValue;
+    }
+
+
 }
