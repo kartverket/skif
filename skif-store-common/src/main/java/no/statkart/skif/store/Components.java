@@ -61,7 +61,7 @@ public class Components {
             newComponent.setOwner(owner);
             if (newComponent instanceof InverseRelationParticipation) {
                 BubbleObject owningBubble = getOwningBubble(newComponent);
-                StoreRelationCache relationCache = BubbleIds.getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull(owningBubble);
+                StoreRelationCache relationCache = Bubbles.getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull(owningBubble);
                 if (relationCache != null) {
                     relationCache.updateAdded(owningBubble.getBubbleId(), (InverseRelationParticipation) newComponent);
                 }

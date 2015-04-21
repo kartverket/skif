@@ -69,7 +69,7 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
                 criteria.add(Restrictions.gt("id", id));
             }
             criteria.addOrder(Order.asc("id"));
-            return (List) store.getOrdered(BubbleIds.asIds(criteria.list()));
+            return (List) store.getOrdered(Bubbles.asIds(criteria.list()));
         } finally {
             if (sessionSelector != null) sessionSelector.close();
         }

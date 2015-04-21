@@ -61,7 +61,7 @@ public class X2EntityComponentOne implements EntityBubbleComponent<X2AAWithEntit
     }
 
     public void setSomeBBId(X2BBOneId<?> someBBId) {
-        this.someBBId = BubbleIds.onChangeRelation(this, X2AAWithEntityComponentFinderService.Role.someBB, this.someBBId, someBBId);
+        this.someBBId = Bubbles.onChangeRelation(this, X2AAWithEntityComponentFinderService.Role.someBB, this.someBBId, someBBId);
     }
 
     public Set<X2CCManyId<?>> getSomeCCsIds() {

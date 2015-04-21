@@ -2,11 +2,8 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
-import no.statkart.skif.exception.ConfigurationException;
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.exception.*;
 import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.exception.ObjectsNotFoundException;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.util.CopyHelper;
@@ -290,7 +287,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         }
         if (bubbleIds.size() != result.size()) {
             Set<BubbleId<?>> ids = new HashSet<BubbleId<?>>(bubbleIds);
-            ids.removeAll(BubbleIds.asIds(result));
+            ids.removeAll(Bubbles.asIds(result));
             throw new ObjectsNotFoundException(ids);
         }
         return result;

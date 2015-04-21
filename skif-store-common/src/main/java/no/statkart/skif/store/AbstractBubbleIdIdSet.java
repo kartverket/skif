@@ -14,7 +14,7 @@ import java.util.Set;
  * Bemerk: I definisjonen av denne klassen burde {@code <O>} egentlig extende både {@code BubbleObject} og
  * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da må subklassen {@link ComponentBubbleIdSet}
  * eksplisitt angi den eidende bobleklassen i tillegg til den direkte eiende klassen og det blir og det blir veldig
- * tungvingt. Har derfor istedet valgt å lage en package private hjelpemetode {@link BubbleIds#onChangeRelationImpl}
+ * tungvingt. Har derfor istedet valgt å lage en package private hjelpemetode {@link Bubbles#onChangeRelationImpl}
  * som kun krever at {@code owner} er av type BubbleObject.
  *
  * @author Henrik Fredholm
@@ -58,7 +58,7 @@ public abstract class AbstractBubbleIdIdSet<O extends BubbleObject, E extends Bu
         boolean added = super.add(element);
         if (added) {
             O owner = getOwner();
-            BubbleIds.onChangeRelationImpl(owner, relationName, null, element);
+            Bubbles.onChangeRelationImpl(owner, relationName, null, element);
         }
         return added;
     }
@@ -69,7 +69,7 @@ public abstract class AbstractBubbleIdIdSet<O extends BubbleObject, E extends Bu
         boolean removed = super.remove(object);
         if (removed) {
             O owner = getOwner();
-            BubbleIds.onChangeRelationImpl(owner, relationName, (E) object, null);
+            Bubbles.onChangeRelationImpl(owner, relationName, (E) object, null);
         }
         return removed;
     }
@@ -92,7 +92,7 @@ public abstract class AbstractBubbleIdIdSet<O extends BubbleObject, E extends Bu
     public void clear() {
         O owner = getOwner();
         for (E e : delegate) {
-            BubbleIds.onChangeRelationImpl(owner, relationName, e, null);
+            Bubbles.onChangeRelationImpl(owner, relationName, e, null);
         }
         super.clear();
     }
@@ -119,7 +119,7 @@ public abstract class AbstractBubbleIdIdSet<O extends BubbleObject, E extends Bu
         @Override
         public void remove() {
             O owner = getOwner();
-            BubbleIds.onChangeRelationImpl(owner, relationName, current, null);
+            Bubbles.onChangeRelationImpl(owner, relationName, current, null);
             super.remove();
         }
     }

@@ -94,7 +94,6 @@ public class BubbleIds {
     /**
      * @deprecated Metoden er flyttet til {@link Bubbles#setDelegate}
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     static public <E extends BubbleId<?>> void setDelegate(Set<E> bubbleIds, Set<E> newElements) {
         ((AbstractBubbleIdIdSet) bubbleIds).setDelegate(newElements);
@@ -103,7 +102,6 @@ public class BubbleIds {
     /**
      * @deprecated Metoden er flyttet til {@link Bubbles#getDelegate}
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     static public <E extends BubbleId<?>> Set<E> getDelegate(Set<E> bubbleIds) {
         return ((AbstractBubbleIdIdSet) bubbleIds).delegate();
@@ -178,7 +176,7 @@ public class BubbleIds {
     @Deprecated
     public static <T extends BubbleId<?>> T onChangeRelation(ComponentWithOwnerReference<?> component, RelationName relationName, T oldValue, T newValue) {
         BubbleObject owningBubble = Components.getOwningBubble(component);
-        BubbleIds.onChangeRelationImpl(owningBubble,relationName, oldValue, newValue);
+        Bubbles.onChangeRelationImpl(owningBubble,relationName, oldValue, newValue);
         return newValue;
     }
 

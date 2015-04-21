@@ -101,8 +101,8 @@ public class TestdataServiceImpl implements TestdataService {
         setTransactionSnapshot(snapshotVersion);
         UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
-            store.lock(BubbleIds.asBaseIds(transfer.getUpdatedObjects()));
-            store.lock(BubbleIds.asBaseIds(transfer.getDeletedObjects()));
+            store.lock(Bubbles.asBaseIds(transfer.getUpdatedObjects()));
+            store.lock(Bubbles.asBaseIds(transfer.getDeletedObjects()));
             store.registerTransfer(transfer);
             store.commitUnitOfWork(unitOfWork);
         } finally {
