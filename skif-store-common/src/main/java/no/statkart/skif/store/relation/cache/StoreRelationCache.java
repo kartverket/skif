@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public abstract class StoreRelationCache {
     protected RelationCache relationCache = new RelationCache();
-    protected boolean enabled;
     protected final Store store;
     protected final Provider<RelationCacheRegistry> cacheRegistryProvider = new Provider<RelationCacheRegistry>() {
         @Override
@@ -47,21 +46,18 @@ public abstract class StoreRelationCache {
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return relationCache.isEnabled(getLevel());
     }
 
     /**
      * Enabler og disabler relation caching. Ved disabling evictes alle cachet relasjoner.
      */
     public void setEnabled(boolean enabled) {
-        if (enabled==false) {
-            relationCache.evictAll();
-        }
-        this.enabled = enabled;
+        relationCache.setEnabled(getLevel(), enabled);
     }
 
     public RelationStrategy getStrategy(Method method) {
-        if (enabled) {
+        if (isEnabled()) {
             return cacheRegistryProvider.get().getStrategy(method);
         } else {
             return null;
@@ -69,23 +65,23 @@ public abstract class StoreRelationCache {
     }
 
     public <E> void onChangeRelation(RelationName relationName, BubbleId<?> sourceId, @Nullable E oldValue, @Nullable E newValue) {
-        if (enabled) {
+        if (isEnabled()) {
             relationCache.onChangeRelation(getLevel(), inAttachedMode(), relationName, sourceId, oldValue, newValue);
         }
     }
 
     public <E> RelationValueHolder getRelationValue(RelationName relationName, E value) {
-        checkState(enabled);
+        checkState(isEnabled());
         return relationCache.getRelationValue(getLevel(), relationName, value);
     }
 
     public <E> Object setRelationValue(RelationName relationName, E value, Object relationValue) {
-        checkState(enabled);
+        checkState(isEnabled());
         return relationCache.setRelationValue(getLevel(), relationName, value, relationValue);
     }
 
     public RelationName getRelationNameReturnNullIfDisabled(Method method) {
-        if (enabled) {
+        if (isEnabled()) {
             return relationCache.getRelationName(method);
         } else {
             return null;
@@ -93,10 +89,10 @@ public abstract class StoreRelationCache {
     }
 
     public boolean transferToCache(RelationName relationName, BubbleId<?> id, Object cachedRelationValue) {
-        if (enabled) {
+        if (isEnabled()) {
             relationCache.setRelationValue(getLevel(), relationName, id, cachedRelationValue);
         }
-        return enabled;
+        return isEnabled();
     }
 
 
@@ -142,7 +138,7 @@ public abstract class StoreRelationCache {
             checkState(bubbleObject.store() == store, "BubbleObject er ikke registrert i inneværende Store");
             for (InverseRelation<?> inverseRelation : getInverseRelations(bubbleObject)) {
                 if (inverseRelation.isMaterialised()) {
-                    if (enabled) {
+                    if (isEnabled()) {
                         relationCache.setRelationValue(getLevel(), inverseRelation.getName(), bubbleObject.getId(), inverseRelation.getCached());
                     }
                     inverseRelation.setCached(null);
@@ -159,7 +155,7 @@ public abstract class StoreRelationCache {
     }
 
     public <T> Collection<T> findNonMaterialized(RelationName relationName, Collection<T> ids) {
-        checkState(enabled);
+        checkState(isEnabled());
         return relationCache.findNonMaterialized(getLevel(), relationName, ids);
     }
 

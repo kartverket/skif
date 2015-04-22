@@ -19,6 +19,7 @@ import java.util.Set;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Henrik Fredholm
@@ -134,10 +135,10 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2BBOneMockupFactory X2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
 
-        store.getRelationCache().setEnabled(true);
         UnitOfWork unitOfWork = null;
         try {
             unitOfWork = store.beginUnitOfWork();
+            store.getRelationCache().setEnabled(true);
             X2BBOne b1 = store.get(X2BBOneMockupFactory.getB1Id());
             assertThat(b1.findInvSomeBBIds()).doesNotContain(X2AAWithEntityComponentMockupFactory.getA2Id());
             X2AAWithEntityComponent a2 = store.get(X2AAWithEntityComponentMockupFactory.getA2Id());

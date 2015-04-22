@@ -286,6 +286,7 @@ public class AbstractStore implements Store {
 
         // Så det som ikke kan feile
         storeSession = storeUnitOfWork;
+        storeRelationCache.onBeginUnitOfWork();
         return unitOfWork;
     }
 

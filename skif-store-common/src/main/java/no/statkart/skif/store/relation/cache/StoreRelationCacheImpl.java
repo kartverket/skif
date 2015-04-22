@@ -24,6 +24,10 @@ public abstract class StoreRelationCacheImpl extends StoreRelationCache{
         super(store);
     }
 
+    public void onBeginUnitOfWork() {
+        relationCache.onBeginUnitOfWork(getLevel());
+    }
+
     public void onCommitUnitOfWork() {
         relationCache.onCommitUnitOfWork(getLevel()+1);
 

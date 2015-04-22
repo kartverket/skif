@@ -1,5 +1,7 @@
 package no.statkart.skif;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
@@ -7,6 +9,9 @@ import no.statkart.skif.exception.ImplementationException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * @author Henrik Fredholm
@@ -85,4 +90,25 @@ public class SkifUtil {
         }
     }
 
+    /**
+     * Oppretter en HashMap dimensjonert til antall keys og legger inn {@code null} for hver key
+     */
+    public static <K, V> HashMap<K, V> newHashMapWithNullValues(Collection<? extends K> keys) {
+        HashMap<K, V> map = Maps.newHashMapWithExpectedSize(keys.size());
+        for (K k : keys) {
+            map.put(k, null);
+        }
+        return map;
+    }
+
+    /**
+     * Oppretter en HashMap dimensjonert til antall keys og legger inn et tomt sett for hver key
+     */
+    public static <K, E> HashMap<K, Set<E>> newHashMapWithEmptySetValues(Collection<? extends K> keys) {
+        HashMap<K, Set<E>> map = Maps.newHashMapWithExpectedSize(keys.size());
+        for (K k : keys) {
+            map.put(k, Sets.<E>newHashSet());
+        }
+        return map;
+    }
 }

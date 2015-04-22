@@ -25,6 +25,23 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class RelationCache {
     Map<Key, RelationEntry> inverseRelationMap = Maps.newHashMap();
+    final static int MAX_LEVELS = 4;
+    private boolean[] enabled = new boolean[MAX_LEVELS];
+
+    public boolean isEnabled(int level) {
+        return enabled[level];
+    }
+
+    /**
+     * Enabler og disabler relation caching. Ved disabling evictes alle cachet relasjoner.
+     */
+    public void setEnabled(int level, boolean enabled) {
+        checkState(level==0 || this.enabled[level-1]==false || enabled, "Disabling av relation caching i current UnitOfWork støttes ikke når underliggende UnitOfWork eller session har caching enablet");
+        if (enabled==false && this.enabled[level]==true) {
+            evictAll();
+        }
+        this.enabled[level] = enabled;
+    }
 
     public <E> void onChangeRelation(int level, boolean inAttachedMode, RelationName relationName, BubbleId<?> sourceId, @Nullable E oldInverseValue, @Nullable E newInverseValue) {
         removeId(level, inAttachedMode, relationName, oldInverseValue, sourceId);
@@ -86,7 +103,14 @@ public class RelationCache {
         return name;
     }
 
+    public void onBeginUnitOfWork(int level) {
+        enabled[level] = enabled[level-1];
+    }
+
     public void onCommitUnitOfWork(int level) {
+        if (enabled[level] && !enabled[level-1]) {
+            evictAll();
+        }
         for (Map.Entry<Key, RelationEntry> mapElement : inverseRelationMap.entrySet()) {
             RelationEntry entry = mapElement.getValue();
             entry.commitEntry(level);
@@ -94,6 +118,9 @@ public class RelationCache {
     }
 
     public void onAbortUnitOfWork(int level) {
+        if (enabled[level] && !enabled[level-1]) {
+            evictAll();
+        }
         Iterator<Map.Entry<Key,RelationEntry>> iterator = inverseRelationMap.entrySet().iterator();
         while ( iterator.hasNext()) {
             Map.Entry<Key, RelationEntry> mapElement = iterator.next();
@@ -130,6 +157,7 @@ public class RelationCache {
         // TODO: Dersom relasjonscachen inneholder endringer blir nedenstående feil. Løsningen må utvides til alltid å ta vare på endringene. Krever endringer mer omfattende endringer i RelationTracker så det tas senere
         inverseRelationMap.clear();
     }
+
 
     static class Key {
         private final RelationName name;

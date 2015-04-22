@@ -182,6 +182,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     WrappableStoreSession commitUnitOfWork() {
+
         wrappedStoreSession.commitUnitOfWork(modifiedMap);
         return wrappedStoreSession;
     }
