@@ -50,6 +50,9 @@ public abstract class StoreRelationCache {
         return enabled;
     }
 
+    /**
+     * Enabler og disabler relation caching. Ved disabling evictes alle cachet relasjoner.
+     */
     public void setEnabled(boolean enabled) {
         if (enabled==false) {
             relationCache.evictAll();
