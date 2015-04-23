@@ -41,6 +41,11 @@ public class MockupStore implements Store {
         public void setEnabled(boolean enabled) {
             throw new UnsupportedOperationException("MockupStore støtter ikke operasjon på StoreRelationCache");
         }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
     };
 
     /**
