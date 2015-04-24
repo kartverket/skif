@@ -1,7 +1,6 @@
 package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
-import com.google.inject.Key;
 import com.google.inject.Provider;
 import no.statkart.skif.service.*;
 import no.statkart.skif.service.ServiceContext;
@@ -67,17 +66,17 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
         TransactionAttributeType txType = ejbAttributesLookup.lookupAttribute(method);
 
         if (isNewContextRequired(origTxMode, txType)) {
-            return executeInNewContext(origTxMode, txType, ejbAttributesLookup.isBeanManagedTransaction(),method, args);
+            return executeInNewContext(txType, ejbAttributesLookup.isBeanManagedTransaction(),method, args);
         } else {
             return executeInExistingContext(origTxMode, txType, method, args);
         }
     }
 
-    private Object executeInNewContext(TxMode origTxMode, TransactionAttributeType txType, boolean beanManagedTransaction, Method method, Object[] args) throws Throwable {
+    private Object executeInNewContext(TransactionAttributeType txType, boolean beanManagedTransaction, Method method, Object[] args) throws Throwable {
         final TxMode txMode = (txType == TransactionAttributeType.REQUIRED || txType == TransactionAttributeType.REQUIRES_NEW) ? TxMode.TX : TxMode.NO_TX;
         final SingleVmRemoteCallContext singleVmRemoteCallContext = singleVmRemoteCallContextProvider.get();
         final Map<String, Object> contextData = singleVmRemoteCallContext.getContextData();
-        ServiceContext serviceContext = null;
+        ServiceContext serviceContext;
         ServiceRequestContext serviceRequestContext;
         if (isRemoteCall(contextData)) {
             serviceContext = (ServiceContext) contextData.get("serviceContext");
@@ -92,7 +91,7 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
             serviceRequestContext.setServicename(method.getName());
         } else {
             ServiceRequestContext oldServiceRequestContext = serviceRequestContextProvider.get();
-            serviceRequestContext = new ServiceRequestContext(oldServiceRequestContext, txMode, false, txType);
+            serviceRequestContext = new ServiceRequestContext(oldServiceRequestContext, txMode, beanManagedTransaction, txType);
             serviceRequestContext.incNestedLevel();
             serviceRequestContext.setCallId(callIdProvider.get());
             serviceRequestContext.setParentCallId(oldServiceRequestContext.getCallId());
@@ -130,6 +129,7 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
     private Object invokeInContext(Method method, Object[] args) throws Throwable {
         try {
             final S ejbServiceChain = ejbServiceChainProvider.get();
+            //noinspection UnnecessaryLocalVariable
             Object result = method.invoke(ejbServiceChain, args);
             return result;
         } catch (InvocationTargetException e) {
