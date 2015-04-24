@@ -2,6 +2,7 @@ package no.statkart.skif.store.service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.NotImplementedException;
@@ -18,9 +19,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static no.statkart.skif.util.HibernateHelper.*;
 
@@ -97,7 +96,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
             } else if (returnerBobler == ReturnerBobler.Alltid) {
                 int oensketAntallEndringer = Math.min(LIMIT, maksAntall);
                 List<E> accumulatedEndringer = null;
-                Collection<BubbleId<?>> accumulatedEndretIds = Sets.newLinkedHashSet();
+                Map<BubbleId<?>, BubbleObject> accumulatedBubbleObjects = Maps.newHashMap();
                 while (oensketAntallEndringer > 0 && !endringer.isAlleEndringerFunnet()) {
                     // Finn endringer
                     Criteria criteria = session.createCriteria(endringClass);
@@ -126,17 +125,14 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
                                 endretIds.add(endring.getEndretBubbleId());
                         }
                     }
-                    if (!accumulatedEndretIds.isEmpty()) {
-                        store.evict(accumulatedEndretIds);   //Det er greit å evicte ids som ikke finnes i store
+                    if (!accumulatedBubbleObjects.isEmpty()) {
+                        store.evict(accumulatedBubbleObjects.keySet());   //Det er greit å evicte ids som ikke finnes i store
                     }
                     //Noen objekter kan ha blitt fjernet på et senere tidspunkt, må derfor bruke getIgnoreMissing
                     List<BubbleObject> bubbleObjects = store.getIgnoreMissing(endretIds);
 
-                    //Kan ikke putte endretId rett inn i accumulatedEndretIds, siden noen endretId kan ha blitt fjernet
                     for (BubbleObject object : bubbleObjects) {
-                        if (!accumulatedEndretIds.contains(object.getId())) {
-                            accumulatedEndretIds.add(object.getId());
-                        }
+                        accumulatedBubbleObjects.put(object.getId(), object);
                     }
 
                     // Fikk vi alle endringer?
@@ -150,10 +146,8 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
                             // Det har ikke kommet nye endringer. Stopper her.
                             endringer.setAlleEndringerFunnet(true);
                             endringer.setEndringList(accumulatedEndringer);
-                            endringer.setSisteEndringIdProsessert(sisteEndringId);
-                            List endretObjects = new ArrayList(accumulatedEndretIds.size());
-                            store.getOrdered(accumulatedEndretIds, endretObjects);
-                            endringer.setObjects(endretObjects);
+                            endringer.setSisteEndringIdProsessert(nytSisteEndringId);
+                            endringer.setObjects(sorterBobler(accumulatedEndringer, accumulatedBubbleObjects));
                         } else {
                             // Det har kommet flere endringer mens vi leste objekter. Forsetter.
                             oensketAntallEndringer = oensketAntallEndringer - endringList.size();
@@ -163,9 +157,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
                         endringer.setAlleEndringerFunnet(false);
                         endringer.setEndringList(accumulatedEndringer);
                         endringer.setSisteEndringIdProsessert(accumulatedEndringer.get(accumulatedEndringer.size() - 1).getId());
-                        List endretObjects = new ArrayList(accumulatedEndretIds.size());
-                        store.getOrdered(accumulatedEndretIds, endretObjects);
-                        endringer.setObjects(endretObjects);
+                        endringer.setObjects(sorterBobler(accumulatedEndringer, accumulatedBubbleObjects));
                         oensketAntallEndringer = 0;
                     }
                 }
@@ -176,6 +168,19 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
             if (sessionSelector != null) sessionSelector.close();
         }
         return endringer;
+    }
+
+    private List<BubbleObject> sorterBobler(List<E> accumulatedEndringer, Map<BubbleId<?>, BubbleObject> accumulatedBubbleObjects) {
+        Set<BubbleObject> objects = Sets.newLinkedHashSetWithExpectedSize(accumulatedEndringer.size());
+
+        for (E endring : accumulatedEndringer) {
+            BubbleObject object = accumulatedBubbleObjects.get(endring.getEndretBubbleId());
+            if (object != null) {
+                objects.add(object);
+            }
+        }
+
+        return Lists.newArrayList(objects);
     }
 
     @Override
