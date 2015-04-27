@@ -44,7 +44,7 @@ public class StoreEntry {
         return persistentBubbleObject;
     }
 
-    public boolean hasSeparatePersistentBubbleObject() {
+    public boolean isLevel0PersistentBubbleObject() {
         return persistentBubbleObject==this.bubbleObject[0];
     }
 
@@ -228,7 +228,7 @@ public class StoreEntry {
 
         int l = getLevelForDerivedBubbleObject(level);
         if (isLocked()) {
-            if (l==0) {
+            if (l==0 && isLevel0PersistentBubbleObject()) {
                 store.ensureFullyLoaded(bubbleObject[0]);
             }
             BubbleObject copy = CopyHelper.copy(bubbleObject[l]);

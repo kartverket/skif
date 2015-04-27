@@ -512,7 +512,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             storeEntry.setLocked(0);
         } else {
             BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
-            if (derivedBubbleObject == storeEntry.getDerivedBubbleObject(0) && !storeEntry.hasSeparatePersistentBubbleObject()) {
+            if (derivedBubbleObject == storeEntry.getDerivedBubbleObject(0) && storeEntry.isLevel0PersistentBubbleObject()) {
                 persistenceSessionManager.ensureFullyLoaded(derivedBubbleObject);
             }
             BubbleObject copy = CopyHelper.copy(derivedBubbleObject);
