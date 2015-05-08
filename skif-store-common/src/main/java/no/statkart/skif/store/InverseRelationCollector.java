@@ -33,7 +33,7 @@ public class InverseRelationCollector {
          * @param objects som skal legges til
          * @return true hvis ingen av objektene fantes fra før
          */
-        boolean addAll(Set<Object> objects) {
+        boolean addAll(Set<? extends Object> objects) {
             boolean allAdded = true;
             for (Object object : objects) {
                 allAdded &= v.add(object);
@@ -65,7 +65,7 @@ public class InverseRelationCollector {
         }
     }
 
-    public void put(RelationName role, Set<Object> value) {
+    public void put(RelationName role, Set<? extends Object> value) {
         if (value != null && !value.isEmpty()) {
             if (inCollection) {
                 Object v = map.get(role);
