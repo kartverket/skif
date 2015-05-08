@@ -176,8 +176,8 @@ public class Test1ServiceWSTestJEE {
             loginUserHolder.set(new LoginUser("unknown_user", "wrongPassword"));
             assertEquals(instance.helloWorld("Henrik", skifTestContext), "Hello1: Henrik");
             fail("Forventet exception");
-        } catch (com.sun.xml.ws.client.ClientTransportException e) {
-            Assert.assertEquals(e.getArguments()[0], 401);
+        } catch (no.statkart.skif.exception.InvalidUserException e) {
+            Assert.assertEquals(e.getMessage(), "HTTP 401 Unauthorized");
         }
 
     }
