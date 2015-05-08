@@ -48,4 +48,10 @@ public class X2AAWithEntityComponentFinderServiceEJBBean extends EJBTimedService
     public Map<X2CCManyId<?>, X2AAWithEntityComponentId<?>> findInvSomeCCsId(Collection<? extends X2CCManyId<?>> ids) {
         return serviceChain.findInvSomeCCsId(ids);
     }
+
+    @Override
+    public Map<X2BBOneId<?>, Set<X2AAWithEntityComponentId<?>>> findInvRole1BBIds(Collection<? extends X2BBOneId<?>> x2BBOneIds) {
+        return serviceChain.findInvRole1BBIds(x2BBOneIds);
+    }
+
 }

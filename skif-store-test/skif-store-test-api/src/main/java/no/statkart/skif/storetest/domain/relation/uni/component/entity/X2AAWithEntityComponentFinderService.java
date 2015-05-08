@@ -16,7 +16,8 @@ import java.util.Set;
 public interface X2AAWithEntityComponentFinderService {
     public enum Role implements RelationName {
         someBB,
-        someCCs
+        someCCs,
+        role1BBs
     }
 
     @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="someBB")
@@ -24,4 +25,7 @@ public interface X2AAWithEntityComponentFinderService {
 
     @Relation(type= RelationType.INVERSE, cardinality= Cardinality.ONE, name="someCCs")
     Map<X2CCManyId<?>, X2AAWithEntityComponentId<?>> findInvSomeCCsId(Collection<? extends X2CCManyId<?>> x2CCManyIds);
+
+    @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="role1BBs")
+    Map<X2BBOneId<?>, Set<X2AAWithEntityComponentId<?>>> findInvRole1BBIds(Collection<? extends X2BBOneId<?>> x2BBOneIds);
 }

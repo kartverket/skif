@@ -23,6 +23,11 @@
                 cascade="all-delete-orphan">
         </many-to-one>
 
+        <set name="aaSetEntityComponentsSet" lazy="true" cascade="all-delete-orphan,evict" batch-size="256">
+            <key column="ownerId"/>
+            <one-to-many class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2SetEntityComponent"/>
+        </set>
+
     </class>
 
     <class name="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2EntityComponentOne" lazy="true"
@@ -55,4 +60,33 @@
         </set>
 
     </class>
+
+    <class name="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2SetEntityComponent" table="X2SetEntityComp"
+           lazy="true" select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+
+        <!-- readonly tilbakepeker som settes av one-to-many collection mapping i owner  -->
+        <many-to-one
+                name="owner"
+                column="ownerId"
+                class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponent"
+                access="field"
+                update="false"
+                insert="false"
+                cascade="none">
+        </many-to-one>
+
+        <property name="text"/>
+
+        <many-to-one
+                name="role1BBOne"
+                column="role1BBOneId"
+                class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2BBOne">
+            <meta attribute="bubble-ref"/>
+        </many-to-one>
+
+    </class>
+
 </hibernate-mapping>

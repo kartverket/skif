@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import no.statkart.skif.SkifUtil;
 import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.SessionSelector;
@@ -40,6 +41,7 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
         try {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select someBBId, ownerId  from X2EntityComponentOne  where someBBId in (select * from table(:idValues))");
+            query.addSynchronizedQuerySpace("X2EntityComponentOne");
             query.setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, ids.size()));
             query.addScalar("someBBId", Hibernate.LONG);
@@ -74,6 +76,8 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
         try {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select t.id, c.ownerId  from X2CCMany t, X2EntityComponentOne c  where t.ownerId = c.id and  t.id in (select * from table(:idValues))");
+            query.addSynchronizedQuerySpace("X2CCMany");
+            query.addSynchronizedQuerySpace("X2EntityComponentOne");
             query.setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, ids.size()));
             query.addScalar("id", Hibernate.LONG);
@@ -93,4 +97,34 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
         return result;
     }
 
+    @Override
+    public Map<X2BBOneId<?>, Set<X2AAWithEntityComponentId<?>>> findInvRole1BBIds(Collection<? extends X2BBOneId<?>> ids) {
+        Map<X2BBOneId<?>, Set<X2AAWithEntityComponentId<?>>> result = SkifUtil.newHashMapWithEmptySetValues(ids);
+
+
+        SnapshotVersion snapshotVersion = ids.iterator().next().getSnapshotVersion();
+        SessionSelector sessionSelector = sessionSelectorProvider.get();
+        PreparedStatement preparedStatement = null;
+        try {
+            Session session = sessionSelector.get(snapshotVersion);
+            SQLQuery query = session.createSQLQuery("select role1BBOneId, ownerId  from X2SetEntityComp  where role1BBOneId in (select * from table(:idValues))");
+            query.addSynchronizedQuerySpace("X2SetEntityComp");
+            query.setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType());
+            query.setFetchSize(Math.min(1000, ids.size()));
+            query.addScalar("role1BBOneId", Hibernate.LONG);
+            query.addScalar("ownerId", Hibernate.LONG);
+            ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
+
+            while (scroll.next()) {
+                Object[] next = scroll.get();
+                X2BBOneId<?> key = new X2BBOneId<X2BBOne>((Long) next[0], snapshotVersion);
+                Set<X2AAWithEntityComponentId<?>> relatedIds = result.get(key);
+                relatedIds.add(new X2AAWithEntityComponentId<X2AAWithEntityComponent>((Long) next[1], snapshotVersion));
+            }
+        } finally {
+            HibernateHelper.close(preparedStatement, sessionSelector);
+        }
+        return result;
+
+    }
 }

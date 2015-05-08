@@ -56,14 +56,26 @@ public class Components {
         return component;
     }
 
-    static <O, C extends ComponentWithOwnerReference<O>> void setOwner(@Nullable C newComponent, O owner) {
-        if (newComponent != null) {
-            newComponent.setOwner(owner);
-            if (newComponent instanceof InverseRelationParticipation) {
-                BubbleObject owningBubble = getOwningBubble(newComponent);
-                StoreRelationCache relationCache = Bubbles.getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull(owningBubble);
-                if (relationCache != null) {
-                    relationCache.updateAdded(owningBubble.getBubbleId(), (InverseRelationParticipation) newComponent);
+    static <O, C extends ComponentWithOwnerReference<O>> void setOwner(@Nullable C component, O owner) {
+        if (component != null) {
+            if (component.getOwner() != owner) {
+                // Component kan ikke bytte eier, men kan settes til null ved sletting
+                if (component instanceof InverseRelationParticipation) {
+                    // originalOwningBubble vil være null ved 'add' og være satt ved 'remove'
+                    BubbleObject originalOwningBubble = getOwningBubble(component);
+                    StoreRelationCache relationCacheOriginalBubble = Bubbles.getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull(originalOwningBubble);
+                    if (relationCacheOriginalBubble != null) {
+                        relationCacheOriginalBubble.updateRemoved(originalOwningBubble.getBubbleId(), (InverseRelationParticipation) component);
+                    }
+                    component.setOwner(owner);
+                    // originalOwningBubble vil være sattn ved 'add' og være nll ved 'remove'
+                    BubbleObject owningBubble = getOwningBubble(component);
+                    StoreRelationCache relationCacheNewBubble = Bubbles.getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull(owningBubble);
+                    if (relationCacheNewBubble != null) {
+                        relationCacheNewBubble.updateAdded(owningBubble.getBubbleId(), (InverseRelationParticipation) component);
+                    }
+                } else {
+                    component.setOwner(owner);
                 }
             }
         }
@@ -158,7 +170,7 @@ public class Components {
     }
 
     public static BubbleObject getOwningBubble(ComponentWithOwnerReference<?> component) {
-        Object result=component;
+        Object result = component;
         do {
             result = ((ComponentWithOwnerReference<?>) result).getOwner();
             if (result == null) return null;

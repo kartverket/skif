@@ -43,4 +43,9 @@ public class X2BBOne  extends AbstractRelationTestBubble {
     public Set<X2AAWithEntityComponent> getInvSomeBB() {
         return store.get(invSomeBBIds.get());
     }
+
+    public Set<X2AAWithEntityComponentId<?>> findInvRole1BBOneIds() {
+        return unwrap(finder(X2AAWithEntityComponentFinderService.class).findInvRole1BBIds(idAsSet()));
+    }
+
 }

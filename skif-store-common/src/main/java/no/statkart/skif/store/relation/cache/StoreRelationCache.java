@@ -164,7 +164,11 @@ public abstract class StoreRelationCache {
         oldInstance.collectInverseRelationValues(collector);
         for (Map.Entry<RelationName, Object> entry : collector.entrySet()) {
             Object inverseValue = entry.getValue();
-            if (inverseValue instanceof Collection) {
+            if (inverseValue instanceof InverseRelationCollector.Values) {
+                for (Object v : ((InverseRelationCollector.Values) inverseValue)) {
+                    onChangeRelation(entry.getKey(), owningBubbleId, null, v);
+                }
+            } else if (inverseValue instanceof Collection) {
                 for (Object v : (Collection) inverseValue) {
                     onChangeRelation(entry.getKey(), owningBubbleId, v, null);
                 }
@@ -179,7 +183,11 @@ public abstract class StoreRelationCache {
         newInstance.collectInverseRelationValues(collector);
         for (Map.Entry<RelationName, Object> entry : collector.entrySet()) {
             Object inverseValue = entry.getValue();
-            if (inverseValue instanceof Collection) {
+            if (inverseValue instanceof InverseRelationCollector.Values) {
+                for (Object v : ((InverseRelationCollector.Values) inverseValue)) {
+                    onChangeRelation(entry.getKey(), owningBubbleId, null, v);
+                }
+            } else if (inverseValue instanceof Collection) {
                 for (Object v : (Collection) inverseValue) {
                     onChangeRelation(entry.getKey(), owningBubbleId, null, v);
                 }

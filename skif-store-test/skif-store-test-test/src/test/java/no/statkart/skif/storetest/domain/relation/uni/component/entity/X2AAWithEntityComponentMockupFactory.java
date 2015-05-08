@@ -43,7 +43,7 @@ public class X2AAWithEntityComponentMockupFactory extends AbstractMockupFactory 
     public void createAllMockups() {
         store.insert(createX2AA(a1Id, 1, null, X2BBOneMockupFactory.getB2Id()));
         store.insert(createX2AA(a2Id, 2, null, X2BBOneMockupFactory.getB3Id()));
-        store.insert(createX2AA(a3Id, 3, null, X2BBOneMockupFactory.getB3Id(), ImmutableSet.of(X2CCManyMockupFactory.getC2Id(), X2CCManyMockupFactory.getC3Id())));
+        store.insert(createX2AAWithRole1BBOne(a3Id, 3, null, X2BBOneMockupFactory.getB3Id(), ImmutableSet.of(X2CCManyMockupFactory.getC2Id(), X2CCManyMockupFactory.getC3Id())));
     }
 
     private X2AAWithEntityComponent createX2AA(X2AAWithEntityComponentId<?> aId, int nr, String text, X2BBOneId someBBId) {
@@ -58,6 +58,20 @@ public class X2AAWithEntityComponentMockupFactory extends AbstractMockupFactory 
         a.setEntityComponentOne(new X2EntityComponentOne());
         a.getEntityComponentOne().setSomeBBId(someBBId);
         a.getEntityComponentOne().setSomeCCsIds(ccManyIds);
+        return a;
+    }
+
+    private X2AAWithEntityComponent createX2AAWithRole1BBOne(X2AAWithEntityComponentId<?> aId, int nr, String text, X2BBOneId someBBId, Set<X2CCManyId<?>> ccManyIds) {
+        X2AAWithEntityComponent a = new X2AAWithEntityComponent();
+        a.setId(aId);
+        a.setNr(nr);
+        a.setText(text);
+        a.setEntityComponentOne(new X2EntityComponentOne());
+        a.getEntityComponentOne().setSomeBBId(someBBId);
+        a.getEntityComponentOne().setSomeCCsIds(ccManyIds);
+        X2SetEntityComponent component = new X2SetEntityComponent();
+        component.setRole1BBOneId(someBBId);
+        a.getAaSetEntityComponents().add(component);
         return a;
     }
 

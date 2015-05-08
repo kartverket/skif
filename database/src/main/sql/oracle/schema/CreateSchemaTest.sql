@@ -462,6 +462,7 @@ create table X2EntityComponentOne (
 );
 alter table X2EntityComponentOne add constraint FK_X2EntityCompOne_someBBId foreign key (someBBId) references X2BBOne;
 
+
 create table X2AAWithEntComp (
   id number(19,0) not null,
   nr number(10,0),
@@ -470,6 +471,18 @@ create table X2AAWithEntComp (
   primary key (id)
 );
 alter table X2AAWithEntComp add constraint FK_X2AA_entityComponentOneId foreign key (entityComponentOneId) references X2EntityComponentOne;
+
+
+create table X2SetEntityComp (
+  id number(19,0) not null,
+  ownerId number(19,0) constraint X2SetEntityComp_ownerId_null not null initially deferred,
+  text varchar2(255),
+  role1BBOneId number(19,0),
+  primary key (id)
+);
+alter table X2SetEntityComp add constraint FK_X2SetEntityComp_ownerId foreign key (ownerId) references X2AAWithEntComp;
+alter table X2SetEntityComp add constraint FK_X2SetEntityComp_bbOneId foreign key (role1BBOneId) references X2BBOne;
+
 
 create table X2CCMany (
   id number(19,0) not null,

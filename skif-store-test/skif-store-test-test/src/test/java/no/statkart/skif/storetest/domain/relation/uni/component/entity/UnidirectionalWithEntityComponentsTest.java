@@ -11,12 +11,14 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Map;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -47,6 +49,13 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
                 );
             }
         });
+    }
+
+    @BeforeMethod
+    protected void beforeMethod() {
+        store.getRelationCache().setEnabled(false);
+        store.evictAll();
+
     }
 
     public void testManyToOneMockups() {
@@ -182,24 +191,128 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
 
     public void testChangeSomeCCsRelation() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
-        X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
+        X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2CCManyMockupFactory X2CCManyMockupFactory = mockupFacade.getX2CCManyMockupFactory();
 
         store.getRelationCache().setEnabled(true);
         X2CCMany c1 = store.get(X2CCManyMockupFactory.getC1Id());
         assertThat(c1.findInvSomeCCsIds()).isNull();
 
-        X2AAWithEntityComponent a2 = store.get(X2AAWithEntityComponentMockupFactory.getA2Id());
+        X2AAWithEntityComponent a2 = store.get(x2AAWithEntityComponentMockupFactory.getA2Id());
         a2.getEntityComponentOne().getSomeCCsIds().add(c1.getId());
         assertThat((X2AAWithEntityComponentId) c1.findInvSomeCCsIds()).isEqualTo(a2.getId());
     }
 
-
-    public void testGetUnique() {
-
+    /**
+     * Test at a3 har nettopp en komponent  i 'asSetEntityComponents' og at denne komponenten inneholde en peker til b3.
+     * Test dernest at invers finder for b3 finner a3.
+     */
+    public void testRole1BBOneReleation() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
+        X2BBOneMockupFactory x2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
+        X2AAWithEntityComponent a3 = store.get(x2AAWithEntityComponentMockupFactory.getA3Id());
+        assertEquals(a3.getAaSetEntityComponents().iterator().next().getRole1BBOneId(), x2BBOneMockupFactory.getB3Id());
+        X2BBOne b3 = store.get(x2BBOneMockupFactory.getB3Id());
+        assertThat(b3.findInvRole1BBOneIds()).containsExactly(x2AAWithEntityComponentMockupFactory.getA3Id());
     }
 
-    public void testManyToMany() {
 
+    public void testAddComponentWithRelation() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
+        X2BBOneMockupFactory x2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
+        X2AAWithEntityComponent a2 = store.get(x2AAWithEntityComponentMockupFactory.getA2Id());
+        UnitOfWork unitOfWork = null;
+        try {
+            unitOfWork = store.beginUnitOfWork();
+            store.getRelationCache().setEnabled(true);
+            X2BBOne b1 = store.get(x2BBOneMockupFactory.getB1Id());
+            assertThat(b1.findInvRole1BBOneIds()).doesNotContain(x2AAWithEntityComponentMockupFactory.getA2Id());
+            X2SetEntityComponent component1 = new X2SetEntityComponent();
+            component1.setRole1BBOneId(x2BBOneMockupFactory.getB1Id());
+            a2.getAaSetEntityComponents().add(component1);
+            X2SetEntityComponent component2 = new X2SetEntityComponent();
+            component2.setRole1BBOneId(x2BBOneMockupFactory.getB2Id());
+            a2.getAaSetEntityComponents().add(component2);
+            assertThat(b1.findInvRole1BBOneIds()).contains(x2AAWithEntityComponentMockupFactory.getA2Id());
+        } finally {
+            unitOfWork.close();
+        }
     }
+
+    public void testRemoveComponentWithRelation() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
+        X2BBOneMockupFactory x2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
+        X2AAWithEntityComponent a3 = store.get(x2AAWithEntityComponentMockupFactory.getA3Id());
+        UnitOfWork unitOfWork = null;
+        try {
+            unitOfWork = store.beginUnitOfWork();
+            store.getRelationCache().setEnabled(true);
+            X2BBOne b3 = store.get(x2BBOneMockupFactory.getB3Id());
+            assertThat(b3.findInvRole1BBOneIds()).contains(x2AAWithEntityComponentMockupFactory.getA3Id());
+            X2SetEntityComponent component = a3.getAaSetEntityComponents().iterator().next();
+            a3.getAaSetEntityComponents().remove(component);
+            assertThat(b3.findInvRole1BBOneIds()).doesNotContain(x2AAWithEntityComponentMockupFactory.getA3Id());
+        } finally {
+            unitOfWork.close();
+        }
+    }
+
+    /**
+     * Tester at relasjoner beregnes riktig for boble med collection av komponenter som inneholder en relasjon.
+     */
+    public void testAddBubbleWithComponentSetWithDifferentRelationValues() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
+        X2BBOneMockupFactory x2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
+        X2AAWithEntityComponent a2 = store.get(x2AAWithEntityComponentMockupFactory.getA2Id());
+        UnitOfWork unitOfWork = null;
+        try {
+            unitOfWork = store.beginUnitOfWork();
+            store.getRelationCache().setEnabled(true);
+            X2AAWithEntityComponent aNew = new X2AAWithEntityComponent();
+            X2SetEntityComponent component1 = new X2SetEntityComponent();
+            component1.setRole1BBOneId(x2BBOneMockupFactory.getB1Id());
+            X2SetEntityComponent component2 = new X2SetEntityComponent();
+            component2.setRole1BBOneId(x2BBOneMockupFactory.getB2Id());
+            // Her leges til 2 komponenter som inneholder samme relasjonsfelt, men med forskjellige verdier
+            aNew.getAaSetEntityComponents().add(component1);
+            aNew.getAaSetEntityComponents().add(component2);
+            store.insert(aNew);
+            X2BBOne b1 = store.get(x2BBOneMockupFactory.getB1Id());
+            X2BBOne b2 = store.get(x2BBOneMockupFactory.getB2Id());
+            assertThat(b1.findInvRole1BBOneIds()).contains(aNew.getId());
+            assertThat(b2.findInvRole1BBOneIds()).contains(aNew.getId());
+        } finally {
+            unitOfWork.close();
+        }
+    }
+
+    public void testAddBubbleWithComponentSetWithSameRelationValues() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
+        X2BBOneMockupFactory x2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
+        X2AAWithEntityComponent a2 = store.get(x2AAWithEntityComponentMockupFactory.getA2Id());
+        UnitOfWork unitOfWork = null;
+        try {
+            unitOfWork = store.beginUnitOfWork();
+            store.getRelationCache().setEnabled(true);
+            X2AAWithEntityComponent aNew = new X2AAWithEntityComponent();
+            X2SetEntityComponent component1 = new X2SetEntityComponent();
+            component1.setRole1BBOneId(x2BBOneMockupFactory.getB1Id());
+            X2SetEntityComponent component2 = new X2SetEntityComponent();
+            component2.setRole1BBOneId(x2BBOneMockupFactory.getB1Id());
+            aNew.getAaSetEntityComponents().add(component1);
+            aNew.getAaSetEntityComponents().add(component2);
+            store.insert(aNew);
+            failBecauseExceptionWasNotThrown(IllegalStateException.class);
+        } catch(IllegalStateException e) {
+            assertThat(e).hasMessageStartingWith("Multiple felter/objekter i collection av objekter mapper til samme feltverdi [X2BBOneId");
+        } finally {
+            unitOfWork.close();
+        }
+    }
+
 }
