@@ -2,10 +2,9 @@ package no.statkart.skif.service.ws;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.TypeLiteral;
 import no.statkart.skif.service.ServiceRequestContext;
+import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
-import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 
 import javax.xml.ws.WebServiceContext;
@@ -19,15 +18,15 @@ import java.lang.reflect.Method;
  * @since 2.0
  */
 public class SkifWSInterceptor<T> extends ChainedProxyHandler<T> {
-    final private TypeLiteral<T> serviceType;
     final private ServiceRequestScope scope;
+    final private Provider<Long> callIdProvider;
     private WebServiceContext webServiceContext;
     private String serviceName;
 
     @Inject
-    public SkifWSInterceptor(TypeLiteral<T> serviceType, ServiceRequestScope scope) {
-        this.serviceType = serviceType;
+    public SkifWSInterceptor(ServiceRequestScope scope, @CallId Provider<Long> callIdProvider) {
         this.scope = scope;
+        this.callIdProvider = callIdProvider;
     }
 
     @Override
@@ -36,6 +35,7 @@ public class SkifWSInterceptor<T> extends ChainedProxyHandler<T> {
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
         serviceRequestContext.setCallerPrincipal(webServiceContext.getUserPrincipal());
         serviceRequestContext.setServicename(serviceName);
+        serviceRequestContext.setCallId(callIdProvider.get());
         try {
             scope.seed(ServiceRequestContext.class, serviceRequestContext);
             scope.seed(WebServiceContext.class, webServiceContext);
