@@ -1,6 +1,7 @@
 package no.statkart.skif.service;
 
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.util.Locales;
 
 import java.util.Locale;
 
@@ -12,7 +13,7 @@ public class DefaultServiceContext implements ServiceContext {
     static final long serialVersionUID = 1L;
 
     private String systemVersion="1.0";
-    private Locale locale = new Locale("nb", "NO");
+    private Locale locale = Locales.BOKMAAL;
 
     @Override
     public String getSystemVersion() {
