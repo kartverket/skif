@@ -277,16 +277,11 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         if (sourceType instanceof Class && ((Class) sourceType).isPrimitive()) {
             return TypeToken.of(sourceType);
         }
-
-        try {
-            return TypeToken.of(sourceType).getSubtype(source.getClass());
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().startsWith("No type mapping from")) {
-                return TypeToken.of(source.getClass());
-            } else {
-                throw e;
-            }
+        if (source.getClass().getTypeParameters().length == 0) {
+            return TypeToken.of(source.getClass());
         }
+
+        return TypeToken.of(sourceType).getSubtype(source.getClass());
     }
 
     /**
