@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import no.statkart.skif.service.ServiceRequestContext;
+import no.statkart.skif.service.TxMode;
 import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
@@ -43,8 +44,10 @@ public class EJBCallTypeChooserProxyHandler<S> extends TerminatingProxyHandler<S
 
     private ProxyHandler<S> calcProxyHandler(Method method) {
         final TransactionAttributeType txType = ejbAttributesLookup.lookupAttribute(method);
-        if (txType == TransactionAttributeType.REQUIRED) {
-            final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
+        final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
+        if (serviceRequestContext.getTxMode() == TxMode.NOT_IN_EJB) {
+            return ejbProxyHandlerProvider.get();
+        } else if (txType == TransactionAttributeType.REQUIRED) {
             if (serviceRequestContext.isTransactional()) {
                 return implementationServiceChainFactory.createChain();
             } else {
