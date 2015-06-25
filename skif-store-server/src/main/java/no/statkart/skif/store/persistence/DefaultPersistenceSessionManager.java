@@ -4,6 +4,8 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.persistence.kodeliste.CachingKodelistePersistenceSessionSubtypeHandler;
+import no.statkart.skif.store.persistence.kodeliste.KodelistePersistenceSessionSubtypeHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -95,8 +97,14 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
 
     @Override
     public void commit() {
-        PersistenceSessionMaster implementation = getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
+        PersistenceSessionForSnapshot forSnapshotVersion = getForSnapshotVersion(SnapshotVersion.CURRENT);
+        PersistenceSessionMaster implementation = forSnapshotVersion.getImplementation(PersistenceSessionMaster.class);
         implementation.commit();
+        //TODO: Lage generell mekanisme for for nedenstående
+        KodelistePersistenceSessionSubtypeHandler kodelistePersistenceSessionSubtypeHandler = forSnapshotVersion.getImplementation(KodelistePersistenceSessionSubtypeHandler.class);
+        if (kodelistePersistenceSessionSubtypeHandler instanceof CachingKodelistePersistenceSessionSubtypeHandler) {
+            ((CachingKodelistePersistenceSessionSubtypeHandler) kodelistePersistenceSessionSubtypeHandler).afterTransactionCommit();
+        }
         inTransaction = false;
     }
 
@@ -121,7 +129,6 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> get(Collection<I> bubbleIds) {
-
         Collection<T> result = new ArrayList<T>(bubbleIds.size());
         Map<SnapshotVersion, Map<PersistenceSessionForSnapshot, Collection<I>>> snapshotVersionMap = calcSnapshotToPersistenceSessionMap(bubbleIds);
 
@@ -139,23 +146,35 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     }
 
     private <T extends BubbleObject, I extends BubbleId<? extends T>> Map<SnapshotVersion, Map<PersistenceSessionForSnapshot, Collection<I>>> calcSnapshotToPersistenceSessionMap(Collection<I> bubbleIds) {
-        // TODO: denne kan sikkert opptimaliseres
+        // Denne metode er optimaliser med henblikk på at alle objekter har samme snapshotVersion og er av samme type.
+        SnapshotVersion prevSnapshotVersion = null;
+        Class prevClass = null;
+        Collection<I> prevCollection = null;
+
         Map<SnapshotVersion, Map<PersistenceSessionForSnapshot, Collection<I>>> map = new HashMap<SnapshotVersion, Map<PersistenceSessionForSnapshot, Collection<I>>>(5);
         for (I bubbleId : bubbleIds) {
-            SnapshotVersion snapshotVersion = bubbleId.getSnapshotVersion();
-            Map<PersistenceSessionForSnapshot, Collection<I>> snapshotManagedCollectionMap = map.get(snapshotVersion);
-            if (snapshotManagedCollectionMap == null) {
-                snapshotManagedCollectionMap = new HashMap<PersistenceSessionForSnapshot, Collection<I>>(2);
-                map.put(snapshotVersion, snapshotManagedCollectionMap);
-            }
-            PersistenceSessionForSnapshot persistenceManager = getForSnapshotVersion(snapshotVersion).getForBubbleId(bubbleId.getClass());
+            if (prevSnapshotVersion != null && prevSnapshotVersion.equals(bubbleId.getSnapshotVersion()) && prevClass == bubbleId.getClass()) {
+                prevCollection.add(bubbleId);
+            } else {
+                SnapshotVersion snapshotVersion = bubbleId.getSnapshotVersion();
+                Map<PersistenceSessionForSnapshot, Collection<I>> snapshotManagedCollectionMap = map.get(snapshotVersion);
+                if (snapshotManagedCollectionMap == null) {
+                    snapshotManagedCollectionMap = new HashMap<PersistenceSessionForSnapshot, Collection<I>>(2);
+                    map.put(snapshotVersion, snapshotManagedCollectionMap);
+                }
+                PersistenceSessionForSnapshot persistenceManager = getForSnapshotVersion(snapshotVersion).getForBubbleId(bubbleId.getClass());
 
-            Collection<I> collection = snapshotManagedCollectionMap.get(persistenceManager);
-            if (collection == null) {
-                collection = new ArrayList<I>();
-                snapshotManagedCollectionMap.put(persistenceManager, collection);
+                Collection<I> collection = snapshotManagedCollectionMap.get(persistenceManager);
+                if (collection == null) {
+                    // Dersom alle tilhører samme collection så blir estimated size riktig med en gang.
+                    collection = (prevCollection == null ? new ArrayList<I>(bubbleIds.size()) : new ArrayList<I>());
+                    snapshotManagedCollectionMap.put(persistenceManager, collection);
+                }
+                collection.add(bubbleId);
+                prevSnapshotVersion = bubbleId.getSnapshotVersion();
+                prevClass = bubbleId.getClass();
+                prevCollection = collection;
             }
-            collection.add(bubbleId);
         }
         return map;
     }
