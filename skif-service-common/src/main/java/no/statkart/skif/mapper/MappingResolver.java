@@ -1,5 +1,6 @@
 package no.statkart.skif.mapper;
 
+import com.google.common.collect.Maps;
 import com.google.common.primitives.Primitives;
 import com.google.common.reflect.TypeToken;
 import no.statkart.skif.exception.ImplementationException;
@@ -10,7 +11,13 @@ import java.lang.reflect.TypeVariable;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -42,6 +49,45 @@ public class MappingResolver {
     protected Map<String, String> domainPkg2wsapiPkg = new HashMap<String, String>();
     protected Map<Class, Class> classMappings = new HashMap<Class, Class>();
     protected Map<? extends Class<?>, ? extends Class<?>> overrideClassMappings;
+    private final Map<SubtypeKey, TypeToken<?>> resolvedSubtypes = Maps.newHashMap();
+
+    private static class SubtypeKey {
+        private final TypeToken<?> typeToken;
+        private final Class sourceClass;
+
+        public SubtypeKey(TypeToken<?> typeToken, Class sourceClass) {
+            this.typeToken = typeToken;
+            this.sourceClass = sourceClass;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            SubtypeKey that = (SubtypeKey) o;
+
+            if (!sourceClass.equals(that.sourceClass)) return false;
+            if (!typeToken.equals(that.typeToken)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = typeToken.hashCode();
+            result = 31 * result + sourceClass.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "SubtypeKey{" +
+                    "sourceType=" + typeToken +
+                    ", sourceClass=" + sourceClass +
+                    '}';
+        }
+    }
 
     public MappingResolver() {
     }
@@ -130,6 +176,7 @@ public class MappingResolver {
         return retVal;
     }
 
+
     /**
      * Workaround for mangel i {@link TypeToken#getSubtype(Class)}.
      */
@@ -144,16 +191,23 @@ public class MappingResolver {
             typeToken = (TypeToken<T>) TypeToken.of(Primitives.wrap(typeToken.getRawType()));
         }
 
-        try {
-            return typeToken.getSubtype(subClass);
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().startsWith("No type mapping from")) {
-                //noinspection unchecked
-                return (TypeToken<? extends T>) TypeToken.of(subClass);
-            } else {
-                throw e;
+        // Kall til getSubtype er dyrt så vi cacher beregningen
+        SubtypeKey subtypeKey = new SubtypeKey(typeToken, subClass);
+        TypeToken<?> subtype = resolvedSubtypes.get(subtypeKey);
+        if (subtype == null) {
+            try {
+                subtype = typeToken.getSubtype(subClass);
+            } catch (IllegalArgumentException e) {
+                if (e.getMessage().startsWith("No type mapping from")) {
+                    //noinspection unchecked
+                    subtype = TypeToken.of(subClass);
+                } else {
+                    throw e;
+                }
             }
+            resolvedSubtypes.put(subtypeKey, subtype);
         }
+        return (TypeToken<? extends T>) subtype;
     }
 
     /**
