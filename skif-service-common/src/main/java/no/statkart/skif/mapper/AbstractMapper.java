@@ -4,7 +4,6 @@ package no.statkart.skif.mapper;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.TypeLiteral;
@@ -13,18 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.lang.reflect.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -45,44 +34,6 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
          * mapping from webservice to domain classes
          */
         W2D
-    }
-
-    private static class SubtypeKey {
-        private final Type  sourceType;
-        private final Class sourceClass;
-
-        public SubtypeKey(Type sourceType, Class sourceClass) {
-            this.sourceType = sourceType;
-            this.sourceClass = sourceClass;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            SubtypeKey that = (SubtypeKey) o;
-
-            if (!sourceClass.equals(that.sourceClass)) return false;
-            if (!sourceType.equals(that.sourceType)) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = sourceType.hashCode();
-            result = 31 * result + sourceClass.hashCode();
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "SubtypeKey{" +
-                    "sourceType=" + sourceType +
-                    ", sourceClass=" + sourceClass +
-                    '}';
-        }
     }
 
     protected static class MapperKey {
@@ -127,8 +78,6 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
     protected final Map<MapperKey, TypeMapper<?, ?>> mapperCache = new ConcurrentHashMap<MapperKey, TypeMapper<?, ?>>();
 
     private final M thisMapping;
-
-    private final Map<SubtypeKey, TypeToken<?>> resolvedSubtypes = Maps.newHashMap();
 
     private final ThreadLocal<Integer> recurseLevel = new ThreadLocal<Integer>() {
         @Override
@@ -321,30 +270,18 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
     /**
      * Workaround for manglende funksjonalitet i Guava. Den takler ikke at man går fra KodeId&lt;?&gt; til AKodeId.
      */
-    private TypeToken<?> resolveSubClass(Object source, Type sourceType) {
+    private static TypeToken<?> resolveSubClass(Object source, Type sourceType) {
         if (sourceType instanceof TypeVariable) {
             return TypeToken.of(source.getClass());
         }
         if (sourceType instanceof Class && ((Class) sourceType).isPrimitive()) {
             return TypeToken.of(sourceType);
         }
-
-        // Kall til getSubtype er dyrt så vi cacher beregningen
-        SubtypeKey subtypeKey = new SubtypeKey(sourceType, source.getClass());
-        TypeToken<?> subtype = resolvedSubtypes.get(subtypeKey);
-        if (subtype==null) {
-            try {
-                subtype = TypeToken.of(sourceType).getSubtype(source.getClass());
-            } catch (IllegalArgumentException e) {
-                if (e.getMessage().startsWith("No type mapping from")) {
-                    subtype = TypeToken.of(source.getClass());
-                } else {
-                    throw e;
-                }
-            }
-            resolvedSubtypes.put(subtypeKey, subtype);
+        if (source.getClass().getTypeParameters().length == 0) {
+            return TypeToken.of(source.getClass());
         }
-        return subtype;
+
+        return TypeToken.of(sourceType).getSubtype(source.getClass());
     }
 
     /**

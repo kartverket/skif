@@ -1,7 +1,6 @@
 package no.statkart.skif.mapper;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import no.statkart.skif.exception.ImplementationException;
 import org.slf4j.Logger;
@@ -174,19 +173,19 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
 
 
     protected Collection<Method> findGetters(Class<?> c) {
-        Map<String, Method> getters = Maps.newLinkedHashMap();
+        List<Method> getters = new ArrayList<Method>();
 
         for (Class<?> clazz = c; clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
             Method[] methods = clazz.getDeclaredMethods();
             for (Method method : methods) {
-                if (!method.isBridge() && method.getParameterTypes().length == 0 && (method.getName().startsWith("get") || method.getName().startsWith("is")) && method.getAnnotation(DontMap.class) == null && !getters.containsKey(method.getName())) {
+                if (!method.isBridge() && method.getParameterTypes().length == 0 && (method.getName().startsWith("get") || method.getName().startsWith("is")) && method.getAnnotation(DontMap.class) == null) {
                     method.setAccessible(true);
-                    getters.put(method.getName(), method);
+                    getters.add(method);
                 }
             }
         }
 
-        return getters.values();
+        return getters;
     }
 
     protected Method findSetterForGetter(Class<?> targetClass, Method getter) {
