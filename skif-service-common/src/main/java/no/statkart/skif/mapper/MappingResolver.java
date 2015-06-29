@@ -144,16 +144,11 @@ public class MappingResolver {
             typeToken = (TypeToken<T>) TypeToken.of(Primitives.wrap(typeToken.getRawType()));
         }
 
-        try {
-            return typeToken.getSubtype(subClass);
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().startsWith("No type mapping from")) {
-                //noinspection unchecked
-                return (TypeToken<? extends T>) TypeToken.of(subClass);
-            } else {
-                throw e;
-            }
+        if (subClass.getTypeParameters().length == 0) {
+            return (TypeToken<? extends T>) TypeToken.of(subClass);
         }
+
+        return typeToken.getSubtype(subClass);
     }
 
     /**
