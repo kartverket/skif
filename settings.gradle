@@ -44,16 +44,12 @@ include 'skif-wsversioning:skif-wsversioning-ear'
 
 rootProject.name = 'skif'
 
-rootProject.children.each { project -> configureProject(project)}
-
-
+rootProject.children.each { project -> configureProject(project) }
 void configureProject(ProjectDescriptor project) {
     project.buildFileName = "${project.name}.gradle"
     assert project.projectDir.isDirectory()
 
-    if (project.children.size()!=0) {
-        project.children.each{configureProject(it)}
-    }
+    project.children.each { configureProject(it) }
 }
 
 
