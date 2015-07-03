@@ -2,11 +2,15 @@ package no.statkart.skif.mapper;
 
 import com.google.common.primitives.Primitives;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.util.Types;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -144,8 +148,17 @@ public class MappingResolver {
             typeToken = (TypeToken<T>) TypeToken.of(Primitives.wrap(typeToken.getRawType()));
         }
 
-        if (subClass.getTypeParameters().length == 0) {
+        TypeVariable<? extends Class<?>>[] subClassParameters = subClass.getTypeParameters();
+        if (subClassParameters.length == 0) {
             return (TypeToken<? extends T>) TypeToken.of(subClass);
+        }
+        if (typeToken.getType() instanceof ParameterizedType) {
+            ParameterizedType parameterizedSourceType = (ParameterizedType) typeToken.getType();
+            Type[] actualTypeArguments = parameterizedSourceType.getActualTypeArguments();
+            if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof WildcardType && subClassParameters.length == 1) {
+                // Antar at sourceType er en BubbleId<?>, mens
+                return (TypeToken<? extends T>) TypeToken.of(Types.newParameterizedType(subClass, actualTypeArguments[0]));
+            }
         }
 
         return typeToken.getSubtype(subClass);

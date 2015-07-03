@@ -7,6 +7,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.TypeLiteral;
+import com.google.inject.util.Types;
 import no.statkart.skif.exception.ImplementationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -277,8 +278,17 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         if (sourceType instanceof Class && ((Class) sourceType).isPrimitive()) {
             return TypeToken.of(sourceType);
         }
-        if (source.getClass().getTypeParameters().length == 0) {
+        TypeVariable[] sourceClassParameters = source.getClass().getTypeParameters();
+        if (sourceClassParameters.length == 0) {
             return TypeToken.of(source.getClass());
+        }
+        if (sourceType instanceof ParameterizedType) {
+            ParameterizedType parameterizedSourceType = (ParameterizedType) sourceType;
+            Type[] actualTypeArguments = parameterizedSourceType.getActualTypeArguments();
+            if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof WildcardType && sourceClassParameters.length == 1) {
+                // Antar at sourceType er en BubbleId<?>, mens
+                return TypeToken.of(Types.newParameterizedType(source.getClass(), actualTypeArguments[0]));
+            }
         }
 
         return TypeToken.of(sourceType).getSubtype(source.getClass());
