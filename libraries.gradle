@@ -12,8 +12,8 @@ def libraries = [
         'tools.jar': files("${JAVA_HOME}/lib/tools.jar").stopExecutionIfEmpty(), //JAVA_HOME ikke satt??
 
         // Database
-        ojdbc: "com.oracle:ojdbc6:${libVersion('oracle', '11.2.0.3.0')}@jar",
-        ojdbc_g: "com.oracle:ojdbc6_g:${libVersion('oracle', '11.2.0.3.0')}@jar",
+        ojdbc: "com.oracle:ojdbc6:${libVersion('oracle', '11.2.0.4.0')}@jar",
+        ojdbc_g: "com.oracle:ojdbc6_g:${libVersion('oracle', '11.2.0.4.0')}@jar",
 
         // Logging
         slf4j_api: "org.slf4j:slf4j-api:${libVersion('slf4j', '1.6.1')}",
