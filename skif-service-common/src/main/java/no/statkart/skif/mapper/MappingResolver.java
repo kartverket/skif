@@ -157,7 +157,7 @@ public class MappingResolver {
             Type[] actualTypeArguments = parameterizedSourceType.getActualTypeArguments();
             if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof WildcardType && subClassParameters.length == 1) {
                 // Antar at sourceType er en BubbleId<?>, mens
-                return (TypeToken<? extends T>) TypeToken.of(Types.newParameterizedType(subClass, actualTypeArguments[0]));
+                return (TypeToken<? extends T>) TypeToken.of(Types.newParameterizedTypeWithOwner(subClass.getEnclosingClass(), subClass, actualTypeArguments[0]));
             }
         }
 

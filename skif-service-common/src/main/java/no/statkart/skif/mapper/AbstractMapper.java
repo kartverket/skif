@@ -287,7 +287,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
             Type[] actualTypeArguments = parameterizedSourceType.getActualTypeArguments();
             if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof WildcardType && sourceClassParameters.length == 1) {
                 // Antar at sourceType er en BubbleId<?>, mens
-                return TypeToken.of(Types.newParameterizedType(source.getClass(), actualTypeArguments[0]));
+                return TypeToken.of(Types.newParameterizedTypeWithOwner(source.getClass().getEnclosingClass(), source.getClass(), actualTypeArguments[0]));
             }
         }
 
