@@ -1,3 +1,3 @@
 
-start "%~dp0" setenv.cmd
+start "%~dp0" "%~dp0setenv.cmd"
 

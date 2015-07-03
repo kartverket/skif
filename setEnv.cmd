@@ -8,9 +8,16 @@
 rem Setter hovedkatalog for prosjektet. PROJECT_ROOT inneholder '\' til slutt derfor må det stå en '.' til slutt
 rem %~dp0 is name of current script under NT
 set PROJECT_ROOT=%~dp0.
+cd /d %PROJECT_ROOT%
 
 rem les inn JAVA_HOME, GRADLE_HOME, MAVEN_HOME og andre maskin/bruker spesifike settings
-if exist setEnv_personal.cmd call setEnv_personal.cmd
+@if exist setEnv_personal.cmd (
+  echo Applying setEnv_personal ...
+  call setEnv_personal.cmd
+) else (
+  echo setEnv_personal.cmd does not exists - continuing with current environment settings ...
+)
+
 
 
 : Window title
