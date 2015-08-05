@@ -18,7 +18,7 @@ import java.util.Set;
  */
 public class SetAaEntityComponent extends AbstractEntityBubbleComponentWithOwner<BubbleWithEntityComponent> {
     private Long id;
-    private BubbleWithEntityComponent owner;
+    private transient BubbleWithEntityComponent owner;
     private int ident;
     private String text;
     private SetAaLevel1EntityComponent level1Component;
@@ -102,5 +102,10 @@ public class SetAaEntityComponent extends AbstractEntityBubbleComponentWithOwner
         beloepSet = Sets.newHashSet(beloepSet);
         if (level1Component!=null)level1Component.removeHibernatePersistenceSet();
         if (nestedComponent!=null)nestedComponent.removeHibernatePersistenceSet();
+    }
+
+    private Object readResolve() {
+        if (level1Component != null) level1Component.setOwner(this);
+        return this;
     }
 }
