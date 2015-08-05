@@ -84,13 +84,6 @@ public abstract class AbstractComponentSet<O, E extends ComponentWithOwnerRefere
         super.clear();
     }
 
-    protected Object readResolve() {
-        for (E e : delegate) {
-            e.setOwner(getOwner());
-        }
-        return this;
-    }
-
     private class IteratorWrapper extends ForwardingIterator<E> {
         private final Iterator<E> delegate;
         private E current = null;

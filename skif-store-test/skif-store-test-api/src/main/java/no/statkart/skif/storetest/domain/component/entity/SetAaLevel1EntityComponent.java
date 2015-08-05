@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class SetAaLevel1EntityComponent implements EntityComponentWithOwnerReference<SetAaEntityComponent> {
     private Long id;
-    private transient SetAaEntityComponent owner;
+    private SetAaEntityComponent owner;
     private String text;
     private SetAaLevel2EntityComponent level2Component;
     private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
@@ -77,10 +77,5 @@ public class SetAaLevel1EntityComponent implements EntityComponentWithOwnerRefer
     public void removeHibernatePersistenceSet() {
         if (level2Component!=null) level2Component.removeHibernatePersistenceSet();
         beloepSet = Sets.newHashSet(beloepSet);
-    }
-
-    private Object readResolve() {
-        if (level2Component != null) level2Component.setOwner(this);
-        return this;
     }
 }

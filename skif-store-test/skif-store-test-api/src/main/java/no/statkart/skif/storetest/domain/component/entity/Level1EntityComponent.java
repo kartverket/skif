@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEntityComponent>, InverseRelationParticipation {
     private Long id;
-    private transient BubbleWithEntityComponent owner;
+    private BubbleWithEntityComponent owner;
     private String text;
     private BeloepValueObject beloep;
     private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
@@ -88,10 +88,5 @@ public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEn
         beloepSet = Sets.newHashSet(beloepSet);
         if (level2Component!=null) level2Component.removeHibernatePersistenceSet();
 
-    }
-
-    private Object readResolve() {
-        if (level2Component != null) level2Component.setOwner(this);
-        return this;
     }
 }
