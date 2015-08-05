@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class SetAaLevel2EntityComponent implements EntityComponentWithOwnerReference<SetAaLevel1EntityComponent> {
     private Long id;
-    private SetAaLevel1EntityComponent owner;
+    private transient SetAaLevel1EntityComponent owner;
     private String text;
     private Set<BeloepValueObject> beloepSet = Sets.newHashSet();
 
