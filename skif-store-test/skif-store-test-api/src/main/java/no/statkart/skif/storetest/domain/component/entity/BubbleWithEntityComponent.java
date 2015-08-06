@@ -97,9 +97,4 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
                aaComponent.removeHibernatePersistenceSet();
         }
     }
-
-    private Object readResolve() {
-        if (level1Component != null) level1Component.setOwner(this);
-        return this;
-    }
 }
