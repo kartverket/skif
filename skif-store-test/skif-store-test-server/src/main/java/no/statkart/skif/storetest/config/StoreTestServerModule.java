@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
@@ -81,6 +82,7 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
 
+import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -335,11 +337,38 @@ public class StoreTestServerModule extends SkifModule {
     }
 
     @Provides
+    @Singleton
+    ComboPooledDataSource provideConnectionPool() {
+        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM || moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM_XML) {
+            Configuration configuration = moduleConfiguration.getConfiguration();
+            String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
+            String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
+            String sid = configuration.getString(SkifConfigConstants.DB_SID);
+            String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
+            String port = configuration.getString(SkifConfigConstants.DB_PORT);
+            String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
+
+            try {
+                ComboPooledDataSource pool = new ComboPooledDataSource();
+                pool.setDriverClass("oracle.jdbc.OracleDriver");
+                pool.setJdbcUrl(url);
+                pool.setUser(username);
+                pool.setPassword(password);
+                return pool;
+            } catch (PropertyVetoException e) {
+                throw new ImplementationException("Could not set up connection pool", e);
+            }
+        } else {
+            throw new ImplementationException("Will not provide connection pool in JEE-mode. Get datasource from JNDI.");
+        }
+    }
+
+    @Provides
     @ServiceRequestScoped
-    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider) {
+    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider, Provider<ComboPooledDataSource> dataSourceProvider) {
         final String strategy = resourceManagerConfiguratorProvider.get().getStrategy();
         if (strategy == ResourceManagerConfigurator.CONNECTION_ONLY) {
-            return createResourceManagerForConnectionOnlyStrategy();
+            return createResourceManagerForConnectionOnlyStrategy(dataSourceProvider);
         } else {
             return createResourceManagerForHibernateStrategy(
                     hibernateSessionFactoryManagerBundleProvider.get(),
@@ -349,18 +378,11 @@ public class StoreTestServerModule extends SkifModule {
 
     }
 
-    ResourceManager createResourceManagerForConnectionOnlyStrategy() {
+    ResourceManager createResourceManagerForConnectionOnlyStrategy(Provider<ComboPooledDataSource> dataSourceProvider) {
         Configuration configuration = moduleConfiguration.getConfiguration();
         ConnectionManager connectionManager;
-        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
-            String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
-            String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
-            String sid = configuration.getString(SkifConfigConstants.DB_SID);
-            String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
-            String port = configuration.getString(SkifConfigConstants.DB_PORT);
-            String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
-
-            connectionManager = new ConnectionManagerUsingFactory(new ConnectionFactoryUsingJDBC(url, username, password, false, SnapshotVersion.CURRENT, false));
+        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM || moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM_XML) {
+            connectionManager = new ConnectionManagerUsingFactory(new ConnectionFactoryUsingPool(dataSourceProvider.get(), false, SnapshotVersion.CURRENT, false));
         } else {
             String datasource = configuration.getString(SkifConfigConstants.DB_DATASOURCE);
             if (datasource == null) throw new ConfigurationException(String.format("Mangler verdi for %s", SkifConfigConstants.DB_DATASOURCE)); //denne skal finnes i default konfigurasjon (filtreres inn via gradle.properties)

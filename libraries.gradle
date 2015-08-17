@@ -14,6 +14,7 @@ def libraries = [
         // Database
         ojdbc: "com.oracle:ojdbc6:${libVersion('oracle', '11.2.0.4.0')}@jar",
         ojdbc_g: "com.oracle:ojdbc6_g:${libVersion('oracle', '11.2.0.4.0')}@jar",
+        c3p0: "com.mchange:c3p0:${libVersion('c3p0', '0.9.5.1')}",
 
         // Logging
         slf4j_api: "org.slf4j:slf4j-api:${libVersion('slf4j', '1.6.1')}",

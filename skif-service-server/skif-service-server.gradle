@@ -9,6 +9,7 @@ dependencies {
     compile project(':skif-service-common')
 
     compile libraries.guice_for_server
+    compile libraries.c3p0
 
     provided libraries.jdbc
     provided libraries.weblogic

@@ -10,6 +10,8 @@ import java.sql.SQLException;
 /**
  * @author Henrik Fredholm
  * @since 2.1
+ *
+ * @deprecated Inneffektiv. Bruk heller {@link ConnectionFactoryUsingPool}.
  */
 public class ConnectionFactoryUsingJDBC extends AbstractConnectionFactory {
     private final String url;
