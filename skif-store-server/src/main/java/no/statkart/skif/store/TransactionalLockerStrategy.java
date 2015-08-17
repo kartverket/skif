@@ -297,24 +297,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         if (lockMap == null) {
             lockMap = new HashMap<BubbleId, LockInfo<?>>();
             initializeLockMap();
-        } else if (lockMapInitializedForDifferentOwner()) {
-            initializeLockMap();
         }
-    }
-
-    /**
-     * Sjekker om låser i lockMap tilhører owner
-     *
-     * @return true dersom ingen av låsene i LockMap tilhører owner
-     */
-    private boolean lockMapInitializedForDifferentOwner() {
-        String owner = serviceRequestContext.getUserName();
-        for (Map.Entry<BubbleId, LockInfo<?>> entry : lockMap.entrySet()) {
-            if (entry.getValue().isOwnedBy(owner)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
