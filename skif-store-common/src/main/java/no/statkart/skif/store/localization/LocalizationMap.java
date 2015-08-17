@@ -131,5 +131,11 @@ public class LocalizationMap implements Serializable {
             result = 31 * result + (locale != null ? locale.hashCode() : 0);
             return result;
         }
+
+        @Override
+        public String toString() {
+            return locale==null? "<null>" : locale.toString() + "." + name;
+        }
+
     }
 }
