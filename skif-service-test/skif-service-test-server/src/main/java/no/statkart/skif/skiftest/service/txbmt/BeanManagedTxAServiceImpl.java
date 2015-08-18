@@ -27,7 +27,9 @@ public class BeanManagedTxAServiceImpl implements BeanManagedTxAService {
         try {
             statement = c.createStatement();
             statement.execute("delete from TestMap");
+            c.commit();
         } catch (SQLException e) {
+            JDBCHelper.rollback(c);
             throw new ImplementationException(e);
         } finally {
             JDBCHelper.close(statement);
