@@ -12,16 +12,13 @@ import java.sql.Connection;
  * <strong>Eksempel på bruk</strong>
  * <pre>
  *     class ConnectionSelectorUsage {
- *         @Inject
+ *         &#064;Inject
  *         Provider<ConnectionSelector> connectionSelectorProvider;
  *
  *         public void someMethod() {
- *             ConnectionSelector connectionSelector = connectionSelectorProvider.get();
- *             try {
+ *             try (ConnectionSelector connectionSelector = connectionSelectorProvider.get()) {
  *                 Connection connection = connectionSelector.get(SnapshotVersion.OLD);
  *                 // Bruk connection for OLD
- *             } finnaly {
- *                 if (connectionSelector!=null) connectionSelector.close();
  *             }
  *         }
  *     }
@@ -31,7 +28,7 @@ import java.sql.Connection;
  * @author Henrik Fredholm
  *
  */
-public interface ConnectionSelector {
+public interface ConnectionSelector extends AutoCloseable {
     /**
      * Returnerer en connection som er låst til en gitt snapshotversion og som kun er gyldig sålenge det
      * ikke hentes ut en connection for en annen snapshotversion via selectoren.
@@ -41,5 +38,6 @@ public interface ConnectionSelector {
     /**
      * Frigir inneværende connection dersom en slik har blit allokert og lukker selectoren slik at den ikke lengre kan brukes
      */
+    @Override
     void close();
 }

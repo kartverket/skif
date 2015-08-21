@@ -10,20 +10,17 @@ import org.hibernate.Session;
  * Klasse for å hente ut en Hibernate session og låse denne til å bruke en gitt snapshotversion. Når man er
  * ferdig med å bruke sessionen må den frigis slik at sessionen senere kan gjenbrukes for en annen snapshotversion.
  * Dette skjer automatisk når man skifter snapshotversion via selectoren samt når selectoren lukkes.
- * <p>
+ * <p/>
  * <strong>Eksempel på bruk</strong>
  * <pre>
  *     class SessionSelectorUsage {
- *         @Inject
+ *         &#064;Inject
  *         Provider<SessionSelector> sessionSelectorProvider;
  *
  *         public void someMethod() {
- *             SessionSelector sessionSelector = sessionSelectorProvider.get();
- *             try {
+ *             try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
  *                 Session session = sessionSelector.get(SnapshotVersion.OLD);
  *                 // Bruk session for OLD
- *             } finnaly {
- *                 if (sessionSelector!=null) sessionSelector.close();
  *             }
  *         }
  *     }
@@ -31,7 +28,7 @@ import org.hibernate.Session;
  *
  * @author Henrik Fredholm
  */
-public class SessionSelector {
+public class SessionSelector implements AutoCloseable {
     private PersistenceSessionManager persistenceSessionManager;
     private HibernatePersistenceSessionMaster implementation;
     private Session session;
@@ -59,9 +56,10 @@ public class SessionSelector {
     /**
      * Frigir inneværende session dersom en slik har blit allokert og lukker selectoren slik at den ikke lengre kan brukes
      */
-     public void close() {
+    @Override
+    public void close() {
         release();
-        persistenceSessionManager=null;
+        persistenceSessionManager = null;
     }
 
     private void reserveForSnapshot(SnapshotVersion snapshotVersion) {
@@ -77,7 +75,7 @@ public class SessionSelector {
         if (implementation != null) {
             implementation.releaseSession();
             implementation = null;
-            session= null;
+            session = null;
         }
     }
 }
