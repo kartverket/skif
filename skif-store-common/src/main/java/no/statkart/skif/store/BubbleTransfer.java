@@ -57,9 +57,13 @@ public abstract class BubbleTransfer<T> extends Transfer<T> {
     }
 
     public BubbleTransfer(T result, Iterable<? extends BubbleObject> objects) {
-        super(result, objects);
+        super(result);
+        addAll(objects);
     }
 
+    /**
+     * @deprecated Denne virker ikke på noen forståelig måte. Bare ligg unna!
+     */
     public BubbleTransfer(T result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId> lockedIds) {
         this(result, objects);
         Iterables.addAll(this.lockedIds, lockedIds);
@@ -78,6 +82,7 @@ public abstract class BubbleTransfer<T> extends Transfer<T> {
      * Legg til objekt som med sikkerhet ikke er blitt låst.
      */
     protected final void addUnlocked(BubbleObject bubbleObject) {
+        // Kaller super eksplisitt, slik at denne klassens modifisering av add() ikke brukes
         super.add(bubbleObject);
     }
 
@@ -95,15 +100,16 @@ public abstract class BubbleTransfer<T> extends Transfer<T> {
      * Legg til en samling objekter som med sikkerhet ikke er blitt låst.
      */
     public final void addUnlocked(Iterable<? extends BubbleObject> bubbleObjects) {
-        super.addAll(bubbleObjects);
+        for (BubbleObject bubbleObject : bubbleObjects) {
+            // Kaller super eksplisitt, slik at denne klassens modifisering av add() ikke brukes
+            super.add(bubbleObject);
+        }
     }
 
     /**
      * Legg til et objekt som kanskje er blitt låst. Om objektet er låst eller ikke sjekkes mot {@link no.statkart.skif.store.BubbleObject#store()}.
      */
     public final void addAll(Iterable<? extends BubbleObject> bubbleObjects) {
-        for (BubbleObject bubbleObject : bubbleObjects) {
-            add(bubbleObject);
-        }
+        super.addAll(bubbleObjects);
     }
 }
