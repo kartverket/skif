@@ -13,9 +13,6 @@ public class StoreUnitOfWorkClient extends StoreUnitOfWork {
     }
 
     public WrappableStoreSession endUnitOfWork() {
-        if (level != 1) {
-            throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork() or abortUnitOfWork() instead");
-        }
         if (isAccessedAfterGetTransfer()) {
             throw new ImplementationException("Store was access beweeen calls to Store.getUnitOfWorkTransfer() and Store.endUnitOfWork() and may result in impropper commit");
         }

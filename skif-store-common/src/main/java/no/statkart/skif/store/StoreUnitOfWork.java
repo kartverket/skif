@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.util.*;
@@ -112,9 +113,6 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     public WrappableStoreSession endUnitOfWork() {
-        if (level != 1) {
-            throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork() or abortUnitOfWork() instead");
-        }
         if (isAccessedAfterGetTransfer()) {
             throw new ImplementationException("Store was accessed between calls to Store.getUnitOfWorkTransfer() and Store.endUnitOfWork() and may result in improper commit");
         }
@@ -148,24 +146,104 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     public UnitOfWorkTransfer getUnitOfWorkTransfer() {
-        accessedAfterLastCallToGetTransfer = false;
-        getTransferHasBeenCalled = true;
+        UnitOfWorkTransfer snapshot = getSnapshot();
 
-        return getSnapshot();
+        StoreUnitOfWork uow = this;
+        while (uow != null) {
+            uow.accessedAfterLastCallToGetTransfer = false;
+            uow.getTransferHasBeenCalled = true;
+
+            uow = uow.wrappedStoreSession instanceof StoreUnitOfWork ? (StoreUnitOfWork) uow.wrappedStoreSession : null;
+        }
+
+        return snapshot;
     }
 
     public UnitOfWorkTransfer getSnapshot() {
-        List<BubbleObject> insertedObjects = Lists.newArrayList();
-        List<BubbleObject> updatedObjects = Lists.newArrayList();
-        List<BubbleObject> deletedObjects = Lists.newArrayList();
+        List<BubbleObject> insertedObjects;
+        List<BubbleObject> updatedObjects;
+        List<BubbleObject> deletedObjects;
 
-        for (Map.Entry<BubbleId<?>, StoreEntry> mapEntry : modifiedMap.entrySet()) {
-            StoreEntry storeCacheEntry = mapEntry.getValue();
+        Set<BubbleId<?>> modifiedIds = Sets.newLinkedHashSet(modifiedMap.keySet());
+
+        if (wrappedStoreSession instanceof StoreUnitOfWork) {
+            UnitOfWorkTransfer snapshot = ((StoreUnitOfWork) wrappedStoreSession).getSnapshot();
+            insertedObjects = snapshot.getInsertedObjects();
+            updatedObjects = snapshot.getUpdatedObjects();
+            deletedObjects = snapshot.getDeletedObjects();
+
+            for (ListIterator<BubbleObject> iterator = insertedObjects.listIterator(); iterator.hasNext(); ) {
+                BubbleObject insertedObject = iterator.next();
+                StoreEntry storeCacheEntry = modifiedMap.get(insertedObject.getId());
+                if (storeCacheEntry != null) {
+                    StoreEntryState state = storeCacheEntry.getState(level);
+                    switch (state) {
+                        case INSERTED:
+                            // Dette skal egentlig ikke være mulig. Anser insert etter insert som update etter insert.
+                        case INSERTED_DELETED:
+                        case UPDATED:
+                            iterator.set(storeCacheEntry.getBubbleObject(level));
+                            break;
+                        case DELETED:
+                            iterator.remove();
+                            break;
+                    }
+                    modifiedIds.remove(insertedObject.getId());
+                }
+            }
+            for (ListIterator<BubbleObject> iterator = updatedObjects.listIterator(); iterator.hasNext(); ) {
+                BubbleObject updatedObject = iterator.next();
+                StoreEntry storeCacheEntry = modifiedMap.get(updatedObject.getId());
+                if (storeCacheEntry != null) {
+                    StoreEntryState state = storeCacheEntry.getState(level);
+                    switch (state) {
+                        case INSERTED:
+                            // Dette skal egentlig ikke være mulig. Anser insert etter update som update etter update.
+                        case INSERTED_DELETED:
+                        case UPDATED:
+                            iterator.set(storeCacheEntry.getBubbleObject(level));
+                            break;
+                        case DELETED:
+                            iterator.remove();
+                            deletedObjects.add(storeCacheEntry.getBubbleObject(level));
+                            break;
+                    }
+                    modifiedIds.remove(updatedObject.getId());
+                }
+            }
+            for (ListIterator<BubbleObject> iterator = deletedObjects.listIterator(); iterator.hasNext(); ) {
+                BubbleObject deletedObject = iterator.next();
+                StoreEntry storeCacheEntry = modifiedMap.get(deletedObject.getId());
+                if (storeCacheEntry != null) {
+                    StoreEntryState state = storeCacheEntry.getState(level);
+                    switch (state) {
+                        case INSERTED:
+                            iterator.remove();
+                            updatedObjects.add(storeCacheEntry.getBubbleObject(level)); // Det som blir inserted kan være endret fra det som ble deleted
+                        case INSERTED_DELETED:
+                        case UPDATED:
+                            throw new ImplementationException("Can not update deleted object");
+                        case DELETED:
+                            // OK
+                            break;
+                    }
+                    modifiedIds.remove(deletedObject.getId());
+                }
+            }
+        } else {
+            insertedObjects = Lists.newArrayList();
+            updatedObjects = Lists.newArrayList();
+            deletedObjects = Lists.newArrayList();
+        }
+
+        for (BubbleId<?> modifiedId : modifiedIds) {
+            StoreEntry storeCacheEntry = modifiedMap.get(modifiedId);
             StoreEntryState state = storeCacheEntry.getState(level);
             switch (state) {
                 case INSERTED:
                     insertedObjects.add(storeCacheEntry.getBubbleObject(level));
                     break;
+                case INSERTED_DELETED:
                 case UPDATED:
                     updatedObjects.add(storeCacheEntry.getBubbleObject(level));
                     break;

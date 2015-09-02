@@ -309,8 +309,24 @@ public class AbstractStore implements Store {
 
         // TODO: Ikke sikker på at denne skal være her
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
+
+        if (storeUnitOfWork.getLevel() != 1) {
+            throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork() or abortUnitOfWork() instead");
+        }
+
         storeSession = storeUnitOfWork.endUnitOfWork();
         storeRelationCache.onCommitUnitOfWork();
+    }
+
+    @Override
+    public void endUnitsOfWork(UnitOfWork unitOfWork) {
+        validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
+
+        do {
+            StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
+            storeSession = storeUnitOfWork.endUnitOfWork();
+            storeRelationCache.onCommitUnitOfWork();
+        } while (storeSession instanceof StoreUnitOfWork);
     }
 
     @Override

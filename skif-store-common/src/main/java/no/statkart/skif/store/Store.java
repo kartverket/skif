@@ -460,6 +460,16 @@ public interface Store {
     void endUnitOfWork(UnitOfWork unitOfWork);
 
     /**
+     * Avslutter alle unit-of-work. Man må ha kalt {@link #getUnitOfWorkTransfer()} først for å hente ut endringene.
+     * <p/>
+     * Man må angi hvilken unit-of-work som er gjeldende, selv om alle aktive unit-of-works avsluttes.
+     * Dette for å sjekke at man avslutter den man tror man skal avslutte.
+     *
+     * @param unitOfWork    unit-of-work som man tror er aktiv
+     */
+    void endUnitsOfWork(UnitOfWork unitOfWork);
+
+    /**
      * Sørger for at en unit-of-work er avsluttet. Har den ikke blitt avsluttet eller abortert allerede, så blir den
      * abortert.
      *
@@ -484,4 +494,5 @@ public interface Store {
     <S> S getInstance(Class<S> serviceClass);
 
     StoreRelationCache getRelationCache();
+
 }

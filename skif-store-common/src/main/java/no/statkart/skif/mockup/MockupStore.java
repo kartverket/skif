@@ -362,6 +362,11 @@ public class MockupStore implements Store {
     }
 
     @Override
+    public void endUnitsOfWork(UnitOfWork unitOfWork) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public void closeUnitOfWork(UnitOfWork unitOfWork) {
         throw new NotImplementedException();
     }
