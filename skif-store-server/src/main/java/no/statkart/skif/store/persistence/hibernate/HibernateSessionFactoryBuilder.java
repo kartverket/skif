@@ -41,7 +41,7 @@ public abstract class HibernateSessionFactoryBuilder {
     protected final String mappingFilesDirectory;
     private final Map<Class<? extends BubbleObject>, Integer> bubbleClassDependencyIndex = new HashMap<Class<? extends BubbleObject>, Integer>();
     private int nextOrderIndex;
-    private Map<String, String> className2resourceNameMap = new HashMap<String, String>();
+    protected Map<String, String> className2resourceNameMap = new HashMap<String, String>();
 
     public HibernateSessionFactoryBuilder(String mappingFilesDirectory) {
         if (!mappingFilesDirectory.equals("")){
@@ -239,7 +239,7 @@ public abstract class HibernateSessionFactoryBuilder {
      *
      * @throws java.io.IOException
      */
-    private void findAllMappings() throws IOException, URISyntaxException {
+    protected void findAllMappings() throws IOException, URISyntaxException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
         Enumeration<URL> resources = classLoader.getResources(mappingFilesDirectory);
