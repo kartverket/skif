@@ -398,27 +398,31 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
         if (existingBubble != bubbleObject) {
             ensureFullyLoaded(existingBubble); // TODO: Håndter lazy loaded collections. Må pt kalle ensureFullyLoaded fordi attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents pt ikke håndtere lazyloaded collections.
-            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents(bubbleObject, existingBubble, orphanOneToOneEntityComponents);
 
+            // Typeendring må skje før attachPersistenceCollection
             if (!(bubbleObject.getClass().isInstance(existingBubble))) {
                 changeType(bubbleObject, existingBubble);
 
-                fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
-            } else {
-                // Objektet har ikke endret type, bare hiv ut gammel versjon fra Hibernate.
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Evict av annen boble instans assosiert med sessionen : " + bubbleObject.getBubbleId());
-                }
-                // Dersom den gamle instansen har blitt endret vil hibernate kunne gi en "postInsert feil: possible nonthreadsafe access to session"
-                // Denne feilen kan unngåes hvis man gjør en session.flush() her slik at alle endringer fra den gamle instansen
-                // kommer ned i databasen. Rammeverket skal dog fange opp og hindre at det oppdateres på flere instanser av
-                // samme objekt innenfor samme session. Det skal derfor ikke være noen flush her.
-                //session.flush();
-                // La den nye versjonen erstatte den gamle. Det er tryggt å anta at denne også er fullt initialisert.
-                fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
-
-                session().evict(existingBubble);
+                // Les inn objektet på nytt med den nye typen. changeType har evictet.
+                existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
+                ensureFullyLoaded(existingBubble); // TODO: Håndter lazy loaded collections. Må pt kalle ensureFullyLoaded fordi attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents pt ikke håndtere lazyloaded collections.
             }
+
+            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents(bubbleObject, existingBubble, orphanOneToOneEntityComponents);
+
+            // Objektet har ikke endret type, bare hiv ut gammel versjon fra Hibernate.
+            if (logger.isDebugEnabled()) {
+                logger.debug("Evict av annen boble instans assosiert med sessionen : " + bubbleObject.getBubbleId());
+            }
+            // Dersom den gamle instansen har blitt endret vil hibernate kunne gi en "postInsert feil: possible nonthreadsafe access to session"
+            // Denne feilen kan unngåes hvis man gjør en session.flush() her slik at alle endringer fra den gamle instansen
+            // kommer ned i databasen. Rammeverket skal dog fange opp og hindre at det oppdateres på flere instanser av
+            // samme objekt innenfor samme session. Det skal derfor ikke være noen flush her.
+            //session.flush();
+            // La den nye versjonen erstatte den gamle. Det er tryggt å anta at denne også er fullt initialisert.
+            fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
+
+            session().evict(existingBubble);
         } else {
             // Gjør ingen ting, bubbleObject er det objektet som allerede ligger i hibernate sessionen
         }
@@ -943,12 +947,13 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @since 2.1
      */
     private void changeType(BubbleObject currentObject, BubbleObject previousObject) throws SQLException {
-        List<Field> primitiveFields;
+        List<Field> oldPrimitiveFields;
         try {
-            primitiveFields = blankUtIkkeFellesFelter(previousObject, currentObject.getClass());
+            oldPrimitiveFields = blankUtIkkeFellesFelter(previousObject, currentObject.getClass());
         } catch (IllegalAccessException e) {
             throw new ImplementationException("Could not clear fields in initial object during type change", e, logger);
         }
+        List<Field> newPrimitiveFields = findNyePrimitiveFelter(previousObject.getClass(), currentObject.getClass());
 
         flush();
         evict(currentObject.getBubbleId());
@@ -976,15 +981,26 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             sql.append(dbTable);
             sql.append(" set ").append(discriminatorColumn).append('=').append(discriminatorValue);
 
-            if (!primitiveFields.isEmpty()) {
-                for (int i = 0; i < primitiveFields.size(); i++) {
-                    final Field field = primitiveFields.get(i);
+            if (!oldPrimitiveFields.isEmpty()) {
+                for (int i = 0; i < oldPrimitiveFields.size(); i++) {
+                    final Field field = oldPrimitiveFields.get(i);
                     final int propertyIndex = fromEntityPersister.getPropertyIndex(field.getName());
                     final String[] propertyColumnNames = fromEntityPersister.getPropertyColumnNames(propertyIndex);
                     if (propertyColumnNames.length != 1) {
                         throw new ImplementationException("Property " + field.getName() + " er mappet til flere kolonner: " + Arrays.toString(propertyColumnNames), logger);
                     }
                     sql.append(", ").append(propertyColumnNames[0]).append("=null");
+                }
+            }
+            if (!newPrimitiveFields.isEmpty()) {
+                for (int i = 0; i < newPrimitiveFields.size(); i++) {
+                    final Field field = newPrimitiveFields.get(i);
+                    final int propertyIndex = toEntityPersister.getPropertyIndex(field.getName());
+                    final String[] propertyColumnNames = toEntityPersister.getPropertyColumnNames(propertyIndex);
+                    if (propertyColumnNames.length != 1) {
+                        throw new ImplementationException("Property " + field.getName() + " er mappet til flere kolonner: " + Arrays.toString(propertyColumnNames), logger);
+                    }
+                    sql.append(", ").append(propertyColumnNames[0]).append("=0"); // Antar at 0 er OK verdi for det vi har av primitive felter.
                 }
             }
 
@@ -1030,6 +1046,33 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                     }
                 } else if (logger.isDebugEnabled()) {
                     logger.debug("Bobletypeendring: Blanker ikke ut felt " + field.toString());
+                }
+            }
+        }
+
+        return primitiveFields;
+    }
+
+    /**
+     * Når et objekt skal endre type, må alle primitive felter som kun finnes i den nye typen få en lovlig verdi.
+     * Denne metoden finner de feltene som er primitiver siden siste felles klasse.
+     *
+     * @param fraClass     typen objektet endres fra
+     * @param tilClass     typen objektet skal endres til
+     * @return liste over primitive felter som må initialiseres med SQL
+     * @throws IllegalAccessException dersom det av en eller annen grunn ikke er mulig å få tak i noen av feltene
+     * @since 2.4.5
+     */
+    private static List<Field> findNyePrimitiveFelter(Class<? extends BubbleObject> fraClass, Class<? extends BubbleObject> tilClass) {
+        ArrayList<Field> primitiveFields = new ArrayList<Field>();
+
+        for (Class<?> clazz = tilClass; !clazz.isAssignableFrom(fraClass); clazz = clazz.getSuperclass()) {
+            for (Field field : clazz.getDeclaredFields()) {
+                // Ikke vurderer statiske og transiente felter
+                if ((field.getModifiers() & (Modifier.STATIC | Modifier.FINAL | Modifier.TRANSIENT)) == 0) {
+                    if (field.getType().isPrimitive()) {
+                        primitiveFields.add(field);
+                    }
                 }
             }
         }
