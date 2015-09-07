@@ -401,27 +401,31 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
         if (existingBubble != bubbleObject) {
             ensureFullyLoaded(existingBubble); // TODO: Håndter lazy loaded collections. Må pt kalle ensureFullyLoaded fordi attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents pt ikke håndtere lazyloaded collections.
-            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents(bubbleObject, existingBubble, orphanOneToOneEntityComponents);
 
+            // Typeendring må skje før attachPersistenceCollection
             if (!(bubbleObject.getClass().isInstance(existingBubble))) {
                 changeType(bubbleObject, existingBubble);
 
-                fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
-            } else {
-                // Objektet har ikke endret type, bare hiv ut gammel versjon fra Hibernate.
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Evict av annen boble instans assosiert med sessionen : " + bubbleObject.getBubbleId());
-                }
-                // Dersom den gamle instansen har blitt endret vil hibernate kunne gi en "postInsert feil: possible nonthreadsafe access to session"
-                // Denne feilen kan unngåes hvis man gjør en session.flush() her slik at alle endringer fra den gamle instansen
-                // kommer ned i databasen. Rammeverket skal dog fange opp og hindre at det oppdateres på flere instanser av
-                // samme objekt innenfor samme session. Det skal derfor ikke være noen flush her.
-                //session.flush();
-                // La den nye versjonen erstatte den gamle. Det er tryggt å anta at denne også er fullt initialisert.
-                fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
-
-                session().evict(existingBubble);
+                // Les inn objektet på nytt med den nye typen. changeType har evictet.
+                existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
+                ensureFullyLoaded(existingBubble); // TODO: Håndter lazy loaded collections. Må pt kalle ensureFullyLoaded fordi attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents pt ikke håndtere lazyloaded collections.
             }
+
+            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents(bubbleObject, existingBubble, orphanOneToOneEntityComponents);
+
+            // Objektet har ikke endret type, bare hiv ut gammel versjon fra Hibernate.
+            if (logger.isDebugEnabled()) {
+                logger.debug("Evict av annen boble instans assosiert med sessionen : " + bubbleObject.getBubbleId());
+            }
+            // Dersom den gamle instansen har blitt endret vil hibernate kunne gi en "postInsert feil: possible nonthreadsafe access to session"
+            // Denne feilen kan unngåes hvis man gjør en session.flush() her slik at alle endringer fra den gamle instansen
+            // kommer ned i databasen. Rammeverket skal dog fange opp og hindre at det oppdateres på flere instanser av
+            // samme objekt innenfor samme session. Det skal derfor ikke være noen flush her.
+            //session.flush();
+            // La den nye versjonen erstatte den gamle. Det er tryggt å anta at denne også er fullt initialisert.
+            fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
+
+            session().evict(existingBubble);
         } else {
             // Gjør ingen ting, bubbleObject er det objektet som allerede ligger i hibernate sessionen
         }
