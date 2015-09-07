@@ -977,20 +977,14 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             sql.append(" set ").append(discriminatorColumn).append('=').append(discriminatorValue);
 
             if (!primitiveFields.isEmpty()) {
-                final boolean[] propertyNullability = fromEntityPersister.getPropertyNullability();
-
                 for (int i = 0; i < primitiveFields.size(); i++) {
                     final Field field = primitiveFields.get(i);
                     final int propertyIndex = fromEntityPersister.getPropertyIndex(field.getName());
-                    if (propertyNullability[propertyIndex]) {
-                        final String[] propertyColumnNames = fromEntityPersister.getPropertyColumnNames(propertyIndex);
-                        if (propertyColumnNames.length != 1) {
-                            throw new ImplementationException("Property " + field.getName() + " er mappet til flere kolonner: " + Arrays.toString(propertyColumnNames), logger);
-                        }
-                        sql.append(", ").append(propertyColumnNames[0]).append("=null");
-                    } else {
-                        logger.warn("Property " + field.getName() + " er ikke nullable, men unik for fra-klasse " + previousObject.getClass());
+                    final String[] propertyColumnNames = fromEntityPersister.getPropertyColumnNames(propertyIndex);
+                    if (propertyColumnNames.length != 1) {
+                        throw new ImplementationException("Property " + field.getName() + " er mappet til flere kolonner: " + Arrays.toString(propertyColumnNames), logger);
                     }
+                    sql.append(", ").append(propertyColumnNames[0]).append("=null");
                 }
             }
 
