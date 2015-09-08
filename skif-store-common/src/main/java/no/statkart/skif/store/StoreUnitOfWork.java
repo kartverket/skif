@@ -28,22 +28,22 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry insertEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry insertEntry(int level, T bubbleObject) {
         return wrappedStoreSession.insertEntry(level, bubbleObject);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry updateEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry updateEntry(int level, T bubbleObject) {
         return wrappedStoreSession.updateEntry(level, bubbleObject);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry deleteEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry deleteEntry(int level, T bubbleObject) {
         return wrappedStoreSession.deleteEntry(level, bubbleObject);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean undoEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> boolean undoEntry(int level, T bubbleObject) {
         return wrappedStoreSession.undoEntry(level, bubbleObject);
     }
 
@@ -81,7 +81,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAllEntries(int level) {
+    public boolean evictAllEntries(int level) {
         return wrappedStoreSession.evictAllEntries(level);
     }
 

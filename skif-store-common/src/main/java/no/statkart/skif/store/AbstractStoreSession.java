@@ -25,7 +25,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     protected AbstractStoreSession(int level, StoreCache storeCache) {
         this.level = level;
         this.storeCache = storeCache;
-        this.modifiedMap = new LinkedHashMap<BubbleId<?>, StoreEntry>(1000);
+        this.modifiedMap = new LinkedHashMap<>(1000);
     }
 
     public void setStore(Store store) {
@@ -60,6 +60,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             entry = loadEntry(level, bubbleId, false);
         }
 
+        //noinspection unchecked
         final T bubble = (T) entry.getDerivedBubbleObjectCopyIfLocked(level, store);
         if (bubble == null) {
             throw new ObjectNotFoundException(bubbleId);
@@ -88,21 +89,21 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             bubbleObjects = get((List<I>) bubbleIds);
         } else {
             checkNotNull(bubbleIds, "bubbleIds");
-            bubbleObjects = get(new ArrayList<I>(bubbleIds));
+            bubbleObjects = get(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<I> bubbleIds) {
-        Set<T> result = new HashSet<T>();
+        Set<T> result = new HashSet<>();
         get(bubbleIds, result);
         return result;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<I> bubbleIds) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         get(bubbleIds, result);
         return result;
     }
@@ -116,10 +117,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             final StoreEntry storeEntry = storeCache.get(bubbleId);
             final BubbleObject bubbleObject = storeEntry == null ? null : storeEntry.getDerivedBubbleObjectCopyIfLocked(level, store);
             if (bubbleObject != null) {
+                //noinspection unchecked
                 bubbleObjects.add((T) bubbleObject);
             } else {
                 if (missingBubbleIds == null) {
-                    missingBubbleIds = new HashSet<I>(bubbleIds.size());
+                    missingBubbleIds = new HashSet<>(bubbleIds.size());
                 }
                 missingBubbleIds.add(bubbleId);
             }
@@ -128,10 +130,12 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         if (missingBubbleIds != null) {
             if (missingBubbleIds.size() == 1) {
                 StoreEntry entry = loadEntry(level, missingBubbleIds.iterator().next(), false);
+                //noinspection unchecked
                 bubbleObjects.add((T) entry.getDerivedBubbleObjectCopyIfLocked(level, store));
             } else {
                 Collection<StoreEntry> entries = loadEntries(level, missingBubbleIds, false);
                 for (StoreEntry entry : entries) {
+                    //noinspection unchecked
                     bubbleObjects.add((T) entry.getDerivedBubbleObjectCopyIfLocked(level, store));
 
                 }
@@ -148,21 +152,21 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             bubbleObjects = getOrdered((List<I>) bubbleIds);
         } else {
             checkNotNull(bubbleIds, "bubbleIds");
-            bubbleObjects = getOrdered(new ArrayList<I>(bubbleIds));
+            bubbleObjects = getOrdered(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds) {
-        Set<T> result = new LinkedHashSet<T>();
+        Set<T> result = new LinkedHashSet<>();
         getOrdered(bubbleIds, result);
         return result;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         getOrdered(bubbleIds, result);
         return result;
     }
@@ -171,8 +175,8 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
         checkNotNull(bubbleIds, "bubbleIds");
 
-        ArrayList<T> bubbleObjectsFound = new ArrayList<T>(bubbleIds.size());
-        ArrayList<I> orderedBubbleIds = new ArrayList<I>(bubbleIds.size());
+        ArrayList<T> bubbleObjectsFound = new ArrayList<>(bubbleIds.size());
+        ArrayList<I> orderedBubbleIds = new ArrayList<>(bubbleIds.size());
         Set<I> missingBubbleIds = null;
 
         for (I bubbleId : bubbleIds) {
@@ -180,11 +184,12 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             final StoreEntry storeEntry = storeCache.get(bubbleId);
             final BubbleObject bubbleObject = storeEntry == null ? null : storeEntry.getDerivedBubbleObjectCopyIfLocked(level, store);
             if (bubbleObject != null) {
+                //noinspection unchecked
                 bubbleObjectsFound.add((T) bubbleObject);
             } else {
                 bubbleObjectsFound.add(null);  // null er plassholder
                 if (missingBubbleIds == null) {
-                    missingBubbleIds = new HashSet<I>(bubbleIds.size());
+                    missingBubbleIds = new HashSet<>(bubbleIds.size());
                 }
                 missingBubbleIds.add(bubbleId);
             }
@@ -193,13 +198,14 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         // Hent de som ikke ble funnet og legg inn i hashmap
         if (missingBubbleIds != null) {
             final Collection<StoreEntry> storeEntries = loadEntries(level, missingBubbleIds, false);
-            final Map<BubbleId<?>, StoreEntry> storeEntryMap = new HashMap<BubbleId<?>, StoreEntry>(storeEntries.size());
+            final Map<BubbleId<?>, StoreEntry> storeEntryMap = new HashMap<>(storeEntries.size());
             for (StoreEntry storeEntry : storeEntries) {
                 storeEntryMap.put(storeEntry.getId(), storeEntry);
             }
             for (int i = 0; i < bubbleObjectsFound.size(); i++) {
                 if (bubbleObjectsFound.get(i) == null) {
                     final StoreEntry storeEntry = storeEntryMap.get(orderedBubbleIds.get(i));
+                    //noinspection unchecked
                     bubbleObjectsFound.set(i, (T) storeEntry.getDerivedBubbleObjectCopyIfLocked(level, store));
                 }
             }
@@ -217,21 +223,21 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             bubbleObjects = getIgnoreMissing((List<I>) bubbleIds);
         } else {
             checkNotNull(bubbleIds, "bubbleIds");
-            bubbleObjects = getIgnoreMissing(new ArrayList<I>(bubbleIds));
+            bubbleObjects = getIgnoreMissing(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<I> bubbleIds) {
-        Set<T> result = new HashSet<T>();
+        Set<T> result = new HashSet<>();
         getIgnoreMissing(bubbleIds, result);
         return result;
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<I> bubbleIds) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         getIgnoreMissing(bubbleIds, result);
         return result;
     }
@@ -245,10 +251,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             final StoreEntry storeEntry = storeCache.get(bubbleId);
             final BubbleObject bubbleObject = storeEntry == null ? null : storeEntry.getDerivedBubbleObjectCopyIfLocked(level, store);
             if (bubbleObject != null) {
+                //noinspection unchecked
                 bubbleObjects.add((T) bubbleObject);
             } else {
                 if (missingBubbleIds == null) {
-                    missingBubbleIds = new HashSet<I>(bubbleIds.size());
+                    missingBubbleIds = new HashSet<>(bubbleIds.size());
                 }
                 missingBubbleIds.add(bubbleId);
             }
@@ -258,6 +265,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             if (missingBubbleIds.size() == 1) {
                 try {
                     StoreEntry entry = loadEntry(level, missingBubbleIds.iterator().next(), false);
+                    //noinspection unchecked
                     bubbleObjects.add((T) entry.getDerivedBubbleObjectCopyIfLocked(level, store));
                 } catch (ObjectNotFoundException ignore) {
                     // OK, så fantes den ikke, da.
@@ -265,6 +273,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             } else {
                 Collection<StoreEntry> entries = loadEntriesIgnoreMissing(level, missingBubbleIds, false);
                 for (StoreEntry entry : entries) {
+                    //noinspection unchecked
                     bubbleObjects.add((T) entry.getDerivedBubbleObjectCopyIfLocked(level, store));
                 }
             }
@@ -272,7 +281,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry insertEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry insertEntry(int level, T bubbleObject) {
         StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
         if (storeEntry == null) {
             storeEntry = storeCache.createEntry(level, bubbleObject.getId());
@@ -320,10 +329,8 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry updateEntry(int level, T
-            bubbleObject) {
+    public <T extends BubbleObject> StoreEntry updateEntry(int level, T bubbleObject) {
         StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
-
 
         if (storeEntry == null) {
             storeEntry = storeCache.createEntry(level, bubbleObject.getId());
@@ -375,10 +382,8 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry deleteEntry(int level, T
-            bubbleObject) {
+    public <T extends BubbleObject> StoreEntry deleteEntry(int level, T bubbleObject) {
         StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
-
 
         if (storeEntry == null) {
             storeEntry = storeCache.createEntry(level, bubbleObject.getId());
@@ -406,7 +411,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
         }
         StoreRelationCache relationCache = store.getRelationCache();
-        T oldInstance = (T) storeEntry.getDerivedBubbleObject(level);
+        BubbleObject oldInstance = storeEntry.getDerivedBubbleObject(level);
         if (oldInstance != bubbleObject) {
             bubbleObject.register(store);
             // TODO: Make oldInstance stale in order to detect continued usage of oldInstance
@@ -428,7 +433,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean undoEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> boolean undoEntry(int level, T bubbleObject) {
         if (level == 0) {
             throw new ImplementationException("Can't undo on level 0");
         }
@@ -514,6 +519,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     @Override
     public final <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId) {
         StoreEntry entry = lockEntry(level, bubbleId);
+        //noinspection unchecked
         return (T) entry.getBubbleObject(level);
     }
 

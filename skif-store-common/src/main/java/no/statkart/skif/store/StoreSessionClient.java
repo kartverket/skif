@@ -1,7 +1,6 @@
 package no.statkart.skif.store;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.util.CopyHelper;
 
@@ -34,7 +33,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry insertEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry insertEntry(int level, T bubbleObject) {
         if (level == 0) {
             throw new ImplementationException("Insert on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer()");
         } else {
@@ -43,7 +42,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry updateEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry updateEntry(int level, T bubbleObject) {
         if (level == 0) {
             throw new ImplementationException("Update on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer()");
         } else {
@@ -52,7 +51,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry deleteEntry(int level, T bubbleObject) {
+    public <T extends BubbleObject> StoreEntry deleteEntry(int level, T bubbleObject) {
         if (level == 0) {
             throw new ImplementationException("Delete on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer()");
         } else {
@@ -78,6 +77,7 @@ public class StoreSessionClient extends AbstractStoreSession {
             snapshotVersionContext.setSnapshotVersion(bubbleId.getSnapshotVersion());
             T bubbleObject = storeService.getObject(bubbleId);
             bubbleObject.register(store);
+            //noinspection UnnecessaryLocalVariable
             StoreEntry entry = storeCache.register(level, bubbleObject, bubbleObject);
             return entry;
         } finally {
@@ -87,13 +87,13 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Set<I> bubbleIds, boolean refresh) {
-        Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
+        Collection<StoreEntry> result = new ArrayList<>(bubbleIds.size());
 
-        Map<SnapshotVersion, Collection<I>> idsForVersions = new HashMap<SnapshotVersion, Collection<I>>();
+        Map<SnapshotVersion, Collection<I>> idsForVersions = new HashMap<>();
         for (I bubbleId : bubbleIds) {
             Collection<I> ids = idsForVersions.get(bubbleId.getSnapshotVersion());
             if (ids == null) {
-                ids = new HashSet<I>();
+                ids = new HashSet<>();
                 idsForVersions.put(bubbleId.getSnapshotVersion(), ids);
             }
             ids.add(bubbleId);
@@ -119,13 +119,13 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntriesIgnoreMissing(int level, Set<I> bubbleIds, boolean refresh) {
-        Collection<StoreEntry> result = new ArrayList<StoreEntry>(bubbleIds.size());
+        Collection<StoreEntry> result = new ArrayList<>(bubbleIds.size());
 
-        Map<SnapshotVersion, Collection<I>> idsForVersions = new HashMap<SnapshotVersion, Collection<I>>();
+        Map<SnapshotVersion, Collection<I>> idsForVersions = new HashMap<>();
         for (I bubbleId : bubbleIds) {
             Collection<I> ids = idsForVersions.get(bubbleId.getSnapshotVersion());
             if (ids == null) {
-                ids = new HashSet<I>();
+                ids = new HashSet<>();
                 idsForVersions.put(bubbleId.getSnapshotVersion(), ids);
             }
             ids.add(bubbleId);
@@ -155,15 +155,13 @@ public class StoreSessionClient extends AbstractStoreSession {
         if (storeEntry != null) {
             // Entry finnes, må sjekk om objekt er låst på underliggende nivå
             int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
-            if (lockLevel == level) {
-                // Allerede låst for level
-            } else if (lockLevel >= 0) {
+            if (lockLevel >= 0) {
                 // Låst for underliggende level
                 BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
                 BubbleObject copy = CopyHelper.copy(derivedBubbleObject);
                 copy.register(store);
                 storeEntry.setLocked(level, copy);
-            } else {
+            } else if (lockLevel != level) {
                 // Ikke låst, hent fra server
                 BubbleObject lockedBubbleObject = storeService.lock(bubbleId);
                 lockedBubbleObject.register(store);
@@ -247,7 +245,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAllEntries(int level) {
+    public boolean evictAllEntries(int level) {
         boolean allWasEvicted = true;
         final Iterator<StoreEntry> iterator = storeCache.values().iterator();
         while (iterator.hasNext()) {

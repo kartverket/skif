@@ -183,7 +183,7 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictAllEntries(int level) {
+    public boolean evictAllEntries(int level) {
         boolean allWasEvicted = true;
         final Iterator<StoreEntry> iterator = storeCache.values().iterator();
         while (iterator.hasNext()) {
