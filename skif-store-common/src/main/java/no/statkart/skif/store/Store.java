@@ -352,7 +352,7 @@ public interface Store {
      *
      * <P>Eksempel på bruk:
      * <pre>
-     *     {@code Map<AId, List<AId>> result = storeService.getVersionForList(ImmutableList.<AId>of(ASubId.create(1), ASubId.create(2)), start, end)}
+     *     {@code Map&lt;AId, List&lt;AId>> result = storeService.getVersionForList(ImmutableList.&lt;AId>of(ASubId.create(1), ASubId.create(2)), start, end)}
      * </pre>
      *
      * @param ids   id-ene til objektene man skal finne historikk for. Id-enes snapshotversion blir ignorert
