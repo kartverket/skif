@@ -480,17 +480,20 @@ public class StoreSessionServer extends AbstractStoreSession {
         if (storeEntry != null) {
             // Entry finnes, må sjekk om objekt er låst på underliggende nivå
             int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
-            if (lockLevel >= 0) {
-                // Låst for underliggende level
-                lockEntry(storeEntry, level, false);
-            } else if (lockLevel != level) {
-                // Uvist om låst
-                boolean isNewLock = lockerStrategy.lock(bubbleId);
-                if (isNewLock) {
-                    // Objekt var ikke låst fra før, må gjøre en refresh
-                    refreshEntry(storeEntry);
+            if (lockLevel != level) {
+                // Ikke allerede låst for level
+                if (lockLevel >= 0) {
+                    // Låst for underliggende level
+                    lockEntry(storeEntry, level, false);
+                } else {
+                    // Uvist om låst
+                    boolean isNewLock = lockerStrategy.lock(bubbleId);
+                    if (isNewLock) {
+                        // Objekt var ikke låst fra før, må gjøre en refresh
+                        refreshEntry(storeEntry);
+                    }
+                    lockEntry(storeEntry, level, isNewLock);
                 }
-                lockEntry(storeEntry, level, isNewLock);
             }
         } else {
             // Ingen entry, opprett entry, refresh objekt hvis det ikke allerede er låst

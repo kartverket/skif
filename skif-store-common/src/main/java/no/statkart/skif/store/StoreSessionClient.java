@@ -155,19 +155,22 @@ public class StoreSessionClient extends AbstractStoreSession {
         if (storeEntry != null) {
             // Entry finnes, må sjekk om objekt er låst på underliggende nivå
             int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
-            if (lockLevel >= 0) {
-                // Låst for underliggende level
-                BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
-                BubbleObject copy = CopyHelper.copy(derivedBubbleObject);
-                copy.register(store);
-                storeEntry.setLocked(level, copy);
-            } else if (lockLevel != level) {
-                // Ikke låst, hent fra server
-                BubbleObject lockedBubbleObject = storeService.lock(bubbleId);
-                lockedBubbleObject.register(store);
-                // TODO: fjern allerede leste versjoner hvis timestamp/versjon er eldre
-                storeEntry.setLocked(level, lockedBubbleObject);
-                storeEntry.setLockCreatedByLevel(level);
+            if (lockLevel != level) {
+                // Ikke allerede låst for level
+                if (lockLevel >= 0) {
+                    // Låst for underliggende level
+                    BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
+                    BubbleObject copy = CopyHelper.copy(derivedBubbleObject);
+                    copy.register(store);
+                    storeEntry.setLocked(level, copy);
+                } else {
+                    // Ikke låst, hent fra server
+                    BubbleObject lockedBubbleObject = storeService.lock(bubbleId);
+                    lockedBubbleObject.register(store);
+                    // TODO: fjern allerede leste versjoner hvis timestamp/versjon er eldre
+                    storeEntry.setLocked(level, lockedBubbleObject);
+                    storeEntry.setLockCreatedByLevel(level);
+                }
             }
         } else {
             BubbleObject lockedBubbleObject = storeService.lock(bubbleId);
