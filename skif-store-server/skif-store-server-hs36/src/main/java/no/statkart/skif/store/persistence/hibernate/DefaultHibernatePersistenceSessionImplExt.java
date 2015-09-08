@@ -47,7 +47,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
      * @throws org.hibernate.HibernateException
      *
      */
-    protected void ensureInitialized(Object object, IdentityHashMap initializedObjects) throws HibernateException {
+    protected void ensureInitialized(Object object, IdentityHashMap<Object, Object> initializedObjects) throws HibernateException {
         if (object == null) return;
 
         if (initializedObjects.containsKey(object)) return;
@@ -71,7 +71,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         ensureInitialized(types, values, sessionImpl, sessionFactory, cascadeStyles, initializedObjects);
     }
 
-    private void ensureInitialized(Type[] types, Object[] values, SessionImpl sessionImpl, SessionFactoryImplementor sessionFactory, CascadeStyle[] cascadeStyles, IdentityHashMap initializedObjects) {
+    private void ensureInitialized(Type[] types, Object[] values, SessionImpl sessionImpl, SessionFactoryImplementor sessionFactory, CascadeStyle[] cascadeStyles, IdentityHashMap<Object, Object> initializedObjects) {
         for (int i = 0; i < types.length; i++) {
             Type type = types[i];
             if (type.isEntityType()) {
@@ -105,6 +105,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                             CompositeType compositeType = (CompositeType) collectionPersister.getElementType();
                             for (Object componentObject : col) {
                                 final Object[] propertyValues = compositeType.getPropertyValues(componentObject, sessionImpl);
+                                //noinspection ForLoopReplaceableByForEach
                                 for (int j = 0; j < propertyValues.length; j++) {
                                     ensureInitialized(propertyValues[j], initializedObjects);
                                 }
@@ -113,9 +114,9 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                             for (Object o : col) {
                                 ensureInitialized(o, initializedObjects);
                             }
-                        } else {
+                        } // else {
                             // No-op
-                        }
+                        //}
                     }
                 }
             }
@@ -149,7 +150,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
     }
 
     @Override
-    protected boolean isNewOrReplacedEntityComponent(EntityType type, Object value, Object valueExisting, IdentityHashMap processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents, CascadeStyle cascadeStyle) {
+    protected boolean isNewOrReplacedEntityComponent(EntityType type, Object value, Object valueExisting, IdentityHashMap<Object, Object> processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents, CascadeStyle cascadeStyle) {
         Class typeClass = type.getReturnedClass();
         if (EntityComponent.class.isAssignableFrom(typeClass)) {
             EntityComponent componentExisting = (EntityComponent) valueExisting;
