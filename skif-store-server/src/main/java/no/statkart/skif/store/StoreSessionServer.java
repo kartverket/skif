@@ -15,6 +15,7 @@ import org.hibernate.JDBCException;
 import org.hibernate.Session;
 
 import javax.annotation.Nullable;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.*;
@@ -24,9 +25,9 @@ import java.util.*;
  */
 public class StoreSessionServer extends AbstractStoreSession {
     private final PersistenceSessionManager persistenceSessionManager;
-    private final List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
-    private final List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
-    private final List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
+    private final List<StoreSessionReadListener> readListeners = new ArrayList<>();
+    private final List<StoreSessionWriteListener> writeListeners = new ArrayList<>();
+    private final List<StoreSessionFinishListener> finishListeners = new ArrayList<>();
     private final Provider<VersionFinder> versionFinderProvider;
     private final Provider<SnapshotVersion> snapshotVersionProvider;
     private final BubbleDependencyComparator bubbleDependencyComparator;
@@ -52,10 +53,10 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
 
         private void calc() {
-            insertedIds = new LinkedHashSet<BubbleId<?>>();
-            updatedIds = new LinkedHashSet<BubbleId<?>>();
-            deletedIds = new LinkedHashSet<BubbleId<?>>();
-            lockedIds = new LinkedHashSet<BubbleId<?>>();
+            insertedIds = new LinkedHashSet<>();
+            updatedIds = new LinkedHashSet<>();
+            deletedIds = new LinkedHashSet<>();
+            lockedIds = new LinkedHashSet<>();
             for (StoreEntry storeEntry : modifiedMap.values()) {
                 switch (storeEntry.getState(0)) {
                     case UNCHANGED:
@@ -260,10 +261,6 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
     }
 
-    private void fixEntryAfterDeleteFailure(StoreEntry storeEntry, StoreEntryState oldState) {
-        // Level er alltid 0
-    }
-
 
     /**
      * @see StoreServer#attemptDelete
@@ -274,7 +271,8 @@ public class StoreSessionServer extends AbstractStoreSession {
             flush();
             HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
             Session session = persistenceSessionMaster.reserveSession();
-            Savepoint savepoint = session.connection().setSavepoint();
+            Connection connection = session.connection();
+            Savepoint savepoint = connection.setSavepoint();
             StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry == null) {
                 storeEntry = loadEntry(level, bubbleId, false);
@@ -285,7 +283,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                 flush();
                 addModified(storeEntry);
             } catch (JDBCException e) {
-                session.connection().rollback(savepoint);
+                connection.rollback(savepoint);
                 storeEntry.setState(level, oldState);
                 clearPersistenceSessionAndSyncronizeWithStore(persistenceSessionMaster);
                 throw new AttemptDeleteException(bubbleId, e);
@@ -301,9 +299,7 @@ public class StoreSessionServer extends AbstractStoreSession {
 
         // Finn alle modifiserte entries som kan være lazyloaded. De som er inserted eller deleted er ikke interessante
         // Fjern alle readOnly entries
-        final Iterator<StoreEntry> iterator = storeCache.values().iterator();
-        while (iterator.hasNext()) {
-            final StoreEntry storeEntry = iterator.next();
+        for (StoreEntry storeEntry : storeCache.values()) {
             if (!fullyInitializedBubbles.containsKey(storeEntry.getId())) {
                 StoreEntryState state = storeEntry.getState(level);
                 if (state == StoreEntryState.UNCHANGED || state == StoreEntryState.UPDATED) {
@@ -393,7 +389,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         Collections.sort(updated, c);
         Collections.sort(deleted, inverseC);
 
-        Map<BubbleId<?>, StoreEntry> modifiedSorted = new LinkedHashMap<BubbleId<?>, StoreEntry>(modified.size());
+        Map<BubbleId<?>, StoreEntry> modifiedSorted = new LinkedHashMap<>(modified.size());
         for (Map.Entry<BubbleId<?>, StoreEntry> mapEntry : inserted) {
             modifiedSorted.put(mapEntry.getKey(), mapEntry.getValue());
         }
@@ -443,7 +439,7 @@ public class StoreSessionServer extends AbstractStoreSession {
     public void fixBatchingForBubblesWithEntityComponentsForSameType(Map<BubbleId<?>, StoreEntry> modified) throws HibernateException {
         HibernatePersistenceSessionMasterImpl implementation = getPersistenceSessionManager().getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
         List<Multimap<Class<? extends EntityComponent>, EntityComponent>> entityMap = Lists.newArrayList();
-        IdentityHashMap processedObjects = new IdentityHashMap();
+        IdentityHashMap<Object, Object> processedObjects = new IdentityHashMap<>();
 
         for (Map.Entry<BubbleId<?>, StoreEntry> entry : modified.entrySet()) {
             try {
@@ -484,12 +480,10 @@ public class StoreSessionServer extends AbstractStoreSession {
         if (storeEntry != null) {
             // Entry finnes, må sjekk om objekt er låst på underliggende nivå
             int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
-            if (lockLevel == level) {
-                // Allerede låst for level
-            } else if (lockLevel >= 0) {
+            if (lockLevel >= 0) {
                 // Låst for underliggende level
                 lockEntry(storeEntry, level, false);
-            } else {
+            } else if (lockLevel != level) {
                 // Uvist om låst
                 boolean isNewLock = lockerStrategy.lock(bubbleId);
                 if (isNewLock) {
@@ -524,10 +518,10 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
     }
 
-    private <T extends BubbleObject, I extends BubbleId<? extends T>> void refreshEntry(StoreEntry storeEntry) {
-        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject();
+    private void refreshEntry(StoreEntry storeEntry) {
+        BubbleObject persistentBubbleObject = storeEntry.getPersistentBubbleObject();
         persistenceSessionManager.refresh(persistentBubbleObject);
-        T bubbleObject = persistentBubbleObject;
+        BubbleObject bubbleObject = persistentBubbleObject;
         for (StoreSessionReadListener readListener : readListeners) {
             bubbleObject = readListener.onRegister(bubbleObject);
         }
@@ -577,7 +571,7 @@ public class StoreSessionServer extends AbstractStoreSession {
 
 // Denne metode kan opptimaliseres, ved å først å sortere ids på basetype og så gjøre en list query basert på
 // OracleArrayType for hver basetype.
-        Map<I, List<I>> retur = new HashMap<I, List<I>>();
+        Map<I, List<I>> retur = new HashMap<>();
         for (I id : ids) {
             // Sliter litt med generics her. Vi passe litt på fordi dette kun er lovlig hvis <I> faktisk er en basetype dersom id kan skifte subtype.
             retur.put((I) (BubbleId) id.asSnapshotVersion(snapshotVersionProvider.get()), versionFinder.findBubbleIdsForInterval(id, start, end));
@@ -618,8 +612,8 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     private <T extends BubbleObject> void onInsertObject(StoreEntry storeEntry, T bubbleObject) {
-        T resultingPersistentBubbleObject = (T) bubbleObject;
-        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject();
+        T resultingPersistentBubbleObject = bubbleObject;
+        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject(); // TODO: Denne cast er ikke riktig grunnet subtypeendring
         for (StoreSessionWriteListener writeListener : writeListeners) {
             resultingPersistentBubbleObject = writeListener.onInsert(bubbleObject, persistentBubbleObject);
             persistentBubbleObject = resultingPersistentBubbleObject;
@@ -640,8 +634,8 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     private <T extends BubbleObject> void onUpdateObject(StoreEntry storeEntry, T bubbleObject) {
-        T resultingPersistentBubbleObject = (T) bubbleObject;
-        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject();
+        T resultingPersistentBubbleObject = bubbleObject;
+        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject(); // TODO: Denne cast er ikke riktig grunnet subtypeendring
         for (StoreSessionWriteListener writeListener : writeListeners) {
             resultingPersistentBubbleObject = writeListener.onUpdate(bubbleObject, persistentBubbleObject);
             persistentBubbleObject = resultingPersistentBubbleObject;
@@ -661,8 +655,8 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     private <T extends BubbleObject> void onDeleteObject(StoreEntry storeEntry, T bubbleObject) {
-        T resultingPersistentBubbleObject = (T) bubbleObject;
-        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject();
+        T resultingPersistentBubbleObject = bubbleObject;
+        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject(); // TODO: Denne cast er ikke riktig grunnet subtypeendring
         for (StoreSessionWriteListener writeListener : writeListeners) {
             resultingPersistentBubbleObject = writeListener.onDelete(bubbleObject, persistentBubbleObject);
             persistentBubbleObject = resultingPersistentBubbleObject;
@@ -704,15 +698,16 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> loadEntries(int level, Set<I> bubbleIds, boolean refresh) {
-        Collection<T> persistentBubbleObjects;
+        Collection<? extends T> persistentBubbleObjects;
         if (refresh) {
             // TODO: bulk optimize
-            persistentBubbleObjects = new ArrayList<T>(bubbleIds.size());
+            Collection<T> list = new ArrayList<>(bubbleIds.size());
             for (I bubbleId : bubbleIds) {
-                persistentBubbleObjects.add(persistenceSessionManager.refresh(bubbleId));
+                list.add(persistenceSessionManager.refresh(bubbleId));
             }
+            persistentBubbleObjects = list;
         } else {
-            persistentBubbleObjects = (Collection<T>) persistenceSessionManager.get(bubbleIds);
+            persistentBubbleObjects = persistenceSessionManager.get(bubbleIds);
         }
 
         Collection<StoreEntry> entries = new ArrayList<StoreEntry>(bubbleIds.size());
@@ -739,7 +734,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             }
         }
 
-        Collection<StoreEntry> entries = new ArrayList<StoreEntry>(bubbleIds.size());
+        Collection<StoreEntry> entries = new ArrayList<>(bubbleIds.size());
         for (T originalBubbleObject : persistentBubbleObjects) {
             entries.add(createEntry(level, originalBubbleObject));
         }
