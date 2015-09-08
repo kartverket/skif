@@ -124,6 +124,7 @@ public class WSVersioningServerModule extends SkifServerModule {
         List<StoreSessionReadListener> readListeners = ImmutableList.of();
         List<StoreSessionWriteListener> writeListeners = ImmutableList.of();
         List<StoreSessionFinishListener> finishListeners = ImmutableList.of();
+        //noinspection UnnecessaryLocalVariable
         StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, versionFinderProvider, snapshotVersionProvider, lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners), injector);
         return storeServer;
     }
@@ -177,7 +178,7 @@ public class WSVersioningServerModule extends SkifServerModule {
 
             @Override
             public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> get(Collection<I> bubbleIds) {
-                Set<T> result = new LinkedHashSet<T>(bubbleIds.size());
+                Set<T> result = new LinkedHashSet<>(bubbleIds.size());
                 for (I bubbleId : bubbleIds) {
                     result.add(get(bubbleId));
                 }
@@ -185,17 +186,17 @@ public class WSVersioningServerModule extends SkifServerModule {
             }
 
             @Override
-            public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubble) {
+            public <T extends BubbleObject> void insert(T bubble) {
                 throw new NotImplementedException("insert");
             }
 
             @Override
-            public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubble) {
+            public <T extends BubbleObject> void update(T bubble) {
                 throw new NotImplementedException("update");
             }
 
             @Override
-            public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubble) {
+            public <T extends BubbleObject> void delete(T bubble) {
                 throw new NotImplementedException("delete");
             }
 

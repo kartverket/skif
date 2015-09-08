@@ -282,7 +282,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * bli sendt til databasen.
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubbleObject) {
+    public <T extends BubbleObject> void insert(T bubbleObject) {
         try {
             checkEntityComponentsOnInsert(bubbleObject);
             session().save(bubbleObject);
@@ -302,7 +302,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * Endringer blir først utført ved senere kall til flush()
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubbleObject) {
+    public <T extends BubbleObject> void update(T bubbleObject) {
         List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents = Lists.newArrayList();
         try {
             assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject, orphanOneToOneEntityComponents);
@@ -329,7 +329,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @param bubbleObject objekt som inneholder id for det objekt som skal slettes
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubbleObject) {
+    public <T extends BubbleObject> void delete(T bubbleObject) {
         try {
             Object obj = getFromHibernateSessionOrLoad(bubbleObject.getId());
             fullyInitializedBubbles.remove(bubbleObject.getId());

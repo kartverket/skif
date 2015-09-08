@@ -22,7 +22,7 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
     private final static Set<Method> methodsImplementedByProxy;
 
     static {
-        methodsImplementedByProxy = new HashSet<Method>();
+        methodsImplementedByProxy = new HashSet<>();
         methodsImplementedByProxy.addAll(Arrays.asList(Object.class.getMethods()));
         methodsImplementedByProxy.addAll(Arrays.asList(PersistenceSessionForSnapshot.class.getMethods()));
     }
@@ -36,13 +36,13 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
 
     }
 
-    private final Class[] getDerivedInterfaces(Class<?> clazz) {
-        List<Class> interfaces = new ArrayList<Class>(5);
+    private Class[] getDerivedInterfaces(Class<?> clazz) {
+        List<Class> interfaces = new ArrayList<>(5);
         do {
             interfaces.addAll(Arrays.asList(clazz.getInterfaces()));
             clazz = clazz.getSuperclass();
         } while (clazz!=null);
-        return interfaces.toArray(new Class[0]);
+        return interfaces.toArray(new Class[interfaces.size()]);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubble) {
+    public <T extends BubbleObject> void insert(T bubble) {
         SnapshotVersion previousVersion = delegate.setSnapshot(snapshotVersion);
         try {
             delegate.insert(bubble);
@@ -141,7 +141,7 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubble) {
+    public <T extends BubbleObject> void update(T bubble) {
         SnapshotVersion previousVersion = delegate.setSnapshot(snapshotVersion);
         try {
             delegate.update(bubble);
@@ -151,7 +151,7 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubble) {
+    public <T extends BubbleObject> void delete(T bubble) {
         SnapshotVersion previousVersion = delegate.setSnapshot(snapshotVersion);
         try {
             delegate.delete(bubble);

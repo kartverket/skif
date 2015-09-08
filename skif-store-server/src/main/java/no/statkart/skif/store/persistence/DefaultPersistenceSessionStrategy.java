@@ -17,7 +17,7 @@ import java.util.Map;
 public class DefaultPersistenceSessionStrategy implements PersistenceSessionStrategy{
     protected final PersistenceSessionMaster master;
     protected final PersistenceSessionSubtypeHandler[] handlers;
-    protected final Map<Class<? extends BubbleId>, PersistenceSessionForSnapshot> subtypeMapping = new HashMap<Class<? extends BubbleId>, PersistenceSessionForSnapshot>();
+    protected final Map<Class<? extends BubbleId>, PersistenceSessionForSnapshot> subtypeMapping = new HashMap<>();
 
 
     public DefaultPersistenceSessionStrategy(PersistenceSessionMaster master, PersistenceSessionSubtypeHandler... handlers) {
@@ -49,6 +49,7 @@ public class DefaultPersistenceSessionStrategy implements PersistenceSessionStra
     public PersistenceSessionForSnapshot getForBubbleId(Class<? extends BubbleId> type) {
         PersistenceSessionForSnapshot sessionForSnapshot = subtypeMapping.get(type);
         if (sessionForSnapshot==null) {
+            //noinspection ForLoopReplaceableByForEach
             for (int i = 0; i < handlers.length; i++) {
                 PersistenceSessionSubtypeHandler handler = handlers[i];
                 if (handler.acceptsSubtype(type)) {
@@ -66,15 +67,16 @@ public class DefaultPersistenceSessionStrategy implements PersistenceSessionStra
 
     public <T extends PersistenceSessionForSnapshot> T getImplementation(Class<T> interfaceType) {
         if (interfaceType.isAssignableFrom(this.getClass())) {
-            return (T) this;
+            return interfaceType.cast(this);
         } else {
             if (interfaceType.isAssignableFrom(master.getClass())) {
-                return (T) master;
+                return interfaceType.cast(master);
             } else {
+                //noinspection ForLoopReplaceableByForEach
                 for (int i = 0; i < handlers.length; i++) {
                     PersistenceSessionSubtypeHandler handler = handlers[i];
                     if (interfaceType.isAssignableFrom(handler.getClass())) {
-                        return (T) handler;
+                        return interfaceType.cast(handler);
                     }
                 }
                 throw new ImplementationException("Could not find implementation of interface: " + interfaceType);
@@ -94,19 +96,19 @@ public class DefaultPersistenceSessionStrategy implements PersistenceSessionStra
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubble) {
+    public <T extends BubbleObject> void insert(T bubble) {
         PersistenceSessionForSnapshot forBubbleId = getForBubbleId(bubble.getId().getClass());
         forBubbleId.insert(bubble);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubble) {
+    public <T extends BubbleObject> void update(T bubble) {
         PersistenceSessionForSnapshot forBubbleId = getForBubbleId(bubble.getId().getClass());
         forBubbleId.update(bubble);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubble) {
+    public <T extends BubbleObject> void delete(T bubble) {
         PersistenceSessionForSnapshot forBubbleId = getForBubbleId(bubble.getId().getClass());
         forBubbleId.delete(bubble);
     }

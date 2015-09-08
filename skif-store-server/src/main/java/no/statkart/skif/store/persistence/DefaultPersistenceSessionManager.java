@@ -129,11 +129,10 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> get(Collection<I> bubbleIds) {
-        Collection<T> result = new ArrayList<T>(bubbleIds.size());
+        Collection<T> result = new ArrayList<>(bubbleIds.size());
         Map<SnapshotVersion, Map<PersistenceSessionForSnapshot, Collection<I>>> snapshotVersionMap = calcSnapshotToPersistenceSessionMap(bubbleIds);
 
         for (Map.Entry<SnapshotVersion, Map<PersistenceSessionForSnapshot, Collection<I>>> snapshotVersionEntry : snapshotVersionMap.entrySet()) {
-            SnapshotVersion snapshotVersion = snapshotVersionEntry.getKey();
             Map<PersistenceSessionForSnapshot, Collection<I>> persistenceSessionMap = snapshotVersionEntry.getValue();
             for (Map.Entry<PersistenceSessionForSnapshot, Collection<I>> persistenceSessionEntry : persistenceSessionMap.entrySet()) {
                 PersistenceSessionForSnapshot sessionForSnapshotAndSubtype = persistenceSessionEntry.getKey();
@@ -151,7 +150,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
         Class prevClass = null;
         Collection<I> prevCollection = null;
 
-        Map<SnapshotVersion, Map<PersistenceSessionForSnapshot, Collection<I>>> map = new HashMap<SnapshotVersion, Map<PersistenceSessionForSnapshot, Collection<I>>>(5);
+        Map<SnapshotVersion, Map<PersistenceSessionForSnapshot, Collection<I>>> map = new HashMap<>(5);
         for (I bubbleId : bubbleIds) {
             if (prevSnapshotVersion != null && prevSnapshotVersion.equals(bubbleId.getSnapshotVersion()) && prevClass == bubbleId.getClass()) {
                 prevCollection.add(bubbleId);
@@ -159,7 +158,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
                 SnapshotVersion snapshotVersion = bubbleId.getSnapshotVersion();
                 Map<PersistenceSessionForSnapshot, Collection<I>> snapshotManagedCollectionMap = map.get(snapshotVersion);
                 if (snapshotManagedCollectionMap == null) {
-                    snapshotManagedCollectionMap = new HashMap<PersistenceSessionForSnapshot, Collection<I>>(2);
+                    snapshotManagedCollectionMap = new HashMap<>(2);
                     map.put(snapshotVersion, snapshotManagedCollectionMap);
                 }
                 PersistenceSessionForSnapshot persistenceManager = getForSnapshotVersion(snapshotVersion).getForBubbleId(bubbleId.getClass());
@@ -180,19 +179,19 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void insert(T bubble) {
+    public <T extends BubbleObject> void insert(T bubble) {
         PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
         persistenceSessionForSnapshot.insert(bubble);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void update(T bubble) {
+    public <T extends BubbleObject> void update(T bubble) {
         PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
         persistenceSessionForSnapshot.update(bubble);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void delete(T bubble) {
+    public <T extends BubbleObject> void delete(T bubble) {
         PersistenceSessionForSnapshot persistenceSessionForSnapshot = getForSnapshotVersion(bubble.getId().getSnapshotVersion());
         persistenceSessionForSnapshot.delete(bubble);
     }
