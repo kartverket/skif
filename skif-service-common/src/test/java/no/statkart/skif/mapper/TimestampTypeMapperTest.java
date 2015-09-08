@@ -56,18 +56,6 @@ public class TimestampTypeMapperTest {
         Assert.assertEquals(mappedXml.getTimestamp(), xmlGregorianCalendar, "Feil ved mapping fra Timestamp til XML");
     }
 
-    public void testParsing() throws DatatypeConfigurationException {
-        XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar();
-        xmlGregorianCalendar.setYear(2000);
-        xmlGregorianCalendar.setMonth(1);
-        xmlGregorianCalendar.setDay(1);
-        xmlGregorianCalendar.setHour(0);
-        xmlGregorianCalendar.setMinute(0);
-        xmlGregorianCalendar.setSecond(0);
-        xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(0, 9));
-        System.out.println(xmlGregorianCalendar.toXMLFormat());
-    }
-
     public static class WrappedTimestamp {
         private XMLGregorianCalendar timestamp;
 
