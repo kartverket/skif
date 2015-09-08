@@ -22,7 +22,7 @@ public interface DBLockerService<T> {
      * millisekunder. Hvis det ikke er mulig å ta låsen kastes LockedException.
      *
      * @param lockKey     lockKey for boble som skal låses
-     * @param owner
+     * @param owner       brukernavn som forsøker å låse
      * @param lockTimeout utløpstid i millisekunder  @return informasjon om låsen, bl.a om kalder hadde låsen fra før
      * @return LockInfo for låsen
      * @throws LockedException hvis boblen er låst av anden bruker
@@ -34,7 +34,7 @@ public interface DBLockerService<T> {
      * eller ingen av dem.
      *
      * @param lockKeys    ider for bobler som skal låses
-     * @param owner
+     * @param owner       brukernavn som forsøker å låse
      * @param lockTimeout utløpstid i millisekunder  @return informasjon om låsene, bl.a om kalder hadde låsen fra før
      * @throws LockedException hvis en eller flere bobler er låst av anden bruker
      */
@@ -43,8 +43,8 @@ public interface DBLockerService<T> {
     /**
      * Låse opp boble med angitt lockKey. Har ingen effekt hvis kalder ikke har låsen (låsen kunne være løpet ut på tid)
      *
-     * @param lockKey lockKey for boble som skal låses
-     * @param owner
+     * @param lockKey lockKey for boble som skal låses opp
+     * @param owner   brukernavn som forsøker å låse opp
      */
     void unlock(LockKey<T> lockKey, String owner);
 
@@ -52,8 +52,8 @@ public interface DBLockerService<T> {
      * Låse opp alle bobler med angitt ider. Har ingen effekt hvis kalder ikke har låsen (låsen kunne være løpet ut på
      * tid)
      *
-     * @param unLockKeys
-     * @param owner
+     * @param unLockKeys    lockKeys for bobler som skal låses opp
+     * @param owner         brukernavn som forsøker å låse opp
      */
     void unlockAll(Set<LockKey<T>> unLockKeys, String owner);
 
@@ -67,7 +67,7 @@ public interface DBLockerService<T> {
     /**
      * Frigir alle låse for kalder
      *
-     * @param owner
+     * @param owner    brukernavn som skal slippe alle sine låser
      */
     void releaseAllLocks(String owner);
 
@@ -75,7 +75,7 @@ public interface DBLockerService<T> {
      * Fornyr alle låse for kalder med ny utløpsperiode på lockTimeout millisekunder. Låse som har lengere utløpsperiode
      * vil ikke bli endret.
      *
-     * @param owner
+     * @param owner       brukernavn som forsøker å fornye sine låser
      * @param lockTimeout utløpstid i millisekunder
      * @return informasjon om alle lås for kalder
      */

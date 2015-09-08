@@ -30,16 +30,16 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     private Map<BubbleId, LockInfo<?>> lockMap = null;
 
     //Brukes for å holde rede på hvilke ids som er nye og som derfor ikke kan låses opp.
-    private final Set<BubbleId> insertedIds = new HashSet<BubbleId>();
+    private final Set<BubbleId> insertedIds = new HashSet<>();
 
     //Brukes for å holde rede på hvilke ids som er endret og som derfor ikke kan låses opp.
-    private final Set<BubbleId> modifiedIds = new HashSet<BubbleId>();
+    private final Set<BubbleId> modifiedIds = new HashSet<>();
 
     //Brukes for å finne ut av hvilke låser som skal frigis etter fullføring av transaksjon.
-    private final Set<BubbleId> newLockIds = new HashSet<BubbleId>();
+    private final Set<BubbleId> newLockIds = new HashSet<>();
 
     //Brukes for å holde rede på hvilke elementer man ønsker å låse opp, men som ikke er låst i denne transaksjonen.
-    private final Set<BubbleId> unlockIds = new HashSet<BubbleId>();
+    private final Set<BubbleId> unlockIds = new HashSet<>();
 
     /**
      * Injector som kun skal brukes til å slå opp {@link DBLockerService} og {@link DBLockerInTransactionService}, siden
@@ -143,14 +143,14 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     public void releaseAllLocks() {
         String owner = serviceRequestContext.getUserName();
         ensureLockMapInitialized();
-        Map<Class<?>, Set<LockKey<?>>> idsForUnlock = new HashMap<Class<?>, Set<LockKey<?>>>();
+        Map<Class<?>, Set<LockKey<?>>> idsForUnlock = new HashMap<>();
         for (Map.Entry<BubbleId, LockInfo<?>> entry : lockMap.entrySet()) {
             if (entry.getValue().getOwner().equals(owner) && !modifiedIds.contains(entry.getKey()) && !insertedIds.contains(entry.getKey())) {
                 if (newLockIds.contains(entry.getKey())) {
                     LockKey<?> lockKey = entry.getValue().getLockKey();
                     Set<LockKey<?>> lockKeys = idsForUnlock.get(lockKey.keyValue.getClass());
                     if (lockKeys == null) {
-                        lockKeys = new HashSet<LockKey<?>>();
+                        lockKeys = new HashSet<>();
                         idsForUnlock.put(lockKey.keyValue.getClass(), lockKeys);
                     }
                     lockKeys.add(lockKey);
@@ -219,7 +219,6 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         Map<Key<?>,Binding<?>> bindings = injector.getBindings();
         for (Map.Entry<Key<?>, Binding<?>> bindingEntry : bindings.entrySet()) {
             if (bindingEntry.getKey().getTypeLiteral().getRawType().equals(DBLockerInTransactionService.class)) {
-                Type[] typeArguments = ((ParameterizedType) bindingEntry.getKey().getTypeLiteral().getType()).getActualTypeArguments();
                 DBLockerInTransactionService<?> lockerInTransactionService = (DBLockerInTransactionService<?>) bindingEntry.getValue().getProvider().get();
                 consumedLocks += lockerInTransactionService.consumeAllLocks(owner);
             }
@@ -274,18 +273,18 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         id = id.asBase();
 
         if (id.getValue() instanceof Long) {
-            return new LockKey<Long>(id.getClass().getName(), (Long) id.getValue());
+            return new LockKey<>(id.getClass().getName(), (Long) id.getValue());
         } else {
             return null;
         }
     }
 
     private Map<Class<?>, Set<LockKey<?>>> createLockKeys(Set<BubbleId> ids) {
-        Map<Class<?>, Set<LockKey<?>>> lockKeysMap = new HashMap<Class<?>, Set<LockKey<?>>>();
+        Map<Class<?>, Set<LockKey<?>>> lockKeysMap = new HashMap<>();
         for (BubbleId id : ids) {
             Set<LockKey<?>> lockKeys = lockKeysMap.get(id.getValueType());
             if (lockKeys == null) {
-                lockKeys = new HashSet<LockKey<?>>();
+                lockKeys = new HashSet<>();
                 lockKeysMap.put(id.getValueType(), lockKeys);
             }
             lockKeys.add(createLockKey(id));
@@ -295,7 +294,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
 
     private void ensureLockMapInitialized() {
         if (lockMap == null) {
-            lockMap = new HashMap<BubbleId, LockInfo<?>>();
+            lockMap = new HashMap<>();
             initializeLockMap();
         }
     }

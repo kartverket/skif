@@ -57,7 +57,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 lockInfo = getLock(con, lockKey);
                 if (lockInfo == null) {
                     // Race condition: Kan ikke opprette eller finne lås. Lite sannsynlig at dette skal oppstå
-                    throw new LockedException(owner, new LockInfo<Long>(lockKey, null));
+                    throw new LockedException(owner, new LockInfo<>(lockKey, null));
                 } else if (lockInfo.isOwnedBy(owner)) {
                     lockInfo = renewLock(con, lockInfo, expires);
                 } else if (lockInfo.expired()) {
@@ -94,7 +94,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 result = insertedLocks;
             } else {
                 // Kunne ikke låse alle i første forsøk. Finn ut hvilke som finnes fra før og timeout låse som er expired.
-                result = new HashSet<LockInfo<Long>>();
+                result = new HashSet<>();
                 Set<LockInfo<Long>> existingLocks = findExistingLocks(con, lockKeys);
                 Set<LockInfo<Long>> locksNotOwnedByKey = getLocksNotOwnedByKey(existingLocks, owner);
                 // Sjekk at alle låse vi ikke eier kan times ut
@@ -174,10 +174,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
 //            con.setAutoCommit(false);
             unlockAll(con, unLockKeys, owner);
             con.commit();
-        } catch (RuntimeException e) {
-            rollback = true;
-            throw new ImplementationException("Failed to unlock objects", e, logger);
-        } catch (SQLException e) {
+        } catch (RuntimeException | SQLException e) {
             rollback = true;
             throw new ImplementationException("Failed to unlock objects", e, logger);
         } finally {
@@ -197,11 +194,9 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     public void releaseAllLocks(String owner) {
         Connection con = connectionProvider.get();
 
-        PreparedStatement stmt = null;
         boolean rollback = true;
-        try {
-            String sqlString = "DELETE FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE OWNER=?";
-            stmt = con.prepareStatement(sqlString);
+        String sqlString = "DELETE FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE OWNER=?";
+        try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
             stmt.setString(1, owner);
             logger.debug("SQL: " + sqlString);
             logger.debug("SQL: PARAM 1=" + owner);
@@ -211,7 +206,6 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         } catch (SQLException e) {
             throw new OperationalException("Deleting all locks for user failed: " + owner, e);
         } finally {
-            JDBCHelper.close(stmt);
             if (rollback) {
                 JDBCHelper.rollback(con);
             }
@@ -304,36 +298,29 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * @return databasens systemtid
      */
     private static Timestamp getDBSystime(Connection con) {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            stmt = con.prepareStatement("SELECT SYSTIMESTAMP FROM DUAL");
+        try (PreparedStatement stmt = con.prepareStatement("SELECT SYSTIMESTAMP FROM DUAL")) {
             logger.debug("SQL: SELECT SYSTIMESTAMP FROM DUAL)");
-            rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
             rs.next();
             return rs.getTimestamp(1);
         } catch (SQLException e) {
             throw new OperationalException("Error reading SYSTIMESTAMP from database", e);
-        } finally {
-            JDBCHelper.close(rs, stmt);
         }
     }
 
     /**
      * Forsøker å opprette en ny lås uten å ta hensyn til om lås finnes fra før. Returner lås med låseinformasjon
      * hvis lås ble opprettet. Returnerer null hvis låsen ikke ble opprettet.
-     * false.
      *
      * @param con     databaseforbindelse
      * @param lockKey angi lockKey'en som skal låses
      * @param owner   nøkkel som brukes for låsing (brukerid)
      * @param expires utløpstidspunkt
-     * @return true hvis lås ble opprettet
+     * @return låsen som ble opprettet, eller {@code null} hvis låsen ikke kunne opprettes
      */
-    private LockInfo<Long> insertLock(Connection con, LockKey<Long> lockKey, String owner, Timestamp expires) {
-        PreparedStatement stmt = null;
-        try {
-            stmt = con.prepareStatement("INSERT INTO " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)");
+    protected LockInfo<Long> insertLock(Connection con, LockKey<Long> lockKey, String owner, Timestamp expires) {
+        String sql = "INSERT INTO " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)";
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setLong(1, lockKey.keyValue);
             stmt.setString(2, lockKey.discriminator);
             stmt.setString(3, owner);
@@ -346,24 +333,31 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 logger.debug("SQL: PARAM 4=" + expires);
             }
             stmt.executeUpdate();
-            return new LockInfo<Long>(new LockKey<Long>(lockKey.discriminator, lockKey.keyValue), owner, expires, true);
+            return new LockInfo<>(new LockKey<>(lockKey.discriminator, lockKey.keyValue), owner, expires, true);
         } catch (SQLException e) {
             if (e.getErrorCode() == 1) {
                 return null;
             } else {
                 throw new OperationalException("Unexpected error locking lockKey: " + lockKey, e);
             }
-        } finally {
-            JDBCHelper.close(stmt);
         }
     }
 
-    public Set<LockInfo<Long>> insertLocks(Connection con, Collection<LockKey<Long>> lockKeys, String owner, Timestamp expires) throws LockedException {
-        PreparedStatement stmt = null;
-        Set<LockInfo<Long>> newLockInfos = new HashSet<LockInfo<Long>>();
-        try {
-            String sqlString = "INSERT INTO " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)";
-            stmt = con.prepareStatement(sqlString);
+    /**
+     * Forsøker å opprette en haug med låser uten å ta hensyn til om lås finnes fra før. Returner låser med
+     * låseinformasjon hvis alle låser ble opprettet. Returnerer null hvis noen låser feilet.
+     * false.
+     *
+     * @param con      databaseforbindelse
+     * @param lockKeys angi lockKey-ene som skal låses
+     * @param owner    nøkkel som brukes for låsing (brukerid)
+     * @param expires  utløpstidspunkt
+     * @return låsene som ble opprettet, eller {@code null} hvis noen av låsene ikke kunne opprettes
+     */
+    protected Set<LockInfo<Long>> insertLocks(Connection con, Collection<LockKey<Long>> lockKeys, String owner, Timestamp expires) {
+        Set<LockInfo<Long>> newLockInfos = new HashSet<>();
+        String sqlString = "INSERT INTO " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)";
+        try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
             for (LockKey<Long> lockKey : lockKeys) {
                 stmt.setLong(1, lockKey.keyValue);
                 stmt.setString(2, lockKey.discriminator);
@@ -377,7 +371,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                     logger.debug("SQL: PARAM 4=" + expires);
                 }
                 stmt.addBatch();
-                newLockInfos.add(new LockInfo<Long>(lockKey, owner, expires, true));
+                newLockInfos.add(new LockInfo<>(lockKey, owner, expires, true));
             }
             stmt.executeBatch();
             return newLockInfos;
@@ -390,9 +384,12 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 throw new OperationalException(e1);
             }
         } catch (SQLException e) {
+            try {
+                con.rollback();
+            } catch (SQLException e1) {
+                e.addSuppressed(e1);
+            }
             throw new OperationalException("Locking ids failed: " + lockKeys, e);
-        } finally {
-            JDBCHelper.close(stmt);
         }
     }
 
@@ -405,11 +402,8 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * @return lås eller null hvis lås ikke lengre finnes
      */
     private LockInfo<Long> getLock(Connection con, LockKey<Long> lockKey) {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            String sqlString = "SELECT OWNER, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID=? AND CLASS=?";
-            stmt = con.prepareStatement(sqlString);
+                String sqlString = "SELECT OWNER, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID=? AND CLASS=?";
+        try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
             stmt.setLong(1, lockKey.keyValue);
             stmt.setString(2, lockKey.discriminator);
             if (logger.isDebugEnabled()) {
@@ -417,18 +411,16 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 logger.debug("SQL: PARAM 1=" + lockKey.keyValue);
                 logger.debug("SQL: PARAM 2=" + lockKey.discriminator);
             }
-            rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 String lockedBykey = rs.getString(1);
                 Timestamp expires = rs.getTimestamp(2);
-                return new LockInfo<Long>(lockKey, lockedBykey, expires, false);
+                return new LockInfo<>(lockKey, lockedBykey, expires, false);
             } else {
                 return null;
             }
         } catch (SQLException e) {
             throw new OperationalException("Search for locks with lockKey failed: " + lockKey, e);
-        } finally {
-            JDBCHelper.close(rs, stmt);
         }
     }
 
@@ -442,9 +434,8 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * @throws LockedException hvis låsen ikke kunne fornyes
      */
     private LockInfo<Long> renewLock(Connection con, LockInfo<Long> lockInfo, Timestamp expires) throws LockedException {
-        PreparedStatement stmt = null;
-        try {
-            stmt = con.prepareStatement("UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?");
+        String sql = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?";
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setTimestamp(1, expires);
             stmt.setLong(2, lockInfo.getLockKey().keyValue);
             stmt.setString(3, lockInfo.getLockKey().discriminator);
@@ -460,15 +451,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             if (result == 0) {
                 LockInfo<Long> newLockInfo = getLock(con, lockInfo.getLockKey());
                 if (newLockInfo == null) {
-                    newLockInfo = new LockInfo<Long>(lockInfo.getLockKey(), "", new Timestamp(System.currentTimeMillis()), false);
+                    newLockInfo = new LockInfo<>(lockInfo.getLockKey(), "", new Timestamp(System.currentTimeMillis()), false);
                 }
                 throw new LockedException(lockInfo.getOwner(), newLockInfo);
             }
-            return new LockInfo<Long>(lockInfo.getLockKey(), lockInfo.getOwner(), expires, false);
+            return new LockInfo<>(lockInfo.getLockKey(), lockInfo.getOwner(), expires, false);
         } catch (SQLException e) {
             throw new OperationalException("Unexpected error locking id: " + lockInfo.getLockKey(), e);
-        } finally {
-            JDBCHelper.close(stmt);
         }
     }
 
@@ -483,9 +472,8 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * @return ny lås
      */
     private LockInfo<Long> timeoutAndTakeLock(Connection con, String owner, Timestamp expires, LockInfo<Long> lockInfo) {
-        PreparedStatement stmt = null;
-        try {
-            stmt = con.prepareStatement("UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES<SYSTIMESTAMP");
+        String sql = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES<SYSTIMESTAMP";
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, owner);
             stmt.setTimestamp(2, expires);
             stmt.setLong(3, lockInfo.getLockKey().keyValue);
@@ -501,11 +489,9 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             if (result == 0) {
                 throw new LockedException(owner, lockInfo);
             }
-            return new LockInfo<Long>(lockInfo.getLockKey(), lockInfo.getOwner(), expires, true);
+            return new LockInfo<>(lockInfo.getLockKey(), lockInfo.getOwner(), expires, true);
         } catch (SQLException e) {
             throw new OperationalException("Error locking id: " + lockInfo.getLockKey(), e);
-        } finally {
-            JDBCHelper.close(stmt);
         }
     }
 
@@ -517,7 +503,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * @return map av eksisterende locks (key=BubbleId, value=DBLock)
      */
     private Set<LockInfo<Long>> findExistingLocks(Connection con, Set<LockKey<Long>> lockKeys) {
-        Set<LockInfo<Long>> lockInfos = new HashSet<LockInfo<Long>>();
+        Set<LockInfo<Long>> lockInfos = new HashSet<>();
         Iterator<LockKey<Long>> keyIteratory = lockKeys.iterator();
         while (keyIteratory.hasNext()) {
             findLocksForBatch(con, lockInfos, keyIteratory);
@@ -533,13 +519,10 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * @param keyIterator Iterator for keys det skal søkes for
      */
     private void findLocksForBatch(Connection con, Set<LockInfo<Long>> lockInfos, Iterator<LockKey<Long>> keyIterator) {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        Set<LockKey<Long>> idsWanted = new HashSet<LockKey<Long>>();
-        try {
-            // Vi spør ikke etter CLASS da det komplisere query. Gjør en filter etter på
-            String sqlString = "SELECT ID, CLASS, OWNER, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID IN (?,?,?,?,?,?,?,?,?,?)";
-            stmt = con.prepareStatement(sqlString);
+        Set<LockKey<Long>> idsWanted = new HashSet<>();
+        // Vi spør ikke etter CLASS da det komplisere query. Gjør en filter etter på
+        String sqlString = "SELECT ID, CLASS, OWNER, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID IN (?,?,?,?,?,?,?,?,?,?)";
+        try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
             for (int i = 1; i <= 10; i++) {
                 if (keyIterator.hasNext()) {
                     LockKey<Long> lockKey = keyIterator.next();
@@ -550,21 +533,19 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 }
             }
             logger.debug("SQL: " + sqlString);
-            rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 long idValue = rs.getLong(1);
                 String baseIdClassName = rs.getString(2);
                 String key = rs.getString(3);
                 Timestamp timestamp = rs.getTimestamp(4);
-                LockKey<Long> lockKey = new LockKey<Long>(baseIdClassName, idValue);
+                LockKey<Long> lockKey = new LockKey<>(baseIdClassName, idValue);
                 if (idsWanted.contains(lockKey)) {
-                    lockInfos.add(new LockInfo<Long>(lockKey, key, timestamp, false));
+                    lockInfos.add(new LockInfo<>(lockKey, key, timestamp, false));
                 }
             }
         } catch (SQLException e) {
             throw new OperationalException("Reading of locks failed", e);
-        } finally {
-            JDBCHelper.close(rs, stmt);
         }
     }
 
@@ -576,7 +557,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * @return låse i locks som ikke eies av key
      */
     private Set<LockInfo<Long>> getLocksNotOwnedByKey(Set<LockInfo<Long>> locks, String owner) {
-        Set<LockInfo<Long>> notOwnedByKey = new HashSet<LockInfo<Long>>();
+        Set<LockInfo<Long>> notOwnedByKey = new HashSet<>();
         for (LockInfo<Long> lock : locks) {
             if (!lock.isOwnedBy(owner)) {
                 notOwnedByKey.add(lock);
@@ -586,7 +567,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     private void verifyAllLocksExpired(Set<LockInfo<Long>> locksNotOwnedByKey, String owner) throws LockedException {
-        Set<LockInfo<Long>> notExpired = new HashSet<LockInfo<Long>>();
+        Set<LockInfo<Long>> notExpired = new HashSet<>();
         for (LockInfo<Long> lock : locksNotOwnedByKey) {
             if (!lock.expired()) {
                 notExpired.add(lock);
@@ -606,7 +587,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * @return set av id'er som ikke har en tilhørende lås i locks
      */
     private Set<LockKey<Long>> getIdsWithNoLock(Set<LockKey<Long>> ids, Set<LockInfo<Long>> locks) {
-        Set<LockKey<Long>> result = new HashSet<LockKey<Long>>(ids);
+        Set<LockKey<Long>> result = new HashSet<>(ids);
         for (LockInfo<Long> lock : locks) {
             result.remove(lock.getLockKey());
         }
@@ -633,14 +614,12 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     private Set<LockInfo<Long>> renewLocksUsingQracleBatching(Connection con, Set<LockInfo<Long>> existingLocks, Timestamp expires, String owner) throws OracleBatchUpdateCountException {
-        if (existingLocks.size() == 0) return new HashSet<LockInfo<Long>>();
-        OraclePreparedStatement ps = null;
+        if (existingLocks.size() == 0) return new HashSet<>();
         int batchResult = 0;
-        Set<LockInfo<Long>> renewedLocks = new HashSet<LockInfo<Long>>(existingLocks.size());
-        try {
-            String sqlString = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?";
-            OracleConnection oracleCon = OracleUtils.getOracleConnection(con);
-            ps = (OraclePreparedStatement) oracleCon.prepareStatement(sqlString);
+        Set<LockInfo<Long>> renewedLocks = new HashSet<>(existingLocks.size());
+        String sqlString = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?";
+        OracleConnection oracleCon = OracleUtils.getOracleConnection(con);
+        try (OraclePreparedStatement ps = (OraclePreparedStatement) oracleCon.prepareStatement(sqlString)) {
             ps.setExecuteBatch(Math.min(existingLocks.size(), MAX_BATCH_SIZE));
             for (LockInfo<Long> lockInfo : existingLocks) {
                 ps.setTimestamp(1, expires);
@@ -655,24 +634,20 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                     logger.debug("SQL: PARAM 4=" + lockInfo.getOwner());
                 }
                 batchResult += ps.executeUpdate();
-                renewedLocks.add(new LockInfo<Long>(lockInfo.getLockKey(), owner, expires, false));
+                renewedLocks.add(new LockInfo<>(lockInfo.getLockKey(), owner, expires, false));
             }
             batchResult += ps.sendBatch();
             if (batchResult != existingLocks.size()) {
                 throw new OracleBatchUpdateCountException(batchResult, existingLocks.size());
             }
             return renewedLocks;
-        } catch (BatchUpdateException e) {
-            throw new OperationalException("Error locking objects", e);
         } catch (SQLException e) {
             throw new OperationalException("Error locking objects", e);
-        } finally {
-            JDBCHelper.close(ps);
         }
     }
 
     private Set<LockInfo<Long>> findLocksNotOwnedByKey(Connection con, String owner, Set<LockInfo<Long>> locks) {
-        Set<LockKey<Long>> lockKeys = new HashSet<LockKey<Long>>(locks.size());
+        Set<LockKey<Long>> lockKeys = new HashSet<>(locks.size());
         for (LockInfo<Long> lock : locks) {
             lockKeys.add(lock.getLockKey());
         }
@@ -691,12 +666,12 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * @param existingLocks eksisterende låser.
      */
     private void addMissingLocks(Set<LockKey<Long>> lockKeys, Set<LockInfo<Long>> existingLocks) {
-        HashSet<LockKey<Long>> lockKeys2 = new HashSet<LockKey<Long>>(lockKeys);
+        HashSet<LockKey<Long>> lockKeys2 = new HashSet<>(lockKeys);
         for (LockInfo<Long> existingLock : existingLocks) {
             lockKeys2.remove(existingLock.getLockKey());
         }
         for (LockKey<Long> lockKey : lockKeys2) {
-            existingLocks.add(new LockInfo<Long>(new LockKey<Long>(lockKey.discriminator, lockKey.keyValue), "", new Timestamp(System.currentTimeMillis()), false));
+            existingLocks.add(new LockInfo<>(new LockKey<>(lockKey.discriminator, lockKey.keyValue), "", new Timestamp(System.currentTimeMillis()), false));
         }
     }
 
@@ -711,15 +686,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     private Set<LockInfo<Long>> timeoutAndTakeLocksUsingQracleBatching(Connection con, Set<LockInfo<Long>> locksToTimeout, String owner, Timestamp expires) throws OracleBatchUpdateCountException {
-        if (locksToTimeout.size() == 0) return new HashSet<LockInfo<Long>>();
-        OraclePreparedStatement ps = null;
+        if (locksToTimeout.size() == 0) return new HashSet<>();
         int batchResult = 0;
-        List<LockInfo<Long>> locksToTimeoutList = new ArrayList<LockInfo<Long>>(locksToTimeout);
-        Set<LockInfo<Long>> timedoutLocks = new HashSet<LockInfo<Long>>(locksToTimeout.size());
-        try {
-            String sqlString = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES < SYSTIMESTAMP";
-            OracleConnection oracleCon = OracleUtils.getOracleConnection(con);
-            ps = (OraclePreparedStatement) oracleCon.prepareStatement(sqlString);
+        List<LockInfo<Long>> locksToTimeoutList = new ArrayList<>(locksToTimeout);
+        Set<LockInfo<Long>> timedoutLocks = new HashSet<>(locksToTimeout.size());
+        String sqlString = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES < SYSTIMESTAMP";
+        OracleConnection oracleCon = OracleUtils.getOracleConnection(con);
+        try (OraclePreparedStatement ps = (OraclePreparedStatement) oracleCon.prepareStatement(sqlString)) {
             ps.setExecuteBatch(Math.min(locksToTimeoutList.size(), MAX_BATCH_SIZE));
             for (LockInfo<Long> lock : locksToTimeoutList) {
                 ps.setString(1, owner);
@@ -734,7 +707,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                     logger.debug("SQL: PARAM 4=" + lock.getLockKey().discriminator);
                 }
                 batchResult += ps.executeUpdate();
-                timedoutLocks.add(new LockInfo<Long>(lock.getLockKey(), owner, expires, true));
+                timedoutLocks.add(new LockInfo<>(lock.getLockKey(), owner, expires, true));
             }
 
             batchResult += ps.sendBatch();
@@ -742,12 +715,8 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                 throw new OracleBatchUpdateCountException(batchResult, locksToTimeoutList.size());
             }
             return timedoutLocks;
-        } catch (BatchUpdateException e) {
-            throw new OperationalException("Error locking objects", e);
         } catch (SQLException e) {
             throw new OperationalException("Error locking objects", e);
-        } finally {
-            JDBCHelper.close(ps);
         }
     }
 
@@ -760,15 +729,14 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
 
     private void unlockBatch(Connection con, String owner, Iterator<LockKey<Long>> idIterator) {
         int BATCH_SIZE = 10;
-        PreparedStatement stmt = null;
-        try {
-            StringBuilder buf = new StringBuilder();
-            buf.append("DELETE FROM ").append(configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME)).append(" WHERE (ID=? AND CLASS=? AND OWNER=?) ");
-            for (int i = 2; i <= BATCH_SIZE; i++) {
-                buf.append("OR (ID=? AND CLASS=? AND OWNER=?)");
-            }
 
-            stmt = con.prepareStatement(buf.toString());
+        StringBuilder buf = new StringBuilder();
+        buf.append("DELETE FROM ").append(configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME)).append(" WHERE (ID=? AND CLASS=? AND OWNER=?) ");
+        for (int i = 2; i <= BATCH_SIZE; i++) {
+            buf.append("OR (ID=? AND CLASS=? AND OWNER=?)");
+        }
+
+        try (PreparedStatement stmt = con.prepareStatement(buf.toString())) {
             for (int i = 1; i <= BATCH_SIZE * 3; i = i + 3) {
                 if (idIterator.hasNext()) {
                     LockKey<Long> id = idIterator.next();
@@ -785,59 +753,47 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new OperationalException("Error deleting locks", e);
-        } finally {
-            JDBCHelper.close(stmt);
         }
 
     }
 
     private Collection<LockInfo<Long>> getLocksBy(Connection con, String owner) {
-        Collection<LockInfo<Long>> locks = new ArrayList<LockInfo<Long>>();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            String sqlString = "SELECT ID, CLASS, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE OWNER=?";
-            stmt = con.prepareStatement(sqlString);
+        Collection<LockInfo<Long>> locks = new ArrayList<>();
+        String sqlString = "SELECT ID, CLASS, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE OWNER=?";
+        try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
             stmt.setString(1, owner);
             if (logger.isDebugEnabled()) {
                 logger.debug("SQL: " + sqlString);
                 logger.debug("SQL: PARAM 1=" + owner);
             }
-            rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 long keyValue = rs.getLong(1);
                 String discriminator = rs.getString(2);
                 Timestamp expires = rs.getTimestamp(3);
-                locks.add(new LockInfo<Long>(new LockKey<Long>(discriminator, keyValue), owner, expires, false));
+                locks.add(new LockInfo<>(new LockKey<>(discriminator, keyValue), owner, expires, false));
             }
             return locks;
         } catch (SQLException e) {
             throw new OperationalException("Search for locks for user failed: " + owner, e);
-        } finally {
-            JDBCHelper.close(rs, stmt);
         }
     }
 
     private void renewAllLocks(Connection con, String owner, Timestamp expires) {
-       PreparedStatement stmt = null;
-       ResultSet rs = null;
-       try {
-          // NB: Records som har en lengre utløpstid enn den nye utløpstid oppdateres ikke.
-          String sqlString = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE OWNER=? AND EXPIRES < ?";
-          stmt = con.prepareStatement(sqlString);
-          stmt.setTimestamp(1, expires);
-          stmt.setString(2, owner);
-          stmt.setTimestamp(3, expires);
-          logger.debug("SQL: " + sqlString);
-          logger.debug("SQL: PARAM 1=" + expires);
-          logger.debug("SQL: PARAM 2=" + owner);
-          logger.debug("SQL: PARAM 3=" + expires);
-          stmt.executeUpdate();
-       } catch( SQLException e ) {
-          throw new OperationalException("Modifying lock expiration time for user failed: " + owner, e);
-       } finally {
-          JDBCHelper.close(rs, stmt);
-       }
+        // NB: Records som har en lengre utløpstid enn den nye utløpstid oppdateres ikke.
+        String sqlString = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE OWNER=? AND EXPIRES < ?";
+        try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
+            stmt.setTimestamp(1, expires);
+            stmt.setString(2, owner);
+            stmt.setTimestamp(3, expires);
+            logger.debug("SQL: " + sqlString);
+            logger.debug("SQL: PARAM 1=" + expires);
+            logger.debug("SQL: PARAM 2=" + owner);
+            logger.debug("SQL: PARAM 3=" + expires);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new OperationalException("Modifying lock expiration time for user failed: " + owner, e);
+        }
 
     }
 
