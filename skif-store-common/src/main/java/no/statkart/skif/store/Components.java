@@ -37,9 +37,7 @@ public class Components {
         if (thisComponent != null && component == null) {
             // Komponent fjernes fra owner
             thisComponent.setOwner(null);
-        } else if (thisComponent == component) {
-            // begge er null eller like, det er greit
-        } else {
+        } else if (thisComponent != component) {
             if (thisComponent != null) {
                 if (isNullComponent(thisComponent) || thisComponent instanceof EntityComponent) {
                     thisComponent.setOwner(null);
@@ -114,59 +112,56 @@ public class Components {
 
 
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(CompositeComponent<O, ?> owner) {
-        return new CompositeComponentSet<O, E>(owner, Sets.<E>newHashSet());
+        return newSet(owner, Sets.<E>newHashSet());
     }
 
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(CompositeComponent<O, ?> owner, Set<E> set) {
-        return new CompositeComponentSet<O, E>(owner, set);
+        return new CompositeComponentSet<>(owner, set);
     }
 
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(O owner) {
-        return new ComponentSet<O, E>(owner, Sets.<E>newHashSet());
+        return newSet(owner, Sets.<E>newHashSet());
     }
 
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentSet<O, E> newSet(O owner, Set<E> set) {
-        return new ComponentSet<O, E>(owner, set);
+        return new ComponentSet<>(owner, set);
     }
 
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentList<O, E> newList(CompositeComponent<O, ?> owner) {
-        return new CompositeComponentList<O, E>(owner, Lists.<E>newArrayList());
+        return newList(owner, Lists.<E>newArrayList());
     }
 
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentList<O, E> newList(CompositeComponent<O, ?> owner, List<E> list) {
-        return new CompositeComponentList<O, E>(owner, list);
+        return new CompositeComponentList<>(owner, list);
     }
 
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentList<O, E> newList(O owner) {
-        return new ComponentList<O, E>(owner, Lists.<E>newArrayList());
+        return newList(owner, Lists.<E>newArrayList());
     }
 
     static public <O, E extends ComponentWithOwnerReference<O>> AbstractComponentList<O, E> newList(O owner, List<E> list) {
-        return new ComponentList<O, E>(owner, list);
+        return new ComponentList<>(owner, list);
     }
 
-    static public <E extends Component> void setFrom(Collection<E> collection, Set<E> newElements) {
+    static public <E extends Component> void setFrom(Collection<E> collection, Collection<E> newElements) {
         collection.clear();
         collection.addAll(newElements);
     }
 
-    @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> void setDelegate(Set<E> componentSet, Set<E> newElements) {
-        ((ComponentSet) componentSet).setDelegate(newElements);
+        ((ComponentSet<?, E>) componentSet).setDelegate(newElements);
     }
 
     static public <E extends ComponentWithOwnerReference<?>> Set<E> getDelegate(Set<E> componentSet) {
-        return ((ComponentSet) componentSet).delegate();
+        return ((ComponentSet<?, E>) componentSet).delegate();
     }
 
-    @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> void setDelegate(List<E> componentList, List<E> newElements) {
-        ((ComponentList) componentList).setDelegate(newElements);
+        ((ComponentList<?, E>) componentList).setDelegate(newElements);
     }
 
-    @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> List<E> getDelegate(List<E> componentList) {
-        return ((ComponentList) componentList).delegate();
+        return ((ComponentList<?, E>) componentList).delegate();
     }
 
     public static BubbleObject getOwningBubble(ComponentWithOwnerReference<?> component) {
