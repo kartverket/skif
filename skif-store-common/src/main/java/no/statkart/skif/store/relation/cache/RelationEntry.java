@@ -1,5 +1,7 @@
 package no.statkart.skif.store.relation.cache;
 
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.util.CopyHelper;
 
@@ -47,7 +49,14 @@ public class RelationEntry {
             return null;
         } else {
             int j = i;
-            while ((j >= 0) && !relations[j].isMaterialised()) {
+//            while ((j >= 0) && !relations[j].isMaterialised()) {
+            while ((j >= 0)) {
+                if (relations[j]==null)  {
+                    throw new ImplementationException(String.format("RelationValue Feil!\nLevel=%d, i=%d, j=%d\nrelations[3]=%s\nrelations[2]=%s\nrelations[1]=%s\nrelations[0]=%s\n", level, i, j, relations[3], relations[2], relations[1], relations[0]));
+                }
+                if (relations[j].isMaterialised()) {
+                    break;
+                }
                 j--;
             }
             // j er materialisert, og skal brukes som startpunkt for videre materialisering
