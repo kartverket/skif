@@ -171,4 +171,13 @@ public class RelationTracker {
         this.holder = applyOperations(relation);
         materialised=true;
     }
+
+
+    @Override
+    public String toString() {
+        return "RelationTracker{" +
+                "materialised=" + materialised +
+                ", holder=" + holder +
+                '}';
+    }
 }
