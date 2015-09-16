@@ -62,7 +62,9 @@ public abstract class BubbleTransfer<T> extends Transfer<T> {
     }
 
     /**
-     * @deprecated Denne virker ikke på noen forståelig måte. Bare ligg unna!
+     * Denne må eksponeres videre av alle subklasser.
+     *
+     * @deprecated Kun for WS-mapping. Ved direkte bruk kan man lett skape feilsituasjoner.
      */
     public BubbleTransfer(T result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId> lockedIds) {
         this(result, objects);
