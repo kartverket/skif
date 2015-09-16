@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class TransferTypeMapperFactoryTest {
     @Test
-    public void testMapping() {
+    public void testTransfer() {
         Mapping mapping = new TransferTypeMapperFactoryTestMapper().getMapping();
 
         DomainObjectId id1 = new DomainObjectId(1L);
@@ -33,7 +33,7 @@ public class TransferTypeMapperFactoryTest {
 
         DomainResult result = new DomainResult();
         result.setIds(ImmutableSet.<DomainObjectId<?>>of(id1, id2));
-        Transfer<DomainResult> transfer = new Transfer<DomainResult>(result, ImmutableList.of(object1, object2));
+        Transfer<DomainResult> transfer = new Transfer<>(result, ImmutableList.of(object1, object2));
 
         TypeLiteral<Transfer<DomainResult>> domainTransferType = new TypeLiteral<Transfer<DomainResult>>() {};
 
@@ -48,7 +48,7 @@ public class TransferTypeMapperFactoryTest {
 
         Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly(id1, id2);
 
-        Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<DomainObjectId<?>>(2);
+        Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
         Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
         for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
             DomainObject domainObject = (DomainObject) bubbleObject;
@@ -64,19 +64,60 @@ public class TransferTypeMapperFactoryTest {
     }
 
     @Test
+    public void testBubbleTransfer() {
+        Mapping mapping = new TransferTypeMapperFactoryTestMapper().getMapping();
+
+        DomainObjectId<?> id1 = new DomainObjectId<>(1L);
+        DomainObjectId<?> id2 = new DomainObjectId<>(2L);
+        DomainObject object1 = new DomainObject();
+        object1.setId(id1);
+        object1.setText("A");
+        DomainObject object2 = new DomainObject();
+        object2.setId(id2);
+        object2.setText("B");
+
+        DomainBubbleTransfer transfer = new DomainBubbleTransfer(id1, ImmutableList.of(object1, object2), ImmutableSet.of(id1, id2));
+
+        ApiBubbleTransfer apiTransfer = mapping.d2w(transfer, ApiBubbleTransfer.class);
+
+        Assertions.assertThat(apiTransfer.getId()).isEqualTo(new ApiObjectId("1"));
+        Assertions.assertThat(apiTransfer.getBubbleObjects().getItem()).containsExactly(new ApiObject(new ApiObjectId("1"), "A"), new ApiObject(new ApiObjectId("2"), "B"));
+        Assertions.assertThat(apiTransfer.getLockedIds().getItem()).containsExactly(new ApiObjectId("1"), new ApiObjectId("2"));
+
+        DomainBubbleTransfer domainTransfer = mapping.w2d(apiTransfer, DomainBubbleTransfer.class);
+
+        Assertions.assertThat((DomainObjectId) domainTransfer.getResult()).isEqualTo((DomainObjectId) id1);
+
+        Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
+        Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
+        for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
+            DomainObject domainObject = (DomainObject) bubbleObject;
+            funnetIds.add(domainObject.getId());
+            Assertions.assertThat((DomainObjectId) domainObject.getId()).isIn((DomainObjectId) id1, (DomainObjectId) id2);
+            if (domainObject.getId().equals(id1)) {
+                Assertions.assertThat(domainObject.getText()).isEqualTo("A");
+            } else if (domainObject.getId().equals(id2)) {
+                Assertions.assertThat(domainObject.getText()).isEqualTo("B");
+            }
+        }
+        Assertions.assertThat(funnetIds).containsExactly(id1, id2);
+        Assertions.assertThat(domainTransfer.getLockedIds()).containsExactly(id1, id2);
+    }
+
+    @Test
     public void testKodeliste() {
         Mapping mapping = new TransferTypeMapperFactoryTestMapper().getMapping();
 
-        List<DomainKodelisteId<?>> kodelisteIds = new ArrayList<DomainKodelisteId<?>>();
-        DomainKodelisteId<DomainKodeliste> kodelisteId = new DomainKodelisteId<DomainKodeliste>(1L);
+        List<DomainKodelisteId<?>> kodelisteIds = new ArrayList<>();
+        DomainKodelisteId<DomainKodeliste> kodelisteId = new DomainKodelisteId<>(1L);
         kodelisteIds.add(kodelisteId);
 
-        List<DomainKodeliste> kodelister = new ArrayList<DomainKodeliste>();
+        List<DomainKodeliste> kodelister = new ArrayList<>();
         DomainKodeliste kodeliste = new DomainKodeliste();
         kodeliste.setId(kodelisteId);
         kodelister.add(kodeliste);
 
-        KodelisteTransfer<DomainKodelisteId<?>> kodelisteTransfer = new KodelisteTransfer<DomainKodelisteId<?>>(kodelisteIds, kodelister);
+        KodelisteTransfer<DomainKodelisteId<?>> kodelisteTransfer = new KodelisteTransfer<>(kodelisteIds, kodelister);
 
         ApiKodelisteTransfer apiKodelisteTransfer = mapping.d2w(kodelisteTransfer, ApiKodelisteTransfer.class);
 
@@ -85,6 +126,7 @@ public class TransferTypeMapperFactoryTest {
 
         KodelisteTransfer domeneKodelisteTransfer = mapping.w2d(apiKodelisteTransfer, KodelisteTransfer.class);
 
+        //noinspection unchecked
         Assertions.assertThat(domeneKodelisteTransfer.getKodelisterIds()).containsExactly(kodelisteId);
         Assertions.assertThat(domeneKodelisteTransfer.getBubbleObjects()).hasSize(1);
         Assertions.assertThat(domeneKodelisteTransfer.getBubbleObjects().get(kodelisteId)).isNotNull();
@@ -106,6 +148,7 @@ public class TransferTypeMapperFactoryTest {
             addMapperFactory(new IdentityTypeMapperFactory().useIdentityMappingForBasicTypes());
             addMapperFactory(new BubbleIdTypeMapperFactory(ApiObjectId.class, Providers.of(SnapshotVersion.CURRENT)));
             addMapperFactory(new BubbleIdTypeMapperFactory(ApiKodelisteId.class, Providers.of(SnapshotVersion.CURRENT)));
+            addMapperFactory(new BubbleTransferTypeMapperFactory());
             addMapperFactory(new TransferTypeMapperFactory());
             addMapperFactory(new CollectionMapperFactory());
             addMapperFactory(new DefaultTypeMapperFactory());
@@ -154,6 +197,17 @@ public class TransferTypeMapperFactoryTest {
         @Override
         public Long getValue() {
             return (Long) super.getValue();
+        }
+    }
+
+    public static class DomainBubbleTransfer extends BubbleTransfer<DomainObjectId<?>> {
+//        public DomainBubbleTransfer(DomainObjectId<?> result, Iterable<? extends BubbleObject> objects) {
+//            super(result, objects);
+//        }
+
+        @SuppressWarnings("deprecation")
+        public DomainBubbleTransfer(DomainObjectId<?> result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId> lockedIds) {
+            super(result, objects, lockedIds);
         }
     }
 
@@ -298,6 +352,38 @@ public class TransferTypeMapperFactoryTest {
         }
     }
 
+    public static class ApiBubbleTransfer {
+        private ApiObjectList bubbleObjects;
+        private ApiIdList lockedIds;
+        private ApiObjectId id;
+
+        public ApiObjectList getBubbleObjects() {
+            return bubbleObjects;
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public void setBubbleObjects(ApiObjectList bubbleObjects) {
+            this.bubbleObjects = bubbleObjects;
+        }
+
+        public ApiObjectId getId() {
+            return id;
+        }
+
+        public void setId(ApiObjectId id) {
+            this.id = id;
+        }
+
+        public ApiIdList getLockedIds() {
+            return lockedIds;
+        }
+
+        @SuppressWarnings("UnusedDeclaration") // WS-mapping
+        public void setLockedIds(ApiIdList lockedIds) {
+            this.lockedIds = lockedIds;
+        }
+    }
+
     public static class ApiKodelisteTransfer {
         private ApiKodelisteList bubbleObjects;
         private ApiKodelisteIdList kodelisterIds;
@@ -315,6 +401,7 @@ public class TransferTypeMapperFactoryTest {
             return kodelisterIds;
         }
 
+        @SuppressWarnings("UnusedDeclaration") // WS-mapping
         public void setKodelisterIds(ApiKodelisteIdList kodelisterIds) {
             this.kodelisterIds = kodelisterIds;
         }
@@ -422,8 +509,7 @@ public class TransferTypeMapperFactoryTest {
 
         @Override
         public int hashCode() {
-            int result = id.hashCode();
-            return result;
+            return id.hashCode();
         }
     }
 
