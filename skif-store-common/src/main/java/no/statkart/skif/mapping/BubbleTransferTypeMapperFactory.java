@@ -36,12 +36,24 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
                 resultTypeToken = TypeToken.of(parameterizedType.getActualTypeArguments()[0]);
             }
 
+            Constructor<DomainT> transferConstructor;
+            try {
+                transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(resultTypeToken.getRawType(), Iterable.class, Iterable.class);
+            } catch (NoSuchMethodException ignore) {
+                try {
+                    // Første parameter er sannsynligvis Object pga. type erasure
+                    transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(Object.class, Iterable.class, Iterable.class);
+                } catch (NoSuchMethodException e) {
+                    return null; // Ikke en ordentlig BubbleTransfer. Kan være en vanlig Transfer med bobler, f.eks. KodelisteTransfer
+                }
+            }
+
             if (BubbleId.class.isAssignableFrom(resultTypeToken.getRawType()) || Collection.class.isAssignableFrom(resultTypeToken.getRawType())) {
 
-                return new ExternalTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultTypeToken);
+                return new ExternalTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultTypeToken, transferConstructor);
             } else {
                 //noinspection unchecked
-                return new InlineTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultTypeToken);
+                return new InlineTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultTypeToken, transferConstructor);
             }
         } else {
             return null;
@@ -55,18 +67,12 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
         private final PropertyDescriptor lockedIdsProperty;
         private final Constructor<DomainT> transferConstructor;
 
-        public InlineTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, TypeToken<ResultT> resultTypeToken) {
+        public InlineTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, TypeToken<ResultT> resultTypeToken, Constructor<DomainT> transferConstructor) {
             //noinspection unchecked
             super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), Mapping.class);
 
             this.resultTypeToken = resultTypeToken;
-
-            try {
-                // Første parameter er Object pga. type erasure
-                transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(Object.class, Iterable.class, Iterable.class);
-            } catch (NoSuchMethodException e) {
-                throw new MappingException("No suitable constructor for " + domainTypeToken.getRawType());
-            }
+            this.transferConstructor = transferConstructor;
 
             resultMapper = new DefaultTypeMapper<WsapiT, ResultT, Mapping>(wsapiTypeToken, resultTypeToken, Mapping.class, Collections.<Class<?>>emptySet(), true) {
                 @Override
@@ -175,22 +181,10 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
         private final PropertyDescriptor resultProperty;
         private final Constructor<DomainT> transferConstructor;
 
-        public ExternalTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<BubbleTransfer<ResultT>> domainTypeToken, TypeToken<ResultT> resultTypeToken) {
+        public ExternalTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<BubbleTransfer<ResultT>> domainTypeToken, TypeToken<ResultT> resultTypeToken, Constructor<DomainT> transferConstructor) {
             //noinspection unchecked
             super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), Mapping.class);
             this.resultTypeToken = resultTypeToken;
-
-            Constructor<DomainT> transferConstructor;
-            try {
-                transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(resultTypeToken.getRawType(), Iterable.class, Iterable.class);
-            } catch (NoSuchMethodException ignore) {
-                try {
-                    // Første parameter er sannsynligvis Object pga. type erasure
-                    transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(Object.class, Iterable.class, Iterable.class);
-                } catch (NoSuchMethodException e) {
-                    throw new MappingException("No suitable constructor for " + domainTypeToken.getRawType());
-                }
-            }
             this.transferConstructor = transferConstructor;
 
             PropertyDescriptor bubbleObjectsProperty = null;
