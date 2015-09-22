@@ -59,6 +59,7 @@ public class TestdataServiceImpl implements TestdataService {
 
     @Override
     public void saveAll(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers) {
+        if (snapshotTransfers.isEmpty()) return;
         // Sjekk om testsettet allerede er skrevet til databasen ved å sjekke på om første id i transfer finnes
         SnapshotVersion firstSnapshot = snapshotTransfers.firstKey();
         MockupTransfer firstTransfer = snapshotTransfers.get(firstSnapshot);
