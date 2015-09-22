@@ -141,13 +141,7 @@ public class RelationCache {
             if (inverseRelationEntry == null) {
                 missingInverseValues.add(inverseValue);
             } else {
-                boolean materialized = false;
-                for (int i = level; i >= 0; --i) {
-                    if (inverseRelationEntry.isMaterialized(i)) {
-                        materialized = true;
-                    }
-                }
-                if (!materialized) {
+                if (!inverseRelationEntry.isMaterialized(level)) {
                     missingInverseValues.add(inverseValue);
                 }
             }
@@ -218,7 +212,18 @@ public class RelationCache {
             getOrCreateRelation(level).remove(sourceId);
         }
 
+
         public boolean isMaterialized(int level) {
+            boolean materialized = false;
+            for (int i = level; i >= 0; --i) {
+                if (isMaterializedAt(i)) {
+                    materialized = true;
+                }
+            }
+            return materialized;
+        }
+
+        private boolean isMaterializedAt(int level) {
             return relations[level] != null && relations[level].isMaterialised();
         }
 
