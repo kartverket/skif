@@ -62,9 +62,12 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
 
     @Override
     protected String calcConfigurationKey() {
-        return super.calcConfigurationKey() + ":" +
-                serverModuleExtClass + ":" +
-                ejbServiceChainExtClass;
+        String key = super.calcConfigurationKey();
+        // Bruk samme nøkkel som superklasse hvis disse properties ikke er satt slik at server instans gjenbrukes
+        if (serverModuleExtClass!=null || ejbServiceChainExtClass!=null) {
+            key += ":" + serverModuleExtClass + ":" + ejbServiceChainExtClass;
+        }
+        return key;
     }
 
     @Override
