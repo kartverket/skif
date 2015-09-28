@@ -229,7 +229,7 @@ public class StoreSessionServer extends AbstractStoreSession {
 
         for (StoreEntry storeEntry : storeCache.values()) {
             if (storeEntry.getBubbleObject(0).isFlushed() && (storeEntry.getState(0) == StoreEntryState.NULL || storeEntry.getState(0) == StoreEntryState.UNCHANGED)) {
-                throw new ImplementationException("Modified object not updated!");
+                throw new ImplementationException("Modified object not updated! " + storeEntry.getId());
             }
             storeEntry.getBubbleObject(0).setFlushed(false);
         }
