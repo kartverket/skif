@@ -65,28 +65,28 @@ public class FlushNoUpdateTest extends StoreTestServerTestCase {
     private Store store;
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!.+")
     public void testUpdateBubble() {
         BubbleWithValueObject object = store.get(mockupFacade.getBubbleWithValueObjectMockupFactory().getWithBeloepSetId());
         object.setText("Jeg er endret!");
     }
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!.+")
     public void testUpdateValueComponent() {
         BubbleWithValueObject object = store.get(mockupFacade.getBubbleWithValueObjectMockupFactory().getWithBeloepSetId());
         object.setA(new BeloepValueObject("SEK", 123));
     }
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!.+")
     public void testUpdateSetOfValueComponents() {
         BubbleWithValueObject object = store.get(mockupFacade.getBubbleWithValueObjectMockupFactory().getWithBeloepSetId());
         object.getBeloepSet().add(new BeloepValueObject("SEK", 321));
     }
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!.+")
     public void testUpdateCompositeComponent1() {
         BubbleWithCompositeComponent object = store.get(mockupFacade.getBubbleWithCompositeComponentMockupFactory().getWithNonNullComponentsId());
         //noinspection ConstantConditions
@@ -94,7 +94,7 @@ public class FlushNoUpdateTest extends StoreTestServerTestCase {
     }
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!.+")
     public void testUpdateCompositeComponent2() {
         BubbleWithCompositeComponent object = store.get(mockupFacade.getBubbleWithCompositeComponentMockupFactory().getWithNonNullComponentsId());
         //noinspection ConstantConditions
@@ -102,7 +102,7 @@ public class FlushNoUpdateTest extends StoreTestServerTestCase {
     }
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!.+")
     public void testUpdateEntityComponent1() {
         BubbleWithEntityComponent object = store.get(mockupFacade.getBubbleWithEntityComponentMockupFactory().getWithNonNullComponentsId());
         //noinspection ConstantConditions
@@ -110,7 +110,7 @@ public class FlushNoUpdateTest extends StoreTestServerTestCase {
     }
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!.+")
     public void testUpdateEntityComponent2() {
         BubbleWithEntityComponent object = store.get(mockupFacade.getBubbleWithEntityComponentMockupFactory().getWithNonNullComponentsId());
         //noinspection ConstantConditions
@@ -118,7 +118,7 @@ public class FlushNoUpdateTest extends StoreTestServerTestCase {
     }
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!.+")
     public void testUpdateEntityComponentInCompositeComponent1() {
         BubbleWithEntityInCompositeComponent object = store.get(mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory().getWithNonNullComponentsId());
         //noinspection ConstantConditions
@@ -126,7 +126,7 @@ public class FlushNoUpdateTest extends StoreTestServerTestCase {
     }
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!.+")
     public void testUpdateEntityComponentInCompositeComponent2() {
         BubbleWithEntityInCompositeComponent object = store.get(mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory().getWithNonNullComponentsId());
         //noinspection ConstantConditions
@@ -134,7 +134,7 @@ public class FlushNoUpdateTest extends StoreTestServerTestCase {
     }
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Modified object not updated!.+")
     public void testUpdateSetOfEntityComponentInCompositeComponent() {
         BubbleWithEntityInCompositeComponent object = store.get(mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory().getWithNonNullComponentsId());
         //noinspection ConstantConditions
