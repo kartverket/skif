@@ -166,7 +166,7 @@ public abstract class StoreRelationCache {
             Object inverseValue = entry.getValue();
             if (inverseValue instanceof InverseRelationCollector.Values) {
                 for (Object v : ((InverseRelationCollector.Values) inverseValue)) {
-                    onChangeRelation(entry.getKey(), owningBubbleId, null, v);
+                    onChangeRelation(entry.getKey(), owningBubbleId, v, null);
                 }
             } else if (inverseValue instanceof Collection) {
                 for (Object v : (Collection) inverseValue) {
