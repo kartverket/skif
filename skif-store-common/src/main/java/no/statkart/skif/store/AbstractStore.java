@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * @author Henrik Fredholm
  */
-public class AbstractStore implements Store {
+public abstract class AbstractStore implements Store {
     protected WrappableStoreSession storeSession;
     final private Injector injector;
     final protected StoreRelationCacheImpl storeRelationCache = new StoreRelationCacheImpl(this) {
@@ -176,6 +176,8 @@ public class AbstractStore implements Store {
         if (transfer.isShared()) {
             transfer = CopyHelper.copy(transfer);
         }
+        // Opptimalisering: Last opprinnelig tilstand for alle objekter samlet. Lastes utenfor unit of work for kunne dra nytte av lazyloading
+        storeSession.get(getIdsOfUpdatedOrDeleted(transfer));
 
         UnitOfWork unitOfWork = beginUnitOfWork();
         try {
@@ -389,4 +391,18 @@ public class AbstractStore implements Store {
         }
         return false;
     }
+
+    private Set<? extends BubbleId<?>> getIdsOfUpdatedOrDeleted(UnitOfWorkTransfer transfer) {
+        Set result = Sets.newHashSetWithExpectedSize(transfer.getUpdatedObjects().size() + transfer.getDeletedObjects().size());
+        for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
+            result.add(bubbleObject.getId());
+        }
+        for (BubbleObject bubbleObject : transfer.getDeletedObjects()) {
+            result.add(bubbleObject.getId());
+        }
+        return result;
+    }
+
+    abstract protected boolean isServerStore();
+
 }

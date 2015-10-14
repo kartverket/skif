@@ -130,4 +130,9 @@ public class StoreServer extends AbstractStore {
     public void materialiseRequestedRelations(Collection<? extends BubbleObject> bubbleObjects) {
         storeRelationCache.materialiseRequestedRelations(bubbleObjects);
     }
+
+    @Override
+    protected boolean isServerStore() {
+        return true;
+    }
 }

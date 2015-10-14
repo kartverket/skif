@@ -2,7 +2,14 @@ package no.statkart.skif.store.relation.cache;
 
 import com.google.common.collect.Lists;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.AbstractStoreSession;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.InverseRelation;
+import no.statkart.skif.store.InverseRelationCollector;
+import no.statkart.skif.store.InverseRelationParticipation;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.WrappableStoreSession;
 
 import javax.annotation.Nullable;
 import javax.inject.Provider;
@@ -53,7 +60,18 @@ public abstract class StoreRelationCache {
      * Enabler og disabler relation caching. Ved disabling evictes alle cachet relasjoner.
      */
     public void setEnabled(boolean enabled) {
-        relationCache.setEnabled(getLevel(), enabled);
+        int level = getLevel();
+        if (enabled != relationCache.isEnabled(level)) {
+            if (enabled) {
+                // Store enables her og alle underliggende UnitOfWork er disabled (fordi cachinging auto enables når
+                // underliggende UnitOfWork har caching enabled og i slike tilfeller kan caching ikke disables).
+                relationCache.setEnabled(level, true);
+                AbstractStoreSession storeSession = (AbstractStoreSession) getStoreSession();
+                storeSession.onEnableRelationCache(level);
+            } else {
+                relationCache.setEnabled(level, false);
+            }
+        }
     }
 
     public RelationStrategy getStrategy(Method method) {

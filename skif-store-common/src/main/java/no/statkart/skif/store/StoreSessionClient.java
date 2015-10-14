@@ -1,10 +1,18 @@
 package no.statkart.skif.store;
 
+import com.google.common.base.Preconditions;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.util.CopyHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * StoreSession som utgjør avsluttende ledd på klienten. Klassen anvender en {@link StoreService} for å hente
@@ -280,5 +288,18 @@ public class StoreSessionClient extends AbstractStoreSession {
     @Override
     public StoreUnitOfWork beginUnitOfWork() {
         return new StoreUnitOfWorkClient(level + 1, this, storeCache, store);
+    }
+
+    /**
+     * På klienten vil level 0 inneholde det opprindelige objektet i uforandret state) eller null dersom det er nytt
+     */
+    @Override
+    public BubbleObject getPersistedBubbleObjectForLocked(StoreEntry storeEntry) {
+        Preconditions.checkState(storeEntry.isLocked(), "Entry må være låst: %s", storeEntry);
+        if (storeEntry.getState(0) == StoreEntryState.UNCHANGED) {
+            return Preconditions.checkNotNull(storeEntry.getBubbleObject(0), "Entry.getBubbleObject[0] kan ikke være null: %s", storeEntry);
+        } else {
+            return storeEntry.getBubbleObject(0);
+        }
     }
 }

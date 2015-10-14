@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.*;
 import no.statkart.skif.persistence.VersionFinder;
@@ -803,5 +804,11 @@ public class StoreSessionServer extends AbstractStoreSession {
     @Override
     public boolean inAttachedMode() {
         return true;
+    }
+
+    @Override
+    public BubbleObject getPersistedBubbleObjectForLocked(StoreEntry storeEntry) {
+        Preconditions.checkState(storeEntry.isLocked(), "Entry må være låst: %s", storeEntry);
+        return Preconditions.checkNotNull(storeEntry.getBubbleObject(0), "Entry.getBubbleObject[0] kan ikke være null: %s", storeEntry);
     }
 }

@@ -31,5 +31,12 @@ public interface WrappableStoreSession extends StoreSession {
     <T extends BubbleObject, I extends BubbleId<? extends T>>  Map<I,List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end);
     int getLevel();
     boolean inAttachedMode();
+
+    /**
+     * Returnerer et BubbleObject med samme innhold som databasen eller null dersom objektet er nytt. Metoden
+     * er kun implementert for objekter som allerede er låst (kan vurdere å utvidet hvis det er et behov for det)
+     */
+    public BubbleObject getPersistedBubbleObjectForLocked(StoreEntry storeEntry);
+
 }
 

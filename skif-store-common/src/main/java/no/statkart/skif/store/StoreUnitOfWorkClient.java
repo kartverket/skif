@@ -8,7 +8,7 @@ import no.statkart.skif.exception.ImplementationException;
  */
 public class StoreUnitOfWorkClient extends StoreUnitOfWork {
 
-    public StoreUnitOfWorkClient(int level, WrappableStoreSession wrappedStoreSession, StoreCache storeCache, Store store) {
+    public StoreUnitOfWorkClient(int level, WrappableStoreSession wrappedStoreSession, StoreCache storeCache, AbstractStore store) {
         super(level, wrappedStoreSession, storeCache, store);
     }
 

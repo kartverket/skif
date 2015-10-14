@@ -347,8 +347,8 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         Map<X1CCManyId<?>, X1AAId<?>> invSomeCCsIdsMap = x1AAFinderService.findInvSomeCCsId(ccIds);
         assertThat(invSomeCCsIdsMap).hasSize(3);
         assertThat(invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC1Id())).isNull();
-        assertThat((X1AAId)invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC2Id())).isEqualTo(x1AAMockupFactory.getA3Id());
-        assertThat((X1AAId)invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC3Id())).isEqualTo(x1AAMockupFactory.getA3Id());
+        assertThat((X1AAId) invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC2Id())).isEqualTo(x1AAMockupFactory.getA3Id());
+        assertThat((X1AAId) invSomeCCsIdsMap.get(x1CCManyMockupFactory.getC3Id())).isEqualTo(x1AAMockupFactory.getA3Id());
     }
 
 
@@ -369,7 +369,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         // Her endres a2 til å peke på c1
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
         a2.getSomeCCsIds().add(c1.getId());
-        assertThat((X1AAId)c1.findInvSomeCCsIds()).isEqualTo(a2.getId());
+        assertThat((X1AAId) c1.findInvSomeCCsIds()).isEqualTo(a2.getId());
     }
 
     public void testNewObjects() {
@@ -492,9 +492,9 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
 
-        UnitOfWork unitOfWork =null;
+        UnitOfWork unitOfWork = null;
         try {
-            unitOfWork= store.beginUnitOfWork();
+            unitOfWork = store.beginUnitOfWork();
             X1AA x1AA = new X1AA();
             x1AA.setUniqueOnX1AA("blabla");
             store.insert(x1AA);
@@ -503,7 +503,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             assertEquals(map.get("blabla"), x1AA.getId());
             assertNotNull(map.get("Unique: [0,2]"));
         } finally {
-            if (unitOfWork!=null) unitOfWork.close();
+            if (unitOfWork != null) unitOfWork.close();
         }
     }
 
@@ -524,7 +524,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         assertNotNull(map.get("NonUnique: [0,0]"));
         assertEquals(map.get("NonUnique: [0,0]"), ImmutableSet.of(x1AAMockupFactory.getA1Id()));
         assertNotNull(map.get("NonUnique: [0,1]"));
-        assertEquals(map.get("NonUnique: [0,1]"), ImmutableSet.of(x1AAMockupFactory.getA2Id(),x1AAMockupFactory.getA3Id()));
+        assertEquals(map.get("NonUnique: [0,1]"), ImmutableSet.of(x1AAMockupFactory.getA2Id(), x1AAMockupFactory.getA3Id()));
     }
 
     /**
@@ -536,25 +536,59 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
 
-        UnitOfWork unitOfWork =null;
+        UnitOfWork unitOfWork = null;
         try {
-            unitOfWork= store.beginUnitOfWork();
+            unitOfWork = store.beginUnitOfWork();
             X1AA x1AA = new X1AA();
             x1AA.setUniqueOnX1AA("blabla");
             x1AA.setNonUniqueOnX1AA("NonUnique: [0,1]");
             store.insert(x1AA);
             Map<String, Set<X1AAId<?>>> map = x1AAFinderService.findX1AAIdsForNonUniqueOnX1AA(ImmutableSet.of("NonUnique: [0,1]"));
             assertNotNull(map.get("NonUnique: [0,1]"));
-            assertEquals(map.get("NonUnique: [0,1]"), ImmutableSet.of(x1AAMockupFactory.getA2Id(),x1AAMockupFactory.getA3Id(),x1AA.getId()));
+            assertEquals(map.get("NonUnique: [0,1]"), ImmutableSet.of(x1AAMockupFactory.getA2Id(), x1AAMockupFactory.getA3Id(), x1AA.getId()));
 
             x1AA.setNonUniqueOnX1AA(null);
             Map<String, Set<X1AAId<?>>> map2 = x1AAFinderService.findX1AAIdsForNonUniqueOnX1AA(ImmutableSet.of("NonUnique: [0,1]"));
             assertNotNull(map2.get("NonUnique: [0,1]"));
-            assertEquals(map2.get("NonUnique: [0,1]"), ImmutableSet.of(x1AAMockupFactory.getA2Id(),x1AAMockupFactory.getA3Id()));
+            assertEquals(map2.get("NonUnique: [0,1]"), ImmutableSet.of(x1AAMockupFactory.getA2Id(), x1AAMockupFactory.getA3Id()));
 
         } finally {
-            if (unitOfWork!=null) unitOfWork.close();
+            if (unitOfWork != null) unitOfWork.close();
         }
     }
 
+    public void testEnableCacheAfterInsert() {
+        try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
+            X1AA x1AA = new X1AA();
+            X1BBOne x1BBOne = new X1BBOne();
+            store.insert(x1BBOne);
+            x1AA.setSomeBBId(x1BBOne.getId());
+            store.insert(x1AA);
+            store.getRelationCache().setEnabled(true);
+            assertThat(x1BBOne.findInvSomeBBIds()).containsExactly(x1AA.getId());
+        }
+    }
+
+    public void testEnableCacheAfterUpdate() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
+        X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
+
+        // Sjekk at a1 peker på b2
+        X1AA a1 = store.get(x1AAMockupFactory.getA1Id());
+        assertNotNull(a1);
+        assertEquals(a1.getSomeBBId(), x1BBOneMockupFactory.getB2Id());
+
+        try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
+            X1BBOne x1BBOne = new X1BBOne();
+            store.insert(x1BBOne);
+            X1AA a1Changed = store.lock((x1AAMockupFactory.getA1Id()));
+            a1Changed.setSomeBBId(x1BBOne.getId());
+            store.update(a1Changed);
+            try (UnitOfWork unitOfWork2 = store.beginUnitOfWork()) {
+                store.getRelationCache().setEnabled(true);
+                assertThat(x1BBOne.findInvSomeBBIds()).containsExactly(a1Changed.getId());
+            }
+        }
+    }
 }

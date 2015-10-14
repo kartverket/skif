@@ -1,5 +1,7 @@
 package no.statkart.skif.store;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.NotLockedException;
@@ -7,9 +9,18 @@ import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * @author Henrik Fredholm
@@ -19,7 +30,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     protected final int level;
     protected final StoreCache storeCache;
     protected final LinkedHashMap<BubbleId<?>, StoreEntry> modifiedMap;
-    protected Store store;
+    protected AbstractStore store;
     protected IdService idService;
 
     protected AbstractStoreSession(int level, StoreCache storeCache) {
@@ -28,7 +39,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         this.modifiedMap = new LinkedHashMap<>(1000);
     }
 
-    public void setStore(Store store) {
+    public void setStore(AbstractStore store) {
         this.store = store;
         this.storeCache.setStore(store);
         this.idService = store.getInstance(IdService.class);
@@ -305,25 +316,21 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             }
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
         }
+        // Dette kan være en re-insert av et objekt som tidligere har blitt slettet, men dette krever ingen
+        // ingen ekstra håndtering fordi:
+        // 1) Hvis RelationCache er enabled så vil relations i oldInstance ha blitt fjerne da oldInstance ble slettet fra
+        //    Store
+        // 2) Hvis bubbleObject allerede er knyttet til Store, så skader det ikke at bubbleObject registreres i Store
+        // og at RelationCache oppdaters på nytt
+        onInsertEntry(level, storeEntry, bubbleObject);
+        storeEntry.setLocked(level);       // TODO: Kunne denne bli satt av ensureLocked når den må hente status via lockerStrategy?
+        bubbleObject.register(store);
         StoreRelationCache relationCache = store.getRelationCache();
-        BubbleObject oldInstance = storeEntry.getBubbleObject(level);
-        if (oldInstance != bubbleObject) {
-            bubbleObject.register(store);
-            // Det bør ikke være gjort noen endringer via det gamle objektet siden det ble fjernet. Trenger derfor
-            // ikke å fjerne relasjoner på nytt (eksisterende relasjoner ble fjernet da objektet ble deleted.
-            //if (relationCache.isEnabled()) {
-            //    if (oldInstance!=null && oldInstance instanceof InverseRelationParticipation) {
-            //        relationCache.updateRemoved(oldInstance.getBubbleId(), (InverseRelationParticipation)oldInstance);
-            //    }
-            //}
-        }
         if (relationCache.isEnabled()) {
             if (bubbleObject instanceof InverseRelationParticipation) {
                 relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
             }
         }
-        onInsertEntry(level, storeEntry, bubbleObject);
-        storeEntry.setLocked(level);       // TODO: fix - (HF: usikker på hva som skal fikses her. Kanskje vi bare kan slette denne kommentar?)
         return storeEntry;
     }
 
@@ -333,7 +340,8 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
 
         if (storeEntry == null) {
-            storeEntry = storeCache.createEntry(level, bubbleObject.getId());
+            storeEntry = loadEntry(level, bubbleObject.getId(), false);
+            //storeEntry = storeCache.createEntry(level, bubbleObject.getId());
             ensureLocked(storeEntry);
             storeEntry.setState(level, StoreEntryState.UPDATED);
         } else {
@@ -360,7 +368,13 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
 
         }
-        BubbleObject oldInstance = storeEntry.getBubbleObject(level);
+        // Må her sjekkes om bubbleObject er en helt ny instans. Dersom det er tilfellet må relasjoner
+        // som lå i oldInstance fjernes fra RelationCache. I tillegg fjernes også relasjoner som ligger i bubbleObject
+        // siden den knyttes til Store.
+        BubbleObject oldInstance = storeEntry.getDerivedBubbleObject(level);
+        onUpdateEntry(level, storeEntry, bubbleObject);
+        storeEntry.setLocked(level);       // TODO: Kunne denne bli satt av ensureLocked når den må hente status via lockerStrategy?
+
         if (oldInstance != bubbleObject) {
             bubbleObject.register(store);
             // TODO: Make oldInstance stale in order to detect continued usage of oldInstance
@@ -375,9 +389,6 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 }
             }
         }
-
-        onUpdateEntry(level, storeEntry, bubbleObject);
-        storeEntry.setLocked(level);       // TODO: fix
         return storeEntry;
     }
 
@@ -386,7 +397,8 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
 
         if (storeEntry == null) {
-            storeEntry = storeCache.createEntry(level, bubbleObject.getId());
+            storeEntry = loadEntry(level, bubbleObject.getId(), false);
+            //storeEntry = storeCache.createEntry(level, bubbleObject.getId());
             ensureLocked(storeEntry);
             storeEntry.setState(level, StoreEntryState.DELETED);
         } else {
@@ -410,25 +422,29 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             }
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
         }
-        StoreRelationCache relationCache = store.getRelationCache();
+
+        // Må her sjekkes om bubbleObject er en helt ny instans. Dersom det er tilfellet må relasjoner
+        // som lå i oldInstance også fjernes fra relasjonscachen og videre må bubbleObject registres
+        // og knyttes til store.
         BubbleObject oldInstance = storeEntry.getDerivedBubbleObject(level);
+        onDeleteEntry(level, storeEntry, bubbleObject);
+        storeEntry.setLocked(level);       // TODO: Kunne denne bli satt av ensureLocked når den må hente status via lockerStrategy?
+
         if (oldInstance != bubbleObject) {
             bubbleObject.register(store);
             // TODO: Make oldInstance stale in order to detect continued usage of oldInstance
 
+            StoreRelationCache relationCache = store.getRelationCache();
             if (relationCache.isEnabled()) {
                 if (oldInstance != null && oldInstance instanceof InverseRelationParticipation) {
                     relationCache.updateRemoved(oldInstance.getBubbleId(), (InverseRelationParticipation) oldInstance);
+
+                }
+                if (bubbleObject instanceof InverseRelationParticipation) {
+                    relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
                 }
             }
         }
-        if (relationCache.isEnabled()) {
-            if (bubbleObject instanceof InverseRelationParticipation) {
-                relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
-            }
-        }
-        onDeleteEntry(level, storeEntry, bubbleObject);
-        storeEntry.setLocked(level);       // TODO: fix
         return storeEntry;
     }
 
@@ -675,5 +691,79 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     @Override
     public boolean inAttachedMode() {
         return false;
+    }
+
+    /**
+     * Ved enabling av RelationCaching må cachen oppdateres med endringer i alle modifiserte objekter, herunder også de som bare er
+     * låste fordi de også kan inneholde endringer. Deretter vil trackingen skje synkront når et objekt endres eller
+     * registreres i Store. For hvert endret objekt må de gamle relasjonsverdier fjernes og de nye legges inn. Siden
+     * objektene ikke selv ved hva deres gamle relasjonsverdier var, må Store hjelpe til her. Dette er løst ved å sikre
+     * at Store tar vare på de opprinnelige umodifiserte bobleobjektene der hvor det er behov for det (dvs. alle andre
+     * steder enn for StoreServerSession hvor hibernate holder objektene i synk med databasen via autoflushing). Store
+     * tar vare på en kopi når objektet låses eller også hentes en kopi fra databasen eller serveren første gang ett
+     * detached bobleobjekt oppdateres eller slettes.
+     */
+    public void onEnableRelationCache(int level) {
+        StoreRelationCache relationCache = store.getRelationCache();
+        checkState(relationCache.isEnabled());
+        // Må her itererer på kopi av storeCache fordi nye objekter kan bli lastet inn i denne ifm RelationCache
+        // beregningen. For eksempel ved caching av identer som byggs utfra flere bobler som da må lastes. Mengden
+        // av objekter som er aktuelle for cacheberegningen er dog uforandret så det er uproblematisk at cachen vokser.
+        Collection<StoreEntry> values = Lists.newArrayList(storeCache.values());
+        for (StoreEntry storeEntry : values) {
+            if (storeEntry.isLocked()) {
+                BubbleObject persistedBubbleObject;
+                BubbleObject bubbleObject;
+                switch (storeEntry.getDerivedState(level)) {
+                    case INSERTED:
+                        bubbleObject = storeEntry.getDerivedBubbleObject(level);
+                        if (bubbleObject instanceof InverseRelationParticipation) {
+                            relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+                        }
+                        break;
+
+                    case DELETED_INSERTED:
+                    case UPDATED:
+                    case UNCHANGED: /* UNCHANGED representerer objekter er låst hvor Store.update() ikke har blitt kallt ennå. Objektet kan likevel være endret */
+                        persistedBubbleObject = getPersistedBubbleObjectForLocked(storeEntry);
+                        bubbleObject = storeEntry.getDerivedBubbleObject(level);
+                        if (persistedBubbleObject != bubbleObject) {
+                            if (persistedBubbleObject != null && persistedBubbleObject instanceof InverseRelationParticipation) {
+                                relationCache.updateRemoved(persistedBubbleObject.getBubbleId(), (InverseRelationParticipation) persistedBubbleObject);
+                            }
+                            if (bubbleObject instanceof InverseRelationParticipation) {
+                                relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+                            }
+                        } else {
+                            // Kan kun komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
+                            // databasen og det er derfor ikke nødvendig å gjøre noen ting.
+                            Preconditions.checkState(store.isServerStore(), "Forventet ServerStore");
+                            Preconditions.checkState(storeEntry.getLevelForDerivedBubbleObject(level)==0, "storeEntry.getLevelForDerivedBubbleObject(level)==0. StoreSessionClass=%s, level=%d, storeEntry=%s", this.getClass().getName(), storeEntry);
+                        }
+                        break;
+
+                    case DELETED:
+                    case INSERTED_DELETED:
+                        persistedBubbleObject = getPersistedBubbleObjectForLocked(storeEntry);
+                        bubbleObject = storeEntry.getDerivedBubbleObject(level);
+                        if (persistedBubbleObject != bubbleObject) {
+                            if (persistedBubbleObject != null && persistedBubbleObject instanceof InverseRelationParticipation) {
+                                relationCache.updateRemoved(persistedBubbleObject.getBubbleId(), (InverseRelationParticipation) persistedBubbleObject);
+                            }
+                            if (bubbleObject instanceof InverseRelationParticipation) {
+                                relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+                            }
+                        } else {
+                            // Kan kun komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
+                            // databasen og det er derfor ikke nødvendig å gjøre noen ting.
+                            Preconditions.checkState(store.isServerStore(), "Forventet ServerStore");
+                            Preconditions.checkState(storeEntry.getLevelForDerivedBubbleObject(level)==0, "storeEntry.getLevelForDerivedBubbleObject(level)==0. StoreSessionClass=%s, level=%d, storeEntry=%s", this.getClass().getName(), storeEntry);
+                        }
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected state: " + storeEntry.getDerivedState(level));
+                }
+            }
+        }
     }
 }

@@ -4,7 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import no.statkart.skif.exception.ImplementationException;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Henrik Fredholm
@@ -16,7 +21,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     protected boolean accessedAfterLastCallToGetTransfer;
     protected boolean getTransferHasBeenCalled;
 
-    public StoreUnitOfWork(int level, WrappableStoreSession wrappedStoreSession, StoreCache storeCache, Store store) {
+    public StoreUnitOfWork(int level, WrappableStoreSession wrappedStoreSession, StoreCache storeCache, AbstractStore store) {
         super(level, storeCache);
         this.setStore(store);
         this.wrappedStoreSession = wrappedStoreSession;
@@ -138,7 +143,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
             } else {
                 storeEntry.clear(level);
             }
-            storeEntry.lockCreatedByLevel=0;
+            storeEntry.lockCreatedByLevel = 0;
         }
         modifiedMap.clear();
         markModified();
@@ -279,6 +284,11 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     @Override
     public void registerEntries(int level, BubbleTransfer<?> bubbleTransfer) {
         wrappedStoreSession.registerEntries(level, bubbleTransfer);
+    }
+
+    @Override
+    public BubbleObject getPersistedBubbleObjectForLocked(StoreEntry storeEntry) {
+        return wrappedStoreSession.getPersistedBubbleObjectForLocked(storeEntry);
     }
 }
 
