@@ -735,9 +735,21 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                                 relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
                             }
                         } else {
-                            // Kan kun komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
+                            // Kan komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
                             // databasen og det er derfor ikke nødvendig å gjøre noen ting.
-                            Preconditions.checkState(store.isServerStore(), "Forventet ServerStore");
+
+                            // Kan også kommer her hvis objektet er låst i StoreSessionClient (dvs før UnitOfWork ble startet).
+                            // Slik objekter må under ingen omstendigheter endres hvis beregningen av cachingen skal bli
+                            // riktig, men systemet hindre ikke dette direkte bortsett fra at man ikke vil kunne kalle
+                            // Store.update(object) med objektet. Dvs man må trikse det til ved å kalle
+                            // Store.update(CopyHelper.copy(object)) og det skal man jo egentlig ikke gøre.
+                            // UnitOfWork.undo() vil jo heller ikke virker hvis man holder på slikt. Caching algoritmen
+                            // vil jo også feile hvis men holder på å endre objekter som ikke er låst.
+                            //
+                            // Hvis man gjør endringer riktik, dvs. starter UnitOfWork og sier Store.get() på objektet
+                            // man vil endre blir cachingen riktig. Man vil dog uansett kommer her for de objekter som
+                            // er låste men ennå ikke hentet ut for endring i UnitOfWork. Det er riktig at systemet ikke
+                            // trenger å gjøre noe for disse objektene.
                             Preconditions.checkState(storeEntry.getLevelForDerivedBubbleObject(level)==0, "storeEntry.getLevelForDerivedBubbleObject(level)==0. StoreSessionClass=%s, level=%d, storeEntry=%s", this.getClass().getName(), storeEntry);
                         }
                         break;
@@ -754,9 +766,21 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                                 relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
                             }
                         } else {
-                            // Kan kun komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
+                            // Kan komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
                             // databasen og det er derfor ikke nødvendig å gjøre noen ting.
-                            Preconditions.checkState(store.isServerStore(), "Forventet ServerStore");
+
+                            // Kan også kommer her hvis objektet er låst i StoreSessionClient (dvs før UnitOfWork ble startet).
+                            // Slik objekter må under ingen omstendigheter endres hvis beregningen av cachingen skal bli
+                            // riktig, men systemet hindre ikke dette direkte bortsett fra at man ikke vil kunne kalle
+                            // Store.update(object) med objektet. Dvs man må trikse det til ved å kalle
+                            // Store.update(CopyHelper.copy(object)) og det skal man jo egentlig ikke gøre.
+                            // UnitOfWork.undo() vil jo heller ikke virker hvis man holder på slikt. Caching algoritmen
+                            // vil jo også feile hvis men holder på å endre objekter som ikke er låst.
+                            //
+                            // Hvis man gjør endringer riktik, dvs. starter UnitOfWork og sier Store.get() på objektet
+                            // man vil endre blir cachingen riktig. Man vil dog uansett kommer her for de objekter som
+                            // er låste men ennå ikke hentet ut for endring i UnitOfWork. Det er riktig at systemet ikke
+                            // trenger å gjøre noe for disse objektene.
                             Preconditions.checkState(storeEntry.getLevelForDerivedBubbleObject(level)==0, "storeEntry.getLevelForDerivedBubbleObject(level)==0. StoreSessionClass=%s, level=%d, storeEntry=%s", this.getClass().getName(), storeEntry);
                         }
                         break;
