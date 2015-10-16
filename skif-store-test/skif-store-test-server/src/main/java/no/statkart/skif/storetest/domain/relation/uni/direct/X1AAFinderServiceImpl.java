@@ -40,6 +40,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         try {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select someBBId, id  from X1AA  where someBBId in (select * from table(:idValues))");
+            query.addSynchronizedQuerySpace("X1AA");
             query.setParameter("idValues", x1BBOneIds, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, x1BBOneIds.size()));
             query.addScalar("someBBId", Hibernate.LONG);
@@ -74,6 +75,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         try {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select id, ownerId  from X1CCMany  where id in (select * from table(:idValues))");
+            query.addSynchronizedQuerySpace("X1CCMany");
             query.setParameter("idValues", x1CCManyIds, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, x1CCManyIds.size()));
             query.addScalar("id", Hibernate.LONG);
@@ -110,6 +112,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         try {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select id, ownerId  from X1CCMany  where id in (select * from table(:idValues))");
+            query.addSynchronizedQuerySpace("X1CCMany");
             query.setParameter("idValues", x1CCManyIds, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, x1CCManyIds.size()));
             query.addScalar("id", Hibernate.LONG);
@@ -145,6 +148,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         try {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select uniqueOnX1AA, id  from X1AA  where uniqueOnX1AA in (select * from table(:textValues))");
+            query.addSynchronizedQuerySpace("X1AA");
             query.setParameter("textValues", textValues, new OracleArrayStringCustomType());
             query.setFetchSize(Math.min(1000, textValues.size()));
             query.addScalar("uniqueOnX1AA", Hibernate.STRING);
@@ -179,6 +183,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         try {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select nonUniqueOnX1AA, id  from X1AA  where nonUniqueOnX1AA in (select * from table(:textValues))");
+            query.addSynchronizedQuerySpace("X1AA");
             query.setParameter("textValues", textValues, new OracleArrayStringCustomType());
             query.setFetchSize(Math.min(1000, textValues.size()));
             query.addScalar("nonUniqueOnX1AA", Hibernate.STRING);

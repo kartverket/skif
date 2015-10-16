@@ -1,8 +1,10 @@
 package no.statkart.skif.storetest.store;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
@@ -10,6 +12,9 @@ import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAId;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOneId;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCManyId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
@@ -32,6 +37,21 @@ import static org.testng.Assert.*;
  */
 @Test(groups = "singlevm-required")
 public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
+    @Inject
+    private StoreTestMockupFacadeFactory mockupFacadeFactory;
+    @Inject
+    private Store clientStore;
+
+    private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
+        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
+            @Override
+            public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
+                return ImmutableSet.copyOf(Iterables.concat(
+                        Collections.singleton(mockupFacade.getSimpleMockupFactory().getSimpleId1())
+                ));
+            }
+        });
+    }
 
     public void testBeginEndEmptyUnitOfWork() {
 
@@ -311,14 +331,12 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void testGetTransferInsertNull() {
-        Store store = injector.getInstance(Store.class);// Klient-store
-
-        try (UnitOfWork uow1 = store.beginUnitOfWork()) {
+        try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
             Simple bubbleObject = new Simple();
-            store.insert(bubbleObject);
+            clientStore.insert(bubbleObject);
 
-            try (UnitOfWork uow2 = store.beginUnitOfWork()) {
-                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+            try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
+                UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
                 BubbleObject inserted = Iterables.getOnlyElement(unitOfWorkTransfer.getInsertedObjects());
                 assertSame(inserted, bubbleObject);
             }
@@ -326,17 +344,15 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void testGetTransferInsertUpdate() {
-        Store store = injector.getInstance(Store.class);// Klient-store
-
-        try (UnitOfWork uow1 = store.beginUnitOfWork()) {
+        try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
             Simple bubbleObject1 = new Simple();
-            store.insert(bubbleObject1);
+            clientStore.insert(bubbleObject1);
 
-            try (UnitOfWork uow2 = store.beginUnitOfWork()) {
-                Simple bubbleObject2 = store.get(bubbleObject1.getId());
-                store.update(bubbleObject2);
+            try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
+                Simple bubbleObject2 = clientStore.get(bubbleObject1.getId());
+                clientStore.update(bubbleObject2);
 
-                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+                UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
                 BubbleObject inserted = Iterables.getOnlyElement(unitOfWorkTransfer.getInsertedObjects());
                 assertSame(inserted, bubbleObject2);
                 assertEquals(unitOfWorkTransfer.getUpdatedObjects(), Collections.emptyList());
@@ -345,17 +361,15 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void testGetTransferInsertDelete() {
-        Store store = injector.getInstance(Store.class);// Klient-store
-
-        try (UnitOfWork uow1 = store.beginUnitOfWork()) {
+        try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
             Simple bubbleObject1 = new Simple();
-            store.insert(bubbleObject1);
+            clientStore.insert(bubbleObject1);
 
-            try (UnitOfWork uow2 = store.beginUnitOfWork()) {
-                Simple bubbleObject2 = store.get(bubbleObject1.getId());
-                store.delete(bubbleObject2);
+            try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
+                Simple bubbleObject2 = clientStore.get(bubbleObject1.getId());
+                clientStore.delete(bubbleObject2);
 
-                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+                UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
                 assertEquals(unitOfWorkTransfer.getInsertedObjects(), Collections.emptyList());
                 assertEquals(unitOfWorkTransfer.getUpdatedObjects(), Collections.emptyList());
                 assertEquals(unitOfWorkTransfer.getDeletedObjects(), Collections.emptyList());
@@ -364,16 +378,13 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void testGetTransferUpdateNull() {
-        StoreTestMockupFacadeFactory mockupFacadeFactory = injector.getInstance(StoreTestMockupFacadeFactory.class);
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        Store store = injector.getInstance(Store.class);// Klient-store
+        try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
+            Simple bubbleObject = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+            clientStore.update(bubbleObject);
 
-        try (UnitOfWork uow1 = store.beginUnitOfWork()) {
-            Simple bubbleObject = store.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-            store.update(bubbleObject);
-
-            try (UnitOfWork uow2 = store.beginUnitOfWork()) {
-                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+            try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
+                UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
                 BubbleObject updated = Iterables.getOnlyElement(unitOfWorkTransfer.getUpdatedObjects());
                 assertSame(updated, bubbleObject);
             }
@@ -381,19 +392,16 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void testGetTransferUpdateUpdate() {
-        StoreTestMockupFacadeFactory mockupFacadeFactory = injector.getInstance(StoreTestMockupFacadeFactory.class);
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        Store store = injector.getInstance(Store.class);// Klient-store
+        try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
+            Simple bubbleObject1 = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+            clientStore.update(bubbleObject1);
 
-        try (UnitOfWork uow1 = store.beginUnitOfWork()) {
-            Simple bubbleObject1 = store.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-            store.update(bubbleObject1);
+            try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
+                Simple bubbleObject2 = clientStore.get(bubbleObject1.getId());
+                clientStore.update(bubbleObject2);
 
-            try (UnitOfWork uow2 = store.beginUnitOfWork()) {
-                Simple bubbleObject2 = store.get(bubbleObject1.getId());
-                store.update(bubbleObject2);
-
-                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+                UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
                 BubbleObject updated = Iterables.getOnlyElement(unitOfWorkTransfer.getUpdatedObjects());
                 assertSame(updated, bubbleObject2);
             }
@@ -401,19 +409,16 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void testGetTransferUpdateDelete() {
-        StoreTestMockupFacadeFactory mockupFacadeFactory = injector.getInstance(StoreTestMockupFacadeFactory.class);
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        Store store = injector.getInstance(Store.class);// Klient-store
+        try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
+            Simple bubbleObject1 = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+            clientStore.update(bubbleObject1);
 
-        try (UnitOfWork uow1 = store.beginUnitOfWork()) {
-            Simple bubbleObject1 = store.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-            store.update(bubbleObject1);
+            try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
+                Simple bubbleObject2 = clientStore.get(bubbleObject1.getId());
+                clientStore.delete(bubbleObject2);
 
-            try (UnitOfWork uow2 = store.beginUnitOfWork()) {
-                Simple bubbleObject2 = store.get(bubbleObject1.getId());
-                store.delete(bubbleObject2);
-
-                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+                UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
                 assertEquals(unitOfWorkTransfer.getInsertedObjects(), Collections.emptyList());
                 assertEquals(unitOfWorkTransfer.getUpdatedObjects(), Collections.emptyList());
                 BubbleObject deleted = Iterables.getOnlyElement(unitOfWorkTransfer.getDeletedObjects());
@@ -423,57 +428,79 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void testEndUnitOfWork() {
-        Store store = injector.getInstance(Store.class);// Klient-store
-
-        StoreTestMockupFacadeFactory mockupFacadeFactory = injector.getInstance(StoreTestMockupFacadeFactory.class);
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-
-        try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
-            Simple simple = store.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-            store.update(simple);
-            store.endUnitOfWork(unitOfWork);
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            Simple simple = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+            clientStore.update(simple);
+            clientStore.endUnitOfWork(unitOfWork);
             fail("No exception");
         } catch (ImplementationException e) {
             assertTrue(e.getMessage().contains("Store contains modified objects"));
         }
 
-        store.evictAll();
+        clientStore.evictAll();
 
-        try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
-            store.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-            store.endUnitOfWork(unitOfWork);
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+            clientStore.endUnitOfWork(unitOfWork);
         }
 
-        store.evictAll();
+        clientStore.evictAll();
     }
 
     public void testEndUnitsOfWork() {
-        Store store = injector.getInstance(Store.class);// Klient-store
-
-        StoreTestMockupFacadeFactory mockupFacadeFactory = injector.getInstance(StoreTestMockupFacadeFactory.class);
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
         //noinspection UnusedDeclaration
-        try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
-            store.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
             Simple inserted = new Simple();
-            store.insert(inserted);
+            clientStore.insert(inserted);
 
-            try (UnitOfWork nested = store.beginUnitOfWork()) {
-                Simple updated = store.get(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-                store.update(updated);
-                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+            //noinspection UnusedDeclaration
+            try (UnitOfWork nested = clientStore.beginUnitOfWork()) {
+                Simple updated = clientStore.get(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+                clientStore.update(updated);
+                UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
 
                 assertEquals(Iterables.getOnlyElement(unitOfWorkTransfer.getInsertedObjects()).getId(), inserted.getId());
                 assertEquals(Iterables.getOnlyElement(unitOfWorkTransfer.getUpdatedObjects()).getId(), updated.getId());
                 assertEquals(unitOfWorkTransfer.getDeletedObjects(), Collections.emptyList());
 
-                store.endUnitsOfWork(nested);
+                clientStore.endUnitsOfWork(nested);
             }
         } finally {
-            store.evictAll();
+            clientStore.evictAll();
         }
 
-        assertFalse(store.inUnitOfWork());
+        assertFalse(clientStore.inUnitOfWork());
+    }
+
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Update on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer.*")
+    public void testClientUpdateOutsideUnitOfWork() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        Simple simple = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+        clientStore.update(simple);
+    }
+
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Attempt at updating StoreSession\\(level= 1\\) with instance from lower StoreSession\\(level=0\\).*")
+    public void testClientUpdateInUnitOfWorkWithObjectLockedOutsideUnitOfWork() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        Simple simple = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+        //noinspection UnusedDeclaration
+        try (UnitOfWork nested = clientStore.beginUnitOfWork()) {
+            clientStore.update(simple);
+        }
+    }
+
+    public void testClientUpdateInUnitOfWorkWithObjectLockedOutsideUnitOfWorkDoneRight() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+        //noinspection UnusedDeclaration
+        try (UnitOfWork nested = clientStore.beginUnitOfWork()) {
+            Simple simple = clientStore.get(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+            clientStore.update(simple);
+            // NB: Tester her bare at oppdateringen kan utføres i UnitOfWork på klient. Hvis endringen skal lagres må den sendes som transfer til server.
+        }
     }
 }

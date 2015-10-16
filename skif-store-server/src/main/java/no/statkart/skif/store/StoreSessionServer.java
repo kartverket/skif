@@ -546,6 +546,10 @@ public class StoreSessionServer extends AbstractStoreSession {
                         }
                         storeEntry.setBubbleObject(level, null);
                         storeEntry.unlock(level);
+                        if (storeEntry.getLevelForDerivedBubbleObject(level)==0) {
+                            // Entry inneholder ingen objekter lengre. Store forventer at storeEntry inneholder et objekt, så entry må fjernes
+                            storeCache.remove(bubbleId);
+                        }
                     }
                     break;
                 default:
