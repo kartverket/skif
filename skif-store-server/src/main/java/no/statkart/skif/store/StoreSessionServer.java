@@ -544,12 +544,15 @@ public class StoreSessionServer extends AbstractStoreSession {
                             lockerStrategy.unlock(bubbleId);
                             storeEntry.setLockCreatedByLevel(-1);
                         }
-                        storeEntry.setBubbleObject(level, null);
-                        storeEntry.unlock(level);
-                        if (storeEntry.getLevelForDerivedBubbleObject(level)==0) {
-                            // Entry inneholder ingen objekter lengre. Store forventer at storeEntry inneholder et objekt, så entry må fjernes
-                            storeCache.remove(bubbleId);
+                        if (level>0) {
+                            // På serveren kan disse være endret og evt flushet, men det vil bli fanget opp senere siden
+                            // man ikke har kallt Store.update. Videre vil objektet være knyttet til hibernate sessionen
+                            // og siden det ikke evictes fra denne vil man uansett få tilbake samme instans ved get.
+                            // Hvis kan i stedet for unlock kalte undo ville man ha fått en feil hvis objektet fra
+                            // flushet.
+                            storeEntry.setBubbleObject(level, null);
                         }
+                        storeEntry.unlock(level);
                     }
                     break;
                 default:

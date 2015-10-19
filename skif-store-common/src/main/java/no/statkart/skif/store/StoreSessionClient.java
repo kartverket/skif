@@ -203,7 +203,10 @@ public class StoreSessionClient extends AbstractStoreSession {
                             storeService.unlock(bubbleId);
                             storeEntry.setLockCreatedByLevel(-1);
                         }
-                        storeEntry.setBubbleObject(level, null);
+                        if (level>0) {
+                            // Objekter på level 0 skal ikke kastes. På klienten vil disse aldri være endret.
+                            storeEntry.setBubbleObject(level, null);
+                        }
                         storeEntry.unlock(level);
                     }
                     break;

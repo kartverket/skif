@@ -256,4 +256,87 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
             }
         });
     }
+
+    /**
+     * Tester at objekter kan låses og låses opp på i StoreSessionServer så lenge de ikke er modifisert.
+     */
+    public void testStoreSessionServerUnlockUnmodified() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        server.runInTxRequiresNew(new RunOnServerMethod() {
+            @Inject
+            private Store serverStore;
+
+            @Override
+            public Object run() {
+                serverStore.lock(simpleId1);
+                serverStore.unlock(simpleId1);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Tester at objekter kan låses og låses opp på i StoreSessionClient så lenge de ikke oppdateres.
+     */
+    public void testStoreSessionClientUnlockUnmodified() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        clientStore.lock(simpleId1);
+        clientStore.unlock(simpleId1);
+    }
+
+    /**
+     * Tester at objekter som er modifisert vil gi feil hvis blir forsøk låst. Presis hvilken feil man får
+     * avhenger av om update er kallt
+     */
+    public void testStoreSessionServerUnlockGirFeilForModifisertObjektVedUpdateIkkeKallt() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+
+        try {
+            server.runInTxRequiresNew(new RunOnServerMethod() {
+                @Inject
+                private Store serverStore;
+
+                @Override
+                public Object run() {
+                    Simple simple = serverStore.lock(simpleId1);
+                    simple.setText("Jeg er endret");
+                    serverStore.unlock(simpleId1);
+                    return null;
+                }
+            });
+        } catch (ImplementationException e) {
+            Assert.assertTrue(e.getMessage().startsWith("Modified object not updated!"));
+        }
+    }
+
+    /**
+     * Tester at objekter som er modifisert vil gi feil hvis blir forsøk låst. Presis hvilken feil man får
+     * avhenger av om update er kallt
+     */
+    public void testStoreSessionServerUnlockGirFeilForModifisertObjektVedUpdateKallt() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+
+        try {
+            server.runInTxRequiresNew(new RunOnServerMethod() {
+                @Inject
+                private Store serverStore;
+
+                @Override
+                public Object run() {
+                    Simple simple = serverStore.lock(simpleId1);
+                    simple.setText("Jeg er endret");
+                    serverStore.update(simple);
+
+                    serverStore.unlock(simpleId1);
+                    return null;
+                }
+            });
+        } catch (ImplementationException e) {
+            Assert.assertTrue(e.getMessage().startsWith("Object has been changed and can not be unlocked"));
+        }
+    }
 }

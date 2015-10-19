@@ -431,6 +431,7 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
 
             @Override
             public Object run() {
+                storeServer.get(a1Id);
                 X1AA a1 = storeServer.lock(a1Id);
                 a1.setSomeBBId(null);
                 // RelationCache onEnable-algoritmen vil se a1, men ikke ta hensyn til den siden den vil være i synk fordi flush kalles automatisk
@@ -447,8 +448,7 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
                 storeServer.getRelationCache().setEnabled(false);
                 Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsChange2 = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
                 assertEquals(invSomeBBIdsAfterEnabled.get(b2Id), Collections.singleton(a1Id));
-
-                storeServer.unlock(a1Id);
+                storeServer.update(a1);
                 return null;
             }
         });
