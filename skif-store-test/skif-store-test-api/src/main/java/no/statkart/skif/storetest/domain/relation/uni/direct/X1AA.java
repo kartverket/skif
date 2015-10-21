@@ -1,16 +1,12 @@
 package no.statkart.skif.storetest.domain.relation.uni.direct;
 
-import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.Bubbles;
 import no.statkart.skif.store.InverseRelationCollector;
 import no.statkart.skif.store.InverseRelationParticipation;
-import no.statkart.skif.store.relation.cache.annotation.Cardinality;
-import no.statkart.skif.store.relation.cache.annotation.Relation;
-import no.statkart.skif.store.relation.cache.annotation.RelationType;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -21,6 +17,7 @@ import java.util.Set;
  * <li>En-til-en relasjon til {@code X1DDUnique}: 'myUniqueDD' (TODO)</li>
  * <li>En verdi som brukes som en unik index for klassen</li>
  * <li>En verdi som brukes son en nonunik index for klassen</li>
+ * <li>En verdi som sammen med verdi fra {@code X1BBOne} utgjør en unik index for klassen (bruker {@code nr} fra begge)</li>
  * </ul>
  * <p/>
  * De 3 relaterte klassene implementerer en finder for å navigerer relasjonen i motsatt rettning. Det finnes ingen
@@ -48,11 +45,32 @@ public class X1AA extends AbstractRelationTestBubble implements InverseRelationP
         collector.put(X1AAFinderService.Role.someCCs, someCCsIds);
         collector.put(X1AAFinderService.Role.uniqueOnX1AA, uniqueOnX1AA);
         collector.put(X1AAFinderService.Role.nonUniqueOnX1AA, nonUniqueOnX1AA);
+        collector.put(X1AAFinderService.Role.compositeIdent, getIdent());
     }
 
     @Override
     public X1AAId<?> getId() {
         return (X1AAId<?>) super.getId();
+    }
+
+    @Nullable // Hvis det ikke finnes noen someBB
+    public X1AAIdent getIdent() {
+        X1BBOne someBB = getSomeBB();
+        if (someBB == null) {
+            return null;
+        }
+        return new X1AAIdent(someBB.getNr(), getNr());
+    }
+
+    @Override
+    public void setNr(int nr) {
+        if (isRelationCacheEnabled()) {
+            X1AAIdent oldIdent = getIdent();
+            super.setNr(nr);
+            Bubbles.onChangeRelation(this, X1AAFinderService.Role.compositeIdent, oldIdent, getIdent());
+        } else {
+            super.setNr(nr);
+        }
     }
 
     public X1BBOneId<?> getSomeBBId() {

@@ -9,6 +9,7 @@ import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -729,7 +731,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                         bubbleObject = storeEntry.getDerivedBubbleObject(level);
                         if (persistedBubbleObject != bubbleObject) {
                             if (persistedBubbleObject != null && persistedBubbleObject instanceof InverseRelationParticipation) {
-                                relationCache.updateRemoved(persistedBubbleObject.getBubbleId(), (InverseRelationParticipation) persistedBubbleObject);
+                                relationCache.updateRemoved(persistedBubbleObject.getBubbleId(), (InverseRelationParticipation) persistedBubbleObject, new WithoutUnitOfWorkExecutor());
                             }
                             if (bubbleObject instanceof InverseRelationParticipation) {
                                 relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
@@ -760,7 +762,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                         bubbleObject = storeEntry.getDerivedBubbleObject(level);
                         if (persistedBubbleObject != bubbleObject) {
                             if (persistedBubbleObject != null && persistedBubbleObject instanceof InverseRelationParticipation) {
-                                relationCache.updateRemoved(persistedBubbleObject.getBubbleId(), (InverseRelationParticipation) persistedBubbleObject);
+                                relationCache.updateRemoved(persistedBubbleObject.getBubbleId(), (InverseRelationParticipation) persistedBubbleObject, new WithoutUnitOfWorkExecutor());
                             }
                             if (bubbleObject instanceof InverseRelationParticipation) {
                                 relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
@@ -787,6 +789,23 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                     default:
                         throw new IllegalStateException("Unexpected state: " + storeEntry.getDerivedState(level));
                 }
+            }
+        }
+    }
+
+    private class WithoutUnitOfWorkExecutor implements Executor {
+        @Override
+        public void execute(@Nonnull Runnable command) {
+            // Må midlertidig poppe av alle unit-of-works, slik at navigering gjennom de forskjellige get() går på nivå 0.
+            WrappableStoreSession originalSession = store.storeSession;
+            try {
+                while (store.storeSession instanceof StoreUnitOfWork) {
+                    store.storeSession = ((StoreUnitOfWork) store.storeSession).wrappedStoreSession;
+                }
+
+                command.run();
+            } finally {
+                store.storeSession = originalSession;
             }
         }
     }

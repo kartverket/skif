@@ -11,6 +11,7 @@ import no.statkart.skif.store.InverseRelationParticipation;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.WrappableStoreSession;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Provider;
 import java.lang.reflect.InvocationTargetException;
@@ -18,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -178,8 +180,22 @@ public abstract class StoreRelationCache {
     }
 
     public void updateRemoved(BubbleId<?> owningBubbleId, InverseRelationParticipation oldInstance) {
-        InverseRelationCollector collector = new InverseRelationCollector();
-        oldInstance.collectInverseRelationValues(collector);
+        updateRemoved(owningBubbleId, oldInstance, new Executor() {
+            @Override
+            public void execute(@Nonnull Runnable command) {
+                command.run();
+            }
+        });
+    }
+
+    public void updateRemoved(BubbleId<?> owningBubbleId, final InverseRelationParticipation oldInstance, Executor collectionExcutor) {
+        final InverseRelationCollector collector = new InverseRelationCollector();
+        collectionExcutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                oldInstance.collectInverseRelationValues(collector);
+            }
+        });
         for (Map.Entry<RelationName, Object> entry : collector.entrySet()) {
             Object inverseValue = entry.getValue();
             if (inverseValue instanceof InverseRelationCollector.Values) {

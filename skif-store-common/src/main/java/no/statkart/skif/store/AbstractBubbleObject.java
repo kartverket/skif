@@ -87,6 +87,10 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
         return store.getInstance(type);
     }
 
+    protected final boolean isRelationCacheEnabled() {
+        return store != null && store.getRelationCache().isEnabled();
+    }
+
     protected <T extends Set> T idAsSet() { return (T) ImmutableSet.of(getId()); }
 
     public final boolean equals(Object object) {

@@ -4,15 +4,20 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayStringCustomType;
+import no.statkart.skif.persistence.hibernate.type.OracleArrayUserType;
 import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
+import no.statkart.skif.store.persistence.OracleArrayConverter;
 import no.statkart.skif.store.persistence.SessionSelector;
 import no.statkart.skif.util.HibernateHelper;
 import org.hibernate.*;
+import org.hibernate.type.CustomType;
 
 import javax.inject.Provider;
 import java.sql.PreparedStatement;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -204,4 +209,50 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         return result;
     }
 
+    @Override
+    public Map<X1AAIdent, Set<X1AAId<?>>> findX1AAIdsForIdents(Collection<X1AAIdent> idents) {
+        Map<X1AAIdent, Set<X1AAId<?>>> result = Maps.newHashMapWithExpectedSize(idents.size());
+        for (X1AAIdent ident : idents) {
+            result.put(ident, new HashSet<X1AAId<?>>());
+        }
+
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
+            SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
+            Session session = sessionSelector.get(snapshotVersion);
+            SQLQuery query = session.createSQLQuery("select b.nr as bnr, a.nr as anr, a.id  from X1AA a join X1BBOne b on a.someBBId=b.id  where (b.nr, a.nr) in (select * from table(:idents))");
+            query.addSynchronizedQuerySpace("X1AA");
+            query.addSynchronizedQuerySpace("X1BBOne");
+            query.setParameter("idents", idents, new CustomType(new OracleX1AAIdentArrayUserType()));
+            query.setFetchSize(Math.min(1000, idents.size()));
+            query.addScalar("bnr", Hibernate.INTEGER);
+            query.addScalar("anr", Hibernate.INTEGER);
+            query.addScalar("id", Hibernate.LONG);
+            ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
+
+            while (scroll.next()) {
+                Object[] next = scroll.get();
+                X1AAIdent ident = new X1AAIdent((Integer) next[0], (Integer) next[1]);
+                Set<X1AAId<?>> relatedIds = result.get(ident);
+                relatedIds.add(new X1AAId<>((Long) next[2], snapshotVersion));
+            }
+        }
+        return result;
+    }
+
+    private static class OracleX1AAIdentArrayConverter extends OracleArrayConverter<X1AAIdent> {
+        public OracleX1AAIdentArrayConverter() {
+            super("NUMBER_NUMBER_LIST_TYPE");
+        }
+
+        @Override
+        protected Object toValue(X1AAIdent object) {
+            return new Object[]{object.getBNr(), object.getANr()};
+        }
+    }
+
+    private static class OracleX1AAIdentArrayUserType extends OracleArrayUserType<OracleX1AAIdentArrayConverter, X1AAIdent> {
+        public OracleX1AAIdentArrayUserType() {
+            super(new OracleX1AAIdentArrayConverter());
+        }
+    }
 }

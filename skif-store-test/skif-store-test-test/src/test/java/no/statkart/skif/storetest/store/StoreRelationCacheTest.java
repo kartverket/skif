@@ -10,12 +10,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.UnitOfWork;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1AA;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAFinderService;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAId;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOneId;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCManyId;
+import no.statkart.skif.storetest.domain.relation.uni.direct.*;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
@@ -27,9 +22,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * TODO: Dette bør nok stå et annet sted som dokumentasjon også. Det står her for å gi er overblikk av hva som bør testes her
@@ -452,6 +445,40 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
                 return null;
             }
         });
+    }
+
+    /**
+     * Tester at ident cachen virker på riktig nivå, altså at når enabling av caching collecter opprinnelige relasjoner,
+     * så skal Store.get() navigere på nivå 0.
+     */
+    public void testRiktigIdentCachingVedOppdateringAvAvledetDelAvIdentFoerRelationCachingEnabling() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
+        final X1BBOneId<?> b2Id = mockupFacade.getX1BBOneMockupFactory().getB2Id();
+        final int orgBNr = mockupFacade.getStore().get(b2Id).getNr();
+        final int orgANr = mockupFacade.getStore().get(a1Id).getNr();
+
+        Map<X1AAIdent, Set<X1AAId<?>>> x1AAIdsForIdents;
+
+        X1AAIdent orgIdent = new X1AAIdent(orgBNr, orgANr);
+        x1AAIdsForIdents = x1AAFinderService.findX1AAIdsForIdents(Collections.singleton(orgIdent));
+        assertEquals(x1AAIdsForIdents.get(orgIdent), Collections.singleton(a1Id));
+
+        try (UnitOfWork ignored = storeClient.beginUnitOfWork()) {
+            X1BBOne b2 = storeClient.lock(b2Id);
+            storeClient.lock(a1Id);
+            b2.setNr(b2.getNr() + 10);
+            storeClient.update(b2);
+
+            X1AAIdent modIdent = new X1AAIdent(b2.getNr(), orgANr);
+
+            storeClient.getRelationCache().setEnabled(true);
+            x1AAIdsForIdents = x1AAFinderService.findX1AAIdsForIdents(ImmutableSet.of(orgIdent, modIdent));
+            assertEquals(x1AAIdsForIdents.get(orgIdent), Collections.emptySet());
+            assertEquals(x1AAIdsForIdents.get(modIdent), Collections.singleton(a1Id));
+
+            assertSame(storeClient.get(b2Id), b2);
+        }
     }
 
     // TODO: Det er fortsatt flere testcaser som bør skrives, blant annet transfer fra klient til server og update/sletting med detached objekt

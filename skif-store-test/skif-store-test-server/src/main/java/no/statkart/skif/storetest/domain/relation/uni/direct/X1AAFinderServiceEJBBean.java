@@ -51,4 +51,10 @@ public class X1AAFinderServiceEJBBean extends EJBTimedService implements X1AAFin
     public Map<String, Set<X1AAId<?>>> findX1AAIdsForNonUniqueOnX1AA(Collection<String> textValues) {
         return serviceChain.findX1AAIdsForNonUniqueOnX1AA(textValues);
     }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @Override
+    public Map<X1AAIdent, Set<X1AAId<?>>> findX1AAIdsForIdents(Collection<X1AAIdent> idents) {
+        return serviceChain.findX1AAIdsForIdents(idents);
+    }
 }
