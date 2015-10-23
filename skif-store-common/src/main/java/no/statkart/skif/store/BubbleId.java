@@ -14,6 +14,7 @@ public interface BubbleId<T extends BubbleObject> extends Serializable, Comparab
     public Class getBaseType();
     public Class<T> getType();
     public Class getValueType();
+    public Class<? extends BubbleId<? super T>> getBaseIdType();
     public boolean equalsIgnoreSnapshotVersion(Object object);
     public BubbleId<? super T> asSnapshotVersion(SnapshotVersion snapshotVersion);
     public BubbleId<? super T> asSnapshotVersion(BubbleId<?>  bubbleId);

@@ -320,7 +320,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      *
      * @return the base type class of the id
      */
-    public Class getBaseIdType() {
+    public  Class<? extends BubbleId<? super T>> getBaseIdType() {
         return calcBaseIdType(clazz);
     }
 

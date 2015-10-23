@@ -1,6 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
@@ -11,6 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 
 /**
@@ -33,7 +36,9 @@ public class AnyBubbleIdType extends BubbleIdType {
     @SuppressWarnings("unchecked")
     protected Class<? extends BubbleId<?>> returnedClass(Object value) {
         try {
-            return (Class<? extends BubbleId<?>>) Class.forName((String) value);
+            Class<?> bubbleIdClass = Class.forName((String) value);
+            checkArgument(BubbleId.class.isAssignableFrom(bubbleIdClass), "Forventet subtype av BubbleId: %s", value);
+            return (Class<? extends BubbleId<?>>) bubbleIdClass;
         } catch (ClassNotFoundException e) {
             throw new ImplementationException(e);
         }
@@ -81,9 +86,9 @@ public class AnyBubbleIdType extends BubbleIdType {
                 if (IS_VALUE_TRACING_ENABLED) {
                     log().trace("binding '" + value + "' to parameter: " + index);
                 }
-                BubbleId bubbleId = (BubbleId) value;
-                st.setLong(index, (Long) bubbleId.getValue());
-                st.setString(index + 1, bubbleId.getClass().getName());
+                Object[] values = toSQLValues((BubbleId) value);
+                st.setLong(index, (Long) values[0]);
+                st.setString(index + 1, (String)values[1]);
             }
         } catch (ClassCastException ce) {
             log().info("could not bind value '" + value + "' to parameter: " + index + "; ClassCastException: expected parameter of class " + getClass() + " got " + ce.getMessage());
@@ -108,5 +113,9 @@ public class AnyBubbleIdType extends BubbleIdType {
     protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
         Object[] values = (Object[]) value;
         return BubbleIds.createInstance(returnedClass(values[1]), values[0], snapshotVersion);
+    }
+
+    public Object[] toSQLValues(BubbleId id) {
+        return new Object[] {id.getValue(), id.getBaseIdType().getName()};
     }
 }
