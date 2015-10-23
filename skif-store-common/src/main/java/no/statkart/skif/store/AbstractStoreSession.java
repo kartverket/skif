@@ -432,19 +432,21 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         onDeleteEntry(level, storeEntry, bubbleObject);
         storeEntry.setLocked(level);       // TODO: Kunne denne bli satt av ensureLocked når den må hente status via lockerStrategy?
 
+        StoreRelationCache relationCache = store.getRelationCache();
         if (oldInstance != bubbleObject) {
             bubbleObject.register(store);
             // TODO: Make oldInstance stale in order to detect continued usage of oldInstance
 
-            StoreRelationCache relationCache = store.getRelationCache();
             if (relationCache.isEnabled()) {
                 if (oldInstance != null && oldInstance instanceof InverseRelationParticipation) {
                     relationCache.updateRemoved(oldInstance.getBubbleId(), (InverseRelationParticipation) oldInstance);
 
                 }
-                if (bubbleObject instanceof InverseRelationParticipation) {
-                    relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
-                }
+            }
+        }
+        if (relationCache.isEnabled()) {
+            if (bubbleObject instanceof InverseRelationParticipation) {
+                relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
             }
         }
         return storeEntry;
@@ -752,7 +754,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                             // man vil endre blir cachingen riktig. Man vil dog uansett kommer her for de objekter som
                             // er låste men ennå ikke hentet ut for endring i UnitOfWork. Det er riktig at systemet ikke
                             // trenger å gjøre noe for disse objektene.
-                            Preconditions.checkState(storeEntry.getLevelForDerivedBubbleObject(level)==0, "storeEntry.getLevelForDerivedBubbleObject(level)==0. StoreSessionClass=%s, level=%d, storeEntry=%s", this.getClass().getName(), storeEntry);
+                            Preconditions.checkState(storeEntry.getLevelForDerivedBubbleObject(level) == 0, "storeEntry.getLevelForDerivedBubbleObject(level)==0. StoreSessionClass=%s, level=%d, storeEntry=%s", this.getClass().getName(), storeEntry);
                         }
                         break;
 
@@ -783,7 +785,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                             // man vil endre blir cachingen riktig. Man vil dog uansett kommer her for de objekter som
                             // er låste men ennå ikke hentet ut for endring i UnitOfWork. Det er riktig at systemet ikke
                             // trenger å gjøre noe for disse objektene.
-                            Preconditions.checkState(storeEntry.getLevelForDerivedBubbleObject(level)==0, "storeEntry.getLevelForDerivedBubbleObject(level)==0. StoreSessionClass=%s, level=%d, storeEntry=%s", this.getClass().getName(), storeEntry);
+                            Preconditions.checkState(storeEntry.getLevelForDerivedBubbleObject(level) == 0, "storeEntry.getLevelForDerivedBubbleObject(level)==0. StoreSessionClass=%s, level=%d, storeEntry=%s", this.getClass().getName(), storeEntry);
                         }
                         break;
                     default:
