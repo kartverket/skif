@@ -1,8 +1,8 @@
 package no.statkart.skif.service.proxy;
 
 /**
- * Denne klassen implementerer en {@code ProxyHandler} som kan inngå som et ikke avsluttende ledd i en
- * kjede av {@code ProxyHandler}e. Etter at klasse har gjort sitt sende kalle videre til neste ledd i kjeden.
+ * Denne klassen implementerer en {@link ProxyHandler} som kan inngå som et ikke avsluttende ledd i en
+ * {@code ServiceChain}. Etter at klasse har gjort sitt kalles det videre til neste ledd i kjeden.
  *
  * @author Henrik Fredholm
  */
