@@ -22,12 +22,19 @@ import java.sql.SQLException;
  * @since 2.1
  */
 public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAllocatorService {
+    protected static final String NEXTFREENUMBER = "NEXTFREENUMBER";
+    protected static final String SEQUENCENAME = "TABLENAME";
+
     protected final Provider<Connection> connectionProvider;
     protected final Configuration configuration;
 
     public DefaultSequenceBlockAllocatorServiceImpl(Provider<Connection> connectionProvider, Configuration configuration) {
         this.connectionProvider = connectionProvider;
         this.configuration = configuration;
+    }
+
+    protected String getTablename() {
+        return configuration.getString(SkifConfigConstants.DB_SEQUENCE_TABLENAME);
     }
 
     @Override
@@ -41,7 +48,9 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
 
         PreparedStatement stmt = null;
         try {
-            String sqlString = "SELECT NEXTFREENUMBER FROM " + configuration.getString(SkifConfigConstants.DB_SEQUENCE_TABLENAME) + " WHERE TABLENAME=? FOR UPDATE";
+            String tablename = getTablename();
+
+            String sqlString = "SELECT " + NEXTFREENUMBER + " FROM " + tablename + " WHERE " + SEQUENCENAME + "=? FOR UPDATE";
             stmt = con.prepareStatement(sqlString);
             stmt.setString(1, sequenceName);
             ResultSet rs = stmt.executeQuery();
@@ -53,7 +62,7 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
             JDBCHelper.close(rs, stmt);
 
             nextFreeNumber = prevFreeNumber + blockSize;
-            sqlString = "UPDATE TABLESEQUENCE SET NEXTFREENUMBER=? WHERE TABLENAME=?";
+            sqlString = "UPDATE " + tablename + " SET " + NEXTFREENUMBER + "=? WHERE " + SEQUENCENAME + "=?";
             stmt = con.prepareStatement(sqlString);
             stmt.setLong(1, nextFreeNumber);
             stmt.setString(2, sequenceName);
