@@ -5,7 +5,6 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
-import no.statkart.skif.util.JDBCHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -46,41 +45,37 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
         final long prevFreeNumber;
         final long nextFreeNumber;
 
-        PreparedStatement stmt = null;
         try {
             String tablename = getTablename();
 
             String sqlString = "SELECT " + NEXTFREENUMBER + " FROM " + tablename + " WHERE " + SEQUENCENAME + "=? FOR UPDATE";
-            stmt = con.prepareStatement(sqlString);
-            stmt.setString(1, sequenceName);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                prevFreeNumber = rs.getLong(1);
-            } else {
-                throw new ImplementationException("Found no sequence named:" + sequenceName);
+            try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
+                stmt.setString(1, sequenceName);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        prevFreeNumber = rs.getLong(1);
+                    } else {
+                        throw new ImplementationException("Found no sequence named:" + sequenceName);
+                    }
+                }
             }
-            JDBCHelper.close(rs, stmt);
 
             nextFreeNumber = prevFreeNumber + blockSize;
             sqlString = "UPDATE " + tablename + " SET " + NEXTFREENUMBER + "=? WHERE " + SEQUENCENAME + "=?";
-            stmt = con.prepareStatement(sqlString);
-            stmt.setLong(1, nextFreeNumber);
-            stmt.setString(2, sequenceName);
-            int result = stmt.executeUpdate();
-            if (result != 1) {
-                con.rollback();
-                throw new ImplementationException("Failed to update sequence named: " + sequenceName + ". Expected one update, got " + result);
+            try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
+                stmt.setLong(1, nextFreeNumber);
+                stmt.setString(2, sequenceName);
+                int result = stmt.executeUpdate();
+                if (result != 1) {
+                    con.rollback();
+                    throw new ImplementationException("Failed to update sequence named: " + sequenceName + ". Expected one update, got " + result);
+                }
             }
             commit(con);
         } catch (SQLException e) {
             throw new OperationalException("Failed to update sequence named: " + sequenceName, e);
-        } finally {
-            if (stmt != null) try {
-                stmt.close();
-            } catch (SQLException e) {
-                throw new OperationalException(e);
-            }
         }
+
         return nextFreeNumber - 1;
     }
 
