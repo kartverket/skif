@@ -91,7 +91,7 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
      * @param con    databaseforbindelsen
      * @throws SQLException
      */
-    public void commit(Connection con) throws SQLException {
+    protected void commit(Connection con) throws SQLException {
         con.commit();
     }
 }

@@ -37,7 +37,7 @@ public abstract class AbstractEndringManager<E extends AbstractEndring> implemen
 
         this.sequenceBlockAllocatorService = new DefaultSequenceBlockAllocatorServiceImpl(connectionProvider, configuration) {
             @Override
-            public void commit(Connection con) throws SQLException {
+            protected void commit(Connection con) throws SQLException {
                 // Committing tas av container for endringsnummer
             }
         };
