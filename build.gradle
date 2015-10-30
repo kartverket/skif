@@ -236,8 +236,8 @@ afterEvaluate {
 
 
     idea.project {
-        jdkName = '1.6'
-        languageLevel = '1.6'
+        jdkName = '1.7'
+        languageLevel = '1.7'
 
     }
 
