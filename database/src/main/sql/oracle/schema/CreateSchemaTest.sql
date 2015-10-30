@@ -636,7 +636,7 @@ BEGIN
         UPDATE BAR_H SET versjonId = :old.versjonId + 1 WHERE id= :new.id and sluttdato = t_End;
     END IF;
     UPDATE BAR_H
-    SET id = :new.id, oppdateringsdato = t_Trans, nr = :new.husnr, navn = :new.bokstav, fooId = :new.fooId, bazId = :new.bazId
+    SET id = :new.id, oppdateringsdato = t_Trans, husnr = :new.husnr, bokstav = :new.bokstav, fooId = :new.fooId, bazId = :new.bazId
     WHERE id = :new.id and sluttdato = t_End;
   ELSIF INSERTING THEN
     INSERT INTO BAR_H
@@ -716,15 +716,15 @@ BEGIN
         VALUES (:old.barFoosId, :old.fooId, :old.oppdateringsdato, t_Trans);
     END IF;
     UPDATE FooForBarFoos_H
-    SET barFoosId = :new.barFoosId, fooId = :new.fooId and oppdateringsdato = t_Trans
+    SET barFoosId = :new.barFoosId, fooId = :new.fooId, oppdateringsdato = t_Trans
     WHERE barFoosId = :new.barFoosId and fooId = :new.fooId and sluttdato = t_End;
   ELSIF INSERTING THEN
     INSERT INTO FooForBarFoos_H
-        VALUES (:new.barFoosId, :new.barId, t_Trans,t_End);
+        VALUES (:new.barFoosId, :new.fooId, t_Trans,t_End);
   ELSIF DELETING THEN
     IF :old.oppdateringsdato < t_Trans THEN
         INSERT INTO FooForBarFoos_H
-        VALUES (:old.barFoosId, :old.barId, :old.oppdateringsdato, t_Trans);
+        VALUES (:old.barFoosId, :old.fooId, :old.oppdateringsdato, t_Trans);
     END IF;
     delete from FooForBarFoos_H
     WHERE barFoosId = :old.barFoosId and fooId = :old.fooId and sluttdato = t_End;
@@ -752,21 +752,21 @@ t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF INSERTING THEN
     INSERT INTO GEOMETRICELEMENT_H
-        VALUES (:new.ID, point, polygon, t_Now, t_End, 1);
+        VALUES (:new.ID, :new.point, :new.polygon, t_Trans, t_End, 1);
 
   ELSIF UPDATING THEN
-     IF :old.oppdateringsdato < t_Now THEN
-        INSERT INTO GEOMETRICELEMENT_H VALUES (:old.ID, :new.POINT, :new.POLYGON, :old.oppdateringsdato, t_Now, :old.versjonId);
+     IF :old.oppdateringsdato < t_Trans THEN
+        INSERT INTO GEOMETRICELEMENT_H VALUES (:old.ID, :new.POINT, :new.POLYGON, :old.oppdateringsdato, t_Trans, :old.versjonId);
         UPDATE GEOMETRICELEMENT_H SET versjonId = :old.versjonId+1
         WHERE id = :new.id and sluttdato = t_End;
      END IF;
-     UPDATE TEIG_H SET ID=:new.ID, POINT=:new.POINT, POLYGON=:new.POLYGON, oppdateringsdato=t_Now, sluttdato=t_End, versjonId=versjonId
+     UPDATE GEOMETRICELEMENT_H SET ID=:new.ID, POINT=:new.POINT, POLYGON=:new.POLYGON, oppdateringsdato=t_Trans, sluttdato=t_End, versjonId=versjonId
         WHERE id = :new.id and sluttdato = t_End;
 
   ELSIF DELETING THEN
-     IF :old.oppdateringsdato < t_Now THEN
+     IF :old.oppdateringsdato < t_Trans THEN
         INSERT INTO GEOMETRICELEMENT_H
-           VALUES (:old.ID, :old.POINT, :old.POLYGON, :old.oppdateringsdato, t_Now, :old.versjonId);
+           VALUES (:old.ID, :old.POINT, :old.POLYGON, :old.oppdateringsdato, t_Trans, :old.versjonId);
      END IF;
      DELETE FROM GEOMETRICELEMENT_H
         WHERE id = :old.id AND sluttdato = t_End;
