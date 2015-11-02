@@ -7,6 +7,7 @@ package no.statkart.skif.config;
 public class SkifConfigConstants {
 
     public final static String SINGLE_VM_SERVER_INJECTOR = "skif.single_vm_serverInjector";
+    /** @deprecated Single-VM er ikke lenger en true/false-greie. Se {@link #SERVICE_MODE} */
     public final static String SINGLE_VM = "skif.single_vm";
     public final static String SERVICE_MODE = "skif.service_mode";
     public static final String MODULE_CLASS = "skif.module_class";
