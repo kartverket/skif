@@ -11,8 +11,6 @@ def filterProperties = [
 configureDatabasePlugin {
     useDrivers libraries.ojdbc
 
-    project.ext.tns = "${db_sid}_${db_hostname}"
-
     toolset(name: '', type: 'oracle', prefix: '') {
         sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
         sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql') { mustRunAfter 'purge', 'historikkUpdatePackageSnapshotTime' }
@@ -25,7 +23,7 @@ configureDatabasePlugin {
 
         credentials.username = db_username
         credentials.password = db_username
-        url = "jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}"
+        url = "jdbc:oracle:thin:@//${db_hostname}:${db_port}/${db_service}"
     }
 
     /**
@@ -38,7 +36,7 @@ configureDatabasePlugin {
 
         credentials.username = admin_db_username
         credentials.password = admin_db_password
-        url = "jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}"
+        url = "jdbc:oracle:thin:@//${db_hostname}:${db_port}/${db_service}"
 
     }
 
@@ -62,7 +60,7 @@ configureDatabasePlugin {
 
         credentials.username = db_username
         credentials.password = db_username
-        url = "jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}"
+        url = "jdbc:oracle:thin:@//${db_hostname}:${db_port}/${db_service}"
 
     }
 
@@ -94,7 +92,7 @@ task applyHistorikk() {
     ]
 
     doLast {
-        groovy.sql.Sql sql = groovy.sql.Sql.newInstance("jdbc:oracle:thin:@${db_hostname}:${db_port}:${db_sid}", db_username, db_password, 'oracle.jdbc.OracleDriver')
+        groovy.sql.Sql sql = groovy.sql.Sql.newInstance("jdbc:oracle:thin:@//${db_hostname}:${db_port}/${db_service}", db_username, db_password, 'oracle.jdbc.OracleDriver')
 
         println("connected to database: ${sql.connection.metaData.URL} [${sql.connection.metaData.userName}]")
 

@@ -33,7 +33,7 @@ public class SkifConfigConstants {
     public static final String DB_PASSWORD = "skif.db_password";
     public static final String DB_HOSTNAME = "skif.db_hostname";
     public static final String DB_PORT = "skif.db_port";
-    public static final String DB_SID = "skif.db_sid";
+    public static final String DB_SERVICE = "skif.db_service";
     public static final String DB_DATASOURCE = "skif.db_datasource";
     public static final String DB_DATASOURCE_OLD = "skif.db_datasource_old";
 

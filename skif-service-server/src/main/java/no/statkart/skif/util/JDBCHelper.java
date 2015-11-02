@@ -75,10 +75,10 @@ public class JDBCHelper {
     public static ConnectionFactoryUsingJDBC createConnectionFactoryUsingJDBC(Configuration configuration, SnapshotVersion snapshotVersion, boolean setSnapshotOnSession) {
         String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
         String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
-        String sid = configuration.getString(SkifConfigConstants.DB_SID);
+        String service = configuration.getString(SkifConfigConstants.DB_SERVICE);
         String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
         String port = configuration.getString(SkifConfigConstants.DB_PORT);
-        String url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
+        String url = String.format("jdbc:oracle:thin:@//%s:%s/%s", hostname, port, service);
         return new ConnectionFactoryUsingJDBC(url, username, password, false, snapshotVersion, setSnapshotOnSession);
     }
 

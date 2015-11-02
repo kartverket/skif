@@ -32,10 +32,10 @@ public class ConnectionManagerUsingJDBCTest {
         SkifServerConfiguration configuration = new SkifServerConfiguration();
         username = configuration.getString(SkifConfigConstants.DB_USERNAME);
         password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
-        String sid = configuration.getString(SkifConfigConstants.DB_SID);
+        String service = configuration.getString(SkifConfigConstants.DB_SERVICE);
         String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
         String port = configuration.getString(SkifConfigConstants.DB_PORT);
-        url = String.format("jdbc:oracle:thin:@%s:%s:%s", hostname, port, sid);
+        url = String.format("jdbc:oracle:thin:@//%s:%s/%s", hostname, port, service);
 
 
         connectionManager = new ConnectionManagerUsingFactory(
