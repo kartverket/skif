@@ -31,11 +31,15 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.store.BubbleId;
 import org.hibernate.EntityMode;
+import org.hibernate.LockMode;
+import org.hibernate.impl.SessionImpl;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.persister.entity.SingleTableEntityPersister;
 import org.hibernate.type.CompositeType;
+import org.hibernate.type.EntityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -759,6 +763,16 @@ public class ActionQueue {
                 Object value = propertyValues[i];
                 Type type = propertyTypes[i];
                 if (type.isEntityType() && value != null) {
+                    // SKIF-549 Start MODIFIED-BubbleRef
+                    // Hvis det er en id, så må boblen hentes
+                    if (value instanceof BubbleId) {
+                        BubbleId id = (BubbleId) value;
+                        // Vil ikke bruker get() eller load(), for vi trenger ikke å sjekke databasen her.
+                        EntityPersister entityPersister = session.getFactory().getEntityPersister(id.getType().getName());
+                        value = session.getPersistenceContext().getEntity(new EntityKey(id, entityPersister, EntityMode.POJO));
+                    }
+                    // SKIF-549 End
+
                     // find the batch number associated with the current association, if any.
                     Integer associationBatchNumber = (Integer) entityBatchNumber.get(value);
                     if (associationBatchNumber != null && associationBatchNumber.compareTo(latestBatchNumberForType) > 0) {
