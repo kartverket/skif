@@ -8,10 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -22,7 +25,7 @@ import java.util.Collection;
 public abstract class AbstractSkifTestCase {
     static final Logger logger = LoggerFactory.getLogger(SkifTestCase.class);
     private ModuleBuilder moduleBuilder;
-    private Boolean singleVm;
+    protected Boolean singleVm;
     private Class<? extends Module> moduleClass;
     private Class<? extends Module> singleVmServerModuleClass;
     private String[] configurationFilenames = null;
@@ -146,6 +149,22 @@ public abstract class AbstractSkifTestCase {
     protected void beforeClass(ITestContext context) {
         checkModuleBuilderNotCreated();
         moduleBuilder = getModuleBuilder(context);
+    }
+
+    /**
+     * Blanker ut alle felter slik at testklassen ikke holder på mye tilstand etter at testene er kjørt.
+     */
+    @AfterClass
+    protected void afterClass() throws IllegalAccessException {
+        injector = null;
+        for (Class c = getClass(); !c.equals(AbstractSkifTestCase.class); c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                if ((field.getModifiers() & (Modifier.FINAL | Modifier.STATIC)) == 0 && !field.getType().isPrimitive()) {
+                    field.setAccessible(true);
+                    field.set(this, null);
+                }
+            }
+        }
     }
 
     private final ModuleBuilder getModuleBuilder(ITestContext context) {

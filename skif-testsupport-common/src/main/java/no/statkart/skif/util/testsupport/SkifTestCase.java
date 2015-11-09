@@ -71,8 +71,6 @@ import org.testng.annotations.Test;
  */
 @Test
 public class SkifTestCase  extends AbstractSkifTestCase {
-    private Boolean singleVm;
-
     protected void setSingleVmServerModuleClassname(String singleVmModuleClassname) {
         setSingleVmServerModuleClass((Class<? extends Module>) SkifUtil.classForName(singleVmModuleClassname));
     }
