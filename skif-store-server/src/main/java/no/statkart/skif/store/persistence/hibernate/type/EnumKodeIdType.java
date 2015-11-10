@@ -39,13 +39,30 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     private Class<? extends KodeId> enumClass;
     private Object[] values = new Object[125]; // cached Enum values
 
+    public EnumKodeIdType() {
+    }
+
+    @SuppressWarnings("UnusedDeclaration") // API
+    public EnumKodeIdType(Class<? extends KodeId> enumClass) {
+        this.enumClass = enumClass;
+    }
+
+    @SuppressWarnings("UnusedDeclaration") // API
+    public Class<? extends KodeId> getEnumClass() {
+        return enumClass;
+    }
+
+    @SuppressWarnings("UnusedDeclaration") // API
+    public void setEnumClass(Class<? extends KodeId> enumClass) {
+        this.enumClass = enumClass;
+    }
 
     public void setParameterValues(Properties parameters) {
         String enumClassName = parameters.getProperty("enumClassName");
         try {
             enumClass = Class.forName(enumClassName).asSubclass(KodeId.class);
             if (!KodeId.class.isAssignableFrom(enumClass)) {
-                throw new MappingException("Enumklasse implementerer ikke interface EnumKodeId: " + enumClass.getName());
+                throw new MappingException("Enumklasse er ikke en KodeId: " + enumClass.getName());
             }
         } catch (ClassNotFoundException cnfe) {
             throw new HibernateException("Enumklasse ble ikke funnet", cnfe);
