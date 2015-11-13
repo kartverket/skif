@@ -38,10 +38,10 @@ public class CopyHelper {
     }
 
     /**
-     * Makes a copy of an object by serilizing and deserializing it.
+     * Makes a copy of an object by serializing and deserializing it.
      *
      * @param object the object to copy.
-     * @return a copy.
+     * @return a copy of the object.
      */
     public static <T> T copy(T object) {
         if (object == null) return null;
@@ -65,11 +65,11 @@ public class CopyHelper {
     }
 
     /**
-     * Makes a copy of an object by serilizing and deserializing it. Objects may use the thread local method
-     * {@link #getSnapshotVersion()} to reset their snapshotVersion fields for copied objects
+     * Makes a copy of an object by serializing and deserializing it. Objects may use the thread local method
+     * {@link #getSnapshotVersion()} to reset their snapshotVersion fields for copied objects.
      *
      * @param object the object to copy.
-     * @return a copy.
+     * @return a copy of the object.
      */
     public static <T> T copy(T object, SnapshotVersion snapshotVersion) {
         if (object == null) return null;
