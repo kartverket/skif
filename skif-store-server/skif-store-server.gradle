@@ -8,6 +8,8 @@ dependencies {
     compile libraries.jodatime
     compile libraries.jts
 
+    provided libraries.jdbc
+
     // Sett hibernateVersion i gradle.properties
     // Scope er provided, ein må sjølv inkludere skif-store-server:skif-store-server-hs32 eller skif-store-server:skif-store-server-hs36 i sitt prosjekt
     if(hibernateVersion.equals("3.6")) {

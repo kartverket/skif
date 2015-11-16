@@ -1,12 +1,19 @@
 apply plugin: 'sktools-weblogic-wswar-plugin'
 
+configurations {
+    singlevm {
+        description = 'En Jar-utgave for bruk i SingleVM'
+        extendsFrom weblogic
+    }
+
+    weblogicTools {
+        description = 'Avhengigheter for weblogic-verktøy'
+    }
+}
+
 sourceSets.weblogic {
     java.srcDirs = ['src/main/java']
     resources.srcDirs = []
-}
-
-warWeblogic {
-  from 'src/main/webapp'
 }
 
 dependencies {
@@ -16,18 +23,20 @@ dependencies {
     weblogicCompile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
     weblogicCompile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
-    weblogicProvided libraries['tools.jar']
     weblogicProvided libraries.weblogic
+
+    weblogicTools libraries['tools.jar']
+    weblogicTools libraries.weblogic_tools
 }
 
-
-configurations {
-    singlevm {
-        description = 'En Jar-utgave for bruk i SingleVM'
-        extendsFrom weblogic
-    }
+genWeblogic {
+    classpath = sourceSets.weblogic.runtimeClasspath + configurations.weblogicTools
+    weblogicClasspath = configurations.weblogicTools
 }
 
+warWeblogic {
+    from 'src/main/webapp'
+}
 
 task jarSingleVm(type: Jar, dependsOn: project.tasks.warWeblogic.dependsOn) {
   classifier = 'singlevm'

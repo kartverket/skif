@@ -143,14 +143,6 @@ libraries.weblogic_client = files(
 libraries.weblogic_server = files(
         libraries.weblogic_databinding,
 
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
-                "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
-        ] : [
-                "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
-                "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
-                "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
-        ],
-
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar" : [],
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar" : [],
         weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? "${WEBLOGIC_HOME}/oracle_common/modules/javax.annotation_1.2.0.0_1-1.jar" : [],
@@ -169,6 +161,14 @@ libraries.weblogic_server = files(
 libraries.weblogic = files(
         libraries.weblogic_server,
         libraries.weblogic_client,
+)
+
+libraries.weblogic_tools = files(
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
+                "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
+        ] : [
+                "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
+        ],
 )
 
 libraries.jaxws_rt = files(

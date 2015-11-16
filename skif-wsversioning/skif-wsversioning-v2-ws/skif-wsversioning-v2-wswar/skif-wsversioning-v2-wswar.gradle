@@ -11,13 +11,26 @@ warWeblogic {
   from 'src/main/webapp'
 }
 
-configurations.weblogicProvided.extendsFrom configurations.provided
+configurations {
+    weblogicProvided.extendsFrom provided
+
+    weblogicTools {
+        description = 'Avhengigheter for weblogic-verktøy'
+    }
+}
 
 dependencies {
     compile project(':skif-wsversioning:skif-wsversioning-server')
     compile project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsschema')
     compile project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsmapping')
 
-    provided libraries['tools.jar']
     provided libraries.weblogic
+
+    weblogicTools libraries['tools.jar']
+    weblogicTools libraries.weblogic_tools
+}
+
+genWeblogic {
+    classpath = sourceSets.weblogic.runtimeClasspath + configurations.weblogicTools
+    weblogicClasspath = configurations.weblogicTools
 }

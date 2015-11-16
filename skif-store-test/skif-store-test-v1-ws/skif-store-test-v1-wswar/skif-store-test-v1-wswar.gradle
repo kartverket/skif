@@ -4,16 +4,15 @@ configurations {
     schemas {
         description = 'Configuration for consuming schemas'
     }
+
+    weblogicTools {
+        description = 'Avhengigheter for weblogic-verktøy'
+    }
 }
 
 sourceSets.weblogic {
     java.srcDirs = ['src/main/java']
     resources.srcDirs = []
-}
-
-
-warWeblogic {
-    from 'src/main/webapp'
 }
 
 
@@ -26,10 +25,17 @@ dependencies {
     weblogicCompile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     weblogicCompile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
-    weblogicProvided libraries['tools.jar']
     weblogicProvided libraries.weblogic
 
+    weblogicTools libraries['tools.jar']
+    weblogicTools libraries.weblogic_tools
+
     schemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
+}
+
+genWeblogic {
+    classpath = sourceSets.weblogic.runtimeClasspath + configurations.weblogicTools
+    weblogicClasspath = configurations.weblogicTools
 }
 
 task zipWsdlsAndSchemas(type: Zip) { Task t ->
@@ -49,5 +55,6 @@ task zipWsdlsAndSchemas(type: Zip) { Task t ->
 }
 
 warWeblogic {
+    from 'src/main/webapp'
     from zipWsdlsAndSchemas
 }

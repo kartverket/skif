@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'sktools-weblogic-wsclient-plugin'
 
 dependencies {
-  weblogicProvided libraries.weblogic
+  weblogicProvided libraries.weblogic_tools
   weblogicProvided libraries['tools.jar']
 }
 
