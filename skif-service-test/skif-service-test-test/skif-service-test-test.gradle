@@ -7,6 +7,7 @@ dependencies {
 
     provided libraries.jaxws_rt
     provided libraries.weblogic
+    provided libraries.jdbc
 
     testCompile project(':skif-testsupport-common')
     testCompile project(':skif-service-test:skif-service-test-server') //trenger denne avhengighet for testing av servicer

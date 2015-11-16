@@ -15,6 +15,7 @@ dependencies {
     runtime libraries.gt2 //optional avhengighet for gt2 for persistering av geometri for Oracle DB
 
     provided libraries.weblogic
+    provided libraries.jdbc
 
     testCompile project(':skif-testsupport-common')
 
