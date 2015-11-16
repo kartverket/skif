@@ -15,10 +15,10 @@ import java.util.*;
 
 /**
  * Hjelpeklasse for kjøring av prepared statements.
- * <p/>
+ * <p>
  * Inndata kan typisk være en sql (med parametere) etterfulgt av en valgfri 'in elelemts clause'
  * som beskriver en collection med {@link BubbleId}-er.
- * <p/>
+ * <p>
  * Ved store collections av id-er, vil denne bli brutt ned i mindre batcher slik at statementet vil bli kjørt flere ganger mot databasen.
  *
  * @author Christian A. Rektorli

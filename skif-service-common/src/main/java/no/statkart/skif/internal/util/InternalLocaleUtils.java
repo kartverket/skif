@@ -5,7 +5,7 @@ import java.util.Locale;
 /**
  * SKIF-271:
  * Implementasjon hentet ifra Apache Commons Lang 3.1
- * <p/>
+ * <p>
  * SKIF-462:
  * Tilpasset med støtte for Locale.ROOT, som representeres som tom streng.
  *

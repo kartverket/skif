@@ -13,11 +13,11 @@ import java.util.Collection;
 
 /**
  * Tjeneste for lesing av endringslogg for bobler som er endret.
- * <P/>
+ * <p>
  * Hvilke subtyper som støttes for filtrering av bobleklasser er implementasjonsavhengig og ikke alle subtyper vil
  * nødvendigvis være støttet. Hvis en subtype ikke er støttet må supertypen brukes i stedet og ytereligere filtrering må
  * skje på klienten etter at boblen har blitt lastet over på klienten.
- * <P/>
+ * <p>
  * For noen bobleklasser kan det finnes spesifikke filtre som filtrerer yterligere hva som returneres. Filtre som ikke
  * er relevant for en bobleklasse ignoreres mens filtre som er ukjente gir ImplementationException.
  *

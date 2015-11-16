@@ -9,7 +9,7 @@ import no.statkart.skif.storetest.domain.standalone.FilteredBubbleId;
 
 /**
  * Filtrerer objekter som er av typen FilteredBubble.
- * <p/>
+ * <p>
  * Hvis egenskap
  *
  * @author Jan Holmen

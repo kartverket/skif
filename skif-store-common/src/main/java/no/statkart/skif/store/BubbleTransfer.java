@@ -7,18 +7,18 @@ import java.util.*;
 /**
  * Et data transfer objekt for å overføre et sett med {@code BubbleObject} objekter fra
  * server til klient som en samlet enhet.
- * <p/>
+ * <p>
  * {@code BubbleTransfer} klassen er abstrakt og må subklasses for hver brukstilfelle.
  * Subklasser må definere en konstruktør som er ansvarlig for å legge inn alle objekter
  * som behøves i overførslen. Dette gjøres ved i konstruktøren å kalle
  * {@link #add(BubbleObject)} and {@link #addAll(Iterable) add(BubbleObjects)} metodene.<p>
- * <p/>
+ * <p>
  * Subklasser av <code>BubbleTransfer</code> bør definere tilgangsmetoder for å hent ut transfer objektets
  * hoved BubbleId'er. BubbleTransfer subklasser bør aldrig tilbyde tilgangsmetoder for å hente ut
  * {@code BubbleObject} objekter direkte. I stedet bør BubbleTransfer objektet registreres i {@code Store} via
  * {@link Store#register} metoden. Dette er for ikke å omgå {@code Store} sin håndtering av låste objekter,
  * slik at man ender opp med å jobbe med riktig {@code BubbleObject} dersom det finnes en nyere kopi i {@code Store}.
- * <p/>
+ * <p>
  * <strong>Eksempel 1</strong>
  * <pre>
  * // Medtode som returnerer mange objekter av forskjellig type fra server

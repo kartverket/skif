@@ -31,10 +31,10 @@ import static org.testng.Assert.*;
 
 /**
  * Tester bruk av EntityComponent på Serveren for attached og detached state for one-to-one mappings
- * <p/>
+ * <p>
  * TODO: Teste håndteringen av EntityComponents som er lazyloaded.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * Tester som er markert med "HHH-5267 NPE when updating a detached entity with a one-to-one!" tester for fix av
  * problemet med at hibernate ikke laster loadedState for detached objekter og får nullpointer exception og
  * videre ikke klarer å slette objekter som har blitt orphan.

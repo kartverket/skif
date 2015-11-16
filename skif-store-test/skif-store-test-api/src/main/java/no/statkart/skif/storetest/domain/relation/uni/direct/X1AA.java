@@ -19,7 +19,7 @@ import java.util.Set;
  * <li>En verdi som brukes son en nonunik index for klassen</li>
  * <li>En verdi som sammen med verdi fra {@code X1BBOne} utgjør en unik index for klassen (bruker {@code nr} fra begge)</li>
  * </ul>
- * <p/>
+ * <p>
  * De 3 relaterte klassene implementerer en finder for å navigerer relasjonen i motsatt rettning. Det finnes ingen
  * klasser for indexene. De bruker String klassen. Oppslag for disse skjer via servicefindermetoder.
  *

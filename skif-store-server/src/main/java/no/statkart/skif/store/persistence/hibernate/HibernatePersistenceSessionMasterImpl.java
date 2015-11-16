@@ -298,7 +298,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * componenter som ikke lengre er i bruk blir slettet automatisk. Videre blir alle collections konvertert til
      * PersistentCollections og snapshot fra opprinnelig objekt blir satt slik at Hibernate kan slette referanse som
      * ikke lenger er en del av collectionen.
-     * <p/>
+     * <p>
      * Endringer blir først utført ved senere kall til flush()
      */
     @Override
@@ -322,7 +322,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     /**
      * Sletter objekt som har samme id som {@code bubbeObject} fra underliggende hibernate session. Ved senere kall til
      * flush() vil endringene bli sendt til databasen.
-     * <p/>
+     * <p>
      * Slettingen utføres med det objektet som ligger i Hibernate (det lastes eventuelt inn hvis det ikke allerede er
      * lastet), ikke med det objektet som kommer inn, som kan være en annen detached instans.
      *
@@ -343,15 +343,15 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     /**
      * Laster eksisterende objekt fra databasen hvis det ikke allerede er lastet og prosesserer det nye objektet
      * dersom nytt og eksisterende objekt er forskjellige instanser.
-     * <p/>
+     * <p>
      * Prosesseringen består i at det nye objektet får oppdatert alle sine collections slik at de inneholder riktig
      * snapshotverdi av gammel tilstand. Dette er viktig for at hibernate skal kunne oppdatere collections riktig i
      * databasen (se SKIF-214).  Prosesseringen finner også one-to-one objekter som har blitt orphan og som må
      * slettes manuelt.
-     * <p/>
+     * <p>
      * Videre så sjekkes det nye objektet har endret type i forhold til eksisterende objekt. Dersom så har skjedd, så
      * må ikke-felles felter nullstilles og det utføres en spesiell SQL som endrer objekttypen i databasen.
-     * <p/>
+     * <p>
      * Endelig sørges det for at Hibernates cache ikke inneholder et objekt med samme id, med mindre det også er
      * nøyaktig samme objekt (instans) som <i>bubbleObject</i>.
      *
@@ -863,7 +863,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * <P>I Hibernate 3.6 støttes automatisk sletting av orphan entity components i attached state. For å få dette til
      * har Hibernate 3.6 blitt patchet med 2 bugfixes (se SKIF-326). Oppførslen blir derfor lik for attached og
      * detached state.
-     * <p/>
+     * <p>
      *
      * @param type          typen til feltet
      * @param value         nåværende verdi
@@ -1001,7 +1001,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     /**
      * Når et objekt skal endre type, må alle felter som finnes i fra-typen men ikke i til-typen, blankes ut.
      * Det vil si at kolleksjoner må tømmes og referanser må settes til <code>null</code>.
-     * <p/>
+     * <p>
      * Primitive felter kan ikke nulles ut. Disse blir returnert slik at de kan nulles ut med SQL, om mulig.
      *
      * @param bubbleObject den gamle utgaven av objektet med sin gamle type
@@ -1291,7 +1291,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * begrensninger i Oracle for hvor mange uttrykk det kan være i en WHERE-claus så deles
      * spørringen opp i flere søk/criteria-objekter dersom listen over id'er er over størrelsen
      * definert i <code>OracleUtils.SQL_EXPRESSION_MAX_SIZE</code>.
-     * <p/>
+     * <p>
      *
      * @param type klassen til domeneboblene som skal lastes
      * @param ids  et sett med id'er for domeneboblene
@@ -1342,7 +1342,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     /**
      * Metode for å sjekke om objektet allerede er lastet av hibernate uten at hibernate forsøker å laste objeket eller lager
      * en proxy.
-     * <p/>
+     * <p>
      * TODO: Vurder om dette kan gjøres smartere. Evt vedlikeholde en egen map av objekter som helt sikkert er lastet via en listener
      *
      * @return true hvis objektet er lastet

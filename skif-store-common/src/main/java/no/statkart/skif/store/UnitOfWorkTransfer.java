@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Transferobjekt som brukes for overføre endringer gjort på klient til server. For inserts og
  * updates overføres selve objektet, mens for deletes overføres kun id.
- * <p/>
+ * <p>
  * Objektet har en valideringsmetode, {@link #checkAllowedClasses()} for å sjekke at transferobjektet kun inneholder gyldige klasser. Som default
  * tillates alle bobleklasser. Metoden kan gjøres mer restriktiv i subklasser. Metoden kalles på serveren i forbindelse med
  * registrering av transferen på tjeneren.

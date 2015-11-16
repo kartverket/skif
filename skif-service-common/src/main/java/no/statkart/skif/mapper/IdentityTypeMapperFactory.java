@@ -42,19 +42,19 @@ public class IdentityTypeMapperFactory implements TypeMapperFactory {
 
     /**
      * Legger til grunnleggende Java-typer.
-     * <li>
-     * <ul>Boolean og bool</ul>
-     * <ul>Byte og byte</ul>
-     * <ul>Short og short</ul>
-     * <ul>Integer og int</ul>
-     * <ul>Long og long</ul>
-     * <ul>Float og float</ul>
-     * <ul>Double og double</ul>
-     * <ul>Character og char</ul>
-     * <ul>String</ul>
-     * <ul>BigInteger</ul>
-     * <ul>BigDecimal</ul>
-     * </li>
+     * <ul>
+     * <li>Boolean og bool</li>
+     * <li>Byte og byte</li>
+     * <li>Short og short</li>
+     * <li>Integer og int</li>
+     * <li>Long og long</li>
+     * <li>Float og float</li>
+     * <li>Double og double</li>
+     * <li>Character og char</li>
+     * <li>String</li>
+     * <li>BigInteger</li>
+     * <li>BigDecimal</li>
+     * </ul>
      *
      * @return <code>this</code>
      */

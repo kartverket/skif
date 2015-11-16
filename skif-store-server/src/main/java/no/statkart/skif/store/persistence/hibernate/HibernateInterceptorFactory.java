@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 /**
  * Factory for å opprette Hibernate Interceptor.
- * <p/>
+ * <p>
  * Implementasjoner av dette interface kan anvende dependency injection ved bruk av et standard injection builder pattern,
  * dvs at implementasjonen definere en constructor som å få injected ekstra
  * parametre, f.eks i form av {@code Provider} instanser som gjemmes som member variable. I {@link #create}

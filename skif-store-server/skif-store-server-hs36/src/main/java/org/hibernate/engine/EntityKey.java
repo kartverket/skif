@@ -37,7 +37,7 @@ import org.hibernate.type.Type;
 
 /**
  * Uniquely identifies of an entity instance in a particular session by identifier.
- * <p/>
+ * <p>
  * Uniqueing information consists of the entity-name and the identifier value.
  *
  * Modified for BubbleRef support. Lines marked with MODIFIED-BubbleRef

@@ -364,7 +364,7 @@ public class AutomagicTest {
     /**
      * Denne finner antatt beste match, ved å se på hvor mange av pakkenavn-elementene, tekst mellom punktum,
      * som er lik i domenemodellen. Den antar at den beste matchen vil få flest treff.
-     * <p/>
+     * <p>
      * Den antar også at man alltid søker fra wsapi-pakke til domene-pakke.
      *
      * @param finnDenne

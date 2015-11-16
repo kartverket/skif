@@ -9,10 +9,10 @@ import javax.xml.ws.WebServiceContext;
 
 /**
  * Factory for å få tak i {@code WSServiceChain} for Web Service av type {@code <W>}.
- * <p/>
+ * <p>
  * For hver gang {@link WebServiceImplementationFactory#getService(javax.xml.ws.WebServiceContext, Class)} kalles
  * oppretter factoryen en ny {@code WSServiceChain} med tilhørende proxy av type {@code W}.
- * <p/>
+ * <p>
  * {@code WSServiceChain}'en konstrueres ved å sette sammen en en {@code SkifWSInterceptor<W>} med ProxyHandlere
  * fra {@code WSServiceChainFactory}.
  *

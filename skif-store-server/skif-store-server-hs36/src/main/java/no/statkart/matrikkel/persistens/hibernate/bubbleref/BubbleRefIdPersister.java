@@ -19,14 +19,14 @@ import java.io.Serializable;
  * This persister exists with the sole purpose of making bubble references pass Hibernate
  * persistence consistency checks. The persister tells Hibernate that object referenced via a bubble
  * reference can be assumed to exist in the database.
- * <p/>
+ * <p>
  * When Hibernate is going to persist an object (entity), it check to see if objects referenced by
  * the entity are new (does not exist in database) or old. Hibernate makes this check to ensure that
  * reference constraints in the database are not violated. In order to make these kinds of checks
  * Hibernated needs to be able to look up the persister of the assocated object. Since
  * bubble references used the Id of the object instead of the object itself, a persister must
  * registered in Hibernated for the Id class.
- * <p/>
+ * <p>
  * The persister registered for the Id class only needs to know whether or not the object represented
  * by the Id exists in the database or not. For bubble references it can be assumed that the object
  * always will exist in the database, since bubbles are inserted one by one and not as a connected

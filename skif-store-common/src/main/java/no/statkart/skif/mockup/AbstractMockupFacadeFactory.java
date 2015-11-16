@@ -19,7 +19,7 @@ import java.util.SortedMap;
  * som builderen oppretter blir instansiert via en egen fritstående modul som forsyner MockupFacaden med
  * en egen {@code MockupStore}-instans, {@code TestNumer}-instans og {@code IdService}-instans for generering
  * av test id'er.
- * <p/>
+ * <p>
  * Klassen er annotert med @Singleton slik at readTestSet gjenbrukes på tvers av tester. Tilsvarende må subklasser
  * annoteres med @Singleton side Guice ikke tar hensyn til annotasjoner på superklasser.
  *

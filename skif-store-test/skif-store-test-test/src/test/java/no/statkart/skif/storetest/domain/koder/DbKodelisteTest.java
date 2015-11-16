@@ -27,7 +27,7 @@ import java.util.Locale;
 
 /**
  * Tester oppdatering av databasekodelister.
- * <p/>
+ * <p>
  * Testen er på ingen måte representativ for faktisk bruk, da man aldri vil opprette eller slette kodelister på denne
  * måten. Oppdateringsdelen er muligens relevant.
  *

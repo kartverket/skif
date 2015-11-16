@@ -17,7 +17,7 @@ import java.util.*;
 public class ResourceListerTest {
     /**
      * javax.swing.plaf.basic.icons.JavaCup16.png vil nok alltid være i en jar-fil (resources.jar).
-     * <p/>
+     * <p>
      * Av en eller annen grunn virker ikke dette trikset alltid for system-jar-filter. Det ser ut til å virker for
      * våre egne heldigvis, og det er der vi stort sett skal lete etter ressurser.
      *

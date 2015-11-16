@@ -26,7 +26,7 @@ import java.util.Collection;
  * expected to have a flag where the individual bits in the flag tells which collections in the
  * object that are known to be empty. These collections are then pre-initialized to empty collections
  * such that Hibernate will not need to read the collections from the database.
- * <p/>
+ * <p>
  * The objects empty collection flag must be updated whenever the contentes of one of the objects collections are changed.
  * A straight forward approach is to recalculate the flagg whenever the object is flushed. This approach, however,  can
  * lead to deadlocks and subtle raceconditions where a flush during a pure read operation causes the flag to change.
@@ -37,7 +37,7 @@ import java.util.Collection;
  * are not recalculated since theses collections will be unchanged. The initial value of the flag can be zero. When the
  * object is updated the flag will be recalculated and bits for empty collections will be set allowing the optimization
  * to kick in the next time the object is loaded.
- * <p/>
+ * <p>
  * Note: this optimalization works because the collections always are updated through the BubbleObject and
  * never directly (and because insert, update, remove always is called on the StoreChain whenever a BubbleObject changes).
  *

@@ -13,7 +13,7 @@ import no.statkart.skif.service.proxy.SingleVmViaWSWithServiceContextMapperRemot
 
 /**
  * Strategi for kjøring i SingleVM, men med serialisering via XML mellom klient og tjener.
- * <p/>
+ * <p>
  * Denne klassen arver fra {@link RemoteServiceModuleStrategyJEE} siden den har mest logikk til felles, men det betyr at
  * noe superklassen setter må overskrives med verdier tilsvarende {@link RemoteServiceModuleStrategySingleVm}.
  *

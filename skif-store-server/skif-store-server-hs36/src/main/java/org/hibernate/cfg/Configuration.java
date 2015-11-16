@@ -626,7 +626,7 @@ public class Configuration implements Serializable {
 
 	/**
 	 * <b>INTENDED FOR TESTSUITE USE ONLY!</b>
-	 * <p/>
+	 * <p>
 	 * Much like {@link #addCacheableFile(File)} except that here we will fail immediately if
 	 * the cache version cannot be found or used for whatever reason
 	 *
@@ -855,7 +855,7 @@ public class Configuration implements Serializable {
 
 	/**
 	 * Read all mappings from a jar file
-	 * <p/>
+	 * <p>
 	 * Assumes that any file named <tt>*.hbm.xml</tt> is a mapping document.
 	 *
 	 * @param jar a jar file
@@ -911,7 +911,7 @@ public class Configuration implements Serializable {
 
 	/**
 	 * Read all mapping documents from a directory tree.
-	 * <p/>
+	 * <p>
 	 * Assumes that any file named <tt>*.hbm.xml</tt> is a mapping document.
 	 *
 	 * @param dir The directory
@@ -1525,7 +1525,7 @@ public class Configuration implements Serializable {
 	 * Recursively builds a list of FkSecondPass instances ready to be processed in this order.
 	 * Checking all dependencies recursively seems quite expensive, but the original code just relied
 	 * on some sort of table name sorting which failed in certain circumstances.
-	 * <p/>
+	 * <p>
 	 * See <tt>ANN-722</tt> and <tt>ANN-730</tt>
 	 *
 	 * @param orderedFkSecondPasses The list containing the <code>FkSecondPass<code> instances ready
@@ -2146,7 +2146,7 @@ public class Configuration implements Serializable {
 	/**
 	 * Use the mappings and properties specified in the given application resource. The format of the resource is
 	 * defined in <tt>hibernate-configuration-3.0.dtd</tt>.
-	 * <p/>
+	 * <p>
 	 * The resource is found via {@link #getConfigurationInputStream}
 	 *
 	 * @param resource The resource to use
@@ -2167,7 +2167,7 @@ public class Configuration implements Serializable {
 	 * Get the configuration file as an <tt>InputStream</tt>. Might be overridden
 	 * by subclasses to allow the configuration to be located by some arbitrary
 	 * mechanism.
-	 * <p/>
+	 * <p>
 	 * By default here we use classpath resource resolution
 	 *
 	 * @param resource The resource to locate

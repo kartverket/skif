@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 /**
  * Adapter proxy som adapterer domain interface T til webservice interface A ved å mappe metoder med samme navn til hverandre og transformere
  * argumentene og resultatet vha et {@code map} objekt
- * <p/>
+ * <p>
  * Adapteren har også exception håndtering dersom denne er tildelt og satt (ikke null).
  * Mapperen får som rolle å holde styr på evt wrapping av exceptions. Et eksempel kan være å wrappe alle ikke skif exceptions i en {@link no.statkart.skif.exception.ImplementationException}.
  *

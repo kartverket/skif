@@ -429,7 +429,7 @@ public class MockupStore implements Store {
 
     /**
      * Finner alle BubbleIds som refereres til fra dette objektet og alle underkomponenter.
-     * <p/>
+     * <p>
      * Algoritmen tar høyde for at domenemodellen har doble eller sirkulære linker. Benytter derfor en {@code Stack} for å overkomme dette.
      *
      * @param object           objektet som skal granskes

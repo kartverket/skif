@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * Mapper mellom {@link SnapshotVersion} og en wrappet {@link javax.xml.datatype.XMLGregorianCalendar}.
- * <p/>
+ * <p>
  * Typen i XML-skjema skal være:
  * <pre>
  * &lt;xs:complexType name="SnapshotVersion"&gt;

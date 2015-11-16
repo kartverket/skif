@@ -62,7 +62,7 @@ public class IdServiceImpl implements IdService {
 
     /**
      * Angir hvilke sekvensnavn som skal brukes for gitt {@code BubbleId} klasse.
-     * <p/>
+     * <p>
      * Default implementasjonen bruker samme sekvensnavn, {@code GLOBAL_SEQUENCE} for alle klasser
      */
     protected <T extends BubbleId<?>> String getSequenceName(Class<T> idClass) {

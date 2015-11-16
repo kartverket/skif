@@ -15,7 +15,7 @@ import java.net.URL;
  * and <code>FileConfiguration#save(java.io.Writer)</code>.</p>
  * <p>This base class already implements a couple of ways to specify the location
  * of the file this configuration is based on. The following possibilities
- * exist:
+ * exist:</p>
  * <ul><li>URLs: With the method <code>setURL()</code> a full URL to the
  * configuration source can be specified. This is the most flexible way. Note
  * that the <code>save()</code> methods support only <em>file:</em> URLs.</li>
@@ -29,15 +29,15 @@ import java.net.URL;
  * the location is stored. The base path is a string defining either a local
  * directory or a URL. It can be set using the <code>setBasePath()</code>
  * method. The file name, non surprisingly, defines the name of the configuration
- * file.</li></ul></p>
+ * file.</li></ul>
  * <p>Note that the <code>load()</code> methods do not wipe out the configuration's
  * content before the new configuration file is loaded. Thus it is very easy to
  * construct a union configuration by simply loading multiple configuration
  * files, e.g.</p>
- * <p><pre>
+ * <pre>
  * config.load(configFile1);
  * config.load(configFile2);
- * </pre></p>
+ * </pre>
  * <p>After executing this code fragment, the resulting configuration will
  * contain both the configuration of configFile1 and configFile2. On the other
  * hand, if the current configuration file is to be reloaded, <code>clear()</code>

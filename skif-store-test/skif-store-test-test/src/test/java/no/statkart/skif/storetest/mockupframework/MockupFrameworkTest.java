@@ -25,7 +25,7 @@ import java.util.SortedMap;
 
 /**
  * Tester at mockup rammeverket virker fra klient.
- * <p/>
+ * <p>
  * Denne testen bruker en helt egen lille MockupFacadeFactory som inneholder begrenset antall klasser og
  * som ikke brukes for annen testing.
  *

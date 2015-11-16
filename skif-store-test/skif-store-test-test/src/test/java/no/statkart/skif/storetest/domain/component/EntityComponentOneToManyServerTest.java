@@ -27,7 +27,7 @@ import static org.testng.Assert.*;
 
 /**
  * Tester bruk av EntityComponent på Serveren for attached og detached state for one-to-many mappings
- * <p/>
+ * <p>
  *
  * @author Henrik Fredholm
  * @since 2.4

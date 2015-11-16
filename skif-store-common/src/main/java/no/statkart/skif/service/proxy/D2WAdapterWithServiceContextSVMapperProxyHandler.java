@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 /**
  * Proxy som adapterer java interface {@code T} til Web service interface {@code A}. Denne adapter har
  * tilleggsfunksjonalitet som anvender et sett av regler på java intefacemetodens parametre til å bestemme
- * hvilken  {@hcode SnapshotVersion} som skal gjelde for kallet. Bl.a tillader adapteren at java interface metoden har en
+ * hvilken  {@code SnapshotVersion} som skal gjelde for kallet. Bl.a tillader adapteren at java interface metoden har en
  * ekstra siste parameter som eksplisitt angir {@code SnapshotVersion} for kallet. Denne parameteren overføres
  * som en del av ServiceContext objektet og ikke som en selvstendig parameter i wsapi kallet. Dersom java interfacemetoden
  * ikke har en slik eksplisitt {@code SnapshotVersion} som siste parameter forsøker adapteren istedet å finne en
@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
  * anvende java interfacemetodens parametre til å bestemme {@code SnapshotVersion} anvendes verdien i
  * {@code SnapshotVersionContext} uforandret.
  *
- * <P/>Algoritmen som bestemmer hvilken parameter som skal anvendes for en gitt javaa interfacemetode avhenger kun av
+ * <p>Algoritmen som bestemmer hvilken parameter som skal anvendes for en gitt javaa interfacemetode avhenger kun av
  * java interfacemetodens signatur og ikke av faktiske parameterverdier.
  *
  * @author Henrik Fredholm

@@ -21,9 +21,9 @@ import java.util.Iterator;
 /**
  * Adapter proxy som adapterer domain interface T til webservice interface A ved å mappe metoder med samme navn til hverandre og transformere
  * argumentene og resultatet vha et mapping2 objekt
- * <p/>
+ * <p>
  * Adapteren har også exception håndtering dersom denne er tildelt og satt (ikke null).
- * Alle @{Exception}s annotert med {@WebFault} blir mappet over til korresponderende exceptions ihht til mapper. All andre exceptions blir fanget og wrappet til
+ * Alle {@link Exception}s annotert med {@link WebFault} blir mappet over til korresponderende exceptions ihht til mapper. All andre exceptions blir fanget og wrappet til
  * {@link ImplementationException}.
  *
  * @author Henrik Fredholm

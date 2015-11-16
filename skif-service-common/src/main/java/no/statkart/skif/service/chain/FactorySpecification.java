@@ -6,7 +6,7 @@ import no.statkart.skif.exception.ImplementationException;
 /**
  * En spesifikasjon som angir en ServiceChainFactory klasse med tilhørende Guice bindinger som må til for å binde opp
  * ProxyHandlere som factoryen anvender for hver service.
- * </p>
+ * <p>
  * Klassen har også en hjelpemetode {@link #requireBinding(com.google.inject.Binder, Class)} som gjør de mulig å angi
  * andre bindinger som factoryen avhenger av og som allerede må være bundet opp.
  *

@@ -78,7 +78,7 @@ public class MemoryLocker<T> implements DBLockerService<T>, DBLockerInTransactio
      * Obtains a lock for all spesified ids that automatically times out after lockTime miliseconds. Locks already held by
      * key will get their expiration renewed. Locks not held by the key will be timeout and taken by key. If it is not
      * possible to take all locks, the method will throw an LockExcption and no locks will be taken.
-     * <p/>
+     * <p>
      * Note: Timedout locks are not restored when a LockedException is thrown.
      *
      * @param keys         set of BubbleIds to lock. May contain ids already lock by user.

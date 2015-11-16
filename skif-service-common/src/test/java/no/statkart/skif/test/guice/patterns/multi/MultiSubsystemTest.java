@@ -12,11 +12,11 @@ import static org.testng.Assert.assertEquals;
  * forskjellige instanser eller implementasjonsklasser. Her kan enten være snakk om at den samme modulen
  * brukes flere ganger i forskjelige konfigurasjon eller om forskjellige moduler som tilfeldigvis bruker
  * de samme klassene.
- * <p/>
+ * <p>
  * Standard løsningen for problemet er i utgangspunktet å bruke en {@code PrivateModule} for hvert subsystem og
  * eksponere utvalgte eller alle bindinger med forskjellig annotasjon slik at de ikke blir konflikt. F.eks kan subsystem
  * A eksponere alle sine bindinger som {@code @Named("A"}} og subsystem B som {@code @Named("B"}.
- * <p/>
+ * <p>
  * Problemet med ovenståenede teknikk er at det fort kan bli uklart hvor ting kommer fra og henger sammen når man
  * lager klasser som jobber på tvers av systemene. Hvis begge subsystemene har en tjenester som hedder {@code Store}
  * og {@code Service1} må man ved injection f.eks angi "{@code @Inject @Named("A") Store store; @Inject @Named("A") Service1 s;}"
@@ -27,14 +27,14 @@ import static org.testng.Assert.assertEquals;
  * ut fra injectoren med annotasjonen som key. Dette kan fort bli kryptisk og fører til en rar programmeringsstil. Endvidere
  * kan det bli vanskelig å skjønne når man skal bruke {@code @Inject Store store;} og man bør bruke
  * {@code @Inject @Named("A") Store store}.
- * <p/>
+ * <p>
  * Det kan i mange tilfelle være hensiktsmessig fra starten av å oppfatte hvert subsystemet som en instans som man gjerne
  * vil kunne sende rundt som en parameter til kode som jobber på et eller flere subsystemer. I {@code PrivateModule} bør man
  * eksponere et interface som representere submodulen og som har metoder for å hente ut intern komponenter. F.eks
  * {@code interface SystemA { Store getStore(); Service1 getSerivce1();}}. Da kan man injecte {@code SystemA} de steder
  * hvor man trenger og jobbe med det. Klassen {@code SystemA} blir da en facade til subsystemet, noe som er et velkjendt
  * design pattern.
- * <p/>
+ * <p>
  * Denne testcasen tester ut forskjellige aspekter av dette prinsippet. Overordnet princip:
  * <ul>
  * <li>Hvert subsystem legges inn i et PrivateModule som inneholder:

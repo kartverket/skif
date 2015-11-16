@@ -15,7 +15,7 @@ public class IdentityMappingTest {
      * I dette tilfellet har vi en {@link Integer} på source-siden, men vet ikke noe mer enn at det er {@link Object}
      * på andre siden. Det er en {@link IdentityTypeMapperFactory} installert som skal sørge for at {@code Integer}
      * kommer rett over.
-     * <p/>
+     * <p>
      * Dette er noe som ikke virker så minimalt som det er gjort her.
      */
     @Test(enabled = false)

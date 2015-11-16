@@ -23,18 +23,18 @@ import java.util.zip.ZipInputStream;
 /**
  * Denne klassen forsøker å finne ut hvilke klasser som tilsvarer hverandre basert på antagelsen at klassenavnene er
  * like, klassene ligger bare i forskjellige pakker.
- * <p/>
+ * <p>
  * For å benytte klassen så setter man inn denne med {@link AbstractMapper#setMappingResolver(MappingResolver)}.
  * For å benytte MappingResolver må også en packageMapping legges inn. Ved bruk av addPackageMapping er det mulig å
  * mappe alle klasser i en pakke og subpakker til klasser i en annen pakke og subpakkker med samme navn.</p>
- * <p/>
+ * <p>
  * F.eks.
- * <code><pre>
+ * <pre><code>
  * MappingResolver resolver = new MappingResolver();
  * resolver.addPackageMapping("no.statkart.grunnbok.borett.info.wsapi.domain", "no.statkart.grunnbok.borett.info.domain");
  * setMappingResolver(resolver);
- * </pre></code>
- * <p/>
+ * </code></pre>
+ * <p>
  * Hensikten med defaultmapperen er at den skal benyttes ved "defaulting" som i en switch-statement. Dersom ingen annen typemapping
  * finnes så faller typemappingen tilbake til denne.</p>
  *

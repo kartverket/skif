@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * EntityComponent som tester nesting. Har et felt {@code nestedComponent} som peken på en annen instans av samme type.
  * Har også et {@code Set} som peker på komponenter av samme type. Ingen instanser skal kunne deles.
- * <p/>
+ * <p>
  * <P>Denne klassen har ingen tilbakepeker til owner og kan derfor pekes til fra forskjellige klasser. Der gør at det
  * ikke trengs som mange forskjellige testklasser. I attached state kan rammeverket ikke fange opp hvis komponenten
  * stjæles.

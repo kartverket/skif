@@ -15,7 +15,7 @@ import static org.testng.Assert.*;
 
 /**
  * Tester mixed kjørsel på klient og tjener.
- * <p/>
+ * <p>
  * Klient og tjener kjøre i forskjellige omgivelser og skal ikke dele sekvenser.
  *
  * @author Henrik Fredholm

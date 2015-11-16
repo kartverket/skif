@@ -15,11 +15,11 @@ import no.statkart.skif.service.proxy.ProxyHandler;
  * service av type {@code S} har sin egen {@code EJBServiceChainFactory<S>} og
  * {@code ImplementationServiceChainFactory<S>} implementasjoner og kan derfor ha forskjellige innhold i deres
  * {@code EJBServiceChain}s om ønskelig.
- * <p/>
+ * <p>
  * Denne provider skal kun brukes av skif-rammeverket og skal ikke brukes direkte fra annen kode.
  * Provideren bindes inn av skif-rammeverket med en egen Guice key {@link no.statkart.skif.service.annotation.EJBRef}
  * for type {@code S} slik at den ikke kommer i konflikt med standard bindingen for  type {@code S}.
- * <p/>
+ * <p>
  * Servicens {@code EJBServiceChain} implementerer et abstraksjonlag som gjør det mulig å implementere services som
  * virker likt både med og uten en applikasjonsserver. Instanser fra denne provider brukes litt forskjellig i
  * {@code JEE} og {@code SINGLE_VM} mode siden applikasonstjenerens ejb-implementasjon automatisk gjør en del arbeide

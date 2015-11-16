@@ -74,7 +74,7 @@ public class VersionFinder {
 
     /**
      * Forventer at tabellnavn er laget for å støtte følgende konvensjon:
-     * <p/>
+     * <p>
      * Tabellnavn = BubbleId - "Id" + _H
      * Dersom klassen da heter BubbleId skal det finnes en tabell som heter Bubble_H i databasen.
      *

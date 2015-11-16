@@ -85,7 +85,7 @@ public abstract class AbstractTypeMapper<WsapiT, DomainT, M extends Mapping> imp
     }
 
     /**
-     * @return debug streng på formen <TypeMapperklasse>{<domeneklasse> <-> <apiklasse>}
+     * @return debug streng på formen <pre>&lt;TypeMapperklasse&gt;{&lt;domeneklasse&gt; &lt;-&gt; &lt;apiklasse&gt;}</pre>
      */
     public String toString() {
         return super.toString() + "{" + domainClass + " <-> " + wsapiClass + "}";

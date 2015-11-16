@@ -458,7 +458,7 @@ public class StoreSessionServer extends AbstractStoreSession {
     /**
      * Låser objekt og lager en kopi av objektet hvis låsingen skjer i en unit of work. Hvis låsingen skjer direkte
      * på StoreSessionServer lages ingen kopi og objekt som er koblet mot underliggende session brukes.
-     * <p/>
+     * <p>
      * Objektet kan være følgende tilstander:
      * <ul>
      * <li>Allerede låst for level</li>
@@ -467,7 +467,7 @@ public class StoreSessionServer extends AbstractStoreSession {
      * <li>Ikke loaded, men allerede låst</li>
      * <li>Ikke loaded og ikke låst</li>
      * </ul>
-     * <p/>
+     * <p>
      * Et av målene for implementasjonen er å utnytte tilgjengelig informasjon for å ungå å måtte gjøre kall mot
      * databasen.
      *

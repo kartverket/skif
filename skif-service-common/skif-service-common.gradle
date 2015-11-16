@@ -21,13 +21,6 @@ task testJar(type: Jar) {
     from sourceSets.test.output
 }
 
-
-task javadocJar(type: Jar, dependsOn:javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-    onlyIf { gradle.taskGraph.hasTask(install) || gradle.taskGraph.hasTask(uploadArchives) } //only when published..
-}
-
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
@@ -37,7 +30,6 @@ task sourcesJar(type: Jar, dependsOn:classes) {
 artifacts {
     testApi testJar
     archives sourcesJar
-    archives javadocJar
 }
 
 task assertDependencies() {

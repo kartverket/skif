@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  * parameter skal kun påvirke de tester som er designet til valgfritt å kunne kjøres i begge modes. Tester som krever
  * bestemt mode eller eksplisitt tester alle modes skal ikke påvirkes av en slik ekstern parameter. Det skal være mulig
  * selektivt å kjøre tester som tilhører en bestemt testgruppe eller ekskluderer tester som tilhører en bestemt testgruppe.
- * <p/>
+ * <p>
  * Videre skal støtte i denne klassen være slik at der er enkelt å kjøre testene fra både fra byggeverktøy (f.eks Gradle)
  * og fra IntelliJ. Spesielt skal det være mulig å velge en enkelt testmetode eller testklasse i IntelliJ, høyre-klikke
  * på metoden og kjøre denne. TestNG støtten i IntelliJ (versjon 10) er slik at ikke alle TestNG annotasjoner umiddelbart
@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
  * det med hensikt anvendes mellom testklasser i samme pakke). Annotasjonen dependsOnMethods bør kun brukes innenfor
  * samme testklasse og gjør at man ikke lengere kan kjøre metodene enkeltvis fra IntelliJ og bør derfor ikke brukes
  * i stor utstrekning.
- * <p/>
+ * <p>
  * Tanken bak designet av testklassen var opprindelig å bruke  {@code @BeforeSuite} til å gjøre all nødvendig tung
  * initialisering, men det virket dårlig fordi {@code @BeforeSuite} ikke blir kjørt når man bruker grupper
  * ( {@code @BeforeSuite} blir ikke med i grupper som subklassen tilhører) og dermed blir  {@code @BeforeSuite} ikke
@@ -41,7 +41,7 @@ import org.testng.annotations.Test;
  * i en av subklassene kjøres. Dette skal skje uavhengig av hvordan testene blir utvalgt. Det er ikke mulig å få til
  * med {@code @BeforeSuite} annotasjonen. Derfor blir {@code @BeforeClass} og {@code alwaysRun} brukt i stedet. Man må
  * da teste på en statisk variable eller lignende slik at initialiseringen ikke skjer flere ganger.
- * <p/>
+ * <p>
  * Det er ønskelig å kunne skjeldne mellom release- og unit-tester da disse vil gå mot forskjellige typer databaser. Unit-
  * tester må ikke få lov å ødelegge releasetestdatabasen da denne kan ta lang tid å gjenetablere.
  * For release-tester er det også ønskelig å kunne skjeldne mellom read- og write-tester siden write-tester krever at
@@ -49,7 +49,7 @@ import org.testng.annotations.Test;
  * forskjellige brukere for hver database type og evt en liten sjekk som får unit tester til å feile hvis de
  * forsøker å skrive data til en releasetest database.  Denne basisklassen har dog ikke noen eksplisitt støtte for dette
  * konseptet. Dette kan implementeres i en subklasse.
- * <p/>
+ * <p>
  * Klassen har avansert støtte for å gjenbruke konfigurasjon på tvers av testcaser og testmetoder slik at initialisering
  * av tunge ressurser kan reduseres. Default er følgende:
  * <ul>
@@ -60,10 +60,10 @@ import org.testng.annotations.Test;
  * </ul>
  * Det er mulig å endre oppførslen for en test slik at den alltid kjører i SingleVm eller JEE mode. Det er også mulig å angi
  * at hver enkelt testmetode skal ha sin egen injector eller at testcasen ikke skal dele konfigurasjon med andre testcases.
- * <p/>
+ * <p>
  * Klassen støtter automatisk member injection av via @Inject slik testcasens membervariable er satt før test metoden
  * kalles. Member variablene sette hvergang klasse skifter injector.
- * <p/>
+ * <p>
  * Klassen har en tom {@link #resetLogin()}-metode som kalles automatisk før hver testmetode.
  *
  * @author Henrik Fredholm

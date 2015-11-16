@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * Mapper mellom {@link Timestamp} og wrappet {@link XMLGregorianCalendar}.
- * <p/>
+ * <p>
  * Typen i XML-skjema skal være:
  * <pre>
  * &lt;xs:complexType name="SnapshotVersion"&gt;

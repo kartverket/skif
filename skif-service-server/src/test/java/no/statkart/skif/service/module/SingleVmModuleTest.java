@@ -42,8 +42,8 @@ import static org.testng.Assert.*;
  * - StrategyFactory
  * - Properties
  * - ServerMode
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * ModuleConfig
  * -StrategyFactory
  *

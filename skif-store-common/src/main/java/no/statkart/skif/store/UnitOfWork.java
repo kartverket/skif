@@ -4,7 +4,7 @@ import java.io.Closeable;
 
 /**
  * Eksternt API for å forholde seg til en unit of work.
- * <p/>
+ * <p>
  * Klassen implementerer {@link Closeable}, og kan derfor benyttes med try-with-resource. {@link #close()} vil medføre
  * at unit-of-work blir abortert dersom den fortsatt er aktiv.
  *

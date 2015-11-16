@@ -140,7 +140,7 @@ public class Test1ServiceWSTestJEE {
     /**
      * JAX-WS klient mot remote server hvor Guice binding av Web Servicen konfigureres manuelt vha en JAX-WS provider som
      * støtter dynamisk endringer username, password og url.
-     * <p/>
+     * <p>
      * Da testen ble skrevet fantes det alternativer. Nå er dette eneste måten å gjøre dette på, og de andre testene er
      * endret, men denne tester noe de ikke tester og dermed beholdt.
      */

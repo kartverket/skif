@@ -12,7 +12,7 @@ import java.sql.Connection;
  * Klasse for å hente ut en Hibernate session og låse denne til å bruke en gitt snapshotversion. Når man er
  * ferdig med å bruke sessionen må den frigis slik at sessionen senere kan gjenbrukes for en annen snapshotversion.
  * Dette skjer automatisk når man skifter snapshotversion via selectoren og når selectoren lukkes.
- * <p/>
+ * <p>
  * <strong>Eksempel på bruk</strong>
  * <pre>
  *     class SessionSelectorUsage {

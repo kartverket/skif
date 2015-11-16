@@ -20,7 +20,7 @@ import java.util.HashMap;
  * for webservice av type {@code <T>}. Siden implementasjonen på tjeneren benytter interface {@code <A extends ServiceWSI>},
  * så må kallet også adapteres fra {@code <T>} til {@code <A>}. På tjenersiden sendes kallet videre til proxyhandlerkjeden
  * som er genereres av den oppbundete {@code WSServiceChainFactory<A>}.
- * <p/>
+ * <p>
  * I forkant av hvert kall til serveren henter ProxyHandleren ut {@code UserLogin} fra klients injector.
  * Disse data legges inn i et {@link no.statkart.skif.service.SingleVmRemoteCallContext}-objekt som overføres til serveren uten om selve
  * service-kallet ved å binde objektet i serverens injector med scope {@link no.statkart.skif.service.scope.ServiceRequestScope}. Det er nødvendig å

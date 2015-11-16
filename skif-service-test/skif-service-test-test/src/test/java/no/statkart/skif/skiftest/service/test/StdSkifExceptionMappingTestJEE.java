@@ -44,7 +44,7 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
 
     /**
      * Test kall til Web service virker når det ikke genereres exception.
-     * <p/>
+     * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
      */
     @Test(groups = "server-required")
@@ -56,7 +56,7 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
     /**
      * Web service kaster en runtime exception som JAX-WS Web service rammeverket på serveren automatisk gjør om
      * til en SOAPFaultException. På klienten mappes denne med en IdentityMapper.
-     * <p/>
+     * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
      */
     @Test(groups = "server-required", expectedExceptions = SOAPFaultException.class, expectedExceptionsMessageRegExp = "abc")
@@ -67,7 +67,7 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
     /**
      * Web service kaster en checked exception som JAX-WS Web service rammeverket på serveren sender videre uforandret
      * siden den er annotert med @WebFault. På klienten mappes denne ikke og det produseres en MappingException.
-     * <p/>
+     * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
      */
     @Test(groups = "server-required")
@@ -86,7 +86,7 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
      * Web service kaster en checked exception som JAX-WS Web service rammeverket på serveren sender videre uforandret
      * siden den er annotert med @WebFault. På klienten gjenkjennes denne og mappes til en domene runtime exception med
      * tilsvarende navn.
-     * <p/>
+     * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
      */
     @Test(groups = "server-required")
@@ -104,7 +104,7 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
 
     /**
      * Test kall til Web service virker når det ikke genereres exception.
-     * <p/>
+     * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
      */
     @Test(groups = "server-required")
@@ -116,7 +116,7 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
     /**
      * Web service kaster en runtime exception som JAX-WS Web service rammeverket på serveren automatisk gjør om
      * til en SOAPFaultException. På klienten mappes denne med en IdentityMapper.
-     * <p/>
+     * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
      */
     @Test(groups = "server-required")
@@ -153,7 +153,7 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
      * Web service kaster en checked exception som JAX-WS Web service rammeverket på serveren sender videre uforandret
      * siden den er annotert med @WebFault. På klienten gjenkjennes denne og mappes til en domene runtime exception med
      * tilsvarende navn.
-     * <p/>
+     * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
      */
     @Test(groups = "server-required")

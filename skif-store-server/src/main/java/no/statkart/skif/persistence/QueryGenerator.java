@@ -55,7 +55,7 @@ public class QueryGenerator extends GenericQueryGenerator {
 
     /**
      * Angir hvilken java.sql.Connection som skal brukes, samt hvilken {@link SnapshotVersion} som er satt.
-     * <p/>
+     * <p>
      * OBS! Det er kallers ansvar å sørge for at snapshotVersion er satt på Connection. Å endre snapshot på connection
      * mens QueryGenerator er i bruk blir lett bare rot.
      *

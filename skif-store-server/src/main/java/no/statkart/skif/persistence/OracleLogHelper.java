@@ -24,14 +24,14 @@ import java.util.logging.*;
  * program vil slå av all logging. Programkode som skal gjenbrukes skal ikke inneholde kall til {@code setTraceState()}
  * og bør fortrinsvis bare inneholde kall til {@code pause()} og {@code resume(boolean)}.
  *
- * <p/>
+ * <p>
  * Logging sendes til konsolen som default, men det er mulig å sende logging til en fil i stedet. Hvis det skal sendes
  * til fil må man kalle {@link #initHandler(String)} før {@link #enableTrace(Verbose)} kalles første gang.
- * <p/>
+ * <p>
  * For at det skal komme noe logging i det hele tatt må man bruke ojdbc*_g versjonen av Oracle driveren og det er
  * viktig å sjekke at ikke andre bibliotekter med oracle driver (f.eks weblogic ) er først i classpath. Dette kan
  * f.eks sjekkes ved å inspisere oracle.jdbc.driver.OracleLog.class.getProtectionDomain().getCodeSource()
- * <p/>
+ * <p>
  * Ved overgang til ny versjon  av Oracle JDBC driver må filtrene i denne logger oftest skrives om pga interne endringer
  * i driveren fører til at det genereres andre log records. Her gjelder det og oppdatere OracleLogHelper til å plukke
  * ut de riktige records slik at kun sql og bindingsparametre vises.

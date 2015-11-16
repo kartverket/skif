@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 /**
  * Definerer mapping mellom Domain Objects og Web Service API Objects.
- * <p/>
+ * <p>
  * I utgangspunktet trenger man ikke definere noen andre metoder enn de generiske, men custom mappere blir mer
  * kompakte dersom man definerer opp de mappingene de bruker.
  *

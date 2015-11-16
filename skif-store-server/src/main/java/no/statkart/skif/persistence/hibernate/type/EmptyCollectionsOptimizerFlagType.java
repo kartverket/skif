@@ -26,7 +26,7 @@ import java.util.Properties;
  * all. If the collection is empty for only some for the bubbles the performance benefit will be less
  * since Hibernate then will have to hit the database for those collections that are not empty and by utilizing batch
  * loading Hibernate would get the empty collections in the same database call.
- * <p/>
+ * <p>
  * The type is a flag where each bit corresponds to a given collection in the bubble. A set bit indicates that
  * the collection is know to be empty. A non set bit indicates that the collection might be non empty and must
  * be loaded.

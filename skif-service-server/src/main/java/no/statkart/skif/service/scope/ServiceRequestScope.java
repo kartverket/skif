@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * Scopes a single execution of a block of code. Apply this scope with a
  * try/finally block: <pre>   {@code
- * <p/>
+ * <p>
  *   scope.enter();
  *   try {
  *     // explicitly seed some seed objects...
@@ -26,7 +26,7 @@ import static com.google.common.base.Preconditions.checkState;
  *     scope.exit();
  *   }
  * }</pre>
- * <p/>
+ * <p>
  * The scope can be initialized with one or more seed values by calling
  * <code>seed(key, value)</code> before the injector will be called upon to
  * provide for this key. A typical use is for a servlet filter to enter/exit the
@@ -35,7 +35,7 @@ import static com.google.common.base.Preconditions.checkState;
  * (since you have to provide <i>some</i> binding anyhow) to include a
  * corresponding binding that will throw an exception if Guice is asked to
  * provide for that key if it was not yet seeded: <pre>   {@code
- * <p/>
+ * <p>
  *   bind(key)
  *       .toProvider(SimpleScope.<KeyClass>seededKeyProvider())
  *       .in(ScopeAnnotation.class);

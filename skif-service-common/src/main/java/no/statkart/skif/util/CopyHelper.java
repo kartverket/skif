@@ -19,7 +19,7 @@ public class CopyHelper {
      * kopiering av et objekt skal fører til at utvalgte SnapshotVersion felter i objektet overskrives med den satte
      * verdien. Etter bruk sette variablen tilbake til null.
      *
-     * <P/>Hvilke felter som får overskrevet snapshotVersion felter styres av klassen selv ved å implementere følgende
+     * <p>Hvilke felter som får overskrevet snapshotVersion felter styres av klassen selv ved å implementere følgende
      * serialiseringslogikk:
      * <pre>
      * private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {

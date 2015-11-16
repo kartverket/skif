@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 
 /**
  * Felles baseklasse for alle typer exception som kan oppstå i systemet.
- * <p/>
+ * <p>
  * Feiltyper deles strent inn i {@link ApplicationException applikasjonsfeil} og {@link SystemException systemfeil}.
  *
  *

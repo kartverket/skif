@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Components {
     /**
      * Hjelpemetode som sikre at komponent blir sjekket og satt riktig påeiende objekt.
-     * <p/>
+     * <p>
      * <P>Eksempel på implementasjon i eiende objekt:
      * <pre>
      *    public void setLevel1Component(Level1CompositeComponent level1Component) {
@@ -81,7 +81,7 @@ public class Components {
 
     /**
      * Hjelpemetode som sikre at tilbakepeker til owner blir sjekket og satt riktig for komponenter
-     * <p/>
+     * <p>
      * <P>Eksempel på bruk:
      * <pre>
      *    public void setOwner(BubbleWithCompositeComponent owner) {

@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkState;
  * hovedsakelig i forbindelse med spørringer hvor collections kan være  vilkårlig store. Alle BubbleId'er i en collectionen
  * må ha samme idValue type (Long eller String). {@code SnapshotVersion} i id'er anvendes ikke, men må være satt på
  * sessionen allerede. For å hindre feil sjekkes det at alle id'er inneholder samme snapshotversion.
- * <p/>
+ * <p>
  * <p>For å kunne bruke henholdsvis Number og String arrays i spørringer må Oracle skjemaet inneholde følgende definisjoner:
  * <pre>
  *    CREATE TYPE NUMBER_LIST_TYPE AS TABLE OF NUMBER;

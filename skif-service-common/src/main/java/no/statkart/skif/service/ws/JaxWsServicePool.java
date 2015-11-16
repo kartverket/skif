@@ -15,10 +15,10 @@ import java.util.regex.Pattern;
  * Pool av JAX-WS klienter for en gitt porttype. Implementasjonen antar at Web service endpoint classname kan avledes
  * fra porttypen ved å legge til "WS" på slutten av porttype classname og at context path kan avledes fra Web servicens
  * target namespace.
- * <p/>
+ * <p>
  * Context path avledes fra target namespace "http://serveraddress/context1/../contextN/service/..." ved å plukke
  * ut "context1/../contextN" som context path.
- * <p/>
+ * <p>
  * Pooling er nødvendig fordi JAX-WS klienter ikke er trådsikre. Poolet består foreløpig av en enkel ThreadLocal, siden
  * det antas at de trådene som kaller en service er konstante og få.
  */

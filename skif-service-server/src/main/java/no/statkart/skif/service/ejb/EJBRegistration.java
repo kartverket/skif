@@ -21,9 +21,9 @@ import java.util.Set;
  * </p>
  * Dette er i hack som omgår det problem at EJB 3.0 har begrenset støtte å dynamisk lookup av EJB'er. Dette skal være
  * løst i EJB 3.1.
- * <p/>
+ * <p>
  * For at EJB'ene skal bli registrert må klassen kjøres fra en ServletContextListner minst en gang.
- * <p/>
+ * <p>
  * TODO: Pt må alle slike kjøres før servermodulen opprettes. Kunne være fint hvis dette ikke var nødvendig
  *
  * @author Henrik Fredholm

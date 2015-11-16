@@ -5,7 +5,7 @@ import no.statkart.skif.service.proxy.SingleVmViaWSWithServiceContextSVMapperRem
 
 /**
  * Strategi for kjøring i SingleVM, men med serialisering via XML mellom klient og tjener og med mapping av {@code SnapshotVersion}
- * <p/>
+ * <p>
  * Denne klassen har samme funksjonalitet som {@link RemoteServiceModuleStrategySingleVmXml}, men konfigurerer opp
  * en annen {@code SingleVmRemoteCallProxyHandler}
  *

@@ -59,7 +59,7 @@ public class MockupPersister {
 
     /**
      * Putter inn et objekt på tidspunkt gitt av <code>snapshotVersion</code>.
-     * <p/>
+     * <p>
      * Følgende krav gjelder:
      * <ul>
      * <li>Objektet kan ikke allerede ha blitt inserted på noe tidspunkt</li>
@@ -83,7 +83,7 @@ public class MockupPersister {
 
     /**
      * Oppdaterer et objekt på tidspunkt gitt av <code>snapshotVersion</code>.
-     * <p/>
+     * <p>
      * Følgende krav gjelder:
      * <ul>
      * <li>Objektet må ha blitt inserted på et tidligere eller likt tidspunkt</li>
@@ -118,7 +118,7 @@ public class MockupPersister {
 
     /**
      * Sletter et objekt på tidspunkt gitt av <code>snapshotVersion</code>.
-     * <p/>
+     * <p>
      * Følgende krav gjelder:
      * <ul>
      * <li>Objektet må ha blitt inserted på et tidligere eller likt tidspunkt</li>
@@ -191,10 +191,10 @@ public class MockupPersister {
 
     /**
      * Henter ut inserts, updates og deletes for gitt SnapshotVersion. Gitt snapshot må ha blitt laget.
-     * <p/>
+     * <p>
      * Objektene i transfer er kopier, slik at de ikke lenger er knyttet opp til denne Store og dermed kan puttes inn
      * i en ordentlig Store.
-     * <p/>
+     * <p>
      * Pga effektivitet bør objektene ikke kopieres. Dersom de skal legges direkte inn i store kan transfer lage en kopi
      * om nødvendig
      *
@@ -225,10 +225,10 @@ public class MockupPersister {
     /**
      * Henter ut inserts, updates og deletes for gitte objekter i gitt SnapshotVersion. Gitt snapshot må ha blitt laget.
      * Dersom noen av objektene ikke har blitt endret i gitt snapshot, så blir de ikke med i transfer.
-     * <p/>
+     * <p>
      * Objektene i transferen vil forsatt være knyttet opp mot MockupStore og må derfor kopieres før de puttes inn i
      * ordentlig Store. Dette skjer normalt automatisk.
-     * <p/>
+     * <p>
      *
      * @param ids             id-er til objekter som skal hentes ut
      * @param snapshotVersion tidspunkt som skal hentes ut

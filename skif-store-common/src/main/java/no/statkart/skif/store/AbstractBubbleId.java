@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Id klasse for {@link AbstractBubbleObject}
- * <p/>
+ * <p>
  * Subklasser må definere hvilken konkret type som skal brukes for {@code idValue}. Dette gjørs ved å la subtypen implementerer
  * metoden {@link #getValue()} med konkret return type (f.eks {@code Long} eller {@code String}.
  *
@@ -33,7 +33,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     /**
      * Helper class that holds meta info for each subtype of this class. The meta info takes
      * time to calculate and is therefore shared by all instances of a particular class.
-     * <p/>
+     * <p>
      * This class should not be Serializable
      */
     static class TypeInfo {
@@ -167,7 +167,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * spesielt. I vår modell kan vi ha hierarkier i domenemodellen der super-klassen er en abstract klasse.
      * Men hibernate gjør at når vi laster et objekt av klasse <code>Sub</code> som er subklasse av
      * <code>Super</code>, vil objektet kunne få et id-objekt som er av id-typen til 'Super'.
-     * <p/>
+     * <p>
      * <p>Eksempel: I matrikkelen vil en grunneiendom få id av type MatrikkelenhetId i stedet for GrunneiendomId. I praksis er en id
      * av type MatrikkelenhetId lik en med type GrunneiendomId, dersom id'ens <code>value</code> er lik. I motsetning
      * vil en VegadresseId og en GrunneiendomId være forskjellige selvom id'ene har samme value (gitt at id-verdier evt.
@@ -195,7 +195,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     /**
      * To {@code BubbleId}'er er i utgangspunktet compatible hvis base typen for id'ene er den samme. Det er det samme
      * som at base typen for id'ens {@code BubbleObject}'er er like.
-     * <p/>
+     * <p>
      * I noen tilfeller kan det være nødvendig å overskrive denne metode, se {@link no.statkart.skif.store.kodeliste.Kodeliste}
      *
      * @param id
@@ -228,7 +228,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * So if you have an id class org.foo.BarId,
      * the type name returned is "Bar".
      * The type of a non-subclassed id is the empty string.</p>
-     * <p/>
+     * <p>
      * <p>A different naming scheme can be facilitated by
      * overriding this method (and probably createTypeInstance
      * and getType as well).</p>
@@ -315,7 +315,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 
     /**
      * Returns the class of the base id type. The base id type is last non abstract super class of the id class.
-     * <p/>
+     * <p>
      * Note: This method is not fast as the result is not cached. Use {@link #getBaseType()} if possible.
      *
      * @return the base type class of the id

@@ -8,7 +8,7 @@ import java.util.Map;
  * men kan også omfatte annen data som f.eks en {@code ServiceContext} parameter. I JEE mode brukes ikke denne
  * klassen siden her går kallet via tilhørende Web Service som sender brukernavn og passord via http authentisering
  * og overfører {@code ServiceContext}'en som en ekstra siste paramter i kallet.
- * <p/>
+ * <p>
  * Klassen bruker et {@code Map<String, Object>} dataobjekt for mest mulig fleksibel overføring av data via klassen.
  *
  * @author Henrik Fredholm

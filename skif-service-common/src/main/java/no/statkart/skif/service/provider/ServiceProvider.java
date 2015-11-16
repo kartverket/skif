@@ -17,13 +17,13 @@ import java.util.*;
  * av type {@code <S>} kan spesifisere sin egen {@code CallServiceChainFactory}-liste slik at services kan ha forskjellig
  * innhold i deres {@code CallServiceChain}.  Hver {@code CallServiceChainFactory} i listen produserer en frakment
  * av {@code CallServiceChain}. Frakmentene settes sammen rekkefølge som deres factory står i listen.
- * <p/>
+ * <p>
  * {@code CallServiceChainFactory}-listen spesifiseres via en Guice {@code Multibinder<CallServiceChainFactory>} binding
  * som gir tilbake et uordnet sett av {@code CallServiceChainFactory}-instanser. For å unngå å måtte sorterer
  * settet hvergang provideren opprettes brukes en singleton {@link OrderedCallServiceChainFactoryList}-instans. Det
  * er greit å bruke en singleton instans her siden {@code CallServiceChainFactory}-settet er konstant for hver servicetype
  * [@code S}.
- * <p/>
+ * <p>
  * Guice oppretter en instans av provideren hvergang Guice trenger en ny service-instans av type {@code S} og er dermed
  * styrt av hvilke scope som er anvendt i bindingen av {@code S}.
  *

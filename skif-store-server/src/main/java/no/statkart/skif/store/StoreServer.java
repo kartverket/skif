@@ -35,7 +35,7 @@ public class StoreServer extends AbstractStore {
 
     /**
      * Starter en ny transaksjon ved manuell transaksjonshåndtering.
-     * <p/>
+     * <p>
      * Denne metoden er kun en hjelpemetode for verktøy som kjører utelukkende i tjenermodus. Når Store kjører i
      * servicerammeverket er det {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate#beginService()}
      * eller {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks#beginService()}
@@ -52,7 +52,7 @@ public class StoreServer extends AbstractStore {
 
     /**
      * Committer en transaksjon ved manuell transaksjonshåndtering.
-     * <p/>
+     * <p>
      * Denne metoden er kun en hjelpemetode for verktøy som kjører utelukkende i tjenermodus. Når Store kjører i
      * servicerammeverket er det {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate#completeService()}
      * eller {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks#completeService()}
@@ -64,7 +64,7 @@ public class StoreServer extends AbstractStore {
 
     /**
      * Ruller tilbake en transaksjon ved manuell transaksjonshåndtering.
-     * <p/>
+     * <p>
      * Denne metoden er kun en hjelpemetode for verktøy som kjører utelukkende i tjenermodus. Når Store kjører i
      * servicerammeverket er det {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate#abortService()}
      * eller {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks#abortService()}
@@ -82,7 +82,7 @@ public class StoreServer extends AbstractStore {
      * Flusher endringer, kaller finishListeners, flusher på nytt om nødvendig. Tar deretter og fjerner alle
      * objekter som har blitt slettet fra Store og setter status for alle andre endret objekter til {@code
      * UNCHANGED}.
-     * <p/>
+     * <p>
      * Kall til finish() bør etterfølges av kall til enten {@link #commitTransaction()} eller {@link
      * #rollbackTransaction()} uten at det utføres andre mellomliggende operasjoner på {@code StoreServer}.
      */

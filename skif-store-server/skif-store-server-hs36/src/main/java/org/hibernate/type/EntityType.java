@@ -195,7 +195,7 @@ public abstract class EntityType extends AbstractType implements AssociationType
 	/**
 	 * This returns the wrong class for an entity with a proxy, or for a named
 	 * entity.  Theoretically it should return the proxy class, but it doesn't.
-	 * <p/>
+	 * <p>
 	 * The problem here is that we do not necessarily have a ref to the associated
 	 * entity persister (nor to the session factory, to look it up) which is really
 	 * needed to "do the right thing" here...
@@ -482,7 +482,7 @@ public abstract class EntityType extends AbstractType implements AssociationType
 
 	/**
 	 * Get the identifier value of an instance or proxy.
-	 * <p/>
+	 * <p>
 	 * Intended only for loggin purposes!!!
 	 *
 	 * @param object The object from which to extract the identifier.

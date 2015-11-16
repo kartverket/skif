@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
  * attribute="bubble-ref"/&gt;</tt> meta tag into bubble references. By using meta tags to specify
  * bubble references it is not necessary to extend the Hibernate mapping syntax or change the
  * Hibernate classes that parser the Hiberante mapping documents.
- * <p/>
+ * <p>
  * Bubble references solves the problem of partitioning a domain model into disconnected object
  * graphs (bubbles) that can be transferred accross the network independently of each other. Bubble
  * references differ from ordinary Java references, in that a bubble reference points to the id of
@@ -34,7 +34,7 @@ import java.util.LinkedHashMap;
  * associations can be traversed and eager loaded using Hibernate Query Language dot notation. For
  * for instance: "from Child c where c.parent.age=25", "from Child c where c.parent=:someparent",
  * and "from Child c join fecth c.parent where c.age=3".
- * <p/>
+ * <p>
  * Hibernate associations are usually mapped to Java objects via Java references. For instance, if a
  * class Child defines an association "parent" to a class Parent, then Child would have a member
  * variable of type Parent that holds the assocated object and a getter and setter method pair
@@ -43,24 +43,24 @@ import java.util.LinkedHashMap;
  * collection of objects then the object holding the association will have a {@link java.util.Set}
  * member variable and getter and setter method pair that uses a {@link java.util.Set} as argument
  * and return value. The elements of the set will be references to the assocated Java objects.
- * <p/>
+ * <p>
  * When a Hibernate association is defined as a bubble reference then Hibernate will pass the id of
  * the associated object to the holder of the association instead of the object itself. That is, the
  * holder of the association must define a getter and setter pair that uses the id class of the
  * associated object. Furthermore (by convension), the postfix "<tt>Id</tt>" or "<tt>Ids</tt>" must
  * be added to the names of the getter and setter methods depending on whether the association
  * defines a reference to a single object or a collection of objects.
- * <p/>
+ * <p>
  * Thus, if the association between Parent and Child in the example above is defined as a bubble
  * reference, then class Parent must define a member variable of type ParentId and a getter and
  * setter pair <tt>ParentId getParentId()</tt> and <tt>void setParentId(ParentId id)</tt>
- * <p/>
+ * <p>
  * Hibernate supports lazy loading via a proxy framework that makes the proxies appear as if they
  * are the actual objects. Initally a proxy will only hold the id of the object it represents, but
  * when a proxy is accessed for data it will lookup or load the actual object and forward all calls
  * to it. Proxies comes with a number of disadvantages with respect to casting of subclasses and
  * uniqueness (see Hibernate documentation for details).
- * <p/>
+ * <p>
  * In the implementation of bubble references it is vital that all bubble should defined as lazy
  * loaded, because otherwise the whole object will be loaded whenever it is referenced. However,
  * since proxies in general are undesirable,  great care has been taken to ensure that bubbl
@@ -68,7 +68,7 @@ import java.util.LinkedHashMap;
  * object, only the Id class will be instantiated. This is different from how Hibernate normally
  * handles lazy loading which always cause Hibernate to create a proxy fro reference objects. Bubble
  * references can avoid creating proxies since only the id of the object is needed.
- * <p/>
+ * <p>
  * It might be that the bubble refereces could work without requiring them to be lazy loaded,
  * however then the following problem must also be addressed. During updates and deletes we must be
  * able to figure out if a different object instance of the same object is already loaded by the
@@ -78,10 +78,10 @@ import java.util.LinkedHashMap;
  * this will create a proxy if the object is not already loaded (hence no database access). If
  * instance returned is different from the one we want to delete/update then we simply evict the undesired
  * instance from the hibernate session before delete/update is called.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * <strong>Example</strong>
- * <p/>
+ * <p>
  * This example defines a bi-directional association between between Parent and Child.
  * <pre>
  * ...
@@ -289,7 +289,7 @@ public class BubbleRefConfiguration extends Configuration {
      * attribute="bubble-ref"/&gt;</tt> slik at mappingen blir riktig. Dette må gjøre etter at Hibernate har
      * generert opp initiell mapping fordi Hibernate ikke nok plugg-in punkter til å gjøre det under den
      * initielle mappingen.
-     * <p/>
+     * <p>
      * Oppretter deretter egne mapping klasser for BubbleId'er.
      */
     protected void configureSecondPassBubbleMappings() throws MappingException {

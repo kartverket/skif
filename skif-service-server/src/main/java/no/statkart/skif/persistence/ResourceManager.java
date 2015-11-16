@@ -124,7 +124,7 @@ public interface ResourceManager  {
 
     /**
      * Lukker alle resourser som har blitt hentet ut.
-     * <p/>
+     * <p>
      * TODO: Vurdere om denne metode også skal kalles i JEE mode,
      */
     public void close();

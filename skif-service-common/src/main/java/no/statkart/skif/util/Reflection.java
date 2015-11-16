@@ -285,7 +285,7 @@ public class Reflection {
      * A getter is a public, non-static method beginning with "get"
      * or "is" and taking no arguments.
      *
-     * @return a List<Method> of all the getters in the given type,
+     * @return a List&lt;Method&gt; of all the getters in the given type,
      *         or an emtpy list if there is no getters
      */
     public static List findGetters(Class type) {
@@ -323,7 +323,7 @@ public class Reflection {
      * A getter is a public, non-static method beginning with "set"
      * and taking one argument.
      *
-     * @return a List<Method> of all the setters in the given type,
+     * @return a List&lt;Method&gt; of all the setters in the given type,
      *         or an emtpy list if there is no setters
      */
     public static List findSetters(Class type) {

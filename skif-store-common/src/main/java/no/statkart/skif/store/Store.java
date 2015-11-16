@@ -16,7 +16,7 @@ import java.util.Set;
 public interface Store {
     /**
      * Resetter hele Store.
-     * <p/>
+     * <p>
      * TODO: Forklar forskjellen mellom denne og {@link #evictAll()}.
      */
     void clear();
@@ -188,7 +188,7 @@ public interface Store {
     /**
      * Låser og henter objektet for gitt id. Dersom id er <code>null</code> så returneres også <code>null</code>, uten
      * at noe låses.
-     * <p/>
+     * <p>
      * Det er viktig at det er objektet som returneres her som en det man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
      *
@@ -205,7 +205,7 @@ public interface Store {
     /**
      * Låser og henter mange objekter for gitte id-er. Returnerer {@link Set} eller {@link List} avhengig av hva man sendte inn.
      * Rekkefølgene objektene returneres i er tilfeldig.
-     * <p/>
+     * <p>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
      *
@@ -222,7 +222,7 @@ public interface Store {
 
     /**
      * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
-     * <p/>
+     * <p>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
      *
@@ -239,7 +239,7 @@ public interface Store {
 
     /**
      * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er "tilfeldig".
-     * <p/>
+     * <p>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
      *
@@ -256,7 +256,7 @@ public interface Store {
 
     /**
      * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
-     * <p/>
+     * <p>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
      *
@@ -405,7 +405,7 @@ public interface Store {
 
     /**
      * Sørger for at en boble er fullstendig initialisert.
-     * <p/>
+     * <p>
      * TODO: Burde denne kun vært på StoreServer?
      *
      * @param bubbleObject boblen som skal være fullstendig initialisert når metoden returerer
@@ -423,7 +423,7 @@ public interface Store {
 
     /**
      * Committer gjeldende unit-of-work ned på nivået under. Nivået under blir neste gjeldende nivå.
-     * <p/>
+     * <p>
      * Man må angi hvilken unit-of-work som skal committes, selv om det kun er gjeldende unit-of-work som kan committes.
      * Dette for å sjekke at man committer den man tror man skal committe.
      *
@@ -433,7 +433,7 @@ public interface Store {
 
     /**
      * Avbryter unit-of-work og returnerer til nivået under.
-     * <p/>
+     * <p>
      * Man må angi hvilken unit-of-work som skal avbrytes, selv om det kun er gjeldende unit-of-work som kan avbrytes.
      * Dette for å sjekke at man avbryter den man tror man skal avbryte.
      *
@@ -451,7 +451,7 @@ public interface Store {
     /**
      * Avslutter gjeldende unit-of-work og returnerer til nivået under. Man må ha kalt {@link #getUnitOfWorkTransfer()}
      * først for å hente ut endringene, siden de ikke overføres til nivået under.
-     * <p/>
+     * <p>
      * Man må angi hvilken unit-of-work som skal avsluttes, selv om det kun er gjeldende unit-of-work som kan avsluttes.
      * Dette for å sjekke at man avslutter den man tror man skal avslutte.
      *
@@ -461,7 +461,7 @@ public interface Store {
 
     /**
      * Avslutter alle unit-of-work. Man må ha kalt {@link #getUnitOfWorkTransfer()} først for å hente ut endringene.
-     * <p/>
+     * <p>
      * Man må angi hvilken unit-of-work som er gjeldende, selv om alle aktive unit-of-works avsluttes.
      * Dette for å sjekke at man avslutter den man tror man skal avslutte.
      *

@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Abstrakt implementasjon av kodeliste. Klasse holder på en liste av {@code KodeId}s og implementere
  * lokaliseringsstøtte.
- * <p/>
+ * <p>
  * Klassen er knyttet mot {@link AbstractKodelisteId} som bruker {@code Object} som idValue type. Det finnes
  * konkrete subtyper som bruker {@code Long} og {@code String} som idValue type.
  *

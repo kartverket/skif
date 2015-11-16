@@ -7,12 +7,12 @@ import org.hibernate.mapping.RootClass;
 
 /**
  * Hibernate persistence class for a bubble reference Id.
- * <p/>
+ * <p>
  * For instance, if <tt>AnnenPerson</tt> is a bubble that has id class <tt>PersonId</tt>. Then Hibernate
  * will automatically create a persistence class for <tt>AnnenPerson</tt> since person is defined in the
  * Hibernate mapping document. However we also need to defined a persistence class for the Id class.
  * This the role of this class.
- * <p/>
+ * <p>
  * This class exists mainly to allow (fool) hibernate to handling bubble references. Most of the values
  * are unimportant. Rather than leaving the values to their default unitialized value, the values are taken
  * from the persistent object that the id describes.

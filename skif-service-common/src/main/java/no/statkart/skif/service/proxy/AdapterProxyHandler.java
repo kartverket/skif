@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Adapter proxy som adaptere interface T til A. Default implementasjon
  * for {@link #invoke} mapper metoder med samme navn og argumenter til hverandre.
- * <p/>
+ * <p>
  *
  * @author Henrik Fredholm
  */

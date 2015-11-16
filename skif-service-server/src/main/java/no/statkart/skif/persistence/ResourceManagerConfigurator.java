@@ -8,12 +8,12 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
  * Det kan for eksemple pga ytelse være aktuelt å kunne velge om {@code Connection} objekter skal opprettes via Hibernate
  * {@code Session} eller direkte via en {@code ConnectionFactory}. Når man først har valgt konfigurasjon er det ikke
  * mulig å bytte en en annen konfigurasjon innen for samme {@code ServiceRequestContext}.
- * <p/>
+ * <p>
  * Design pattern for denne klasse er at klassen er {@code ServiceRequestScoped} og hentes ut via en {@code Provider} i
  * en {@code EJBServiceChain ProxyHandler}. Den første service som kalles for en {@code ServiceRequestContext}
  * Har mulighet for å endre strategi i forhold til default. Etterfølgende proxy handlere må velge kompatible strategier
  * for å ungå å få feil.
- * <p/>
+ * <p>
  * Dersom en service ikke har noen proxy handler som sette strategien vil den automatisk velge default strategi
  * med mindre annet allerede er valgt. Dermed holder det å legge en proxy handler på de tjenester som eksplisitt
  * trenger en annen strategi enn default.

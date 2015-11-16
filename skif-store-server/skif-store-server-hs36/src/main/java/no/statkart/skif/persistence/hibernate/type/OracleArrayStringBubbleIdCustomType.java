@@ -10,7 +10,7 @@ import org.hibernate.type.CustomType;
  * En Hibernate {@code CustomType} klasse som gjør det mulig å bruke collections av vilkårlig størrelse
  * som innput parameter i hibernate spørringer. Klassen baserer seg på [@code OracleArrayUserType}
  * som er en Hibernate {@code UserType} for persistering av Oracle {@code oracle.sql.ARRAY}.
- * <p/>
+ * <p>
  * <strong>Eksempel på bruk:</strong>
  * <pre>
  *    Collection<EierId<?>> eierIds = getEierIds();

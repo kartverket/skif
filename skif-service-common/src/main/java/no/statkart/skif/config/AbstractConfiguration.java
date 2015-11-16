@@ -98,7 +98,7 @@ public abstract class AbstractConfiguration implements Configuration {
 
     /**
      * Change the list delimiter for this configuration.
-     * <p/>
+     * <p>
      * Note: this change will only be effective for new parsings. If you
      * want it to take effect for all loaded configuration use the no arg constructor
      * and call this method before setting the source.
@@ -133,7 +133,7 @@ public abstract class AbstractConfiguration implements Configuration {
      * Set whether this configuration should use delimiters when parsing
      * property values to convert them to lists of values. By default delimiter
      * parsing is enabled
-     * <p/>
+     * <p>
      * Note: this change will only be effective for new parsings. If you
      * want it to take effect for all loaded configuration use the no arg constructor
      * and call this method before setting source.

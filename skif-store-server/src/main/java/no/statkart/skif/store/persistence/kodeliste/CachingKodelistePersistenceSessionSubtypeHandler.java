@@ -43,7 +43,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * koder og kodelister. Dersom den globale cachen blir invalidert senere tidspunkt vil det ikke påvirke handleren.
  * Handleren vil kun bli påvirket ved kall til evict eller ved modifikasjoner på kode.
  *
- * <p/>Koder som tilhører handleren ligger i en lokal map {@code localBubbleMap}. Når handleren skal finne en kode så
+ * <p>Koder som tilhører handleren ligger i en lokal map {@code localBubbleMap}. Når handleren skal finne en kode så
  * så sikre handleren at denne er initialisert og laster koden der fra. I forbindelse med initialiseringen så sjekker
  * handleren om mappen allerede er initialisert og om den allerede inneholder koden. Hvis ikke så hentes koden fra
  * cachen og den legges inn i den lokale mappen.
@@ -54,7 +54,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * <p>Ved kall til insert, update og delete så husker handleren at den er {@code motifisert} og slutter å bruke den
  * globale cachen og går over til kun å bruke {@code localBubbleMap} og {@code localCache} som da vil peke på samme
  * underliggende map instans.
- * <p/>
+ * <p>
  *
  * @author Henrik Fredholm
  * @since 2.6.1

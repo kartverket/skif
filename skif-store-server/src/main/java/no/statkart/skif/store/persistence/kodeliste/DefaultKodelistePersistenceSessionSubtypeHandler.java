@@ -17,15 +17,15 @@ import java.util.*;
 /**
  * En PersistendeSessionSubtypeHandler for Kodeliste og Kode som henter enum baserte koder fra en {@code EnumKodelisteManager}
  * og database baserte koder fra Hibernate (via en underliggende HibernatePersistenceSessionMaster).
- * <p/>
+ * <p>
  * Klassen antar at Kode-klasser som ikke kjennes igjen av {@code EnumKodelisteManager} er Kode-klasser som skal hentes
  * via Hibernate. For Kodelister gjelder tilsvarende. Hvis {@link EnumKodelisteManager} ikke inneholder instansen
  * for en kodelisteId da antas det at kodelisteinstansen skal hentes fra databasen.
- * <p/>
+ * <p>
  * I den nåværende implementasjon er det litt forskjell på hvordan kodelistene fylles ut med sine koders id-er. For
  * enumkoder så er kodeid-ene allerede fylt ut fra EnumKodelisteManager, men for databasekoder så må kodene lastes fra
  * databasen med eksplisitt kall til Hibernate.
- * <p/>
+ * <p>
  * TODO: Hadde vært fint om håndteringen av enum og database basert koder var mer likt hverandre.
  *
  * @author Henrik Fredholm

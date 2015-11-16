@@ -11,26 +11,26 @@ import java.util.*;
 /**
  * Superklasse for å hente tekster fra <code>ResourceBundles</code>. Denne klassen kan kun brukes
  * via en subklasse. <p>
- * <p/>
+ * <p>
  * Internasjonalisering håndteres ved å plassere alle tekster i en resourcebundle som navngis etter
  * den Javapakken hvor den plasseres og det lokale som resourcebundlen representerer. For eksempel
  * for pakken <code>no.statkart.matrikkel.presentasjon.adresse</code> lages det en resoucebundle
  * propertyfil som heter <code>AdresseMsg_no_NO_B.properties</code>. I tillegg lages det en
  * klasse som heter <code>no.statkart.matrikkel.presentasjon.adresse.AdresseMsg</code> som kan hente ut tekster
  * fra resourcebundlen.<p>
- * <p/>
+ * <p>
  * Konvensjonen for plassering av tekster:
  * <ul>
  * <li>Tekster plasseres fortrinnsvis i pakkens resourcebundle.
  * <li>Hvis en pakke ikke har noen resourcebundle brukes superpakkens resourcebundle.
  * </ul>
- * <p/>
+ * <p>
  * Det er mulig å kjede resourcebundles sammen så en resourcebundleklasse leter i flere
  * resourcebundles. For eksempel kan <code>AdresseMsg</code> settes opp til først å lete i
  * resourcebundlen <code>no.statkart.matrikkel.presentasjon.adresse.AdresseMsg</code> og dernest i
  * <code>no.statkart.matrikkel.MatrikkelMsg</code>. Får å få dette til må
  * <code>AdresseMsg</code> settes opp til å bruke begge resourcebundles.<p>
- * <p/>
+ * <p>
  * Konvensjon for navngivning av tekster:
  * <ul>
  * <li>For generelle tekster som brukes av mange klasser skrives nøkkelen med små bokstaver og
@@ -41,7 +41,7 @@ import java.util.*;
  * <li>For klassespesifikke tekster prefikses nøkkelen med klassenavnet.
  * Eksempel: <code>"VegView.adressekode_ikke_nummer_numerisk"</code>
  * </ul><p>
- * <p/>
+ * <p>
  * <strong>Bruk</strong>
  * <pre>
  *    AdresseMsg.getString("adressekode");

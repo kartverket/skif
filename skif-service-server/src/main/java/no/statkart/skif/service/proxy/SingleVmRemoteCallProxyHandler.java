@@ -19,7 +19,7 @@ import java.util.HashMap;
  * En abstract {@code ProxyHandler} som i {@code SINGLE_VM}-mode simulerer remote kall fra klient til server {@code singleVmServer}
  * i for service av type {@code <S>}. {@code ProxyHandler}en henter ut en {@code EJBProxyHandler<S>} fra serveren og
  * sender kall videre til denne.
- * <p/>
+ * <p>
  * I forkant av hvert kall til serveren henter ProxyHandleren ut {@code UserLogin}, og evt {@code ServiceContext}
  * hvis kallet krever det, fra klients injector. Disse data legges inn i et {@link SingleVmRemoteCallContext}-objekt
  * som overføres til serveren uten om selve service-kallet ved å binde objektet i serverens injector med

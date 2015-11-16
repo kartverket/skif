@@ -598,7 +598,7 @@ public class InternalStringUtils {
     /**
      * <p>Strips any of a set of characters from the start and end of every
      * String in an array.</p>
-     * Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
+     * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
      *
      * <p>A new array is returned each time, except for length zero.
      * A <code>null</code> array will return <code>null</code>.
@@ -2212,7 +2212,7 @@ public class InternalStringUtils {
      * <p>Replaces multiple characters in a String in one go.
      * This method can also be used to delete characters.</p>
      *
-     * <p>For example:<br />
+     * <p>For example:<br>
      * <code>replaceChars(&quot;hello&quot;, &quot;ho&quot;, &quot;jy&quot;) = jelly</code>.</p>
      *
      * <p>A <code>null</code> string input returns <code>null</code>.
@@ -2842,7 +2842,7 @@ public class InternalStringUtils {
     /**
      * <p>Left pad a String with spaces (' ').</p>
      *
-     * <p>The String is padded to the size of <code>size<code>.</p>
+     * <p>The String is padded to the size of <code>size</code>.</p>
      *
      * <pre>
      * StringUtils.leftPad(null, *)   = null
@@ -3386,7 +3386,7 @@ public class InternalStringUtils {
     /**
      * <p>Reverses a String as per {@link StringBuffer#reverse()}.</p>
      *
-     * <p><A code>null</code> String returns <code>null</code>.</p>
+     * <p>A <code>null</code> String returns <code>null</code>.</p>
      *
      * <pre>
      * StringUtils.reverse(null)  = null
@@ -3412,7 +3412,7 @@ public class InternalStringUtils {
      * <p>Abbreviates a String using ellipses. This will turn
      * "Now is the time for all good men" into "Now is the time for..."</p>
      *
-     * <p>Specifically:
+     * <p>Specifically:</p>
      * <ul>
      *   <li>If <code>str</code> is less than <code>maxWidth</code> characters
      *       long, return it.</li>
@@ -3422,7 +3422,6 @@ public class InternalStringUtils {
      *   <li>In no case will it return a String of length greater than
      *       <code>maxWidth</code>.</li>
      * </ul>
-     * </p>
      *
      * <pre>
      * StringUtils.abbreviate(null, *)      = null
@@ -3515,7 +3514,7 @@ public class InternalStringUtils {
      * starting from where it's different from the first.)</p>
      *
      * <p>For example,
-     * <code>difference("i am a machine", "i am a robot") -> "robot"</code>.</p>
+     * <code>difference("i am a machine", "i am a robot") -&gt; "robot"</code>.</p>
      *
      * <pre>
      * StringUtils.difference(null, null) = null
@@ -3553,7 +3552,7 @@ public class InternalStringUtils {
      * Strings begin to differ.</p>
      *
      * <p>For example,
-     * <code>indexOfDifference("i am a machine", "i am a robot") -> 7</code></p>
+     * <code>indexOfDifference("i am a machine", "i am a robot") -&gt; 7</code></p>
      *
      * <pre>
      * StringUtils.indexOfDifference(null, null) = -1

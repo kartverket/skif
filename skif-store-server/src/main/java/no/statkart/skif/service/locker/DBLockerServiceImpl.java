@@ -254,13 +254,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
 
     /**
      * Beregner tidsforskjelljustering mellom database og server og returnerer denne.
-     * <p/>
+     * <p>
      * Dersom serveren har en tid som er tidligere enn databasens returneres denne forskjellen, med mindre
      * tidsforskjellen er vesentlig (MAX_TIME_DIFF_THRESHOLD). I dette tilfelle kastes en exception.
-     * <p/>
+     * <p>
      * Hvis serveren har en tid som er senere enn databasen returneres 0. Hvis tidsforskjellen er vesentlig
      * (MAX_TIME_DIFF_THRESHOLD) logges en feilmelding men det kastes ingen exception.
-     * <p/>
+     * <p>
      * Forskjellen beregnes kun en gang, da forskjellen antas å være konstant.
      *
      * @param con databaseforbindelse

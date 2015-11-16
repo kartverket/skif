@@ -55,7 +55,7 @@ public interface HistTestService {
     /**
      * Finner {@code HistSimple} objekter med text lik {@code text} hørende til mockup testsett {@code testsettNumber}
      * for gitt tidspunkt {@code snapshotVersion}.
-     * <P/>
+     * <p>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
      *
@@ -69,9 +69,9 @@ public interface HistTestService {
     /**
      * Finner {@code HistSimple} objekter med text lik {@code text} hørende til mockup testsett {@code testsettNumber}
      * for gitt tidspunkt {@code snapshotVersion}.
-     * <P/>
+     * <p>
      * Samme funksjonalitet som {@link #findHistSimpleIdsForTextUsingJDBC} bare implementert via hibernate
-     * <P/>
+     * <p>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
      *
@@ -85,7 +85,7 @@ public interface HistTestService {
     /**
      * Finner {@code HistWithRelation} objekter som peker på et {@code HistSimple} objekt som har text lik {@code text} hørende til
      * mockup testsett {@code testsettNumber} for gitt tidspunkt {@code snapshotVersion}
-     * <P/>
+     * <p>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
 
@@ -99,7 +99,7 @@ public interface HistTestService {
      * Finner {@code HistWithRelation} objekter som har text lik {@code text} hørende til mockup testsett {@code testsettNumber}
      * og som er relatert til et {@code HistSimple} objekt med id lik {@code histSimpleId} for gitt tidspunkt {@code snapshotVersion}.
      * Fordi {@code histSimpleId} kan  være null må metoden ha en eksplisitt SnapshotVersion parameter som siste argument.
-     * <P/>
+     * <p>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket. Dette er nødvendig siden {@code histSimpleId} kan være null og vi ønsker å kunne angi
      * SnapshotVersion for søket. SnapshotVersion i {@code histSimpleId} ignoreres.
@@ -114,7 +114,7 @@ public interface HistTestService {
     /**
      * Finner {@code HistWithRelation} objekter som har text lik {@code text} hørende til mockup testsett {@code testsettNumber}
      * og som er relatert til et {@code HistSimple} objekt med id lik {@code histSimpleIds}.
-     * <P/>
+     * <p>
      * Denne metode har ikke en eksplisitt SnapshotVersion parameter fordi snapthotversion kan bestemmes ut fra  {@code histSimpleIds}
      *
      * @param text
@@ -149,7 +149,7 @@ public interface HistTestService {
 
     /**
      * Finner objekter hvis punkt ligger inne i {@code selectionPolygon}  på gitt snapshot-tidspunkt {@code snapshotVersion}.
-     * <p/>
+     * <p>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
      *
@@ -161,7 +161,7 @@ public interface HistTestService {
 
     /**
      * Finner objekter hvis polygon ligger inne i {@code selectionPolygon}  på gitt snapshot-tidspunkt {@code snapshotVersion}.
-     * <p/>
+     * <p>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
      *
