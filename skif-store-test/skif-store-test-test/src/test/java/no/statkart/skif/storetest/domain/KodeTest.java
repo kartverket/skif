@@ -200,8 +200,8 @@ public class KodeTest extends StoreTestTestCase {
 
     public void testGetKodelisteTransfer() {
         KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
-        KodelisteTransfer<?> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
-        List<? extends KodelisteId> kodelisteIds = kodelisteTransfer.getKodelisterIds();
+        KodelisteTransfer<? extends KodelisteId<?>> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
+        List<KodelisteId<?>> kodelisteIds = (List<KodelisteId<?>>) kodelisteTransfer.getKodelisterIds(); // Ellers feiler det som følger på Java 8
 
         assertThat(kodelisteIds).contains(
                 AEnumKodeId.KODELISTE_ID,

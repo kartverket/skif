@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.domain.relation.uni.direct;
 import no.statkart.skif.store.InverseRelation;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -46,7 +47,7 @@ public class X1BBOne extends AbstractRelationTestBubble {
      * bli cachet må caching enables først.
      */
     public Set<X1AAId<?>> findInvSomeBBIds() {
-        return unwrap(finder(X1AAFinderService.class).findInvSomeBBIds(idAsSet()));
+        return unwrap(finder(X1AAFinderService.class).findInvSomeBBIds((Collection<? extends X1BBOneId<?>>) idAsSet()));
     }
 
     /**

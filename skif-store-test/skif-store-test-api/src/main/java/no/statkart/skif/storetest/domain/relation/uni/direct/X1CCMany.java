@@ -4,6 +4,7 @@ import no.statkart.skif.store.InverseRelation;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Klasse for å test unidireksjonelle relasjoner. Klassen inngår i følgende relasjon:
@@ -34,7 +35,7 @@ public class X1CCMany extends AbstractRelationTestBubble {
     }
 
     public X1AAId<?> findInvSomeCCsIds() {
-        return unwrap(finder(X1AAFinderService.class).findInvSomeCCsId(idAsSet()));
+        return unwrap(finder(X1AAFinderService.class).findInvSomeCCsId((Collection<? extends X1CCManyId<?>>) idAsSet()));
     }
 
     @Nullable

@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 import no.statkart.skif.store.InverseRelation;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -25,7 +26,7 @@ public class X2BBOne  extends AbstractRelationTestBubble {
     }
 
     public Set<X2AAWithEntityComponentId<?>> findInvSomeBBIds() {
-        return unwrap(finder(X2AAWithEntityComponentFinderService.class).findInvSomeBBIds(idAsSet()));
+        return unwrap(finder(X2AAWithEntityComponentFinderService.class).findInvSomeBBIds((Collection<? extends X2BBOneId<?>>) idAsSet()));
     }
 
     public Set<X2AAWithEntityComponent> findInvSomeBB() {
@@ -45,7 +46,7 @@ public class X2BBOne  extends AbstractRelationTestBubble {
     }
 
     public Set<X2AAWithEntityComponentId<?>> findInvRole1BBOneIds() {
-        return unwrap(finder(X2AAWithEntityComponentFinderService.class).findInvRole1BBIds(idAsSet()));
+        return unwrap(finder(X2AAWithEntityComponentFinderService.class).findInvRole1BBIds((Collection<? extends X2BBOneId<?>>) idAsSet()));
     }
 
 }

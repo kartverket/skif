@@ -4,6 +4,7 @@ import no.statkart.skif.store.InverseRelation;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Pekt på av {@link X2EntityComponentOne}
@@ -25,7 +26,7 @@ public class X2CCMany extends AbstractRelationTestBubble {
     }
 
     public X2AAWithEntityComponentId<?> findInvSomeCCsIds() {
-        return unwrap(finder(X2AAWithEntityComponentFinderService.class).findInvSomeCCsId(idAsSet()));
+        return unwrap(finder(X2AAWithEntityComponentFinderService.class).findInvSomeCCsId((Collection<? extends X2CCManyId<?>>) idAsSet()));
     }
 
     @Nullable
