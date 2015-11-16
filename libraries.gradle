@@ -103,6 +103,7 @@ libraries.hibernate_3_6 = [
 final Map WEBLOGIC_VERSIONS = [
         WL_10_3_5: '10.3.5',
         WL_10_3_6: '10.3.6',
+        WL_12_1_3: '12.1.3',
 ]
 ext.weblogicVersion = project.properties.get('WEBLOGIC_VERSION', WEBLOGIC_VERSIONS.WL_10_3_5)
 assert WEBLOGIC_VERSIONS.containsValue(weblogicVersion) //husk å utvide byggesystem med ny weblogic version..
@@ -112,28 +113,45 @@ assert WEBLOGIC_HOME //WEBLOGIC_HOME maa vaere gitt
 libraries.weblogic_jaxws_rt = files(
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.3.0.0_2-1-5.jar" : [],
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.2.0.0_2-1-5.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.ws.jaxws-rt_2.2.jar" : [],
 )
 
 // Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
 libraries.weblogic_client = files(
-        "${WEBLOGIC_HOME}/modules/javax.ejb_3.0.1.jar",
-        "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
-        "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
+                "${WEBLOGIC_HOME}/oracle_common/modules/javax.ejb_3.3.0.jar",
+                "${WEBLOGIC_HOME}/wlserver/modules/javax.interceptor_1.3.jar",
+                "${WEBLOGIC_HOME}/wlserver/modules/javax.transaction_2.2.0.0_1-1.jar",
+        ] : [
+                "${WEBLOGIC_HOME}/modules/javax.ejb_3.0.1.jar",
+                "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
+                "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
+        ],
 
         libraries.weblogic_jaxws_rt,
 )
 
 // Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
 libraries.weblogic_server = files(
-        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
-        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
-        "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
+                "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
+        ] : [
+                "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
+                "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/webservices.jar",
+                "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/wljmsclient.jar",
+        ],
 
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar" : [],
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? "${WEBLOGIC_HOME}/oracle_common/modules/javax.annotation_1.2.0.0_1-1.jar" : [],
 
-        "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
-        "${WEBLOGIC_HOME}/modules/ws.api_1.1.0.0.jar", // For eventuell testing av WS-Policy
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
+                "${WEBLOGIC_HOME}/oracle_common/modules/javax.servlet_2.2.0.0_3-0.jar",
+                // Har ikke funnet ws.api for 12c
+        ] : [
+                "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
+                "${WEBLOGIC_HOME}/modules/ws.api_1.1.0.0.jar", // For eventuell testing av WS-Policy
+        ],
 
         libraries.weblogic_client,
 )
