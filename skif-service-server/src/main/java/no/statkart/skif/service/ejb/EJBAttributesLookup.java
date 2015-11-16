@@ -1,13 +1,21 @@
 package no.statkart.skif.service.ejb;
 
-import com.google.inject.*;
+import com.google.inject.Binding;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.google.inject.spi.LinkedKeyBinding;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.service.annotation.Implementation;
 
-import javax.ejb.*;
-import java.lang.annotation.Target;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
