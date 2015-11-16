@@ -116,6 +116,14 @@ libraries.weblogic_jaxws_rt = files(
         weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.ws.jaxws-rt_2.2.jar" : [],
 )
 
+// Trengs for å tvinge vekk moxy på Weblogic 12c
+libraries.weblogic_databinding = files(
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
+                "${WEBLOGIC_HOME}/wlserver/modules/databinding.override_1.2.0.0.jar",
+        ] : [
+        ],
+)
+
 // Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
 libraries.weblogic_client = files(
         weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
@@ -133,6 +141,8 @@ libraries.weblogic_client = files(
 
 // Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
 libraries.weblogic_server = files(
+        libraries.weblogic_databinding,
+
         weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
                 "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
         ] : [
