@@ -12,7 +12,7 @@ sourceSets {
     xjc {
       schema {
         srcDir 'src/main/schema'
-        config.skDoc from: 'no.statkart.skif.storetest.wsapi.domain', to: 'no.statkart.skif.teststore.domain'
+        config.getWithSkDoc from: 'no.statkart.skif.storetest.wsapi.domain', to: 'no.statkart.skif.teststore.domain'
       }
     }
     resources.srcDirs = []
