@@ -113,7 +113,16 @@ assert WEBLOGIC_HOME //WEBLOGIC_HOME maa vaere gitt
 libraries.weblogic_jaxws_rt = files(
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.3.0.0_2-1-5.jar" : [],
         weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_5 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.2.0.0_2-1-5.jar" : [],
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.ws.jaxws-rt_2.2.jar" : [],
+        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.bind.jaxb-core_2.2.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.bind.jaxb-impl_2.2.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.ws.jaxws-rt_2.2.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.ws.policy_2.4.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.stream.buffer.streambuffer_1.5.3.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/org.jvnet.staxex.stax-ex_1.7.5.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/org.glassfish.gmbal.gmbal-api-only_3.1.0-b001.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.ws.jaxws-rt_2.2.jar"
+        ] : [],
 )
 
 // Trengs for å tvinge vekk moxy på Weblogic 12c
