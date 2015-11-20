@@ -252,7 +252,7 @@ afterEvaluate {
     // gradle spesifik iml fil da gradle dependencies ligger på hver modul
     allprojects {
         idea.module {
-            outputFile = file("${project.name}-wl10.3.6.iml")
+            outputFile = file("${project.name}.iml")
         }
     }
 
