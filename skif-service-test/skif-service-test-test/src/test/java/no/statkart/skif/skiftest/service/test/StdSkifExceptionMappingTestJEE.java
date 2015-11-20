@@ -1,19 +1,14 @@
 package no.statkart.skif.skiftest.service.test;
 
 import com.google.inject.Inject;
-import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ServerException;
 import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.mapper.MappingException;
-import no.statkart.skif.service.LoginUser;
-import no.statkart.skif.service.LoginUserHolder;
-import no.statkart.skif.service.ServerUrlHolder;
 import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.exception.SimpleNonMappedException;
 import no.statkart.skif.skiftest.service.testd.DService;
-import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
@@ -59,9 +54,14 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
      * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
      */
-    @Test(groups = "server-required", expectedExceptions = SOAPFaultException.class, expectedExceptionsMessageRegExp = "abc")
+    @Test(groups = "server-required")
     public void testThrowNonMappedRuntimeExceptionNonMappedWSCall() throws SimpleException, SimpleNonMappedException {
-        service.nonMappedWSCall(RuntimeException.class.getName(), "abc");
+        try {
+            service.nonMappedWSCall(RuntimeException.class.getName(), "abc");
+        } catch (Throwable t) {
+            assertTrue(t instanceof SOAPFaultException, "Forventet exception type");
+            assertTrue(t.getLocalizedMessage().contains("abc"), "Excepted exception message");
+        }
     }
 
     /**

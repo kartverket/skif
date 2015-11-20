@@ -10,7 +10,6 @@
     </security>
     <prefer-application-packages>
         <package-name>antlr.*</package-name>
-        <package-name>org.hibernate.*</package-name>
     </prefer-application-packages>
     <prefer-application-resources>
         <resource-name>META-INF/services/com.sun.xml.ws.spi.db.BindingContextFactory</resource-name>

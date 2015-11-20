@@ -173,6 +173,7 @@ libraries.weblogic = files(
 )
 
 libraries.weblogic_tools = files(
+        libraries.weblogic_databinding,
         weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
                 "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
         ] : [

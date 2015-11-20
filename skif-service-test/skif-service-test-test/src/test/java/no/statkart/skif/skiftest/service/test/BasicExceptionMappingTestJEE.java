@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Henrik Fredholm
@@ -55,8 +56,8 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
             service.nonMappedCall(RuntimeException.class.getName(), "abc");
         } catch (Throwable t) {
 
-            assertEquals(t.getClass(), SOAPFaultException.class, "Forventet exception type");
-            assertEquals(t.getLocalizedMessage(), "abc", "Excepted exception message");
+            assertTrue(t instanceof SOAPFaultException, "Forventet exception type");
+            assertTrue(t.getLocalizedMessage().contains("abc"), "Excepted exception message");
         }
     }
 
@@ -115,8 +116,8 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
         } catch (Throwable t) {
             String expectedMessage = String.format("TypeMapper[%s] could not map from %s to %s", SkifTestSimpleExceptionMapper.class.getName(), SimpleNonMappedException.class.getName(), Throwable.class.getName());
 
-            assertEquals(t.getClass(), SOAPFaultException.class, "Forventet exception type");
-            assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
+            assertTrue(t instanceof SOAPFaultException, "Forventet exception type");
+            assertTrue(t.getLocalizedMessage().contains(expectedMessage), "Excepted exception message");
         }
     }
 
@@ -131,8 +132,8 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
         } catch (Throwable t) {
             String expectedMessage = String.format("TypeMapper[%s] could not map from %s to %s", SkifTestSimpleExceptionMapper.class.getName(), SimpleNonMappedException.class.getName(), Throwable.class.getName());
 
-            assertEquals(t.getClass(), SOAPFaultException.class, "Forventet exception type");
-            assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
+            assertTrue(t instanceof SOAPFaultException, "Forventet exception type");
+            assertTrue(t.getLocalizedMessage().contains(expectedMessage), "Excepted exception message");
         }
 
     }
@@ -149,8 +150,8 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
         } catch (Throwable t) {
             String expectedMessage = String.format("TypeMapper[%s] could not map from %s to %s", SkifTestSimpleExceptionMapper.class.getName(), SimpleNonMappedException.class.getName(), Throwable.class.getName());
 
-            assertEquals(t.getClass(), SOAPFaultException.class, "Forventet exception type");
-            assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
+            assertTrue(t instanceof SOAPFaultException, "Forventet exception type");
+            assertTrue(t.getLocalizedMessage().contains(expectedMessage), "Excepted exception message");
         }
     }
 
@@ -164,8 +165,8 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
         } catch (Throwable t) {
             String expectedMessage = String.format("TypeMapper[%s] could not map from %s to %s", SkifTestSimpleExceptionMapper.class.getName(), SimpleNonMappedException.class.getName(), Throwable.class.getName());
 
-            assertEquals(t.getClass(), SOAPFaultException.class, "Forventet exception type");
-            assertEquals(t.getLocalizedMessage(), expectedMessage, "Excepted exception message");
+            assertTrue(t instanceof SOAPFaultException, "Forventet exception type");
+            assertTrue(t.getLocalizedMessage().contains(expectedMessage), "Excepted exception message");
         }
     }
 }

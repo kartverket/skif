@@ -243,16 +243,16 @@ afterEvaluate {
 
     // branch spesifike navn for prosjekt og workspace fil.
     ideaWorkspace {
-        outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}-wl${weblogicVersion}.iws")
+        outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}.iws")
     }
     idea.project {
-        outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}-wl${weblogicVersion}.ipr")
+        outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}.ipr")
     }
 
     // gradle spesifik iml fil da gradle dependencies ligger på hver modul
     allprojects {
         idea.module {
-            outputFile = file("${project.name}-wl${weblogicVersion}.iml")
+            outputFile = file("${project.name}-wl10.3.6.iml")
         }
     }
 

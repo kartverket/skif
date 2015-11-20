@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Henrik Fredholm
@@ -87,7 +88,7 @@ public class BasicExceptionMappingTest extends SkifTestCase {
             } else if (serviceMode == ServiceMode.SINGLE_VM_XML) {
                 assertEquals(t.getClass(), MappingException.class);
             } else {
-                assertEquals(t.getClass(), javax.xml.ws.soap.SOAPFaultException.class);
+                assertTrue(t instanceof javax.xml.ws.soap.SOAPFaultException);
             }
         }
     }
