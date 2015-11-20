@@ -21,14 +21,15 @@ public class WSRemoteServiceModule extends SkifModule {
         this.serviceClasses = serviceClases;
     }
 
-    public WSRemoteServiceModule(Configuration configuration) {
-        super(configuration);
-    }
-
     @Override
     protected void configure() {
         for (Class<?> serviceClass : serviceClasses) {
-            bind(serviceClass).toProvider(typeLiteral(JaxWsServiceProvider.class, serviceClass));
+            bindJaxWsServiceProvider(serviceClass);
         }
+    }
+
+    private <T> void bindJaxWsServiceProvider(Class<T> serviceClass) {
+        TypeLiteral<JaxWsServiceProvider<T>> providerTypeLiteral = typeLiteral(JaxWsServiceProvider.class, serviceClass);
+        bind(serviceClass).toProvider(providerTypeLiteral);
     }
 }
