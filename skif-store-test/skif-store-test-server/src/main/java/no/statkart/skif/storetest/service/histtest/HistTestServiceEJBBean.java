@@ -20,7 +20,7 @@ import java.util.Set;
  * @author Tor Egil R. Strand
  * @since 2.0
  */
-@Stateless(name = "no.statkart.skif.storetest.service.histtest.HistTestServiceEJBBEan")
+@Stateless(name = "no.statkart.skif.storetest.service.histtest.HistTestServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 public class HistTestServiceEJBBean extends EJBTimedService implements HistTestService {
 

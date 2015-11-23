@@ -29,14 +29,13 @@ import java.util.Collection;
 @RolesAllowed("Innsyn")
 @SuppressWarnings("unused")
 
-@Stateless(name = "EndringsloggServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.service.endringslogg.EndringsloggServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class EndringsloggServiceEJBBean extends EJBTimedService implements EndringsloggService {
     @Inject
     @EJBServiceChain
     EndringsloggService serviceChain;
-
 
     @Nullable
     @Override

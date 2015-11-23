@@ -18,7 +18,7 @@ import java.sql.Timestamp;
  * EJB for {@link ExceptionTestService}.
  */
 @RolesAllowed("Innsyn")
-@Stateless(name = "ExceptionTestServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.service.exceptiontest.ExceptionTestServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class ExceptionTestServiceEJBBean extends EJBTimedService implements ExceptionTestService {

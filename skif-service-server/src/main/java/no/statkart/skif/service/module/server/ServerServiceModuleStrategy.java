@@ -89,6 +89,10 @@ public abstract class ServerServiceModuleStrategy extends ModuleStrategy {
         }
     }
 
+    public void lookupServices(Binder binder, Iterable<? extends Class<?>> services) {
+        // Default er at dette ikke trengs
+    }
+
     @Override
     public ServerServiceModuleStrategy clone() {
         final ServerServiceModuleStrategy clone = (ServerServiceModuleStrategy) super.clone();

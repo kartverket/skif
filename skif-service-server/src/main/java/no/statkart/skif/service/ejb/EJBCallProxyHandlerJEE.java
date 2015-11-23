@@ -1,8 +1,9 @@
 package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
-import com.google.inject.TypeLiteral;
+import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.service.annotation.EJBBean;
 
 import javax.ejb.EJBException;
 import java.lang.reflect.InvocationTargetException;
@@ -19,22 +20,21 @@ import java.lang.reflect.Method;
  * @since 2.0
  */
 public class EJBCallProxyHandlerJEE<S> extends EJBCallProxyHandler<S> {
-    private final TypeLiteral<S> type;
+    private final Provider<S> ejbProvider;
 
     @Inject
-    public EJBCallProxyHandlerJEE(TypeLiteral<S> type) {
-        this.type = type;
+    public EJBCallProxyHandlerJEE(@EJBBean Provider<S> ejbProvider) {
+        this.ejbProvider = ejbProvider;
     }
 
     @Override
     public Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
-        final Object ejb = EJBLookupHelper.getInstance().lookupEjb(type.getRawType());
+        final Object ejb = ejbProvider.get();
         try {
+            //noinspection UnnecessaryLocalVariable
             Object result = method.invoke(ejb, args);
             return result;
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalAccessException | IllegalArgumentException e) {
             throw new ImplementationException(e);
         } catch (InvocationTargetException e) {
             Throwable targetException = e.getTargetException();

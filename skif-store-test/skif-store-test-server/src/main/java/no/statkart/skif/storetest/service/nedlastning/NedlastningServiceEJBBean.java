@@ -26,7 +26,7 @@ import java.util.List;
 @RolesAllowed("Innsyn")
 @SuppressWarnings("unused")
 
-@Stateless(name = "NedlastningServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.service.nedlastning.NedlastningServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class NedlastningServiceEJBBean extends EJBTimedService implements NedlastningService {

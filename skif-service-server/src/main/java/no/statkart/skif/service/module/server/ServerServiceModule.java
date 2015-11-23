@@ -12,9 +12,9 @@ import java.util.Set;
  * @since 2.0
  */
 public class ServerServiceModule extends ModuleWithStrategy<ServerServiceModuleStrategy> {
-    protected final Set<Class<? extends Object>> services = new HashSet<>();
+    protected final Set<Class<?>> services = new HashSet<>();
 
-    public ServerServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services) {
+    public ServerServiceModule(ModuleConfiguration configuration, Collection<Class<?>> services) {
         super(ServerServiceModuleStrategy.class, configuration);
         this.services.addAll(services);
     }
@@ -31,7 +31,9 @@ public class ServerServiceModule extends ModuleWithStrategy<ServerServiceModuleS
 
 
     protected void configureServices() {
-        for (Class<? extends Object> service : services) {
+        strategy.lookupServices(binder(), services);
+
+        for (Class<?> service : services) {
             strategy.bindServiceChainFactoriesForService(binder(), service);
             strategy.bindService(binder(), service);
         }

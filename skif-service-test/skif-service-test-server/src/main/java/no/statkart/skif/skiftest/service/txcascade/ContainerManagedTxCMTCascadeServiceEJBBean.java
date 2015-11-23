@@ -14,7 +14,7 @@ import javax.interceptor.Interceptors;
  * @since 2.0
  */
 @RolesAllowed("Innsyn")
-@Stateless(name = "no.statkart.skif.skiftest.service.txcascade.ContainerManagedTxCMTShadowServiceEJBBean")
+@Stateless(name = "no.statkart.skif.skiftest.service.txcascade.ContainerManagedTxCMTCascadeServiceEJBBean")
 @Interceptors(SkifTestTxManagementEJBInterceptorJEE.class)
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class ContainerManagedTxCMTCascadeServiceEJBBean extends EJBTimedService implements ContainerManagedTxCMTCascadeService {

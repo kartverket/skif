@@ -19,7 +19,7 @@ import java.util.Set;
  */
 
 @RolesAllowed("Innsyn")
-@Stateless(name = "no.statkart.skif.storetest.domain.relation.uni.X1AAFinderServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.domain.relation.uni.direct.X1AAFinderServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class X1AAFinderServiceEJBBean extends EJBTimedService implements X1AAFinderService {

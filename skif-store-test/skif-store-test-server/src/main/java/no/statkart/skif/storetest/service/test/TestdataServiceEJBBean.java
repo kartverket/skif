@@ -23,7 +23,7 @@ import java.util.SortedMap;
  * @since 2.1
  */
 @RolesAllowed("Innsyn")
-@Stateless(name = "no.statkart.skif.storetest.service.test.TestServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.service.test.TestdataServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 public class TestdataServiceEJBBean extends EJBTimedService implements TestdataService {
     @Inject @EJBServiceChain
