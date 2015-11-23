@@ -1,30 +1,33 @@
 package no.statkart.skif.wsversioning.config;
 
-import com.google.common.base.Supplier;
 import com.google.inject.Injector;
-import no.statkart.skif.ServerInjectorRegistry;
+import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
 
-import javax.ejb.Stateless;
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 
 /**
  * Definere hvilken injector som skal brukes internt i serveren og hvordan denne konfigureres opp.
- *
- * @author Henrik Fredholm
- * @author Tor Egil R. Strand
- * @since 2.4.0
  */
-@Stateless
+@Startup
+@Singleton
 public class WSVersioningServerInjectorEJBBean implements WSVersioningServerInjector {
-    @Override public Injector getInjector() {
-        return ServerInjectorRegistry.getInjector("WSVersioningServerModule", new Supplier<ModuleBuilder>() {
-            @Override
-            public ModuleBuilder get() {
-                return new ModuleBuilder()
-                        .setConfiguration(new SkifServerConfiguration())
-                        .setModuleClass(WSVersioningServerModule.class);
-            }
-        });
+    private Injector injector;
+
+    @PostConstruct
+    public void init() {
+        injector = new ModuleBuilder()
+                .setConfiguration(new SkifServerConfiguration())
+                .setModuleClass(WSVersioningServerModule.class)
+                .setServiceMode(ServiceMode.JEE)
+                .buildInjector();
+    }
+
+    @Override
+    public Injector getInjector() {
+        return injector;
     }
 }
