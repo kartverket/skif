@@ -6,6 +6,8 @@ import no.statkart.skif.ServerInjectorRegistry;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
 
+import javax.ejb.Stateless;
+
 /**
  * Definere hvilken injector som skal brukes intern i serveren og hvordan denne konfigureres opp.
  *
@@ -13,8 +15,9 @@ import no.statkart.skif.module.ModuleBuilder;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-public class WSVersioningServerInjector {
-    public static Injector getInjector() {
+@Stateless
+public class WSVersioningServerInjectorEJBBean implements WSVersioningServerInjector {
+    @Override public Injector getInjector() {
         return ServerInjectorRegistry.getInjector("WSVersioningServerModule", new Supplier<ModuleBuilder>() {
             @Override
             public ModuleBuilder get() {

@@ -16,7 +16,7 @@ import java.util.Set;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-@Stateless(name = "GateServiceEJBBean")
+@Stateless(name = "no.statkart.skif.wsversioning.service.GateServiceEJBBean")
 @Interceptors(WSVersioningV1EJBInterceptorJEE.class)
 public class GateServiceEJBBean extends EJBTimedService implements GateService {
     @Inject

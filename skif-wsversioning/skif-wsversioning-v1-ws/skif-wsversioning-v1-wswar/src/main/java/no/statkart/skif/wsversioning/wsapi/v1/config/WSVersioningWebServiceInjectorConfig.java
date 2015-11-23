@@ -5,6 +5,7 @@ import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
 import no.statkart.skif.wsversioning.config.WSVersioningServerV1Injector;
 
+import javax.ejb.EJB;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -15,6 +16,9 @@ import javax.servlet.ServletContextListener;
  * @since 2.4.0
  */
 public class WSVersioningWebServiceInjectorConfig implements ServletContextListener {
+    @EJB
+    private WSVersioningServerV1Injector wsVersioningServerV1Injector;
+
     private static volatile Injector injector;
 
     public static Injector getWebServiceInjector() {
@@ -25,7 +29,7 @@ public class WSVersioningWebServiceInjectorConfig implements ServletContextListe
     public void createInjector() {
         ClassLoader classLoader = getClass().getClassLoader();
 
-        Injector ejbServiceInjector = WSVersioningServerV1Injector.getInjector();
+        Injector ejbServiceInjector = wsVersioningServerV1Injector.getInjector();
         ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
         injector = ejbServiceInjector.createChildInjector(

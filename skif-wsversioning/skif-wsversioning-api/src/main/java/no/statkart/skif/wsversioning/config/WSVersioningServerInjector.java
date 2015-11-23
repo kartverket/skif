@@ -5,6 +5,6 @@ import com.google.inject.Injector;
 /**
  * Lokalt interface for injector-EJB.
  */
-public interface WSVersioningServerV1Injector {
+public interface WSVersioningServerInjector {
     Injector getInjector();
 }
