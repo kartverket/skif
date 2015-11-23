@@ -2,24 +2,9 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5">
     <display-name>SkifTestWSWebApp</display-name>
     <listener>
-        <listener-class>no.statkart.skif.skiftest.config.SkifTestGroup1ServicesEJBs</listener-class>
-    </listener>
-    <listener>
-        <listener-class>no.statkart.skif.skiftest.config.SkifTestGroup2ServicesEJBs</listener-class>
-    </listener>
-    <listener>
-        <listener-class>no.statkart.skif.skiftest.config.SkifTestGroupABCDServicesEJBs</listener-class>
-    </listener>
-    <listener>
-        <listener-class>no.statkart.skif.skiftest.config.SkifTestGroupExServicesEJBs</listener-class>
-    </listener>
-    <listener>
         <listener-class>no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig</listener-class>
     </listener>
 
-    <listener>
-        <listener-class>no.statkart.skif.skiftest.config.SkifTestTxManagementServicesEJBs</listener-class>
-    </listener>
     <listener>
         <listener-class>no.statkart.skif.skiftest.wsapi.config.SkifTestTxManagementWebServiceInjectorConfig</listener-class>
     </listener>

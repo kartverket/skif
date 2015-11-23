@@ -3,11 +3,7 @@ package no.statkart.skif;
 import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import no.statkart.skif.module.ModuleBuilder;
-import no.statkart.skif.service.ejb.EJBLookupHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,20 +15,7 @@ import java.util.Map;
  * @since 2.0
  */
 public class ServerInjectorRegistry {
-    private static Logger logger = LoggerFactory.getLogger(ServerInjectorRegistry.class);
-
-    private static final Map<Object, Injector> injectorMap = new HashMap<Object, Injector>();
-
-    public static void init() {
-        // Dette er nødvendig for å få bunnet EJB'ene slik at man kan gjøre dynamisk lookup av dem serere.
-        EJBLookupHelper lookupHelper = EJBLookupHelper.getInstance();
-        lookupHelper.registerEjbsFromContext();
-
-        final Collection<Class<?>> services = lookupHelper.getServices();
-        for (Class<?> service : services) {
-            logger.info("Binder service " + service.getName());
-        }
-    }
+    private static final Map<Object, Injector> injectorMap = new HashMap<>();
 
     /**
      * Henter ut en registrert injector, eller oppretter den fra en {@link ModuleBuilder} dersom den ikke eksisterer.
@@ -71,7 +54,6 @@ public class ServerInjectorRegistry {
     }
 
     private static Injector createInjector(ModuleBuilder moduleBuilder) {
-        init();
         return moduleBuilder.setServiceMode(ServiceMode.JEE).buildInjector();
     }
 

@@ -16,7 +16,7 @@ import javax.interceptor.Interceptors;
  * @since 2.0
  */
 @RolesAllowed("Innsyn")
-@Stateless(name = "no.statkart.skif.storetest.service.test1.Test1ServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.service.storetest1.StoreTest1ServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 public class StoreTest1ServiceEJBBean extends EJBTimedService implements StoreTest1Service {
 

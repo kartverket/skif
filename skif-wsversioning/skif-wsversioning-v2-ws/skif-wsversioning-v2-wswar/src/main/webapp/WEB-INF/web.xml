@@ -2,10 +2,6 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
     <display-name>SkifWSVersioningV2WebApp</display-name>
     <listener>
-        <listener-class>no.statkart.skif.wsversioning.config.WSVersioningServicesEJBs</listener-class>
-    </listener>
-
-    <listener>
         <listener-class>no.statkart.skif.wsversioning.wsapi.v2.config.WSVersioningWebServiceInjectorConfig</listener-class>
     </listener>
 

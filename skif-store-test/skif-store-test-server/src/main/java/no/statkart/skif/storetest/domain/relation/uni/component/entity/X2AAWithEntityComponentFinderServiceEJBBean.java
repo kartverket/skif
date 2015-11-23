@@ -23,7 +23,7 @@ import java.util.Set;
 @RolesAllowed("Innsyn")
 @SuppressWarnings("unused")
 
-@Stateless(name = "X2AAWithEntityComponentFinderServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponentFinderServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class X2AAWithEntityComponentFinderServiceEJBBean extends EJBTimedService implements X2AAWithEntityComponentFinderService {

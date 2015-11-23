@@ -1,28 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5">
     <display-name>SkifTestWSWebApp</display-name>
-    <listener>
-        <listener-class>no.statkart.skif.storetest.config.StoreTestGroup1ServicesEJBs</listener-class>
-    </listener>
-    <listener>
-        <listener-class>no.statkart.skif.storetest.config.StoreTestStoreServicesEJBs</listener-class>
-    </listener>
-    <listener>
-        <listener-class>no.statkart.skif.storetest.config.StoreTestDomainFinderServicesEJBs</listener-class>
-    </listener>
-    <listener>
-        <listener-class>no.statkart.skif.storetest.config.StoreTestStoreUpdateServicesEJBs</listener-class>
-    </listener>
-    <listener>
-        <listener-class>no.statkart.skif.storetest.config.StoreTestTestServicesEJBs</listener-class>
-    </listener>
-
-    <listener>
-        <listener-class>no.statkart.skif.storetest.config.StoreTestTxManagementServicesEJBs</listener-class>
-    </listener>
-    <listener>
-        <listener-class>no.statkart.skif.storetest.config.StoreTestSequenceBlockAllocatorServicesEJBs</listener-class>
-    </listener>
 
     <listener>
         <listener-class>no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig</listener-class>
