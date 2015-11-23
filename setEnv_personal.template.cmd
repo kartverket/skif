@@ -21,8 +21,6 @@ set ORA_DEBUG=false
 @rem *******************************************************************************************************************
 set WEBLOGIC_HOME=C:\bea_wls10.3.5
 set WEBLOGIC_VERSION=10.3.5
-@rem LOCALHOSTNAME bestemmer gyldig hostname for bruk med sertifikater (default til %COMPUTERNAME%.statkart.no)
-@rem set LOCALHOSTNAME=%COMPUTERNAME%.statkart.no
 
 
 @rem *******************************************************************************************************************
