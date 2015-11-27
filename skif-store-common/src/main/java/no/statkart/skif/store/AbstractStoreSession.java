@@ -581,6 +581,9 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                         entry.clear(level + 1);
                     }
                     break;
+                case UNCHANGED:
+                    entry.commit(level + 1);
+                    break;
             }
         }
     }

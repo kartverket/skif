@@ -12,9 +12,6 @@ import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAId;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOneId;
-import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCManyId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
@@ -502,5 +499,50 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             clientStore.update(simple);
             // NB: Tester her bare at oppdateringen kan utføres i UnitOfWork på klient. Hvis endringen skal lagres må den sendes som transfer til server.
         }
+    }
+
+    /**
+     * Tester låsing i nøstet unit-of-work, committing av unit-of-work, låsing igjen i ny nøstet unit-of-work.
+     */
+    public void testSKIF_555() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            private Store store;
+
+            @Override
+            public Object run() {
+                try (UnitOfWork outer1 = store.beginUnitOfWork()) {
+                    try (UnitOfWork inner11 = store.beginUnitOfWork()) {
+                        Simple simple = store.lock(simpleId1);
+                        store.update(simple);
+                        store.commitUnitOfWork(inner11);
+                    }
+                    try (UnitOfWork inner12 = store.beginUnitOfWork()) {
+                        Simple simple = store.lock(simpleId1);
+                        store.commitUnitOfWork(inner12);
+                    }
+                    store.commitUnitOfWork(outer1);
+                }
+                try (UnitOfWork outer2 = store.beginUnitOfWork()) {
+                    try (UnitOfWork inner2 = store.beginUnitOfWork()) {
+                        store.abortUnitOfWork(inner2);
+                    }
+                    store.commitUnitOfWork(outer2);
+                }
+                try (UnitOfWork outer3 = store.beginUnitOfWork()) {
+                    try (UnitOfWork inner3 = store.beginUnitOfWork()) {
+                        Simple simple = store.lock(simpleId1);
+                        assertNotNull(simple);
+                        store.commitUnitOfWork(inner3);
+                    }
+                    store.commitUnitOfWork(outer3);
+                }
+
+                return null;
+            }
+        });
     }
 }
