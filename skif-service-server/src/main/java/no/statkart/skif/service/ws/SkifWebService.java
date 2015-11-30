@@ -16,8 +16,7 @@ import javax.xml.ws.WebServiceContext;
  * @since 2.0
  */
 public abstract class SkifWebService<T extends ServiceWSI> {
-    private static Logger logger = LoggerFactory.getLogger(SkifWebService.class);
-    Class<T> serviceClass;
+    private final Class<T> serviceClass;
 
     protected SkifWebService(Class<T> serviceClass) {
         this.serviceClass = serviceClass;
@@ -29,6 +28,8 @@ public abstract class SkifWebService<T extends ServiceWSI> {
     }
 
     protected T getServiceImplementation(Injector injector, WebServiceContext ctx) {
+        Logger logger = LoggerFactory.getLogger(SkifWebService.class);
+
         if (logger.isInfoEnabled()) {
             logger.info("Oppretter WebService: " + getClass().getName() + " vha injector: " + System.identityHashCode(injector));
         }
