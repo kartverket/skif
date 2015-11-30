@@ -81,6 +81,16 @@ task dbInit {
 
 }
 
+/**
+ * Fiks for groovy feil: {@code java.lang.ClassNotFoundException: oracle.xdb.XMLType}
+ * https://issues.apache.org/jira/browse/GROOVY-7105
+ */
+@SuppressWarnings("UnnecessaryQualifiedReference")
+@groovy.transform.CompileStatic
+java.sql.DatabaseMetaData getMetadata(groovy.sql.Sql sql) {
+    return sql.getConnection().getMetaData()
+}
+
 task applyHistorikk() {
     mustRunAfter 'loadTestdata', 'tableSequence'
     def tables = [
@@ -94,11 +104,11 @@ task applyHistorikk() {
     doLast {
         groovy.sql.Sql sql = groovy.sql.Sql.newInstance("jdbc:oracle:thin:@//${db_hostname}:${db_port}/${db_service}", db_username, db_password, 'oracle.jdbc.OracleDriver')
 
-        println("connected to database: ${sql.connection.metaData.URL} [${sql.connection.metaData.userName}]")
+        println("connected to database: ${getMetadata(sql).URL} [${getMetadata(sql).userName}]")
 
         def findColumnNames = { String schema, String tableName ->
             def ret = []
-            def resultSet = sql.properties.connection.metaData.getColumns(null, schema, tableName.toUpperCase(), null)
+            def resultSet = getMetadata(sql).getColumns(null, schema, tableName.toUpperCase(), null)
             while (resultSet.next()) {
                 ret.add(resultSet.getString('COLUMN_NAME'))
             }
@@ -109,7 +119,7 @@ task applyHistorikk() {
 
         def findPKColumnNames = { String schema, String tableName ->
             def ret = []
-            def resultSet = sql.properties.connection.metaData.getPrimaryKeys(null, schema, tableName.toUpperCase())
+            def resultSet = getMetadata(sql).getPrimaryKeys(null, schema, tableName.toUpperCase())
             while (resultSet.next()) {
                 ret[resultSet.getInt('KEY_SEQ') - 1] = resultSet.getString('COLUMN_NAME')
             }
