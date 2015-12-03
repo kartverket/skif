@@ -108,6 +108,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
             if (storeEntry.isLockedByLevel(level)) {
                 wrappedStoreSession.unlockEntry(level, storeEntry.getId());
             }
+            storeEntry.clear(level);
             if (storeEntry.getLoadedByLevel() == level) {
                 iterator.remove();
             }

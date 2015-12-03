@@ -521,6 +521,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                         store.commitUnitOfWork(inner11);
                     }
                     try (UnitOfWork inner12 = store.beginUnitOfWork()) {
+                        //noinspection UnusedDeclaration
                         Simple simple = store.lock(simpleId1);
                         store.commitUnitOfWork(inner12);
                     }
@@ -539,6 +540,43 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                         store.commitUnitOfWork(inner3);
                     }
                     store.commitUnitOfWork(outer3);
+                }
+
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Tester låsing, oppdatering, ny låsing i nøstet unit-of-work, aborting av unit-of-work, låsing igjen i ny nøstet unit-of-work.
+     */
+    public void testSKIF_556() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            private Store store;
+
+            @Override
+            public Object run() {
+                try (UnitOfWork outer = store.beginUnitOfWork()) {
+                    try (UnitOfWork inner1 = store.beginUnitOfWork()) {
+                        Simple simple = store.lock(simpleId1);
+                        store.update(simple);
+                        store.commitUnitOfWork(inner1);
+                    }
+                    try (UnitOfWork inner2 = store.beginUnitOfWork()) {
+                        //noinspection UnusedDeclaration
+                        Simple simple = store.lock(simpleId1);
+                        store.abortUnitOfWork(inner2);
+                    }
+                    try (UnitOfWork inner3 = store.beginUnitOfWork()) {
+                        Simple simple = store.lock(simpleId1);
+                        assertNotNull(simple);
+                        store.commitUnitOfWork(inner3);
+                    }
+                    store.commitUnitOfWork(outer);
                 }
 
                 return null;
