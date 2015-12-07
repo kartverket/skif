@@ -9,7 +9,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logback-output.log</file>
+        <file>skif.log</file>
         <encoder>
             <pattern>%d{ISO8601} %-5level %-45logger{45} - %msg%n</pattern>
         </encoder>
