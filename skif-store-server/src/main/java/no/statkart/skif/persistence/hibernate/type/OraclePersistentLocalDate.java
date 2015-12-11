@@ -54,7 +54,7 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
     }
 
     public Object nullSafeGet(ResultSet resultSet, String name) throws SQLException {
-        OracleResultSet oracleResultSet = (OracleResultSet) resultSet;
+        OracleResultSet oracleResultSet = resultSet.unwrap(OracleResultSet.class);
         DATE oracleDate = oracleResultSet.getDATE(name);
         if (oracleDate == null) {
             return null;
@@ -72,7 +72,7 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
         if (value == null) {
             preparedStatement.setNull(index, Types.DATE);
         } else {
-            OraclePreparedStatement oraclePreparedStatement = (OraclePreparedStatement) preparedStatement;
+            OraclePreparedStatement oraclePreparedStatement = preparedStatement.unwrap(OraclePreparedStatement.class);
             LocalDate localDate = (LocalDate) value;
             byte[] rawData = new byte[7];
             rawData[0] = (byte) (localDate.getCenturyOfEra() + 100);
