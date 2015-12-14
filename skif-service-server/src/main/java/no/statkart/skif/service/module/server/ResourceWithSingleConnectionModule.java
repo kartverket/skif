@@ -15,12 +15,10 @@ import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.jdbc.*;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
-import oracle.jdbc.pool.OracleConnectionPoolDataSource;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * @author Henrik Fredholm
@@ -41,7 +39,7 @@ public class ResourceWithSingleConnectionModule extends SkifModule {
 
     @Provides
     @Singleton
-    ComboPooledDataSource provideConnectionPool() {
+    DataSource provideConnectionPool() {
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM || moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM_XML) {
             Configuration configuration = moduleConfiguration.getConfiguration();
             String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
@@ -68,7 +66,7 @@ public class ResourceWithSingleConnectionModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    ResourceManager provideResourceManager(Provider<ComboPooledDataSource> dataSourceProvider) {
+    ResourceManager provideResourceManager(Provider<DataSource> dataSourceProvider) {
         Configuration configuration = moduleConfiguration.getConfiguration();
         ConnectionManager connectionManager;
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM || moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM_XML) {

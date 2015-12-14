@@ -3,13 +3,15 @@ package no.statkart.skif.persistence.jdbc;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
+import oracle.jdbc.OracleConnection;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import javax.sql.DataSource;
 import java.sql.*;
 
-import static no.statkart.skif.util.JDBCHelper.createConnectionFactoryUsingJDBC;
+import static no.statkart.skif.util.JDBCHelper.createPooledDataSource;
 import static org.testng.Assert.*;
 
 /**
@@ -37,10 +39,11 @@ public class ConnectionManagerUsingJDBCTest {
         String port = configuration.getString(SkifConfigConstants.DB_PORT);
         url = String.format("jdbc:oracle:thin:@//%s:%s/%s", hostname, port, service);
 
+        DataSource pool = createPooledDataSource(configuration);
 
         connectionManager = new ConnectionManagerUsingFactory(
-                createConnectionFactoryUsingJDBC(configuration, SnapshotVersion.CURRENT, false),
-                createConnectionFactoryUsingJDBC(configuration, SnapshotVersion.OLD, false)
+                new ConnectionFactoryUsingPool(pool, false, SnapshotVersion.CURRENT, false),
+                new ConnectionFactoryUsingPool(pool, false, SnapshotVersion.OLD, false)
         );
     }
 
@@ -59,7 +62,8 @@ public class ConnectionManagerUsingJDBCTest {
         try {
             Connection unwrappedConnection = connectionForSnapshotVersion.reserve();
             assertFalse(unwrappedConnection.getAutoCommit());
-            assertEquals(unwrappedConnection.getClass().getName(), "oracle.jdbc.driver.T4CConnection");
+            OracleConnection oracleConnection = unwrappedConnection.unwrap(OracleConnection.class);// Sjekk at vi har muligheten for å få tak i denne
+            assertEquals(oracleConnection.getClass().getName(), "oracle.jdbc.driver.T4CConnection");
         } finally {
             connectionForSnapshotVersion.release();
         }

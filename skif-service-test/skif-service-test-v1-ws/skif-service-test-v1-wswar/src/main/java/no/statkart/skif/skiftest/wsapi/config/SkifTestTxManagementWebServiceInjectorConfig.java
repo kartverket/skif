@@ -8,6 +8,8 @@ import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.skiftest.config.*;
 import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletContextEvent;
@@ -50,7 +52,12 @@ public class SkifTestTxManagementWebServiceInjectorConfig implements ServletCont
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        createInjector();
+        try {
+            createInjector();
+        } catch (Exception e) {
+            Logger logger = LoggerFactory.getLogger(getClass());
+            logger.error("Injector creation failed", e);
+        }
     }
 
     @Override

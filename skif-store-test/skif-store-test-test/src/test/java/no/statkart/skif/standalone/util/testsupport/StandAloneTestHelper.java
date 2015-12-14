@@ -13,10 +13,12 @@ import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.standalone.*;
+import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Environment;
 
+import javax.sql.DataSource;
 import java.util.Properties;
 
 import static org.testng.FileAssert.fail;
@@ -43,16 +45,10 @@ public class StandAloneTestHelper {
 
         SkifConfiguration configuration = new SkifServerConfiguration();
 
-        String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
-        String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
-        String service = configuration.getString(SkifConfigConstants.DB_SERVICE);
-        String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
-        String port = configuration.getString(SkifConfigConstants.DB_PORT);
-        String url = String.format("jdbc:oracle:thin:@//%s:%s/%s", hostname, port, service);
+        DataSource pooledDataSource = JDBCHelper.createPooledDataSource(configuration);
 
-        hibernateProperties.setProperty(Environment.USER, username);
-        hibernateProperties.setProperty(Environment.PASS, password);
-        hibernateProperties.setProperty(Environment.URL, url);
+        hibernateProperties.setProperty(Environment.CONNECTION_PROVIDER, "no.statkart.skif.persistence.hibernate.PoolConnectionProvider");
+        hibernateProperties.put(Environment.DATASOURCE, pooledDataSource);
         hibernateProperties.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JDBCTransactionFactory");
         return hibernateProperties;
     }
@@ -79,17 +75,6 @@ public class StandAloneTestHelper {
 
     /**
      * Builder som inneholder bobler med historikk.
-     *
-     * @return
-     */
-    public static HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
-        return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate");
-    }
-
-    /**
-     * Builder som inneholder bobler med historikk.
-     *
-     * @return
      */
     public static HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilderWithHistory() {
         return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate36")
@@ -146,7 +131,7 @@ public class StandAloneTestHelper {
         try {
             store.get(bubbleId);
             fail("Objekt skal ikke være i store");
-        } catch (ObjectNotFoundException e) {
+        } catch (ObjectNotFoundException ignored) {
         }
     }
 

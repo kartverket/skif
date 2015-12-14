@@ -82,6 +82,7 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
 
+import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -216,7 +217,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @Singleton
-    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<IdService> idServiceProvider) {
+    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<IdService> idServiceProvider, Provider<DataSource> poolProvider) {
 
         Configuration configuration = moduleConfiguration.getConfiguration();
 
@@ -300,18 +301,10 @@ public class StoreTestServerModule extends SkifModule {
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
             hibernatePropertiesConfiguration.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JDBCTransactionFactory");
 
-            String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
-            String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
-            String service = configuration.getString(SkifConfigConstants.DB_SERVICE);
-            String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
-            String port = configuration.getString(SkifConfigConstants.DB_PORT);
-            String url = String.format("jdbc:oracle:thin:@//%s:%s/%s", hostname, port, service);
-
             hibernatePropertiesCurrent = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
 
-            hibernatePropertiesCurrent.setProperty(Environment.USER, username);
-            hibernatePropertiesCurrent.setProperty(Environment.PASS, password);
-            hibernatePropertiesCurrent.setProperty(Environment.URL, url);
+            hibernatePropertiesCurrent.setProperty(Environment.CONNECTION_PROVIDER, no.statkart.skif.persistence.hibernate.PoolConnectionProvider.class.getName());
+            hibernatePropertiesCurrent.put(Environment.DATASOURCE, poolProvider.get());
 
             hibernatePropertiesOld = hibernatePropertiesCurrent;
         } else {
@@ -338,7 +331,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @Singleton
-    ComboPooledDataSource provideConnectionPool() {
+    DataSource provideConnectionPool() {
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM || moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM_XML) {
             Configuration configuration = moduleConfiguration.getConfiguration();
             String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
@@ -365,7 +358,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @ServiceRequestScoped
-    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider, Provider<ComboPooledDataSource> dataSourceProvider) {
+    ResourceManager provideResourceManager(Provider<ResourceManagerConfigurator> resourceManagerConfiguratorProvider, Provider<HibernateSessionFactoryManagerBundle> hibernateSessionFactoryManagerBundleProvider, Provider<EnumKodelisteManager> enumKodelisteManagerProvider, Provider<DataSource> dataSourceProvider) {
         final String strategy = resourceManagerConfiguratorProvider.get().getStrategy();
         if (strategy == ResourceManagerConfigurator.CONNECTION_ONLY) {
             return createResourceManagerForConnectionOnlyStrategy(dataSourceProvider);
@@ -378,7 +371,7 @@ public class StoreTestServerModule extends SkifModule {
 
     }
 
-    ResourceManager createResourceManagerForConnectionOnlyStrategy(Provider<ComboPooledDataSource> dataSourceProvider) {
+    ResourceManager createResourceManagerForConnectionOnlyStrategy(Provider<DataSource> dataSourceProvider) {
         Configuration configuration = moduleConfiguration.getConfiguration();
         ConnectionManager connectionManager;
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM || moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM_XML) {

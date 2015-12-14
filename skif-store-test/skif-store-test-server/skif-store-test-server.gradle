@@ -14,7 +14,7 @@ dependencies {
 
     runtime libraries.gt2 //optional avhengighet for gt2 for persistering av geometri for Oracle DB
 
-    compile libraries.c3p0
+    provided libraries.c3p0
 
     provided libraries.weblogic
     provided libraries.jdbc

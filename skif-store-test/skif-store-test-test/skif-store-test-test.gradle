@@ -6,6 +6,7 @@ dependencies {
     runtime project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient')
 
     provided libraries.jaxws_rt
+    provided libraries.c3p0
     provided libraries.weblogic
     provided libraries.jdbc
 

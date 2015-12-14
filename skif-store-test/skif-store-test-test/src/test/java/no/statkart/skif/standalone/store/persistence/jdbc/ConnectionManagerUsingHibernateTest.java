@@ -8,6 +8,7 @@ import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceS
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate;
+import oracle.jdbc.OracleConnection;
 import org.hibernate.jdbc.ConnectionWrapper;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -20,6 +21,7 @@ import java.util.Properties;
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactorManagerBundle;
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactoryBuilderWithHistory;
 import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tester for {@link  no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate}
@@ -67,8 +69,8 @@ public class ConnectionManagerUsingHibernateTest {
 
         try {
             Connection wrappedConnection = connectionForSnapshotVersion.reserve();
-            Connection unwrappedConnection = ConnectionWrapper.class.cast(wrappedConnection).getWrappedConnection();
-            assertEquals(unwrappedConnection.getClass().getName(), "oracle.jdbc.driver.T4CConnection");
+            OracleConnection oracleConnection = wrappedConnection.unwrap(OracleConnection.class);// Sjekk at vi har muligheten for å få tak i denne
+            assertEquals(oracleConnection.getClass().getName(), "oracle.jdbc.driver.T4CConnection");
         } finally {
             connectionForSnapshotVersion.release();
         }

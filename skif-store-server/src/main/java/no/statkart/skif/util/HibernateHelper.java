@@ -1,11 +1,5 @@
 package no.statkart.skif.util;
 
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.persistence.jdbc.ConnectionFactoryUsingJDBC;
-import no.statkart.skif.persistence.jdbc.ConnectionSelector;
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.Session;
 import org.hibernate.metadata.ClassMetadata;
