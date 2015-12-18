@@ -49,7 +49,12 @@ public class ConnectionProxyUsingJDBC implements InvocationHandler, ConnectionRe
             }
         } else {
             factory.setSnapshotVersion(delegate, snapshotVersion);
-            Object result = method.invoke(delegate, args);
+            Object result = null;
+            try {
+                result = method.invoke(delegate, args);
+            } catch (InvocationTargetException e) {
+                throw e.getTargetException();
+            }
             return result;
         }
     }
