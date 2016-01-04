@@ -269,8 +269,8 @@ allprojects {
                         'Specification-Version': gradle.startParameter.projectProperties.get('version', "${version}"),
 
                         //misc build info
-                        'Build-By': "${System.getenv('USERNAME')}",
-                        'Build-Machine': "${System.getenv('COMPUTERNAME')}",
+                        'Build-By'     : System.getProperty('user.name'),
+                        'Build-Machine': java.net.InetAddress.localHost.hostName,
                         'Build-Repo': MAVEN_REPO,
 
                         'Implementation-Title': "${project.name} bygget for ${(version == null || version.contains('-SNAPSHOT') || version.contains('-build')) ? 'TEST' : 'Produksjon'}",
@@ -290,7 +290,6 @@ buildscript {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     [
             'JAVA_HOME',
-            'COMPUTERNAME',
             'LOCALHOSTNAME',
             'WEBLOGIC_HOME',
             'WEBLOGIC_VERSION',
@@ -301,7 +300,7 @@ buildscript {
     }
 
     if (!project.hasProperty('LOCALHOSTNAME')) {
-        project.ext.setProperty('LOCALHOSTNAME', java.net.InetAddress.getLocalHost().getHostName() + '.statkart.no')
+        project.ext.setProperty('LOCALHOSTNAME', java.net.InetAddress.localHost.hostName + '.statkart.no')
     }
 
     ext.ORA_DEBUG = Boolean.valueOf("${rootProject.properties.get('ORA_DEBUG', System.getenv('ORA_DEBUG')) ?: 'false'}")
