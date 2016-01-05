@@ -11,6 +11,7 @@ import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -38,8 +39,8 @@ public class RelationCache {
      * Enabler og disabler relation caching. Ved disabling evictes alle cachet relasjoner.
      */
     public void setEnabled(int level, boolean enabled) {
-        checkState(level==0 || this.enabled[level-1]==false || enabled, "Disabling av relation caching i current UnitOfWork støttes ikke når underliggende UnitOfWork eller session har caching enablet");
-        if (enabled==false && this.enabled[level]==true) {
+        checkState(level == 0 || this.enabled[level - 1] == false || enabled, "Disabling av relation caching i current UnitOfWork støttes ikke når underliggende UnitOfWork eller session har caching enablet");
+        if (enabled == false && this.enabled[level] == true) {
             evictAll();
         }
         this.enabled[level] = enabled;
@@ -95,22 +96,22 @@ public class RelationCache {
 
     public RelationName getRelationName(Method method) {
         //TODO optimaliser via singleton lookup for method. Dette endre seg ikke og kan derfor caches på tvers av alle sessions
-        RelationName name=null;
+        RelationName name = null;
         Relation annotation = method.getAnnotation(Relation.class);
-        if (annotation!=null) {
-            checkState(annotation.type()== RelationType.INVERSE);
-            Class<? extends Enum> enumClass = SkifUtil.classForName(method.getDeclaringClass().getCanonicalName()+"$Role");
+        if (annotation != null) {
+            checkState(annotation.type() == RelationType.INVERSE);
+            Class<? extends Enum> enumClass = SkifUtil.classForName(method.getDeclaringClass().getCanonicalName() + "$Role");
             name = (RelationName) Enum.valueOf(enumClass, annotation.name());
         }
         return name;
     }
 
     public void onBeginUnitOfWork(int level) {
-        enabled[level] = enabled[level-1];
+        enabled[level] = enabled[level - 1];
     }
 
     public void onCommitUnitOfWork(int level) {
-        if (enabled[level] && !enabled[level-1]) {
+        if (enabled[level] && !enabled[level - 1]) {
             evictAll();
         }
         for (Map.Entry<Key, RelationEntry> mapElement : inverseRelationMap.entrySet()) {
@@ -120,15 +121,15 @@ public class RelationCache {
     }
 
     public void onAbortUnitOfWork(int level) {
-        if (enabled[level] && !enabled[level-1]) {
+        if (enabled[level] && !enabled[level - 1]) {
             evictAll();
         }
-        Iterator<Map.Entry<Key,RelationEntry>> iterator = inverseRelationMap.entrySet().iterator();
-        while ( iterator.hasNext()) {
+        Iterator<Map.Entry<Key, RelationEntry>> iterator = inverseRelationMap.entrySet().iterator();
+        while (iterator.hasNext()) {
             Map.Entry<Key, RelationEntry> mapElement = iterator.next();
             RelationEntry entry = mapElement.getValue();
             entry.abortEntry(level);
-            if (entry.hasNoRelationsInRemainigLevels(level-1)) {
+            if (entry.hasNoRelationsInRemainigLevels(level - 1)) {
                 iterator.remove();
             }
         }
@@ -154,8 +155,38 @@ public class RelationCache {
         inverseRelationMap.clear();
     }
 
+    public Map<Key, RelationEntry> filterOnKeys(Comparable<Key> keyComparable) {
+        Map<Key, RelationEntry> filtered = Maps.newHashMap();
+        for (Map.Entry<Key, RelationEntry> entry : inverseRelationMap.entrySet()) {
+            if (keyComparable.compareTo(entry.getKey()) == 0) {
+                filtered.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return filtered;
+    }
 
-    static class Key {
+    public Map<Key, RelationEntry> filterOnRelationName(String relationName) {
+        return filterOnKeys(relationNameEquals(relationName));
+    }
+
+    private static Comparable<Key> relationNameEquals(final String relationName) {
+        return new Comparable<Key>() {
+            @Override
+            public int compareTo(Key o) {
+                return relationName.compareTo(o.name.toString());
+            }
+        };
+    }
+
+    public Set<String> getCachedRelationNames() {
+        Set<String> relationNames = Sets.newHashSet();
+        for (Key key : inverseRelationMap.keySet()) {
+            relationNames.add(key.name.toString());
+        }
+        return relationNames;
+    }
+
+    public static class Key {
         private final RelationName name;
         private final Object inverseValue;
 
@@ -180,13 +211,17 @@ public class RelationCache {
             result = 31 * result + inverseValue.hashCode();
             return result;
         }
+
+        @Override
+        public String toString() {
+            return name + ":" + inverseValue;
+        }
     }
 
     /**
      * Denne klasse holder på styr på hvilke objekter som inngår i en invers relasjon for gitt unit-of-work, relasjon og
      * verdi (bubbleId eller verdi). Klassen anvender et array av {@code RelationTracker}s hvor index i array
      * svarer til unit-of-work level.
-     *
      *
      * @author Henrik Fredholm
      * @since 2.4
@@ -245,7 +280,7 @@ public class RelationCache {
             }
             // Hvis RelationTracker ikke er materalisert for inneværende nivå 'i', må vi hente verdien fra et underliggende nivå. NB: Det kan være huller.
             int j = i;
-            while (j >= 0 && (relations[j]==null || !relations[j].isMaterialised())) {
+            while (j >= 0 && (relations[j] == null || !relations[j].isMaterialised())) {
                 j--;
             }
             if (j == -1) {
@@ -254,8 +289,8 @@ public class RelationCache {
             // j er materialisert, og skal brukes som startpunkt for videre materialisering opp til level 'i'
             while (j < i) {
                 Object value = CopyHelper.copy(relations[j].getRelation());
-                if (relations[j+1]==null) {
-                    relations[j+1] = new RelationTracker(true, value);
+                if (relations[j + 1] == null) {
+                    relations[j + 1] = new RelationTracker(true, value);
                 } else {
                     relations[j + 1].materialise(value);
                 }
@@ -301,6 +336,13 @@ public class RelationCache {
                 if (relations[i] != null) return false;
             }
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return "RelationEntry{" +
+                    "relations=" + Arrays.toString(relations) +
+                    '}';
         }
     }
 }

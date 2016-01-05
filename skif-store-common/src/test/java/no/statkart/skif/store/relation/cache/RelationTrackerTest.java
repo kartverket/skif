@@ -158,6 +158,26 @@ public class RelationTrackerTest {
 
     }
 
+    /**
+     * Tester 'commitInto' for umaterialisert relasjon på level 1 hvor relasjon for level 0 er realisert for en
+     * 'one'-relation. Resultatet etter commit skal være den siste verdien som ble lagt til level 1 relasjonen.
+     */
+    public void commitIntoMaterialisedOneRelation() {
+        RelationTracker t = new RelationTracker();
+        t.materialise(null);  // Initiell verdi for level 0 relasjon er 'null'.
+        assertTrue(t.isMaterialised());
+        RelationTracker t2 = new RelationTracker();
+        assertFalse(t2.isMaterialised());
+        t2.add(new Id(1));
+        t2.remove(new Id(1));
+        final Id FINAL_RESULT = new Id(2);
+        t2.add(FINAL_RESULT);
+
+        t2.commitInto(t);
+        assertTrue(t.isMaterialised());
+        assertThat(t.getRelation()).isSameAs(FINAL_RESULT);
+    }
+
    public static class Id {
        private final long value;
 

@@ -161,7 +161,7 @@ public class RelationTracker {
             underlyingTracker.materialised = materialised;
             underlyingTracker.holder = holder;
         } else if (underlyingTracker.materialised) {
-            applyOperations(underlyingTracker.getRelation());
+            underlyingTracker.holder = applyOperations(underlyingTracker.holder);
         } else {
             underlyingTracker.getValuesAsOperations().addAll(getValuesAsOperations());
         }
