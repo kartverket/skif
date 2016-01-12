@@ -332,6 +332,9 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             if (bubbleObject instanceof InverseRelationParticipation) {
                 relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
             }
+            if (bubbleObject instanceof BubbleObjectWithIdent) {
+                ((BubbleObjectWithIdent<?>)bubbleObject).onIdentChanged();
+            }
         }
         return storeEntry;
     }
@@ -388,6 +391,13 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 }
                 if (bubbleObject instanceof InverseRelationParticipation) {
                     relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+                }
+                if (bubbleObject instanceof BubbleObjectWithIdent) {
+                    Object oldIdent = (oldInstance == null) ? null : ((BubbleObjectWithIdent<?>) oldInstance).getIdent();
+                    BubbleObjectWithIdent<?> bubbleBubbleObjectWithIdent = (BubbleObjectWithIdent<?>) bubbleObject;
+                    if (!bubbleBubbleObjectWithIdent.getIdent().equals(oldIdent)) {
+                        bubbleBubbleObjectWithIdent.onIdentChanged();
+                    }
                 }
             }
         }
@@ -447,6 +457,9 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         if (relationCache.isEnabled()) {
             if (bubbleObject instanceof InverseRelationParticipation) {
                 relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+            }
+            if (bubbleObject instanceof BubbleObjectWithIdent) {
+                relationCache.onIdentRemoved(bubbleObject.getBubbleId());
             }
         }
         return storeEntry;
@@ -727,6 +740,10 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                         if (bubbleObject instanceof InverseRelationParticipation) {
                             relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
                         }
+                        if (bubbleObject instanceof BubbleObjectWithIdent) {
+                            BubbleObjectWithIdent<?> bubbleBubbleObjectWithIdent = (BubbleObjectWithIdent<?>) bubbleObject;
+                            bubbleBubbleObjectWithIdent.onIdentChanged();
+                        }
                         break;
 
                     case DELETED_INSERTED:
@@ -740,6 +757,14 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                             }
                             if (bubbleObject instanceof InverseRelationParticipation) {
                                 relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+                            }
+                            if (bubbleObject instanceof BubbleObjectWithIdent) {
+                                Object oldIdent = (persistedBubbleObject == null) ? null : ((BubbleObjectWithIdent<?>) persistedBubbleObject).getIdent();
+                                BubbleObjectWithIdent<?> bubbleBubbleObjectWithIdent = (BubbleObjectWithIdent<?>) bubbleObject;
+                                Object ident = bubbleBubbleObjectWithIdent.getIdent();
+                                if ((ident==null && oldIdent!=null) || !ident.equals(oldIdent)) {
+                                    bubbleBubbleObjectWithIdent.onIdentChanged();
+                                }
                             }
                         } else {
                             // Kan komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
@@ -771,6 +796,9 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                             }
                             if (bubbleObject instanceof InverseRelationParticipation) {
                                 relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+                            }
+                            if (bubbleObject instanceof BubbleObjectWithIdent) {
+                                relationCache.onIdentRemoved(bubbleObject.getId());
                             }
                         } else {
                             // Kan komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk

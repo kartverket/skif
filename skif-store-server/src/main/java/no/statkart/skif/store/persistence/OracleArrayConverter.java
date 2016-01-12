@@ -59,8 +59,10 @@ public class OracleArrayConverter<T> {
     }
 
     /**
-     * Denne metode er overrides i subklasser og gjøre public, dersom den underliggende elementtype kan brukes direkte
-     * i et oracle ARRAY, dvs. er av type Object eller Object[]
+     * Denne metode kan overrides i subklasser til å være public dersom den underliggende elementtype kan brukes direkte
+     * i et oracle ARRAY, dvs. er av type Object eller Object[] slik at man kan kalle
+     * {@link #toArray(java.sql.Connection, java.util.Collection)} i stedet for
+     * {@link #toObjectArray(java.sql.Connection, java.util.Collection)}
      */
     protected ARRAY toArray(Connection sqlConnection, Object[] objects) {
         try {

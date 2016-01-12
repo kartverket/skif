@@ -10,7 +10,13 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.UnitOfWork;
-import no.statkart.skif.storetest.domain.relation.uni.direct.*;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1AA;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAFinderService;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAId;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAIdent;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOneId;
+import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCManyId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
@@ -22,15 +28,18 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 /**
  * TODO: Dette bør nok stå et annet sted som dokumentasjon også. Det står her for å gi er overblikk av hva som bør testes her
- * <p>
- * Tester relationcaching gjennom store, herunder samspillet med relation cachingen og Unit of Work konseptet. Store
+ * <p/>
+ * Tester relationcaching gjennom Store, herunder samspillet med relation cachingen og Unit of Work konseptet. Store
  * støtter at relation caching kan slås av og på, dog pt med den begrensningen at caching ikke kan slås av hvis
  * den er slått på for underliggende Unit of Work.
- * <p>
+ * <p/>
  * Et sentralt konsept i Unit of Work konseptet er at de endringer som gjøres innefor en unit of work begrenses til denne
  * i en vis forstand. Med hensyn til transaksjoner er det at endringer committes til underliggende session ved commit og
  * at endringene rulles tilbake (dvs ikke påvirker underliggende lag) ved abort. For caching betyder det at cachet
@@ -44,7 +53,7 @@ import static org.testng.Assert.*;
  * Dvs et objekt kan være endret, men Store.update er ennå ikke kallt på det tidspunkt hvor cachingen slås på. Siden
  * relation cachingen opererer synkront når den er enablet, virker det riktigst at algoritmen  for enabling av
  * cachen tar hensyn til disse  objektene også.
- * <p>
+ * <p/>
  * Ovenstående prinsipper bør testes for klient og server. Det finnes mange kombinasjoner så ikke alle blir nødvendigvis
  * testet. Fokus har vært på å få testet de mest vanlige patterns på klient og server.
  *
@@ -116,10 +125,6 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
             @Override
             public Object run() {
                 assertFalse(serverStore.getRelationCache().isEnabled());
-                serverStore.getRelationCache().setEnabled(true);
-                assertTrue(serverStore.getRelationCache().isEnabled());
-                serverStore.getRelationCache().setEnabled(false);
-                assertFalse(serverStore.getRelationCache().isEnabled());
                 return null;
             }
         });
@@ -132,6 +137,10 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
 
             @Override
             public Object run() {
+                assertFalse(serverStore.getRelationCache().isEnabled());
+                serverStore.getRelationCache().setEnabled(true);
+                assertTrue(serverStore.getRelationCache().isEnabled());
+                serverStore.getRelationCache().setEnabled(false);
                 assertFalse(serverStore.getRelationCache().isEnabled());
                 return null;
             }
@@ -177,6 +186,26 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
         assertFalse(storeClient.getRelationCache().isEnabled());
     }
 
+    public void testClientCachingIUnitOfWorkKanDisablesNaaCachingIUnderliggerErPaa() {
+        assertFalse(storeClient.getRelationCache().isEnabled());
+        try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
+            storeClient.getRelationCache().setEnabled(true);
+            assertTrue(storeClient.getRelationCache().isEnabled());
+
+            try (UnitOfWork inner = storeClient.beginUnitOfWork()) {
+                assertTrue(storeClient.getRelationCache().isEnabled());
+                storeClient.getRelationCache().setEnabled(false);
+                assertFalse(storeClient.getRelationCache().isEnabled());
+                storeClient.commitUnitOfWork(inner);
+            }
+
+            assertTrue(storeClient.getRelationCache().isEnabled());
+
+        }
+        assertFalse(storeClient.getRelationCache().isEnabled());
+    }
+
+
     public void testStoreSessionClientLockObjectMedEtterfoelgedeRelationCachingEnabling() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
@@ -194,7 +223,7 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
      * Når cachen enables må algoritmen innse at a1 er endret. Dvs den gamel versjon av a1 (hvor a1->b2Id) gjelder ikke
      * lengre. Istedet gjelder den oppdaterte versjonen av a1 (a1->bNewId). Algoritmen må innse at koblingen a1->b2Id er
      * 'removed' og koblingen a1->bNewId er 'added'
-     * <p>
+     * <p/>
      * <p>Videre, etter at UnitOfWork er aborted skal relasjonene svare det opprinnelige
      */
     public void testClientUpdateMedEtterfoelgedeRelationCachingEnabling() {
@@ -314,14 +343,14 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     /**
      * Tester at relation cachen beregner relasjoner riktig når den enables etter at objekter i Store er endret en en
      * ytre unit of work.
-     * <p>
+     * <p/>
      * I testcasen starter vi men en situasjon hvor a1->b2Id. Så endres a1->bNewId i ytre unit of work og til
      * a1-b2NewId i indre unit of work. Så lenge caching ikke er enablet vil servicen lese det som står i databasen.
      * Dvs for b2Id finner vi {a1Id} og for bNewId  og b2NewId finner vi {}.
      * Når cachen enables må algoritmen innse at a1 er endret. Dvs den gamel versjon av a1 (hvor a1->b2Id) gjelder ikke
      * lengre. Istedet gjelder den oppdaterte versjonen av a1 (a1->b2NewId). Algoritmen må innse at koblingen a1->b2Id er
      * 'removed' og koblingen a1->b2NewId er 'added', mens koblingen a1->bNewId er irrelevant.
-     * <p>
+     * <p/>
      * <p>Videre, etter at UnitOfWork er aborted skal relasjonene svare det opprinnelige
      */
     public void testClientUpdatesInNestedUnitOfWorksMedEtterfoelgedeRelationCachingEnabling() {

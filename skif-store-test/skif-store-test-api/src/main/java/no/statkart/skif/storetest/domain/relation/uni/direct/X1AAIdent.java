@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.domain.relation.uni.direct;
 import java.io.Serializable;
 
 /**
- * Komposittident for {@link X1AA} som består av {@link X1AA#nr} fra {@link X1BBOne}, som er globalt unik, og {@link X1BBOne#nr}, som ikke er det.
+ * Komposittident for {@link X1AA} som er sammensatt av {@link X1BBOne#nr} og {@link X1AA#nr}.
  */
 public class X1AAIdent implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -35,6 +35,10 @@ public class X1AAIdent implements Serializable {
         this.aNr = aNr;
     }
 
+    public static X1AAIdent from(X1BBOne someBB, int nr) {
+        return someBB==null ? null : new X1AAIdent(someBB.getNr(), nr);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -59,4 +63,5 @@ public class X1AAIdent implements Serializable {
                 ", aNr=" + aNr +
                 '}';
     }
+
 }

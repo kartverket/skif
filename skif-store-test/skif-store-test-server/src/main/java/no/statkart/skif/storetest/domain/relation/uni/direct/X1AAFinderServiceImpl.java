@@ -255,4 +255,51 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             super(new OracleX1AAIdentArrayConverter());
         }
     }
+
+
+    private static class OracleX1BBOneIdentArrayConverter extends OracleArrayConverter<X1BBOneIdent> {
+        public OracleX1BBOneIdentArrayConverter() {
+            super("NUMBER_LIST_TYPE");
+        }
+
+        @Override
+        protected Object toValue(X1BBOneIdent object) {
+            return object.getBNr();
+        }
+    }
+
+    private static class OracleX1BBOneIdentArrayUserType extends OracleArrayUserType<OracleX1BBOneIdentArrayConverter, X1BBOneIdent> {
+        public OracleX1BBOneIdentArrayUserType() {
+            super(new OracleX1BBOneIdentArrayConverter());
+        }
+    }
+
+    @Override
+    public Map<X1BBOneIdent, Set<X1BBOneId<?>>> findX1BBOneIdsForIdents(Collection<X1BBOneIdent> idents) {
+        Map<X1BBOneIdent, Set<X1BBOneId<?>>> result = Maps.newHashMapWithExpectedSize(idents.size());
+        for (X1BBOneIdent ident : idents) {
+            result.put(ident, new HashSet<X1BBOneId<?>>());
+        }
+
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
+            SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
+            Session session = sessionSelector.get(snapshotVersion);
+            SQLQuery query = session.createSQLQuery("select b.nr as bnr, b.id  from X1BBOne b where (b.nr) in (select * from table(:idents))");
+            query.addSynchronizedQuerySpace("X1BBOne");
+            query.setParameter("idents", idents, new CustomType(new OracleX1BBOneIdentArrayUserType()));
+            query.setFetchSize(Math.min(1000, idents.size()));
+            query.addScalar("bnr", Hibernate.INTEGER);
+            query.addScalar("id", Hibernate.LONG);
+            ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
+
+            while (scroll.next()) {
+                Object[] next = scroll.get();
+                X1BBOneIdent ident = new X1BBOneIdent((Integer) next[0]);
+                Set<X1BBOneId<?>> relatedIds = result.get(ident);
+                relatedIds.add(new X1BBOneId<>((Long) next[1], snapshotVersion));
+            }
+        }
+        return result;
+    }
+
 }

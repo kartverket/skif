@@ -1,5 +1,6 @@
 package no.statkart.skif.store.relation.cache;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import no.statkart.skif.SkifUtil;
@@ -11,25 +12,47 @@ import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Klasse for caching av invers relasjoner i Store. Invers relasjonen kan enten være fra en bobleId eller et
- * value objekt som brukes index key (f.eks en streng).
+ * Klasse for caching av invers relasjoner i Store. Inversrelasjonen kan enten være fra en bobleId eller et
+ * vilkårlig valueobjekt og går til boblen som har denne verdien. Dersom verdien ligger i en komponent av boblen går
+ * inversrelasjonen alltid til boblen som eier komponenten.
+ * <p>
+ * Eiende boble må fortelle relasjonscachen hver gang relasjonen endres. Dette skjer via kall til
+ * {@link #onChangeRelation} hvor kan det angis hva den gamle verdi var og hva den nye verdi er. Hvis relasjonen har
+ * {@code mange} kardinalitet så brukes {@code null} for gammel verdi ved {@code add} og {@null}  for ny verdier ved
+ * {@ocde remove}. Relasjonscachen er således alltid i synk med hensyn til hvilke objekter som er lagt til og fjernet.
+ * <p>
+ * Relasjonen som caches trenger ikke å være materialisert for at cachen kan holde styr på hvilke verdier som har blitt
+ * lagt til eller fjernet. Relasjonen materialiseres først hvis relasjonens verdier skal  brukes. Da appliseres
+ * alle cachet endringene på den materialiserte relasjonen slik at relasjonen fremstå som endret og med riktig innhold.
+ * <p>
+ * For å kunne forenkle håndtering av relasjonscaching av identer som beregnes på basis av flere objekter, så behandler
+ * relasjonscachen relasjoner til valueobjekter litt anderledes enn relasjner til bobleId. For valueobjekter så husker
+ * relasjonscachen selv den gamle verdien slik at den ikke skal oppgis. Derved trenger boblen ikke å være i stand
+ * til å kunne beregne den gamle verdien eller eksplisitt å hente ut den gamle verdien før objekter som inngår i beregningen
+ * endres. Antagelsen for valueobjekter er at relasjonen har kardinalitet 1 og at den gamle verdien ikke lengre skal
+ * peke på objektet.
+ * <p/>
  *
  * @author Henrik Fredholm
  * @since 2.4
  */
 public class RelationCache {
-    Map<Key, RelationEntry> inverseRelationMap = Maps.newHashMap();
-    final static int MAX_LEVELS = 4;
-    private boolean[] enabled = new boolean[MAX_LEVELS];
+    final private Map<Key, RelationEntry> inverseRelationMap = Maps.newHashMap();
+    final private Map<BubbleId<?>, List<CachedInverseValueEntry>> sourceIdToInverseValueMap = Maps.newHashMap();
+    final private static int MAX_LEVELS = 4;
+    final private boolean[] enabled = new boolean[MAX_LEVELS];
 
     public boolean isEnabled(int level) {
         return enabled[level];
@@ -39,16 +62,99 @@ public class RelationCache {
      * Enabler og disabler relation caching. Ved disabling evictes alle cachet relasjoner.
      */
     public void setEnabled(int level, boolean enabled) {
-        checkState(level == 0 || this.enabled[level - 1] == false || enabled, "Disabling av relation caching i current UnitOfWork støttes ikke når underliggende UnitOfWork eller session har caching enablet");
-        if (enabled == false && this.enabled[level] == true) {
+        if (this.enabled[level]) {
             evictAll();
         }
         this.enabled[level] = enabled;
     }
 
+    private CachedInverseValueEntry getCachedInverseValueEntry(RelationName relationName, BubbleId<?> sourceId) {
+        List<CachedInverseValueEntry> cachedInverseValueEntries = sourceIdToInverseValueMap.get(sourceId);
+        if (cachedInverseValueEntries==null) return null;
+        for (CachedInverseValueEntry cachedInverseValueEntry : cachedInverseValueEntries) {
+            if (cachedInverseValueEntry.getRelationName().equals(relationName)) {
+                return cachedInverseValueEntry;
+            }
+        }
+        return null;
+    }
+
+    private CachedInverseValueEntry getOrCreateCachedInverseValueEntry(RelationName relationName, BubbleId<?> sourceId) {
+        List<CachedInverseValueEntry> cachedInverseValueEntries = sourceIdToInverseValueMap.get(sourceId);
+        if (cachedInverseValueEntries==null) {
+            cachedInverseValueEntries = Lists.newArrayListWithCapacity(1);
+            sourceIdToInverseValueMap.put(sourceId, cachedInverseValueEntries);
+        }
+        for (CachedInverseValueEntry cachedInverseValueEntry : cachedInverseValueEntries) {
+            if (cachedInverseValueEntry.getRelationName().equals(relationName)) {
+                return cachedInverseValueEntry;
+            }
+        }
+        CachedInverseValueEntry cachedInverseValueEntry = new CachedInverseValueEntry(relationName);
+        cachedInverseValueEntries.add(cachedInverseValueEntry);
+        return cachedInverseValueEntry;
+    }
+
     public <E> void onChangeRelation(int level, boolean inAttachedMode, RelationName relationName, BubbleId<?> sourceId, @Nullable E oldInverseValue, @Nullable E newInverseValue) {
+        if (oldInverseValue == null || !(oldInverseValue instanceof BubbleId)) {
+            // For value objekt relasjoner skal gammel verdi alltid hentes fra cachen
+            oldInverseValue = lookupCachedInverseValueAndMarkAsRemoved(level, relationName, sourceId);
+        }
         removeId(level, inAttachedMode, relationName, oldInverseValue, sourceId);
         addId(level, inAttachedMode, relationName, newInverseValue, sourceId);
+        if (newInverseValue != null && !(newInverseValue instanceof BubbleId)) {
+            saveCachedInverseValue(level, relationName, sourceId, newInverseValue);
+        }
+    }
+
+    private Key createCurrentValueKey(RelationName relationName, BubbleId<?> sourceId) {
+        return new Key(relationName, sourceId.getValue());
+    }
+
+    /**
+     * Kalles når en value relation materialiseres. Metoden finner ut av om relasjonen er endret for noen av de sourceIds
+     * som ble funnet for inverseValue. De sourceIds hvor relasojnen er endret fjernes fra returnverdien, men de
+     * som har uendret relasjon får cachet informasjon om at sourceId er knyttet til inverseValue slik at den gamle
+     * verdien vil være tilgjengelig hvis relasjonen endres.
+     */
+    private <E> Object resolveAndSaveCurrentInverseValueForSourceIdsIfUnchanged(int level, RelationName relationName, E inverseValue, Object relationValue) {
+        if (relationValue instanceof Set) {
+            final Set resolvedValues = Sets.newHashSetWithExpectedSize(((Set) relationValue).size());
+            for (BubbleId<?> sourceId : (Set<BubbleId<?>>) relationValue) {
+                final CachedInverseValueEntry cachedInverseValueEntry = getOrCreateCachedInverseValueEntry(relationName, sourceId);
+                if (cachedInverseValueEntry.getValue(level) == null) {
+                    cachedInverseValueEntry.setValue(level, inverseValue);
+                    resolvedValues.add(sourceId);
+                }
+            }
+            return resolvedValues;
+        } else if (relationValue != null) {
+            final BubbleId<?> sourceId = (BubbleId<?>) relationValue;
+            final CachedInverseValueEntry cachedInverseValueEntry = getOrCreateCachedInverseValueEntry(relationName, sourceId);
+            if (cachedInverseValueEntry.getValue(level) == null) {
+                cachedInverseValueEntry.setValue(level, inverseValue);
+                return relationValue;
+            }
+        }
+        return null;
+    }
+
+    private <E> void saveCachedInverseValue(int level, RelationName relationName, BubbleId<?> sourceId, E newInverseValue) {
+        CachedInverseValueEntry cachedInverseValueEntry = getOrCreateCachedInverseValueEntry(relationName, sourceId);
+        cachedInverseValueEntry.setValue(level, newInverseValue);
+    }
+
+
+    private <E> E lookupCachedInverseValueAndMarkAsRemoved(int level, RelationName relationName, BubbleId<?> sourceId) {
+        CachedInverseValueEntry cachedInverseValueEntry = getCachedInverseValueEntry(relationName, sourceId);
+        if (cachedInverseValueEntry != null) {
+            @SuppressWarnings("unchecked")
+            E value = (E) cachedInverseValueEntry.getValue(level);
+            cachedInverseValueEntry.markRemoved(level);
+            return value;
+        } else {
+            return null;
+        }
     }
 
     private <E> void removeId(int level, boolean inAttachedMode, RelationName relationName, @Nullable E inverseValue, BubbleId<?> sourceId) {
@@ -59,7 +165,6 @@ public class RelationCache {
             }
         }
     }
-
 
     private <E> void addId(int level, boolean inAttachedMode, RelationName relationName, @Nullable E inverseValue, BubbleId<?> sourceId) {
         if (inverseValue != null) {
@@ -90,9 +195,14 @@ public class RelationCache {
     }
 
     public <E> Object setRelationValue(int level, RelationName relationName, E inverseValue, Object relationValue) {
+        checkNotNull(inverseValue, "Uventet null verdi for relation: %s", relationName);
         RelationEntry inverseRelationEntry = getInverseRelation(relationName, inverseValue, true);
+        if (!(inverseValue instanceof BubbleId)) {
+            relationValue = resolveAndSaveCurrentInverseValueForSourceIdsIfUnchanged(level, relationName, inverseValue, relationValue);
+        }
         return inverseRelationEntry.setRelationValue(level, relationValue);
     }
+
 
     public RelationName getRelationName(Method method) {
         //TODO optimaliser via singleton lookup for method. Dette endre seg ikke og kan derfor caches på tvers av alle sessions
@@ -118,18 +228,48 @@ public class RelationCache {
             RelationEntry entry = mapElement.getValue();
             entry.commitEntry(level);
         }
+        Iterator<List<CachedInverseValueEntry>> iterator = sourceIdToInverseValueMap.values().iterator();
+        while (iterator.hasNext()) {
+            List<CachedInverseValueEntry> next = iterator.next();
+            Iterator<CachedInverseValueEntry> iteratorInner = next.iterator();
+            while(iteratorInner.hasNext())  {
+                CachedInverseValueEntry nextInner = iteratorInner.next();
+                nextInner.commit(level);
+                if (nextInner.canBeRemoved(level)) {
+                    iteratorInner.remove();
+                }
+            }
+            if (next.isEmpty()) {
+                iterator.remove();
+            }
+        }
     }
 
     public void onAbortUnitOfWork(int level) {
         if (enabled[level] && !enabled[level - 1]) {
             evictAll();
         }
-        Iterator<Map.Entry<Key, RelationEntry>> iterator = inverseRelationMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Key, RelationEntry> mapElement = iterator.next();
+        Iterator<Map.Entry<Key, RelationEntry>> relationEntryIterator = inverseRelationMap.entrySet().iterator();
+        while (relationEntryIterator.hasNext()) {
+            Map.Entry<Key, RelationEntry> mapElement = relationEntryIterator.next();
             RelationEntry entry = mapElement.getValue();
             entry.abortEntry(level);
             if (entry.hasNoRelationsInRemainigLevels(level - 1)) {
+                relationEntryIterator.remove();
+            }
+        }
+        Iterator<List<CachedInverseValueEntry>> iterator = sourceIdToInverseValueMap.values().iterator();
+        while (iterator.hasNext()) {
+            List<CachedInverseValueEntry> next = iterator.next();
+            Iterator<CachedInverseValueEntry> iteratorInner = next.iterator();
+            while(iteratorInner.hasNext())  {
+                CachedInverseValueEntry nextInner = iteratorInner.next();
+                nextInner.abort(level);
+                if (nextInner.canBeRemoved(level)) {
+                    iteratorInner.remove();
+                }
+            }
+            if (next.isEmpty()) {
                 iterator.remove();
             }
         }
@@ -151,8 +291,8 @@ public class RelationCache {
     }
 
     public void evictAll() {
-        // TODO: Dersom relasjonscachen inneholder endringer blir nedenstående feil. Løsningen må utvides til alltid å ta vare på endringene. Krever endringer mer omfattende endringer i RelationTracker så det tas senere
         inverseRelationMap.clear();
+        sourceIdToInverseValueMap.clear();
     }
 
     public Map<Key, RelationEntry> filterOnKeys(Comparable<Key> keyComparable) {
@@ -184,6 +324,18 @@ public class RelationCache {
             relationNames.add(key.name.toString());
         }
         return relationNames;
+    }
+
+    public void onSourceIdRemoved(int level, BubbleId<?> sourceId) {
+        List<CachedInverseValueEntry> cachedInverseValueEntries = sourceIdToInverseValueMap.get(sourceId);
+        if (cachedInverseValueEntries!=null) {
+            for (CachedInverseValueEntry entry : cachedInverseValueEntries) {
+                Object inverseValue = entry.getValue(level);
+                if (inverseValue!=null) {
+                    onChangeRelation(level, true, entry.getRelationName(), sourceId, inverseValue,null);
+                }
+            }
+        }
     }
 
     public static class Key {
@@ -227,7 +379,6 @@ public class RelationCache {
      * @since 2.4
      */
     private static class RelationEntry {
-        final static int MAX_LEVELS = 4;
         final RelationTracker[] relations = new RelationTracker[MAX_LEVELS];
 
         public void addId(int level, BubbleId<?> sourceId) {
@@ -263,7 +414,7 @@ public class RelationCache {
         }
 
         /**
-         * Henter ut relasjonsverdien for et gitt {@coce level}. RelationEntry forventes å inneholder  et antall
+         * Henter ut relasjonsverdien for et gitt {@code level}. RelationEntry forventes å inneholder  et antall
          * RelationTrackers for levels {@code 'i' <= level} hvor minst en av disse trackers allerede vil være materalisert.
          * RelationTrackers for høyere levels enn den som er materialisert kan være uinitialiserte eller inneholde
          * endringsoperasjon som skal appliseres for å få riktig relasjonsverdi for et gitt {@code level}. Disse vil
@@ -343,6 +494,56 @@ public class RelationCache {
             return "RelationEntry{" +
                     "relations=" + Arrays.toString(relations) +
                     '}';
+        }
+    }
+
+    private static class CachedInverseValueEntry {
+        final private RelationName relationName;
+        final private Object[] values = new Object[MAX_LEVELS];
+        final private Object REMOVED_MARKER = new Object();
+
+        private CachedInverseValueEntry(RelationName relationName) {
+            this.relationName = relationName;
+        }
+
+        private RelationName getRelationName() {
+            return relationName;
+        }
+
+        public Object getValue(int level) {
+            for (int i = level; i >= 0; i--)
+                if (values[i] != null) {
+                    return values[i] == REMOVED_MARKER ? null : values[i];
+                }
+            return null;
+        }
+
+        public void markRemoved(int level) {
+            values[level] = REMOVED_MARKER;
+        }
+
+        public void setValue(int level, Object value) {
+            values[level] = value;
+        }
+
+        public boolean canBeRemoved(int level) {
+            for (int i = 0; i <= level; i++) {
+                if (values[i] != null) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public void commit(int level) {
+            if (level - 1 >= 0) {
+                values[level - 1] = values[level];
+            }
+            values[level] = null;
+        }
+
+        public void abort(int level) {
+            values[level] = null;
         }
     }
 }

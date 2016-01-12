@@ -339,7 +339,12 @@ public abstract class AbstractStore implements Store {
     @Override
     public void commitUnitOfWork(UnitOfWork unitOfWork) {
         validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
-
+        int level = storeSession.getLevel();
+        if (level>0 && storeRelationCache.isEnabled(level-1)) {
+            // Hvis underliggende session har caching enables på caching enables for inneværende unit of work før commit
+            // for at cachingen for underliggende session skal bli riktig.
+            storeRelationCache.setEnabled(true);
+        }
         storeSession = storeUnitOfWork().commitUnitOfWork();
         storeRelationCache.onCommitUnitOfWork();
     }

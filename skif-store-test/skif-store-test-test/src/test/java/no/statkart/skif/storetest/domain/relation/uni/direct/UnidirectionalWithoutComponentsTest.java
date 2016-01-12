@@ -445,19 +445,19 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
 
-        // Sjekk at a1 har en gitt index verdi
+        // Sjekk at a1 har gitt index verdier
         X1AA a1 = store.get(x1AAMockupFactory.getA1Id());
         assertNotNull(a1);
         assertEquals(a1.getUniqueOnX1AA(), "Unique: [0,1]");
         assertEquals(a1.getNonUniqueOnX1AA(), "NonUnique: [0,0]");
 
-        // Sjekk at a2 har en gitt index verdi
+        // Sjekk at a2 har  gitt index verdier
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
         assertNotNull(a2);
         assertEquals(a2.getUniqueOnX1AA(), "Unique: [0,2]");
         assertEquals(a2.getNonUniqueOnX1AA(), "NonUnique: [0,1]");
 
-        // Sjekk at a3 har en gitt index verdi
+        // Sjekk at a3 har gitt index verdier
         X1AA a3 = store.get(x1AAMockupFactory.getA3Id());
         assertNotNull(a3);
         assertEquals(a3.getUniqueOnX1AA(), "Unique: [0,3]");

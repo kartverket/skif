@@ -20,7 +20,8 @@ public interface X1AAFinderService {
         someCCs,
         uniqueOnX1AA,
         nonUniqueOnX1AA,
-        compositeIdent
+        x1AAForIdent,
+        x1BBOneForIdent
     }
 
     @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="someBB")
@@ -35,7 +36,9 @@ public interface X1AAFinderService {
     @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="nonUniqueOnX1AA")
     public Map<String, Set<X1AAId<?>>> findX1AAIdsForNonUniqueOnX1AA(Collection<String> textValues);
 
-    @Relation(type= RelationType.INVERSE, cardinality= Cardinality.ONE, name="compositeIdent")
+    @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="x1AAForIdent")
     public Map<X1AAIdent, Set<X1AAId<?>>> findX1AAIdsForIdents(Collection<X1AAIdent> idents);
 
+    @Relation(type= RelationType.INVERSE, cardinality= Cardinality.MANY, name="x1BBOneForIdent")
+    public Map<X1BBOneIdent, Set<X1BBOneId<?>>> findX1BBOneIdsForIdents(Collection<X1BBOneIdent> idents);
 }

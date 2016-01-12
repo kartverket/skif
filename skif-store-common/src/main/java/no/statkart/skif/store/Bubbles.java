@@ -79,6 +79,10 @@ public class Bubbles {
         return newValue;
     }
 
+    public static final <O extends BubbleObject, E> void onChangeIdent(O owner, RelationName relationName, E newValue) {
+        onChangeRelationImpl(owner, relationName, null, newValue);
+    }
+
     /**
      *  @deprecated bruk identisk metode  {@link Components#onChangeRelation}
      */

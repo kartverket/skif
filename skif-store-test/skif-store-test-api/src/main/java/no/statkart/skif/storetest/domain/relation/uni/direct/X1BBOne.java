@@ -1,6 +1,8 @@
 package no.statkart.skif.storetest.domain.relation.uni.direct;
 
+import no.statkart.skif.store.Bubbles;
 import no.statkart.skif.store.InverseRelation;
+import no.statkart.skif.store.BubbleObjectWithIdent;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
 import java.util.Collection;
@@ -25,7 +27,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class X1BBOne extends AbstractRelationTestBubble {
+public class X1BBOne extends AbstractRelationTestBubble implements BubbleObjectWithIdent<X1BBOneIdent> {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -36,6 +38,21 @@ public class X1BBOne extends AbstractRelationTestBubble {
     @Override
     public X1BBOneId<?> getId() {
         return (X1BBOneId<?>) super.getId();
+    }
+
+    public void onIdentChanged() {
+        if (isRelationCacheEnabled()) {
+            Bubbles.onChangeIdent(this, X1AAFinderService.Role.x1BBOneForIdent, getIdent());
+            onDerivedIdentsChanged();
+        }
+    }
+
+    private void onDerivedIdentsChanged() {
+        if (isRelationCacheEnabled()) {
+            for (X1AA a : getInvSomeBB()) {
+                a.onIdentChanged();
+            }
+        }
     }
 
     /**
@@ -75,4 +92,7 @@ public class X1BBOne extends AbstractRelationTestBubble {
         return store.get(invSomeBBIds.get());
     }
 
+    public X1BBOneIdent getIdent() {
+        return new X1BBOneIdent(this.getNr());
+    }
 }

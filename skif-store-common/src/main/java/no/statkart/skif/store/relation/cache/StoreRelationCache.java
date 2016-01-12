@@ -58,6 +58,9 @@ public abstract class StoreRelationCache {
         return relationCache.isEnabled(getLevel());
     }
 
+    public boolean isEnabled(int level) {
+        return relationCache.isEnabled(level);
+    }
     /**
      * Enabler og disabler relation caching. Ved disabling evictes alle cachet relasjoner.
      */
@@ -212,6 +215,10 @@ public abstract class StoreRelationCache {
         }
     }
 
+    public void onIdentRemoved(BubbleId<?> bubbleId) {
+        relationCache.onSourceIdRemoved(getLevel(), bubbleId);
+    }
+
     public void updateAdded(BubbleId<?> owningBubbleId, InverseRelationParticipation newInstance) {
         InverseRelationCollector collector = new InverseRelationCollector();
         newInstance.collectInverseRelationValues(collector);
@@ -234,4 +241,5 @@ public abstract class StoreRelationCache {
     public void evictAll() {
         relationCache.evictAll();
     }
+
 }
