@@ -2,7 +2,6 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ConfigurationException;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.persistence.hibernate.CurrentDatabaseEventListener;
 import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
@@ -11,7 +10,14 @@ import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefConfigura
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.event.*;
+import org.hibernate.event.DeleteEventListener;
+import org.hibernate.event.PostDeleteEventListener;
+import org.hibernate.event.PostInsertEventListener;
+import org.hibernate.event.PostUpdateEventListener;
+import org.hibernate.event.PreDeleteEventListener;
+import org.hibernate.event.PreInsertEventListener;
+import org.hibernate.event.PreLoadEventListener;
+import org.hibernate.event.PreUpdateEventListener;
 import org.hibernate.event.def.DefaultPreLoadEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 
@@ -35,12 +41,14 @@ public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryB
     protected Configuration createConfiguration(Properties props, @Nullable Interceptor interceptor) {
         // Log databaseparametre. I singlevm mode brukes JDBCTransactionFactory (dvs url, bruker/password).
         // I servermode brukes JTATransactionFactory (dvs datasource)
+        String connectionInfo;
         if (props.get("hibernate.transaction.factory_class").equals("org.hibernate.transaction.JDBCTransactionFactory")) {
-            logger.info("SKIF hibernatekonfigurasjon(3.2): " + props.get("hibernate.connection.url") + " - " + props.get("hibernate.connection.username"));
+            connectionInfo = props.getProperty("hibernate.connection.url") + " - " + props.getProperty("hibernate.connection.username");
         } else {
             // TODO: Dette blir feil for SnapshotVersion.OLD. Må bruke old datasource
-            logger.info("SKIF hibernatekonfigurasjon(3.2): " + props.get("hibernate.connection.datasource"));
+            connectionInfo = props.getProperty("hibernate.connection.datasource");
         }
+        logger.info("SKIF hibernatekonfigurasjon({}): {}", org.hibernate.Version.getVersionString(), connectionInfo);
         ClassLoader cl = HibernateSessionFactoryBuilder.class.getClassLoader();
         Configuration cfg = null;
         try {
