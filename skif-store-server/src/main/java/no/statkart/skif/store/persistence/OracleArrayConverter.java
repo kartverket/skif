@@ -67,7 +67,7 @@ public class OracleArrayConverter<T> {
     protected ARRAY toArray(Connection sqlConnection, Object[] objects) {
         try {
             final Connection oracleConnection = OracleUtils.getOracleConnection(sqlConnection);
-            ArrayDescriptor oracleArrayDescriptor = ArrayDescriptor.createDescriptor(oracleArrayType, oracleConnection, true, true);
+            ArrayDescriptor oracleArrayDescriptor = ArrayDescriptor.createDescriptor(oracleArrayType, oracleConnection, true, false);
             ARRAY array = new ARRAY(oracleArrayDescriptor, oracleConnection, objects);
             array.setAutoIndexing(true);
             return array;
