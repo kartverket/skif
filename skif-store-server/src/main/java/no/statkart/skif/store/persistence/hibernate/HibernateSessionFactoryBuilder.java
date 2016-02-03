@@ -37,11 +37,11 @@ import java.util.zip.ZipInputStream;
 public abstract class HibernateSessionFactoryBuilder {
     protected static final Logger logger = LoggerFactory.getLogger(HibernateSessionFactoryBuilder.class);
     private final static Object LOCK = new Object();
-    protected final List<String> hbmResource = new ArrayList<String>();
+    protected final List<String> hbmResource = new ArrayList<>();
     protected final String mappingFilesDirectory;
-    private final Map<Class<? extends BubbleObject>, Integer> bubbleClassDependencyIndex = new HashMap<Class<? extends BubbleObject>, Integer>();
+    private final Map<Class<? extends BubbleObject>, Integer> bubbleClassDependencyIndex = new HashMap<>();
     private int nextOrderIndex;
-    protected Map<String, String> className2resourceNameMap = new HashMap<String, String>();
+    protected Map<String, String> className2resourceNameMap = new HashMap<>();
 
     public HibernateSessionFactoryBuilder(String mappingFilesDirectory) {
         if (!mappingFilesDirectory.equals("")){
@@ -73,6 +73,7 @@ public abstract class HibernateSessionFactoryBuilder {
     }
 
 
+    @SuppressWarnings("UnusedDeclaration") // Public API
     public HibernateSessionFactoryBuilder addDependencyIndex(Class... classes) {
         nextOrderIndex++;
         addDependencyUseSameIndex(classes);
@@ -88,7 +89,7 @@ public abstract class HibernateSessionFactoryBuilder {
         return this;
     }
 
-    private void createDependencyIndex(Class clazz) {
+    protected void createDependencyIndex(Class clazz) {
 
         final Integer previousIndex = bubbleClassDependencyIndex.put(clazz, nextOrderIndex);
         if (previousIndex !=null) {
@@ -146,6 +147,7 @@ public abstract class HibernateSessionFactoryBuilder {
 
 */
 
+    @SuppressWarnings("UnusedDeclaration") // Public API
     public HibernateSessionFactoryBuilder addResourceUsingAbsolutePathUseNextIndex(Class clazz, String hbmFilename) {
         nextOrderIndex++;
         return addResourceUsingAbsolutePathUseSameIndex(clazz, hbmFilename);
@@ -178,10 +180,6 @@ public abstract class HibernateSessionFactoryBuilder {
      *     <li>hibernate.connection.datasource=no.kartverket.mysystem.myapp.persistence.MyApp_DS</li>
      * </ul>
      *
-     * @return
-     * @param snapshotVersionSeed
-     * @param properties
-     * @param interceptor
      */
     public SessionFactory build(SnapshotVersionSeed snapshotVersionSeed, Properties properties, @Nullable Interceptor interceptor) {
         // Denne metoden bruker synkronisering på {@code LOCK} fordi BubbleIdType.SnapshotVersionSeedSeed ikke må endres mens
@@ -200,12 +198,6 @@ public abstract class HibernateSessionFactoryBuilder {
             try {
                 BubbleIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
                 Configuration cfg = createConfiguration(properties,interceptor);
-                if (!SnapshotVersion.CURRENT.equals(snapshotVersionSeed) ) {
-                    // Denne kan være satt ifm testing for current session factory, men den skal aldig være satt for
-                    // old eller historic session factory. Det ville føre til at auto operasjonen ville bli utført 2 ganger
-                    cfg.setProperty("hibernate.hbm2ddl.auto", "");
-
-                }
                 sessionFactory = cfg.buildSessionFactory();
             } catch (HibernateException e) {
                 throw new ImplementationException("Error initializing Hibernate", e, logger);
@@ -218,11 +210,6 @@ public abstract class HibernateSessionFactoryBuilder {
 
     }
 
-    /**
-     * @param props
-     * @param interceptor
-     * @return
-     */
     protected abstract Configuration createConfiguration(Properties props, Interceptor interceptor);
 
     public Map<Class<? extends BubbleObject>, Integer> getBubbleClassDependencyIndex() {
@@ -243,8 +230,8 @@ public abstract class HibernateSessionFactoryBuilder {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
         Enumeration<URL> resources = classLoader.getResources(mappingFilesDirectory);
-        List<String> files = new ArrayList<String>();
-        Set<String> startPaths = new HashSet<String>();
+        List<String> files = new ArrayList<>();
+        Set<String> startPaths = new HashSet<>();
 
         findHbmFilenames(resources, files, startPaths);
 
@@ -255,12 +242,10 @@ public abstract class HibernateSessionFactoryBuilder {
     }
 
     private void iterateOverFilesAndFindClassnames(ClassLoader classLoader, List<String> files, Set<String> startPaths) {
-        for (Iterator<String> iterator = files.iterator(); iterator.hasNext(); ) {
-            String file = iterator.next();
+        for (String file : files) {
             try {
                 String reducedFileName = file;
-                for (Iterator<String> stringIterator = startPaths.iterator(); stringIterator.hasNext(); ) {
-                    String next = stringIterator.next();
+                for (String next : startPaths) {
                     if (file.contains(next)) {
                         reducedFileName = file.replace(next, "");
                         break;
@@ -269,9 +254,8 @@ public abstract class HibernateSessionFactoryBuilder {
 
                 InputStream is = classLoader.getResourceAsStream(reducedFileName);
                 InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader input = new BufferedReader(isr);
 
-                try {
+                try (BufferedReader input = new BufferedReader(isr)) {
                     String line;
                     boolean fileRead = false;
                     while ((line = input.readLine()) != null) {
@@ -283,8 +267,8 @@ public abstract class HibernateSessionFactoryBuilder {
                                 className2resourceNameMap.put(className, reducedFileName);
                             } else {
                                 if (!line.matches(".*<typedef class=\".*\".*")) {
-                                    if(!className2resourceNameMap.get(className).equals(reducedFileName)){
-                                        throw new ConfigurationException("Class named " + className + ", mapped in file "+reducedFileName+" has already been mapping in file " + className2resourceNameMap.get(className));
+                                    if (!className2resourceNameMap.get(className).equals(reducedFileName)) {
+                                        throw new ConfigurationException("Class named " + className + ", mapped in file " + reducedFileName + " has already been mapping in file " + className2resourceNameMap.get(className));
                                     }
                                 }
                             }
@@ -297,8 +281,6 @@ public abstract class HibernateSessionFactoryBuilder {
                         //If we get here, we didnt find a match in a file, not good.
                         throw new ImplementationException("No match for class name in mapping file: " + file);
                     }
-                } finally {
-                    input.close();
                 }
             } catch (IOException ex) {
                 throw new OperationalException(ex);
@@ -331,8 +313,7 @@ public abstract class HibernateSessionFactoryBuilder {
         int idx = filepath.indexOf("!");
         String parsedJarName = filepath.substring(0, idx);
         URL resource2 = new File(parsedJarName).toURI().toURL();
-        ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
-        try {
+        try (ZipInputStream zip2 = new ZipInputStream(resource2.openStream())) {
             ZipEntry ze;
             while ((ze = zip2.getNextEntry()) != null) {
                 String entryName = ze.getName();
@@ -340,8 +321,6 @@ public abstract class HibernateSessionFactoryBuilder {
                     files.add(entryName);
                 }
             }
-        } finally {
-            zip2.close();
         }
     }
 
@@ -350,8 +329,7 @@ public abstract class HibernateSessionFactoryBuilder {
         int idx = filepath.indexOf("!");
         String parsedJarName = filepath.substring(0, idx);
         URL resource2 = new URL(parsedJarName);
-        ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
-        try {
+        try (ZipInputStream zip2 = new ZipInputStream(resource2.openStream())) {
             ZipEntry ze;
             while ((ze = zip2.getNextEntry()) != null) {
                 String entryName = ze.getName();
@@ -359,8 +337,6 @@ public abstract class HibernateSessionFactoryBuilder {
                     files.add(entryName);
                 }
             }
-        } finally {
-            zip2.close();
         }
     }
 
@@ -379,23 +355,25 @@ public abstract class HibernateSessionFactoryBuilder {
     }
 
     private static List<String> findHbmXmlFiles(String path) throws IOException {
-        List<String> returnFiles = new ArrayList<String>();
+        List<String> returnFiles = new ArrayList<>();
 
         File directory = new File(path);
         File[] files = directory.listFiles();
-        for (File file : files) {
-            String fileName = file.getCanonicalPath();
-            if (file.isDirectory()) {
-                returnFiles.addAll(findHbmXmlFiles(fileName));
-            } else if (fileName.endsWith(".hbm.xml")) {
-                //Trim filename to contain the resource-part.
-//                int i = fileName.indexOf("no\\statkart");
-//                String trimmedFileName = fileName.substring(i);
-                final String replace = fileName.replace("\\", "/");
-                if (fileName.startsWith("/")) {
-                    returnFiles.add(replace.replaceFirst("/", ""));
-                } else {
-                    returnFiles.add(replace);
+        if (files != null) {
+            for (File file : files) {
+                String fileName = file.getCanonicalPath();
+                if (file.isDirectory()) {
+                    returnFiles.addAll(findHbmXmlFiles(fileName));
+                } else if (fileName.endsWith(".hbm.xml")) {
+                    //Trim filename to contain the resource-part.
+    //                int i = fileName.indexOf("no\\statkart");
+    //                String trimmedFileName = fileName.substring(i);
+                    final String replace = fileName.replace("\\", "/");
+                    if (fileName.startsWith("/")) {
+                        returnFiles.add(replace.replaceFirst("/", ""));
+                    } else {
+                        returnFiles.add(replace);
+                    }
                 }
             }
         }
