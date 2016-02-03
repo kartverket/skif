@@ -2,13 +2,13 @@ package no.statkart.skif.service;
 
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 
-import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import java.io.Serializable;
 import java.security.Principal;
 
 /**
  * Denne klasseninneholder infomasjon om inneværende kall som vedlikeholdes av servicerammeverket.
+ *
  * @author Henrik Fredholm
  * @since 2.0
  */
@@ -66,15 +66,15 @@ public class ServiceRequestContext implements Serializable {
     }
 
     public boolean isNewTx() {
-        return txMode== TxMode.TX;
+        return txMode == TxMode.TX;
     }
 
     public boolean isContinuedTx() {
-        return txMode== TxMode.TX_CONTINUATION;
+        return txMode == TxMode.TX_CONTINUATION;
     }
 
     public boolean inTx() {
-        return txMode != TxMode.NO_TX;
+        return txMode == TxMode.NO_TX || txMode == TxMode.TX_CONTINUATION;
     }
 
     public Principal getCallerPrincipal() {
@@ -94,7 +94,7 @@ public class ServiceRequestContext implements Serializable {
     }
 
     public String getUserName() {
-        return callerPrincipal.getName();
+        return callerPrincipal == null ? null : callerPrincipal.getName();
     }
 
     public void setCallId(long callId) {
@@ -128,18 +128,18 @@ public class ServiceRequestContext implements Serializable {
     public void setFrom(ServiceRequestContext context) {
         this.callerPrincipal = context.callerPrincipal;
         this.callId = context.callId;
-        this.nestedLevel= context.nestedLevel;
+        this.nestedLevel = context.nestedLevel;
         this.parentCallId = context.parentCallId;
         this.servicename = context.servicename;
         this.txMode = context.txMode;
     }
 
     public boolean isContinuation() {
-        return txMode==TxMode.NO_TX_CONTINUATION || txMode == TxMode.TX_CONTINUATION;
+        return txMode == TxMode.NO_TX_CONTINUATION || txMode == TxMode.TX_CONTINUATION;
     }
 
     public boolean isTransactional() {
-        return txMode==TxMode.TX|| txMode == TxMode.TX_CONTINUATION;
+        return txMode == TxMode.TX || txMode == TxMode.TX_CONTINUATION;
     }
 
     public boolean isRollbackOnly() {
