@@ -63,7 +63,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
             Assert.assertNull(dbLockerService.getLock(new LockKey<Long>(SimpleId.class.getName(), Simple.getId().getValue())), "Nyinsertet objekt skal ikke være låst i lockerservice.");
 
-            server.runInTxRequiresNew(new RunOnServerMethod() {
+            server.runInTxRequired(new RunOnServerMethod() {
                 @Inject
                 private Store serverStore;
 
@@ -95,7 +95,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
         final SimpleId<?> id = mockIdService.getNextId(SimpleId.class);
 
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        server.runInTxRequired(new RunOnServerMethod() {
             @Inject
             private Store serverStore;
 
@@ -128,7 +128,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
             final UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
 
-            server.runInTxRequiresNew(new RunOnServerMethod() {
+            server.runInTxRequired(new RunOnServerMethod() {
                 @Inject
                 private Store serverStore;
 
@@ -164,7 +164,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
         final SimpleId<?> id = mockIdService.getNextId(SimpleId.class);
 
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        server.runInTxRequired(new RunOnServerMethod() {
             @Inject
             private Store serverStore;
 
@@ -196,7 +196,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
             final UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
 
-            server.runInTxRequiresNew(new RunOnServerMethod() {
+            server.runInTxRequired(new RunOnServerMethod() {
                 @Inject
                 private Store serverStore;
 
@@ -235,7 +235,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
         clientStore.lock(simpleId1);
 
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        server.runInTxRequired(new RunOnServerMethod() {
             @Inject
             private Store serverStore;
 
@@ -263,7 +263,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     public void testStoreSessionServerUnlockUnmodified() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        server.runInTxRequired(new RunOnServerMethod() {
             @Inject
             private Store serverStore;
 
@@ -295,7 +295,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
         final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
 
         try {
-            server.runInTxRequiresNew(new RunOnServerMethod() {
+            server.runInTxRequired(new RunOnServerMethod() {
                 @Inject
                 private Store serverStore;
 
@@ -321,7 +321,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
         final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
 
         try {
-            server.runInTxRequiresNew(new RunOnServerMethod() {
+            server.runInTxRequired(new RunOnServerMethod() {
                 @Inject
                 private Store serverStore;
 

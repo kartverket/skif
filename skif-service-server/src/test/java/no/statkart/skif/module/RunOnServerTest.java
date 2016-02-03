@@ -85,6 +85,21 @@ public class RunOnServerTest {
         assertEquals(result, "TestServerModule" );
     }
 
+    public void testBuildContainerManagedRequiredTransactionService() {
+        final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
+        final RunOnServerWithTxRequiredService service = builder.buildContainerManagedRequiredTranactionService();
+        Object result = service.run(new RunOnServerMethod() {
+            @Inject
+            @Named("modulename")
+            private String moduleName;
+            @Override
+            public Object run() {
+                return moduleName;
+            }
+        });
+        assertEquals(result, "TestServerModule" );
+    }
+
     public void testBuildContainerManagedService() {
         final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
         final ContainerManagedTransactionRunOnServerService service = builder.buildContainerManagedService();

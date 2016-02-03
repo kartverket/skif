@@ -6,6 +6,7 @@ import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
 import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
+import no.statkart.skif.service.RunOnServerWithTxRequiredService;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
@@ -30,6 +31,7 @@ public class RunOnServerServiceModule extends ServerServiceModule {
         ArrayList<Class<?>> list = new ArrayList<Class<?>>();
         list.add(RunOnServerWithTxNotSupportedService.class);
         list.add(RunOnServerWithTxRequiresNewService.class);
+        list.add(RunOnServerWithTxRequiredService.class);
         list.add(RunOnServerWithTxBeanManagedService.class);
 
         // TODO: Ta denne bort

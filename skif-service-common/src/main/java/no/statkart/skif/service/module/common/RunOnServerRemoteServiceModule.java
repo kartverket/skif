@@ -5,6 +5,7 @@ import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
 import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
+import no.statkart.skif.service.RunOnServerWithTxRequiredService;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 
@@ -30,6 +31,7 @@ public class RunOnServerRemoteServiceModule extends RemoteServiceModule {
         ArrayList<Class<?>> list = new ArrayList<Class<?>>();
         list.add(RunOnServerWithTxNotSupportedService.class);
         list.add(RunOnServerWithTxRequiresNewService.class);
+        list.add(RunOnServerWithTxRequiredService.class);
         list.add(RunOnServerWithTxBeanManagedService.class);
 
         // TODO: Ta bort
