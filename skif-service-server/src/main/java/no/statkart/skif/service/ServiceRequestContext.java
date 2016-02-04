@@ -74,7 +74,7 @@ public class ServiceRequestContext implements Serializable {
     }
 
     public boolean inTx() {
-        return txMode == TxMode.NO_TX || txMode == TxMode.TX_CONTINUATION;
+        return txMode == TxMode.TX || txMode == TxMode.TX_CONTINUATION;
     }
 
     public Principal getCallerPrincipal() {
