@@ -39,13 +39,17 @@ public class Components {
             thisComponent.setOwner(null);
         } else if (thisComponent != component) {
             if (thisComponent != null) {
-                if (isNullComponent(thisComponent) || thisComponent instanceof EntityComponent) {
-                    thisComponent.setOwner(null);
-                } else {
-                    throw new IllegalStateException(String.format("Owner already has a component: owner=%s component=%s", thisComponent.getOwner(), component));
-                }
+                // TODO: SKIF-565. Midlertidig endret. Uklart hvorfor EntityComponent kan byttes ut, men ikke ComposisteBubbleComponent.
+                // Burde egentlig litt motsatt. Hvis id-ene er forskjellige kan det bli orphan objekter
+                // (med mindre det håndteres våres hibernate forbedringer)
+                thisComponent.setOwner(null);
+//                if (isNullComponent(thisComponent) || thisComponent instanceof EntityComponent) {
+//                    thisComponent.setOwner(null);
+//                } else {
+//                    throw new IllegalStateException(String.format("Owner already has a component: owner=%s component=%s", thisComponent.getOwner(), component));
+//                }
             }
-            // Owner har ingen komponent og får en ny component (som ikke kan ha owner satt, men kan gjerne ha id fra før)
+            // Owner får en ny component (som ikke kan ha owner satt, men kan gjerne ha id fra før)
             if (component.getOwner() != null) {
                 throw new IllegalStateException("Attempt to assign component to a new owner: component=" + component);
             }
