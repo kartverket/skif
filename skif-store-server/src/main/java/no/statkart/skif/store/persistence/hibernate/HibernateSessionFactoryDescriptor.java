@@ -47,11 +47,7 @@ public class HibernateSessionFactoryDescriptor {
     }
 
     public boolean accepts(SnapshotVersion snapshotVersion) {
-        if (seed.get() == SnapshotVersion.CURRENT) {
-            return snapshotVersion == SnapshotVersion.CURRENT;
-        } else {
-            return snapshotVersion != SnapshotVersion.CURRENT;
-        }
+        return isSnapshotChangable() || seed.get().equals(snapshotVersion);
     }
 
     public SnapshotVersion getSnapshotVersion() {
