@@ -63,36 +63,24 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
         return false;
     }
 
-    /**
-     * Gjør ingenting
-     */
     public Object instantiate(Class entitetClazz, Serializable id) throws CallbackException {
         sjekkSnapshotVersjon(id);
         //Retur av null gjør at Hibernate bruker default oppførsel
         return null;
     }
 
-    /**
-     * Gjør ingenting
-     */
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
         return false;
     }
 
-    /**
-     * Gjør ingenting
-     */
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
         return false;
     }
 
-    /**
-     * Gjør ingenting
-     */
     public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
