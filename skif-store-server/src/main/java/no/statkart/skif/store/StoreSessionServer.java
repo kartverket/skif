@@ -2,16 +2,12 @@ package no.statkart.skif.store;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.*;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.util.CopyHelper;
-import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
 
@@ -209,10 +205,6 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
 
-    public void finishBatch() {
-        // TODO: Sende finishEvent til WriteListeners
-    }
-
     /**
      * @see StoreServer#finish()
      */
@@ -266,7 +258,7 @@ public class StoreSessionServer extends AbstractStoreSession {
     /**
      * @see StoreServer#attemptDelete
      */
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void attemptDelete(I bubbleId) throws AttemptDeleteException {
+    public void attemptDelete(BubbleId<?> bubbleId) throws AttemptDeleteException {
         Preconditions.checkState(level == 0, "level!=0");
         try {
             flush();
@@ -401,57 +393,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             modifiedSorted.put(mapEntry.getKey(), mapEntry.getValue());
         }
 
-        //fixBatchingForBubblesWithEntityComponents(modifiedSorted);
         super.commitUnitOfWork(modifiedSorted); // Gjøres av ovenstående istedet
-    }
-
-    /**
-     * Løper igjennom alle bobler og grouperer {@code EntityComponent} objekter i boblene etter klasse slik at disse kan legges
-     * inn samlet i Hibernate før boblene. Dermed blir det mulig for Hibernate å batch sql for bobler og entitykomponenter.
-     *
-     * Algoritment deler først opp alle bobler i subgrupper {@link #bubbleDependencyComparator}
-     *
-     * @since 2.3
-     */
-    private void fixBatchingForBubblesWithEntityComponents(Map<BubbleId<?>, StoreEntry> modifiedSorted) {
-        List<Map<BubbleId<?>, StoreEntry>> modifiedSortedOfSameTypeList = createSublistsGoupedByClass(modifiedSorted);
-        for (Map<BubbleId<?>, StoreEntry> modifiedSortedOfSameType : modifiedSortedOfSameTypeList) {
-            fixBatchingForBubblesWithEntityComponentsForSameType(modifiedSortedOfSameType);
-            super.commitUnitOfWork(modifiedSortedOfSameType);
-        }
-    }
-
-    private List<Map<BubbleId<?>, StoreEntry>> createSublistsGoupedByClass(Map<BubbleId<?>, StoreEntry> modifiedSorted) {
-        BubbleObject previousBubble = null;
-        Map<BubbleId<?>, StoreEntry> currentMap = null;
-        List<Map<BubbleId<?>, StoreEntry>> modifiedSortedOfSameTypeList = Lists.newArrayList();
-        for (Map.Entry<BubbleId<?>, StoreEntry> entry : modifiedSorted.entrySet()) {
-            BubbleObject bubbleObject = entry.getValue().getBubbleObject(1);
-            if (previousBubble==null || bubbleDependencyComparator.compare(previousBubble,bubbleObject)!=0) {
-                previousBubble=bubbleObject;
-                currentMap = Maps.newLinkedHashMap();
-                modifiedSortedOfSameTypeList.add(currentMap);
-            }
-            currentMap.put(entry.getKey(), entry.getValue());
-        }
-        return modifiedSortedOfSameTypeList;
-    }
-
-    public void fixBatchingForBubblesWithEntityComponentsForSameType(Map<BubbleId<?>, StoreEntry> modified) throws HibernateException {
-        HibernatePersistenceSessionMasterImpl implementation = getPersistenceSessionManager().getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
-        List<Multimap<Class<? extends EntityComponent>, EntityComponent>> entityMap = Lists.newArrayList();
-        IdentityHashMap<Object, Object> processedObjects = new IdentityHashMap<>();
-
-        for (Map.Entry<BubbleId<?>, StoreEntry> entry : modified.entrySet()) {
-            try {
-                // TODO: Dette er juks. Vil ikke virker for filtrerte bobler. Burde bruke getPersistentObject() istedet, men den er pt null på dette tidspunkt
-                BubbleObject bubbleObject = entry.getValue().getBubbleObject(1);
-                implementation.fixBatchingForObjectWithEntityComponents(bubbleObject, processedObjects, 0, entityMap);
-            } catch (HibernateException e) {
-                throw new ImplementationException("Could not check entity components for " + entry.getValue().getBubbleObject(0).getId(), e);
-            }
-        }
-        implementation.saveOrUpdateEntityComponentsInBubbles(entityMap);
     }
 
 
@@ -622,9 +564,9 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
     }
 
-    private <T extends BubbleObject> void onInsertObject(StoreEntry storeEntry, T bubbleObject) {
-        T resultingPersistentBubbleObject = bubbleObject;
-        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject(); // TODO: Denne cast er ikke riktig grunnet subtypeendring
+    private void onInsertObject(StoreEntry storeEntry, BubbleObject bubbleObject) {
+        BubbleObject resultingPersistentBubbleObject = bubbleObject;
+        BubbleObject persistentBubbleObject = storeEntry.getPersistentBubbleObject();
         for (StoreSessionWriteListener writeListener : writeListeners) {
             resultingPersistentBubbleObject = writeListener.onInsert(bubbleObject, persistentBubbleObject);
             persistentBubbleObject = resultingPersistentBubbleObject;
@@ -644,9 +586,9 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
     }
 
-    private <T extends BubbleObject> void onUpdateObject(StoreEntry storeEntry, T bubbleObject) {
-        T resultingPersistentBubbleObject = bubbleObject;
-        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject(); // TODO: Denne cast er ikke riktig grunnet subtypeendring
+    private void onUpdateObject(StoreEntry storeEntry, BubbleObject bubbleObject) {
+        BubbleObject resultingPersistentBubbleObject = bubbleObject;
+        BubbleObject persistentBubbleObject = storeEntry.getPersistentBubbleObject();
         for (StoreSessionWriteListener writeListener : writeListeners) {
             resultingPersistentBubbleObject = writeListener.onUpdate(bubbleObject, persistentBubbleObject);
             persistentBubbleObject = resultingPersistentBubbleObject;
@@ -665,9 +607,9 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
     }
 
-    private <T extends BubbleObject> void onDeleteObject(StoreEntry storeEntry, T bubbleObject) {
-        T resultingPersistentBubbleObject = bubbleObject;
-        T persistentBubbleObject = (T) storeEntry.getPersistentBubbleObject(); // TODO: Denne cast er ikke riktig grunnet subtypeendring
+    private void onDeleteObject(StoreEntry storeEntry, BubbleObject bubbleObject) {
+        BubbleObject resultingPersistentBubbleObject = bubbleObject;
+        BubbleObject persistentBubbleObject = storeEntry.getPersistentBubbleObject();
         for (StoreSessionWriteListener writeListener : writeListeners) {
             resultingPersistentBubbleObject = writeListener.onDelete(bubbleObject, persistentBubbleObject);
             persistentBubbleObject = resultingPersistentBubbleObject;
@@ -688,8 +630,8 @@ public class StoreSessionServer extends AbstractStoreSession {
         return createEntry(level, persistentBubbleObject);
     }
 
-    private <T extends BubbleObject> StoreEntry createEntry(int level, T persistentBubbleObject) {
-        T bubbleObject = persistentBubbleObject;
+    private StoreEntry createEntry(int level, BubbleObject persistentBubbleObject) {
+        BubbleObject bubbleObject = persistentBubbleObject;
         for (StoreSessionReadListener readListener : readListeners) {
             bubbleObject = readListener.onRegister(bubbleObject);
         }
@@ -721,7 +663,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             persistentBubbleObjects = persistenceSessionManager.get(bubbleIds);
         }
 
-        Collection<StoreEntry> entries = new ArrayList<StoreEntry>(bubbleIds.size());
+        Collection<StoreEntry> entries = new ArrayList<>(bubbleIds.size());
         for (T originalBubbleObject : persistentBubbleObjects) {
             entries.add(createEntry(level, originalBubbleObject));
         }
@@ -735,7 +677,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
 
         Collection<? extends T> persistentBubbleObjects = Collections.emptySet();
-        Set<I> idsToLoad = new HashSet<I>(bubbleIds);
+        Set<I> idsToLoad = new HashSet<>(bubbleIds);
         while (!idsToLoad.isEmpty()) {
             try {
                 persistentBubbleObjects = persistenceSessionManager.get(idsToLoad);
@@ -752,22 +694,26 @@ public class StoreSessionServer extends AbstractStoreSession {
         return entries;
     }
 
+    @SuppressWarnings("UnusedDeclaration") // Public API
     public void registerWriteListener(StoreSessionWriteListener listener) {
         if (!writeListeners.contains(listener)) {
             writeListeners.add(listener);
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration") // Public API
     public boolean removeWriteListener(StoreSessionWriteListener listener) {
         return writeListeners.remove(listener);
     }
 
+    @SuppressWarnings("UnusedDeclaration") // Public API
     public void registerReadListener(StoreSessionReadListener listener) {
         if (!readListeners.contains(listener)) {
             readListeners.add(listener);
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration") // Public API
     public boolean removeReadListener(StoreSessionReadListener listener) {
         return readListeners.remove(listener);
     }
