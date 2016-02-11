@@ -1,5 +1,9 @@
 package no.statkart.skif.persistence;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
+
 /**
  * Et interface for håndtering av ressourser som implementerer interfacet {@link Resource} og som gjør det mulig
  * å hent ut en ressurs basert på interface som ressoursen implementerer. Ved registrering angis alle
@@ -22,15 +26,15 @@ package no.statkart.skif.persistence;
  */
 public interface ResourceManager  {
 
-    public final static class Key {
+    public final static class Key<T extends Resource> {
         final String name;
-        final Class<? extends Resource> type;
+        final Class<T> type;
 
-        public Key(Class<? extends Resource> type) {
+        public Key(Class<T> type) {
             this("", type);
         }
 
-        public Key(String name, Class<? extends Resource> type) {
+        public Key(String name, Class<T> type) {
             this.name = name;
             this.type = type;
         }
@@ -52,7 +56,7 @@ public interface ResourceManager  {
 
     public final static class Entry {
         final String name;
-        final Class<? extends Resource>[] types;
+        final List<Class<? extends Resource>> types;
         final Resource implementation;
 
         /** Angir om denne resources har fått startet sin transaksjon */
@@ -66,21 +70,23 @@ public interface ResourceManager  {
             this(name, implementation, implementation.getClass());
         }
 
+        @SafeVarargs
         public Entry(Resource implementation, Class<? extends Resource>... types) {
             this("", implementation, types);
         }
 
+        @SafeVarargs
         public Entry(String name, Resource implementation, Class<? extends Resource>... types) {
             this.name = name;
             this.implementation = implementation;
-            this.types = types;
+            this.types = ImmutableList.copyOf(types);
         }
     }
 
 
     public <T extends Resource> T getResource(Class<T> type);
 
-    public <T extends Resource> T getResource(Key key);
+    public <T extends Resource> T getResource(Key<T> key);
 
     /**
      * Starter {@code ResourceManager} for uthenting av ressurser
@@ -94,7 +100,6 @@ public interface ResourceManager  {
 
     /**
      * Returnerer true hvis en eller flere resource har blitt hentet ut
-     * @return
      */
     public boolean isActive();
 

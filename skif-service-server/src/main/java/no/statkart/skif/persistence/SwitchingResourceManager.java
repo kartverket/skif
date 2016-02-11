@@ -39,7 +39,7 @@ public class SwitchingResourceManager implements ResourceManager {
     }
 
     @Override
-    public <T extends Resource> T getResource(Key key) {
+    public <T extends Resource> T getResource(Key<T> key) {
         return selected().getResource(key);
     }
 

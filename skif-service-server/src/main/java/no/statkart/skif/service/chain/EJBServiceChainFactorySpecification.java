@@ -21,13 +21,15 @@ import java.util.List;
 public class EJBServiceChainFactorySpecification extends FactorySpecification<EJBServiceChainFactory> {
     private ArrayList<Class<? extends ChainedProxyHandler>> ejbCallChainProxyHandlerClassList;
 
+    @SafeVarargs
     public EJBServiceChainFactorySpecification(Class<? extends ChainedProxyHandler>... ejbCallChainProxyHandlerClasses) {
         this(EJBServiceChainFactoryImpl.class, ejbCallChainProxyHandlerClasses);
     }
 
+    @SafeVarargs
     public EJBServiceChainFactorySpecification(Class<? extends EJBServiceChainFactory> factoryClass, Class<? extends ChainedProxyHandler>... ejbResourceProxyHandlerImplentationClasses) {
         super(factoryClass);
-        this.ejbCallChainProxyHandlerClassList = new ArrayList<Class<? extends ChainedProxyHandler>>(Arrays.asList(ejbResourceProxyHandlerImplentationClasses));
+        this.ejbCallChainProxyHandlerClassList = new ArrayList<>(Arrays.asList(ejbResourceProxyHandlerImplentationClasses));
     }
 
     public void appendEJBServiceChainProxyHandler(Class<? extends ChainedProxyHandler> ejbServiceChainProxyHandler) {
@@ -37,7 +39,7 @@ public class EJBServiceChainFactorySpecification extends FactorySpecification<EJ
 
     @Override
     public <S> void bindProxyHandlersForService(Binder binder, Class<S> service) {
-        final List<TypeLiteral<? extends ChainedProxyHandler<S>>> ejbCallChainProxyHandlerTypeList = new ArrayList<TypeLiteral<? extends ChainedProxyHandler<S>>>(ejbCallChainProxyHandlerClassList.size());
+        final List<TypeLiteral<? extends ChainedProxyHandler<S>>> ejbCallChainProxyHandlerTypeList = new ArrayList<>(ejbCallChainProxyHandlerClassList.size());
         for (Class<? extends ChainedProxyHandler> chainedProxyHandlerImplClass : ejbCallChainProxyHandlerClassList) {
             TypeLiteral<? extends EJBResourceProxyHandler<S>>  ejbCallChainProxyHandlerType = SkifUtil.typeLiteral(chainedProxyHandlerImplClass, service);
             binder.bind(ejbCallChainProxyHandlerType);
@@ -52,7 +54,7 @@ public class EJBServiceChainFactorySpecification extends FactorySpecification<EJ
 
             @Override
             public List<ChainedProxyHandler<S>> get() {
-                List<ChainedProxyHandler<S>> list = new ArrayList<ChainedProxyHandler<S>>(ejbCallChainProxyHandlerTypeList.size());
+                List<ChainedProxyHandler<S>> list = new ArrayList<>(ejbCallChainProxyHandlerTypeList.size());
                 for (TypeLiteral<? extends ChainedProxyHandler<S>> type : ejbCallChainProxyHandlerTypeList) {
                     final ChainedProxyHandler<S> proxyHandler = injector.getInstance(Key.get(type));
                     list.add(proxyHandler);
@@ -76,6 +78,7 @@ public class EJBServiceChainFactorySpecification extends FactorySpecification<EJ
     @Override
     public EJBServiceChainFactorySpecification clone() {
         EJBServiceChainFactorySpecification clone = (EJBServiceChainFactorySpecification) super.clone();
+        //noinspection unchecked
         clone.ejbCallChainProxyHandlerClassList = (ArrayList<Class<? extends ChainedProxyHandler>>) ejbCallChainProxyHandlerClassList.clone();
         return clone;
     }

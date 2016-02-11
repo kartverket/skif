@@ -3,7 +3,6 @@ package no.statkart.skif.persistence;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class DefaultResourceManager implements ResourceManager {
     /** Angir om ResourceManager har vært i bruk */
     private boolean isActive;
 
-    private HashMap<Key, Entry> map = new HashMap<Key, Entry>();
+    private HashMap<Key<?>, Entry> map = new HashMap<>();
     private Entry[] entries;
     private boolean started;
 
@@ -25,10 +24,10 @@ public class DefaultResourceManager implements ResourceManager {
         this.entries=entries;
 
         for (Entry entry : entries) {
-            List<Class<? extends Resource>> types = new ArrayList<Class<? extends Resource>>(Arrays.asList(entry.types));
+            List<Class<? extends Resource>> types = new ArrayList<>(entry.types);
             types.add(entry.implementation.getClass());
             for (Class<? extends Resource> type : types) {
-                Key key = new Key(entry.name, type);
+                Key<?> key = new Key<>(entry.name, type);
                 Entry existing = map.put(key, entry);
                 if (existing != null) {
                     throw new ImplementationException("Duplicate resource for key: " + key + ", entry: " + entry + ", existing: " + existing);
@@ -44,19 +43,11 @@ public class DefaultResourceManager implements ResourceManager {
     }
 
     public <T extends Resource> T getResource(Class<T> type) {
-        checkIsStarted();
-        setActive();
-        Entry entry = map.get(new Key(type));
-        if (entry == null) {
-            throw new ImplementationException("Found no resource of type " + type);
-        }
-        entry.implementation.setActive();
-        ensureTransactionStarted(entry);
-        return type.cast(entry.implementation);
+        return getResource(new Key<>(type));
     }
 
 
-    public <T extends Resource> T getResource(Key key) {
+    public <T extends Resource> T getResource(Key<T> key) {
         checkIsStarted();
         setActive();
         Entry entry = map.get(key);
@@ -66,7 +57,7 @@ public class DefaultResourceManager implements ResourceManager {
         }
         entry.implementation.setActive();
         ensureTransactionStarted(entry);
-        return (T)key.type.cast(entry.implementation);
+        return key.type.cast(entry.implementation);
     }
 
 
