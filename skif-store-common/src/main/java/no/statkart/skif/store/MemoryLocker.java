@@ -3,7 +3,6 @@ package no.statkart.skif.store;
 import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.LockedException;
-import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
@@ -158,11 +157,11 @@ public class MemoryLocker<T> implements DBLockerService<T>, DBLockerInTransactio
     }
 
     @Override
-    public LockInfo<T> getLock(LockKey<T> lockKey) {
+    public synchronized LockInfo<T> getLock(LockKey<T> lockKey) {
         return locks.get(lockKey);
     }
 
-    public void unlockAll(Set<LockKey<T>> unLockIds, String owner) {
+    public synchronized void unlockAll(Set<LockKey<T>> unLockIds, String owner) {
         for (Iterator<Map.Entry<LockKey<T>, LockInfo<T>>> iterator = locks.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<LockKey<T>, LockInfo<T>> entry = iterator.next();
             LockInfo<T> lock = entry.getValue();
@@ -172,7 +171,7 @@ public class MemoryLocker<T> implements DBLockerService<T>, DBLockerInTransactio
         }
     }
 
-    public int consumeAllLocks(String owner) {
+    public synchronized int consumeAllLocks(String owner) {
         int lockCount = 0;
 
         MemoryLocker.log.debug("Releasing all locks for " + owner + " in transaction");
