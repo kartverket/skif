@@ -7,7 +7,7 @@
 @rem * Gradle & Project Setup
 @rem *******************************************************************************************************************
 set JAVA_HOME=C:\Program Files\Java\jdk1.7.0_60
-set GRADLE_HOME=C:\bin\gradle-1.6
+set GRADLE_HOME=C:\bin\gradle-2.8
 
 @rem bestemmer bruk av debug JDBC driver for Oracle [SKIF-239]
 set ORA_DEBUG=false
@@ -19,8 +19,11 @@ set ORA_DEBUG=false
 @rem *******************************************************************************************************************
 @rem * Weblogic Setup
 @rem *******************************************************************************************************************
-set WEBLOGIC_HOME=C:\bea_wls10.3.5
-set WEBLOGIC_VERSION=10.3.5
+set WEBLOGIC_HOME=C:\bea_wls10.3.6
+set WEBLOGIC_VERSION=10.3.6
+
+set WEBLOGIC_HOME=C:\\bea1213
+set WEBLOGIC_VERSION=12.1.3
 
 
 @rem *******************************************************************************************************************
