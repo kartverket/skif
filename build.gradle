@@ -55,17 +55,17 @@ apply from: file('libraries.gradle')
 
 subprojects { Project project ->
     apply plugin: 'project-report'
-    apply plugin: 'base' // Så vet vi at vi har clean
+    apply plugin: 'base' // Sï¿½ vet vi at vi har clean
 
     clean {
         delete 'gen'
     }
     rootProject.ideaExtensions.ignorePaths += project.file('gen')
 
-    propertyUtils.expandProjectProperties() //må ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
-    //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
+    propertyUtils.expandProjectProperties() //mï¿½ ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
+    //PS: dersom 'version' eller andre properties ï¿½nskes overstyrt i underprosjekter mï¿½ disse evaluerest fï¿½rst. (evt kan man legge denne til en afterEvaluate{})
 
-    // TODO: Denne skal egentlig kun brukes på skif-config mener Henrik. Rett opp dette når filtrering er fjernet fra andre moduler.
+    // TODO: Denne skal egentlig kun brukes pï¿½ skif-config mener Henrik. Rett opp dette nï¿½r filtrering er fjernet fra andre moduler.
     project.filterResources {
         Map filterProperties = propertyUtils.fromFile("${project.name}-filter.properties") << gradle.startParameter.projectProperties
         propertyUtils.expandProperties(filterProperties)
@@ -113,7 +113,7 @@ subprojects { Project project ->
 
         /**
          * Testing via TestNG grupper. Se bruk av @Test(groups = "") i koden.
-         * Følgende parametere styrer hvilke grupper som blir kjørt:
+         * Fï¿½lgende parametere styrer hvilke grupper som blir kjï¿½rt:
          *
          * gradle test -DfilterSlowTests=INCLUDE
          * gradle test -DfilterOracleLatest=INCLUDE
@@ -121,15 +121,15 @@ subprojects { Project project ->
          * osv..
          *
          * GBOK-2266: Tilpasset oppsett for downstream testing i Jenkins
-         * Dersom ingen test-oppsett spesifisert så eksluderes alle grupper.
-         * Dersom test-oppsett spesifiseres, kjøres kun spesifisert gruppe.
-         *  - På denne måten oppnås disjointe sett av tester slik man unngår å kjøre samme test to ganger i de ulike Jenkins jobbene.
+         * Dersom ingen test-oppsett spesifisert sï¿½ eksluderes alle grupper.
+         * Dersom test-oppsett spesifiseres, kjï¿½res kun spesifisert gruppe.
+         *  - Pï¿½ denne mï¿½ten oppnï¿½s disjointe sett av tester slik man unngï¿½r ï¿½ kjï¿½re samme test to ganger i de ulike Jenkins jobbene.
          *
-         * En har videre mulighet til ytterligere å spesifisere kombinasjoner av grupper.
-         * F.eks. vil gradle test -DfilterHistorikkTests=INCLUDE -DfilterSlowTests=EXCLUDE kjøre alle tester i gruppen historikk, men ikke de som også finnes i gruppen slow.
-         * Har man en test annotert med @Test(groups = "kreverHistorikk, slow") vil den testen da ikke kjøres.
+         * En har videre mulighet til ytterligere ï¿½ spesifisere kombinasjoner av grupper.
+         * F.eks. vil gradle test -DfilterHistorikkTests=INCLUDE -DfilterSlowTests=EXCLUDE kjï¿½re alle tester i gruppen historikk, men ikke de som ogsï¿½ finnes i gruppen slow.
+         * Har man en test annotert med @Test(groups = "kreverHistorikk, slow") vil den testen da ikke kjï¿½res.
          *
-         * -DignoreFailures=true stopper ikke eksekvering etter feilende modul og kjører videre. Kjekt for integrasjonstesting som ønsker å kjøre alle tester alltid.
+         * -DignoreFailures=true stopper ikke eksekvering etter feilende modul og kjï¿½rer videre. Kjekt for integrasjonstesting som ï¿½nsker ï¿½ kjï¿½re alle tester alltid.
          *
          * --info gir verbos logging av hvilke grupper som faktisk blir inkludert og ekskludert.
          */
@@ -140,7 +140,7 @@ subprojects { Project project ->
             def filterOracleLatest = gradle.startParameter.systemPropertiesArgs.get('filterOracleLatest', 'EXCLUDE').toUpperCase();
 
             filterTestGroup(it, 'slow', filterSlowTests)
-            filterTestGroup(it, 'oracleLatest', filterOracleLatest) // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
+            filterTestGroup(it, 'oracleLatest', filterOracleLatest) // Midlertidig lagt til denne gruppe for ï¿½ exclude tester som krever seneste oracle versjon
 
             filterTestGroup(it, 'hibernate36', hibernateVersion == '3.6' ? 'IGNORED' : 'EXCLUDE')
 
@@ -149,8 +149,8 @@ subprojects { Project project ->
 //            jvmArgs '-Xmx1024m', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
             testLogging.showStandardStreams = true
 
-            inputs.property 'excludedGroups', testFramework.options.includeGroups //trigger re-kjøring av test ved endring av grupper
-            inputs.property 'includedGroups', testFramework.options.excludeGroups //trigger re-kjøring av test ved endring av grupper
+            inputs.property 'excludedGroups', testFramework.options.includeGroups //trigger re-kjï¿½ring av test ved endring av grupper
+            inputs.property 'includedGroups', testFramework.options.excludeGroups //trigger re-kjï¿½ring av test ved endring av grupper
         }
     }
 
@@ -173,7 +173,7 @@ subprojects { Project project ->
         systemProperties "org.uncommons.reportng.title": "${project.name} Report"
 
 
-        inputs.property 'singleVm', singleVm //trigger re-kjøring av test ved endring av parameter
+        inputs.property 'singleVm', singleVm //trigger re-kjï¿½ring av test ved endring av parameter
 
         if (rootProject.hasProperty('test.remote.debug')) {
             jvmArgs '-Xdebug'
@@ -202,13 +202,13 @@ subprojects { Project project ->
 
 
     project.idea.module {
-        // Får Idea til å legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)
+        // Fï¿½r Idea til ï¿½ legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)
         inheritOutputDirs = true
     }
 
     tasks.ideaModule {
 
-        // Plasserer weblogic avhengigheter til sist på classpath...
+        // Plasserer weblogic avhengigheter til sist pï¿½ classpath...
         doFirst {
             def weblogic_home = project.WEBLOGIC_HOME.replace('\\', '/').toLowerCase()
 
@@ -239,6 +239,23 @@ afterEvaluate {
         jdkName = '1.7'
         languageLevel = '1.7'
 
+        ipr {
+            withXml {
+                //default project encoding
+                def encoding = it.asNode().component.find { it.@name == 'Encoding' }
+                if (encoding) {
+                    encoding.@useUTFGuessing = false
+                    encoding.@native2AsciiForPropertiesFiles = true
+                    encoding.@defaultCharsetForPropertiesFiles = 'ISO-8859-1'
+
+                    encoding.file.each { encoding.remove(it) /* sletter alle noder */ }
+                    encoding.appendNode('file', ['url': 'PROJECT', 'charset': 'windows-1252'])
+                } else {
+                    logger.warn('Not able to configure file encodings for IntelliJ')
+                }
+            }
+        }
+
     }
 
     // branch spesifike navn for prosjekt og workspace fil.
@@ -249,7 +266,7 @@ afterEvaluate {
         outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}.ipr")
     }
 
-    // gradle spesifik iml fil da gradle dependencies ligger på hver modul
+    // gradle spesifik iml fil da gradle dependencies ligger pï¿½ hver modul
     allprojects {
         idea.module {
             outputFile = file("${project.name}.iml")
@@ -286,7 +303,7 @@ allprojects {
 buildscript {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Miljøvariable for konfigurasjon av byggemiljø
+    // Miljï¿½variable for konfigurasjon av byggemiljï¿½
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     [
             'JAVA_HOME',
@@ -348,6 +365,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build520'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build524'
     }
 }
