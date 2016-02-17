@@ -27,6 +27,12 @@ public class HibernateBubbleDependencyComparator implements BubbleDependencyComp
         bubbleClassDependencyIndex = bundleManager.getBundle().get(0).getBubbleClassDependencyIndex();
     }
 
+    /**
+     * @since 2.7.0
+     */
+    public HibernateBubbleDependencyComparator(HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder) {
+        this.bubbleClassDependencyIndex = hibernateSessionFactoryBuilder.getBubbleClassDependencyIndex();
+    }
 
     @Override
     public int compare(BubbleObject o1, BubbleObject o2) {
