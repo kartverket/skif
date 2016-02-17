@@ -15,7 +15,7 @@ configurations {
     weblogicProvided.extendsFrom provided
 
     weblogicTools {
-        description = 'Avhengigheter for weblogic-verktøy'
+        description = 'Avhengigheter for weblogic-verktÃ¸y'
     }
 }
 

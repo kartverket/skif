@@ -7,7 +7,7 @@ configurations {
     }
 
     weblogicTools {
-        description = 'Avhengigheter for weblogic-verktøy'
+        description = 'Avhengigheter for weblogic-verktÃ¸y'
     }
 }
 
@@ -19,7 +19,7 @@ sourceSets.weblogic {
 dependencies {
     weblogicCompile project(':skif-service-server')
     weblogicCompile project(':skif-service-test:skif-service-test-api')
-// Havner tydeligvis på compile classpath   weblogicRuntime project(':skif-service-test:skif-service-test-server')
+// Havner tydeligvis pÃ¥ compile classpath   weblogicRuntime project(':skif-service-test:skif-service-test-server')
     weblogicCompile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
     weblogicCompile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 

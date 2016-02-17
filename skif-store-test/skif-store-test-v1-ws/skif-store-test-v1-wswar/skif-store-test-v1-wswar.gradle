@@ -6,7 +6,7 @@ configurations {
     }
 
     weblogicTools {
-        description = 'Avhengigheter for weblogic-verktøy'
+        description = 'Avhengigheter for weblogic-verktÃ¸y'
     }
 }
 
@@ -21,7 +21,7 @@ dependencies {
         weblogicCompile project(':skif-store-server:skif-store-server-hs36')
     }
     weblogicCompile project(':skif-store-test:skif-store-test-api')
-// Havner tydeligvis på compile classpath   weblogicRuntime project(':skif-store-test:skif-store-test-server')
+// Havner tydeligvis pÃ¥ compile classpath   weblogicRuntime project(':skif-store-test:skif-store-test-server')
     weblogicCompile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     weblogicCompile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 

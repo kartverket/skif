@@ -34,7 +34,7 @@ artifacts {
 }
 
 task assertDependencies() {
-    //kjøres som en test
+    //kjÃ¸res som en test
     test.dependsOn it
 
     doFirst {
