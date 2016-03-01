@@ -3,6 +3,9 @@ package no.statkart.skif.storetest.service.test;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.OperationalException;
+import no.statkart.skif.mockup.TestNumberFactory;
+import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
+import no.statkart.skif.store.Store;
 import no.statkart.skif.util.JDBCHelper;
 
 import java.sql.Connection;
@@ -17,7 +20,9 @@ import java.sql.SQLException;
  */
 public class TestdataServiceImpl extends no.statkart.skif.service.test.TestdataServiceImpl implements TestdataService {
     @Inject
-    private Provider<Connection> connectionProvider;
+    public TestdataServiceImpl(SequenceBlockAllocatorService sequenceBlockAllocatorService, Provider<Connection> connectionProvider, Store store, no.statkart.skif.service.test.TestdataService testdataService, TestNumberFactory testNumberFactory) {
+        super(sequenceBlockAllocatorService, connectionProvider, store, testdataService, testNumberFactory);
+    }
 
     @Override
     public void deleteObject(long id, String tableName) {

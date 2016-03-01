@@ -30,22 +30,25 @@ import java.util.SortedMap;
 public class TestdataServiceImpl implements TestdataService {
     protected Logger logger = LoggerFactory.getLogger(TestdataServiceImpl.class);
 
-    @Inject
-    private SequenceBlockAllocatorService sequenceBlockAllocatorService;
+    protected final SequenceBlockAllocatorService sequenceBlockAllocatorService;
 
-    @Inject
-    private Provider<Connection> connectionProvider;
+    protected final Provider<Connection> connectionProvider;
 
-    @Inject
-    private Store store;
+    protected final Store store;
 
     // Denne trengs for å få service kall til å gå via service rammeverket i stedet for direkte
-    @Inject
-    TestdataService testdataService;
+    protected final TestdataService testdataService;
+
+    protected final TestNumberFactory testNumberFactory;
 
     @Inject
-    TestNumberFactory testNumberFactory;
-
+    public TestdataServiceImpl(SequenceBlockAllocatorService sequenceBlockAllocatorService, Provider<Connection> connectionProvider, Store store, TestdataService testdataService, TestNumberFactory testNumberFactory) {
+        this.sequenceBlockAllocatorService = sequenceBlockAllocatorService;
+        this.connectionProvider = connectionProvider;
+        this.store = store;
+        this.testdataService = testdataService;
+        this.testNumberFactory = testNumberFactory;
+    }
 
     @Override
     public TestNumber getTestNumber0() {
