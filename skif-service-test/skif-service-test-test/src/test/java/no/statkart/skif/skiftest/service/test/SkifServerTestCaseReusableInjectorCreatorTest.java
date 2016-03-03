@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
@@ -22,14 +23,16 @@ import static org.testng.Assert.assertTrue;
 @Test(groups = "SkifServerTest.createsInjector")
 public class SkifServerTestCaseReusableInjectorCreatorTest extends SkifServerTestCase {
     private Injector firstTestMethodInjector;
-    private static String TEST_VALUE="testvalue";
+    private static String TEST_VALUE = "testvalue";
 
     public SkifServerTestCaseReusableInjectorCreatorTest() {
         super(SkifTestServerModule.class);
     }
 
+    @Test
     public void firstTestMethod() {
         final List list = injector.getInstance(Key.get(List.class, Names.named("SharedList")));
+        assertFalse(list.contains(TEST_VALUE));
         list.add(TEST_VALUE);
         firstTestMethodInjector = injector;
     }
