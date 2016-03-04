@@ -12,6 +12,8 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.storetest.domain.basic.HistSimple;
+import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.mockup.*;
 import no.statkart.skif.storetest.service.test.TestdataService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
@@ -19,7 +21,9 @@ import no.statkart.skif.util.CopyHelper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.sql.Timestamp;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -256,5 +260,37 @@ public class MockupFrameworkTest extends StoreTestTestCase {
         } catch (ObjectNotFoundException e) {
             // Korrekt
         }
+    }
+
+    public void testSommertidVintertid() {
+        MockupFacadeFactory mockupFacadeFactory = injector.getInstance(MockupFacadeFactory.class);
+        MockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
+
+        Timestamp klokka0100CEST = new Timestamp(1445727600000L);
+        Timestamp klokka0245CEST = new Timestamp(1445733900000L);
+        Timestamp klokka0215CET = new Timestamp(1445735700000L);
+        Timestamp klokka0245CET = new Timestamp(1445737500000L);
+
+        HistSimpleId id = mockupFacade.getIdService().getNextId(HistSimpleId.class);
+        mockupFacade.getStore().setSnapshotVersion(SnapshotVersion.createInstance(klokka0100CEST));
+        mockupFacade.getStore().insert(createHistSimple(id, "Sommer"));
+        mockupFacade.getStore().setSnapshotVersion(SnapshotVersion.createInstance(klokka0245CEST));
+        mockupFacade.getStore().update(createHistSimple(id, "Sommer slutt"));
+        mockupFacade.getStore().setSnapshotVersion(SnapshotVersion.createInstance(klokka0215CET));
+        mockupFacade.getStore().update(createHistSimple(id, "Back to the vinter"));
+        mockupFacade.getStore().setSnapshotVersion(SnapshotVersion.createInstance(klokka0245CET));
+        mockupFacade.getStore().update(createHistSimple(id, "Vinter"));
+
+        testdataService.saveAll(mockupFacade.getAllTransfers());
+
+        List<HistSimpleId> versions = store.getVersions(id, SnapshotVersion.START, SnapshotVersion.CURRENT);
+        Assert.assertEquals(versions.size(), 4, "Antall versjoner");
+    }
+
+    private HistSimple createHistSimple(HistSimpleId<?> id, String text) {
+        HistSimple histSimple = new HistSimple(id);
+        histSimple.setNr(1);
+        histSimple.setText(text);
+        return histSimple;
     }
 }
