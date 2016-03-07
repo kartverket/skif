@@ -204,6 +204,9 @@ subprojects { Project project ->
     project.idea.module {
         // Får Idea til å legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)
         inheritOutputDirs = true
+
+        downloadSources = true
+        downloadJavadoc = true //for jdbc dokumentasjon
     }
 
     tasks.ideaModule {
