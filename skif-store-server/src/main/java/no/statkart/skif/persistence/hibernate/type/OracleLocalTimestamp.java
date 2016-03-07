@@ -1,7 +1,7 @@
 package no.statkart.skif.persistence.hibernate.type;
 
 import oracle.jdbc.OraclePreparedStatement;
-import oracle.sql.TIMESTAMPLTZ;
+import oracle.sql.TIMESTAMPTZ;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
 
@@ -48,7 +48,7 @@ public class OracleLocalTimestamp implements UserType {
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
         OraclePreparedStatement ops = st.unwrap(OraclePreparedStatement.class);
-        ops.setTIMESTAMPLTZ(index, new TIMESTAMPLTZ(ops.getConnection(), (Timestamp) value));
+        ops.setTIMESTAMPTZ(index, new TIMESTAMPTZ(ops.getConnection(), (Timestamp) value));
     }
 
     @Override

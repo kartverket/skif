@@ -12,7 +12,7 @@ import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.*;
 import no.statkart.skif.util.JDBCHelper;
 import oracle.jdbc.OraclePreparedStatement;
-import oracle.sql.TIMESTAMPLTZ;
+import oracle.sql.TIMESTAMPTZ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +126,7 @@ public class TestdataServiceImpl implements TestdataService {
                 // Dette feiler i den doble timen når vi går over fra sommertid til vintertid. Må bruke Oracle API.
 //                statement.setTimestamp(1, transactionSnapshot.getTimestamp());
                 OraclePreparedStatement oracleStatement = statement.unwrap(OraclePreparedStatement.class);
-                oracleStatement.setTIMESTAMPLTZ(1, new TIMESTAMPLTZ(oracleStatement.getConnection(), transactionSnapshot.getTimestamp()));
+                oracleStatement.setTIMESTAMPTZ(1, new TIMESTAMPTZ(oracleStatement.getConnection(), transactionSnapshot.getTimestamp()));
 
                 int rader = statement.executeUpdate();
                 if (rader != 1) {
