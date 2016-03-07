@@ -266,10 +266,10 @@ public class MockupFrameworkTest extends StoreTestTestCase {
         MockupFacadeFactory mockupFacadeFactory = injector.getInstance(MockupFacadeFactory.class);
         MockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
 
-        Timestamp klokka0100CEST = new Timestamp(1445727600000L);
-        Timestamp klokka0245CEST = new Timestamp(1445733900000L);
-        Timestamp klokka0215CET = new Timestamp(1445735700000L);
-        Timestamp klokka0245CET = new Timestamp(1445737500000L);
+        Timestamp klokka0100CEST = new Timestamp(1256421600000L); //2009-10-25 00:00:00.00 GMT+2:00
+        Timestamp klokka0245CEST = new Timestamp(1256430600000L); //2009-10-25 02:30:00.00 GMT+2:00
+        Timestamp klokka0215CET = new Timestamp(1256433300000L); //2009-10-25 02:15:00.00 GMT+1:00
+        Timestamp klokka0245CET = new Timestamp(1256434200000L); //2009-10-25 02:30:00.00 GMT+1:00
 
         HistSimpleId id = mockupFacade.getIdService().getNextId(HistSimpleId.class);
         mockupFacade.getStore().setSnapshotVersion(SnapshotVersion.createInstance(klokka0100CEST));
