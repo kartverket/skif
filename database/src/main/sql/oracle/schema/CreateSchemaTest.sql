@@ -19,7 +19,7 @@ CREATE TABLE Endring (
     ID NUMBER(19,0) NOT NULL,
     CLASS VARCHAR2(255 CHAR) NOT NULL,
     ENDRINGSTYPE NUMBER(3,0),
-    ENDRINGSTIDSPUNKT TIMESTAMP(6),
+    ENDRINGSTIDSPUNKT TIMESTAMP(6) WITH LOCAL TIME ZONE,
     BRUKERNAVN VARCHAR2(255 CHAR),
     ENDRETBUBBLEID NUMBER(19,0),
     CONSTRAINT PK_ENDRING PRIMARY KEY (ID)
@@ -353,8 +353,8 @@ alter table L2SetEntInCompComponent add constraint FK_L2SetEntInComp_ownerId for
 
 CREATE TABLE HIST_ENTITY_COMPONENT (
     ID NUMBER(19,0) NOT NULL,
-    OPPDATERINGSDATO TIMESTAMP(6),
-    SLUTTDATO TIMESTAMP(6),
+    OPPDATERINGSDATO TIMESTAMP(6) WITH LOCAL TIME ZONE,
+    SLUTTDATO TIMESTAMP(6) WITH LOCAL TIME ZONE,
     VERSJONID NUMBER(19,0),
     VALUE VARCHAR2(255 CHAR),
     BUBBLEID NUMBER(19,0),
@@ -364,8 +364,8 @@ COMMENT ON TABLE HIST_ENTITY_COMPONENT IS 'Komponent for bobble med historikk';
 
 CREATE TABLE HIST_BUBBLE_W_ENTITIES (
     ID NUMBER(19,0) NOT NULL,
-    OPPDATERINGSDATO TIMESTAMP(6),
-    SLUTTDATO TIMESTAMP(6),
+    OPPDATERINGSDATO TIMESTAMP(6) WITH LOCAL TIME ZONE,
+    SLUTTDATO TIMESTAMP(6) WITH LOCAL TIME ZONE,
     VERSJONID NUMBER(19,0),
     MAINENTITYCOMPONENT NUMBER(19,0) CONSTRAINT FK_HIST_BUBBLE_W_ENTITIES_1 REFERENCES HIST_ENTITY_COMPONENT(ID),
     CONSTRAINT PK_HIST_BUBBLE_W_ENTITIES PRIMARY KEY (ID)
@@ -379,8 +379,8 @@ ALTER TABLE HIST_ENTITY_COMPONENT ADD (
 
 CREATE TABLE HIST_BUBBLE_W_LENTITIES (
     ID NUMBER(19,0) NOT NULL,
-    OPPDATERINGSDATO TIMESTAMP(6),
-    SLUTTDATO TIMESTAMP(6),
+    OPPDATERINGSDATO TIMESTAMP(6) WITH LOCAL TIME ZONE,
+    SLUTTDATO TIMESTAMP(6) WITH LOCAL TIME ZONE,
     VERSJONID NUMBER(19,0),
     CONSTRAINT PK_HIST_BUBBLE_W_LENTITIES PRIMARY KEY (ID)
 );
@@ -388,8 +388,8 @@ COMMENT ON TABLE HIST_BUBBLE_W_LENTITIES IS 'Bobble med historikk og liste av ma
 
 CREATE TABLE HIST_LENTITY_COMPONENT (
     ID NUMBER(19,0) NOT NULL,
-    OPPDATERINGSDATO TIMESTAMP(6),
-    SLUTTDATO TIMESTAMP(6),
+    OPPDATERINGSDATO TIMESTAMP(6) WITH LOCAL TIME ZONE,
+    SLUTTDATO TIMESTAMP(6) WITH LOCAL TIME ZONE,
     VERSJONID NUMBER(19,0),
     TEXTVALUE VARCHAR2(255 CHAR),
     LISTOFENTITYCOMPONENTSID NUMBER(19,0) CONSTRAINT FK_HIST_LENTITY_COMPONENT_1 REFERENCES HIST_BUBBLE_W_LENTITIES(ID),
@@ -541,8 +541,8 @@ alter table XStrKodeLoc add constraint FK_XStrKodeLoc foreign key (id) reference
 
 CREATE TABLE FOO_H (
     id                   NUMBER(19,0) NOT NULL ENABLE,
-    oppdateringsdato               timestamp(6) not null,
-    sluttdato                 timestamp(6) not null,
+    oppdateringsdato               timestamp(6) with local time zone not null,
+    sluttdato                 timestamp(6) with local time zone not null,
     versjonId             number (19,0) not null,
     nr                   number(10,0),
     navn                 VARCHAR2(255 BYTE),
@@ -554,8 +554,8 @@ CREATE OR REPLACE TRIGGER FOO_TRIGGER
 INSTEAD OF INSERT OR UPDATE OR DELETE ON FOO
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF UPDATING THEN
     IF :old.oppdateringsdato < t_Trans THEN
@@ -610,8 +610,8 @@ CREATE TABLE RazEntityComponent (
 
 CREATE TABLE BAR_H (
     id                   NUMBER(19,0) NOT NULL ENABLE,
-    oppdateringsdato               timestamp(6) not null,
-    sluttdato                 timestamp(6) not null,
+    oppdateringsdato               timestamp(6) with local time zone not null,
+    sluttdato                 timestamp(6) with local time zone not null,
     versjonId             number (19,0) not null,
     husnr                number(10,0),
     bokstav              VARCHAR2(255 BYTE),
@@ -625,8 +625,8 @@ CREATE OR REPLACE TRIGGER BAR_TRIGGER
 INSTEAD OF INSERT OR UPDATE OR DELETE ON BAR
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF UPDATING THEN
     IF :old.oppdateringsdato < t_Trans THEN
@@ -654,8 +654,8 @@ END BAR_TRIGGER;
 
 CREATE TABLE BARFOOS_H (
     id                   NUMBER(19,0) NOT NULL ENABLE,
-    oppdateringsdato               timestamp(6) not null,
-    sluttdato                 timestamp(6) not null,
+    oppdateringsdato               timestamp(6) with local time zone not null,
+    sluttdato                 timestamp(6) with local time zone not null,
     versjonId             number (19,0) not null,
     text                 VARCHAR2(255 BYTE),
     barId                number(19,0) not null,
@@ -667,8 +667,8 @@ CREATE OR REPLACE TRIGGER BARFOOS_TRIGGER
 INSTEAD OF INSERT OR UPDATE OR DELETE ON BARFOOS
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF UPDATING THEN
     IF :old.oppdateringsdato < t_Trans THEN
@@ -697,8 +697,8 @@ END BARFOOS_TRIGGER;
 CREATE TABLE FooForBarFoos_H (
     barFoosId             NUMBER(19,0) not null,
     fooId                NUMBER(19,0) not null,
-    oppdateringsdato               timestamp(6) not null,
-    sluttdato                 timestamp(6) not null,
+    oppdateringsdato               timestamp(6) with local time zone not null,
+    sluttdato                 timestamp(6) with local time zone not null,
     PRIMARY KEY (barFoosId, fooId, sluttdato)
 );
 create view FooForBarFoos as select * from FooForBarFoos_H where snapshot_time.t_between(oppdateringsdato, sluttdato)=1;
@@ -707,8 +707,8 @@ CREATE OR REPLACE TRIGGER FooForBarFoos_TRIGGER
 INSTEAD OF INSERT OR UPDATE OR DELETE ON FooForBarFoos
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF UPDATING THEN
     IF :old.oppdateringsdato < t_Trans THEN
@@ -737,8 +737,8 @@ CREATE TABLE GEOMETRICELEMENT_H (
   id                  NUMBER(19,0),
   point               MDSYS.SDO_GEOMETRY,
   polygon             MDSYS.SDO_GEOMETRY,
-  oppdateringsdato              timestamp(6) not null,
-  sluttdato                timestamp(6) not null,
+  oppdateringsdato              timestamp(6) with local time zone not null,
+  sluttdato                timestamp(6) with local time zone not null,
   versjonId            number (19,0) not null,
   primary key(id, oppdateringsdato)
 );
@@ -747,8 +747,8 @@ create view GEOMETRICELEMENT as select * from GEOMETRICELEMENT_H where snapshot_
 CREATE OR REPLACE TRIGGER T_GEOMETRICELEMENT INSTEAD OF INSERT OR UPDATE OR DELETE ON GEOMETRICELEMENT
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF INSERTING THEN
     INSERT INTO GEOMETRICELEMENT_H
@@ -787,16 +787,16 @@ create table AggregertObjektMeta_h (
   id number(19,0) not null,
   sistOppdatertAv varchar2(255 char),
   sistOppdatert timestamp,
-  oppdateringsdato              timestamp(6) not null,
-  sluttdato                timestamp(6) not null,
+  oppdateringsdato              timestamp(6) with local time zone not null,
+  sluttdato                timestamp(6) with local time zone not null,
   versjonId            number (19,0) not null,
   primary key (id, sluttdato)
 );
 create table AggregertObjekt_H (
   id number(19,0) not null,
   tekst varchar2(255 char),
-  oppdateringsdato              timestamp(6) not null,
-  sluttdato                timestamp(6) not null,
+  oppdateringsdato              timestamp(6) with local time zone not null,
+  sluttdato                timestamp(6) with local time zone not null,
   versjonId            number (19,0) not null,
   primary key (id, sluttdato)
 );
@@ -805,8 +805,8 @@ create table AggregertKomponent_h (
   indeks number(10,0) not null,
   noe varchar2(255 char),
   annet number(10,0),
-  oppdateringsdato              timestamp(6) not null,
-  sluttdato                timestamp(6) not null,
+  oppdateringsdato              timestamp(6) with local time zone not null,
+  sluttdato                timestamp(6) with local time zone not null,
   versjonId            number (19,0) not null,
   primary key (id, indeks, sluttdato)
 );
@@ -815,8 +815,8 @@ create view AggregertObjektMeta as select * from AggregertObjektMeta_H where sna
 CREATE OR REPLACE TRIGGER T_AggregertObjektMeta INSTEAD OF INSERT OR UPDATE OR DELETE ON AggregertObjektMeta
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF INSERTING THEN
     INSERT INTO AggregertObjektMeta_H
@@ -844,8 +844,8 @@ create view AggregertObjekt as select * from AggregertObjekt_H where snapshot_ti
 CREATE OR REPLACE TRIGGER T_AggregertObjekt INSTEAD OF INSERT OR UPDATE OR DELETE ON AggregertObjekt
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF INSERTING THEN
     INSERT INTO AggregertObjekt_H
@@ -876,8 +876,8 @@ create view AggregertKomponent as select * from AggregertKomponent_H where snaps
 CREATE OR REPLACE TRIGGER T_AggregertKomponent INSTEAD OF INSERT OR UPDATE OR DELETE ON AggregertKomponent
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF INSERTING THEN
     INSERT INTO AggregertKomponent_H
@@ -928,8 +928,8 @@ Primary Key (rettsstiftelseId, rolle, personId)
 create table BubbleWithList_h (
   id number(19, 0) not null,
   text                varchar2(30),
-  oppdateringsdato              timestamp(6) not null,
-  sluttdato                timestamp(6) not null,
+  oppdateringsdato              timestamp(6) with local time zone not null,
+  sluttdato                timestamp(6) with local time zone not null,
   versjonId            number (19,0) not null,
   primary key (id, sluttdato)
 );
@@ -938,8 +938,8 @@ create view BubbleWithList as select * from BubbleWithList_h where snapshot_time
 CREATE OR REPLACE TRIGGER T_BubbleWithList INSTEAD OF INSERT OR UPDATE OR DELETE ON BubbleWithList
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF INSERTING THEN
     INSERT INTO BubbleWithList_h
@@ -969,8 +969,8 @@ END T_BubbleWithList;
 create table BWLForBWL_h(
   underBWLId number(19,0) not null,
   bwlId number(19,0) not null,
-  oppdateringsdato              timestamp(6) not null,
-  sluttdato                timestamp(6) not null,
+  oppdateringsdato              timestamp(6) with local time zone not null,
+  sluttdato                timestamp(6) with local time zone not null,
   versjonId            number (19,0) not null,
   primary key(underBWLId, bwlId)
 );
@@ -979,8 +979,8 @@ create view BWLForBWL as select * from BWLForBWL_h where snapshot_time.t_between
 CREATE OR REPLACE TRIGGER T_BWLForBWL INSTEAD OF INSERT OR UPDATE OR DELETE ON BWLForBWL
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF INSERTING THEN
     INSERT INTO BWLForBWL_h
@@ -1012,8 +1012,8 @@ create table BubbleWithListComponent_h (
   componentName varchar2(255 BYTE),
   bubblewithlistid number(19, 0),
   aEnumKodeId number(19, 0),
-  oppdateringsdato              timestamp(6) not null,
-  sluttdato                timestamp(6) not null,
+  oppdateringsdato              timestamp(6) with local time zone not null,
+  sluttdato                timestamp(6) with local time zone not null,
   versjonId            number (19,0) not null,
   primary key (id, sluttdato)
 );
@@ -1022,8 +1022,8 @@ create view BubbleWithListComponent as select * from BubbleWithListComponent_h w
 CREATE OR REPLACE TRIGGER T_BubbleWithListComponent INSTEAD OF INSERT OR UPDATE OR DELETE ON BubbleWithListComponent
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF INSERTING THEN
     INSERT INTO BubbleWithListComponent_h
@@ -1054,8 +1054,8 @@ create table BubbleWithListComponent2_h (
   id number(19, 0) not null,
   componentName varchar2(255 BYTE),
   bubblewithlistid number(19, 0),
-  oppdateringsdato              timestamp(6) not null,
-  sluttdato                timestamp(6) not null,
+  oppdateringsdato              timestamp(6) with local time zone not null,
+  sluttdato                timestamp(6) with local time zone not null,
   versjonId            number (19,0) not null,
   primary key (id, sluttdato)
 );
@@ -1064,8 +1064,8 @@ create view BubbleWithListComponent2 as select * from BubbleWithListComponent2_h
 CREATE OR REPLACE TRIGGER T_BubbleWithListComponent2 INSTEAD OF INSERT OR UPDATE OR DELETE ON BubbleWithListComponent2
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF INSERTING THEN
     INSERT INTO BubbleWithListComponent2_h

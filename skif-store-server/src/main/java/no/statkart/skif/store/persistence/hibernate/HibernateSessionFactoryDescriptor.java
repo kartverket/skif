@@ -1,18 +1,12 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import com.google.inject.Provider;
-import com.google.inject.util.Providers;
-import no.statkart.skif.SkifUtil;
-import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.exception.ImplementationException;
 import com.google.common.base.Preconditions;
+import no.statkart.skif.persistence.hibernate.type.OracleLocalTimestamp;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
-import org.hibernate.Interceptor;
 import org.hibernate.Session;
+import org.hibernate.type.CustomType;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 /**
@@ -58,7 +52,7 @@ public class HibernateSessionFactoryDescriptor {
     public void setSnapshotVersion(Session session, SnapshotVersion snapshotVersion) {
         Preconditions.checkArgument(accepts(snapshotVersion), "Session " + name + " støtter ikke snapshot version: " + snapshotVersion);
         if (setSnapshotOnSession) {
-            session.createSQLQuery("select snapshot_time.set_t(:timestamp) from dual").setTimestamp("timestamp", snapshotVersion.getTimestamp()).executeUpdate();
+            session.createSQLQuery("select snapshot_time.set_t(:timestamp) from dual").setParameter("timestamp", snapshotVersion.getTimestamp(), new CustomType(new OracleLocalTimestamp())).executeUpdate();
         }
         seed.set(snapshotVersion);
     }

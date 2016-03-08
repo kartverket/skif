@@ -55,7 +55,7 @@ configureDatabasePlugin {
 
 
         filterProperties = [
-                DATA_CONVERT_TIMESTAMP: '2012-09-02 00:00:00.00',   //dato for dump av kildebase som skal materialiseres
+                DATA_CONVERT_TIMESTAMP: '2012-09-02 00:00:00.00 +01:00',   //dato for dump av kildebase som skal materialiseres
         ]
 
         credentials.username = db_username
@@ -156,8 +156,8 @@ task applyHistorikk() {
             if (!hasHistoryColumns) {
                 sql.execute("""
                     ALTER TABLE ${tableName}_H ADD (
-                        oppdateringsdato TIMESTAMP(6) DEFAULT sysdate NOT NULL,
-                        sluttdato TIMESTAMP(6) DEFAULT timestamp'9999-01-01 00:00:00.00' NOT NULL,
+                        oppdateringsdato TIMESTAMP(6) WITH LOCAL TIME ZONE DEFAULT sysdate NOT NULL,
+                        sluttdato TIMESTAMP(6) WITH LOCAL TIME ZONE DEFAULT timestamp'9999-01-01 00:00:00.00 +01:00' NOT NULL,
                         versjonId NUMBER (19,0) DEFAULT 0 NOT NULL
                      )""".toString())
             }
@@ -169,8 +169,8 @@ task applyHistorikk() {
             sql.execute("""CREATE OR REPLACE TRIGGER T_${tableName} INSTEAD OF INSERT OR UPDATE OR DELETE ON ${tableName}
  FOR EACH ROW
   DECLARE
-    T_TRANS TIMESTAMP := SNAPSHOT_TIME.GET_T_TRANS();
-    T_END TIMESTAMP := SNAPSHOT_TIME.GET_T_CURRENT();
+    T_TRANS TIMESTAMP WITH LOCAL TIME ZONE := SNAPSHOT_TIME.GET_T_TRANS();
+    T_END TIMESTAMP WITH LOCAL TIME ZONE := SNAPSHOT_TIME.GET_T_CURRENT();
     ANT NUMBER(10,0);
     UPDATE_FEIL EXCEPTION;
   BEGIN

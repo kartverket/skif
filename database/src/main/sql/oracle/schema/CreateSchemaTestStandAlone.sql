@@ -14,8 +14,8 @@ create table TestBubble(
 
 CREATE TABLE TestBubbleWithHistory_H (
   id NUMBER(19,0) NOT NULL ENABLE,
-  oppdateringsdato timestamp(6) not null,
-  sluttdato timestamp(6) not null,
+  oppdateringsdato timestamp(6) with local time zone not null,
+  sluttdato timestamp(6) with local time zone not null,
   versjonId number (19,0) not null,
   nr number(10,0),
   text VARCHAR2(255 BYTE),
@@ -27,8 +27,8 @@ CREATE OR REPLACE TRIGGER TestBubbleWithHistory_TRIGGER
 INSTEAD OF INSERT OR UPDATE OR DELETE ON TestBubbleWithHistory
 FOR EACH ROW
 DECLARE
-t_Trans TIMESTAMP := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP := snapshot_time.Get_T_CURRENT();
+t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
+t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
 BEGIN
   IF UPDATING THEN
     IF :old.oppdateringsdato < t_Trans THEN
