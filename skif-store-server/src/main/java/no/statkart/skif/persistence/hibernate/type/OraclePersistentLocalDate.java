@@ -74,6 +74,11 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
         } else {
             OraclePreparedStatement oraclePreparedStatement = preparedStatement.unwrap(OraclePreparedStatement.class);
             LocalDate localDate = (LocalDate) value;
+
+            if (localDate.getYear() == 0) {
+                throw new HibernateException("Year can not be 0");
+            }
+
             byte[] rawData = new byte[7];
             rawData[0] = (byte) (localDate.getCenturyOfEra() + 100);
             rawData[1] = (byte) (localDate.getYearOfCentury() + 100);
