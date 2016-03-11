@@ -17,7 +17,8 @@ import java.util.GregorianCalendar;
  * @since 2.4 - ny grunnbok sprint 29
  */
 public class SQLTimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, java.sql.Timestamp, Mapping> {
-    private final boolean mandatoryTimeZone = true;
+    @SuppressWarnings("FieldCanBeLocal")
+    private boolean mandatoryTimeZone = true;
 
     public SQLTimestampTypeMapper() {
         super(XMLGregorianCalendar.class, java.sql.Timestamp.class, Mapping.class);

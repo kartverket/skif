@@ -10,8 +10,8 @@ import java.util.Map;
  * @author Henrik Fredholm
  */
 public class PersistenceSessionProxyCache {
-    protected final Map<Key, PersistenceSessionProxy> currentMap = new HashMap<Key, PersistenceSessionProxy>(4);
-    protected final Map<Key, PersistenceSessionProxy> oldMap = new HashMap<Key, PersistenceSessionProxy>();
+    protected final Map<Key, PersistenceSessionProxy> currentMap = new HashMap<>(4);
+    protected final Map<Key, PersistenceSessionProxy> oldMap = new HashMap<>();
     protected final Map<Key, PersistenceSessionProxy> historicMap = new LinkedHashMap<Key, PersistenceSessionProxy>() {
         private final int MAX_SIZE = 100;
 
@@ -44,7 +44,7 @@ public class PersistenceSessionProxyCache {
 
     public PersistenceSessionForSnapshot getOrCreateProxy(PersistenceSessionForSnapshot persistenceSessionForSnapshot, SnapshotVersion snapshotVersion) {
         Map<Key, PersistenceSessionProxy> map;
-        if (snapshotVersion == snapshotVersion.OLD) {
+        if (snapshotVersion == SnapshotVersion.OLD) {
             map = oldMap;
         } else if (snapshotVersion == SnapshotVersion.CURRENT) {
             map = currentMap;

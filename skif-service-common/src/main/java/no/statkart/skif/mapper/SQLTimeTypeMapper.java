@@ -18,7 +18,8 @@ import static no.statkart.skif.mapper.SQLTimestampTypeMapper.createPureGregorian
  * @since 2.4 - ny grunnbok sprint 29
  */
 public class SQLTimeTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, java.sql.Time, Mapping> {
-    private final boolean mandatoryTimeZone = true;
+    @SuppressWarnings("FieldCanBeLocal")
+    private boolean mandatoryTimeZone = true;
 
     public SQLTimeTypeMapper() {
         super(XMLGregorianCalendar.class, java.sql.Time.class, Mapping.class);
