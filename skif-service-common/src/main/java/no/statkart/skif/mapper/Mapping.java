@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 /**
  * Definerer mapping mellom Domain Objects og Web Service API Objects.
- * <p>
+ * <p/>
  * I utgangspunktet trenger man ikke definere noen andre metoder enn de generiske, men custom mappere blir mer
  * kompakte dersom man definerer opp de mappingene de bruker.
  *
@@ -15,26 +15,44 @@ import java.math.BigDecimal;
  * @author Tor Egil R. Strand
  */
 public interface Mapping extends MappingBase {
-    public <T> T d2w(Object source, Class<T> targetClass);
-    public <T> T w2d(Object source, Class<T> targetClass);
-    public Object d2w(Object source, Type sourceType, Type targetType);
-    public Object w2d(Object source, Type sourceType, Type targetType);
-    public <T> T d2w(Object source, TypeLiteral<T> targetType);
-    public <T> T w2d(Object source, TypeLiteral<T> targetType);
 
-    public String d2w(String source);
-    public String w2d(String source);
+    <T> T d2w(Object source, Class<T> targetClass);
 
-    public Integer d2w(Integer source);
-    public Integer w2d(Integer source);
+    <T> T w2d(Object source, Class<T> targetClass);
 
-    public Long d2w(Long source);
-    public Long w2d(Long source);
 
-    public Boolean d2w(Boolean source);
-    public Boolean w2d(Boolean source);
+    Object d2w(Object source, Type sourceType, Type targetType);
 
-    public BigDecimal d2w(BigDecimal source);
-    public BigDecimal w2d(BigDecimal source);
+    Object w2d(Object source, Type sourceType, Type targetType);
+
+
+    <T> T d2w(Object source, TypeLiteral<T> targetType);
+
+    <T> T w2d(Object source, TypeLiteral<T> targetType);
+
+
+    String d2w(String source);
+
+    String w2d(String source);
+
+
+    Integer d2w(Integer source);
+
+    Integer w2d(Integer source);
+
+
+    Long d2w(Long source);
+
+    Long w2d(Long source);
+
+
+    Boolean d2w(Boolean source);
+
+    Boolean w2d(Boolean source);
+
+
+    BigDecimal d2w(BigDecimal source);
+
+    BigDecimal w2d(BigDecimal source);
 
 }

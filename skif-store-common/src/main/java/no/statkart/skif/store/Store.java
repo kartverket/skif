@@ -16,7 +16,7 @@ import java.util.Set;
 public interface Store {
     /**
      * Resetter hele Store.
-     * <p>
+     * <p/>
      * TODO: Forklar forskjellen mellom denne og {@link #evictAll()}.
      */
     void clear();
@@ -27,8 +27,7 @@ public interface Store {
      * @param bubbleId id til objektet man ønsker å hente ut
      * @param <T>      typen til objektet man ønsker å hente ut
      * @return objektet
-     * @throws no.statkart.skif.exception.ObjectNotFoundException
-     *          dersom objektet ikke fins
+     * @throws no.statkart.skif.exception.ObjectNotFoundException dersom objektet ikke fins
      */
     <T extends BubbleObject> T get(@Nullable BubbleId<? extends T> bubbleId);
 
@@ -40,8 +39,7 @@ public interface Store {
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å hente ut
      * @param <I>       den id-supertypen som er felles for alle objektene man ønsker å hente ut
      * @return objektene, i tilfeldig rekkefølge
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds);
 
@@ -52,8 +50,7 @@ public interface Store {
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å hente ut
      * @param <I>       den id-supertypen som er felles for alle objektene man ønsker å hente ut
      * @return objektene, i tilfeldig rekkefølge
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<I> bubbleIds);
 
@@ -64,8 +61,7 @@ public interface Store {
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å hente ut
      * @param <I>       den id-supertypen som er felles for alle objektene man ønsker å hente ut
      * @return objektene, i tilfeldig rekkefølge
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<I> bubbleIds);
 
@@ -76,8 +72,7 @@ public interface Store {
      * @param bubbleObjects et sted å putte objektene for returnering
      * @param <T>           den supertypen som er felles for alle objektene man ønsker å hente ut
      * @param <I>           den id-supertypen som er felles for alle objektene man ønsker å hente ut
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects);
 
@@ -91,8 +86,7 @@ public interface Store {
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å hente ut
      * @param <I>       den id-supertypen som er felles for alle objektene man ønsker å hente ut
      * @return objektene, i samme rekkefølge som id-ene
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<I> bubbleIds);
 
@@ -105,8 +99,7 @@ public interface Store {
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å hente ut
      * @param <I>       den id-supertypen som er felles for alle objektene man ønsker å hente ut
      * @return objektene, i samme rekkefølge som id-ene
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds);
 
@@ -118,8 +111,7 @@ public interface Store {
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å hente ut
      * @param <I>       den id-supertypen som er felles for alle objektene man ønsker å hente ut
      * @return objektene, i samme rekkefølge som id-ene
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds);
 
@@ -131,8 +123,7 @@ public interface Store {
      * @param bubbleObjects et sted å putte objektene for returnering
      * @param <T>           den supertypen som er felles for alle objektene man ønsker å hente ut
      * @param <I>           den id-supertypen som er felles for alle objektene man ønsker å hente ut
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects);
 
@@ -188,24 +179,22 @@ public interface Store {
     /**
      * Låser og henter objektet for gitt id. Dersom id er <code>null</code> så returneres også <code>null</code>, uten
      * at noe låses.
-     * <p>
+     * <p/>
      * Det er viktig at det er objektet som returneres her som en det man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
      *
      * @param bubbleId id til objektet man ønsker å låse
      * @param <T>      typen til objektet man ønsker å låse
      * @return objektet
-     * @throws no.statkart.skif.exception.ObjectNotFoundException
-     *          dersom objektet ikke fins
-     * @throws no.statkart.skif.exception.LockedException
-     *          dersom noen andre har låst objektet
+     * @throws no.statkart.skif.exception.ObjectNotFoundException dersom objektet ikke fins
+     * @throws no.statkart.skif.exception.LockedException         dersom noen andre har låst objektet
      */
     <T extends BubbleObject> T lock(@Nullable BubbleId<? extends T> bubbleId);
 
     /**
      * Låser og henter mange objekter for gitte id-er. Returnerer {@link Set} eller {@link List} avhengig av hva man sendte inn.
      * Rekkefølgene objektene returneres i er tilfeldig.
-     * <p>
+     * <p/>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
      *
@@ -213,16 +202,14 @@ public interface Store {
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å låse
      * @param <I>       den id-supertypen som er felles for alle objektene man ønsker å låse
      * @return objektene, i tilfeldig rekkefølge
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
-     * @throws no.statkart.skif.exception.LockedException
-     *          dersom noen andre har låst objektet
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.LockedException          dersom noen andre har låst objektet
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds);
 
     /**
      * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
-     * <p>
+     * <p/>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
      *
@@ -230,16 +217,14 @@ public interface Store {
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å låse
      * @param <I>       den id-supertypen som er felles for alle objektene man ønsker å låse
      * @return objektene, i tilfeldig rekkefølge
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
-     * @throws no.statkart.skif.exception.LockedException
-     *          dersom noen andre har låst objektet
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.LockedException          dersom noen andre har låst objektet
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<I> bubbleIds);
 
     /**
      * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er "tilfeldig".
-     * <p>
+     * <p/>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
      *
@@ -247,16 +232,14 @@ public interface Store {
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å låse
      * @param <I>       den id-supertypen som er felles for alle objektene man ønsker å låse
      * @return objektene, i tilfeldig rekkefølge
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
-     * @throws no.statkart.skif.exception.LockedException
-     *          dersom noen andre har låst objektet
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.LockedException          dersom noen andre har låst objektet
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<I> bubbleIds);
 
     /**
      * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
-     * <p>
+     * <p/>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
      *
@@ -264,10 +247,8 @@ public interface Store {
      * @param bubbleObjects et sted å putte de låste objektene for returnering
      * @param <T>           den supertypen som er felles for alle objektene man ønsker å låse
      * @param <I>           den id-supertypen som er felles for alle objektene man ønsker å låse
-     * @throws no.statkart.skif.exception.ObjectsNotFoundException
-     *          dersom noen av objektene ikke fins
-     * @throws no.statkart.skif.exception.LockedException
-     *          dersom noen andre har låst objektet
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
+     * @throws no.statkart.skif.exception.LockedException          dersom noen andre har låst objektet
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects);
 
@@ -329,27 +310,12 @@ public interface Store {
      * @param <I>   id-typen til objektet
      * @return liste med tidsspesifike id-er
      */
-    public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
-
-    /**
-     * Finner alle versjoner for id'er for gitt interval {@code [start,end[}.
-     *
-     * <P>Eksempel på bruk:
-     * <pre>
-     *     {@code Map<AId, List<AId>> result = storeService.getVersionForList(ImmutableList.<AId>of(ASubId.create(1), ASubId.create(2)), start, end)}
-     * </pre>
-     *
-     * @param ids collection med id'er man skal finne versjoner for.
-     * @param start starttidspunkt for interval
-     * @param end   slutttidspunkt for interval.
-     * @param <I>   Felles basetype for alle ids det skal finnes versjoner for.
-     * @return
-     */
+    <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end);
 
 
     /**
      * Finner historiske utgaver av gitte objekter for interval {@code [start,end[}.
-     *
+     * <p/>
      * <P>Eksempel på bruk:
      * <pre>
      *     {@code Map&lt;AId, List&lt;AId>> result = storeService.getVersionForList(ImmutableList.&lt;AId>of(ASubId.create(1), ASubId.create(2)), start, end)}
@@ -360,7 +326,7 @@ public interface Store {
      * @param end   seneste tidspunkt man er interessert i (eksklusiv)
      * @return key er id-en man sendte inn men med {@code SnapshotVersion.CURRENT}, value er sortert liste med tidsspesifike id-er
      */
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end);
+    <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end);
 
     /**
      * Legger en nyopprettet boble inn i Store. Dersom boblen ikke har fått tilordnet id, så genereres denne med
@@ -369,7 +335,7 @@ public interface Store {
      * @param bubbleObject boblen som skal legges inn
      * @param <T>          typen til boblen
      */
-    public <T extends BubbleObject> void insert(T bubbleObject);
+    <T extends BubbleObject> void insert(T bubbleObject);
 
     /**
      * Oppdaterer en eksisterende boble. Boblen må være låst av gjeldende bruker, eller nyopprettet i denne sesjonen.
@@ -377,7 +343,7 @@ public interface Store {
      * @param bubbleObject den oppdaterte utgaven av boblen
      * @param <T>          typen til boblen
      */
-    public <T extends BubbleObject> void update(T bubbleObject);
+    <T extends BubbleObject> void update(T bubbleObject);
 
     /**
      * Sletter en eksisterende boble. Boblen må være låst av gjeldende bruker, eller nyopprettet i denne sesjonen.
@@ -385,7 +351,7 @@ public interface Store {
      * @param bubbleObject boblen som skal slettes
      * @param <T>          typen til boblen
      */
-    public <T extends BubbleObject> void delete(T bubbleObject);
+    <T extends BubbleObject> void delete(T bubbleObject);
 
     /**
      * Markerer en boble som uendret. Alle modifikasjoner i gjeldende unit-of-work forkastes.
@@ -393,7 +359,7 @@ public interface Store {
      * @param bubbleObject boblen som skal rulles tilbake
      * @param <T>          typen til boblen
      */
-    public <T extends BubbleObject> void undo(T bubbleObject);
+    <T extends BubbleObject> void undo(T bubbleObject);
 
     /**
      * Endrer boblens plass i oppdateringsrekkefølgen ved å flytte den til "nå".
@@ -401,17 +367,17 @@ public interface Store {
      * @param bubbleId id-en til boblen som skal omkronologiseres
      * @param <I>      id-typen til boblen
      */
-    public <I extends BubbleId<?>> void reorderModification(I bubbleId);
+    <I extends BubbleId<?>> void reorderModification(I bubbleId);
 
     /**
      * Sørger for at en boble er fullstendig initialisert.
-     * <p>
+     * <p/>
      * TODO: Burde denne kun vært på StoreServer?
      *
      * @param bubbleObject boblen som skal være fullstendig initialisert når metoden returerer
      * @param <T>          typen til boblen
      */
-    public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
+    <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
 
 
     /**
@@ -423,21 +389,21 @@ public interface Store {
 
     /**
      * Committer gjeldende unit-of-work ned på nivået under. Nivået under blir neste gjeldende nivå.
-     * <p>
+     * <p/>
      * Man må angi hvilken unit-of-work som skal committes, selv om det kun er gjeldende unit-of-work som kan committes.
      * Dette for å sjekke at man committer den man tror man skal committe.
      *
-     * @param unitOfWork    unit-of-work som skal committes
+     * @param unitOfWork unit-of-work som skal committes
      */
     void commitUnitOfWork(UnitOfWork unitOfWork);
 
     /**
      * Avbryter unit-of-work og returnerer til nivået under.
-     * <p>
+     * <p/>
      * Man må angi hvilken unit-of-work som skal avbrytes, selv om det kun er gjeldende unit-of-work som kan avbrytes.
      * Dette for å sjekke at man avbryter den man tror man skal avbryte.
      *
-     * @param unitOfWork    unit-of-work som skal avbrytes
+     * @param unitOfWork unit-of-work som skal avbrytes
      */
     void abortUnitOfWork(UnitOfWork unitOfWork);
 
@@ -451,21 +417,21 @@ public interface Store {
     /**
      * Avslutter gjeldende unit-of-work og returnerer til nivået under. Man må ha kalt {@link #getUnitOfWorkTransfer()}
      * først for å hente ut endringene, siden de ikke overføres til nivået under.
-     * <p>
+     * <p/>
      * Man må angi hvilken unit-of-work som skal avsluttes, selv om det kun er gjeldende unit-of-work som kan avsluttes.
      * Dette for å sjekke at man avslutter den man tror man skal avslutte.
      *
-     * @param unitOfWork    unit-of-work som skal avsluttes
+     * @param unitOfWork unit-of-work som skal avsluttes
      */
     void endUnitOfWork(UnitOfWork unitOfWork);
 
     /**
      * Avslutter alle unit-of-work. Man må ha kalt {@link #getUnitOfWorkTransfer()} først for å hente ut endringene.
-     * <p>
+     * <p/>
      * Man må angi hvilken unit-of-work som er gjeldende, selv om alle aktive unit-of-works avsluttes.
      * Dette for å sjekke at man avslutter den man tror man skal avslutte.
      *
-     * @param unitOfWork    unit-of-work som man tror er aktiv
+     * @param unitOfWork unit-of-work som man tror er aktiv
      */
     void endUnitsOfWork(UnitOfWork unitOfWork);
 
@@ -473,7 +439,7 @@ public interface Store {
      * Sørger for at en unit-of-work er avsluttet. Har den ikke blitt avsluttet eller abortert allerede, så blir den
      * abortert.
      *
-     * @param unitOfWork    unit-of-work som skal tvinges avsluttet
+     * @param unitOfWork unit-of-work som skal tvinges avsluttet
      */
     void closeUnitOfWork(UnitOfWork unitOfWork);
 

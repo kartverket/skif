@@ -6,10 +6,12 @@ import no.statkart.skif.wsversioning.wsapi.v2.domain.VegIdList;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.ServiceException;
 
 /**
- * WebServiceInterface for {@link no.statkart.skif.wsversioning.service.VegService}.
+ * WebServiceInterface for {@link no.statkart.skif.wsversioning.service.VegService VegService}.
  *
  * @author Tor Egil R. Strand
  */
 public interface VegServiceWSI extends ServiceWSI {
-    public VegIdList findAlleVeger(WSVersioningContext context) throws ServiceException;
+
+    VegIdList findAlleVeger(WSVersioningContext context) throws ServiceException;
+
 }

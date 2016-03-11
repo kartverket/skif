@@ -34,7 +34,7 @@ public class InverseRelationTypeMapperTest {
         }
     }
 
-    public static interface TestMapping extends Mapping {
+    public interface TestMapping extends Mapping {
         DummyOptionalValue d2w(InverseRelation<String> source);
         InverseRelation<String> w2d(DummyOptionalValue source);
     }

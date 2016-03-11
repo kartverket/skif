@@ -1,8 +1,8 @@
 package no.statkart.skif.util.testsupport;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.common.base.Preconditions;
 import no.statkart.skif.module.ModuleBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,7 +167,7 @@ public abstract class AbstractSkifTestCase {
         }
     }
 
-    private final ModuleBuilder getModuleBuilder(ITestContext context) {
+    private ModuleBuilder getModuleBuilder(ITestContext context) {
         ModuleBuilder moduleBuilder = createModuleBuilder();
         if (moduleBuilder == null) {
             // Bruk builder hvis den finnes fra før, elles opprett en

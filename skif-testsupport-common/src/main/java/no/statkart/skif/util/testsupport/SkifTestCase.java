@@ -80,7 +80,7 @@ public class SkifTestCase  extends AbstractSkifTestCase {
         this.singleVm = singleVm;
     }
 
-    private final ModuleBuilder getModuleBuilder(ITestContext context) {
+    private ModuleBuilder getModuleBuilder(ITestContext context) {
         ModuleBuilder moduleBuilder = createModuleBuilder();
         if (moduleBuilder == null) {
             // Bruk builder hvis den finnes fra før, elles opprett en

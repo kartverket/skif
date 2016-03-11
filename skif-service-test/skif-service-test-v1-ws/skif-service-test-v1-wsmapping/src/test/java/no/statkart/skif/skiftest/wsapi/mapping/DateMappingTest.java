@@ -1,7 +1,6 @@
 package no.statkart.skif.skiftest.wsapi.mapping;
 
 import no.statkart.skif.mapper.*;
-import no.statkart.skif.skiftest.wsapi.domain.DatesAndTimes;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
@@ -12,7 +11,6 @@ import java.sql.Timestamp;
 
 /**
  * Tester mapping av wrappede datotyper.
- *
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0
@@ -89,7 +87,7 @@ public class DateMappingTest {
         }
     }
 
-    private static interface DateMappingTestMapping extends Mapping {
+    private interface DateMappingTestMapping extends Mapping {
         no.statkart.skif.skiftest.wsapi.domain.DatesAndTimes d2w(DatesAndTimes source);
         DatesAndTimes w2d(no.statkart.skif.skiftest.wsapi.domain.DatesAndTimes source);
     }
@@ -98,7 +96,7 @@ public class DateMappingTest {
         public DateMappingTestMapper() {
             super(DateMappingTestMapping.class);
 
-            addMapper(new DefaultTypeMapper<no.statkart.skif.skiftest.wsapi.domain.DatesAndTimes, DatesAndTimes, DateMappingTestMapping>(no.statkart.skif.skiftest.wsapi.domain.DatesAndTimes.class, DatesAndTimes.class, DateMappingTestMapping.class));
+            addMapper(new DefaultTypeMapper<>(no.statkart.skif.skiftest.wsapi.domain.DatesAndTimes.class, DatesAndTimes.class, DateMappingTestMapping.class));
             addMapper(TimestampTypeMapper.create(no.statkart.skif.skiftest.wsapi.domain.Timestamp.class));
             addMapper(LocalDateTimeTypeMapper.create(no.statkart.skif.skiftest.wsapi.domain.LocalDateTime.class));
             addMapper(LocalDateTypeMapper.create(no.statkart.skif.skiftest.wsapi.domain.LocalDate.class));

@@ -1,10 +1,8 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.kodeliste.*;
+import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.localization.LocalizedString;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
-
-import java.util.List;
 
 /**
  * Alle Kodelister i StoreTest applikasjonen implementerer dette interface. Det er nødvendig å implementere dette
@@ -18,8 +16,12 @@ public interface StoreTestKodeliste extends StoreTestBubble, Kodeliste {
     //@Override
     //StoreTestKodelisteId<?> getId();
 
-    public abstract LocalizedString getNavn();
-    public abstract void setNavn(LocalizedString navn);
-    public abstract LocalizedString getBeskrivelse();
-    public abstract void setBeskrivelse(LocalizedString beskrivelse);
+    LocalizedString getNavn();
+
+    void setNavn(LocalizedString navn);
+
+    LocalizedString getBeskrivelse();
+
+    void setBeskrivelse(LocalizedString beskrivelse);
+
 }

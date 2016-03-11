@@ -24,16 +24,16 @@
  */
 package org.hibernate.engine;
 
-import java.io.Serializable;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
 import org.hibernate.AssertionFailure;
 import org.hibernate.EntityMode;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.pretty.MessageHelper;
 import org.hibernate.type.Type;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * Uniquely identifies of an entity instance in a particular session by identifier.
@@ -84,7 +84,7 @@ public final class EntityKey implements Serializable {
           throw new RuntimeException(e);
        }
     }
-    private final String getRootEntityName(EntityPersister persister) {
+    private String getRootEntityName(EntityPersister persister) {
        String name = persister.getRootEntityName();
        if (persister.getClass()==bubbleRefIdPersisterClass) {
           return name.substring(0, name.length()-2);

@@ -2,7 +2,6 @@ package no.statkart.skif.storetest.service.histtest;
 
 import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.service.annotation.ServiceContextMapped;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
@@ -19,7 +18,7 @@ import java.util.Set;
  * i java api-et inneholder snapshotversion mens at wsapi har en eksplisitt context parameter som inneholder
  * snapshotversion. Dette gjør at det ikke er en en-til-en match mellom java api og wsapi og det er nødvendig med en
  * mapping regel for metodekall.
- *
+ * <p/>
  * Følgende regel brukes for mapping av java api metoder til wsapi metoder
  * <ul>
  *     <li>Hvis ingen av metodens parameter er av type  {@code BubbleId}, collection av {@code BubbleId} eller
@@ -52,54 +51,55 @@ import java.util.Set;
  * @author Tor Egil R. Strand
  */
 public interface HistTestService {
-    /**
-     * Finner {@code HistSimple} objekter med text lik {@code text} hørende til mockup testsett {@code testsettNumber}
-     * for gitt tidspunkt {@code snapshotVersion}.
-     * <p>
-     * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
-     * som brukes for søket.
-     *
-     * @param text
-     * @param testsettNummer
-     * @param snapshotVersion
-     * @return  id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
-     */
-    public Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingJDBC(String text, int testsettNummer, @ServiceContextMapped SnapshotVersion snapshotVersion);
 
     /**
      * Finner {@code HistSimple} objekter med text lik {@code text} hørende til mockup testsett {@code testsettNumber}
      * for gitt tidspunkt {@code snapshotVersion}.
-     * <p>
-     * Samme funksjonalitet som {@link #findHistSimpleIdsForTextUsingJDBC} bare implementert via hibernate
-     * <p>
+     * <p/>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
      *
      * @param text
      * @param testsettNummer
      * @param snapshotVersion
-     * @return  id-er på objekter som ble funnet. Id-er  har SnapshotVersion {@code snapshotVersion}
+     * @return id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
      */
-    public Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingHibernate(String text, int testsettNummer, @ServiceContextMapped SnapshotVersion snapshotVersion);
+    Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingJDBC(String text, int testsettNummer, @ServiceContextMapped SnapshotVersion snapshotVersion);
+
+    /**
+     * Finner {@code HistSimple} objekter med text lik {@code text} hørende til mockup testsett {@code testsettNumber}
+     * for gitt tidspunkt {@code snapshotVersion}.
+     * <p/>
+     * Samme funksjonalitet som {@link #findHistSimpleIdsForTextUsingJDBC} bare implementert via hibernate
+     * <p/>
+     * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
+     * som brukes for søket.
+     *
+     * @param text
+     * @param testsettNummer
+     * @param snapshotVersion
+     * @return id-er på objekter som ble funnet. Id-er  har SnapshotVersion {@code snapshotVersion}
+     */
+    Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingHibernate(String text, int testsettNummer, @ServiceContextMapped SnapshotVersion snapshotVersion);
 
     /**
      * Finner {@code HistWithRelation} objekter som peker på et {@code HistSimple} objekt som har text lik {@code text} hørende til
      * mockup testsett {@code testsettNumber} for gitt tidspunkt {@code snapshotVersion}
-     * <p>
+     * <p/>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
-
+     *
      * @param text
      * @param testsettNummer
-     * @return  id-er på objekter som ble funnet. Id-er  har SnapshotVersion {@code snapshotVersion}
+     * @return id-er på objekter som ble funnet. Id-er  har SnapshotVersion {@code snapshotVersion}
      */
-    public Set<HistWithRelationId<?>> findHistWithRelationIdsRelatedToHistSimpleWithText(String text, int testsettNummer, SnapshotVersion snapshotVersion);
+    Set<HistWithRelationId<?>> findHistWithRelationIdsRelatedToHistSimpleWithText(String text, int testsettNummer, SnapshotVersion snapshotVersion);
 
     /**
      * Finner {@code HistWithRelation} objekter som har text lik {@code text} hørende til mockup testsett {@code testsettNumber}
      * og som er relatert til et {@code HistSimple} objekt med id lik {@code histSimpleId} for gitt tidspunkt {@code snapshotVersion}.
      * Fordi {@code histSimpleId} kan  være null må metoden ha en eksplisitt SnapshotVersion parameter som siste argument.
-     * <p>
+     * <p/>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket. Dette er nødvendig siden {@code histSimpleId} kan være null og vi ønsker å kunne angi
      * SnapshotVersion for søket. SnapshotVersion i {@code histSimpleId} ignoreres.
@@ -107,22 +107,22 @@ public interface HistTestService {
      * @param text
      * @param histSimpleId
      * @param snapshotVersion
-     * @return  id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
+     * @return id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
      */
-    public Set<HistWithRelationId<?>> findHistWithRelationIdsWithTextRelatedToHistSimpleId(String text, @Nullable HistSimpleId<?> histSimpleId, SnapshotVersion snapshotVersion);
+    Set<HistWithRelationId<?>> findHistWithRelationIdsWithTextRelatedToHistSimpleId(String text, @Nullable HistSimpleId<?> histSimpleId, SnapshotVersion snapshotVersion);
 
     /**
      * Finner {@code HistWithRelation} objekter som har text lik {@code text} hørende til mockup testsett {@code testsettNumber}
      * og som er relatert til et {@code HistSimple} objekt med id lik {@code histSimpleIds}.
-     * <p>
+     * <p/>
      * Denne metode har ikke en eksplisitt SnapshotVersion parameter fordi snapthotversion kan bestemmes ut fra  {@code histSimpleIds}
      *
      * @param text
      * @param histSimpleIds
      * @param snapshotVersion
-     * @return  id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
+     * @return id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
      */
-    public Map<HistSimpleId<?>,Set<HistWithRelationId<?>>> findHistWithRelationIdsWithTextRelatedToHistSimpleIds(String text, Collection<HistSimpleId<?>> histSimpleIds, @Deprecated SnapshotVersion snapshotVersion);
+    Map<HistSimpleId<?>, Set<HistWithRelationId<?>>> findHistWithRelationIdsWithTextRelatedToHistSimpleIds(String text, Collection<HistSimpleId<?>> histSimpleIds, @Deprecated SnapshotVersion snapshotVersion);
 
     /**
      * Finner id-ene til alle HistSimple objekter i {@code histSimpleIds} og som eksisterte på gitt snapshot-tidspunkt.
@@ -130,26 +130,25 @@ public interface HistTestService {
      *
      * @param histSimpleIds
      * @param snapshotVersion
-     * @return  id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
+     * @return id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
      * @since 2.1
      */
-    public List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion);
+    List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion);
 
     /**
      * Finner id-ene til alle HistSimple objekter i {@code histSimpleIds} og som eksisterte på gitt snapshot-tidspunkt.
      * For denne metoden angis kan snapshotVersion eksplisitt.
      *
-     *
-     * @param histSimpleIds alle ids må ha samme SnapshotVersion
+     * @param histSimpleIds   alle ids må ha samme SnapshotVersion
      * @param snapshotVersion
      * @return
      * @since 2.1
      */
-    public List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingOracleArray(Collection<HistSimpleId<?>> histSimpleIds,  SnapshotVersion snapshotVersion);
+    List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingOracleArray(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion);
 
     /**
      * Finner objekter hvis punkt ligger inne i {@code selectionPolygon}  på gitt snapshot-tidspunkt {@code snapshotVersion}.
-     * <p>
+     * <p/>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
      *
@@ -157,11 +156,11 @@ public interface HistTestService {
      * @param snapshotVersion
      * @return
      */
-    public List<GeometricElementId> findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion);
+    List<GeometricElementId> findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion);
 
     /**
      * Finner objekter hvis polygon ligger inne i {@code selectionPolygon}  på gitt snapshot-tidspunkt {@code snapshotVersion}.
-     * <p>
+     * <p/>
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
      *
@@ -169,5 +168,6 @@ public interface HistTestService {
      * @param snapshotVersion
      * @return
      */
-    public List<GeometricElementId> findGeometricElementsWithPolygonInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion);
+    List<GeometricElementId> findGeometricElementsWithPolygonInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion);
+
 }

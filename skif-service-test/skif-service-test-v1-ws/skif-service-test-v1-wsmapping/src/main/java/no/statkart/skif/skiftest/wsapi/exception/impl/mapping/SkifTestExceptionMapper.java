@@ -18,7 +18,7 @@ public class SkifTestExceptionMapper extends AbstractExceptionMapper<SkifTestExc
      * NB: insertion order er viktig. legg superklasser til sist!
      */
 
-    private final static Map<String, Class<? extends SkifException>> exceptionClassMap = new LinkedHashMap<String, Class<? extends SkifException>>();
+    private final static Map<String, Class<? extends SkifException>> exceptionClassMap = new LinkedHashMap<>();
     static {
         exceptionClassMap.put(Kategori.SERVICE_APPLICATION_FINDER_EXCEPTION.value, no.statkart.skif.exception.FinderException.class);
         exceptionClassMap.put(Kategori.SERVICE_APPLICATION_VALIDATION_EXCEPTION.value, no.statkart.skif.exception.ValidationException.class);
@@ -56,8 +56,8 @@ public class SkifTestExceptionMapper extends AbstractExceptionMapper<SkifTestExc
 
     private void addMappersForExceptionTypes() {
         addMapper(new ServiceExceptionTypeMapper(exceptionClassMap));
-        addMapper(new IdentityExceptionTypeMapper<Error>(Error.class));
-        addMapper(new IdentityExceptionTypeMapper<RuntimeException>(RuntimeException.class));
+        addMapper(new IdentityExceptionTypeMapper<>(Error.class));
+        addMapper(new IdentityExceptionTypeMapper<>(RuntimeException.class));
     }
 
     /**
@@ -66,7 +66,7 @@ public class SkifTestExceptionMapper extends AbstractExceptionMapper<SkifTestExc
      * @author Leif Lislegård
      * @since 2.0
      */
-    public static enum Kategori {
+    public enum Kategori {
         SERVICE_EXCEPTION(":ServiceException:"),
         SERVICE_SYSTEM_EXCEPTION(":ServiceException:SystemException:"),
         SERVICE_SYSTEM_IMPLEMENTATION_EXCEPTION(":ServiceException:SystemException:ImplementationException:"),

@@ -7,6 +7,7 @@ import org.hibernate.mapping.PersistentClass;
  * @author Henrik Fredholm
  */
 public interface BubbleRefMapping extends Mapping {
-     public PersistentClass getClassMapping(String entityName);
+
+     PersistentClass getClassMapping(String entityName);
 
 }

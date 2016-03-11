@@ -12,6 +12,9 @@ import no.statkart.skif.skiftest.exception.SimpleException;
  * @since 2.0
  */
 public interface Test3Service {
-    public A b2A(B b);
-    public String testThrowExcpetion(String exceptionClass, String message) throws SimpleException;
+
+    A b2A(B b);
+
+    String testThrowExcpetion(String exceptionClass, String message) throws SimpleException;
+
 }

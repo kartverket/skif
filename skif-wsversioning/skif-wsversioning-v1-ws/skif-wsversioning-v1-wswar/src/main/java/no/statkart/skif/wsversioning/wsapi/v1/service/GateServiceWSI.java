@@ -11,5 +11,7 @@ import no.statkart.skif.wsversioning.wsapi.v1.exception.ServiceException;
  * @author Tor Egil R. Strand
  */
 public interface GateServiceWSI extends ServiceWSI {
-    public GateIdList findAlleGater(WSVersioningContext context) throws ServiceException;
+
+    GateIdList findAlleGater(WSVersioningContext context) throws ServiceException;
+
 }

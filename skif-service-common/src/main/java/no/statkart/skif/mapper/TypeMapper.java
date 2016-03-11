@@ -7,15 +7,18 @@ package no.statkart.skif.mapper;
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  */
-public interface TypeMapper<WsapiT,DomainT> {
-    public Mapping getMapping();
+public interface TypeMapper<WsapiT, DomainT> {
+
+    Mapping getMapping();
+
     void setMapping(Mapping mapping);
 
-    public WsapiT mapDomainObject(DomainT source);
+    WsapiT mapDomainObject(DomainT source);
 
-    public DomainT mapWsapiObject(WsapiT source);
+    DomainT mapWsapiObject(WsapiT source);
 
     Class<WsapiT> getWsapiClass();
 
     Class<DomainT> getDomainClass();
+
 }

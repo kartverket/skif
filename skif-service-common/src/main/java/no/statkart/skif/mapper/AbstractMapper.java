@@ -26,7 +26,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
     private MappingResolver mappingResolver = null;
 
-    static enum Direction {
+    enum Direction {
         /**
          * mapping from domain to webserivce classes
          */

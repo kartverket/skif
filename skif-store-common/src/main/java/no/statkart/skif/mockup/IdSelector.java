@@ -15,8 +15,9 @@ public interface IdSelector<T extends AbstractMockupFacade> {
     /**
      * Angir hvilke id-er fra testsettet som skal lagres ned.
      *
-     * @param mockupFacade    mockupfacade for testsettet
+     * @param mockupFacade mockupfacade for testsettet
      * @return id-ene som skal lagres
      */
-    public Set<? extends BubbleId> selectFrom(T mockupFacade);
+    Set<? extends BubbleId> selectFrom(T mockupFacade);
+
 }

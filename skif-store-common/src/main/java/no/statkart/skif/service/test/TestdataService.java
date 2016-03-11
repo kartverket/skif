@@ -13,44 +13,45 @@ import java.util.SortedMap;
  * @since 2.1
  */
 public interface TestdataService {
+
     /**
      * Returnerer testnummer 0
      *
      * @return neste testnummer
      */
-    public TestNumber getTestNumber0();
+    TestNumber getTestNumber0();
 
     /**
      * Finner neste ledige testnummer.
      *
      * @return neste testnummer
      */
-    public TestNumber getNextTestNumber();
+    TestNumber getNextTestNumber();
 
     /**
      * Lagrer alle snapshots for et mockup-sett.
      *
      * @param snapshotTransfers snapshot-ene i mockup-settet, sortert kronologisk
      */
-    public void saveAll(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers);
+    void saveAll(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers);
 
     /**
      * Lagrer ett enkelt snapshot. Denne er kun ment for intern bruk og skal ikke kalles fra klienter.
      *
      * @param snapshotVersion tidspunkt for snapshot
-     * @param mockupTransfer transfer med alle objekter som endres på gitt tidspunkt
+     * @param mockupTransfer  transfer med alle objekter som endres på gitt tidspunkt
      */
     @SuppressSnapshotVersionMapping
-    public void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer mockupTransfer);
+    void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer mockupTransfer);
 
     /**
      * Sjekker om objekt med gitt id finnes i databasen fra før. Klienter skal sende inn id til første objekt
      * i et readmockupsett før den eventuel sender over en hel transfer.
      *
-     * @param id    id til første objekt i mockupsett
-     * @return om (i alle fall deler av) mockupsettet allerede ligger i databasen
-     *
+     * @param id id til første objekt i mockupsett
+     * @return {@code true} dersom (i alle fall deler av) mockupsettet allerede ligger i databasen
      * @since 2.3.0
      */
-    public boolean objectExists(BubbleId<?> id);
+    boolean objectExists(BubbleId<?> id);
+
 }

@@ -22,10 +22,11 @@ package no.statkart.skif.store;
  * @since 2.2.0
  */
 public interface EntityComponent extends Component {
+
     /**
      * Hibernate 3.2 håndterer ikke covariant return type for id'er. Må derfor være definert som Long.
      * Velger alltid første metode som hedder getId() og som da vil returnerer Object
      */
-    public abstract Long getId();
+    Long getId();
 
 }

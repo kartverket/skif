@@ -11,5 +11,6 @@ import javax.jws.WebParam;
  */
 public interface SequenceBlockAllocatorServiceWSI extends ServiceWSI {
 
-    public long allocateSequenceBlock(@WebParam(name="sequenceName")String sequenceName,@WebParam(name="blockSize") int blockSize, @WebParam(name = "context") StoreTestContext context);
+    long allocateSequenceBlock(@WebParam(name = "sequenceName") String sequenceName, @WebParam(name = "blockSize") int blockSize, @WebParam(name = "context") StoreTestContext context);
+
 }

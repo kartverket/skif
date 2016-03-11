@@ -7,10 +7,10 @@ import javax.annotation.Nullable;
 /**
  * Factory for å lage en {@code ServiceChain} eller en del av en {@code ServiceChain}. Subklasser av dette interfacet
  * implementerer forskjellige typer {@code ServiceChain}s.
- *
+ * <p />
  * En service {@code S} kan ha tilknyttet flere forskjellige typer {@code ServiceChain}s som hver spiller sin rolle
  * i utførelsen av et servicekall.
- *
+ * <p />
  * <ul>
  *     <li>{@code CallServiceChain}: Utføres i forkant av alle servicekall på klient og server. På klienten termineres
  *     den av en remoting {@code ProxyHandler} som sender kallet videre til serveren. Dersom remotingen skjer via
@@ -39,17 +39,18 @@ public interface ServiceChainFactory<S> {
      * En factory som returnerer vedien 0 indikerer at den kun kan stå sist i en {@code ServiceChain}.
      * Det kan kun være en slik factory i ett {@code ServiceChainFactory}-sett.
      */
-    public float getChainPosition();
+    float getChainPosition();
 
     /**
      * Oppretter en kjede av {@code ProxyHandler}s og returnerer første element i kjeden.
      */
-    public abstract ProxyHandler<S> createChain();
+    ProxyHandler<S> createChain();
 
     /**
      * Oppretter en {@code ServiceChain} som legges foran en eksisterende {@code ServiceChain} gitt ved
      * {@code firstInChain}. Returnerer den nye {@code ServiceChain} representert ved den forreste
      * {@code ProxyHandler}.
      */
-    public abstract ProxyHandler<S> extendChain(@Nullable ProxyHandler<S> firstInChain);
+    ProxyHandler<S> extendChain(@Nullable ProxyHandler<S> firstInChain);
+
 }

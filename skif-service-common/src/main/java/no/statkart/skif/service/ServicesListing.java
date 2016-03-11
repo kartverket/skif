@@ -7,5 +7,7 @@ import java.util.List;
  * @since 2.0
  */
 public interface ServicesListing {
-    public List<Class<?>> getServices();
+
+    List<Class<?>> getServices();
+
 }

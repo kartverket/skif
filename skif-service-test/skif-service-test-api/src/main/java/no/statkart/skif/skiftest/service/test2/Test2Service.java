@@ -11,5 +11,7 @@ import no.statkart.skif.skiftest.domain.B;
  * @since 2.0
  */
 public interface Test2Service {
-    public B a2B(A a);
+
+    B a2B(A a);
+
 }

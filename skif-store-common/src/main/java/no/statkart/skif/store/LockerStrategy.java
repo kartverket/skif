@@ -16,7 +16,7 @@ public interface LockerStrategy {
      * @throws no.statkart.skif.exception.LockedException
      *          Dersom element er låst av annen bruker
      */
-    public boolean lock(BubbleId id) throws LockedException;
+    boolean lock(BubbleId id) throws LockedException;
 
     /**
      * Låser opp gjeldende id dersom denne kan låses opp. Nye elementer og endrede/slettede elementer kan ikke låses opp.
@@ -34,7 +34,7 @@ public interface LockerStrategy {
      * @param id    Id som skal sjekkes
      * @return true dersom owner har en lås på id
      */
-    public boolean isLockedByCaller(BubbleId id);
+    boolean isLockedByCaller(BubbleId id);
 
     /**
      * Sjekker om id er låst av en annen bruker enn owner.
@@ -42,29 +42,29 @@ public interface LockerStrategy {
      * @param id    Id som skal sjekkes
      * @return true dersom det finnes en lås på id, og eier av låsen ikke er owner
      */
-    public boolean isLockedByOther(BubbleId id);
+    boolean isLockedByOther(BubbleId id);
 
     /**
      * Slipper alle låser for owner der objekter ikke er modifisert.
      */
-    public void releaseAllLocks();
+    void releaseAllLocks();
 
     /**
      * Slipper alle låser for owner som er tatt i denne transaksjonen. Rører ikke låser som owner eier fra andre transaksjoner.
      */
-    public void releaseLocksOnRollback();
+    void releaseLocksOnRollback();
 
     /**
      * Tømmer innhold i strategy-klassen
      */
-    public void clear();
+    void clear();
 
     /**
      * Registrer en insert i transaksjonen. Brukes for å bestemme om elementet kan tas låser på/kan låses opp.
      *
      * @param id Id som skal registreres
      */
-    public void registerInserted(BubbleId id);
+    void registerInserted(BubbleId id);
 
     /**
      * Registrer en update i transaksjonen. Brukes for å holde rede på elementer som ikke kan låses opp. Vil feile dersom
@@ -72,7 +72,7 @@ public interface LockerStrategy {
      *
      * @param id    Id som skal registreres
      */
-    public void registerUpdated(BubbleId id);
+    void registerUpdated(BubbleId id);
 
     /**
      * Registrer en remove i transaksjonen. Brukes for å holde rede på elementer som ikke kan låses opp. Vil feile dersom
@@ -80,7 +80,7 @@ public interface LockerStrategy {
      *
      * @param id    Id som skal registreres
      */
-    public void registerRemoved(BubbleId id);
+    void registerRemoved(BubbleId id);
 
     /**
      * Låser opp alle brukerens låser i transaksjonen og sjekker at antallet stemmer.
@@ -88,11 +88,11 @@ public interface LockerStrategy {
      * @throws no.statkart.skif.exception.OperationalException
      *          dersom antall låser som ble låst opp avviker fra det som er forventet
      */
-    public void consumeAllLocks();
+    void consumeAllLocks();
 
     /**
      * Låser opp de låsene brukeren har kalt unlock på i løpet av et scope, men som var låst fra før.
      */
-    public void releaseLocksOnNonTransactionalScopeCompletion();
+    void releaseLocksOnNonTransactionalScopeCompletion();
 
 }

@@ -8,6 +8,9 @@ package no.statkart.skif.skiftest.service.test1;
  * @since 2.0
  */
 public interface Test1Service {
-    public String helloWorld(String message);
-    public String helloVersion(String message);
+
+    String helloWorld(String message);
+
+    String helloVersion(String message);
+
 }

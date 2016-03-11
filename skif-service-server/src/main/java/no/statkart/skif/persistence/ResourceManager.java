@@ -10,13 +10,13 @@ import java.util.List;
  * klassenavne for interfacer som skal mappe til ressoursen. Dersom flere ressourser skal mappes til
  * samme interface må mappingen av interfacet beskrives via en nøkkel {@link Key} som inneholder en string i tillegg
  * til interfacet slik at det blir unikt. Det er også mulig å mapper superklasser for en ressurs.
- *
+ * <p/>
  * En viktig egenskap ved en {@code ResourceManager} kan være å være lazy slik at ressurser ikke opprettes før
  * de etterspørs og at den kan lukke alle ressurser som har vært i bruk. Den må kunne vite om en ressurs skal inngå
  * i en transaksjon og må kunne skjelne mellom transaksjonelle og ikke transaksjonelle ressurser slik at
  * kun startes transaksjoner på ressurser som støtter det. Videre skal den ikke starte en transaksjon på en ressurs
  * før den blir etterspurt.
- *
+ * <p/>
  * Før {@code ResourceManager} kan gi ut ressurser må {@link #start} være kallt. Det er for å sikre at ressurser som blir hentet
  * ut (f.eks via dependency injection) vil skje i scope av en kodeblock som også vil sikre at {@link #close} vil bli
  * kaldt for ressoursen.
@@ -24,9 +24,9 @@ import java.util.List;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public interface ResourceManager  {
+public interface ResourceManager {
 
-    public final static class Key<T extends Resource> {
+    final class Key<T extends Resource> {
         final String name;
         final Class<T> type;
 
@@ -54,12 +54,14 @@ public interface ResourceManager  {
         }
     }
 
-    public final static class Entry {
+    final class Entry {
         final String name;
         final List<Class<? extends Resource>> types;
         final Resource implementation;
 
-        /** Angir om denne resources har fått startet sin transaksjon */
+        /**
+         * Angir om denne resources har fått startet sin transaksjon
+         */
         boolean transactionStarted;
 
         public Entry(Resource implementation) {
@@ -84,53 +86,53 @@ public interface ResourceManager  {
     }
 
 
-    public <T extends Resource> T getResource(Class<T> type);
+    <T extends Resource> T getResource(Class<T> type);
 
-    public <T extends Resource> T getResource(Key<T> key);
+    <T extends Resource> T getResource(Key<T> key);
 
     /**
      * Starter {@code ResourceManager} for uthenting av ressurser
      */
-    public void start();
+    void start();
 
     /**
      * Lukker {@code ResourceManager} for uthenting av ressurser
      */
-    public void shutdown();
+    void shutdown();
 
     /**
      * Returnerer true hvis en eller flere resource har blitt hentet ut
      */
-    public boolean isActive();
+    boolean isActive();
 
     /**
      * Sette {@code ResourceManager} til aktiv
      */
-    public void setActive();
+    void setActive();
 
 
-
-    public void beginTransaction();
+    void beginTransaction();
 
     /**
      * Utfører flush på alle transaksjonelle ressourser som har blitt hentet ut
      */
-    public void flush();
+    void flush();
 
     /**
      * Utfører commit på alle transaksjonelle ressourser som har blitt hentet ut
      */
-    public void commit();
+    void commit();
 
     /**
      * Utfører rollback på alle transaksjonelle ressourser som har blitt hentet ut
      */
-    public void rollback();
+    void rollback();
 
     /**
      * Lukker alle resourser som har blitt hentet ut.
-     * <p>
+     * <p/>
      * TODO: Vurdere om denne metode også skal kalles i JEE mode,
      */
-    public void close();
+    void close();
+
 }

@@ -13,7 +13,9 @@ import javax.jws.WebParam;
  * @since 2.0
  */
 public interface Test3ServiceWSI extends ServiceWSI {
-    public A b2A(@WebParam(name = "b") B b, @WebParam(name="skifTestContext")SkifTestContext skifTestContext);
 
-    public String testThrowExcpetion(@WebParam(name = "exceptionClass") String exceptionClass, @WebParam(name="message") String message, @WebParam(name="skifTestContext")SkifTestContext skifTestContext) throws SimpleException;
+    A b2A(@WebParam(name = "b") B b, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext);
+
+    String testThrowExcpetion(@WebParam(name = "exceptionClass") String exceptionClass, @WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) throws SimpleException;
+
 }

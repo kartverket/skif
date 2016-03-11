@@ -3,7 +3,6 @@ package no.statkart.skif.wsversioning.wsapi.v1.exception.mapping;
 import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.mapper.AbstractExceptionMapper;
 import no.statkart.skif.mapper.IdentityExceptionTypeMapper;
-import no.statkart.skif.wsversioning.wsapi.v1.exception.ServiceException;
 import no.statkart.skif.wsversioning.wsapi.v1.exception.ServiceFaultInfo;
 
 import java.util.LinkedHashMap;
@@ -24,7 +23,7 @@ public class WSVersioningExceptionMapper extends AbstractExceptionMapper<WSVersi
      * NB: insertion order er viktig. legg superklasser til sist!
      */
 
-    private final static Map<String, Class<? extends no.statkart.skif.exception.SkifException>> exceptionClassMap = new LinkedHashMap<String, Class<? extends no.statkart.skif.exception.SkifException>>();
+    private final static Map<String, Class<? extends no.statkart.skif.exception.SkifException>> exceptionClassMap = new LinkedHashMap<>();
     static {
         exceptionClassMap.put(Kategori.SERVICE_APPLICATION_FINDER_EXCEPTION.value, no.statkart.skif.exception.FinderException.class);
         exceptionClassMap.put(Kategori.SERVICE_APPLICATION_VALIDATION_EXCEPTION.value, no.statkart.skif.exception.ValidationException.class);
@@ -47,7 +46,7 @@ public class WSVersioningExceptionMapper extends AbstractExceptionMapper<WSVersi
 
 
     private void addMappersForFaultTypes() {
-        addMapper(new DefaultFaultInfoTypeMapper<ServiceFaultInfo, SkifException>(ServiceFaultInfo.class, SkifException.class));
+        addMapper(new DefaultFaultInfoTypeMapper<>(ServiceFaultInfo.class, SkifException.class));
         addMapper(new AttemptDeleteFaultInfoTypeMapper());
         addMapper(new LockedFaultInfoTypeMapper());
         addMapper(new ObjectsNotFoundFaultInfoTypeMapper());
@@ -56,8 +55,8 @@ public class WSVersioningExceptionMapper extends AbstractExceptionMapper<WSVersi
 
     private void addMapptersForExceptionTypes() {
         addMapper(new ServiceExceptionTypeMapper(exceptionClassMap));
-        addMapper(new IdentityExceptionTypeMapper<Error>(Error.class));
-        addMapper(new IdentityExceptionTypeMapper<RuntimeException>(RuntimeException.class));
+        addMapper(new IdentityExceptionTypeMapper<>(Error.class));
+        addMapper(new IdentityExceptionTypeMapper<>(RuntimeException.class));
     }
 
 
@@ -67,7 +66,7 @@ public class WSVersioningExceptionMapper extends AbstractExceptionMapper<WSVersi
      * @author Leif Lislegård
      * @since 2.0
      */
-    public static enum Kategori {
+    public enum Kategori {
         SERVICE_EXCEPTION(":ServiceException:"),
         SERVICE_SYSTEM_EXCEPTION(":ServiceException:SystemException:"),
         SERVICE_SYSTEM_IMPLEMENTATION_EXCEPTION(":ServiceException:SystemException:ImplementationException:"),
@@ -87,6 +86,7 @@ public class WSVersioningExceptionMapper extends AbstractExceptionMapper<WSVersi
 
 
         public String toString() {
+            //noinspection StringBufferReplaceableByString
             return new StringBuilder(name()).append('{').append(value).append('}').toString();
         }
     }

@@ -9,9 +9,11 @@ import java.sql.Timestamp;
  * @since 2.4.0
  */
 public interface BubbleObjectWithHistory extends BubbleObject {
-    public Timestamp getOppdateringsdato();
-    public void setOppdateringsdato(Timestamp oppdateringsdato);
 
-    public Timestamp getSluttdato();
-    public void setSluttdato(Timestamp sluttdato);
+    Timestamp getOppdateringsdato();
+    void setOppdateringsdato(Timestamp oppdateringsdato);
+
+    Timestamp getSluttdato();
+    void setSluttdato(Timestamp sluttdato);
+
 }

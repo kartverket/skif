@@ -6,7 +6,6 @@ import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.jws.WebParam;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * @author Roar Ingebrigtsen
@@ -14,19 +13,29 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * @since 2.0
  */
 public interface TestdataServiceWSI extends ServiceWSI {
-    /** @since 2.1 */
-    public TestNumber getNextTestNumber(@WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
-    /** @since 2.1 */
-    public TestNumber getTestNumber0(@WebParam(name = "context") StoreTestContext context) throws ServiceException;
+    /**
+     * @since 2.1
+     */
+    TestNumber getNextTestNumber(@WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
-    /** @since 2.1 */
-    public void saveAll(@WebParam(name = "snapshotTransfers") MockupSnapshotMap snapshotTransfers, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
+    /**
+     * @since 2.1
+     */
+    TestNumber getTestNumber0(@WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
-    /** @since 2.1 */
-    public void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
+    /**
+     * @since 2.1
+     */
+    void saveAll(@WebParam(name = "snapshotTransfers") MockupSnapshotMap snapshotTransfers, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
-    public void deleteObject(@WebParam(name = "id") long id, @WebParam(name = "tableName") String tableName, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
+    /**
+     * @since 2.1
+     */
+    void saveSnapshotTransfer(@WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "mockupTransfer") MockupTransfer mockupTransfer, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
-    public boolean objectExists(@WebParam(name="id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context)throws ServiceException;
+    void deleteObject(@WebParam(name = "id") long id, @WebParam(name = "tableName") String tableName, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
+
+    boolean objectExists(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
+
 }

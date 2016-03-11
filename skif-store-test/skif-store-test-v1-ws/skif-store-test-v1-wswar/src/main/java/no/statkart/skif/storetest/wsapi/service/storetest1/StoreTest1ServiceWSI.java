@@ -10,10 +10,17 @@ import javax.jws.WebParam;
  * @since 2.0
  */
 public interface StoreTest1ServiceWSI extends ServiceWSI {
-    public String put(@WebParam(name = "key")String key, @WebParam(name = "value")String value) throws ServiceException;
-    public String get(@WebParam(name = "key")String key) throws ServiceException;
-    public String remove(@WebParam(name = "key") String key) throws ServiceException;
-    public void clear() throws ServiceException;
-    public String putThatFails(@WebParam(name = "key")String key, @WebParam(name = "value")String value) throws ServiceException;
-    public String putViaJDBCConnection(@WebParam(name = "key")String key, @WebParam(name = "value")String value) throws ServiceException;
+
+    String put(@WebParam(name = "key") String key, @WebParam(name = "value") String value) throws ServiceException;
+
+    String get(@WebParam(name = "key") String key) throws ServiceException;
+
+    String remove(@WebParam(name = "key") String key) throws ServiceException;
+
+    void clear() throws ServiceException;
+
+    String putThatFails(@WebParam(name = "key") String key, @WebParam(name = "value") String value) throws ServiceException;
+
+    String putViaJDBCConnection(@WebParam(name = "key") String key, @WebParam(name = "value") String value) throws ServiceException;
+
 }

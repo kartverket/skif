@@ -1,8 +1,5 @@
 package no.statkart.skif.storetest.service.test;
 
-import no.statkart.skif.mockup.MockupTransfer;
-import no.statkart.skif.store.SnapshotVersion;
-
 /**
  * Interface for service for bruk i tester.
  *
@@ -15,8 +12,10 @@ public interface TestdataService extends no.statkart.skif.service.test.TestdataS
     /**
      * TODO: Ta bort
      * Hjelpe tjeneste for skif-tester som brukes til å slette data i tester som ikke bruker unike testdatasett
-     * @param id
-     * @param tableName
+     *
+     * @param id id-verdi
+     * @param tableName tabellnavn
      */
-    public void deleteObject(long id, String tableName);
+    void deleteObject(long id, String tableName);
+
 }

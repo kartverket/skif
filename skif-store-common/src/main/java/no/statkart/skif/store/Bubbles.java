@@ -18,7 +18,7 @@ import java.util.Set;
 public class Bubbles {
 
     public static List<BubbleId<?>> asIds(Collection<? extends BubbleObject> bubbleObjects) {
-        List<BubbleId<?>> ids = new ArrayList<BubbleId<?>>(bubbleObjects.size());
+        List<BubbleId<?>> ids = new ArrayList<>(bubbleObjects.size());
         for (BubbleObject bubbleObject : bubbleObjects) {
             ids.add(bubbleObject.getId());
         }
@@ -26,7 +26,7 @@ public class Bubbles {
     }
 
     public static List<BubbleId<?>> asBaseIds(Collection<? extends BubbleObject> bubbleObjects) {
-        List<BubbleId<?>> ids = new ArrayList<BubbleId<?>>(bubbleObjects.size());
+        List<BubbleId<?>> ids = new ArrayList<>(bubbleObjects.size());
         for (BubbleObject bubbleObject : bubbleObjects) {
             BubbleId<?> id = bubbleObject.getId();
             ids.add(id.asBase());
@@ -50,15 +50,15 @@ public class Bubbles {
     }
 
     static public <O extends BubbleObject & InverseRelationParticipation, E> AbstractInverseValueSet<O, E> newSet(O owner, RelationName relationName) {
-        return new InverseValueSet<O, E>(owner, relationName, Sets.<E>newHashSet());
+        return new InverseValueSet<>(owner, relationName, Sets.<E>newHashSet());
     }
 
     static public <O extends BubbleObject & InverseRelationParticipation, E> AbstractInverseValueSet<O, E> newSet(O owner, RelationName relationName, Set<E> set) {
-        return new InverseValueSet<O, E>(owner, relationName, set);
+        return new InverseValueSet<>(owner, relationName, set);
     }
 
     static public <O extends ComponentWithOwnerReference<?> & InverseRelationParticipation, E> AbstractInverseValueSet<?, E> newSet(O owner, RelationName relationName, Set<E> set) {
-        return new ComponentInverseValueSet<O, E>(owner, relationName, set);
+        return new ComponentInverseValueSet<>(owner, relationName, set);
     }
 
     static public <O extends ComponentWithOwnerReference<?> & InverseRelationParticipation, E> AbstractInverseValueSet<?, E> newSet(O owner, RelationName relationName) {
@@ -66,7 +66,7 @@ public class Bubbles {
     }
 
 
-    static final <O extends BubbleObject, E> void onChangeRelationImpl(O owner, RelationName relationName, E oldValue, E newValue) {
+    static <O extends BubbleObject, E> void onChangeRelationImpl(O owner, RelationName relationName, E oldValue, E newValue) {
         if (owner != null) {
             if (oldValue != newValue && owner.store() != null && owner.getId().getSnapshotVersion() == SnapshotVersion.CURRENT) {
                 owner.store().getRelationCache().onChangeRelation(relationName, owner.getId(), oldValue, newValue);
@@ -74,12 +74,12 @@ public class Bubbles {
         }
     }
 
-    public static final <O extends BubbleObject & InverseRelationParticipation, E> E onChangeRelation(O owner, RelationName relationName, E oldValue, E newValue) {
+    public static <O extends BubbleObject & InverseRelationParticipation, E> E onChangeRelation(O owner, RelationName relationName, E oldValue, E newValue) {
         onChangeRelationImpl(owner, relationName, oldValue, newValue);
         return newValue;
     }
 
-    public static final <O extends BubbleObject, E> void onChangeIdent(O owner, RelationName relationName, E newValue) {
+    public static <O extends BubbleObject, E> void onChangeIdent(O owner, RelationName relationName, E newValue) {
         onChangeRelationImpl(owner, relationName, null, newValue);
     }
 

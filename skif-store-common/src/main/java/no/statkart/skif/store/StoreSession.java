@@ -8,6 +8,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  */
 public interface StoreSession {
+
     /**
      * Henter objekt med gitt bubbleId knyttet til sessionen. Hvis ingen objekt er knyttet til sessionen vil objektet
      * blir hentet fra underliggende session
@@ -17,7 +18,7 @@ public interface StoreSession {
     /**
      * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
      */
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds);
 
 
     /**
@@ -54,7 +55,7 @@ public interface StoreSession {
      * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects);
-    
+
     /**
      * Henter objekter med spesifisert id. Metoden ignorerer om ikke alle objekter ble funnet.
      */
@@ -78,21 +79,23 @@ public interface StoreSession {
     /**
      * Fjerner objektet fra sessionen. Objekter som har blitt endret fjernes ikke
      * TODO: Legge inn støtte til å kunne fjerne endret objekter etter flush/finishBatch har blitt kjørt
-     * @return  true hvis objektet ble fjernet
+     *
+     * @return {@code true} hvis objektet ble fjernet
      */
     <I extends BubbleId<?>> boolean evict(I bubbleId);
 
     /**
      * Fjerner objektet fra sessionen. Objekter som har blitt endret fjernes ikke
      * TODO: Legge inn støtte til å kunne fjerne endret objekter etter flush/finishBatch har blitt kjørt
-     * @return  true hvis objektet ble fjernet
+     *
+     * @return {@code true} hvis objektet ble fjernet
      */
     boolean evictAll();
 
     /**
      * Oppretter objektet i sessionen. Metoden kaster exception hvis objektet allerede er knyttet til sessionen eller
      * det finnes en annen instans med samme id som er knyttet til sessionen.
-     *
+     * <p/>
      * Dersom som objektets id er null så tildeles objektet automatisk en ny id via kall til
      * {@link no.statkart.skif.service.sequence.IdService}
      */
@@ -137,4 +140,5 @@ public interface StoreSession {
     <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
 
     void register(BubbleTransfer bubbleTransfer);
+
 }

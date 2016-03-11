@@ -1,8 +1,5 @@
 package no.statkart.skif.store;
 
-import no.statkart.skif.store.relation.cache.RelationName;
-
-import java.util.Map;
 
 /**
  * Interface som må implementeres av domeneobekter som enten selv eller via subkomponenter har  bubbleId referanser som
@@ -13,9 +10,12 @@ import java.util.Map;
  * @since 2.1
  */
 public interface InverseRelationParticipation {
+
     /**
      * Henter ut relasjonsnavne med tilhørende feltverdi
-     * @param collector
+     *
+     * @param collector collector
      */
-    public void collectInverseRelationValues(InverseRelationCollector collector);
+    void collectInverseRelationValues(InverseRelationCollector collector);
+
 }

@@ -7,6 +7,9 @@ package no.statkart.skif.generics.domain;
  * @since 1.0 - sprint 28
  */
 public interface Strut<I extends StrutId<?, ?>> {
-    public I getId();
-    public I setId(I strutId);
+
+    I getId();
+
+    I setId(I strutId);
+
 }

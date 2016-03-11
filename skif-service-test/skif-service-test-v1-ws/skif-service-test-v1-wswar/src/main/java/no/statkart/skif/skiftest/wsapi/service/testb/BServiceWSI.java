@@ -11,7 +11,11 @@ import javax.jws.WebParam;
  * @since 2.0
  */
 public interface BServiceWSI extends ServiceWSI {
-    public String m1(@WebParam(name = "callSpec") StringList callSpec) throws ServiceException;
-    public String m2(@WebParam(name = "callSpec") StringList callSpec) throws ServiceException;
-    public String m3(@WebParam(name = "callSpec") StringList callSpec) throws ServiceException;
+
+    String m1(@WebParam(name = "callSpec") StringList callSpec) throws ServiceException;
+
+    String m2(@WebParam(name = "callSpec") StringList callSpec) throws ServiceException;
+
+    String m3(@WebParam(name = "callSpec") StringList callSpec) throws ServiceException;
+
 }

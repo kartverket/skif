@@ -10,11 +10,11 @@ import java.util.List;
 
 /**
  * Tjeneste for nedlastning av bobler av gitt type eller subtype .
- * <p>
+ * <p/>
  * Hvilke subtyper som støttes for filtrering av bobleklasser er implementasjonsavhengig og ikke alle subtyper vil
  * nødvendigvis være støttet. Hvis en subtype ikke er støttet må supertypen brukes i stedet og ytereligere filtrering må
  * skje på klienten etter at boblen har blitt lastet over på klienten.
- * <p>
+ * <p/>
  * For noen bobleklasser kan det finnes spesifikke filtre som filtrerer yterligere hva som returneres. Filtre som ikke
  * er relevant for en bobleklasse ignoreres mens filtre som er ukjente gir ImplementationException.
  *
@@ -24,6 +24,7 @@ import java.util.List;
  *
  */
 public interface NedlastningService {
+
     /**
      * Henter et antall id-er etter en gitt id for bobler av en gitt type eller subtype.
      *
@@ -34,7 +35,7 @@ public interface NedlastningService {
      * @return id-ene sortert i stigende rekkerføge; tomt liste hvis alle id-er har blitt hentet for gitt domainklasse og filter
      *
      */
-    public <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> domainklasse, @Nullable String filter, int maksAntall);
+    <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> domainklasse, @Nullable String filter, int maksAntall);
 
     /**
      * Henter et antall bobler etter en gitt id for bobler av en gitt type eller subtype
@@ -46,7 +47,7 @@ public interface NedlastningService {
      * @return bobler sortert i stigende rekkerføge; tomt liste hvis alle bobler har blitt hentet for gitt domainklasse og filter
      *
      */
-    public <T extends BubbleObject> List<T> findObjekterEtterId(@Nullable BubbleId<? extends T> id, Class<T> domainklasse, @Nullable String filter, int maksAntall);
+    <T extends BubbleObject> List<T> findObjekterEtterId(@Nullable BubbleId<? extends T> id, Class<T> domainklasse, @Nullable String filter, int maksAntall);
 
     /**
      * Beregner kontroll for bobler med id-er i intervall "]fraId, tilId]"
@@ -58,7 +59,7 @@ public interface NedlastningService {
      * @return beregnet kontroll
      *
      */
-    public <T extends BubbleObject> Kontroll calcObjektkontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId, Class<T> domainklasse, @Nullable String filter);
+    <T extends BubbleObject> Kontroll calcObjektkontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId, Class<T> domainklasse, @Nullable String filter);
 
     /**
      * Beregner kontroll for bobler med id-er i liste
@@ -68,5 +69,6 @@ public interface NedlastningService {
      * @return beregnet kontroll
      *
      */
-    public <I extends BubbleId<? extends T>, T extends BubbleObject> Kontroll calcObjektkontrollForList(Collection<I> ids, Class<T> domainklasse);
+    <I extends BubbleId<? extends T>, T extends BubbleObject> Kontroll calcObjektkontrollForList(Collection<I> ids, Class<T> domainklasse);
+
 }

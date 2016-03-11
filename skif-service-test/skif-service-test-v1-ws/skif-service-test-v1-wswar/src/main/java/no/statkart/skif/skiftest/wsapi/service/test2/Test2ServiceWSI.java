@@ -12,5 +12,7 @@ import javax.jws.WebParam;
  * @since 2.0
  */
 public interface Test2ServiceWSI extends ServiceWSI {
-    public B a2B(@WebParam(name = "a") A a, @WebParam(name="skifTestContext")SkifTestContext skifTestContext);
+
+    B a2B(@WebParam(name = "a") A a, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext);
+
 }

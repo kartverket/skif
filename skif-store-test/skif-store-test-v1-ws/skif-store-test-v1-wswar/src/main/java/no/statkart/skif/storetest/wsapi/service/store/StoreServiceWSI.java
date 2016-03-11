@@ -10,20 +10,21 @@ import no.statkart.skif.storetest.wsapi.exception.ServiceException;
  * @since 2.0
  */
 public interface StoreServiceWSI extends ServiceWSI {
-    public StoreTestBubble getObject(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
 
-    public StoreTestBubbleList getObjects(StoreTestBubbleIdList ids, StoreTestContext context) throws ServiceException;
+    StoreTestBubble getObject(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
 
-    public StoreTestBubbleList getObjectsIgnoreMissing(StoreTestBubbleIdList ids, StoreTestContext context) throws ServiceException;
+    StoreTestBubbleList getObjects(StoreTestBubbleIdList ids, StoreTestContext context) throws ServiceException;
 
-    public SnapshotVersionToStoreTestBubbleIdMap getVersions(StoreTestBubbleId id, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
+    StoreTestBubbleList getObjectsIgnoreMissing(StoreTestBubbleIdList ids, StoreTestContext context) throws ServiceException;
 
-    public StoreTestBubbleIdToSnapshotBubbleIdsMap getVersionsForList(StoreTestBubbleIdList ids, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
+    SnapshotVersionToStoreTestBubbleIdMap getVersions(StoreTestBubbleId id, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
 
-    public StoreTestBubble lock(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
+    StoreTestBubbleIdToSnapshotBubbleIdsMap getVersionsForList(StoreTestBubbleIdList ids, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
 
-    public void unlock(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
+    StoreTestBubble lock(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
 
-    public boolean isLocked(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
+    void unlock(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
+
+    boolean isLocked(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
 
 }

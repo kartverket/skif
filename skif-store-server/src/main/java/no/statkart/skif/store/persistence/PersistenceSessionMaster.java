@@ -4,13 +4,23 @@ package no.statkart.skif.store.persistence;
  * @author Henrik Fredholm
  */
 public interface PersistenceSessionMaster extends PersistenceSessionForSnapshot {
-    public void ensureBubblesFullyLoaded();
-    public void close();
-    public boolean hasLocalTrasaction();
-    public void beginTransaction();
-    public void commit();
-    public void rollback();
-    public void flush();
-    public void clear();
+
+    void ensureBubblesFullyLoaded();
+
+    void close();
+
+    boolean hasLocalTrasaction();
+
+    void beginTransaction();
+
+    void commit();
+
+    void rollback();
+
+    void flush();
+
+    void clear();
+
     void verifySessionIsEmpty();
+
 }

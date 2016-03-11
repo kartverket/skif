@@ -8,17 +8,31 @@ import java.io.Serializable;
  * @since 2.0
  */
 public interface BubbleId<T extends BubbleObject> extends Serializable, Comparable<Object>{
-    public Object getValue();
-    public SnapshotVersion getSnapshotVersion();
-    public T createTypeInstance();
-    public Class getBaseType();
-    public Class<T> getType();
-    public Class getValueType();
-    public Class<? extends BubbleId<? super T>> getBaseIdType();
-    public boolean equalsIgnoreSnapshotVersion(Object object);
-    public BubbleId<? super T> asSnapshotVersion(SnapshotVersion snapshotVersion);
-    public BubbleId<? super T> asSnapshotVersion(BubbleId<?>  bubbleId);
-    public BubbleId<? super T> asSnapshotVersionOld();
-    public BubbleId<? super T> asSnapshotVersionCurrent();
-    public BubbleId<? super T> asBase();
+
+    Object getValue();
+
+    SnapshotVersion getSnapshotVersion();
+
+    T createTypeInstance();
+
+    Class getBaseType();
+
+    Class<T> getType();
+
+    Class getValueType();
+
+    Class<? extends BubbleId<? super T>> getBaseIdType();
+
+    boolean equalsIgnoreSnapshotVersion(Object object);
+
+    BubbleId<? super T> asSnapshotVersion(SnapshotVersion snapshotVersion);
+
+    BubbleId<? super T> asSnapshotVersion(BubbleId<?> bubbleId);
+
+    BubbleId<? super T> asSnapshotVersionOld();
+
+    BubbleId<? super T> asSnapshotVersionCurrent();
+
+    BubbleId<? super T> asBase();
+
 }

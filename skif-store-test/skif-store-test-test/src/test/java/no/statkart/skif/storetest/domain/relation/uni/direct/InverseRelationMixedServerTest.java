@@ -13,7 +13,6 @@ import no.statkart.skif.storetest.domain.relation.X1AAMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1BBOneMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
-import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -35,10 +34,10 @@ import static org.testng.Assert.assertTrue;
  */
 @Test(groups = "singlevm-required")
 public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
+
     @Inject
     StoreClient store;
-    @Inject
-    StoreUpdateService storeUpdateService;
+
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
@@ -76,11 +75,9 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     /**
      * Hjelpestruktur som angir operasjoner som server skal gjøre på invers relasjon før boble sende til klient
      */
-    private static enum Action {
+    private enum Action {
         LOAD, REQUEST
     }
-
-    ;
 
     private X1BBOne getBBOne(final @Nullable X1BBOneId<?> bId, final Action... actions) {
         return (X1BBOne) server.runInTxRequiresNew(new RunOnServerMethod() {
