@@ -65,8 +65,6 @@ public class OracleLogHelper {
         FULL
     }
 
-    ;
-
     private static Handler handler;
     private static OracleLogFilter filter;
 
@@ -201,8 +199,6 @@ public class OracleLogHelper {
             }
             return result;
         }
-
-        ;
     }
 
     /**

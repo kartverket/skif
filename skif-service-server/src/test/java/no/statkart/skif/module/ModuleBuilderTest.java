@@ -18,7 +18,6 @@ import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
@@ -30,7 +29,7 @@ import static org.testng.Assert.assertTrue;
 
 @Test
 public class ModuleBuilderTest {
-    private HashMap builderConfig;
+
     private SystemConfiguration systemConfiguration;
 
     /**
@@ -239,13 +238,13 @@ public class ModuleBuilderTest {
 
 
     public void testUdvidetOppsettViaSetters() {
-        Configuration clientProperties= new MapConfiguration();
-        clientProperties.setProperty("key1", "clientValue1" ) ;
-        clientProperties.setProperty("clientKey2", "clientValue2" ) ;
+        Configuration clientProperties = new MapConfiguration();
+        clientProperties.setProperty("key1", "clientValue1");
+        clientProperties.setProperty("clientKey2", "clientValue2");
 
-        Configuration serverProperties= new MapConfiguration();
-        serverProperties.setProperty("key1", "serverValue1" ) ;
-        serverProperties.setProperty("serverKey2", "serverValue2" ) ;
+        Configuration serverProperties = new MapConfiguration();
+        serverProperties.setProperty("key1", "serverValue1");
+        serverProperties.setProperty("serverKey2", "serverValue2");
 
         ModuleBuilder builder = new ModuleBuilder();
         builder.setModuleClass(TestClientModule.class);
@@ -253,7 +252,7 @@ public class ModuleBuilderTest {
         builder.setModuleStrategyFactoryClass(ClientModuleStrategyFactory.class);
         builder.setSingleVmServerModuleClass(TestServerModule.class);
         builder.setSingleVmServerModuleStrategyFactoryClass(ServerModuleStrategyFactory.class);
-        builder.setSingleVmServerConfiguration(serverProperties);;
+        builder.setSingleVmServerConfiguration(serverProperties);
         builder.setServiceMode(ServiceMode.SINGLE_VM);
 
         Module module = builder.buildModule();

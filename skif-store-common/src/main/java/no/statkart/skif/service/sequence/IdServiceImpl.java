@@ -31,7 +31,7 @@ public class IdServiceImpl implements IdService {
     private class Entry {
         long lastUsed;
         long last;
-    };
+    }
 
     private Map<String, Entry> sequences = new HashMap<>();
     private int blockSize = 10;

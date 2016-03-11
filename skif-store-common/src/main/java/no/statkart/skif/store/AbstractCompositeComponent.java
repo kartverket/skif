@@ -45,7 +45,7 @@ public abstract class AbstractCompositeComponent<O, T> implements CompositeCompo
         O compositeRootOwner = getCompositeRootOwner();
         for (EntityComponentWithOwnerReference<O> element : collectionWithOwnerReferance) {
             element.setOwner(compositeRootOwner);
-        };
+        }
     }
 
 }

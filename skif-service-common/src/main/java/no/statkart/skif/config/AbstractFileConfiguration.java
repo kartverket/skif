@@ -1,10 +1,15 @@
 package no.statkart.skif.config;
 
+import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.internal.util.InternalConfigurationUtils;
 import no.statkart.skif.internal.util.InternalStringUtils;
-import no.statkart.skif.exception.ConfigurationException;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -452,7 +457,7 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
                 catch (MalformedURLException e)
                 {
                     // simply ignore it and return null
-                    ;
+                    return null;
                 }
             }
         }
