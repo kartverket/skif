@@ -1,6 +1,11 @@
 package no.statkart.skif.service.chain;
 
-import com.google.inject.*;
+import com.google.inject.Binder;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.service.annotation.Implementation;
@@ -16,13 +21,15 @@ import java.util.List;
 public class ImplementationServiceChainFactorySpecification extends FactorySpecification<ImplementationServiceChainFactory> {
     private ArrayList<Class<? extends ChainedProxyHandler>> implementationCallChainProxyHandlerClassList;
 
+    @SafeVarargs
     public ImplementationServiceChainFactorySpecification(Class<? extends ChainedProxyHandler>... implementationCallChainProxyHandlerClasses) {
         this(ImplementationServiceChainFactoryImpl.class, implementationCallChainProxyHandlerClasses);
     }
 
+    @SafeVarargs
     public ImplementationServiceChainFactorySpecification(Class<? extends ImplementationServiceChainFactory> factoryClass, Class<? extends ChainedProxyHandler>... implementationCallChainProxyHandlerClasses) {
         super(factoryClass);
-        implementationCallChainProxyHandlerClassList = new ArrayList<Class<? extends ChainedProxyHandler>>(Arrays.asList(implementationCallChainProxyHandlerClasses));
+        implementationCallChainProxyHandlerClassList = new ArrayList<>(Arrays.asList(implementationCallChainProxyHandlerClasses));
     }
 
     public void appendImplementationServiceChainProxyHandler(Class<? extends ChainedProxyHandler> implementationServiceChainProxyHandler) {
@@ -31,7 +38,7 @@ public class ImplementationServiceChainFactorySpecification extends FactorySpeci
 
     @Override
     public <S> void bindProxyHandlersForService(Binder binder, Class<S> service) {
-        final List<TypeLiteral<? extends ChainedProxyHandler<S>>> implementationCallChainProxyHandlerTypeList = new ArrayList<TypeLiteral<? extends ChainedProxyHandler<S>>>(implementationCallChainProxyHandlerClassList.size());
+        final List<TypeLiteral<? extends ChainedProxyHandler<S>>> implementationCallChainProxyHandlerTypeList = new ArrayList<>(implementationCallChainProxyHandlerClassList.size());
         for (Class<? extends ChainedProxyHandler> chainedProxyHandlerImplClass : implementationCallChainProxyHandlerClassList) {
             TypeLiteral<? extends ChainedProxyHandler<S>> implementationCallChainProxyHandlerType = SkifUtil.typeLiteral(chainedProxyHandlerImplClass, service);
             binder.bind(implementationCallChainProxyHandlerType);
@@ -46,7 +53,7 @@ public class ImplementationServiceChainFactorySpecification extends FactorySpeci
 
             @Override
             public List<ChainedProxyHandler<S>> get() {
-                List<ChainedProxyHandler<S>> list = new ArrayList<ChainedProxyHandler<S>>(implementationCallChainProxyHandlerTypeList.size());
+                List<ChainedProxyHandler<S>> list = new ArrayList<>(implementationCallChainProxyHandlerTypeList.size());
                 for (TypeLiteral<? extends ChainedProxyHandler<S>> type : implementationCallChainProxyHandlerTypeList) {
                     final ChainedProxyHandler<S> proxyHandler = injector.getInstance(Key.get(type));
                     list.add(proxyHandler);
@@ -59,7 +66,7 @@ public class ImplementationServiceChainFactorySpecification extends FactorySpeci
     @Override
     public ImplementationServiceChainFactorySpecification clone() {
         ImplementationServiceChainFactorySpecification clone = (ImplementationServiceChainFactorySpecification) super.clone();
-        clone.implementationCallChainProxyHandlerClassList = new ArrayList<Class<? extends ChainedProxyHandler>>(implementationCallChainProxyHandlerClassList);
+        clone.implementationCallChainProxyHandlerClassList = new ArrayList<>(implementationCallChainProxyHandlerClassList);
         return clone;
     }
 

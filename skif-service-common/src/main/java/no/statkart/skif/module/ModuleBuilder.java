@@ -393,7 +393,7 @@ public class ModuleBuilder {
     }
 
     public List<Module> buildModules() {
-        List<Module> modules = new ArrayList<Module>();
+        List<Module> modules = new ArrayList<>();
         String moduleClassname = getModuleClassname();
         Preconditions.checkNotNull(getModuleClassname(), "ModuleClassname");
         Constructor<? extends SkifModule> constructor = getModuleConstructor(moduleClassname);
@@ -470,15 +470,15 @@ public class ModuleBuilder {
     }
 
     @Deprecated
-    public <T extends SkifModule> Constructor<T> getModuleConstructor() {
+    public <T extends SkifModule> Constructor<? extends T> getModuleConstructor() {
         String moduleClassname = getModuleClassname();
         Preconditions.checkNotNull(getModuleClassname(), "ModuleClassname");
         return getModuleConstructor(moduleClassname);
     }
 
-    private <T extends SkifModule> Constructor<T> getModuleConstructor(String moduleClassname) {
-        Class<T> moduleClass = (Class<T>) SkifUtil.classForName(moduleClassname);
-        Constructor<T> constructor;
+    private <T extends SkifModule> Constructor<? extends T> getModuleConstructor(String moduleClassname) {
+        Class<? extends T> moduleClass = SkifUtil.classForName(moduleClassname);
+        Constructor<? extends T> constructor;
         try {
             constructor = moduleClass.getConstructor(ModuleConfiguration.class);
             return constructor;

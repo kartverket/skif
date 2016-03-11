@@ -18,7 +18,7 @@ import no.statkart.skif.service.test.service.Test2Service;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,7 +36,7 @@ public class CallChainTest {
             protected void configure() {
                 install(new ServerModule(moduleConfiguration));
 
-                ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, Arrays.<Class<? extends Object>>asList(Test2Service.class));
+                ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, Collections.<Class<?>>singleton(Test2Service.class));
                 serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ServerCallServiceChainFactory.class, TestProxyHandler.class));
                 install(serverServiceModule);
             }

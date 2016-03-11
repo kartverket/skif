@@ -8,7 +8,12 @@ import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.UnitOfWork;
+import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
@@ -22,7 +27,12 @@ import java.util.Collections;
 import java.util.Set;
 
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.assertNotFound;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 /**
  * Tester bruk av UnitOfWork på server. Alle tester kjøres via bean managed transaction slik at ingen ting blir
@@ -43,9 +53,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
             @Override
             public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
-                return ImmutableSet.copyOf(Iterables.concat(
-                        Collections.singleton(mockupFacade.getSimpleMockupFactory().getSimpleId1())
-                ));
+                return ImmutableSet.of(
+                        mockupFacade.getSimpleMockupFactory().getSimpleId1());
             }
         });
     }
@@ -328,10 +337,12 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void testGetTransferInsertNull() {
+        //noinspection unused
         try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
             Simple bubbleObject = new Simple();
             clientStore.insert(bubbleObject);
 
+            //noinspection unused
             try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
                 UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
                 BubbleObject inserted = Iterables.getOnlyElement(unitOfWorkTransfer.getInsertedObjects());
@@ -341,10 +352,12 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void testGetTransferInsertUpdate() {
+        //noinspection unused
         try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
             Simple bubbleObject1 = new Simple();
             clientStore.insert(bubbleObject1);
 
+            //noinspection unused
             try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
                 Simple bubbleObject2 = clientStore.get(bubbleObject1.getId());
                 clientStore.update(bubbleObject2);
@@ -358,10 +371,12 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void testGetTransferInsertDelete() {
+        //noinspection unused
         try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
             Simple bubbleObject1 = new Simple();
             clientStore.insert(bubbleObject1);
 
+            //noinspection unused
             try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
                 Simple bubbleObject2 = clientStore.get(bubbleObject1.getId());
                 clientStore.delete(bubbleObject2);
@@ -376,10 +391,12 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
     public void testGetTransferUpdateNull() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        //noinspection unused
         try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
             Simple bubbleObject = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
             clientStore.update(bubbleObject);
 
+            //noinspection unused
             try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
                 UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
                 BubbleObject updated = Iterables.getOnlyElement(unitOfWorkTransfer.getUpdatedObjects());
@@ -390,10 +407,12 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
     public void testGetTransferUpdateUpdate() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        //noinspection unused
         try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
             Simple bubbleObject1 = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
             clientStore.update(bubbleObject1);
 
+            //noinspection unused
             try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
                 Simple bubbleObject2 = clientStore.get(bubbleObject1.getId());
                 clientStore.update(bubbleObject2);
@@ -407,10 +426,12 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
     public void testGetTransferUpdateDelete() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        //noinspection unused
         try (UnitOfWork uow1 = clientStore.beginUnitOfWork()) {
             Simple bubbleObject1 = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
             clientStore.update(bubbleObject1);
 
+            //noinspection unused
             try (UnitOfWork uow2 = clientStore.beginUnitOfWork()) {
                 Simple bubbleObject2 = clientStore.get(bubbleObject1.getId());
                 clientStore.delete(bubbleObject2);

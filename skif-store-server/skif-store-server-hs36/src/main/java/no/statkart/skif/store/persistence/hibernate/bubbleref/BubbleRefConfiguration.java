@@ -301,19 +301,18 @@ public class BubbleRefConfiguration extends Configuration {
      */
     protected void configureSecondPassBubbleMappings() throws MappingException {
         Mappings mappings = createMappings();
-        for (Iterator iterator = getClassMappings(); iterator.hasNext(); ) {
-            PersistentClass persistentClass = (PersistentClass) iterator.next();
+        for (Iterator<PersistentClass> iterator = getClassMappings(); iterator.hasNext(); ) {
+            PersistentClass persistentClass = iterator.next();
             configureSecondPassBubbleMappings(persistentClass, mappings);
         }
 
         // We need to add new persistent classes to the mapping while we iterate.
         // Hence we need a copy of the collection we are iterating over.
-        java.util.List persistentClasses = new ArrayList();
-        for (Iterator iterator = getClassMappings(); iterator.hasNext(); ) {
+        java.util.List<PersistentClass> persistentClasses = new ArrayList<>();
+        for (Iterator<PersistentClass> iterator = getClassMappings(); iterator.hasNext(); ) {
             persistentClasses.add(iterator.next());
         }
-        for (Iterator iterator = persistentClasses.iterator(); iterator.hasNext(); ) {
-            PersistentClass persistenceClass = (PersistentClass) iterator.next();
+        for (PersistentClass persistenceClass : persistentClasses) {
             defineIdClassMapping(persistenceClass, mappings);
         }
     }
@@ -322,8 +321,8 @@ public class BubbleRefConfiguration extends Configuration {
      * Går igjennom alle property mappings for en persistent klasse og fixer mappingen for properties som bruker bubble-ref
      * hvor det er nødvendig. Dvs hvor det er brukt collections eller components.
      *
-     * @param persistentClass
-     * @param mappings
+     * @param persistentClass class
+     * @param mappings mappings
      * @throws org.hibernate.MappingException
      */
     private void configureSecondPassBubbleMappings(PersistentClass persistentClass, Mappings mappings) throws MappingException {
@@ -340,9 +339,9 @@ public class BubbleRefConfiguration extends Configuration {
      * hvor det er nødvendig. Siden en property kan være en komponent, som igjen inneholder properties er denne
      * metode rekursiv.
      *
-     * @param persistentClass
-     * @param mappings
-     * @param prop
+     * @param persistentClass class
+     * @param mappings mappings
+     * @param prop property
      */
     private void configurePropertyBubbleMappings(PersistentClass persistentClass, Mappings mappings, Property prop) {
         if (prop.getValue() instanceof Collection) {

@@ -103,7 +103,7 @@ public class EJBAttributesLookup<S> {
         if (type.getRawType().getAnnotation(Stateless.class) != null) return (Class<? extends S>) type.getRawType();
 
         try {
-            return (Class<? extends S>) SkifUtil.classForName(type.getRawType().getName() + "EJBBean");
+            return SkifUtil.classForName(type.getRawType().getName() + "EJBBean");
         } catch (RuntimeException e) {
             // Fant ingen EJBKlasse
             return null;

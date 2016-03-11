@@ -2,7 +2,12 @@ package no.statkart.skif.config;
 
 import no.statkart.skif.internal.util.InternalConfigurationUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * This Configuration class allows you to add multiple different types of Configuration
@@ -18,7 +23,7 @@ import java.util.*;
 public class CompositeConfiguration extends AbstractConfiguration implements Cloneable
 {
     /** List holding all the configuration */
-    private List configList = new LinkedList();
+    private List<Configuration> configList = new LinkedList<>();
 
     /**
      * Configuration that holds in memory stuff.  Inserted as first so any
@@ -55,7 +60,7 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
      *
      * @param configurations the collection of configurations to add
      */
-    public CompositeConfiguration(Collection configurations)
+    public CompositeConfiguration(Collection<Configuration> configurations)
     {
         this(new MapConfiguration(), configurations);
     }
@@ -67,16 +72,13 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
      * @param inMemoryConfiguration the in memory configuration to use
      * @param configurations        the collection of configurations to add
      */
-    public CompositeConfiguration(Configuration inMemoryConfiguration, Collection configurations)
+    public CompositeConfiguration(Configuration inMemoryConfiguration, Collection<Configuration> configurations)
     {
         this(inMemoryConfiguration);
 
-        if (configurations != null)
-        {
-            Iterator it = configurations.iterator();
-            while (it.hasNext())
-            {
-                addConfiguration((Configuration) it.next());
+        if (configurations != null) {
+            for (Configuration configuration : configurations) {
+                addConfiguration(configuration);
             }
         }
     }
@@ -163,11 +165,8 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
     public Object getProperty(String key)
     {
         Configuration firstMatchingConfiguration = null;
-        for (Iterator i = configList.iterator(); i.hasNext();)
-        {
-            Configuration config = (Configuration) i.next();
-            if (config.containsKey(key))
-            {
+        for (Configuration config : configList) {
+            if (config.containsKey(key)) {
                 firstMatchingConfiguration = config;
                 break;
             }
@@ -186,16 +185,11 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
     public Iterator getKeys()
     {
         List keys = new ArrayList();
-        for (Iterator i = configList.iterator(); i.hasNext();)
-        {
-            Configuration config = (Configuration) i.next();
-
+        for (Configuration config : configList) {
             Iterator j = config.getKeys();
-            while (j.hasNext())
-            {
+            while (j.hasNext()) {
                 String key = (String) j.next();
-                if (!keys.contains(key))
-                {
+                if (!keys.contains(key)) {
                     keys.add(key);
                 }
             }
@@ -228,11 +222,8 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
     public boolean isEmpty()
     {
         boolean isEmpty = true;
-        for (Iterator i = configList.iterator(); i.hasNext();)
-        {
-            Configuration config = (Configuration) i.next();
-            if (!config.isEmpty())
-            {
+        for (Configuration config : configList) {
+            if (!config.isEmpty()) {
                 return false;
             }
         }
@@ -242,20 +233,15 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
 
     protected void clearPropertyDirect(String key)
     {
-        for (Iterator i = configList.iterator(); i.hasNext();)
-        {
-            Configuration config = (Configuration) i.next();
+        for (Configuration config : configList) {
             config.clearProperty(key);
         }
     }
 
     public boolean containsKey(String key)
     {
-        for (Iterator i = configList.iterator(); i.hasNext();)
-        {
-            Configuration config = (Configuration) i.next();
-            if (config.containsKey(key))
-            {
+        for (Configuration config : configList) {
+            if (config.containsKey(key)) {
                 return true;
             }
         }
@@ -317,7 +303,7 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
      */
     public Configuration getConfiguration(int index)
     {
-        return (Configuration) configList.get(index);
+        return configList.get(index);
     }
 
     /**
@@ -347,7 +333,7 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
         {
             CompositeConfiguration copy = (CompositeConfiguration) super
                     .clone();
-            copy.configList = new LinkedList();
+            copy.configList = new LinkedList<>();
             copy.inMemoryConfiguration = InternalConfigurationUtils
                     .cloneConfiguration(getInMemoryConfiguration());
             copy.configList.add(copy.inMemoryConfiguration);
@@ -431,13 +417,9 @@ public class CompositeConfiguration extends AbstractConfiguration implements Clo
         }
 
         Configuration source = null;
-        for (Iterator it = configList.iterator(); it.hasNext();)
-        {
-            Configuration conf = (Configuration) it.next();
-            if (conf.containsKey(key))
-            {
-                if (source != null)
-                {
+        for (Configuration conf : configList) {
+            if (conf.containsKey(key)) {
+                if (source != null) {
                     throw new IllegalArgumentException("The key " + key
                             + " is defined by multiple sources!");
                 }

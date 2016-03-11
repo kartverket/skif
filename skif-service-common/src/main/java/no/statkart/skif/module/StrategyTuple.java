@@ -27,8 +27,8 @@ import static no.statkart.skif.SkifConstants.SINGLE_VM_XML_POSTFIX;
  * @since 2.0
  */
 public class StrategyTuple<T extends ModuleStrategy> implements Cloneable {
-    protected EnumMap<ServiceMode, T> instanceForMode = new EnumMap<ServiceMode, T>(ServiceMode.class);
-    protected EnumMap<ServiceMode, String> strategyClassNameForMode = new EnumMap<ServiceMode, String>(ServiceMode.class);
+    protected EnumMap<ServiceMode, T> instanceForMode = new EnumMap<>(ServiceMode.class);
+    protected EnumMap<ServiceMode, String> strategyClassNameForMode = new EnumMap<>(ServiceMode.class);
     protected Configuration configuration;
 
     public StrategyTuple() {
@@ -139,7 +139,7 @@ public class StrategyTuple<T extends ModuleStrategy> implements Cloneable {
     @Nullable
     public Class<? extends T> getStrategyClass(ServiceMode serviceMode) {
         String className = getStrategyClassName(serviceMode);
-        return (Class<? extends T>) (className == null ? null : SkifUtil.classForName(className));
+        return className == null ? null : SkifUtil.<T>classForName(className);
     }
 
     public void setStrategyClass(ServiceMode serviceMode, Class<? extends T> strategyClass) {

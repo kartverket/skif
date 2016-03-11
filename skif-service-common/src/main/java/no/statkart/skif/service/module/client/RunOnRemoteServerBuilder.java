@@ -26,7 +26,7 @@ public class RunOnRemoteServerBuilder {
     final ModuleBuilder moduleBuilder;
 
     public RunOnRemoteServerBuilder(String serverModuleClassName) {
-        this((Class<? extends SkifModule>)SkifUtil.classForName(serverModuleClassName));
+        this(SkifUtil.<SkifModule>classForName(serverModuleClassName));
     }
 
     public RunOnRemoteServerBuilder(Class<? extends SkifModule> serverModuleClass) {

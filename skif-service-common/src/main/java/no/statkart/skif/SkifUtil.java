@@ -30,7 +30,7 @@ public class SkifUtil {
 
     public static <T> T newInstance(String className) {
         try {
-            return (T) classForName(className).newInstance();
+            return SkifUtil.<T>classForName(className).newInstance();
         } catch (InstantiationException e) {
             throw new ImplementationException(e);
         } catch (IllegalAccessException e) {

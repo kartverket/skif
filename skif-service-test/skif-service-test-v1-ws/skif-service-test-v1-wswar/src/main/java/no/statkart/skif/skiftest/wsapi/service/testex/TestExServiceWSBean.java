@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@SuppressWarnings("unused")
+
 @WebService(
         name = "TestExService",
         serviceName = "TestExServiceWS",
@@ -72,7 +74,7 @@ public class TestExServiceWSBean extends SkifWebService<TestExServiceWSI> implem
             throw new SimpleNonMappedException(message, info);
         } else {
             try {
-                throw (RuntimeException) SkifUtil.classForName(exceptionClass).getConstructor(String.class).newInstance(message);
+                throw SkifUtil.<RuntimeException>classForName(exceptionClass).getConstructor(String.class).newInstance(message);
             } catch (InstantiationException e) {
                 throw new ImplementationException(e);
             } catch (IllegalAccessException e) {

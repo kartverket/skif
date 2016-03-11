@@ -1,6 +1,10 @@
 package no.statkart.skif.skiftest.wsapi.mapping;
 
-import no.statkart.skif.mapper.*;
+import no.statkart.skif.mapper.AbstractMapper;
+import no.statkart.skif.mapper.DefaultTypeMapperFactory;
+import no.statkart.skif.mapper.IdentityTypeMapperFactory;
+import no.statkart.skif.mapper.MappingResolver;
+import no.statkart.skif.mapper.WsapiListTypeMapper;
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
 
@@ -29,11 +33,11 @@ public class SkifTestMapper<M extends SkifTestMapping> extends AbstractMapper<M>
         addMapperFactory(new DefaultTypeMapperFactory());
 
         // Objekter
-        addMapper(new ATypeMapper<no.statkart.skif.skiftest.wsapi.domain.A, A>(no.statkart.skif.skiftest.wsapi.domain.A.class, A.class));
-        addMapper(new BTypeMapper<no.statkart.skif.skiftest.wsapi.domain.B, B>(no.statkart.skif.skiftest.wsapi.domain.B.class, B.class));
+        addMapper(new ATypeMapper<>(no.statkart.skif.skiftest.wsapi.domain.A.class, A.class));
+        addMapper(new BTypeMapper<>(no.statkart.skif.skiftest.wsapi.domain.B.class, B.class));
 
         // Lister
-        addMapper(new WsapiListTypeMapper<no.statkart.skif.skiftest.wsapi.domain.AList, no.statkart.skif.skiftest.wsapi.domain.A, Set, A>(no.statkart.skif.skiftest.wsapi.domain.AList.class, no.statkart.skif.skiftest.wsapi.domain.A.class, Set.class, A.class));
-        addMapper(new WsapiListTypeMapper<no.statkart.skif.skiftest.wsapi.domain.StringList, String, List, String>(no.statkart.skif.skiftest.wsapi.domain.StringList.class, String.class, List.class, String.class));
+        addMapper(new WsapiListTypeMapper<>(no.statkart.skif.skiftest.wsapi.domain.AList.class, no.statkart.skif.skiftest.wsapi.domain.A.class, Set.class, A.class));
+        addMapper(new WsapiListTypeMapper<>(no.statkart.skif.skiftest.wsapi.domain.StringList.class, String.class, List.class, String.class));
     }
 }

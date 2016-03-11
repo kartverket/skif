@@ -54,8 +54,8 @@ public class RemoteServiceModuleStrategyJEE extends RemoteServiceModuleStrategy 
         Class<?> webServiceClass = null;
         String serviceClassname = serviceClass.getName();
 
-        List<String> mapingsTried = new ArrayList<String>();
-        List<String> classNamesTried = new ArrayList<String>();
+        List<String> mapingsTried = new ArrayList<>();
+        List<String> classNamesTried = new ArrayList<>();
 
         for (String classPackageMapping : classWSPackageMappings) {
             final String[] mapping = classPackageMapping.split(":");

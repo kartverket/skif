@@ -101,7 +101,7 @@ public class DServiceWSBean extends SkifWebService<DServiceWSI> implements DServ
         } else {
             //noinspection TryWithIdenticalCatches --WL12 krever java 1.5 syntax
             try {
-                throw (RuntimeException) SkifUtil.classForName(exceptionClass).getConstructor(String.class).newInstance(message);
+                throw SkifUtil.<RuntimeException>classForName(exceptionClass).getConstructor(String.class).newInstance(message);
             } catch (InstantiationException e) {
                 throw new no.statkart.skif.exception.ImplementationException(e);
             } catch (IllegalAccessException e) {
