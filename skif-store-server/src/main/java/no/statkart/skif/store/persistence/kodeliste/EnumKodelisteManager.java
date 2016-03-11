@@ -1,5 +1,6 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
@@ -9,7 +10,13 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.BubbleObjectWithHistory;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodeliste.*;
+import no.statkart.skif.store.kodeliste.DynamicKodeSupport;
+import no.statkart.skif.store.kodeliste.EnumKodeSupport;
+import no.statkart.skif.store.kodeliste.Kode;
+import no.statkart.skif.store.kodeliste.KodeId;
+import no.statkart.skif.store.kodeliste.Kodeliste;
+import no.statkart.skif.store.kodeliste.KodelisteId;
+import no.statkart.skif.store.kodeliste.StaticKodelisteKodeSupport;
 import no.statkart.skif.store.localization.LocalizationMap;
 import no.statkart.skif.store.localization.Localized;
 import no.statkart.skif.util.CopyHelper;
@@ -19,7 +26,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,14 +55,14 @@ public class EnumKodelisteManager {
     /**
      * Alle enum baserte koder og kodelister.
      */
-    private Map<BubbleId<?>, BubbleObject> enumCache = new HashMap<BubbleId<?>, BubbleObject>();
-    private Set<KodelisteId<?>> kodelisteIds = new HashSet<KodelisteId<?>>();
-    private Set<Class<? extends KodeId>> enumClasses = new HashSet<Class<? extends KodeId>>();
+    private Map<BubbleId<?>, BubbleObject> enumCache = new HashMap<>();
+    private Set<KodelisteId<?>> kodelisteIds = new HashSet<>();
+    private Set<Class<? extends KodeId>> enumClasses = new HashSet<>();
 
     /**
      * Alle innleste resource filer.
      */
-    private Map<String, Map<String, Properties>> resourceFiles = new HashMap<String, Map<String, Properties>>();
+    private Map<String, Map<String, Properties>> resourceFiles = new HashMap<>();
 
     /**
      * Installerer EnumKoder og tilhørende kodelister
@@ -60,7 +77,7 @@ public class EnumKodelisteManager {
         Kodeliste kodeliste = (Kodeliste) kodeSupport.getKodelisteId().createTypeInstance();
         kodeliste.setId(kodeSupport.getKodelisteId());
         kodeliste.setKodeIdClass(enumKodeIdClass);
-        kodeliste.setKoderIds(new ArrayList<KodeId<?>>(koder.keySet()));
+        kodeliste.setKoderIds(new ArrayList<>(koder.keySet()));
         if (kodeliste instanceof Localized) {
             initializeLocalizedFieldsForKodeliste(kodeSupport, (Localized) kodeliste);
         }
@@ -100,7 +117,7 @@ public class EnumKodelisteManager {
     private Map<String, Properties> getResourceProperties(String baseName) {
         Map<String, Properties> propertyFiles = resourceFiles.get(baseName);
         if (propertyFiles == null) {
-            propertyFiles = new HashMap<String, Properties>();
+            propertyFiles = new HashMap<>();
 
             int lastDot = baseName.lastIndexOf('.');
             final String packageName, resourceName;
@@ -128,6 +145,8 @@ public class EnumKodelisteManager {
                         fullResourceName = fullResourceName.replace('.', '/') + ".properties";
                         URL resourceUrl = getClass().getClassLoader().getResource(fullResourceName);
 
+                        Preconditions.checkNotNull(resourceUrl, "Property file not found: " + fullResourceName);
+
                         Properties properties = new Properties();
                         InputStream inputStream = resourceUrl.openStream();
                         try {
@@ -154,7 +173,7 @@ public class EnumKodelisteManager {
     private void initializeLocalizedFieldsForKodeliste(StaticKodelisteKodeSupport kodeSupport, Localized kodeliste) {
         Map<String, Properties> resourceProperties = getResourceProperties(kodeSupport.getResourceMsgName());
 
-        Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<LocalizationMap.LocalizationKey, String>();
+        Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<>();
 
         for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
             Locale locale = toLocale(entry.getKey());
@@ -179,7 +198,7 @@ public class EnumKodelisteManager {
     private void initializeLocalizedFieldsForKode(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Localized enumKode) {
         Map<String, Properties> resourceProperties = getResourceProperties(kodeSupport.getResourceMsgName());
 
-        Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<LocalizationMap.LocalizationKey, String>();
+        Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<>();
 
         for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
             Locale locale = toLocale(entry.getKey());
@@ -242,7 +261,7 @@ public class EnumKodelisteManager {
 
                 List<KodeId<?>> originalKodeIds = kodeliste.getKoderIds();
                 if (originalKodeIds != null) { // Dersom null, så ligger kodene i databasen og skal ikke håndteres her
-                    List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>(originalKodeIds.size());
+                    List<KodeId<?>> kodeIds = new ArrayList<>(originalKodeIds.size());
                     if (BubbleObjectWithHistory.class.isAssignableFrom(kodeliste.getKodeClass())) {
                         // Må filtrer vekk id-er for kodeverdier som ikke fantes for kodelistens snapshotversion
                         for (KodeId<?> originalKodeId : originalKodeIds) {
