@@ -74,9 +74,9 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
     private final ListMultimap<Class<?>, TypeMapper<?, ?>> mappersByDomainClass = ArrayListMultimap.create();
     private final ListMultimap<Class<?>, TypeMapper<?, ?>> mappersByWsapiClass = ArrayListMultimap.create();
 
-    private final List<TypeMapperFactory> typeMapperFactories = new ArrayList<TypeMapperFactory>();
+    private final List<TypeMapperFactory> typeMapperFactories = new ArrayList<>();
 
-    protected final Map<MapperKey, TypeMapper<?, ?>> mapperCache = new ConcurrentHashMap<MapperKey, TypeMapper<?, ?>>();
+    protected final Map<MapperKey, TypeMapper<?, ?>> mapperCache = new ConcurrentHashMap<>();
 
     private final M thisMapping;
 
@@ -431,7 +431,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         }
 
         // Finn mappere som kan gå fra sourceClass eller en superklasse av dette
-        List<TypeMapper<?, ?>> candidates = new ArrayList<TypeMapper<?, ?>>();
+        List<TypeMapper<?, ?>> candidates = new ArrayList<>();
 
         for (Map.Entry<Class<?>, TypeMapper<?, ?>> entry : mapOfMappers.entries()) {
             if (entry.getKey().isAssignableFrom(sourceClass)) {
@@ -472,7 +472,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         ListMultimap<TypeMapperMatch, TypeMapper<?, ?>> signedCandidates = Multimaps.newListMultimap(new TreeMap<TypeMapperMatch, Collection<TypeMapper<?, ?>>>(), new Supplier<List<TypeMapper<?, ?>>>() {
             @Override
             public List<TypeMapper<?, ?>> get() {
-                return new ArrayList<TypeMapper<?, ?>>();
+                return new ArrayList<>();
             }
         });
 
