@@ -12,7 +12,7 @@ public abstract class TerminatingProxyHandler<S> extends ProxyHandler<S> {
         return null;
     }
 
-    public void  setChained(ProxyHandler<S> chained) {
+    public void setChained(@SuppressWarnings("UnusedParameters") ProxyHandler<S> chained) {
         throw new ImplementationException("This handler terminates the chain and can not be chained");
     }
 }
