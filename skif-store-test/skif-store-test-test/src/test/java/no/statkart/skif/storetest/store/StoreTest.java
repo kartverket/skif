@@ -20,6 +20,7 @@ import org.testng.annotations.Test;
 
 import java.util.*;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.*;
 
 /**
@@ -27,17 +28,20 @@ import static org.testng.Assert.*;
  */
 @Test
 public class StoreTest extends StoreTestTestCase {
+
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
     @Inject
     private Store store;
 
+
+    @Test
     public void testStoreGet() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
 
-        List<SimpleId> ids = new ArrayList<SimpleId>();
+        List<SimpleId> ids = new ArrayList<>();
         ids.add(simple1Id);
 
         Simple bubble = store.get(simple1Id);
@@ -48,7 +52,7 @@ public class StoreTest extends StoreTestTestCase {
         assertEquals(simple1Id, bubbles.get(0).getId());
     }
 
-
+    @Test
     public void testStoreGetOld() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simpleId1Old = mockupFacade.getSimpleMockupFactory().getSimpleId1().asSnapshotVersionOld();
@@ -230,6 +234,7 @@ public class StoreTest extends StoreTestTestCase {
     /**
      * Tester insert object med automatisk tildeling av id
      */
+    @Test
     public void testManuellAllokeringAvId() {
         UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
@@ -246,6 +251,7 @@ public class StoreTest extends StoreTestTestCase {
     /**
      * Tester insert object med automatisk tildeling av id
      */
+    @Test
     public void testAutomatiskTilordningAvIdViaInsert() {
         UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
@@ -267,12 +273,14 @@ public class StoreTest extends StoreTestTestCase {
     /**
      * Tester forsøk på henting av ikke-eksisterende objekt.
      */
+    @Test
     public void testObjectNotFoundException() {
         final SimpleId<?> id = new SimpleId(-1L);
         try {
             store.get(id);
             fail("Skulle fått exception");
-        } catch (FinderException e) {
+        } catch (Throwable t) {
+            assertThat(t).describedAs("forventet exception").isInstanceOf(FinderException.class);
         }
 //        TODO: bruke denne istedet
 //        } catch (ObjectNotFoundException e) {
@@ -284,14 +292,16 @@ public class StoreTest extends StoreTestTestCase {
     /**
      * Tester forsøk på henting av ikke-eksisterende objekt.
      */
+    @Test
     public void testObjectsNotFoundException() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
-        final List<SimpleId<?>> ids = Arrays.<SimpleId<?>>asList(simple1Id, new SimpleId(-1L));
+        final List<SimpleId<?>> ids = Arrays.asList(simple1Id, new SimpleId<>(-1L));
         try {
             store.get(ids);
             fail("Skulle fått exception");
-        } catch (FinderException e) {
+        } catch (Throwable t) {
+            assertThat(t).describedAs("forventet exception").isInstanceOf(FinderException.class);
         }
 //        TODO: bruke denne istedet
 //        } catch (ObjectsNotFoundException e) {
@@ -313,16 +323,18 @@ public class StoreTest extends StoreTestTestCase {
         });
     }
 
+    @Test
     public void testIgnoreMissing() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
-        final List<SimpleId<?>> ids = Arrays.<SimpleId<?>>asList(simple1Id, new SimpleId(-1L));
+        final List<SimpleId<?>> ids = Arrays.asList(simple1Id, new SimpleId<>(-1L));
         List<Simple> bubbles = store.getIgnoreMissing(ids);
         assertEquals(bubbles.size(), 1, "Antall objekter");
         assertEquals(bubbles.get(0).getId(), simple1Id, "Uventet id");
     }
 
-    public void  testHentObjectMedEmptyCollection() {
+    @Test
+    public void testHentObjectMedEmptyCollection() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         SubTypeWithCollection objectWithEmptyCollection = (SubTypeWithCollection)store.get(mockupFacade.getSubTypedBubbleMockupFactory().getDifferentHistoricSubtypesId().asSnapshotVersion(SnapshotVersion.createInstance("2011-10-02 09:00:00.00")));
         assertNotNull(objectWithEmptyCollection.getTekster());
@@ -331,7 +343,8 @@ public class StoreTest extends StoreTestTestCase {
         objectWithEmptyCollection.getTekster().addAll(stringList);
     }
 
-    public void  testHentBubbleViaAnyBubbleRef() {
+    @Test
+    public void testHentBubbleViaAnyBubbleRef() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         BubbleWithAnyBubbleRef bubbleWithAnyBubbleRef = store.get(mockupFacade.getBubbleWithAnyBubbleRefMockupFactory().getBubbleWithAnyBubbleRefId1());
         assertEquals(bubbleWithAnyBubbleRef.getAnyId(), mockupFacade.getSimpleMockupFactory().getSimpleId2());

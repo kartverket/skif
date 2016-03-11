@@ -2,12 +2,14 @@ package no.statkart.skif.skiftest.service.txmanagement;
 
 import no.statkart.skif.exception.ValidationException;
 import no.statkart.skif.skiftest.config.SkifTestTxManagementServerModule;
+import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.service.txbmt.BeanManagedTxAService;
 import no.statkart.skif.skiftest.service.txcascade.ContainerManagedTxCMTCascadeService;
 import no.statkart.skif.skiftest.service.txcmt.ContainerManagedTxAService;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
@@ -61,7 +63,8 @@ public class SkifTestTxManagementTest extends SkifTestCase {
                 // key3 skal ikke bli satt, da metoden kaster exception og bruker CMT {@code TransactionAttributeType.REQUIRED}
                 cascadeService.containerTest3("key1", "multiValue1", null, "multiValue2");
                 fail("Forventet ValidationException");
-            } catch (ValidationException e) {
+            } catch (Throwable t) {
+                assertThat(t).describedAs("forventet exception").isInstanceOf(ValidationException.class);
             }
         }
         assertEquals(bmtServiceA.get("key1"), "value1");

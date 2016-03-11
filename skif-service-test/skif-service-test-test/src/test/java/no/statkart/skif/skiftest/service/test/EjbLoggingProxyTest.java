@@ -31,6 +31,8 @@ import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
 /**
  * Tester {@link no.statkart.skif.service.proxy.EjbLoggingProxyHandler}.
  *
@@ -69,6 +71,7 @@ public class EjbLoggingProxyTest extends SkifTestCase {
         Assert.assertEquals(globalCallLogger.getErrors(), 0, "Feil før");
     }
 
+    @Test
     public void testLoggingException() {
         Assert.assertEquals(globalCallLogger.getCalls(), 0, "Kall før");
         Assert.assertEquals(globalCallLogger.getReturns(), 0, "Returer før");
@@ -77,9 +80,10 @@ public class EjbLoggingProxyTest extends SkifTestCase {
         try {
             testExService.noTx(SimpleException.class.getName(), "abc");
             Assert.fail("Skulle fått en exception");
-        } catch (SimpleException e) {
         } catch (SimpleNonMappedException e) {
             Assert.fail("Skulle ikke fått denne exception");
+        } catch (Throwable t) {
+            assertThat(t).describedAs("forventet exception").isInstanceOf(SimpleException.class);
         }
 
         Assert.assertEquals(globalCallLogger.getCalls(), 1, "Kall før");

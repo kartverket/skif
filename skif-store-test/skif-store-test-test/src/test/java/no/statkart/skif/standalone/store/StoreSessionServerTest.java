@@ -576,6 +576,7 @@ public class StoreSessionServerTest {
     }
 
 
+    @Test
     public void testRollbackTransaction() {
         TestBubble testBubble_101 = new TestBubble(TestBubbleId_101);
         testBubble_101.setText("Insert 1");
@@ -587,7 +588,8 @@ public class StoreSessionServerTest {
         try {
             storeServer.get(TestBubbleId_101);
             fail("Objekt skal ikke være igjen i store etter rollback");
-        } catch (ObjectNotFoundException e) {
+        } catch (Throwable t) {
+            assertThat(t).describedAs("forventet exception").isInstanceOf(ObjectNotFoundException.class);
         }
 
         storeServer.beginTransaction();
@@ -724,7 +726,7 @@ public class StoreSessionServerTest {
     public void testInsertDeleteObjectViaNestedUnitOfWork() {
         storeServer.beginTransaction();
         UnitOfWork unitOfWork1 = storeServer.beginUnitOfWork();
-        TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
+        TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<>(101L);
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");
         storeServer.insert(testBubble1);
         UnitOfWork unitOfWork2 = storeServer.beginUnitOfWork();
@@ -877,6 +879,7 @@ public class StoreSessionServerTest {
         storeServer.commitTransaction();
     }
 
+    @Test
     public void testReorderModificationNotInUnitOfWork() {
         try {
             storeServer.beginTransaction();
@@ -900,7 +903,8 @@ public class StoreSessionServerTest {
             storeServer.insert(b_103);
             storeServer.reorderModification(b_102.getId());
             fail();
-        } catch (ImplementationException e) {
+        } catch (Throwable t) {
+            assertThat(t).describedAs("forventet exception").isInstanceOf(ImplementationException.class);
         } finally {
             storeServer.rollbackTransaction();
         }
@@ -937,6 +941,7 @@ public class StoreSessionServerTest {
             storeServer.flush();
             fail("Skulle ha fått feil på flush: 'integritetsskranken (FREHEN_GB.SELF_FK) er overtrådt - hovednøkkel ikke funnet'");
         } catch (ConstraintViolationException e) {
+            // Tidligere versjoner av oracle enn 11.2.0.3.0 gir ikke constraintfeil hvis objekter er i samme batch
         } finally {
             storeServer.rollbackTransaction();
         }

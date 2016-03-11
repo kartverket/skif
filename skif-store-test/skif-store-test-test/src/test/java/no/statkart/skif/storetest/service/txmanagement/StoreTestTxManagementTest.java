@@ -8,6 +8,7 @@ import no.statkart.skif.storetest.service.txcmt.ContainerManagedTxAService;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.*;
 
 /**
@@ -37,8 +38,8 @@ public class StoreTestTxManagementTest extends SkifTestCase {
         assertEquals(bmtServiceA.get("key2"), "multiValue2");
         try {
             bmtServiceA.multiPut("key3", "multiValue3", null, "XXX");
-        } catch (ValidationException e) {
-
+        } catch (Throwable t) {
+            assertThat(t).describedAs("forventet exception").isInstanceOf(ValidationException.class);
         }
         assertEquals(bmtServiceA.get("key3"), "multiValue3");
     }
@@ -49,7 +50,8 @@ public class StoreTestTxManagementTest extends SkifTestCase {
         for (int i = 0; i < 200; i++) {
             try {
                 cascadeService.containerTest3("key1", "multiValue1", null, "multiValue2");
-            } catch (ValidationException e) {
+            } catch (Throwable t) {
+                assertThat(t).describedAs("forventet exception").isInstanceOf(ValidationException.class);
             }
         }
 
@@ -71,8 +73,8 @@ public class StoreTestTxManagementTest extends SkifTestCase {
         assertEquals(cmtServiceA.get("key2"), "multiValue2");
         try {
             cmtServiceA.multiPut("key3", "multiValue3", null, "XXX");
-        } catch (ValidationException e) {
-
+        } catch (Throwable t) {
+            assertThat(t).describedAs("forventet exception").isInstanceOf(ValidationException.class);
         }
         assertEquals(cmtServiceA.get("key3"), null);
     }

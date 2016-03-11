@@ -19,6 +19,8 @@ import org.testng.annotations.Test;
 
 import java.util.Collection;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
 /**
  * Testen anvender SimpleId klassen, men krever ikke at det finnes objekter i database for de id'er som brukes.
  *
@@ -35,6 +37,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         return new TransactionalLockerStrategy(injector, injector.getInstance(Configuration.class), serviceRequestContext);
     }
 
+    @Test
     public void testIsLockedBy() {
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
         TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
@@ -53,6 +56,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         strategy.releaseAllLocks();
     }
 
+    @Test
     public void testUpdate() {
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
         TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
@@ -63,7 +67,8 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         try {
             strategy.registerUpdated(testId);
             Assert.fail("Har ikke låst testId så update skal feile!");
-        } catch (NotLockedException e) {
+        } catch (Throwable t) {
+            assertThat(t).describedAs("forventet exception").isInstanceOf(NotLockedException.class);
         }
 
         strategy.lock(testId);
@@ -79,10 +84,12 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         injector.getInstance(Key.get(dbLockerServiceTypeLiteral)).releaseAllLocks("ingroa");
     }
 
-    @Test(invocationCount = 1 /*200*/)
+    @Test(invocationCount = 200, groups = "slow")
     public void many() {
        testUpdate();
     }
+
+    @Test
     public void testRemove() {
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
         TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
@@ -93,7 +100,8 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         try {
             strategy.registerRemoved(testId);
             Assert.fail("Har ikke låst testId så update skal feile!");
-        } catch (NotLockedException e) {
+        } catch (Throwable t) {
+            assertThat(t).describedAs("forventet exception").isInstanceOf(NotLockedException.class);
         }
 
         strategy.lock(testId);
@@ -108,6 +116,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         injector.getInstance(Key.get(dbLockerServiceTypeLiteral)).releaseAllLocks("ingroa");
     }
 
+    @Test
     public void testInsert() {
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
         serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
@@ -122,6 +131,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         injector.getInstance(Key.get(dbLockerServiceTypeLiteral)).releaseAllLocks("ingroa");
     }
 
+    @Test
     public void testUnlock() {
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
         serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
@@ -145,6 +155,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
         injector.getInstance(Key.get(dbLockerServiceTypeLiteral)).releaseAllLocks("ingroa");
     }
 
+    @Test
     public void testRenewLocksViaUpdate(){
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
         serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
@@ -153,7 +164,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
         SimpleId testId = new SimpleId(14L, SnapshotVersion.CURRENT);
         long l = System.currentTimeMillis();
-        db.lock(new LockKey<Long>(testId.getClass().getName(), testId.getValue()), "ingroa", 200);
+        db.lock(new LockKey<>(testId.getClass().getName(), testId.getValue()), "ingroa", 200);
 
         strategy.registerUpdated(testId);
         strategy.isLockedByCaller(testId);
@@ -166,4 +177,5 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
         db.releaseAllLocks("ingroa");
     }
+
 }
