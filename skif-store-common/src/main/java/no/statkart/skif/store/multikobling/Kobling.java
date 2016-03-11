@@ -1,7 +1,5 @@
 package no.statkart.skif.store.multikobling;
 
-import no.statkart.skif.store.BubbleId;
-
 import java.io.Serializable;
 
 /**

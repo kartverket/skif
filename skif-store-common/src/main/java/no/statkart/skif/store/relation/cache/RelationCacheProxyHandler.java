@@ -13,13 +13,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 /**
  * ProxyHandler for caching av relasjoner. Denne proxyhandler legges i {@code CallServiceChain} på klient og server
  * for de services som implementerer invers domene finders.
- * <p>
- * <P>Proxy-en har til oppgave å bruke cachet relasjoner der hvor de allerede finnes og hente opp og cache
+ * <p/>
+ * Proxy-en har til oppgave å bruke cachet relasjoner der hvor de allerede finnes og hente opp og cache
  * etterspurte relasjoner som ikke finnes. Relasjonscaching  styres via {@link StoreRelationCache}
  *
  * @author Henrik Fredholm

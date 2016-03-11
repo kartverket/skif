@@ -1,6 +1,5 @@
 package no.statkart.skif.storetest.domain.relation;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -12,7 +11,6 @@ import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAId;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOneId;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1CCManyId;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 

@@ -1,7 +1,5 @@
 package no.statkart.skif.service.proxy;
 
-import no.statkart.skif.store.SnapshotVersion;
-
 /**
  * Hjelpestruktur for å returnere 2 verdier fra metoden
  *

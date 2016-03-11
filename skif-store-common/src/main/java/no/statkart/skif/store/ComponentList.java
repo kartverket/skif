@@ -1,12 +1,6 @@
 package no.statkart.skif.store;
 
-import com.google.common.collect.ForwardingList;
-import com.google.common.collect.ForwardingListIterator;
-
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Implementasjon av {@link ComponentCollection} for wrapping av {@link List}.

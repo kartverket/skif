@@ -1,6 +1,5 @@
 package no.statkart.skif;
 
-import com.google.inject.Module;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleConfiguration;
 

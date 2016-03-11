@@ -1,8 +1,6 @@
 package no.statkart.skif.storetest.domain.basic;
 
-import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 /**
  * Boble med historikk med relasjon til HistSimple

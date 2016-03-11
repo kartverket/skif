@@ -1,14 +1,10 @@
 package no.statkart.skif.mapper;
 
 import com.google.common.base.Joiner;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.SnapshotVersion;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;

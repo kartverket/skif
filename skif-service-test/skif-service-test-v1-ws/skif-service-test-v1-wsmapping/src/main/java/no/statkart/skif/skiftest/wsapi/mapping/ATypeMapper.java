@@ -1,6 +1,5 @@
 package no.statkart.skif.skiftest.wsapi.mapping;
 
-import no.statkart.skif.mapper.AbstractTypeMapper;
 import no.statkart.skif.skiftest.domain.A;
 
 /**

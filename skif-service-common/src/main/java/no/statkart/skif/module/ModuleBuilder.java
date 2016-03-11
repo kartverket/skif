@@ -1,19 +1,21 @@
 package no.statkart.skif.module;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
-
-import static no.statkart.skif.config.SkifConfigConstants.*;
-
+import no.statkart.skif.config.CompositeConfiguration;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.MapConfiguration;
+import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.config.*;
-import no.statkart.skif.internal.util.InternalConfigurationUtils;
+import no.statkart.skif.config.StackedConfiguration;
+import no.statkart.skif.config.SystemConfiguration;
 import no.statkart.skif.exception.ImplementationException;
-import com.google.common.base.Preconditions;
+import no.statkart.skif.internal.util.InternalConfigurationUtils;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,21 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static no.statkart.skif.config.SkifConfigConstants.CONFIGURATION_FILENAME;
+import static no.statkart.skif.config.SkifConfigConstants.EJB_SERVICE_CHAIN_EXT_CLASS;
+import static no.statkart.skif.config.SkifConfigConstants.MODULE_CLASS;
+import static no.statkart.skif.config.SkifConfigConstants.MODULE_EXT_CLASS;
+import static no.statkart.skif.config.SkifConfigConstants.MODULE_STRATEGY_FACTORY_CLASS;
+import static no.statkart.skif.config.SkifConfigConstants.SERVICE_MODE;
+import static no.statkart.skif.config.SkifConfigConstants.SINGLE_VM;
+import static no.statkart.skif.config.SkifConfigConstants.SINGLE_VM_SERVER_CONFIGURATION_FILENAME;
+import static no.statkart.skif.config.SkifConfigConstants.SINGLE_VM_SERVER_EJB_SERVICE_CHAIN_EXT_CLASS;
+import static no.statkart.skif.config.SkifConfigConstants.SINGLE_VM_SERVER_INJECTOR;
+import static no.statkart.skif.config.SkifConfigConstants.SINGLE_VM_SERVER_MODULE_CLASS;
+import static no.statkart.skif.config.SkifConfigConstants.SINGLE_VM_SERVER_MODULE_EXT_CLASS;
+import static no.statkart.skif.config.SkifConfigConstants.SINGLE_VM_SERVER_MODULE_STRATEGY_FACTORY_CLASS;
+import static no.statkart.skif.config.SkifConfigConstants.USE_SHARED_SERVER;
 
 /**
  * @author Henrik Fredholm
@@ -400,11 +417,7 @@ public class ModuleBuilder {
 
         try {
             module = constructor.newInstance(constructorParameter);
-        } catch (InstantiationException e) {
-            throw new ImplementationException("Could not instantiate module", e);
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException("Could not instantiate module", e);
-        } catch (InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new ImplementationException("Could not instantiate module", e);
         }
 

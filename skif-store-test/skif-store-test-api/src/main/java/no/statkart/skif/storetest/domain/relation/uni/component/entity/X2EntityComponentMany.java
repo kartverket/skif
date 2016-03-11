@@ -1,7 +1,5 @@
 package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 
-import java.util.Set;
-
 /**
  * @author Henrik Fredholm
  * @since 2.4

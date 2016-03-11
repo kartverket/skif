@@ -3,12 +3,16 @@ package no.statkart.skif.storetest.domain.component;
 import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.component.historikk.*;
+import no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithEntityComponents;
+import no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithEntityComponentsId;
+import no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithListEntityComponents;
+import no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithListEntityComponentsId;
+import no.statkart.skif.storetest.domain.component.historikk.HistorikkEntityComponent;
+import no.statkart.skif.storetest.domain.component.historikk.HistorikkListEntityComponent;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreService;
@@ -38,6 +42,7 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
 
     @Inject
     private SnapshotVersionContext snapshotVersionContext;
+
 
     /**
      * Kjører update med umodifisert detached objekt. Det skal ikke blir generert historikk for dette.
@@ -105,7 +110,7 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
         Assert.assertEquals(bubble2.getEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid på komponent");
 
         // Sørg for at objektet blir helt detached
-        bubble2.setEntityComponents(new ArrayList<HistorikkListEntityComponent>(bubble2.getEntityComponents()));
+        bubble2.setEntityComponents(new ArrayList<>(bubble2.getEntityComponents()));
 
         update(bubble2);
 

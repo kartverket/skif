@@ -4,9 +4,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
 
 /**
  * Test for {@link ResourceLister}.

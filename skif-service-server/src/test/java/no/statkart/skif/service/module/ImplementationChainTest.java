@@ -9,12 +9,10 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.service.annotation.Implementation;
-import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ImplementationServiceChainFactorySpecification;
 import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
-import no.statkart.skif.service.proxy.InvokeViaProviderProxyHandler;
 import no.statkart.skif.service.test.service.Test2Service;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -27,6 +25,8 @@ import java.util.List;
  */
 @Test(groups = "singlevm-required")
 public class ImplementationChainTest {
+
+    @Test
     public void buildCustomChain() {
         DefaultModuleConfiguration moduleConfiguration = new DefaultModuleConfiguration();
         moduleConfiguration.setServiceMode(ServiceMode.SINGLE_VM);

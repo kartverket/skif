@@ -8,7 +8,6 @@ import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef;
 import no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRefId;
-import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.basic.SomeIdent;
 
 /**

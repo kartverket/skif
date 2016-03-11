@@ -3,10 +3,12 @@ package no.statkart.skif.service.module.server;
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.service.chain.*;
+import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
+import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
+import no.statkart.skif.service.chain.ImplementationServiceChainFactorySpecification;
+import no.statkart.skif.service.chain.ServerCallServiceChainFactory;
 import no.statkart.skif.service.ejb.EJBCallProxyHandler;
 import no.statkart.skif.service.ejb.EJBInterceptorSingleVm;
-import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
 /**
  * Denne klasse brukes via refelction

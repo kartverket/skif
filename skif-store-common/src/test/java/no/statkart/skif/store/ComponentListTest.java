@@ -1,10 +1,12 @@
 package no.statkart.skif.store;
 
-import com.google.common.collect.Lists;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -14,6 +16,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
+@Test
 public class ComponentListTest {
     @Test
     public void testAddIndex() throws Exception {

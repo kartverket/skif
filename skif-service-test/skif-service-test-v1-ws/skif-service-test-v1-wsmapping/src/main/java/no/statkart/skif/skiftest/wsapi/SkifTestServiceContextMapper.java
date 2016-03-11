@@ -6,7 +6,6 @@ import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.service.AbstractServiceContextMapper;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
-import no.statkart.skif.store.SnapshotVersion;
 
 
 /**

@@ -2,7 +2,6 @@ package no.statkart.skif.storetest.domain.demo;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.C2DbKodeId;
 import no.statkart.skif.storetest.domain.mockup.Foo;
@@ -18,6 +17,7 @@ public class Baz extends AbstractBubbleObject implements StoreTestBubble {
     FooId<Foo> fooId;
     AEnumKodeId testAEnumKodeId = AEnumKodeId.IkkeOppgittId;
     C2DbKodeId testC2DbKodeId = C2DbKodeId.C2A1Id;
+
 
     @Override
     public BazId<?> getId() {

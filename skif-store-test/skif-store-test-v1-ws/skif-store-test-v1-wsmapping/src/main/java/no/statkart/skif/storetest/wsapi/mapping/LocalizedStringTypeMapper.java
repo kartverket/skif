@@ -1,8 +1,6 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
 import no.statkart.skif.internal.util.InternalLocaleUtils;
-import no.statkart.skif.mapper.AbstractTypeMapper;
-import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.store.localization.LocalizedString;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package no.statkart.skif.store.relation.cache;
 
 import com.google.common.collect.Lists;
-import no.statkart.skif.store.BubbleId;
 
 import java.util.Collection;
 import java.util.List;

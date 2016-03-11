@@ -10,11 +10,12 @@ import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
-import java.util.Collection;
 
 /**
  * @author Henrik Fredholm
  */
+@SuppressWarnings("unused")
+
 @Stateless(name = "no.statkart.skif.storetest.service.kodeliste.KodelisteServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 public class KodelisteServiceEJBBean extends EJBTimedService implements KodelisteService {

@@ -5,13 +5,19 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import no.statkart.skif.util.JDBCHelper;
-import oracle.sql.STRUCT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Denne klassen generer en sql-spørring ut fra brukerdefinerte parametere og evt subspørringer, som igjen kan være
@@ -83,23 +89,23 @@ public class GenericQueryGenerator {
     /**
      * Kolonner som skal med i seleksjon
      */
-    private List<String> projection = new ArrayList<String>();
+    private List<String> projection = new ArrayList<>();
     /**
      * Tabeller som skal med i spørringen
      */
-    private List<TableOrInlineView> tablesOrInlineViews = new ArrayList<TableOrInlineView>();
+    private List<TableOrInlineView> tablesOrInlineViews = new ArrayList<>();
     /**
      * Seleksjonsoperator for seleksjonsbetingelse, default er "and" men det er mulig å angi "or"
      */
-    private List<String> selectionOperator = new ArrayList<String>();
+    private List<String> selectionOperator = new ArrayList<>();
     /**
      * Første del av en seleksjonsbetingelse
      */
-    private List<String> selection1 = new ArrayList<String>();
+    private List<String> selection1 = new ArrayList<>();
     /**
      * Evt. andre del av en seleksjonsbetingelse
      */
-    private List<String> selection2 = new ArrayList<String>();
+    private List<String> selection2 = new ArrayList<>();
     /**
      * Parametre til seleksjonsbetingelsene
      */
@@ -107,18 +113,18 @@ public class GenericQueryGenerator {
     /**
      * Evt ordning av tupler
      */
-    private List<String> orderby = new ArrayList<String>();
+    private List<String> orderby = new ArrayList<>();
     /**
      * Evt hints for opimizeren
      */
-    private List<String> hints = new ArrayList<String>();
+    private List<String> hints = new ArrayList<>();
 
     /**
      * Tree av subspørringer
      */
-    private List<String> subqueryKey = new ArrayList<String>();
-    private List<GenericQueryGeneratorOperation> subqueryOp = new ArrayList<GenericQueryGeneratorOperation>();
-    private List<List<GenericQueryGenerator>> subquery = new ArrayList<List<GenericQueryGenerator>>();
+    private List<String> subqueryKey = new ArrayList<>();
+    private List<GenericQueryGeneratorOperation> subqueryOp = new ArrayList<>();
+    private List<List<GenericQueryGenerator>> subquery = new ArrayList<>();
 
 
     private int maxRowCount = -1;

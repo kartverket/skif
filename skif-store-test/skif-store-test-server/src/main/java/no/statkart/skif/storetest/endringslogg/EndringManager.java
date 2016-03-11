@@ -6,14 +6,13 @@ import no.statkart.skif.config.Configuration;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.endringslogg.AbstractEndringManager;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 
 import java.sql.Connection;
 
 /**
  * Genererer endringer for et utvalg objekter.
- *
+ * <p/>
  * Implementasjonen demonstrerer hvordan en kan sette ekstra informasjon på endring i form av brukernavn for transaksjonen. Se {@link Endring#brukernavn}.
  *
  * @author Tor Egil R. Strand
@@ -22,6 +21,7 @@ import java.sql.Connection;
 public class EndringManager extends AbstractEndringManager<Endring> {
 
     private final Provider<ServiceRequestContext> contextProvider;
+
 
     @Inject
     public EndringManager(EndringManagerConfiguration endringManagerConfiguration, Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Configuration skifConfiguration) {

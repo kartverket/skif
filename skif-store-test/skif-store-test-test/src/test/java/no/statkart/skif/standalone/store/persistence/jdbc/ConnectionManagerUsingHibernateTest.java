@@ -9,7 +9,6 @@ import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuild
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate;
 import oracle.jdbc.OracleConnection;
-import org.hibernate.jdbc.ConnectionWrapper;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -20,8 +19,10 @@ import java.util.Properties;
 
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactorManagerBundle;
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactoryBuilderWithHistory;
-import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertSame;
 
 /**
  * Tester for {@link  no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate}

@@ -1,10 +1,8 @@
 package no.statkart.skif.storetest.domain.basic;
 
-import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistoryId;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 /**
  * @author Henrik Fredholm
@@ -22,7 +20,7 @@ public class HistWithRelationId<T extends HistWithRelation> extends AbstractStor
     }
 
     public static HistWithRelationId<HistWithRelation> create(long id, SnapshotVersion snapshotVersion) {
-        return new HistWithRelationId<HistWithRelation>(id, snapshotVersion);
+        return new HistWithRelationId<>(id, snapshotVersion);
     }
 
     @Override

@@ -20,7 +20,6 @@ import org.testng.annotations.Test;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm

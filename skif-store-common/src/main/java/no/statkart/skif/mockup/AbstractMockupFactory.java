@@ -1,15 +1,10 @@
 package no.statkart.skif.mockup;
 
-import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.Store;
 
 import java.lang.reflect.Field;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

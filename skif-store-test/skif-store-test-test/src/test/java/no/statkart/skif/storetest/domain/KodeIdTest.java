@@ -3,11 +3,16 @@ package no.statkart.skif.storetest.domain;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodelisteId;
-import no.statkart.skif.storetest.domain.demo.koder.*;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.C1DbKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.C2DbKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.CDbKodeId;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 /**

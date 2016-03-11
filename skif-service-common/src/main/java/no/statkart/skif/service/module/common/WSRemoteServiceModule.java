@@ -2,7 +2,6 @@ package no.statkart.skif.service.module.common;
 
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifModule;
-import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;
 

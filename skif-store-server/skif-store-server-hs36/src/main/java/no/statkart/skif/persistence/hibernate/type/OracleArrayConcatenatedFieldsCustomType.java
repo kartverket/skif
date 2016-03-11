@@ -1,9 +1,7 @@
 package no.statkart.skif.persistence.hibernate.type;
 
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.ConcatenatedFieldsSerialization;
 import no.statkart.skif.store.persistence.OracleArrayConcatenatedFieldsConverter;
-import no.statkart.skif.store.persistence.OracleArrayStringBubbleIdConverter;
 import org.hibernate.MappingException;
 import org.hibernate.type.CustomType;
 

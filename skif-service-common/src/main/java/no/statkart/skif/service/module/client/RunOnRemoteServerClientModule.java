@@ -1,6 +1,5 @@
 package no.statkart.skif.service.module.client;
 
-import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.module.common.RemoteServerModule;

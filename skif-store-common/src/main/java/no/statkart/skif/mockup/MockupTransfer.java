@@ -1,11 +1,9 @@
 package no.statkart.skif.mockup;
 
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.BubbleTransfer;
 import no.statkart.skif.store.UnitOfWorkTransfer;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * @author Tor Egil R. Strand

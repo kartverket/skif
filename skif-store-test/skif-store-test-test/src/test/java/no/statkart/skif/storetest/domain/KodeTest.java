@@ -3,14 +3,30 @@ package no.statkart.skif.storetest.domain;
 
 import com.google.inject.Inject;
 import no.statkart.skif.mockup.TestNumber;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.KodelisteTransfer;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.Kodeliste;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.localization.LocalizedString;
 import no.statkart.skif.storetest.domain.basic.BubbleWithKode;
-import no.statkart.skif.storetest.domain.demo.koder.*;
+import no.statkart.skif.storetest.domain.demo.koder.ADbKode;
+import no.statkart.skif.storetest.domain.demo.koder.ADbKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.BDbKode;
+import no.statkart.skif.storetest.domain.demo.koder.BDbKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.C1DbKode;
+import no.statkart.skif.storetest.domain.demo.koder.C1DbKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.C2DbKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.CDbKode;
+import no.statkart.skif.storetest.domain.demo.koder.SEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.XStrDbKode;
+import no.statkart.skif.storetest.domain.demo.koder.XStrDbKodeId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
@@ -22,13 +38,14 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static org.fest.assertions.api.Assertions.*;
-import static org.testng.Assert.*;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Henrik Fredholm

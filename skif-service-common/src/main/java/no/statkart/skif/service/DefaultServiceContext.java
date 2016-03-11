@@ -1,6 +1,5 @@
 package no.statkart.skif.service;
 
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.util.Locales;
 
 import java.util.Locale;

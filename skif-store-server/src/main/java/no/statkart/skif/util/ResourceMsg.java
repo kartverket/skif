@@ -1,12 +1,15 @@
 package no.statkart.skif.util;
 
-import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * Superklasse for å hente tekster fra <code>ResourceBundles</code>. Denne klassen kan kun brukes

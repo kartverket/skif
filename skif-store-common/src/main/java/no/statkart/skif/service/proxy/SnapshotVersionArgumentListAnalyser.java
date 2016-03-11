@@ -14,8 +14,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Klasse som henter ut {@code SnapshotVersion} fra parameterliste for gitt metode
  *

@@ -1,22 +1,21 @@
 package no.statkart.skif.service.module.common;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
 import com.google.inject.PrivateBinder;
 import com.google.inject.PrivateModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
-import com.google.common.base.Preconditions;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
+import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.ServiceContextMapper;
-import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
-import no.statkart.skif.service.proxy.D2WAdapterProxyHandler;
 
 import java.util.Collection;
 import java.util.HashSet;

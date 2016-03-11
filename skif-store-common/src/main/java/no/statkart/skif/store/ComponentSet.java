@@ -1,10 +1,5 @@
 package no.statkart.skif.store;
 
-import com.google.common.collect.ForwardingIterator;
-import com.google.common.collect.ForwardingSet;
-
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 
 /**

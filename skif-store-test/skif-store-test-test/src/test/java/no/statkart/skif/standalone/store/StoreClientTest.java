@@ -1,19 +1,34 @@
 package no.statkart.skif.standalone.store;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.TestIdServiceLong;
 import no.statkart.skif.mockup.TestNumber;
-import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.StoreClient;
+import no.statkart.skif.store.StoreSessionClient;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Tester grunnleggende ting i {@link no.statkart.skif.store.StoreClient}. Dette er stort sett implementert i diverse session-klasser.

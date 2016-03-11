@@ -6,12 +6,14 @@ import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestNumber;
-import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
-import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponent;
-import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
-import no.statkart.skif.storetest.domain.component.composite.Level1CompositeComponent;
-import no.statkart.skif.storetest.domain.component.composite.Level2CompositeComponent;
-import no.statkart.skif.storetest.domain.component.entity.*;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponentId;
+import no.statkart.skif.storetest.domain.component.entity.Level1CompositeComponentWithEntity;
+import no.statkart.skif.storetest.domain.component.entity.Level1EntityInCompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.Level1SetEntityInCompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.Level2CompositeComponentWithEntity;
+import no.statkart.skif.storetest.domain.component.entity.Level2EntityInCompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.Level2SetEntityInCompositeComponent;
 
 import java.util.Set;
 

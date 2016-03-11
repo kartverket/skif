@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.config;
 
 import no.statkart.skif.service.ServicesListing;
-import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
 import no.statkart.skif.storetest.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 

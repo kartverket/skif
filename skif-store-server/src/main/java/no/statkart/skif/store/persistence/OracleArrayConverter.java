@@ -1,12 +1,10 @@
 package no.statkart.skif.store.persistence;
 
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.util.OracleUtils;
 import oracle.sql.ARRAY;
 import oracle.sql.ArrayDescriptor;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;

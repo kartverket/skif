@@ -4,16 +4,16 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.skiftest.service.ServiceSelector;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import java.util.List;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
+@SuppressWarnings("unused")
 public class BServiceImpl implements BService {
     private final Provider<ServiceSelector> serviceSelector;
+
 
     @Inject
     public BServiceImpl(Provider<ServiceSelector> serviceSelector) {

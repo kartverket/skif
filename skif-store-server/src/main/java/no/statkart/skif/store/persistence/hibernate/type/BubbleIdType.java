@@ -1,9 +1,10 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
-import com.google.common.base.Preconditions;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.*;
-import no.statkart.skif.store.kodeliste.KodeId;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
@@ -12,8 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

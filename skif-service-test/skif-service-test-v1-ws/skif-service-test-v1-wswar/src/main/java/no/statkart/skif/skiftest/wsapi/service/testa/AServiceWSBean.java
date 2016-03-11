@@ -4,7 +4,6 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
 import no.statkart.skif.skiftest.wsapi.domain.StringList;
-import no.statkart.skif.skiftest.wsapi.service.test1.Test1ServiceWSI;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -17,6 +16,7 @@ import javax.xml.ws.WebServiceContext;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@SuppressWarnings("unused")
 @WebService(
         name = "AService",
         serviceName = "AServiceWS",
@@ -26,6 +26,7 @@ public class AServiceWSBean extends SkifWebService<AServiceWSI> implements AServ
     private WebServiceContext ctx;
 
     private AServiceWSI wsServiceChain;
+
 
     public AServiceWSBean() {
         super(AServiceWSI.class);

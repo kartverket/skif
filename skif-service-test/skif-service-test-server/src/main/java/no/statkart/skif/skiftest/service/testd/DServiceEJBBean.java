@@ -1,12 +1,10 @@
 package no.statkart.skif.skiftest.service.testd;
 
 import com.google.inject.Inject;
-import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.service.annotation.EJBServiceChain;
-import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
-import no.statkart.skif.skiftest.service.testc.CService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -14,13 +12,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import java.util.List;
-
-import no.statkart.skif.exception.SkifException;
 /**
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
 @RolesAllowed("Innsyn")
+@SuppressWarnings("unused")
+
 @Stateless(name = "no.statkart.skif.skiftest.service.testd.DServiceEJBBean")
 @Interceptors(SkifTestEJBInterceptorJEE.class)
 public class DServiceEJBBean extends EJBTimedService implements DService {

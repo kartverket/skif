@@ -1,12 +1,12 @@
 package no.statkart.skif.storetest.endringslogg;
 
 import com.google.common.collect.ImmutableBiMap;
-import com.google.inject.Singleton;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.endringslogg.AbstractEndring;
 import no.statkart.skif.store.endringslogg.AbstractEndringManagerConfiguration;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.basic.*;
+import no.statkart.skif.storetest.domain.basic.BubbleWithRelation;
+import no.statkart.skif.storetest.domain.basic.Simple;
+import no.statkart.skif.storetest.domain.basic.SubTypedBubble;
 import no.statkart.skif.storetest.domain.endringslogg.BubbleWithRelationEndring;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.endringslogg.SimpleEndring;

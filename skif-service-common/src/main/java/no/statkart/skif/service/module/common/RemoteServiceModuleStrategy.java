@@ -6,7 +6,6 @@ import no.statkart.skif.module.ModuleStrategy;
 import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ServiceChainFactories;
-import no.statkart.skif.service.proxy.D2WAdapterProxyHandler;
 
 /**
  * @author Henrik Fredholm

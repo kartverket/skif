@@ -2,8 +2,6 @@ package no.statkart.skif.service;
 
 import com.google.inject.Injector;
 
-import java.io.Serializable;
-
 /**
  * @author Henrik Fredholm
  */

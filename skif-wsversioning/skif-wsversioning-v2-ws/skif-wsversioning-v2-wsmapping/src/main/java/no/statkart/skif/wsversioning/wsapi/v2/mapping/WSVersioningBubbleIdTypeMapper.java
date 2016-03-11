@@ -5,8 +5,6 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.wsversioning.domain.WSVersioningBubbleId;
 import no.statkart.skif.wsversioning.wsapi.v2.domain.Timestamp;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
 /**
  * Mapper for bobleid-er.
  * 

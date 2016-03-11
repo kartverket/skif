@@ -3,8 +3,6 @@ package no.statkart.skif.storetest.domain.relation;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
-import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
-import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistoryId;
 
 /**
  * @author Henrik Fredholm

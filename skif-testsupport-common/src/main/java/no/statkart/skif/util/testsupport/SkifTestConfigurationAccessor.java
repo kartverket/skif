@@ -3,7 +3,6 @@ package no.statkart.skif.util.testsupport;
 import com.google.inject.Inject;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.config.PropertiesConfiguration;
 
 /**
  * @author Henrik Fredholm

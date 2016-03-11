@@ -1,6 +1,10 @@
 package no.statkart.skif.module;
 
-import com.google.inject.*;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
@@ -9,16 +13,20 @@ import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SystemConfiguration;
 import no.statkart.skif.internal.util.InternalConfigurationUtils;
 import no.statkart.skif.service.SingleVmServer;
-import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
+import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.List;
 
-import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 @Test
 public class ModuleBuilderTest {

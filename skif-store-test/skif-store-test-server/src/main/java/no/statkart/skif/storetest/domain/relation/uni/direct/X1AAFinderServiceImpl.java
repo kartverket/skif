@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.relation.uni.direct;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayStringCustomType;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayUserType;
@@ -10,12 +9,14 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.persistence.OracleArrayConverter;
 import no.statkart.skif.store.persistence.SessionSelector;
-import no.statkart.skif.util.HibernateHelper;
-import org.hibernate.*;
+import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.hibernate.type.CustomType;
 
 import javax.inject.Provider;
-import java.sql.PreparedStatement;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;

@@ -3,9 +3,14 @@ package no.statkart.skif.persistence;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.logging.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Filter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Hjelpe klasse for å slå på logging for Oracle JDBC driver som bruker Java Logging Framework. Det er mulig å
@@ -204,7 +209,7 @@ public class OracleLogHelper {
      * Gir mulighet for å pause tracingen uavhenging av om tracing er på eller av. Dette kan være nødvendig fordi
      * tracing er treg.
      *
-     * @return
+     * @return oldState
      */
     public static boolean pause() {
         boolean oldState = cachedState;
@@ -214,8 +219,6 @@ public class OracleLogHelper {
 
     /**
      * Gjenoppretter tracing til tidligere tilstand
-     *
-     * @return
      */
     public static void resume(boolean state) {
         setTrace(traceState);
@@ -224,7 +227,7 @@ public class OracleLogHelper {
     /**
      * Global setting for å slå tracing fullstendig av også for fremtidig kall til {@link #enableTrace(Verbose)}.
      *
-     * @param state
+     * @param state bestemmer tracing
      */
     public static void setTraceState(boolean state) {
         traceState = state;

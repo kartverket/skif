@@ -2,8 +2,6 @@ package no.statkart.skif.storetest.domain.component.entity;
 
 import no.statkart.skif.store.AbstractEntityBubbleComponentWithOwner;
 import no.statkart.skif.store.Components;
-import no.statkart.skif.store.EntityBubbleComponent;
-import no.statkart.skif.store.OwnerCheck;
 
 /**
  * En entity som inngår i en composite component, som ligger i et sett og som har

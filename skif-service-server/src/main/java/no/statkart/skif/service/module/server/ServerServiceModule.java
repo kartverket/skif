@@ -1,8 +1,7 @@
 package no.statkart.skif.service.module.server;
 
-import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.module.ModuleWithStrategy;
 import no.statkart.skif.module.ModuleConfiguration;
+import no.statkart.skif.module.ModuleWithStrategy;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,7 +12,7 @@ import java.util.Set;
  * @since 2.0
  */
 public class ServerServiceModule extends ModuleWithStrategy<ServerServiceModuleStrategy> {
-    protected final Set<Class<? extends Object>> services = new HashSet<Class<? extends Object>>();
+    protected final Set<Class<? extends Object>> services = new HashSet<>();
 
     public ServerServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services) {
         super(ServerServiceModuleStrategy.class, configuration);

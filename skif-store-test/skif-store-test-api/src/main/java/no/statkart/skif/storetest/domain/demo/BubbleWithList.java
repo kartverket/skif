@@ -5,7 +5,6 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,7 +27,7 @@ public class BubbleWithList extends AbstractBubbleObject implements StoreTestBub
 
     public BubbleWithList(BubbleWithList bubbleWithList) {
         this.setId(bubbleWithList.getId());
-        this.components = new HashSet<BubbleWithListComponent>();
+        this.components = new HashSet<>();
         for (BubbleWithListComponent component : bubbleWithList.components) {
             BubbleWithListComponent e = new BubbleWithListComponent(component.getId(), component.getComponentName(), component.getaEnumKodeId());
             e.setBubbleWithList(this);

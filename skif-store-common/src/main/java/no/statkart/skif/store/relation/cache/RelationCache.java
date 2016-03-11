@@ -12,7 +12,6 @@ import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -30,8 +29,8 @@ import static com.google.common.base.Preconditions.checkState;
  * <p>
  * Eiende boble må fortelle relasjonscachen hver gang relasjonen endres. Dette skjer via kall til
  * {@link #onChangeRelation} hvor kan det angis hva den gamle verdi var og hva den nye verdi er. Hvis relasjonen har
- * {@code mange} kardinalitet så brukes {@code null} for gammel verdi ved {@code add} og {@null}  for ny verdier ved
- * {@ocde remove}. Relasjonscachen er således alltid i synk med hensyn til hvilke objekter som er lagt til og fjernet.
+ * {@code mange} kardinalitet så brukes {@code null} for gammel verdi ved {@code add} og {@code null} for ny verdier ved
+ * {@code remove}. Relasjonscachen er således alltid i synk med hensyn til hvilke objekter som er lagt til og fjernet.
  * <p>
  * Relasjonen som caches trenger ikke å være materialisert for at cachen kan holde styr på hvilke verdier som har blitt
  * lagt til eller fjernet. Relasjonen materialiseres først hvis relasjonens verdier skal  brukes. Da appliseres

@@ -2,8 +2,6 @@ package no.statkart.skif.storetest.domain.endringslogg;
 
 import no.statkart.skif.store.endringslogg.AbstractEndring;
 import no.statkart.skif.store.endringslogg.AbstractEndringId;
-import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
-import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 

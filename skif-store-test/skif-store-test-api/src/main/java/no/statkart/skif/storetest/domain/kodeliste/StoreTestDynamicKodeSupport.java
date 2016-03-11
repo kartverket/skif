@@ -1,6 +1,5 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.kodeliste.DbKodeSupport;
 import no.statkart.skif.store.kodeliste.DynamicKodeSupport;
 import no.statkart.skif.store.kodeliste.KodeId;
 

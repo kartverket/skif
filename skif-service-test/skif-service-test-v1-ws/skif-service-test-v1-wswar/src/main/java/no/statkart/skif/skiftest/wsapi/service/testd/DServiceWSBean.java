@@ -8,22 +8,23 @@ import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
 import no.statkart.skif.skiftest.wsapi.domain.StringList;
 import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
 import no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException;
-import no.statkart.skif.skiftest.wsapi.exception.simple.*;
-import no.statkart.skif.skiftest.wsapi.exception.impl.*;
-import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
+import no.statkart.skif.skiftest.wsapi.exception.impl.ExceptionDetail;
+import no.statkart.skif.skiftest.wsapi.exception.impl.ServiceFaultInfo;
+import no.statkart.skif.skiftest.wsapi.exception.impl.StackTraceElementList;
+import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleNonMappedFaultInfo;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
-import java.lang.StackTraceElement;
 import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
+@SuppressWarnings("unused")
 @WebService(
         name = "DService",
         serviceName = "DServiceWS",
@@ -33,6 +34,7 @@ public class DServiceWSBean extends SkifWebService<DServiceWSI> implements DServ
     private WebServiceContext ctx;
 
     private DServiceWSI wsServiceChain;
+
 
     public DServiceWSBean() {
         super(DServiceWSI.class);
@@ -99,13 +101,7 @@ public class DServiceWSBean extends SkifWebService<DServiceWSI> implements DServ
         } else {
             try {
                 throw (RuntimeException) SkifUtil.classForName(exceptionClass).getConstructor(String.class).newInstance(message);
-            } catch (InstantiationException e) {
-                throw new no.statkart.skif.exception.ImplementationException(e);
-            } catch (IllegalAccessException e) {
-                throw new no.statkart.skif.exception.ImplementationException(e);
-            } catch (InvocationTargetException e) {
-                throw new no.statkart.skif.exception.ImplementationException(e);
-            } catch (NoSuchMethodException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new no.statkart.skif.exception.ImplementationException(e);
             }
         }

@@ -1,7 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;

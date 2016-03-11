@@ -3,7 +3,11 @@ package no.statkart.skif.storetest.wsapi.service.test;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
-import no.statkart.skif.storetest.wsapi.domain.*;
+import no.statkart.skif.storetest.wsapi.domain.MockupSnapshotMap;
+import no.statkart.skif.storetest.wsapi.domain.MockupTransfer;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
+import no.statkart.skif.storetest.wsapi.domain.TestNumber;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
@@ -11,7 +15,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.WebServiceContext;
 
 /**
@@ -19,6 +22,7 @@ import javax.xml.ws.WebServiceContext;
  * @author Tor Egil R. Strand
  * @since 2.0
  */
+@SuppressWarnings("unused")
 @WebService(
         name = "TestdataService",
         serviceName = "TestdataServiceWS",
@@ -28,6 +32,7 @@ public class TestdataServiceWSBean extends SkifWebService<TestdataServiceWSI> im
     private WebServiceContext ctx;
 
     private TestdataServiceWSI wsServiceChain;
+
 
     public TestdataServiceWSBean() {
         super(TestdataServiceWSI.class);

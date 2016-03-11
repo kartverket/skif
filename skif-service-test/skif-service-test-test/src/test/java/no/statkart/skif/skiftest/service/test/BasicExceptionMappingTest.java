@@ -2,8 +2,6 @@ package no.statkart.skif.skiftest.service.test;
 
 import com.google.inject.Inject;
 import no.statkart.skif.ServiceMode;
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.MappingException;
 import no.statkart.skif.skiftest.config.SkifTestServerModule;

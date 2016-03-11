@@ -1,6 +1,10 @@
 package no.statkart.skif.store;
 
-import com.google.inject.*;
+import com.google.inject.Binding;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
@@ -13,9 +17,11 @@ import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementasjon av LockerStrategy som fungerer for BubbleIds som har en Long som value. Holder på alle

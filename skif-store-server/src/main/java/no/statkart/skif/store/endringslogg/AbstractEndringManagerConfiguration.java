@@ -5,10 +5,8 @@ import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
 import no.statkart.skif.inject.Holder;
 import no.statkart.skif.inject.HolderImpl;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -55,7 +53,7 @@ public abstract class AbstractEndringManagerConfiguration<E extends AbstractEndr
     public Class<? extends E> findEndringClass(Class<? extends BubbleObject> domainklasse) {
         Holder<Class<? extends E>> endringsklasseHolder = cache.get(domainklasse);
         if (endringsklasseHolder == null) {
-            endringsklasseHolder = new HolderImpl<Class<? extends E>>();
+            endringsklasseHolder = new HolderImpl<>();
             for (Class bubbleClass = domainklasse; bubbleClass != null; bubbleClass = bubbleClass.getSuperclass()) {
                 //noinspection unchecked
                 Class<? extends E> endringsklasse = getEndringsklasse(bubbleClass);

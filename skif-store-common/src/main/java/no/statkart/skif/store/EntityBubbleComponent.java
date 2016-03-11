@@ -1,9 +1,5 @@
 package no.statkart.skif.store;
 
-import no.statkart.skif.store.relation.cache.RelationName;
-
-import java.util.Map;
-
 /**
  * Interface som angir at objektet er en EntityComponent og at det eiende objektet er en boble
  *

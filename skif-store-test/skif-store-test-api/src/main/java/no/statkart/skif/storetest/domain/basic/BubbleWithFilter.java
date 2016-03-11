@@ -1,10 +1,7 @@
 package no.statkart.skif.storetest.domain.basic;
 
-import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.standalone.FilteredBubbleId;
 
 /**
  * Boble uten historikk med filtered property.
@@ -36,7 +33,7 @@ public class BubbleWithFilter extends AbstractStoreTestBubble {
 
     @Override
     public void setId(BubbleId<?> id) {
-        super.setId((BubbleWithFilterId<?>) id);
+        super.setId(id);
     }
 
     @Override

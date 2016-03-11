@@ -1,7 +1,5 @@
 package no.statkart.skif.store;
 
-import no.statkart.skif.inject.Holder;
-
 /**
  * Holder på default[@code SnapshotVersion} for kjørende tråd og brukes bl.a av mapping rammeverket for mappe
  * {@code BubbleId} i wsapi (som ikke har {@code SnapshotVersion}) til BubbleId i javaapi (som har {@code SnapshotVersion}).

@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.basic;
 
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
-import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 import org.joda.time.LocalDate;
 
 /**

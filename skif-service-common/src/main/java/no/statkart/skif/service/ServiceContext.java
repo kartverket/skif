@@ -1,7 +1,5 @@
 package no.statkart.skif.service;
 
-import no.statkart.skif.store.SnapshotVersion;
-
 import java.io.Serializable;
 import java.util.Locale;
 

@@ -1,7 +1,5 @@
 package no.statkart.skif.store;
 
-import java.io.Serializable;
-
 /**
  * Interface som angir at et domeneobjekt er en komponent som ikke har id og som lagres i databasen i samme tabell som
  * det eiende objektet {@code <T> }. Siden det eiende objektet selv kan være en {@code CompositeComponent} så er det

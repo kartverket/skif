@@ -5,7 +5,6 @@ import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
 import no.statkart.skif.skiftest.wsapi.domain.StringList;
 import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
-import no.statkart.skif.skiftest.wsapi.service.testa.AServiceWSI;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -18,6 +17,7 @@ import javax.xml.ws.WebServiceContext;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@SuppressWarnings("unused")
 @WebService(
         name = "BService",
         serviceName = "BServiceWS",
@@ -27,6 +27,7 @@ public class BServiceWSBean extends SkifWebService<BServiceWSI> implements BServ
     private WebServiceContext ctx;
 
     private BServiceWSI wsServiceChain;
+
 
     public BServiceWSBean() {
         super(BServiceWSI.class);

@@ -1,11 +1,5 @@
 package no.statkart.skif.mapper;
 
-import no.statkart.skif.exception.ImplementationException;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 

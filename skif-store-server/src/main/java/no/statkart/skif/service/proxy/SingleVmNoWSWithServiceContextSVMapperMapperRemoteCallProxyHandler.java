@@ -11,10 +11,7 @@ import no.statkart.skif.store.SnapshotVersionContext;
 
 import java.lang.reflect.Method;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * @author
  * @since 2.4
  */
 public class SingleVmNoWSWithServiceContextSVMapperMapperRemoteCallProxyHandler<S> extends SingleVmNoWSWithServiceContextMapperRemoteCallProxyHandler<S> {

@@ -3,13 +3,7 @@ package no.statkart.skif.service.provider;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
-import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.chain.OrderedCallServiceChainFactoryList;
-import no.statkart.skif.service.chain.OrderedServiceChainFactoryList;
-import no.statkart.skif.service.chain.ServiceChainFactory;
-import no.statkart.skif.service.proxy.ProxyHandler;
-
-import java.util.*;
 
 /**
  * En Guice provider som produserer service-instanser av type {@code S}. Provideren oppretter service-instansen ved å

@@ -2,7 +2,6 @@ package no.statkart.skif.storetest.id;
 
 import no.statkart.skif.storetest.service.id.SequenceBlockAllocatorService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

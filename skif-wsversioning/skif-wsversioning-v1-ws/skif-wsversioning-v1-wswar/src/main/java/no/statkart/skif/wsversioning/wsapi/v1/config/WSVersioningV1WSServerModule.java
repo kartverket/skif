@@ -3,7 +3,6 @@ package no.statkart.skif.wsversioning.wsapi.v1.config;
 import no.statkart.skif.config.SkifServerModule;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.wsversioning.config.WSVersioningCompatServicesV1;
 import no.statkart.skif.wsversioning.config.WSVersioningServicesV1;

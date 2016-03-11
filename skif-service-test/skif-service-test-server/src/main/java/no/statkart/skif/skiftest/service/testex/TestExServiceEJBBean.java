@@ -1,7 +1,6 @@
 package no.statkart.skif.skiftest.service.testex;
 
 import com.google.inject.Inject;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
@@ -20,6 +19,8 @@ import java.util.List;
  * @since 2.0
  */
 @RolesAllowed("Innsyn")
+@SuppressWarnings("unused")
+
 @Stateless(name = "no.statkart.skif.skiftest.service.testex.TestExServiceEJBBean")
 @Interceptors(SkifTestEJBInterceptorJEE.class)
 public class TestExServiceEJBBean extends EJBTimedService implements TestExService {

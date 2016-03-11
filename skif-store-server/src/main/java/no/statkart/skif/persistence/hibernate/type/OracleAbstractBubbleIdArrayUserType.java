@@ -11,13 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.sql.*;
-import java.util.Arrays;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkState;
 
 /**
  * En Hibernate {@code UserType} for persistering av {@code BubbleId} collections via Oracle {@code oracle.sql.ARRAY}. Klassen brukes

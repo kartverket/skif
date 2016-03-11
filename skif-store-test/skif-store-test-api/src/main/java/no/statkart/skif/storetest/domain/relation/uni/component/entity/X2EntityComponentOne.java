@@ -1,10 +1,12 @@
 package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 
-import no.statkart.skif.store.*;
-import no.statkart.skif.store.relation.cache.RelationName;
+import no.statkart.skif.store.Bubbles;
+import no.statkart.skif.store.Components;
+import no.statkart.skif.store.EntityBubbleComponent;
+import no.statkart.skif.store.InverseRelationCollector;
+import no.statkart.skif.store.InverseRelationParticipation;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 /**

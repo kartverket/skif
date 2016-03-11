@@ -9,7 +9,6 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
-import static org.testng.Assert.assertSame;
 
 /**
  * Tester at injector ikke gjenbrukes på tvers av testmetoder når {@link #isReuseInjector()} returnerer false

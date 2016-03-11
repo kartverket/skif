@@ -4,12 +4,15 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import no.statkart.skif.util.JDBCHelper;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 

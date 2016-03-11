@@ -1,7 +1,5 @@
 package no.statkart.skif.service.proxy;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -9,14 +7,11 @@ import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
-import no.statkart.skif.store.SnapshotVersion;
 
 import javax.annotation.Nullable;
 import javax.xml.ws.WebFault;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  * Adapter proxy som adapterer domain interface T til webservice interface A ved å mappe metoder med samme navn til hverandre og transformere
@@ -75,6 +70,7 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
     public Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         Method toMethod = getMethod(method);
         try {
+            //noinspection UnnecessaryLocalVariable
             Object result = mapArgsAndInvokeMethod(proxy, method, args, toMethod);
             return result;
         } catch (Throwable t) {
@@ -85,6 +81,7 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
     protected Object mapArgsAndInvokeMethod(Object proxy, Method method, Object[] args, Method toMethod) throws Throwable {
         int length = args == null ? 0 : args.length;
         Object[] mappedArgs = mapArgs(args, method, toMethod, length);
+        //noinspection UnnecessaryLocalVariable
         Object result = invokeMethodForMappedArgs(proxy, method, toMethod, mappedArgs);
         return result;
     }
@@ -97,6 +94,7 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
             if (exceptionMapping != null) {
                 //forventer kun exceptions definert for webservice api. Disse er da annotert med @WebFault
                 if (t.getClass().getAnnotation(WebFault.class) != null) {
+                    //noinspection UnnecessaryLocalVariable
                     Throwable mappedException = exceptionMapping.w2d(t);
                     throw mappedException;
                 }

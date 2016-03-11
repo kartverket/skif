@@ -10,12 +10,9 @@ import no.statkart.skif.storetest.domain.demo.BubbleWithComponents;
 import no.statkart.skif.storetest.domain.demo.BubbleWithComponentsComponent;
 import no.statkart.skif.storetest.domain.demo.BubbleWithComponentsId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
-import no.statkart.skif.storetest.mockupframework.MockupFacade;
-import no.statkart.skif.storetest.mockupframework.MockupFacadeFactory;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.testsupport.SkifServerTestCase;
 import org.testng.Assert;
-import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,11 +26,13 @@ import java.util.Collections;
  */
 @Deprecated // Skrives om til å bruke andre objekter og mockupfactory
 public class EntityComponentTest extends SkifServerTestCase {
+
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
 
     @Inject
     private StoreServer store;
+
 
     public EntityComponentTest() {
         super(StoreTestServerModule.class);
@@ -91,11 +90,7 @@ public class EntityComponentTest extends SkifServerTestCase {
             Method getPseudoId = AbstractEntityComponent.class.getDeclaredMethod("getPseudoId");
             getPseudoId.setAccessible(true);
             return (Long) getPseudoId.invoke(component);
-        } catch (NoSuchMethodException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException(e);
-        } catch (InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new ImplementationException(e);
         }
     }

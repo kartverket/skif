@@ -1,8 +1,6 @@
 package no.statkart.skif.storetest.domain.mockup;
 
-import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.demo.Baz;
 import no.statkart.skif.storetest.domain.demo.BazId;
 

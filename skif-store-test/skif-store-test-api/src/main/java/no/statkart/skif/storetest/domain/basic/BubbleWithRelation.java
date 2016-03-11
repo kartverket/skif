@@ -1,14 +1,6 @@
 package no.statkart.skif.storetest.domain.basic;
 
-import no.statkart.skif.store.AbstractBubbleObject;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.demo.Baz;
-import no.statkart.skif.storetest.domain.demo.BazId;
-import no.statkart.skif.storetest.domain.mockup.BarId;
-import no.statkart.skif.storetest.domain.mockup.Foo;
-import no.statkart.skif.storetest.domain.mockup.FooId;
 
 /**
  * Boble uten historikk med relasjon til boble Simple

@@ -1,7 +1,5 @@
 package no.statkart.skif.mapper;
 
-import java.lang.reflect.InvocationTargetException;
-
 
 /**
  * Slipper exception av angitt type uendret igjennom.

@@ -1,23 +1,15 @@
 package no.statkart.skif.store.endringslogg;
 
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.SessionSelector;
-import no.statkart.skif.util.HibernateHelper;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import java.sql.PreparedStatement;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Basisfunksjonalitet for å finne endringer.

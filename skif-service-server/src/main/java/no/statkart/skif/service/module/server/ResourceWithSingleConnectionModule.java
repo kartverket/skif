@@ -12,7 +12,13 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.persistence.DefaultResourceManager;
 import no.statkart.skif.persistence.ResourceManager;
-import no.statkart.skif.persistence.jdbc.*;
+import no.statkart.skif.persistence.jdbc.ConnectionFactoryUsingDataSource;
+import no.statkart.skif.persistence.jdbc.ConnectionFactoryUsingPool;
+import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
+import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersionProvider;
+import no.statkart.skif.persistence.jdbc.ConnectionManager;
+import no.statkart.skif.persistence.jdbc.ConnectionManagerProvider;
+import no.statkart.skif.persistence.jdbc.ConnectionManagerUsingFactory;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
 

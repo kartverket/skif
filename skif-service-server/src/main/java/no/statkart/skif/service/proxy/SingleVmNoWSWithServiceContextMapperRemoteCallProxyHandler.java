@@ -5,15 +5,17 @@ import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.SkifException;
-import no.statkart.skif.service.*;
+import no.statkart.skif.service.LoginUserHolder;
+import no.statkart.skif.service.RunOnServerMethod;
+import no.statkart.skif.service.ServiceContext;
+import no.statkart.skif.service.SingleVmRemoteCallContext;
+import no.statkart.skif.service.SingleVmServer;
 import no.statkart.skif.service.ejb.EJBCallProxyHandler;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.util.CopyHelper;
 
 import java.lang.reflect.Method;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Henrik Fredholm

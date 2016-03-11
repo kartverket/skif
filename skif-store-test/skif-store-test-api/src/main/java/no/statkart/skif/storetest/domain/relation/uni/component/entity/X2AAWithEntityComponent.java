@@ -3,7 +3,6 @@ package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.store.InverseRelationCollector;
 import no.statkart.skif.store.InverseRelationParticipation;
-import no.statkart.skif.storetest.domain.component.entity.SetAaEntityComponent;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
 import java.util.Set;

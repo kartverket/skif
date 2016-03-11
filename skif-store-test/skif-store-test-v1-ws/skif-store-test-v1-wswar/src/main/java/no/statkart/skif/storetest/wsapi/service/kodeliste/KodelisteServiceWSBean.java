@@ -12,13 +12,14 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.WebServiceContext;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
+@SuppressWarnings("unused")
+
 @WebService(
         name = "KodelisteService",
         serviceName = "KodelisteServiceWS",

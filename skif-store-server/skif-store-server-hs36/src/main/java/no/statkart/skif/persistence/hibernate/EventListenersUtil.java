@@ -1,16 +1,12 @@
 package no.statkart.skif.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
-import org.hibernate.Interceptor;
 import org.hibernate.Session;
-import org.hibernate.event.*;
+import org.hibernate.event.EventListeners;
 import org.hibernate.impl.SessionImpl;
-import org.hibernate.jdbc.ConnectionManager;
-import org.hibernate.jdbc.NonBatchingBatcherFactory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
 /**
  * @author frehen

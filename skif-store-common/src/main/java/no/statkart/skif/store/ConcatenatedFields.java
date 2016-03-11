@@ -1,9 +1,7 @@
 package no.statkart.skif.store;
 
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.exception.ImplementationException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkState;

@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
-import no.statkart.skif.skiftest.service.testa.AService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -18,6 +17,8 @@ import java.util.List;
  * @since 2.0
  */
 @RolesAllowed("Innsyn")
+@SuppressWarnings("unused")
+
 @Stateless(name = "no.statkart.skif.skiftest.service.testc.CServiceEJBBean")
 @Interceptors(SkifTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)

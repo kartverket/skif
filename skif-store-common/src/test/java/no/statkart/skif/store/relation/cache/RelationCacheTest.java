@@ -6,8 +6,6 @@ import org.testng.annotations.Test;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
 
 /**
  * Test av basis funksjonalitet for {@link no.statkart.skif.store.relation.cache.RelationCache}

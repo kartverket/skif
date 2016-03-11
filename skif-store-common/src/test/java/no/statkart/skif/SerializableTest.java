@@ -2,10 +2,8 @@ package no.statkart.skif;
 
 import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.store.AbstractBubbleId;
-import no.statkart.skif.store.SnapshotVersion;
 import org.reflections.Reflections;
 import org.testng.Assert;
 import org.testng.annotations.Test;

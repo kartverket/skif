@@ -1,10 +1,7 @@
 package no.statkart.skif.storetest.domain.basic;
 
-import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.domain.standalone.FilteredBubble;
 
 /**
  * @author Henrik Fredholm

@@ -6,7 +6,6 @@ import org.testng.annotations.Test;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 import java.util.Random;

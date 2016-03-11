@@ -1,7 +1,10 @@
 package no.statkart.skif.standalone.store;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
@@ -17,20 +20,44 @@ import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.store.*;
+import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.LockerStrategy;
+import no.statkart.skif.store.MemoryLocker;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.StoreSessionFinishListener;
+import no.statkart.skif.store.StoreSessionReadListener;
+import no.statkart.skif.store.StoreSessionServer;
+import no.statkart.skif.store.StoreSessionWriteListener;
+import no.statkart.skif.store.TransactionalLockerStrategy;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
-import no.statkart.skif.store.persistence.hibernate.*;
+import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImplExt;
+import no.statkart.skif.store.persistence.hibernate.HibernateBubbleDependencyComparator;
+import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
+import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceSessionSubtypeHandler;
 import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
-import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
-import no.statkart.skif.storetest.domain.standalone.*;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.SEnumKodeId;
+import no.statkart.skif.storetest.domain.standalone.ChildBubble;
+import no.statkart.skif.storetest.domain.standalone.ChildBubbleId;
+import no.statkart.skif.storetest.domain.standalone.FilteredBubble;
+import no.statkart.skif.storetest.domain.standalone.FilteredBubbleId;
+import no.statkart.skif.storetest.domain.standalone.ParentBubble;
+import no.statkart.skif.storetest.domain.standalone.ParentBubbleId;
+import no.statkart.skif.storetest.domain.standalone.SelfBubble;
+import no.statkart.skif.storetest.domain.standalone.SelfBubbleId;
 import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
+import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistory;
+import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistoryId;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.util.CopyHelper;
@@ -40,13 +67,35 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.Set;
 
-import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.*;
-import static org.fest.assertions.api.Assertions.*;
-import static org.testng.Assert.*;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.S1;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.S2;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.S3;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.assertNotFound;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.countInDatabase;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactorManagerBundle;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.deletePriviouslyWritenTestBubbles;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 import static org.testng.FileAssert.fail;
 
 /**
@@ -554,8 +603,6 @@ public class StoreSessionServerTest {
     /**
      * Test finder som laster inn objekt i hibernate via query. Finderen returnerer id og ikke selve objektet slik at store har mulighet
      * for å returnere en filtrert eller oppdatert instans.
-     *
-     * @return
      */
     private TestBubbleId testBubbleIdFinder() {
         try {

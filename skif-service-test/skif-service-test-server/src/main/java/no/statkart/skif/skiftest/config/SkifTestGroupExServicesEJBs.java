@@ -1,10 +1,6 @@
 package no.statkart.skif.skiftest.config;
 
 import no.statkart.skif.service.ejb.EJBRegistration;
-import no.statkart.skif.skiftest.service.testa.AService;
-import no.statkart.skif.skiftest.service.testb.BService;
-import no.statkart.skif.skiftest.service.testc.CService;
-import no.statkart.skif.skiftest.service.testd.DService;
 import no.statkart.skif.skiftest.service.testex.TestExService;
 
 import javax.ejb.EJB;

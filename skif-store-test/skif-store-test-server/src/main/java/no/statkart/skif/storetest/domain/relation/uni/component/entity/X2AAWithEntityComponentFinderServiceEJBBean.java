@@ -1,25 +1,15 @@
 package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.persistence.SessionSelector;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
-import no.statkart.skif.util.HibernateHelper;
-import org.hibernate.*;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Provider;
 import javax.interceptor.Interceptors;
-import java.sql.PreparedStatement;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +21,8 @@ import java.util.Set;
  * @since 2.4
  */
 @RolesAllowed("Innsyn")
+@SuppressWarnings("unused")
+
 @Stateless(name = "X2AAWithEntityComponentFinderServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)

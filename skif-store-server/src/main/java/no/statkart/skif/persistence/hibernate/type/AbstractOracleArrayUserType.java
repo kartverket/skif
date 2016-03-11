@@ -6,8 +6,12 @@ import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
-import java.sql.*;
-import java.util.Collection;
+import java.sql.Array;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Hjelpeklasse for å bruke Oracle ARRAY i Hibernate

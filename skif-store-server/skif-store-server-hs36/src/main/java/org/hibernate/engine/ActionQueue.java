@@ -23,27 +23,10 @@
  */
 package org.hibernate.engine;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.*;
-
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
-import org.hibernate.EntityMode;
-import org.hibernate.LockMode;
-import org.hibernate.impl.SessionImpl;
-import org.hibernate.persister.entity.AbstractEntityPersister;
-import org.hibernate.persister.entity.EntityPersister;
-import org.hibernate.persister.entity.SingleTableEntityPersister;
-import org.hibernate.type.CompositeType;
-import org.hibernate.type.EntityType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hibernate.AssertionFailure;
+import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.action.AfterTransactionCompletionProcess;
 import org.hibernate.action.BeforeTransactionCompletionProcess;
@@ -57,7 +40,26 @@ import org.hibernate.action.EntityInsertAction;
 import org.hibernate.action.EntityUpdateAction;
 import org.hibernate.action.Executable;
 import org.hibernate.cache.CacheException;
+import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.persister.entity.SingleTableEntityPersister;
+import org.hibernate.type.CompositeType;
 import org.hibernate.type.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Responsible for maintaining the queue of actions related to events.

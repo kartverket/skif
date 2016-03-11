@@ -3,10 +3,11 @@ package no.statkart.skif.storetest.id;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
-import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tester id allokering for kode som kjører på serveren
@@ -17,6 +18,7 @@ import static org.testng.Assert.*;
 @Test
 public class IdServiceServerTest extends StoreTestServerTestCase {
 
+    @Test
     public void testNextValue() {
         IdService idService = injector.getInstance(IdService.class);
         int oldBlockSize = idService.getBlockSize();
@@ -26,13 +28,14 @@ public class IdServiceServerTest extends StoreTestServerTestCase {
             final Long idValue1 = Long.class.cast(idService.getNextIdValue(SimpleId.class));
             final Long idValue2 = Long.class.cast(idService.getNextIdValue(SimpleId.class));
             final Long idValue3 = Long.class.cast(idService.getNextIdValue(SimpleId.class));
-            assertEquals(new Long(idValue1+1), new Long(idValue2));
+            assertEquals(new Long(idValue1+1), idValue2);
             assertTrue(idValue2 < idValue3);
         } finally {
             idService.setBlockSize(oldBlockSize);
         }
     }
 
+    @Test
     public void testNextId() {
         IdService idService = injector.getInstance(IdService.class);
         int oldBlockSize = idService.getBlockSize();
@@ -45,13 +48,14 @@ public class IdServiceServerTest extends StoreTestServerTestCase {
             final Long idValue1 = nextId1.getValue();
             final Long idValue2 = nextId2.getValue();
             final Long idValue3 = nextId3.getValue();
-            assertEquals(new Long(idValue1+1), new Long(idValue2));
+            assertEquals(new Long(idValue1+1), idValue2);
             assertTrue(idValue2 < idValue3);
         } finally {
             idService.setBlockSize(oldBlockSize);
         }
     }
 
+    @Test
     public void testIsSingleton() {
         assertSame(injector.getInstance(IdService.class), injector.getInstance(IdService.class));
     }

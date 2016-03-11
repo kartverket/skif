@@ -3,7 +3,6 @@ package no.statkart.skif.service.ejb;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.NotImplementedException;
 
 import javax.ejb.EJBException;
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +12,7 @@ import java.lang.reflect.Method;
  * Finner EJB hørende til service {@code S} og gjør et kall på den. Konverterer EJB spesifikke exceptions til
  * rammeverk spesifikke exceptions og også bruke i SingleVm mode slik at det blir transparent at kallet ble
  * utført via en EJB.
- *
+ * <p/>
  * TODO: Implementer EJB exception konvertering
  *
  * @author Henrik Fredholm
@@ -40,8 +39,8 @@ public class EJBCallProxyHandlerJEE<S> extends EJBCallProxyHandler<S> {
         } catch (InvocationTargetException e) {
             Throwable targetException = e.getTargetException();
             if (targetException instanceof EJBException) {
-                final Throwable cause = ((EJBException) targetException).getCause();
-                if (cause !=null) {
+                final Throwable cause = targetException.getCause();
+                if (cause != null) {
                     throw cause;
                 } else {
                     throw targetException;

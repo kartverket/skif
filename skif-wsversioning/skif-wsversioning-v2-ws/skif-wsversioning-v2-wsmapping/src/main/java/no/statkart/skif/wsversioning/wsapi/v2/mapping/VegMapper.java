@@ -1,6 +1,5 @@
 package no.statkart.skif.wsversioning.wsapi.v2.mapping;
 
-import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 import no.statkart.skif.mapper.DefaultTypeMapper;
 import no.statkart.skif.mapper.MappingException;
@@ -44,6 +43,7 @@ public class VegMapper extends DefaultTypeMapper<no.statkart.skif.wsversioning.w
             throw new MappingException("Støtter ikke mapping av annet enn versjon 2.1");
         }
 
+        //noinspection UnnecessaryLocalVariable
         Veg target = super.mapWsapiObject(source);
         return target;
     }

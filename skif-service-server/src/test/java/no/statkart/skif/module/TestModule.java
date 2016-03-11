@@ -4,7 +4,6 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import no.statkart.skif.SkifConfigurationModule;
 import no.statkart.skif.SkifModule;
-import no.statkart.skif.config.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;

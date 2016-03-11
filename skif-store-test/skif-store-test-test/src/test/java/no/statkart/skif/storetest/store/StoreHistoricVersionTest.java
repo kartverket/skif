@@ -17,9 +17,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static no.statkart.skif.storetest.mockup.MockupSnapshots.*;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.CURRENT;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.S0;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.S1;
 import static no.statkart.skif.storetest.mockup.MockupSnapshots.S2;
 import static no.statkart.skif.storetest.mockup.MockupSnapshots.S3;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.S4;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.S4_justafter;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**

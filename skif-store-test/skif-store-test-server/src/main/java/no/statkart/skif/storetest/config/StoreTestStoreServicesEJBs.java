@@ -9,7 +9,6 @@ import no.statkart.skif.storetest.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
-import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
 import no.statkart.skif.storetest.service.store.StoreService;
 
 import javax.ejb.EJB;

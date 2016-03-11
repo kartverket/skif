@@ -1,17 +1,10 @@
 package no.statkart.skif.store;
 
-import com.google.common.collect.Sets;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.relation.cache.RelationName;
-import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

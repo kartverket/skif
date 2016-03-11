@@ -8,8 +8,6 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -22,6 +20,8 @@ import java.util.Map;
 /**
  * @author Henrik Fredholm
  */
+@SuppressWarnings("unused")
+
 @Stateless(name = "no.statkart.skif.storetest.service.store.StoreServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 // TODO: legge på riktig transattributes

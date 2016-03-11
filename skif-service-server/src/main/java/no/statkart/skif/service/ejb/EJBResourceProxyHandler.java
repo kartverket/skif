@@ -1,7 +1,5 @@
 package no.statkart.skif.service.ejb;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
 import java.lang.reflect.Method;

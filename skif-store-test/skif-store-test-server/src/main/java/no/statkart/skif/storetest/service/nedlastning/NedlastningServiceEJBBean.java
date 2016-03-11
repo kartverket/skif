@@ -6,13 +6,7 @@ import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Kontroll;
-import no.statkart.skif.store.endringslogg.AbstractEndringId;
-import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubbleId;
-import no.statkart.skif.storetest.domain.endringslogg.EndringId;
-import no.statkart.skif.store.endringslogg.Endringer;
 
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
@@ -30,6 +24,8 @@ import java.util.List;
  * @since 2.2.0
  */
 @RolesAllowed("Innsyn")
+@SuppressWarnings("unused")
+
 @Stateless(name = "NedlastningServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)

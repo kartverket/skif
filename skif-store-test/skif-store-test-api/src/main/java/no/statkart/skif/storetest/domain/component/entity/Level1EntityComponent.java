@@ -1,12 +1,14 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
 import com.google.common.collect.Sets;
-import no.statkart.skif.store.*;
-import no.statkart.skif.store.relation.cache.RelationName;
+import no.statkart.skif.store.Components;
+import no.statkart.skif.store.EntityBubbleComponent;
+import no.statkart.skif.store.InverseRelationCollector;
+import no.statkart.skif.store.InverseRelationParticipation;
+import no.statkart.skif.store.ValueObjects;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
 import javax.annotation.Nullable;
-import java.util.Map;
 import java.util.Set;
 
 /**

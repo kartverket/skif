@@ -1,6 +1,5 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodelisteLongId;
 
 /**

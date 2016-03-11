@@ -5,7 +5,6 @@ import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefMapping;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
-import org.hibernate.cache.CacheConcurrencyStrategy;
 import org.hibernate.cache.access.EntityRegionAccessStrategy;
 import org.hibernate.engine.Mapping;
 import org.hibernate.engine.SessionFactoryImplementor;

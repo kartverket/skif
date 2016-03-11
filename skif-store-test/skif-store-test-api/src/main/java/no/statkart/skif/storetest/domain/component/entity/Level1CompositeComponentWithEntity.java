@@ -2,7 +2,6 @@ package no.statkart.skif.storetest.domain.component.entity;
 
 import no.statkart.skif.store.AbstractCompositeBubbleComponent;
 import no.statkart.skif.store.Components;
-import no.statkart.skif.store.CompositeBubbleComponent;
 import no.statkart.skif.store.CompositeComponentWithCollections;
 
 import javax.annotation.Nullable;

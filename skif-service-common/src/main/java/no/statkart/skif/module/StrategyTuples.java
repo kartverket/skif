@@ -1,7 +1,5 @@
 package no.statkart.skif.module;
 
-import no.statkart.skif.service.module.common.RemoteServiceModuleStrategy;
-
 /**
  * @author Henrik Fredholm
  * @since 2.0

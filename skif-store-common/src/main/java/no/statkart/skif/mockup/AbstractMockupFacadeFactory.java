@@ -1,11 +1,20 @@
 package no.statkart.skif.mockup;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
-import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.service.test.TestdataService;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
+import no.statkart.skif.store.Store;
 import no.statkart.skif.store.kodeliste.KodeId;
 
 import java.util.Collection;
@@ -44,7 +53,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
      *
      * @since 2.3.0
      */
-    protected final Set<Class<? extends BubbleId>> ignoredIdClasses = new HashSet<Class<? extends BubbleId>>();
+    protected final Set<Class<? extends BubbleId>> ignoredIdClasses = new HashSet<>();
 
     /**
      * Angir den snapshotversion som er default i {@link MockupStore}. For mockup-sett uten historikk bør dette være

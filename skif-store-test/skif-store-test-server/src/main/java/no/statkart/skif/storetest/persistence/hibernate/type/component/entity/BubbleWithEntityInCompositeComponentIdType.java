@@ -2,7 +2,6 @@ package no.statkart.skif.storetest.persistence.hibernate.type.component.entity;
 
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
-import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponentId;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponentId;
 
 /**

@@ -5,12 +5,11 @@ import com.google.inject.Injector;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
 
 /**
  * @author Henrik Fredholm
  */
+@SuppressWarnings("unused")
 @Deprecated
 public class ContainerManagedTransactionRunOnServerServiceImpl implements ContainerManagedTransactionRunOnServerService {
     @Inject

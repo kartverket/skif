@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain.demo;
 
 import no.statkart.skif.store.BubbleComponent;
-import no.statkart.skif.store.BubbleObject;
+
 import java.io.Serializable;
 
 /**

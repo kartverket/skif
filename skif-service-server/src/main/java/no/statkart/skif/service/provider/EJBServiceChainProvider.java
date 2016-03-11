@@ -3,9 +3,8 @@ package no.statkart.skif.service.provider;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
-import no.statkart.skif.service.ServiceRequestContext;
-import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
+import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
 import no.statkart.skif.service.proxy.ProxyHandler;
 
 /**

@@ -1,9 +1,6 @@
 package no.statkart.skif.storetest.config;
 
 import no.statkart.skif.service.ServicesListing;
-import no.statkart.skif.storetest.service.histtest.HistTestService;
-import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
-import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.service.store.StoreService;
 
 import java.util.ArrayList;

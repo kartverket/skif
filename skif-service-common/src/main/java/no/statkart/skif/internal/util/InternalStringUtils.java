@@ -4,9 +4,7 @@ package no.statkart.skif.internal.util;
  * Utdrag av StringUtils  fra appache commons-lang pakken. Har fjernet alle metoder som krever andre klasser fra commons-lang.
  *
  */
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * <p>Operations on {@link java.lang.String} that are

@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.relation.uni.direct;
 
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
-import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
 
 /**
  * @author Henrik Fredholm

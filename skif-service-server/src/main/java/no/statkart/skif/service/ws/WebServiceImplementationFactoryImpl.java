@@ -1,7 +1,6 @@
 package no.statkart.skif.service.ws;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.service.chain.WSServiceChainFactory;
 

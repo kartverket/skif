@@ -1,10 +1,11 @@
 package no.statkart.skif.storetest.domain.multikobling_old;
 
 import com.google.inject.Inject;
-import no.statkart.skif.store.*;
-import no.statkart.skif.store.multikobling.DefaultKoblingFactory;
-import no.statkart.skif.store.multikobling.Kobling;
-import no.statkart.skif.store.multikobling.Multikobling;
+import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.UnitOfWork;
+import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.multikobling_old.kobling.RettsstiftelsePersonRolle;
@@ -12,11 +13,12 @@ import no.statkart.skif.storetest.domain.multikobling_old.kobling.Retttstiftelse
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Tester multikobling.
@@ -33,8 +35,8 @@ public class MultikoblingTest extends StoreTestTestCase {
     Store store;
 
     public void test() {
-        List<PersonId<?>> personIds = new ArrayList<PersonId<?>>();
-        List<PengeheftelseId<?>> pengeheftelseIds = new ArrayList<PengeheftelseId<?>>();
+        List<PersonId<?>> personIds = new ArrayList<>();
+        List<PengeheftelseId<?>> pengeheftelseIds = new ArrayList<>();
         UnitOfWork unitOfWork = store.beginUnitOfWork();
 
         try {
@@ -81,7 +83,9 @@ public class MultikoblingTest extends StoreTestTestCase {
             }
 
 
+            //noinspection unused
             final Pengeheftelse pengeheftelse = store.get(pengeheftelseIds.get(2));
+            //noinspection unused
             final UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
             store.endUnitOfWork(unitOfWork);
         } finally {

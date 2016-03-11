@@ -1,8 +1,6 @@
 package no.statkart.skif.skiftest.config;
 
 import no.statkart.skif.service.ServicesListing;
-import no.statkart.skif.skiftest.service.test2.Test2Service;
-import no.statkart.skif.skiftest.service.test3.Test3Service;
 import no.statkart.skif.skiftest.service.testa.AService;
 import no.statkart.skif.skiftest.service.testb.BService;
 import no.statkart.skif.skiftest.service.testc.CService;

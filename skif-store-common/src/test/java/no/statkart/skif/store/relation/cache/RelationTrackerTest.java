@@ -1,10 +1,8 @@
 package no.statkart.skif.store.relation.cache;
 
-import com.google.common.collect.Sets;
 import org.testng.annotations.Test;
 
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;

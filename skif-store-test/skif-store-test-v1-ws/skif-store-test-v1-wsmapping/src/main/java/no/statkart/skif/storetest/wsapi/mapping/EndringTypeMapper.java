@@ -1,13 +1,9 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.mapper.MappingException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.endringslogg.Endringstype;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Mapper mellom {@code wsapi:Endring} og {@code domainT:Endring}. Det må installeres en instans av mapperen
@@ -45,6 +41,6 @@ public class EndringTypeMapper<WsapiT extends no.statkart.skif.storetest.wsapi.d
     }
 
     public static <WsapiT extends no.statkart.skif.storetest.wsapi.domain.endringslogg.Endring, DomainT extends Endring>  EndringTypeMapper<WsapiT, DomainT> create(Class<WsapiT> wsapiTClass, Class<DomainT> domainClass) {
-        return new EndringTypeMapper<WsapiT, DomainT>(wsapiTClass, domainClass);
+        return new EndringTypeMapper<>(wsapiTClass, domainClass);
     }
 }

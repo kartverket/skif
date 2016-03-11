@@ -14,7 +14,6 @@ import javax.xml.ws.soap.SOAPFaultException;
 import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**

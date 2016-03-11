@@ -1,21 +1,15 @@
 package no.statkart.skif.persistence;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.persistence.jdbc.ConnectionSelector;
-import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.OracleArrayType;
 import no.statkart.skif.storetest.domain.basic.HistSimple;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
-import no.statkart.skif.storetest.domain.basic.HistWithRelation;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
-import no.statkart.skif.storetest.domain.mockup.BarId;
-import no.statkart.skif.storetest.domain.mockup.FooId;
 import no.statkart.skif.util.JDBCHelper;
 
 import javax.inject.Provider;
@@ -23,7 +17,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Finder for HistWithRelation.

@@ -1,12 +1,6 @@
 package no.statkart.skif.store.endringslogg;
 
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.AbstractBubbleObject;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * Baseklasse for kontroll beregninger.

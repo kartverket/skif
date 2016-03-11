@@ -1,8 +1,6 @@
 package no.statkart.skif.service.proxy;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
-import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.logging.ServerCallLogger;
 
 import java.lang.reflect.Method;

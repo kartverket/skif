@@ -3,7 +3,6 @@ package no.statkart.skif.service.test.service;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
 
-import java.security.PublicKey;
 import java.util.List;
 
 /**

@@ -1,10 +1,13 @@
 package no.statkart.skif.service.chain;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import no.statkart.skif.service.proxy.ProxyHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Henrik Fredholm

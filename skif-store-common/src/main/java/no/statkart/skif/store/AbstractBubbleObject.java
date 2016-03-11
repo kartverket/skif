@@ -1,8 +1,6 @@
 package no.statkart.skif.store;
 
 import com.google.common.collect.ImmutableSet;
-import no.statkart.skif.store.relation.cache.RelationName;
-import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
 import java.io.Serializable;
 import java.util.Map;

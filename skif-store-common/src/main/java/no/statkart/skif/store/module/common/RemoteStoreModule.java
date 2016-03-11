@@ -1,7 +1,6 @@
 package no.statkart.skif.store.module.common;
 
 import no.statkart.skif.SkifModule;
-import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleConfiguration;
 
 /**

@@ -1,6 +1,5 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import com.google.inject.Inject;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.Interceptor;
 
@@ -8,7 +7,7 @@ import javax.annotation.Nullable;
 
 /**
  * Factory for å opprette Hibernate Interceptor.
- * <p>
+ * <p/>
  * Implementasjoner av dette interface kan anvende dependency injection ved bruk av et standard injection builder pattern,
  * dvs at implementasjonen definere en constructor som å få injected ekstra
  * parametre, f.eks i form av {@code Provider} instanser som gjemmes som member variable. I {@link #create}
@@ -22,7 +21,6 @@ import javax.annotation.Nullable;
 public interface HibernateInterceptorFactory {
     /**
      * Opprett injector for gitt snapshotVersionSeed
-     * @return
      */
     @Nullable
     Interceptor create(SnapshotVersionSeed snapshotVersionSeed);

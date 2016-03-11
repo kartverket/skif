@@ -1,15 +1,6 @@
 package no.statkart.skif.store.relation.cache;
 
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.store.WrappableStoreSession;
-
-import javax.annotation.Nullable;
-import java.lang.reflect.Method;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkState;
 
 /**
  * En facade for håndtering av relation caching i Store. Klassen henter ut aktivt UnitOfWork level fra Store og

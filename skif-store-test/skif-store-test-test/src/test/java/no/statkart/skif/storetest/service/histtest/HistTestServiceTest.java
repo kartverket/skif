@@ -2,12 +2,20 @@ package no.statkart.skif.storetest.service.histtest;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.PrecisionModel;
 import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.basic.*;
+import no.statkart.skif.storetest.domain.basic.GeometricElementId;
+import no.statkart.skif.storetest.domain.basic.HistSimple;
+import no.statkart.skif.storetest.domain.basic.HistSimpleId;
+import no.statkart.skif.storetest.domain.basic.HistWithRelation;
+import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 import no.statkart.skif.storetest.mockup.MockupSnapshots;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
@@ -16,11 +24,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**

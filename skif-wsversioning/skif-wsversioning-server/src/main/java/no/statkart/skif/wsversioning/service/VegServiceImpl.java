@@ -3,7 +3,6 @@ package no.statkart.skif.wsversioning.service;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
-import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.wsversioning.domain.VegId;

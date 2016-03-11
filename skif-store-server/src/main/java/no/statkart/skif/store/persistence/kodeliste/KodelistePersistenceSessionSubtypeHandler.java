@@ -3,7 +3,6 @@ package no.statkart.skif.store.persistence.kodeliste;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.PersistenceSessionSubtypeHandler;
 
-import java.util.Collection;
 import java.util.List;
 
 /**

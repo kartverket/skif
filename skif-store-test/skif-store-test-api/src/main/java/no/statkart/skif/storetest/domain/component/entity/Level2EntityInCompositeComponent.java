@@ -1,12 +1,9 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
-import no.statkart.skif.store.InverseRelationCollector;
-import no.statkart.skif.store.InverseRelationParticipation;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.store.EntityBubbleComponent;
-import no.statkart.skif.store.relation.cache.RelationName;
-
-import java.util.Map;
+import no.statkart.skif.store.InverseRelationCollector;
+import no.statkart.skif.store.InverseRelationParticipation;
 
 /**
  * En entity som inngår i en composite component og som har som har {@code BubbleWithEntityInCompositeComponent} som owner.

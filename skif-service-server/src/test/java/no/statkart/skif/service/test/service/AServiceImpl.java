@@ -5,7 +5,6 @@ import com.google.inject.Provider;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -16,6 +15,7 @@ import java.util.List;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@SuppressWarnings("unused")
 public class AServiceImpl implements AService {
     private final Provider<ServiceSelector> serviceSelector;
 

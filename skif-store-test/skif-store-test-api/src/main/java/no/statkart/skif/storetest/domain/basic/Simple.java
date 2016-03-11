@@ -1,12 +1,6 @@
 package no.statkart.skif.storetest.domain.basic;
 
-import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
-import no.statkart.skif.storetest.domain.StoreTestBubble;
-import no.statkart.skif.storetest.domain.demo.FooEntityComponent;
-import no.statkart.skif.storetest.domain.mockup.FooId;
-
-import java.sql.Timestamp;
 
 /**
  * Boble uten historikk og som ikke har egne relasjoner til andre objekter

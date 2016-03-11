@@ -1,12 +1,6 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.mapper.MappingException;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.endringslogg.EndringId;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Mapper mellom {@code Wsapi:Long} og {@code DomainT:EndringId}

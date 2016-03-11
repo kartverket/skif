@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.koder;
 
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKode;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestEnumKodeId;
 
 /**
  * En veldig enkel rett frem kode uten historikk.

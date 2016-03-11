@@ -1,11 +1,9 @@
 package no.statkart.skif.storetest.domain.basic;
 
-import com.google.common.base.Preconditions;
 import no.statkart.skif.store.ValueObject;
 
 import javax.annotation.Nullable;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
