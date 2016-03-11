@@ -137,10 +137,14 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 recurseLevel.set(++i);
                 target = w2d(method, args);
             } finally {
-                int i = recurseLevel.get();
-                recurseLevel.set(--i);
+                int i = recurseLevel.get() - 1;
                 if (i == 0) {
-                    mappedFieldsTracker.get().clear();
+                    // Å holde på ikke-primitiver i ThreadLocal kan lett medføre minnelekasje
+                    mappedFieldsTracker.remove();
+                    // Tar denne også, for å gjøre det likt
+                    recurseLevel.remove();
+                } else {
+                    recurseLevel.set(i);
                 }
             }
         } else if (method.getName().equals("d2w")) {
@@ -151,10 +155,14 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 recurseLevel.set(++i);
                 target = d2w(method, args);
             } finally {
-                int i = recurseLevel.get();
-                recurseLevel.set(--i);
+                int i = recurseLevel.get() - 1;
                 if (i == 0) {
-                    mappedFieldsTracker.get().clear();
+                    // Å holde på ikke-primitiver i ThreadLocal kan lett medføre minnelekasje
+                    mappedFieldsTracker.remove();
+                    // Tar denne også, for å gjøre det likt
+                    recurseLevel.remove();
+                } else {
+                    recurseLevel.set(i);
                 }
             }
         } else {

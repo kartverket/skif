@@ -59,7 +59,4 @@ public class MappedFieldsTracker {
         return retVal;
     }
 
-    public void clear(){
-        mappedFields.clear();
-    }
 }
