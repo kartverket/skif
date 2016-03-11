@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -26,7 +25,7 @@ import java.util.zip.ZipInputStream;
  * Builder som opprette en Hibernate SessionFactory som er forberedt for bruk av SnapshotVersion seeds slik at
  * det er mulig å støtte database skjemaer med historikk. Denne factory brukes også for skjemaer som ikke støtter
  * historikk.
- *
+ * <p/>
  * Builderen initialiseres opp med de tabeller/klasse som hiberate skal jobbe med og har støtte for å definere sletterekkefølge
  * for bobler. For å opprette en factory kalles {@link #build}.
  * Ved å endre på properties mellom hver kall til build er det mulig å opprette factories (og hibernate sessions) som går mot
@@ -44,7 +43,7 @@ public abstract class HibernateSessionFactoryBuilder {
     protected Map<String, String> className2resourceNameMap = new HashMap<>();
 
     public HibernateSessionFactoryBuilder(String mappingFilesDirectory) {
-        if (!mappingFilesDirectory.equals("")){
+        if (!mappingFilesDirectory.equals("")) {
             if (!mappingFilesDirectory.endsWith("/")) {
                 mappingFilesDirectory += "/";
             }
@@ -55,7 +54,7 @@ public abstract class HibernateSessionFactoryBuilder {
         } catch (IOException e) {
             logger.error("findAllMappings()", e);
             throw new OperationalException(e);
-        } catch (URISyntaxException e) {
+        } catch (Throwable e) {
             logger.error("findAllMappings()", e);
             throw new ImplementationException(e);
         }
@@ -92,7 +91,7 @@ public abstract class HibernateSessionFactoryBuilder {
     protected void createDependencyIndex(Class clazz) {
 
         final Integer previousIndex = bubbleClassDependencyIndex.put(clazz, nextOrderIndex);
-        if (previousIndex !=null) {
+        if (previousIndex != null) {
             throw new ImplementationException("Dependency index for BubbleObject is already defined:" + clazz.getName());
         }
     }
@@ -152,6 +151,7 @@ public abstract class HibernateSessionFactoryBuilder {
         nextOrderIndex++;
         return addResourceUsingAbsolutePathUseSameIndex(clazz, hbmFilename);
     }
+
     public HibernateSessionFactoryBuilder addResourceUsingAbsolutePathUseSameIndex(Class clazz, String hbmFilename) {
         hbmResource.add(hbmFilename);
         if (BubbleObject.class.isAssignableFrom(clazz)) {
@@ -179,7 +179,6 @@ public abstract class HibernateSessionFactoryBuilder {
      *     <li>hibernate.transaction.factory_class=org.hibernate.transaction.JTATransactionFactory</li>
      *     <li>hibernate.connection.datasource=no.kartverket.mysystem.myapp.persistence.MyApp_DS</li>
      * </ul>
-     *
      */
     public SessionFactory build(SnapshotVersionSeed snapshotVersionSeed, Properties properties, @Nullable Interceptor interceptor) {
         // Denne metoden bruker synkronisering på {@code LOCK} fordi BubbleIdType.SnapshotVersionSeedSeed ikke må endres mens
@@ -197,7 +196,7 @@ public abstract class HibernateSessionFactoryBuilder {
         synchronized (LOCK) {
             try {
                 BubbleIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
-                Configuration cfg = createConfiguration(properties,interceptor);
+                Configuration cfg = createConfiguration(properties, interceptor);
                 sessionFactory = cfg.buildSessionFactory();
             } catch (HibernateException e) {
                 throw new ImplementationException("Error initializing Hibernate", e, logger);
@@ -215,18 +214,19 @@ public abstract class HibernateSessionFactoryBuilder {
     public Map<Class<? extends BubbleObject>, Integer> getBubbleClassDependencyIndex() {
         return bubbleClassDependencyIndex;
     }
+
     /**
      * Forsøker å finne alle className->hbm-fil mappinger.
-     *
+     * <p/>
      * Dette gjøres gjennom å først finne alle hbm-filer, deretter gå gjennom dem og forsøke å finne klassenavnet som
      * filen er en mapping for. Deretter legges disse inn i en map som har className->hbm-fil. Denne mappen benyttes så
      * når man forsøker å gjøre en addResource på en klasse.
-     *
+     * <p/>
      * Dette må håndteres litt forskjellig i situasjonene å lese ut hbm-filene fra en fil og fra en jar-fil.
      *
      * @throws java.io.IOException
      */
-    protected void findAllMappings() throws IOException, URISyntaxException {
+    protected void findAllMappings() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
         Enumeration<URL> resources = classLoader.getResources(mappingFilesDirectory);
@@ -236,9 +236,6 @@ public abstract class HibernateSessionFactoryBuilder {
         findHbmFilenames(resources, files, startPaths);
 
         iterateOverFilesAndFindClassnames(classLoader, files, startPaths);
-
-
-
     }
 
     private void iterateOverFilesAndFindClassnames(ClassLoader classLoader, List<String> files, Set<String> startPaths) {
@@ -295,11 +292,11 @@ public abstract class HibernateSessionFactoryBuilder {
             path = path.replaceFirst("/", "");
             startPaths.add(path.replaceFirst(mappingFilesDirectory, ""));
             String protocol = resource.getProtocol();
-            if (protocol.equals("file")) {
+            if ("file".equals(protocol)) {
                 checkForFilesWithFileProtocol(files, resource);
-            } else if (protocol.equals("jar")) {
+            } else if ("jar".equals(protocol)) {
                 checkForFilesWithJarProtocol(files, resource);
-            } else if (protocol.equals("zip")) {
+            } else if ("zip".equals(protocol)) {
                 checkForFilesWithZipProtocol(files, resource);
             } else {
                 throw new ImplementationException("Unknown protocol: " + protocol);
