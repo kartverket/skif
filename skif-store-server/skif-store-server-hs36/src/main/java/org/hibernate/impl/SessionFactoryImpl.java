@@ -224,7 +224,7 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 		this.typeResolver = cfg.getTypeResolver().scope( this );
 		this.typeHelper = new TypeLocatorImpl( typeResolver );
 
-		this.filters = new HashMap();
+		this.filters = new HashMap<>();
 		this.filters.putAll( cfg.getFilterDefinitions() );
 
 		if ( log.isDebugEnabled() ) {
@@ -267,8 +267,8 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 		final String cacheRegionPrefix = settings.getCacheRegionPrefix() == null ? "" : settings.getCacheRegionPrefix() + ".";
 
 		entityPersisters = new HashMap();
-		Map entityAccessStrategies = new HashMap();
-		Map<String,ClassMetadata> classMeta = new HashMap<String,ClassMetadata>();
+		Map entityAccessStrategies = new HashMap<>();
+		Map<String,ClassMetadata> classMeta = new HashMap<>();
 		classes = cfg.getClassMappings();
 		while ( classes.hasNext() ) {
 			final PersistentClass model = (PersistentClass) classes.next();
@@ -292,8 +292,8 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 		}
 		this.classMetadata = Collections.unmodifiableMap(classMeta);
 
-		Map<String,Set<String>> tmpEntityToCollectionRoleMap = new HashMap<String,Set<String>>();
-		collectionPersisters = new HashMap();
+		Map<String,Set<String>> tmpEntityToCollectionRoleMap = new HashMap<>();
+		collectionPersisters = new HashMap<>();
 		Iterator collections = cfg.getCollectionMappings();
 		while ( collections.hasNext() ) {
 			Collection model = (Collection) collections.next();
@@ -314,7 +314,7 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 				String entityName = ( ( AssociationType ) indexType ).getAssociatedEntityName( this );
 				Set roles = ( Set ) tmpEntityToCollectionRoleMap.get( entityName );
 				if ( roles == null ) {
-					roles = new HashSet();
+					roles = new HashSet<>();
 					tmpEntityToCollectionRoleMap.put( entityName, roles );
 				}
 				roles.add( persister.getRole() );
@@ -324,7 +324,7 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 				String entityName = ( ( AssociationType ) elementType ).getAssociatedEntityName( this );
 				Set roles = ( Set ) tmpEntityToCollectionRoleMap.get( entityName );
 				if ( roles == null ) {
-					roles = new HashSet();
+					roles = new HashSet<>();
 					tmpEntityToCollectionRoleMap.put( entityName, roles );
 				}
 				roles.add( persister.getRole() );
@@ -339,10 +339,10 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 		collectionRolesByEntityParticipant = Collections.unmodifiableMap( tmpEntityToCollectionRoleMap );
 
 		//Named Queries:
-		namedQueries = new HashMap( cfg.getNamedQueries() );
-		namedSqlQueries = new HashMap( cfg.getNamedSQLQueries() );
-		sqlResultSetMappings = new HashMap( cfg.getSqlResultSetMappings() );
-		imports = new HashMap( cfg.getImports() );
+		namedQueries = new HashMap<>( cfg.getNamedQueries() );
+		namedSqlQueries = new HashMap<>( cfg.getNamedSQLQueries() );
+		sqlResultSetMappings = new HashMap<>( cfg.getSqlResultSetMappings() );
+		imports = new HashMap<>( cfg.getImports() );
 
 		// after *all* persisters and named queries are registered
 		Iterator iter = entityPersisters.values().iterator();
@@ -401,7 +401,7 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 			updateTimestampsCache = new UpdateTimestampsCache(settings, properties);
 			queryCache = settings.getQueryCacheFactory()
 			        .getQueryCache(null, updateTimestampsCache, settings, properties);
-			queryCaches = new HashMap<String,QueryCache>();
+			queryCaches = new HashMap<>();
 			allCacheRegions.put( updateTimestampsCache.getRegion().getName(), updateTimestampsCache.getRegion() );
 			allCacheRegions.put( queryCache.getRegion().getName(), queryCache.getRegion() );
 		}
@@ -442,7 +442,7 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 		this.entityNotFoundDelegate = entityNotFoundDelegate;
 
 		// this needs to happen after persisters are all ready to go...
-		this.fetchProfiles = new HashMap();
+		this.fetchProfiles = new HashMap<>();
 		itr = cfg.iterateFetchProfiles();
 		while ( itr.hasNext() ) {
 			final org.hibernate.mapping.FetchProfile mappingProfile =
@@ -518,7 +518,7 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 	public void registerEntityNameResolver(EntityNameResolver resolver, EntityMode entityMode) {
 		LinkedHashSet resolversForMode = ( LinkedHashSet ) entityNameResolvers.get( entityMode );
 		if ( resolversForMode == null ) {
-			resolversForMode = new LinkedHashSet();
+			resolversForMode = new LinkedHashSet<>();
 			entityNameResolvers.put( entityMode, resolversForMode );
 		}
 		resolversForMode.add( resolver );
@@ -536,7 +536,7 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 	}
 
 	private Map checkNamedQueries() throws HibernateException {
-		Map errors = new HashMap();
+		Map errors = new HashMap<>();
 
 		// Check named HQL queries
 		log.debug("Checking " + namedQueries.size() + " named HQL queries");
@@ -815,7 +815,7 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 	}
 
 	public ClassMetadata getClassMetadata(String entityName) throws HibernateException {
-		return (ClassMetadata) classMetadata.get(entityName);
+		return classMetadata.get(entityName);
 	}
 
 	/**
@@ -833,7 +833,7 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 			return new String[] { className }; //for a dynamic-class
 		}
 
-		ArrayList results = new ArrayList();
+		ArrayList results = new ArrayList<>();
 		Iterator iter = entityPersisters.values().iterator();
 		while ( iter.hasNext() ) {
 			//test this entity to see if we must query it
@@ -1187,7 +1187,7 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 	}
 
 	public Map getAllSecondLevelCacheRegions() {
-		return new HashMap( allCacheRegions );
+		return new HashMap<>( allCacheRegions );
 	}
 
 	public boolean isClosed() {

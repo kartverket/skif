@@ -10,7 +10,7 @@ import java.util.Set;
 
 /**
  * Abstract implementasjon av {@link ComponentCollection} for wrapping av {@link java.util.Set}.
- *
+ * <p/>
  * Bemerk: I definisjonen av denne klassen burde {@code <O>} egentlig extende både {@code BubbleObject} og
  * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da må subklassen {@link ComponentBubbleIdSet}
  * eksplisitt angi den eidende bobleklassen i tillegg til den direkte eiende klassen og det blir og det blir veldig
@@ -69,7 +69,7 @@ public abstract class AbstractBubbleIdIdSet<O extends BubbleObject, E extends Bu
         boolean removed = super.remove(object);
         if (removed) {
             O owner = getOwner();
-            Bubbles.onChangeRelationImpl(owner, relationName, (E) object, null);
+            Bubbles.onChangeRelationImpl(owner, relationName, object, null);
         }
         return removed;
     }

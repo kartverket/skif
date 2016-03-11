@@ -22,7 +22,7 @@ public class AggregertObjekt extends AbstractBubbleObject implements StoreTestBu
 
     @Override
     public void setId(BubbleId<?> id) {
-        super.setId((AggregertObjektId<?>) id);
+        super.setId(id);
     }
 
     @Override

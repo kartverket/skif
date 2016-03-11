@@ -3,8 +3,6 @@ package no.statkart.skif.generics.domain.impl;
 import no.statkart.skif.generics.service.StrutService;
 
 /**
- * Ikke dokumentert
- *
  * @author Leif Lislegård
  * @since 1.0 - sprint 28
  */
@@ -17,7 +15,7 @@ public class AStrutId<O extends AStrut> extends BaseStrutId<O> {
 
     @Override
     public O getObject(StrutService service) {
-        return (O) service.getStrut(this);
+        return service.getStrut(this);
     }
 
     //implementing methods..

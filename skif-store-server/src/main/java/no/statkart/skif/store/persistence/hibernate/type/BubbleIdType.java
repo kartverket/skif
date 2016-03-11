@@ -111,7 +111,7 @@ public abstract class BubbleIdType implements UserType {
     }
 
     public final int hashCode(Object x) throws HibernateException {
-        return ((BubbleId<?>) x).hashCode();
+        return x.hashCode();
     }
 
     public Object deepCopy(Object value) {

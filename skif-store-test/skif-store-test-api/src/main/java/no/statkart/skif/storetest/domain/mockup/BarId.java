@@ -10,7 +10,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 public class BarId<T extends Bar> extends AbstractStoreTestBubbleId<T> {
 
     public Long getValue() {
-        return (Long) super.getValue();
+        return super.getValue();
     }
 
     public BarId(Long value) {

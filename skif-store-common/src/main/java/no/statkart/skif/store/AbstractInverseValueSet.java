@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Abstract implementasjon av {@link no.statkart.skif.store.InverseValueCollection} for wrapping av {@link java.util.Set}
  * av inverse values.
- *
+ * <p/>
  * Bemerk: I definisjonen av denne klassen burde {@code <O>} egentlig extende både {@code BubbleObject} og
  * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da må subklassen {@link no.statkart.skif.store.ComponentInverseValueSet}
  * eksplisitt angi den eidende bobleklassen i tillegg til den direkte eiende klassen og det blir og det blir veldig
@@ -69,7 +69,7 @@ public abstract class AbstractInverseValueSet<O extends BubbleObject, E> extends
         boolean removed = super.remove(object);
         if (removed) {
             O owner = getOwner();
-            Bubbles.onChangeRelationImpl(owner, relationName, (E) object, null);
+            Bubbles.onChangeRelationImpl(owner, relationName, object, null);
         }
         return removed;
     }

@@ -9,11 +9,10 @@ import java.sql.Timestamp;
 
 /**
  * Boble som har historikk.
- * <p>
+ * <p/>
  * Denne boblen må kun brukes av lavnivå tester som går direkte mot databasen uten å bruke StoreTestServer modulen og
  * skal ikke bruke mockuprammeverket. Objekter med id <= 100 er readonly og skal ikke endres. Objekter med id >
  * 100 slettes automatisk mellom hver testmetode.
- *
  *
  * @author Henrik Fredholm
  * @since 2.3
@@ -37,7 +36,7 @@ public class TestBubbleWithHistory extends AbstractBubbleObject implements Store
 
     @Override
     public void setId(BubbleId<?> id) {
-        super.setId((TestBubbleWithHistoryId<?>)id);
+        super.setId(id);
     }
 
     @Override

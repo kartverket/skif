@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 /**
  * Boble som ikke har historikk.
- * <p>
+ * <p/>
  * Denne boblen må kun brukes av lavnivå tester som går direkte mot databasen uten å bruke StoreTestServer modulen og
  * skal ikke bruke mockuprammeverket. Objekter med id <= 100 er readonly og skal ikke endres. Objekter med id >
  * 100 slettes automatisk mellom hver testmetode
@@ -31,7 +31,7 @@ public class TestBubble extends AbstractBubbleObject implements StoreTestBubble 
 
     @Override
     public void setId(BubbleId<?> id) {
-        super.setId((TestBubbleId<?>)id);
+        super.setId(id);
     }
 
     @Override

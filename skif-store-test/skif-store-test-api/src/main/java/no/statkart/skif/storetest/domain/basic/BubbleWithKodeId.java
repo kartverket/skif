@@ -8,13 +8,12 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
  * @author Henrik Fredholm
  * @since 2.3
  */
-
 public class BubbleWithKodeId<T extends BubbleWithKode> extends AbstractStoreTestBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
     @Override
     public Long getValue() {
-        return (Long)super.getValue();
+        return super.getValue();
     }
 
     public BubbleWithKodeId(Long value) {

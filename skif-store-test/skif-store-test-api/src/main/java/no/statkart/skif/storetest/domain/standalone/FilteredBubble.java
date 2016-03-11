@@ -36,7 +36,7 @@ public class FilteredBubble extends AbstractBubbleObject implements StoreTestBub
 
     @Override
     public void setId(BubbleId<?> id) {
-        super.setId((FilteredBubbleId<?>) id);
+        super.setId(id);
     }
 
     @Override

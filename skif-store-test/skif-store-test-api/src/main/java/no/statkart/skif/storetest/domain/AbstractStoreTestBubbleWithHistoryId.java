@@ -12,7 +12,7 @@ public abstract class AbstractStoreTestBubbleWithHistoryId<T extends AbstractSto
 
     @Override
     public Long getValue() {
-        return (Long)super.getValue();
+        return super.getValue();
     }
 
     public AbstractStoreTestBubbleWithHistoryId(Long value) {

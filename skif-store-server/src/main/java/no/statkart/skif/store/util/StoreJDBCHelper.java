@@ -103,7 +103,7 @@ public class StoreJDBCHelper extends JDBCHelper {
         Object idValue = StoreJDBCHelper.getBubbleIdValue(resultSet, bubbleIdIndex, BubbleIds.getValueType(bubbleIdClass));
         Timestamp timestamp = resultSet.getTimestamp(snapshotVersionIndex);
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance(timestamp.toString());
-        return (T) BubbleIds.createInstance(bubbleIdClass, idValue, snapshotVersion);
+        return BubbleIds.createInstance(bubbleIdClass, idValue, snapshotVersion);
     }
 
 }

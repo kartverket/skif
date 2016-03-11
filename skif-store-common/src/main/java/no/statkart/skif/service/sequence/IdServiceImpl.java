@@ -33,17 +33,17 @@ public class IdServiceImpl implements IdService {
         long last;
     };
 
-    private Map<String, Entry> sequences = new HashMap();
+    private Map<String, Entry> sequences = new HashMap<>();
     private int blockSize = 10;
 
     public <T extends BubbleId<?>> T getNextId(Class<T> idClass) {
         return BubbleIds.createInstance(idClass, getNextIdValue(idClass), SnapshotVersion.CURRENT);
     }
 
-    public  synchronized <T extends BubbleId<?>> Object getNextIdValue(Class<T> aClass) {
+    public synchronized <T extends BubbleId<?>> Object getNextIdValue(Class<T> aClass) {
         long value = 0;
         String sequenceName = getSequenceName(aClass);
-        Entry entry = (Entry) sequences.get(sequenceName);
+        Entry entry = sequences.get(sequenceName);
 
         if (entry == null) {
             // add an entry to the sequence table
@@ -84,7 +84,7 @@ public class IdServiceImpl implements IdService {
 
     public synchronized void clear() {
         logger.debug("Clearing cached sequences");
-        sequences = new HashMap();
+        sequences = new HashMap<>();
 
     }
 }

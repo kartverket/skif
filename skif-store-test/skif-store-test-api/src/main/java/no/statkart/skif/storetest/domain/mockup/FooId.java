@@ -12,7 +12,7 @@ public class FooId <T extends Foo> extends AbstractStoreTestBubbleId<T> {
 
     @Override
     public Long getValue() {
-        return (Long)super.getValue();
+        return super.getValue();
     }
 
     public FooId(Long value) {
