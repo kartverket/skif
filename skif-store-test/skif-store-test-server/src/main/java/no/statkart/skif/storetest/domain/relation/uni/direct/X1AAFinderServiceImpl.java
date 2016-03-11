@@ -35,14 +35,12 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         if (x1BBOneIds.isEmpty()) return result;
 
         for (X1BBOneId<?> id : x1BBOneIds) {
-            result.put(id, Sets.<X1AAId<?>>newHashSet());
+            result.put(id, new HashSet<X1AAId<?>>());
         }
 
 
         SnapshotVersion snapshotVersion = x1BBOneIds.iterator().next().getSnapshotVersion();
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        PreparedStatement preparedStatement = null;
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select someBBId, id  from X1AA  where someBBId in (select * from table(:idValues))");
             query.addSynchronizedQuerySpace("X1AA");
@@ -54,12 +52,10 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
             while (scroll.next()) {
                 Object[] next = scroll.get();
-                X1BBOneId<?> key = new X1BBOneId<X1BBOne>((Long) next[0], snapshotVersion);
+                X1BBOneId<?> key = new X1BBOneId<>((Long) next[0], snapshotVersion);
                 Set<X1AAId<?>> relatedIds = result.get(key);
-                relatedIds.add(new X1AAId<X1AA>((Long) next[1], snapshotVersion));
+                relatedIds.add(new X1AAId<>((Long) next[1], snapshotVersion));
             }
-        } finally {
-            HibernateHelper.close(preparedStatement, sessionSelector);
         }
         return result;
     }
@@ -70,14 +66,11 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         if (x1CCManyIds.isEmpty()) return result;
 
         for (X1CCManyId<?> id : x1CCManyIds) {
-            result.put(id, Sets.<X1AAId<?>>newHashSet());
+            result.put(id, new HashSet<X1AAId<?>>());
         }
 
-
         SnapshotVersion snapshotVersion = x1CCManyIds.iterator().next().getSnapshotVersion();
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        PreparedStatement preparedStatement = null;
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select id, ownerId  from X1CCMany  where id in (select * from table(:idValues))");
             query.addSynchronizedQuerySpace("X1CCMany");
@@ -90,13 +83,11 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             while (scroll.next()) {
                 Object[] next = scroll.get();
                 if (next[1] != null) {
-                    X1CCManyId<?> key = new X1CCManyId<X1CCMany>((Long) next[0], snapshotVersion);
+                    X1CCManyId<?> key = new X1CCManyId<>((Long) next[0], snapshotVersion);
                     Set<X1AAId<?>> relatedIds = result.get(key);
-                    relatedIds.add(new X1AAId<X1AA>((Long) next[1], snapshotVersion));
+                    relatedIds.add(new X1AAId<>((Long) next[1], snapshotVersion));
                 }
             }
-        } finally {
-            HibernateHelper.close(preparedStatement, sessionSelector);
         }
         return result;
     }
@@ -112,9 +103,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
 
         SnapshotVersion snapshotVersion = x1CCManyIds.iterator().next().getSnapshotVersion();
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        PreparedStatement preparedStatement = null;
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select id, ownerId  from X1CCMany  where id in (select * from table(:idValues))");
             query.addSynchronizedQuerySpace("X1CCMany");
@@ -127,12 +116,10 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             while (scroll.next()) {
                 Object[] next = scroll.get();
                 if (next[1] != null) {
-                    X1CCManyId<?> key = new X1CCManyId<X1CCMany>((Long) next[0], snapshotVersion);
-                    result.put(key, new X1AAId<X1AA>((Long) next[1], snapshotVersion));
+                    X1CCManyId<?> key = new X1CCManyId<>((Long) next[0], snapshotVersion);
+                    result.put(key, new X1AAId<>((Long) next[1], snapshotVersion));
                 }
             }
-        } finally {
-            HibernateHelper.close(preparedStatement, sessionSelector);
         }
         return result;
     }
@@ -148,9 +135,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
 
         SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        PreparedStatement preparedStatement = null;
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select uniqueOnX1AA, id  from X1AA  where uniqueOnX1AA in (select * from table(:textValues))");
             query.addSynchronizedQuerySpace("X1AA");
@@ -164,11 +149,9 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
                 Object[] next = scroll.get();
                 if (next[1] != null) {
                     String key = (String) next[0];
-                    result.put(key, new X1AAId<X1AA>((Long) next[1], snapshotVersion));
+                    result.put(key, new X1AAId<>((Long) next[1], snapshotVersion));
                 }
             }
-        } finally {
-            HibernateHelper.close(preparedStatement, sessionSelector);
         }
         return result;
     }
@@ -178,14 +161,12 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         if (textValues.isEmpty()) return result;
 
         for (String values : textValues) {
-            result.put(values, Sets.<X1AAId<?>>newHashSet());
+            result.put(values, new HashSet<X1AAId<?>>());
         }
 
 
         SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        PreparedStatement preparedStatement = null;
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersion);
             SQLQuery query = session.createSQLQuery("select nonUniqueOnX1AA, id  from X1AA  where nonUniqueOnX1AA in (select * from table(:textValues))");
             query.addSynchronizedQuerySpace("X1AA");
@@ -200,11 +181,9 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
                 if (next[1] != null) {
                     String key = (String) next[0];
                     Set<X1AAId<?>> relatedIds = result.get(key);
-                    relatedIds.add(new X1AAId<X1AA>((Long) next[1], snapshotVersion));
+                    relatedIds.add(new X1AAId<>((Long) next[1], snapshotVersion));
                 }
             }
-        } finally {
-            HibernateHelper.close(preparedStatement, sessionSelector);
         }
         return result;
     }

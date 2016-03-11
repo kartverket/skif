@@ -13,7 +13,6 @@ import no.statkart.skif.storetest.domain.relation.X1BBOneMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1CCManyMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
-import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
@@ -22,9 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.testng.Assert.*;
 
 /**
  * Tester kodepattern for unidireksjonelle relasjoner med tilhørede invers findere.
@@ -33,10 +30,10 @@ import static org.testng.Assert.assertNull;
  */
 @Test(groups = "singlevm-required")
 public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
+
     @Inject
     Store store;
-    @Inject
-    StoreUpdateService storeUpdateService;
+
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
@@ -175,8 +172,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
         store.getRelationCache().setEnabled(true);
 
-        UnitOfWork unitOfWork = store.beginUnitOfWork();
-        try {
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
 
             // Sjekk at b1 ikke er invers relatert til a2.
@@ -189,8 +185,6 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             a2.setSomeBBId(b1.getId());
 
             assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
-        } finally {
-            unitOfWork.close();
         }
     }
 
@@ -230,8 +224,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
 
         store.getRelationCache().setEnabled(true);
-        UnitOfWork unitOfWork = store.beginUnitOfWork();
-        try {
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
 
             // Ikke sjekk at b1 ikke er invers relatert til a2.
@@ -244,8 +237,6 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             a2.setSomeBBId(b1.getId());
 
             assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
-        } finally {
-            unitOfWork.close();
         }
     }
 
@@ -296,8 +287,8 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
 
         store.getRelationCache().setEnabled(true);
-        UnitOfWork unitOfWork = store.beginUnitOfWork();
-        try {
+
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
 
             // Ikke sjekk at b1 ikke er invers relatert til a2.
@@ -310,8 +301,6 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             a2.setSomeBBId(b1.getId());
             store.update(a2);
             assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
-        } finally {
-            unitOfWork.close();
         }
     }
 
@@ -376,8 +365,8 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         StoreRelationCache storeRelationCache = store.getRelationCache();
         boolean enabled = storeRelationCache.isEnabled();
         storeRelationCache.setEnabled(true);
-        UnitOfWork unitOfWork = store.beginUnitOfWork();
-        try {
+
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             X1AA a = new X1AA();
             store.insert(a);
 
@@ -389,7 +378,6 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             Set<X1AAId<?>> invSomeBBIds = b.findInvSomeBBIds();
             assertThat(invSomeBBIds).containsExactly(a.getId());
         } finally {
-            unitOfWork.close();
             storeRelationCache.setEnabled(enabled);
         }
     }
@@ -398,12 +386,12 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         StoreRelationCache storeRelationCache = store.getRelationCache();
         boolean enabled = storeRelationCache.isEnabled();
         storeRelationCache.setEnabled(true);
-        UnitOfWork unitOfWork1 = store.beginUnitOfWork();
-        try {
+
+        //noinspection unused
+        try (UnitOfWork unitOfWork1 = store.beginUnitOfWork()) {
             X1AAId<?> aId;
             X1BBOneId<?> bId;
-            UnitOfWork unitOfWork2 = store.beginUnitOfWork();
-            try {
+            try (UnitOfWork unitOfWork2 = store.beginUnitOfWork()) {
                 X1AA a = new X1AA();
                 store.insert(a);
                 aId = a.getId();
@@ -414,8 +402,6 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
                 a.setSomeBBId(b.getId());
                 store.commitUnitOfWork(unitOfWork2);
-            } finally {
-                unitOfWork2.close();
             }
 
             X1AA a = store.get(aId);
@@ -424,7 +410,6 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             Set<X1AAId<?>> invSomeBBIds = b.findInvSomeBBIds();
             assertThat(invSomeBBIds).containsExactly(a.getId());
         } finally {
-            unitOfWork1.close();
             storeRelationCache.setEnabled(enabled);
         }
     }
@@ -443,7 +428,6 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
     public void testUniqueOnX1AAMockups() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
-        X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
 
         // Sjekk at a1 har gitt index verdier
         X1AA a1 = store.get(x1AAMockupFactory.getA1Id());
@@ -469,10 +453,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
      */
     public void testGetviaUniqueOnX1AAIndex() {
         store.getRelationCache().setEnabled(true);
-
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
-        X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
+        mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
         ImmutableSet<String> indexes = ImmutableSet.of("Unique: [0,1]", "Unique: [0,2]", "Unique: [0,3]");
         X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
@@ -489,12 +470,10 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
      */
     public void testInsertUniqueOnX1AAIndex() {
         store.getRelationCache().setEnabled(true);
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
 
-        UnitOfWork unitOfWork = null;
-        try {
-            unitOfWork = store.beginUnitOfWork();
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             X1AA x1AA = new X1AA();
             x1AA.setUniqueOnX1AA("blabla");
             store.insert(x1AA);
@@ -502,8 +481,6 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             assertNotNull(map.get("blabla"));
             assertEquals(map.get("blabla"), x1AA.getId());
             assertNotNull(map.get("Unique: [0,2]"));
-        } finally {
-            if (unitOfWork != null) unitOfWork.close();
         }
     }
 
@@ -536,9 +513,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1AAFinderService x1AAFinderService = store.getInstance(X1AAFinderService.class);
 
-        UnitOfWork unitOfWork = null;
-        try {
-            unitOfWork = store.beginUnitOfWork();
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             X1AA x1AA = new X1AA();
             x1AA.setUniqueOnX1AA("blabla");
             x1AA.setNonUniqueOnX1AA("NonUnique: [0,1]");
@@ -551,14 +526,11 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             Map<String, Set<X1AAId<?>>> map2 = x1AAFinderService.findX1AAIdsForNonUniqueOnX1AA(ImmutableSet.of("NonUnique: [0,1]"));
             assertNotNull(map2.get("NonUnique: [0,1]"));
             assertEquals(map2.get("NonUnique: [0,1]"), ImmutableSet.of(x1AAMockupFactory.getA2Id(), x1AAMockupFactory.getA3Id()));
-
-        } finally {
-            if (unitOfWork != null) unitOfWork.close();
         }
     }
 
     public void testEnableCacheAfterInsert() {
-        try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             X1AA x1AA = new X1AA();
             X1BBOne x1BBOne = new X1BBOne();
             store.insert(x1BBOne);
@@ -579,12 +551,14 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         assertNotNull(a1);
         assertEquals(a1.getSomeBBId(), x1BBOneMockupFactory.getB2Id());
 
+        //noinspection unused
         try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
             X1BBOne x1BBOne = new X1BBOne();
             store.insert(x1BBOne);
             X1AA a1Changed = store.lock((x1AAMockupFactory.getA1Id()));
             a1Changed.setSomeBBId(x1BBOne.getId());
             store.update(a1Changed);
+            //noinspection unused
             try (UnitOfWork unitOfWork2 = store.beginUnitOfWork()) {
                 store.getRelationCache().setEnabled(true);
                 assertThat(x1BBOne.findInvSomeBBIds()).containsExactly(a1Changed.getId());

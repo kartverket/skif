@@ -9,7 +9,6 @@ import no.statkart.skif.store.Store;
 import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
-import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -21,7 +20,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author Henrik Fredholm
@@ -30,8 +28,7 @@ import static org.testng.Assert.assertTrue;
 public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
     @Inject
     Store store;
-    @Inject
-    StoreUpdateService storeUpdateService;
+
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
@@ -144,9 +141,7 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2BBOneMockupFactory X2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
 
-        UnitOfWork unitOfWork = null;
-        try {
-            unitOfWork = store.beginUnitOfWork();
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             store.getRelationCache().setEnabled(true);
             X2BBOne b1 = store.get(X2BBOneMockupFactory.getB1Id());
             assertThat(b1.findInvSomeBBIds()).doesNotContain(X2AAWithEntityComponentMockupFactory.getA2Id());
@@ -155,8 +150,6 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
             aNewComponent.setSomeBBId(b1.getId());
             a2.setEntityComponentOne(aNewComponent);
             assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
-        } finally {
-            unitOfWork.close();
         }
     }
 
@@ -223,9 +216,8 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2BBOneMockupFactory x2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
         X2AAWithEntityComponent a2 = store.get(x2AAWithEntityComponentMockupFactory.getA2Id());
-        UnitOfWork unitOfWork = null;
-        try {
-            unitOfWork = store.beginUnitOfWork();
+
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             store.getRelationCache().setEnabled(true);
             X2BBOne b1 = store.get(x2BBOneMockupFactory.getB1Id());
             assertThat(b1.findInvRole1BBOneIds()).doesNotContain(x2AAWithEntityComponentMockupFactory.getA2Id());
@@ -236,8 +228,6 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
             component2.setRole1BBOneId(x2BBOneMockupFactory.getB2Id());
             a2.getAaSetEntityComponents().add(component2);
             assertThat(b1.findInvRole1BBOneIds()).contains(x2AAWithEntityComponentMockupFactory.getA2Id());
-        } finally {
-            unitOfWork.close();
         }
     }
 
@@ -246,17 +236,14 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2BBOneMockupFactory x2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
         X2AAWithEntityComponent a3 = store.get(x2AAWithEntityComponentMockupFactory.getA3Id());
-        UnitOfWork unitOfWork = null;
-        try {
-            unitOfWork = store.beginUnitOfWork();
+
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             store.getRelationCache().setEnabled(true);
             X2BBOne b3 = store.get(x2BBOneMockupFactory.getB3Id());
             assertThat(b3.findInvRole1BBOneIds()).contains(x2AAWithEntityComponentMockupFactory.getA3Id());
             X2SetEntityComponent component = a3.getAaSetEntityComponents().iterator().next();
             a3.getAaSetEntityComponents().remove(component);
             assertThat(b3.findInvRole1BBOneIds()).doesNotContain(x2AAWithEntityComponentMockupFactory.getA3Id());
-        } finally {
-            unitOfWork.close();
         }
     }
 
@@ -268,9 +255,8 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2BBOneMockupFactory x2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
         X2AAWithEntityComponent a2 = store.get(x2AAWithEntityComponentMockupFactory.getA2Id());
-        UnitOfWork unitOfWork = null;
-        try {
-            unitOfWork = store.beginUnitOfWork();
+
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             store.getRelationCache().setEnabled(true);
             X2AAWithEntityComponent aNew = new X2AAWithEntityComponent();
             X2SetEntityComponent component1 = new X2SetEntityComponent();
@@ -285,8 +271,6 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
             X2BBOne b2 = store.get(x2BBOneMockupFactory.getB2Id());
             assertThat(b1.findInvRole1BBOneIds()).contains(aNew.getId());
             assertThat(b2.findInvRole1BBOneIds()).contains(aNew.getId());
-        } finally {
-            unitOfWork.close();
         }
     }
 
@@ -295,9 +279,8 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2BBOneMockupFactory x2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
         X2AAWithEntityComponent a2 = store.get(x2AAWithEntityComponentMockupFactory.getA2Id());
-        UnitOfWork unitOfWork = null;
-        try {
-            unitOfWork = store.beginUnitOfWork();
+
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
             store.getRelationCache().setEnabled(true);
             X2AAWithEntityComponent aNew = new X2AAWithEntityComponent();
             X2SetEntityComponent component1 = new X2SetEntityComponent();
@@ -310,8 +293,6 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
             failBecauseExceptionWasNotThrown(IllegalStateException.class);
         } catch(IllegalStateException e) {
             assertThat(e).hasMessageStartingWith("Multiple felter/objekter i collection av objekter mapper til samme feltverdi [X2BBOneId");
-        } finally {
-            unitOfWork.close();
         }
     }
 

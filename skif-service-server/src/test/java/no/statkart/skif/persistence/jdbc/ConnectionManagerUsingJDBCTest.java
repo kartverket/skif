@@ -4,6 +4,7 @@ import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import oracle.jdbc.OracleConnection;
+import org.fest.assertions.api.Assertions;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -101,33 +102,32 @@ public class ConnectionManagerUsingJDBCTest {
     public void testSqlRead() throws SQLException {
         ConnectionForSnapshotVersion forSnapshotVersion = connectionManager.getForSnapshotVersion(SnapshotVersion.CURRENT);
         assertFalse(forSnapshotVersion.isClosed());
-        PreparedStatement preparedStatement;
+
         try {
             Connection unwrappedConnection = forSnapshotVersion.reserve();
-            preparedStatement = unwrappedConnection.prepareStatement("select * from foo_h where id = ?");
-            preparedStatement.setInt(1, 101);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet != null) {
-                while (resultSet.next()) {
-                    Integer intger = resultSet.getInt(5);
-                    String str = resultSet.getString(6);
-                    assertNotNull(intger);
-                    assertNotNull(str);
+            try (PreparedStatement preparedStatement = unwrappedConnection.prepareStatement("select * from foo_h where id = ?")) {
+                preparedStatement.setInt(1, 101);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Integer intger = resultSet.getInt(5);
+                        String str = resultSet.getString(6);
+                        assertNotNull(intger);
+                        assertNotNull(str);
 //                    System.out.println(intger + " - " + str);
+                    }
                 }
             }
-            resultSet.close();
 
-            preparedStatement = unwrappedConnection.prepareStatement("select * from bar_h where id = ?");
-            preparedStatement.setInt(1, 1002);
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet != null) {
-                while (resultSet.next()) {
-                    Integer intger = resultSet.getInt(5);
-                    Integer intger2 = resultSet.getInt(7);
-                    assertNotNull(intger);
-                    assertNotNull(intger2);
+            try (PreparedStatement preparedStatement = unwrappedConnection.prepareStatement("select * from bar_h where id = ?")) {
+                preparedStatement.setInt(1, 1002);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Integer intger = resultSet.getInt(5);
+                        Integer intger2 = resultSet.getInt(7);
+                        assertNotNull(intger);
+                        assertNotNull(intger2);
 //                    System.out.println(intger + " - " + intger2);
+                    }
                 }
             }
 
@@ -190,20 +190,20 @@ public class ConnectionManagerUsingJDBCTest {
         Integer res = null;
         ConnectionForSnapshotVersion forSnapshotVersion = connectionManager.getForSnapshotVersion(SnapshotVersion.CURRENT);
         assertFalse(forSnapshotVersion.isClosed());
-        PreparedStatement preparedStatement;
+
         try {
             Connection unwrappedConnection = forSnapshotVersion.reserve();
             String statement = "select count(*) from " + table;
             if (id != null) statement += " where id = ?";
 
-            preparedStatement = unwrappedConnection.prepareStatement(statement);
-            if (id != null) {
-                preparedStatement.setInt(1, 101);
-            }
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet != null) {
-                if (resultSet.next()) {
-                    res = resultSet.getInt(1);
+            try (PreparedStatement preparedStatement = unwrappedConnection.prepareStatement(statement)) {
+                if (id != null) {
+                    preparedStatement.setInt(1, 101);
+                }
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        res = resultSet.getInt(1);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -228,34 +228,36 @@ public class ConnectionManagerUsingJDBCTest {
     public void testUpdateFoo_H_rollback_og_old() throws SQLException {
         String unavn = "Old road";
         ConnectionForSnapshotVersion forSnapshotVersion = connectionManager.getForSnapshotVersion(SnapshotVersion.CURRENT);
-        PreparedStatement preparedStatement = null;
+
         Connection unwrappedConnection = null;
         boolean feilet = false;
 
         try {
             unwrappedConnection = forSnapshotVersion.reserve();
-            preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?");
-            preparedStatement.setString(1, unavn);
-            preparedStatement.setInt(2, 101);
-            preparedStatement.setLong(3, 2);
-            int updated = preparedStatement.executeUpdate();
-            assertTrue(updated == 1, "Mer en en rad er oppdatert!!!!!!");
+            try (PreparedStatement preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?")) {
+                preparedStatement.setString(1, unavn);
+                preparedStatement.setInt(2, 101);
+                preparedStatement.setLong(3, 2);
+                int updated = preparedStatement.executeUpdate();
+                assertTrue(updated == 1, "Mer en en rad er oppdatert!!!!!!");
 
-            //les tilbake oppdatert data
-            String retNavn_ = getNavn(unwrappedConnection, 101, 2);
-            assertTrue(retNavn_.equals(unavn));
+                //les tilbake oppdatert data
+                String retNavn_ = getNavn(unwrappedConnection, 101, 2);
+                assertTrue(retNavn_.equals(unavn));
 
-            String oldNavn = getOld(101, 2);
-            assertFalse(oldNavn.equals(retNavn_), "Old skal ikke vere likt oppdatert navn");
+                String oldNavn = getOld(101, 2);
+                assertFalse(oldNavn.equals(retNavn_), "Old skal ikke vere likt oppdatert navn");
 
-            forSnapshotVersion.rollback();
+                forSnapshotVersion.rollback();
 
-            //sjekk at vi kan lese tilbake de nye data.....
-            String retNavn = getNavn(unwrappedConnection, 101, 2);
-            if (unavn.equals(retNavn)) {
-                //Hvis navnet forsatt er likt, er ikke rollback kjørt.
-                feilet = true;
+                //sjekk at vi kan lese tilbake de nye data.....
+                String retNavn = getNavn(unwrappedConnection, 101, 2);
+                if (unavn.equals(retNavn)) {
+                    //Hvis navnet forsatt er likt, er ikke rollback kjørt.
+                    feilet = true;
+                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -264,12 +266,13 @@ public class ConnectionManagerUsingJDBCTest {
             try {
                 if (unwrappedConnection != null) {
                     //resett etter testen.
-                    preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?");
-                    preparedStatement.setString(1, "GAMMELVEIEN");
-                    preparedStatement.setInt(2, 101);
-                    preparedStatement.setLong(3, 2);
-                    int updated = preparedStatement.executeUpdate();
-                    assertTrue(updated == 1, "Mer en en rad er oppdatert!!!!!!");
+                    try (PreparedStatement preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?")) {
+                        preparedStatement.setString(1, "GAMMELVEIEN");
+                        preparedStatement.setInt(2, 101);
+                        preparedStatement.setLong(3, 2);
+                        Assertions.assertThat(preparedStatement.executeUpdate())
+                                .describedAs("Mer en en rad er oppdatert!!!!!!").isEqualTo(1);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -303,21 +306,19 @@ public class ConnectionManagerUsingJDBCTest {
 
     private String getNavn(Connection unwrappedConnection, int id, int version) throws SQLException {
         String retNavn = null;
-        PreparedStatement preparedStatement;
-        preparedStatement = unwrappedConnection.prepareStatement("select * from foo_h where id = ? and versjonId = ?");
-        preparedStatement.setInt(1, id);
-        preparedStatement.setInt(2, version);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        int returned = 0;
-        if (resultSet != null) {
-            while (resultSet.next()) {
-                returned++;
-                retNavn = resultSet.getString(6);
+        try (PreparedStatement preparedStatement = unwrappedConnection.prepareStatement("select * from foo_h where id = ? and versjonId = ?")) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(2, version);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                int returned = 0;
+                while (resultSet.next()) {
+                    returned++;
+                    retNavn = resultSet.getString(6);
+                }
+                assertTrue(returned == 1);
             }
-            resultSet.close();
+            assertNotNull(retNavn);
         }
-        assertNotNull(retNavn);
-        assertTrue(returned == 1);
         return retNavn;
     }
 
@@ -333,20 +334,21 @@ public class ConnectionManagerUsingJDBCTest {
 
         ConnectionForSnapshotVersion forSnapshotVersion = connectionManager.getForSnapshotVersion(SnapshotVersion.CURRENT);
         assertFalse(forSnapshotVersion.isClosed());
-        PreparedStatement preparedStatement;
+
         Connection unwrappedConnection = null;
         try {
             unwrappedConnection = forSnapshotVersion.reserve();
-            preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?");
-            preparedStatement.setString(1, unavn);
-            preparedStatement.setInt(2, 101);
-            preparedStatement.setLong(3, 2);
-            int updated = preparedStatement.executeUpdate();
-            assertTrue(updated == 1, "Mer en en rad er oppdatert!!!!!!");
-            unwrappedConnection.commit();
+            try (PreparedStatement preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?")) {
+                preparedStatement.setString(1, unavn);
+                preparedStatement.setInt(2, 101);
+                preparedStatement.setLong(3, 2);
+                int updated = preparedStatement.executeUpdate();
+                assertTrue(updated == 1, "Mer en en rad er oppdatert!!!!!!");
+                unwrappedConnection.commit();
 
-            String navn = getOld(101, 2);
-            assertTrue(unavn.equals(navn), "Oppdatering ikke komittet");
+                String navn = getOld(101, 2);
+                assertTrue(unavn.equals(navn), "Oppdatering ikke komittet");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -355,13 +357,14 @@ public class ConnectionManagerUsingJDBCTest {
                 if (unwrappedConnection != null) {
                     int updated = 0;
                     //resett for andre tester.....
-                    preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?");
-                    preparedStatement.setString(1, "GAMMELVEIEN");
-                    preparedStatement.setInt(2, 101);
-                    preparedStatement.setInt(3, 2);
-                    updated = preparedStatement.executeUpdate();
+                    try (PreparedStatement preparedStatement = unwrappedConnection.prepareStatement("update foo_h set navn = ? where id = ? and versjonId = ?")) {
+                        preparedStatement.setString(1, "GAMMELVEIEN");
+                        preparedStatement.setInt(2, 101);
+                        preparedStatement.setInt(3, 2);
+                        updated = preparedStatement.executeUpdate();
+                        unwrappedConnection.commit();
+                    }
                     assertTrue(updated == 1, "Mer en en rad er oppdatert!!!!!!");
-                    unwrappedConnection.commit();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

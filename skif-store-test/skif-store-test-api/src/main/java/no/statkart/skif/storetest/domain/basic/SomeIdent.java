@@ -22,7 +22,7 @@ public class SomeIdent implements ConcatenatedFieldsSerialization, Serializable 
 
     public SomeIdent(ConcatenatedFields fields) {
         String[] values = fields.getFields();
-        this.field1 = values[0]==null ? null : Long.parseLong(values[0]);
+        this.field1 = values[0] == null ? 0L : Long.parseLong(values[0]);
         this.field2 = values[1];
 
     }
