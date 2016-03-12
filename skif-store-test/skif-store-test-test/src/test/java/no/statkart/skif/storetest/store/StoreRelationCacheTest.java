@@ -510,6 +510,37 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
         }
     }
 
+    /**
+     * Tester at invers relasjon av type One-relation ikke blir 'null' når identer swappes. Dvs under swappen, etter
+     * at 'a1.setUniqueOnX1AA(uniqueOnA2)' er utført så vil relation tracking for uniqueOnA2 mappe til a1 (dvs. ikke
+     * lengre til a2). Når a2 etterpå endres fra å peke på uniqueA2 til å peke på uniqueA1, så skal invers trackingen
+     * for uniqueA2 ikke settes til 'null', siden den nå allerede er satt til å mappe til a1.
+     */
+    public void testSwapUniqueIdents() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
+        final X1AAId<?> a2Id = mockupFacade.getX1AAMockupFactory().getA2Id();
+        try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
+            storeClient.getRelationCache().setEnabled(true);
+            X1AA a1 = storeClient.lock(a1Id);
+            X1AA a2 = storeClient.lock(a2Id);
+            String uniqueOnA1 = a1.getUniqueOnX1AA();
+            String uniqueOnA2 = a2.getUniqueOnX1AA();
+            {
+                Map<String, X1AAId<?>> map = x1AAFinderService.findX1AAIdsForUniqueOnX1AA(ImmutableSet.of(uniqueOnA1, uniqueOnA2));
+                assertEquals(map.get(uniqueOnA1), a1Id);
+                assertEquals(map.get(uniqueOnA2), a2Id);
+            }
+            a1.setUniqueOnX1AA(uniqueOnA2);
+            a2.setUniqueOnX1AA(uniqueOnA1);
+            {
+                Map<String, X1AAId<?>> map = x1AAFinderService.findX1AAIdsForUniqueOnX1AA(ImmutableSet.of(uniqueOnA1, uniqueOnA2));
+                assertEquals(map.get(uniqueOnA2), a1Id);
+                assertEquals(map.get(uniqueOnA1), a2Id);
+            }
+        }
+    }
+
     // TODO: Det er fortsatt flere testcaser som bør skrives, blant annet transfer fra klient til server og update/sletting med detached objekt
 
 }

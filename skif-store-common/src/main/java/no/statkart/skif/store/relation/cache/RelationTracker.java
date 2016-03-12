@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -38,7 +39,7 @@ public class RelationTracker {
         final protected Object value;
 
         protected Operation(Object value) {
-            this.value = value;
+            this.value = checkNotNull(value, "value");
         }
 
         protected abstract Object applyTo(Object relation);
@@ -77,7 +78,7 @@ public class RelationTracker {
         protected Object applyTo(Object relation) {
             if (relation instanceof Collection) {
                 ((Collection)relation).remove(value);
-            } else {
+            } else if (value.equals(relation)) {
                 relation=null;
             }
             return relation;
@@ -111,7 +112,7 @@ public class RelationTracker {
         if (materialised) {
             if (holder instanceof Collection) {
                 ((Collection) holder).remove(object);
-            } else {
+            } else if (object.equals(holder)) {
                 holder = null;
             }
         } else {
