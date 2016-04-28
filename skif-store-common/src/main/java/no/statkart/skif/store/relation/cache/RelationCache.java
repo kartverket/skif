@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.StoreEntry;
 import no.statkart.skif.store.relation.cache.annotation.Relation;
 import no.statkart.skif.store.relation.cache.annotation.RelationType;
 import no.statkart.skif.util.CopyHelper;
@@ -50,7 +51,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class RelationCache {
     final private Map<Key, RelationEntry> inverseRelationMap = Maps.newHashMap();
     final private Map<BubbleId<?>, List<CachedInverseValueEntry>> sourceIdToInverseValueMap = Maps.newHashMap();
-    final private static int MAX_LEVELS = 4;
+    final private static int MAX_LEVELS = StoreEntry.MAX_LEVELS;
     final private boolean[] enabled = new boolean[MAX_LEVELS];
 
     public boolean isEnabled(int level) {

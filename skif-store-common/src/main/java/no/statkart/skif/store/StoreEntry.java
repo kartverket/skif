@@ -12,7 +12,7 @@ import no.statkart.skif.util.CopyHelper;
  * @author Henrik Fredholm
  */
 public class StoreEntry {
-    final static int MAX_LEVELS = 4;
+    public final static int MAX_LEVELS = 10;
     BubbleId<?> id;
     protected BubbleObject persistentBubbleObject;
     protected BubbleObject[] bubbleObject = new BubbleObject[MAX_LEVELS];
