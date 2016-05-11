@@ -16,7 +16,7 @@ configureDatabasePlugin {
         sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql') { mustRunAfter 'purge', 'historikkUpdatePackageSnapshotTime' }
         sqlTask('createSchemaTestStandAlone', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTestStandAlone.sql') { mustRunAfter 'createSchema' }
         sqlTask('createSchemaTest', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest.sql') { mustRunAfter 'createSchema' }
-        sqlTask('tableSequence', sqlFile: 'src/main/sql/oracle/data/TableSequence.sql') { mustRunAfter 'createSchema' }
+        sqlTask('tableSequence', sqlFile: 'src/main/sql/oracle/data/Tablesequence.sql') { mustRunAfter 'createSchema' }
         sqlTask('loadTestdata', sqlFile: 'src/main/sql/oracle/data/LoadTestdata.sql') { mustRunAfter 'createSchema', 'createSchemaTestStandAlone', 'createSchemaTest' }
 
         properties = project.properties
