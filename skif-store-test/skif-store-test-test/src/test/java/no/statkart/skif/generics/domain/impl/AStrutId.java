@@ -12,13 +12,13 @@ public class AStrutId<O extends AStrut> extends BaseStrutId<O> {
         super(value);
     }
 
-
     @Override
     public O getObject(StrutService service) {
-        return service.getStrut(this);
+        return (O)service.getStrut(this);
     }
 
-    //implementing methods..
+
+//implementing methods..
 
 
     @Override
