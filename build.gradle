@@ -234,7 +234,7 @@ subprojects { Project project ->
 afterEvaluate {
 
     ideaExtensions {
-        vcs 'Perforce'
+        vcs 'Git'
     }
 
 
