@@ -1,9 +1,6 @@
 ### Java template
 *.class
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
 # Package Files #
 *.jar
 *.war
@@ -34,9 +31,6 @@ gradle-app.setting
 ### Java template
 *.class
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
 # Package Files #
 *.jar
 *.war
@@ -48,10 +42,15 @@ hs_err_pid*
 *.iml
 
 gradle-user.properties
+setEnv_personal.cmd
 
 skif.log
 
 .idea/
+*.iml
+*.ipr
+*.iws
 
 classes/
+gen/
 
