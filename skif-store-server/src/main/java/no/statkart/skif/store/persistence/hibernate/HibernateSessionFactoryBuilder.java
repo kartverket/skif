@@ -7,6 +7,7 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
+import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
@@ -199,6 +200,7 @@ public abstract class HibernateSessionFactoryBuilder {
         synchronized (LOCK) {
             try {
                 BubbleIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
+                EnumKodeIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
                 Configuration cfg = createConfiguration(properties,interceptor);
                 if (!SnapshotVersion.CURRENT.equals(snapshotVersionSeed) ) {
                     // Denne kan være satt ifm testing for current session factory, men den skal aldig være satt for
