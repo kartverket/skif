@@ -2,7 +2,7 @@ package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionContext;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.kodeliste.KodeId;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -29,6 +29,16 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     private static final boolean IS_VALUE_TRACING_ENABLED = LoggerFactory.getLogger(StringHelper.qualifier(BubbleIdType.class.getName())).isTraceEnabled();
     private transient Logger log;
 
+    /* Controls the value of {@link #snapshotVersionSeed} for newly created BubbleIdTypes (is a Seed of Seeds) */
+    private static SnapshotVersionSeed snapshotVersionSeedSeed = new SnapshotVersionSeed(SnapshotVersion.CURRENT);
+
+    /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
+    private SnapshotVersionSeed snapshotVersionSeed = snapshotVersionSeedSeed;
+
+    public static void setSnapshotVersionSeedSeed(SnapshotVersionSeed snapshotVersionSeedSeed) {
+        EnumKodeIdType.snapshotVersionSeedSeed = snapshotVersionSeedSeed;
+    }
+
     private Logger log() {
         if (log == null) {
             log = LoggerFactory.getLogger(getClass());
@@ -37,7 +47,6 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     private Class<? extends KodeId> enumClass;
-    private Object[] values = new Object[125]; // cached Enum values
 
 
     public void setParameterValues(Properties parameters) {
@@ -53,15 +62,8 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     public Object getInstance(int code) throws HibernateException {
-        SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
-        if (code < values.length) {
-            if (values[code] == null) {
-                values[code] = BubbleIds.createInstance(enumClass, (long) code, snapshotVersion);
-            }
-            return values[code];
-        } else {
-            return BubbleIds.createInstance(enumClass, (long) code, snapshotVersion);
-        }
+        SnapshotVersion snapshotVersion = snapshotVersionSeed.get();
+        return BubbleIds.createInstance(enumClass, (long) code, snapshotVersion);
     }
 
     public Object assemble(Serializable cached, Object owner) throws HibernateException {
