@@ -44,7 +44,7 @@ hs_err_pid*
 gradle-user.properties
 setEnv_personal.cmd
 
-skif.log
+*.log
 
 .idea/
 *.iml
