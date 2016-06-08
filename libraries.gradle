@@ -4,12 +4,20 @@ def libVersion(String name, String defaultValue) {
     project.ext.properties.get('version.' + name, defaultValue) //development mode only
 }
 
+File getToolsJar() {
+    String javaHome = System.properties['java.home']
+    if (System.properties['os.name'].toLowerCase().contains('mac os'))
+        new File(javaHome, '../classes/classes.jar')
+    else
+        new File(javaHome, '../lib/tools.jar')
+}
+
 // build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
 // use. In that respect it serves a role similar to <dependencyManagement> in Maven
 def libraries = [
 
         // Tools
-        'tools.jar': files("${JAVA_HOME}/lib/tools.jar").stopExecutionIfEmpty(), //JAVA_HOME ikke satt??
+        'tools.jar': files(getToolsJar()),
 
         // Database
         ojdbc: "com.oracle:ojdbc6:${libVersion('oracle', '11.2.0.3.0')}@jar",
