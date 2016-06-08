@@ -65,7 +65,6 @@ public class TimestampTypeMapperTest {
         xmlGregorianCalendar.setMinute(0);
         xmlGregorianCalendar.setSecond(0);
         xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(0, 9));
-        System.out.println(xmlGregorianCalendar.toXMLFormat());
     }
 
     public static class WrappedTimestamp {
