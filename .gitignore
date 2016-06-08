@@ -1,27 +1,10 @@
-### Java template
-*.class
-
-# Package Files #
-*.jar
-*.war
-*.ear
-
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
 ### Gradle template
 .gradle
 build/
-
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# Created by .ignore support plugin (hsz.mobi)
-### Gradle template
-.gradle
-build/
+gen/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -35,22 +18,15 @@ gradle-app.setting
 *.jar
 *.war
 *.ear
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
 
 *.iml
-
-gradle-user.properties
-setEnv_personal.cmd
-
-skif.log
-
 .idea/
+out/
 *.iml
 *.ipr
 *.iws
 
-classes/
-gen/
+gradle-user.properties
+setEnv_personal.cmd
 
+*.log
