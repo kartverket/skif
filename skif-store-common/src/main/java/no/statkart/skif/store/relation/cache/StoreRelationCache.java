@@ -155,6 +155,13 @@ public abstract class StoreRelationCache {
         return result;
     }
 
+    public <E> boolean isMaterialized(RelationName relationName, E value) {
+        if (isEnabled()) {
+            return relationCache.isMaterialized(getLevel(), relationName, value);
+        } else {
+            return false;
+        }
+    }
 
     public void cacheMaterialisedRelations(@Nullable BubbleObject bubbleObject) {
         if (bubbleObject != null) {

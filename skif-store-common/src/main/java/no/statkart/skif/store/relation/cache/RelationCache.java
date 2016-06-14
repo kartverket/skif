@@ -290,6 +290,15 @@ public class RelationCache {
         return missingInverseValues;
     }
 
+    public <E> boolean isMaterialized(int level, RelationName relationName, E inverseValue) {
+        RelationEntry inverseRelationEntry = getInverseRelation(relationName, inverseValue, false);
+        if (inverseRelationEntry != null) {
+            return inverseRelationEntry.isMaterialized(level);
+        } else {
+            return false;
+        }
+    }
+
     public void evictAll() {
         inverseRelationMap.clear();
         sourceIdToInverseValueMap.clear();

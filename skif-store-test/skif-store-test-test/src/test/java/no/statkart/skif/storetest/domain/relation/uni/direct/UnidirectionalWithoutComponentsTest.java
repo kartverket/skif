@@ -21,7 +21,10 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tester kodepattern for unidireksjonelle relasjoner med tilhørede invers findere.
@@ -140,7 +143,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
      * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
      * I denne varianten blir relasjonen materialisert før endring.
      */
-    public void testChangeSomeBBRelation() {
+    public void testChangeSomeBBRelationCaseEndresEtterMaterialisering() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
@@ -149,9 +152,8 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
 
         // Sjekk at b1 ikke er invers relatert til a2.
-        assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
-        assertEquals(b1.getInvSomeBBIds().isMaterialised(), false);
-        assertNull(b1.getInvSomeBBIds().getCached());
+        assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id()); // her lastes relasjonen
+        assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
 
         // Her endres a2 til å peke på b1
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
@@ -161,11 +163,57 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
     }
 
     /**
+     * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne"
+     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
+     * I denne varianten blir relasjonen endret før den materialiseres, men uten unit-of-work
+     */
+    public void testChangeSomeBBRelationCaseEndresFoerMaterialiseringUtenUOW() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
+        X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
+
+        store.getRelationCache().setEnabled(true);
+        X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
+        assertFalse(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal ikke være lastet");
+
+        // Her endres a2 til å peke på b1
+        X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
+        a2.setSomeBBId(b1.getId());
+
+        assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
+        assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
+    }
+
+    /**
+     * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne"
+     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
+     * I denne varianten blir relasjonen endret før den materialiseres, men i unit-of-work
+     */
+    public void testChangeSomeBBRelationCaseEndresFoerMaterialiseringIUOW() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
+        X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
+
+        store.getRelationCache().setEnabled(true);
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
+            X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
+            assertFalse(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal ikke være lastet");
+
+            // Her endres a2 til å peke på b1
+            X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
+            a2.setSomeBBId(b1.getId());
+
+            assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
+            assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
+        }
+    }
+
+    /**
      * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne".
      * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
      * I denne varianten blir relasjonen materialisert før endring i en unit-of-work.
      */
-    public void testChangeSomeBBRelation4() {
+    public void testChangeSomeBBRelationCaseEndresEtterMaterialiseringIUOW() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
@@ -177,60 +225,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
             // Sjekk at b1 ikke er invers relatert til a2.
             assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
-            assertEquals(b1.getInvSomeBBIds().isMaterialised(), false);
-            assertNull(b1.getInvSomeBBIds().getCached());
-
-            // Her endres a2 til å peke på b1
-            X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
-            a2.setSomeBBId(b1.getId());
-
-            assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
-        }
-    }
-
-    /**
-     * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne"
-     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
-     * I denne varianten blir relasjonen endret før den materialiseres, men uten unit-of-work
-     */
-    public void testChangeSomeBBRelation2() {
-        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
-        X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
-        X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
-
-        store.getRelationCache().setEnabled(true);
-        X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
-
-        // Ikke sjekk at b1 ikke er invers relatert til a2.
-//        assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
-        assertEquals(b1.getInvSomeBBIds().isMaterialised(), false);
-        assertNull(b1.getInvSomeBBIds().getCached());
-
-        // Her endres a2 til å peke på b1
-        X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
-        a2.setSomeBBId(b1.getId());
-
-        assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
-    }
-
-    /**
-     * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne"
-     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
-     * I denne varianten blir relasjonen endret før den materialiseres, men i unit-of-work
-     */
-    public void testChangeSomeBBRelation3() {
-        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
-        X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
-        X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
-
-        store.getRelationCache().setEnabled(true);
-        try (UnitOfWork ignored = store.beginUnitOfWork()) {
-            X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
-
-            // Ikke sjekk at b1 ikke er invers relatert til a2.
-//            assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
-            assertEquals(b1.getInvSomeBBIds().isMaterialised(), false);
-            assertNull(b1.getInvSomeBBIds().getCached());
+            assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
 
             // Her endres a2 til å peke på b1
             X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
@@ -245,7 +240,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
      * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
      * I denne varianten blir relasjonen materialisert før den endres og sjekkes på nytt i en nøstet unit-of-work.
      */
-    public void testChangeSomeBBRelation5() {
+    public void testChangeSomeBBRelationCaseEndresEtterMaterialiseringINoestedUOW() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
@@ -257,8 +252,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
             // Sjekk at b1 ikke er invers relatert til a2.
             assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
-            assertEquals(b1.getInvSomeBBIds().isMaterialised(), false);
-            assertNull(b1.getInvSomeBBIds().getCached());
+            assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
 
             UnitOfWork unitOfWork2 = store.beginUnitOfWork();
             try {
@@ -281,7 +275,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
      * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
      * I denne varianten blir relasjonen endret før den materialiseres, men i unit-of-work
      */
-    public void testChangeSomeBBRelation3Detached() {
+    public void testChangeSomeBBRelationDetached() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
@@ -291,16 +285,13 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         try (UnitOfWork ignored = store.beginUnitOfWork()) {
             X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
 
-            // Ikke sjekk at b1 ikke er invers relatert til a2.
-//            assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
-            assertEquals(b1.getInvSomeBBIds().isMaterialised(), false);
-            assertNull(b1.getInvSomeBBIds().getCached());
-
             // Her endres a2 til å peke på b1. Bemerk at a2 er detached så invers relasjon kan først oppdateres ved store.update(a2)
             X1AA a2 = CopyHelper.copy(store.lock(x1AAMockupFactory.getA2Id()));
             a2.setSomeBBId(b1.getId());
+            assertFalse(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal ikke være lastet");
             store.update(a2);
             assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
+            assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
         }
     }
 
@@ -412,14 +403,6 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         } finally {
             storeRelationCache.setEnabled(enabled);
         }
-    }
-
-    public void testGetUnique() {
-
-    }
-
-    public void testManyToMany() {
-
     }
 
     /**
