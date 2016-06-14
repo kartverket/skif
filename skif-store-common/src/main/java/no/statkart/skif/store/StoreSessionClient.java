@@ -7,6 +7,7 @@ import no.statkart.skif.util.CopyHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,16 +25,29 @@ import java.util.Set;
 public class StoreSessionClient extends AbstractStoreSession {
     private final StoreService storeService;
     private final SnapshotVersionContext snapshotVersionContext;
-
+    private Comparator<BubbleObject> versionComparator = defaultComparator();
 
     public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext) {
         this(storeService, snapshotVersionContext, new StoreCache());
     }
 
     public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext, StoreCache storeCache) {
+        this(storeService, snapshotVersionContext, storeCache, defaultComparator());
+    }
+
+    public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext, StoreCache storeCache, Comparator<? extends BubbleObject> versionComparator) {
         super(0, storeCache);
         this.storeService = storeService;
         this.snapshotVersionContext = snapshotVersionContext;
+    }
+
+    private static Comparator<BubbleObject> defaultComparator() {
+        return new Comparator<BubbleObject>() {
+            @Override
+            public int compare(BubbleObject o1, BubbleObject o2) {
+                return Long.compare(o1.getVersjonId(), o2.getVersjonId());
+            }
+        };
     }
 
     protected boolean isLocked(StoreEntry storeEntry) {
@@ -219,30 +233,42 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public void registerEntries(int level, BubbleTransfer<?> bubbleTransfer) {
-        Set<BubbleId> lockedIds = bubbleTransfer.getLockedIds();
-        for (BubbleObject bubbleObject : bubbleTransfer.getBubbleObjects().values()) {
-            StoreEntry entry = storeCache.get(bubbleObject.getId());
+        Set<BubbleId> lockedIdsFromTransfer = bubbleTransfer.getLockedIds();
+        for (BubbleObject bubbleObjectFromTransfer : bubbleTransfer.getBubbleObjects().values()) {
+            StoreEntry entry = storeCache.get(bubbleObjectFromTransfer.getId());
             if (entry == null) {
-                entry = storeCache.register(level, null, bubbleObject);
-                if (lockedIds.contains(bubbleObject.getId())) {
+                entry = storeCache.register(level, null, bubbleObjectFromTransfer);
+                if (lockedIdsFromTransfer.contains(bubbleObjectFromTransfer.getId())) {
                     entry.setBubbleObject(0, null);
-                    entry.setLocked(level, bubbleObject);
+                    entry.setLocked(level, bubbleObjectFromTransfer);
                     entry.setLockCreatedByLevel(level);
                 }
+                store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, level);
             } else {
                 int lockLevel = entry.calcLockLevelStartingFrom(level);
                 if (lockLevel < 0) {
-                    // Objektet er ikke låst på klienten
-                    if (lockedIds.contains(bubbleObject.getId())) {
-                        bubbleObject.register(store);
-                        entry.setLocked(level, bubbleObject);
+                    // Objekt i Store er ikke låst på klienten
+                    if (lockedIdsFromTransfer.contains(bubbleObjectFromTransfer.getId())) {
+                        bubbleObjectFromTransfer.register(store);
+                        entry.setLocked(level, bubbleObjectFromTransfer);
                         entry.setLockCreatedByLevel(level);
+                        store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, level);
                     } else {
-                        // TODO: Hva skal skje dersom objektet ikke er låst
-                        throw new ImplementationException("Undefined behavior");
+                        // Hverken objekt i Store eller fra transfer er låst
+                        int derivedLevel = entry.getLevelForDerivedBubbleObject(level);
+                        int versionComparison = versionComparator.compare(entry.getDerivedBubbleObject(derivedLevel), bubbleObjectFromTransfer);
+                        if (versionComparison == -1) {
+                            // Objekt fra transfer er nyest
+                            bubbleObjectFromTransfer.register(store);
+                            entry.setBubbleObject(derivedLevel, bubbleObjectFromTransfer);
+                            store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, derivedLevel);
+                        } else if (versionComparison == 0) {
+                            // Objekt i store og transfer har samme versjon. Legg inn materialiserte relasjoner fra transfer hvis de finnes
+                            store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, derivedLevel);
+                        }
                     }
                 }
-                // Hvis objektet er allerede låst, så ignoreres den innkommende kopien
+                // Hvis objektet i Store er allerede låst, så ignoreres den innkommende kopien fra transfer
             }
         }
     }

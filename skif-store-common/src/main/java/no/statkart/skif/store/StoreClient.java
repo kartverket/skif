@@ -27,14 +27,6 @@ public class StoreClient extends AbstractStore {
         }
     }
 
-    public void cacheMaterialisedRelations(@Nullable BubbleObject bubbleObject) {
-        storeRelationCache.cacheMaterialisedRelations(bubbleObject);
-    }
-
-    public void cacheMaterialisedRelations(Collection<? extends BubbleObject> bubbleObjects) {
-        storeRelationCache.cacheMaterialisedRelations(bubbleObjects);
-    }
-
     @Override
     protected boolean isServerStore() {
         return false;

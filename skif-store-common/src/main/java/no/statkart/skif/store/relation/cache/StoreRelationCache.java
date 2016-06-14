@@ -163,24 +163,17 @@ public abstract class StoreRelationCache {
         }
     }
 
-    public void cacheMaterialisedRelations(@Nullable BubbleObject bubbleObject) {
+    public void cacheMaterialisedRelationsAndClearLocallyCachedValues(@Nullable BubbleObject bubbleObject, int level) {
         if (bubbleObject != null) {
-            checkState(bubbleObject.store() == store, "BubbleObject er ikke registrert i inneværende Store");
             for (InverseRelation<?> inverseRelation : getInverseRelations(bubbleObject)) {
                 if (inverseRelation.isMaterialised()) {
                     if (isEnabled()) {
-                        relationCache.setRelationValue(getLevel(), inverseRelation.getName(), bubbleObject.getId(), inverseRelation.getCached());
+                        relationCache.setRelationValue(level, inverseRelation.getName(), bubbleObject.getId(), inverseRelation.getCached());
                     }
                     inverseRelation.setCached(null);
                     inverseRelation.setMaterialised(false);
                 }
             }
-        }
-    }
-
-    public void cacheMaterialisedRelations(Collection<? extends BubbleObject> bubbleObjects) {
-        for (BubbleObject bubbleObject : bubbleObjects) {
-            cacheMaterialisedRelations(bubbleObject);
         }
     }
 

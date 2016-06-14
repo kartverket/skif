@@ -68,7 +68,6 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     private X1BBOne register(X1BBOne b) {
         store.register(new BubbleTransfer<Void>(null, Collections.singletonList(b)) {
         });
-        store.cacheMaterialisedRelations(b);
         return store.get(b.getId());
     }
 

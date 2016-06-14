@@ -5,6 +5,7 @@ import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.BubbleTransfer;
 import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
@@ -17,10 +18,13 @@ import java.util.Collections;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Test av InverseRelation properties for domeneobjekter.
+ * Tester InverseRelation materialisering fra server til klient. Bobler som inneholder materialiserte relasjoner
+ * får deres relasjoner lagt inn i cachen når de registreres i klienten.
  *
  * @author Henrik Fredholm
  * @since 2.4
@@ -46,7 +50,6 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     private X2BBOne register(X2BBOne b) {
         store.register(new BubbleTransfer<Void>(null, Collections.singletonList(b)) {
         });
-        store.cacheMaterialisedRelations(b);
         return store.get(b.getId());
     }
 
@@ -160,20 +163,25 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     }
 
     /**
-     * Tester at umaterialiserte relasjoner sendes til klient når requested er satt
+     * Tester at umaterialiserte relasjoner sendes til klient når requested er satt. Operasjonsrekkefølge som
+     * testes på server er LOAD først, så REQUEST . Tester også at materialiserte relasjoner blir
+     * automatisk blir registrert i RelationCache på klienten ved store.register().
      */
     public void testSerializationMaterialisedRequestedMany() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         final X2BBOneMockupFactory X2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
+        store.getRelationCache().setEnabled(true);
 
         X2BBOne b1 = getBBOne(X2BBOneMockupFactory.getB1Id(), Action.LOAD, Action.REQUEST);
         assertTrue(b1.getInvSomeBBIds().isMaterialised());
         assertTrue(b1.getInvSomeBBIds().isRequested());
         assertThat(b1.getInvSomeBBIds().get()).isEmpty();
 
-        // Registrer b1 i Store. Siden det ikke er gjort endringer blir resultatet det samme
+        assertFalse(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()));
+        // Registrer b1 i Store.
         register(b1);
+        assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()));
         assertThat(b1.getInvSomeBBIds().get()).isEmpty();
 
         X2BBOne b3 = getBBOne(X2BBOneMockupFactory.getB3Id(), Action.LOAD, Action.REQUEST);
@@ -181,22 +189,74 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     }
 
     /**
-     * Tester at umaterialiserte relasjoner sendes til klient når requested er satt
+     * Tester at umaterialiserte relasjoner sendes til klient når requested er satt. Operasjonsrekkefølge som
+     * testes på server er REQUEST først, så LOAD . Tester også at materialiserte relasjoner
+     * automatisk blir registrert i RelationCache på klienten ved store.register().
      */
     public void testSerializationRequestedMaterialisedMany() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         final X2BBOneMockupFactory X2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
+        store.getRelationCache().setEnabled(true);
 
         X2BBOne b1 = getBBOne(X2BBOneMockupFactory.getB1Id(), Action.REQUEST, Action.LOAD);
         assertTrue(b1.getInvSomeBBIds().isMaterialised());
         assertTrue(b1.getInvSomeBBIds().isRequested());
 
-        // Registrer b1 i Store. Siden det ikke er gjort endringer blir resultatet det samme
+        // Registrer b1 i Store.
         register(b1);
+        assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), X2BBOneMockupFactory.getB1Id()));
         assertThat(b1.getInvSomeBBIds().get()).isEmpty();
+    }
 
-        X2BBOne b3 = getBBOne(X2BBOneMockupFactory.getB3Id(), Action.REQUEST, Action.LOAD);
-        assertThat(b3.getInvSomeBBIds().get()).containsOnly(X2AAWithEntityComponentMockupFactory.getA2Id(), X2AAWithEntityComponentMockupFactory.getA3Id());
+    /**
+     * Tester at materialiserte relasjoner som hentes via objekt legges inn i relasjonscachen når objektet
+     * finnes fra før så lenge det ikke er låst på klienten.
+     */
+    public void testRegistrerObjectMedMateralisertRelasjonNaarSammeVersjonAlleredeRegistrert() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
+        final X2BBOneMockupFactory X2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
+        store.getRelationCache().setEnabled(true);
+
+        X2BBOne eksisterende = store.get(X2BBOneMockupFactory.getB1Id());
+        assertFalse(store.getRelationCache().isMaterialized(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
+
+        X2BBOne b1 = getBBOne(X2BBOneMockupFactory.getB1Id(), Action.REQUEST, Action.LOAD);
+        assertNotSame(eksisterende, b1);
+        assertTrue(b1.getInvSomeBBIds().isMaterialised());
+        assertTrue(b1.getInvSomeBBIds().isRequested());
+
+        // Registrer b1 i Store.
+        register(b1);
+        assertTrue(store.getRelationCache().isMaterialized(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
+    }
+
+
+    /**
+     * Tester at objekt med materialiserte relasjoner som hentes via utem om Store og deretter registreres ikke
+     * legges inn i Store når det allrede finnes en annen instans som er låst. Relasjonscachen oppdateres heller ikke.
+     */
+    public void testRegistrerObjectMedMateralisertRelasjonNaarLockedVersonPaaKlient() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final X2AAWithEntityComponentMockupFactory X2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
+        final X2BBOneMockupFactory X2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
+
+        try (UnitOfWork ignore = store.beginUnitOfWork()) {
+            store.getRelationCache().setEnabled(true);
+
+            X2BBOne eksisterendeSomErLocked = store.lock(X2BBOneMockupFactory.getB1Id());
+            assertFalse(store.getRelationCache().isMaterialized(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
+
+            X2BBOne b1 = getBBOne(X2BBOneMockupFactory.getB1Id(), Action.REQUEST, Action.LOAD);
+            assertNotSame(eksisterendeSomErLocked, b1);
+            assertTrue(b1.getInvSomeBBIds().isMaterialised());
+            assertTrue(b1.getInvSomeBBIds().isRequested());
+
+            // Registrer b1 i Store.
+            register(b1);
+            assertSame(store.get(X2BBOneMockupFactory.getB1Id()), eksisterendeSomErLocked);
+            assertFalse(store.getRelationCache().isMaterialized(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
+        }
     }
 }
