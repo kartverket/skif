@@ -1,11 +1,7 @@
 package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
-import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.RunOnServerMethod;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleTransfer;
 import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.StoreServer;
@@ -17,7 +13,6 @@ import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
-import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -43,24 +38,9 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
      * Alle testcaser bruke samme StoreClient instans. Dette sikre at cachet state i klient blir evicted på tvers av
      * tester
      */
-    // TODO: Denne bør flyttes til SkifTestCase (tror jeg)
     @BeforeMethod
     protected void evictAll() {
         store.evictAll();
-    }
-
-    private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
-        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
-            @Override
-            public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
-                return ImmutableSet.copyOf(Iterables.concat(
-                        mockupFacade.getX2AAWithEntityComponentMockupFactory().getAllIds(X2AAWithEntityComponentId.class),
-                        mockupFacade.getX2BBOneMockupFactory().getAllIds(X2BBOneId.class),
-                        mockupFacade.getX2CCManyMockupFactory().getAllIds(X2CCManyId.class)
-
-                ));
-            }
-        });
     }
 
     private X2BBOne register(X2BBOne b) {
@@ -79,7 +59,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
 
 
     private X2BBOne getBBOne(final @Nullable X2BBOneId<?> bId, final Action... actions) {
-        return (X2BBOne) server.runInTxRequiresNew(new RunOnServerMethod() {
+        return (X2BBOne) server.runInTxRequired(new RunOnServerMethod() {
             @Inject
             StoreServer store;
 
