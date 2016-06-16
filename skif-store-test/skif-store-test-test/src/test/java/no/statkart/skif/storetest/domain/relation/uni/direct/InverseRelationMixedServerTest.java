@@ -270,7 +270,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     /**
      * Tester at beregning av invers relasjoner blir korrekt når relation caching er enabled og inversrelasjonen
      * endres på serveren utenom klienten - dersom man kaller Store.evict() for boblen som er endret. Cachet
-     * inversrelasjoner som blir berørt skal da bli riktige likevel. Case a1->b2 endres til a1->b1.
+     * inversrelasjoner som blir berørt skal da bli riktige likevel. Case a1->b2 endres til a1->b1. Se SKIF-583.
      */
     public void testUpdateRelationsOnServerWithCachingOnClientEnabledEvictBubble() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
