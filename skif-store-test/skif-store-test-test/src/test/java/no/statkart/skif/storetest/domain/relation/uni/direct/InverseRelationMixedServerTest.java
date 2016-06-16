@@ -6,11 +6,15 @@ import com.google.inject.Inject;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.BubbleTransfer;
 import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
+import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubbleId;
 import no.statkart.skif.storetest.domain.relation.X1AAMockupFactory;
 import no.statkart.skif.storetest.domain.relation.X1BBOneMockupFactory;
+import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
@@ -23,6 +27,7 @@ import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -45,7 +50,6 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
      * Alle testcaser bruke samme StoreClient instans. Dette sikre at cachet state i klient blir evicted på tvers av
      * tester
      */
-    // TODO: Denne bør flyttes til SkifTestCase (tror jeg)
     @BeforeMethod
     protected void evictAll() {
         store.evictAll();
@@ -233,7 +237,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
         assertThat(store.getRelationCache().isEnabled()).isEqualTo(false);
         assertThat(store.get(x1BBOneMockupFactory.getB1Id()).findInvSomeBBIds()).isEmpty();
         assertThat(store.get(x1BBOneMockupFactory.getB2Id()).findInvSomeBBIds()).containsOnly(x1AAMockupFactory.getA1Id());
-        updateAA(x1AAMockupFactory.getA1Id(), x1BBOneMockupFactory.getB1Id());
+        updateAAOnServer(x1AAMockupFactory.getA1Id(), x1BBOneMockupFactory.getB1Id());
         assertThat(store.get(x1BBOneMockupFactory.getB1Id()).findInvSomeBBIds()).containsOnly(x1AAMockupFactory.getA1Id());
         assertThat(store.get(x1BBOneMockupFactory.getB2Id()).findInvSomeBBIds()).isEmpty();
     }
@@ -242,7 +246,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
      * Tester at beregning av invers relasjoner blir korrekt når relation caching er enabled og inversrelasjonen
      * endres på serveren utenom klienten - dersom man kaller Store.evictAll() før invers relasjonen beregnes.
      */
-    public void testUpdateRelationsOnServerWithCachingOnClientEnabled() {
+    public void testUpdateRelationsOnServerWithCachingOnClientEnabledEvictAll() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
         final X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
@@ -253,7 +257,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
             assertThat(store.getRelationCache().isEnabled()).isEqualTo(true);
             assertThat(store.get(x1BBOneMockupFactory.getB1Id()).findInvSomeBBIds()).isEmpty();
             assertThat(store.get(x1BBOneMockupFactory.getB2Id()).findInvSomeBBIds()).containsOnly(x1AAMockupFactory.getA1Id());
-            updateAA(x1AAMockupFactory.getA1Id(), x1BBOneMockupFactory.getB1Id());
+            updateAAOnServer(x1AAMockupFactory.getA1Id(), x1BBOneMockupFactory.getB1Id());
             store.evictAll(); // Uten denne feiler koden fordi relasjoner som er endret på serveren er cachet på klienten
             assertThat(store.get(x1BBOneMockupFactory.getB1Id()).findInvSomeBBIds()).containsOnly(x1AAMockupFactory.getA1Id());
             assertThat(store.get(x1BBOneMockupFactory.getB2Id()).findInvSomeBBIds()).isEmpty();
@@ -264,10 +268,53 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
+     * Tester at beregning av invers relasjoner blir korrekt når relation caching er enabled og inversrelasjonen
+     * endres på serveren utenom klienten - dersom man kaller Store.evict() for boblen som er endret. Cachet
+     * inversrelasjoner som blir berørt skal da bli riktige likevel. Case a1->b2 endres til a1->b1.
+     */
+    public void testUpdateRelationsOnServerWithCachingOnClientEnabledEvictBubble() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final X1AAMockupFactory x1AAMockupFactory = mockupFacade.getX1AAMockupFactory();
+        final X1BBOneMockupFactory x1BBOneMockupFactory = mockupFacade.getX1BBOneMockupFactory();
+        X1AAId<?> a1Id = x1AAMockupFactory.getA1Id();
+        X1BBOneId<?> b1Id = x1BBOneMockupFactory.getB1Id();
+        X1BBOneId<?> b2Id = x1BBOneMockupFactory.getB2Id();
+        ImmutableSet<? extends BubbleId<? extends BubbleObject>> ids = ImmutableSet.of(b1Id, b2Id, a1Id);
+        try {
+            store.getRelationCache().setEnabled(true);
+            store.get(ImmutableSet.of(b1Id, b2Id));
+
+            assertThat(store.getRelationCache().isEnabled()).isEqualTo(true);
+            assertThat(store.get(b1Id).findInvSomeBBIds()).isEmpty();
+            assertThat(store.get(b2Id).findInvSomeBBIds()).containsExactly(a1Id);
+            updateAAOnServer(a1Id, b1Id); // Her oppdateres a1 på serveren (uten om klienten) til å peke på b1 istedet for b2
+            X1AA a1 = store.get(a1Id);
+            assertEquals(a1.getSomeBBId(), b1Id); // a1 peker nå på b1
+            // Materialisert relasjoner for a1 er feil fordi de fortsatt er cachet. Skal ikke være tom.
+            assertThat(store.getRelationCache().isMaterialized(store.get(b1Id).getInvSomeBBIds().getName(), b1Id));
+            assertThat(store.get(b1Id).findInvSomeBBIds()).isEmpty();
+            assertThat(store.get(b2Id).findInvSomeBBIds()).containsExactly(a1Id);
+
+            // Dette tømmer relasjonscachen. Hadde vært fint om det ikke var nødvendig.
+            store.getRelationCache().setEnabled(false);
+            store.getRelationCache().setEnabled(true);
+
+            // Da blir svarene riktig
+            assertEquals(store.get(a1Id).getSomeBBId(), b1Id);
+            assertThat(store.getRelationCache().isEnabled()).isEqualTo(true);
+            assertThat(store.get(b1Id).findInvSomeBBIds()).containsExactly(a1Id);;
+            assertThat(store.get(b2Id).findInvSomeBBIds()).isEmpty();
+        } finally {
+            store.getRelationCache().setEnabled(false);
+            assertThat(store.getRelationCache().isEnabled()).isEqualTo(false);
+        }
+    }
+
+    /**
      * Hjelpemetode som oppdatere relasjon fra X1AA til X1BBOne på serveren uten om klienten. Metoden kjører
      * i en egen transaksjon.
      */
-    private void updateAA(final X1AAId<?> aId, final X1BBOneId<?> bbOneId) {
+    private void updateAAOnServer(final X1AAId<?> aId, final X1BBOneId<?> bbOneId) {
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
             StoreServer store;

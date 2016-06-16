@@ -175,7 +175,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
         StoreEntry storeEntry = storeCache.get(bubbleId);
         if (storeEntry != null) {
-            // Entry finnes, må sjekk om objekt er låst på underliggende nivå
+            // Entry finnes, må sjekke om objekt er låst på underliggende nivå
             int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
             if (lockLevel != level) {
                 // Ikke allerede låst for level
@@ -186,11 +186,18 @@ public class StoreSessionClient extends AbstractStoreSession {
                     copy.register(store);
                     storeEntry.setLocked(level, copy);
                 } else {
-                    // Ikke låst, hent fra server
+                    // Ikke låst, hent seneste versjon fra server og erstatt eksisterende readOnly instans med versjon fra server hvis nyere.
                     BubbleObject lockedBubbleObject = storeService.lock(bubbleId);
-                    lockedBubbleObject.register(store);
-                    // TODO: fjern allerede leste versjoner hvis timestamp/versjon er eldre
-                    storeEntry.setLocked(level, lockedBubbleObject);
+                    int levelForExisting = storeEntry.getLevelForDerivedBubbleObject(level);
+                    BubbleObject existingInstance = storeEntry.getDerivedBubbleObject(levelForExisting);
+                    if (isNewerThanExisting(existingInstance, lockedBubbleObject)) {
+                        lockedBubbleObject.register(store);
+                        storeEntry.setBubbleObject(levelForExisting, lockedBubbleObject);
+                    }
+                    // Lager en kopi til bruk for oppdatering slik at opprinnelig instans fra serveren forblir uendret og kan brukes ifm caching
+                    BubbleObject copy = CopyHelper.copy(lockedBubbleObject);
+                    copy.register(store);
+                    storeEntry.setLocked(level, copy);
                     storeEntry.setLockCreatedByLevel(level);
                 }
             }
@@ -320,7 +327,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     /**
-     * På klienten vil level 0 inneholde det opprindelige objektet i uforandret state) eller null dersom det er nytt
+     * På klienten vil level 0 inneholde det opprindelige objektet i uforandret state eller null dersom det er nytt
      */
     @Override
     public BubbleObject getPersistedBubbleObjectForLocked(StoreEntry storeEntry) {
@@ -330,5 +337,9 @@ public class StoreSessionClient extends AbstractStoreSession {
         } else {
             return storeEntry.getBubbleObject(0);
         }
+    }
+
+    private boolean isNewerThanExisting(BubbleObject existingBubbleObject, BubbleObject newBubbleObject) {
+        return versionComparator.compare(existingBubbleObject, newBubbleObject) == -1;
     }
 }

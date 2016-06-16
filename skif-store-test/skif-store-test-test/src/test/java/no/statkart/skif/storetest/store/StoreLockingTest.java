@@ -339,4 +339,42 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
             Assert.assertTrue(e.getMessage().startsWith("Object has been changed and can not be unlocked"));
         }
     }
+
+    /**
+     * Tester at hvis serveren inneholder et nyere object så blir dette brukt ved låsing selvom klienten har allerede
+     * har lastet en eldre kopi.
+     */
+    public void testLockRetrivesLatestObjectFromServer() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        final IdService mockIdService = mockupFacade.getStore().getInstance(IdService.class);
+
+        final SimpleId<?> id = mockIdService.getNextId(SimpleId.class);
+
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            private Store serverStore;
+            @Override
+            public Object run() {
+                Simple Simple = new Simple(id, "Initial version");
+                serverStore.insert(Simple);
+                return null;
+            }
+        });
+
+        Assert.assertEquals(clientStore.get(id).getText(), "Initial version");
+
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            private Store serverStore;
+            @Override
+            public Object run() {
+                Simple simple = serverStore.lock(id);
+                simple.setText("Updated version");
+                serverStore.update(simple);
+                return null;
+            }
+        });
+        Assert.assertEquals(clientStore.get(id).getText(), "Initial version");
+        Assert.assertEquals(clientStore.lock(id).getText(), "Updated version");
+    }
 }
