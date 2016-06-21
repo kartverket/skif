@@ -7,7 +7,7 @@ import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.Store;
+import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef;
 import no.statkart.skif.storetest.domain.basic.Simple;
@@ -18,10 +18,19 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 /**
  * @author Henrik Fredholm
@@ -33,8 +42,13 @@ public class StoreTest extends StoreTestTestCase {
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
     @Inject
-    private Store store;
+    private StoreClient store;
 
+
+    @Test
+    public void testStoreClientNotConfiguredWithReadCache() {
+        assertThat(store.getReadCache()).isNull();
+    }
 
     @Test
     public void testStoreGet() {

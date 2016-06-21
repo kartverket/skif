@@ -97,28 +97,17 @@ public class StoreTestClientModule extends SkifModule {
         return store.getRelationCache();
     }
 
-    /*
-        @Provides
-        @Singleton
-        Store storeProvider(StoreReadChain storeReadChain, Injector injector) {
-            StoreCache storeCache = new StoreCache();
-            StoreSessionChain[] storeChainList = {
-                    new StoreSessionReadClient(storeReadChain)
-            };
-            StoreClient store = new StoreClient(storeCache, storeChainList);
-            injector.injectMembers(store);
-            store.init();
-            return store;
-        }
-    */
-
     @Provides
     @Singleton
     StoreClient storeProvider(StoreService storeService, Injector injector, SnapshotVersionContext snapshotVersionContext) {
-        StoreSessionClient storeSession = new StoreSessionClient(storeService, snapshotVersionContext);
+        StoreSessionClient storeSession = createStoreSessionClient(storeService, snapshotVersionContext);
         StoreClient store = new StoreClient(storeSession, injector);
         injector.injectMembers(store);
         return store;
+    }
+
+    protected StoreSessionClient createStoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext) {
+        return new StoreSessionClient(storeService, snapshotVersionContext);
     }
 
 }

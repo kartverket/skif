@@ -32,10 +32,14 @@ public class StoreUnitOfWorkClient extends StoreUnitOfWork {
         }
         for (StoreEntry storeEntry : modifiedMap.values()) {
             if (storeEntry.getLoadedByLevel() == level) {
-                storeCache.remove(storeEntry.getId());
+                // Entry skal fjernes. Gjøres gjennom kall til evictEntry frem fra direkte remove fra storeCache slik at stale kopi i StoreClientReadCache også fjernes
+                storeEntry.setState(level, StoreEntryState.UNCHANGED);
+                storeEntry.unlock(level);
+                wrappedStoreSession.evictEntry(level, storeEntry.getId());
             } else {
                storeEntry.clear(level);
             }
+
             storeEntry.lockCreatedByLevel=0;
         }
         modifiedMap.clear();

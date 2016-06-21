@@ -5,6 +5,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.util.CopyHelper;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,7 +26,10 @@ import java.util.Set;
 public class StoreSessionClient extends AbstractStoreSession {
     private final StoreService storeService;
     private final SnapshotVersionContext snapshotVersionContext;
-    private Comparator<BubbleObject> versionComparator = defaultComparator();
+    @Nullable
+    private final StoreClientReadCache readCache;
+    private final Comparator<BubbleObject> versionComparator;
+
 
     public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext) {
         this(storeService, snapshotVersionContext, new StoreCache());
@@ -35,13 +39,19 @@ public class StoreSessionClient extends AbstractStoreSession {
         this(storeService, snapshotVersionContext, storeCache, defaultComparator());
     }
 
-    public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext, StoreCache storeCache, Comparator<? extends BubbleObject> versionComparator) {
-        super(0, storeCache);
-        this.storeService = storeService;
-        this.snapshotVersionContext = snapshotVersionContext;
+    public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext, StoreCache storeCache, Comparator<BubbleObject> versionComparator) {
+        this(storeService, snapshotVersionContext, storeCache, versionComparator, null);
     }
 
-    private static Comparator<BubbleObject> defaultComparator() {
+    public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext, StoreCache storeCache, Comparator<BubbleObject> versionComparator, @Nullable StoreClientReadCache readCache) {
+        super(0, storeCache);
+        this.snapshotVersionContext = snapshotVersionContext;
+        this.versionComparator = versionComparator;
+        this.readCache = readCache;
+        this.storeService = (readCache==null) ? storeService : new StoreServiceWithReadCache(storeService, readCache);
+    }
+
+    public static Comparator<BubbleObject> defaultComparator() {
         return new Comparator<BubbleObject>() {
             @Override
             public int compare(BubbleObject o1, BubbleObject o2) {
@@ -282,6 +292,7 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
+        evictFromReadCache(bubbleId);
         StoreEntry entry = storeCache.get(bubbleId);
         if (entry != null && entry.getDerivedState(level) == StoreEntryState.UNCHANGED && entry.calcLockLevelStartingFrom(level) == -1) {
             storeCache.remove(bubbleId);
@@ -293,6 +304,7 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public boolean evictAllEntries(int level) {
+        evictAllFromReadCache();
         boolean allWasEvicted = true;
         final Iterator<StoreEntry> iterator = storeCache.values().iterator();
         while (iterator.hasNext()) {
@@ -313,7 +325,7 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
-        return storeService.getVersions(id, start, end);
+        return  storeService.getVersions(id, start, end);
     }
 
     @Override
@@ -341,5 +353,18 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     private boolean isNewerThanExisting(BubbleObject existingBubbleObject, BubbleObject newBubbleObject) {
         return versionComparator.compare(existingBubbleObject, newBubbleObject) == -1;
+    }
+
+    private <T extends BubbleObject, I extends BubbleId<? extends T>> void evictFromReadCache(I bubbleId) {
+        if (readCache!=null) readCache.evict(bubbleId);
+    }
+
+    private void evictAllFromReadCache() {
+        if (readCache!=null) readCache.evictAll();
+    }
+
+    @Nullable
+    public StoreClientReadCache getReadCache() {
+        return readCache;
     }
 }
