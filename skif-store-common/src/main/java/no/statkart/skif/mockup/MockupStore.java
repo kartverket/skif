@@ -377,6 +377,11 @@ public class MockupStore implements Store {
     }
 
     @Override
+    public UnitOfWork getUnitOfWork() {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public <S> S getInstance(Class<S> serviceClass) {
         return injector.getInstance(serviceClass);
     }

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.assertNotFound;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -492,6 +493,16 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         }
 
         assertFalse(clientStore.inUnitOfWork());
+    }
+
+    @Test
+    public void testGetUnitOfWork() {
+        assertThat(clientStore.getUnitOfWork()).isNull();
+        UnitOfWork unitOfWork = clientStore.beginUnitOfWork();
+        assertThat(clientStore.getUnitOfWork()).isNotNull();
+        assertThat(clientStore.getUnitOfWork()).isEqualTo(unitOfWork);
+        clientStore.endUnitsOfWork(clientStore.getUnitOfWork());
+        assertThat(clientStore.getUnitOfWork()).isNull();
     }
 
     @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Update on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer.*")

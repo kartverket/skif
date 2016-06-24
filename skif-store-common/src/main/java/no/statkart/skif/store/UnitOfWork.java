@@ -29,4 +29,11 @@ public class UnitOfWork implements Closeable {
         Store store = unitOfWork.store;
         store.closeUnitOfWork(this);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null
+                && obj instanceof UnitOfWork
+                && this.unitOfWork==((UnitOfWork)obj).unitOfWork;
+    }
 }
