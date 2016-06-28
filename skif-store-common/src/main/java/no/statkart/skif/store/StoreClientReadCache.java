@@ -3,6 +3,7 @@ package no.statkart.skif.store;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.ImplementedBy;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
@@ -27,11 +28,12 @@ public interface StoreClientReadCache {
 
     void putAll(Collection<? extends BubbleObject> objects);
 
-    <T extends BubbleObject> T get(BubbleId<? extends T> id);
+    @Nullable
+    <T extends BubbleObject> T get(@Nullable BubbleId<? extends T> id);
 
     public ImmutableMap<BubbleId<?>, BubbleObject> getAll(Iterable<?> ids);
 
-    public void evict(BubbleId<?> id);
+    public void evict(@Nullable BubbleId<?> id);
 
     public void evictAll();
 

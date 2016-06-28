@@ -74,6 +74,11 @@ public class StoreServiceWithReadCacheTest {
         assertFoundAllObjects(objectsFromCache, simple1, simple2);
     }
 
+    public void getNull() {
+        storeServiceWithReadCache = new StoreServiceWithReadCache(createStoreServiceWithNoObjects(), readCache);
+        assertThat(storeServiceWithReadCache.getObject(null)).isNull();
+    }
+
     public void lock() {
         readCache.put(simple1);
         SimpleId<?> simple1Id = simple1.getId();

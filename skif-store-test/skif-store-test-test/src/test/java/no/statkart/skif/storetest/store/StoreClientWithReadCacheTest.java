@@ -78,6 +78,15 @@ public class StoreClientWithReadCacheTest extends StoreTestMixedTestCase {
         assertThat(readCache.get(simpleId1)).isNull();
     }
 
+    public void testEvictFjernerObjektFraReadCacheNaarStoreIkkeObjekt() {
+        StoreClientReadCache readCache = storeClient.getReadCache();
+        SimpleId<?> simpleId1 = readFacade.getSimpleMockupFactory().getSimpleId1();
+        Simple simple = new Simple(simpleId1, "Simple");
+        readCache.put(simple);
+        storeClient.evict(simpleId1);
+        assertThat(readCache.get(simpleId1)).isNull();
+    }
+
     public void testEvictAllFjernerAlleObjekterFraReadCache() {
         StoreClientReadCache readCache = storeClient.getReadCache();
         SimpleId<?> simpleId1 = readFacade.getSimpleMockupFactory().getSimpleId1();

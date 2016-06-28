@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import no.statkart.skif.util.CopyHelper;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -34,8 +35,9 @@ public class StoreClientReadCacheImpl implements  StoreClientReadCache {
     }
 
     @Override
-    public <T extends BubbleObject> T get(BubbleId<? extends T> id) {
-        return (T)CopyHelper.copy(cache.getIfPresent(id));
+    @Nullable
+    public <T extends BubbleObject> T get(@Nullable BubbleId<? extends T> id) {
+        return id == null ? null : (T) CopyHelper.copy(cache.getIfPresent(id));
     }
 
     @Override
@@ -53,8 +55,10 @@ public class StoreClientReadCacheImpl implements  StoreClientReadCache {
     }
 
     @Override
-    public void evict(BubbleId<?> id) {
-        cache.invalidate(id);
+    public void evict(@Nullable BubbleId<?> id) {
+        if (id != null) {
+            cache.invalidate(id);
+        }
     }
 
     @Override

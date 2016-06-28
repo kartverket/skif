@@ -21,13 +21,8 @@ import static org.testng.Assert.assertNull;
 public class StoreClientReadCacheTest {
 
     public void getNull() {
-        try {
-            StoreClientReadCacheImpl readCache = new StoreClientReadCacheImpl();
-            readCache.get(null);
-            Fail.failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-            // expected
-        }
+        StoreClientReadCacheImpl readCache = new StoreClientReadCacheImpl();
+        assertThat(readCache.get(null)).isNull();
     }
 
     public void getWhenEmpty() {

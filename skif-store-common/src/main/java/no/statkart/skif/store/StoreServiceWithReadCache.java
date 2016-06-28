@@ -21,11 +21,14 @@ public class StoreServiceWithReadCache implements StoreService {
 
     @Override
     public <T extends BubbleObject> T getObject(BubbleId<? extends T> id) {
+        if (id == null) return null;
         //noinspection unchecked
-        T bubbleObject = (T)readCache.get(id);
-        if (bubbleObject==null) {
+        T bubbleObject = (T) readCache.get(id);
+        if (bubbleObject == null) {
             bubbleObject = storeService.getObject(id);
-            readCache.put(bubbleObject);
+            if (bubbleObject != null) {
+                readCache.put(bubbleObject);
+            }
         }
         return bubbleObject;
     }
@@ -57,26 +60,16 @@ public class StoreServiceWithReadCache implements StoreService {
     }
 
     private <T extends BubbleObject, I extends BubbleId<? extends T>> void getFromReadCache(Collection<I> ids, List<T> result, List<I> notInCache) {
-        ImmutableMap<BubbleId<?>,BubbleObject> found = readCache.getAll(ids);
+        ImmutableMap<BubbleId<?>, BubbleObject> found = readCache.getAll(ids);
         for (I id : ids) {
             BubbleObject bubbleObject = found.get(id);
-            if (bubbleObject!=null) {
+            if (bubbleObject != null) {
                 //noinspection unchecked
-                result.add((T)bubbleObject);
+                result.add((T) bubbleObject);
             } else {
                 notInCache.add(id);
             }
         }
-    }
-
-    private <I extends BubbleId<?>> List<I> missing(Collection<I> ids, ImmutableMap<BubbleId<?>, BubbleObject> found) {
-        List<I> missing = new ArrayList<>(ids.size());
-        for (I id : ids) {
-            if (!found.containsKey(id)) {
-                missing.add(id);
-            }
-        }
-        return missing;
     }
 
     @Override
