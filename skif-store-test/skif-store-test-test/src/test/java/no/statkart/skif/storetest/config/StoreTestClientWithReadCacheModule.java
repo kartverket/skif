@@ -7,14 +7,12 @@ import no.statkart.skif.store.StoreClientReadCacheImpl;
 import no.statkart.skif.store.StoreSessionClient;
 import no.statkart.skif.store.service.StoreService;
 
-import static no.statkart.skif.store.StoreSessionClient.defaultComparator;
-
 public class StoreTestClientWithReadCacheModule extends StoreTestClientModule {
     public StoreTestClientWithReadCacheModule(ModuleConfiguration moduleConfiguration) {
         super(moduleConfiguration);
     }
 
     protected StoreSessionClient createStoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext) {
-        return new StoreSessionClient(storeService, snapshotVersionContext, new StoreCache(), defaultComparator(), new StoreClientReadCacheImpl());
+        return new StoreSessionClient(storeService, snapshotVersionContext, new StoreCache(), null, new StoreClientReadCacheImpl());
     }
 }

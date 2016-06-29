@@ -6,6 +6,7 @@ import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleTransfer;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.UnitOfWork;
@@ -16,11 +17,13 @@ import no.statkart.skif.storetest.domain.basic.SubTypeWithCollection;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -37,13 +40,10 @@ import static org.testng.Assert.fail;
  */
 @Test
 public class StoreTest extends StoreTestTestCase {
-
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
-
     @Inject
     private StoreClient store;
-
 
     @Test
     public void testStoreClientNotConfiguredWithReadCache() {
@@ -365,4 +365,35 @@ public class StoreTest extends StoreTestTestCase {
         assertEquals(store.get(bubbleWithAnyBubbleRef.getAnyId()).getId(),mockupFacade.getSimpleMockupFactory().getSimpleId2());
     }
 
+    public void testRegisterTransferWhenNotLockedInStoreOrTransfer() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        Simple simple = store.get(simple1Id);
+        Simple simpleCopy = CopyHelper.copy(simple);
+        store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {
+        });
+        assertThat(store.get(simple1Id)).isSameAs(simpleCopy);
+    }
+
+    public void testRegisterTransferWhenNotLockedInStoreAndLockedInTransfer() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        Simple simple = store.get(simple1Id);
+        Simple simpleCopy = CopyHelper.copy(simple);
+        store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
+        });
+        assertThat(store.isLocked(simple1Id)).isTrue();
+        // assertThat(store.get(simple1Id)).isNotSameAs(simpleCopy); // TODO: SKIF-586
+    }
+
+    public void testRegisterTransferWhenLockedInStore() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        try (UnitOfWork ignore = store.beginUnitOfWork()) {
+            Simple simpleLocked = store.lock(simple1Id);
+            Simple simpleCopy = CopyHelper.copy(simpleLocked);
+            store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {});
+            assertThat(store.get(simple1Id)).describedAs("Forventer Store bruker instans om allerede er låst").isSameAs(simpleLocked);
+        }
+    }
 }

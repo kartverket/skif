@@ -28,6 +28,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     private final SnapshotVersionContext snapshotVersionContext;
     @Nullable
     private final StoreClientReadCache readCache;
+    @Nullable
     private final Comparator<BubbleObject> versionComparator;
 
 
@@ -36,28 +37,19 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext, StoreCache storeCache) {
-        this(storeService, snapshotVersionContext, storeCache, defaultComparator());
+        this(storeService, snapshotVersionContext, storeCache, null);
     }
 
     public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext, StoreCache storeCache, Comparator<BubbleObject> versionComparator) {
         this(storeService, snapshotVersionContext, storeCache, versionComparator, null);
     }
 
-    public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext, StoreCache storeCache, Comparator<BubbleObject> versionComparator, @Nullable StoreClientReadCache readCache) {
+    public StoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext, StoreCache storeCache, @Nullable Comparator<BubbleObject> versionComparator, @Nullable StoreClientReadCache readCache) {
         super(0, storeCache);
         this.snapshotVersionContext = snapshotVersionContext;
         this.versionComparator = versionComparator;
         this.readCache = readCache;
         this.storeService = (readCache==null) ? storeService : new StoreServiceWithReadCache(storeService, readCache);
-    }
-
-    public static Comparator<BubbleObject> defaultComparator() {
-        return new Comparator<BubbleObject>() {
-            @Override
-            public int compare(BubbleObject o1, BubbleObject o2) {
-                return Long.compare(o1.getVersjonId(), o2.getVersjonId());
-            }
-        };
     }
 
     protected boolean isLocked(StoreEntry storeEntry) {
@@ -200,7 +192,7 @@ public class StoreSessionClient extends AbstractStoreSession {
                     BubbleObject lockedBubbleObject = storeService.lock(bubbleId);
                     int levelForExisting = storeEntry.getLevelForDerivedBubbleObject(level);
                     BubbleObject existingInstance = storeEntry.getDerivedBubbleObject(levelForExisting);
-                    if (isNewerThanExisting(existingInstance, lockedBubbleObject)) {
+                    if (replaceVersion(existingInstance, lockedBubbleObject)) {
                         lockedBubbleObject.register(store);
                         storeEntry.setBubbleObject(levelForExisting, lockedBubbleObject);
                     }
@@ -273,14 +265,14 @@ public class StoreSessionClient extends AbstractStoreSession {
                     } else {
                         // Hverken objekt i Store eller fra transfer er låst
                         int derivedLevel = entry.getLevelForDerivedBubbleObject(level);
-                        int versionComparison = versionComparator.compare(entry.getDerivedBubbleObject(derivedLevel), bubbleObjectFromTransfer);
-                        if (versionComparison == -1) {
-                            // Objekt fra transfer er nyest
+                        int versionComparison = selectVersion(entry.getDerivedBubbleObject(derivedLevel), bubbleObjectFromTransfer);
+                        if (versionComparison < 0) {
+                            // Objekt fra transfer skal brukes
                             bubbleObjectFromTransfer.register(store);
                             entry.setBubbleObject(derivedLevel, bubbleObjectFromTransfer);
                             store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, derivedLevel);
                         } else if (versionComparison == 0) {
-                            // Objekt i store og transfer har samme versjon. Legg inn materialiserte relasjoner fra transfer hvis de finnes
+                            // Objekt i store og transfer er like. Legg inn materialiserte relasjoner fra transfer hvis de finnes
                             store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, derivedLevel);
                         }
                     }
@@ -351,8 +343,21 @@ public class StoreSessionClient extends AbstractStoreSession {
         }
     }
 
-    private boolean isNewerThanExisting(BubbleObject existingBubbleObject, BubbleObject newBubbleObject) {
-        return versionComparator.compare(existingBubbleObject, newBubbleObject) == -1;
+    /**
+     * Returnerer true hvis {@code existingBubbleObject} skal erstattes med {@code incommingBubbleObject}
+     */
+    private boolean replaceVersion(BubbleObject existingBubbleObject, BubbleObject incommingBubbleObject) {
+        return selectVersion(existingBubbleObject, incommingBubbleObject) < 0;
+    }
+
+    /**
+     * Hvis {@link #versionComparator} er satt brukes returverdien fra denne. Ellers returneres {@code -1} slik at {@code
+     * incommingBubbleObject} alltid vil bli brukt.
+     * @return  Et negativ tall hvis {@code incommeingBubbleObject } skal brukes, 0 hvis de er like, og et positiv tall
+     * hvis {@code existingBubbleObject} skal brukes. Tilsvarer {@link Comparator#compare(Object, Object)}).
+     */
+    private int selectVersion(BubbleObject existingBubbleObject, BubbleObject incommingBubbleObject) {
+        return versionComparator == null ? -1 : versionComparator.compare(existingBubbleObject, incommingBubbleObject);
     }
 
     private <T extends BubbleObject, I extends BubbleId<? extends T>> void evictFromReadCache(I bubbleId) {

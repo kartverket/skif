@@ -505,6 +505,41 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         assertThat(clientStore.getUnitOfWork()).isNull();
     }
 
+    @Test
+    public void testGetUnitOfWorkMultipleClose() {
+        UnitOfWork unitOfWork = clientStore.beginUnitOfWork();
+        clientStore.getUnitOfWork().close();
+        assertThat(clientStore.inUnitOfWork()).isFalse();
+        unitOfWork.close();
+        assertThat(clientStore.inUnitOfWork()).isFalse();
+    }
+
+    @Test
+    public void testGetUnitOfWorkInInnerUnitOfWork() {
+        UnitOfWork unitOfWork=null;
+        try {
+            // Testen start egentlig her. Det omkringliggende er bare for opprydning etter på
+            try {
+                unitOfWork = clientStore.beginUnitOfWork();
+                methodStartingUnitOfWorkAndThrowingException();
+            } catch (RuntimeException e) {
+                // Meget uheldig, for det er inner unit of work som blir lukket, ikke den ytre som man skulle forventet når man leser koden
+                clientStore.getUnitOfWork().close();
+            }
+            assertThat(clientStore.inUnitOfWork()).isTrue();
+
+            // Her slutter testen.
+        } finally {
+            if (unitOfWork != null) unitOfWork.close();
+        }
+    }
+
+    private void methodStartingUnitOfWorkAndThrowingException() {
+        UnitOfWork unitOfWork = clientStore.beginUnitOfWork();
+        throw new RuntimeException("Her kaster vi en exception som gjøre at inner unit of work ikke ble lukket");
+        //unitOfWork.close(); // Her kommer vi ikke.
+    }
+
     @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Update on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer.*")
     public void testClientUpdateOutsideUnitOfWork() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
