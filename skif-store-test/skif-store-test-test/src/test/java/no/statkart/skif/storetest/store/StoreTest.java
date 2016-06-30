@@ -365,7 +365,18 @@ public class StoreTest extends StoreTestTestCase {
         assertEquals(store.get(bubbleWithAnyBubbleRef.getAnyId()).getId(),mockupFacade.getSimpleMockupFactory().getSimpleId2());
     }
 
-    public void testRegisterTransferWhenNotLockedInStoreOrTransfer() {
+    public void testRegisterTransferWhenNotLoadedInStoreAndNotLockedInTransfer() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        Simple simpleCopy = new Simple(simple1Id, "That's me");
+        store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {
+        });
+        assertThat(store.get(simple1Id)).isSameAs(simpleCopy);
+        assertThat(store.isLocked(simple1Id)).isFalse();
+    }
+
+
+    public void testRegisterTransferWhenLoadedButNotLockedInStoreOrAndNotLockedInTransfer() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
         Simple simple = store.get(simple1Id);
@@ -373,9 +384,22 @@ public class StoreTest extends StoreTestTestCase {
         store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {
         });
         assertThat(store.get(simple1Id)).isSameAs(simpleCopy);
+        assertThat(store.isLocked(simple1Id)).isFalse();
     }
 
-    public void testRegisterTransferWhenNotLockedInStoreAndLockedInTransfer() {
+    public void testRegisterTransferWhenNotLoadedInStoreAndLockedInTransfer() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        Simple simpleCopy = new Simple(simple1Id, "That's me");
+        store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
+        });
+        assertThat(store.isLocked(simple1Id)).isTrue();
+        assertThat(store.get(simple1Id)).isNotSameAs(simpleCopy);
+        assertThat(store.get(simple1Id)).isEqualTo(simpleCopy);
+        assertThat(store.isLocked(simple1Id)).isTrue();
+    }
+
+    public void testRegisterTransferWhenLoadedButNotLockedInStoreAndLockedInTransfer() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
         Simple simple = store.get(simple1Id);
@@ -383,17 +407,31 @@ public class StoreTest extends StoreTestTestCase {
         store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
         });
         assertThat(store.isLocked(simple1Id)).isTrue();
-        // assertThat(store.get(simple1Id)).isNotSameAs(simpleCopy); // TODO: SKIF-586
+        assertThat(store.get(simple1Id)).isNotSameAs(simpleCopy);
+        assertThat(store.get(simple1Id)).isEqualTo(simpleCopy);
+        assertThat(store.isLocked(simple1Id)).isTrue();
     }
 
-    public void testRegisterTransferWhenLockedInStore() {
+    public void testRegisterTransferWhenLockedInStoreAndNotLockedInTransfer() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
         try (UnitOfWork ignore = store.beginUnitOfWork()) {
             Simple simpleLocked = store.lock(simple1Id);
             Simple simpleCopy = CopyHelper.copy(simpleLocked);
             store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {});
-            assertThat(store.get(simple1Id)).describedAs("Forventer Store bruker instans om allerede er låst").isSameAs(simpleLocked);
+            assertThat(store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er låst").isSameAs(simpleLocked);
         }
     }
+
+    public void testRegisterTransferWhenLockedInStoreAndLockedInTransfer() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        try (UnitOfWork ignore = store.beginUnitOfWork()) {
+            Simple simpleLocked = store.lock(simple1Id);
+            Simple simpleCopy = CopyHelper.copy(simpleLocked);
+            store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {});
+            assertThat(store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er låst").isSameAs(simpleLocked);
+        }
+    }
+
 }

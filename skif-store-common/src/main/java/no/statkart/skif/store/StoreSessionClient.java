@@ -246,35 +246,36 @@ public class StoreSessionClient extends AbstractStoreSession {
         for (BubbleObject bubbleObjectFromTransfer : bubbleTransfer.getBubbleObjects().values()) {
             StoreEntry entry = storeCache.get(bubbleObjectFromTransfer.getId());
             if (entry == null) {
-                entry = storeCache.register(level, null, bubbleObjectFromTransfer);
+                entry = storeCache.register(level, bubbleObjectFromTransfer, bubbleObjectFromTransfer);
                 if (lockedIdsFromTransfer.contains(bubbleObjectFromTransfer.getId())) {
-                    entry.setBubbleObject(0, null);
-                    entry.setLocked(level, bubbleObjectFromTransfer);
+                    BubbleObject copy = CopyHelper.copy(bubbleObjectFromTransfer);
+                    copy.register(store);
+                    entry.setLocked(level, copy);
                     entry.setLockCreatedByLevel(level);
                 }
                 store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, level);
             } else {
+                // Entry finnes, må sjekke om objekt er låst på underliggende nivå
                 int lockLevel = entry.calcLockLevelStartingFrom(level);
                 if (lockLevel < 0) {
-                    // Objekt i Store er ikke låst på klienten
-                    if (lockedIdsFromTransfer.contains(bubbleObjectFromTransfer.getId())) {
+                    // Objekt ikke låst i klienten. Må sjekke om objekt i transfer skal erstatte eksisterende readonly instans og om objektet nå skal være låst
+                    int derivedLevel = entry.getLevelForDerivedBubbleObject(level);
+                    int versionComparison = selectVersion(entry.getDerivedBubbleObject(derivedLevel), bubbleObjectFromTransfer);
+                    if (versionComparison < 0) {
+                        // Objekt fra transfer skal brukes
                         bubbleObjectFromTransfer.register(store);
-                        entry.setLocked(level, bubbleObjectFromTransfer);
+                        entry.setBubbleObject(derivedLevel, bubbleObjectFromTransfer);
+                        store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, derivedLevel);
+                    } else if (versionComparison == 0) {
+                        // Objekt i store og transfer er like. Legg inn materialiserte relasjoner fra transfer hvis de finnes
+                        store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, derivedLevel);
+                    }
+                    if (lockedIdsFromTransfer.contains(bubbleObjectFromTransfer.getId())) {
+                        // Lager en kopi til bruk for oppdatering slik at opprinnelig instans fra serveren forblir uendret og kan brukes ifm caching
+                        BubbleObject copy = CopyHelper.copy(bubbleObjectFromTransfer);
+                        copy.register(store);
+                        entry.setLocked(level, copy);
                         entry.setLockCreatedByLevel(level);
-                        store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, level);
-                    } else {
-                        // Hverken objekt i Store eller fra transfer er låst
-                        int derivedLevel = entry.getLevelForDerivedBubbleObject(level);
-                        int versionComparison = selectVersion(entry.getDerivedBubbleObject(derivedLevel), bubbleObjectFromTransfer);
-                        if (versionComparison < 0) {
-                            // Objekt fra transfer skal brukes
-                            bubbleObjectFromTransfer.register(store);
-                            entry.setBubbleObject(derivedLevel, bubbleObjectFromTransfer);
-                            store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, derivedLevel);
-                        } else if (versionComparison == 0) {
-                            // Objekt i store og transfer er like. Legg inn materialiserte relasjoner fra transfer hvis de finnes
-                            store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, derivedLevel);
-                        }
                     }
                 }
                 // Hvis objektet i Store er allerede låst, så ignoreres den innkommende kopien fra transfer
