@@ -451,11 +451,6 @@ public interface Store {
     boolean inUnitOfWork();
 
     /**
-     * @return unit-of-work hvis aktiv ellers null
-     */
-    UnitOfWork getUnitOfWork();
-
-    /**
      * Henter ut en service-implementasjon fra den modulen denne Store kommer fra.
      *
      * @param serviceClass service-interface-klassen

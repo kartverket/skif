@@ -337,15 +337,6 @@ public abstract class AbstractStore implements Store {
     }
 
     @Override
-    public UnitOfWork getUnitOfWork() {
-        if (storeSession instanceof StoreUnitOfWork) {
-            return new UnitOfWork((StoreUnitOfWork)storeSession);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public void commitUnitOfWork(UnitOfWork unitOfWork) {
         validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
         int level = storeSession.getLevel();
