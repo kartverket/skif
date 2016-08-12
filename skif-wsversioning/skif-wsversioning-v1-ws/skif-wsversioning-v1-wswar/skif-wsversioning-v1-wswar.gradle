@@ -1,22 +1,8 @@
-apply plugin: 'java'
-apply plugin: 'sktools-weblogic-wswar-plugin'
-
-sourceSets.weblogic {
-  java.srcDirs = ['src/main/java']
-  resources.srcDirs = []
-}
-
-
-warWeblogic {
-  from 'src/main/webapp'
-}
+apply plugin: 'sktools-wsgen-plugin'
 
 configurations {
-    weblogicProvided.extendsFrom provided
-
-    weblogicTools {
-        description = 'Avhengigheter for weblogic-verktøy'
-    }
+    war { description = 'War-artifaktet' }
+    wsdls { description = 'Zip med WSDL-er' }
 }
 
 dependencies {
@@ -26,11 +12,22 @@ dependencies {
 
     provided libraries.weblogic
 
-    weblogicTools libraries['tools.jar']
-    weblogicTools libraries.weblogic_tools
+    jaxws libraries['tools.jar']
+    jaxws libraries.weblogic_tools
 }
 
-genWeblogic {
-    classpath = sourceSets.weblogic.runtimeClasspath + configurations.weblogicTools
-    weblogicClasspath = configurations.weblogicTools
+war {
+    // Skinny war
+    classpath = sourceSets.main.output
+}
+
+task zipWsdls(type: Zip) {
+    classifier = 'wsdls'
+    extension = 'war'
+    from genWsdls
+}
+
+artifacts {
+    wsdls zipWsdls
+    war project.war
 }

@@ -16,9 +16,8 @@ dependencies {
         earlib p
     }
     warMap.each {
-        def p = project(path: it.key, configuration: 'weblogic')
-        deploy p
-        earlib p
+        deploy project(path: it.key, configuration: 'war')
+        earlib project(path: it.key, configuration: 'compile')
     }
 
     // TODO: Bør noen av de andre modulene trekke med seg denne (de har den nå på testCompile)?
@@ -32,7 +31,7 @@ ear {
         displayName= "skif-store-test"
         warMap.each {
             def p = project(it.key)
-            webModule(p.name + '-weblogic-' + p.version + ".war", it.value)
+            webModule(p.name + '-' + p.version + ".war", it.value)
         }
     }
 }

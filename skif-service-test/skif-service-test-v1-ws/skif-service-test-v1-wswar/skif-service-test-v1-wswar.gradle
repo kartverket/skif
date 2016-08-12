@@ -1,51 +1,34 @@
-apply plugin: 'sktools-weblogic-wswar-plugin'
+apply plugin: 'sktools-wsgen-plugin'
 
 configurations {
-    singlevm {
-        description = 'En Jar-utgave for bruk i SingleVM'
-        extendsFrom weblogic
-    }
-
-    weblogicTools {
-        description = 'Avhengigheter for weblogic-verktøy'
-    }
-}
-
-sourceSets.weblogic {
-    java.srcDirs = ['src/main/java']
-    resources.srcDirs = []
+    war { description = 'War-artifaktet' }
+    wsdls { description = 'Zip med WSDL-er' }
 }
 
 dependencies {
-    weblogicCompile project(':skif-service-server')
-    weblogicCompile project(':skif-service-test:skif-service-test-api')
-// Havner tydeligvis på compile classpath   weblogicRuntime project(':skif-service-test:skif-service-test-server')
-    weblogicCompile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
-    weblogicCompile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
+    compile project(':skif-service-server')
+    compile project(':skif-service-test:skif-service-test-api')
+    compile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
+    compile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
-    weblogicProvided libraries.weblogic
+    provided libraries.weblogic
 
-    weblogicTools libraries['tools.jar']
-    weblogicTools libraries.weblogic_tools
+    jaxws libraries['tools.jar']
+    jaxws libraries.weblogic_tools
 }
 
-genWeblogic {
-    classpath = sourceSets.weblogic.runtimeClasspath + configurations.weblogicTools
-    weblogicClasspath = configurations.weblogicTools
+war {
+    // Skinny war
+    classpath = sourceSets.main.output
 }
 
-warWeblogic {
-    from 'src/main/webapp'
-}
-
-task jarSingleVm(type: Jar, dependsOn: project.tasks.warWeblogic.dependsOn) {
-  classifier = 'singlevm'
-
-  doFirst {
-    from project.sourceSets.weblogic.output
-  }
+task zipWsdls(type: Zip) {
+    classifier = 'wsdls'
+    extension = 'war'
+    from genWsdls
 }
 
 artifacts {
-    singlevm jarSingleVm
+    wsdls zipWsdls
+    war project.war
 }
