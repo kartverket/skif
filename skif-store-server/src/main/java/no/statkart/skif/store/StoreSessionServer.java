@@ -764,4 +764,9 @@ public class StoreSessionServer extends AbstractStoreSession {
         Preconditions.checkState(storeEntry.isLocked(), "Entry må være låst: %s", storeEntry);
         return Preconditions.checkNotNull(storeEntry.getBubbleObject(0), "Entry.getBubbleObject[0] kan ikke være null: %s", storeEntry);
     }
+
+    @Override
+    public UnitOfWorkTransfer getSnapshot() {
+        return getSessionSnapshot();
+    }
 }

@@ -6,6 +6,7 @@ import no.statkart.skif.exception.ImplementationException;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -131,4 +132,21 @@ public class UnitOfWorkTransfer implements Serializable {
     public void setDeletedObjects(List<BubbleObject> deletedObjects) {
         this.deletedObjects = deletedObjects;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UnitOfWorkTransfer)) return false;
+        UnitOfWorkTransfer that = (UnitOfWorkTransfer) o;
+        return Objects.equals(getInsertedObjects(), that.getInsertedObjects())
+                && Objects.equals(getUpdatedObjects(), that.getUpdatedObjects())
+                && Objects.equals(getDeletedObjects(), that.getDeletedObjects())
+                ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getInsertedObjects(), getUpdatedObjects(), getDeletedObjects());
+    }
+
 }

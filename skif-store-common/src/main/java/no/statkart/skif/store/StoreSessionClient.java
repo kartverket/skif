@@ -373,4 +373,14 @@ public class StoreSessionClient extends AbstractStoreSession {
     public StoreClientReadCache getReadCache() {
         return readCache;
     }
+
+    @Override
+    public UnitOfWorkTransfer getSnapshot() {
+        throw new ImplementationException("Not in UnitOfWork");
+    }
+
+    @Override
+    public UnitOfWorkTransfer getSessionSnapshot() {
+        throw new ImplementationException("Not in UnitOfWork");
+    }
 }

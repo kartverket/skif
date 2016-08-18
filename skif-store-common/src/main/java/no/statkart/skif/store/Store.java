@@ -408,11 +408,32 @@ public interface Store {
     void abortUnitOfWork(UnitOfWork unitOfWork);
 
     /**
-     * Henter ut transfer med alle endringer fra gjeldende unit-of-work.
+     * Henter ut transfer med alle endringer fra gjeldende unit-of-work inklusiv endringer fra underliggende
+     * unit-of-works. Metoden kan kun kalles hvis en unit-of-work er aktiv.
      *
      * @return transfer med endrede objekter
      */
     UnitOfWorkTransfer getUnitOfWorkTransfer();
+
+    /**
+     * Henter ut transfer med alle endringer fra gjeldende session inklusiv endringer fra underliggende
+     * sessioner. På klienten kan metoden kun kalles hvis en unit-of-work er aktiv. På serveren
+     * kan metoden også kalles uten en aktiv unit-of-work.
+     *
+     * @return transfer med endrede objekter
+     * @see {@link WrappableStoreSession}
+     */
+    UnitOfWorkTransfer getSnapshot();
+
+    /**
+     * Henter ut transfer med alle endringer som eksplisitt er utført av inneværende session. Endringer
+     * som bare er utført av underliggende sessioner blir ikke med. På klienten kan metoden kun
+     * kalles hvis en unit-of-work er aktiv. På serveren kan metoden også kalles uten en aktiv unit-of-work.
+     *
+     * @return transfer med endrede objekter
+     * @see {@link WrappableStoreSession}
+     */
+    UnitOfWorkTransfer getSessionSnapshot();
 
     /**
      * Avslutter gjeldende unit-of-work og returnerer til nivået under. Man må ha kalt {@link #getUnitOfWorkTransfer()}

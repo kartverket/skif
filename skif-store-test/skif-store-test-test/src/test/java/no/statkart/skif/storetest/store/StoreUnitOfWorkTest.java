@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.store;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
@@ -24,9 +25,11 @@ import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.assertNotFound;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -54,7 +57,9 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             @Override
             public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
                 return ImmutableSet.of(
-                        mockupFacade.getSimpleMockupFactory().getSimpleId1());
+                        mockupFacade.getSimpleMockupFactory().getSimpleId1(),
+                        mockupFacade.getSimpleMockupFactory().getSimpleId2()
+                        );
             }
         });
     }
@@ -494,12 +499,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         assertFalse(clientStore.inUnitOfWork());
     }
 
-    private void methodStartingUnitOfWorkAndThrowingException() {
-        UnitOfWork unitOfWork = clientStore.beginUnitOfWork();
-        throw new RuntimeException("Her kaster vi en exception som gjøre at inner unit of work ikke ble lukket");
-        //unitOfWork.close(); // Her kommer vi ikke.
-    }
-
     @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Update on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer.*")
     public void testClientUpdateOutsideUnitOfWork() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -609,5 +608,106 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 return null;
             }
         });
+    }
+
+    public void getUnitOfWorkOnServerWhenObjectsChangedInSessionAndInNestedUnitsOfWork() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        final SimpleId<?> simpleId2 = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                Simple simple3UpdatedAgain;
+                SimpleId<?> simpleId3 = store.getInstance(IdService.class).getNextId(SimpleId.class);
+                SimpleId<?> simpleId4 = store.getInstance(IdService.class).getNextId(SimpleId.class);
+                Simple simple1 = store.lock(simpleId1);
+                Simple simple2 = store.lock(simpleId2);
+                store.delete(simple1);
+                store.update(simple2);
+                Simple simple3 = new Simple(simpleId3, "Simple 3");
+                store.insert(simple3);
+                try (UnitOfWork ignore = store.beginUnitOfWork()) {
+                    assertTransferEmpty(store.getUnitOfWorkTransfer());
+                    Simple simple3Updated = store.get(simpleId3);
+                    simple3Updated.setText("Updated");
+                    store.update(simple3Updated);
+                    Simple simple4 = new Simple(simpleId4, "Simple 4");
+                    store.insert(simple4);
+                    assertTransfer(store.getUnitOfWorkTransfer(), ImmutableList.of(simple4), ImmutableList.of(simple3Updated), emptyList());
+                    try (UnitOfWork inner = store.beginUnitOfWork()) {
+                        assertTransfer(store.getUnitOfWorkTransfer(), ImmutableList.of(simple4), ImmutableList.of(simple3Updated), emptyList());
+                        simple3UpdatedAgain = store.get(simpleId3);
+                        simple3UpdatedAgain.setText("Updated again");
+                        store.update(simple3UpdatedAgain);
+                        assertTransfer(store.getUnitOfWorkTransfer(), ImmutableList.of(simple4), ImmutableList.of(simple3UpdatedAgain), emptyList());
+                        store.commitUnitOfWork(inner);
+                    }
+                    assertTransfer(store.getUnitOfWorkTransfer(), ImmutableList.of(simple4), ImmutableList.of(simple3UpdatedAgain), emptyList());
+                }
+                return null;
+            }
+        });
+    }
+
+    public void getSnapshotOnClientWhenObjectsChangedInNestedUnitsOfWork() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        final SimpleId<?> simpleId2 = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+
+        try (UnitOfWork unitOfWork1 = clientStore.beginUnitOfWork()) {
+            Simple simple3UpdatedAgain;
+            SimpleId<?> simpleId3 = clientStore.getInstance(IdService.class).getNextId(SimpleId.class);
+            SimpleId<?> simpleId4 = clientStore.getInstance(IdService.class).getNextId(SimpleId.class);
+            Simple simple1 = clientStore.lock(simpleId1);
+            Simple simple2 = clientStore.lock(simpleId2);
+            clientStore.delete(simple1);
+            clientStore.update(simple2);
+            Simple simple3 = new Simple(simpleId3, "Simple 3");
+            clientStore.insert(simple3);
+            try (UnitOfWork unitOfWork2 = clientStore.beginUnitOfWork()) {
+                assertTransfer(clientStore.getUnitOfWorkTransfer(), ImmutableList.of(simple3), ImmutableList.of(simple2), ImmutableList.of(simple1));
+                Simple simple3Updated = clientStore.get(simpleId3);
+                simple3Updated.setText("Updated");
+                clientStore.update(simple3Updated);
+                Simple simple4 = new Simple(simpleId4, "Simple 4");
+                clientStore.insert(simple4);
+                assertTransfer(clientStore.getUnitOfWorkTransfer(), ImmutableList.of(simple3Updated, simple4), ImmutableList.of(simple2), ImmutableList.of(simple1));
+                try (UnitOfWork inner = clientStore.beginUnitOfWork()) {
+                    assertTransfer(clientStore.getUnitOfWorkTransfer(), ImmutableList.of(simple3Updated, simple4), ImmutableList.of(simple2), ImmutableList.of(simple1));
+                    simple3UpdatedAgain = clientStore.get(simpleId3);
+                    simple3UpdatedAgain.setText("Updated again");
+                    clientStore.update(simple3UpdatedAgain);
+                    assertTransfer(clientStore.getUnitOfWorkTransfer(), ImmutableList.of(simple3UpdatedAgain, simple4), ImmutableList.of(simple2), ImmutableList.of(simple1));
+                    clientStore.commitUnitOfWork(inner);
+                }
+                assertTransfer(clientStore.getUnitOfWorkTransfer(), ImmutableList.of(simple3UpdatedAgain, simple4), ImmutableList.of(simple2), ImmutableList.of(simple1));
+                clientStore.commitUnitOfWork(unitOfWork2);
+            }
+            clientStore.abortUnitOfWork(unitOfWork1);
+        }
+    }
+
+    private void assertTransferEmpty(UnitOfWorkTransfer transfer) {
+        assertTransfer(transfer, emptyList(), emptyList(), emptyList());
+    }
+
+    private void assertTransfer(UnitOfWorkTransfer transfer, List<? extends BubbleObject> insertedObjects, List<? extends BubbleObject> updatedObjects, List<? extends BubbleObject> deletedObjects) {
+        assertContainsSame("inserted", transfer.getInsertedObjects(), insertedObjects);
+        assertContainsSame("updated", transfer.getUpdatedObjects(), updatedObjects);
+        assertContainsSame("deleted", transfer.getDeletedObjects(), deletedObjects);
+    }
+
+    private void assertContainsSame(String description, List<? extends BubbleObject> actual, List<? extends BubbleObject> expected) {
+        assertThat(actual).describedAs(description).hasSize(expected.size());
+        for (int i = 0; i < actual.size(); i++) {
+            assertThat(actual.get(i)).describedAs(String.format("%s[%d]", description, i)).isSameAs(expected.get(i));
+        }
+    }
+
+    private static ImmutableList<BubbleObject> emptyList() {
+        return ImmutableList.of();
     }
 }

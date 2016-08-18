@@ -298,6 +298,16 @@ public abstract class AbstractStore implements Store {
     }
 
     @Override
+    public UnitOfWorkTransfer getSnapshot() {
+        return storeSession.getSnapshot();
+    }
+
+    @Override
+    public UnitOfWorkTransfer getSessionSnapshot() {
+        return storeSession.getSessionSnapshot();
+    }
+
+    @Override
     public void abortUnitOfWork(UnitOfWork unitOfWork) {
         validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
         // Hvis det kastes en exception her, så er løpet kjørt. Da må Store forkastes.

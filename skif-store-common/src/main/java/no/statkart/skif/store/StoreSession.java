@@ -141,4 +141,37 @@ public interface StoreSession {
 
     void register(BubbleTransfer bubbleTransfer);
 
+    /**
+     * Henter ut en transfer med objekter som modifisert av inneværende eller av en underliggende session.
+     * @return en transfer med insert, updated og deleted objekter. Hvis et objekt er modifisert
+     * både av inneværende og av en underliggende session gjelder følgende regler:
+     * <ul>
+     *     <li>Hvis en underliggende session har gjort en insert og inneværende session har gjort en
+     *     update så vil objektet ligge i {@code inserted}.</li>
+     *     <li>Hvis en underliggende session har gjort en insert og inneværende session har gjort en
+     *     delete så vil objektet ikke ligge i transferen.</li>
+     *     <li>Hvis en underliggende session har gjort en update og inneværende session har gjort en
+     *     delete så vil objektet ligge i {@code deleted}.</li>
+     *     <li>Hvis en underliggende session har gjort en delete og innværende session har gjort en
+     *     insert så vil objektet ligge i {@code updated}</li>
+     * </ul>
+     */
+    UnitOfWorkTransfer getSnapshot();
+
+    /**
+     * Henter ut en transfer med objekter som eksplisitt er modifisert i inneværende session uten å ta
+     * med objekter som bare er modifisert av underliggende sessioner. Hvis et objekt er modifisert
+     * både av inneværende og av en underliggende session gjelder følgende regler:
+     * <ul>
+     *     <li>Hvis en underliggende session har gjort en insert og inneværende session har gjort en
+     *     update så vil objektet ligge i {@code updated}.</li>
+     *     <li>Hvis en underliggende session har gjort en insert eller update og inneværende session har gjort en
+     *     delete så vil objektet ligge i {@code deleted}.</li>
+     *     <li>Hvis en underliggende session har gjort en delete og innværende session har gjort en
+     *     insert så vil objektet ligge i {@code inserted}</li>
+     * </ul>
+     *
+     * @return en transfer med insert, updated og deleted objekter
+     */
+    UnitOfWorkTransfer getSessionSnapshot();
 }

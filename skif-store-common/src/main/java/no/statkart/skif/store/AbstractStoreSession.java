@@ -826,6 +826,30 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         }
     }
 
+    @Override
+    public UnitOfWorkTransfer getSessionSnapshot() {
+        List<BubbleObject> insertedObjects = Lists.newArrayListWithCapacity(modifiedMap.size());
+        List<BubbleObject> updatedObjects = Lists.newArrayListWithCapacity(modifiedMap.size());
+        List<BubbleObject> deletedObjects = Lists.newArrayList();
+
+        for (StoreEntry storeCacheEntry : modifiedMap.values()) {
+            StoreEntryState state = storeCacheEntry.getState(level);
+            switch (state) {
+                case INSERTED:
+                    insertedObjects.add(storeCacheEntry.getBubbleObject(level));
+                    break;
+                case DELETED_INSERTED:
+                case UPDATED:
+                    updatedObjects.add(storeCacheEntry.getBubbleObject(level));
+                    break;
+                case DELETED:
+                    deletedObjects.add(storeCacheEntry.getBubbleObject(level));
+                    break;
+            }
+        }
+        return new UnitOfWorkTransfer(insertedObjects, updatedObjects, deletedObjects);
+    }
+
     private class WithoutUnitOfWorkExecutor implements Executor {
         @Override
         public void execute(@Nonnull Runnable command) {

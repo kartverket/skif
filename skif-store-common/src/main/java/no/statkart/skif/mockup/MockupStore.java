@@ -352,6 +352,15 @@ public class MockupStore implements Store {
     }
 
     @Override
+    public UnitOfWorkTransfer getSnapshot() {
+        throw new NotImplementedException();
+    }
+    @Override
+    public UnitOfWorkTransfer getSessionSnapshot() {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public void abortUnitOfWork(UnitOfWork unitOfWork) {
         throw new NotImplementedException();
     }
