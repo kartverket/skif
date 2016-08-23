@@ -17,10 +17,7 @@ import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
-import no.statkart.skif.persistence.DefaultResourceManager;
-import no.statkart.skif.persistence.ResourceManager;
-import no.statkart.skif.persistence.ResourceManagerConfigurator;
-import no.statkart.skif.persistence.VersionFinder;
+import no.statkart.skif.persistence.*;
 import no.statkart.skif.persistence.jdbc.*;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandlerForConnection;
@@ -154,6 +151,8 @@ public class StoreTestServerModule extends SkifModule {
         bind(SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).to(no.statkart.skif.storetest.service.locker.DBLockerInTransactionService.class);
         bind(LockerStrategy.class).to(TransactionalLockerStrategy.class);
         bind(TransactionalLockerStrategy.class).in(ServiceRequestScoped.class);
+
+        bind(TransactionTimeService.class).to(HistorikkTransactionTimeServiceImpl.class);
 
         bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
         bind(Session.class).toProvider(SessionProvider.class);

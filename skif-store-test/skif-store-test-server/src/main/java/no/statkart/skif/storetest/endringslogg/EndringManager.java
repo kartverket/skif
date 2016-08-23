@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.endringslogg;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.config.Configuration;
+import no.statkart.skif.persistence.TransactionTimeService;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.endringslogg.AbstractEndringManager;
@@ -24,8 +25,8 @@ public class EndringManager extends AbstractEndringManager<Endring> {
 
 
     @Inject
-    public EndringManager(EndringManagerConfiguration endringManagerConfiguration, Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Configuration skifConfiguration) {
-        super(endringManagerConfiguration, connectionProvider, skifConfiguration);
+    public EndringManager(EndringManagerConfiguration endringManagerConfiguration, Provider<ServiceRequestContext> contextProvider, Provider<Connection> connectionProvider, Provider<TransactionTimeService> transactionTimeServiceProvider, Configuration skifConfiguration) {
+        super(endringManagerConfiguration, connectionProvider, transactionTimeServiceProvider, skifConfiguration);
         this.contextProvider = contextProvider;
     }
 
@@ -33,15 +34,10 @@ public class EndringManager extends AbstractEndringManager<Endring> {
     protected void decorateEndring(StoreServer storeServer, Endring endring) {
         super.decorateEndring(storeServer, endring);
 
-        boolean skalTildelesBrukernavn = true;
+        ServiceRequestContext serviceRequestContext = contextProvider.get();
+        String principal = serviceRequestContext.getCallerPrincipal().getName();
 
-        if (skalTildelesBrukernavn) {
-            ServiceRequestContext serviceRequestContext = contextProvider.get();
-            String principal = serviceRequestContext.getCallerPrincipal().getName();
-
-            endring.setBrukernavn(principal);
-        }
-
+        endring.setBrukernavn(principal);
     }
 
 }

@@ -4,16 +4,17 @@ import com.google.inject.Provider;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.persistence.TransactionTimeService;
 import no.statkart.skif.service.sequence.DefaultSequenceBlockAllocatorServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * Håndterer grunnleggende generering av endringer. Prosjekter må i det minste lage en tynn implementasjon.
@@ -22,18 +23,16 @@ import java.util.*;
  * @since 2.2.0
  */
 public abstract class AbstractEndringManager<E extends AbstractEndring> implements StoreSessionFinishListener {
-    private final static Logger logger = LoggerFactory.getLogger(AbstractEndringManager.class);
-
     private final EndringManagerConfiguration<E> endringManagerConfiguration;
 
-    private final Provider<Connection> connectionProvider;
+    private final Provider<TransactionTimeService> transactionTimeServiceProvider;
 
     private final SequenceBlockAllocatorService sequenceBlockAllocatorService;
     private final String sequenceName;
 
-    protected AbstractEndringManager(EndringManagerConfiguration<E> endringManagerConfiguration, Provider<Connection> connectionProvider, Configuration configuration) {
+    protected AbstractEndringManager(EndringManagerConfiguration<E> endringManagerConfiguration, Provider<Connection> connectionProvider, Provider<TransactionTimeService> transactionTimeServiceProvider, Configuration configuration) {
         this.endringManagerConfiguration = endringManagerConfiguration;
-        this.connectionProvider = connectionProvider;
+        this.transactionTimeServiceProvider = transactionTimeServiceProvider;
 
         this.sequenceBlockAllocatorService = new DefaultSequenceBlockAllocatorServiceImpl(connectionProvider, configuration) {
             @Override
@@ -44,18 +43,6 @@ public abstract class AbstractEndringManager<E extends AbstractEndring> implemen
         this.sequenceName = configuration.getString(SkifConfigConstants.ENDRINGSNUMMER_SEQUENCE_NAME);
     }
 
-
-    /**
-     * Bestemmer hvilket tidspunkt som skal brukes for endringene. Standardoppførsel er å hente transaksjonstidspunkt
-     * fra databasen, noe som forutsetter at den har historikk.
-     *
-     * @return tidspunktet for endringene
-     * @since 2.3.0
-     */
-    protected Timestamp getEndringstidspunkt() {
-        return SnapshotVersionSessionHelper.getTransactionTime(connectionProvider.get());
-    }
-
     @Override
     public void onFinish(StoreServer storeServer) {
         LinkedHashSet<BubbleId<?>> insertedIds = storeServer.getInsertedIds();
@@ -63,9 +50,9 @@ public abstract class AbstractEndringManager<E extends AbstractEndring> implemen
         LinkedHashSet<BubbleId<?>> deletedIds = storeServer.getDeletedIds();
 
         if (insertedIds.size() > 0 || updatedIds.size() > 0 || deletedIds.size() > 0) {
-            Timestamp tidspunkt = getEndringstidspunkt();
+            Timestamp tidspunkt = transactionTimeServiceProvider.get().getTransactionTime();
 
-            List<AbstractEndring> endringer = new ArrayList<AbstractEndring>();
+            List<AbstractEndring> endringer = new ArrayList<>();
 
             for (BubbleId<?> bubbleId : insertedIds) {
                 E endring = createEndring(bubbleId, Endringstype.Nyoppretting, tidspunkt);
@@ -109,9 +96,7 @@ public abstract class AbstractEndringManager<E extends AbstractEndring> implemen
 
             try {
                 endring = endringClass.newInstance();
-            } catch (InstantiationException e) {
-                throw new ImplementationException(e);
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new ImplementationException(e);
             }
 
