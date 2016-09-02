@@ -16,7 +16,6 @@
             <many-to-many
                     class="no.statkart.skif.storetest.domain.demo.BubbleWithList"
                     column="bwlId">
-                <meta attribute="bubble-ref"/>
             </many-to-many>
         </set>
 
