@@ -11,7 +11,9 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Henrik Fredholm
@@ -51,4 +53,26 @@ public class SkifServerTestCaseTest extends SkifServerTestCase {
         assertEquals(result, "AService.m1 BService.m2");
     }
 
+    @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRED)
+    public void testRunOnServerUsingTxRequired() {
+        String result = serviceA.m1(Arrays.asList("BService.m2"));
+        assertTrue(serviceRequestContext.isContainerManagedTransaction());
+        assertTrue(serviceRequestContext.inTx());
+        assertEquals(result, "AService.m1 BService.m2");
+    }
+
+    /**
+     * Skal gi samme resultat som hvis @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRED) er angitt
+     */
+    @TestTransactionAttribute
+    public void testRunOnServerUsingDefaultTestTransactionAttributeValue() {
+        testRunOnServerUsingTxRequired();
+    }
+
+    /**
+     * Skal gi samme resultat som hvis @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRED) er angitt
+     */
+    public void testRunOnServerUsingNoTestTransactionAttribute() {
+        testRunOnServerUsingTxRequired();
+    }
 }
