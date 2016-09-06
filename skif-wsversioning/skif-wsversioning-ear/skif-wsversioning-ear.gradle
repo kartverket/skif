@@ -18,9 +18,8 @@ dependencies {
         earlib p
     }
     warMap.each {
-        def p = project(path: it.key, configuration: 'weblogic')
-        deploy p
-        earlib p
+        deploy project(path: it.key, configuration: 'war')
+        earlib project(path: it.key, configuration: 'compile')
     }
 
     earlib project(':skif-config')
@@ -33,11 +32,9 @@ ear {
         displayName= "skif-wsversioning"
         warMap.each {
             def p = project(it.key)
-            webModule(p.name + '-weblogic-' + p.version + ".war", it.value)
+            webModule(p.name + '-' + p.version + ".war", it.value)
         }
     }
-
-    exclude '*wswar*.jar'
 }
 
 weblogicDeploy {

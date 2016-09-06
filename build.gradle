@@ -368,6 +368,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build524'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build571'
     }
 }

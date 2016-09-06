@@ -1,60 +1,55 @@
-apply plugin: 'sktools-weblogic-wswar-plugin'
+apply plugin: 'sktools-wsgen-plugin'
 
 configurations {
-    schemas {
-        description = 'Configuration for consuming schemas'
-    }
-
-    weblogicTools {
-        description = 'Avhengigheter for weblogic-verktøy'
-    }
+    schemas { description = 'Configuration for consuming schemas' }
+    war { description = 'War-artifaktet' }
+    wsdls { description = 'Zip med WSDL-er' }
 }
-
-sourceSets.weblogic {
-    java.srcDirs = ['src/main/java']
-    resources.srcDirs = []
-}
-
 
 dependencies {
     if(hibernateVersion.equals("3.6")){
-        weblogicCompile project(':skif-store-server:skif-store-server-hs36')
+        compile project(':skif-store-server:skif-store-server-hs36')
     }
-    weblogicCompile project(':skif-store-test:skif-store-test-api')
-// Havner tydeligvis på compile classpath   weblogicRuntime project(':skif-store-test:skif-store-test-server')
-    weblogicCompile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
-    weblogicCompile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
+    compile project(':skif-store-test:skif-store-test-api')
+    compile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
+    compile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
-    weblogicProvided libraries.weblogic
+    provided libraries.weblogic
 
-    weblogicTools libraries['tools.jar']
-    weblogicTools libraries.weblogic_tools
+    jaxws libraries['tools.jar']
+    jaxws libraries.weblogic_tools
 
     schemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
-}
-
-genWeblogic {
-    classpath = sourceSets.weblogic.runtimeClasspath + configurations.weblogicTools
-    weblogicClasspath = configurations.weblogicTools
 }
 
 task zipWsdlsAndSchemas(type: Zip) { Task t ->
     baseName = 'schemas'
 
-    project.tasks.withType(no.statkart.sktools.gradle.plugins.weblogic.wswar.WeblogicWsCompileTask).all { Task wwct ->
-        t.dependsOn wwct
-        t.from {
-            t.project.fileTree(dir: wwct.getGenDir(), includes: ['**/*.wsdl', '**/*schema1.xsd']).files
-        }
-    }
-
     dependsOn configurations.schemas
     from { configurations.schemas.files.collect { project.zipTree it } }
+
+    from genWsdls {
+        include '**/*.wsdl'
+        include '**/*schema1.xsd'
+    }
 
     includeEmptyDirs = false
 }
 
-warWeblogic {
-    from 'src/main/webapp'
-    from zipWsdlsAndSchemas
+task zipWsdls(type: Zip) {
+    classifier = 'wsdls'
+    extension = 'war'
+    from genWsdls
+}
+
+war {
+    // Skinny war
+    classpath = sourceSets.main.output
+
+    from zipWsdls
+}
+
+artifacts {
+    wsdls zipWsdls
+    war project.war
 }
