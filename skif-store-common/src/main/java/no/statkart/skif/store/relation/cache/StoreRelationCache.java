@@ -93,6 +93,16 @@ public abstract class StoreRelationCache {
         }
     }
 
+
+    /**
+     * Hjelpemetode for testing som ikke ellers bør brukes
+     */
+    public <E> RelationTracker peekRelationTracker(RelationName relationName, E value) {
+        checkState(isEnabled());
+        return relationCache.peekRelationTracker(getLevel(), relationName, value);
+    }
+
+
     public <E> RelationValueHolder getRelationValue(RelationName relationName, E value) {
         checkState(isEnabled());
         return relationCache.getRelationValue(getLevel(), relationName, value);

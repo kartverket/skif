@@ -2,7 +2,9 @@ package no.statkart.skif.store.relation.cache;
 
 import com.google.common.collect.Lists;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +28,8 @@ import static com.google.common.base.Preconditions.checkState;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class RelationTracker {
+public class RelationTracker implements Serializable {
+    private static final long serialVersionUID = 1L;
     private boolean materialised;
 
     /**
@@ -35,7 +38,8 @@ public class RelationTracker {
      */
     private Object holder;
 
-    private static abstract class Operation {
+    private static abstract class Operation implements Serializable {
+        private static final long serialVersionUID = 1L;
         final protected Object value;
 
         protected Operation(Object value) {
@@ -54,6 +58,7 @@ public class RelationTracker {
     }
 
     private static class Added extends Operation {
+        private static final long serialVersionUID = 1L;
         private Added(Object value) {
             super(value);
         }
@@ -70,6 +75,7 @@ public class RelationTracker {
     }
 
     private static class Removed extends Operation {
+        private static final long serialVersionUID = 1L;
         private Removed(Object value) {
             super(value);
         }
@@ -172,7 +178,27 @@ public class RelationTracker {
         materialised=true;
     }
 
+    /**
+     * Hjelpemetode for testing som ikke ellers bør brukes. Henter ut verdien for en relasjon med kardinalitet 1.
+     */
+    public Object peekOne() {
+        if (materialised) {
+            return holder;
+        } else {
+            return applyOperations(null);
+        }
+    }
 
+    /**
+     * Hjelpemetode for testing som ikke ellers bør brukes. Henter ut verdien for en relasjon med kardinalitet Many.
+     */
+    public Set peekMany() {
+        if (materialised) {
+            return (Set)holder;
+        } else {
+            return (Set) applyOperations(new LinkedHashSet());
+        }
+    }
     @Override
     public String toString() {
         return "RelationTracker{" +

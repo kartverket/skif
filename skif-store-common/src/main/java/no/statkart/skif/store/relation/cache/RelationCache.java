@@ -185,6 +185,19 @@ public class RelationCache {
         return inverseRelationEntry;
     }
 
+    /**
+     * Hjelpemetode for testing som ikke ellers bør brukes.
+     */
+    public <E> RelationTracker peekRelationTracker(int level, RelationName relationName, E inverseValue) {
+        RelationEntry inverseRelationEntry = getInverseRelation(relationName, inverseValue, false);
+        if (inverseRelationEntry != null) {
+            return CopyHelper.copy(inverseRelationEntry.relations[level]); // defensive copy
+        } else {
+            return null;
+        }
+    }
+
+
     public <E> RelationValueHolder getRelationValue(int level, RelationName relationName, E inverseValue) {
         RelationEntry inverseRelationEntry = getInverseRelation(relationName, inverseValue, false);
         if (inverseRelationEntry != null) {
