@@ -62,6 +62,7 @@ import no.statkart.skif.storetest.domain.koder.*;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.Raz;
 import no.statkart.skif.storetest.domain.multikobling.Multirefererende;
+import no.statkart.skif.storetest.domain.multikobling.entity.BubbleWithEntityInMultikobling;
 import no.statkart.skif.storetest.domain.multikobling_old.Person;
 import no.statkart.skif.storetest.domain.multikobling_old.Rettsstiftelse;
 import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponent;
@@ -249,8 +250,11 @@ public class StoreTestServerModule extends SkifModule {
                 .addResource(HistorikkBubbleWithEntityComponents.class)
                 .addResource(HistorikkBubbleWithListEntityComponents.class)
 
-                        // Multikobling
+                        // Multikobling (standard)
                 .addResource(Multirefererende.class)
+
+                        // Multikobling (entity)
+                .addResource(BubbleWithEntityInMultikobling.class)
 
                         // Koder
                 .addResource(EnumKodeIdType.class)

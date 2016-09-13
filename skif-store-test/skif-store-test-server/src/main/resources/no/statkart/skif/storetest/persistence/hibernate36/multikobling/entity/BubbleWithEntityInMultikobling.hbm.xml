@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping SYSTEM "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.multikobling.entity.BubbleWithEntityInMultikobling" table="BUBBLE_WITH_ENT_MULTKOB" select-before-update="true"
+           lazy="true">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest.persistence.hibernate.type.multikobling.entity.BubbleWithEntityInMultikoblingIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <set name="koblinger" lazy="true" cascade="all-delete-orphan,evict" batch-size="256" collection-type="no.statkart.skif.store.multikobling.MultikoblingPersistentSetType">
+            <key column="ownerId"/>
+            <one-to-many class="no.statkart.skif.storetest.domain.multikobling.entity.EntityInMultikoblingKobling"/>
+        </set>
+
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.multikobling.entity.EntityInMultikoblingKobling" table="ENT_IN_MULTIKOB_KOBLING" lazy="true"
+           select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+        <many-to-one
+                name="owner"
+                column="ownerId"
+                class="no.statkart.skif.storetest.domain.multikobling.entity.BubbleWithEntityInMultikobling"
+                cascade="none">
+        </many-to-one>
+        <property name="rolle" access="property"/>
+        <property name="tekst" access="property"/>
+    </class>
+
+</hibernate-mapping>
