@@ -20,5 +20,13 @@ public class LoginUser {
     public String getPassword() {
         return password;
     }
+
+    @Override
+    public String toString() {
+        return "LoginUser{" +
+                "username='" + username + '\'' +
+                ", password='" + (password != null ? "xxx" : null)+ '\'' +
+                '}';
+    }
 }
 

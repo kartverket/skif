@@ -3,9 +3,9 @@ package no.statkart.skif.service.ws;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.InvalidUserException;
 import no.statkart.skif.exception.PermissionDeniedException;
+import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;
-import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 
 import javax.xml.ws.BindingProvider;
@@ -35,9 +35,9 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
     protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         S jaxwsInstance = jaxwsPool.get();
 
+        LoginUser currentLoginUser = loginUserHolder.get();
         try {
             BindingProvider bindings = (BindingProvider) jaxwsInstance;
-            LoginUser currentLoginUser = loginUserHolder.get();
             if (currentLoginUser != null) {
                 bindings.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, currentLoginUser.getUsername());
                 bindings.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, currentLoginUser.getPassword());
@@ -61,17 +61,15 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
                 Integer responseCode = (Integer) bindings.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE);
                 if (responseCode != null) {
                     if (responseCode == 401) {
-                        throw new InvalidUserException("HTTP 401 Unauthorized");
+                        throw new InvalidUserException("HTTP 401 Unauthorized for user:"+currentLoginUser, exception);
                     } else if (responseCode == 403) {
-                        throw new PermissionDeniedException("HTTP 403 Forbidden");
+                        throw new PermissionDeniedException("HTTP 403 Forbidden for user:"+currentLoginUser, exception);
                     }
                 }
             }
 
             throw exception;
-        } catch (IllegalArgumentException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new ImplementationException(e);
         }
     }
