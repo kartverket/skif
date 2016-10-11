@@ -18,6 +18,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
+import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -359,5 +360,37 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
             assertThat(findIdent(newIdent)).isEmpty();
         }
     }
+
+
+    public void testOnClientDeleteBubbleWithIdent() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final X1BBOneId<?> b1Id = mockupFacade.getX1BBOneMockupFactory().getB1Id();
+        assertFalse(storeClient.getRelationCache().isEnabled());
+        try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
+            storeClient.getRelationCache().setEnabled(true);
+            X1BBOne b1 = storeClient.lock(b1Id);
+            X1BBOneIdent oldB1Ident = b1.getIdent();
+            storeClient.delete(b1);
+            assertThat(findIdent(oldB1Ident)).isEmpty();
+        }
+    }
+
+    public void testOnClientDetachedUpdateOfBubbleWithIdentWhereIdentIsChanged() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final X1BBOneId<?> b1Id = mockupFacade.getX1BBOneMockupFactory().getB1Id();
+        assertFalse(storeClient.getRelationCache().isEnabled());
+        try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
+            storeClient.getRelationCache().setEnabled(true);
+            X1BBOne b1 = storeClient.lock(b1Id);
+            X1BBOne b1Copy = CopyHelper.copy(b1);
+            b1Copy.setNr(123);
+            X1BBOneIdent oldB1Ident = b1.getIdent();
+            X1BBOneIdent newB1Ident = b1Copy.getIdent();
+            storeClient.update(b1Copy);
+            assertThat(findIdent(oldB1Ident)).isEmpty();
+            assertThat(findIdent(newB1Ident)).isNotEmpty();
+        }
+    }
+
 
 }

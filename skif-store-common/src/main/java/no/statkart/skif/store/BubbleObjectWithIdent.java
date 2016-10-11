@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 /**
  * Objekter som har ident må implementere dette interface for å støtte relasjonscaching for identer.
  */
-public interface BubbleObjectWithIdent<I> {
+public interface BubbleObjectWithIdent<I> extends BubbleObject {
 
     /**
      * Returnerer objektes ident eller {@code null} hvis identen beregnes på basis av felter i andre objekter som er {@code null}

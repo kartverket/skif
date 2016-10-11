@@ -5,6 +5,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.AbstractStoreSession;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.BubbleObjectWithIdent;
 import no.statkart.skif.store.InverseRelation;
 import no.statkart.skif.store.InverseRelationCollector;
 import no.statkart.skif.store.InverseRelationParticipation;
@@ -225,8 +226,12 @@ public abstract class StoreRelationCache {
         }
     }
 
-    public void onIdentRemoved(BubbleId<?> bubbleId) {
-        relationCache.onSourceIdRemoved(getLevel(), bubbleId);
+    public void onIdentRemoved(BubbleObjectWithIdent<?> bubbleObjectWithIdent) {
+        // SKIF-599: Nødvendig med kall til 'onIdentChanged' her for å fremtvinge at det opprettes en entry
+        // i relationCache hvis det ikke finnes en fra før. Derved kan 'onSourceIdRemoved' kan plukke opp
+        // relationname og ident for boblen og angi at identen ikke lengre er koplet til boblen.
+        bubbleObjectWithIdent.onIdentChanged();
+        relationCache.onSourceIdRemoved(getLevel(), bubbleObjectWithIdent.getId());
     }
 
     public void updateAdded(BubbleId<?> owningBubbleId, InverseRelationParticipation newInstance) {

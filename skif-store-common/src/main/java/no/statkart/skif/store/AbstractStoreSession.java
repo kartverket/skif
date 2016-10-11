@@ -459,7 +459,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
             }
             if (bubbleObject instanceof BubbleObjectWithIdent) {
-                relationCache.onIdentRemoved(bubbleObject.getBubbleId());
+                relationCache.onIdentRemoved((BubbleObjectWithIdent)bubbleObject);
             }
         }
         return storeEntry;
@@ -798,7 +798,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                                 relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
                             }
                             if (bubbleObject instanceof BubbleObjectWithIdent) {
-                                relationCache.onIdentRemoved(bubbleObject.getId());
+                                relationCache.onIdentRemoved((BubbleObjectWithIdent)bubbleObject);
                             }
                         } else {
                             // Kan komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
