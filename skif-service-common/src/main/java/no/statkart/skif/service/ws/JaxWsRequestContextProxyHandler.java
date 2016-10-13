@@ -36,8 +36,8 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
         S jaxwsInstance = jaxwsPool.get();
 
         LoginUser currentLoginUser = loginUserHolder.get();
+        BindingProvider bindings = (BindingProvider) jaxwsInstance;
         try {
-            BindingProvider bindings = (BindingProvider) jaxwsInstance;
             if (currentLoginUser != null) {
                 bindings.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, currentLoginUser.getUsername());
                 bindings.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, currentLoginUser.getPassword());
@@ -57,13 +57,14 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
             // Det kastes en intern exceptiontype, men den varierer ut fra implementasjonen. Teksten i den kan jo også
             // endre seg. Sjekker derfor HTTP-statuskoden direkte dersom det kastes en exception i det hele tatt.
             if (exception instanceof WebServiceException) {
-                BindingProvider bindings = (BindingProvider) jaxwsInstance;
                 Integer responseCode = (Integer) bindings.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE);
                 if (responseCode != null) {
+                    Object username = bindings.getRequestContext().get(BindingProvider.USERNAME_PROPERTY);
+                    Object endpoint = bindings.getRequestContext().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
                     if (responseCode == 401) {
-                        throw new InvalidUserException("HTTP 401 Unauthorized for user:"+currentLoginUser, exception);
+                        throw new InvalidUserException("HTTP 401 Unauthorized from " + endpoint + " for user " + username, exception);
                     } else if (responseCode == 403) {
-                        throw new PermissionDeniedException("HTTP 403 Forbidden for user:"+currentLoginUser, exception);
+                        throw new PermissionDeniedException("HTTP 403 Forbidden from " + endpoint + " for user " + username, exception);
                     }
                 }
             }
