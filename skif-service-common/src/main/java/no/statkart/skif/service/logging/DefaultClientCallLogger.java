@@ -14,8 +14,13 @@ import java.lang.reflect.Method;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
+@SuppressWarnings("WeakerAccess") // Det skal være mulig å override det meste
 @Singleton
 public class DefaultClientCallLogger implements ClientCallLogger {
+    /**
+     * @deprecated Bruk alltid getteren.
+     */
+    @Deprecated
     private final static Logger logger = LoggerFactory.getLogger(DefaultClientCallLogger.class);
 
     private final LoginUserHolder loginUserHolder;
@@ -25,15 +30,27 @@ public class DefaultClientCallLogger implements ClientCallLogger {
         this.loginUserHolder = loginUserHolder;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    /**
+     * Dels er dette det gamle navnet for {@link #getLogger()} som ligger igjen for kompatibilitet,
+     * dels er dette en måte å kunne få tak i {@link #logger} selv om {@code getLogger()} er overridden.
+     */
+    @SuppressWarnings({"UnusedDeclaration", "deprecation"})
     protected Logger getDefaultLogger() {
+        return logger;
+    }
+
+    /**
+     * @return Loggeren som blir brukt for logging. Override denne for å angi spesielle loggere.
+     */
+    @SuppressWarnings("deprecation")
+    protected Logger getLogger() {
         return logger;
     }
 
     protected void logCall(Long callId, Method method, Object[] args) {
         CharSequence msg = createCallMessage(callId, method, args);
 
-        logger.info(msg.toString());
+        getLogger().info(msg.toString());
     }
 
     /**
@@ -98,7 +115,7 @@ public class DefaultClientCallLogger implements ClientCallLogger {
     protected void logReturn(Long callId, Method method, Object[] args, Object returnValue, long time) {
         CharSequence msg = createReturnMessage(callId, method, args, returnValue, time);
 
-        logger.info(msg.toString());
+        getLogger().info(msg.toString());
     }
 
     /**
@@ -126,7 +143,7 @@ public class DefaultClientCallLogger implements ClientCallLogger {
     protected void logError(Long callId, Method method, Object[] args, Throwable t, long time) {
         CharSequence msg = createErrorMessage(callId, method, args, t, time);
 
-        logger.error(msg.toString(), t);
+        getLogger().error(msg.toString(), t);
     }
 
     /**

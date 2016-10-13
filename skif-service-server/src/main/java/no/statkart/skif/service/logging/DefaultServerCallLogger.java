@@ -15,8 +15,13 @@ import java.lang.reflect.Method;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
+@SuppressWarnings("WeakerAccess") // Det skal være mulig å override det meste
 @Singleton
 public class DefaultServerCallLogger implements ServerCallLogger {
+    /**
+     * @deprecated Bruk alltid getteren.
+     */
+    @Deprecated
     private final static Logger logger = LoggerFactory.getLogger(DefaultServerCallLogger.class);
 
     private final Provider<ServiceRequestContext> serviceRequestContextProvider;
@@ -31,15 +36,27 @@ public class DefaultServerCallLogger implements ServerCallLogger {
         return serviceRequestContextProvider;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    /**
+     * Dels er dette det gamle navnet for {@link #getLogger()} som ligger igjen for kompatibilitet,
+     * dels er dette en måte å kunne få tak i {@link #logger} selv om {@code getLogger()} er overridden.
+     */
+    @SuppressWarnings({"UnusedDeclaration", "deprecation"})
     protected Logger getDefaultLogger() {
+        return logger;
+    }
+
+    /**
+     * @return Loggeren som blir brukt for logging. Override denne for å angi spesielle loggere.
+     */
+    @SuppressWarnings("deprecation")
+    protected Logger getLogger() {
         return logger;
     }
 
     protected void logCall(Method method, Object[] args) {
         CharSequence msg = createCallMessage(method, args);
 
-        logger.info(msg.toString());
+        getLogger().info(msg.toString());
     }
 
     /**
@@ -106,7 +123,7 @@ public class DefaultServerCallLogger implements ServerCallLogger {
     protected void logReturn(Method method, Object[] args, Object returnValue, long time) {
         CharSequence msg = createReturnMessage(method, args, returnValue, time);
 
-        logger.info(msg.toString());
+        getLogger().info(msg.toString());
     }
 
     /**
@@ -134,7 +151,7 @@ public class DefaultServerCallLogger implements ServerCallLogger {
     protected void logError(Method method, Object[] args, Throwable t, long time) {
         CharSequence msg = createErrorMessage(method, args, t, time);
 
-        logger.error(msg.toString(), t);
+        getLogger().error(msg.toString(), t);
     }
 
     /**
