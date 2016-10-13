@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Henrik Fredholm
  * @since 2.4
  */
+@SuppressWarnings("WeakerAccess")
 public class Components {
     /**
      * Hjelpemetode som sikre at komponent blir sjekket og satt riktig påeiende objekt.
@@ -152,20 +153,24 @@ public class Components {
         collection.addAll(newElements);
     }
 
+    @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> void setDelegate(Set<E> componentSet, Set<E> newElements) {
-        ((ComponentSet<?, E>) componentSet).setDelegate(newElements);
+        ((AbstractComponentSet<?, E>) componentSet).setDelegate(newElements);
     }
 
+    @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> Set<E> getDelegate(Set<E> componentSet) {
-        return ((ComponentSet<?, E>) componentSet).delegate();
+        return ((AbstractComponentSet<?, E>) componentSet).delegate();
     }
 
+    @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> void setDelegate(List<E> componentList, List<E> newElements) {
-        ((ComponentList<?, E>) componentList).setDelegate(newElements);
+        ((AbstractComponentList<?, E>) componentList).setDelegate(newElements);
     }
 
+    @SuppressWarnings("unchecked")
     static public <E extends ComponentWithOwnerReference<?>> List<E> getDelegate(List<E> componentList) {
-        return ((ComponentList<?, E>) componentList).delegate();
+        return ((AbstractComponentList<?, E>) componentList).delegate();
     }
 
     public static BubbleObject getOwningBubble(ComponentWithOwnerReference<?> component) {

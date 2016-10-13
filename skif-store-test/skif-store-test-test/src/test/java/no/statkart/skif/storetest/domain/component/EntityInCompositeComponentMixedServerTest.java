@@ -4,17 +4,15 @@ package no.statkart.skif.storetest.domain.component;
 import com.google.inject.Inject;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.RunOnServerMethod;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.Store;
-import no.statkart.skif.store.StoreServer;
-import no.statkart.skif.store.UnitOfWork;
+import no.statkart.skif.store.*;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponentId;
+import no.statkart.skif.storetest.domain.component.entity.Level1SetEntityInCompositeComponent;
 import no.statkart.skif.storetest.mockup.BubbleWithEntityInCompositeComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
-import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Set;
@@ -30,11 +28,9 @@ import static org.testng.Assert.*;
 @Test(groups = {"singlevm-required","hibernate36"})
 public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTestCase {
     @Inject
-    Store store;
+    private Store store;
     @Inject
-    StoreUpdateService storeUpdateService;
-    @Inject
-    StoreTestMockupFacadeFactory mockupFacadeFactory;
+    private StoreTestMockupFacadeFactory mockupFacadeFactory;
 
 
     private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
@@ -58,6 +54,7 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
      * BubbleWithEntityInCompositeComponent med henholdsvis en, to, og tre  BubbleWithEntityInCompositeComponent
      * inserts. For updates skal Hibernate kun produsere en update batchgruppe som setter ownerId.
      */
+    @SuppressWarnings("unused")
     public void testWriteTestSet1() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
     }
@@ -122,19 +119,77 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         final StoreTestMockupFacade mockupFacade =getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
 
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        server.runInTxRequired(new RunOnServerMethod() {
             @Inject
             StoreServer store;
 
             public Object run() {
-                UnitOfWork unitOfWork = store.beginUnitOfWork();
-                try {
+                try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
                     BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
                     store.update(bubble);
                     store.commitUnitOfWork(unitOfWork);
-                } finally {
-                    store.closeUnitOfWork(unitOfWork);
                 }
+                return null;
+            }
+        });
+    }
+
+    public void testInsertComponentInBubbleWithNonNullLevel1AndLevel2CompositeComponentInAttachedState() {
+        final StoreTestMockupFacade mockupFacade =getWriteMockupFacadeAndSaveDataForTestSet1();
+        final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
+
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
+                Level1SetEntityInCompositeComponent entityInCompositeComponent = new Level1SetEntityInCompositeComponent("Insert");
+                bubble.getLevel1Component().getEntitySet().add(entityInCompositeComponent);
+                Assert.assertNotNull(entityInCompositeComponent.getOwner(), "Owner");
+                store.update(bubble);
+                return null;
+            }
+        });
+
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                BubbleWithEntityInCompositeComponent bubble = store.get(mockupFactory.getWithNonNullComponentsId());
+                Assert.assertEquals(bubble.getLevel1Component().getEntitySet().size(), 2, "Antall entity components in level 1");
+                return null;
+            }
+        });
+    }
+
+    public void testDeleteComponentInBubbleWithNonNullLevel1AndLevel2CompositeComponentInAttachedState() {
+        final StoreTestMockupFacade mockupFacade =getWriteMockupFacadeAndSaveDataForTestSet1();
+        final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
+
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
+//                Assert.assertTrue(bubble.getLevel1Component().getEntitySet() instanceof CompositeComponentSet, "CompositeComponentSet");
+                Level1SetEntityInCompositeComponent entityInCompositeComponent = bubble.getLevel1Component().getEntitySet().iterator().next();
+                Assert.assertNotNull(entityInCompositeComponent.getOwner(), "Owner");
+                bubble.getLevel1Component().getEntitySet().clear();
+                store.update(bubble);
+                return null;
+            }
+        });
+
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                BubbleWithEntityInCompositeComponent bubble = store.get(mockupFactory.getWithNonNullComponentsId());
+                Assert.assertEquals(bubble.getLevel1Component().getEntitySet().size(), 0, "Antall entity components in level 1");
                 return null;
             }
         });
@@ -144,7 +199,7 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         final StoreTestMockupFacade mockupFacade =getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
 
-        server.runInTxRequiresNew(new RunOnServerMethod() {
+        server.runInTxRequired(new RunOnServerMethod() {
             @Inject
             StoreServer store;
 
@@ -152,12 +207,25 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
                 UnitOfWork unitOfWork = store.beginUnitOfWork();
                 try {
                     BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
+                    Level1SetEntityInCompositeComponent entityInCompositeComponent = bubble.getLevel1Component().getEntitySet().iterator().next();
+                    Assert.assertNotNull(entityInCompositeComponent.getOwner(), "Owner");
                     bubble.getLevel1Component().getEntitySet().clear();
                     store.update(bubble);
                     store.commitUnitOfWork(unitOfWork);
                 } finally {
                     store.closeUnitOfWork(unitOfWork);
                 }
+                return null;
+            }
+        });
+
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                BubbleWithEntityInCompositeComponent bubble = store.get(mockupFactory.getWithNonNullComponentsId());
+                Assert.assertEquals(bubble.getLevel1Component().getEntitySet().size(), 0, "Antall entity components in level 1");
                 return null;
             }
         });
