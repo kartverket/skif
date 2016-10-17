@@ -111,37 +111,35 @@ import static org.testng.FileAssert.fail;
  */
 @Test(groups = "singlevm-required")
 public class StoreSessionServerTest {
-    protected Logger logger = LoggerFactory.getLogger(StoreSessionServerTest.class);
+    private Logger logger = LoggerFactory.getLogger(StoreSessionServerTest.class);
 
-    Properties hibernateProperties;
+    private Properties hibernateProperties;
 
-    TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_CURRENT = new TestBubbleWithHistoryId<TestBubbleWithHistory>(10L, SnapshotVersion.CURRENT);
-    TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_OLD = new TestBubbleWithHistoryId<TestBubbleWithHistory>(10L, SnapshotVersion.OLD);
-    TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S1 = new TestBubbleWithHistoryId<TestBubbleWithHistory>(10L, S1);
-    TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S2 = new TestBubbleWithHistoryId<TestBubbleWithHistory>(10L, S2);
-    TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S3 = new TestBubbleWithHistoryId<TestBubbleWithHistory>(10L, S3);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_CURRENT = new TestBubbleWithHistoryId<>(10L, SnapshotVersion.CURRENT);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_OLD = new TestBubbleWithHistoryId<>(10L, SnapshotVersion.OLD);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S1 = new TestBubbleWithHistoryId<>(10L, S1);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S2 = new TestBubbleWithHistoryId<>(10L, S2);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S3 = new TestBubbleWithHistoryId<>(10L, S3);
 
-    TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_CURRENT = new TestBubbleWithHistoryId<TestBubbleWithHistory>(11L, SnapshotVersion.CURRENT);
-    TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_S3 = new TestBubbleWithHistoryId<TestBubbleWithHistory>(11L, S3);
-    TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<TestBubbleWithHistory>(11L, SnapshotVersion.OLD);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_CURRENT = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.CURRENT);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_S3 = new TestBubbleWithHistoryId<>(11L, S3);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.OLD);
 
-    TestBubbleId<TestBubble> TestBubbleId_1 = new TestBubbleId<TestBubble>(1);
-    TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<TestBubble>(101);
+    private TestBubbleId<TestBubble> TestBubbleId_1 = new TestBubbleId<>(1);
+    private TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101);
 
-    FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<FilteredBubble>(1);
-    FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<FilteredBubble>(2);
-    FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<FilteredBubble>(101);
+    private FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<>(1);
+    private FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<>(2);
+    private FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<>(101);
 
-    ParentBubbleId<ParentBubble> parentBubbleId_1 = new ParentBubbleId<ParentBubble>(1);
-    ParentBubbleId<ParentBubble> parentBubbleId_2 = new ParentBubbleId<ParentBubble>(2);
+    private ParentBubbleId<ParentBubble> parentBubbleId_1 = new ParentBubbleId<>(1);
+    private ParentBubbleId<ParentBubble> parentBubbleId_2 = new ParentBubbleId<>(2);
 
-    HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
-    DefaultPersistenceSessionManager persistenceSessionManager;
-    PersistenceSessionForSnapshot persistenceSessionForSnapshot;
+    private HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
+    private DefaultPersistenceSessionManager persistenceSessionManager;
+    private PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
-    LockerStrategy lockerStrategy;
-
-    StoreServer storeServer;
+    private StoreServer storeServer;
 
     public StoreSessionServerTest() {
         hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm();
@@ -162,10 +160,6 @@ public class StoreSessionServerTest {
         ServiceContext context = new DefaultServiceContext();
         context.setLocale(new Locale("no", "NO"));
 
-        return createPersistenceSessionManager(context);
-    }
-
-    private DefaultPersistenceSessionManager createPersistenceSessionManager(ServiceContext context) {
         EnumKodelisteManager enumKodelistManager = new EnumKodelisteManager();
         enumKodelistManager.installStatic(AEnumKodeId.class);
         enumKodelistManager.installStatic(BEnumKodeId.class);
@@ -195,11 +189,11 @@ public class StoreSessionServerTest {
         persistenceSessionManager = createPersistenceSessionManager();
         persistenceSessionForSnapshot = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT);
         //ReadListener
-        List<StoreSessionReadListener> readListeners = new ArrayList<StoreSessionReadListener>();
+        List<StoreSessionReadListener> readListeners = new ArrayList<>();
         readListeners.add(new TestBubbleFilter());
-        List<StoreSessionWriteListener> writeListeners = new ArrayList<StoreSessionWriteListener>();
+        List<StoreSessionWriteListener> writeListeners = new ArrayList<>();
         writeListeners.add(new TestBubbleFilter());
-        List<StoreSessionFinishListener> finishListeners = new ArrayList<StoreSessionFinishListener>();
+        List<StoreSessionFinishListener> finishListeners = new ArrayList<>();
         finishListeners.add(new TestBubbleFinishFilter());
 
         Injector fakeInjector = Guice.createInjector(new AbstractModule() {
@@ -220,8 +214,6 @@ public class StoreSessionServerTest {
         });
 
         final HibernateBubbleDependencyComparator dependencyComparator = new HibernateBubbleDependencyComparator(sessionFactoryManagerBundle);
-
-        lockerStrategy = fakeInjector.getInstance(LockerStrategy.class);
 
         storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), Providers.of(SnapshotVersion.CURRENT), fakeInjector.getInstance(LockerStrategy.class), dependencyComparator, readListeners, writeListeners, finishListeners), fakeInjector);
         deletePriviouslyWritenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
@@ -249,14 +241,14 @@ public class StoreSessionServerTest {
         assertEquals(TestBubbleWithHistory_100_S1.getId(), testBubbleWithHistoryId_10_S1);
         assertSame(TestBubbleWithHistory_100_S1, storeServer.get(TestBubbleWithHistory_100_S1.getId()));
 
-        Set<TestBubbleWithHistoryId<?>> TestBubbleWithHistoryIds = new HashSet<TestBubbleWithHistoryId<?>>(3);
+        Set<TestBubbleWithHistoryId<?>> TestBubbleWithHistoryIds = new HashSet<>(3);
         TestBubbleWithHistoryIds.add(testBubbleWithHistoryId_11_OLD);
         TestBubbleWithHistoryIds.add(testBubbleWithHistoryId_11_S3);
         Set<TestBubbleWithHistory> TestBubbleWithHistorys = storeServer.get(TestBubbleWithHistoryIds);
         assertThat(extractProperty("id").from(TestBubbleWithHistorys)).containsOnly(testBubbleWithHistoryId_11_OLD, testBubbleWithHistoryId_11_S3);
 
         // Test at multipel uthenting gir samme objekter
-        TestBubbleWithHistoryIds = new HashSet<TestBubbleWithHistoryId<?>>(3);
+        TestBubbleWithHistoryIds = new HashSet<>(3);
         TestBubbleWithHistoryIds.add(TestBubbleWithHistory_100_CURRENT.getId());
         TestBubbleWithHistoryIds.add(TestBubbleWithHistory_100_OLD.getId());
         TestBubbleWithHistoryIds.add(TestBubbleWithHistory_100_S1.getId());
@@ -476,7 +468,7 @@ public class StoreSessionServerTest {
 
     public void testEvictLoadedObject() {
         TestBubble testBubble1 = storeServer.get(TestBubbleId_1);
-        assertTrue(storeServer.evict(new TestBubbleId<TestBubble>(1L)));
+        assertTrue(storeServer.evict(new TestBubbleId<>(1L)));
         TestBubble testBubble2 = storeServer.get(TestBubbleId_1);
         assertEquals(testBubble1, testBubble2);
         assertNotSame(testBubble1, testBubble2);
@@ -484,9 +476,9 @@ public class StoreSessionServerTest {
 
     public void testEvictLockedObject() {
         TestBubble testBubble1 = storeServer.lock(TestBubbleId_1);
-        assertTrue(storeServer.isLocked(new TestBubbleId<TestBubble>(1L)));
-        assertTrue(storeServer.evict(new TestBubbleId<TestBubble>(1L)));
-        assertTrue(storeServer.isLocked(new TestBubbleId<TestBubble>(1L)));
+        assertTrue(storeServer.isLocked(new TestBubbleId<>(1L)));
+        assertTrue(storeServer.evict(new TestBubbleId<>(1L)));
+        assertTrue(storeServer.isLocked(new TestBubbleId<>(1L)));
         TestBubble testBubble2 = storeServer.get(TestBubbleId_1);
         assertEquals(testBubble1, testBubble2);
         assertNotSame(testBubble1, testBubble2);
@@ -635,8 +627,8 @@ public class StoreSessionServerTest {
         try {
             storeServer.get(TestBubbleId_101);
             fail("Objekt skal ikke være igjen i store etter rollback");
-        } catch (Throwable t) {
-            assertThat(t).describedAs("forventet exception").isInstanceOf(ObjectNotFoundException.class);
+        } catch (ObjectNotFoundException e) {
+            assertEquals(e.getNotFoundId(), TestBubbleId_101);
         }
 
         storeServer.beginTransaction();
@@ -838,7 +830,7 @@ public class StoreSessionServerTest {
     public void testInsertUpdateDeleteObjectViaMultiNestedUnitOfWork() {
         storeServer.beginTransaction();
         UnitOfWork unitOfWork1 = storeServer.beginUnitOfWork();
-        TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<TestBubble>(101L);
+        TestBubbleId<TestBubble> TestBubbleId_101_CURRENT = new TestBubbleId<>(101L);
         TestBubble testBubble1 = new TestBubble(TestBubbleId_101_CURRENT, "TestBubble 101");
         storeServer.insert(testBubble1);
         UnitOfWork unitOfWork2 = storeServer.beginUnitOfWork();
@@ -884,7 +876,7 @@ public class StoreSessionServerTest {
 
     public void testTestBubbleWithHistoryInsertUpdate() {
 
-        TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_101 = new TestBubbleWithHistoryId<TestBubbleWithHistory>(101L);
+        TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_101 = new TestBubbleWithHistoryId<>(101L);
 
         storeServer.beginTransaction();
         TestBubbleWithHistory TestBubbleWithHistory1 = new TestBubbleWithHistory();
@@ -903,9 +895,9 @@ public class StoreSessionServerTest {
     public void testReorderModification() {
         storeServer.beginTransaction();
 
-        SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<SelfBubble>(101L);
-        SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<SelfBubble>(102L);
-        SelfBubbleId<SelfBubble> selfBubbleId_103 = new SelfBubbleId<SelfBubble>(103L);
+        SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<>(102L);
+        SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<>(101L);
+        SelfBubbleId<SelfBubble> selfBubbleId_103 = new SelfBubbleId<>(103L);
         SelfBubble b_101 = new SelfBubble(selfBubbleId_101);
         SelfBubble b_102 = new SelfBubble(selfBubbleId_102);
         SelfBubble b_103 = new SelfBubble(selfBubbleId_103);
@@ -931,9 +923,9 @@ public class StoreSessionServerTest {
         try {
             storeServer.beginTransaction();
 
-            SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<SelfBubble>(101L);
-            SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<SelfBubble>(102L);
-            SelfBubbleId<SelfBubble> selfBubbleId_103 = new SelfBubbleId<SelfBubble>(103L);
+            SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<>(101L);
+            SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<>(102L);
+            SelfBubbleId<SelfBubble> selfBubbleId_103 = new SelfBubbleId<>(103L);
             SelfBubble b_101 = new SelfBubble(selfBubbleId_101);
             SelfBubble b_102 = new SelfBubble(selfBubbleId_102);
             SelfBubble b_103 = new SelfBubble(selfBubbleId_103);
@@ -962,9 +954,9 @@ public class StoreSessionServerTest {
         try {
             storeServer.beginTransaction();
 
-            SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<SelfBubble>(101L);
-            SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<SelfBubble>(102L);
-            SelfBubbleId<SelfBubble> selfBubbleId_103 = new SelfBubbleId<SelfBubble>(103L);
+            SelfBubbleId<SelfBubble> selfBubbleId_101 = new SelfBubbleId<>(101L);
+            SelfBubbleId<SelfBubble> selfBubbleId_102 = new SelfBubbleId<>(102L);
+            SelfBubbleId<SelfBubble> selfBubbleId_103 = new SelfBubbleId<>(103L);
             SelfBubble b_101 = new SelfBubble(selfBubbleId_101);
             SelfBubble b_102 = new SelfBubble(selfBubbleId_102);
             SelfBubble b_103 = new SelfBubble(selfBubbleId_103);
@@ -1125,10 +1117,10 @@ public class StoreSessionServerTest {
      */
     public void testAttemptDelete() {
         //Opprett 1 parentbubble og 2 child bubbles
-        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<ParentBubble>(201);
-        ParentBubbleId<ParentBubble> parentBubbleId_202 = new ParentBubbleId<ParentBubble>(202);
-        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<ChildBubble>(201);
-        ChildBubbleId<ChildBubble> ChildBubbleId_202 = new ChildBubbleId<ChildBubble>(202);
+        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201);
+        ParentBubbleId<ParentBubble> parentBubbleId_202 = new ParentBubbleId<>(202);
+        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201);
+        ChildBubbleId<ChildBubble> ChildBubbleId_202 = new ChildBubbleId<>(202);
 
         ParentBubble parentBubble_201 = new ParentBubble(parentBubbleId_201);
         parentBubble_201.setText("Insert parent 1");
@@ -1139,7 +1131,7 @@ public class StoreSessionServerTest {
 
         ChildBubble childBubble_202 = new ChildBubble(ChildBubbleId_202);
         childBubble_202.setText("Insert child 2");
-        childBubble_202.setTestBubbleId(new TestBubbleId<TestBubble>(2));
+        childBubble_202.setTestBubbleId(new TestBubbleId<>(2));
 
         storeServer.beginTransaction();
         storeServer.insert(childBubble_201);
@@ -1192,8 +1184,8 @@ public class StoreSessionServerTest {
     @Test(groups = "slow")
     public void testAttemptDeleteManyCallsWithFail() {
         int MAX_SAVEPOINTS = 1000;
-        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<ParentBubble>(201);
-        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<ChildBubble>(201);
+        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201);
+        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201);
 
         ParentBubble parentBubble_201 = new ParentBubble(parentBubbleId_201);
         parentBubble_201.setText("Insert parent 1");
@@ -1226,15 +1218,15 @@ public class StoreSessionServerTest {
         }
         storeServer.commitTransaction();
         storeServer.clear();
-        assertEquals(storeServer.get(new ParentBubbleId<ParentBubble>(1000)).getText(), "Updated parent " + 1000);
-        assertEquals(storeServer.get(new ParentBubbleId<ParentBubble>(1000 + MAX_SAVEPOINTS-1)).getText(),"Updated parent " + (1000 + MAX_SAVEPOINTS-1));
+        assertEquals(storeServer.get(new ParentBubbleId<>(1000)).getText(), "Updated parent " + 1000);
+        assertEquals(storeServer.get(new ParentBubbleId<>(1000 + MAX_SAVEPOINTS - 1)).getText(),"Updated parent " + (1000 + MAX_SAVEPOINTS-1));
     }
 
     @Test(groups = "slow")
     public void testAttemptDeleteManyCallsWithoutFail() {
         int MAX_SAVEPOINTS = 10;
-        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<ParentBubble>(201);
-        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<ChildBubble>(201);
+        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201);
+        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201);
 
         ParentBubble parentBubble_201 = new ParentBubble(parentBubbleId_201);
         parentBubble_201.setText("Insert parent 1");
