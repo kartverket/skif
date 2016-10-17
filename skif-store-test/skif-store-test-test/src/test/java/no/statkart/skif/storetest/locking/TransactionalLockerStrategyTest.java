@@ -39,48 +39,49 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     @Test
     public void testIsLockedBy() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
-        TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
+        ServiceRequestContext serviceRequestContext1 = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testIsLockedBy1", 1);
+        ServiceRequestContext serviceRequestContext2 = new ServiceRequestContext(new PrincipalImpl("ingroa2"), "testIsLockedBy2", 2);
+        TransactionalLockerStrategy strategy1 = createTransactionalLockerStrategy(serviceRequestContext1);
+        TransactionalLockerStrategy strategy2 = createTransactionalLockerStrategy(serviceRequestContext2);
 
         SimpleId testId = new SimpleId(10L, SnapshotVersion.CURRENT);
-        strategy.lock(testId);
+        strategy1.lock(testId);
 
-        Assert.assertTrue(strategy.isLockedByCaller(testId));
+        Assert.assertTrue(strategy1.isLockedByCaller(testId));
 
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa2"));
-        Assert.assertFalse(strategy.isLockedByCaller(testId));
-        Assert.assertTrue(strategy.isLockedByOther(testId));
+        Assert.assertFalse(strategy2.isLockedByCaller(testId));
+        Assert.assertTrue(strategy2.isLockedByOther(testId));
 
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
-        strategy.releaseAllLocks();
+        strategy1.releaseAllLocks();
+
+        Assert.assertFalse(strategy2.isLockedByCaller(testId));
+        Assert.assertFalse(strategy2.isLockedByOther(testId));
     }
 
     @Test
     public void testUpdate() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
-        TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
+        ServiceRequestContext serviceRequestContext1 = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testUpdate1", 1);
+        ServiceRequestContext serviceRequestContext2 = new ServiceRequestContext(new PrincipalImpl("ingroa2"), "testUpdate2", 2);
+        TransactionalLockerStrategy strategy1 = createTransactionalLockerStrategy(serviceRequestContext1);
+        TransactionalLockerStrategy strategy2 = createTransactionalLockerStrategy(serviceRequestContext2);
 
         SimpleId testId = new SimpleId(11L, SnapshotVersion.CURRENT);
 
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
         try {
-            strategy.registerUpdated(testId);
+            strategy1.registerUpdated(testId);
             Assert.fail("Har ikke låst testId så update skal feile!");
         } catch (Throwable t) {
             assertThat(t).describedAs("forventet exception").isInstanceOf(NotLockedException.class);
         }
 
-        strategy.lock(testId);
-        strategy.registerUpdated(testId);
+        strategy1.lock(testId);
+        strategy1.registerUpdated(testId);
 
-        Assert.assertTrue(strategy.isLockedByCaller(testId));
+        Assert.assertTrue(strategy1.isLockedByCaller(testId));
 
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa2"));
-        Assert.assertFalse(strategy.isLockedByCaller(testId));
-        Assert.assertTrue(strategy.isLockedByOther(testId));
+        Assert.assertFalse(strategy2.isLockedByCaller(testId));
+        Assert.assertTrue(strategy2.isLockedByOther(testId));
 
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
         injector.getInstance(Key.get(dbLockerServiceTypeLiteral)).releaseAllLocks("ingroa");
     }
 
@@ -91,35 +92,34 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     @Test
     public void testRemove() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
-        TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
+        ServiceRequestContext serviceRequestContext1 = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testRemove1", 1);
+        ServiceRequestContext serviceRequestContext2 = new ServiceRequestContext(new PrincipalImpl("ingroa2"), "testRemove2", 2);
+        TransactionalLockerStrategy strategy1 = createTransactionalLockerStrategy(serviceRequestContext1);
+        TransactionalLockerStrategy strategy2 = createTransactionalLockerStrategy(serviceRequestContext2);
 
         SimpleId testId = new SimpleId(12L, SnapshotVersion.CURRENT);
 
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
         try {
-            strategy.registerRemoved(testId);
+            strategy1.registerRemoved(testId);
             Assert.fail("Har ikke låst testId så update skal feile!");
         } catch (Throwable t) {
             assertThat(t).describedAs("forventet exception").isInstanceOf(NotLockedException.class);
         }
 
-        strategy.lock(testId);
-        strategy.registerRemoved(testId);
+        strategy1.lock(testId);
+        strategy1.registerRemoved(testId);
 
-        Assert.assertTrue(strategy.isLockedByCaller(testId));
+        Assert.assertTrue(strategy1.isLockedByCaller(testId));
 
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa2"));
-        Assert.assertFalse(strategy.isLockedByCaller(testId));
-        Assert.assertTrue(strategy.isLockedByOther(testId));
+        Assert.assertFalse(strategy2.isLockedByCaller(testId));
+        Assert.assertTrue(strategy2.isLockedByOther(testId));
 
         injector.getInstance(Key.get(dbLockerServiceTypeLiteral)).releaseAllLocks("ingroa");
     }
 
     @Test
     public void testInsert() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testInsert", 1);
         TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
 
         SimpleId testId = new SimpleId(13L, SnapshotVersion.CURRENT);
@@ -133,8 +133,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     @Test
     public void testUnlock() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testUnlock", 1);
         TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
 
         SimpleId testId = new SimpleId(14L, SnapshotVersion.CURRENT);
@@ -157,8 +156,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     @Test
     public void testRenewLocksViaUpdate(){
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
-        serviceRequestContext.setCallerPrincipal(new PrincipalImpl("ingroa"));
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testRenewLocksViaUpdate", 1);
         TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
         DBLockerService<Long> db = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 

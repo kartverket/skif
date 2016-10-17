@@ -67,10 +67,14 @@ public class ServiceRequestScopeTemplate {
     }
 
     private ServiceRequestContext createServiceRequestContext(String serviceName, Principal principal) {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(TxMode.NOT_IN_EJB, false, null);
-        serviceRequestContext.setCallerPrincipal(principal);
-        serviceRequestContext.setServicename(serviceName);
-        serviceRequestContext.setCallId(callIdProvider.get());
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(
+                principal,
+                serviceName,
+                callIdProvider.get(),
+                TxMode.NOT_IN_EJB,
+                false,
+                null
+        );
         return serviceRequestContext;
     }
 }

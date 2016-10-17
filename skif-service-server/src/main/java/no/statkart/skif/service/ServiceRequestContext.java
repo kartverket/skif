@@ -1,8 +1,12 @@
 package no.statkart.skif.service;
 
+import com.google.inject.Provider;
+import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 
+import javax.annotation.Nullable;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import java.io.Serializable;
 import java.security.Principal;
 
@@ -14,32 +18,40 @@ import java.security.Principal;
  */
 @ServiceRequestScoped
 public class ServiceRequestContext implements Serializable {
-    private java.security.Principal callerPrincipal;
-    private String servicename;
-    private long parentCallId;
-    private long callId;
-    private int nestedLevel;
-    private TxMode txMode;
+    private final java.security.Principal callerPrincipal;
+    private final String servicename;
+    private final long callId;
+    @Nullable
+    private final ServiceRequestContext parent;
+    private final TxMode txMode;
     private final boolean beanManagedTransaction;
     private final TransactionAttributeType transactionAttributeType;
     private boolean rollbackOnly;
 
-    public ServiceRequestContext() {
-        this(TxMode.NOT_IN_EJB, false, null);
+    @Inject
+    public ServiceRequestContext(@CallId Provider<Long> callIdProvider) {
+        this(null, null, callIdProvider.get());
     }
 
-    public ServiceRequestContext(TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
+    public ServiceRequestContext(java.security.Principal principal, String servicename, long callId) {
+        this(principal, servicename, callId, TxMode.NOT_IN_EJB, false, null);
+    }
+
+    public ServiceRequestContext(java.security.Principal callerPrincipal, String servicename, long callId, TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
+        this.callerPrincipal = callerPrincipal;
+        this.servicename = servicename;
+        this.callId = callId;
+        this.parent = null;
         this.txMode = txMode;
         this.beanManagedTransaction = beanManagedTransaction;
         this.transactionAttributeType = transactionAttributeType;
     }
 
-    public ServiceRequestContext(ServiceRequestContext context, TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
-        this.callerPrincipal = context.callerPrincipal;
-        this.servicename = context.servicename;
-        this.parentCallId = context.parentCallId;
-        this.callId = context.callId;
-        this.nestedLevel = context.nestedLevel;
+    public ServiceRequestContext(ServiceRequestContext parent, long callId, TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
+        this.callerPrincipal = parent.callerPrincipal;
+        this.servicename = parent.servicename;
+        this.callId = callId;
+        this.parent = parent;
         this.txMode = txMode;
         this.beanManagedTransaction = beanManagedTransaction;
         this.transactionAttributeType = transactionAttributeType;
@@ -47,10 +59,6 @@ public class ServiceRequestContext implements Serializable {
 
     public TxMode getTxMode() {
         return txMode;
-    }
-
-    public void setTxMode(TxMode txMode) {
-        this.txMode = txMode;
     }
 
     public TransactionAttributeType getTransactionAttributeType() {
@@ -81,57 +89,25 @@ public class ServiceRequestContext implements Serializable {
         return callerPrincipal;
     }
 
-    public void setCallerPrincipal(Principal callerPrincipal) {
-        this.callerPrincipal = callerPrincipal;
-    }
-
-    public int getNestedLevel() {
-        return nestedLevel;
-    }
-
-    public void setNestedLevel(int nestedLevel) {
-        this.nestedLevel = nestedLevel;
-    }
-
     public String getUserName() {
         return callerPrincipal == null ? null : callerPrincipal.getName();
-    }
-
-    public void setCallId(long callId) {
-        this.callId = callId;
     }
 
     public long getCallId() {
         return callId;
     }
 
+    @Nullable
+    public ServiceRequestContext getParent() {
+        return parent;
+    }
+
     public long getParentCallId() {
-        return parentCallId;
-    }
-
-    public void setParentCallId(long parentCallId) {
-        this.parentCallId = parentCallId;
-    }
-
-    public void setServicename(String servicename) {
-        this.servicename = servicename;
+        return parent != null ? parent.getCallId() : 0;
     }
 
     public String getServicename() {
         return servicename;
-    }
-
-    public void incNestedLevel() {
-        nestedLevel++;
-    }
-
-    public void setFrom(ServiceRequestContext context) {
-        this.callerPrincipal = context.callerPrincipal;
-        this.callId = context.callId;
-        this.nestedLevel = context.nestedLevel;
-        this.parentCallId = context.parentCallId;
-        this.servicename = context.servicename;
-        this.txMode = context.txMode;
     }
 
     public boolean isContinuation() {

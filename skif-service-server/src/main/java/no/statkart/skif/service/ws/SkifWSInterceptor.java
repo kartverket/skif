@@ -32,10 +32,11 @@ public class SkifWSInterceptor<T> extends ChainedProxyHandler<T> {
     @Override
     protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         scope.enter();
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext();
-        serviceRequestContext.setCallerPrincipal(webServiceContext.getUserPrincipal());
-        serviceRequestContext.setServicename(serviceName);
-        serviceRequestContext.setCallId(callIdProvider.get());
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(
+                webServiceContext.getUserPrincipal(),
+                serviceName,
+                callIdProvider.get()
+        );
         try {
             scope.seed(ServiceRequestContext.class, serviceRequestContext);
             scope.seed(WebServiceContext.class, webServiceContext);

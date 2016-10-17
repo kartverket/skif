@@ -4,6 +4,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
+import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.ServiceRequestContext;
@@ -84,12 +85,14 @@ public abstract class EJBInterceptorJEE {
 
     private Object executeInNewContext(Injector injector, InvocationContext invocationContext, ServiceRequestContext serviceRequestContext, TransactionAttributeType txType, boolean isBeanManagedTransaction) throws Exception {
         final TxMode txMode = (txType == TransactionAttributeType.REQUIRED || txType == TransactionAttributeType.REQUIRES_NEW) ? TxMode.TX : TxMode.NO_TX;
-        ServiceRequestContext newServiceRequestContext = new ServiceRequestContext(serviceRequestContext, txMode, isBeanManagedTransaction, txType);
+        ServiceRequestContext newServiceRequestContext = new ServiceRequestContext(
+                serviceRequestContext,
+                injector.getInstance(Key.get(Long.class, CallId.class)),
+                txMode,
+                isBeanManagedTransaction,
+                txType
+        );
         ServiceContext serviceContext = CopyHelper.copy(injector.getInstance(ServiceContext.class));
-        newServiceRequestContext.setCallerPrincipal(sessionContext.getCallerPrincipal());
-        newServiceRequestContext.incNestedLevel();
-        newServiceRequestContext.setCallId(injector.getInstance(Key.get(Long.class, CallId.class)));
-        newServiceRequestContext.setParentCallId(serviceRequestContext.getCallId());
 
         final ServiceRequestScope serviceRequestScope = injector.getInstance(ServiceRequestScope.class);
         serviceRequestScope.suspend();
@@ -107,15 +110,21 @@ public abstract class EJBInterceptorJEE {
         }
     }
 
+    /**
+     * Det finnes ingen tester som bruker denne funksjonaliteten. Det ser heller ikke ut til at det er logisk mulig å nå
+     * denne metoden. Har derfor deaktivert den som ustøttet, men lar den ligge i tilfelle det blir bruk for den senere.
+     */
+    @SuppressWarnings("UnusedParameters")
     private Object executeInExistingContext(Injector injector, InvocationContext invocationContext, ServiceRequestContext serviceRequestContext, TxMode origTxMode, TransactionAttributeType txType) throws Exception {
-        final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
+        /*final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
         final ServiceRequestContext originalServiceRequestContext = new ServiceRequestContext(serviceRequestContext, origTxMode, false, txType);
         try {
             serviceRequestContext.setTxMode(txMode);
             return invokeInContext(injector, invocationContext);
         } finally {
             serviceRequestContext.setFrom(originalServiceRequestContext);
-        }
+        }*/
+        throw new NotImplementedException("executeInExistingContext");
     }
 
 

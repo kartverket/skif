@@ -2,12 +2,8 @@ package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.statkart.skif.service.LoginUser;
-import no.statkart.skif.service.PrincipalImpl;
-import no.statkart.skif.service.ServiceContext;
-import no.statkart.skif.service.ServiceRequestContext;
-import no.statkart.skif.service.SingleVmRemoteCallContext;
-import no.statkart.skif.service.TxMode;
+import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.service.*;
 import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.scope.ServiceRequestScope;
@@ -85,18 +81,12 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
             if (serviceContext == null) {
                 serviceContext = CopyHelper.copy(serviceContextProvider.get());
             }
-            serviceRequestContext = new ServiceRequestContext(txMode, beanManagedTransaction, txType);
             LoginUser loginUser = (LoginUser) contextData.get("credentials");
             final PrincipalImpl callerPrincipal = (loginUser==null) ? new PrincipalImpl(null) :  new PrincipalImpl(loginUser.getUsername());
-            serviceRequestContext.setCallId(callIdProvider.get());
-            serviceRequestContext.setCallerPrincipal(callerPrincipal);
-            serviceRequestContext.setServicename(method.getName());
+            serviceRequestContext = new ServiceRequestContext(callerPrincipal, method.getName(), callIdProvider.get(), txMode, beanManagedTransaction, txType);
         } else {
             ServiceRequestContext oldServiceRequestContext = serviceRequestContextProvider.get();
-            serviceRequestContext = new ServiceRequestContext(oldServiceRequestContext, txMode, beanManagedTransaction, txType);
-            serviceRequestContext.incNestedLevel();
-            serviceRequestContext.setCallId(callIdProvider.get());
-            serviceRequestContext.setParentCallId(oldServiceRequestContext.getCallId());
+            serviceRequestContext = new ServiceRequestContext(oldServiceRequestContext, callIdProvider.get(), txMode, beanManagedTransaction, txType);
             serviceContext = CopyHelper.copy(serviceContextProvider.get());
         }
 
@@ -116,8 +106,13 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
         }
     }
 
+    /**
+     * Det finnes ingen tester som bruker denne funksjonaliteten. Det ser heller ikke ut til at det er logisk mulig å nå
+     * denne metoden. Har derfor deaktivert den som ustøttet, men lar den ligge i tilfelle det blir bruk for den senere.
+     */
+    @SuppressWarnings("UnusedParameters")
     private Object executeInExistingContext(TxMode origTxMode, TransactionAttributeType txType, Method method, Object[] args) throws Throwable {
-        final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
+        /*final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
         final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
         final ServiceRequestContext originalServiceRequestContext = new ServiceRequestContext(serviceRequestContext, origTxMode, false, txType);
         try {
@@ -125,7 +120,8 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
             return invokeInContext(method, args);
         } finally {
             serviceRequestContext.setFrom(originalServiceRequestContext);
-        }
+        }*/
+        throw new NotImplementedException("executeInExistingContext");
     }
 
     private Object invokeInContext(Method method, Object[] args) throws Throwable {
