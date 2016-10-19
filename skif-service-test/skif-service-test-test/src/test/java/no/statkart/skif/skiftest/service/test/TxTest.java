@@ -15,6 +15,7 @@ import static org.testng.Assert.assertEquals;
  * @author Henrik Fredholm
  * @since 2.0
  */
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class TxTest extends SkifTestCase {
 
     public TxTest() {

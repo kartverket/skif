@@ -83,7 +83,10 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
             }
             LoginUser loginUser = (LoginUser) contextData.get("credentials");
             final PrincipalImpl callerPrincipal = (loginUser==null) ? new PrincipalImpl(null) :  new PrincipalImpl(loginUser.getUsername());
-            serviceRequestContext = new ServiceRequestContext(callerPrincipal, method.getName(), callIdProvider.get(), txMode, beanManagedTransaction, txType);
+            // Lag en falsk ServiceRequestContext for å etterligne det SkifWSInterceptor gjør.
+            // Den ServiceRequestContext som ble hentet ut i invokeMethod er i dette tilfellet bare søppel, siden den aldri har blitt initialisert med principal.
+            ServiceRequestContext outerServiceRequestContext = new ServiceRequestContext(callerPrincipal, method.getName(), callIdProvider.get(), TxMode.NOT_IN_EJB, false, null);
+            serviceRequestContext = new ServiceRequestContext(outerServiceRequestContext, callIdProvider.get(), txMode, beanManagedTransaction, txType);
         } else {
             ServiceRequestContext oldServiceRequestContext = serviceRequestContextProvider.get();
             serviceRequestContext = new ServiceRequestContext(oldServiceRequestContext, callIdProvider.get(), txMode, beanManagedTransaction, txType);

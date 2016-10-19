@@ -4,9 +4,11 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import no.statkart.skif.service.ServiceRequestContext;
+import no.statkart.skif.service.TxMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 
 /**
@@ -68,17 +70,28 @@ public class DefaultServerCallLogger implements ServerCallLogger {
      */
     protected CharSequence createCallMessage(Method method, Object[] args) {
         ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
+        ServiceRequestContext ownerServiceRequestContext = calculateOwner(serviceRequestContext);
 
         StringBuilder buf = new StringBuilder(200);
         buf.append("Kaller [id=");
         buf.append(serviceRequestContext.getCallId());
-        buf.append(", parent=");
-        buf.append(serviceRequestContext.getParentCallId());
+        buf.append(", owner=");
+        buf.append(ownerServiceRequestContext != null ? ownerServiceRequestContext.getCallId() : 0);
         buf.append("] ");
         appendMethod(buf, method, args);
         buf.append(" [user=").append(serviceRequestContext.getCallerPrincipal().getName()).append("]");
         buf.append(" [").append(Thread.currentThread()).append("]");
         return buf;
+    }
+
+    @Nullable
+    protected ServiceRequestContext calculateOwner(ServiceRequestContext currentServiceRequestContext) {
+        ServiceRequestContext parent = currentServiceRequestContext.getParent();
+        if (parent != null && firstEjbAfterWebService(parent)) {
+            // Hopp over EJB SRC og gå for WS SRC
+            return parent.getParent();
+        }
+        return parent;
     }
 
     /**
@@ -176,19 +189,32 @@ public class DefaultServerCallLogger implements ServerCallLogger {
         return buf;
     }
 
+    protected boolean firstEjbAfterWebService(ServiceRequestContext serviceRequestContext) {
+        // SkifWSInterceptor vs ServiceRequestScopeTemplate. Førstnevnte kan logges via WsLoggingProxyHandler, og da
+        // skal ikke påfølgende EJB-kall logges. Sistnevnte lager ikke noe egentlig call context, og fyller derfor ikke
+        // inn callId.
+        return serviceRequestContext.getParent() != null && serviceRequestContext.getParent().getTxMode() == TxMode.NOT_IN_EJB && serviceRequestContext.getParent().getCallId() != 0;
+    }
+
     @Override
     public void logEjbCall(Method method, Object[] args) {
-        logCall(method, args);
+        if (!firstEjbAfterWebService(serviceRequestContextProvider.get())) {
+            logCall(method, args);
+        }
     }
 
     @Override
     public void logEjbReturn(Method method, Object[] args, Object returnValue, long time) {
-        logReturn(method, args, returnValue, time);
+        if (!firstEjbAfterWebService(serviceRequestContextProvider.get())) {
+            logReturn(method, args, returnValue, time);
+        }
     }
 
     @Override
     public void logEjbError(Method method, Object[] args, Throwable t, long time) {
-        logError(method, args, t, time);
+        if (!firstEjbAfterWebService(serviceRequestContextProvider.get())) {
+            logError(method, args, t, time);
+        }
     }
 
     @Override

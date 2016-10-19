@@ -9,6 +9,7 @@ import no.statkart.skif.service.CallIdProvider;
 import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ClientCallServiceChainFactoryJEE;
+import no.statkart.skif.service.chain.ClientCallServiceChainFactorySingleVm;
 import no.statkart.skif.service.logging.ClientCallLogger;
 import no.statkart.skif.service.logging.DefaultClientCallLogger;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
@@ -52,8 +53,9 @@ public class SkifTestClientModule extends SkifModule {
                     setExceptionMapping(new SkifTestSimpleExceptionMapper().getMapping()));
             RemoteServiceModule module = new RemoteServiceModule(moduleConfiguration, new SkifTestGroupABCDServices().getServices(), new SkifTestMapper().getMapping()).
                     setExceptionMapping(new SkifTestExceptionMapper().getMapping());
-            // Kun for JEE mode
             module.getStrategy(ServiceMode.JEE).setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ClientCallServiceChainFactoryJEE.class, ClientLoggingProxyHandler.class));
+            module.getStrategy(ServiceMode.SINGLE_VM).setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ClientCallServiceChainFactorySingleVm.class, ClientLoggingProxyHandler.class));
+            module.getStrategy(ServiceMode.SINGLE_VM_XML).setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ClientCallServiceChainFactorySingleVm.class, ClientLoggingProxyHandler.class));
             install(module);
             install(new RemoteServiceModule(moduleConfiguration, new SkifTestGroup1Services().getServices(), new SkifTestMapper().getMapping()).setServiceContextMapperClass(SkifTestServiceContextMapper.class).
                     setExceptionMapping(new SkifTestExceptionMapper().getMapping()));

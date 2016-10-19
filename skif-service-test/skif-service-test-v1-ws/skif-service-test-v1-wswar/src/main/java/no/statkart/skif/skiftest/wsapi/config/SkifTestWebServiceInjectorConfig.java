@@ -1,6 +1,7 @@
 package no.statkart.skif.skiftest.wsapi.config;
 
 import com.google.inject.Injector;
+import no.statkart.skif.ServiceMode;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
@@ -42,15 +43,20 @@ public class SkifTestWebServiceInjectorConfig implements ServletContextListener 
 
         injector = ejbServiceInjector.createChildInjector(
                 new WSServerModule(configuration, classLoader),
-                new WSServerServiceModule(configuration, new SkifTestGroup1Services().getServices(), mapping,classLoader ).setServiceContextMapperClass(SkifTestServiceContextMapper.class),
-                new WSServerServiceModule(configuration, new SkifTestGroup2Services().getServices(), mapping, classLoader)
-                    .setServiceContextMapperClass(SkifTestServiceContextMapper.class),
-                new WSServerServiceModule(configuration, new SkifTestGroupABCDServices().getServices(), mapping, classLoader)
-                        .setExceptionMapping(new SkifTestExceptionMapper().getMapping()),
-                new WSServerServiceModule(configuration, new SkifTestGroupExServices().getServices(), mapping, classLoader).
-                        setExceptionMapping(new SkifTestSimpleExceptionMapper().getMapping())
+                addLogging(new WSServerServiceModule(configuration, new SkifTestGroup1Services().getServices(), mapping,classLoader ).setServiceContextMapperClass(SkifTestServiceContextMapper.class)),
+                addLogging(new WSServerServiceModule(configuration, new SkifTestGroup2Services().getServices(), mapping, classLoader)
+                    .setServiceContextMapperClass(SkifTestServiceContextMapper.class)),
+                addLogging(new WSServerServiceModule(configuration, new SkifTestGroupABCDServices().getServices(), mapping, classLoader)
+                        .setExceptionMapping(new SkifTestExceptionMapper().getMapping())),
+                addLogging(new WSServerServiceModule(configuration, new SkifTestGroupExServices().getServices(), mapping, classLoader).
+                        setExceptionMapping(new SkifTestSimpleExceptionMapper().getMapping()))
 
         );
+    }
+
+    private static WSServerServiceModule addLogging(WSServerServiceModule wsServerServiceModule) {
+        wsServerServiceModule.getStrategy(ServiceMode.JEE).setWsServiceChainFactoryClassForWSI(WSServiceChainWithLoggingFactory.class);
+        return wsServerServiceModule;
     }
 
     @Override

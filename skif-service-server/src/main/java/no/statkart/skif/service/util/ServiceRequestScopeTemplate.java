@@ -1,10 +1,8 @@
 package no.statkart.skif.service.util;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.TxMode;
-import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 
 import java.security.Principal;
@@ -17,12 +15,10 @@ import java.util.concurrent.Callable;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class ServiceRequestScopeTemplate {
-    private final Provider<Long> callIdProvider;
     private final ServiceRequestScope serviceRequestScope;
 
     @Inject
-    public ServiceRequestScopeTemplate(@CallId Provider<Long> callIdProvider, ServiceRequestScope serviceRequestScope) {
-        this.callIdProvider = callIdProvider;
+    public ServiceRequestScopeTemplate(ServiceRequestScope serviceRequestScope) {
         this.serviceRequestScope = serviceRequestScope;
     }
 
@@ -67,10 +63,13 @@ public class ServiceRequestScopeTemplate {
     }
 
     private ServiceRequestContext createServiceRequestContext(String serviceName, Principal principal) {
+        // CallId settes til 0 fordi dette i seg selv ikke er et call context egentlig.
+        // Dette kan brukes til å skille denne klassene fra SkifWSInterceptor, siden den fyller inn en callId.
+        //noinspection UnnecessaryLocalVariable
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext(
                 principal,
                 serviceName,
-                callIdProvider.get(),
+                0,
                 TxMode.NOT_IN_EJB,
                 false,
                 null
