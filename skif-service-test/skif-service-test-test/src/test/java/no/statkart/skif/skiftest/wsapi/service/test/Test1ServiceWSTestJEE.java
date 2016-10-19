@@ -177,7 +177,7 @@ public class Test1ServiceWSTestJEE {
             assertEquals(instance.helloWorld("Henrik", skifTestContext), "Hello1: Henrik");
             fail("Forventet exception");
         } catch (no.statkart.skif.exception.InvalidUserException e) {
-            Assert.assertEquals(e.getMessage(), "HTTP 401 Unauthorized");
+            Assert.assertTrue(e.getMessage().startsWith("HTTP 401 Unauthorized"), e.getMessage());
         }
 
     }
