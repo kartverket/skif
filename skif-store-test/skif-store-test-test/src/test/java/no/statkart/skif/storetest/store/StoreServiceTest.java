@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.store;
 
 import com.google.inject.Inject;
+import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.storetest.domain.basic.Simple;
@@ -14,6 +15,7 @@ import org.testng.annotations.Test;
 import java.util.*;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 /**
  * @author Henrik Fredholm
@@ -32,7 +34,7 @@ public class StoreServiceTest extends StoreTestTestCase {
     public void testStoreService() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
-        List<SimpleId> ids = new ArrayList<SimpleId>();
+        List<SimpleId> ids = new ArrayList<>();
         ids.add(simple1Id);
 
         Simple bubble = storeService.getObject(simple1Id);
@@ -55,6 +57,17 @@ public class StoreServiceTest extends StoreTestTestCase {
             assertEquals(bubble.getId().getSnapshotVersion(), SnapshotVersion.OLD);
         } finally {
             snapshotVersionContext.setSnapshotVersion(oldSnapshotVersion);
+        }
+    }
+
+    public void testStoreGetObjectNotFound() {
+        SimpleId<?> simple1Id = new SimpleId<>(-1L);
+
+        try {
+            storeService.getObject(simple1Id);
+            fail("Skulle fått exception");
+        } catch (ObjectNotFoundException e) {
+            assertEquals(e.getNotFoundId(), simple1Id);
         }
     }
 

@@ -61,7 +61,12 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
         }
         SkifException target = getMapping().w2d(source.getFaultInfo(), SkifException.class);
         setCause(target, cause);
-        target.setStackTrace(generateStackTraceElements(rootExceptionDetail.getStackTraceElements()));
+        StackTraceElement[] serverStackTrace = generateStackTraceElements(rootExceptionDetail.getStackTraceElements());
+        StackTraceElement[] clientStackTrace = source.getStackTrace();
+        StackTraceElement[] combinedStackTrace = new StackTraceElement[serverStackTrace.length + clientStackTrace.length];
+        System.arraycopy(serverStackTrace, 0, combinedStackTrace, 0, serverStackTrace.length);
+        System.arraycopy(clientStackTrace, 0, combinedStackTrace, serverStackTrace.length, clientStackTrace.length);
+        target.setStackTrace(combinedStackTrace);
 
         return target;
     }
@@ -160,8 +165,8 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
     /**
      * cause kan kun settes én gang via {@code Throwable}s grensesnitt. I SkifException-hierarkiet blir cause satt til
      * {@code null} av diverse konstruktører som går hit og dit. {@link Throwable#initCause(Throwable)} vil derfor feile.
-     * Mappingen har ingen måte å sende inn en cause som kan benyttes når underliggende mappere mappers selve exception,
-     * dersom må det dessverre hackes litt.
+     * Mappingen har ingen måte å sende inn en cause som kan benyttes når underliggende mappere mapper selve exception,
+     * derfor må det dessverre hackes litt.
      */
     private void setCause(Throwable throwable, Throwable cause) {
         try {
