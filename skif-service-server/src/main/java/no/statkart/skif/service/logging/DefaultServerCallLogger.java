@@ -3,6 +3,7 @@ package no.statkart.skif.service.logging;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import no.statkart.skif.exception.ApplicationException;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.TxMode;
 import org.slf4j.Logger;
@@ -162,9 +163,17 @@ public class DefaultServerCallLogger implements ServerCallLogger {
     }
 
     protected void logError(Method method, Object[] args, Throwable t, long time) {
-        CharSequence msg = createErrorMessage(method, args, t, time);
-
-        getLogger().error(msg.toString(), t);
+        if (t != null && t instanceof ApplicationException) {
+            CharSequence msg = createApplicationErrorMessage(method, args, t, time);
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug(msg.toString(), t);
+            } else if (getLogger().isInfoEnabled()) {
+                getLogger().info(msg.toString() + " '" + t.toString() + "'");
+            }
+        } else {
+            CharSequence msg = createErrorMessage(method, args, t, time);
+            getLogger().error(msg.toString(), t);
+        }
     }
 
     /**
@@ -186,6 +195,28 @@ public class DefaultServerCallLogger implements ServerCallLogger {
         buf.append("] tok ");
         buf.append(time);
         buf.append(" ms og kastet exception: ");
+        return buf;
+    }
+
+    /**
+     * Lager teksten som skal logges i det en metode returnerer.
+     *
+     * @param method metoden hvis feiling skal logges
+     * @param args   argumentene til metoden
+     * @param t      den exception metoden kastet (kan også være Error)
+     * @param time   tiden kallet tok
+     * @return teksten som skal logges
+     */
+    @SuppressWarnings("UnusedParameters")
+    protected CharSequence createApplicationErrorMessage(Method method, Object[] args, Throwable t, long time) {
+        ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
+
+        StringBuilder buf = new StringBuilder(200);
+        buf.append("<----- [id=");
+        buf.append(serviceRequestContext.getCallId());
+        buf.append("] tok ");
+        buf.append(time);
+        buf.append(" ms og kastet application exception: ");
         return buf;
     }
 
@@ -229,6 +260,11 @@ public class DefaultServerCallLogger implements ServerCallLogger {
 
     @Override
     public void logWsError(Method method, Object[] args, Throwable t, long time) {
-        logError(method, args, t, time);
+        if (t.getClass().getName().contains("ServiceException")) {
+            logError(method, args, t.getCause(), time);
+        } else {
+            logError(method, args, t, time);
+        }
+
     }
 }

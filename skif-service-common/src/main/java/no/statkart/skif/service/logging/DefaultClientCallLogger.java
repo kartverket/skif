@@ -2,6 +2,7 @@ package no.statkart.skif.service.logging;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import no.statkart.skif.exception.ApplicationException;
 import no.statkart.skif.service.LoginUserHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,6 @@ public class DefaultClientCallLogger implements ClientCallLogger {
 
     /**
      * Lager teksten som skal logges i det en metode blir kalt.
-     *
      *
      * @param callId call-id
      * @param method metoden hvis kall skal logges
@@ -121,7 +121,6 @@ public class DefaultClientCallLogger implements ClientCallLogger {
     /**
      * Lager teksten som skal logges i det en metode returnerer.
      *
-     *
      * @param callId      call-id
      * @param method      metoden hvis retur skal logges
      * @param args        argumentene til metoden
@@ -141,14 +140,21 @@ public class DefaultClientCallLogger implements ClientCallLogger {
     }
 
     protected void logError(Long callId, Method method, Object[] args, Throwable t, long time) {
-        CharSequence msg = createErrorMessage(callId, method, args, t, time);
-
-        getLogger().error(msg.toString(), t);
+        if (t != null && t instanceof ApplicationException) {
+            CharSequence msg = createApplicationErrorMessage(callId, method, args, t, time);
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug(msg.toString(), t);
+            } else if (getLogger().isInfoEnabled()) {
+                getLogger().info(msg.toString() + " '" + t.toString() + "'");
+            }
+        } else {
+            CharSequence msg = createErrorMessage(callId, method, args, t, time);
+            getLogger().error(msg.toString(), t);
+        }
     }
 
     /**
      * Lager teksten som skal logges i det en metode returnerer.
-     *
      *
      * @param callId call-id
      * @param method metoden hvis feiling skal logges
@@ -167,6 +173,28 @@ public class DefaultClientCallLogger implements ClientCallLogger {
         buf.append(" ms og kastet exception: ");
         return buf;
     }
+
+    /**
+     * Lager teksten som skal logges i det en metode returnerer.
+     *
+     * @param callId call-id
+     * @param method metoden hvis feiling skal logges
+     * @param args   argumentene til metoden
+     * @param t      den exception metoden kastet (kan også være Error)
+     * @param time   tiden kallet tok
+     * @return teksten som skal logges
+     */
+    @SuppressWarnings("UnusedParameters")
+    protected CharSequence createApplicationErrorMessage(Long callId, Method method, Object[] args, Throwable t, long time) {
+        StringBuilder buf = new StringBuilder(200);
+        buf.append("<----- [id=");
+        buf.append(callId);
+        buf.append("] tok ");
+        buf.append(time);
+        buf.append(" ms og kastet application exception: ");
+        return buf;
+    }
+
 
     @Override
     public void logClientCall(Long callId, Method method, Object[] args) {
