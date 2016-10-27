@@ -41,11 +41,6 @@ public class KodelisteServiceWSBean extends SkifWebService<KodelisteServiceWSI> 
     }
 
     @Override
-    public KodelisteTransfer getKodeliste(@WebParam(name = "kodeIdClassName") String kodeIdClassName, @WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
-        return wsServiceChain.getKodeliste(kodeIdClassName, snapshotVersion, context);
-    }
-
-    @Override
     public KodelisteTransfer getKodelister(@WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         return wsServiceChain.getKodelister(snapshotVersion, context);
     }

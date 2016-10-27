@@ -14,8 +14,6 @@ import javax.jws.WebParam;
  */
 public interface KodelisteServiceWSI extends ServiceWSI {
 
-    KodelisteTransfer getKodeliste(@WebParam(name = "kodeIdClassName") String kodeIdClassName, @WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
-
     KodelisteTransfer getKodelister(@WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
 }

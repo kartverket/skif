@@ -2,7 +2,6 @@ package no.statkart.skif.store.kodeliste;
 
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
-import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
@@ -42,8 +41,4 @@ public class KodelisteServiceImpl implements KodelisteService {
         return kodelisteTransfer;
     }
 
-    @Override
-    public KodelisteTransfer<? extends KodelisteId<?>> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion) {
-        throw new NotImplementedException();
-    }
 }

@@ -11,9 +11,4 @@ import no.statkart.skif.store.SnapshotVersion;
  */
 public interface KodelisteService {
     KodelisteTransfer<? extends KodelisteId<?>> getKodelister(SnapshotVersion snapshotVersion);
-
-    /**
-     * @deprecated Navnet på KodeId-klassen er en dårlig idé å eksponere gjennom API-et. Metoden har heller aldri blitt implementert.
-     */
-    KodelisteTransfer<? extends KodelisteId<?>> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion);
 }

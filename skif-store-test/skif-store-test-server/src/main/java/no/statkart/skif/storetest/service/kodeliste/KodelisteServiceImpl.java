@@ -10,10 +10,6 @@ import no.statkart.skif.store.kodeliste.KodelisteId;
  */
 @SuppressWarnings("unused")
 public class KodelisteServiceImpl extends no.statkart.skif.store.kodeliste.KodelisteServiceImpl implements KodelisteService {
-    @Override
-    public KodelisteTransfer<? extends KodelisteId<?>> getKodeliste(String kodeIdClassName, SnapshotVersion snapshotVersion) {
-        return super.getKodeliste(kodeIdClassName, snapshotVersion);
-    }
 
     @Override
     public KodelisteTransfer<? extends KodelisteId<?>> getKodelister(SnapshotVersion snapshotVersion) {
