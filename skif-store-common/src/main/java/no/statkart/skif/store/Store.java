@@ -41,7 +41,7 @@ public interface Store {
      * @return objektene, i tilfeldig rekkefølge
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<? extends I> bubbleIds);
 
     /**
      * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
@@ -52,7 +52,7 @@ public interface Store {
      * @return objektene, i tilfeldig rekkefølge
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<? extends I> bubbleIds);
 
     /**
      * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er "tilfeldig".
@@ -63,7 +63,7 @@ public interface Store {
      * @return objektene, i tilfeldig rekkefølge
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<? extends I> bubbleIds);
 
     /**
      * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
@@ -74,7 +74,7 @@ public interface Store {
      * @param <I>           den id-supertypen som er felles for alle objektene man ønsker å hente ut
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects);
 
 
     /**
@@ -88,7 +88,7 @@ public interface Store {
      * @return objektene, i samme rekkefølge som id-ene
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<? extends I> bubbleIds);
 
     /**
      * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er den samme som for id-ene man sendte
@@ -101,7 +101,7 @@ public interface Store {
      * @return objektene, i samme rekkefølge som id-ene
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<? extends I> bubbleIds);
 
     /**
      * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er den samme som for id-ene man sendte
@@ -113,7 +113,7 @@ public interface Store {
      * @return objektene, i samme rekkefølge som id-ene
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<? extends I> bubbleIds);
 
     /**
      * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er den samme som for id-ene man sendte
@@ -125,7 +125,7 @@ public interface Store {
      * @param <I>           den id-supertypen som er felles for alle objektene man ønsker å hente ut
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects);
 
 
     /**
@@ -138,7 +138,7 @@ public interface Store {
      * @return objektene som fins, i tilfeldig rekkefølge
      * @since 2.2.0
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<? extends I> bubbleIds);
 
     /**
      * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig, og eventuelt manglende
@@ -150,7 +150,7 @@ public interface Store {
      * @return objektene, i tilfeldig rekkefølge
      * @since 2.2.0
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<? extends I> bubbleIds);
 
     /**
      * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er "tilfeldig", og eventuelt manglende
@@ -162,7 +162,7 @@ public interface Store {
      * @return objektene, i tilfeldig rekkefølge
      * @since 2.2.0
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<? extends I> bubbleIds);
 
     /**
      * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig, og eventuelt manglende
@@ -174,7 +174,7 @@ public interface Store {
      * @param <I>           den id-supertypen som er felles for alle objektene man ønsker å hente ut
      * @since 2.2.0
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<I> bubbleIds, Collection<T> bubbleObjects);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects);
 
     /**
      * Låser og henter objektet for gitt id. Dersom id er <code>null</code> så returneres også <code>null</code>, uten
@@ -205,7 +205,7 @@ public interface Store {
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      * @throws no.statkart.skif.exception.LockedException          dersom noen andre har låst objektet
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<? extends I> bubbleIds);
 
     /**
      * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
@@ -220,7 +220,7 @@ public interface Store {
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      * @throws no.statkart.skif.exception.LockedException          dersom noen andre har låst objektet
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<? extends I> bubbleIds);
 
     /**
      * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er "tilfeldig".
@@ -235,7 +235,7 @@ public interface Store {
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      * @throws no.statkart.skif.exception.LockedException          dersom noen andre har låst objektet
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<I> bubbleIds);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<? extends I> bubbleIds);
 
     /**
      * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
@@ -250,7 +250,7 @@ public interface Store {
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      * @throws no.statkart.skif.exception.LockedException          dersom noen andre har låst objektet
      */
-    <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects);
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects);
 
     /**
      * Sier opp låsen på et gitt objekt. Objektet må være uendret i {@link Store}.
@@ -291,7 +291,7 @@ public interface Store {
      * @param <I>       den id-supertypen som er felles for objektene som skal kastes ut av minnet
      * @return noe uklart
      */
-    <I extends BubbleId<?>> boolean evict(Collection<I> bubbleIds);
+    <I extends BubbleId<?>> boolean evict(Collection<? extends I> bubbleIds);
 
     /**
      * Kaster alle objekter ut av Store. Dette kan være nødvendig i store operasjoner for å frigi minne.
@@ -326,7 +326,7 @@ public interface Store {
      * @param end   seneste tidspunkt man er interessert i (eksklusiv)
      * @return key er id-en man sendte inn men med {@code SnapshotVersion.CURRENT}, value er sortert liste med tidsspesifike id-er
      */
-    <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end);
+    <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end);
 
     /**
      * Legger en nyopprettet boble inn i Store. Dersom boblen ikke har fått tilordnet id, så genereres denne med

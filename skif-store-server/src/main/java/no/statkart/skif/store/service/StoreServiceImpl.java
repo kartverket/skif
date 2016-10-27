@@ -55,7 +55,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
         return store.getVersionsForList(ids, start, end);
     }
 

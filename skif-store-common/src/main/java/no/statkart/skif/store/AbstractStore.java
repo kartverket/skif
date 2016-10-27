@@ -64,63 +64,63 @@ public abstract class AbstractStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<? extends I> bubbleIds) {
         return storeSession.get(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<? extends I> bubbleIds) {
         return storeSession.get(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<? extends I> bubbleIds) {
         return storeSession.get(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects) {
         storeSession.get(bubbleIds, bubbleObjects);
     }
 
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<? extends I> bubbleIds) {
         return storeSession.getOrdered(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<? extends I> bubbleIds) {
         return storeSession.getOrdered(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<? extends I> bubbleIds) {
         return storeSession.getOrdered(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects) {
         storeSession.getOrdered(bubbleIds, bubbleObjects);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<? extends I> bubbleIds) {
         return storeSession.getIgnoreMissing(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<? extends I> bubbleIds) {
         return storeSession.getIgnoreMissing(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<? extends I> bubbleIds) {
         return storeSession.getIgnoreMissing(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects) {
         storeSession.getIgnoreMissing(bubbleIds, bubbleObjects);
     }
 
@@ -131,28 +131,28 @@ public abstract class AbstractStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds) {
-        List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<? extends I> bubbleIds) {
+        List<T> bubbleObjects = new ArrayList<>(bubbleIds.size());
         lock(bubbleIds, bubbleObjects);
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<I> bubbleIds) {
-        Set<T> bubbleObjects = new HashSet<T>(bubbleIds.size());
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<? extends I> bubbleIds) {
+        Set<T> bubbleObjects = new HashSet<>(bubbleIds.size());
         lock(bubbleIds, bubbleObjects);
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<I> bubbleIds) {
-        List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<? extends I> bubbleIds) {
+        List<T> bubbleObjects = new ArrayList<>(bubbleIds.size());
         lock(bubbleIds, bubbleObjects);
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects) {
         // TODO: implementer som batch
         for (I bubbleId : bubbleIds) {
             bubbleObjects.add(storeSession.lock(bubbleId));
@@ -218,7 +218,7 @@ public abstract class AbstractStore implements Store {
     }
 
     @Override
-    public <I extends BubbleId<?>> boolean evict(Collection<I> bubbleIds) {
+    public <I extends BubbleId<?>> boolean evict(Collection<? extends I> bubbleIds) {
         // TODO: Hva bør egentlig returneres her?
         boolean allWasEviced = true;
         for (I bubbleId : bubbleIds) {
@@ -243,7 +243,7 @@ public abstract class AbstractStore implements Store {
     }
 
     @Override
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
         return storeSession.getVersionsForList(ids, start, end);
     }
 
@@ -408,7 +408,7 @@ public abstract class AbstractStore implements Store {
     }
 
     private Set<? extends BubbleId<?>> getIdsOfUpdatedOrDeleted(UnitOfWorkTransfer transfer) {
-        Set result = Sets.newHashSetWithExpectedSize(transfer.getUpdatedObjects().size() + transfer.getDeletedObjects().size());
+        Set<BubbleId<?>> result = Sets.newHashSetWithExpectedSize(transfer.getUpdatedObjects().size() + transfer.getDeletedObjects().size());
         for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
             result.add(bubbleObject.getId());
         }

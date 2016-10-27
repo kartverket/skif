@@ -66,7 +66,7 @@ public interface StoreService {
      * @return map av funnede id-er
      */
     @SuppressSnapshotVersionMapping
-    <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end);
+    <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end);
 
     /**
      * Låser {@link BubbleObject} av type {@code <T>} for {@code id} av type {@code <I>} for kallende bruker og

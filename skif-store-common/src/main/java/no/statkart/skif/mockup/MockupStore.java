@@ -117,111 +117,111 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<? extends I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
-            bubbleObjects = get((Set<I>) bubbleIds);
+            bubbleObjects = get((Set<? extends I>) bubbleIds);
         } else if (bubbleIds instanceof List) {
-            bubbleObjects = get((List<I>) bubbleIds);
+            bubbleObjects = get((List<? extends I>) bubbleIds);
         } else {
             checkNotNull(bubbleIds, "bubbleIds");
-            bubbleObjects = get(new ArrayList<I>(bubbleIds));
+            bubbleObjects = get(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<? extends I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
-        Set<T> bubbleObjects = new HashSet<T>(bubbleIds.size());
+        Set<T> bubbleObjects = new HashSet<>(bubbleIds.size());
         get(bubbleIds, bubbleObjects);
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<? extends I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
-        List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
+        List<T> bubbleObjects = new ArrayList<>(bubbleIds.size());
         get(bubbleIds, bubbleObjects);
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects) {
         for (I bubbleId : bubbleIds) {
             bubbleObjects.add(get(bubbleId));
         }
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<? extends I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
-            bubbleObjects = getOrdered((Set<I>) bubbleIds);
+            bubbleObjects = getOrdered((Set<? extends I>) bubbleIds);
         } else if (bubbleIds instanceof List) {
-            bubbleObjects = getOrdered((List<I>) bubbleIds);
+            bubbleObjects = getOrdered((List<? extends I>) bubbleIds);
         } else {
             checkNotNull(bubbleIds, "bubbleIds");
-            bubbleObjects = getOrdered(new ArrayList<I>(bubbleIds));
+            bubbleObjects = getOrdered(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<? extends I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
-        LinkedHashSet<T> bubbleObjects = new LinkedHashSet<T>(bubbleIds.size());
+        LinkedHashSet<T> bubbleObjects = new LinkedHashSet<>(bubbleIds.size());
         getOrdered(bubbleIds, bubbleObjects);
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<? extends I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
-        List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
+        List<T> bubbleObjects = new ArrayList<>(bubbleIds.size());
         getOrdered(bubbleIds, bubbleObjects);
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects) {
         for (I bubbleId : bubbleIds) {
             bubbleObjects.add(get(bubbleId));
         }
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<? extends I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
-            bubbleObjects = getIgnoreMissing((Set<I>) bubbleIds);
+            bubbleObjects = getIgnoreMissing((Set<? extends I>) bubbleIds);
         } else if (bubbleIds instanceof List) {
-            bubbleObjects = getIgnoreMissing((List<I>) bubbleIds);
+            bubbleObjects = getIgnoreMissing((List<? extends I>) bubbleIds);
         } else {
             checkNotNull(bubbleIds, "bubbleIds");
-            bubbleObjects = getIgnoreMissing(new ArrayList<I>(bubbleIds));
+            bubbleObjects = getIgnoreMissing(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<? extends I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
-        Set<T> bubbleObjects = new HashSet<T>(bubbleIds.size());
+        Set<T> bubbleObjects = new HashSet<>(bubbleIds.size());
         getIgnoreMissing(bubbleIds, bubbleObjects);
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<? extends I> bubbleIds) {
         checkNotNull(bubbleIds, "bubbleIds");
-        List<T> bubbleObjects = new ArrayList<T>(bubbleIds.size());
+        List<T> bubbleObjects = new ArrayList<>(bubbleIds.size());
         getIgnoreMissing(bubbleIds, bubbleObjects);
         return bubbleObjects;
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects) {
         for (I bubbleId : bubbleIds) {
             try {
                 bubbleObjects.add(get(bubbleId));
@@ -236,22 +236,22 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<? extends I> bubbleIds) {
         return get(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<? extends I> bubbleIds) {
         return get(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<? extends I> bubbleIds) {
         return get(bubbleIds);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects) {
         get(bubbleIds, bubbleObjects);
     }
 
@@ -277,7 +277,7 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <I extends BubbleId<?>> boolean evict(Collection<I> bubbleIds) {
+    public <I extends BubbleId<?>> boolean evict(Collection<? extends I> bubbleIds) {
         throw new NotImplementedException();
     }
 
@@ -293,8 +293,8 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
-        LinkedHashMap<I, List<I>> versionsMap = new LinkedHashMap<I, List<I>>(ids.size());
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
+        LinkedHashMap<I, List<I>> versionsMap = new LinkedHashMap<>(ids.size());
         for (I id : ids) {
             versionsMap.put(id, getVersions(id, start, end));
         }
@@ -413,8 +413,8 @@ public class MockupStore implements Store {
      * @return id-ene, inkludert de til gitt bobleobjekter
      */
     private Set<BubbleId> findLinkedBubbleIds(Collection<BubbleObject> bubbleObjects, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
-        Queue<BubbleObject> uncheckedObjects = new ArrayDeque<BubbleObject>(bubbleObjects);
-        Set<BubbleObject> linkedObjects = new LinkedHashSet<BubbleObject>(); // Ønsker å bevare insert rekkefølgen
+        Queue<BubbleObject> uncheckedObjects = new ArrayDeque<>(bubbleObjects);
+        Set<BubbleObject> linkedObjects = new LinkedHashSet<>(); // Ønsker å bevare insert rekkefølgen
 
         while (!uncheckedObjects.isEmpty()) {
             BubbleObject object = uncheckedObjects.remove();
@@ -428,7 +428,7 @@ public class MockupStore implements Store {
             uncheckedObjects.addAll(referencedBubbles);
         }
 
-        Set<BubbleId> linkedIds = new LinkedHashSet<BubbleId>(linkedObjects.size());
+        Set<BubbleId> linkedIds = new LinkedHashSet<>(linkedObjects.size());
         for (BubbleObject linkedObject : linkedObjects) {
             linkedIds.add(linkedObject.getId());
         }
@@ -449,10 +449,10 @@ public class MockupStore implements Store {
         if (object == null) {
             return Collections.emptySet();
         } else {
-            Set<BubbleId> ids = new HashSet<BubbleId>();
+            Set<BubbleId> ids = new HashSet<>();
 
-            Stack<Object> stack = new Stack<Object>();
-            HashSet<Object> visitedObjects = new HashSet<Object>();
+            Stack<Object> stack = new Stack<>();
+            HashSet<Object> visitedObjects = new HashSet<>();
 
             stack.push(object);
             while (!stack.isEmpty()) {
@@ -494,9 +494,7 @@ public class MockupStore implements Store {
                                                 if (!stack.contains(component) && !visitedObjects.contains(component)) {
                                                     stack.push(component);
                                                 }
-                                            } catch (IllegalAccessException e) {
-                                                throw new ImplementationException("Could not get id from object", e);
-                                            } catch (SecurityException e) {
+                                            } catch (IllegalAccessException | SecurityException e) {
                                                 throw new ImplementationException("Could not get id from object", e);
                                             }
                                         }
@@ -541,12 +539,12 @@ public class MockupStore implements Store {
     }
 
     public SortedMap<SnapshotVersion, MockupTransfer> getAllTransfersForIds(Collection<? extends BubbleId> ids, SnapshotVersion beforeSnapshotVersion) {
-        Set<BubbleId> allReferencedIds = new LinkedHashSet<BubbleId>(); // Ønsker å bevare rekkefølgen slik at den ikke avhenger av hashkoden til id-verdien
+        Set<BubbleId> allReferencedIds = new LinkedHashSet<>(); // Ønsker å bevare rekkefølgen slik at den ikke avhenger av hashkoden til id-verdien
 
         SortedMap<SnapshotVersion, MockupTransfer> allCompleteTransfers = mockupPersister.getTransfersBefore(beforeSnapshotVersion);
         for (Map.Entry<SnapshotVersion, MockupTransfer> entry : allCompleteTransfers.entrySet()) {
             MockupTransfer transfer = entry.getValue();
-            List<BubbleObject> allObjects = new ArrayList<BubbleObject>(ids.size());
+            List<BubbleObject> allObjects = new ArrayList<>(ids.size());
             for (BubbleObject bubbleObject : transfer.getInsertedObjects()) {
                 if (ids.contains(bubbleObject.getId())) {
                     allObjects.add(bubbleObject);
@@ -572,7 +570,7 @@ public class MockupStore implements Store {
             }
         }
 
-        SortedMap<SnapshotVersion, MockupTransfer> allTransfersForIds = new TreeMap<SnapshotVersion, MockupTransfer>();
+        SortedMap<SnapshotVersion, MockupTransfer> allTransfersForIds = new TreeMap<>();
         for (SnapshotVersion snapshotVersion : allCompleteTransfers.keySet()) {
             MockupTransfer transferForIds = mockupPersister.getTransferForIds(allReferencedIds, snapshotVersion);
             if (!transferIsEmpty(transferForIds)) {

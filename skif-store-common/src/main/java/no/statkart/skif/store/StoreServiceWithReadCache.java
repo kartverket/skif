@@ -78,7 +78,7 @@ public class StoreServiceWithReadCache implements StoreService {
     }
 
     @Override
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
+    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
         return storeService.getVersionsForList(ids, start, end);
     }
 

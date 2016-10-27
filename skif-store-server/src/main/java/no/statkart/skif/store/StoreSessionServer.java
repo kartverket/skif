@@ -519,7 +519,7 @@ public class StoreSessionServer extends AbstractStoreSession {
      * @see StoreServer#getVersionsForList(java.util.Collection, SnapshotVersion, SnapshotVersion)
      */
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, List<I>> getVersionsForList(Collection<I> ids, SnapshotVersion start, SnapshotVersion end) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
         VersionFinder versionFinder = versionFinderProvider.get();
 
 // Denne metode kan opptimaliseres, ved å først å sortere ids på basetype og så gjøre en list query basert på
