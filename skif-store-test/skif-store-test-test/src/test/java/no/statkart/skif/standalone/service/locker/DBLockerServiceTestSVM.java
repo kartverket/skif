@@ -229,16 +229,16 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
 
         service.releaseAllLocks("ingroa");
 
-        long l = System.currentTimeMillis();
-        service.lock(new LockKey<>("Test1", 10L), "ingroa", 30000);
-        service.lock(new LockKey<>("Test1", 11L), "ingroa", 1000);
+        LockInfo<Long> lock10 = service.lock(new LockKey<>("Test1", 10L), "ingroa", 30000);
+        LockInfo<Long> lock11 = service.lock(new LockKey<>("Test1", 11L), "ingroa", 1000);
         Collection<LockInfo<Long>> locks = service.renewAllLocks("ingroa", 10000);
         Assert.assertEquals(locks.size(), 2);
         for (LockInfo<Long> lock : locks) {
             if(lock.getLockKey().keyValue.equals(10L)) {
-                Assert.assertTrue(lock.getExpires().getTime() > l + 25000); //Skal ikke ha blitt endret
+                Assert.assertEquals(lock.getExpires(), lock10.getExpires()); //Skal ikke ha blitt endret
             } else if(lock.getLockKey().keyValue.equals(11L)) {
-                Assert.assertTrue(lock.getExpires().getTime() > l + 10000 && lock.getExpires().getTime() < l + 15000); //Skal ha blitt endret
+                Assert.assertTrue(lock.getExpires().after(lock11.getExpires()), "Nytt utløpstidspunkt er ikke etter opprinnelig utløpstidspunkt");
+                Assert.assertTrue(lock.getExpires().getTime() < lock11.getExpires().getTime() + 15000, "Fornyet for langt inn i fremtiden");
             }
         }
 
