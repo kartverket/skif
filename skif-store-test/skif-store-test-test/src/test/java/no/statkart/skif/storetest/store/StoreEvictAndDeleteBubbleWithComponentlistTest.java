@@ -29,7 +29,6 @@ import java.util.HashSet;
 @Test
 public class StoreEvictAndDeleteBubbleWithComponentlistTest extends StoreTestMixedTestCase {
 
-    @Test(enabled = false)
     public void testLockAndDeleteObject(){
 
         server.runInBeanManagedTransaction(new RunOnServerMethod() {
