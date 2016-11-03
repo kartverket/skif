@@ -1,5 +1,7 @@
 package no.statkart.skif.service.module;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.*;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
@@ -10,6 +12,7 @@ import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServiceRequestContext;
+import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
@@ -19,6 +22,7 @@ import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
+import no.statkart.skif.service.module.server.ServerServiceModuleStrategySingleVm;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.scope.ServiceRequestScope;
@@ -96,6 +100,41 @@ public class SingleVmModuleTest {
                 serverServiceModule
         );
     }
+
+    private Injector createServerInjectorThatOverridesDefaultImplementationBindings(List<Class<? extends Object>> services) {
+        final ServerModuleStrategyFactory myStrategyFactory = new ServerModuleStrategyFactory();
+        myStrategyFactory.getPrototype(ServerServiceModule.class).setStrategyClass(ServiceMode.SINGLE_VM, ServerServiceModuleStrategyWithExplisitBindingSingleVm.class);
+
+        final DefaultModuleConfiguration myServerCfg = new DefaultModuleConfiguration()
+                .setStrategyFactory(myStrategyFactory)
+                .setServiceMode(ServiceMode.SINGLE_VM);
+
+        return Guice.createInjector(
+                new ServerModule(serverCfg),
+                new ServerServiceModule(myServerCfg, services) {
+                    @Override
+                    protected void configure() {
+                        super.configure(); // Denne er viktig
+                        bind(Test1Service.class).annotatedWith(Implementation.class).to(Test1ServiceImpl2.class);
+                        bind(Test2Service.class).annotatedWith(Implementation.class).to(Test2ServiceImpl2.class);
+                    }
+                }
+        );
+    }
+
+
+
+    /**
+     * Eksemple på alternativ ServerServiceModuleStrategy som forventer at services eksplisitt binnes til
+     * implementasjon i {@link AbstractModule#configure()}
+     **/
+    public static class ServerServiceModuleStrategyWithExplisitBindingSingleVm extends ServerServiceModuleStrategySingleVm {
+        @Override
+        protected <S> void bindServiceImplementation(Binder binder, Class<S> service) {
+            // Services bindes eksplisitt i configure i stedet.
+        }
+    }
+
 
     private Injector createClientInjector(Injector serverInjector, List<Class<? extends Object>> services) {
         clientCfg.getConfiguration().setProperty(SkifConfigConstants.SINGLE_VM_SERVER_INJECTOR, serverInjector);
@@ -324,6 +363,21 @@ public class SingleVmModuleTest {
         assertEquals(bService.m3(Arrays.asList("BService.m2", "BService.m3", "BService.m2", "CService.m1")), "[Tx:BService.m3 BService.m2 [Tx:BService.m3 BService.m2 CService.m1]]");
         assertEquals(bService.m3(Arrays.asList("BService.m2", "BService.m3", "BService.m1", "CService.m1")), "[Tx:BService.m3 BService.m2 [Tx:BService.m3 BService.m1 CService.m1]]");
 
+    }
+
+    /**
+     * Test av hvordan man konfigurerer en {@link ServerServiceModule} til å override default service implementation
+     * binding (serviceclassname + "Impl") og i stedet binne implementasjon i modulens {@code configure()} metode.
+     */
+    public void testBasicSingleVmWireinghatOverridesDefaultImplementationBindings_RequestScopeNotUsed() {
+        final Injector serverInjector = createServerInjectorThatOverridesDefaultImplementationBindings(services);
+        final Injector injector = createClientInjector(serverInjector, services);
+
+        final Test1Service service1 = injector.getInstance(Test1Service.class);
+        final LoginUserHolder loginUserHolder = injector.getInstance(LoginUserHolder.class);
+        loginUserHolder.set(new LoginUser("henrik", "henrikPassword"));
+        assertEquals(service1.helloWorld("test"), "Hello1 impl2: test");
+        assertEquals(service1.helloWorld("test"), "Hello1 impl2: test");
     }
 
 }

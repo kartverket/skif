@@ -1,0 +1,24 @@
+package no.statkart.skif.service.test.service;
+
+import com.google.inject.Inject;
+import no.statkart.skif.service.ServiceRequestContext;
+
+/**
+ * @author Henrik Fredholm
+ * @since 2.0
+ */
+public class Test2ServiceImpl2 implements Test2Service {
+
+    // Denne krever at injectoren har et aktivt ServiceRequestScope
+    final ServiceRequestContext serviceRequestContext;
+
+    @Inject
+    public Test2ServiceImpl2(ServiceRequestContext serviceRequestContext) {
+        this.serviceRequestContext = serviceRequestContext;
+    }
+
+    @Override
+    public String helloWorld(String s) {
+        return "Hello2 impl2: " + s + " username: " + serviceRequestContext.getUserName();
+    }
+}

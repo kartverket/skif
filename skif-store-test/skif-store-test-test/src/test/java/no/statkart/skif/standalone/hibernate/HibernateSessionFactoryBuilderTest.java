@@ -10,6 +10,7 @@ import no.statkart.skif.storetest.domain.standalone.TestEntity;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.testng.annotations.Test;
 
 import java.sql.Connection;
@@ -91,4 +92,12 @@ public class HibernateSessionFactoryBuilderTest {
         testCreateFactoryWithEntity();
     }
 
+
+    public void testStandardHibernateSessionFactory() throws SQLException, InterruptedException {
+        Properties hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm();
+        final Configuration configuration = new Configuration().setProperties(hibernateProperties);
+        final SessionFactory sf = configuration.buildSessionFactory();
+        Session s = sf.openSession();
+        s.close();
+    }
 }
