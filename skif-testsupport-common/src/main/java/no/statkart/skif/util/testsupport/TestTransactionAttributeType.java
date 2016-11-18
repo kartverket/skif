@@ -21,8 +21,8 @@ import no.statkart.skif.service.RunOnServerService;
 
 public enum TestTransactionAttributeType {
     TX_NOT_SUPPORTED (RunOnServerWithTxNotSupportedService.class),
-    TX_REQUIRED(RunOnServerWithTxRequiresNewService.class),
-    TX_REQUIRES_NEW(RunOnServerWithTxRequiredService.class),
+    TX_REQUIRED(RunOnServerWithTxRequiredService.class),
+    TX_REQUIRES_NEW(RunOnServerWithTxRequiresNewService.class),
     TX_BEAN(RunOnServerWithTxBeanManagedService.class);
 
     private Class<? extends RunOnServerService> serviceClass;
