@@ -541,6 +541,45 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
         }
     }
 
+    /**
+     * Tester at kall til {@link no.statkart.skif.store.Store#evictAll()} ikke feiler når relation caching er enabled og
+     * Store inneholder låste objekter som dermed ikke evictes.
+     */
+    public void testEvictAllMedRelationCachingUtenforUnitOfWorkSkalIkkeFeile() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
+        try {
+            storeClient.getRelationCache().setEnabled(true);
+            // Det er ikke lov å endre på a1 her, da unit of work ikke er startet. Dermed ingen grunn til å test at relation caching blir riktig hvis a endres
+            //noinspection UnusedDeclaration
+            X1AA a1 = storeClient.lock(a1Id);
+            storeClient.evictAll();
+        } finally {
+            storeClient.getRelationCache().setEnabled(false);
+            if (storeClient.isLocked(a1Id)) {
+                storeClient.unlock(a1Id);
+            }
+        }
+    }
+
+    /**
+     * Tester at kall til {@link no.statkart.skif.store.Store#evictAll()} i UnitOfWork ikke feiler når relation caching
+     * er enabled og Store inneholder oppdaterte objekter som dermed ikke evictes. Videre skal evictall ikke føre til
+     * at oppslag på releasjoner som er endret blir feil.
+     */
+    public void testEvictAllMedRelationCachingIUnitOfWorkSkalIkkeFeile() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
+        try (UnitOfWork ignore =storeClient.beginUnitOfWork()) {
+            storeClient.getRelationCache().setEnabled(true);
+            X1AA a1 = storeClient.lock(a1Id);
+            a1.setUniqueOnX1AA("abc123");
+            assertEquals(x1AAFinderService.findX1AAIdsForUniqueOnX1AA(ImmutableSet.of("abc123")).get("abc123"), a1Id);
+            storeClient.evictAll();
+            assertEquals(x1AAFinderService.findX1AAIdsForUniqueOnX1AA(ImmutableSet.of("abc123")).get("abc123"), a1Id);
+        }
+    }
+
     // TODO: Det er fortsatt flere testcaser som bør skrives, blant annet transfer fra klient til server og update/sletting med detached objekt
 
 }

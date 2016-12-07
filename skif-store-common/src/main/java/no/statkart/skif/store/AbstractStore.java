@@ -231,7 +231,6 @@ public abstract class AbstractStore implements Store {
     public boolean evictAll() {
         boolean allEvicted = storeSession.evictAll();
         if (storeRelationCache.isEnabled()) {
-            checkState(allEvicted, "Evict av cachet relasjoner støttes ennå ikke når Store inneholder endrede objekter. Workaround er å disable relation caching først, dvs kalle Store.getRelationCache.setEnabled(false).");
             storeRelationCache.evictAll();
         }
         return allEvicted;

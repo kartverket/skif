@@ -254,7 +254,10 @@ public abstract class StoreRelationCache {
     }
 
     public void evictAll() {
-        relationCache.evictAll();
+        if (isEnabled()) {
+            setEnabled(false);  // Ved disabling evictes cachen automatisk
+            setEnabled(true);   // Ved enabling så gjenberegnes caching for låste objekter og har hensyn til endret relasjoner i disse
+        }
     }
 
 }
