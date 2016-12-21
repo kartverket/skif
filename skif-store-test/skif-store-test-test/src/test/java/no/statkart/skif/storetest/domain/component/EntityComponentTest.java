@@ -229,8 +229,8 @@ public class EntityComponentTest extends StoreTestTestCase {
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
         store.endUnitOfWork(unitOfWork);
 
-        // TODO: skrive databasekode som sjekker at level1 og level2 komponeter er slettet.
-        final BubbleWithEntityComponent updatedBubble = store.lock(mockupFactory.getWithNullLevel2Id());
+        assertThat(store.evict(mockupFactory.getWithNullLevel2Id())).isTrue();
+        final BubbleWithEntityComponent updatedBubble = store.get(mockupFactory.getWithNullLevel2Id());
         assertNull(updatedBubble.getLevel1Component());
     }
 
@@ -245,8 +245,8 @@ public class EntityComponentTest extends StoreTestTestCase {
         storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
         store.endUnitOfWork(unitOfWork);
 
-        // TODO: skrive databasekode som sjekker at level1 og level2 komponeter er slettet.
-        final BubbleWithEntityComponent updatedBubble = store.lock(mockupFactory.getWithNonNullComponentsId());
+        assertThat(store.evict(mockupFactory.getWithNullLevel2Id())).isTrue();
+        final BubbleWithEntityComponent updatedBubble = store.get(mockupFactory.getWithNonNullComponentsId());
         assertNull(updatedBubble.getLevel1Component());
     }
 

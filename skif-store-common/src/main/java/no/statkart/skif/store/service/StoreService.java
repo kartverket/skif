@@ -81,7 +81,7 @@ public interface StoreService {
 
     /**
      * Låser opp {@link BubbleObject} av type {@code <T>} for {@code id} av type {@code <I>} dersom det er låst av
-     * kallende bruker. Hvis {@code id} er null returneres {@code null}.
+     * kallende bruker.
      *
      * @param id BubbleId for objekt som skal låses opp
      */

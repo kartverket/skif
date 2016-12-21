@@ -113,19 +113,26 @@ public class EndringManagerTest extends StoreTestTestCase {
 
         final EndringId<?> endringIdFoer = endringsloggService.findSisteEndringId();
 
-        BubbleWithRelation bubbleWithRelation1 = store.lock(mockupFacade.getBubbleWithRelationMockupFactory().getBubbleWithRelationId1());
-        Simple simple2 = store.lock(mockupFacade.getSimpleMockupFactory().getSimpleId2());
+        SimpleId<?> simpleXId = mockupFacade.getIdService().getNextId(SimpleId.class);
+        SimpleId<?> simpleId2 = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+        try (UnitOfWork unitOfWork=store.beginUnitOfWork()) {
+            BubbleWithRelation bubbleWithRelation1 = store.lock(mockupFacade.getBubbleWithRelationMockupFactory().getBubbleWithRelationId1());
+            Simple simple2 = store.lock(simpleId2);
 
-        Simple simpleX = new Simple(
-                mockupFacade.getIdService().getNextId(SimpleId.class),
-                "Erstatning for simple2"
-        );
+            Simple simpleX = new Simple(
+                    simpleXId,
+                    "Erstatning for simple2"
+            );
 
-        bubbleWithRelation1.setSimpleId(simpleX.getId());
+            bubbleWithRelation1.setSimpleId(simpleX.getId());
 
-        // TODO: Det burde kanskje være mulig å bare sende en vanlig UnitOfWorkTransfer til TestdataService. Det er slik i matrikkelen.
-        MockupTransfer transfer = new MockupTransfer(Arrays.asList(simpleX), Arrays.asList(bubbleWithRelation1), Arrays.asList(simple2), mockupFacade.getTestNumber());
-        testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
+            // TODO: Det burde kanskje være mulig å bare sende en vanlig UnitOfWorkTransfer til TestdataService. Det er slik i matrikkelen.
+            MockupTransfer transfer = new MockupTransfer(Arrays.asList(simpleX), Arrays.asList(bubbleWithRelation1), Arrays.asList(simple2), mockupFacade.getTestNumber());
+            testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
+            store.endUnitsOfWork(unitOfWork);
+        }
+        BubbleWithRelation bubbleWithRelation1 = store.get(mockupFacade.getBubbleWithRelationMockupFactory().getBubbleWithRelationId1());
+        Simple simpleX = store.get(simpleXId);
 
         Endringer<? >endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class,null, ReturnerBobler.Aldri, 10);
         List<? extends AbstractEndring<?, ?>> endringList = endringer.getEndringList();
@@ -142,7 +149,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         Assert.assertEquals(endringList.get(2).getClass(), SimpleEndring.class, "Endring 2 klasse");
         Assert.assertEquals(getEndringsnummmer(endringList.get(2).getId()), getEndringsnummmer(endringIdFoer) + 3, "Endring 2 endringsnummer");
         Assert.assertEquals(endringList.get(2).getEndringstype(), Endringstype.Sletting, "Endring 2 endringstype");
-        Assert.assertEquals(endringList.get(2).getEndretBubbleId(), simple2.getId(), "Endring 2 id");
+        Assert.assertEquals(endringList.get(2).getEndretBubbleId(), simpleId2, "Endring 2 id");
     }
 
     /**

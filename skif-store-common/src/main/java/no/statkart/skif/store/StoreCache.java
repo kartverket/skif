@@ -21,12 +21,6 @@ public class StoreCache {
         return cacheMap.get(bubbleId);
     }
 
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evict(int level, I bubbleId) {
-        // Todo: FIX
-        StoreEntry removed = cacheMap.remove(bubbleId);
-        return removed!=null;
-    }
-
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry remove(I bubbleId) {
         StoreEntry storeEntry = cacheMap.remove(bubbleId);
         return storeEntry;

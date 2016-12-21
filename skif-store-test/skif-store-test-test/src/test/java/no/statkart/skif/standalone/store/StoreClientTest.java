@@ -1,5 +1,7 @@
 package no.statkart.skif.standalone.store;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -25,10 +27,13 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * Tester grunnleggende ting i {@link no.statkart.skif.store.StoreClient}. Dette er stort sett implementert i diverse session-klasser.
@@ -179,11 +184,95 @@ public class StoreClientTest {
         TestBubbleId<?> id = new TestBubbleId(1L);
 
         TestBubble testBubble1 = store.get(id);
-        store.evict(id);
+        Assert.assertTrue(store.evict(id), "Evict at ikke låst boble skal gi true");
         TestBubble testBubble2 = store.get(id);
 
         Assert.assertNotSame(testBubble2, testBubble1, "Fikk tilbake samme objekt");
         Assert.assertEquals(testBubble2.getId(), testBubble1.getId(), "Fikk tilbake objekter med forskjellig id");
+    }
+
+    public void evictLaast() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+        try (UnitOfWork ignore = store.beginUnitOfWork()) {
+            TestBubbleId<?> id = new TestBubbleId(1L);
+
+            TestBubble testBubble1 = store.lock(id);
+            Assert.assertFalse(store.evict(id), "Evict at låst boble skal gi false");
+            TestBubble testBubble2 = store.get(id);
+
+            Assert.assertSame(testBubble2, testBubble1, "Fikk ikke tilbake samme objekt");
+            Assert.assertEquals(testBubble2.getId(), testBubble1.getId(), "Fikk tilbake objekter med forskjellig id");
+        }
+    }
+
+    public void evictNonExistingId() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+
+        TestBubbleId<?> id = new TestBubbleId(1L);
+
+        Assert.assertTrue(store.evict(id), "Evict av objekt som ikke er lastet skal gi true");
+    }
+
+    public void evictNull() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+
+        TestBubbleId<?> id = null;
+
+        Assert.assertTrue(store.evict(id), "Evict av id=null skal gi true");
+    }
+
+    public void evictInUnitOfWork() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+
+        TestBubbleId<?> id = new TestBubbleId(1L);
+        TestBubble testBubble1 = store.get(id);
+
+        try (UnitOfWork ignore = store.beginUnitOfWork()) {
+            Assert.assertTrue(store.evict(id), "Evict at ikke låst boble skal gi true");
+            TestBubble testBubble2 = store.get(id);
+
+            Assert.assertNotSame(testBubble2, testBubble1, "Fikk tilbake samme objekt");
+            Assert.assertEquals(testBubble2.getId(), testBubble1.getId(), "Fikk tilbake objekter med forskjellig id");
+        }
+    }
+
+    public void evictCollection() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+
+        TestBubbleId<?> id1 = new TestBubbleId(1L);
+        TestBubbleId<?> id2 = new TestBubbleId(2L);
+        ImmutableList<TestBubbleId<?>> ids = ImmutableList.of(id1, id2);
+
+        List<TestBubble> testBubbles = store.getOrdered(ids);
+        Assert.assertTrue(store.evict(ids), "Evict av ikke låst boble skal gi true");
+        List<TestBubble> testBubbles2 = store.getOrdered(ids);
+
+        Assert.assertNotSame(testBubbles.get(0), testBubbles2.get(0), "Fikk tilbake samme objekt");
+        Assert.assertNotSame(testBubbles.get(1), testBubbles2.get(1), "Fikk tilbake samme objekt");
+    }
+
+    public void evictCollectionLocked() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+
+        try (UnitOfWork ignore=store.beginUnitOfWork()) {
+            TestBubbleId<?> id1 = new TestBubbleId(1L);
+            TestBubbleId<?> id2 = new TestBubbleId(2L);
+            ImmutableList<TestBubbleId<?>> ids = ImmutableList.of(id1, id2);
+
+            List<TestBubble> testBubbles = store.getOrdered(ids);
+            TestBubble lockedBubble = store.lock(id2);
+            Assert.assertFalse(store.evict(ids), "Evict med låst boble skal gi false");
+            List<TestBubble> testBubbles2 = store.getOrdered(ids);
+
+            Assert.assertNotSame(testBubbles.get(0), testBubbles2.get(0), "Fikk tilbake samme objekt");
+            Assert.assertSame(lockedBubble, testBubbles2.get(1), "Fikk ikke tilbake samme objekt");
+        }
     }
 
     public void evictAll() {
@@ -193,12 +282,28 @@ public class StoreClientTest {
         TestBubbleId<?> id = new TestBubbleId(1L);
 
         TestBubble testBubble1 = store.get(id);
-        store.evictAll();
+        Assert.assertTrue(store.evictAll());
         TestBubble testBubble2 = store.get(id);
 
         Assert.assertNotSame(testBubble2, testBubble1, "Fikk tilbake samme objekt");
         Assert.assertEquals(testBubble2.getId(), testBubble1.getId(), "Fikk tilbake objekter med forskjellig id");
     }
+
+    public void evictAllMedLaastObjekt() {
+        Injector injector = createInjector();
+        Store store = injector.getInstance(Store.class);
+
+        try (UnitOfWork ignore = store.beginUnitOfWork()) {
+            TestBubbleId<?> id = new TestBubbleId(1L);
+
+            TestBubble testBubble1 = store.lock(id);
+            assertThat(store.evictAll()).isFalse();
+            TestBubble testBubble2 = store.get(id);
+
+            Assert.assertSame(testBubble2, testBubble1, "Fikk ikke tilbake samme objekt");
+        }
+    }
+
 
     /**
      * En mockup-StoreService som bare returnerer nyinstansierte bobleobjekter.

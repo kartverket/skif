@@ -8,14 +8,18 @@ import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.UnitOfWorkTransfer;
+import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
+import org.fest.assertions.api.Assertions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * Tester låsing gjennom Store, i samspill med låsebehandlingen i transaksjonshåndteringen.
@@ -233,28 +237,31 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
 
-        clientStore.lock(simpleId1);
+        try (UnitOfWork ignore= clientStore.beginUnitOfWork()) {
+         clientStore.lock(simpleId1);
 
-        server.runInTxRequired(new RunOnServerMethod() {
-            @Inject
-            private Store serverStore;
+            server.runInTxRequired(new RunOnServerMethod() {
+                @Inject
+                private Store serverStore;
 
-            @Override
-            public Object run() {
-                UnitOfWork unitOfWork = serverStore.beginUnitOfWork();
-                try {
-                    Simple simple = serverStore.get(simpleId1);
+                @Override
+                public Object run() {
+                    UnitOfWork unitOfWork = serverStore.beginUnitOfWork();
+                    try {
+                        Simple simple = serverStore.get(simpleId1);
 
-                    serverStore.update(simple);
+                        serverStore.update(simple);
 
-                    serverStore.abortUnitOfWork(unitOfWork);
-                } finally {
-                    unitOfWork.close();
+                        serverStore.abortUnitOfWork(unitOfWork);
+                    } finally {
+                        unitOfWork.close();
+                    }
+
+                    return null;
                 }
+            });
+        }
 
-                return null;
-            }
-        });
     }
 
     /**
@@ -277,13 +284,57 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at objekter kan låses og låses opp på i StoreSessionClient så lenge de ikke oppdateres.
+     * Tester at objekter ikke kan låses direkte i en StoreSessionClient
      */
-    public void testStoreSessionClientUnlockUnmodified() {
+    public void testStoreSessionClientCannotLock() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
-        clientStore.lock(simpleId1);
+        try {
+            clientStore.lock(simpleId1);
+            Assertions.failBecauseExceptionWasNotThrown(ImplementationException.class);
+        } catch (ImplementationException e) {
+           assertThat(e).hasMessageStartingWith("Lock on client must be done in a UnitOfWork");
+        }
+        assertThat(clientStore.isLocked(simpleId1)).isFalse();
+    }
+
+    /**
+     * Tester at klient kan låse opp objekter som bare er låst på serveren
+     */
+    public void testUnlockFromClient() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+
+        lockOnServer(simpleId1);
+        Assert.assertTrue(clientStore.getInstance(StoreService.class).isLocked(simpleId1), "Objekt ikke låst som forventet");
         clientStore.unlock(simpleId1);
+        Assert.assertFalse(clientStore.getInstance(StoreService.class).isLocked(simpleId1), "Kall til unlock låser ikke opp på server");
+    }
+
+    private void lockOnServer(final SimpleId<?> simpleId1) {
+        // Må være runInTxNotSupported for å beholde låsen, da den frigis automatisk ved commit.
+        server.runInTxNotSupported(new RunOnServerMethod() {
+            @Inject
+            private Store serverStore;
+
+            @Override
+            public Object run() {
+                Simple simple = serverStore.lock(simpleId1);
+                return null;
+            }
+        });
+    }
+
+    private Boolean isLockedOnServer(final SimpleId<?> simpleId1) {
+        return (Boolean) server.runInTxNotSupported(new RunOnServerMethod() {
+            @Inject
+            private Store serverStore;
+
+            @Override
+            public Object run() {
+                return serverStore.isLocked(simpleId1);
+            }
+        });
     }
 
     /**
@@ -375,6 +426,8 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
             }
         });
         Assert.assertEquals(clientStore.get(id).getText(), "Initial version");
-        Assert.assertEquals(clientStore.lock(id).getText(), "Updated version");
+        try (UnitOfWork ignore = clientStore.beginUnitOfWork()) {
+            Assert.assertEquals(clientStore.lock(id).getText(), "Updated version");
+        }
     }
 }

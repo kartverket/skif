@@ -52,6 +52,14 @@ public class StoreSessionClient extends AbstractStoreSession {
         this.storeService = (readCache==null) ? storeService : new StoreServiceWithReadCache(storeService, readCache);
     }
 
+    @Override
+    public <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId) {
+        if (level==0) {
+            throw new ImplementationException("Lock on client must be done in a UnitOfWork");
+        }
+        return super.lock(bubbleId);
+    }
+
     protected boolean isLocked(StoreEntry storeEntry) {
         return storeEntry.isLocked();
     }
@@ -236,6 +244,8 @@ public class StoreSessionClient extends AbstractStoreSession {
                 default:
                     throw new ImplementationException("Object has been changed and can not be unlocked");
             }
+        } else {
+            storeService.unlock(bubbleId);
         }
         return storeEntry;
     }
@@ -287,7 +297,9 @@ public class StoreSessionClient extends AbstractStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
         evictFromReadCache(bubbleId);
         StoreEntry entry = storeCache.get(bubbleId);
-        if (entry != null && entry.getDerivedState(level) == StoreEntryState.UNCHANGED && entry.calcLockLevelStartingFrom(level) == -1) {
+        if (entry==null) {
+            return true;
+        } else if (entry.getDerivedState(level) == StoreEntryState.UNCHANGED && entry.calcLockLevelStartingFrom(level) == -1) {
             storeCache.remove(bubbleId);
             return true;
         } else {

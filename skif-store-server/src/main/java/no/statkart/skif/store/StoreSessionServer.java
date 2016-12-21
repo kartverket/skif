@@ -164,15 +164,15 @@ public class StoreSessionServer extends AbstractStoreSession {
             evicted = false;
         } else {
             if (storeEntry.getLockCreatedByLevel() > 0) {
-                // Kan ikke entry for UnitOfWork må kunne gjøre en unlock ved abort
+                // Kan ikke evicte entry fordi UnitOfWork må kunne gjøre en unlock ved abort
                 evicted = false;
             } else {
                 if (storeEntry.getBubbleObject(0).isFlushed()) {
                     throw new ImplementationException("Attempted to evict modified, flushed, non-updated bubble!");
                 }
-                StoreEntry evictedEntry = storeCache.remove(bubbleId);
+                storeCache.remove(bubbleId);
                 // TODO: marker evictedEntry som stale
-                evicted = evictedEntry != null;
+                evicted = true;
                 persistenceSessionManager.evict(bubbleId);
             }
         }

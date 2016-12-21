@@ -265,38 +265,41 @@ public interface Store {
     void registerTransfer(UnitOfWorkTransfer transfer);
 
     /**
-     * Sjekker om et objekt er låst av gjeldende bruker.
+     * Sjekker om et objekt er låst av gjeldende bruker. Hvis kallet utføres på klienten og
+     * objektet ikke er låst via inneværende Store instans returnerer metoden <code>false</code>. Det utføres
+     * ikke noe kall mot serveren å sjekke om objektet er låst. Det er mulig å sjekke dette ved å gjøre direkte
+     * kall til {@link no.statkart.skif.store.service.StoreService}
      *
      * @param bubbleId id-en til objektet som skal sjekkes
      * @param <I>      id-type til objektet som skal sjekkes
-     * @return <code>true</code> hvis objektet er låst av gjeldende bruke
+     * @return <code>true</code> hvis objektet er låst av gjeldende bruker
      */
     <I extends BubbleId<?>> boolean isLocked(I bubbleId);
 
     /**
-     * Kaster gitt objekt ut av Store. Dette kan være nødvendig i store operasjoner for å frigi minne. Objektet må være
-     * uendret.
+     * Kaster gitt objekt ut av Store med mindre det er låst. Dette kan være nødvendig i Store operasjoner for å frigi
+     * minne.
      *
      * @param bubbleId id-en til objektet som skal kastes ut av minnet
      * @param <I>      id-typen til objektet som skal kastes ut av minnet
-     * @return <code>true</code> hvis objekter faktisk ble kastet ut
+     * @return <code>false</code> hvis objektet er låst og dermed ikke kunne evictes.
      */
     <I extends BubbleId<?>> boolean evict(I bubbleId);
 
     /**
-     * Kaster gitte objekter ut av Store. Dette kan være nødvendig i store operasjoner for å frigi minne. Objektene må
-     * være uendrede.
+     * Kaster gitte objekter ut av Store, dog ikke de som er låst. Dette kan være nødvendig i Store operasjoner for å
+     * frigi minne.
      *
      * @param bubbleIds id-ene til objektene som skal kastes ut av minnet
      * @param <I>       den id-supertypen som er felles for objektene som skal kastes ut av minnet
-     * @return noe uklart
+     * @return <code>false</code> hvis det fantes låste objeker som dermed ikke ble kastet ut
      */
     <I extends BubbleId<?>> boolean evict(Collection<? extends I> bubbleIds);
 
     /**
-     * Kaster alle objekter ut av Store. Dette kan være nødvendig i store operasjoner for å frigi minne.
+     * Kaster alle objekter som ikke er låst ut av Store. Dette kan være nødvendig i store operasjoner for å frigi minne.
      *
-     * @return noe uklart
+     * @return <code>false</code> hvis det fantes låste objekter som dermed ikke ble kastet ut
      */
     boolean evictAll();
 

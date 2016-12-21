@@ -213,7 +213,7 @@ public abstract class AbstractStore implements Store {
 
     @Override
     public <I extends BubbleId<?>> boolean evict(@Nullable I bubbleId) {
-        if (bubbleId == null) return false;
+        if (bubbleId == null) return true;
         return storeSession.evict(bubbleId);
     }
 

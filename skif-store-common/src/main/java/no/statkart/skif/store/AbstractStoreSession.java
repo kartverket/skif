@@ -550,7 +550,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public final <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId) {
+    public <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId) {
         StoreEntry entry = lockEntry(level, bubbleId);
         //noinspection unchecked
         return (T) entry.getBubbleObject(level);

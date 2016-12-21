@@ -499,31 +499,35 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         assertFalse(clientStore.inUnitOfWork());
     }
 
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Update on client must be done in a UnitOfWork and sent to server via getUnitOfWorkTransfer.*")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Lock on client must be done in a UnitOfWork.*")
     public void testClientUpdateOutsideUnitOfWork() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         Simple simple = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-        clientStore.update(simple);
+        clientStore.update(simple); // Kommer aldri her for lock kaster exceptoin
     }
 
-    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Attempt at updating StoreSession\\(level= 1\\) with instance from lower StoreSession\\(level=0\\).*")
+    @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Attempt at updating StoreSession\\(level= 2\\) with instance from lower StoreSession\\(level=1\\).*")
     public void testClientUpdateInUnitOfWorkWithObjectLockedOutsideUnitOfWork() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
-        Simple simple = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-        //noinspection UnusedDeclaration
-        try (UnitOfWork nested = clientStore.beginUnitOfWork()) {
-            clientStore.update(simple);
+        try (UnitOfWork outer = clientStore.beginUnitOfWork()) {
+            Simple simple = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+            //noinspection UnusedDeclaration
+            try (UnitOfWork nested = clientStore.beginUnitOfWork()) {
+                clientStore.update(simple);
+            }
         }
     }
 
     public void testClientUpdateInUnitOfWorkWithObjectLockedOutsideUnitOfWorkDoneRight() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
-        clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-        //noinspection UnusedDeclaration
-        try (UnitOfWork nested = clientStore.beginUnitOfWork()) {
-            Simple simple = clientStore.get(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-            clientStore.update(simple);
-            // NB: Tester her bare at oppdateringen kan utføres i UnitOfWork på klient. Hvis endringen skal lagres må den sendes som transfer til server.
+        try (UnitOfWork outer = clientStore.beginUnitOfWork()) {
+            clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+            //noinspection UnusedDeclaration
+            try (UnitOfWork nested = clientStore.beginUnitOfWork()) {
+                Simple simple = clientStore.get(mockupFacade.getSimpleMockupFactory().getSimpleId1());
+                clientStore.update(simple);
+                // NB: Tester her bare at oppdateringen kan utføres i UnitOfWork på klient. Hvis endringen skal lagres må den sendes som transfer til server.
+            }
         }
     }
 

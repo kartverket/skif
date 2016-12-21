@@ -30,6 +30,7 @@ import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
@@ -205,22 +206,11 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
         assertFalse(storeClient.getRelationCache().isEnabled());
     }
 
-
-    public void testStoreSessionClientLockObjectMedEtterfoelgedeRelationCachingEnabling() {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
-        storeClient.lock(a1Id);
-        // RelationCache onEnable-algoritmen vil se a1. men ikke ta hensyn til det siden det ikke er lov å endre det uten for en UnitOfWork
-        storeClient.getRelationCache().setEnabled(true);
-        storeClient.unlock(a1Id);
-    }
-
-
     /**
      * Tester at relation cachen beregner relasjoner riktig når den enables etter at objekter i Store er endret. I
-     * testcasen står starter vi men en situasjon hvor a1->b2Id. Så endres a1->bNewId. Så lenge caching ikke er
+     * testcasen starter vi med en situasjon hvor a1->b2Id. Så endres a1->bNewId. Så lenge caching ikke er
      * enablet vil servicen lese det som står i databasen. Dvs for b2Id finner vi {a1Id} og for bNewId finner vi {}.
-     * Når cachen enables må algoritmen innse at a1 er endret. Dvs den gamel versjon av a1 (hvor a1->b2Id) gjelder ikke
+     * Når cachen enables må algoritmen innse at a1 er endret. Dvs den gamle versjon av a1 (hvor a1->b2Id) gjelder ikke
      * lengre. Istedet gjelder den oppdaterte versjonen av a1 (a1->bNewId). Algoritmen må innse at koblingen a1->b2Id er
      * 'removed' og koblingen a1->bNewId er 'added'
      * <p/>
@@ -231,9 +221,8 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         X1BBOneId<?> b2Id = mockupFacade.getX1BBOneMockupFactory().getB2Id();
         X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
-        storeClient.lock(a1Id);
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
-            X1AA a1 = storeClient.get(a1Id);
+            X1AA a1 = storeClient.lock(a1Id);
             X1BBOne bNew = new X1BBOne();
             storeClient.insert(bNew);
             X1BBOneId<?> bNewId = bNew.getId();
@@ -253,7 +242,6 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
         assertEquals(storeClient.get(a1Id).getSomeBBId(), b2Id);
         Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIds = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
         assertEquals(invSomeBBIds.get(b2Id), Collections.singleton(a1Id));
-        storeClient.unlock(a1Id);
     }
 
     /**
@@ -263,9 +251,8 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     public void testClientUpdateUtenFaktiskUpdateMedEtterfoelgedeRelationCachingEnabling() {
         assertFalse(storeClient.getRelationCache().isEnabled());
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
-        storeClient.lock(mockupFacade.getX1AAMockupFactory().getA1Id());
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
-            X1AA a1 = storeClient.get(mockupFacade.getX1AAMockupFactory().getA1Id());
+            X1AA a1 = storeClient.lock(mockupFacade.getX1AAMockupFactory().getA1Id());
             X1BBOne bNew = new X1BBOne();
             storeClient.insert(bNew);
             X1BBOneId<?> bNewId = bNew.getId();
@@ -283,7 +270,7 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
             assertEquals(invSomeBBIdsAfterEnabled.get(bNewId), Collections.singleton(a1.getId()));
             assertEquals(invSomeBBIdsAfterEnabled.get(b2Id), Collections.emptySet());
         }
-        storeClient.unlock(mockupFacade.getX1AAMockupFactory().getA1Id());
+
     }
 
     /**
@@ -293,9 +280,8 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     public void testClientUpdateTilNullMedEtterfoelgedeRelationCachingEnabling() {
         assertFalse(storeClient.getRelationCache().isEnabled());
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
-        storeClient.lock(mockupFacade.getX1AAMockupFactory().getA1Id());
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
-            X1AA a1 = storeClient.get(mockupFacade.getX1AAMockupFactory().getA1Id());
+            X1AA a1 = storeClient.lock(mockupFacade.getX1AAMockupFactory().getA1Id());
             X1BBOneId<?> b2Id = mockupFacade.getX1BBOneMockupFactory().getB2Id();
             Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsBefore = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
             assertEquals(invSomeBBIdsBefore.get(b2Id), Collections.singleton(a1.getId()));
@@ -307,14 +293,13 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
             Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsAfterEnabled = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
             assertEquals(invSomeBBIdsAfterEnabled.get(b2Id), Collections.emptySet());
         }
-        storeClient.unlock(mockupFacade.getX1AAMockupFactory().getA1Id());
     }
 
     /**
      * Tester at relation cachen beregner relasjoner riktig når den enables etter at objekter i Store er slettet. I
-     * testcasen står starter vi men en situasjon hvor a1->b2Id. Så a1. Så lenge caching ikke er
-     * enablet vil servicen lese det som står i databasen. Dvs for b2Id finner vi {a1Id}. Når cachen enables må
-     * algoritmen innse at a1 er slettet. Dvs den gamel versjon av a1 (hvor a1->b2Id) gjelder ikke
+     * testcasen starter vi med en situasjon hvor a1->b2Id. Så slettes a1. Så lenge caching ikke er enablet vil servicen
+     * lese det som står i databasen. Dvs for b2Id finner vi {a1Id}. Når cachen enables må
+     * algoritmen innse at a1 er slettet. Dvs den gamle versjon av a1 (hvor a1->b2Id) gjelder ikke
      * lengre. Algoritmen må innse at koblingen a1->b2Id er 'removed'
      */
     public void testClientDeleteMedEtterfoelgedeRelationCachingEnabling() {
@@ -322,22 +307,21 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
         X1BBOneId<?> b2Id = mockupFacade.getX1BBOneMockupFactory().getB2Id();
-        storeClient.lock(a1Id);
-        try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
-            X1AA a1 = storeClient.get(a1Id);
+        try (UnitOfWork uow = storeClient.beginUnitOfWork()) {
+            X1AA a1 = storeClient.lock(a1Id);
             Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsBefore = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
             assertEquals(invSomeBBIdsBefore.get(b2Id), Collections.singleton(a1Id));
-            storeClient.delete(a1);
+            storeClient.delete(a1); // Objektet er kun slettet i klienten, ikke på serveren
             Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsAfterChange = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
             assertEquals(invSomeBBIdsAfterChange.get(b2Id), Collections.singleton(a1Id));
             storeClient.getRelationCache().setEnabled(true);
             Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsAfterEnabled = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
             assertEquals(invSomeBBIdsAfterEnabled.get(b2Id), Collections.emptySet());
+            storeClient.abortUnitOfWork(uow);
         }
         assertEquals(storeClient.get(a1Id).getSomeBBId(), b2Id);
         Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIds = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
         assertEquals(invSomeBBIds.get(b2Id), Collections.singleton(a1Id));
-        storeClient.unlock(a1Id);
     }
 
     /**
@@ -358,9 +342,8 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         X1BBOneId<?> b2Id = mockupFacade.getX1BBOneMockupFactory().getB2Id();
         X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
-        storeClient.lock(a1Id);
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
-            X1AA a1 = storeClient.get(a1Id);
+            X1AA a1 = storeClient.lock(a1Id);
             X1BBOne bNew = new X1BBOne();
             storeClient.insert(bNew);
             X1BBOneId<?> bNewId = bNew.getId();
@@ -406,7 +389,6 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
         assertEquals(invSomeBBIdsOuterUoW.get(b2Id), Collections.singleton(a1Id));
         Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIds = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
         assertEquals(invSomeBBIds.get(b2Id), Collections.singleton(a1Id));
-        storeClient.unlock(a1Id);
     }
 
     /**
@@ -542,23 +524,21 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at kall til {@link no.statkart.skif.store.Store#evictAll()} ikke feiler når relation caching er enabled og
-     * Store inneholder låste objekter som dermed ikke evictes.
+     * Tester at kall til {@link no.statkart.skif.store.Store#evictAll()} ikke feiler når relation caching er enabled
+     * uten for en unit of work. Utenfor en unit of work er det ikke lov å låse objekter på klienten så det er ikke
+     * behov får å test endringer på objekter.
      */
     public void testEvictAllMedRelationCachingUtenforUnitOfWorkSkalIkkeFeile() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
+        X1AA a1 = null;
         try {
             storeClient.getRelationCache().setEnabled(true);
-            // Det er ikke lov å endre på a1 her, da unit of work ikke er startet. Dermed ingen grunn til å test at relation caching blir riktig hvis a endres
-            //noinspection UnusedDeclaration
-            X1AA a1 = storeClient.lock(a1Id);
+            a1 = storeClient.get(a1Id);
             storeClient.evictAll();
         } finally {
             storeClient.getRelationCache().setEnabled(false);
-            if (storeClient.isLocked(a1Id)) {
-                storeClient.unlock(a1Id);
-            }
+            assertNotSame(a1, storeClient.get(a1Id), "a1 ble ikke evicted");
         }
     }
 
