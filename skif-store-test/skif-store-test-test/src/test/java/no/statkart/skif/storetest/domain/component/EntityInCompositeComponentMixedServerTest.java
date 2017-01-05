@@ -12,6 +12,7 @@ import no.statkart.skif.storetest.mockup.BubbleWithEntityInCompositeComponentMoc
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
+import org.fest.assertions.core.Condition;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -66,11 +67,15 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         assertEquals(bubbleWithNullComponents.getText(), "Obj " + 1 + " med null components");
         // Composite components som inneholder Set vil aldrig være null da de alltid vil ha et tomt Set i seg.
         assertNotNull(bubbleWithNullComponents.getLevel1Component());
+        assertSame(bubbleWithNullComponents, bubbleWithNullComponents.getLevel1Component().getOwner());
+        assertSame(bubbleWithNullComponents, bubbleWithNullComponents.getLevel1Component().getCompositeRootOwner());
         assertNull(bubbleWithNullComponents.getLevel1Component().getText());
         assertNull(bubbleWithNullComponents.getLevel1Component().getEntity());
         assertThat(bubbleWithNullComponents.getLevel1Component().getEntitySet()).isEmpty();
         assertThat(bubbleWithNullComponents.getLevel1Component().getEntitySet()).isEmpty();
         assertNotNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component());
+        assertSame(bubbleWithNullComponents.getLevel1Component(), bubbleWithNullComponents.getLevel1Component().getLevel2Component().getOwner());
+        assertSame(bubbleWithNullComponents, bubbleWithNullComponents.getLevel1Component().getLevel2Component().getCompositeRootOwner());
         assertNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getText());
         assertNull(bubbleWithNullComponents.getLevel1Component().getLevel2Component().getEntity());
         assertTrue(bubbleWithNullComponents.getLevel1Component().getLevel2Component().isNullComponent());
@@ -87,7 +92,8 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         assertFalse(bubbleWithNullLevel2Components.getLevel1Component().isNullComponent());
         assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getText());
         assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getEntity());
-        assertThat(bubbleWithNullLevel2Components.getLevel1Component().getEntitySet()).hasSize(1);
+        assertSame(bubbleWithNullLevel2Components, bubbleWithNullLevel2Components.getLevel1Component().getEntity().getOwner());
+        assertThat(bubbleWithNullLevel2Components.getLevel1Component().getEntitySet()).hasSize(1).are(new CheckOwner<>(bubbleWithNullLevel2Components));
 
         // Composite components som inneholder Set vil aldrig være null da de alltid vil ha en tomt Set.
         assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component());
@@ -107,12 +113,14 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().isNullComponent());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getText());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getEntity());
-        assertThat(bubbleWithNonNullComponents.getLevel1Component().getEntitySet()).hasSize(1);
+        assertSame(bubbleWithNonNullComponents, bubbleWithNonNullComponents.getLevel1Component().getEntity().getOwner());
+        assertThat(bubbleWithNonNullComponents.getLevel1Component().getEntitySet()).hasSize(1).are(new CheckOwner<>(bubbleWithNonNullComponents));
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component());
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().isNullComponent());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getText());
-        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getEntity(), null);
-        assertThat(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getEntitySet()).hasSize(1);
+        assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getEntity());
+        assertSame(bubbleWithNonNullComponents, bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getEntity().getOwner());
+        assertThat(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getEntitySet()).hasSize(1).are(new CheckOwner<>(bubbleWithNonNullComponents));
     }
 
     public void testUpdateBubbleWithNonNullLevel1AndLevel2CompositeComponentNoChangeInDetatcedState() {
@@ -229,5 +237,19 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
                 return null;
             }
         });
+    }
+
+    private static class CheckOwner<T> extends Condition<ComponentWithOwnerReference<T>> {
+        private final T expectedOwner;
+
+        CheckOwner(T expectedOwner) {
+            super("has correct owner");
+            this.expectedOwner = expectedOwner;
+        }
+
+        @Override
+        public boolean matches(ComponentWithOwnerReference<T> value) {
+            return value.getOwner() == expectedOwner;
+        }
     }
 }
