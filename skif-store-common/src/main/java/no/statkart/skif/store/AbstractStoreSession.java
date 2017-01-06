@@ -356,13 +356,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                     storeEntry.setState(level, StoreEntryState.UPDATED);
                     break;
                 case UNCHANGED:
-                    // TODO: checke locked
                     storeEntry.setState(level, StoreEntryState.UPDATED);
                     break;
                 case INSERTED:
                     break;
                 case DELETED_INSERTED:
-                    // TODO: checke locked
                     storeEntry.setState(level, StoreEntryState.UPDATED);
                 case UPDATED:
                     break;
@@ -624,11 +622,9 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         if (oldInstance != null && oldInstance != entry.getBubbleObject(level + 1)) {
             // TODO marker old instance som  stale
         }
-        entry.commit(level + 1); // TODO fix
+        entry.commit(level + 1);
         if (entry.getState(level) == StoreEntryState.INSERTED) {
             onInsertEntry(level, entry, newInstance);
-        } else {
-            //onUpdatedEntry(level, entry, newInstance);
         }
         addModified(entry);
     }
@@ -658,7 +654,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         if (oldInstance != null && oldInstance != entry.getBubbleObject(level + 1)) {
             // TODO marker old instance som  stale
         }
-        entry.commit(level + 1); // TODO fix
+        entry.commit(level + 1);
         onUpdateEntry(level, entry, newInstance);
         addModified(entry);
     }
@@ -689,7 +685,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         if (oldInstance != null && oldInstance != entry.getBubbleObject(level + 1)) {
             // TODO marker old instance som  stale
         }
-        entry.commit(level + 1); // TODO fix
+        entry.commit(level + 1);
         onDeleteEntry(level, entry, newInstance);
         addModified(entry);
     }
@@ -848,6 +844,17 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             }
         }
         return new UnitOfWorkTransfer(insertedObjects, updatedObjects, deletedObjects);
+    }
+
+    @Override
+    public <T extends Transfer<?>> T getAllLoaded(T transfer) {
+        for (StoreEntry storeEntry : storeCache.values()) {
+            StoreEntryState state = storeEntry.getState(level);
+            if (state !=StoreEntryState.INSERTED && state != StoreEntryState.INSERTED_DELETED) {
+                transfer.add(storeEntry.getBubbleObject(0));
+            }
+        }
+        return transfer;
     }
 
     private class WithoutUnitOfWorkExecutor implements Executor {

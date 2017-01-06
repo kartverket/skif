@@ -5,7 +5,11 @@ import com.google.inject.Inject;
 import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleTransfer;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.StoreClient;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
@@ -346,7 +350,7 @@ public class StoreTest extends StoreTestTestCase {
     @Test
     public void testHentObjectMedEmptyCollection() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        SubTypeWithCollection objectWithEmptyCollection = (SubTypeWithCollection)store.get(mockupFacade.getSubTypedBubbleMockupFactory().getDifferentHistoricSubtypesId().asSnapshotVersion(SnapshotVersion.createInstance("2011-10-02 09:00:00.00")));
+        SubTypeWithCollection objectWithEmptyCollection = (SubTypeWithCollection) store.get(mockupFacade.getSubTypedBubbleMockupFactory().getDifferentHistoricSubtypesId().asSnapshotVersion(SnapshotVersion.createInstance("2011-10-02 09:00:00.00")));
         assertNotNull(objectWithEmptyCollection.getTekster());
         assertTrue(objectWithEmptyCollection.getTekster().isEmpty());
         Collection<String> stringList = ImmutableList.of("a", "b");
@@ -358,7 +362,7 @@ public class StoreTest extends StoreTestTestCase {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         BubbleWithAnyBubbleRef bubbleWithAnyBubbleRef = store.get(mockupFacade.getBubbleWithAnyBubbleRefMockupFactory().getBubbleWithAnyBubbleRefId1());
         assertEquals(bubbleWithAnyBubbleRef.getAnyId(), mockupFacade.getSimpleMockupFactory().getSimpleId2());
-        assertEquals(store.get(bubbleWithAnyBubbleRef.getAnyId()).getId(),mockupFacade.getSimpleMockupFactory().getSimpleId2());
+        assertEquals(store.get(bubbleWithAnyBubbleRef.getAnyId()).getId(), mockupFacade.getSimpleMockupFactory().getSimpleId2());
     }
 
     public void testRegisterTransferWhenNotLoadedInStoreAndNotLockedInTransfer() {
@@ -387,12 +391,14 @@ public class StoreTest extends StoreTestTestCase {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
         Simple simpleCopy = new Simple(simple1Id, "That's me");
-        store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
-        });
-        assertThat(store.isLocked(simple1Id)).isTrue();
-        assertThat(store.get(simple1Id)).isNotSameAs(simpleCopy);
-        assertThat(store.get(simple1Id)).isEqualTo(simpleCopy);
-        assertThat(store.isLocked(simple1Id)).isTrue();
+        try (UnitOfWork ignore = store.beginUnitOfWork()) {
+            store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
+            });
+            assertThat(store.isLocked(simple1Id)).isTrue();
+            assertThat(store.get(simple1Id)).isNotSameAs(simpleCopy);
+            assertThat(store.get(simple1Id)).isEqualTo(simpleCopy);
+            assertThat(store.isLocked(simple1Id)).isTrue();
+        }
     }
 
     public void testRegisterTransferWhenLoadedButNotLockedInStoreAndLockedInTransfer() {
@@ -400,12 +406,14 @@ public class StoreTest extends StoreTestTestCase {
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
         Simple simple = store.get(simple1Id);
         Simple simpleCopy = CopyHelper.copy(simple);
-        store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
-        });
-        assertThat(store.isLocked(simple1Id)).isTrue();
-        assertThat(store.get(simple1Id)).isNotSameAs(simpleCopy);
-        assertThat(store.get(simple1Id)).isEqualTo(simpleCopy);
-        assertThat(store.isLocked(simple1Id)).isTrue();
+        try (UnitOfWork ignore = store.beginUnitOfWork()) {
+            store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
+            });
+            assertThat(store.isLocked(simple1Id)).isTrue();
+            assertThat(store.get(simple1Id)).isNotSameAs(simpleCopy);
+            assertThat(store.get(simple1Id)).isEqualTo(simpleCopy);
+            assertThat(store.isLocked(simple1Id)).isTrue();
+        }
     }
 
     public void testRegisterTransferWhenLockedInStoreAndNotLockedInTransfer() {
@@ -414,7 +422,8 @@ public class StoreTest extends StoreTestTestCase {
         try (UnitOfWork ignore = store.beginUnitOfWork()) {
             Simple simpleLocked = store.lock(simple1Id);
             Simple simpleCopy = CopyHelper.copy(simpleLocked);
-            store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {});
+            store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {
+            });
             assertThat(store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er låst").isSameAs(simpleLocked);
         }
     }
@@ -425,7 +434,8 @@ public class StoreTest extends StoreTestTestCase {
         try (UnitOfWork ignore = store.beginUnitOfWork()) {
             Simple simpleLocked = store.lock(simple1Id);
             Simple simpleCopy = CopyHelper.copy(simpleLocked);
-            store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {});
+            store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
+            });
             assertThat(store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er låst").isSameAs(simpleLocked);
         }
     }

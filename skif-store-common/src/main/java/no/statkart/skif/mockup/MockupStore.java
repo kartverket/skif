@@ -120,8 +120,10 @@ public class MockupStore implements Store {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<? extends I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
+            //noinspection unchecked
             bubbleObjects = get((Set<? extends I>) bubbleIds);
         } else if (bubbleIds instanceof List) {
+            //noinspection unchecked
             bubbleObjects = get((List<? extends I>) bubbleIds);
         } else {
             checkNotNull(bubbleIds, "bubbleIds");
@@ -157,8 +159,10 @@ public class MockupStore implements Store {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<? extends I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
+            //noinspection unchecked
             bubbleObjects = getOrdered((Set<? extends I>) bubbleIds);
         } else if (bubbleIds instanceof List) {
+            //noinspection unchecked
             bubbleObjects = getOrdered((List<? extends I>) bubbleIds);
         } else {
             checkNotNull(bubbleIds, "bubbleIds");
@@ -194,8 +198,10 @@ public class MockupStore implements Store {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<? extends I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
+            //noinspection unchecked
             bubbleObjects = getIgnoreMissing((Set<? extends I>) bubbleIds);
         } else if (bubbleIds instanceof List) {
+            //noinspection unchecked
             bubbleObjects = getIgnoreMissing((List<? extends I>) bubbleIds);
         } else {
             checkNotNull(bubbleIds, "bubbleIds");
@@ -260,7 +266,6 @@ public class MockupStore implements Store {
         throw new NotImplementedException();
     }
 
-
     @Override
     public void registerTransfer(UnitOfWorkTransfer transfer) {
         throw new NotImplementedException();
@@ -288,7 +293,6 @@ public class MockupStore implements Store {
 
     @Override
     public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
-        // TODO ?
         throw new NotImplementedException();
     }
 
@@ -579,6 +583,16 @@ public class MockupStore implements Store {
         }
 
         return allTransfersForIds;
+    }
+
+    @Override
+    public StoreBubbleTransfer getAllLoaded() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public <T extends Transfer<?>> T getAllLoaded(T transfer) {
+        throw new NotImplementedException();
     }
 
     private static boolean transferIsEmpty(MockupTransfer transfer) {

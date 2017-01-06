@@ -171,7 +171,6 @@ public class StoreSessionServer extends AbstractStoreSession {
                     throw new ImplementationException("Attempted to evict modified, flushed, non-updated bubble!");
                 }
                 storeCache.remove(bubbleId);
-                // TODO: marker evictedEntry som stale
                 evicted = true;
                 persistenceSessionManager.evict(bubbleId);
             }
@@ -271,6 +270,8 @@ public class StoreSessionServer extends AbstractStoreSession {
                 storeEntry = loadEntry(level, bubbleId, false);
             }
             StoreEntryState oldState = storeEntry.getState(level);
+            // Må ta vare på om objektet var modifisert på forhånd slik at flushed flagget får riktig verdi ved feil
+            boolean oldFlushed = storeEntry.getBubbleObject(level).isFlushed();
             try {
                 deleteEntry(level, storeEntry.getBubbleObject(level));
                 flush();
@@ -279,6 +280,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                 connection.rollback(savepoint);
                 storeEntry.setState(level, oldState);
                 clearPersistenceSessionAndSyncronizeWithStore(persistenceSessionMaster);
+                storeEntry.getBubbleObject(level).setFlushed(oldFlushed);
                 throw new AttemptDeleteException(bubbleId, e);
             }
         } catch (SQLException e) {
@@ -305,9 +307,20 @@ public class StoreSessionServer extends AbstractStoreSession {
         persistenceSessionMaster.clear();
         persistenceSessionMaster.setLazyLoadedBubblesAllowed(lazyLoadedBubblesAllowed);
 
-        // Attatch lazyloaded objekter til sessionen igjen.
+        // Attatch lazyloaded objekter til sessionen igjen
+        List<StoreEntry> unmodifiedEntries = new ArrayList<>(lazyLoaded.size());
         for (StoreEntry storeEntry : lazyLoaded) {
-            persistenceSessionMaster.update(storeEntry.getPersistentBubbleObject());
+            BubbleObject persistentBubbleObject = storeEntry.getPersistentBubbleObject();
+            if (!persistentBubbleObject.isFlushed()) {
+                unmodifiedEntries.add(storeEntry);
+            }
+            persistenceSessionMaster.update(persistentBubbleObject);
+        }
+        // Hibernate kommer til å flushe alle objekter som attaches, også de som ikke er modifisert.
+        // Må derfor gjøre flushen her og så sette flushed flagget til false for de objekter som egnetlig var umodifiserte
+        flush();
+        for (StoreEntry storeEntry : unmodifiedEntries) {
+            storeEntry.getPersistentBubbleObject().setFlushed(false);
         }
     }
 
@@ -342,8 +355,6 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     @Override
     public void commitUnitOfWork(Map<BubbleId<?>, StoreEntry> modified) {
-        // TODO: Opptimaliser
-
         // Sorter bobler i henhold til definert bubble dependency ordering
         List<Map.Entry<BubbleId<?>, StoreEntry>> inserted = Lists.newArrayList();
         List<Map.Entry<BubbleId<?>, StoreEntry>> updated = Lists.newArrayList();
@@ -418,7 +429,6 @@ public class StoreSessionServer extends AbstractStoreSession {
      * @return låst objekt
      */
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
-        // TODO check sluttdato
         StoreEntry storeEntry = storeCache.get(bubbleId);
         if (storeEntry != null) {
             // Entry finnes, må sjekk om objekt er låst på underliggende nivå
@@ -527,6 +537,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         Map<I, List<I>> retur = new HashMap<>();
         for (I id : ids) {
             // Sliter litt med generics her. Vi passe litt på fordi dette kun er lovlig hvis <I> faktisk er en basetype dersom id kan skifte subtype.
+            //noinspection unchecked
             retur.put((I) (BubbleId) id.asSnapshotVersion(snapshotVersionProvider.get()), versionFinder.findBubbleIdsForInterval(id, start, end));
         }
         return retur;

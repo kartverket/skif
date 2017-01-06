@@ -10,9 +10,12 @@ import no.statkart.skif.store.relation.cache.StoreRelationCacheImpl;
 import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
-import java.util.*;
-
-import static com.google.common.base.Preconditions.checkState;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Henrik Fredholm
@@ -182,19 +185,19 @@ public abstract class AbstractStore implements Store {
         UnitOfWork unitOfWork = beginUnitOfWork();
         try {
             for (BubbleObject bubbleObject : transfer.getInsertedObjects()) {
-                if (ids.add(bubbleObject.getId()) == false) {
+                if (!ids.add(bubbleObject.getId())) {
                     throw new ImplementationException("Duplicate object in transfer: " + bubbleObject.getId());
                 }
                 insert(bubbleObject);
             }
             for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
-                if (ids.add(bubbleObject.getId()) == false) {
+                if (!ids.add(bubbleObject.getId())) {
                     throw new ImplementationException("Duplicate object in transfer: " + bubbleObject.getId());
                 }
                 update(bubbleObject);
             }
             for (BubbleObject bubbleObject : transfer.getDeletedObjects()) {
-                if (ids.add(bubbleObject.getId()) == false) {
+                if (!ids.add(bubbleObject.getId())) {
                     throw new ImplementationException("Duplicate object in transfer: " + bubbleObject.getId());
                 }
                 delete(bubbleObject);
@@ -207,19 +210,16 @@ public abstract class AbstractStore implements Store {
 
     @Override
     public <I extends BubbleId<?>> boolean isLocked(@Nullable I bubbleId) {
-        if (bubbleId == null) return false;
-        return storeSession.isLocked(bubbleId);
+        return bubbleId != null && storeSession.isLocked(bubbleId);
     }
 
     @Override
     public <I extends BubbleId<?>> boolean evict(@Nullable I bubbleId) {
-        if (bubbleId == null) return true;
-        return storeSession.evict(bubbleId);
+        return bubbleId == null || storeSession.evict(bubbleId);
     }
 
     @Override
     public <I extends BubbleId<?>> boolean evict(Collection<? extends I> bubbleIds) {
-        // TODO: Hva bør egentlig returneres her?
         boolean allWasEviced = true;
         for (I bubbleId : bubbleIds) {
             allWasEviced &= storeSession.evict(bubbleId);
@@ -317,14 +317,10 @@ public abstract class AbstractStore implements Store {
     @Override
     public void endUnitOfWork(UnitOfWork unitOfWork) {
         validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
-
-        // TODO: Ikke sikker på at denne skal være her
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
-
         if (storeUnitOfWork.getLevel() != 1) {
             throw new ImplementationException("In nested UnitOfWork. Call commitUnitOfWork() or abortUnitOfWork() instead");
         }
-
         storeSession = storeUnitOfWork.endUnitOfWork();
         storeRelationCache.onCommitUnitOfWork();
     }
@@ -406,6 +402,31 @@ public abstract class AbstractStore implements Store {
         return false;
     }
 
+    /**
+     * Returnerer en transfer med alle objekter som er lastet i Store med angivelse av om objektet er låst eller ikke.
+     * Dersom objektet er modifisert returneres den versjon som ble lastet fra server hvis man er på klienten og
+     * den versjon som tilsvarer det som ligger i databasen hvis man er på server. Dersom alle endringer utføres i en
+     * unit of work vil det alltid være den umodifiserte versjonen
+     * @return transfer med alle lastede objekter
+     */
+    @Override
+    public StoreBubbleTransfer getAllLoaded() {
+        return getAllLoaded(new StoreBubbleTransfer());
+    }
+
+    /**
+     * Returnerer en Transfer med alle objekter som er lastet i Store med angivelse av om objektet er låst eller ikke.
+     * Dersom objektet er modifisert returneres den versjon som ble lastet fra server hvis man er på klienten og
+     * den versjon som tilsvarer det som ligger i databasen hvis man er på server. Dersom alle endringer utføres i en
+     * unit of work vil det alltid være den umodifiserte versjonen
+     * @return transfer med alle lastede objekter
+     */
+    @Override
+    public <T extends Transfer<?>> T getAllLoaded(T transfer) {
+        return storeSession.getAllLoaded(transfer);
+    }
+
+
     private Set<? extends BubbleId<?>> getIdsOfUpdatedOrDeleted(UnitOfWorkTransfer transfer) {
         Set<BubbleId<?>> result = Sets.newHashSetWithExpectedSize(transfer.getUpdatedObjects().size() + transfer.getDeletedObjects().size());
         for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
@@ -417,6 +438,7 @@ public abstract class AbstractStore implements Store {
         return result;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     abstract protected boolean isServerStore();
 
 }

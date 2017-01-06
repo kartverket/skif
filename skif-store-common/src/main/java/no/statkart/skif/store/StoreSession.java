@@ -174,4 +174,14 @@ public interface StoreSession {
      * @return en transfer med insert, updated og deleted objekter
      */
     UnitOfWorkTransfer getSessionSnapshot();
+
+    /**
+     * Legger alle objekter som er lastet inn i angitt transfer. Dersom en unit of work er aktiv vil objektet som
+     * gis ut være original versjonen som ble lastet. Hvis ingen unit of work er aktiv gis ut gjeldende versjon
+     * som vil være forskjellig fra objektet som ble lastet hvis objektet er endret. Hvis et objekt lastes og endres i
+     * en unit of work som deretter abortes, så vil man etterpå få ut original objektet som ble lastet da dette fortsatt
+     * vil være cachet i Store.
+     * @return transfer med alle lastede objekter
+     */
+    public <T extends Transfer<?>> T getAllLoaded(T transfer);
 }

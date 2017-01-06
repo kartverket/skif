@@ -1,9 +1,5 @@
 package no.statkart.skif.store;
 
-/**
- * @author Henrik Fredholm
- */
-
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.util.CopyHelper;
 
@@ -18,21 +14,15 @@ public class StoreEntry {
     protected BubbleObject[] bubbleObject = new BubbleObject[MAX_LEVELS];
     protected StoreEntryState[] state = new StoreEntryState[MAX_LEVELS];
 
-    // TODO: Denne kan tas bort og modelleres via StoreEntryState.LOCKED_UNCHANED
-    protected boolean[] locked = new boolean[MAX_LEVELS];
+    protected boolean[] locked = new boolean[MAX_LEVELS]; // Denne kan tas bort og modelleres via StoreEntryState.LOCKED_UNCHANED
     protected int loadedByLevel;
     protected int lockCreatedByLevel;
 
-    public StoreEntry(int level, BubbleObject bubbleObject, StoreEntryState state) {
-        this(bubbleObject.getId());
-        this.bubbleObject[level] = bubbleObject;
-        this.state[level] = state;
-    }
-
-    public StoreEntry(BubbleObject bubbleObject, StoreEntryState state) {
-        this(bubbleObject.getId());
-        this.bubbleObject[0] = bubbleObject;
-        this.state[0] = state;
+    public StoreEntry(BubbleId<?> id) {
+        this.id = id;
+        for (int i = 0; i < state.length; i++) {
+            state[i] = StoreEntryState.NULL;
+        }
     }
 
     public void setPersistentBubbleObject(BubbleObject bubbleObject, BubbleObject persistentBubbleObject) {
@@ -62,14 +52,6 @@ public class StoreEntry {
 
     public void setLockCreatedByLevel(int lockCreatedByLevel) {
         this.lockCreatedByLevel = lockCreatedByLevel;
-    }
-
-    public StoreEntry(BubbleId<?> id) {
-        this.id = id;
-        for (int i = 0; i < state.length; i++) {
-            state[i] = StoreEntryState.NULL;
-
-        }
     }
 
     public BubbleId<?> getId() {
@@ -102,22 +84,13 @@ public class StoreEntry {
         return state[level];
     }
 
-    public void setStateAndCheckLocked(int level, StoreEntryState state) {
-        if (this.locked[level] != true) {
-            throw new ImplementationException("Object not locked for StoreSession level " + level + ": " + id);
-        }
-        this.state[level] = state;
-    }
-
     /**
      * Beregner hvilket level eksisterende lås gjelder for startende fra {@code level}
      *
-     * @param level
      * @return level som lås gjelder for eller -1 hvis ingen lås
      */
     public int calcLockLevelStartingFrom(int level) {
-
-        while (locked[level] == false) {
+        while (!locked[level]) {
             level = level - 1;
             if (level == -1) break;
         }
@@ -125,16 +98,13 @@ public class StoreEntry {
     }
 
     /**
-     * Setter level til locked og sette bubbleObject som må være dekoplet underliggende session
+     * Setter level til locked og setter bubbleObject som må være dekoplet underliggende session
      *
-     * @param level
-     * @param bubbleObject
      */
     public void setLocked(int level, BubbleObject bubbleObject) {
-        if (this.locked[level] == true) {
+        if (this.locked[level]) {
             throw new ImplementationException("Object already locked for StoreSession level " + level + ": " + bubbleObject.getId());
         }
-        makeStale(level);
         this.bubbleObject[level] = bubbleObject;
         this.locked[level] = true;
         this.state[level] = StoreEntryState.UNCHANGED;
@@ -142,13 +112,6 @@ public class StoreEntry {
 
     public void unlock(int level) {
         this.locked[level]=false;
-    }
-
-
-    private void makeStale(int level) {
-        if (bubbleObject[level] != null) {
-            // TODO implement
-        }
     }
 
     public void setLocked(int level) {
@@ -184,10 +147,13 @@ public class StoreEntry {
         clear(level);
     }
 
-    public void abort(int level) {
+    public boolean abort(int level) {
+        // Hvis objektet var inserted i dette level kan entry fjernes
+        boolean removeEntry = state[level] == StoreEntryState.INSERTED || state[level] == StoreEntryState.INSERTED_DELETED;
         state[level] = StoreEntryState.NULL;
         bubbleObject[level] = null;
         // Kan ikke nullstille locked, da opplåsing av objekt er en egen ting som skjer etter at denne metoden blir kalt
+        return removeEntry;
     }
 
     public void clear(int level) {

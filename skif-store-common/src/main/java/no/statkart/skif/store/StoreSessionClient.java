@@ -54,9 +54,10 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId) {
-        if (level==0) {
-            throw new ImplementationException("Lock on client must be done in a UnitOfWork");
-        }
+        // TODO: SKIF-610. Midlertidig disabling av denne i påvente av GBOK-9889. Gjør klienten feiler.
+//        if (level==0) {
+//            throw new ImplementationException("Lock on client must be done in a UnitOfWork");
+//        }
         return super.lock(bubbleId);
     }
 
@@ -253,6 +254,9 @@ public class StoreSessionClient extends AbstractStoreSession {
     @Override
     public void registerEntries(int level, BubbleTransfer<?> bubbleTransfer) {
         Set<BubbleId> lockedIdsFromTransfer = bubbleTransfer.getLockedIds();
+        if (level==0 && !lockedIdsFromTransfer.isEmpty()) {
+            throw new ImplementationException("Lock on client must be done in a UnitOfWork");
+        }
         for (BubbleObject bubbleObjectFromTransfer : bubbleTransfer.getBubbleObjects().values()) {
             StoreEntry entry = storeCache.get(bubbleObjectFromTransfer.getId());
             if (entry == null) {

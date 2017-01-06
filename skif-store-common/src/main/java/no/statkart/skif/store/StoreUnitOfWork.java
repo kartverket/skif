@@ -104,13 +104,14 @@ public class StoreUnitOfWork extends AbstractStoreSession {
         Iterator<StoreEntry> iterator = storeCache.values().iterator();
         while (iterator.hasNext()) {
             StoreEntry storeEntry = iterator.next();
-            storeEntry.abort(level);
+            boolean removeEntry= storeEntry.abort(level);
             if (storeEntry.isLockedByLevel(level)) {
                 wrappedStoreSession.unlockEntry(level, storeEntry.getId());
             }
-            storeEntry.clear(level);
-            if (storeEntry.getLoadedByLevel() == level) {
+            if (removeEntry) {
                 iterator.remove();
+            } else {
+                storeEntry.clear(level);
             }
         }
         modifiedMap.clear();

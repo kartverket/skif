@@ -1112,7 +1112,7 @@ public class StoreSessionServerTest {
 
     /**
      * Tester forsøkvis sletting av boble som gir constraint feil ved sletting. Tester at endringer
-     * gjort før og etter attemptDelete kommer men når transaksjonen committes.
+     * gjort før og etter attemptDelete kommer med når transaksjonen committes.
      */
     public void testAttemptDelete() {
         //Opprett 1 parentbubble og 2 child bubbles
@@ -1180,9 +1180,8 @@ public class StoreSessionServerTest {
 
     }
 
-    @Test(groups = "slow")
     public void testAttemptDeleteManyCallsWithFail() {
-        int MAX_SAVEPOINTS = 1000;
+        int MAX_SAVEPOINTS = 1;
         ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201);
         ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201);
 
@@ -1221,9 +1220,8 @@ public class StoreSessionServerTest {
         assertEquals(storeServer.get(new ParentBubbleId<>(1000 + MAX_SAVEPOINTS - 1)).getText(),"Updated parent " + (1000 + MAX_SAVEPOINTS-1));
     }
 
-    @Test(groups = "slow")
     public void testAttemptDeleteManyCallsWithoutFail() {
-        int MAX_SAVEPOINTS = 10;
+        int MAX_SAVEPOINTS = 5;
         ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201);
         ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201);
 

@@ -88,6 +88,7 @@ public interface Store {
      * @return objektene, i samme rekkefølge som id-ene
      * @throws no.statkart.skif.exception.ObjectsNotFoundException dersom noen av objektene ikke fins
      */
+    @SuppressWarnings("UnusedDeclaration") // Mangler test
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<? extends I> bubbleIds);
 
     /**
@@ -485,4 +486,23 @@ public interface Store {
 
     StoreRelationCache getRelationCache();
 
+    /**
+     * Returnerer en transfer med alle objekter som er lastet. Dersom en unit of work er aktiv vil objektet som
+     * gis ut være original versjonen som ble lastet. Hvis ingen unit of work er aktiv gis ut gjeldende versjon
+     * som vil være forskjellig fra objektet som ble lastet hvis objektet er endret. Hvis et objekt lastes og endres i
+     * en unit of work som deretter abortes, så vil man etterpå få ut original objektet som ble lastet da dette fortsatt
+     * vil være cachet i Store.
+     * @return transfer med alle lastede objekter
+     */
+    StoreBubbleTransfer getAllLoaded();
+
+    /**
+     * Legger alle objekter som er lastet inn i angitt transfer. Dersom en unit of work er aktiv vil objektet som
+     * gis ut være original versjonen som ble lastet. Hvis ingen unit of work er aktiv gis ut gjeldende versjon
+     * som vil være forskjellig fra objektet som ble lastet hvis objektet er endret. Hvis et objekt lastes og endres i
+     * en unit of work som deretter abortes, så vil man etterpå få ut original objektet som ble lastet da dette fortsatt
+     * vil være cachet i Store.
+     * @return transfer med alle lastede objekter
+     */
+    <T extends Transfer<?>> T getAllLoaded(T transfer);
 }
