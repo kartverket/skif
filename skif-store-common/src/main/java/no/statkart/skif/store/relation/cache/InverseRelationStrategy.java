@@ -20,12 +20,12 @@ import static com.google.common.base.Preconditions.checkArgument;
  * automatisk når det utføres endringer direkte på collectionene utenom objektets setter-metode. I tillegg må objektet
  * som eier relasjonen implementere en metode som gjør det mulig for Store automatisk å hente ut alle releasjonen ifm
  * registrering av endrede objekter i Store.
- *
+ * <p/>
  * Denne strategi gjør at releasjonscachen alltid er up-to-date så lenge objektet er knyttet til Store. Cachen er ikke
  * avhengig av at det gjøres kall til store.update() først.
  *
- * @since 2.6.0
  * @author Henrik Fredholm
+ * @since 2.6.0
  */
 public class InverseRelationStrategy extends RelationStrategy {
     public InverseRelationStrategy(RelationName relationName) {
@@ -34,9 +34,9 @@ public class InverseRelationStrategy extends RelationStrategy {
 
     @Override
     public Object invokeMethod(StoreRelationCache cache, ProxyHandler<?> chained, Object proxy, Method method, Object[] args) throws Throwable {
-            checkArgument(args.length==1, "Unexpected argument length: %d", args.length);
-            checkArgument(args[0] instanceof Collection, "Expected collection of bubble ids as argument");
-            return useCaching(cache, chained, proxy, method, (Collection<BubbleId<?>>) args[0]);
+        checkArgument(args.length == 1, "Unexpected argument length: %d", args.length);
+        checkArgument(args[0] instanceof Collection, "Expected collection of bubble ids as argument");
+        return useCaching(cache, chained, proxy, method, (Collection<BubbleId<?>>) args[0]);
     }
 
     private <T> Map<T, Object> useCaching(StoreRelationCache cache, ProxyHandler<?> chained, Object proxy, Method method, Collection<T> inverseValues) throws Throwable {
@@ -46,9 +46,14 @@ public class InverseRelationStrategy extends RelationStrategy {
         if (!missingInverseValues.isEmpty()) {
             Object[] args = {missingInverseValues};
             Map<T, Object> uncachedMap = noCaching(chained, proxy, method, args);
+            // Støtter egentlig ikke multithreaded adgang, men gjør en ekstra sjekk her i tilfellet en annen tråd
+            // har lastet relasjonene i mellomtiden. Det vil fange de fleste tilfeller siden det er lastingen som tar tid.
+            Collection<T> missingInverseValuesAfterLoading = cache.findNonMaterialized(name, inverseValues);
             for (Map.Entry<T, Object> entry : uncachedMap.entrySet()) {
-                Object updatedCachedRelationValue = cache.setRelationValue(name, entry.getKey(), entry.getValue());
-                mapOfResults.put(entry.getKey(), updatedCachedRelationValue);
+                if (missingInverseValuesAfterLoading.contains(entry.getKey())) {
+                    Object updatedCachedRelationValue = cache.setRelationValue(name, entry.getKey(), entry.getValue());
+                    mapOfResults.put(entry.getKey(), updatedCachedRelationValue);
+                }
             }
         }
 
