@@ -44,6 +44,8 @@ def libraries = [
         // Utility libraries
         guava: "com.google.guava:guava:18.0",
         jsr305: "com.google.code.findbugs:jsr305:1.3.9",
+        xstream: 'com.thoughtworks.xstream:xstream:1.4.8',
+
 
         // Testing
         testng: dependencies.create('org.testng:testng:6.8.8') {

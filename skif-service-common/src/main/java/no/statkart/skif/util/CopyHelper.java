@@ -6,6 +6,8 @@ import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.store.SnapshotVersion;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author Henrik Fredholm
@@ -64,6 +66,18 @@ public class CopyHelper {
         }
     }
 
+    private static byte[] toByteArray(Object object) {
+        try {
+            FastByteArrayOutputStream os = new FastByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(object);
+            oos.close();
+            return os.getByteArray();
+        } catch (IOException e) {
+            throw new OperationalException(e);
+        }
+    }
+
     /**
      * Makes a copy of an object by serializing and deserializing it. Objects may use the thread local method
      * {@link #getSnapshotVersion()} to reset their snapshotVersion fields for copied objects.
@@ -100,6 +114,10 @@ public class CopyHelper {
             }
         }
         in.close();
+    }
+
+    public static boolean equalsBySerialization(Object o1, Object o2 ) {
+        return o1==o2 || Arrays.equals(toByteArray(o1), toByteArray(o2));
     }
 
     /**

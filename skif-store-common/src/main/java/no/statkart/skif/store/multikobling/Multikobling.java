@@ -3,6 +3,7 @@ package no.statkart.skif.store.multikobling;
 import com.google.common.collect.*;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -34,16 +35,16 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
     private Set<K> koblinger = new HashSet<K>();
 
     /** Multimap som inneholder koblinger sortert på rolle. Gjenoppfriskes lazy ved endring av {@code koblinger} */
-    private final SetMultimap<R, V> delegate = HashMultimap.create();
+    transient private SetMultimap<R, V> delegate = HashMultimap.create();
 
     /** Factory som brukes for å opprette koblingsobjekter av riktig type */
-    private final KoblingFactory<R, V, K> koblingFactory;
+    private KoblingFactory<R, V, K> koblingFactory;
 
     /**
      * Angir om variablen {@code delegate} må oppfriskes før bruk. Settes til true hver gang
      * {@link #setKoblinger(java.util.Set)} kalles
      */
-    private boolean refreshNeeded;
+    transient private boolean refreshNeeded;
 
     public Multikobling(KoblingFactory<R, V, K> koblingFactory) {
         this.koblingFactory = koblingFactory;
@@ -252,5 +253,19 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
                 koblinger.remove(koblingFactory.create(rolle, current));
             }
         }
+    }
+    private void writeObject(java.io.ObjectOutputStream stream)
+            throws IOException {
+        stream.writeObject(koblinger);
+        stream.writeObject(koblingFactory);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void readObject(java.io.ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        koblinger = (Set<K>) stream.readObject();
+        koblingFactory = (KoblingFactory<R, V, K>) stream.readObject();
+        delegate = HashMultimap.create();
+        refreshNeeded = true;
     }
 }

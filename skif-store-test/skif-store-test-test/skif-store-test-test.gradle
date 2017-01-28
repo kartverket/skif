@@ -17,6 +17,7 @@ dependencies {
 
     testCompile libraries.dbunit //optional library for testing
     testCompile libraries.unitils //optional library for testing
+    testCompile libraries.xstream // Brukes i test
 
     //internal dependencies + optional deps to logging frameworks:
     testCompile project(':skif-config')
