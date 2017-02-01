@@ -254,18 +254,10 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
             }
         }
     }
-    private void writeObject(java.io.ObjectOutputStream stream)
-            throws IOException {
-        stream.writeObject(koblinger);
-        stream.writeObject(koblingFactory);
-    }
 
-    @SuppressWarnings("unchecked")
-    private void readObject(java.io.ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        koblinger = (Set<K>) stream.readObject();
-        koblingFactory = (KoblingFactory<R, V, K>) stream.readObject();
+    private Object readResolve() {
         delegate = HashMultimap.create();
         refreshNeeded = true;
+        return this;
     }
 }
