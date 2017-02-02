@@ -137,6 +137,34 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
     }
 
     /**
+     * Tester at commitUnitOfWork ikke sletter cachet informasjon om opprinnelig ident. Se SKIF-617.
+     * I outer unit of work gjøres det et søk på identen slik at den blir cachet og objekt som har identen
+     * låses. Deretter startes og  commites en UnitOfWork som ikke berører identen. Dvs ikke gjørs hverken
+     * søk eller last av objektet hørende til identen. Etter commit av UOW endres identen og onChangeIdent kalles.
+     * Endelig gjøres et søk med gammel ident. Den skal nå ikke finnes.
+     *
+     */
+    public void testOnClientGammelIdentBevaresICacheVedTomCommitUnitOfWork() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
+        assertFalse(storeClient.getRelationCache().isEnabled());
+        try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
+            storeClient.getRelationCache().setEnabled(true);
+            X1AA a1 = storeClient.lock(a1Id);
+            X1AAIdent oldIdent = a1.getIdent();
+            assertThat(findIdent(oldIdent)).containsExactly(a1Id);
+            try (UnitOfWork uow = storeClient.beginUnitOfWork()) {
+                storeClient.commitUnitOfWork(uow);
+            }
+            a1.setNr(100); // Ident endret, men ikke  relationcache for ident
+            X1AAIdent newIdent = a1.getIdent();
+            a1.onIdentChanged();  // Angi at ident er endret
+            assertThat(findIdent(oldIdent)).isEmpty();
+            assertThat(findIdent(newIdent)).containsExactly(a1Id);
+        }
+    }
+
+    /**
      * Tester at ident endring i inner unit of work med cahcing slått av gir riktig resultat
      * i out unit of work som har caching på.
      */

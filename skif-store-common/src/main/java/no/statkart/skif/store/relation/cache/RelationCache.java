@@ -558,7 +558,7 @@ public class RelationCache {
         }
 
         public void commit(int level) {
-            if (level - 1 >= 0) {
+            if (level - 1 >= 0 && values[level]!=null) {
                 values[level - 1] = values[level];
             }
             values[level] = null;
