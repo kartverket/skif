@@ -62,8 +62,8 @@ public class ConnectionManagerUsingFactory implements ConnectionManager {
     protected void closeConnection(int i) {
         try {
             logger.debug("Close Connection");
-            if (originalAutoCommits[i]) {
-                connections[i].setAutoCommit(false);
+            if (originalAutoCommits[i] != connections[i].getAutoCommit()) {
+                connections[i].setAutoCommit(originalAutoCommits[i]);
             }
             connections[i].close();
             connections[i] = null;

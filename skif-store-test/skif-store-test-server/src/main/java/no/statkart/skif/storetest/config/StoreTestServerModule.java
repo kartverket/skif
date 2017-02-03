@@ -1,10 +1,9 @@
 package no.statkart.skif.storetest.config;
 
 import com.google.common.collect.ImmutableList;
-import com.google.inject.Injector;
-import com.google.inject.Provider;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import com.google.inject.*;
+import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.ServiceMode;
@@ -18,6 +17,8 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.persistence.*;
+import no.statkart.skif.persistence.hibernate.GuiceJTATransactionFactory;
+import no.statkart.skif.persistence.hibernate.GuiceTransactionManagerLookup;
 import no.statkart.skif.persistence.jdbc.*;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandlerForConnection;
@@ -81,6 +82,8 @@ import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
 
 import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -217,7 +220,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @Singleton
-    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<IdService> idServiceProvider, Provider<DataSource> poolProvider) {
+    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<IdService> idServiceProvider, Provider<DataSource> transactionAwarePoolProvider, Provider<DataSource> poolProvider, Injector injector) {
 
         Configuration configuration = moduleConfiguration.getConfiguration();
 
@@ -302,14 +305,17 @@ public class StoreTestServerModule extends SkifModule {
         Properties hibernatePropertiesCurrent;
         Properties hibernatePropertiesOld;
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
-            hibernatePropertiesConfiguration.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JDBCTransactionFactory");
+            hibernatePropertiesConfiguration.setProperty(Environment.CONNECTION_PROVIDER, no.statkart.skif.persistence.hibernate.PoolConnectionProvider.class.getName());
 
             hibernatePropertiesCurrent = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
+            hibernatePropertiesCurrent.setProperty(Environment.TRANSACTION_MANAGER_STRATEGY, GuiceTransactionManagerLookup.class.getName());
+            hibernatePropertiesCurrent.setProperty(Environment.TRANSACTION_STRATEGY, GuiceJTATransactionFactory.class.getName());
+            hibernatePropertiesCurrent.put(Injector.class.getName(), injector);
+            hibernatePropertiesCurrent.put(Environment.DATASOURCE, transactionAwarePoolProvider.get());
 
-            hibernatePropertiesCurrent.setProperty(Environment.CONNECTION_PROVIDER, no.statkart.skif.persistence.hibernate.PoolConnectionProvider.class.getName());
-            hibernatePropertiesCurrent.put(Environment.DATASOURCE, poolProvider.get());
-
-            hibernatePropertiesOld = hibernatePropertiesCurrent;
+            hibernatePropertiesOld = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
+            hibernatePropertiesOld.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JDBCTransactionFactory");
+            hibernatePropertiesOld.put(Environment.DATASOURCE, poolProvider.get());
         } else {
             hibernatePropertiesConfiguration.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JTATransactionFactory");
 
@@ -334,6 +340,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     @Singleton
+    @NonTransactional
     DataSource provideConnectionPool() {
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM || moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM_XML) {
             Configuration configuration = moduleConfiguration.getConfiguration();

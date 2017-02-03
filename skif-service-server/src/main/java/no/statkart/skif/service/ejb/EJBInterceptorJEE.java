@@ -34,9 +34,6 @@ public abstract class EJBInterceptorJEE {
     @Resource
     private SessionContext sessionContext;
 
-    @Resource(mappedName = "javax.transaction.TransactionManager")
-    private TransactionManager transactionManager;
-
     /**
      * Prosjektene må implementere denne til å returnere sin server-injector.
      */
@@ -99,7 +96,6 @@ public abstract class EJBInterceptorJEE {
         serviceRequestScope.enter();
         try {
             serviceRequestScope.seed(ServiceRequestContext.class, newServiceRequestContext);
-            serviceRequestScope.seed(TransactionManager.class, transactionManager);
             if (serviceContext != null) {
                 serviceRequestScope.seed((Class<ServiceContext>) serviceContext.getClass(), serviceContext);
             }

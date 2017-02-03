@@ -1,10 +1,14 @@
 package no.statkart.skif.service.module;
 
-import com.google.inject.*;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.util.Types;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.module.DefaultModuleConfiguration;
+import no.statkart.skif.persistence.jdbc.DummyDataSourceModule;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.module.server.ServerModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
@@ -34,6 +38,8 @@ public class EjbChainTest {
                 ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, Arrays.<Class<? extends Object>>asList(Test2Service.class));
                 serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactorySpecification(TestProxyHandler.class));
                 install(serverServiceModule);
+
+                install(new DummyDataSourceModule());
             }
         };
         Injector injector = Guice.createInjector(module);

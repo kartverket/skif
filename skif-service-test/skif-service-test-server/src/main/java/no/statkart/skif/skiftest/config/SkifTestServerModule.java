@@ -10,6 +10,7 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleStrategyFactory;
+import no.statkart.skif.persistence.jdbc.DummyDataSourceModule;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
@@ -17,8 +18,8 @@ import no.statkart.skif.service.logging.DefaultServerCallLogger;
 import no.statkart.skif.service.logging.ServerCallLogger;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import no.statkart.skif.service.module.server.RunOnServerServiceModule;
-import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
+import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.EjbLoggingProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
@@ -62,6 +63,8 @@ public class SkifTestServerModule extends SkifModule {
         bind(ServerCallLogger.class).to(DefaultServerCallLogger.class);
 
         bind(List.class).annotatedWith(Names.named("SharedList")).to(ArrayList.class).in(Singleton.class); // OBS! Her er det kun bindingen fra @Named List som er singleton, ikke klassen ArrayList
+
+        install(new DummyDataSourceModule());
     }
 }
 

@@ -8,6 +8,7 @@ import com.google.inject.util.Types;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.module.DefaultModuleConfiguration;
+import no.statkart.skif.persistence.jdbc.DummyDataSourceModule;
 import no.statkart.skif.service.annotation.Call;
 import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
 import no.statkart.skif.service.chain.ServerCallServiceChainFactory;
@@ -39,6 +40,8 @@ public class CallChainTest {
                 ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, Collections.<Class<?>>singleton(Test2Service.class));
                 serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ServerCallServiceChainFactory.class, TestProxyHandler.class));
                 install(serverServiceModule);
+
+                install(new DummyDataSourceModule());
             }
         };
         Injector injector = Guice.createInjector(module);

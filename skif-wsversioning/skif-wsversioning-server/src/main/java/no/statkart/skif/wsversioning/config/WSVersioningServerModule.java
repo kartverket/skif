@@ -15,6 +15,7 @@ import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.persistence.DefaultResourceManager;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.persistence.VersionFinder;
+import no.statkart.skif.persistence.jdbc.DummyDataSourceModule;
 import no.statkart.skif.service.module.server.RunOnServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
@@ -49,6 +50,8 @@ public class WSVersioningServerModule extends SkifServerModule {
         bind(BubbleDependencyComparator.class).to(BubbleDependencyComparatorNoReordering.class);
 
         install(new ServerServiceModule(moduleConfiguration, new WSVersioningServices().getServices()));
+
+        install(new DummyDataSourceModule());
     }
 
     @Provides

@@ -6,6 +6,7 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
+import no.statkart.skif.persistence.jdbc.DummyDataSourceModule;
 import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.logging.ServerCallLogger;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
@@ -168,6 +169,8 @@ public class EjbLoggingProxyTest extends SkifTestCase {
             install(serviceModule);
 
             bind(ServerCallLogger.class).toInstance(globalCallLogger);
+
+            install(new DummyDataSourceModule());
         }
     }
 

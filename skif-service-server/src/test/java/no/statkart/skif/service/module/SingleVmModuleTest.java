@@ -9,6 +9,7 @@ import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.module.ModuleConfiguration;
+import no.statkart.skif.persistence.jdbc.DummyDataSourceModule;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServiceRequestContext;
@@ -86,7 +87,8 @@ public class SingleVmModuleTest {
     private Injector createServerInjector(List<Class<? extends Object>> services) {
         return Guice.createInjector(
                 new ServerModule(serverCfg),
-                new ServerServiceModule(serverCfg, services)
+                new ServerServiceModule(serverCfg, services),
+                new DummyDataSourceModule()
         );
     }
 
@@ -97,7 +99,8 @@ public class SingleVmModuleTest {
 
         return Guice.createInjector(
                 new ServerModule(serverCfg),
-                serverServiceModule
+                serverServiceModule,
+                new DummyDataSourceModule()
         );
     }
 
@@ -118,7 +121,8 @@ public class SingleVmModuleTest {
                         bind(Test1Service.class).annotatedWith(Implementation.class).to(Test1ServiceImpl2.class);
                         bind(Test2Service.class).annotatedWith(Implementation.class).to(Test2ServiceImpl2.class);
                     }
-                }
+                },
+                new DummyDataSourceModule()
         );
     }
 

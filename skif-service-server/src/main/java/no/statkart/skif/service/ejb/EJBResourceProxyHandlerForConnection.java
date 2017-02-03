@@ -37,9 +37,9 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
         final ResourceManager resourceManager = resourceManagerProvider.get();
         resourceManager.start();
 
-        if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
-            resourceManager.beginTransaction();
-        }
+//        if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx() && serviceRequestContext.isContainerManagedTransaction()) {
+//            resourceManager.beginTransaction();
+//        }
 
     }
 
@@ -51,9 +51,9 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
         final ResourceManager resourceManager = resourceManagerProvider.get();
 
         if (serviceRequestContext.isContainerManagedTransaction()) {
-            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
-                resourceManager.commit();
-            }
+//            if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isNewTx()) {
+//                resourceManager.commit();
+//            }
 
             // Ved ytterste metode i et scope er det noen ekstra ting som skal gjøres
             if (!serviceRequestContext.isContinuation()) {
@@ -70,24 +70,24 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
     protected void abortService() {
         log.debug("abortService");
         final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
-        final ServiceMode serviceMode = serviceModeProvider.get();
+//        final ServiceMode serviceMode = serviceModeProvider.get();
         final ResourceManager resourceManager = resourceManagerProvider.get();
 
-        try {
+//        try {
             serviceRequestContext.setRollbackOnly();
-            if (serviceRequestContext.isNewTx()) {
-                if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
-                    resourceManager.rollback();
-                }
-            }
-        } catch (Exception e) { // Bevisst valg å la Error forbli ufanget
+//            if (serviceRequestContext.isNewTx()) {
+//                if (serviceMode == ServiceMode.SINGLE_VM && serviceRequestContext.isContainerManagedTransaction()) {
+//                    resourceManager.rollback();
+//                }
+//            }
+//        } catch (Exception e) { // Bevisst valg å la Error forbli ufanget
             // SKIF-158: Spis exceptions som kommer inni her, siden abortService() blir kalt pga. en annen exception som det anses for viktigere å kaste videre
-            log.error("Ny exception ved abortService()", e);
-        } finally {
+//            log.error("Ny exception ved abortService()", e);
+//        } finally {
             if (!serviceRequestContext.isContinuation()) {
                 resourceManager.close();
                 resourceManager.shutdown();
             }
-        }
+//        }
     }
 }

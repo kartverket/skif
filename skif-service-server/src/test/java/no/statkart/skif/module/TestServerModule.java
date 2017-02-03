@@ -2,6 +2,7 @@ package no.statkart.skif.module;
 
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
+import no.statkart.skif.persistence.jdbc.DummyDataSourceModule;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
 import no.statkart.skif.service.module.server.ServerModule;
 
@@ -27,6 +28,7 @@ public class TestServerModule extends TestModule {
     protected void configure() {
         super.configure();
         install(new ServerModule(moduleConfiguration));
+        install(new DummyDataSourceModule());
     }
 
     protected void configureModulename() {

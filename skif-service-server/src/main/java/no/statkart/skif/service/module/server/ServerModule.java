@@ -15,8 +15,6 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 
-import javax.transaction.TransactionManager;
-
 /**
  * @since 2.0
  */
@@ -45,9 +43,6 @@ public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy> {
         bindScope(ServiceRequestScoped.class, serviceRequestScope);
         bind(ServiceRequestScope.class).toInstance(serviceRequestScope);
         bind(ServiceRequestContext.class).in(ServiceRequestScoped.class);
-
-        // Denne seedes inn i ServiceRequestScope
-        bind(TransactionManager.class).toProvider(ServiceRequestScope.<TransactionManager>seededKeyProvider()).in(ServiceRequestScoped.class);
 
         // Binder opp provider av call id
         bind(Long.class).annotatedWith(CallId.class).toProvider(CallIdProvider.class);

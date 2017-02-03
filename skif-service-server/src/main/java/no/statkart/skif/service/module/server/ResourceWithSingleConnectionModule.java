@@ -3,6 +3,7 @@ package no.statkart.skif.service.module.server;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
@@ -12,17 +13,15 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.persistence.DefaultResourceManager;
 import no.statkart.skif.persistence.ResourceManager;
-import no.statkart.skif.persistence.jdbc.ConnectionFactoryUsingDataSource;
-import no.statkart.skif.persistence.jdbc.ConnectionFactoryUsingPool;
-import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
-import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersionProvider;
-import no.statkart.skif.persistence.jdbc.ConnectionManager;
-import no.statkart.skif.persistence.jdbc.ConnectionManagerProvider;
-import no.statkart.skif.persistence.jdbc.ConnectionManagerUsingFactory;
+import no.statkart.skif.persistence.SingleVmTransactionManager;
+import no.statkart.skif.persistence.SingleVmUserTransaction;
+import no.statkart.skif.persistence.jdbc.*;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
 
 import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 
@@ -40,13 +39,13 @@ public class ResourceWithSingleConnectionModule extends SkifModule {
         bind(ConnectionManager.class).toProvider(ConnectionManagerProvider.class);
         bind(Connection.class).to(ConnectionForSnapshotVersion.class);
         bind(ConnectionForSnapshotVersion.class).toProvider(ConnectionForSnapshotVersionProvider.class);
-
     }
 
     @Provides
     @Singleton
+    @NonTransactional
     DataSource provideConnectionPool() {
-        if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM || moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM_XML) {
+        if (getServiceMode() == ServiceMode.SINGLE_VM || getServiceMode() == ServiceMode.SINGLE_VM_XML) {
             Configuration configuration = moduleConfiguration.getConfiguration();
             String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
             String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);

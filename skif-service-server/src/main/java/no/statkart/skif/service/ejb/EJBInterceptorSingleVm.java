@@ -3,13 +3,17 @@ package no.statkart.skif.service.ejb;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.service.*;
 import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.util.CopyHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.TransactionAttributeType;
+import javax.transaction.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -38,6 +42,8 @@ import java.util.Map;
  * @since 2.0
  */
 public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
+    private static final Logger logger = LoggerFactory.getLogger(EJBInterceptorSingleVm.class);
+
     protected final Provider<SingleVmRemoteCallContext> singleVmRemoteCallContextProvider;
     protected final Provider<ServiceContext> serviceContextProvider;
     protected final Provider<ServiceRequestContext> serviceRequestContextProvider;
@@ -45,9 +51,10 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
     protected final Provider<S> ejbServiceChainProvider;
     protected final EJBAttributesLookup<S> ejbAttributesLookup;
     protected final Provider<Long> callIdProvider;
+    protected final TransactionManager transactionManager;
 
     @Inject
-    public EJBInterceptorSingleVm(Provider<SingleVmRemoteCallContext> singleVmRemoteCallContextProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceRequestScope> serviceRequestScopeProvider, Provider<ServiceContext> serviceContextProvider, @EJBServiceChain Provider<S> ejbServiceChainProvider, EJBAttributesLookup<S> ejbAttributesLookup, @CallId Provider<Long> callIdProvider) {
+    public EJBInterceptorSingleVm(Provider<SingleVmRemoteCallContext> singleVmRemoteCallContextProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceRequestScope> serviceRequestScopeProvider, Provider<ServiceContext> serviceContextProvider, @EJBServiceChain Provider<S> ejbServiceChainProvider, EJBAttributesLookup<S> ejbAttributesLookup, @CallId Provider<Long> callIdProvider, TransactionManager transactionManager) {
         this.singleVmRemoteCallContextProvider = singleVmRemoteCallContextProvider;
         this.serviceRequestContextProvider = serviceRequestContextProvider;
         this.serviceRequestScopeProvider = serviceRequestScopeProvider;
@@ -55,6 +62,7 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
         this.ejbServiceChainProvider = ejbServiceChainProvider;
         this.ejbAttributesLookup = ejbAttributesLookup;
         this.callIdProvider = callIdProvider;
+        this.transactionManager = transactionManager;
     }
 
     @Override
@@ -93,16 +101,67 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
             serviceContext = CopyHelper.copy(serviceContextProvider.get());
         }
 
+        Transaction suspended;
+        try {
+            suspended = transactionManager.suspend();
+        } catch (SystemException e) {
+            throw new OperationalException("Failed to suspend transaction", e);
+        }
+
         final ServiceRequestScope serviceRequestScope = serviceRequestScopeProvider.get();
         serviceRequestScope.suspend();
         serviceRequestScope.enter();
+
+        if (txMode == TxMode.TX && !beanManagedTransaction) {
+            try {
+                transactionManager.begin();
+            } catch (NotSupportedException | SystemException e) {
+                serviceRequestScope.exit();
+                serviceRequestScope.resumeSuspended();
+                throw new OperationalException("Failed to start transaction");
+            }
+        }
+
         try {
             serviceRequestScope.seed(ServiceRequestContext.class, serviceRequestContext);
+            serviceRequestScope.seed(TransactionManager.class, transactionManager);
             if (serviceContext != null) {
                 serviceRequestScope.seed((Class<ServiceContext>)serviceContext.getClass(), serviceContext);
 //                serviceRequestScope.seed(ServiceContext.class, serviceContext);
             }
-            return invokeInContext(method, args);
+            Object retVal = invokeInContext(method, args);
+
+            if (txMode == TxMode.TX && !beanManagedTransaction) {
+                try {
+                    transactionManager.commit();
+                } catch (RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException | SystemException e) {
+                    throw new OperationalException("Failed to commit transaction", e);
+                }
+            }
+
+            try {
+                transactionManager.resume(suspended);
+            } catch (InvalidTransactionException | IllegalStateException | SystemException e) {
+                throw new OperationalException("Failed to resume transaction", e);
+            }
+
+            return retVal;
+        } catch (Throwable t) {
+            if (txMode == TxMode.TX && !beanManagedTransaction) {
+                try {
+                    transactionManager.rollback();
+                } catch (IllegalStateException | SecurityException | SystemException e) {
+                    t.addSuppressed(e);
+                }
+            }
+
+            try {
+                transactionManager.resume(suspended);
+            } catch (InvalidTransactionException | IllegalStateException | SystemException e) {
+                t.addSuppressed(e);
+            }
+
+            throw t;
         } finally {
             serviceRequestScope.exit();
             serviceRequestScope.resumeSuspended();
