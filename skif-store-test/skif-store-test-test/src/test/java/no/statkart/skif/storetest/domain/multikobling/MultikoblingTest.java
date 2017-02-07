@@ -297,6 +297,65 @@ public class MultikoblingTest extends StoreTestTestCase {
         assertThat(multikobling1.equals(multikobling2)).isTrue();
     }
 
+    public void testEqualsBySerializationMangeElementer() throws NoSuchFieldException, IllegalAccessException {
+        Field delegateField = Multikobling.class.getDeclaredFields()[2];
+        assertThat(delegateField.getName()).isEqualTo("delegate");
+        delegateField.setAccessible(true);
+        Field refreshNeededField = Multikobling.class.getDeclaredFields()[4];
+        assertThat(refreshNeededField.getName()).isEqualTo("refreshNeeded");
+        refreshNeededField.setAccessible(true);
+
+        Multikobling<String, String, MultirefererendeKobling> multikobling1 = Multikobling.create(DefaultKoblingFactory.create(MultirefererendeKobling.class));
+        for (int i = 0; i<50; i++) {
+            multikobling1.put("Over", Integer.toString(i));
+        }
+        Multikobling<String, String, MultirefererendeKobling> multikobling2 = CopyHelper.copy(multikobling1);
+
+        // Multikobling1 og multikobling2 inneholder forskjellig state for 'delegate' og 'refreshNeeded', da disse ikke settes ved kopiering
+        SetMultimap<String, String> delegate1 = (SetMultimap<String, String>) delegateField.get(multikobling1);
+        SetMultimap<String, String> delegate2 = (SetMultimap<String, String>) delegateField.get(multikobling2);
+        assertThat((Boolean) refreshNeededField.get(multikobling1)).isFalse();
+        assertThat((Boolean) refreshNeededField.get(multikobling2)).isTrue(); // refreshNeeded og delegate blir ikke med ved serialisering
+        assertThat(delegate1.isEmpty()).isFalse();
+        assertThat(delegate2.isEmpty()).isTrue();
+        assertThat(CopyHelper.equalsBySerialization(multikobling1, multikobling2)).isTrue();
+        assertThat(multikobling1.equals(multikobling2)).isTrue();
+    }
+
+
+    public void testEqualsBySerializationMangeElementerSomIkkeVirker() throws NoSuchFieldException, IllegalAccessException {
+        Field delegateField = Multikobling.class.getDeclaredFields()[2];
+        assertThat(delegateField.getName()).isEqualTo("delegate");
+        delegateField.setAccessible(true);
+        Field refreshNeededField = Multikobling.class.getDeclaredFields()[4];
+        assertThat(refreshNeededField.getName()).isEqualTo("refreshNeeded");
+        refreshNeededField.setAccessible(true);
+
+        Multikobling<String, String, MultirefererendeKobling> multikobling1 = Multikobling.create(DefaultKoblingFactory.create(MultirefererendeKobling.class));
+        multikobling1.setKoblinger(new HashSet<MultirefererendeKobling>(1000)); // LoadFaktor blir forskjellig
+        for (int i = 0; i<50; i++) {
+            multikobling1.put("Over", Integer.toString(i));
+        }
+        Multikobling<String, String, MultirefererendeKobling> multikobling2 = CopyHelper.copy(multikobling1);
+
+        // Multikobling1 og multikobling2 inneholder forskjellig state for 'delegate' og 'refreshNeeded', da disse ikke settes ved kopiering
+        SetMultimap<String, String> delegate1 = (SetMultimap<String, String>) delegateField.get(multikobling1);
+        SetMultimap<String, String> delegate2 = (SetMultimap<String, String>) delegateField.get(multikobling2);
+        assertThat((Boolean) refreshNeededField.get(multikobling1)).isFalse();
+        assertThat((Boolean) refreshNeededField.get(multikobling2)).isTrue(); // refreshNeeded og delegate blir ikke med ved serialisering
+        assertThat(delegate1.isEmpty()).isFalse();
+        assertThat(delegate2.isEmpty()).isTrue();
+        assertThat(CopyHelper.equalsBySerialization(multikobling1, multikobling2)).isFalse();  // Denne virker ikke, elementer i Multikobling har forskjellig rekkefølge pga forskjellig loadfaktor.
+        assertThat(multikobling1.equals(multikobling2)).isTrue();
+
+        // XStream serialisering virker heller ikke
+        XStream xstream = new XStream();
+        String o1xml = xstream.toXML(multikobling1);
+        String o2xml = xstream.toXML(multikobling2);
+        assertThat(o1xml).isNotEqualTo(o2xml);
+
+    }
+
     /**
      * Tester at XStream serialisering blir den samme selvom interne felter {@code refreshNeeded} og {@code delegate}
      * er forskjellige. Disse felter er transiente og blir ikke med ved serialisering.

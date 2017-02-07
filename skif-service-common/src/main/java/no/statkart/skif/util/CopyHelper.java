@@ -117,7 +117,8 @@ public class CopyHelper {
     }
 
     public static boolean equalsBySerialization(Object o1, Object o2 ) {
-        return o1==o2 || Arrays.equals(toByteArray(o1), toByteArray(o2));
+        // SKIF-619 Workaround. Nødvendig å gjøre copy først for å øke sjansen for at felter som inneholder Set får sammeload faktor
+        return o1==o2 || Arrays.equals(toByteArray(copy(o1)), toByteArray(copy(o2)));
     }
 
     /**

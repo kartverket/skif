@@ -22,7 +22,7 @@ public class StoreClientReadCacheTest {
 
     public void getNull() {
         StoreClientReadCacheImpl readCache = new StoreClientReadCacheImpl();
-        assertThat(readCache.get(null)).isNull();
+        assertThat(readCache.get((BubbleId<?>)null)).isNull();
     }
 
     public void getWhenEmpty() {

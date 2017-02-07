@@ -258,6 +258,13 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
     private Object readResolve() {
         delegate = HashMultimap.create();
         refreshNeeded = true;
+
+        // SKIF-619 Workaround. Vi ønsker et HashSet som har defalut defalut størrelse slik at loadfaktor og rekkefølge har størst mulighet for å ble den sammen. Dette her er en løsning som sikkert ikke vil virke i alle tilfeller.
+        if (koblinger instanceof HashSet) {
+          Set<K> koblinger1 = new HashSet<>();
+          koblinger1.addAll(koblinger);
+          koblinger = koblinger1;
+        }
         return this;
     }
 }

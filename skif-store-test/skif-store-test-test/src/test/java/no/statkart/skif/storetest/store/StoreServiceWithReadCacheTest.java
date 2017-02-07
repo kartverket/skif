@@ -76,7 +76,7 @@ public class StoreServiceWithReadCacheTest {
 
     public void getNull() {
         storeServiceWithReadCache = new StoreServiceWithReadCache(createStoreServiceWithNoObjects(), readCache);
-        assertThat(storeServiceWithReadCache.getObject(null)).isNull();
+        assertThat(storeServiceWithReadCache.getObject((BubbleId<?>)null)).isNull();
     }
 
     public void lock() {

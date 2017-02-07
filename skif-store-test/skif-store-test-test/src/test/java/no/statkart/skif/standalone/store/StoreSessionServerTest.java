@@ -202,8 +202,8 @@ public class StoreSessionServerTest {
                 bind(IdService.class).toProvider(Providers.<IdService>of(null));
                 TypeLiteral<MemoryLocker<Long>> memoryLockerLongType = SkifUtil.typeLiteral(MemoryLocker.class, Long.class);
                 bind(memoryLockerLongType).in(Singleton.class);
-                bind(SkifUtil.typeLiteral(DBLockerService.class, Long.class)).to(memoryLockerLongType);
-                bind(SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).to(memoryLockerLongType);
+                bind((TypeLiteral<DBLockerService>)SkifUtil.typeLiteral(DBLockerService.class, Long.class)).to(memoryLockerLongType);
+                bind((TypeLiteral<DBLockerInTransactionService>)SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).to(memoryLockerLongType);
                 bind(LockerStrategy.class).to(TransactionalLockerStrategy.class);
                 bind(TransactionalLockerStrategy.class).in(Singleton.class);
                 bind(Configuration.class).toInstance(new SkifServerConfiguration());
@@ -595,6 +595,7 @@ public class StoreSessionServerTest {
      * Test finder som laster inn objekt i hibernate via query. Finderen returnerer id og ikke selve objektet slik at store har mulighet
      * for å returnere en filtrert eller oppdatert instans.
      */
+    @SuppressWarnings("JpaQlInspection")
     private TestBubbleId testBubbleIdFinder() {
         try {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
@@ -1216,8 +1217,8 @@ public class StoreSessionServerTest {
         }
         storeServer.commitTransaction();
         storeServer.clear();
-        assertEquals(storeServer.get(new ParentBubbleId<>(1000)).getText(), "Updated parent " + 1000);
-        assertEquals(storeServer.get(new ParentBubbleId<>(1000 + MAX_SAVEPOINTS - 1)).getText(),"Updated parent " + (1000 + MAX_SAVEPOINTS-1));
+        assertEquals(storeServer.get(new ParentBubbleId<ParentBubble>(1000)).getText(), "Updated parent " + 1000);
+        assertEquals(storeServer.get(new ParentBubbleId<ParentBubble>(1000 + MAX_SAVEPOINTS - 1)).getText(),"Updated parent " + (1000 + MAX_SAVEPOINTS-1));
     }
 
     public void testAttemptDeleteManyCallsWithoutFail() {
