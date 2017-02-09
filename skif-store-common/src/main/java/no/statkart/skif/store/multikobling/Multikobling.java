@@ -1,9 +1,10 @@
 package no.statkart.skif.store.multikobling;
 
 import com.google.common.collect.*;
+import no.statkart.skif.domain.EqualityByFields;
+import no.statkart.skif.domain.EqualsByFields;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -24,7 +25,7 @@ import java.util.*;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMultimap<R, V> implements Serializable {
+public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMultimap<R, V> implements Serializable, EqualityByFields {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -32,7 +33,7 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
      * må etterfølges av et kall til {@link #setKoblinger(java.util.Set)} for å sikre riktig synkronisering mellom
      * variablene {@code koblinger} og {@code delegate.}
      */
-    private Set<K> koblinger = new HashSet<K>();
+    private Set<K> koblinger = new HashSet<>();
 
     /** Multimap som inneholder koblinger sortert på rolle. Gjenoppfriskes lazy ved endring av {@code koblinger} */
     transient private SetMultimap<R, V> delegate = HashMultimap.create();
@@ -51,7 +52,7 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
     }
 
     public static <R, V, K extends Kobling<R,V>> Multikobling<R, V, K> create(KoblingFactory<R, V, K> koblingFactory) {
-        return new Multikobling<R, V, K>(koblingFactory);
+        return new Multikobling<>(koblingFactory);
     }
 
     @Override
@@ -266,5 +267,14 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
           koblinger = koblinger1;
         }
         return this;
+    }
+
+    /**
+     * Sjekker kun delegate for å matche kontrakten for Multimap. Altså at <code>Multimap.equals(Multikobling)</code>
+     * alltid gir samme svar som <code>Multikobling.equals(Multimap)</code>.
+     */
+    @Override
+    public boolean equalsByFields(Object other, EqualsByFields comparator) {
+        return comparator.isEqualByFields(delegate(), other);
     }
 }

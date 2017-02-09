@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 import com.thoughtworks.xstream.XStream;
+import no.statkart.skif.domain.EqualsByFields;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.store.Store;
@@ -20,7 +21,6 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -104,7 +104,7 @@ public class MultikoblingTest extends StoreTestTestCase {
         Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().size(), 1);
         Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().iterator().next(), new MultirefererendeKobling("A", "A"));
 
-        multirefererende.getMultikobling().setKoblinger(new HashSet<MultirefererendeKobling>());
+        multirefererende.getMultikobling().setKoblinger(new HashSet<>());
         Assert.assertEquals(multirefererende.getMultikobling().getKoblinger().size(), 0);
         Assert.assertEquals(multirefererende.getMultikobling().get("A").size(), 0);
     }
@@ -293,7 +293,7 @@ public class MultikoblingTest extends StoreTestTestCase {
         assertThat((Boolean) refreshNeededField.get(multikobling2)).isTrue(); // refreshNeeded og delegate blir ikke med ved serialisering
         assertThat(delegate1.isEmpty()).isFalse();
         assertThat(delegate2.isEmpty()).isTrue();
-        assertThat(CopyHelper.equalsBySerialization(multikobling1, multikobling2)).isTrue();
+        assertThat(multikobling1.equalsByFields(multikobling2, new EqualsByFields())).isTrue();
         assertThat(multikobling1.equals(multikobling2)).isTrue();
     }
 
@@ -318,42 +318,8 @@ public class MultikoblingTest extends StoreTestTestCase {
         assertThat((Boolean) refreshNeededField.get(multikobling2)).isTrue(); // refreshNeeded og delegate blir ikke med ved serialisering
         assertThat(delegate1.isEmpty()).isFalse();
         assertThat(delegate2.isEmpty()).isTrue();
-        assertThat(CopyHelper.equalsBySerialization(multikobling1, multikobling2)).isTrue();
+        assertThat(multikobling1.equalsByFields(multikobling2, new EqualsByFields())).isTrue();
         assertThat(multikobling1.equals(multikobling2)).isTrue();
-    }
-
-
-    public void testEqualsBySerializationMangeElementerSomIkkeVirker() throws NoSuchFieldException, IllegalAccessException {
-        Field delegateField = Multikobling.class.getDeclaredFields()[2];
-        assertThat(delegateField.getName()).isEqualTo("delegate");
-        delegateField.setAccessible(true);
-        Field refreshNeededField = Multikobling.class.getDeclaredFields()[4];
-        assertThat(refreshNeededField.getName()).isEqualTo("refreshNeeded");
-        refreshNeededField.setAccessible(true);
-
-        Multikobling<String, String, MultirefererendeKobling> multikobling1 = Multikobling.create(DefaultKoblingFactory.create(MultirefererendeKobling.class));
-        multikobling1.setKoblinger(new HashSet<MultirefererendeKobling>(1000)); // LoadFaktor blir forskjellig
-        for (int i = 0; i<50; i++) {
-            multikobling1.put("Over", Integer.toString(i));
-        }
-        Multikobling<String, String, MultirefererendeKobling> multikobling2 = CopyHelper.copy(multikobling1);
-
-        // Multikobling1 og multikobling2 inneholder forskjellig state for 'delegate' og 'refreshNeeded', da disse ikke settes ved kopiering
-        SetMultimap<String, String> delegate1 = (SetMultimap<String, String>) delegateField.get(multikobling1);
-        SetMultimap<String, String> delegate2 = (SetMultimap<String, String>) delegateField.get(multikobling2);
-        assertThat((Boolean) refreshNeededField.get(multikobling1)).isFalse();
-        assertThat((Boolean) refreshNeededField.get(multikobling2)).isTrue(); // refreshNeeded og delegate blir ikke med ved serialisering
-        assertThat(delegate1.isEmpty()).isFalse();
-        assertThat(delegate2.isEmpty()).isTrue();
-        assertThat(CopyHelper.equalsBySerialization(multikobling1, multikobling2)).isFalse();  // Denne virker ikke, elementer i Multikobling har forskjellig rekkefølge pga forskjellig loadfaktor.
-        assertThat(multikobling1.equals(multikobling2)).isTrue();
-
-        // XStream serialisering virker heller ikke
-        XStream xstream = new XStream();
-        String o1xml = xstream.toXML(multikobling1);
-        String o2xml = xstream.toXML(multikobling2);
-        assertThat(o1xml).isNotEqualTo(o2xml);
-
     }
 
     /**

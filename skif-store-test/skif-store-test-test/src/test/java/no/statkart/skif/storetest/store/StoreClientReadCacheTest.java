@@ -9,7 +9,6 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.StoreClientReadCacheImpl;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-import org.fest.assertions.api.Fail;
 import org.testng.annotations.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;

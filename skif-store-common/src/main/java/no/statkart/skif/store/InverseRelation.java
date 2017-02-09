@@ -4,6 +4,7 @@ import no.statkart.skif.store.relation.cache.RelationName;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -114,5 +115,19 @@ public class InverseRelation<T> implements Serializable, Cloneable {
     public void setFrom(InverseRelation<T> from) {
         this.setMaterialised(from.isMaterialised());
         this.setCached(from.getCached());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InverseRelation<?> that = (InverseRelation<?>) o;
+        return Objects.equals(owner, that.owner) &&
+                Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(owner, name);
     }
 }
