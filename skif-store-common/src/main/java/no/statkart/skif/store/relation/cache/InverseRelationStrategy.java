@@ -28,10 +28,12 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @since 2.6.0
  */
 public class InverseRelationStrategy extends RelationStrategy {
+    @SuppressWarnings("WeakerAccess")
     public InverseRelationStrategy(RelationName relationName) {
         super(relationName);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Object invokeMethod(StoreRelationCache cache, ProxyHandler<?> chained, Object proxy, Method method, Object[] args) throws Throwable {
         checkArgument(args.length == 1, "Unexpected argument length: %d", args.length);
@@ -42,16 +44,17 @@ public class InverseRelationStrategy extends RelationStrategy {
     private <T> Map<T, Object> useCaching(StoreRelationCache cache, ProxyHandler<?> chained, Object proxy, Method method, Collection<T> inverseValues) throws Throwable {
         Map<T, Object> mapOfResults = Maps.newHashMapWithExpectedSize(inverseValues.size());
 
-        Collection<T> missingInverseValues = cache.findNonMaterialized(name, inverseValues);
+        Collection<T> missingInverseValues = cache.findNonMaterialised(name, inverseValues);
         if (!missingInverseValues.isEmpty()) {
             Object[] args = {missingInverseValues};
             Map<T, Object> uncachedMap = noCaching(chained, proxy, method, args);
             // Støtter egentlig ikke multithreaded adgang, men gjør en ekstra sjekk her i tilfellet en annen tråd
             // har lastet relasjonene i mellomtiden. Det vil fange de fleste tilfeller siden det er lastingen som tar tid.
-            Collection<T> missingInverseValuesAfterLoading = cache.findNonMaterialized(name, inverseValues);
+            Collection<T> missingInverseValuesAfterLoading = cache.findNonMaterialised(name, inverseValues);
             for (Map.Entry<T, Object> entry : uncachedMap.entrySet()) {
                 if (missingInverseValuesAfterLoading.contains(entry.getKey())) {
-                    Object updatedCachedRelationValue = cache.setRelationValue(name, entry.getKey(), entry.getValue());
+                    cache.materialiseRelation(name, entry.getKey(), entry.getValue());
+                    Object updatedCachedRelationValue = cache.getRelationValueHolder(name, entry.getKey()).getValue();
                     mapOfResults.put(entry.getKey(), updatedCachedRelationValue);
                 }
             }
@@ -61,7 +64,7 @@ public class InverseRelationStrategy extends RelationStrategy {
         restOfInverseValues.removeAll(mapOfResults.keySet());
 
         for (T inverseValue : inverseValues) {
-            RelationValueHolder cachedRelationValueHolder = cache.getRelationValue(name, inverseValue);
+            RelationValueHolder cachedRelationValueHolder = cache.getRelationValueHolder(name, inverseValue);
             if (cachedRelationValueHolder != null) {
                 mapOfResults.put(inverseValue, cachedRelationValueHolder.getValue());
             } else {
@@ -72,6 +75,7 @@ public class InverseRelationStrategy extends RelationStrategy {
         return mapOfResults;
     }
 
+    @SuppressWarnings({"unchecked", "WeakerAccess"})
     protected <T> Map<T, Object> noCaching(ProxyHandler<?> chained, Object proxy, Method method, Object[] args) throws Throwable {
         return (Map<T, Object>) invokeChained(chained, proxy, method, args);
     }

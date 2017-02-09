@@ -755,6 +755,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                                 relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
                             }
                             if (bubbleObject instanceof BubbleObjectWithIdent) {
+                                // For composite identer vil 'oldIdent' slik den beregnes her kun være forskjellig fra 'ident'
+                                // for den delen som tilhører denne boblen. Hvis kun den avledede delen er endret vil dette bli
+                                // plukket opp når den avledede boblen behandles. På det tidspunkt vil da 'onIdentChanged'
+                                // bli kallt automatisk på boblen som behandles her. Derfor er det greit at 'onIdentChanged'
+                                // kun blir kallt her hvis boblens egen del av identen er endret.
                                 Object oldIdent = (persistedBubbleObject == null) ? null : ((BubbleObjectWithIdent<?>) persistedBubbleObject).getIdent();
                                 BubbleObjectWithIdent<?> bubbleBubbleObjectWithIdent = (BubbleObjectWithIdent<?>) bubbleObject;
                                 Object ident = bubbleBubbleObjectWithIdent.getIdent();

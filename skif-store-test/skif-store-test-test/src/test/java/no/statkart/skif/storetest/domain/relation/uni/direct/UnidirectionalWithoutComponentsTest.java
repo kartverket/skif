@@ -153,7 +153,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
         // Sjekk at b1 ikke er invers relatert til a2.
         assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id()); // her lastes relasjonen
-        assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
+        assertTrue(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
 
         // Her endres a2 til å peke på b1
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
@@ -174,14 +174,14 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
         store.getRelationCache().setEnabled(true);
         X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
-        assertFalse(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal ikke være lastet");
+        assertFalse(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal ikke være lastet");
 
         // Her endres a2 til å peke på b1
         X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
         a2.setSomeBBId(b1.getId());
 
         assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
-        assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
+        assertTrue(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
     }
 
     /**
@@ -197,14 +197,14 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
         store.getRelationCache().setEnabled(true);
         try (UnitOfWork ignored = store.beginUnitOfWork()) {
             X1BBOne b1 = store.get(x1BBOneMockupFactory.getB1Id());
-            assertFalse(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal ikke være lastet");
+            assertFalse(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal ikke være lastet");
 
             // Her endres a2 til å peke på b1
             X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
             a2.setSomeBBId(b1.getId());
 
             assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
-            assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
+            assertTrue(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
         }
     }
 
@@ -225,7 +225,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
             // Sjekk at b1 ikke er invers relatert til a2.
             assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
-            assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
+            assertTrue(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
 
             // Her endres a2 til å peke på b1
             X1AA a2 = store.get(x1AAMockupFactory.getA2Id());
@@ -252,7 +252,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
             // Sjekk at b1 ikke er invers relatert til a2.
             assertThat(b1.findInvSomeBBIds()).doesNotContain(x1AAMockupFactory.getA2Id());
-            assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
+            assertTrue(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
 
             UnitOfWork unitOfWork2 = store.beginUnitOfWork();
             try {
@@ -288,10 +288,10 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
             // Her endres a2 til å peke på b1. Bemerk at a2 er detached så invers relasjon kan først oppdateres ved store.update(a2)
             X1AA a2 = CopyHelper.copy(store.lock(x1AAMockupFactory.getA2Id()));
             a2.setSomeBBId(b1.getId());
-            assertFalse(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal ikke være lastet");
+            assertFalse(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal ikke være lastet");
             store.update(a2);
             assertThat(b1.findInvSomeBBIds()).contains(a2.getId());
-            assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
+            assertTrue(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()), "Relasjon skal være lastet");
         }
     }
 

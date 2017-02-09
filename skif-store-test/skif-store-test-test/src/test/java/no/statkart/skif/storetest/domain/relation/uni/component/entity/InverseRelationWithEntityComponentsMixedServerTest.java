@@ -178,10 +178,10 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
         assertTrue(b1.getInvSomeBBIds().isRequested());
         assertThat(b1.getInvSomeBBIds().get()).isEmpty();
 
-        assertFalse(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()));
+        assertFalse(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()));
         // Registrer b1 i Store.
         register(b1);
-        assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), b1.getId()));
+        assertTrue(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), b1.getId()));
         assertThat(b1.getInvSomeBBIds().get()).isEmpty();
 
         X2BBOne b3 = getBBOneWithRelationMaterialized(X2BBOneMockupFactory.getB3Id(), Action.LOAD, Action.REQUEST);
@@ -205,7 +205,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
 
         // Registrer b1 i Store.
         register(b1);
-        assertTrue(store.getRelationCache().isMaterialized(b1.getInvSomeBBIds().getName(), X2BBOneMockupFactory.getB1Id()));
+        assertTrue(store.getRelationCache().isMaterialised(b1.getInvSomeBBIds().getName(), X2BBOneMockupFactory.getB1Id()));
         assertThat(b1.getInvSomeBBIds().get()).isEmpty();
     }
 
@@ -224,7 +224,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
 
         // Registrer b1 i Store.
         register(b1);
-        assertTrue(store.getRelationCache().isMaterialized(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
+        assertTrue(store.getRelationCache().isMaterialised(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
     }
 
     /**
@@ -237,7 +237,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
         store.getRelationCache().setEnabled(true);
 
         X2BBOne eksisterende = store.get(X2BBOneMockupFactory.getB1Id());
-        assertFalse(store.getRelationCache().isMaterialized(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
+        assertFalse(store.getRelationCache().isMaterialised(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
 
         X2BBOne b1 = getBBOneWithRelationMaterialized(X2BBOneMockupFactory.getB1Id(), Action.REQUEST, Action.LOAD);
         assertNotSame(eksisterende, b1);
@@ -246,7 +246,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
 
         // Registrer b1 i Store.
         register(b1);
-        assertTrue(store.getRelationCache().isMaterialized(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
+        assertTrue(store.getRelationCache().isMaterialised(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
     }
 
 
@@ -263,7 +263,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
             store.getRelationCache().setEnabled(true);
 
             X2BBOne eksisterendeSomErLocked = store.lock(X2BBOneMockupFactory.getB1Id());
-            assertFalse(store.getRelationCache().isMaterialized(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
+            assertFalse(store.getRelationCache().isMaterialised(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
 
             X2BBOne b1 = getBBOneWithRelationMaterialized(X2BBOneMockupFactory.getB1Id(), Action.REQUEST, Action.LOAD);
             assertNotSame(eksisterendeSomErLocked, b1);
@@ -273,7 +273,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
             // Registrer b1 i Store.
             register(b1);
             assertSame(store.get(X2BBOneMockupFactory.getB1Id()), eksisterendeSomErLocked);
-            assertFalse(store.getRelationCache().isMaterialized(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
+            assertFalse(store.getRelationCache().isMaterialised(X2AAWithEntityComponentFinderService.Role.someBB, X2BBOneMockupFactory.getB1Id()));
         }
     }
 }

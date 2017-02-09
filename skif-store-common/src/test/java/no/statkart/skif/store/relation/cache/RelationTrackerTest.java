@@ -2,21 +2,97 @@ package no.statkart.skif.store.relation.cache;
 
 import org.testng.annotations.Test;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-/**
- * Test av basis funksjonalitet for {@link RelationTracker}
- * @author Henrik Fredholm
- */
 @Test
 public class RelationTrackerTest {
 
-   public void trackUnmaterialisedManyRelationAndThenMaterialise() {
+
+    @SuppressWarnings("unchecked")
+    public void applyOperationsManyRelation() {
+        RelationTracker relationTracker = new RelationTracker();
+        assertThat(relationTracker.isMaterialised()).isFalse();
+        relationTracker.add("value1");
+        relationTracker.add("value2");
+        assertThat(relationTracker.isMaterialised()).isFalse();
+        Set<String> values = (Set<String>) relationTracker.applyOperations(new HashSet<String>());
+        assertThat(values).containsOnly("value1", "value2");
+        assertThat(relationTracker.isMaterialised()).isFalse();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void applyOperationsOneRelation() {
+        RelationTracker relationTracker = new RelationTracker();
+        assertThat(relationTracker.isMaterialised()).isFalse();
+        relationTracker.add("value1");
+        relationTracker.remove("value1");
+        relationTracker.add("value2");
+        assertThat(relationTracker.isMaterialised()).isFalse();
+        String value = (String) relationTracker.applyOperations(null);
+        assertThat(value).isEqualTo("value2");
+        assertThat(relationTracker.isMaterialised()).isFalse();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void materialiseManyRelation() {
+        RelationTracker relationTracker = new RelationTracker();
+        assertThat(relationTracker.isMaterialised()).isFalse();
+        relationTracker.add("value1");
+        relationTracker.add("value2");
+        Set<String> relation = new LinkedHashSet<>();
+        relation.add("initialValue");
+        relationTracker.materialise(relation);
+        assertThat(relationTracker.isMaterialised()).isTrue();
+        assertThat(relationTracker.getManyRelation()).containsExactly("initialValue", "value1", "value2");
+    }
+
+    public void materialiseOneRelation() {
+        RelationTracker relationTracker = new RelationTracker();
+        assertThat(relationTracker.isMaterialised()).isFalse();
+        relationTracker.add("value1");
+        relationTracker.remove("value1");
+        relationTracker.add("value2");
+        relationTracker.materialise("initialValue");
+        assertThat(relationTracker.isMaterialised()).isTrue();
+        assertThat(relationTracker.getOneRelation()).isEqualTo("value2");
+    }
+
+    public void materialiseOneRelationNullVariant1() {
+        RelationTracker relationTracker = new RelationTracker();
+        assertThat(relationTracker.isMaterialised()).isFalse();
+        relationTracker.remove("initialValue");
+        relationTracker.materialise("initialValue");
+        assertThat(relationTracker.isMaterialised()).isTrue();
+        assertThat(relationTracker.getOneRelation()).isNull();
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "Relation is not materialised")
+    public void getRelationSkalFeileForUmaterialised() {
+        RelationTracker relationTracker = new RelationTracker();
+        assertThat(relationTracker.isMaterialised()).isFalse();
+        relationTracker.getRelation();
+    }
+
+    public void materialiseOneRelationNullVariant2() {
+        RelationTracker relationTracker = new RelationTracker();
+        assertThat(relationTracker.isMaterialised()).isFalse();
+        relationTracker.remove("initialValue");
+        relationTracker.add("value1");
+        relationTracker.remove("value1");
+        relationTracker.materialise("initialValue");
+        assertThat(relationTracker.isMaterialised()).isTrue();
+        assertThat(relationTracker.getOneRelation()).isNull();
+    }
+
+
+    public void trackUnmaterialisedManyRelationAndThenMaterialise() {
        RelationTracker t = new RelationTracker();
        assertFalse(t.isMaterialised());
        t.add(new Id(1));
@@ -28,7 +104,6 @@ public class RelationTrackerTest {
            failBecauseExceptionWasNotThrown(IllegalStateException.class);
        } catch  (IllegalStateException e) {
            assertThat(e).hasMessage("Relation is not materialised");
-           // Expected
        }
        t.materialise(new LinkedHashSet());
        assertThat(t.getManyRelation()).containsExactly(new Id(2), new Id(3));
@@ -45,7 +120,6 @@ public class RelationTrackerTest {
             failBecauseExceptionWasNotThrown(IllegalStateException.class);
         } catch  (IllegalStateException e) {
             assertThat(e).hasMessage("Relation is not materialised");
-            // Expected
         }
         t.materialise(null);
         assertThat(t.getOneRelation()).isEqualTo(new Id(2));
@@ -61,7 +135,6 @@ public class RelationTrackerTest {
             failBecauseExceptionWasNotThrown(IllegalStateException.class);
         } catch  (IllegalStateException e) {
             assertThat(e).hasMessage("Relation is not materialised");
-            // Expected
         }
         t.materialise(new Id(1));
         assertThat(t.getOneRelation()).isEqualTo(new Id(2));

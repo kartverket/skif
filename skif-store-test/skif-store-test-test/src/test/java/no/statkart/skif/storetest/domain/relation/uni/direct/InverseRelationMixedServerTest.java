@@ -288,7 +288,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
             X1AA a1 = store.get(a1Id);
             assertEquals(a1.getSomeBBId(), b1Id); // a1 peker nå på b1
             // Materialisert relasjoner for a1 er feil fordi de fortsatt er cachet. Skal ikke være tom.
-            assertThat(store.getRelationCache().isMaterialized(store.get(b1Id).getInvSomeBBIds().getName(), b1Id));
+            assertThat(store.getRelationCache().isMaterialised(store.get(b1Id).getInvSomeBBIds().getName(), b1Id));
             assertThat(store.get(b1Id).findInvSomeBBIds()).isEmpty();
             assertThat(store.get(b2Id).findInvSomeBBIds()).containsExactly(a1Id);
 

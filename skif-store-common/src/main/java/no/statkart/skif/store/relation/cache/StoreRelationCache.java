@@ -31,6 +31,7 @@ import static com.google.common.base.Preconditions.checkState;
  * @author Henrik Fredholm
  * @since 2.4
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class StoreRelationCache {
     protected RelationCache relationCache = new RelationCache();
     protected final Store store;
@@ -104,31 +105,15 @@ public abstract class StoreRelationCache {
     }
 
 
-    public <E> RelationValueHolder getRelationValue(RelationName relationName, E value) {
+    public <E> RelationValueHolder getRelationValueHolder(RelationName relationName, E value) {
         checkState(isEnabled());
-        return relationCache.getRelationValue(getLevel(), relationName, value);
+        return relationCache.getRelationValueHolder(getLevel(), relationName, value);
     }
 
-    public <E> Object setRelationValue(RelationName relationName, E value, Object relationValue) {
+    public <E> void materialiseRelation(RelationName relationName, E value, Object relationValue) {
         checkState(isEnabled());
-        return relationCache.setRelationValue(getLevel(), relationName, value, relationValue);
+        relationCache.materialiseRelation(getLevel(), relationName, value, relationValue);
     }
-
-    public RelationName getRelationNameReturnNullIfDisabled(Method method) {
-        if (isEnabled()) {
-            return relationCache.getRelationName(method);
-        } else {
-            return null;
-        }
-    }
-
-    public boolean transferToCache(RelationName relationName, BubbleId<?> id, Object cachedRelationValue) {
-        if (isEnabled()) {
-            relationCache.setRelationValue(getLevel(), relationName, id, cachedRelationValue);
-        }
-        return isEnabled();
-    }
-
 
     public RelationFinder getRelationFinder(RelationName relationName, Store store) {
         return new RelationFinder(relationName, store);
@@ -156,9 +141,7 @@ public abstract class StoreRelationCache {
             if (InverseRelation.class.isAssignableFrom(method.getReturnType())) {
                 try {
                     result.add((InverseRelation<?>) method.invoke(bubbleObject));
-                } catch (IllegalAccessException e) {
-                    throw new ImplementationException(e);
-                } catch (InvocationTargetException e) {
+                } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new ImplementationException(e);
                 }
             }
@@ -166,12 +149,8 @@ public abstract class StoreRelationCache {
         return result;
     }
 
-    public <E> boolean isMaterialized(RelationName relationName, E value) {
-        if (isEnabled()) {
-            return relationCache.isMaterialized(getLevel(), relationName, value);
-        } else {
-            return false;
-        }
+    public <E> boolean isMaterialised(RelationName relationName, E value) {
+        return isEnabled() && relationCache.isMaterialised(getLevel(), relationName, value);
     }
 
     public void cacheMaterialisedRelationsAndClearLocallyCachedValues(@Nullable BubbleObject bubbleObject, int level) {
@@ -179,7 +158,9 @@ public abstract class StoreRelationCache {
             for (InverseRelation<?> inverseRelation : getInverseRelations(bubbleObject)) {
                 if (inverseRelation.isMaterialised()) {
                     if (isEnabled()) {
-                        relationCache.setRelationValue(level, inverseRelation.getName(), bubbleObject.getId(), inverseRelation.getCached());
+                        // TODO: Her må vi egentlig vite om oppdateringen kommer fra en UnitOfWorkTransfer (som kan inneholde endret state) eller en Transfer (som ikke kan inneholde endret state).
+                        // TODO: Hvis vi har endret state skal verdienen ikke settes på underliggende levels. Det blir feil ved abort.
+                        relationCache.materialiseRelation(level, inverseRelation.getName(), bubbleObject.getId(), inverseRelation.getCached());
                     }
                     inverseRelation.setCached(null);
                     inverseRelation.setMaterialised(false);
@@ -188,9 +169,9 @@ public abstract class StoreRelationCache {
         }
     }
 
-    public <T> Collection<T> findNonMaterialized(RelationName relationName, Collection<T> ids) {
+    public <T> Collection<T> findNonMaterialised(RelationName relationName, Collection<T> ids) {
         checkState(isEnabled());
-        return relationCache.findNonMaterialized(getLevel(), relationName, ids);
+        return relationCache.findNonMaterialised(getLevel(), relationName, ids);
     }
 
     public void updateRemoved(BubbleId<?> owningBubbleId, InverseRelationParticipation oldInstance) {
@@ -202,6 +183,7 @@ public abstract class StoreRelationCache {
         });
     }
 
+    @SuppressWarnings("Duplicates")
     public void updateRemoved(BubbleId<?> owningBubbleId, final InverseRelationParticipation oldInstance, Executor collectionExcutor) {
         final InverseRelationCollector collector = new InverseRelationCollector();
         collectionExcutor.execute(new Runnable() {
@@ -234,6 +216,7 @@ public abstract class StoreRelationCache {
         relationCache.onSourceIdRemoved(getLevel(), bubbleObjectWithIdent.getId());
     }
 
+    @SuppressWarnings("Duplicates")
     public void updateAdded(BubbleId<?> owningBubbleId, InverseRelationParticipation newInstance) {
         InverseRelationCollector collector = new InverseRelationCollector();
         newInstance.collectInverseRelationValues(collector);
@@ -259,5 +242,4 @@ public abstract class StoreRelationCache {
             setEnabled(true);   // Ved enabling så gjenberegnes caching for låste objekter og har hensyn til endret relasjoner i disse
         }
     }
-
 }

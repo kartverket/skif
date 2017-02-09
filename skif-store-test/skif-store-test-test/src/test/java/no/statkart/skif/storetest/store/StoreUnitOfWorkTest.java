@@ -255,9 +255,9 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 String orgText = simple.getText();
                 simple.setText("Blabla");
                 store.update(simple);
-                assertEquals(store.get(simpleId).getText(), simple.getText());
+                assertEquals(((Simple)store.get(simpleId)).getText(), simple.getText());
                 store.undo(simple);
-                assertEquals(store.get(simpleId).getText(), orgText);
+                assertEquals(((Simple)store.get(simpleId)).getText(), orgText);
                 store.abortUnitOfWork(unitOfWork);
 
                 return null;
@@ -747,8 +747,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             assertThat(clientStore.getAllLoaded().getObject(simpleId2)).isSameAs(bubbleTransfer.getObject(simpleId2));
             assertThat(clientStore.isLocked(simpleId1)).isFalse();
             assertThat(clientStore.isLocked(simpleId2)).isTrue();
-            assertThat(clientStore.get(simpleId2).getText()).isNotEqualTo("foobar");
-            assertThat(clientStore.get(simpleId2).getText()).isEqualTo(originalText);
+            assertThat(((Simple)clientStore.get(simpleId2)).getText()).isNotEqualTo("foobar");
+            assertThat(((Simple)clientStore.get(simpleId2)).getText()).isEqualTo(originalText);
         }
     }
 

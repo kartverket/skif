@@ -16,7 +16,6 @@ import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOneId;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOneIdent;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
-import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.BeforeMethod;
@@ -61,10 +60,7 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
     private Store storeClient;
 
     @Inject
-    X1AAFinderService finderService;
-
-    @Inject
-    private DBLockerService dbLockerService;
+    private X1AAFinderService finderService;
 
     @BeforeMethod
     protected void evictAll() {
@@ -107,7 +103,7 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
         assertFalse(storeClient.getRelationCache().isEnabled());
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
             storeClient.getRelationCache().setEnabled(true);
-            X1AAIdent oldIdent = storeClient.get(a1Id).getIdent();
+            X1AAIdent oldIdent = ((X1AA)storeClient.get(a1Id)).getIdent();
             X1AAIdent oldIdent2;
             X1AAIdent newIdent;
             try (UnitOfWork inner = storeClient.beginUnitOfWork()) {
@@ -174,9 +170,9 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
         assertFalse(storeClient.getRelationCache().isEnabled());
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
             storeClient.getRelationCache().setEnabled(true);
-            X1AAIdent oldIdent = storeClient.get(a1Id).getIdent();
+            X1AAIdent oldIdent = ((X1AA)storeClient.get(a1Id)).getIdent();
             X1AAIdent oldIdent2;
-            X1AAIdent newIdent = null;
+            X1AAIdent newIdent;
             try (UnitOfWork inner = storeClient.beginUnitOfWork()) {
                 storeClient.getRelationCache().setEnabled(false);
                 X1AA a1 = storeClient.lock(a1Id);
@@ -214,9 +210,9 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
         assertFalse(storeClient.getRelationCache().isEnabled());
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
             storeClient.getRelationCache().setEnabled(true);
-            X1AAIdent oldA1Ident = storeClient.get(a1Id).getIdent();
+            X1AAIdent oldA1Ident = ((X1AA)storeClient.get(a1Id)).getIdent();
             X1AAIdent newA1Ident;
-            X1BBOneIdent oldB2Ident = storeClient.get(b2Id).getIdent();
+            X1BBOneIdent oldB2Ident = ((X1BBOne)storeClient.get(b2Id)).getIdent();
             X1BBOneIdent newB2Ident;
             try (UnitOfWork inner = storeClient.beginUnitOfWork()) {
                 X1AA a1 = storeClient.get(a1Id);
@@ -256,9 +252,9 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
         assertFalse(storeClient.getRelationCache().isEnabled());
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
             storeClient.getRelationCache().setEnabled(true);
-            X1AAIdent oldA1Ident = storeClient.get(a1Id).getIdent();
+            X1AAIdent oldA1Ident = ((X1AA)storeClient.get(a1Id)).getIdent();
             X1AAIdent newA1Ident;
-            X1BBOneIdent oldB2Ident = storeClient.get(b2Id).getIdent();
+            X1BBOneIdent oldB2Ident = ((X1BBOne)storeClient.get(b2Id)).getIdent();
             X1BBOneIdent newB2Ident;
             try (UnitOfWork inner = storeClient.beginUnitOfWork()) {
                 X1AA a1 = storeClient.get(a1Id);
@@ -297,9 +293,9 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
         assertFalse(storeClient.getRelationCache().isEnabled());
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
             storeClient.getRelationCache().setEnabled(true);
-            X1AAIdent oldA1Ident = storeClient.get(a1Id).getIdent();
+            X1AAIdent oldA1Ident = ((X1AA)storeClient.get(a1Id)).getIdent();
             X1AAIdent newA1Ident;
-            X1BBOneIdent oldB2Ident = storeClient.get(b2Id).getIdent();
+            X1BBOneIdent oldB2Ident = ((X1BBOne)storeClient.get(b2Id)).getIdent();
             X1BBOneIdent newB2Ident;
             try (UnitOfWork inner = storeClient.beginUnitOfWork()) {
                 storeClient.getRelationCache().setEnabled(false);
@@ -331,9 +327,9 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
         assertFalse(storeClient.getRelationCache().isEnabled());
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
             storeClient.getRelationCache().setEnabled(true);
-            X1AAIdent oldA1Ident = storeClient.get(a1Id).getIdent();
+            X1AAIdent oldA1Ident = ((X1AA)storeClient.get(a1Id)).getIdent();
             X1AAIdent newA1Ident;
-            X1BBOneIdent oldB2Ident = storeClient.get(b2Id).getIdent();
+            X1BBOneIdent oldB2Ident = ((X1BBOne)storeClient.get(b2Id)).getIdent();
             X1BBOneIdent newB2Ident;
             try (UnitOfWork inner = storeClient.beginUnitOfWork()) {
                 storeClient.getRelationCache().setEnabled(false);
@@ -354,11 +350,6 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester caching når identendringer er utført med caching disabled i inner uow. Et objekt med avledede
-     * identer får endret sin ident. I outer unit of work er caching enabled. Ident søk med gamle identer skal da gi
-     * opprinnelig objecter  mens ident søk med ny ident skal gi null etter abort av inner uow
-     */
-    /**
      * Tester at når et objekt får endret sin ident så må man eksplisitt fortelle cachen om det
      * via kall til onIdentChanged(). Tester også at commit fra inner unit of work virker slik
      * ident relasjoner automatisk blir riktig i out unit of work.
@@ -369,7 +360,7 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
         assertFalse(storeClient.getRelationCache().isEnabled());
         try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
             storeClient.getRelationCache().setEnabled(true);
-            X1AAIdent oldIdent = storeClient.get(a1Id).getIdent();
+            X1AAIdent oldIdent = ((X1AA)storeClient.get(a1Id)).getIdent();
             X1AAIdent newIdent;
             try (UnitOfWork inner = storeClient.beginUnitOfWork()) {
                 X1AA a1 = storeClient.lock(a1Id);
@@ -389,6 +380,43 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
         }
     }
 
+    /**
+     * Tester at når et objekt får endret sin ident så må man eksplisitt fortelle cachen om det
+     * via kall til onIdentChanged(). Deretter vil søk på gammel ident ikke finne opprinnelig
+     * objekt da det nå har fått ny ident. Dvs gammel ident er ledig og kan brukes av et annet
+     * objekt.
+     */
+    public void testOnClientChangeAndRemoveCompositeIdentVariant2() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
+        assertFalse(storeClient.getRelationCache().isEnabled());
+        storeClient.getRelationCache().setEnabled(true);
+        X1AAIdent oldIdent = ((X1AA)storeClient.get(a1Id)).getIdent();
+        //noinspection ConstantConditions
+        X1AAIdent newIdent = new X1AAIdent(oldIdent.getBNr(), 100);
+        try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
+            // Her materialiseres relasjonene for oldIdent og newIdent
+            assertThat(findIdent(oldIdent)).containsExactly(a1Id);
+            assertThat(findIdent(newIdent)).isEmpty();
+        }
+
+        try (UnitOfWork ignore = storeClient.beginUnitOfWork()) {
+            try (UnitOfWork inner = storeClient.beginUnitOfWork()) {
+                assertThat(findIdent(oldIdent)).containsExactly(a1Id);
+                assertThat(findIdent(newIdent)).isEmpty();
+                X1AA a1 = storeClient.lock(a1Id);
+                a1.setNr(100); // Ident endret, men ikke  relationcache for ident
+                a1.onIdentChanged();  // Angi at ident er endret
+                storeClient.update(a1);
+                assertThat(findIdent(oldIdent)).isEmpty();
+                assertThat(findIdent(newIdent)).containsExactly(a1Id);
+                storeClient.delete(a1);
+                storeClient.commitUnitOfWork(inner);
+            }
+            assertThat(findIdent(oldIdent)).isEmpty();
+            assertThat(findIdent(newIdent)).isEmpty();
+        }
+    }
 
     public void testOnClientDeleteBubbleWithIdent() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -419,6 +447,4 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
             assertThat(findIdent(newB1Ident)).isNotEmpty();
         }
     }
-
-
 }

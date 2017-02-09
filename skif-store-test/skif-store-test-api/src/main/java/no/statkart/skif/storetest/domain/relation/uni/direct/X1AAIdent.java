@@ -11,6 +11,7 @@ public class X1AAIdent implements Serializable {
     private int bNr;
     private int aNr;
 
+    @SuppressWarnings("unused") // WS-mapping
     public X1AAIdent() {
     }
 
@@ -23,14 +24,17 @@ public class X1AAIdent implements Serializable {
         return bNr;
     }
 
+    @SuppressWarnings("unused") // WS-mapping
     public void setBNr(int bNr) {
         this.bNr = bNr;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public int getANr() {
         return aNr;
     }
 
+    @SuppressWarnings("unused") // WS-mapping
     public void setANr(int aNr) {
         this.aNr = aNr;
     }
