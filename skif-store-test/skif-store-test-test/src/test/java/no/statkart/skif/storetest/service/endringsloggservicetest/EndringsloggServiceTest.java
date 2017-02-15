@@ -2,12 +2,13 @@ package no.statkart.skif.storetest.service.endringsloggservicetest;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Kontroll;
-import no.statkart.skif.store.endringslogg.AbstractEndringId;
 import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
+import no.statkart.skif.storetest.domain.endringslogg.EndringId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
 import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
@@ -17,9 +18,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 
 /**
@@ -38,10 +37,10 @@ import static org.testng.Assert.assertTrue;
 @Test
 public class EndringsloggServiceTest extends StoreTestTestCase {
     @Inject
-    EndringsloggService endringsloggService;
+    private EndringsloggService endringsloggService;
 
     @Inject
-    NedlastningService nedlastningService;
+    private NedlastningService nedlastningService;
 
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
@@ -52,7 +51,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     }
 
     public void testFindSisteEndringId(){
-        AbstractEndringId<?> sisteEndringId = endringsloggService.findSisteEndringId();
+        EndringId<?> sisteEndringId = endringsloggService.findSisteEndringId();
         assertNotNull(sisteEndringId);
         assertTrue(sisteEndringId.getValue() > 0);
     }
@@ -67,6 +66,39 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
         assertEquals(endringer.getEndringList().size(),1);
     }
 
+    public void testFindEndringerMedNegativMaksAntall() {
+        try {
+            endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Aldri, -1);
+            fail("Skulle fått exception");
+        } catch (RuntimeException e) {
+            assertEquals(e.getMessage(), "maksAntall er negativ");
+        }
+    }
+
+    public void testFindEndringerMaks0AlltidReturner() {
+        EndringId<?> sisteEndringId = endringsloggService.findSisteEndringId();
+        assertNotNull(sisteEndringId);
+        EndringId nestSisteEndringId = new EndringId(sisteEndringId.getValue() - 1);
+        Endringer<?> endringer = endringsloggService.findEndringer(nestSisteEndringId, Simple.class, null, ReturnerBobler.Alltid, 0);
+        assertEquals(endringer.getSisteEndringIdProsessert(), nestSisteEndringId);
+        assertFalse(endringer.isAlleEndringerFunnet());
+        endringer = endringsloggService.findEndringer(sisteEndringId, Simple.class, null, ReturnerBobler.Alltid, 0);
+        assertEquals(endringer.getSisteEndringIdProsessert(), sisteEndringId);
+        assertTrue(endringer.isAlleEndringerFunnet());
+    }
+
+    public void testFindEndringerMaks0AldriReturner() {
+        EndringId<?> sisteEndringId = endringsloggService.findSisteEndringId();
+        assertNotNull(sisteEndringId);
+        EndringId nestSisteEndringId = new EndringId(sisteEndringId.getValue() - 1);
+        Endringer<?> endringer = endringsloggService.findEndringer(nestSisteEndringId, Simple.class, null, ReturnerBobler.Aldri, 0);
+        assertEquals(endringer.getSisteEndringIdProsessert(), nestSisteEndringId);
+        assertFalse(endringer.isAlleEndringerFunnet());
+        endringer = endringsloggService.findEndringer(sisteEndringId, Simple.class, null, ReturnerBobler.Aldri, 0);
+        assertEquals(endringer.getSisteEndringIdProsessert(), sisteEndringId);
+        assertTrue(endringer.isAlleEndringerFunnet());
+    }
+
     public void testCalcEndringskontroll(){
         Kontroll kontroll = endringsloggService.calcEndringskontroll(null, Simple.class, null, 1);
         assertEquals(kontroll.getAntall(),1);
@@ -74,7 +106,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
 
     public void testCalcObjectkontrollForList(){
         Endringer<?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Alltid, 1);
-        List<SimpleId<?>> endretBubbleIds = (List)endringer.getEndretBubbleIds();
+        List<BubbleId<?>> endretBubbleIds = endringer.getEndretBubbleIds();
         Kontroll kontroll = endringsloggService.calcObjektkontrollForList(endretBubbleIds, Simple.class);
         assertEquals(kontroll.getAntall(),1);
     }

@@ -66,6 +66,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
     public Endringer<E> findEndringer(@Nullable EI id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
         Preconditions.checkNotNull(bobleklasse, "domainKlasse er obligatorisk");
         Preconditions.checkNotNull(returnerBobler, "returnerBobler er obligatorisk");
+        Preconditions.checkArgument(maksAntall >= 0, "maksAntall er negativ");
 
         Endringer<E> endringer = new Endringer<E>();
 
@@ -82,6 +83,9 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
                 endringer.setAlleEndringerFunnet(true);
                 endringer.setSisteEndringIdProsessert(sisteEndringId);
                 return endringer;
+            } else if (maksAntall == 0) {
+                endringer.setAlleEndringerFunnet(false); // Siden vi er i en else
+                endringer.setSisteEndringIdProsessert(id);
             } else if (returnerBobler == ReturnerBobler.Aldri) {
                 // Finn endringer, objekter skal ikke returneres
                 Criteria criteria = session.createCriteria(endringClass);
