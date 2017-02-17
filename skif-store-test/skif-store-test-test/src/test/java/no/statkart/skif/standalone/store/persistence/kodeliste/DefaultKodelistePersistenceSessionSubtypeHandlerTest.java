@@ -1,6 +1,7 @@
 package no.statkart.skif.standalone.store.persistence.kodeliste;
 
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
+import no.statkart.skif.store.BubbleModelConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.KodelisteId;
@@ -48,15 +49,16 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 
     @BeforeClass
     public void setUp() {
-        HibernateSessionFactoryBuilder sessionFactoryBuilder = createHibernateSessionFactoryBuilderWithHistory();
-//        sessionFactoryBuilder.addResourceUsingRelativePath("kodeliste", ADbKode.class);
-        sessionFactoryBuilder.addResource(ADbKode.class);
-        sessionFactoryBuilder.addResource(BDbKode.class);
-        sessionFactoryBuilder.addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class);
-        sessionFactoryBuilder.addResource(XStrDbKode.class);
-        sessionFactoryBuilder.addResourceWithSubclasses(HistoriskDbKode.class, SimpleLocalizedDbKode.class);
-        sessionFactoryBuilder.addResource(StoreTestKodelisteLong.class);
+        BubbleModelConfiguration bubbleClasses = new BubbleModelConfiguration();
+        bubbleClasses.addBubble(ADbKode.class);
+        bubbleClasses.addBubble(BDbKode.class);
+        bubbleClasses.addBubbleWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class);
+        bubbleClasses.addBubble(XStrDbKode.class);
+        bubbleClasses.addBubbleWithSubclasses(HistoriskDbKode.class, SimpleLocalizedDbKode.class);
+        bubbleClasses.addBubble(StoreTestKodelisteLong.class);
 
+        HibernateSessionFactoryBuilder sessionFactoryBuilder = createHibernateSessionFactoryBuilderWithHistory();
+        sessionFactoryBuilder.addBubbleModel(bubbleClasses);
 
         sessionFactoryManagerBundle = createHibernateSessionFactorManagerBundle(sessionFactoryBuilder, hibernateProperties);
     }

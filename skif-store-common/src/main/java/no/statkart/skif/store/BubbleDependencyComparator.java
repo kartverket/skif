@@ -1,7 +1,6 @@
 package no.statkart.skif.store;
 
 import com.google.inject.ImplementedBy;
-import no.statkart.skif.store.persistence.hibernate.HibernateBubbleDependencyComparator;
 
 import java.util.Comparator;
 
@@ -10,6 +9,6 @@ import java.util.Comparator;
  * @author Henrik Fredholm
  * @since 2.1
  */
-@ImplementedBy(HibernateBubbleDependencyComparator.class)
+@ImplementedBy(BubbleModelConfiguration.class)
 public interface BubbleDependencyComparator extends Comparator<BubbleObject> {
 }

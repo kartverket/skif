@@ -2,13 +2,13 @@ package no.statkart.skif.standalone.util.testsupport;
 
 import com.google.inject.util.Providers;
 import no.statkart.skif.ConfigurationConverter;
-import no.statkart.skif.config.*;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.PropertiesConfiguration;
+import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionSeed;
-import no.statkart.skif.store.Store;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
@@ -38,6 +38,21 @@ public class StandAloneTestHelper {
     public static SnapshotVersion S4 = SnapshotVersion.createInstance(T4);
     public static SnapshotVersion CURRENT = SnapshotVersion.CURRENT;
     public static SnapshotVersion OLD = SnapshotVersion.OLD;
+
+    private static BubbleModelConfiguration bubbleClasses = new BubbleModelConfiguration()
+            .addBubble(TestBubbleWithHistory.class)
+            .addBubble(TestBubble.class)
+//                .addBubbleUseSameIndex(SelfBubble.class)   // Blir sortert sammen med TestBubble
+            .addBubble(SelfBubble.class)
+            .addBubble(ParentBubble.class)
+            .addBubble(FilteredBubble.class)
+            .addBubble(ChildBubble.class)
+//                .addBubble(Foo.class)
+            ;
+
+    public static BubbleDependencyComparator getBubbleDependencyComparator() {
+        return bubbleClasses;
+    }
 
     public static Properties createHibernatePropertiesSingleVm() {
         Configuration cfg = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate.properties");
@@ -78,14 +93,7 @@ public class StandAloneTestHelper {
      */
     public static HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilderWithHistory() {
         return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate36")
-                .addResource(TestBubbleWithHistory.class)
-                .addResource(TestBubble.class)
-//                .addResourceUseSameIndex(SelfBubble.class)   // Blir sortert sammen med TestBubble
-                .addResource(SelfBubble.class)
-                .addResource(ParentBubble.class)
-                .addResource(FilteredBubble.class)
-                .addResource(ChildBubble.class)
-//                .addResource(Foo.class)
+                .addBubbleModel(bubbleClasses)
                 ;
     }
 

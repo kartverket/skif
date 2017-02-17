@@ -184,6 +184,7 @@ public class StoreTestServerModule extends SkifModule {
                 new TestBubbleFinishFilter(),
                 injector.getInstance(EndringManager.class)
         );
+        //noinspection UnnecessaryLocalVariable
         StoreServer storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, versionFinderProvider, snapshotVersionProvider, lockerStrategy, bubbleDependencyComparator, readListeners, writeListeners, finishListeners), injector);
         return storeServer;
     }
@@ -214,10 +215,79 @@ public class StoreTestServerModule extends SkifModule {
         };
     }
 
+    @Provides
+    @Singleton
+    BubbleModelConfiguration provideBubbleClassDependencyIndex() {
+        return new BubbleModelConfiguration()
+                // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
+                .addBubble(Simple.class)
+                .addBubble(BubbleWithRelation.class)
+                .addBubble(BubbleWithAnyBubbleRef.class)
+                .addBubble(BubbleWithFilter.class)
+                .addBubble(BubbleWithValueObject.class)
+                .addBubble(BubbleWithLocalDate.class)
+                .addBubble(BubbleWithLocalDateTime.class)
+                .addBubble(HistSimple.class)
+                .addBubble(HistWithRelation.class)
+                .addBubbleWithSubclasses(SubTypedBubble.class, SubTypeWithPrimitive.class, SubTypeWithCollection.class)
+
+                // Components
+                .addBubble(BubbleWithCompositeComponent.class)
+                .addBubble(BubbleWithEntityComponent.class)
+                .addBubble(BubbleWithEntityInCompositeComponent.class)
+
+                .addBubble(HistorikkBubbleWithEntityComponents.class)
+                .addBubble(HistorikkBubbleWithListEntityComponents.class)
+
+                // Multikobling (standard)
+                .addBubble(Multirefererende.class)
+
+                // Multikobling (entity)
+                .addBubble(BubbleWithEntityInMultikobling.class)
+
+                // Koder
+                .addBubbleWithSubclasses(HistoriskDbKode.class, SimpleLocalizedDbKode.class)
+
+                // Gamle koder
+                .addBubble(ADbKode.class)
+                .addBubble(BDbKode.class)
+                .addBubbleWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class)
+                .addBubble(XStrDbKode.class)
+                .addBubble(StoreTestKodelisteLong.class)
+                .addBubble(BubbleWithKode.class)
+
+                // Klasser for relasjonstesting
+                .addBubble(X1BBOne.class)
+                .addBubble(X1CCMany.class)
+//                .addBubble(X1DDUnique.class)
+                .addBubble(X1AA.class)
+
+                .addBubble(X2BBOne.class)
+                .addBubble(X2CCMany.class)
+                .addBubble(X2AAWithEntityComponent.class)
+
+                .addBubble(TestBubble.class)
+                .addBubbleUseSameIndex(SelfBubble.class)   // Blir sortert sammen me TestBubble
+                .addBubble(ChildBubble.class)
+                .addBubble(ParentBubble.class)
+                .addBubble(FilteredBubble.class)
+                .addBubble(Foo.class)
+//                .addBubble(Baz.class)
+                .addBubble(Raz.class)
+//                .addBubble(Bar.class)
+//                .addBubble(BarFoos.class)
+                .addBubble(AggregertObjekt.class)
+                .addBubble(Person.class)
+                .addBubble(Rettsstiftelse.class)
+                .addBubble(BubbleWithList.class)
+                .addBubble(BubbleWithComponents.class)
+
+                .addBubble(Endring.class);
+    }
 
     @Provides
     @Singleton
-    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<IdService> idServiceProvider, Provider<DataSource> poolProvider) {
+    HibernateSessionFactoryManagerBundle provideHibernateSessionFactoryManagerBundle(Provider<IdService> idServiceProvider, Provider<DataSource> poolProvider, BubbleModelConfiguration bubbleModelConfiguration) {
 
         Configuration configuration = moduleConfiguration.getConfiguration();
 
@@ -230,72 +300,10 @@ public class StoreTestServerModule extends SkifModule {
             throw new ImplementationException("Ukjent hibernate-versjon: " + hibernateVersion);
         }
         HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilderImpl(hibernateMappingDir)
-                // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
-                .addResource(Simple.class)
-                .addResource(BubbleWithRelation.class)
-                .addResource(BubbleWithAnyBubbleRef.class)
-                .addResource(BubbleWithFilter.class)
-                .addResource(BubbleWithValueObject.class)
-                .addResource(BubbleWithLocalDate.class)
-                .addResource(BubbleWithLocalDateTime.class)
-                .addResource(HistSimple.class)
-                .addResource(HistWithRelation.class)
-                .addResourceWithSubclasses(SubTypedBubble.class, SubTypeWithPrimitive.class, SubTypeWithCollection.class)
-
-                        // Components
-                .addResource(BubbleWithCompositeComponent.class)
-                .addResource(BubbleWithEntityComponent.class)
-                .addResource(BubbleWithEntityInCompositeComponent.class)
-
-                .addResource(HistorikkBubbleWithEntityComponents.class)
-                .addResource(HistorikkBubbleWithListEntityComponents.class)
-
-                        // Multikobling (standard)
-                .addResource(Multirefererende.class)
-
-                        // Multikobling (entity)
-                .addResource(BubbleWithEntityInMultikobling.class)
-
-                        // Koder
                 .addResource(EnumKodeIdType.class)
-                .addResourceWithSubclasses(HistoriskDbKode.class, SimpleLocalizedDbKode.class)
-
-                        // Gamle koder
-                .addResource(ADbKode.class)
-                .addResource(BDbKode.class)
-                .addResourceWithSubclasses(CDbKode.class, C1DbKode.class, C2DbKode.class)
-                .addResource(XStrDbKode.class)
-                .addResource(StoreTestKodelisteLong.class)
-                .addResource(BubbleWithKode.class)
-
-                        // Klasser for relasjonstesting
-                .addResource(X1BBOne.class)
-                .addResource(X1CCMany.class)
-//                .addResource(X1DDUnique.class)
-                .addResource(X1AA.class)
-
-                .addResource(X2BBOne.class)
-                .addResource(X2CCMany.class)
-                .addResource(X2AAWithEntityComponent.class)
-
-                .addResource(TestBubble.class)
-                .addResourceUseSameIndex(SelfBubble.class)   // Blir sortert sammen me TestBubble
-                .addResource(ChildBubble.class)
-                .addResource(ParentBubble.class)
-                .addResource(FilteredBubble.class)
-                .addResource(Foo.class)
-//                .addResource(Baz.class)
-                .addResource(Raz.class)
-//                .addResource(Bar.class)
-//                .addResource(BarFoos.class)
                 .addResource(TestMap.class)
-                .addResource(AggregertObjekt.class)
-                .addResource(Person.class)
-                .addResource(Rettsstiftelse.class)
-                .addResource(BubbleWithList.class)
-                .addResource(BubbleWithComponents.class)
-
-                .addResource(Endring.class);
+                .addBubbleModel(bubbleModelConfiguration)
+                ;
 
         PropertiesConfiguration hibernatePropertiesConfiguration = new PropertiesConfiguration("no/statkart/skif/storetest/config/persistence/skiftest-hibernate.properties");
 
@@ -323,6 +331,8 @@ public class StoreTestServerModule extends SkifModule {
         }
 
         final HibernateStoreInterceptorFactory hibernateInterceptorFactory = new HibernateStoreInterceptorFactory();
+
+        //noinspection UnnecessaryLocalVariable
         HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle = new DefaultHibernateSessionFactoryManagerBundle(hibernateSessionFactoryBuilder, idServiceProvider,
                 new HibernateSessionFactoryDescriptor("CURRENT(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.CURRENT), true, false, hibernatePropertiesCurrent, hibernateInterceptorFactory),
                 new HibernateSessionFactoryDescriptor("OLD(HISTORIC-SCHEMA)", new SnapshotVersionSeed(SnapshotVersion.OLD), true, true, hibernatePropertiesOld, hibernateInterceptorFactory)
@@ -409,6 +419,7 @@ public class StoreTestServerModule extends SkifModule {
                 )
         );
 
+        //noinspection UnnecessaryLocalVariable
         ResourceManager resourceManager = new DefaultResourceManager(
                 new ResourceManager.Entry(
                         new ConnectionManagerUsingHibernate(persistenceSessionManager),

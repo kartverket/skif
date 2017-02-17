@@ -3,7 +3,7 @@ package no.statkart.skif.store.persistence.hibernate;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
-import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.BubbleModelConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
@@ -39,8 +39,6 @@ public abstract class HibernateSessionFactoryBuilder {
     private final static Object LOCK = new Object();
     protected final List<String> hbmResource = new ArrayList<>();
     protected final String mappingFilesDirectory;
-    private final Map<Class<? extends BubbleObject>, Integer> bubbleClassDependencyIndex = new HashMap<>();
-    private int nextOrderIndex;
     protected Map<String, String> className2resourceNameMap = new HashMap<>();
 
     public HibernateSessionFactoryBuilder(String mappingFilesDirectory) {
@@ -61,55 +59,25 @@ public abstract class HibernateSessionFactoryBuilder {
         }
     }
 
-    public HibernateSessionFactoryBuilder addResourceWithSubclasses(Class baseclass, Class... subclasses) {
-        return addResourceWithSubclassesUseNextIndex(baseclass, subclasses);
-
-    }
-
-    public HibernateSessionFactoryBuilder addResourceWithSubclassesUseNextIndex(Class baseclass, Class... subclasses) {
-        addResource(baseclass);
-        addDependencyUseSameIndex(subclasses);
-        return this;
-    }
-
-
-    @SuppressWarnings("UnusedDeclaration") // Public API
-    public HibernateSessionFactoryBuilder addDependencyIndex(Class... classes) {
-        nextOrderIndex++;
-        addDependencyUseSameIndex(classes);
-        return this;
-    }
-
-    public HibernateSessionFactoryBuilder addDependencyUseSameIndex(Class... classes) {
-        for (Class clazz : classes) {
-            if (BubbleObject.class.isAssignableFrom(clazz)) {
-                createDependencyIndex(clazz);
-            }
+    /**
+     * Registrerer all bobler inn i Hibernate. Dersom hbm-filene for noen av boblene ikke kan finnes automatisk, så må
+     * man registrere disse boblene med {@link #addResourceUsingAbsolutePath(Class, String)} først.
+     */
+    public HibernateSessionFactoryBuilder addBubbleModel(BubbleModelConfiguration bubbleModelConfiguration) {
+        for (Class<?> clazz : bubbleModelConfiguration.getBaseClasses()) {
+            addResource(clazz);
         }
         return this;
     }
 
-    protected void createDependencyIndex(Class clazz) {
-
-        final Integer previousIndex = bubbleClassDependencyIndex.put(clazz, nextOrderIndex);
-        if (previousIndex != null) {
-            throw new ImplementationException("Dependency index for BubbleObject is already defined:" + clazz.getName());
-        }
-    }
-
-    public HibernateSessionFactoryBuilder addResource(Class clazz) {
-        return addResourceUseNextIndex(clazz);
-    }
-
-    public HibernateSessionFactoryBuilder addResourceUseNextIndex(Class clazz) {
-        nextOrderIndex++;
-       return addResourceUseSameIndex(clazz);
-    }
-
-    public HibernateSessionFactoryBuilder addResourceUseSameIndex(Class clazz) {
-        if (BubbleObject.class.isAssignableFrom(clazz)) {
-            createDependencyIndex(clazz);
-        }
+    /**
+     * Registerer en entitetsklasse i Hibernate. Hbm-fil forutsettes at kan finnes automatisk.
+     * <p/>
+     * <strong>Denne bør ikke benyttes for bobler!</strong>
+     *
+     * @param clazz entitetsklassen
+     */
+    public HibernateSessionFactoryBuilder addResource(Class<?> clazz) {
         final String resourceName = className2resourceNameMap.get(clazz.getName());
         if (resourceName != null) {
             hbmResource.add(resourceName);
@@ -117,47 +85,35 @@ public abstract class HibernateSessionFactoryBuilder {
             throw new ConfigurationException("Could not find *.hbm.xml mapping file for " + clazz.getName());
         }
         return this;
-
-    }
-/*
-    public HibernateSessionFactoryBuilder addResourceUsingRelativePath(String relativePath, Class clazz) {
-        addResourceUsingAbsolutePath(clazz, mappingFilesDirectory + relativePath + "/" + clazz.getSimpleName() + ".hbm.xml");
-        return this;
     }
 
-    public HibernateSessionFactoryBuilder addResourceWithSubclasses(Class baseclass, Class... subclasses) {
-        hbmResource.add(mappingFilesDirectory + baseclass.getSimpleName() + ".hbm.xml");
-        for (Class subclass : subclasses) {
-            if (BubbleObject.class.isAssignableFrom(subclass)) {
-                bubbleClassDeleteOrder.add(subclass);
-            }
-        }
-        return this;
-    }
-
-    public HibernateSessionFactoryBuilder addResourceWithSubclassesUsingRelativePath(String relativePath, Class baseclass, Class... subclasses) {
-        hbmResource.add(mappingFilesDirectory + relativePath + "/" + baseclass.getSimpleName() + ".hbm.xml");
-        for (Class subclass : subclasses) {
-            if (BubbleObject.class.isAssignableFrom(subclass)) {
-                bubbleClassDeleteOrder.add(subclass);
-            }
-        }
-        return this;
-    }
-
-*/
-
-    @SuppressWarnings("UnusedDeclaration") // Public API
-    public HibernateSessionFactoryBuilder addResourceUsingAbsolutePathUseNextIndex(Class clazz, String hbmFilename) {
-        nextOrderIndex++;
-        return addResourceUsingAbsolutePathUseSameIndex(clazz, hbmFilename);
-    }
-
-    public HibernateSessionFactoryBuilder addResourceUsingAbsolutePathUseSameIndex(Class clazz, String hbmFilename) {
+    /**
+     * Registrerer en entitsklasse i Hibernate. Hbm-fil angis eksplisitt.
+     * <p/>
+     * <strong>Denne bør ikke benyttes for bobler!</strong>
+     *
+     * @param clazz       entitetsklassen
+     * @param hbmFilename sti til hbm-fil
+     */
+    public HibernateSessionFactoryBuilder addResourceUsingAbsolutePath(Class<?> clazz, String hbmFilename) {
+        registerHbm(clazz, hbmFilename);
         hbmResource.add(hbmFilename);
-        if (BubbleObject.class.isAssignableFrom(clazz)) {
-            createDependencyIndex(clazz);
+        return this;
+    }
+
+    /**
+     * Registrerer hva som er hbm-filen for en gitt klasse, men legger ikke klassen til i Hibernate.
+     * Dette er for hvis en klasse i {@link BubbleModelConfiguration} har en hbm-fil som ikke kan finnes automatisk.
+     *
+     * @param clazz       entitetsklassen
+     * @param hbmFilename sti til hbm-fil
+     */
+    public HibernateSessionFactoryBuilder registerHbm(Class<?> clazz, String hbmFilename) {
+        String resourceName = className2resourceNameMap.get(clazz.getName());
+        if (resourceName != null) {
+            throw new ImplementationException("Resource " + clazz.getName() + " has already been registered");
         }
+        className2resourceNameMap.put(clazz.getName(), hbmFilename);
         return this;
     }
 
@@ -192,7 +148,7 @@ public abstract class HibernateSessionFactoryBuilder {
         // må bruke hver sin factory. De kan ikke bruke samme factory siden det er factoryen som styrer
         // hvilken snapshotVersionSeed instans som vil bli brukt ved materalisering av BubbleId'en.
 
-        SessionFactory sessionFactory = null;
+        SessionFactory sessionFactory;
         logger.debug("creating session factory");
         synchronized (LOCK) {
             try {
@@ -213,20 +169,14 @@ public abstract class HibernateSessionFactoryBuilder {
 
     protected abstract Configuration createConfiguration(Properties props, Interceptor interceptor);
 
-    public Map<Class<? extends BubbleObject>, Integer> getBubbleClassDependencyIndex() {
-        return bubbleClassDependencyIndex;
-    }
-
     /**
      * Forsøker å finne alle className->hbm-fil mappinger.
      * <p/>
      * Dette gjøres gjennom å først finne alle hbm-filer, deretter gå gjennom dem og forsøke å finne klassenavnet som
      * filen er en mapping for. Deretter legges disse inn i en map som har className->hbm-fil. Denne mappen benyttes så
-     * når man forsøker å gjøre en addResource på en klasse.
+     * når man forsøker å gjøre en addBubble på en klasse.
      * <p/>
      * Dette må håndteres litt forskjellig i situasjonene å lese ut hbm-filene fra en fil og fra en jar-fil.
-     *
-     * @throws java.io.IOException
      */
     protected void findAllMappings() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

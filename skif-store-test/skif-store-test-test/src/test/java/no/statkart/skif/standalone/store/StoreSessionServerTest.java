@@ -21,22 +21,11 @@ import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.LockerStrategy;
-import no.statkart.skif.store.MemoryLocker;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.StoreServer;
-import no.statkart.skif.store.StoreSessionFinishListener;
-import no.statkart.skif.store.StoreSessionReadListener;
-import no.statkart.skif.store.StoreSessionServer;
-import no.statkart.skif.store.StoreSessionWriteListener;
-import no.statkart.skif.store.TransactionalLockerStrategy;
-import no.statkart.skif.store.UnitOfWork;
+import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImplExt;
-import no.statkart.skif.store.persistence.hibernate.HibernateBubbleDependencyComparator;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
@@ -212,7 +201,7 @@ public class StoreSessionServerTest {
             }
         });
 
-        final HibernateBubbleDependencyComparator dependencyComparator = new HibernateBubbleDependencyComparator(sessionFactoryManagerBundle);
+        final BubbleDependencyComparator dependencyComparator = StandAloneTestHelper.getBubbleDependencyComparator();
 
         storeServer = new StoreServer(new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), Providers.of(SnapshotVersion.CURRENT), fakeInjector.getInstance(LockerStrategy.class), dependencyComparator, readListeners, writeListeners, finishListeners), fakeInjector);
         deletePriviouslyWritenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));

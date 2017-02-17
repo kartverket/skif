@@ -2,13 +2,11 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.service.sequence.HighLowGenerator;
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.store.BubbleObject;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import javax.inject.Provider;
-import java.util.Map;
 
 /**
  * @author Henrik Fredholm
@@ -59,9 +57,5 @@ public class HibernateSessionFactoryManager {
         Session session;
         session = getFactory().openSession();
         return session;
-    }
-
-    public Map<Class<? extends BubbleObject>, Integer> getBubbleClassDependencyIndex() {
-        return factoryBuilder.getBubbleClassDependencyIndex();
     }
 }
