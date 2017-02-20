@@ -44,11 +44,13 @@ public abstract class AbstractInverseRelationTrackingSet<E> extends ForwardingSe
         this.ownerExtractor = OwningBubbleExtractor.create(owner);
     }
 
+    /* Kommentert ut da den forvirrer IntelliJ IDEA og gir sporadiske kompileringsfeil
     public <O extends ComponentWithOwnerReference<?> & InverseRelationParticipation> AbstractInverseRelationTrackingSet(O owner, Set<E> delegate) {
         Preconditions.checkNotNull(owner);
         this.delegate = delegate;
         this.ownerExtractor = OwningBubbleExtractor.create(owner);
     }
+    */
 
     public BubbleObject getOwner() {
         return ownerExtractor.getOwner();
