@@ -104,7 +104,7 @@ libraries.hibernate_3_6 = [
 //        'org.antlr:antlr:3.4@jar',   // denne har annen pakkestruktur (org.antlr.*) og kan derfor ikke brukes sammen med hibernate 3.6.10 (gir feil i Weblogic)
         'net.sf.ehcache:ehcache-core:2.5.2',
         'odmg:odmg:3.0@jar',
-        'javassist:javassist:3.12.1.GA',
+        'org.javassist:javassist:3.21.0-GA',
 ]
 
 
