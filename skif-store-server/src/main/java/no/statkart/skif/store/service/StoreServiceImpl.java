@@ -2,11 +2,14 @@ package no.statkart.skif.store.service;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.LockedException;
-import no.statkart.skif.persistence.VersionFinder;
-import no.statkart.skif.service.ServiceRequestContext;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Store;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Henrik Fredholm
@@ -15,12 +18,6 @@ import java.util.*;
 public class StoreServiceImpl implements StoreService {
     @Inject
     protected Store store;
-
-    @Inject
-    protected VersionFinder versionFinder;
-
-    @Inject
-    protected ServiceRequestContext serviceRequestContext;
 
     @Override
     public <T extends BubbleObject> T getObject(BubbleId<? extends T> id) {
@@ -69,6 +66,16 @@ public class StoreServiceImpl implements StoreService {
         final T bubbleObject = store.lock(id);
         store.ensureFullyLoaded(bubbleObject);
         return bubbleObject;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids) {
+        Collection<T> bubbleObjects = store.lock(ids);
+        // TODO: Opptimaliser for bulk
+        for (T bubbleObject : bubbleObjects) {
+            store.ensureFullyLoaded(bubbleObject);
+        }
+        return bubbleObjects;
     }
 
     @Override

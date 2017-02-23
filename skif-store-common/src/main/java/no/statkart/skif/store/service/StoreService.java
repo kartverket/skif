@@ -72,12 +72,23 @@ public interface StoreService {
      * Låser {@link BubbleObject} av type {@code <T>} for {@code id} av type {@code <I>} for kallende bruker og
      * returnerer objektet.
      *
-     * @param id BubbleId for objekt som skal lastes
+     * @param id BubbleId for objekt som skal låses og lastes
      * @return BubbleObject for {@code id}
      * @throws no.statkart.skif.exception.ObjectNotFoundException kastes hvis {@code id} ikke finnes
      * @throws no.statkart.skif.exception.LockedException         kastes hvis objekt er låst av en annen bruker
      */
     <T extends BubbleObject> T lock(BubbleId<? extends T> id);
+
+    /**
+     * Låser {@link BubbleObject} av type {@code <T>} for {@code id} av type {@code <I>} for kallende bruker og
+     * returnerer objektet.
+     *
+     * @param ids BubbleIds for objekter som skal låses og lastes
+     * @return BubbleObject fors {@code ids}
+     * @throws no.statkart.skif.exception.ObjectsNotFoundException kastes hvis noen {@code ids} ikke finnes
+     * @throws no.statkart.skif.exception.LockedException          kastes hvis et objekt er låst av en annen bruker
+     */
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids);
 
     /**
      * Låser opp {@link BubbleObject} av type {@code <T>} for {@code id} av type {@code <I>} dersom det er låst av

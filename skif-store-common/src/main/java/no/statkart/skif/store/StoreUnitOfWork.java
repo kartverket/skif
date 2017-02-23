@@ -76,6 +76,16 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> lockEntries(int level, Set<I> bubbleIds) {
+        Collection<StoreEntry> entries = wrappedStoreSession.lockEntries(level, bubbleIds);
+        for (StoreEntry entry : entries) {
+            modifiedMap.put(entry.getId(), entry);
+        }
+        markModified();
+        return entries;
+    }
+
+    @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry unlockEntry(int level, I bubbleId) {
         return wrappedStoreSession.unlockEntry(level, bubbleId);
     }

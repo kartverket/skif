@@ -1,5 +1,7 @@
 package no.statkart.skif.store;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimaps;
 import com.google.inject.Binding;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -9,6 +11,7 @@ import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.exception.NotLockedException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.locker.LockInfo;
@@ -17,11 +20,7 @@ import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementasjon av LockerStrategy som fungerer for BubbleIds som har en Long som value. Holder på alle
@@ -108,6 +107,47 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         return lockIsNew;
     }
 
+    @Override
+    public Set<BubbleId> lock(Set<BubbleId> ids) throws LockedException {
+        if (ids.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        String owner = serviceRequestContext.getUserName();
+
+        ensureLockMapInitialized();
+
+        Set<BubbleId> idsToLock = new HashSet<>(ids.size());
+        for (BubbleId id : ids) {
+            if (!insertedIds.contains(id)) {
+                LockInfo<?> lock = lockMap.get(id);
+                if (lock == null || !renewNotRequired(lock)) {
+                    idsToLock.add(id);
+                }
+            }
+        }
+
+        if (idsToLock.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        Set<BubbleId> newlyLocked = new HashSet<>(idsToLock.size());
+        Map<Class<?>, Set<LockKey<?>>> lockKeys = createLockKeys(idsToLock);
+        for (Map.Entry<Class<?>, Set<LockKey<?>>> entry : lockKeys.entrySet()) {
+            DBLockerService lockerService = getLockerService(entry.getKey());
+            Set<LockInfo> lockInfos = lockerService.lockAll(entry.getValue(), owner, LOCK_TIMEOUT);
+            for (LockInfo lock : lockInfos) {
+                BubbleId id = createBubbleIdFromLockKey(lock.getLockKey());
+                lockMap.put(id, lock);
+                if (lock.isNew()) {
+                    newLockIds.add(id);
+                    newlyLocked.add(id);
+                }
+            }
+        }
+
+        return newlyLocked;
+    }
 
     @Override
     public void unlock(BubbleId id) {

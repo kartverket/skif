@@ -90,6 +90,13 @@ public class StoreServiceWithReadCache implements StoreService {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids) {
+        Collection<T> lockedObjects = storeService.lockForList(ids);
+        readCache.putAll(lockedObjects);
+        return lockedObjects;
+    }
+
+    @Override
     public <I extends BubbleId<?>> void unlock(I id) {
         storeService.unlock(id);
     }

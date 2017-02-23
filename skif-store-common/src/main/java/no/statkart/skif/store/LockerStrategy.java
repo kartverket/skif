@@ -2,6 +2,8 @@ package no.statkart.skif.store;
 
 import no.statkart.skif.exception.LockedException;
 
+import java.util.Set;
+
 /**
  * @author Henrik Fredholm
  * @since 2.0
@@ -17,6 +19,16 @@ public interface LockerStrategy {
      *          Dersom element er låst av annen bruker
      */
     boolean lock(BubbleId id) throws LockedException;
+
+    /**
+     * Låser id-er for owner dersom dette er mulig.
+     *
+     * @param ids    Id-er som skal låses
+     * @return id-er hvor det ble tatt nye låser
+     * @throws no.statkart.skif.exception.LockedException
+     *          Dersom element er låst av annen bruker
+     */
+    Set<BubbleId> lock(Set<BubbleId> ids) throws LockedException;
 
     /**
      * Låser opp gjeldende id dersom denne kan låses opp. Nye elementer og endrede/slettede elementer kan ikke låses opp.

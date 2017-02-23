@@ -64,6 +64,11 @@ public class StoreServiceTestHelper {
             }
 
             @Override
+            public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids) {
+                return getObjects(ids);
+            }
+
+            @Override
             public <I extends BubbleId<?>> void unlock(I id) {
                 // no-op
             }

@@ -20,7 +20,6 @@ public interface StoreSession {
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<I> bubbleIds);
 
-
     /**
      * Henter alle objekter med spesifisert id. Metoden kaster exception hvis ikke alle objekter ble funnet
      */
@@ -132,6 +131,14 @@ public interface StoreSession {
 
 
     <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId);
+
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds);
+
+    <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<I> bubbleIds);
+
+    <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<I> bubbleIds);
+
+    <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects);
 
     <I extends BubbleId<?>> void unlock(I bubbleId);
 

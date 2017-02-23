@@ -78,6 +78,12 @@ public class StoreServiceWSBean extends SkifWebService<StoreServiceWSI> implemen
 
     @Override
     @WebMethod
+    public StoreTestBubbleList lockForList(@WebParam(name = "ids") StoreTestBubbleIdList ids, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        return wsServiceChain.lockForList(ids, context);
+    }
+
+    @Override
+    @WebMethod
     public void unlock(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         wsServiceChain.unlock(id, context);
     }

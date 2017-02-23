@@ -135,31 +135,22 @@ public abstract class AbstractStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<? extends I> bubbleIds) {
-        List<T> bubbleObjects = new ArrayList<>(bubbleIds.size());
-        lock(bubbleIds, bubbleObjects);
-        return bubbleObjects;
+        return storeSession.lock(bubbleIds);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<? extends I> bubbleIds) {
-        Set<T> bubbleObjects = new HashSet<>(bubbleIds.size());
-        lock(bubbleIds, bubbleObjects);
-        return bubbleObjects;
+        return storeSession.lock(bubbleIds);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<? extends I> bubbleIds) {
-        List<T> bubbleObjects = new ArrayList<>(bubbleIds.size());
-        lock(bubbleIds, bubbleObjects);
-        return bubbleObjects;
+        return storeSession.lock(bubbleIds);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<? extends I> bubbleIds, Collection<T> bubbleObjects) {
-        // TODO: implementer som batch
-        for (I bubbleId : bubbleIds) {
-            bubbleObjects.add(storeSession.lock(bubbleId));
-        }
+        storeSession.lock(bubbleIds, bubbleObjects);
     }
 
     @Override

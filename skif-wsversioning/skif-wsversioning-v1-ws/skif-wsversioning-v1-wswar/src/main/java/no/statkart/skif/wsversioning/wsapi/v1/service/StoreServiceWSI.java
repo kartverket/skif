@@ -26,6 +26,8 @@ public interface StoreServiceWSI extends ServiceWSI {
 
     WSVersioningBubble lock(WSVersioningBubbleId id, WSVersioningContext context) throws ServiceException;
 
+    WSVersioningBubbleList lockForList(WSVersioningBubbleIdList ids, WSVersioningContext context) throws ServiceException;
+
     void unlock(WSVersioningBubbleId id, WSVersioningContext context) throws ServiceException;
 
     boolean isLocked(WSVersioningBubbleId id, WSVersioningContext context) throws ServiceException;

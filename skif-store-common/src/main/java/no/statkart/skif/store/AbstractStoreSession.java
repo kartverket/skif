@@ -555,6 +555,67 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<I> bubbleIds) {
+        Collection<T> bubbleObjects;
+        if (bubbleIds instanceof Set) {
+            bubbleObjects = lock((Set<I>) bubbleIds);
+        } else if (bubbleIds instanceof List) {
+            bubbleObjects = lock((List<I>) bubbleIds);
+        } else {
+            checkNotNull(bubbleIds, "bubbleIds");
+            bubbleObjects = lock(new ArrayList<>(bubbleIds));
+        }
+        return bubbleObjects;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<I> bubbleIds) {
+        Set<T> result = new HashSet<>();
+        lock(bubbleIds, result);
+        return result;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<I> bubbleIds) {
+        List<T> result = new ArrayList<>();
+        lock(bubbleIds, result);
+        return result;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+        checkNotNull(bubbleIds, "bubbleIds");
+        Set<I> unlockedBubbleIds = null;
+
+        for (I bubbleId : bubbleIds) {
+            final StoreEntry storeEntry = storeCache.get(bubbleId);
+            if (storeEntry != null && storeEntry.isLocked()) {
+                //noinspection unchecked
+                bubbleObjects.add((T) storeEntry.getDerivedBubbleObjectCopyIfLocked(level, store));
+            } else {
+                if (unlockedBubbleIds == null) {
+                    unlockedBubbleIds = new HashSet<>(bubbleIds.size());
+                }
+                unlockedBubbleIds.add(bubbleId);
+            }
+        }
+
+        if (unlockedBubbleIds != null) {
+            if (unlockedBubbleIds.size() == 1) {
+                StoreEntry entry = lockEntry(level, unlockedBubbleIds.iterator().next());
+                //noinspection unchecked
+                bubbleObjects.add((T) entry.getDerivedBubbleObjectCopyIfLocked(level, store));
+            } else {
+                Collection<StoreEntry> entries = lockEntries(level, unlockedBubbleIds);
+                for (StoreEntry entry : entries) {
+                    //noinspection unchecked
+                    bubbleObjects.add((T) entry.getDerivedBubbleObjectCopyIfLocked(level, store));
+                }
+            }
+        }
+    }
+
+    @Override
     public final <I extends BubbleId<?>> void unlock(I bubbleId) {
         StoreEntry storeEntry = unlockEntry(level, bubbleId);
         removeModified(storeEntry);

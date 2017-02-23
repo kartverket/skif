@@ -1,7 +1,9 @@
 package no.statkart.skif.standalone.store;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -20,14 +22,17 @@ import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.StoreSessionClient;
 import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.service.StoreService;
+import no.statkart.skif.storetest.domain.basic.Simple;
+import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
+import org.fest.assertions.api.Assertions;
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +81,7 @@ public class StoreClientTest {
         Injector injector = createInjector();
         Store store = injector.getInstance(Store.class);
 
+        //noinspection unused
         UnitOfWork unitOfWork1 = store.beginUnitOfWork();
         UnitOfWork unitOfWork2 = store.beginUnitOfWork();
 
@@ -131,6 +137,7 @@ public class StoreClientTest {
 
         TestBubbleId<?> id = new TestBubbleId(1L);
 
+        //noinspection unused
         UnitOfWork unitOfWork1 = store.beginUnitOfWork();
 
         UnitOfWork unitOfWork2 = store.beginUnitOfWork();
@@ -221,6 +228,7 @@ public class StoreClientTest {
 
         TestBubbleId<?> id = null;
 
+        //noinspection ConstantConditions
         Assert.assertTrue(store.evict(id), "Evict av id=null skal gi true");
     }
 
@@ -304,12 +312,360 @@ public class StoreClientTest {
         }
     }
 
+    public void testLockSingleUngotten() {
+        SimpleId<?> id = new SimpleId<>(17L);
+        Simple object = new Simple(id);
+
+        StoreService storeService = Mockito.mock(StoreService.class);
+        Mockito.doReturn(object).when(storeService).lock(id);
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionClient storeSessionClient = new StoreSessionClient(
+                storeService,
+                SnapshotVersionContext.getInstance()
+        );
+
+        StoreClient storeClient = new StoreClient(storeSessionClient, injector);
+        try (UnitOfWork ignored = storeClient.beginUnitOfWork()) {
+            Simple locked = storeClient.lock(id);
+
+            assertThat(locked).isNotSameAs(object).isEqualTo(object);
+            Mockito.verify(storeService).lock(id);
+            Mockito.verifyNoMoreInteractions(storeService, idService);
+
+            Simple locked2 = storeClient.lock(id);
+            assertThat(locked2).isSameAs(locked);
+            Mockito.verifyNoMoreInteractions(storeService, idService);
+        }
+
+        Mockito.verify(storeService).unlock(id);
+        Mockito.verifyNoMoreInteractions(storeService, idService);
+    }
+
+    public void testLockSingleGotten() {
+        SimpleId<?> id = new SimpleId<>(17L);
+        Simple object = new Simple(id);
+        Simple objectLocked = new Simple(id, "A");
+
+        StoreService storeService = Mockito.mock(StoreService.class);
+        Mockito.doReturn(object).when(storeService).getObject(id);
+        Mockito.doReturn(objectLocked).when(storeService).lock(id);
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionClient storeSessionClient = new StoreSessionClient(
+                storeService,
+                SnapshotVersionContext.getInstance()
+        );
+
+        StoreClient storeClient = new StoreClient(storeSessionClient, injector);
+        try (UnitOfWork ignored = storeClient.beginUnitOfWork()) {
+            Simple gotten = storeClient.get(id);
+            assertThat(gotten).isSameAs(object);
+            assertThat(gotten.getText()).isNull();
+            Mockito.verify(storeService).getObject(id);
+
+            Simple locked = storeClient.lock(id);
+
+            assertThat(locked).isNotSameAs(gotten).isNotSameAs(objectLocked).isEqualTo(objectLocked);
+            assertThat(locked.getText()).isEqualTo("A");
+            Mockito.verify(storeService).lock(id);
+            Mockito.verifyNoMoreInteractions(storeService, idService);
+        }
+    }
+
+    public void testLockSinglePrelocked() {
+        SimpleId<?> id = new SimpleId<>(17L);
+        Simple object = new Simple(id);
+
+        StoreService storeService = Mockito.mock(StoreService.class);
+        Mockito.doReturn(object).when(storeService).getObject(id);
+        Mockito.doReturn(object).when(storeService).lock(id);
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionClient storeSessionClient = new StoreSessionClient(
+                storeService,
+                SnapshotVersionContext.getInstance()
+        );
+
+        StoreClient storeClient = new StoreClient(storeSessionClient, injector);
+        try (UnitOfWork ignored = storeClient.beginUnitOfWork()) {
+            Simple gotten = storeClient.get(id);
+            assertThat(gotten).isSameAs(object);
+            Mockito.verify(storeService).getObject(id);
+
+            Simple locked = storeClient.lock(id);
+
+            assertThat(locked).isNotSameAs(gotten).isEqualTo(gotten);
+            Mockito.verify(storeService).lock(id);
+            Mockito.verifyNoMoreInteractions(storeService, idService);
+        }
+    }
+
+    // At refresh blir kalt enkeltvis er en implementasjonsdetalj, ikke slik det skal være
+    public void testLockMultipleUngotten() {
+        SimpleId<?> id1 = new SimpleId<>(1L);
+        SimpleId<?> id2 = new SimpleId<>(2L);
+        Simple object1 = new Simple(id1, "A");
+        Simple object2 = new Simple(id2, "B");
+
+        StoreService storeService = Mockito.mock(StoreService.class);
+        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(storeService).lockForList(ImmutableSet.of(id1, id2));
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionClient storeSessionClient = new StoreSessionClient(
+                storeService,
+                SnapshotVersionContext.getInstance()
+        );
+
+        StoreClient storeClient = new StoreClient(storeSessionClient, injector);
+        try (UnitOfWork ignored = storeClient.beginUnitOfWork()) {
+            Set<Simple> locked = storeClient.lock(ImmutableSet.of(id1, id2));
+            ImmutableMap<? extends SimpleId<?>, Simple> lockedMap = Maps.uniqueIndex(locked, Simple::getId);
+
+            assertThat(locked).containsOnly(object1, object2);
+            assertThat(lockedMap.get(id1)).isNotSameAs(object1).isEqualTo(object1);
+            assertThat(lockedMap.get(id2)).isNotSameAs(object2).isEqualTo(object2);
+            Mockito.verify(storeService).lockForList(ImmutableSet.of(id1, id2));
+            Mockito.verifyNoMoreInteractions(storeService, idService);
+
+            Set<Simple> locked2 = storeClient.lock(ImmutableSet.of(id1, id2));
+            Assertions.assertThat(locked2).containsOnly(object1, object2);
+            ImmutableMap<? extends SimpleId<?>, Simple> lockedMap2 = Maps.uniqueIndex(locked2, Simple::getId);
+            assertThat(lockedMap2.get(id1)).isSameAs(lockedMap.get(id1));
+            assertThat(lockedMap2.get(id2)).isSameAs(lockedMap.get(id2));
+            Mockito.verifyNoMoreInteractions(storeService, idService);
+        }
+
+        Mockito.verify(storeService).unlock(id1);
+        Mockito.verify(storeService).unlock(id2);
+        Mockito.verifyNoMoreInteractions(storeService, idService);
+    }
+
+    public void testLockMultipleOneGotten() {
+        SimpleId<?> id1 = new SimpleId<>(1L);
+        SimpleId<?> id2 = new SimpleId<>(2L);
+        Simple object1 = new Simple(id1);
+        Simple object1Locked = new Simple(id1, "A");
+        Simple object2 = new Simple(id2, "B");
+
+        StoreService storeService = Mockito.mock(StoreService.class);
+        Mockito.doReturn(object1).when(storeService).getObject(id1);
+        Mockito.doReturn(ImmutableSet.of(object1Locked, object2)).when(storeService).lockForList(ImmutableSet.of(id1, id2));
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionClient storeSessionClient = new StoreSessionClient(
+                storeService,
+                SnapshotVersionContext.getInstance()
+        );
+
+        StoreClient storeClient = new StoreClient(storeSessionClient, injector);
+        try (UnitOfWork ignored = storeClient.beginUnitOfWork()) {
+            Simple gotten = storeClient.get(id1);
+            assertThat(gotten).isSameAs(object1);
+            assertThat(gotten.getText()).isNull();
+            Mockito.verify(storeService).getObject(id1);
+
+            Set<Simple> locked = storeClient.lock(ImmutableSet.of(id1, id2));
+            ImmutableMap<? extends SimpleId<?>, Simple> lockedMap = Maps.uniqueIndex(locked, Simple::getId);
+
+            assertThat(locked).containsOnly(object1, object2);
+            Simple locked1 = lockedMap.get(id1);
+            Simple locked2 = lockedMap.get(id2);
+            assertThat(locked1).isNotSameAs(object1Locked).isNotSameAs(gotten).isEqualTo(gotten).isEqualTo(object1Locked);
+            assertThat(locked2).isNotSameAs(object2).isEqualTo(object2);
+            assertThat(locked1.getText()).isEqualTo("A");
+            assertThat(locked2.getText()).isEqualTo("B");
+            Mockito.verify(storeService).lockForList(ImmutableSet.of(id1, id2));
+            Mockito.verifyNoMoreInteractions(storeService, idService);
+        }
+
+        Mockito.verify(storeService).unlock(id1);
+        Mockito.verify(storeService).unlock(id2);
+        Mockito.verifyNoMoreInteractions(storeService, idService);
+    }
+
+    // Denne testen er foreløpig ikke mulig, da klienten ikke ser forskjell på nye og gamle låser.
+    @Test(enabled = false)
+    public void testLockMultipleAllPrelocked() {
+        SimpleId<?> id1 = new SimpleId<>(1L);
+        SimpleId<?> id2 = new SimpleId<>(2L);
+        Simple object1 = new Simple(id1, "A");
+        Simple object2 = new Simple(id2, "B");
+
+        StoreService storeService = Mockito.mock(StoreService.class);
+        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(storeService).getObjects(ImmutableSet.of(id1, id2));
+        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(storeService).lockForList(ImmutableSet.of(id1, id2));
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionClient storeSessionClient = new StoreSessionClient(
+                storeService,
+                SnapshotVersionContext.getInstance()
+        );
+
+        StoreClient storeClient = new StoreClient(storeSessionClient, injector);
+        try (UnitOfWork ignored = storeClient.beginUnitOfWork()) {
+            Set<Simple> gotten = storeClient.get(ImmutableSet.of(id1, id2));
+            assertThat(gotten).containsOnly(object1, object2);
+            ImmutableMap<? extends SimpleId<?>, Simple> gottenMap = Maps.uniqueIndex(gotten, Simple::getId);
+            assertThat(gottenMap.get(id1)).isSameAs(object1);
+            assertThat(gottenMap.get(id2)).isSameAs(object2);
+            Mockito.verify(storeService).getObjects(ImmutableSet.of(id1, id2));
+
+            Set<Simple> locked = storeClient.lock(ImmutableSet.of(id1, id2));
+            ImmutableMap<? extends SimpleId<?>, Simple> lockedMap = Maps.uniqueIndex(locked, Simple::getId);
+
+            assertThat(locked).containsOnly(object1, object2);
+            assertThat(lockedMap.get(id1)).isNotSameAs(gottenMap.get(id1)).isEqualTo(object1);
+            assertThat(lockedMap.get(id2)).isNotSameAs(gottenMap.get(id2)).isEqualTo(object2);
+            Mockito.verify(storeService).lockForList(ImmutableSet.of(id1, id2));
+            Mockito.verifyNoMoreInteractions(storeService, idService);
+        }
+
+        Mockito.verifyNoMoreInteractions(storeService, idService);
+    }
+
+    // Denne testen er foreløpig ikke mulig, da klienten ikke ser forskjell på nye og gamle låser.
+    @Test(enabled = false)
+    public void testLockMultipleOnePrelockedOtherUngotten() {
+        SimpleId<?> id1 = new SimpleId<>(1L);
+        SimpleId<?> id2 = new SimpleId<>(2L);
+        Simple object1 = new Simple(id1, "A");
+        Simple object2 = new Simple(id2, "B");
+
+        StoreService storeService = Mockito.mock(StoreService.class);
+        Mockito.doReturn(object1).when(storeService).getObject(id1);
+        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(storeService).lockForList(ImmutableSet.of(id1, id2));
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionClient storeSessionClient = new StoreSessionClient(
+                storeService,
+                SnapshotVersionContext.getInstance()
+        );
+
+        StoreClient storeClient = new StoreClient(storeSessionClient, injector);
+        try (UnitOfWork ignored = storeClient.beginUnitOfWork()) {
+            Simple gotten = storeClient.get(id1);
+            assertThat(gotten).isSameAs(object1);
+            Mockito.verify(storeService).getObject(id1);
+
+            Set<Simple> locked = storeClient.lock(ImmutableSet.of(id1, id2));
+            ImmutableMap<? extends SimpleId<?>, Simple> lockedMap = Maps.uniqueIndex(locked, Simple::getId);
+
+            assertThat(locked).containsOnly(object1, object2);
+            assertThat(lockedMap.get(id1)).isNotSameAs(gotten).isNotSameAs(object1).isEqualTo(object1);
+            assertThat(lockedMap.get(id2)).isNotSameAs(object2).isEqualTo(object2);
+            Mockito.verify(storeService).lockForList(ImmutableSet.of(id1, id2));
+            Mockito.verifyNoMoreInteractions(storeService, idService);
+        }
+
+        Mockito.verifyNoMoreInteractions(storeService, idService);
+    }
+
+    // Denne testen er foreløpig ikke mulig, da klienten ikke ser forskjell på nye og gamle låser.
+    @Test(enabled = false)
+    public void testLockMultipleOnePrelockedOtherGotten() {
+        SimpleId<?> id1 = new SimpleId<>(1L);
+        SimpleId<?> id2 = new SimpleId<>(2L);
+        Simple object1 = new Simple(id1, "A");
+        Simple object2 = new Simple(id2);
+        Simple object2Locked = new Simple(id2, "B");
+
+        StoreService storeService = Mockito.mock(StoreService.class);
+        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(storeService).getObjects(ImmutableSet.of(id1, id2));
+        Mockito.doReturn(ImmutableSet.of(object1, object2Locked)).when(storeService).lockForList(ImmutableSet.of(id1, id2));
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionClient storeSessionClient = new StoreSessionClient(
+                storeService,
+                SnapshotVersionContext.getInstance()
+        );
+
+        StoreClient storeClient = new StoreClient(storeSessionClient, injector);
+        try (UnitOfWork ignored = storeClient.beginUnitOfWork()) {
+            Set<Simple> gotten = storeClient.get(ImmutableSet.of(id1, id2));
+            ImmutableMap<? extends SimpleId<?>, Simple> gottenMap = Maps.uniqueIndex(gotten, Simple::getId);
+            assertThat(gottenMap.get(id1)).isSameAs(object1);
+            assertThat(gottenMap.get(id2)).isSameAs(object2);
+            assertThat(gottenMap.get(id1).getText()).isEqualTo("A");
+            assertThat(gottenMap.get(id2).getText()).isNull();
+            Mockito.verify(storeService).getObjects(ImmutableSet.of(id1, id2));
+
+            Set<Simple> locked = storeClient.lock(ImmutableSet.of(id1, id2));
+            ImmutableMap<? extends SimpleId<?>, Simple> lockedMap = Maps.uniqueIndex(locked, Simple::getId);
+
+            Assertions.assertThat(locked).containsOnly(object1, object2);
+            assertThat(lockedMap.get(id1)).isNotSameAs(object1).isEqualTo(object1);
+            assertThat(lockedMap.get(id2)).isNotSameAs(object2Locked).isNotSameAs(gottenMap.get(id2)).isEqualTo(object2Locked);
+            assertThat(lockedMap.get(id1).getText()).isEqualTo("A");
+            assertThat(lockedMap.get(id2).getText()).isEqualTo("B");
+            Mockito.verify(storeService).lockForList(ImmutableSet.of(id1, id2));
+            Mockito.verifyNoMoreInteractions(storeService, idService);
+        }
+        
+        Mockito.verifyNoMoreInteractions(storeService, idService);
+    }
 
     /**
      * En mockup-StoreService som bare returnerer nyinstansierte bobleobjekter.
      */
     public static class StoreClientTestStoreService implements StoreService {
-        private final Set<BubbleId<?>> lockedIds = new HashSet<BubbleId<?>>();
+        private final Set<BubbleId<?>> lockedIds = new HashSet<>();
 
         public void clearLocks() {
             lockedIds.clear();
@@ -321,9 +677,7 @@ public class StoreClientTest {
                 T bubble = bubbleType.newInstance();
                 bubble.setId(id);
                 return bubble;
-            } catch (InstantiationException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -335,7 +689,7 @@ public class StoreClientTest {
 
         @Override
         public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjects(Collection<I> ids) {
-            List<T> objects = new ArrayList<T>(ids.size());
+            List<T> objects = new ArrayList<>(ids.size());
             for (I id : ids) {
                 objects.add(getObject(id));
             }
@@ -362,6 +716,15 @@ public class StoreClientTest {
             T bubble = createBubble(id);
             lockedIds.add(id);
             return bubble;
+        }
+
+        @Override
+        public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids) {
+            List<T> objects = new ArrayList<>(ids.size());
+            for (I id : ids) {
+                objects.add(lock(id));
+            }
+            return objects;
         }
 
         @Override

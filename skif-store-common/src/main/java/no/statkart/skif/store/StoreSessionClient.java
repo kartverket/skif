@@ -15,6 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * StoreSession som utgjør avsluttende ledd på klienten. Klassen anvender en {@link StoreService} for å hente
@@ -54,11 +57,18 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId) {
-        // TODO: SKIF-610. Midlertidig disabling av denne i påvente av GBOK-9889. Gjør klienten feiler.
-//        if (level==0) {
-//            throw new ImplementationException("Lock on client must be done in a UnitOfWork");
-//        }
+        if (level==0) {
+            throw new ImplementationException("Lock on client must be done in a UnitOfWork");
+        }
         return super.lock(bubbleId);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
+        if (level==0) {
+            throw new ImplementationException("Lock on client must be done in a UnitOfWork");
+        }
+        super.lock(bubbleIds, bubbleObjects);
     }
 
     protected boolean isLocked(StoreEntry storeEntry) {
@@ -221,6 +231,69 @@ public class StoreSessionClient extends AbstractStoreSession {
             storeEntry.setLockCreatedByLevel(level);
         }
         return storeEntry;
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> lockEntries(int level, Set<I> bubbleIds) {
+        Collection<StoreEntry> result = new ArrayList<>(bubbleIds.size());
+
+        List<StoreEntry> unlockedEntries = new ArrayList<>();
+        List<I> missing = new ArrayList<>();
+
+        for (I bubbleId : bubbleIds) {
+            StoreEntry storeEntry = storeCache.get(bubbleId);
+            if (storeEntry != null) {
+                // Entry finnes, må sjekke om objekt er låst på underliggende nivå
+                int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
+                if (lockLevel != level) {
+                    // Ikke allerede låst for level
+                    if (lockLevel >= 0) {
+                        // Låst for underliggende level
+                        BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
+                        BubbleObject copy = CopyHelper.copy(derivedBubbleObject);
+                        copy.register(store);
+                        storeEntry.setLocked(level, copy);
+                        result.add(storeEntry);
+                    } else {
+                        unlockedEntries.add(storeEntry);
+                    }
+                }
+            } else {
+                missing.add(bubbleId);
+            }
+        }
+
+        Set<BubbleId<?>> fetchIds = Stream.concat(unlockedEntries.stream().map(StoreEntry::getId), missing.stream()).collect(Collectors.toSet());
+        Map<? extends BubbleId<?>, BubbleObject> lockedObjects = storeService.lockForList(fetchIds).stream().collect(Collectors.toMap(BubbleObject::getId, Function.identity()));
+
+        for (StoreEntry storeEntry : unlockedEntries) {
+            // Ikke låst. Erstatt eksisterende readOnly instans med hent seneste versjon fra server hvis nyere.
+            BubbleObject lockedBubbleObject = lockedObjects.get(storeEntry.getId());
+            int levelForExisting = storeEntry.getLevelForDerivedBubbleObject(level);
+            BubbleObject existingInstance = storeEntry.getDerivedBubbleObject(levelForExisting);
+            if (replaceVersion(existingInstance, lockedBubbleObject)) {
+                lockedBubbleObject.register(store);
+                storeEntry.setBubbleObject(levelForExisting, lockedBubbleObject);
+            }
+            // Lager en kopi til bruk for oppdatering slik at opprinnelig instans fra serveren forblir uendret og kan brukes ifm caching
+            BubbleObject copy = CopyHelper.copy(lockedBubbleObject);
+            copy.register(store);
+            storeEntry.setLocked(level, copy);
+            storeEntry.setLockCreatedByLevel(level);
+            result.add(storeEntry);
+        }
+
+        for (I bubbleId : missing) {
+            BubbleObject lockedBubbleObject = lockedObjects.get(bubbleId);
+            StoreEntry storeEntry = storeCache.register(level, null, lockedBubbleObject);
+            BubbleObject copy = CopyHelper.copy(lockedBubbleObject);
+            copy.register(store);
+            storeEntry.setLocked(level, copy);
+            storeEntry.setLockCreatedByLevel(level);
+            result.add(storeEntry);
+        }
+
+        return result;
     }
 
     @Override
