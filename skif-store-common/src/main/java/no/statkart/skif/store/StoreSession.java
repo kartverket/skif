@@ -142,6 +142,8 @@ public interface StoreSession {
 
     <I extends BubbleId<?>> void unlock(I bubbleId);
 
+    void unlock(Collection<? extends BubbleId<?>> bubbleIds);
+
     <I extends BubbleId<?>> boolean isLocked(I bubbleId);
 
     <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);

@@ -621,6 +621,14 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         removeModified(storeEntry);
     }
 
+    @Override
+    public void unlock(Collection<? extends BubbleId<?>> bubbleIds) {
+        Collection<StoreEntry> storeEntries = unlockEntries(level, bubbleIds);
+        for (StoreEntry storeEntry : storeEntries) {
+            removeModified(storeEntry);
+        }
+    }
+
     public StoreUnitOfWork beginUnitOfWork() {
         return new StoreUnitOfWork(level + 1, this, storeCache, store);
     }

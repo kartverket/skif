@@ -83,4 +83,9 @@ public class StoreServiceImpl implements StoreService {
         store.unlock(id);
     }
 
+    @Override
+    public void unlockForList(Collection<? extends BubbleId<?>> ids) {
+        store.unlock(ids);
+    }
+
 }

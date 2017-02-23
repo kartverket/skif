@@ -83,6 +83,11 @@ public class StoreServiceWSBean extends SkifWebService<StoreServiceWSI> implemen
     }
 
     @Override
+    public void unlockForList(@WebParam(name = "ids") WSVersioningBubbleIdList ids, @WebParam(name = "context") WSVersioningContext context) throws ServiceException {
+        wsServiceChain.unlockForList(ids, context);
+    }
+
+    @Override
     public boolean isLocked(@WebParam(name="id") WSVersioningBubbleId id, @WebParam(name="context") WSVersioningContext context) throws ServiceException {
         return wsServiceChain.isLocked(id, context);
     }

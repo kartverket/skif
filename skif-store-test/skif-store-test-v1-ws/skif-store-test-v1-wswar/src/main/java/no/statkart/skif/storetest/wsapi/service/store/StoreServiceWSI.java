@@ -27,6 +27,8 @@ public interface StoreServiceWSI extends ServiceWSI {
 
     void unlock(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
 
+    void unlockForList(StoreTestBubbleIdList ids, StoreTestContext context) throws ServiceException;
+
     boolean isLocked(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
 
 }

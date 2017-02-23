@@ -102,6 +102,11 @@ public class StoreServiceWithReadCache implements StoreService {
     }
 
     @Override
+    public void unlockForList(Collection<? extends BubbleId<?>> ids) {
+        storeService.unlockForList(ids);
+    }
+
+    @Override
     public <I extends BubbleId<?>> boolean isLocked(I id) {
         return storeService.isLocked(id);
     }

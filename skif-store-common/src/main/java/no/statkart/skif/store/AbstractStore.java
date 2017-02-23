@@ -160,6 +160,11 @@ public abstract class AbstractStore implements Store {
     }
 
     @Override
+    public void unlock(Collection<? extends BubbleId<?>> bubbleIds) {
+        storeSession.unlock(bubbleIds);
+    }
+
+    @Override
     public void register(BubbleTransfer transfer) {
         storeSession.register(transfer);
     }

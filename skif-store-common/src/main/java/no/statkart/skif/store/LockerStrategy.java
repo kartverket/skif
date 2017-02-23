@@ -41,6 +41,16 @@ public interface LockerStrategy {
     void unlock(BubbleId id);
 
     /**
+     * Låser opp gjeldende id-er dersom disse kan låses opp. Nye elementer og endrede/slettede elementer kan ikke låses opp.
+     * Elementer som er låst i nåværende transaksjon vil bli forsøkt låst opp direkte, mens elementer som har blitt låst
+     * tidligere vil bli lagt i en liste som skal låses opp ved commit av denne transaksjonen. (Låses opp ved kall til
+     * {@link #consumeAllLocks()} eller {@link #releaseLocksOnNonTransactionalScopeCompletion()}.)
+     *
+     * @param ids    Id-er som skal låses opp
+     */
+    void unlock(Set<BubbleId> ids);
+
+    /**
      * Sjekker om id er låst av owner.
      *
      * @param id    Id som skal sjekkes

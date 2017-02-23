@@ -70,6 +70,10 @@ public class WSVersioningServerModule extends SkifServerModule {
             }
 
             @Override
+            public void unlock(Set<BubbleId> ids) {
+            }
+
+            @Override
             public boolean isLockedByCaller(BubbleId id) {
                 return true;
             }

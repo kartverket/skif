@@ -602,6 +602,63 @@ public class StoreSessionServer extends AbstractStoreSession {
         return storeEntry;
     }
 
+    @Override
+    public Collection<StoreEntry> unlockEntries(int level, Collection<? extends BubbleId<?>> bubbleIds) {
+        List<StoreEntry> entries = new ArrayList<>(bubbleIds.size());
+        Set<BubbleId> unlockIds = new HashSet<>(bubbleIds.size());
+
+        // Gjør dette i tre trinn ettersom hvor sannsynlig det er at de feiler, slik at ingen trinn skal bli bare delvis gjennomført.
+        // Trinn 1 (denne kan ende opp med å bare bli delvis gjennomført, men den er uten sideeffekter)
+        for (BubbleId<?> bubbleId : bubbleIds) {
+            StoreEntry storeEntry = storeCache.get(bubbleId);
+            if (storeEntry != null) {
+                switch (storeEntry.getDerivedState(level)) {
+                    case NULL:
+                    case UNCHANGED:
+                        if (isLocked(storeEntry)) {
+                            if (storeEntry.getLockCreatedByLevel() == level) {
+                                unlockIds.add(bubbleId);
+                            }
+                        }
+                        entries.add(storeEntry);
+                        break;
+                    default:
+                        throw new ImplementationException("Object has been changed and can not be unlocked");
+                }
+            } else {
+                // SKIF-480: Skal klienten kunne låse opp ting, så må server-store være villig til å låse opp objekter den ikke kjenner til.
+                if (lockerStrategy.isLockedByCaller(bubbleId)) {
+                    unlockIds.add(bubbleId);
+                }
+            }
+        }
+
+        // Trinn 2
+        if (!unlockIds.isEmpty()) {
+            lockerStrategy.unlock(unlockIds);
+        }
+
+        // Trinn 3 (dette skal være ren bokføring)
+        for (StoreEntry storeEntry : entries) {
+            if (isLocked(storeEntry)) {
+                if (storeEntry.getLockCreatedByLevel() == level) {
+                    storeEntry.setLockCreatedByLevel(-1);
+                }
+                if (level>0) {
+                    // På serveren kan disse være endret og evt flushet, men det vil bli fanget opp senere siden
+                    // man ikke har kallt Store.update. Videre vil objektet være knyttet til hibernate sessionen
+                    // og siden det ikke evictes fra denne vil man uansett få tilbake samme instans ved get.
+                    // Hvis kan i stedet for unlock kalte undo ville man ha fått en feil hvis objektet fra
+                    // flushet.
+                    storeEntry.setBubbleObject(level, null);
+                }
+                storeEntry.unlock(level);
+            }
+        }
+
+        return entries;
+    }
+
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {

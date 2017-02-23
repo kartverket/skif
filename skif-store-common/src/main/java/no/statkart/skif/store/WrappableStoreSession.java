@@ -30,6 +30,8 @@ public interface WrappableStoreSession extends StoreSession {
 
     <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry unlockEntry(int level, I bubbleId);
 
+    Collection<StoreEntry> unlockEntries(int level, Collection<? extends BubbleId<?>> bubbleIds);
+
     <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId);
 
     boolean evictAllEntries(int level);

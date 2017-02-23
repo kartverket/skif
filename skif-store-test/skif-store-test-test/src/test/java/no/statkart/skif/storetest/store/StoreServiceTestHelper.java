@@ -74,6 +74,11 @@ public class StoreServiceTestHelper {
             }
 
             @Override
+            public void unlockForList(Collection<? extends BubbleId<?>> ids) {
+                // no-op
+            }
+
+            @Override
             public <I extends BubbleId<?>> boolean isLocked(I id) {
                 throw  new NotImplementedException();
             }

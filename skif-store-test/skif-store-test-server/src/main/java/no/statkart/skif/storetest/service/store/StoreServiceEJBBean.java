@@ -82,4 +82,10 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
     public <I extends BubbleId<?>> void unlock(I id) {
         serviceChain.unlock(id);
     }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void unlockForList(Collection<? extends BubbleId<?>> ids) {
+        serviceChain.unlockForList(ids);
+    }
 }

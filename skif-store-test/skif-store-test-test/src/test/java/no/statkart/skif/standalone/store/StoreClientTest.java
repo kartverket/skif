@@ -345,7 +345,7 @@ public class StoreClientTest {
             Mockito.verifyNoMoreInteractions(storeService, idService);
         }
 
-        Mockito.verify(storeService).unlock(id);
+        Mockito.verify(storeService).unlockForList(ImmutableSet.of(id));
         Mockito.verifyNoMoreInteractions(storeService, idService);
     }
 
@@ -464,8 +464,7 @@ public class StoreClientTest {
             Mockito.verifyNoMoreInteractions(storeService, idService);
         }
 
-        Mockito.verify(storeService).unlock(id1);
-        Mockito.verify(storeService).unlock(id2);
+        Mockito.verify(storeService).unlockForList(ImmutableSet.of(id1, id2));
         Mockito.verifyNoMoreInteractions(storeService, idService);
     }
 
@@ -514,8 +513,7 @@ public class StoreClientTest {
             Mockito.verifyNoMoreInteractions(storeService, idService);
         }
 
-        Mockito.verify(storeService).unlock(id1);
-        Mockito.verify(storeService).unlock(id2);
+        Mockito.verify(storeService).unlockForList(ImmutableSet.of(id1, id2));
         Mockito.verifyNoMoreInteractions(storeService, idService);
     }
 
@@ -730,6 +728,11 @@ public class StoreClientTest {
         @Override
         public <I extends BubbleId<?>> void unlock(I id) {
             lockedIds.remove(id);
+        }
+
+        @Override
+        public void unlockForList(Collection<? extends BubbleId<?>> ids) {
+            lockedIds.removeAll(ids);
         }
 
         @Override

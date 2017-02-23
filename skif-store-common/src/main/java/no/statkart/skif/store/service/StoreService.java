@@ -91,12 +91,18 @@ public interface StoreService {
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids);
 
     /**
-     * Låser opp {@link BubbleObject} av type {@code <T>} for {@code id} av type {@code <I>} dersom det er låst av
-     * kallende bruker.
+     * Låser opp {@link BubbleObject} for {@code id} av type {@code <I>} dersom det er låst av kallende bruker.
      *
      * @param id BubbleId for objekt som skal låses opp
      */
     <I extends BubbleId<?>> void unlock(I id);
+
+    /**
+     * Låser opp {@link BubbleObject}-er for gitte {@code ids} dersom det er låst av kallende bruker.
+     *
+     * @param ids BubbleIds for objekter som skal låses opp
+     */
+    void unlockForList(Collection<? extends BubbleId<?>> ids);
 
     /**
      * Rerturnerer true dersom objektet er låst av kallende bruker

@@ -1,12 +1,6 @@
 package no.statkart.skif.store;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimaps;
-import com.google.inject.Binding;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import com.google.inject.*;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
@@ -163,6 +157,33 @@ public class TransactionalLockerStrategy implements LockerStrategy {
             }
         } else {
             unlockIds.add(id);
+        }
+    }
+
+    @Override
+    public void unlock(Set<BubbleId> ids) {
+        String owner = serviceRequestContext.getUserName();
+        Set<BubbleId> unlockNow = new HashSet<>(ids.size());
+
+        for (BubbleId id : ids) {
+            if (insertedIds.contains(id)) {
+                throw new ImplementationException("Attempted to unlock inserted object: " + id.toString());
+            } else if (modifiedIds.contains(id)) {
+                throw new ImplementationException("Attempted to unlock modified object: " + id.toString());
+            } else if (newLockIds.remove(id)) {
+                unlockNow.add(id);
+            } else {
+                unlockIds.add(id);
+            }
+        }
+
+        Map<Class<?>, Set<LockKey<?>>> unlockMap = createLockKeys(unlockNow);
+        for (Map.Entry<Class<?>, Set<LockKey<?>>> entry : unlockMap.entrySet()) {
+            DBLockerService lockerService = getLockerService(entry.getKey());
+            lockerService.unlockAll(entry.getValue(), owner);
+        }
+        if (lockMap != null) {
+            lockMap.keySet().removeAll(unlockNow);
         }
     }
 

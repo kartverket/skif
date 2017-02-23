@@ -1614,4 +1614,161 @@ public class StoreSessionServerTest {
         Mockito.verify(persistenceSessionManager).refresh(object2);
         Mockito.verifyNoMoreInteractions(persistenceSessionManager, lockerStrategy, idService);
     }
+
+    public void testUnlockSingleUnloaded() {
+        SimpleId<?> id = new SimpleId<>(17L);
+
+        PersistenceSessionManager persistenceSessionManager = Mockito.mock(PersistenceSessionManager.class);
+        LockerStrategy lockerStrategy = Mockito.mock(LockerStrategy.class);
+        Mockito.when(lockerStrategy.isLockedByCaller(id)).thenReturn(true, false);
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionServer storeSessionServer = new StoreSessionServer(
+                persistenceSessionManager,
+                Providers.of(null),
+                Providers.of(SnapshotVersion.CURRENT),
+                lockerStrategy,
+                StandAloneTestHelper.getBubbleDependencyComparator(),
+                null,
+                null,
+                null
+        );
+
+        StoreServer storeServer = new StoreServer(storeSessionServer, injector);
+        storeServer.unlock(id);
+
+        Mockito.verify(lockerStrategy).isLockedByCaller(id);
+        Mockito.verify(lockerStrategy).unlock(id);
+        Mockito.verifyNoMoreInteractions(persistenceSessionManager, lockerStrategy, idService);
+
+        storeServer.unlock(id);
+        Mockito.verify(lockerStrategy, Mockito.times(2)).isLockedByCaller(id);
+        Mockito.verifyNoMoreInteractions(persistenceSessionManager, lockerStrategy, idService);
+    }
+
+    public void testUnlockSingleLocked() {
+        SimpleId<?> id = new SimpleId<>(17L);
+        Simple object = new Simple(id);
+
+        PersistenceSessionManager persistenceSessionManager = Mockito.mock(PersistenceSessionManager.class);
+        Mockito.doReturn(object).when(persistenceSessionManager).refresh(id);
+        LockerStrategy lockerStrategy = Mockito.mock(LockerStrategy.class);
+        Mockito.doReturn(true).when(lockerStrategy).lock(id);
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionServer storeSessionServer = new StoreSessionServer(
+                persistenceSessionManager,
+                Providers.of(null),
+                Providers.of(SnapshotVersion.CURRENT),
+                lockerStrategy,
+                StandAloneTestHelper.getBubbleDependencyComparator(),
+                null,
+                null,
+                null
+        );
+
+        StoreServer storeServer = new StoreServer(storeSessionServer, injector);
+        storeServer.lock(id);
+        Mockito.reset(persistenceSessionManager, lockerStrategy);
+
+        storeServer.unlock(id);
+        Mockito.verify(lockerStrategy).unlock(id);
+        Mockito.verifyNoMoreInteractions(persistenceSessionManager, lockerStrategy, idService);
+    }
+
+    public void testUnlockMultipleUnloaded() {
+        SimpleId<?> id1 = new SimpleId<>(1L);
+        SimpleId<?> id2 = new SimpleId<>(2L);
+
+        PersistenceSessionManager persistenceSessionManager = Mockito.mock(PersistenceSessionManager.class);
+        LockerStrategy lockerStrategy = Mockito.mock(LockerStrategy.class);
+        Mockito.when(lockerStrategy.isLockedByCaller(id1)).thenReturn(true, false);
+        Mockito.when(lockerStrategy.isLockedByCaller(id2)).thenReturn(true, false);
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionServer storeSessionServer = new StoreSessionServer(
+                persistenceSessionManager,
+                Providers.of(null),
+                Providers.of(SnapshotVersion.CURRENT),
+                lockerStrategy,
+                StandAloneTestHelper.getBubbleDependencyComparator(),
+                null,
+                null,
+                null
+        );
+
+        StoreServer storeServer = new StoreServer(storeSessionServer, injector);
+        storeServer.unlock(ImmutableSet.of(id1, id2));
+
+        Mockito.verify(lockerStrategy).isLockedByCaller(id1);
+        Mockito.verify(lockerStrategy).isLockedByCaller(id2);
+        Mockito.verify(lockerStrategy).unlock(ImmutableSet.of(id1, id2));
+        Mockito.verifyNoMoreInteractions(persistenceSessionManager, lockerStrategy, idService);
+
+        storeServer.unlock(ImmutableSet.of(id1, id2));
+        Mockito.verify(lockerStrategy, Mockito.times(2)).isLockedByCaller(id1);
+        Mockito.verify(lockerStrategy, Mockito.times(2)).isLockedByCaller(id2);
+        Mockito.verifyNoMoreInteractions(persistenceSessionManager, lockerStrategy, idService);
+    }
+
+    public void testUnlockMultipleLocked() {
+        SimpleId<?> id1 = new SimpleId<>(1L);
+        SimpleId<?> id2 = new SimpleId<>(2L);
+        Simple object1 = new Simple(id1, "A");
+        Simple object2 = new Simple(id2, "B");
+
+        PersistenceSessionManager persistenceSessionManager = Mockito.mock(PersistenceSessionManager.class);
+        Mockito.doReturn(object1).when(persistenceSessionManager).refresh(id1);
+        Mockito.doReturn(object2).when(persistenceSessionManager).refresh(id2);
+        LockerStrategy lockerStrategy = Mockito.mock(LockerStrategy.class);
+        Mockito.doReturn(ImmutableSet.of(id1, id2)).when(lockerStrategy).lock(ImmutableSet.of(id1, id2));
+        IdService idService = Mockito.mock(IdService.class);
+
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(IdService.class).toInstance(idService);
+            }
+        });
+
+        StoreSessionServer storeSessionServer = new StoreSessionServer(
+                persistenceSessionManager,
+                Providers.of(null),
+                Providers.of(SnapshotVersion.CURRENT),
+                lockerStrategy,
+                StandAloneTestHelper.getBubbleDependencyComparator(),
+                null,
+                null,
+                null
+        );
+
+        StoreServer storeServer = new StoreServer(storeSessionServer, injector);
+        storeServer.lock(ImmutableSet.of(id1, id2));
+        Mockito.reset(persistenceSessionManager, lockerStrategy);
+
+        storeServer.unlock(ImmutableSet.of(id1, id2));
+        Mockito.verify(lockerStrategy).unlock(ImmutableSet.of(id1, id2));
+        Mockito.verifyNoMoreInteractions(persistenceSessionManager, lockerStrategy, idService);
+    }
 }

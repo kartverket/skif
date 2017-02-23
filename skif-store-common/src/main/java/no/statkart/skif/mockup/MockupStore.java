@@ -267,6 +267,11 @@ public class MockupStore implements Store {
     }
 
     @Override
+    public void unlock(Collection<? extends BubbleId<?>> bubbleIds) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public void registerTransfer(UnitOfWorkTransfer transfer) {
         throw new NotImplementedException();
     }

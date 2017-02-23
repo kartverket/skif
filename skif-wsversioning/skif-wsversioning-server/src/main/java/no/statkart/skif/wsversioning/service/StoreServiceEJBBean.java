@@ -71,6 +71,11 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
     }
 
     @Override
+    public void unlockForList(Collection<? extends BubbleId<?>> ids) {
+        serviceChain.unlockForList(ids);
+    }
+
+    @Override
     public <I extends BubbleId<?>> boolean isLocked(I id) {
         return serviceChain.isLocked(id);
     }
