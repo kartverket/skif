@@ -3,6 +3,7 @@ package no.statkart.skif.store.persistence.hibernate;
 import com.google.common.collect.Multimap;
 import no.statkart.matrikkel.persistens.hibernate.bubbleref.BubbleRefIdPersister;
 import no.statkart.skif.store.EntityComponent;
+import no.statkart.skif.util.HibernateHelper;
 import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -13,6 +14,7 @@ import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.*;
 
 import java.util.Collection;
@@ -44,7 +46,6 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
      *
      * @param object             a helt eller delvis initialisert objekt.
      * @param initializedObjects set av objekter som methoden allerede har initialisert
-     * @throws org.hibernate.HibernateException
      *
      */
     protected void ensureInitialized(Object object, IdentityHashMap<Object, Object> initializedObjects) throws HibernateException {
@@ -55,7 +56,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
 
         final SessionImpl sessionImpl = (SessionImpl) session();
         final SessionFactoryImplementor sessionFactory = sessionImpl.getFactory();
-        ClassMetadata classMetadata = sessionFactory.getClassMetadata(object.getClass());
+        ClassMetadata classMetadata = HibernateHelper.getClassMetadata(sessionImpl, object);
 
         if (classMetadata == null) {
             Hibernate.initialize(object);
@@ -63,9 +64,16 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
         }
         if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
 
+        Object persistentObject;
+        if (object instanceof HibernateProxy) {
+            persistentObject = ((HibernateProxy) object).getHibernateLazyInitializer().getImplementation();
+        } else {
+            persistentObject = object;
+        }
+
         EntityPersister persister = (EntityPersister) classMetadata;
         Type[] types = persister.getPropertyTypes();
-        Object[] values = persister.getPropertyValues(object, EntityMode.POJO);
+        Object[] values = persister.getPropertyValues(persistentObject, EntityMode.POJO);
         CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
 
         ensureInitialized(types, values, sessionImpl, sessionFactory, cascadeStyles, initializedObjects);
