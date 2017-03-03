@@ -14,8 +14,11 @@ import no.statkart.skif.util.CopyHelper;
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.proxy.HibernateProxy;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 /**
  * Dette er ting som ikke kan testes med det som er tilgjengelig for HibernatePersistenceSessionTest da de krever
@@ -43,10 +46,13 @@ public class HibernatePersistenceSessionTest2 extends StoreTestServerTestCase {
 
         Session session = hibernatePersistenceSessionMaster.reserveSession();
         try {
-            session.createCriteria(BubbleWithEntityComponent.class)
+            List list = session.createCriteria(BubbleWithEntityComponent.class)
                     .add(Restrictions.idEq(id))
                     .setFetchMode("level1Component", FetchMode.SELECT)
                     .list();
+
+            BubbleWithEntityComponent entity = (BubbleWithEntityComponent) list.get(0);
+            Assert.assertTrue(entity.getLevel1Component() instanceof HibernateProxy);
 
             BubbleWithEntityComponent bubble = hibernatePersistenceSessionMaster.get(id);
             //noinspection ConstantConditions
