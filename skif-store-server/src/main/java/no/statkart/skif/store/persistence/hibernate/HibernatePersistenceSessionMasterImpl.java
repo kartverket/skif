@@ -7,6 +7,7 @@ import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.util.CopyHelper;
+import no.statkart.skif.util.HibernateHelper;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.*;
 import org.hibernate.LockMode;
@@ -36,7 +37,7 @@ import java.util.*;
 /**
  * @author Henrik Fredholm
  */
-@SuppressWarnings("ForLoopReplaceableByForEach")
+@SuppressWarnings({"ForLoopReplaceableByForEach", "WeakerAccess"})
 public abstract class HibernatePersistenceSessionMasterImpl implements HibernatePersistenceSessionMaster {
     protected static Logger logger = LoggerFactory.getLogger(HibernatePersistenceSessionMasterImpl.class);
     private static final int CRITERIA_BATCH_POWER = 9;
@@ -243,7 +244,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 idsToLoad.add(bubbleId);
             }
         }
-        Set<T> result = null;
+        Set<T> result;
         if (idsToLoad.size() > 0) {
             FlushMode oldFlushMode = session().getFlushMode();
             try {
@@ -431,7 +432,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         if (processedObjects.containsKey(object)) return;
         processedObjects.put(object, null);
 
-        ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
+        ClassMetadata classMetadata = HibernateHelper.getClassMetadata(session(), object);
 
         if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
         EntityPersister persister = (EntityPersister) classMetadata;
@@ -719,7 +720,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     private void checkEntityComponentsOnInsert(Object object, IdentityHashMap<Object, Object> processedObjects) throws HibernateException {
         if (object == null) return;
 
-        ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
+        ClassMetadata classMetadata = HibernateHelper.getClassMetadata(session(), object);
 
         if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
         EntityPersister persister = (EntityPersister) classMetadata;
@@ -1271,7 +1272,6 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      *
      * @param object             a helt eller delvis initialisert objekt.
      * @param initializedObjects set av objekter som methoden allerede har initialisert
-     * @throws org.hibernate.HibernateException
      *
      */
     protected abstract void ensureInitialized(Object object, IdentityHashMap<Object, Object> initializedObjects) throws HibernateException;
@@ -1484,7 +1484,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         if (processedObjects.containsKey(object)) return;
         processedObjects.put(object, null);
 
-        ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
+        ClassMetadata classMetadata = HibernateHelper.getClassMetadata(session(), object);
         EntityPersister persister = (EntityPersister) classMetadata;
 
         if (objectType.isEntityType()) {
@@ -1560,7 +1560,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         if (processedObjects.containsKey(object)) return;
         processedObjects.put(object, null);
 
-        ClassMetadata classMetadata = ((SessionImpl) session()).getFactory().getClassMetadata(object.getClass());
+        ClassMetadata classMetadata = HibernateHelper.getClassMetadata(session(), object.getClass());
 
         if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
         EntityPersister persister = (EntityPersister) classMetadata;
