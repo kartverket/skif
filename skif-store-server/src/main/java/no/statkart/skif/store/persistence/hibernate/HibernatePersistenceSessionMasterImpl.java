@@ -1184,10 +1184,10 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @return en liste av <code>Criteria</code>-objekter der hver criteria laster domenebobler av en
      *         bestemt type.
      */
-    private List<Criteria> buildCriterias(Set<? extends BubbleId> ids) {
+    public List<Criteria> buildCriterias(Set<? extends BubbleId> ids) {
         List<Criteria> criterias = new ArrayList<>();
 
-        Map<Class<?>, ? extends Set<? extends Serializable>> idsByType = getIdsByType(ids);
+        LinkedHashMap<Class<?>, ? extends Set<? extends Serializable>> idsByType = getIdsByType(ids);
         for (Object o : idsByType.keySet()) {
             Class type = (Class) o;
             List<Criteria> criteriasForType = buildCriteriaForType(type, idsByType.get(type));
@@ -1198,13 +1198,14 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
 
     /**
-     * Create a map with a ids keyed on the clazz of entity that they defines the id for
+     * Create a map with a ids keyed on the clazz of entity that they defines the id for.
      *
      * @param ids a set of ids
-     * @return a map of ids keyed by the clazz og the entity
+     * @return a map of ids keyed by the clazz og the entity. The map has at predictable iteration order defined by
+     * the iteration order of parameter {@code ids}
      */
-    private <T extends BubbleObject, I extends BubbleId<? extends T>> Map<Class<?>, Set<I>> getIdsByType(Set<I> ids) {
-        HashMap<Class<?>, Set<I>> idsByType = new HashMap<>();
+    private <T extends BubbleObject, I extends BubbleId<? extends T>> LinkedHashMap<Class<?>, Set<I>> getIdsByType(Set<I> ids) {
+        LinkedHashMap<Class<?>, Set<I>> idsByType = new LinkedHashMap<>();
         for (I id : ids) {
             Class entityClazz = id.getBaseType(); //Class name for the entity owning the id
             // Endringer ligger i mange forskjellige tabeller. Hvis vi gjør query via basetype må

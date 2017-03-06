@@ -1,27 +1,34 @@
 package no.statkart.skif.standalone.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImplExt;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
-import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
+import no.statkart.skif.storetest.domain.standalone.ParentBubbleId;
 import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistory;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistoryId;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.impl.CriteriaImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 
-import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.*;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.CURRENT;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.OLD;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.S3;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactorManagerBundle;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactoryBuilderWithHistory;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 
@@ -35,19 +42,19 @@ import static org.testng.Assert.assertNotSame;
  */
 @Test(groups = "singlevm-required")
 public class HibernatePersistenceSessionTest {
-    Properties hibernateProperties;
+    private Properties hibernateProperties;
 
-    TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_10_CURRENT = new TestBubbleWithHistoryId<TestBubbleWithHistory>(10L, CURRENT);
-    TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_10_OLD = new TestBubbleWithHistoryId<TestBubbleWithHistory>(10L, OLD);
-    TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_10_S3 = new TestBubbleWithHistoryId<TestBubbleWithHistory>(10L, S3);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_10_CURRENT = new TestBubbleWithHistoryId<>(10L, CURRENT);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_10_OLD = new TestBubbleWithHistoryId<>(10L, OLD);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_10_S3 = new TestBubbleWithHistoryId<>(10L, S3);
 
-    TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_11_CURRENT = new TestBubbleWithHistoryId<TestBubbleWithHistory>(11L, CURRENT);
-    TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_11_S3 = new TestBubbleWithHistoryId<TestBubbleWithHistory>(11L, S3);
-    TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<TestBubbleWithHistory>(11L, OLD);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_11_CURRENT = new TestBubbleWithHistoryId<>(11L, CURRENT);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_11_S3 = new TestBubbleWithHistoryId<>(11L, S3);
+    private TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<>(11L, OLD);
 
-    TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<TestBubble>(101);
+    private TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101);
 
-    HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
+    private HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
 
     public HibernatePersistenceSessionTest() {
         hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm();
@@ -77,7 +84,7 @@ public class HibernatePersistenceSessionTest {
         }
     }
 
-    @Test(invocationCount = 1)
+    @Test(invocationCount = 2)
     public void testLoadObjectWithHistory_many() {
         testLoadObjectsForCurrent();
     }
@@ -134,16 +141,17 @@ public class HibernatePersistenceSessionTest {
     public void testLoadObjectsForOLDAndHistoricTogether_Fail() {
         HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1));
         try {
-            List<BubbleId<TestBubbleWithHistory>> TestBubbleWithHistoryIds = new ArrayList<BubbleId<TestBubbleWithHistory>>();
+            List<BubbleId<TestBubbleWithHistory>> TestBubbleWithHistoryIds = new ArrayList<>();
             TestBubbleWithHistoryIds.add(TestBubbleWithHistoryId_10_OLD);
             TestBubbleWithHistoryIds.add(TestBubbleWithHistoryId_10_S3);
             TestBubbleWithHistoryIds.add(TestBubbleWithHistoryId_11_OLD);
-            Collection<? extends TestBubbleWithHistory> TestBubbleWithHistorys = persistenceSession.get(TestBubbleWithHistoryIds);
+            persistenceSession.get(TestBubbleWithHistoryIds);
         } finally {
             persistenceSession.close();
         }
     }
 
+    @SuppressWarnings({"JpaQlInspection", "Duplicates"})
     public void testInsertAndCommit() {
         HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
 
@@ -170,7 +178,7 @@ public class HibernatePersistenceSessionTest {
         }
     }
 
-    @Test(invocationCount = 1)
+    @Test(invocationCount = 2)
     public void testCommit_many() {
         testInsertAndCommit();
     }
@@ -181,7 +189,7 @@ public class HibernatePersistenceSessionTest {
         testInsertAndCommit();
         try {
             persistenceSession.beginTransaction();
-            TestBubble testBubble = persistenceSession.get(new TestBubbleId<TestBubble>(101));
+            TestBubble testBubble = persistenceSession.get(new TestBubbleId<>(101));
             testBubble.setText("updated");
             persistenceSession.update(testBubble);
             persistenceSession.commit();
@@ -200,7 +208,7 @@ public class HibernatePersistenceSessionTest {
         testInsertAndCommit();
         try {
             persistenceSession.beginTransaction();
-            TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
+            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101));
             testBubble.setText("Updated");
             persistenceSession.update(testBubble);
             persistenceSession.commit();
@@ -213,7 +221,7 @@ public class HibernatePersistenceSessionTest {
         }
     }
 
-    @Test(invocationCount = 1)
+    @Test(invocationCount = 2)
     public void testUpdateDetatchNotLoaded_many() {
         testUpdateDetatchNotLoaded();
     }
@@ -224,7 +232,7 @@ public class HibernatePersistenceSessionTest {
         testInsertAndCommit();
         try {
             persistenceSession.beginTransaction();
-            TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
+            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101));
             testBubble.setText("Updated");
             persistenceSession.get(testBubble.getId());
             persistenceSession.update(testBubble);
@@ -244,7 +252,7 @@ public class HibernatePersistenceSessionTest {
         testInsertAndCommit();
         try {
             persistenceSession.beginTransaction();
-            TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
+            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101));
             testBubble.setText("Updated");
             persistenceSession.delete(testBubble);
             persistenceSession.commit();
@@ -254,7 +262,7 @@ public class HibernatePersistenceSessionTest {
         }
     }
 
-    @Test(invocationCount = 1)
+    @Test(invocationCount = 2)
     public void testDeleteNotAlreadyLoaded_many() {
         testDeleteAlreadyLoaded();
     }
@@ -268,12 +276,43 @@ public class HibernatePersistenceSessionTest {
         testInsertAndCommit();
         try {
             persistenceSession.beginTransaction();
-            TestBubble testBubble = new TestBubble(new TestBubbleId<TestBubble>(101));
+            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101));
             testBubble.setText("Updated");
             persistenceSession.get(testBubble.getId());
             persistenceSession.delete(testBubble);
             persistenceSession.commit();
             assertEquals(testBubble.getText(), "Updated");
+        } finally {
+            persistenceSession.close();
+        }
+    }
+
+    /**
+     * Tester at buildCriterias oppretter Criteria i samme iterasjonsrekkefølge som objektklassene forekommer første
+     * gang i {@code ids}.
+     */
+    public void testDeterministiskLoadOrderForBuildCriterias() {
+        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
+        
+        try {
+            LinkedHashSet<BubbleId<?>> ids1 = new LinkedHashSet<>();
+            ids1.add(new ParentBubbleId<>(1L));
+            ids1.add(new TestBubbleId<>(1L));
+            ids1.add(new ParentBubbleId<>(2L));
+            final List<Criteria> criteriaList1 = persistenceSession.buildCriterias(ids1);
+            assertEquals(criteriaList1.size(), 2);
+            assertEquals(((CriteriaImpl)criteriaList1.get(0)).getEntityOrClassName(), "no.statkart.skif.storetest.domain.standalone.ParentBubble");
+            assertEquals(((CriteriaImpl)criteriaList1.get(1)).getEntityOrClassName(), "no.statkart.skif.storetest.domain.standalone.TestBubble");
+
+            LinkedHashSet<BubbleId<?>> ids2 = new LinkedHashSet<>();
+            ids2.add(new TestBubbleId<>(1L));
+            ids2.add(new ParentBubbleId<>(1L));
+            ids2.add(new ParentBubbleId<>(2L));
+            final List<Criteria> criteriaList2 = persistenceSession.buildCriterias(ids2);
+            assertEquals(criteriaList2.size(), 2);
+            assertEquals(((CriteriaImpl)criteriaList2.get(0)).getEntityOrClassName(), "no.statkart.skif.storetest.domain.standalone.TestBubble");
+            assertEquals(((CriteriaImpl)criteriaList2.get(1)).getEntityOrClassName(), "no.statkart.skif.storetest.domain.standalone.ParentBubble");
+
         } finally {
             persistenceSession.close();
         }
