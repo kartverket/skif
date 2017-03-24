@@ -1,5 +1,7 @@
 package no.statkart.skif.wsversioning.domain;
 
+import no.statkart.skif.util.Since;
+
 /**
  * Eksempelklasse som tidligere het Gate, basert på et faktisk tilfelle.
  *
@@ -10,6 +12,8 @@ public class Veg extends AbstractWSVersioningBubbleObject {
     private static final long serialVersionUID = 1L;
 
     private String adressenavn;
+
+    @Since("2.1")
     private String alternativtNavn;
 
     public Veg() {
