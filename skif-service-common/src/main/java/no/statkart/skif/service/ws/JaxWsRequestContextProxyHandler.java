@@ -13,6 +13,7 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.ConnectException;
 
 /**
  * Setter innstillinger på web service for hvert kall, siden web servicen-stubben gjenbrukes.
@@ -65,6 +66,9 @@ public class JaxWsRequestContextProxyHandler<S> extends TerminatingProxyHandler<
                         throw new InvalidUserException("HTTP 401 Unauthorized from " + endpoint + " for user " + username, exception);
                     } else if (responseCode == 403) {
                         throw new PermissionDeniedException("HTTP 403 Forbidden from " + endpoint + " for user " + username, exception);
+                    }
+                    if (exception.getCause() instanceof ConnectException) {
+                        throw new ImplementationException("Could not connect to endpoint '" + endpoint + "' with user '" + username + "'", exception);
                     }
                 }
             }
