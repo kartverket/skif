@@ -24,25 +24,31 @@ public class EqualsByFields {
     }
 
     public boolean isEqualByFields(@Nullable Object o1, @Nullable Object o2) {
-        if (!processed.add(new Pair(o1, o2))) {
+        Pair pair = new Pair(o1, o2);
+        if (!processed.add(pair)) {
             // Det kan hende koden som la paret inn ikke har kjørt sammenligningen enda, men den kommer til å gjøre det,
             // med mindre noe annet feiler først.
             return true;
         }
 
-        if (o1 instanceof EqualityByFields) {
-            EqualityByFields ebf1 = (EqualityByFields) o1;
-            return ebf1.equalsByFields(o2, this);
-        }
-
-        for (HandlerEntry handlerEntry : handlers) {
-            if (handlerEntry.getClazz().isInstance(o1)) {
-                EqualityHandler handler = handlerEntry.getHandler();
-                return useHandler(handler, o1, o2);
+        try {
+            if (o1 instanceof EqualityByFields) {
+                EqualityByFields ebf1 = (EqualityByFields) o1;
+                return ebf1.equalsByFields(o2, this);
             }
-        }
 
-        return Objects.equals(o1, o2);
+            for (HandlerEntry handlerEntry : handlers) {
+                if (handlerEntry.getClazz().isInstance(o1)) {
+                    EqualityHandler handler = handlerEntry.getHandler();
+                    return useHandler(handler, o1, o2);
+                }
+            }
+
+            return Objects.equals(o1, o2);
+        } finally {
+            // Må fjerne denne igjen slik at vi ikke returnerer true senere selv om det vi fant ut var false
+            processed.remove(pair);
+        }
     }
 
     /**
