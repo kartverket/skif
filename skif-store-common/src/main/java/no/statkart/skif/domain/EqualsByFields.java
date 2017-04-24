@@ -8,6 +8,9 @@ import java.util.*;
 public class EqualsByFields {
     private final List<HandlerEntry> handlers = new ArrayList<>();
 
+    // For å unngå rekursivitet
+    private final Set<Pair> processed = new HashSet<>();
+
     public EqualsByFields() {
         addHandler(List.class, new ListHandler());
         addHandler(Set.class, new SetHandler());
@@ -21,19 +24,31 @@ public class EqualsByFields {
     }
 
     public boolean isEqualByFields(@Nullable Object o1, @Nullable Object o2) {
-        if (o1 instanceof EqualityByFields) {
-            EqualityByFields ebf1 = (EqualityByFields) o1;
-            return ebf1.equalsByFields(o2, this);
+        Pair pair = new Pair(o1, o2);
+        if (!processed.add(pair)) {
+            // Det kan hende koden som la paret inn ikke har kjørt sammenligningen enda, men den kommer til å gjøre det,
+            // med mindre noe annet feiler først.
+            return true;
         }
 
-        for (HandlerEntry handlerEntry : handlers) {
-            if (handlerEntry.getClazz().isInstance(o1)) {
-                EqualityHandler handler = handlerEntry.getHandler();
-                return useHandler(handler, o1, o2);
+        try {
+            if (o1 instanceof EqualityByFields) {
+                EqualityByFields ebf1 = (EqualityByFields) o1;
+                return ebf1.equalsByFields(o2, this);
             }
-        }
 
-        return Objects.equals(o1, o2);
+            for (HandlerEntry handlerEntry : handlers) {
+                if (handlerEntry.getClazz().isInstance(o1)) {
+                    EqualityHandler handler = handlerEntry.getHandler();
+                    return useHandler(handler, o1, o2);
+                }
+            }
+
+            return Objects.equals(o1, o2);
+        } finally {
+            // Må fjerne denne igjen slik at vi ikke returnerer true senere selv om det vi fant ut var false
+            processed.remove(pair);
+        }
     }
 
     /**
@@ -59,6 +74,35 @@ public class EqualsByFields {
 
         public EqualityHandler getHandler() {
             return handler;
+        }
+    }
+
+    /**
+     * Klasse som representerer et par med objekter. Likhet er på identiten til de to objektene.
+     */
+    private static class Pair {
+        @Nullable private final Object o1;
+        @Nullable private final Object o2;
+
+        private Pair(@Nullable Object o1, @Nullable Object o2) {
+            this.o1 = o1;
+            this.o2 = o2;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Pair pair = (Pair) o;
+
+            // Det er med vilje at denne sjekker på identitet
+            return o1 == pair.o1 && o2 == pair.o2;
+        }
+
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(o1) + System.identityHashCode(o2);
         }
     }
 }
