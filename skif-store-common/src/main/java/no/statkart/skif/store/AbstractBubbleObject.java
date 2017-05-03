@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
 import com.google.common.collect.ImmutableSet;
+import no.statkart.skif.domain.EqualityByFields;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -13,7 +14,7 @@ import static com.google.common.base.Preconditions.checkState;
  * @author Tor Egil R. Strand
  * @since 2.0
  */
-public class AbstractBubbleObject implements BubbleObject, Serializable {
+public class AbstractBubbleObject implements BubbleObject, Serializable, EqualityByFields {
     private static final long serialVersionUID = 1L;
 
     protected transient Store store;
@@ -91,6 +92,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable {
 
     protected <T extends Set> T idAsSet() { return (T) ImmutableSet.of(getId()); }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     public final boolean equals(Object object) {
        if( this == object ) return true;
        if( object == null || !(object instanceof AbstractBubbleObject) ) return false;
