@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.domain.component.entity;
 
 import com.google.common.collect.Sets;
 import no.statkart.skif.store.Components;
-import no.statkart.skif.store.EntityBubbleComponent;
+import no.statkart.skif.store.AbstractEntityBubbleComponentWithOwner;
 import no.statkart.skif.store.InverseRelationCollector;
 import no.statkart.skif.store.InverseRelationParticipation;
 import no.statkart.skif.store.ValueObjects;
@@ -19,7 +19,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4
  */
-public class Level1EntityComponent implements EntityBubbleComponent<BubbleWithEntityComponent>, InverseRelationParticipation {
+public class Level1EntityComponent extends AbstractEntityBubbleComponentWithOwner<BubbleWithEntityComponent> implements InverseRelationParticipation {
     private Long id;
     private BubbleWithEntityComponent owner;
     private String text;

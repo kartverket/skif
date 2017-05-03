@@ -1,6 +1,10 @@
 package no.statkart.skif.store;
 
+import no.statkart.skif.domain.EqualityByFields;
+import no.statkart.skif.domain.EqualsByFields;
+
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  * Baseklasse for EntityComponents som har mutabel ident og som derfor må ha en id for å sjekke på likhet.
@@ -9,7 +13,7 @@ import java.io.Serializable;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-public abstract class AbstractEntityComponent implements EntityComponent, Serializable {
+public abstract class AbstractEntityComponent implements EntityComponent, Serializable, EqualityByFields {
     private static final long serialVersionUID = 1L;
 
     private Long pseudoId = null;
@@ -34,5 +38,21 @@ public abstract class AbstractEntityComponent implements EntityComponent, Serial
     @Override
     public final int hashCode() {
         return getPseudoId().hashCode();
+    }
+
+    @Override
+    public boolean fieldFilter(Field field) {
+        String fieldName = field.getName();
+        //noinspection SimplifiableIfStatement
+        if (fieldName.equals("id") || fieldName.equals("pseudoId")) {
+            return false;
+        }
+        return EqualityByFields.super.fieldFilter(field);
+    }
+
+    @Override
+    public boolean equalsByFields(Object other, EqualsByFields comparator) {
+        // Kaller equals for å sammenligne id/pseudoId.
+        return equals(other) && EqualityByFields.super.equalsByFields(other, comparator);
     }
 }

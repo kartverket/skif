@@ -1,11 +1,13 @@
 package no.statkart.skif.store;
 
+import no.statkart.skif.domain.EqualityByFields;
+
 import java.util.Collection;
 
 /**
  * @author Henrik Fredholm
  */
-public abstract class AbstractCompositeComponent<O, T> implements CompositeComponent<O, T>{
+public abstract class AbstractCompositeComponent<O, T> implements CompositeComponent<O, T>, EqualityByFields {
     private static final long serialVersionUID = 1L;
 
     protected T owner;

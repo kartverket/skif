@@ -3,11 +3,11 @@ package no.statkart.skif.storetest.domain.component;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
+import no.statkart.skif.domain.EqualsByFields;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.service.test.TestdataService;
-import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.AbstractEntityComponent;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.UnitOfWork;
@@ -20,8 +20,11 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
+import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -38,22 +41,17 @@ import static org.testng.Assert.*;
 @Test(groups = "hibernate36")
 public class EntityComponentTest extends StoreTestTestCase {
     @Inject
-    Store store;
+    private Store store;
     @Inject
-    StoreUpdateService storeUpdateService;
+    private StoreUpdateService storeUpdateService;
     @Inject
-    StoreTestMockupFacadeFactory mockupFacadeFactory;
+    private StoreTestMockupFacadeFactory mockupFacadeFactory;
     @Inject
-    TestdataService testdataService;
+    private TestdataService testdataService;
 
 
     private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
-        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
-            @Override
-            public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
-                return mockupFacade.getBubbleWithEntityComponentMockupFactory().getAllIds(BubbleWithEntityComponentId.class);
-            }
-        });
+        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(mockupFacade -> mockupFacade.getBubbleWithEntityComponentMockupFactory().getAllIds(BubbleWithEntityComponentId.class));
     }
 
     /**
@@ -88,7 +86,7 @@ public class EntityComponentTest extends StoreTestTestCase {
     public void testBatchRead() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
-        ImmutableSet<BubbleWithEntityComponentId<?>> ids = ImmutableSet.of(
+        ImmutableSet<? extends BubbleWithEntityComponentId<?>> ids = ImmutableSet.of(
                 mockupFactory.getWithNonNullComponentsId(),
                 mockupFactory.getWithNullComponentsId(),
                 mockupFactory.getWithNonNullComponentsId2(),
@@ -156,6 +154,7 @@ public class EntityComponentTest extends StoreTestTestCase {
         assertNull(updatedBubble.getLevel1Component());
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void testSubstituteNullComponentWithNonNull() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
@@ -234,6 +233,7 @@ public class EntityComponentTest extends StoreTestTestCase {
         assertNull(updatedBubble.getLevel1Component());
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void testDeleteComponentLevel1AndLevel2() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
@@ -274,5 +274,34 @@ public class EntityComponentTest extends StoreTestTestCase {
         SetAaEntityComponent updatedComponent = updatedBubble.getAaComponents().iterator().next();
         assertEquals(updatedComponent.getId(), component.getId());
         assertEquals(updatedComponent.getIdent(), newIdent);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public void testEqualityByFields() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        EqualsByFields equalsByFields = new EqualsByFields();
+
+        BubbleWithEntityComponent orgBubble = new BubbleWithEntityComponent();
+        orgBubble.setId(new BubbleWithEntityComponentId<>(1L, SnapshotVersion.CURRENT));
+        Level1EntityComponent orgLevel1Component = new Level1EntityComponent();
+        orgBubble.setLevel1Component(orgLevel1Component);
+        orgLevel1Component.setText("Foo");
+
+        // Må trigge generering av pseudoId
+        //noinspection ResultOfMethodCallIgnored
+        orgLevel1Component.hashCode();
+
+        BubbleWithEntityComponent copyBubble = CopyHelper.copy(orgBubble);
+        assertTrue(orgBubble.equals(copyBubble), "equals1");
+        assertTrue(equalsByFields.isEqualByFields(orgBubble, copyBubble), "equalsByFields1");
+
+        Method idSetter = Level1EntityComponent.class.getDeclaredMethod("setId", Long.class);
+        idSetter.setAccessible(true);
+        idSetter.invoke(orgBubble.getLevel1Component(), 2L);
+        assertTrue(orgBubble.equals(copyBubble), "equals2");
+        assertTrue(equalsByFields.isEqualByFields(orgBubble, copyBubble), "equalsByFields2");
+
+        copyBubble.getLevel1Component().setText("Bar");
+        assertTrue(orgBubble.equals(copyBubble), "equals3");
+        assertFalse(equalsByFields.isEqualByFields(orgBubble, copyBubble), "equalsByFields3");
     }
 }

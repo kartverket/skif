@@ -30,8 +30,7 @@ public interface EqualityByFields {
             for (Class c = getClass(); c != Object.class; c = c.getSuperclass()) {
                 Field[] fields = c.getDeclaredFields();
                 for (Field field : fields) {
-                    int modifiers = field.getModifiers();
-                    if (!(Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers))) {
+                    if (!Modifier.isStatic(field.getModifiers()) && fieldFilter(field)) {
                         field.setAccessible(true);
                         Object v1 = field.get(this);
                         Object v2 = field.get(other);
@@ -47,5 +46,14 @@ public interface EqualityByFields {
         }
 
         return true;
+    }
+
+    /**
+     * Defaultimplementasjon er å ignorere transiente felter.
+     *
+     * @return {@code true} for å sammenligne feltet, {@code false} for å ignorere det
+     */
+    default boolean fieldFilter(Field field) {
+        return !Modifier.isTransient(field.getModifiers());
     }
 }
