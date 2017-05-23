@@ -1,6 +1,8 @@
 package no.statkart.skif.mapper;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
+import no.statkart.skif.service.ServiceContext;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,13 +14,29 @@ import java.util.Set;
  * @since 2.4.0
  */
 public class DefaultTypeMapperFactory implements TypeMapperFactory {
-    private final Set<Class<?>> doNotMapTheseClasses = new HashSet<Class<?>>();
+    private final Set<Class<?>> doNotMapTheseClasses = new HashSet<>();
 
     private boolean failIfMissingDomainProperties = true;
+    protected Provider<? extends ServiceContext> serviceContextProvider;
+
+    public DefaultTypeMapperFactory() {
+        serviceContextProvider = null; //Ingen servicecontext
+    }
+
+    public DefaultTypeMapperFactory(Provider<? extends ServiceContext> serviceContextProvider) {
+        this.serviceContextProvider = serviceContextProvider;
+    }
 
     @Override
     public <WsapiT, DomainT> TypeMapper<WsapiT, DomainT> createTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
-        return new DefaultTypeMapper<WsapiT, DomainT, Mapping>(wsapiTypeToken, domainTypeToken, Mapping.class, doNotMapTheseClasses, failIfMissingDomainProperties);
+        return new DefaultTypeMapper<>(
+                wsapiTypeToken,
+                domainTypeToken,
+                Mapping.class,
+                doNotMapTheseClasses,
+                failIfMissingDomainProperties,
+                serviceContextProvider
+        );
     }
 
     /**

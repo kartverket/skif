@@ -28,16 +28,14 @@ public class WSVersioningMapper extends AbstractMapper<WSVersioningMapping> {
 
         addMapperFactory(new CollectionMapperFactory());
 
-        addMapperFactory(new DefaultTypeMapperFactory());
+        addMapperFactory(new DefaultTypeMapperFactory(serviceContextProvider));
 
 
-        addMapper(new SnapshotVersionTypeMapper<Timestamp>(Timestamp.class));
-        addMapper(new TimestampTypeMapper<Timestamp>(Timestamp.class));
+        addMapper(new SnapshotVersionTypeMapper<>(Timestamp.class));
+        addMapper(new TimestampTypeMapper<>(Timestamp.class));
 
         // Alle Id-er
-        addMapper(new WSVersioningBubbleIdTypeMapper<no.statkart.skif.wsversioning.wsapi.v2.domain.VegId, VegId>(no.statkart.skif.wsversioning.wsapi.v2.domain.VegId.class, VegId.class));
+        addMapper(new WSVersioningBubbleIdTypeMapper<>(no.statkart.skif.wsversioning.wsapi.v2.domain.VegId.class, VegId.class));
 
-        // Ting som må mappes manuelt pga. API-endringer
-        addMapper(new VegMapper(serviceContextProvider));
     }
 }
