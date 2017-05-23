@@ -2,10 +2,12 @@ package no.statkart.skif.mapper.exception;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.mapper.DefaultTypeMapper;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.mapper.MappingException;
+import no.statkart.skif.service.ServiceContext;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +28,15 @@ public abstract class AbstractServiceFaultInfoTypeMapper<WsapiT, DomainT extends
             "getExceptionDetail",
             "getStackTraceText"
     );
+
+
+    public AbstractServiceFaultInfoTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<Mapping> mappingInterface, Provider<? extends ServiceContext> serviceContextProvider) {
+        this(wsapiTypeToken, domainTypeToken, mappingInterface, Collections.<Class<?>>emptySet(), true, serviceContextProvider);
+    }
+
+    public AbstractServiceFaultInfoTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<Mapping> mappingInterface, Set<Class<?>> doNotMapTheseClasses, boolean failIfMissingDomainProperties, Provider<? extends ServiceContext> serviceContextProvider) {
+        super(wsapiTypeToken, domainTypeToken, mappingInterface, doNotMapTheseClasses, failIfMissingDomainProperties, serviceContextProvider);
+    }
 
     public AbstractServiceFaultInfoTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
         this(wsapiTypeToken, domainTypeToken, Collections.<Class<?>>emptySet(), true);
@@ -75,18 +86,10 @@ public abstract class AbstractServiceFaultInfoTypeMapper<WsapiT, DomainT extends
             Constructor<? extends DomainT> constructor = eClass.getConstructor(String.class);
 
             return constructor.newInstance(getExceptionDetailMessage(source));
-        } catch (ClassNotFoundException e) {
-            throw new MappingException(e);
-        } catch (ClassCastException e) {
-            throw new MappingException(e);
-        } catch (NoSuchMethodException e) {
+        } catch (ClassNotFoundException | ClassCastException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             throw new MappingException(e);
         } catch (InvocationTargetException e) {
             throw new MappingException(e.getTargetException());
-        } catch (InstantiationException e) {
-            throw new MappingException(e);
-        } catch (IllegalAccessException e) {
-            throw new MappingException(e);
         }
     }
 }

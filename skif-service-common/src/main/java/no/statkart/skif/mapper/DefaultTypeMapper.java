@@ -4,10 +4,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.service.ServiceContext;
+import no.statkart.skif.util.Since;
+import no.statkart.skif.util.SystemVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -23,17 +28,32 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
     private final Map<Method, PropertyMappingInfo> wsapiToDomain;
     private final Map<Method, PropertyMappingInfo> domainToWsapi;
 
+    protected final Provider<? extends ServiceContext> serviceContextProvider;
+
     public DefaultTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass, Class<M> mappingInterface) {
-        this(TypeToken.of(wsapiClass), TypeToken.of(domainClass), mappingInterface);
+        this(TypeToken.of(wsapiClass), TypeToken.of(domainClass), mappingInterface, null);
+    }
+
+    public DefaultTypeMapper(Class<WsapiT> wsapiClass, Class<DomainT> domainClass, Class<M> mappingInterface, Provider<? extends ServiceContext> serviceContextProvider) {
+        this(TypeToken.of(wsapiClass), TypeToken.of(domainClass), mappingInterface, serviceContextProvider);
     }
 
     public DefaultTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<M> mappingInterface) {
-        this(wsapiTypeToken, domainTypeToken, mappingInterface, Collections.<Class<?>>emptySet(), false);
+        this(wsapiTypeToken, domainTypeToken, mappingInterface, Collections.<Class<?>>emptySet(), false, null);
+    }
+
+    public DefaultTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<M> mappingInterface, Provider<? extends ServiceContext> serviceContextProvider) {
+        this(wsapiTypeToken, domainTypeToken, mappingInterface, Collections.<Class<?>>emptySet(), false, serviceContextProvider);
     }
 
     public DefaultTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<M> mappingInterface, Set<Class<?>> doNotMapTheseClasses, boolean failIfMissingDomainProperties) {
+        this(wsapiTypeToken, domainTypeToken, mappingInterface, doNotMapTheseClasses, failIfMissingDomainProperties, null);
+    }
+
+    public DefaultTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<M> mappingInterface, Set<Class<?>> doNotMapTheseClasses, boolean failIfMissingDomainProperties, Provider<? extends ServiceContext> serviceContextProvider) {
         //noinspection unchecked
         super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), mappingInterface);
+        this.serviceContextProvider = serviceContextProvider;
 
         Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
 
@@ -42,11 +62,13 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
         for (Method wsapiGetter : wsapiGetters) {
             Method domainSetter = findSetterForGetter(domainTypeToken.getRawType(), wsapiGetter);
             if (domainSetter != null) {
+
+
                 PropertyMappingInfo pmi = new PropertyMappingInfo(
                         domainSetter,
                         wsapiTypeToken.resolveType(wsapiGetter.getGenericReturnType()),
-                        domainTypeToken.resolveType(domainSetter.getGenericParameterTypes()[0])
-                );
+                        domainTypeToken.resolveType(domainSetter.getGenericParameterTypes()[0]),
+                        null);
 
                 if (!doNotMapTheseClasses.contains(pmi.getFromType().getRawType()) && !doNotMapTheseClasses.contains(pmi.getToType().getRawType())) {
                     logger.debug("Mapping {} {}.{}() to void {}.{}({})", new Object[]{pmi.fromType, wsapiTypeToken.getRawType(), wsapiGetter.getName(), domainTypeToken.getRawType(), domainSetter.getName(), pmi.toType});
@@ -64,11 +86,14 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
         for (Method domainGetter : domainGetters) {
             Method wsapiSetter = findSetterForGetter(wsapiTypeToken.getRawType(), domainGetter);
             if (wsapiSetter != null) {
+
+                SystemVersion sinceVersion = findSinceVersionForDomainField(domainGetter);
+
                 PropertyMappingInfo pmi = new PropertyMappingInfo(
                         wsapiSetter,
                         domainTypeToken.resolveType(domainGetter.getGenericReturnType()),
-                        wsapiTypeToken.resolveType(wsapiSetter.getGenericParameterTypes()[0])
-                );
+                        wsapiTypeToken.resolveType(wsapiSetter.getGenericParameterTypes()[0]),
+                        sinceVersion);
 
                 if (!doNotMapTheseClasses.contains(pmi.getFromType().getRawType()) && !doNotMapTheseClasses.contains(pmi.getToType().getRawType())) {
                     logger.debug("Mapping {} {}.{}() to void {}.{}({})", new Object[]{pmi.fromType, domainTypeToken.getRawType(), domainGetter.getName(), wsapiTypeToken.getRawType(), wsapiSetter.getName(), pmi.toType});
@@ -81,9 +106,63 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
     }
 
     /**
+     * Finner Since-annotasjon på feltet som ligger bak metoden sendt inn som parameter.
+     *
+     * @param domainGetter Metode vi ønsker å finne since-versjon for
+     * @return Strengverdi av since-annotasjonen hvis denne finnes, null ellers.
+     * @throws MappingException dersom det ikke finnes et felt med samme navn som metode
+     */
+    private SystemVersion findSinceVersionForDomainField(Method domainGetter) {
+        Field domainField = findFieldForDomainGetter(domainGetter);
+
+        Since sinceAnnotation = domainField != null ? domainField.getAnnotation(Since.class) : null;
+        if (sinceAnnotation != null) {
+            return new SystemVersion(sinceAnnotation.value());
+        }
+
+        return null;
+    }
+
+    /**
+     * Finner felt for get-metode på en klasse
+     *
+     * @param domainGetter Metode vi ønsker å finne felt for
+     * @return Field-element for feltet.
+     */
+    private Field findFieldForDomainGetter(Method domainGetter) {
+
+        String methodName = domainGetter.getName();
+
+        //Fjerner "get" eller "is" fra navnet og gjør første bokstav til liten bokstav istedenfor stor
+        String fieldName = null;
+        if (methodName.startsWith("get")) {
+            fieldName = methodName.substring(3, 4).toLowerCase() + methodName.substring(4);
+        } else if (methodName.startsWith("is")) {
+            fieldName = methodName.substring(2, 3).toLowerCase() + methodName.substring(3);
+        }
+
+        if (fieldName != null) {
+            Class<?> domainClass = domainGetter.getDeclaringClass();
+            TypeToken<?> typeToken = TypeToken.of(domainClass);
+
+            for (Class<?> clazz : typeToken.getTypes().classes().rawTypes()) {
+                try {
+                    return clazz.getDeclaredField(fieldName);
+                } catch (NoSuchFieldException e) {
+                    //OK, fant ikke feltet
+                }
+            }
+        }
+
+        //Det finnes ikke noe felt for getteren. Getteren er da enten feilskrevet eller er ikke en getter i det hele tatt.
+        //Kan ikke kaste exception da dette blant annet gjeldet "getBubbleId" på AbstractBubbleObject
+        return null;
+    }
+
+    /**
      * Override denne dersom målklassen avhenger av hva kildeklassen er.
      *
-     * @param source    kildeklassen
+     * @param source kildeklassen
      * @return initielt opprettet målklasse
      */
     protected WsapiT createWsapiT(DomainT source) {
@@ -93,7 +172,7 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
     /**
      * Override denne dersom målklassen avhenger av hva kildeklassen er.
      *
-     * @param source    kildeklassen
+     * @param source kildeklassen
      * @return initielt opprettet målklasse
      */
     protected DomainT createDomainT(WsapiT source) {
@@ -104,32 +183,29 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
     public WsapiT mapDomainObject(DomainT source) {
         WsapiT target = createWsapiT(source);
 
+        SystemVersion contextVersion = serviceContextProvider != null ? new SystemVersion(serviceContextProvider.get().getSystemVersion()) : null;
+
         for (Map.Entry<Method, PropertyMappingInfo> entry : domainToWsapi.entrySet()) {
             Method getter = entry.getKey();
             PropertyMappingInfo pmi = entry.getValue();
             Method setter = pmi.getSetter();
 
-            final Object fromValue;
-            try {
-                fromValue = getter.invoke(source);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during reading of " + getter.toGenericString(), e);
-            } catch (InvocationTargetException e) {
-                throw new MappingException("Error during reading of " + getter.toGenericString(), e);
-            } catch (IllegalArgumentException e) {
-                throw new MappingException("Error during reading of " + getter.toGenericString(), e);
-            }
+            if (contextVersion == null || pmi.getSinceVersion() == null || contextVersion.newerThanOrEqualTo(pmi.getSinceVersion())) {
 
-            final Object toValue = getMapping().d2w(fromValue, pmi.getFromType().getType(), pmi.getToType().getType());
+                final Object fromValue;
+                try {
+                    fromValue = getter.invoke(source);
+                } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
+                    throw new MappingException("Error during reading of " + getter.toGenericString(), e);
+                }
 
-            try {
-                setter.invoke(target, toValue);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during writing to " + setter.toGenericString(), e);
-            } catch (InvocationTargetException e) {
-                throw new MappingException("Error during writing to " + setter.toGenericString(), e);
-            } catch (IllegalArgumentException e) {
-                throw new MappingException("Error during writing to " + setter.toGenericString(), e);
+                final Object toValue = getMapping().d2w(fromValue, pmi.getFromType().getType(), pmi.getToType().getType());
+
+                try {
+                    setter.invoke(target, toValue);
+                } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
+                    throw new MappingException("Error during writing to " + setter.toGenericString(), e);
+                }
             }
         }
 
@@ -149,11 +225,7 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
             final Object fromValue;
             try {
                 fromValue = getter.invoke(source);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during reading of " + getter.toGenericString(), e);
-            } catch (InvocationTargetException e) {
-                throw new MappingException("Error during reading of " + getter.toGenericString(), e);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
                 throw new MappingException("Error during reading of " + getter.toGenericString(), e);
             }
 
@@ -161,11 +233,7 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
 
             try {
                 setter.invoke(target, toValue);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during writing to " + setter.toGenericString(), e);
-            } catch (InvocationTargetException e) {
-                throw new MappingException("Error during writing to " + setter.toGenericString(), e);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
                 throw new MappingException("Error during writing to " + setter.toGenericString(), e);
             }
         }
@@ -218,11 +286,13 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
         private final Method setter;
         private final TypeToken<?> fromType;
         private final TypeToken<?> toType;
+        private final SystemVersion sinceVersion;
 
-        private PropertyMappingInfo(Method setter, TypeToken<?> fromType, TypeToken<?> toType) {
+        private PropertyMappingInfo(Method setter, TypeToken<?> fromType, TypeToken<?> toType, SystemVersion sinceVersion) {
             this.setter = setter;
             this.fromType = fromType;
             this.toType = toType;
+            this.sinceVersion = sinceVersion;
         }
 
         private Method getSetter() {
@@ -235,6 +305,10 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
 
         private TypeToken<?> getToType() {
             return toType;
+        }
+
+        public SystemVersion getSinceVersion() {
+            return sinceVersion;
         }
     }
 }
