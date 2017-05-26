@@ -39,42 +39,10 @@ public class MultiBinderTest {
         final Injector injector = Guice.createInjector(module1, module2);
         final Set<TestService> instance = injector.getInstance(Key.get(new TypeLiteral<Set<TestService>>() {
         }));
-        assertEquals(instance.size(), 2);
+        assertEquals(instance.size(), 1);
         final Set<TestService> instance2 = injector.getInstance(Key.get(new TypeLiteral<Set<TestService>>() {
         }));
-        assertEquals(instance2.size(), 2);
-    }
-
-    /**
-     * Opprett 2 multibinder set; et for TestService1 og et for TestService2
-     */
-    public void testMultibinderDynamicClassBinding() {
-        final Class<?> service1 = TestService1.class;
-        final Class<?> service2 = TestService2.class;
-
-        final Module module1 = new AbstractModule() {
-            @Override
-            protected void configure() {
-                bindService(2, service1);
-                bindService(3, service2);
-            }
-
-            private <S> void bindService(int count, Class<S> service) {
-                Multibinder<S> s1 = Multibinder.newSetBinder(binder(), service);
-                for (int i = 0; i < count; i++) {
-                    s1.addBinding().to(service);
-
-                }
-            }
-        };
-
-        final Injector injector = Guice.createInjector(module1);
-        final Set<TestService1> instance1 = injector.getInstance(Key.get(new TypeLiteral<Set<TestService1>>() {
-        }));
-        assertEquals(instance1.size(), 2);
-        final Set<TestService2> instance2 = injector.getInstance(Key.get(new TypeLiteral<Set<TestService2>>() {
-        }));
-        assertEquals(instance2.size(), 3);
+        assertEquals(instance2.size(), 1);
     }
 
     /**
