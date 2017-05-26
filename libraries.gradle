@@ -32,13 +32,13 @@ def libraries = [
         logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '1.0.13')}",
 
         // Guice med extensions
-        guice: "com.google.inject:guice:${libVersion('guice', '3.0')}",
-        guice_multibindings: "com.google.inject.extensions:guice-multibindings:${libVersion('guice', '3.0')}",
-        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${libVersion('guice', '3.0')}",
-        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${libVersion('guice', '3.0')}",
-        guice_grapher: "com.google.inject.extensions:guice-grapher:${libVersion('guice', '3.0')}",
+        guice: "com.google.inject:guice:${libVersion('guice', '4.0')}",
+        guice_multibindings: "com.google.inject.extensions:guice-multibindings:${libVersion('guice', '4.0')}",
+        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${libVersion('guice', '4.0')}",
+        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${libVersion('guice', '4.0')}",
+        guice_grapher: "com.google.inject.extensions:guice-grapher:${libVersion('guice', '4.0')}",
         // guice-servlet depends on servlet-api som her er provided via weblogic og derfor ikke skal være med her
-        guice_servlet: "com.google.inject.extensions:guice-servlet:${libVersion('guice', '3.0')}@jar",
+        guice_servlet: "com.google.inject.extensions:guice-servlet:${libVersion('guice', '4.0')}@jar",
 
 
         // Utility libraries
