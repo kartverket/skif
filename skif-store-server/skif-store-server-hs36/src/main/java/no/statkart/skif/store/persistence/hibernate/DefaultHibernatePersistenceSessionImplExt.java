@@ -99,7 +99,7 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                     for (int j = 0; j < componentCascadeStyles.length; j++) {
                         componentCascadeStyles[j] = t.getCascadeStyle(j);
                     }
-                    ensureInitialized(componentTypes, componentProperties, sessionImpl, sessionFactory, cascadeStyles, initializedObjects);
+                    ensureInitialized(componentTypes, componentProperties, sessionImpl, sessionFactory, componentCascadeStyles, initializedObjects);
                 }
             } else if (type.isAssociationType()) {
                 Hibernate.initialize(values[i]);
