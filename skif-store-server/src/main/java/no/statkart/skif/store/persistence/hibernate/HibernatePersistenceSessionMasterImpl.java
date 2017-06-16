@@ -10,7 +10,8 @@ import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.HibernateHelper;
 import org.hibernate.*;
 import org.hibernate.LockMode;
-import org.hibernate.collection.*;
+import org.hibernate.collection.PersistentCollection;
+import org.hibernate.collection.PersistentMap;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.CascadeStyle;
 import org.hibernate.engine.CascadingAction;
@@ -488,8 +489,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 persister.setPropertyValue(object, i, mapWithSnapshot, EntityMode.POJO);
             } else {
                 CollectionType collectionType = (CollectionType) type;
-                Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
-                Collection collectionWithSnapshot = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection((Collection) value, (Collection) valueExisting, elementType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+                Collection collectionWithSnapshot = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection((Collection) value, (Collection) valueExisting, collectionType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
                 persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
             }
         } else if (!isSingleColumnType(type) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
@@ -541,8 +541,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                         properties[j] = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForMap((Map) property, (Map) propertyExisting, mapType, true);
                     } else {
                         CollectionType collectionType = (CollectionType) propertyType;
-                        Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
-                        properties[j] = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection((Collection) property, (Collection) propertyExisting, elementType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+                        properties[j] = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection((Collection) property, (Collection) propertyExisting, collectionType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
                     }
                     wasModified = true;
                 } else {
@@ -594,12 +593,13 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      */
     abstract protected Type[] getSubtypes(Type componentType);
 
+    @SuppressWarnings("unchecked")
     protected Map attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForMap(Map mapInObject, Map mapInExistingObject, MapType mapType, boolean cascade) {
         if (mapInExistingObject instanceof PersistentCollection) {
             PersistentCollection persistentMapInExistingObject = (PersistentCollection) mapInExistingObject;
             if (mapInObject instanceof PersistentCollection && !((PersistentCollection) mapInObject).wasInitialized()) {
                 // Hvis map ikke er initialisert, er det heller ikke gjort endringer på den
-                return mapInObject;
+                return mapInObject; // TODO: SKIF-639
             }
 
             final SessionImpl sessionImpl = (SessionImpl) session();
@@ -609,21 +609,13 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 throw new ImplementationException("Key must be LiteralType");
             }
 
-            PersistentMap persistentMap;
-            if (persistentMapInExistingObject instanceof PersistentSortedMap) {
-                SortedMap sortedMap = (SortedMap) mapInObject;
-                if (sortedMap == null) {
-                    sortedMap = new TreeMap();
-                }
-                persistentMap = new PersistentSortedMap(null, sortedMap);
-            } else {
-                Map map = mapInObject;
-                if (map == null) {
-                    map = new HashMap();
-                }
-                persistentMap = new PersistentMap(null, map);
-            }
+            Map map = (Map) mapType.instantiate(mapInObject != null ? mapInObject.size() : 0);
+            PersistentMap persistentMap = (PersistentMap) mapType.wrap(sessionImpl, map);
+            persistentMap.unsetSession(sessionImpl); // Skal ikke være attached enda, men null er ikke lov over
             persistentMap.setSnapshot(persistentMapInExistingObject.getKey(), persistentMapInExistingObject.getRole(), persistentMapInExistingObject.getStoredSnapshot());
+            if (mapInObject != null) {
+                persistentMap.putAll(mapInObject);
+            }
 
             if (cascade) {
                 // Sjekk at det ikke er noen collections inni her
@@ -650,30 +642,27 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         }
     }
 
-    protected Collection attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection(Collection collectionInObject, Collection collectionInExistingObject, Type elementType, IdentityHashMap<Object, Object> processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
+    @SuppressWarnings("unchecked")
+    protected Collection attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection(Collection collectionInObject, Collection collectionInExistingObject, CollectionType collectionType, IdentityHashMap<Object, Object> processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
         if (collectionInExistingObject instanceof PersistentCollection) {
             PersistentCollection persistentCollectionInExistingObject = (PersistentCollection) collectionInExistingObject;
             if (collectionInObject instanceof PersistentCollection && !((PersistentCollection) collectionInObject).wasInitialized()) {
                 // Hvis collection ikke er initialisert, er det heller ikke gjort endringer på den
-                return collectionInObject;
+                return collectionInObject; // TODO: SKIF-639
             } else {
-                PersistentCollection persistentCollection;
-                if (persistentCollectionInExistingObject instanceof PersistentSet) {
-                    Set setInObject = (Set) collectionInObject;
-                    if (setInObject == null) {
-                        setInObject = new HashSet();
-                    }
-                    persistentCollection = new PersistentSet(null, setInObject);
-                } else if (persistentCollectionInExistingObject instanceof PersistentList) {
-                    List listInObject = (List) collectionInObject;
-                    if (listInObject == null) {
-                        listInObject = new ArrayList();
-                    }
-                    persistentCollection = new PersistentList(null, listInObject);
-                } else {
-                    throw new NotImplementedException(collectionInExistingObject.getClass().getName());
-                }
+                final SessionImpl sessionImpl = (SessionImpl) session();
+
+                Collection collection = (Collection) collectionType.instantiate(collectionInObject != null ? collectionInObject.size() : 0);
+                PersistentCollection persistentCollection = collectionType.wrap(sessionImpl, collection);
+                persistentCollection.unsetSession(sessionImpl); // Skal ikke være attached enda, men null er ikke lov over
                 persistentCollection.setSnapshot(persistentCollectionInExistingObject.getKey(), persistentCollectionInExistingObject.getRole(), persistentCollectionInExistingObject.getStoredSnapshot());
+
+                // Det er viktig å gjøre dette etter setSnapshot pga. MultikoblingPersistentSet
+                if (collectionInObject != null) {
+                    ((Collection) persistentCollection).addAll(collectionInObject);
+                }
+
+                Type elementType = collectionType.getElementType(sessionImpl.getFactory());
                 checkForStolenEntityComponent(elementType, collectionInObject, collectionInExistingObject);
                 attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollectionCascade((Collection) persistentCollection, collectionInExistingObject, elementType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
                 return (Collection) persistentCollection;
