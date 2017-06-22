@@ -1,12 +1,11 @@
 package no.statkart.skif.store.localization;
 
+import no.statkart.skif.domain.EqualityByFields;
+import no.statkart.skif.domain.EqualsByFields;
 import no.statkart.skif.store.BubbleObject;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Logikk for at mange felter kan ha mange oversettelser, samlet i én tabell.
@@ -14,7 +13,7 @@ import java.util.Map;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-public class LocalizationMap implements Serializable {
+public class LocalizationMap implements Serializable, EqualityByFields {
     private static final long serialVersionUID = 1L;
 
     private final BubbleObject owner;
@@ -73,6 +72,28 @@ public class LocalizationMap implements Serializable {
 
     public BubbleObject getOwner() {
         return owner;
+    }
+
+    @Override
+    public boolean equalsByFields(Object other, EqualsByFields comparator) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        LocalizationMap that = (LocalizationMap) other;
+        return comparator.isEqualByFields(owner, that.owner) && comparator.isEqualByFields(map, that.map);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LocalizationMap that = (LocalizationMap) o;
+        return Objects.equals(owner, that.owner) &&
+                Objects.equals(map, that.map);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(owner, map);
     }
 
     public static class LocalizationKey implements Serializable {
