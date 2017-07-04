@@ -3,30 +3,62 @@ package no.statkart.skif.util;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Klasse for å holde på systemversjon og sammenligne disse.
  */
 public class SystemVersion implements Comparable<SystemVersion> {
+    private static final Pattern sluttPattern = Pattern.compile("(\\d+)?((?:\\p{Alpha}|-).*)?");
 
-    int[] deler;
+    private final int[] deler;
 
     public SystemVersion(String systemVersion) {
         if (systemVersion == null) {
             throw new ImplementationException("SystemVersion kan ikke være null");
         }
 
-        systemVersion = systemVersion.trim().replace("-SNAPSHOT", "");
-        systemVersion = systemVersion.replaceAll("-build([0-9]+)", "");
-        systemVersion = systemVersion.replaceAll("([a-b])([0-9])", ".$2");
+        systemVersion = systemVersion.trim();
 
         if (systemVersion.length() > 0 && Character.isLetter(systemVersion.charAt(0))) {
             deler = null;
         } else {
             String[] ss = systemVersion.split("\\.");
-            deler = new int[ss.length];
 
-            for (int i = 0; i < ss.length; i++) {
+            // Siste del kan gi en eller to deler, så ta den først
+            int siste = ss.length - 1;
+            Matcher sluttMatcher = sluttPattern.matcher(ss[siste]);
+            if (sluttMatcher.matches()) {
+                String tall = sluttMatcher.group(1);
+                String suffix = sluttMatcher.group(2);
+
+                if (tall == null && suffix == null) {
+                    throw new ImplementationException("Ugyldig systemVersion:  " + systemVersion);
+                } else if (tall != null && suffix != null) {
+                    deler = new int[ss.length + 1];
+                } else {
+                    deler = new int[ss.length];
+                }
+
+                if (tall != null) {
+                    try {
+                        deler[siste] = Integer.parseInt(tall);
+                        if (deler[siste] < 0) {
+                            throw new ImplementationException("Ugyldig systemVersion: " + systemVersion);
+                        }
+                    } catch (NumberFormatException e) {
+                        throw new ImplementationException("Ugyldig systemVersion:  " + systemVersion);
+                    }
+                }
+                if (suffix != null) {
+                    deler[tall != null ? siste + 1 : siste] = Integer.MAX_VALUE;
+                }
+            } else {
+                throw new ImplementationException("Ugyldig systemVersion:  " + systemVersion);
+            }
+
+            for (int i = 0; i < ss.length - 1; i++) {
                 try {
                     deler[i] = Integer.parseInt(ss[i]);
                     if (deler[i] < 0) {
@@ -51,7 +83,7 @@ public class SystemVersion implements Comparable<SystemVersion> {
      */
     public int compareTo(SystemVersion that) {
         if (that == null) {
-            throw new ImplementationException("Kan ikke sammenlikne Matrikkelversjon mot null");
+            throw new ImplementationException("Kan ikke sammenlikne SystemVersion mot null");
         }
 
         // hvis en av dem er trunk
