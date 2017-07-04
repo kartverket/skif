@@ -21,16 +21,16 @@ public class SystemVersionTest {
     public void testFeilSystemVersion() {
         parseFeilSystemVersion(null);
         parseFeilSystemVersion("");
-        parseFeilSystemVersion("1.10.b1");
+        parseFeilSystemVersion("3,14");
     }
 
     public void testSystemVersionOK() {
-//      assertEquals("3.2", new SystemVersion("3.2").toString());
-//      assertEquals("3.2.0", new SystemVersion("3.2.0").toString());
-//      assertEquals("3.2.0.0", new SystemVersion("3.2.0.0").toString());
-//      assertEquals("3.2.1", new SystemVersion("3.2a1").toString());
-//      assertEquals("3.2.0.1", new SystemVersion("3.2.0a1").toString());
-        assertEquals("3.3", new SystemVersion("3.3-build6").toString());
+        assertEquals(new SystemVersion("3.2").toString(), "3.2");
+        assertEquals(new SystemVersion("3.2.0").toString(), "3.2.0");
+        assertEquals(new SystemVersion("3.2.0.0").toString(), "3.2.0.0");
+        assertEquals(new SystemVersion("3.2a1").toString(), "3.2." + Integer.MAX_VALUE);
+        assertEquals(new SystemVersion("3.2.0a1").toString(), "3.2.0." + Integer.MAX_VALUE);
+        assertEquals(new SystemVersion("3.3-build6").toString(), "3.3." + Integer.MAX_VALUE);
     }
 
     public void testSystemVersionEqualsHashCode() {
@@ -69,5 +69,21 @@ public class SystemVersionTest {
             assertEquals(versjon, SystemVersion, "Skulle vært like");
             i++;
         }
+    }
+
+    public void testAlfaBeta() {
+        SystemVersion _1a1 = new SystemVersion("1.0a1");
+        SystemVersion _1b1 = new SystemVersion("1.0b1");
+        SystemVersion _2a1 = new SystemVersion("2.0a1");
+
+        assertTrue(_1a1.compareTo(_1b1) == 0, "1.0a1 == 1.0b1");
+        assertTrue(_1b1.compareTo(_2a1) < 0, "1.0n1 < 2.0a1");
+    }
+
+    public void testSnapshot() {
+        SystemVersion version = new SystemVersion("1.0.1");
+        SystemVersion snapshot = new SystemVersion("1.0-SNAPSHOT");
+
+        assertTrue(version.compareTo(snapshot) < 0, "1.0.1 < 1.0-SNAPSHOT");
     }
 }
