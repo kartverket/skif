@@ -1,6 +1,5 @@
 package no.statkart.skif.util.testsupport;
 
-import com.google.inject.Module;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifClientConfiguration;
@@ -72,36 +71,12 @@ import org.testng.annotations.Test;
 @Test
 public class SkifTestCase extends AbstractSkifTestCase {
     protected void setSingleVmServerModuleClassname(String singleVmModuleClassname) {
-        setSingleVmServerModuleClass(SkifUtil.<Module>classForName(singleVmModuleClassname));
+        setSingleVmServerModuleClass(SkifUtil.classForName(singleVmModuleClassname));
     }
 
     protected void setSingleVm(Boolean singleVm) {
         checkModuleBuilderNotCreated();
         this.singleVm = singleVm;
-    }
-
-    private ModuleBuilder getModuleBuilder(ITestContext context) {
-        ModuleBuilder moduleBuilder = createModuleBuilder();
-        if (moduleBuilder == null) {
-            // Bruk builder hvis den finnes fra før, elles opprett en
-            String key = calcConfigurationKey();
-            String keyCreatingClass = key + ":creatingClass";
-            moduleBuilder = (ModuleBuilder) context.getAttribute(key);
-            if (moduleBuilder == null) {
-                logger.debug("Oppretter gjenbrukbar ModuleBuilder for " + getClass().getName());
-                moduleBuilder = createReusableModuleBuilder();
-                context.setAttribute(key, moduleBuilder);
-                context.setAttribute(keyCreatingClass, getClass().getName());
-            } else {
-                String classname = (String) context.getAttribute(keyCreatingClass);
-                logger.debug("Gjenbruker ModuleBuilder for " + getClass().getName() + " opprettet av " + classname);
-                context.setAttribute(key, moduleBuilder);
-                context.setAttribute(keyCreatingClass, getClass().getName());
-            }
-        } else {
-            logger.debug("Anvender en ikke gjenbrukbar ModuleBuilder for " + getClass().getName());
-        }
-        return moduleBuilder;
     }
 
     protected final ModuleBuilder createReusableModuleBuilder() {
