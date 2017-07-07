@@ -17,7 +17,6 @@ import java.lang.reflect.Method;
 /**
  * SingleVmViaWSWithServiceContextSVMapperRemoteCallProxyHandler
  * SingleVmViaWSWithContextAndSnapshotRemoteCallProxyHandler
- * @author
  * @since 2.4
  */
 public class SingleVmViaWSWithServiceContextSVMapperRemoteCallProxyHandler<S, W extends ServiceWSI> extends SingleVmNoWSWithServiceContextMapperRemoteCallProxyHandler<S> {
@@ -42,7 +41,6 @@ public class SingleVmViaWSWithServiceContextSVMapperRemoteCallProxyHandler<S, W 
 
     protected SingleVmRemoteCallContext createSingleVmRemoteCallcontext(SnapshotVersion snapshotVersion) {
         final SingleVmRemoteCallContext singleVmRemoteCallcontext = super.createSingleVmRemoteCallcontext();
-        ServiceContext context = serviceContextProvider.get();
         singleVmRemoteCallcontext.getContextData().put("snapshotVersion", snapshotVersionContext.getSnapshotVersion());
         return singleVmRemoteCallcontext;
     }
@@ -60,10 +58,12 @@ public class SingleVmViaWSWithServiceContextSVMapperRemoteCallProxyHandler<S, W 
         SnapshotVersion orignalSnapshotVersion = snapshotVersionContext.setSnapshotVersion(snapshotVersion);
         try {
             serviceRequestScope.seed(SingleVmRemoteCallContext.class, createSingleVmRemoteCallcontext(snapshotVersion));
-            final EJBCallProxyHandler<S> ejbCallProxyHandler = singleVmServerEJBProxyHandlerProvider.get();
-            final W2DAdapterProxyHandler<W, S> w2d = new W2DAdapterWithServiceContextSVMapperProxyHandler<W, S>(serviceClass, ejbCallProxyHandler, mapping, exceptionMapping, serviceContextMapper, snapshotVersionContext);
-            final D2WAdapterProxyHandler<S, W> d2w = new D2WAdapterWithServiceContextSVMapperProxyHandler<S, W>(webServiceClass, w2d, mapping, exceptionMapping, serviceContextMapper, snapshotVersionContext);
 
+            final EJBCallProxyHandler<S> ejbCallProxyHandler = singleVmServerEJBProxyHandlerProvider.get();
+            final W2DAdapterProxyHandler<W, S> w2d = new W2DAdapterWithServiceContextSVMapperProxyHandler<>(serviceClass, ejbCallProxyHandler, mapping, exceptionMapping, singleVmServer.getInjector().getInstance(serviceContextMapper.getClass()), snapshotVersionContext);
+            final D2WAdapterProxyHandler<S, W> d2w = new D2WAdapterWithServiceContextSVMapperProxyHandler<>(webServiceClass, w2d, mapping, exceptionMapping, serviceContextMapper, snapshotVersionContext);
+
+            //noinspection UnnecessaryLocalVariable
             Object result = d2w.invoke(proxy, method, args);
 
             return result;
@@ -72,7 +72,5 @@ public class SingleVmViaWSWithServiceContextSVMapperRemoteCallProxyHandler<S, W 
             serviceRequestScope.exit();
         }
     }
-
-    // TODO: context burde også vært gjennom mapperen, men mapperen er ikke fleksibel nok
 
 }
