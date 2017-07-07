@@ -19,7 +19,7 @@ import java.util.Set;
  */
 @SuppressWarnings("unchecked")
 public class IdentityTypeMapperFactory implements TypeMapperFactory {
-    private final Set<Class<?>> useIdentityMapping = new HashSet<Class<?>>();
+    private final Set<Class<?>> useIdentityMapping = new HashSet<>();
 
     public IdentityTypeMapperFactory useIdentityMapping(Class<?>... c) {
         useIdentityMapping.addAll(Lists.newArrayList(c));
@@ -31,7 +31,7 @@ public class IdentityTypeMapperFactory implements TypeMapperFactory {
      * @return et map som kan brukes fritt, siden det lages en ny ved hvert kall, og dermed heller ikke er "live"
      */
     public Map<Class<?>, Class<?>> getOverrideMappings() {
-        Map<Class<?>, Class<?>> overrides = new HashMap<Class<?>, Class<?>>(useIdentityMapping.size());
+        Map<Class<?>, Class<?>> overrides = new HashMap<>(useIdentityMapping.size());
         for (Class<?> c : useIdentityMapping) {
             if (!c.isPrimitive()) {
                 overrides.put(c, c);
@@ -123,7 +123,7 @@ public class IdentityTypeMapperFactory implements TypeMapperFactory {
     private <WsapiT, DomainT> boolean isRelated(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
         if (wsapiTypeToken.equals(domainTypeToken)) {
             return true;
-        } else if (wsapiTypeToken.isAssignableFrom(domainTypeToken) || domainTypeToken.isAssignableFrom(wsapiTypeToken)) { // Antar her at subklassen er en subklasse bare fordi instansen er det, ikke fordi feltet er slik
+        } else if (wsapiTypeToken.isSupertypeOf(domainTypeToken) || domainTypeToken.isSupertypeOf(wsapiTypeToken)) { // Antar her at subklassen er en subklasse bare fordi instansen er det, ikke fordi feltet er slik
             return true;
         } else {
             // Det er viktig her å ikke gå ned på equals av rawType med mindre den ene eller andre siden er en primitiv type.

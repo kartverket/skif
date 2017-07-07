@@ -10,7 +10,6 @@ import no.statkart.skif.store.kodeliste.Kode;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 
 /**
  * Håndterer det at {@link no.statkart.skif.store.kodeliste.Kode} har kodelisteId i WS-API, men ikke i internmodell.
@@ -25,19 +24,14 @@ public class DefaultKodeTypeMapperFactory implements TypeMapperFactory {
 
     @Override
     public <WsapiT, DomainT> TypeMapper createTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
-        if (kodeTypeToken.isAssignableFrom(domainTypeToken)) {
+        if (kodeTypeToken.isSupertypeOf(domainTypeToken)) {
             final Class<?> wsapiKodeClass = wsapiTypeToken.getRawType();
-            return new DefaultTypeMapper<WsapiT, DomainT, Mapping>(wsapiTypeToken, domainTypeToken, Mapping.class, Collections.<Class<?>>emptySet(), true) {
+            return new DefaultTypeMapper<WsapiT, DomainT, Mapping>(wsapiTypeToken, domainTypeToken, Mapping.class, Collections.emptySet(), true) {
                 @Override
                 protected Collection<Method> findGetters(Class<?> c) {
                     Collection<Method> getters = super.findGetters(c);
                     if (c.equals(wsapiKodeClass)) {
-                        for (Iterator<Method> iterator = getters.iterator(); iterator.hasNext(); ) {
-                            Method method = iterator.next();
-                            if (method.getName().equals("getKodelisteId")) {
-                                iterator.remove();
-                            }
-                        }
+                        getters.removeIf(method -> method.getName().equals("getKodelisteId"));
                     }
                     return getters;
                 }
