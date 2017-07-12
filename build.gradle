@@ -5,7 +5,6 @@ if (!['2.8'].findAll { gradle.gradleVersion == it }) {
 
 
 apply plugin: 'sktools-properties-plugin'
-apply plugin: 'sktools-filter-resources-plugin'
 
 //user properties
 Map userProperties = propertyUtils.fromFile('gradle-user.properties') << gradle.startParameter.projectProperties
@@ -13,7 +12,6 @@ propertyUtils.assignPropertiesToProject(userProperties)
 
 allprojects {
 //    apply plugin: 'sktools-properties-plugin'
-    apply plugin: 'sktools-filter-resources-plugin'
     propertyUtils.assignPropertiesToProject(userProperties)
 
     //version kan bestemmes via env variabel og -P parameter
@@ -34,7 +32,6 @@ allprojects {
 
 
     apply plugin: 'idea'
-    apply plugin: 'sktools-ideaextensions-plugin'
 
 
     repositories {
@@ -51,6 +48,12 @@ allprojects {
 
 }
 
+idea.project {
+    jdkName = '1.8'
+    languageLevel = '1.8'
+    vcs = 'Git'
+}
+
 apply from: file('libraries.gradle')
 
 subprojects { Project project ->
@@ -60,17 +63,9 @@ subprojects { Project project ->
     clean {
         delete 'gen'
     }
-    rootProject.ideaExtensions.ignorePaths += project.file('gen')
 
     propertyUtils.expandProjectProperties() //må ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
     //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
-
-    // TODO: Denne skal egentlig kun brukes på skif-config mener Henrik. Rett opp dette når filtrering er fjernet fra andre moduler.
-    project.filterResources {
-        Map filterProperties = propertyUtils.fromFile("${project.name}-filter.properties") << gradle.startParameter.projectProperties
-        propertyUtils.expandProperties(filterProperties)
-        properties filterProperties
-    }
 
     def filterTestGroup = { Test test = test, String group, String value ->
         test.with {
@@ -208,74 +203,6 @@ subprojects { Project project ->
         downloadSources = true
         downloadJavadoc = true //for jdbc dokumentasjon
     }
-
-    tasks.ideaModule {
-
-        // Plasserer weblogic avhengigheter til sist på classpath...
-        doFirst {
-            def weblogic_home = project.WEBLOGIC_HOME.replace('\\', '/').toLowerCase()
-
-            project.idea.module.iml.withXml { provider ->
-                def rootNode = provider.asNode()
-                def node = rootNode.component.find { it.@name == 'NewModuleRootManager' }
-
-                def weblogicNodes = node.orderEntry.findAll {
-                    it.@type.equals('module-library') && it.library.CLASSES.root.@url.findAll({ it.toLowerCase().contains(weblogic_home) }).size() > 0
-                }
-
-                weblogicNodes.each { node.remove it }
-                weblogicNodes.each { node.append it }
-            }
-        }
-
-    }
-}
-
-afterEvaluate {
-
-    ideaExtensions {
-        vcs 'Git'
-    }
-
-
-    idea.project {
-        jdkName = '1.7'
-        languageLevel = '1.7'
-
-        ipr {
-            withXml {
-                //default project encoding
-                def encoding = it.asNode().component.find { it.@name == 'Encoding' }
-                if (encoding) {
-                    encoding.@useUTFGuessing = false
-                    encoding.@native2AsciiForPropertiesFiles = true
-                    encoding.@defaultCharsetForPropertiesFiles = 'ISO-8859-1'
-
-                    encoding.file.each { encoding.remove(it) /* sletter alle noder */ }
-                    encoding.appendNode('file', ['url': 'PROJECT', 'charset': 'windows-1252'])
-                } else {
-                    logger.warn('Not able to configure file encodings for IntelliJ')
-                }
-            }
-        }
-
-    }
-
-    // branch spesifike navn for prosjekt og workspace fil.
-    ideaWorkspace {
-        outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}.iws")
-    }
-    idea.project {
-        outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}.ipr")
-    }
-
-    // gradle spesifik iml fil da gradle dependencies ligger på hver modul
-    allprojects {
-        idea.module {
-            outputFile = file("${project.name}.iml")
-        }
-    }
-
 }
 
 //SKIF-266: versjon informasjon i distribusjon

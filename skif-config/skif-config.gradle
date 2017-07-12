@@ -1,7 +1,14 @@
 apply plugin: 'java'
+apply plugin: 'sktools-filter-resources-plugin'
 
 sourceSets.main {
   filterResources.srcDir 'src/main/resources.filtered'
+}
+
+filterResources {
+    Map filterProperties = propertyUtils.fromFile("${project.name}-filter.properties") << gradle.startParameter.projectProperties
+    propertyUtils.expandProperties(filterProperties)
+    properties filterProperties
 }
 
 dependencies {
