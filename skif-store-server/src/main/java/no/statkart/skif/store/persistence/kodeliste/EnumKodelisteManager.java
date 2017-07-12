@@ -71,22 +71,23 @@ public class EnumKodelisteManager {
      */
     public void installStatic(Class<? extends KodeId<?>> enumKodeIdClass) {
         enumClasses.add(enumKodeIdClass);
-        EnumKodeSupport kodeSupport = getEnumKodeSupport(enumKodeIdClass);
-        LinkedHashMap<KodeId<?>, Kode> koder = kodeSupport.getKoder();
+        EnumKodeSupport<?,?,?,?> kodeSupport = getEnumKodeSupport(enumKodeIdClass);
+        LinkedHashMap<? extends KodeId<?>, ? extends Kode> koder = kodeSupport.getKoder();
 
-        Kodeliste kodeliste = (Kodeliste) kodeSupport.getKodelisteId().createTypeInstance();
+        Kodeliste kodeliste = kodeSupport.getKodelisteId().createTypeInstance();
         kodeliste.setId(kodeSupport.getKodelisteId());
         kodeliste.setKodeIdClass(enumKodeIdClass);
         kodeliste.setKoderIds(new ArrayList<>(koder.keySet()));
         if (kodeliste instanceof Localized) {
-            initializeLocalizedFieldsForKodeliste(kodeSupport, (Localized) kodeliste);
+            initializeLocalizedFieldsForKodeliste(kodeSupport, (Kodeliste & Localized) kodeliste);
         }
         enumCache.put(kodeliste.getId(), kodeliste);
-        for (Map.Entry<KodeId<?>, Kode> entry : koder.entrySet()) {
-            if (entry.getValue() instanceof Localized) {
-                initializeLocalizedFieldsForKode(kodeSupport, (Localized) entry.getValue());
+        for (Map.Entry<? extends KodeId<?>, ? extends Kode> entry : koder.entrySet()) {
+            Kode kode = entry.getValue();
+            if (kode instanceof Localized) {
+                initializeLocalizedFieldsForKode(kodeSupport, (Kode & Localized) kode);
             }
-            enumCache.put(entry.getKey(), entry.getValue());
+            enumCache.put(entry.getKey(), kode);
         }
         kodelisteIds.add(kodeliste.getId());
     }
@@ -97,14 +98,14 @@ public class EnumKodelisteManager {
      * @param kodeIdClass id-klassen til kode-klassen
      */
     public void installDynamic(Class<? extends KodeId<?>> kodeIdClass) {
-        DynamicKodeSupport kodeSupport = getDynamicKodeSupport(kodeIdClass);
+        DynamicKodeSupport<?,?,?> kodeSupport = getDynamicKodeSupport(kodeIdClass);
 
-        Kodeliste kodeliste = (Kodeliste) kodeSupport.getKodelisteId().createTypeInstance();
+        Kodeliste kodeliste = kodeSupport.getKodelisteId().createTypeInstance();
         kodeliste.setId(kodeSupport.getKodelisteId());
         kodeliste.setKodeIdClass(kodeIdClass);
         kodeliste.setKoderIds(null); // Marker at dette må lastes senere
         if (kodeliste instanceof Localized) {
-            initializeLocalizedFieldsForKodeliste(kodeSupport, (Localized) kodeliste);
+            initializeLocalizedFieldsForKodeliste(kodeSupport, (Kodeliste & Localized) kodeliste);
         }
         enumCache.put(kodeliste.getId(), kodeliste);
         kodelisteIds.add(kodeliste.getId());
@@ -170,43 +171,33 @@ public class EnumKodelisteManager {
         return propertyFiles;
     }
 
-    private void initializeLocalizedFieldsForKodeliste(StaticKodelisteKodeSupport kodeSupport, Localized kodeliste) {
+    private <T extends Kodeliste & Localized> void initializeLocalizedFieldsForKodeliste(StaticKodelisteKodeSupport kodeSupport, T kodeliste) {
         Map<String, Properties> resourceProperties = getResourceProperties(kodeSupport.getResourceMsgName());
+        String prefix = kodeSupport.getKodelisteResourceKey() + '.';
 
-        Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<>();
-
-        for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
-            Locale locale = toLocale(entry.getKey());
-            Properties properties = entry.getValue();
-            String prefix = kodeSupport.getKodelisteResourceKey() + '.';
-
-            for (Map.Entry<Object, Object> propertyEntry : properties.entrySet()) {
-                // Det er bevisst at key castes og verdi toString-es
-                String key = (String) propertyEntry.getKey();
-
-                if (key.startsWith(prefix)) {
-                    String field = key.substring(prefix.length());
-                    String value = propertyEntry.getValue().toString();
-                    localizations.put(new LocalizationMap.LocalizationKey(field, locale), value);
-                }
-            }
-        }
+        Map<LocalizationMap.LocalizationKey, String> localizations = loadLocalizationMap(resourceProperties, prefix);
 
         kodeliste.setLocalizationMap(localizations);
     }
 
-    private void initializeLocalizedFieldsForKode(EnumKodeSupport<?, ?, ?, ?> kodeSupport, Localized enumKode) {
+    private <T extends Kode & Localized> void initializeLocalizedFieldsForKode(EnumKodeSupport<?, ?, ?, ?> kodeSupport, T enumKode) {
         Map<String, Properties> resourceProperties = getResourceProperties(kodeSupport.getResourceMsgName());
+        String prefix = kodeSupport.getKodeResourceKey(enumKode.getId()) + '.';
 
+        Map<LocalizationMap.LocalizationKey, String> localizations = loadLocalizationMap(resourceProperties, prefix);
+
+        enumKode.setLocalizationMap(localizations);
+    }
+
+    private Map<LocalizationMap.LocalizationKey, String> loadLocalizationMap(Map<String, Properties> resourceProperties, String prefix) {
         Map<LocalizationMap.LocalizationKey, String> localizations = new HashMap<>();
 
         for (Map.Entry<String, Properties> entry : resourceProperties.entrySet()) {
             Locale locale = toLocale(entry.getKey());
             Properties properties = entry.getValue();
-            String prefix = kodeSupport.getKodeResourceKey((KodeId<?>) enumKode.getId()) + '.';
 
             for (Map.Entry<Object, Object> propertyEntry : properties.entrySet()) {
-                // Det er bevisst at key castes og verdi toString-es
+                // Det er bevisst at key castes og verdi toString-es. Key skal være en String, men value kan i prinsippet være hva som helst.
                 String key = (String) propertyEntry.getKey();
 
                 if (key.startsWith(prefix)) {
@@ -216,8 +207,7 @@ public class EnumKodelisteManager {
                 }
             }
         }
-
-        enumKode.setLocalizationMap(localizations);
+        return localizations;
     }
 
     private static Locale toLocale(String localeString) {
@@ -267,13 +257,13 @@ public class EnumKodelisteManager {
                         for (KodeId<?> originalKodeId : originalKodeIds) {
                             BubbleObjectWithHistory kode = (BubbleObjectWithHistory) enumCache.get(originalKodeId);
                             if (bubbleId.getSnapshotVersion().between(kode.getOppdateringsdato(), kode.getSluttdato())) {
-                                kodeIds.add((KodeId) originalKodeId.asSnapshotVersion(bubbleId));
+                                kodeIds.add(originalKodeId.asSnapshotVersion(bubbleId));
                             }
                         }
 
                     } else {
                         for (KodeId<?> originalKodeId : originalKodeIds) {
-                            kodeIds.add((KodeId) originalKodeId.asSnapshotVersion(bubbleId));
+                            kodeIds.add(originalKodeId.asSnapshotVersion(bubbleId));
                         }
                     }
                     kodeliste.setKoderIds(kodeIds);
@@ -296,6 +286,7 @@ public class EnumKodelisteManager {
         try {
             Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
             kodeSupportField.setAccessible(true);
+            //noinspection UnnecessaryLocalVariable
             EnumKodeSupport<?, ?, ?, ?> kodeSupport = (EnumKodeSupport<?, ?, ?, ?>) kodeSupportField.get(null);
             return kodeSupport;
         } catch (NoSuchFieldException e) {
@@ -309,6 +300,7 @@ public class EnumKodelisteManager {
         try {
             Field kodeSupportField = idClass.getDeclaredField("kodeSupport");
             kodeSupportField.setAccessible(true);
+            //noinspection UnnecessaryLocalVariable
             DynamicKodeSupport<?, ?, ?> kodeSupport = (DynamicKodeSupport<?, ?, ?>) kodeSupportField.get(null);
             return kodeSupport;
         } catch (NoSuchFieldException e) {

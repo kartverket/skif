@@ -19,9 +19,8 @@ public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kod
     private final KLID kodelisteId;
     private final String resourceMsgName;
 
-    // Bruk av KodeId<?> her og i getKodeResourceKey() er fordi vi ikke har noen compile-time garanti for at T.getId() returnerer I
-    private LinkedHashMap<KodeId<?>, T> koder = new LinkedHashMap<KodeId<?>, T>();
-    private HashMap<KodeId<?>, String> kodeResourceKeys = new HashMap<KodeId<?>, String>();
+    private LinkedHashMap<I, T> koder = new LinkedHashMap<>();
+    private HashMap<I, String> kodeResourceKeys = new HashMap<>();
 
     public EnumKodeSupport(Class<I> kodeIdClass, KLID kodelisteId, String resourceMsgName) {
         this.kodeIdClass = kodeIdClass;
@@ -34,10 +33,11 @@ public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kod
     }
 
     public synchronized void addKode(T kode) {
-        if (koder.containsKey(kode.getId())) {
-            throw new ImplementationException("Forsøk på å definere samme kode flere ganger: " + kode );
+        I kodeId = kodeIdClass.cast(kode.getId());
+        if (koder.containsKey(kodeId)) {
+            throw new ImplementationException("Forsøk på å definere samme kode flere ganger: " + kode);
         }
-        koder.put(kode.getId(), kode);
+        koder.put(kodeId, kode);
     }
 
     public T defineKode(Object idValue,String kodeResourceKey) {
@@ -46,7 +46,7 @@ public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kod
         kode.setId(id);
         addKode(kode);
         String key = getKodeName() + "." + kodeResourceKey;
-        kodeResourceKeys.put(kode.getId(), key);
+        kodeResourceKeys.put(id, key);
         return kode;
     }
 
@@ -64,14 +64,14 @@ public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kod
     }
 
     public String getKodeResourceKey(KodeId<?> id) {
-        return kodeResourceKeys.get(id);
+        return kodeResourceKeys.get(kodeIdClass.cast(id));
     }
 
     public Class<I> getKodeIdClass() {
         return kodeIdClass;
     }
 
-    public LinkedHashMap<KodeId<?>, T> getKoder() {
+    public LinkedHashMap<I, T> getKoder() {
         return koder;
     }
 
