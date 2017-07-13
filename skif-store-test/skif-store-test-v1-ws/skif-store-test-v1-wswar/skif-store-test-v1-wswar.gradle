@@ -28,7 +28,7 @@ task zipWsdlsAndSchemas(type: Zip) { Task t ->
     dependsOn configurations.schemas
     from { configurations.schemas.files.collect { project.zipTree it } }
 
-    from genWsdls {
+    from(genWsdls) {
         include '**/*.wsdl'
         include '**/*schema1.xsd'
     }
