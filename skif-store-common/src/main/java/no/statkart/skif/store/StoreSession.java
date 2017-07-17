@@ -192,5 +192,5 @@ public interface StoreSession {
      * vil være cachet i Store.
      * @return transfer med alle lastede objekter
      */
-    public <T extends Transfer<?>> T getAllLoaded(T transfer);
+    <T extends Transfer<?>> T getAllLoaded(T transfer);
 }

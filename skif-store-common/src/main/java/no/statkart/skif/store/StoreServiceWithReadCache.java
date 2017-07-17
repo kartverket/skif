@@ -24,7 +24,6 @@ public class StoreServiceWithReadCache implements StoreService, LockService {
     @Override
     public <T extends BubbleObject> T getObject(BubbleId<? extends T> id) {
         if (id == null) return null;
-        //noinspection unchecked
         T bubbleObject = readCache.get(id);
         if (bubbleObject == null) {
             bubbleObject = storeService.getObject(id);

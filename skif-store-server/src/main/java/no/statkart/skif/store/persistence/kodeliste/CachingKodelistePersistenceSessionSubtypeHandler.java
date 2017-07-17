@@ -1,5 +1,6 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -116,12 +117,14 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
      * globalt.
      */
     private synchronized KodelisteTransfer<KodelisteId<?>> loadKodelisteTranfer() {
-        List<KodelisteId<?>> kodelisteIds = handler.getKodelisteIds();
+        List<KodelisteId<?>> kodelisteIds = ImmutableList.copyOf(handler.getKodelisteIds());
+        //noinspection unchecked (IDEA bug)
         Collection<? extends Kodeliste> kodelisteList = handler.get(kodelisteIds);
         List<KodeId<?>> kodeIds = new ArrayList<>(kodelisteList.size() * 10);
         for (Kodeliste kodeliste : kodelisteList) {
             kodeIds.addAll(kodeliste.getKoderIds());
         }
+        //noinspection unchecked (IDEA bug)
         Collection<? extends Kode> koder = handler.get(kodeIds);
         for (Kode kode : koder) {
             ensureFullyLoaded(kode);
@@ -223,7 +226,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
     @Override
     public <T extends BubbleObject> T get(BubbleId<? extends T> bubbleId) {
         ensureLocalMapInitialized(Collections.singleton(bubbleId));
-        //noinspection unchecked
+        @SuppressWarnings("unchecked")
         T bubble = (T) localBubbleMap.get(bubbleId);
         if (bubble == null) {
             bubble = handler.get(bubbleId);
@@ -245,7 +248,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject> void insert(T bubble) {
-        ensureLocalMapInitialized(Collections.<BubbleId<?>>emptySet());
+        ensureLocalMapInitialized(Collections.emptySet());
         handler.insert(bubble);
         markModified();
         localBubbleMap.put(bubble.getId(), bubble);
@@ -257,7 +260,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject> void update(T bubble) {
-        ensureLocalMapInitialized(Collections.<BubbleId<?>>emptySet());
+        ensureLocalMapInitialized(Collections.emptySet());
         handler.update(bubble);
         markModified();
         localBubbleMap.put(bubble.getId(), bubble);
@@ -265,7 +268,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject> void delete(T bubble) {
-        ensureLocalMapInitialized(Collections.<BubbleId<?>>emptySet());
+        ensureLocalMapInitialized(Collections.emptySet());
         handler.delete(bubble);
         markModified();
         localBubbleMap.remove(bubble.getId());
@@ -278,7 +281,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void evict(I bubbleId) {
-        ensureLocalMapInitialized(Collections.<BubbleId<?>>emptySet());
+        ensureLocalMapInitialized(Collections.emptySet());
         localBubbleMap.remove(bubbleId);
         localCache = null;
         handler.evict(bubbleId);
@@ -291,7 +294,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject> T refresh(BubbleId<? extends T> bubbleId) {
-        ensureLocalMapInitialized(Collections.<BubbleId<?>>emptySet());
+        ensureLocalMapInitialized(Collections.emptySet());
         localBubbleMap.remove(bubbleId);
         T bubble = handler.refresh(bubbleId);
         ensureFullyLoaded(bubble);
@@ -300,13 +303,12 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> refresh(Collection<I> bubbleIds) {
-        ensureLocalMapInitialized(Collections.<BubbleId<?>>emptySet());
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> refresh(Collection<I> bubbleIds) {
+        ensureLocalMapInitialized(Collections.emptySet());
         for (I bubbleId : bubbleIds) {
             localBubbleMap.remove(bubbleId);
         }
-        //noinspection unchecked
-        Collection<T> bubbles = (Collection<T>) handler.refresh(bubbleIds);
+        Collection<? extends T> bubbles = handler.refresh(bubbleIds);
         for (T bubble : bubbles) {
             ensureFullyLoaded(bubble);
             localBubbleMap.put(bubble.getId(), bubble);
@@ -316,7 +318,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     @Override
     public <T extends BubbleObject> void refresh(T bubble) {
-        ensureLocalMapInitialized(Collections.<BubbleId<?>>emptySet());
+        ensureLocalMapInitialized(Collections.emptySet());
         localBubbleMap.remove(bubble.getId());
         handler.refresh(bubble);
         ensureFullyLoaded(bubble);
@@ -324,10 +326,9 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     @Override
-    public List<KodelisteId<?>> getKodelisteIds() {
-        ensureLocalMapInitialized(Collections.<BubbleId<?>>emptySet());
-        //noinspection unchecked
-        return (List<KodelisteId<?>>) kodelisteIdList;
+    public List<? extends KodelisteId<?>> getKodelisteIds() {
+        ensureLocalMapInitialized(Collections.emptySet());
+        return kodelisteIdList;
     }
 
     @Override

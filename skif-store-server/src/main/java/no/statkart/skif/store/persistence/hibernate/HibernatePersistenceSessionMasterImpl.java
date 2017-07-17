@@ -270,7 +270,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             }
         }
         if (bubbleIds.size() != result.size()) {
-            Set<BubbleId<?>> ids = new HashSet<BubbleId<?>>(bubbleIds);
+            Set<BubbleId<?>> ids = new HashSet<>(bubbleIds);
             ids.removeAll(Bubbles.asIds(result));
             throw new ObjectsNotFoundException(ids);
         }
@@ -501,7 +501,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      */
     protected void addOrphanOneToOneEntityComponent(int nestingLevel, EntityComponent valueExisting, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) {
         while (orphanOneToOneEntityComponents.size() <= nestingLevel) {
-            orphanOneToOneEntityComponents.add(HashMultimap.<Class<? extends EntityComponent>, EntityComponent>create());
+            orphanOneToOneEntityComponents.add(HashMultimap.create());
         }
         orphanOneToOneEntityComponents.get(nestingLevel).put(valueExisting.getClass(), valueExisting);
     }
@@ -1188,7 +1188,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @return en liste av <code>Criteria</code>-objekter der hver criteria laster domenebobler av en
      *         bestemt type.
      */
-    public List<Criteria> buildCriterias(Set<? extends BubbleId> ids) {
+    public List<Criteria> buildCriterias(Set<? extends BubbleId<?>> ids) {
         List<Criteria> criterias = new ArrayList<>();
 
         LinkedHashMap<Class<?>, ? extends Set<? extends Serializable>> idsByType = getIdsByType(ids);
@@ -1220,7 +1220,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             //}
             if (!idsByType.containsKey(entityClazz)) {
                 //Add an entry in the map for holding all ids of this typename
-                idsByType.put(entityClazz, new HashSet<I>());
+                idsByType.put(entityClazz, new HashSet<>());
             }
 
             idsByType.get(entityClazz).add(id);
@@ -1606,7 +1606,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         if (value != null && EntityComponent.class.isAssignableFrom(typeClass)) {
             EntityComponent component = (EntityComponent) value;
             if (groupedEntityComponents.size() == levelKey) {
-                groupedEntityComponents.add(HashMultimap.<Class<? extends EntityComponent>, EntityComponent>create());
+                groupedEntityComponents.add(HashMultimap.create());
             }
             groupedEntityComponents.get(levelKey).put(component.getClass(), component);
             fixBatchingForObjectWithEntityComponents(value, processedObjects, levelKey + 1, groupedEntityComponents);

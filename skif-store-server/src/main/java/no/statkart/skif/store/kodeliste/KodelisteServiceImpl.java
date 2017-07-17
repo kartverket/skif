@@ -1,5 +1,6 @@
 package no.statkart.skif.store.kodeliste;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import no.statkart.skif.store.KodelisteTransfer;
@@ -30,14 +31,17 @@ public class KodelisteServiceImpl implements KodelisteService {
 
     @Override
     public KodelisteTransfer<? extends KodelisteId<?>> getKodelister(SnapshotVersion snapshotVersion) {
-        List<KodelisteId<?>> kodelisteIds = getKodelisteSubtypeHandler(snapshotVersion).getKodelisteIds();
-        List<Kodeliste> kodelisteList =store.get(kodelisteIds);
-        List<KodeId<?>> kodeIds = new ArrayList<KodeId<?>>(kodelisteList.size() * 10);
+        List<KodelisteId<?>> kodelisteIds = ImmutableList.copyOf(getKodelisteSubtypeHandler(snapshotVersion).getKodelisteIds());
+        //noinspection unchecked (IDEA bug)
+        List<Kodeliste> kodelisteList = store.get(kodelisteIds);
+        List<KodeId<?>> kodeIds = new ArrayList<>(kodelisteList.size() * 10);
         for (Kodeliste kodeliste : kodelisteList) {
             kodeIds.addAll(kodeliste.getKoderIds());
         }
+        //noinspection unchecked (IDEA bug)
         List<Kode> koder = store.get(kodeIds);
-        KodelisteTransfer<KodelisteId<?>> kodelisteTransfer = new KodelisteTransfer<KodelisteId<?>>(kodelisteIds, Iterables.concat(kodelisteList, koder));
+        //noinspection UnnecessaryLocalVariable
+        KodelisteTransfer<KodelisteId<?>> kodelisteTransfer = new KodelisteTransfer<>(kodelisteIds, Iterables.concat(kodelisteList, koder));
         return kodelisteTransfer;
     }
 

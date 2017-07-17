@@ -405,7 +405,7 @@ public class MockupStore implements Store {
         return mockupPersister.getTransfer(snapshotVersion);
     }
 
-    public MockupTransfer getTransferForIds(Collection<? extends BubbleId> ids, SnapshotVersion snapshotVersion) {
+    public MockupTransfer getTransferForIds(Collection<? extends BubbleId<?>> ids, SnapshotVersion snapshotVersion) {
         SnapshotVersion previousSnapshotVersion = getSnapshotVersion();
         Set<BubbleId> linkedIds;
         try {
@@ -430,7 +430,7 @@ public class MockupStore implements Store {
         while (!uncheckedObjects.isEmpty()) {
             BubbleObject object = uncheckedObjects.remove();
 
-            Set<BubbleId> referencedBubbleIds = findReferencedBubbleIds(object, ignoredIdClasses);
+            Set<BubbleId<?>> referencedBubbleIds = findReferencedBubbleIds(object, ignoredIdClasses);
             Set<BubbleObject> referencedBubbles = get(referencedBubbleIds);
 
             referencedBubbles.removeAll(uncheckedObjects);
@@ -464,11 +464,11 @@ public class MockupStore implements Store {
      * @param ignoredIdClasses id-klasser som ikke skal følges
      * @return alle id-er, inkludert potensielt objektets egen id
      */
-    private static Set<BubbleId> findReferencedBubbleIds(Object object, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
+    private static Set<BubbleId<?>> findReferencedBubbleIds(Object object, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
         if (object == null) {
             return Collections.emptySet();
         } else {
-            Set<BubbleId> ids = new HashSet<>();
+            Set<BubbleId<?>> ids = new HashSet<>();
 
             Stack<Object> stack = new Stack<>();
             HashSet<Object> visitedObjects = new HashSet<>();

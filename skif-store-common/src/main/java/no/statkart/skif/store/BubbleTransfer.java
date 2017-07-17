@@ -50,7 +50,7 @@ import java.util.*;
 public abstract class BubbleTransfer<T> extends Transfer<T> {
     private static final long serialVersionUID = 1L;
 
-    private Set<BubbleId> lockedIds = new HashSet<BubbleId>();
+    private Set<BubbleId> lockedIds = new HashSet<>();
 
     public BubbleTransfer(T result) {
         super(result);

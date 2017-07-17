@@ -258,8 +258,10 @@ public class StoreClientTest {
         TestBubbleId<?> id2 = new TestBubbleId(2L);
         ImmutableList<TestBubbleId<?>> ids = ImmutableList.of(id1, id2);
 
+        //noinspection unchecked (IDEA bug)
         List<TestBubble> testBubbles = store.getOrdered(ids);
         Assert.assertTrue(store.evict(ids), "Evict av ikke låst boble skal gi true");
+        //noinspection unchecked (IDEA bug)
         List<TestBubble> testBubbles2 = store.getOrdered(ids);
 
         Assert.assertNotSame(testBubbles.get(0), testBubbles2.get(0), "Fikk tilbake samme objekt");
@@ -275,9 +277,11 @@ public class StoreClientTest {
             TestBubbleId<?> id2 = new TestBubbleId(2L);
             ImmutableList<TestBubbleId<?>> ids = ImmutableList.of(id1, id2);
 
+            //noinspection unchecked (IDEA bug)
             List<TestBubble> testBubbles = store.getOrdered(ids);
             TestBubble lockedBubble = store.lock(id2);
             Assert.assertFalse(store.evict(ids), "Evict med låst boble skal gi false");
+            //noinspection unchecked (IDEA bug)
             List<TestBubble> testBubbles2 = store.getOrdered(ids);
 
             Assert.assertNotSame(testBubbles.get(0), testBubbles2.get(0), "Fikk tilbake samme objekt");

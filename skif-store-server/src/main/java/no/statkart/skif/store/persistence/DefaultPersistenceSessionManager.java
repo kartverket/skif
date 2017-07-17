@@ -166,7 +166,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
                 Collection<I> collection = snapshotManagedCollectionMap.get(persistenceManager);
                 if (collection == null) {
                     // Dersom alle tilhører samme collection så blir estimated size riktig med en gang.
-                    collection = (prevCollection == null ? new ArrayList<I>(bubbleIds.size()) : new ArrayList<I>());
+                    collection = (prevCollection == null ? new ArrayList<>(bubbleIds.size()) : new ArrayList<I>());
                     snapshotManagedCollectionMap.put(persistenceManager, collection);
                 }
                 collection.add(bubbleId);

@@ -321,7 +321,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 
         try {
             KodelistePersistenceSessionSubtypeHandler kodelisteSubtypeHandler = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(KodelistePersistenceSessionSubtypeHandler.class);
-            Collection<KodelisteId<?>> kodelisteIds = kodelisteSubtypeHandler.getKodelisteIds();
+            Collection<? extends KodelisteId<?>> kodelisteIds = kodelisteSubtypeHandler.getKodelisteIds();
             assertEquals(kodelisteIds.size(), 9);
         } finally {
             persistenceSessionManager.close();

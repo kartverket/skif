@@ -294,11 +294,11 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> refresh(Collection<I> bubbleIds) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> refresh(Collection<I> bubbleIds) {
         for (I bubbleId : bubbleIds) {
             evict(bubbleId);
         }
-        return (Collection<T>) get(bubbleIds);
+        return get(bubbleIds);
     }
 
     @Override

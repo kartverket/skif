@@ -18,5 +18,5 @@ public interface KodelistePersistenceSessionSubtypeHandler extends PersistenceSe
      * at alle tilhørende kodelister og koder  er lastet.
      * @return Collection med all kodelisteids
      */
-    List<KodelisteId<?>> getKodelisteIds();
+    List<? extends KodelisteId<?>> getKodelisteIds();
 }

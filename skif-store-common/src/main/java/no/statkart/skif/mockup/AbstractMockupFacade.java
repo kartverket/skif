@@ -62,11 +62,11 @@ public abstract class AbstractMockupFacade {
         return store.getTransfer(snapshotVersion);
     }
 
-    public MockupTransfer getTransferForIds(Set<? extends BubbleId> ids) {
+    public MockupTransfer getTransferForIds(Set<? extends BubbleId<?>> ids) {
         return getTransferForIds(ids, SnapshotVersion.CURRENT);
     }
 
-    public MockupTransfer getTransferForIds(Set<? extends BubbleId> ids, SnapshotVersion snapshotVersion) {
+    public MockupTransfer getTransferForIds(Set<? extends BubbleId<?>> ids, SnapshotVersion snapshotVersion) {
         return store.getTransferForIds(ids, snapshotVersion);
     }
 
