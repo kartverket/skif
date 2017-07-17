@@ -157,7 +157,8 @@ public class StoreSessionServer extends AbstractStoreSession {
         throw new ImplementationException("Reordering is only supported in UnitOfWork. BubbleId: " + bubbleId);
     }
 
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
+    @Override
+    public boolean evictEntry(int level, BubbleId<?> bubbleId) {
         boolean evicted;
         StoreEntry storeEntry = storeCache.get(bubbleId);
         if (storeEntry == null) {
@@ -568,7 +569,7 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry unlockEntry(int level, I bubbleId) {
+    public StoreEntry unlockEntry(int level, BubbleId<?> bubbleId) {
         StoreEntry storeEntry = storeCache.get(bubbleId);
         if (storeEntry != null) {
             switch (storeEntry.getDerivedState(level)) {

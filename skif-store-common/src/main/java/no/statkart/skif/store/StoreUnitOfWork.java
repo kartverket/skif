@@ -82,7 +82,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry unlockEntry(int level, I bubbleId) {
+    public StoreEntry unlockEntry(int level, BubbleId<?> bubbleId) {
         return wrappedStoreSession.unlockEntry(level, bubbleId);
     }
 
@@ -92,7 +92,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
+    public boolean evictEntry(int level, BubbleId<?> bubbleId) {
         return wrappedStoreSession.evictEntry(level, bubbleId);
     }
 

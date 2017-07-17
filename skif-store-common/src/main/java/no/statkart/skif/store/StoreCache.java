@@ -17,17 +17,18 @@ public class StoreCache {
         return store;
     }
 
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry get(I bubbleId) {
+    public StoreEntry get(BubbleId<?> bubbleId) {
         return cacheMap.get(bubbleId);
     }
 
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry remove(I bubbleId) {
+    public StoreEntry remove(BubbleId<?> bubbleId) {
+        //noinspection UnnecessaryLocalVariable
         StoreEntry storeEntry = cacheMap.remove(bubbleId);
         return storeEntry;
     }
 
     public StoreCache() {
-        cacheMap = new HashMap<BubbleId<?>, StoreEntry>(1000);
+        cacheMap = new HashMap<>(1000);
     }
 
     public void clear() {
