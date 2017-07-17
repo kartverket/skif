@@ -988,16 +988,19 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
         final String sqlString = sql.toString();
         logger.debug(sqlString);
-        try (PreparedStatement statement = session().connection().prepareStatement(sqlString)) {
-            for (StatementSetter newPrimitive : newPrimitives) {
-                newPrimitive.set(statement);
+        session().doWork(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement(sqlString)) {
+                for (StatementSetter newPrimitive : newPrimitives) {
+                    newPrimitive.set(statement);
+                }
+                int rows = statement.executeUpdate();
+                if (rows != 1) {
+                    throw new ImplementationException("When changing type, the number of updated rows should be 1, but it turned out to be " + rows, logger);
+                }
             }
-            int rows = statement.executeUpdate();
-            if (rows != 1) {
-                throw new ImplementationException("When changing type, the number of updated rows should be 1, but it turned out to be " + rows, logger);
-            }
-        }
+        });
     }
+
     @FunctionalInterface
     interface StatementSetter {
         void set(PreparedStatement preparedStatement) throws SQLException;
