@@ -9,7 +9,6 @@ import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.HibernateHelper;
 import org.hibernate.*;
-import org.hibernate.LockMode;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.*;
@@ -372,7 +371,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         // Dersom objektet ikke allerede er lastet lastes eksistrende objekt her. For bulk updates vil det går raksere
         // hvis eksisterende objekter allerede er lastet før man kommer her slik at eksisterende objekter ikke lastes
         // en-etter-en.
-        BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
+        BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockOptions.NONE);
         if (existingBubble != bubbleObject) {
             ensureFullyLoaded(existingBubble); // TODO: Håndter lazy loaded collections. Må pt kalle ensureFullyLoaded fordi attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents pt ikke håndtere lazyloaded collections.
 
@@ -381,7 +380,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 changeType(bubbleObject, existingBubble);
 
                 // Les inn objektet på nytt med den nye typen. changeType har evictet.
-                existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
+                existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockOptions.NONE);
                 ensureFullyLoaded(existingBubble); // TODO: Håndter lazy loaded collections. Må pt kalle ensureFullyLoaded fordi attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents pt ikke håndtere lazyloaded collections.
             }
 
@@ -1235,7 +1234,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         T bubble = getFromHibernatePersistenceContext(bubbleId);
         if (bubble == null) {
             //noinspection unchecked
-            bubble = (T) session().get(bubbleId.getType(), bubbleId, LockMode.NONE);
+            bubble = (T) session().get(bubbleId.getType(), bubbleId, LockOptions.NONE);
         }
         return bubble;
     }
