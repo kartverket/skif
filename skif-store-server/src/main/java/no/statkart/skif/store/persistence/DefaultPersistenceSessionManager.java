@@ -156,17 +156,13 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
                 prevCollection.add(bubbleId);
             } else {
                 SnapshotVersion snapshotVersion = bubbleId.getSnapshotVersion();
-                Map<PersistenceSessionForSnapshot, Collection<I>> snapshotManagedCollectionMap = map.get(snapshotVersion);
-                if (snapshotManagedCollectionMap == null) {
-                    snapshotManagedCollectionMap = new HashMap<>(2);
-                    map.put(snapshotVersion, snapshotManagedCollectionMap);
-                }
+                Map<PersistenceSessionForSnapshot, Collection<I>> snapshotManagedCollectionMap = map.computeIfAbsent(snapshotVersion, k -> new HashMap<>(2));
                 PersistenceSessionForSnapshot persistenceManager = getForSnapshotVersion(snapshotVersion).getForBubbleId(bubbleId.getClass());
 
                 Collection<I> collection = snapshotManagedCollectionMap.get(persistenceManager);
                 if (collection == null) {
                     // Dersom alle tilhører samme collection så blir estimated size riktig med en gang.
-                    collection = (prevCollection == null ? new ArrayList<>(bubbleIds.size()) : new ArrayList<I>());
+                    collection = (prevCollection == null ? new ArrayList<>(bubbleIds.size()) : new ArrayList<>());
                     snapshotManagedCollectionMap.put(persistenceManager, collection);
                 }
                 collection.add(bubbleId);

@@ -1,11 +1,11 @@
 package no.statkart.skif.store;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author Henrik Fredholm
@@ -124,15 +124,10 @@ public class StoreUnitOfWork extends AbstractStoreSession {
             }
         }
 
-        ImmutableSet<? extends BubbleId<?>> unlockIds = ImmutableSet.copyOf(
-                Iterables.transform(
-                        Iterables.filter(
-                                Iterables.concat(removeEntries, clearEntries),
-                                storeEntry -> storeEntry.isLockedByLevel(level)
-                        ),
-                        StoreEntry::getId
-                )
-        );
+        ImmutableSet<? extends BubbleId<?>> unlockIds = Stream.concat(removeEntries.stream(), clearEntries.stream())
+                .filter(storeEntry -> storeEntry.isLockedByLevel(level))
+                .map(StoreEntry::getId)
+                .collect(ImmutableSet.toImmutableSet());
         if (!unlockIds.isEmpty()) {
             wrappedStoreSession.unlockEntries(level, unlockIds);
         }

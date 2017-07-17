@@ -143,11 +143,7 @@ public class StoreSessionClient extends AbstractStoreSession {
 
         Map<SnapshotVersion, Collection<I>> idsForVersions = new HashMap<>();
         for (I bubbleId : bubbleIds) {
-            Collection<I> ids = idsForVersions.get(bubbleId.getSnapshotVersion());
-            if (ids == null) {
-                ids = new HashSet<>();
-                idsForVersions.put(bubbleId.getSnapshotVersion(), ids);
-            }
+            Collection<I> ids = idsForVersions.computeIfAbsent(bubbleId.getSnapshotVersion(), k -> new HashSet<>());
             ids.add(bubbleId);
         }
 
@@ -175,11 +171,7 @@ public class StoreSessionClient extends AbstractStoreSession {
 
         Map<SnapshotVersion, Collection<I>> idsForVersions = new HashMap<>();
         for (I bubbleId : bubbleIds) {
-            Collection<I> ids = idsForVersions.get(bubbleId.getSnapshotVersion());
-            if (ids == null) {
-                ids = new HashSet<>();
-                idsForVersions.put(bubbleId.getSnapshotVersion(), ids);
-            }
+            Collection<I> ids = idsForVersions.computeIfAbsent(bubbleId.getSnapshotVersion(), k -> new HashSet<>());
             ids.add(bubbleId);
         }
 

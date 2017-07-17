@@ -197,11 +197,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                     KodelisteId kodelisteId = kode.getKodelisteId();
                     if (kodelisteId != prevKodelisteId) {
                         prevKodelisteId = kodelisteId;
-                        kodeIds = kodeIdsMap.get(kodelisteId);
-                        if (kodeIds == null) {
-                            kodeIds = new ArrayList<>();
-                            kodeIdsMap.put(kodelisteId, kodeIds);
-                        }
+                        kodeIds = kodeIdsMap.computeIfAbsent(kodelisteId, k -> new ArrayList<>());
                     }
                     addFilterKodeForSnapshot(kodeIds, kode);
                 }
