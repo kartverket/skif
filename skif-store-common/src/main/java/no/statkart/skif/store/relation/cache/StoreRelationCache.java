@@ -2,17 +2,8 @@ package no.statkart.skif.store.relation.cache;
 
 import com.google.common.collect.Lists;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.AbstractStoreSession;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.BubbleObjectWithIdent;
-import no.statkart.skif.store.InverseRelation;
-import no.statkart.skif.store.InverseRelationCollector;
-import no.statkart.skif.store.InverseRelationParticipation;
-import no.statkart.skif.store.Store;
-import no.statkart.skif.store.WrappableStoreSession;
+import no.statkart.skif.store.*;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Provider;
 import java.lang.reflect.InvocationTargetException;
@@ -175,23 +166,13 @@ public abstract class StoreRelationCache {
     }
 
     public void updateRemoved(BubbleId<?> owningBubbleId, InverseRelationParticipation oldInstance) {
-        updateRemoved(owningBubbleId, oldInstance, new Executor() {
-            @Override
-            public void execute(@Nonnull Runnable command) {
-                command.run();
-            }
-        });
+        updateRemoved(owningBubbleId, oldInstance, Runnable::run);
     }
 
     @SuppressWarnings("Duplicates")
     public void updateRemoved(BubbleId<?> owningBubbleId, final InverseRelationParticipation oldInstance, Executor collectionExcutor) {
         final InverseRelationCollector collector = new InverseRelationCollector();
-        collectionExcutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                oldInstance.collectInverseRelationValues(collector);
-            }
-        });
+        collectionExcutor.execute(() -> oldInstance.collectInverseRelationValues(collector));
         for (Map.Entry<RelationName, Object> entry : collector.entrySet()) {
             Object inverseValue = entry.getValue();
             if (inverseValue instanceof InverseRelationCollector.Values) {

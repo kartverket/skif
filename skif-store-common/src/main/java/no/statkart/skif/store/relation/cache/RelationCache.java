@@ -88,11 +88,7 @@ public class RelationCache {
     }
 
     private CachedInverseValueEntry getOrCreateCachedInverseValueEntry(RelationName relationName, BubbleId<?> sourceId) {
-        List<CachedInverseValueEntry> cachedInverseValueEntries = sourceIdToInverseValueMap.get(sourceId);
-        if (cachedInverseValueEntries==null) {
-            cachedInverseValueEntries = Lists.newArrayListWithCapacity(1);
-            sourceIdToInverseValueMap.put(sourceId, cachedInverseValueEntries);
-        }
+        List<CachedInverseValueEntry> cachedInverseValueEntries = sourceIdToInverseValueMap.computeIfAbsent(sourceId, k -> Lists.newArrayListWithCapacity(1));
         for (CachedInverseValueEntry cachedInverseValueEntry : cachedInverseValueEntries) {
             if (cachedInverseValueEntry.getRelationName().equals(relationName)) {
                 return cachedInverseValueEntry;
@@ -352,13 +348,7 @@ public class RelationCache {
     }
 
     private static Comparable<Key> relationNameEquals(final String relationName) {
-        return new Comparable<Key>() {
-            @SuppressWarnings("NullableProblems")
-            @Override
-            public int compareTo(Key o) {
-                return relationName.compareTo(o.name.toString());
-            }
-        };
+        return o -> relationName.compareTo(o.name.toString());
     }
 
     public Set<String> getCachedRelationNames() {

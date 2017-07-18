@@ -58,12 +58,7 @@ public class LocalizationMap implements Serializable, EqualityByFields {
     }
 
     public void updateLocalizations(String fieldName, LocalizedString localizedString) {
-        for (Iterator<LocalizationKey> iterator = map.keySet().iterator(); iterator.hasNext(); ) {
-            LocalizationKey next = iterator.next();
-            if (next.getName().equals(fieldName)) {
-                iterator.remove();
-            }
-        }
+        map.keySet().removeIf(next -> next.getName().equals(fieldName));
 
         for (Map.Entry<Locale, String> entry : localizedString.getAllTexts().entrySet()) {
             map.put(new LocalizationKey(fieldName, entry.getKey()), entry.getValue());
@@ -137,20 +132,14 @@ public class LocalizationMap implements Serializable, EqualityByFields {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-
             LocalizationKey that = (LocalizationKey) o;
-
-            if (locale != null ? !locale.equals(that.locale) : that.locale != null) return false;
-            if (!name.equals(that.name)) return false;
-
-            return true;
+            return Objects.equals(name, that.name) &&
+                    Objects.equals(locale, that.locale);
         }
 
         @Override
         public int hashCode() {
-            int result = name.hashCode();
-            result = 31 * result + (locale != null ? locale.hashCode() : 0);
-            return result;
+            return Objects.hash(name, locale);
         }
 
         @Override

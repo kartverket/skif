@@ -1,6 +1,7 @@
 package no.statkart.skif.store.multikobling;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author Henrik Fredholm
@@ -38,18 +39,11 @@ public abstract class Kobling<R,V> implements Serializable {
 
         Kobling kobling = (Kobling) o;
 
-        if (rolle != null ? !rolle.equals(kobling.rolle) : kobling.rolle != null) return false;
-        V value = getValue();
-        if (value != null ? !value.equals(kobling.getValue()) : kobling.getValue() != null) return false;
-
-        return true;
+        return Objects.equals(rolle, kobling.rolle) && Objects.equals(getValue(), kobling.getValue());
     }
 
     @Override
     public int hashCode() {
-        int result = rolle != null ? rolle.hashCode() : 0;
-        V value = getValue();
-        result = 31 * result + (value != null ? value.hashCode() : 0);
-        return result;
+        return Objects.hash(rolle, getValue());
     }
 }
