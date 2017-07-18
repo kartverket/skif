@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public abstract class AbstractModuleStrategyFactory implements ModuleStrategyFactory {
     protected  ServiceMode serviceMode = ServiceMode.JEE;
-    protected Map<Class<? extends ModuleWithStrategy<?>>, StrategyTuple<?>> strategyTupleMap = new HashMap<Class<? extends ModuleWithStrategy<?>>, StrategyTuple<?>>();
+    protected Map<Class<? extends ModuleWithStrategy<?>>, StrategyTuple<?>> strategyTupleMap = new HashMap<>();
 
 
     public AbstractModuleStrategyFactory() {

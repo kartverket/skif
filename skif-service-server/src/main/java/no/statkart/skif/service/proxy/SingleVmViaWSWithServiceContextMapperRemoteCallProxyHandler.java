@@ -51,9 +51,10 @@ public class SingleVmViaWSWithServiceContextMapperRemoteCallProxyHandler<S, W ex
         try {
             serviceRequestScope.seed(SingleVmRemoteCallContext.class, createSingleVmRemoteCallcontext(snapshotVersion));
             final EJBCallProxyHandler<S> ejbCallProxyHandler = singleVmServerEJBProxyHandlerProvider.get();
-            final W2DAdapterProxyHandler<W, S> w2d = new W2DAdapterProxyHandler<W, S>(serviceClass, ejbCallProxyHandler, mapping, exceptionMapping);
-            final D2WAdapterProxyHandler<S, W> d2w = new D2WAdapterProxyHandler<S, W>(webServiceClass, w2d, mapping, exceptionMapping);
+            final W2DAdapterProxyHandler<W, S> w2d = new W2DAdapterProxyHandler<>(serviceClass, ejbCallProxyHandler, mapping, exceptionMapping);
+            final D2WAdapterProxyHandler<S, W> d2w = new D2WAdapterProxyHandler<>(webServiceClass, w2d, mapping, exceptionMapping);
 
+            //noinspection UnnecessaryLocalVariable
             Object result = d2w.invoke(proxy, method, args);
 
             return result;

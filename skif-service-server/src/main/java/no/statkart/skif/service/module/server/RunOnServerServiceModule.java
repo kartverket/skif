@@ -27,7 +27,7 @@ public class RunOnServerServiceModule extends ServerServiceModule {
         super(configuration, getList());
     }
 
-    private static Collection<Class<? extends Object>> getList() {
+    private static Collection<Class<?>> getList() {
         ArrayList<Class<?>> list = new ArrayList<Class<?>>();
         list.add(RunOnServerWithTxNotSupportedService.class);
         list.add(RunOnServerWithTxRequiresNewService.class);

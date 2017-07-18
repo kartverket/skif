@@ -47,7 +47,7 @@ public class ServiceRequestContext implements Serializable {
         this.transactionAttributeType = transactionAttributeType;
     }
 
-    public ServiceRequestContext(ServiceRequestContext parent, long callId, TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
+    public ServiceRequestContext(@SuppressWarnings("NullableProblems") ServiceRequestContext parent, long callId, TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
         this.callerPrincipal = parent.callerPrincipal;
         this.servicename = parent.servicename;
         this.callId = callId;

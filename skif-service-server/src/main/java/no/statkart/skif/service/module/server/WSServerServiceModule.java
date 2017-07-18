@@ -24,7 +24,7 @@ import java.util.*;
  */
 public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceModuleStrategy> {
     protected final ClassLoader classLoader;
-    protected final Set<Class<? extends Object>> services = new HashSet<>();
+    protected final Set<Class<?>> services = new HashSet<>();
     protected final Mapping mapping;
     protected ExceptionMapping exceptionMapping;
     protected Class<? extends ServiceContextMapper<?>> serviceContextMapperClass;
@@ -36,27 +36,27 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
      */
     protected String[] classWSIPackageMappings = null;
 
-    public WSServerServiceModule(Configuration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
+    public WSServerServiceModule(Configuration configuration, Collection<Class<?>> services, Mapping mapping) {
         super(WSServerServiceModuleStrategy.class, configuration);
         this.services.addAll(services);
         this.mapping = Objects.requireNonNull(mapping, "mapping");
         this.classLoader = getClass().getClassLoader();
     }
 
-    public WSServerServiceModule(Configuration configuration, Collection<Class<? extends Object>> services, Mapping mapping, ClassLoader classLoader) {
+    public WSServerServiceModule(Configuration configuration, Collection<Class<?>> services, Mapping mapping, ClassLoader classLoader) {
         super(WSServerServiceModuleStrategy.class, configuration);
         this.services.addAll(services);
         this.mapping = Objects.requireNonNull(mapping, "mapping");
         this.classLoader = classLoader;
     }
-    public WSServerServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
+    public WSServerServiceModule(ModuleConfiguration configuration, Collection<Class<?>> services, Mapping mapping) {
         super(WSServerServiceModuleStrategy.class, configuration);
         this.services.addAll(services);
         this.mapping = Objects.requireNonNull(mapping, "mapping");
         this.classLoader = getClass().getClassLoader();
     }
 
-    public WSServerServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping, ClassLoader classLoader) {
+    public WSServerServiceModule(ModuleConfiguration configuration, Collection<Class<?>> services, Mapping mapping, ClassLoader classLoader) {
         super(WSServerServiceModuleStrategy.class, configuration);
         this.services.addAll(services);
         this.mapping = Objects.requireNonNull(mapping, "mapping");
@@ -140,7 +140,7 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
     protected void configureServiceContextMapper(Binder outerBinder, PrivateBinder innerBinder) {
         if (serviceContextMapperClass == null) {
             innerBinder.bind(new TypeLiteral<ServiceContextMapper<?>>() {
-            }).toProvider(Providers.<ServiceContextMapper<?>>of(null));
+            }).toProvider(Providers.of(null));
         } else {
             innerBinder.bind(new TypeLiteral<ServiceContextMapper<?>>() {
             }).to(serviceContextMapperClass);
@@ -148,7 +148,7 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
     }
 
     protected void configureServices(Binder outerBinder, PrivateBinder innerBinder) {
-        for (Class<? extends Object> serviceClass : services) {
+        for (Class<?> serviceClass : services) {
             Class<? extends ServiceWSI> serviceWSIClass = strategy.findWSIClass(serviceClass, classLoader);
             strategy.bindSkifWSInterceptorForService(outerBinder, innerBinder, serviceClass, serviceWSIClass);
             strategy.bindWSServiceChainFactoryForService(outerBinder, innerBinder, serviceClass, serviceWSIClass, w2DAdapterProxyHandlerImplClass);

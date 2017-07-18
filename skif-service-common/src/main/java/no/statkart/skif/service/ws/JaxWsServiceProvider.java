@@ -28,7 +28,7 @@ public class JaxWsServiceProvider<S> implements Provider<S> {
         this.type = type;
         this.loginUserHolder = loginUserHolder;
         this.serverUrlHolder = serverUrlHolder;
-        pool = new JaxWsServicePool<S>((Class<S>) type.getRawType());
+        pool = new JaxWsServicePool<>((Class<S>) type.getRawType());
         pool.setHostnameVerifier(hostnameVerifier);
     }
 
@@ -36,6 +36,7 @@ public class JaxWsServiceProvider<S> implements Provider<S> {
     public S get() {
         final String webServiceContextPath = pool.getWebServiceContextPath();
         final JaxWsRequestContextProxyHandler<S> jaxWsRequestContextProxyHandler = new JaxWsRequestContextProxyHandler<S>(pool, loginUserHolder, serverUrlHolder, webServiceContextPath);
+        //noinspection UnnecessaryLocalVariable
         final S jaxWsInstanceWithProxy = jaxWsRequestContextProxyHandler.buildProxy(type);
         return jaxWsInstanceWithProxy;
     }

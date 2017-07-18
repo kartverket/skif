@@ -43,6 +43,7 @@ public class EJBServiceChainProvider<S> implements Provider<S> {
     @Override
     public S get() {
         final ProxyHandler<S> implChain = implementationServiceChainFactory.createChain();
+        //noinspection UnnecessaryLocalVariable
         S proxy = ejbServiceChainFactory.extendChain(implChain).buildProxy(type);
         return proxy;
     }

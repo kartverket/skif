@@ -69,11 +69,10 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
 
         Class<? extends ModuleStrategyFactory> strategyFactoryClass = SkifUtil.classForName(classname);
         try {
+            //noinspection UnnecessaryLocalVariable
             final ModuleStrategyFactory moduleStrategyFactory = strategyFactoryClass.newInstance();
             return moduleStrategyFactory;
-        } catch (InstantiationException e) {
-            throw new ImplementationException("Could not instantiate ModuleStrategyFactory class: " + strategyFactoryClass.getName(), e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new ImplementationException("Could not instantiate ModuleStrategyFactory class: " + strategyFactoryClass.getName(), e);
         }
     }

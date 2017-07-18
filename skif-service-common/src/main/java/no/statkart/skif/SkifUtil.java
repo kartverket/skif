@@ -21,9 +21,7 @@ public class SkifUtil {
     public static <T> T newInstance(Class<T> aClass) {
         try {
             return aClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new ImplementationException(e);
         }
     }
@@ -31,9 +29,7 @@ public class SkifUtil {
     public static <T> T newInstance(String className) {
         try {
             return SkifUtil.<T>classForName(className).newInstance();
-        } catch (InstantiationException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new ImplementationException(e);
         }
     }
@@ -77,15 +73,7 @@ public class SkifUtil {
         try {
             Class<? extends T> aClass = (Class<? extends T>) Class.forName(className);
             return aClass.getConstructor(arg.getClass()).newInstance(arg);
-        } catch (ClassNotFoundException e) {
-            throw new ImplementationException(e);
-        } catch (InvocationTargetException e) {
-            throw new ImplementationException(e);
-        } catch (NoSuchMethodException e) {
-            throw new ImplementationException(e);
-        } catch (InstantiationException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
+        } catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
             throw new ImplementationException(e);
         }
     }

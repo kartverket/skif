@@ -4,11 +4,9 @@ import com.google.inject.Binder;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
-import com.google.inject.util.Types;
 import no.statkart.skif.SkifUtil;
 
 import javax.annotation.Nullable;
-import java.util.Set;
 
 /**
  * Hjelpeklasse for å binde {@code ServiceChainFactory}s
@@ -37,7 +35,7 @@ public class ServiceChainFactories {
      * til å definerer opp settet.
      */
     public static <S, F extends ServiceChainFactory<S>, FImpl extends F> void multibindFactory(Binder binder, Class<F> factory, Class<S> service, @Nullable Class<FImpl> factoryImpl) {
-        TypeLiteral<F> factoryType = (TypeLiteral<F>) TypeLiteral.get(Types.newParameterizedType(factory, service));
+        TypeLiteral<F> factoryType = SkifUtil.typeLiteral(factory, service);
 
         Multibinder<F> multibinder = Multibinder.newSetBinder(binder, factoryType);
         if (factoryImpl != null) {
@@ -46,17 +44,6 @@ public class ServiceChainFactories {
             binder.bind(factoryImplType).in(Singleton.class);
         }
 
-    }
-
-    /**
-     * Returnerer en {@code TypeLiteral} som definere et sett av {@code CallChainFactory}-klasser av
-     * type {@code factory} for {@code service}. Den returnerte {@code TypeLiteral} kan bl.a. brukes som
-     * innput til {@link com.google.inject.Injector#getInstance(com.google.inject.Key)} for å hente ut et slik sett.
-     */
-    public static <S, F extends ServiceChainFactory<S>> TypeLiteral<Set<F>> makeFactorySetType(Class<F> factory, Class<S> service) {
-        TypeLiteral<Set<F>> factorySetType = (TypeLiteral<Set<F>>) TypeLiteral.get(
-                Types.newParameterizedType(Set.class, Types.newParameterizedType(factory, service)));
-        return factorySetType;
     }
 
 }

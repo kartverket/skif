@@ -44,6 +44,7 @@ public abstract class RemoteServiceModuleStrategy extends ModuleStrategy {
     /**
      * @see #classWSPackageMappings
      */
+    @SuppressWarnings("UnusedReturnValue") // Det er et chaining-pattern
     public RemoteServiceModuleStrategy setClassWSPackageMappings(String... classWSPackageMappings) {
         this.classWSPackageMappings = classWSPackageMappings;
         return this;

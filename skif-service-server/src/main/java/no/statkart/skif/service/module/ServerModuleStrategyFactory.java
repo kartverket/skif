@@ -18,7 +18,7 @@ import no.statkart.skif.service.module.server.*;
  * @since 2.0
  */
 public class ServerModuleStrategyFactory extends AbstractModuleStrategyFactory {
-    final Class<RemoteServiceModuleStrategy> remoteServiceModuleStrategyBaseClass;
+    final Class<? extends RemoteServiceModuleStrategy> remoteServiceModuleStrategyBaseClass;
 
     /**
      * Oppretter en factory for server som anvender standard innstillinger for SKIF service rammeverk
@@ -30,11 +30,9 @@ public class ServerModuleStrategyFactory extends AbstractModuleStrategyFactory {
     /**
      * Oppretter en factory for server som anvender {@code remoteServiceModuleStrategyClass} for konfigurasjon av
      * services mot en annen server.
-     *
-     * @param remoteServiceModuleStrategyClass
      */
     public ServerModuleStrategyFactory(Class<? extends RemoteServiceModuleStrategy> remoteServiceModuleStrategyClass) {
-        this.remoteServiceModuleStrategyBaseClass = (Class<RemoteServiceModuleStrategy>) remoteServiceModuleStrategyClass;
+        this.remoteServiceModuleStrategyBaseClass = remoteServiceModuleStrategyClass;
         addStrategyForServerModule();
         addStrategyForRemoteServiceModule();
         addStrategyForImplementationServiceModule();

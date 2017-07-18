@@ -41,7 +41,7 @@ public class WebServiceImplementationFactoryImpl<W> implements WebServiceImpleme
 
     private String buildServiceName(Class impl) {
         javax.jws.WebService webService = (javax.jws.WebService) impl.getAnnotation(javax.jws.WebService.class);
-        if (webService.name() != null && !webService.name().trim().equals("")) {
+        if (webService != null && !webService.name().trim().equals("")) {
             return impl.getPackage().getName() + "." + webService.name();
         } else {
             return impl.getName();

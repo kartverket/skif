@@ -37,13 +37,13 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
         this(adaptee, map, null);
     }
 
-    public W2DAdapterProxyHandler(A adaptee, Mapping map, ExceptionMapping exceptionMapping) {
+    public W2DAdapterProxyHandler(A adaptee, Mapping map, @Nullable ExceptionMapping exceptionMapping) {
         super(adaptee);
         this.map = map;
         this.exceptionMapping = exceptionMapping;
     }
 
-    W2DAdapterProxyHandler(Class<A> adapteeClass, ProxyHandler<A> handler, Mapping map, ExceptionMapping exceptionMapping) {
+    W2DAdapterProxyHandler(Class<A> adapteeClass, ProxyHandler<A> handler, Mapping map, @Nullable ExceptionMapping exceptionMapping) {
         super(adapteeClass, handler);
         this.map = map;
         this.exceptionMapping = exceptionMapping;
@@ -66,6 +66,7 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
     public Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         Method toMethod = getMethod(method);
         try {
+            //noinspection UnnecessaryLocalVariable
             Object result = mapArgsAndInvokeMethod(proxy, method, args, toMethod);
             return result;
         } catch (Throwable t) {
@@ -76,6 +77,7 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
     protected Object mapArgsAndInvokeMethod(Object proxy, Method method, Object[] args, Method toMethod) throws Throwable {
         int length = toMethod.getParameterTypes().length;
         Object[] mappedArgs = mapArgs(args, method, toMethod, length);
+        //noinspection UnnecessaryLocalVariable
         Object result = invokeMethodForMappedArgs(proxy, method, toMethod, mappedArgs);
         return result;
     }
@@ -86,6 +88,7 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
             return mapResult(method, toMethod, result);
         } catch (Throwable t) {
             if (exceptionMapping != null) {
+                //noinspection UnnecessaryLocalVariable
                 Throwable mappedException = exceptionMapping.d2w(t);
                 throw mappedException;
             }

@@ -32,7 +32,7 @@ public abstract class ProxyHandler<S> implements InvocationHandler {
     }
 
     public final S buildProxy(TypeLiteral<S> type) {
-        return (S) buildProxy((Class<S>)type.getRawType());
+        return buildProxy((Class<S>)type.getRawType());
     }
 
     @Override

@@ -32,6 +32,7 @@ public abstract class FactorySpecification<T extends ServiceChainFactory> implem
         binder.getProvider(type);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public FactorySpecification<T> clone() {
         try {

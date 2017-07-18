@@ -26,7 +26,7 @@ import java.util.Set;
  * @since 2.0
  */
 public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleStrategy> {
-    protected final Set<Class<? extends Object>> services = new HashSet<>();
+    protected final Set<Class<?>> services = new HashSet<>();
     protected final Mapping mapping;
     protected Class<? extends ServiceContextMapper<?>> serviceContextMapperClass;
     protected ExceptionMapping exceptionMapping;
@@ -36,7 +36,7 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
      */
     protected String[] classWSPackageMappings = null;
 
-    public RemoteServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
+    public RemoteServiceModule(ModuleConfiguration configuration, Collection<Class<?>> services, Mapping mapping) {
         super(RemoteServiceModuleStrategy.class, configuration);
         this.services.addAll(services);
         this.mapping = Objects.requireNonNull(mapping, "mapping");
@@ -130,7 +130,7 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
         innerBinder.bind(Mapping.class).toProvider(Providers.of(mapping));
         innerBinder.bind(ExceptionMapping.class).toProvider(Providers.of(exceptionMapping));
         if (serviceContextMapperClass == null) {
-            innerBinder.bind(new TypeLiteral<ServiceContextMapper<?>>() {}).toProvider(Providers.<ServiceContextMapper<?>>of(null));
+            innerBinder.bind(new TypeLiteral<ServiceContextMapper<?>>() {}).toProvider(Providers.of(null));
         } else {
             innerBinder.bind(new TypeLiteral<ServiceContextMapper<?>>() {}).to(serviceContextMapperClass);
         }
@@ -138,7 +138,7 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
 
     private void configureServices(Binder outerBinder, PrivateBinder innerBinder) {
         final RemoteServiceModuleStrategy strategy = getStrategy();
-        for (Class<? extends Object> service : services) {
+        for (Class<?> service : services) {
             strategy.bindCallServiceChainFactoryForService(outerBinder, innerBinder, service);
             strategy.bindService(outerBinder, innerBinder, service);
         }

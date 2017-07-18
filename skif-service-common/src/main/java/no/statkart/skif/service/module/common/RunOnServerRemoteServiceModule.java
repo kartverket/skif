@@ -27,8 +27,8 @@ public class RunOnServerRemoteServiceModule extends RemoteServiceModule {
         super(configuration, getList(), new IdentityMapper().getMapping());
     }
 
-    private static Collection<Class<? extends Object>> getList() {
-        ArrayList<Class<?>> list = new ArrayList<Class<?>>();
+    private static Collection<Class<?>> getList() {
+        ArrayList<Class<?>> list = new ArrayList<>();
         list.add(RunOnServerWithTxNotSupportedService.class);
         list.add(RunOnServerWithTxRequiresNewService.class);
         list.add(RunOnServerWithTxRequiredService.class);

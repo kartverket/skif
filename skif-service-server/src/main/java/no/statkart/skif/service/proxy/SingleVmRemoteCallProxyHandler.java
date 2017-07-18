@@ -72,8 +72,6 @@ public abstract class SingleVmRemoteCallProxyHandler<S> extends TerminatingProxy
      * RunOnServerMethod} så serialiseres argumentet. Forsøk på å serialisere RunOnServerMethod
      * vil føre til en masse problemer siden objektet ofte er implementert som en anonym klasse og vil
      * har peker til et outer objekt (testcasen) som ikke kan serialiseres.
-     * @param args
-     * @return
      */
     private Object[] copyArgs(Object[] args) {
         if (args!=null && args.length==1 && args[0] instanceof RunOnServerMethod) {
@@ -84,8 +82,9 @@ public abstract class SingleVmRemoteCallProxyHandler<S> extends TerminatingProxy
     }
 
     protected SingleVmRemoteCallContext createSingleVmRemoteCallcontext() {
-        final HashMap<String, Object> contextData = new HashMap<String, Object>();
+        final HashMap<String, Object> contextData = new HashMap<>();
         contextData.put("credentials", loginUserHolder.get());
+        //noinspection UnnecessaryLocalVariable
         SingleVmRemoteCallContext svmContext = new SingleVmRemoteCallContext(contextData);
         return svmContext;
     }

@@ -35,7 +35,7 @@ public class EJBAttributesLookup<S> {
     protected final Injector injector;
     protected final TypeLiteral<S> type;
     protected final ServiceMode serviceMode;
-    private final Map<String, TransactionAttributeType> methodToTxTypeMap = new HashMap<String, TransactionAttributeType>();
+    private final Map<String, TransactionAttributeType> methodToTxTypeMap = new HashMap<>();
     private boolean ejbCallsNotRequired = true;
 
     @Inject
@@ -78,7 +78,7 @@ public class EJBAttributesLookup<S> {
             for (Method m : classToAnalyse.getDeclaredMethods()) {
                 TransactionAttributeType txType = TransactionAttributeType.REQUIRES_NEW;
                 methodToTxTypeMap.put(m.getName(), txType);
-                ejbCallsNotRequired &= txType == TransactionAttributeType.SUPPORTS;
+                ejbCallsNotRequired &= false;
             }
         } else {
             TransactionAttributeType classDefaultTxType = getType(classToAnalyse.getAnnotation(TransactionAttribute.class), DEFAULT_TRANSACTION_ATTRIBUTE);

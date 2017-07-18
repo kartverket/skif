@@ -18,7 +18,8 @@ import java.util.List;
  * @since 2.0
  */
 public class ServerCallServiceChainFactory<S> implements CallServiceChainFactory<S> {
-    private TypeLiteral<S> type;
+    @SuppressWarnings({"FieldCanBeLocal", "unused"}) // Kjekk å ha når man debugger
+    private final TypeLiteral<S> type;
     private final ImplementationServiceChainFactory<S> implementationServiceChainFactory;
     private final Provider<EJBCallTypeChooserProxyHandler<S>> ejbInvokerProxyHandlerProvider;
     private final EJBAttributesLookup<S> ejbAttributesLookup;

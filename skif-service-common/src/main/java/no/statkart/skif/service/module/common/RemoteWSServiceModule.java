@@ -16,7 +16,7 @@ import java.util.Set;
  * @since 2.1
  */
 public class RemoteWSServiceModule extends ModuleWithStrategy<RemoteWSServiceModuleStrategy> {
-   protected final Set<Class<?>> services = new HashSet<Class<?>>();
+   protected final Set<Class<?>> services = new HashSet<>();
 
    /**
     * Oppretter en ny klientmodul for direkte tilgang til gitte webservices.

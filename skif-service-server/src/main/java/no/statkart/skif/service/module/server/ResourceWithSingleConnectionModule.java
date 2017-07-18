@@ -86,6 +86,7 @@ public class ResourceWithSingleConnectionModule extends SkifModule {
             );
         }
 
+        //noinspection UnnecessaryLocalVariable
         ResourceManager resourceManager = new DefaultResourceManager(
                 new ResourceManager.Entry(connectionManager, ConnectionManager.class)
         );

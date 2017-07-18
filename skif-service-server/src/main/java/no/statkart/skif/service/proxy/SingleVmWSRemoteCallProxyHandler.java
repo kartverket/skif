@@ -53,8 +53,9 @@ public class SingleVmWSRemoteCallProxyHandler<T, A extends ServiceWSI> extends A
     }
 
     protected SingleVmRemoteCallContext createSingleVmRemoteCallcontext() {
-        final HashMap<String, Object> contextData = new HashMap<String, Object>();
+        final HashMap<String, Object> contextData = new HashMap<>();
         contextData.put("credentials", loginUserHolder.get());
+        //noinspection UnnecessaryLocalVariable
         SingleVmRemoteCallContext svmContext = new SingleVmRemoteCallContext(contextData);
         return svmContext;
     }

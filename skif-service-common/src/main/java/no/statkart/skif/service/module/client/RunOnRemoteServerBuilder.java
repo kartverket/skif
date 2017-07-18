@@ -26,7 +26,7 @@ public class RunOnRemoteServerBuilder {
     final ModuleBuilder moduleBuilder;
 
     public RunOnRemoteServerBuilder(String serverModuleClassName) {
-        this(SkifUtil.<SkifModule>classForName(serverModuleClassName));
+        this(SkifUtil.classForName(serverModuleClassName));
     }
 
     public RunOnRemoteServerBuilder(Class<? extends SkifModule> serverModuleClass) {
@@ -59,6 +59,7 @@ public class RunOnRemoteServerBuilder {
           return  moduleBuilder.buildInjector();
     }
 
+    @Deprecated
     public ContainerManagedTransactionRunOnServerService buildContainerManagedService() {
         return moduleBuilder.buildInjector().getInstance(ContainerManagedTransactionRunOnServerService.class);
     }

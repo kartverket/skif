@@ -47,6 +47,7 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
         return wsServiceChainFactoryClassForWSI;
     }
 
+    @SuppressWarnings("UnusedReturnValue") // Det er et chaining-pattern
     public WSServerServiceModuleStrategy setWsServiceChainFactoryClassForWSI(Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForWSI) {
         this.wsServiceChainFactoryClassForWSI = wsServiceChainFactoryClassForWSI;
         return this;
@@ -56,9 +57,7 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
         return wsServiceChainFactoryClassForService;
     }
 
-    /**
-     * @return {@link #classWSIPackageMappings}
-     */
+    @SuppressWarnings("UnusedReturnValue") // Det er et chaining-pattern
     public WSServerServiceModuleStrategy setWsServiceChainFactoryClassForService(Class<? extends WSServiceChainFactory> wsServiceChainFactoryClassForService) {
         this.wsServiceChainFactoryClassForService = wsServiceChainFactoryClassForService;
         return this;
@@ -67,12 +66,13 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
     /**
      * @see #classWSIPackageMappings
      */
+    @SuppressWarnings("UnusedReturnValue") // Det er et chaining-pattern
     public WSServerServiceModuleStrategy setClassWSIPackageMappings(String... classWSIPackageMappings) {
         this.classWSIPackageMappings = classWSIPackageMappings;
         return this;
     }
 
-    protected void bindSkifWSInterceptorForService(Binder outerBinder, PrivateBinder innerBinder, Class<? extends Object> service, Class<? extends ServiceWSI> serviceWSIClass) {
+    protected void bindSkifWSInterceptorForService(Binder outerBinder, PrivateBinder innerBinder, Class<?> service, Class<? extends ServiceWSI> serviceWSIClass) {
         outerBinder.bind(typeLiteral(WebServiceImplementationFactory.class, serviceWSIClass)).to(typeLiteral(WebServiceImplementationFactoryImpl.class, serviceWSIClass));
         outerBinder.bind(typeLiteral(SkifWSInterceptor.class, serviceWSIClass));
     }
@@ -103,8 +103,8 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
         Class<? extends ServiceWSI> webServiceClass = null;
         String serviceClassname = serviceClass.getName();
 
-        List<String> mapingsTried = new ArrayList<String>();
-        List<String> classNamesTried = new ArrayList<String>();
+        List<String> mapingsTried = new ArrayList<>();
+        List<String> classNamesTried = new ArrayList<>();
 
         for (String classPackageMapping : classWSIPackageMappings) {
             final String[] mapping = classPackageMapping.split(":");
@@ -115,7 +115,7 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
             final String toPackage = mapping[1];
             String webServiceClassname = Pattern.compile(Matcher.quoteReplacement(fromPackage)).matcher(serviceClassname).replaceFirst(toPackage) + "WSI";
             try {
-                webServiceClass = (Class<? extends ServiceWSI>) Class.forName(webServiceClassname, true, classLoader);
+                webServiceClass = Class.forName(webServiceClassname, true, classLoader).asSubclass(ServiceWSI.class);
                 break; // found class
             } catch (ClassNotFoundException e) {
                 mapingsTried.add(classPackageMapping);

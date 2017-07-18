@@ -31,7 +31,7 @@ public class CopyHelper {
      * }
      * </pre>
      */
-    private static ThreadLocal<SnapshotVersion> snapshotVersionThreadLocal = new ThreadLocal<SnapshotVersion>();
+    private static ThreadLocal<SnapshotVersion> snapshotVersionThreadLocal = new ThreadLocal<>();
 
     public static SnapshotVersion getSnapshotVersion() {
         return snapshotVersionThreadLocal.get();
@@ -82,6 +82,9 @@ public class CopyHelper {
         }
     }
 
+    /**
+     * @deprecated Denne er slem og lukker in. Det finnes andre alternativer til denne i Guava og også i nyere Java.
+     */
     public static void copy(InputStream in, File dest) throws IOException {
         FileOutputStream fos = null;
         try {

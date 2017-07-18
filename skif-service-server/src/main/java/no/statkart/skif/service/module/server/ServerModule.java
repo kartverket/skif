@@ -47,7 +47,7 @@ public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy> {
         bind(ServiceRequestContext.class).in(ServiceRequestScoped.class);
 
         // Denne seedes inn i ServiceRequestScope
-        bind(TransactionManager.class).toProvider(ServiceRequestScope.<TransactionManager>seededKeyProvider()).in(ServiceRequestScoped.class);
+        bind(TransactionManager.class).toProvider(ServiceRequestScope.seededKeyProvider()).in(ServiceRequestScoped.class);
 
         // Binder opp provider av call id
         bind(Long.class).annotatedWith(CallId.class).toProvider(CallIdProvider.class);

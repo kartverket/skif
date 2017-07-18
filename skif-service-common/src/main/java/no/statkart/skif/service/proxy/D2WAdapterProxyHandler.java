@@ -41,13 +41,13 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
         this(adapteeProvider, aType, map, null);
     }
 
-    public D2WAdapterProxyHandler(Provider<A> adapteeProvider, TypeLiteral<A> aType, Mapping map, ExceptionMapping exceptionMapping) {
+    public D2WAdapterProxyHandler(Provider<A> adapteeProvider, TypeLiteral<A> aType, Mapping map, @Nullable ExceptionMapping exceptionMapping) {
         super(adapteeProvider, (Class<A>) aType.getRawType());
         this.map = map;
         this.exceptionMapping = exceptionMapping;
     }
 
-    D2WAdapterProxyHandler(Class<A> adapteeClass, ProxyHandler<A> handler, Mapping map, ExceptionMapping exceptionMapping) {
+    D2WAdapterProxyHandler(Class<A> adapteeClass, ProxyHandler<A> handler, Mapping map, @Nullable ExceptionMapping exceptionMapping) {
         super(adapteeClass, handler);
         this.map = map;
         this.exceptionMapping = exceptionMapping;

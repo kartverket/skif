@@ -27,6 +27,7 @@ public class WSServiceChainProvider<T> implements Provider<T> {
 
     @Override
     public T get() {
+        //noinspection UnnecessaryLocalVariable
         T proxy = wsServiceChainFactory.createChain().buildProxy(type);
         return proxy;
     }

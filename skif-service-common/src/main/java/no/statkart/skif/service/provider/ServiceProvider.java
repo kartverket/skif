@@ -36,6 +36,7 @@ public class ServiceProvider<S> implements Provider<S> {
 
     @Override
     public S get() {
+        //noinspection UnnecessaryLocalVariable
         S instanceOrProxy = callServiceChainFactoryList.buildChain().buildProxy(type);
         return instanceOrProxy;
     }

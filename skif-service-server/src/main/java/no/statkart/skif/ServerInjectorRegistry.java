@@ -21,7 +21,7 @@ import java.util.Map;
 public class ServerInjectorRegistry {
     private static Logger logger = LoggerFactory.getLogger(ServerInjectorRegistry.class);
 
-    private static final Map<Object, Injector> injectorMap = new HashMap<Object, Injector>();
+    private static final Map<Object, Injector> injectorMap = new HashMap<>();
 
     public static void init() {
         // Dette er nødvendig for å få bunnet EJB'ene slik at man kan gjøre dynamisk lookup av dem serere.

@@ -39,7 +39,7 @@ public class ImplementationServiceChainFactoryImpl<S> implements ImplementationS
      */
     @Override
     public ProxyHandler<S> createChain() {
-        ProxyHandler<S> head = new InvokeViaProviderProxyHandler<S>(implementationProvider);
+        ProxyHandler<S> head = new InvokeViaProviderProxyHandler<>(implementationProvider);
         final List<ChainedProxyHandler<S>> proxyHandlerList = implementationProxyHandlerListProvider.get();
         for (int i = proxyHandlerList.size() - 1; i >= 0; i--) {
             head = proxyHandlerList.get(i).setChained(head);

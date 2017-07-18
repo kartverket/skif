@@ -45,7 +45,7 @@ public abstract class EJBRegistration implements ServletContextListener {
     private void registerEJBs() {
         // Dette er nødvendig for å få bunnet EJB'ene slik at man kan gjøre dynamisk lookup av dem serere.
         EJBLookupHelper lookupHelper = EJBLookupHelper.getInstance();
-        Set<Class<?>> servicesFromEJBContext = new HashSet<Class<?>>(lookupHelper.registerEjbsFromContext());
+        Set<Class<?>> servicesFromEJBContext = new HashSet<>(lookupHelper.registerEjbsFromContext());
 
         final Collection<Class<?>> requiredServices = getRequiredServices();
         for (Class<?> service : requiredServices) {

@@ -44,9 +44,7 @@ public class JaxWsServicePool<T> {
         Class<? extends Service> endpointClass = getEndpointClassAddWS(portClass);
         try {
             endpoint = endpointClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new ImplementationException("Could not instantiate JAX-WS Endpoint class: " + endpointClass, e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new ImplementationException("Could not instantiate JAX-WS Endpoint class: " + endpointClass, e);
         }
     }

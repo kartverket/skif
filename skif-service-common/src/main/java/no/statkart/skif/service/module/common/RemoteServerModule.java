@@ -83,7 +83,7 @@ public class RemoteServerModule extends ModuleWithStrategy<RemoteServerModuleStr
         bind(SnapshotVersionContext.class).toInstance(SnapshotVersionContext.getInstance());
 
         if (hostnameVerifierClass == null) {
-            bind(HostnameVerifier.class).toProvider(Providers.<HostnameVerifier>of(null));
+            bind(HostnameVerifier.class).toProvider(Providers.of(null));
         } else {
             bind(HostnameVerifier.class).to(hostnameVerifierClass);
         }

@@ -43,7 +43,7 @@ public class CallServiceChainFactorySpecification extends FactorySpecification<C
             binder.bind(callChainProxyHandlerType);
             callChainProxyHandlerTypeList.add(callChainProxyHandlerType);
         }
-        TypeLiteral<List<ChainedProxyHandler<S>>> callChainProxyHandlerListType =
+        @SuppressWarnings("unchecked") TypeLiteral<List<ChainedProxyHandler<S>>> callChainProxyHandlerListType =
                 (TypeLiteral<List<ChainedProxyHandler<S>>>) TypeLiteral.get(Types.listOf(Types.newParameterizedType(ChainedProxyHandler.class, service)));
 
         binder.bind(callChainProxyHandlerListType).annotatedWith(Call.class).toProvider(new Provider<List<ChainedProxyHandler<S>>>() {

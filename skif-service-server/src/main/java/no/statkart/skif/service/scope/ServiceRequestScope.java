@@ -58,11 +58,11 @@ public class ServiceRequestScope implements Scope {
                 }
             };
     private final ThreadLocalWithSuspend<Map<Key<?>, Object>> values
-            = new ThreadLocalWithSuspend<Map<Key<?>, Object>>();
+            = new ThreadLocalWithSuspend<>();
 
     public void enter() {
         checkState(values.get() == null, "A scoping block is already in progress");
-        values.set(new HashMap<Key<?>, Object>());
+        values.set(new HashMap<>());
     }
 
 

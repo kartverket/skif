@@ -30,11 +30,10 @@ public class EJBCallProxyHandlerJEE<S> extends EJBCallProxyHandler<S> {
     public Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         final Object ejb = EJBLookupHelper.getInstance().lookupEjb(type.getRawType());
         try {
+            //noinspection UnnecessaryLocalVariable
             Object result = method.invoke(ejb, args);
             return result;
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalAccessException | IllegalArgumentException e) {
             throw new ImplementationException(e);
         } catch (InvocationTargetException e) {
             Throwable targetException = e.getTargetException();

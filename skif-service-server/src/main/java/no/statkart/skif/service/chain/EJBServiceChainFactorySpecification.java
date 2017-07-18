@@ -45,7 +45,7 @@ public class EJBServiceChainFactorySpecification extends FactorySpecification<EJ
             binder.bind(ejbCallChainProxyHandlerType);
             ejbCallChainProxyHandlerTypeList.add(ejbCallChainProxyHandlerType);
         }
-        TypeLiteral<List<ChainedProxyHandler<S>>> ejbCallChainProxyHandlerListType =
+        @SuppressWarnings("unchecked") TypeLiteral<List<ChainedProxyHandler<S>>> ejbCallChainProxyHandlerListType =
                 (TypeLiteral<List<ChainedProxyHandler<S>>>) TypeLiteral.get(Types.listOf(Types.newParameterizedType(ChainedProxyHandler.class, service)));
 
         binder.bind(ejbCallChainProxyHandlerListType).toProvider(new Provider<List<ChainedProxyHandler<S>>>() {

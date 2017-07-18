@@ -6,10 +6,10 @@ package no.statkart.skif.module;
  */
 public class StrategyTuples {
     public static <T extends ModuleStrategy> StrategyTuple<T> newStrategyTuple() {
-        return new StrategyTuple<T>();
+        return new StrategyTuple<>();
     }
-    public static <T extends ModuleStrategy> StrategyTuple<T> newStrategyTuple(Class<T> strategyBaseClass) {
-        return new StrategyTuple<T>(strategyBaseClass);
+    public static <T extends ModuleStrategy> StrategyTuple<T> newStrategyTuple(Class<? extends T> strategyBaseClass) {
+        return new StrategyTuple<>(strategyBaseClass);
     }
 
 }

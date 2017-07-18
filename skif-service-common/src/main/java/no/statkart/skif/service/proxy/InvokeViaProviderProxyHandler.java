@@ -32,9 +32,7 @@ public class InvokeViaProviderProxyHandler<S> extends TerminatingProxyHandler<S>
             return method.invoke(instance, args);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
-        } catch (IllegalArgumentException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new ImplementationException(e);
         }
     }

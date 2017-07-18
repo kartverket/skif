@@ -40,16 +40,16 @@ public class EJBLookupHelper {
     private static Logger logger = LoggerFactory.getLogger(EJBLookupHelper.class);
     private static EJBLookupHelper instance;
 
-    private ConcurrentMap<Class<? extends Object>, Object> ejbRegistry = new ConcurrentHashMap<Class<? extends Object>, Object>();
+    private ConcurrentMap<Class<?>, Object> ejbRegistry = new ConcurrentHashMap<>();
 
-    public List<Class<? extends Object>> registerEjbsFromContext() {
-        List<Class<? extends Object>> foundEJBServices = new ArrayList<Class<? extends Object>>();
+    public List<Class<?>> registerEjbsFromContext() {
+        List<Class<?>> foundEJBServices = new ArrayList<>();
         try {
             Context ctx = new InitialContext();
             NamingEnumeration<Binding> iterator = ctx.listBindings("java:comp/env/ejb");
             while (iterator.hasMore()) {
                 Binding binding = iterator.next();
-                Class<Object> serviceClass = addBinding(binding);
+                Class<?> serviceClass = addBinding(binding);
                 if (serviceClass !=null) {
                     foundEJBServices.add(serviceClass);
                 }
@@ -62,40 +62,36 @@ public class EJBLookupHelper {
         return foundEJBServices;
     }
 
-    private Class<Object> addBinding(Binding binding) {
+    private Class<?> addBinding(Binding binding) {
         Object obj = binding.getObject();
         for (Class<?> c : obj.getClass().getInterfaces()) {
             if (Object.class.isAssignableFrom(c)) {
-                Class<Object> serviceClass = (Class<Object>) c;
-                addEjb(serviceClass, (Object) obj);
-                return serviceClass;
+                addEjb(c, obj);
+                return c;
             }
         }
         return null;
     }
 
 
-    public void addEjb(Class<? extends Object> serviceClass, Object ejbService) {
+    public void addEjb(Class<?> serviceClass, Object ejbService) {
         Object old = ejbRegistry.putIfAbsent(serviceClass, ejbService);
         if (old == null) {
             logger.info("Adding EJB for service class: {} instance: {}", serviceClass.getName(), ejbService);
-        } else {
+        } // else {
             // Service allerede allerede bunnet. Det er ok. Gjør ingen ting da.
-        }
+        //}
     }
 
     /**
      * Finner ejb referanse ut fra service interface. 
-     * @param serviceClass
-     * @param <T>
-     * @return
      */
-    public <T extends Object> T lookupEjb(Class<T> serviceClass) {
+    public <T> T lookupEjb(Class<T> serviceClass) {
         Object ejb = ejbRegistry.get(serviceClass);
         if (ejb == null) {
             throw new ConfigurationException("Could not find EJB for interface: " + serviceClass.getName()+ " Check that corresponding EJB has been registered in SKIF by the EJBRegistration class; i.e. by a servlet listener in the Web service's web.xml");
         }
-        return (T) ejb;
+        return serviceClass.cast(ejb);
     }
 
 
@@ -106,7 +102,7 @@ public class EJBLookupHelper {
         return instance;
     }
 
-    public Set<Class<? extends Object>> getServices() {
+    public Set<Class<?>> getServices() {
         return ejbRegistry.keySet();
     }
 }

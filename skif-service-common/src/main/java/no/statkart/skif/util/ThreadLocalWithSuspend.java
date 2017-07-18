@@ -9,7 +9,7 @@ import java.util.Stack;
  * @since 2.0
  */
 public class ThreadLocalWithSuspend<T> extends ThreadLocal<T> {
-    private ThreadLocalStack<T> suspended = new ThreadLocalStack<T>();
+    private ThreadLocalStack<T> suspended = new ThreadLocalStack<>();
 
 
     /**
@@ -51,7 +51,7 @@ public class ThreadLocalWithSuspend<T> extends ThreadLocal<T> {
     private static class ThreadLocalStack<T> extends ThreadLocal<Stack<T>> {
         @Override
         protected Stack<T> initialValue() {
-            return new Stack<T>();
+            return new Stack<>();
         }
 
         public Stack<T> getStack() {
