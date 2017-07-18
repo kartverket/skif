@@ -33,7 +33,6 @@ public class ConnectionFactoryUsingJDBC extends AbstractConnectionFactory {
         } catch (ClassNotFoundException e) {
             throw new ImplementationException("Could not load JDBC driver", e);
         }
-        Connection conn = DriverManager.getConnection(url, username, password);
-        return conn;
+        return DriverManager.getConnection(url, username, password);
     }
 }

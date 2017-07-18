@@ -25,8 +25,7 @@ public class ConnectionFactoryUsingDataSource extends AbstractConnectionFactory 
         try {
             InitialContext ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup(dataSourceName);
-            Connection con = ds.getConnection();
-            return con;
+            return ds.getConnection();
         } catch (NamingException e) {
             throw new OperationalException("Unknown datasource: " + dataSourceName, e);
         } catch (SQLException e) {

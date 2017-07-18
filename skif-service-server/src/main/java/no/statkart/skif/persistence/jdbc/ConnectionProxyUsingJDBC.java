@@ -23,7 +23,7 @@ public class ConnectionProxyUsingJDBC implements InvocationHandler, ConnectionRe
     private ConnectionForSnapshotVersion proxy;
 
     static {
-        methodsImplementedByProxy = new HashSet<Method>();
+        methodsImplementedByProxy = new HashSet<>();
         methodsImplementedByProxy.addAll(Arrays.asList(Object.class.getMethods()));
         methodsImplementedByProxy.addAll(Arrays.asList(ConnectionReservationForSnapshot.class.getMethods()));
     }
@@ -49,7 +49,7 @@ public class ConnectionProxyUsingJDBC implements InvocationHandler, ConnectionRe
             }
         } else {
             factory.setSnapshotVersion(delegate, snapshotVersion);
-            Object result = null;
+            Object result;
             try {
                 result = method.invoke(delegate, args);
             } catch (InvocationTargetException e) {
