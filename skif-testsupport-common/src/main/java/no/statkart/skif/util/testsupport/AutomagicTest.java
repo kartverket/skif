@@ -152,7 +152,7 @@ public class AutomagicTest {
         return classes;
     }
 
-    protected Map<String, List<Class>> discoverClassHierarchy(List<Class> classes, Map<String, List<Class>> className2ListOfSubclasses) throws ClassNotFoundException {
+    protected void discoverClassHierarchy(List<Class> classes, Map<String, List<Class>> className2ListOfSubclasses) throws ClassNotFoundException {
         for (Class next : classes) {
             String nextName = next.getName();
             String packageName = nextName.substring(0, nextName.lastIndexOf("."));
@@ -162,17 +162,11 @@ public class AutomagicTest {
 
             if (testClass) {
                 if (next.getSuperclass() != null) {
-
-                    List<Class> subclasses = className2ListOfSubclasses.get(next.getSuperclass().getName());
-                    if (subclasses == null) {
-                        subclasses = new ArrayList<>();
-                        className2ListOfSubclasses.put(next.getSuperclass().getName(), subclasses);
-                    }
+                    List<Class> subclasses = className2ListOfSubclasses.computeIfAbsent(next.getSuperclass().getName(), k -> new ArrayList<>());
                     subclasses.add(next);
                 }
             }
         }
-        return className2ListOfSubclasses;
     }
 
     protected <T> T generateDummyData(T o, String fieldPath) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
