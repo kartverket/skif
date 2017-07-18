@@ -36,6 +36,7 @@ public class TimestampTypeMapper<WsapiT> extends AbstractJavaDateTypeMapper<Wsap
         XMLGregorianCalendar xmlGregorianCalendar = datatypeFactory.newXMLGregorianCalendar(pureGregorianCalendar);
         xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(source.getNanos(), 9));
 
+        //noinspection UnnecessaryLocalVariable
         WsapiT target = wrap(xmlGregorianCalendar);
 
         return target;
@@ -69,7 +70,7 @@ public class TimestampTypeMapper<WsapiT> extends AbstractJavaDateTypeMapper<Wsap
      * @param timestamp XML-dato som skal valideres som timestamp
      */
     private static void validate(XMLGregorianCalendar timestamp) {
-        List<String> errorMsgs = new ArrayList<String>();
+        List<String> errorMsgs = new ArrayList<>();
         if (timestamp.getEon() != null && timestamp.getEon().longValue() != 0)
             errorMsgs.add("Timestamp can't span eons.");
         if (timestamp.getYear() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Year is not specified.");
@@ -86,7 +87,7 @@ public class TimestampTypeMapper<WsapiT> extends AbstractJavaDateTypeMapper<Wsap
     }
 
     public static <T> TimestampTypeMapper<T> create(Class<T> wsTimestampClass) {
-        return new TimestampTypeMapper<T>(wsTimestampClass);
+        return new TimestampTypeMapper<>(wsTimestampClass);
     }
 
 }

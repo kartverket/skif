@@ -42,9 +42,9 @@ import java.util.zip.ZipInputStream;
  * @author Tor Egil R. Strand
  */
 public class MappingResolver {
-    protected Map<String, String> wsapiPkg2domainPkg = new HashMap<String, String>();
-    protected Map<String, String> domainPkg2wsapiPkg = new HashMap<String, String>();
-    protected Map<Class, Class> classMappings = new HashMap<Class, Class>();
+    protected Map<String, String> wsapiPkg2domainPkg = new HashMap<>();
+    protected Map<String, String> domainPkg2wsapiPkg = new HashMap<>();
+    protected Map<Class, Class> classMappings = new HashMap<>();
     protected Map<? extends Class<?>, ? extends Class<?>> overrideClassMappings;
 
     public MappingResolver() {
@@ -172,7 +172,7 @@ public class MappingResolver {
      * @throws ClassNotFoundException If a file found in the directory appears to be a class for Class.forName(...) fails
      */
     protected static List<Class> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         if (!directory.exists()) {
             return classes;
         }
@@ -207,15 +207,13 @@ public class MappingResolver {
      *
      * @param packageName The base package
      * @return The classes
-     * @throws ClassNotFoundException
-     * @throws java.io.IOException
      */
     protected static List<Class> getClasses(String packageName, boolean recurse) throws ClassNotFoundException, IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
-        Set<Class> classes = new HashSet<Class>();
+        Set<Class> classes = new HashSet<>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             String protocol = resource.getProtocol();
@@ -258,8 +256,7 @@ public class MappingResolver {
                 int idx = filepath.indexOf("!");
                 String parsedJarName = filepath.substring(0, idx);
                 URL resource2 = new File(parsedJarName).toURI().toURL();
-                ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
-                try {
+                try (ZipInputStream zip2 = new ZipInputStream(resource2.openStream())) {
                     ZipEntry ze;
                     while ((ze = zip2.getNextEntry()) != null) {
                         String entryName = ze.getName();
@@ -282,8 +279,6 @@ public class MappingResolver {
                             }
                         }
                     }
-                } finally {
-                    zip2.close();
                 }
 
             } else {
@@ -292,7 +287,7 @@ public class MappingResolver {
         }
 
         if (!recurse) {
-            Set<Class> trimmedClasses = new HashSet<Class>();
+            Set<Class> trimmedClasses = new HashSet<>();
             for (Class c : classes) {
                 if (c.getPackage().getName().equals(packageName)) {
                     trimmedClasses.add(c);
@@ -301,6 +296,6 @@ public class MappingResolver {
             classes = trimmedClasses;
         }
 
-        return new ArrayList<Class>(classes);
+        return new ArrayList<>(classes);
     }
 }

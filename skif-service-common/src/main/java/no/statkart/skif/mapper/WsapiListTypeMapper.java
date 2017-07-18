@@ -39,9 +39,7 @@ public class WsapiListTypeMapper<WsapiT, WsapiE, DomainT extends Collection, Dom
     private List getList(WsapiT target) {
         try {
             return (List) getItemsMethod.invoke(target);
-        } catch (IllegalAccessException e) {
-            throw new MappingException("Object does does not implement method getItem() as expected:" + target.getClass().getName());
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new MappingException("Object does does not implement method getItem() as expected:" + target.getClass().getName());
         }
     }

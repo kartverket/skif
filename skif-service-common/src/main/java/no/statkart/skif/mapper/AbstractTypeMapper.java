@@ -61,9 +61,7 @@ public abstract class AbstractTypeMapper<WsapiT, DomainT, M extends Mapping> imp
     protected WsapiT createWsapiT() {
         try {
             return wsapiClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new MappingException("Could not create new instance of " + wsapiClass, e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new MappingException("Could not create new instance of " + wsapiClass, e);
         }
     }
@@ -77,9 +75,7 @@ public abstract class AbstractTypeMapper<WsapiT, DomainT, M extends Mapping> imp
     protected DomainT createDomainT() {
         try {
             return domainClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new MappingException("Could not create new instance of " + domainClass, e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new MappingException("Could not create new instance of " + domainClass, e);
         }
     }

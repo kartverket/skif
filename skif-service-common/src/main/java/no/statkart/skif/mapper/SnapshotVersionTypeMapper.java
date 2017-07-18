@@ -38,6 +38,7 @@ public class SnapshotVersionTypeMapper<WsapiT> extends AbstractJavaDateTypeMappe
         XMLGregorianCalendar xmlGregorianCalendar = datatypeFactory.newXMLGregorianCalendar(pureGregorianCalendar);
         xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(source.getTimestamp().getNanos(), 9));
 
+        //noinspection UnnecessaryLocalVariable
         WsapiT target = wrap(xmlGregorianCalendar);
 
         return target;
@@ -71,7 +72,7 @@ public class SnapshotVersionTypeMapper<WsapiT> extends AbstractJavaDateTypeMappe
      * @param timestamp XML-dato som skal valideres som timestamp
      */
     private static void validate(XMLGregorianCalendar timestamp) {
-        List<String> errorMsgs = new ArrayList<String>();
+        List<String> errorMsgs = new ArrayList<>();
         if (timestamp.getEon() != null && timestamp.getEon().longValue() != 0)
             errorMsgs.add("SnapshotVersion can't span eons.");
         if (timestamp.getYear() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Year is not specified.");
@@ -88,7 +89,7 @@ public class SnapshotVersionTypeMapper<WsapiT> extends AbstractJavaDateTypeMappe
     }
 
     public static <T> SnapshotVersionTypeMapper<T> create(Class<T> wsSnapshotVersionClass) {
-        return new SnapshotVersionTypeMapper<T>(wsSnapshotVersionClass);
+        return new SnapshotVersionTypeMapper<>(wsSnapshotVersionClass);
     }
 
 }

@@ -30,6 +30,7 @@ public class IdentityMapper implements InvocationHandler {
         }
         // Invode built in method
         try {
+            //noinspection UnnecessaryLocalVariable
             final Object result = method.invoke(this, args);
             return result;
         } catch (IllegalAccessException e) {

@@ -40,9 +40,7 @@ public abstract class AbstractWrappedDateTypeMapper<WsapiT, DomainT> extends Abs
 
         try {
             wrappedProperty.getWriteMethod().invoke(target, xmlGregorianCalendar);
-        } catch (IllegalAccessException e) {
-            throw new MappingException("Could not set " + wrappedProperty.getName(), e);
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new MappingException("Could not set " + wrappedProperty.getName(), e);
         }
         return target;
@@ -52,11 +50,7 @@ public abstract class AbstractWrappedDateTypeMapper<WsapiT, DomainT> extends Abs
         XMLGregorianCalendar xmlGregorianCalendar;
         try {
             xmlGregorianCalendar = (XMLGregorianCalendar) wrappedProperty.getReadMethod().invoke(source);
-        } catch (IllegalAccessException e) {
-            throw new MappingException("Could not get " + wrappedProperty.getName(), e);
-        } catch (InvocationTargetException e) {
-            throw new MappingException("Could not get " + wrappedProperty.getName(), e);
-        } catch (ClassCastException e) {
+        } catch (IllegalAccessException | InvocationTargetException | ClassCastException e) {
             throw new MappingException("Could not get " + wrappedProperty.getName(), e);
         }
         return xmlGregorianCalendar;

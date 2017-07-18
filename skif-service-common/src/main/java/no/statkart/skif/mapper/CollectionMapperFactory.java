@@ -42,19 +42,19 @@ public class CollectionMapperFactory implements TypeMapperFactory {
     }
 
     protected <WsapiT extends Collection<?>, DomainT extends Collection<?>> TypeMapper<WsapiT, DomainT> collectionToCollection(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
-        return new CollectionToCollectionTypeMapper<WsapiT, DomainT>(wsapiTypeToken, domainTypeToken);
+        return new CollectionToCollectionTypeMapper<>(wsapiTypeToken, domainTypeToken);
     }
 
     protected <WsapiT, DomainT extends Collection<?>> TypeMapper<WsapiT, DomainT> collectionToXmlItems(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
-        return new CollectionToXmlTypeMapper<WsapiT, DomainT>(wsapiTypeToken, domainTypeToken);
+        return new CollectionToXmlTypeMapper<>(wsapiTypeToken, domainTypeToken);
     }
 
     protected <WsapiT, DomainT extends Map<?, ?>> TypeMapper<WsapiT, DomainT> mapToXmlEntries(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
-        return new MapToXmlTypeMapper<WsapiT, DomainT>(wsapiTypeToken, domainTypeToken);
+        return new MapToXmlTypeMapper<>(wsapiTypeToken, domainTypeToken);
     }
 
     protected <WsapiT, DomainT> TypeMapper<WsapiT, DomainT> arrayToXmlItems(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
-        return new ArrayToXmlTypeMapper<WsapiT, DomainT>(wsapiTypeToken, domainTypeToken);
+        return new ArrayToXmlTypeMapper<>(wsapiTypeToken, domainTypeToken);
     }
 
     protected boolean checkHasField(Class clazz, String fieldname) {
@@ -88,9 +88,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
         protected WsapiT createXmlList() {
             try {
                 return (WsapiT) wsapiTypeToken.getRawType().newInstance();
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create list", e);
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new MappingException("Failed to create list", e);
             }
         }
@@ -110,7 +108,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
             WsapiT target = createXmlList();
 
             final int length = Array.getLength(source);
-            List<Object> items = new ArrayList<Object>(length);
+            List<Object> items = new ArrayList<>(length);
 
             for (int i = 0; i < length; ++i) {
                 items.add(getMapping().d2w(Array.get(source, i), domainTypeToken.getComponentType().getType(), itemClass));
@@ -216,11 +214,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
                 } else {
                     return wsapiCollectionConstructor.newInstance();
                 }
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create " + wsapiCollectionConstructor.getDeclaringClass(), e);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Failed to create " + wsapiCollectionConstructor.getDeclaringClass(), e);
-            } catch (InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Failed to create " + wsapiCollectionConstructor.getDeclaringClass(), e);
             }
         }
@@ -232,11 +226,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
                 } else {
                     return domainCollectionConstructor.newInstance();
                 }
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create " + domainCollectionConstructor.getDeclaringClass(), e);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Failed to create " + domainCollectionConstructor.getDeclaringClass(), e);
-            } catch (InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Failed to create " + domainCollectionConstructor.getDeclaringClass(), e);
             }
         }
@@ -344,9 +334,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
         protected WsapiT createXmlList() {
             try {
                 return (WsapiT) wsapiTypeToken.getRawType().newInstance();
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create list", e);
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new MappingException("Failed to create list", e);
             }
         }
@@ -358,11 +346,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
                 } else {
                     return collectionConstructor.newInstance();
                 }
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create " + collectionConstructor.getDeclaringClass(), e);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Failed to create " + collectionConstructor.getDeclaringClass(), e);
-            } catch (InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Failed to create " + collectionConstructor.getDeclaringClass(), e);
             }
         }
@@ -381,7 +365,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
         public WsapiT mapDomainObject(DomainT source) {
             WsapiT target = createXmlList();
 
-            List<Object> items = new ArrayList<Object>(source.size());
+            List<Object> items = new ArrayList<>(source.size());
             for (Object o : source) {
                 items.add(mapping.d2w(o, domainElementType, itemClass));
             }
@@ -461,9 +445,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
         protected WsapiT createDictionary() {
             try {
                 return (WsapiT) wsapiTypeToken.getRawType().newInstance();
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create map/dictionary", e);
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new MappingException("Failed to create map/dictionary", e);
             }
         }
@@ -471,9 +453,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
         protected Object createEntry() {
             try {
                 return entryClass.newInstance();
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create entry for map/dictionary", e);
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new MappingException("Failed to create entry for map/dictionary", e);
             }
         }
@@ -481,9 +461,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
         private DomainT createMap() {
             try {
                 return (DomainT) domainTypeToken.getRawType().newInstance();
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create map", e);
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new MappingException("Failed to create map", e);
             }
         }
@@ -520,7 +498,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
             WsapiT target = createDictionary();
 
             try {
-                List<Object> entryList = new ArrayList<Object>();
+                List<Object> entryList = new ArrayList<>();
                 entryField.set(target, entryList);
 
                 for (Map.Entry<?, ?> sourceEntry : source.entrySet()) {

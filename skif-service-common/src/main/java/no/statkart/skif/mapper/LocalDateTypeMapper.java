@@ -45,6 +45,7 @@ public class LocalDateTypeMapper<WsapiT> extends AbstractWrappedDateTypeMapper<W
 
         validate(xmlGregorianCalendar);
 
+        //noinspection UnnecessaryLocalVariable
         LocalDate localDate = new LocalDate(
                 xmlGregorianCalendar.getYear(),
                 xmlGregorianCalendar.getMonth(),
@@ -60,7 +61,7 @@ public class LocalDateTypeMapper<WsapiT> extends AbstractWrappedDateTypeMapper<W
      * @param dateTime XML-dato som skal valideres som dato
      */
     private static void validate(XMLGregorianCalendar dateTime) {
-        List<String> errorMsgs = new ArrayList<String>();
+        List<String> errorMsgs = new ArrayList<>();
         if (dateTime.getEon() != null && dateTime.getEon().longValue() != 0)
             errorMsgs.add("LocalDate can't span eons.");
         if (dateTime.getTimezone() != DatatypeConstants.FIELD_UNDEFINED)
@@ -81,6 +82,6 @@ public class LocalDateTypeMapper<WsapiT> extends AbstractWrappedDateTypeMapper<W
     }
 
     public static <T> LocalDateTypeMapper<T> create(Class<T> wsDateClass) {
-        return new LocalDateTypeMapper<T>(wsDateClass);
+        return new LocalDateTypeMapper<>(wsDateClass);
     }
 }

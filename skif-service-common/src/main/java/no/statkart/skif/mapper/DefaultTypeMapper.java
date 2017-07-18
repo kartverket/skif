@@ -39,11 +39,11 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
     }
 
     public DefaultTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<M> mappingInterface) {
-        this(wsapiTypeToken, domainTypeToken, mappingInterface, Collections.<Class<?>>emptySet(), false, null);
+        this(wsapiTypeToken, domainTypeToken, mappingInterface, Collections.emptySet(), false, null);
     }
 
     public DefaultTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<M> mappingInterface, Provider<? extends ServiceContext> serviceContextProvider) {
-        this(wsapiTypeToken, domainTypeToken, mappingInterface, Collections.<Class<?>>emptySet(), false, serviceContextProvider);
+        this(wsapiTypeToken, domainTypeToken, mappingInterface, Collections.emptySet(), false, serviceContextProvider);
     }
 
     public DefaultTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Class<M> mappingInterface, Set<Class<?>> doNotMapTheseClasses, boolean failIfMissingDomainProperties) {

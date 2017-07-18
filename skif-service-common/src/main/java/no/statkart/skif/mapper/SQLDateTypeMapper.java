@@ -46,6 +46,7 @@ public class SQLDateTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, 
 
         final GregorianCalendar gregorianCalendar = source.toGregorianCalendar();
 
+        //noinspection UnnecessaryLocalVariable
         java.sql.Date target = new java.sql.Date(gregorianCalendar.getTimeInMillis());
 //        Timestamp target = new Timestamp(gregorianCalendar.get(Calendar.YEAR)-1900, gregorianCalendar.get(Calendar.MONTH), gregorianCalendar.get(Calendar.DATE), gregorianCalendar.get(Calendar.HOUR_OF_DAY), gregorianCalendar.get(Calendar.MINUTE), gregorianCalendar.get(Calendar.SECOND), gregorianCalendar.get(Calendar.MILLISECOND));
 

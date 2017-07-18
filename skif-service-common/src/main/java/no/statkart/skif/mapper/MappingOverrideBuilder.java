@@ -18,6 +18,7 @@ public class MappingOverrideBuilder {
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue") // Chain-pattern
     public MappingOverrideBuilder addBidirectional(Class<?> a, Class<?> b) {
         builder.put(a, b);
         builder.put(b, a);
