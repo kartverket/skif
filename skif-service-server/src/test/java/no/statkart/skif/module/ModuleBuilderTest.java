@@ -74,6 +74,7 @@ public class ModuleBuilderTest {
         final List test = injector.getInstance(Key.get(List.class, Names.named("test")));
         final List testExt = injector.getInstance(Key.get(List.class, Names.named("testExt")));
         final List testExt2 = injector.getInstance(Key.get(List.class, Names.named("testExt2")));
+        assertNotNull(config);
         assertNotNull(test);
         assertNotNull(testExt);
         assertSame(test, testExt2);

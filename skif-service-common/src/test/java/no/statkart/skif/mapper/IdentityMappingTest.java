@@ -74,7 +74,7 @@ public class IdentityMappingTest {
         AbstractMapper<Mapping> mapper = new AbstractMapper<Mapping>(Mapping.class) {
             {
                 MappingResolver mappingResolver = new MappingResolver();
-                Map<Class<?>, Class<?>> overrides = new HashMap<Class<?>, Class<?>>(1);
+                Map<Class<?>, Class<?>> overrides = new HashMap<>(1);
                 overrides.put(Integer.class, Integer.class);
                 mappingResolver.overrideClassMappings(overrides);
                 setMappingResolver(mappingResolver);

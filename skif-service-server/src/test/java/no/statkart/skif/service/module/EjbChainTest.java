@@ -1,6 +1,9 @@
 package no.statkart.skif.service.module;
 
-import com.google.inject.*;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.util.Types;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
@@ -13,7 +16,7 @@ import no.statkart.skif.service.test.service.Test2Service;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,7 +34,7 @@ public class EjbChainTest {
             protected void configure() {
                 install(new ServerModule(moduleConfiguration));
 
-                ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, Arrays.<Class<? extends Object>>asList(Test2Service.class));
+                ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, Collections.singletonList(Test2Service.class));
                 serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactorySpecification(TestProxyHandler.class));
                 install(serverServiceModule);
             }

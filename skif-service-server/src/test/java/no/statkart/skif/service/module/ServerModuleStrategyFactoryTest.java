@@ -19,6 +19,7 @@ import static org.testng.Assert.assertSame;
  */
 @Test
 public class ServerModuleStrategyFactoryTest {
+    @SuppressWarnings("ConstantConditions")
     public void testCreateInstance() {
         ModuleStrategyFactory factory = new ServerModuleStrategyFactory();
         final StrategyTuple<ServerServiceModuleStrategy> serverImplServiceStrategy = factory.getPrototype(ServerServiceModule.class);

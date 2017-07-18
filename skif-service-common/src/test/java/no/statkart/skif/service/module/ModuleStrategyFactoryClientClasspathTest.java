@@ -26,7 +26,7 @@ public class ModuleStrategyFactoryClientClasspathTest {
     public void testConfigureDefaultStrategy() {
         ModuleStrategyFactory factory = new EmptyModuleStrategyFactory();
 
-        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<RemoteServiceModuleStrategy>();
+        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<>();
         tuple.setStrategyClass(ServiceMode.JEE, TestStrategyJEE.class);
         tuple.setStrategyClass(ServiceMode.SINGLE_VM, TestStrategySingleVm.class);
         factory.addPrototype(RemoteServiceModule.class, tuple);
@@ -43,19 +43,21 @@ public class ModuleStrategyFactoryClientClasspathTest {
         assertEquals(strategy1.getStrategyClassName(ServiceMode.SINGLE_VM), strategy2.getStrategyClassName(ServiceMode.SINGLE_VM));
         assertNotSame(strategy1.getStrategy(ServiceMode.JEE), strategy2.getStrategy(ServiceMode.JEE));
         assertNotSame(strategy1.getStrategy(ServiceMode.SINGLE_VM), strategy2.getStrategy(ServiceMode.SINGLE_VM));
+        //noinspection ConstantConditions
         assertEquals(strategy1.getStrategy(ServiceMode.JEE).getClass(), TestStrategyJEE.class) ;
+        //noinspection ConstantConditions
         assertEquals(strategy1.getStrategy(ServiceMode.SINGLE_VM).getClass(), TestStrategySingleVm.class) ;
     }
 
     public void testOverwriteDefaultStrategy() {
         ModuleStrategyFactory factory = new EmptyModuleStrategyFactory();
 
-        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<RemoteServiceModuleStrategy>();
+        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<>();
         tuple.setStrategyClass(ServiceMode.JEE, TestStrategyJEE.class);
         tuple.setStrategyClass(ServiceMode.SINGLE_VM, TestStrategySingleVm.class);
         factory.addPrototype(RemoteServiceModule.class, tuple);
 
-        StrategyTuple<RemoteServiceModuleStrategy> tuple2 = new StrategyTuple<RemoteServiceModuleStrategy>();
+        StrategyTuple<RemoteServiceModuleStrategy> tuple2 = new StrategyTuple<>();
         tuple2.setStrategyClass(ServiceMode.JEE, TestStrategyJEE.class);
         tuple2.setStrategyClass(ServiceMode.SINGLE_VM, TestStrategySingleVm.class);
         factory.addPrototype(TestRemoteServiceModule.class, tuple2);
@@ -78,7 +80,7 @@ public class ModuleStrategyFactoryClientClasspathTest {
     }
 
     public static class TestRemoteServiceModule extends RemoteServiceModule {
-        public TestRemoteServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
+        public TestRemoteServiceModule(ModuleConfiguration configuration, Collection<Class<?>> services, Mapping mapping) {
             super(configuration, services, mapping);
         }
     }

@@ -26,7 +26,7 @@ public class TestServerModule extends TestModule {
         install(new ServerModule(moduleConfiguration));
     }
 
-    private void configurModulename() {
+    protected void configureModulename() {
         bind(String.class).annotatedWith(Names.named("modulename")).toInstance("TestServerModule");
     }
 }

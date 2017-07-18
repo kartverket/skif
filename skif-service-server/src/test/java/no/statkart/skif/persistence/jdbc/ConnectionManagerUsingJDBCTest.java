@@ -22,6 +22,7 @@ import static org.testng.Assert.*;
  * @author Jan Holmen
  * @since 2.1
  */
+@SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
 @Test(groups = "singlevm-required")
 public class ConnectionManagerUsingJDBCTest {
     private ConnectionManagerUsingFactory connectionManager;

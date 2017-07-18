@@ -26,10 +26,12 @@ public class ClientModuleStrategyFactoryTest  {
         final StrategyTuple<RemoteServiceModuleStrategy> remoteServiceStrategy = factory.getPrototype(RemoteServiceModule.class);
         assertNotNull(remoteServiceStrategy);
 
+        //noinspection ConstantConditions
         final CallServiceChainFactorySpecification callServiceChainFactorySpecificationSingleVm =
                 remoteServiceStrategy.getStrategy(ServiceMode.SINGLE_VM).getCallServiceChainFactorySpecification() ;
         assertSame(callServiceChainFactorySpecificationSingleVm.getFactoryClass(), ClientCallServiceChainFactorySingleVm.class);
 
+        //noinspection ConstantConditions
         final CallServiceChainFactorySpecification callServiceChainFactorySpecificationJEE =
                 remoteServiceStrategy.getStrategy(ServiceMode.JEE).getCallServiceChainFactorySpecification() ;
         assertSame(callServiceChainFactorySpecificationJEE.getFactoryClass(), ClientCallServiceChainFactoryJEE.class);

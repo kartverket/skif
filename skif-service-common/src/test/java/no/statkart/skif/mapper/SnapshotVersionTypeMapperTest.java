@@ -21,7 +21,7 @@ public class SnapshotVersionTypeMapperTest {
     // Tilsvarende test finnes i TimestampTypeMapperTest
     public void testManyCombinations() {
         Random random = new Random(31415L); // Bruker fast seed, slik at testen skal være repeterbar
-        SnapshotVersionTypeMapper<SnapshotVersionWS> mapper = new SnapshotVersionTypeMapper<SnapshotVersionWS>(SnapshotVersionWS.class);
+        SnapshotVersionTypeMapper<SnapshotVersionWS> mapper = new SnapshotVersionTypeMapper<>(SnapshotVersionWS.class);
 
         for (int i = 0; i < 10000; ++i) {
             Timestamp timestamp = new Timestamp(random.nextInt(Integer.MAX_VALUE)); // Negative verdier skal ikke forekomme
@@ -36,7 +36,7 @@ public class SnapshotVersionTypeMapperTest {
     }
 
     public void currentToXml() {
-        SnapshotVersionTypeMapper<SnapshotVersionWS> mapper = new SnapshotVersionTypeMapper<SnapshotVersionWS>(SnapshotVersionWS.class);
+        SnapshotVersionTypeMapper<SnapshotVersionWS> mapper = new SnapshotVersionTypeMapper<>(SnapshotVersionWS.class);
 
         String xmlString = mapper.mapDomainObject(SnapshotVersion.CURRENT).getTimestamp().toXMLFormat();
 
@@ -44,7 +44,7 @@ public class SnapshotVersionTypeMapperTest {
     }
 
     public void xmlToCurrent() throws DatatypeConfigurationException {
-        SnapshotVersionTypeMapper<SnapshotVersionWS> mapper = new SnapshotVersionTypeMapper<SnapshotVersionWS>(SnapshotVersionWS.class);
+        SnapshotVersionTypeMapper<SnapshotVersionWS> mapper = new SnapshotVersionTypeMapper<>(SnapshotVersionWS.class);
 
         String xmlString = "9999-01-01T00:00:00.000000000+01:00";
 
@@ -55,7 +55,8 @@ public class SnapshotVersionTypeMapperTest {
 
     // Denne koden er litt risikabel
     public void xmlNoTzToCurrent() throws DatatypeConfigurationException {
-        SnapshotVersionTypeMapper<SnapshotVersionWS> mapper = new SnapshotVersionTypeMapper<SnapshotVersionWS>(SnapshotVersionWS.class);
+        SnapshotVersionTypeMapper<SnapshotVersionWS> mapper;
+        mapper = new SnapshotVersionTypeMapper<>(SnapshotVersionWS.class);
 
         String xmlString = "9999-01-01T00:00:00.000000000";
 

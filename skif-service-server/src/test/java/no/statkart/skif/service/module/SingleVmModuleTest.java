@@ -1,7 +1,5 @@
 package no.statkart.skif.service.module;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.*;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
@@ -20,8 +18,8 @@ import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
-import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
+import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategySingleVm;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
@@ -58,8 +56,8 @@ import static org.testng.Assert.*;
 public class SingleVmModuleTest {
     private ModuleConfiguration clientCfg;
     private ModuleConfiguration serverCfg;
-    private List<Class<? extends Object>> services;
-    private List<Class<? extends Object>> services2;
+    private List<Class<?>> services;
+    private List<Class<?>> services2;
 
     @BeforeMethod
     private void setUp() {
@@ -72,25 +70,25 @@ public class SingleVmModuleTest {
                 .setServiceMode(ServiceMode.SINGLE_VM);
 
         // Simpel service gruppe
-        services = new ArrayList<Class<? extends Object>>();
+        services = new ArrayList<>();
         services.add(Test1Service.class);
         services.add(Test2Service.class);
 
         // Servicegruppe med Tx annotasjoner og hvor services kaller hverandre
-        services2 = new ArrayList<Class<? extends Object>>();
+        services2 = new ArrayList<>();
         services2.add(AService.class);
         services2.add(BService.class);
         services2.add(CService.class);
     }
 
-    private Injector createServerInjector(List<Class<? extends Object>> services) {
+    private Injector createServerInjector(List<Class<?>> services) {
         return Guice.createInjector(
                 new ServerModule(serverCfg),
                 new ServerServiceModule(serverCfg, services)
         );
     }
 
-    private Injector createServerInjectorWithTxAnnotation(List<Class<? extends Object>> services) {
+    private Injector createServerInjectorWithTxAnnotation(List<Class<?>> services) {
         final ServerServiceModule serverServiceModule = new ServerServiceModule(serverCfg, services);
         serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactorySpecification(AnnotatingEjbServiceChainFactory.class));
 
@@ -101,7 +99,7 @@ public class SingleVmModuleTest {
         );
     }
 
-    private Injector createServerInjectorThatOverridesDefaultImplementationBindings(List<Class<? extends Object>> services) {
+    private Injector createServerInjectorThatOverridesDefaultImplementationBindings(List<Class<?>> services) {
         final ServerModuleStrategyFactory myStrategyFactory = new ServerModuleStrategyFactory();
         myStrategyFactory.getPrototype(ServerServiceModule.class).setStrategyClass(ServiceMode.SINGLE_VM, ServerServiceModuleStrategyWithExplisitBindingSingleVm.class);
 
@@ -123,7 +121,6 @@ public class SingleVmModuleTest {
     }
 
 
-
     /**
      * Eksemple på alternativ ServerServiceModuleStrategy som forventer at services eksplisitt binnes til
      * implementasjon i {@link AbstractModule#configure()}
@@ -136,7 +133,7 @@ public class SingleVmModuleTest {
     }
 
 
-    private Injector createClientInjector(Injector serverInjector, List<Class<? extends Object>> services) {
+    private Injector createClientInjector(Injector serverInjector, List<Class<?>> services) {
         clientCfg.getConfiguration().setProperty(SkifConfigConstants.SINGLE_VM_SERVER_INJECTOR, serverInjector);
         return Guice.createInjector(
                 new RemoteServerModule(clientCfg),
@@ -193,8 +190,6 @@ public class SingleVmModuleTest {
      * uten noe aktivt ServiceRequestScope.
      */
     public void testEJBServiceChainFactory() {
-        final ProxyHandler<Test1Service> implementationServiceChain = mock(ProxyHandler.class);
-        final ProxyHandler<Test1Service> implementationServiceChain2 = mock(ProxyHandler.class);
         final Injector serverInjector = createServerInjector(services);
         final EJBServiceChainFactory<Test1Service> factory = serverInjector.getInstance(
                 Key.get(new TypeLiteral<EJBServiceChainFactory<Test1Service>>() {
@@ -266,7 +261,6 @@ public class SingleVmModuleTest {
         final Injector serverInjector = createServerInjector(services);
         final Injector injector = createClientInjector(serverInjector, services);
 
-        final Test1Service service1 = injector.getInstance(Test1Service.class);
         final LoginUserHolder loginUserHolder = injector.getInstance(LoginUserHolder.class);
         loginUserHolder.set(new LoginUser("henrik", "henrikPassword"));
         final Test2Service service2 = injector.getInstance(Test2Service.class);
@@ -286,7 +280,8 @@ public class SingleVmModuleTest {
         loginUserHolder.set(new LoginUser("henrik", "henrikPassword"));
 
         // Startende kall er ikke transaksjonelt
-        assertEquals(serviceA.m1(new ArrayList<String>()), "[NoTx:AService.m1]");
+        assertEquals(serviceA.m1(new ArrayList<>()), "[NoTx:AService.m1]");
+        //noinspection ArraysAsListWithZeroOrOneArgument
         assertEquals(serviceA.m1(Arrays.asList("AService.m2")), "[NoTx:AService.m1 AService.m2]");
         assertEquals(serviceA.m1(Arrays.asList("AService.m2", "AService.m3")), "[NoTx:AService.m1 AService.m2 AService.m3]");
     }
@@ -294,20 +289,22 @@ public class SingleVmModuleTest {
     /**
      * Test kall til metode som ikke selv krever tx men som kaller andre metoder som krever det
      */
-     public void testCrossCallSingleVmWireing_StartingCallHasNoTxOnMethodFollowingCallsMayHave() {
+    public void testCrossCallSingleVmWireing_StartingCallHasNoTxOnMethodFollowingCallsMayHave() {
         final Injector serverInjector = createServerInjectorWithTxAnnotation(services2);
         final Injector injector = createClientInjector(serverInjector, services2);
 
-        final AService serviceA= injector.getInstance(AService.class);
+        final AService serviceA = injector.getInstance(AService.class);
         final LoginUserHolder loginUserHolder = injector.getInstance(LoginUserHolder.class);
         loginUserHolder.set(new LoginUser("henrik", "henrikPassword"));
 
+        //noinspection ArraysAsListWithZeroOrOneArgument
         assertEquals(serviceA.m1(Arrays.asList("BService.m2")), "[NoTx:AService.m1 [Tx:BService.m2]]");
         assertEquals(serviceA.m1(Arrays.asList("BService.m2", "BService.m3")), "[NoTx:AService.m1 [Tx:BService.m2 [Tx:BService.m3]]]");
         assertEquals(serviceA.m1(Arrays.asList("BService.m2", "BService.m3", "BService.m2")), "[NoTx:AService.m1 [Tx:BService.m2 [Tx:BService.m3 BService.m2]]]");
         assertEquals(serviceA.m1(Arrays.asList("BService.m2", "BService.m3", "BService.m2", "CService.m1")), "[NoTx:AService.m1 [Tx:BService.m2 [Tx:BService.m3 BService.m2 CService.m1]]]");
         assertEquals(serviceA.m1(Arrays.asList("BService.m2", "BService.m3", "BService.m1", "CService.m1")), "[NoTx:AService.m1 [Tx:BService.m2 [Tx:BService.m3 BService.m1 CService.m1]]]");
 
+        //noinspection ArraysAsListWithZeroOrOneArgument
         assertEquals(serviceA.m1(Arrays.asList("BService.m2")), "[NoTx:AService.m1 [Tx:BService.m2]]");
         assertEquals(serviceA.m1(Arrays.asList("BService.m2", "CService.m3")), "[NoTx:AService.m1 [Tx:BService.m2 CService.m3]]");
         assertEquals(serviceA.m1(Arrays.asList("BService.m2", "CService.m3", "BService.m2")), "[NoTx:AService.m1 [Tx:BService.m2 CService.m3 BService.m2]]");
@@ -328,12 +325,14 @@ public class SingleVmModuleTest {
         loginUserHolder.set(new LoginUser("henrik", "henrikPassword"));
 
         // Startende kall har REQUIRES tx
-        assertEquals(serviceB.m2(new ArrayList<String>()), "[Tx:BService.m2]");
+        assertEquals(serviceB.m2(new ArrayList<>()), "[Tx:BService.m2]");
+        //noinspection ArraysAsListWithZeroOrOneArgument
         assertEquals(serviceB.m2(Arrays.asList("AService.m2")), "[Tx:BService.m2 AService.m2]");
         assertEquals(serviceB.m2(Arrays.asList("AService.m2", "AService.m3")), "[Tx:BService.m2 AService.m2 AService.m3]");
 
         // Startende kall har REQUIRES_NEW tx
-        assertEquals(serviceB.m3(new ArrayList<String>()), "[Tx:BService.m3]");
+        assertEquals(serviceB.m3(new ArrayList<>()), "[Tx:BService.m3]");
+        //noinspection ArraysAsListWithZeroOrOneArgument
         assertEquals(serviceB.m3(Arrays.asList("AService.m2")), "[Tx:BService.m3 AService.m2]");
         assertEquals(serviceB.m3(Arrays.asList("AService.m2", "AService.m3")), "[Tx:BService.m3 AService.m2 AService.m3]");
 
@@ -347,16 +346,18 @@ public class SingleVmModuleTest {
         final Injector serverInjector = createServerInjectorWithTxAnnotation(services2);
         final Injector injector = createClientInjector(serverInjector, services2);
 
-        final BService bService= injector.getInstance(BService.class);
+        final BService bService = injector.getInstance(BService.class);
         final LoginUserHolder loginUserHolder = injector.getInstance(LoginUserHolder.class);
         loginUserHolder.set(new LoginUser("henrik", "henrikPassword"));
 
+        //noinspection ArraysAsListWithZeroOrOneArgument
         assertEquals(bService.m2(Arrays.asList("BService.m2")), "[Tx:BService.m2 BService.m2]");
         assertEquals(bService.m2(Arrays.asList("BService.m2", "BService.m3")), "[Tx:BService.m2 BService.m2 [Tx:BService.m3]]");
         assertEquals(bService.m2(Arrays.asList("BService.m2", "BService.m3", "BService.m2")), "[Tx:BService.m2 BService.m2 [Tx:BService.m3 BService.m2]]");
         assertEquals(bService.m2(Arrays.asList("BService.m2", "BService.m3", "BService.m2", "CService.m1")), "[Tx:BService.m2 BService.m2 [Tx:BService.m3 BService.m2 CService.m1]]");
         assertEquals(bService.m2(Arrays.asList("BService.m2", "BService.m3", "BService.m1", "CService.m1")), "[Tx:BService.m2 BService.m2 [Tx:BService.m3 BService.m1 CService.m1]]");
 
+        //noinspection ArraysAsListWithZeroOrOneArgument
         assertEquals(bService.m3(Arrays.asList("BService.m2")), "[Tx:BService.m3 BService.m2]");
         assertEquals(bService.m3(Arrays.asList("BService.m2", "BService.m3")), "[Tx:BService.m3 BService.m2 [Tx:BService.m3]]");
         assertEquals(bService.m3(Arrays.asList("BService.m2", "BService.m3", "BService.m2")), "[Tx:BService.m3 BService.m2 [Tx:BService.m3 BService.m2]]");

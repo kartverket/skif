@@ -37,7 +37,7 @@ public class ImplementationChainTest {
             protected void configure() {
                 install(new ServerModule(moduleConfiguration));
 
-                ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, Collections.<Class<?>>singletonList(Test2Service.class));
+                ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, Collections.singletonList(Test2Service.class));
                 serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setImplementationServiceChainFactorySpecification(new ImplementationServiceChainFactorySpecification(TestProxyHandler.class));
                 install(serverServiceModule);
             }

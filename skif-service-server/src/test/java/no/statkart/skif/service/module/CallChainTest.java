@@ -36,7 +36,7 @@ public class CallChainTest {
             protected void configure() {
                 install(new ServerModule(moduleConfiguration));
 
-                ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, Collections.<Class<?>>singleton(Test2Service.class));
+                ServerServiceModule serverServiceModule = new ServerServiceModule(moduleConfiguration, Collections.singleton(Test2Service.class));
                 serverServiceModule.getStrategy(ServiceMode.SINGLE_VM).setCallServiceChainFactorySpecification(new CallServiceChainFactorySpecification(ServerCallServiceChainFactory.class, TestProxyHandler.class));
                 install(serverServiceModule);
             }

@@ -25,6 +25,7 @@ public class TestExtEJBServiceChainProxyHandler<S> extends ChainedProxyHandler<S
     protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         listProvider.get().add("Inserted by TestExtEJBServiceChainProxyHandler");
         try {
+            //noinspection UnnecessaryLocalVariable
             Object result = chained.invoke(proxy, method, args);
             return result;
         } finally {

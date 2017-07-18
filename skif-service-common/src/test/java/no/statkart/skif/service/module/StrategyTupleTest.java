@@ -20,7 +20,7 @@ public class StrategyTupleTest {
     public void testNewStrategyTupleWithJustJEE() {
         RemoteServiceModuleStrategy REMOTE_STRATEGY_JEE = new TestStrategyJEE();
 
-        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<RemoteServiceModuleStrategy>();
+        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<>();
         tuple.setStrategy(ServiceMode.JEE, REMOTE_STRATEGY_JEE);
         assertSame(tuple.getStrategy(ServiceMode.JEE), REMOTE_STRATEGY_JEE);
         assertSame(tuple.getStrategyClass(ServiceMode.JEE), REMOTE_STRATEGY_JEE.getClass());
@@ -33,7 +33,7 @@ public class StrategyTupleTest {
 
     public void testNewStrategyTupleWithJustSingleVm() {
         RemoteServiceModuleStrategy REMOTE_STRATEGY_SVM = new TestStrategySingleVm();
-        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<RemoteServiceModuleStrategy>();
+        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<>();
         tuple.setStrategy(ServiceMode.SINGLE_VM, REMOTE_STRATEGY_SVM);
         assertSame(tuple.getStrategy(ServiceMode.SINGLE_VM), REMOTE_STRATEGY_SVM);
         assertSame(tuple.getStrategyClass(ServiceMode.SINGLE_VM), REMOTE_STRATEGY_SVM.getClass());
@@ -47,7 +47,7 @@ public class StrategyTupleTest {
     public void testNewStrategyTupleWithJEEAndSingleVm() {
         RemoteServiceModuleStrategy REMOTE_STRATEGY_SVM = new TestStrategySingleVm();
         RemoteServiceModuleStrategy REMOTE_STRATEGY_JEE = new TestStrategyJEE();
-        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<RemoteServiceModuleStrategy>();
+        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<>();
 
         tuple.setStrategy(ServiceMode.JEE, REMOTE_STRATEGY_JEE);
         assertSame(tuple.getStrategy(ServiceMode.JEE), REMOTE_STRATEGY_JEE);
@@ -62,11 +62,12 @@ public class StrategyTupleTest {
 
 
     public void testNewStrategyConfigElementWithNoSingleVmClassOnClasspath() {
-        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<RemoteServiceModuleStrategy>(AnotherStrategy.class);
+        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<>(AnotherStrategy.class);
         assertEquals(tuple.getStrategyClassName(ServiceMode.JEE), AnotherStrategyJEE.class.getName());
         assertEquals(tuple.getStrategyClassName(ServiceMode.SINGLE_VM), AnotherStrategy.class.getName() + SkifConstants.SINGLE_VM_POSTFIX);
 
         assertNotNull(tuple.getStrategy(ServiceMode.JEE));
+        //noinspection ConstantConditions
         assertSame(tuple.getStrategy(ServiceMode.JEE).getClass(), AnotherStrategyJEE.class);
 
         try {
@@ -78,14 +79,14 @@ public class StrategyTupleTest {
     }
 
     public void testCloneBeforeGetInstance() {
-        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<RemoteServiceModuleStrategy>(TestStrategy.class);
+        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<>(TestStrategy.class);
         StrategyTuple<RemoteServiceModuleStrategy> tupleClone = tuple.clone();
         assertNotNull(tupleClone.getStrategy(ServiceMode.JEE));
         assertNotNull(tupleClone.getStrategy(ServiceMode.SINGLE_VM));
     }
 
     public void testCloneAfterGetInstance() {
-        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<RemoteServiceModuleStrategy>(TestStrategy.class);
+        StrategyTuple<RemoteServiceModuleStrategy> tuple = new StrategyTuple<>(TestStrategy.class);
         assertNotNull(tuple.getStrategy(ServiceMode.JEE));
         StrategyTuple<RemoteServiceModuleStrategy> tupleClone = tuple.clone();
         assertNotNull(tupleClone.getStrategy(ServiceMode.JEE));

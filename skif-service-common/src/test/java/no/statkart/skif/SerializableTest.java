@@ -6,8 +6,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +17,7 @@ import java.util.Set;
 @Test
 public class SerializableTest {
 
-    static final List<String> packages = Arrays.asList(
+    static final List<String> packages = Collections.singletonList(
             SerializableTest.class.getPackage().getName()
     );
 
@@ -34,7 +33,7 @@ public class SerializableTest {
      * satt serialVersionUID ihht standard
      */
     public void testSerialVersionUID() {
-        LinkedHashSet<String> feilliste = new LinkedHashSet<String>();
+        LinkedHashSet<String> feilliste = new LinkedHashSet<>();
 
 
         for (String packageName : packages) {
@@ -50,7 +49,7 @@ public class SerializableTest {
                 while( clazz != null && Serializable.class.isAssignableFrom(clazz) ) {
                     if (clazz.isInterface()) break;
                     try {
-                        Field field = clazz.getDeclaredField("serialVersionUID");
+                        clazz.getDeclaredField("serialVersionUID");
                     } catch( NoSuchFieldException e ) {
                         feilliste.add(String.format("\nForventet at klasse %s deklarerer feltet 'serialVersionUID'", clazz.getName()));
                     }
