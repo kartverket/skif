@@ -145,7 +145,7 @@ public class SnapshotBubbleIdTypeMapperFactory implements TypeMapperFactory {
         public WsapiT mapDomainObject(DomainT source) {
             WsapiT target = createDictionary();
 
-            List<Object> entries = new ArrayList<Object>(source.size());
+            List<Object> entries = new ArrayList<>(source.size());
 
             for (final AbstractBubbleId bubbleId : source) {
                 TypeToken<?> wsBubbleIdTypeToken = getMapping().getMappingResolver().resolveTargetType(bubbleId.getClass(), TypeToken.of(valueField.getGenericType()));
@@ -235,9 +235,7 @@ public class SnapshotBubbleIdTypeMapperFactory implements TypeMapperFactory {
         protected WsapiT createDictionary() {
             try {
                 return (WsapiT) wsapiTypeToken.getRawType().newInstance();
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create map/dictionary", e);
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new MappingException("Failed to create map/dictionary", e);
             }
         }
@@ -245,9 +243,7 @@ public class SnapshotBubbleIdTypeMapperFactory implements TypeMapperFactory {
         protected Object createEntry() {
             try {
                 return entryClass.newInstance();
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create entry for map/dictionary", e);
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new MappingException("Failed to create entry for map/dictionary", e);
             }
         }
@@ -259,12 +255,10 @@ public class SnapshotBubbleIdTypeMapperFactory implements TypeMapperFactory {
                 } else {
                     return collectionConstructor.newInstance();
                 }
-            } catch (InstantiationException e) {
-                throw new MappingException("Failed to create " + collectionConstructor.getDeclaringClass(), e);
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new MappingException("Failed to create " + collectionConstructor.getDeclaringClass(), e);
             } catch (InvocationTargetException e) {
-                throw new MappingException("Failed to create " + collectionConstructor.getDeclaringClass(), e);
+                throw new MappingException("Failed to create " + collectionConstructor.getDeclaringClass(), e.getTargetException());
             }
         }
     }

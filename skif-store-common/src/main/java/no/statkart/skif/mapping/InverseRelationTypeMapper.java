@@ -64,7 +64,7 @@ public class InverseRelationTypeMapper<WsapiT, DomainT extends InverseRelation> 
         } catch (IllegalAccessException e) {
             throw new MappingException("Could not set fields on " + target.getClass(), e);
         } catch (InvocationTargetException e) {
-            throw new MappingException("Could not set fields on " + target.getClass(), e);
+            throw new MappingException("Could not set fields on " + target.getClass(), e.getTargetException());
         }
 
         return target;
@@ -76,12 +76,10 @@ public class InverseRelationTypeMapper<WsapiT, DomainT extends InverseRelation> 
         final InverseRelation target;
         try {
             target = domainConstructor.newInstance();
-        } catch (InstantiationException e) {
-            throw new MappingException("Could not create new instance of " + getDomainClass(), e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new MappingException("Could not create new instance of " + getDomainClass(), e);
         } catch (InvocationTargetException e) {
-            throw new MappingException("Could not create new instance of " + getDomainClass(), e);
+            throw new MappingException("Could not create new instance of " + getDomainClass(), e.getTargetException());
         }
 
         try {
@@ -93,7 +91,7 @@ public class InverseRelationTypeMapper<WsapiT, DomainT extends InverseRelation> 
         } catch (IllegalAccessException e) {
             throw new MappingException("Could not read fields on " + source.getClass(), e);
         } catch (InvocationTargetException e) {
-            throw new MappingException("Could not read fields on " + source.getClass(), e);
+            throw new MappingException("Could not read fields on " + source.getClass(), e.getTargetException());
         }
 
         return target;

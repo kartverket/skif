@@ -38,7 +38,7 @@ public class ObjectsNotFoundException extends FinderException {
      */
     ObjectsNotFoundException(BubbleId<?> idNotFound, Throwable cause, Logger logger) {
         super(String.valueOf(idNotFound), cause, logger);
-        this.idsNotFound = ImmutableSet.<BubbleId<?>>of(idNotFound);
+        this.idsNotFound = ImmutableSet.of(idNotFound);
     }
 
     public Set<BubbleId<?>> getIdsNotFound() {
