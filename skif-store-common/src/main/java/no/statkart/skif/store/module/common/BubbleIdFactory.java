@@ -20,16 +20,11 @@ public class BubbleIdFactory {
         try {
             Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), SnapshotVersion.class);
             ctor.setAccessible(true);
-            I id = ctor.newInstance(idValue, snapshotVersion);
-            return id;
-        } catch (InstantiationException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException(e);
-        } catch (NoSuchMethodException e) {
+            return ctor.newInstance(idValue, snapshotVersion);
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             throw new ImplementationException(e);
         } catch (InvocationTargetException e) {
-            throw new ImplementationException(e);
+            throw new ImplementationException(e.getTargetException());
         }
     }
 

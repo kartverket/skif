@@ -26,7 +26,7 @@ public class RelationFinder {
         this.relationName = relationName;
         String classname = relationName.getClass().getCanonicalName();
         checkArgument(classname.endsWith(".Role"), "RelationName must defined as an inner class of FinderService with name Role");
-        Class finderServiceClass = SkifUtil.classForName(classname.substring(0, classname.length()-5));
+        Class<?> finderServiceClass = SkifUtil.classForName(classname.substring(0, classname.length()-5));
         for (Method m : finderServiceClass.getDeclaredMethods()) {
             Relation annotation = m.getAnnotation(Relation.class);
             if (annotation != null && annotation.name().equals(relationName.toString())) {
@@ -51,7 +51,7 @@ public class RelationFinder {
         } catch (IllegalAccessException e) {
             throw new ImplementationException(e);
         } catch (InvocationTargetException e) {
-            throw new ImplementationException(e);
+            throw new ImplementationException(e.getTargetException());
         }
     }
 }

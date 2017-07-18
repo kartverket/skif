@@ -20,7 +20,7 @@ public abstract class AbstractKodeliste extends AbstractBubbleObject implements 
 
     private String kodeTypeNavn;
     private Class<? extends KodeId<?>> kodeIdClass;
-    private List<KodeId<?>> koderIds = new ArrayList<KodeId<?>>();
+    private List<KodeId<?>> koderIds = new ArrayList<>();
     private boolean editerbar;
 
     // Avledet felt

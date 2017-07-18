@@ -17,8 +17,7 @@ public class DbKodeSupport<I extends KodeId, KL extends Kodeliste, KLID extends 
     }
 
     public I defineId(Object idValue) {
-        I id = BubbleIds.createInstance(kodeIdClass, idValue, SnapshotVersion.CURRENT);
-        return id;
+        return BubbleIds.createInstance(kodeIdClass, idValue, SnapshotVersion.CURRENT);
     }
 
 

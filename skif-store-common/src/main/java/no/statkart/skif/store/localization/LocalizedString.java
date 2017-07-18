@@ -18,7 +18,7 @@ public class LocalizedString implements Serializable {
     private final Map<Locale, String> localizations;
 
     public LocalizedString() {
-        localizations = new HashMap<Locale, String>();
+        localizations = new HashMap<>();
     }
 
     public LocalizedString(Map<Locale, String> localizations) {

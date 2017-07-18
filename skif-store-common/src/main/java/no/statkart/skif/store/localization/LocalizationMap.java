@@ -21,7 +21,7 @@ public class LocalizationMap implements Serializable, EqualityByFields {
     /**
      * Map fra locale+feltnavn til tekst. Det er dette Hibernate jobber med.
      */
-    private Map<LocalizationKey, String> map = new HashMap<LocalizationKey, String>();
+    private Map<LocalizationKey, String> map = new HashMap<>();
 
     public LocalizationMap(BubbleObject owner) {
         this.owner = owner;
@@ -46,7 +46,7 @@ public class LocalizationMap implements Serializable, EqualityByFields {
     }
 
     public LocalizedString localizedStringForField(String fieldName) {
-        Map<Locale, String> localizations = new HashMap<Locale, String>();
+        Map<Locale, String> localizations = new HashMap<>();
 
         for (Map.Entry<LocalizationKey, String> entry : map.entrySet()) {
             if (entry.getKey().getName().equals(fieldName)) {

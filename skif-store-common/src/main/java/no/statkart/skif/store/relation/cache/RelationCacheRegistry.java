@@ -19,7 +19,7 @@ import static com.google.common.base.Preconditions.checkState;
 */
 @Singleton
 public class RelationCacheRegistry {
-    final ConcurrentHashMap<String, RelationStrategy> registry = new ConcurrentHashMap<String, RelationStrategy>();
+    final ConcurrentHashMap<String, RelationStrategy> registry = new ConcurrentHashMap<>();
 
 
     public RelationStrategy getStrategy(Method method) {

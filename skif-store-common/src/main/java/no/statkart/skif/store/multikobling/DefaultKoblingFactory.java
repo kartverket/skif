@@ -27,6 +27,7 @@ public class DefaultKoblingFactory<R,V, K extends Kobling<R,V>> implements Kobli
         this.constructor = findConstructor(koblingClass);
     }
 
+    @SuppressWarnings("unchecked")
     private Constructor<K> findConstructor(Class<K> koblingClass) {
         for (Constructor<?> c : koblingClass.getConstructors()) {
             if (c.getParameterTypes().length==2) {
@@ -40,17 +41,15 @@ public class DefaultKoblingFactory<R,V, K extends Kobling<R,V>> implements Kobli
     public K create(R rolle, V value) {
         try {
             return constructor.newInstance(rolle, value);
-        } catch (InstantiationException e) {
-            throw new ConfigurationException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new ConfigurationException(e);
         } catch (InvocationTargetException e) {
-            throw new ConfigurationException(e);
+            throw new ConfigurationException(e.getTargetException());
         }
     }
 
     public static <R,V, K extends Kobling<R,V>> KoblingFactory<R, V, K> create(Class<K> c) {
-        return new DefaultKoblingFactory<R,V,K>(c);
+        return new DefaultKoblingFactory<>(c);
     }
 
     /**
