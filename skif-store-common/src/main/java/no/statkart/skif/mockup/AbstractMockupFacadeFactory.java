@@ -78,12 +78,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
         // Bruker her en Provider som oppretter readFacade første gang man ber om den. Må være lazy fordi testdataService ikke bør kalles
         // i forbindelse med opprettelse MockupFacadeFactory'en. TestdataService gjør et kall til serveren og krever bl.a
         // at bruker login er satt opp.
-        readFacadeProvider = new Provider<T>() {
-            @Override
-            public T get() {
-                return createFacade(AbstractMockupFacadeFactory.this.testdataService.getTestNumber0());
-            }
-        };
+        readFacadeProvider = () -> createFacade(AbstractMockupFacadeFactory.this.testdataService.getTestNumber0());
 
         ignoredIdClasses.add(KodeId.class);
     }

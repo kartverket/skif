@@ -38,11 +38,8 @@ public class MockupPersister {
      * @return snapshot
      */
     private Map<BubbleId<?>, BubbleObject> getSnapshot(SnapshotVersion snapshotVersion) {
-        Map<BubbleId<?>, BubbleObject> snapshot = snapshots.get(snapshotVersion);
-        if (snapshot == null) {
-            snapshot = new LinkedHashMap<>();
-            snapshots.put(snapshotVersion, snapshot);
-        }
+        //noinspection UnnecessaryLocalVariable
+        Map<BubbleId<?>, BubbleObject> snapshot = snapshots.computeIfAbsent(snapshotVersion, k -> new LinkedHashMap<>());
         return snapshot;
     }
 
