@@ -9,12 +9,7 @@ public class SnapshotVersionSeed implements Holder<SnapshotVersion> {
     ThreadLocal<SnapshotVersion> threadLocal;
 
     public SnapshotVersionSeed(final SnapshotVersion initialValue) {
-        threadLocal = new ThreadLocal<SnapshotVersion>() {
-            @Override
-            protected SnapshotVersion initialValue() {
-                return initialValue;
-            }
-        };
+        threadLocal = ThreadLocal.withInitial(() -> initialValue);
     }
 
     @Override

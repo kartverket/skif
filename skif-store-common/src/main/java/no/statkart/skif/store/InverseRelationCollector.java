@@ -50,13 +50,8 @@ public class InverseRelationCollector {
     public void put(RelationName role, Object value) {
         if (value != null) {
             if (inCollection) {
-                Object v = map.get(role);
-                if (v==null) {
-                    v = new Values();
-                    map.put(role, v);
-                }
+                Object v = map.computeIfAbsent(role, k -> new Values());
                 checkState(v instanceof Values, "Multiple felter i objektgraf mapper til samme rolle [%s]. Feltverdi [%s]", role, value);
-                @SuppressWarnings("ConstantConditions")
                 Values values = (Values) v;
                 checkState(values.add(value), "Multiple felter/objekter i collection av objekter mapper til samme feltverdi [%s] for rolle [%s]", value, role);
             } else {
@@ -68,13 +63,8 @@ public class InverseRelationCollector {
     public void put(RelationName role, Set<?> value) {
         if (value != null && !value.isEmpty()) {
             if (inCollection) {
-                Object v = map.get(role);
-                if (v==null) {
-                    v = new Values();
-                    map.put(role, v);
-                }
+                Object v = map.computeIfAbsent(role, k -> new Values());
                 checkState(v instanceof Values, "Multiple felter i objektgraf mapper til samme rolle [%s]. Feltverdi [%s]", role, value);
-                @SuppressWarnings("ConstantConditions")
                 Values values = (Values) v;
                 checkState(values.addAll(value), "Multiple felter/objekter (med Set-verdier) i en collection av objekter inneholder ikke disjunkte Set av relasjonsverdier. Rolle [%s], nye verdier [%s], eksisterende verdier[%s],   ", role, value, values.v);
             } else {
