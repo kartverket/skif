@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Jan Holmen
  * @since 2.1
  */
-public class ChildForParent implements Serializable { //extends AbstractObject{
+public class ChildForParent implements Serializable {
     private Long id;
     private ParentBubble parentBubble;
     private ChildBubbleId<?> childBubbleId;
