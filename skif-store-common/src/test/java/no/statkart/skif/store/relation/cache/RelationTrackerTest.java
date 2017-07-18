@@ -92,6 +92,7 @@ public class RelationTrackerTest {
     }
 
 
+    @SuppressWarnings("unchecked")
     public void trackUnmaterialisedManyRelationAndThenMaterialise() {
        RelationTracker t = new RelationTracker();
        assertFalse(t.isMaterialised());
@@ -140,6 +141,7 @@ public class RelationTrackerTest {
         assertThat(t.getOneRelation()).isEqualTo(new Id(2));
     }
 
+    @SuppressWarnings("unchecked")
     public void trackMaterialisedManyRelationAndThenRetrieve() {
         RelationTracker t = new RelationTracker();
         t.materialise(new LinkedHashSet());
@@ -184,6 +186,7 @@ public class RelationTrackerTest {
         assertThat(t.getOneRelation()).isEqualTo(new Id(3));
     }
 
+    @SuppressWarnings("unchecked")
     public void commitIntoUnmaterialisedManyRelation() {
         RelationTracker t = new RelationTracker();
         t.add(new Id(1));
@@ -211,6 +214,7 @@ public class RelationTrackerTest {
         assertThat(t.getOneRelation()).isEqualTo(new Id(3));
     }
 
+    @SuppressWarnings("unchecked")
     public void commitIntoMaterialisedManyRelation() {
         RelationTracker t = new RelationTracker();
         t.materialise(new LinkedHashSet());
@@ -263,9 +267,7 @@ public class RelationTrackerTest {
 
            Id id = (Id) o;
 
-           if (value != id.value) return false;
-
-           return true;
+           return value == id.value;
        }
 
        @Override

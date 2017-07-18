@@ -37,7 +37,7 @@ public class SerializableTest {
      * satt serialVersionUID ihht standard
      */
     public void testSerialVersionUID() {
-        LinkedHashSet<String> feilliste = new LinkedHashSet<String>();
+        LinkedHashSet<String> feilliste = new LinkedHashSet<>();
 
 
         for (Package aPackage : packages) {
@@ -50,7 +50,7 @@ public class SerializableTest {
                 while( clazz != null && Serializable.class.isAssignableFrom(clazz) ) {
                     if (clazz.isInterface()) break;
                     try {
-                        Field field = clazz.getDeclaredField("serialVersionUID");
+                        clazz.getDeclaredField("serialVersionUID");
                     } catch( NoSuchFieldException e ) {
                         feilliste.add(String.format("\nForventet at klasse %s deklarerer feltet 'serialVersionUID'", clazz.getName()));
                     }

@@ -17,13 +17,14 @@ import java.util.*;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
+@SuppressWarnings("unused")
 public class TransferTypeMapperFactoryTest {
     @Test
     public void testTransfer() {
         Mapping mapping = new TransferTypeMapperFactoryTestMapper().getMapping();
 
-        DomainObjectId id1 = new DomainObjectId(1L);
-        DomainObjectId id2 = new DomainObjectId(2L);
+        DomainObjectId<?> id1 = new DomainObjectId<>(1L);
+        DomainObjectId<?> id2 = new DomainObjectId<>(2L);
         DomainObject object1 = new DomainObject();
         object1.setId(id1);
         object1.setText("A");
@@ -86,14 +87,14 @@ public class TransferTypeMapperFactoryTest {
 
         DomainBubbleTransfer domainTransfer = mapping.w2d(apiTransfer, DomainBubbleTransfer.class);
 
-        Assertions.assertThat((DomainObjectId) domainTransfer.getResult()).isEqualTo((DomainObjectId) id1);
+        Assertions.assertThat(domainTransfer.getResult()).isEqualTo(id1);
 
         Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
         Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
         for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
             DomainObject domainObject = (DomainObject) bubbleObject;
             funnetIds.add(domainObject.getId());
-            Assertions.assertThat((DomainObjectId) domainObject.getId()).isIn((DomainObjectId) id1, (DomainObjectId) id2);
+            Assertions.assertThat(domainObject.getId()).isIn(id1, id2);
             if (domainObject.getId().equals(id1)) {
                 Assertions.assertThat(domainObject.getText()).isEqualTo("A");
             } else if (domainObject.getId().equals(id2)) {
@@ -303,7 +304,7 @@ public class TransferTypeMapperFactoryTest {
 
         //noinspection unchecked
         Assertions.assertThat(domeneKodelisteTransfer.getKodelisterIds()).containsExactly(kodelisteId);
-        Assertions.assertThat((Map<?, ?>) domeneKodelisteTransfer.getBubbleObjects()).hasSize(1);
+        Assertions.assertThat((Map<?,?>)domeneKodelisteTransfer.getBubbleObjects()).hasSize(1);
         Assertions.assertThat(domeneKodelisteTransfer.getBubbleObjects().get(kodelisteId)).isNotNull();
     }
 

@@ -42,6 +42,7 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        //noinspection RedundantCast Ønsker ikke å bruker overload for collection/set
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
 
@@ -53,6 +54,7 @@ public class ComponentSetTest {
         bubble.getComponents().add(a);
 
         Assert.assertEquals(a.getOwner(), bubble, "a.owner");
+        //noinspection RedundantCast Ønsker ikke å bruker overload for collection/set
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Collections.singleton(a), "aaComponents");
     }
 
@@ -68,6 +70,7 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        //noinspection RedundantCast Ønsker ikke å bruker overload for collection/set
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
 
@@ -81,6 +84,7 @@ public class ComponentSetTest {
 
         Assert.assertEquals(a.getOwner(), bubble, "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        //noinspection RedundantCast Ønsker ikke å bruker overload for collection/set
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(a, b), "aaComponents");
     }
 
@@ -96,6 +100,7 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        //noinspection RedundantCast Ønsker ikke å bruker overload for collection/set
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
 

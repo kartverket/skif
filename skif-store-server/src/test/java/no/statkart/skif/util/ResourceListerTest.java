@@ -17,8 +17,6 @@ public class ResourceListerTest {
      * <p>
      * Av en eller annen grunn virker ikke dette trikset alltid for system-jar-filter. Det ser ut til å virker for
      * våre egne heldigvis, og det er der vi stort sett skal lete etter ressurser.
-     *
-     * @throws IOException
      */
     @Test(enabled = false)
     public void finnJavaCup() throws IOException {
@@ -37,8 +35,6 @@ public class ResourceListerTest {
 
     /**
      * Denne klassen kan selv være på classpathen som en fil i en katalog.
-     *
-     * @throws IOException
      */
     public void finnSegSelv() throws IOException {
         ResourceLister resourceLister = new ResourceLister("no.statkart.skif.util");

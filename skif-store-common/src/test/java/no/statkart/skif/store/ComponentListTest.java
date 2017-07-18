@@ -57,6 +57,7 @@ public class ComponentListTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        //noinspection ArraysAsListWithZeroOrOneArgument For ensartethet
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
     }
 
@@ -69,12 +70,14 @@ public class ComponentListTest {
 
         Assert.assertEquals(a.getOwner(), bubble, "a.owner");
         Assert.assertNull(b.getOwner(), "b.owner");
+        //noinspection ArraysAsListWithZeroOrOneArgument For ensartethet
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(a), "components");
 
         bubble.getComponents().set(0, b);
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        //noinspection ArraysAsListWithZeroOrOneArgument For ensartethet
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
     }
 
@@ -96,6 +99,7 @@ public class ComponentListTest {
 
         listIterator.remove();
 
+        //noinspection ArraysAsListWithZeroOrOneArgument For ensartethet
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
     }
 
@@ -133,6 +137,7 @@ public class ComponentListTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        //noinspection ArraysAsListWithZeroOrOneArgument For ensartethet
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
     }
 
@@ -151,6 +156,7 @@ public class ComponentListTest {
 
         listIterator.remove();
 
+        //noinspection ArraysAsListWithZeroOrOneArgument For ensartethet
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
     }
 
@@ -166,6 +172,7 @@ public class ComponentListTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        //noinspection ArraysAsListWithZeroOrOneArgument For ensartethet
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
     }
 
@@ -177,7 +184,8 @@ public class ComponentListTest {
         bubble.getComponents().add(a);
 
         Assert.assertEquals(a.getOwner(), bubble, "a.owner");
-        Assert.assertEquals(bubble.getComponents(), Collections.singletonList(a), "components");
+        //noinspection ArraysAsListWithZeroOrOneArgument For ensartethet
+        Assert.assertEquals(bubble.getComponents(), Arrays.asList(a), "components");
     }
 
     @Test
@@ -191,6 +199,7 @@ public class ComponentListTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        //noinspection ArraysAsListWithZeroOrOneArgument For ensartethet
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
     }
 
@@ -219,6 +228,7 @@ public class ComponentListTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        //noinspection ArraysAsListWithZeroOrOneArgument For ensartethet
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "aaComponents");
     }
 
