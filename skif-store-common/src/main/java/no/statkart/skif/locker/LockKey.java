@@ -1,6 +1,7 @@
 package no.statkart.skif.locker;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Interface for LockKey. Brukes for låsing mot database
@@ -23,21 +24,14 @@ public class LockKey<T> implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        LockKey lockKey = (LockKey) o;
-
-        if (discriminator != null ? !discriminator.equals(lockKey.discriminator) : lockKey.discriminator != null)
-            return false;
-        if (keyValue != null ? !keyValue.equals(lockKey.keyValue) : lockKey.keyValue != null) return false;
-
-        return true;
+        LockKey<?> lockKey = (LockKey<?>) o;
+        return Objects.equals(keyValue, lockKey.keyValue) &&
+                Objects.equals(discriminator, lockKey.discriminator);
     }
 
     @Override
     public int hashCode() {
-        int result = keyValue != null ? keyValue.hashCode() : 0;
-        result = 31 * result + (discriminator != null ? discriminator.hashCode() : 0);
-        return result;
+        return Objects.hash(keyValue, discriminator);
     }
 
     @Override

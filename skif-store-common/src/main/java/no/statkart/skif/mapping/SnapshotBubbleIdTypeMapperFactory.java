@@ -150,12 +150,7 @@ public class SnapshotBubbleIdTypeMapperFactory implements TypeMapperFactory {
             for (final AbstractBubbleId bubbleId : source) {
                 TypeToken<?> wsBubbleIdTypeToken = getMapping().getMappingResolver().resolveTargetType(bubbleId.getClass(), TypeToken.of(valueField.getGenericType()));
                 //noinspection unchecked
-                BubbleIdTypeMapperFactory.BubbleIdTypeMapper bubbleIdTypeMapper = new BubbleIdTypeMapperFactory.BubbleIdTypeMapper(wsBubbleIdTypeToken.getRawType(), bubbleId.getClass(), new Provider<SnapshotVersion>() {
-                    @Override
-                    public SnapshotVersion get() {
-                        return bubbleId.getSnapshotVersion();
-                    }
-                });
+                BubbleIdTypeMapperFactory.BubbleIdTypeMapper bubbleIdTypeMapper = new BubbleIdTypeMapperFactory.BubbleIdTypeMapper(wsBubbleIdTypeToken.getRawType(), bubbleId.getClass(), bubbleId::getSnapshotVersion);
 
                 Object wsSnapshotVersion = getMapping().d2w(bubbleId.getSnapshotVersion(), keyField.getType());
                 Object wsBubbleId = bubbleIdTypeMapper.mapDomainObject(bubbleId);
@@ -195,12 +190,7 @@ public class SnapshotBubbleIdTypeMapperFactory implements TypeMapperFactory {
 
                         TypeToken<?> bubbleIdTypeToken = getMapping().getMappingResolver().resolveTargetType(wsBubbleId.getClass(), domainElementTypeToken);
                         //noinspection unchecked
-                        BubbleIdTypeMapperFactory.BubbleIdTypeMapper bubbleIdTypeMapper = new BubbleIdTypeMapperFactory.BubbleIdTypeMapper(wsBubbleId.getClass(), bubbleIdTypeToken.getRawType(), new Provider<SnapshotVersion>() {
-                            @Override
-                            public SnapshotVersion get() {
-                                return snapshotVersion;
-                            }
-                        });
+                        BubbleIdTypeMapperFactory.BubbleIdTypeMapper bubbleIdTypeMapper = new BubbleIdTypeMapperFactory.BubbleIdTypeMapper(wsBubbleId.getClass(), bubbleIdTypeToken.getRawType(), () -> snapshotVersion);
 
                         //noinspection unchecked
                         final AbstractBubbleId bubbleId = bubbleIdTypeMapper.mapWsapiObject(wsBubbleId);
