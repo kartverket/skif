@@ -38,13 +38,13 @@ import java.util.zip.ZipInputStream;
  */
 public class AutomagicTest {
     protected static Logger logger = LoggerFactory.getLogger(AutomagicTest.class);
-    private Set<String> wsapiPkg = new HashSet<String>();
-    private Set<String> domainPkg = new HashSet<String>();
-    private Set<String> skipTestingForTheseClasses = new HashSet<String>();
-    protected Map<String, List<Class>> className2ListOfSubclasses = new HashMap<String, List<Class>>();
+    private Set<String> wsapiPkg = new HashSet<>();
+    private Set<String> domainPkg = new HashSet<>();
+    private Set<String> skipTestingForTheseClasses = new HashSet<>();
+    protected Map<String, List<Class>> className2ListOfSubclasses = new HashMap<>();
     private Random randomGenerator = new Random();
-    protected List<Class> wsapiClasses = new ArrayList<Class>();
-    protected List<Class> domainClasses = new ArrayList<Class>();
+    protected List<Class> wsapiClasses = new ArrayList<>();
+    protected List<Class> domainClasses = new ArrayList<>();
 
     private static void addDeclaredAndInheritedFields(Class<?> c, Collection<Field> fields) {
         fields.addAll(Arrays.asList(c.getDeclaredFields()));
@@ -59,8 +59,6 @@ public class AutomagicTest {
      *
      * @param packageName The base package
      * @return The classes
-     * @throws ClassNotFoundException
-     * @throws java.io.IOException
      */
     @SuppressWarnings("unchecked")
     protected static List<Class> getClasses(String packageName) throws ClassNotFoundException, IOException {
@@ -68,8 +66,7 @@ public class AutomagicTest {
         assert classLoader != null;
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
-        List<File> dirs = new ArrayList<File>();
-        ArrayList<Class> classes = new ArrayList<Class>();
+        ArrayList<Class> classes = new ArrayList<>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             String protocol = resource.getProtocol();
@@ -93,7 +90,7 @@ public class AutomagicTest {
                         logger.info(entryName);
                         if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
                             Class _class;
-                            String className = null;
+                            String className;
                             try {
                                 className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
                                 String classPackageName = className.substring(0, className.lastIndexOf("."));
@@ -126,10 +123,9 @@ public class AutomagicTest {
      * @param directory   The base directory
      * @param packageName The package name for classes found inside the base directory
      * @return The classes
-     * @throws ClassNotFoundException
      */
     private static List<Class> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         if (!directory.exists()) {
             return classes;
         }
@@ -169,7 +165,7 @@ public class AutomagicTest {
 
                     List<Class> subclasses = className2ListOfSubclasses.get(next.getSuperclass().getName());
                     if (subclasses == null) {
-                        subclasses = new ArrayList<Class>();
+                        subclasses = new ArrayList<>();
                         className2ListOfSubclasses.put(next.getSuperclass().getName(), subclasses);
                     }
                     subclasses.add(next);
@@ -181,7 +177,7 @@ public class AutomagicTest {
 
     protected <T> T generateDummyData(T o, String fieldPath) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         if (o != null) {
-            List<Field> fields = new ArrayList<Field>();
+            List<Field> fields = new ArrayList<>();
             addDeclaredAndInheritedFields(o.getClass(), fields);
             for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext(); ) {
                 Field field = iterator.next();
@@ -275,7 +271,7 @@ public class AutomagicTest {
         } else if (type.getRawType().equals(Double.class)) {
             retVal = randomGenerator.nextDouble();
         } else if (type.getRawType().equals(List.class)) {
-            ArrayList<Object> list = new ArrayList<Object>();
+            ArrayList<Object> list = new ArrayList<>();
             ParameterizedType genericType = (ParameterizedType) type.getType();
             TypeToken<?> genericElementType = TypeToken.of(genericType.getActualTypeArguments()[0]);
             Object instanceForList = generateInstanceForClass(genericElementType.getRawType());
@@ -366,9 +362,6 @@ public class AutomagicTest {
      * som er lik i domenemodellen. Den antar at den beste matchen vil få flest treff.
      * <p>
      * Den antar også at man alltid søker fra wsapi-pakke til domene-pakke.
-     *
-     * @param finnDenne
-     * @return
      */
     private CharSequence finnBesteMatch(String finnDenne) {
         String[] elementer = finnDenne.split("\\.");
@@ -455,9 +448,9 @@ public class AutomagicTest {
     }
 
     protected <T> T createNewInstance(Class<T> clazz) throws IllegalAccessException, InstantiationException {
-        T t = null;
+        T t;
         if (clazz.equals(Long.class)) {
-            t = clazz.cast(new Long(randomGenerator.nextLong()));
+            t = clazz.cast(randomGenerator.nextLong());
         } else if (clazz.equals(BigInteger.class)) {
             t = clazz.cast(BigInteger.ONE); // Caster for å unngå warning
         } else {
@@ -529,9 +522,6 @@ public class AutomagicTest {
     /**
      * initierer testen, her må 'toppen' av pakkestien for wsapi- og domene-klasser legges inn. Alle klasser under disse
      * vil (stort sett) oppdages automatisk.
-     *
-     * @throws ClassNotFoundException
-     * @throws java.io.IOException
      */
     protected void discoverClassHierarchy() throws ClassNotFoundException, IOException {
         for (String s : getWsapiPkg()) {

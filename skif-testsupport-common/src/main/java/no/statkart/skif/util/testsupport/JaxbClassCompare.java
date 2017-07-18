@@ -28,7 +28,7 @@ public class JaxbClassCompare {
         File jar1 = new File(args[0]);
         File jar2 = new File(args[1]);
 
-        LinkedHashSet<String> classNames = new LinkedHashSet<String>();
+        LinkedHashSet<String> classNames = new LinkedHashSet<>();
 
         JarFile jarFile = new JarFile(jar1);
         Enumeration<JarEntry> entries = jarFile.entries();
@@ -85,8 +85,8 @@ public class JaxbClassCompare {
     }
 
     private static void compareAnnotations(String elementName, Annotation[] annotationArray1, Annotation[] annotationArray2) {
-        Map<Class<? extends Annotation>, Annotation> annotationMap1 = new LinkedHashMap<Class<? extends Annotation>, Annotation>(annotationArray1.length);
-        Map<Class<? extends Annotation>, Annotation> annotationMap2 = new LinkedHashMap<Class<? extends Annotation>, Annotation>(annotationArray2.length);
+        Map<Class<? extends Annotation>, Annotation> annotationMap1 = new LinkedHashMap<>(annotationArray1.length);
+        Map<Class<? extends Annotation>, Annotation> annotationMap2 = new LinkedHashMap<>(annotationArray2.length);
 
         for (Annotation annotation : annotationArray1) {
             annotationMap1.put(annotation.annotationType(), annotation);

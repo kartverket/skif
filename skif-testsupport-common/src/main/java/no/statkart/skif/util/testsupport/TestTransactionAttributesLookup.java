@@ -20,6 +20,7 @@ public class TestTransactionAttributesLookup {
     public static TestTransactionAttributeType getAnnotation(Method method) {
         Class<?> type = method.getDeclaringClass();
         TestTransactionAttributeType classDefaultTxType = getAnnotationValue(type.getAnnotation(TestTransactionAttribute.class), DEFAULT_TRANSACTION_ATTRIBUTE);
+        //noinspection UnnecessaryLocalVariable
         TestTransactionAttributeType txType = getAnnotationValue(method.getAnnotation(TestTransactionAttribute.class), classDefaultTxType);
         return txType;
     }

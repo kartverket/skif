@@ -142,8 +142,6 @@ public abstract class AbstractSkifTestCase {
 
     /**
      * Utfører initialisering av Skif konfigurasjon. TestNG krever at den ikke er private.
-     *
-     * @param context
      */
     @BeforeClass(alwaysRun = true)
     protected void beforeClass(ITestContext context) {

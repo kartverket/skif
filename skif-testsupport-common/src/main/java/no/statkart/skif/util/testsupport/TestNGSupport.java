@@ -18,9 +18,7 @@ public class TestNGSupport {
             Method method = (Method) field.get(callBack);
             field.setAccessible(false);
             return method;
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException("This should not happen. Something has changed in TestNG", e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException("This should not happen. Something has changed in TestNG", e);
         }
     }
