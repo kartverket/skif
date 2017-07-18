@@ -13,6 +13,7 @@ import java.util.List;
 public class MockupTransfer extends UnitOfWorkTransfer {
     private TestNumber testNumber;
 
+    @SuppressWarnings("deprecation")
     @Deprecated // WS-mapping
     public MockupTransfer() {
     }

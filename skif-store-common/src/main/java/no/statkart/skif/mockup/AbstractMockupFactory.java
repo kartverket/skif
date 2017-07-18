@@ -57,7 +57,7 @@ public abstract class AbstractMockupFactory {
      * @return id-ene
      */
     public <I extends BubbleId> Set<I> getAllIds(Class<I> idClass, boolean includeSubTypes) {
-        Set<I> ids = new LinkedHashSet<I>(); // Ønsker å bevare rekkefølge samt gjøre funksjonen deterministisk (dvs at rekkefølgen ikke avhenger av hashkoden til id-veriden)
+        Set<I> ids = new LinkedHashSet<>(); // Ønsker å bevare rekkefølge samt gjøre funksjonen deterministisk (dvs at rekkefølgen ikke avhenger av hashkoden til id-veriden)
 
         try {
             Field[] fields = getClass().getDeclaredFields();

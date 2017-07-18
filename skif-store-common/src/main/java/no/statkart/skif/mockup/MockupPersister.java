@@ -20,10 +20,10 @@ public class MockupPersister {
     private final Store store;
     private final TestNumber testNumber;
 
-    SortedMap<SnapshotVersion, Map<BubbleId<?>, BubbleObject>> snapshots = new TreeMap<SnapshotVersion, Map<BubbleId<?>, BubbleObject>>();
-    Map<BubbleId, SnapshotVersion> insertedAtSnapshot = new LinkedHashMap<BubbleId, SnapshotVersion>();
-    Map<BubbleId, SnapshotVersion> lastSnapshotForBubble = new LinkedHashMap<BubbleId, SnapshotVersion>();
-    Map<BubbleId, SnapshotVersion> deletedAtSnapshot = new LinkedHashMap<BubbleId, SnapshotVersion>();
+    SortedMap<SnapshotVersion, Map<BubbleId<?>, BubbleObject>> snapshots = new TreeMap<>();
+    Map<BubbleId, SnapshotVersion> insertedAtSnapshot = new LinkedHashMap<>();
+    Map<BubbleId, SnapshotVersion> lastSnapshotForBubble = new LinkedHashMap<>();
+    Map<BubbleId, SnapshotVersion> deletedAtSnapshot = new LinkedHashMap<>();
 
     public MockupPersister(Store store, TestNumber testNumber) {
         this.store = store;
@@ -40,7 +40,7 @@ public class MockupPersister {
     private Map<BubbleId<?>, BubbleObject> getSnapshot(SnapshotVersion snapshotVersion) {
         Map<BubbleId<?>, BubbleObject> snapshot = snapshots.get(snapshotVersion);
         if (snapshot == null) {
-            snapshot = new LinkedHashMap<BubbleId<?>, BubbleObject>();
+            snapshot = new LinkedHashMap<>();
             snapshots.put(snapshotVersion, snapshot);
         }
         return snapshot;
@@ -265,7 +265,7 @@ public class MockupPersister {
      * @return transfers i sortert rekkefølge, eldste først
      */
     public SortedMap<SnapshotVersion, MockupTransfer> getTransfersBefore(SnapshotVersion beforeSnapshotVersion) {
-        TreeMap<SnapshotVersion, MockupTransfer> transfers = new TreeMap<SnapshotVersion, MockupTransfer>();
+        TreeMap<SnapshotVersion, MockupTransfer> transfers = new TreeMap<>();
 
         for (SnapshotVersion snapshotVersion : snapshots.keySet()) {
             if (snapshotVersion.compareTo(beforeSnapshotVersion) <= 0) {
