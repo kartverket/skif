@@ -1,6 +1,5 @@
 package no.statkart.skif.persistence.hibernate.type;
 
-import no.statkart.skif.store.ConcatenatedFieldsSerialization;
 import no.statkart.skif.store.persistence.OracleArrayConcatenatedFieldsConverter;
 import org.hibernate.MappingException;
 import org.hibernate.type.CustomType;
@@ -15,6 +14,6 @@ import org.hibernate.type.CustomType;
  */
 public class OracleArrayConcatenatedFieldsCustomType extends CustomType {
     public OracleArrayConcatenatedFieldsCustomType() throws MappingException {
-        super(new OracleArrayUserType<OracleArrayConcatenatedFieldsConverter, ConcatenatedFieldsSerialization>(new OracleArrayConcatenatedFieldsConverter()));
+        super(new OracleArrayUserType<>(new OracleArrayConcatenatedFieldsConverter()));
     }
 }

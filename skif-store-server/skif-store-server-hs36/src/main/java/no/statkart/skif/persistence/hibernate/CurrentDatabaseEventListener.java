@@ -9,7 +9,7 @@ import org.hibernate.impl.SessionImpl;
  * @author frehen
  */
 public class CurrentDatabaseEventListener implements PreInsertEventListener, PreUpdateEventListener, PreDeleteEventListener, PostInsertEventListener, PostUpdateEventListener, PostDeleteEventListener{
-    private final ThreadLocal<AbstractPreDatabaseOperationEvent> currentEvent = new ThreadLocalWithSuspend<AbstractPreDatabaseOperationEvent>();
+    private final ThreadLocal<AbstractPreDatabaseOperationEvent> currentEvent = new ThreadLocalWithSuspend<>();
     @Override
     public boolean onPreInsert(PreInsertEvent event) {
         this.currentEvent.set(event);

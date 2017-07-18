@@ -34,7 +34,6 @@ import java.io.Serializable;
  * @author Henrik Fredholm
  */
 public class BubbleRefIdPersister extends SingleTableEntityPersister {
-    SingleTableEntityPersister delegate;
     SessionFactoryImplementor factory;
 
     private static PersistentClass fix(PersistentClass persistentClass, Mapping mapping) {

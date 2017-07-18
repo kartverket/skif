@@ -24,6 +24,6 @@ import org.hibernate.type.CustomType;
  */
 public class OracleStringArrayCustomType extends CustomType {
     public OracleStringArrayCustomType() throws MappingException {
-        super(new OracleArrayUserType<OracleArrayStringConverter, String>(new OracleArrayStringConverter()));
+        super(new OracleArrayUserType<>(new OracleArrayStringConverter()));
     }
 }

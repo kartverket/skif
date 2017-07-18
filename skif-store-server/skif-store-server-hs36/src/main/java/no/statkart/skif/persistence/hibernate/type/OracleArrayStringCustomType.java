@@ -23,6 +23,6 @@ import org.hibernate.type.CustomType;
  */
 public class OracleArrayStringCustomType extends CustomType {
     public OracleArrayStringCustomType() throws MappingException {
-        super(new OracleArrayUserType<OracleArrayStringConverter, String>(new OracleArrayStringConverter()));
+        super(new OracleArrayUserType<>(new OracleArrayStringConverter()));
     }
 }
