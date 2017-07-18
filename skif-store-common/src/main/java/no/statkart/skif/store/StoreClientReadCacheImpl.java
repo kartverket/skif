@@ -15,7 +15,7 @@ public class StoreClientReadCacheImpl implements  StoreClientReadCache {
     public StoreClientReadCacheImpl() {
         this(CacheBuilder.newBuilder()
                 .maximumSize(10000)
-                .<BubbleId<?>, BubbleObject>build());
+                .build());
     }
 
     public StoreClientReadCacheImpl(Cache<BubbleId<?>, BubbleObject> cache) {
@@ -37,7 +37,7 @@ public class StoreClientReadCacheImpl implements  StoreClientReadCache {
     @Override
     @Nullable
     public <T extends BubbleObject> T get(@Nullable BubbleId<? extends T> id) {
-        return id == null ? null : (T) CopyHelper.copy(cache.getIfPresent(id));
+        return id == null ? null : CopyHelper.copy(id.getType().cast(cache.getIfPresent(id)));
     }
 
     @Override

@@ -16,8 +16,8 @@ import java.util.Map;
  */
 @Deprecated
 public class KodeIdLookup {
-    final Map<Class<? extends KodeId>, Map<String, KodeId<?>>> idMapMap = new HashMap<Class<? extends KodeId>, Map<String, KodeId<?>>>();
-    final Map<Class<? extends KodeId>, Map<KodeId<?>, String>> stringMapMap = new HashMap<Class<? extends KodeId>, Map<KodeId<?>, String>>();
+    final Map<Class<? extends KodeId>, Map<String, KodeId<?>>> idMapMap = new HashMap<>();
+    final Map<Class<? extends KodeId>, Map<KodeId<?>, String>> stringMapMap = new HashMap<>();
 
 
     private KodeIdLookup(Collection<? extends Kode> koder) {
@@ -25,7 +25,7 @@ public class KodeIdLookup {
             { //verdier for lookup
                 Map<String, KodeId<?>> map = idMapMap.get(kode.getId().getClass());
                 if (map == null) {
-                    map = new HashMap<String, KodeId<?>>();
+                    map = new HashMap<>();
                     idMapMap.put(kode.getId().getClass(), map);
                 }
                 //map.put(kode.getKodeverdi(), kode.getId());
@@ -33,7 +33,7 @@ public class KodeIdLookup {
             { //ids for lookup
                 Map<KodeId<?>, String> map = stringMapMap.get(kode.getId().getClass());
                 if (map == null) {
-                    map = new HashMap<KodeId<?>, String>();
+                    map = new HashMap<>();
                     stringMapMap.put(kode.getId().getClass(), map);
                 }
                 //map.put(kode.getId(), kode.getKodeverdi());
@@ -42,7 +42,7 @@ public class KodeIdLookup {
     }
 
     public static KodeIdLookup buildFromKodeliste(Collection<? extends Kodeliste> kodelisteCollection) {
-        ArrayList<Kode> kodes = new ArrayList<Kode>();
+        ArrayList<Kode> kodes = new ArrayList<>();
         for (Kodeliste kodeliste : kodelisteCollection) {
             //kodes.addAll(kodeliste.getKoder());
         }
@@ -65,7 +65,7 @@ public class KodeIdLookup {
      * </ul>
      */
     public <I extends KodeId<?>> I fromKodeVerdi(Class<I> kodeIdClass, String kodeVerdi) {
-        I kodeId = null;
+        I kodeId;
         Map<String, KodeId<?>> bubbleKodeIdMap = idMapMap.get(kodeIdClass);
         if (bubbleKodeIdMap != null) {
             kodeId = (I) bubbleKodeIdMap.get(kodeVerdi);
@@ -90,7 +90,6 @@ public class KodeIdLookup {
      * </ul>
      */
     public <I extends KodeId<?>> String fromKodeId(I kodeId) {
-        String verdi;
         Map<KodeId<?>, String> stringMap = stringMapMap.get(kodeId.getClass());
         if (stringMap != null) {
             return stringMap.get(kodeId);

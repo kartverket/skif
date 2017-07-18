@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2.0
  */
 public class BubbleIds {
-    private static ConcurrentHashMap<Class, Constructor> constructorMap = new ConcurrentHashMap<Class, Constructor>();
+    private static ConcurrentHashMap<Class, Constructor> constructorMap = new ConcurrentHashMap<>();
 
     /**
      * Oppretter en bubbleId instans av gitt type
@@ -46,7 +46,6 @@ public class BubbleIds {
         return AbstractBubbleId.getValueType(clazz);
     }
 
-    //public static <T extends BubbleObject, I extends BubbleId<? extends T>> Class<? extends T> getBaseType(Class<I> clazz) {
     public static Class<? extends BubbleObject> getBaseType(Class<? extends BubbleId<?>> clazz) {
         // TODO: bruke reflection på clazz istedet for å gå mot direkte AbstractBubbleId
         return AbstractBubbleId.getTypeInfo(clazz).baseType;

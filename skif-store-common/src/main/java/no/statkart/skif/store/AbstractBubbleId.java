@@ -68,7 +68,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
     // static Map of meta info for each BubbleId class
-    transient private static Map<Class, TypeInfo> typeInfoMap = new ConcurrentHashMap<Class, TypeInfo>(100);
+    transient final private static Map<Class, TypeInfo> typeInfoMap = new ConcurrentHashMap<>(100);
 
     // Cached meta info for this instance.
     transient private TypeInfo typeInfo;
@@ -146,7 +146,8 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
     public static Class<? extends BubbleObject> getType(Class<? extends BubbleId> idClass) {
-        return getTypeInfo(idClass).type;
+        Class<?> type = getTypeInfo(idClass).type;
+        return type.asSubclass(BubbleObject.class);
     }
 
     @Override
@@ -193,9 +194,6 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * som at base typen for id'ens {@code BubbleObject}'er er like.
      * <p>
      * I noen tilfeller kan det være nødvendig å overskrive denne metode, se {@link no.statkart.skif.store.kodeliste.Kodeliste}
-     *
-     * @param id
-     * @return
      */
     protected boolean compatible(AbstractBubbleId id) {
         // Bruker getBaseType istedet for getBaseTypeId da denne er mye raskere pga caching.
@@ -253,6 +251,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      *
      * @return the class
      */
+    @SuppressWarnings("unchecked")
     public Class<T> getType() {
         if (typeInfo == null) {
             typeInfo = getTypeInfo(clazz);
@@ -301,6 +300,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * @throws no.statkart.skif.exception.ReflectionException
      *          if the type could not be created
      */
+    @SuppressWarnings("unchecked")
     public T createTypeInstance() {
         T instance = (T) Reflection.newInstance(getType());
         if (instance == null)
@@ -316,6 +316,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      *
      * @return the base type class of the id
      */
+    @SuppressWarnings("unchecked")
     public  Class<? extends BubbleId<? super T>> getBaseIdType() {
         return calcBaseIdType(clazz);
     }

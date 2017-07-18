@@ -14,7 +14,7 @@ import java.util.*;
 public class Transfer<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final Map<BubbleId, BubbleObject> bubbleObjects = new LinkedHashMap<BubbleId, BubbleObject>();
+    private final Map<BubbleId, BubbleObject> bubbleObjects = new LinkedHashMap<>();
     private final T result;
 
     public Transfer(T result) {

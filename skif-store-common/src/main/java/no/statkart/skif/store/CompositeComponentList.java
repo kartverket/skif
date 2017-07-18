@@ -11,7 +11,6 @@ import java.util.List;
 public class CompositeComponentList<O, E extends ComponentWithOwnerReference<O>> extends AbstractComponentList<O, E> {
     private static final long serialVersionUID = 1L;
     private final CompositeComponent<O, ?> owner;
-    private List<E> delegate;
 
     public CompositeComponentList(CompositeComponent<O, ?> owner, List<E> delegate) {
         super(delegate);

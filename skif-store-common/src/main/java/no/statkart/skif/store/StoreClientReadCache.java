@@ -24,17 +24,17 @@ import java.util.Collection;
  */
 @ImplementedBy(StoreClientReadCacheImpl.class)
 public interface StoreClientReadCache {
-    public void put(BubbleObject bubbleObject);
+    void put(BubbleObject bubbleObject);
 
     void putAll(Collection<? extends BubbleObject> objects);
 
     @Nullable
     <T extends BubbleObject> T get(@Nullable BubbleId<? extends T> id);
 
-    public ImmutableMap<BubbleId<?>, BubbleObject> getAll(Iterable<?> ids);
+    ImmutableMap<BubbleId<?>, BubbleObject> getAll(Iterable<?> ids);
 
-    public void evict(@Nullable BubbleId<?> id);
+    void evict(@Nullable BubbleId<?> id);
 
-    public void evictAll();
+    void evictAll();
 
 }

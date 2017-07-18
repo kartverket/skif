@@ -62,7 +62,7 @@ public class Bubbles {
     }
 
     static public <O extends ComponentWithOwnerReference<?> & InverseRelationParticipation, E> AbstractInverseValueSet<?, E> newSet(O owner, RelationName relationName) {
-        return new ComponentInverseValueSet<O, E>(owner, relationName, Sets.<E>newHashSet());
+        return new ComponentInverseValueSet<>(owner, relationName, Sets.<E>newHashSet());
     }
 
 

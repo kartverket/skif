@@ -31,7 +31,7 @@ public class InverseRelation<T> implements Serializable, Cloneable {
     private T cached;
 
     public static <T> InverseRelation<T> create(AbstractBubbleObject owner, RelationName name) {
-        return new InverseRelation<T>(owner, name);
+        return new InverseRelation<>(owner, name);
     }
 
     @SuppressWarnings("UnusedDeclaration")// WS-Mapping

@@ -40,7 +40,6 @@ public class MemoryLocker<T> implements DBLockerService<T>, DBLockerInTransactio
      * @param owner         unique string identifying the locker
      * @param lockTimeout miliseconds before the lock may be automatically timed out
      * @return the obtained lock. The lock will specifiy whether it is new or was already held by the user
-     * @throws no.statkart.skif.exception.LockedException
      *
      */
     public synchronized LockInfo<T> lock(LockKey<T> key, String owner, long lockTimeout) throws LockedException {
