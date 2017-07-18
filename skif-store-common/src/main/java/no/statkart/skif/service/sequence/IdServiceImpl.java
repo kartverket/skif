@@ -41,23 +41,17 @@ public class IdServiceImpl implements IdService {
     }
 
     public synchronized <T extends BubbleId<?>> Object getNextIdValue(Class<T> aClass) {
-        long value = 0;
         String sequenceName = getSequenceName(aClass);
-        Entry entry = sequences.get(sequenceName);
+        Entry entry = sequences.computeIfAbsent(sequenceName, k -> new Entry());
 
-        if (entry == null) {
-            // add an entry to the sequence table
-            entry = new Entry();
-            sequences.put(sequenceName, entry);
-        }
         if (entry.lastUsed == entry.last) {
             entry.last = sequenceBlockAllocatorService.allocateSequenceBlock(sequenceName, blockSize);
             entry.lastUsed = entry.last - blockSize;
         }
         entry.lastUsed += 1;
-        value = entry.lastUsed;
+        long value = entry.lastUsed;
         if (logger.isDebugEnabled()) logger.debug("Allocating id for class" + aClass.getName() + " Id=" + value);
-        return new Long(value);
+        return value;
     }
 
     /**
