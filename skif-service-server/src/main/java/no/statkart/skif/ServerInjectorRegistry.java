@@ -1,6 +1,5 @@
 package no.statkart.skif;
 
-import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.ejb.EJBLookupHelper;
@@ -10,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Klasse som holder på registrerte skif server injectors. Denne klasse gjør det mulig å ha mer
@@ -41,15 +41,10 @@ public class ServerInjectorRegistry {
      * @param key                      unik identifikator
      * @param moduleBuilder            modulebuilder
      * @return injectoren
-     * @deprecated det er bedre å bruke {@link #getInjector(String, com.google.common.base.Supplier)} siden ModuleBuilder da kan opprettes kun ved behov
+     * @deprecated det er bedre å bruke {@link #getInjector(String, Supplier)} siden ModuleBuilder da kan opprettes kun ved behov
      */
     public static synchronized Injector getInjector(String key, ModuleBuilder moduleBuilder) {
-        Injector injector = injectorMap.get(key);
-        if (injector == null) {
-            injector = createInjector(moduleBuilder);
-            injectorMap.put(key, injector);
-        }
-        return injector;
+        return injectorMap.computeIfAbsent(key, k -> createInjector(moduleBuilder));
     }
 
     /**
@@ -62,12 +57,7 @@ public class ServerInjectorRegistry {
      * @since 2.4.0
      */
     public static synchronized Injector getInjector(String key, Supplier<ModuleBuilder> moduleBuilderSupplier) {
-        Injector injector = injectorMap.get(key);
-        if (injector == null) {
-            injector = createInjector(moduleBuilderSupplier.get());
-            injectorMap.put(key, injector);
-        }
-        return injector;
+        return injectorMap.computeIfAbsent(key, k -> createInjector(moduleBuilderSupplier.get()));
     }
 
     private static Injector createInjector(ModuleBuilder moduleBuilder) {
@@ -84,11 +74,6 @@ public class ServerInjectorRegistry {
      * @since 2.4.0
      */
     public static synchronized Injector getInjectorCustom(String key, Supplier<Injector> supplier) {
-        Injector injector = injectorMap.get(key);
-        if (injector == null) {
-            injector = supplier.get();
-            injectorMap.put(key, injector);
-        }
-        return injector;
+        return injectorMap.computeIfAbsent(key, k -> supplier.get());
     }
 }
