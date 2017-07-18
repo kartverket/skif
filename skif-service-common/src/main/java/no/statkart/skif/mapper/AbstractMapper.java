@@ -1,7 +1,6 @@
 package no.statkart.skif.mapper;
 
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
@@ -80,18 +79,8 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
     private final M thisMapping;
 
-    private final ThreadLocal<Integer> recurseLevel = new ThreadLocal<Integer>() {
-        @Override
-        protected Integer initialValue() {
-            return 0;
-        }
-    };
-    private final ThreadLocal<MappedFieldsTracker> mappedFieldsTracker = new ThreadLocal<MappedFieldsTracker>() {
-        @Override
-        protected MappedFieldsTracker initialValue() {
-            return new MappedFieldsTracker();
-        }
-    };
+    private final ThreadLocal<Integer> recurseLevel = ThreadLocal.withInitial(() -> 0);
+    private final ThreadLocal<MappedFieldsTracker> mappedFieldsTracker = ThreadLocal.withInitial(MappedFieldsTracker::new);
 
     public AbstractMapper(Class<? extends M> mappingClass) {
         thisMapping = mappingClass.cast(Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{mappingClass}, this));
@@ -469,12 +458,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
     static TypeMapper<?, ?> findClosestTypeMapper(Collection<TypeMapper<?, ?>> candidates, Class mappableClass, Class requestedClass, Direction direction) {
         //map with natural ordering of keys
-        ListMultimap<TypeMapperMatch, TypeMapper<?, ?>> signedCandidates = Multimaps.newListMultimap(new TreeMap<TypeMapperMatch, Collection<TypeMapper<?, ?>>>(), new Supplier<List<TypeMapper<?, ?>>>() {
-            @Override
-            public List<TypeMapper<?, ?>> get() {
-                return new ArrayList<>();
-            }
-        });
+        ListMultimap<TypeMapperMatch, TypeMapper<?, ?>> signedCandidates = Multimaps.newListMultimap(new TreeMap<TypeMapperMatch, Collection<TypeMapper<?, ?>>>(), ArrayList::new);
 
         for (TypeMapper<?, ?> candidate : candidates) {
             final Class<?> fromClass, toClass;

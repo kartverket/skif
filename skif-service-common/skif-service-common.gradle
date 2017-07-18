@@ -20,6 +20,7 @@ dependencies {
 
     testImplementation libraries.weblogic_jaxws_rt
     testImplementation libraries.reflections
+    testRuntimeOnly project(':skif-config')
 }
 
 task testJar(type: Jar) {

@@ -35,11 +35,7 @@ public class MappedFieldsTracker {
     public void put(Object src, Object dest) {
         int destId = System.identityHashCode(dest);
 
-        Map<Integer, Object> mappedTo = mappedFields.get(src);
-        if (mappedTo == null) {
-            mappedTo = new HashMap<>();
-            mappedFields.put(src, mappedTo);
-        }
+        Map<Integer, Object> mappedTo = mappedFields.computeIfAbsent(src, k -> new HashMap<>());
         if (!mappedTo.containsKey(destId)) {
             mappedTo.put(destId, dest);
         }
