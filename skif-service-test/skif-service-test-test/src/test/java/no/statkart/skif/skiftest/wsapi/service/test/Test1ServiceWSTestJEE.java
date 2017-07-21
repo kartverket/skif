@@ -72,7 +72,7 @@ public class Test1ServiceWSTestJEE {
                     }
 
                     @Provides
-                    <T> no.statkart.skif.skiftest.wsapi.service.test1.Test1Service provideJaxWSService(LoginUserHolder loginUserHolder, ServerUrlHolder serverUrlHolder, @Nullable HostnameVerifier hostnameVerifier) {
+                    no.statkart.skif.skiftest.wsapi.service.test1.Test1Service provideJaxWSService(LoginUserHolder loginUserHolder, ServerUrlHolder serverUrlHolder, @Nullable HostnameVerifier hostnameVerifier) {
                         Test1ServiceWS endpoint = new Test1ServiceWS();
                         no.statkart.skif.skiftest.wsapi.service.test1.Test1Service port = endpoint.getTest1ServicePort();
                         BindingProvider bindings = (BindingProvider) port;
@@ -188,7 +188,7 @@ public class Test1ServiceWSTestJEE {
     @Test(groups = "server-required")
     public void testJaxWsClientServiceCreateUsingWSRemoteModule() throws ServiceException {
         ModuleConfiguration clientCfg = createClientConfiguration();
-        final List<Class<? extends Object>> serviceClasses = Arrays.asList(Test1Service.class, Test2Service.class);
+        final List<Class<?>> serviceClasses = Arrays.asList(Test1Service.class, Test2Service.class);
 
         injector = Guice.createInjector(
                 new RemoteServerModule(clientCfg)

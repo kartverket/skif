@@ -23,7 +23,6 @@ public class SkifTestSimpleExceptionMapper extends AbstractSkifTestSimpeExceptio
     @Override
     public Throwable d2w(Throwable source) {
         if (source instanceof no.statkart.skif.skiftest.exception.SimpleException) {
-            //noinspection unchecked,ThrowableResultOfMethodCallIgnored
             return buildExternalSimpleException((no.statkart.skif.skiftest.exception.SimpleException) source);
         }
 
@@ -41,7 +40,6 @@ public class SkifTestSimpleExceptionMapper extends AbstractSkifTestSimpeExceptio
     @Override
     public Throwable w2d(Throwable source) {
         if (source instanceof SimpleException) {
-            //noinspection ThrowableResultOfMethodCallIgnored,unchecked
             return buildInternalSimpleException((SimpleException) source);
         }
 

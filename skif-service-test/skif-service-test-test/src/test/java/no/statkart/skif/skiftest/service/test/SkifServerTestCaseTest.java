@@ -9,11 +9,9 @@ import no.statkart.skif.util.testsupport.TestTransactionAttribute;
 import no.statkart.skif.util.testsupport.TestTransactionAttributeType;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
+import java.util.Collections;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
@@ -31,7 +29,7 @@ public class SkifServerTestCaseTest extends SkifServerTestCase {
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_BEAN)
     public void testRunOnServerUsingBeanManagedTransaction() {
-        String result = serviceA.m1(Arrays.asList("BService.m2"));
+        String result = serviceA.m1(Collections.singletonList("BService.m2"));
         assertTrue(serviceRequestContext.isBeanManagedTransaction());
         assertTrue(serviceRequestContext.inTx());
         assertEquals(result, "AService.m1 BService.m2");
@@ -39,7 +37,7 @@ public class SkifServerTestCaseTest extends SkifServerTestCase {
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_NOT_SUPPORTED)
     public void testRunOnServerUsingTxNotSupported() {
-        String result = serviceA.m1(Arrays.asList("BService.m2"));
+        String result = serviceA.m1(Collections.singletonList("BService.m2"));
         assertTrue(serviceRequestContext.isContainerManagedTransaction());
         assertFalse(serviceRequestContext.inTx());
         assertEquals(result, "AService.m1 [Tx:BService.m2]");
@@ -47,7 +45,7 @@ public class SkifServerTestCaseTest extends SkifServerTestCase {
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRES_NEW)
     public void testRunOnServerUsingTxRequiresNew() {
-        String result = serviceA.m1(Arrays.asList("BService.m2"));
+        String result = serviceA.m1(Collections.singletonList("BService.m2"));
         assertTrue(serviceRequestContext.isContainerManagedTransaction());
         assertTrue(serviceRequestContext.inTx());
         assertEquals(result, "AService.m1 BService.m2");
@@ -55,7 +53,7 @@ public class SkifServerTestCaseTest extends SkifServerTestCase {
 
     @TestTransactionAttribute(TestTransactionAttributeType.TX_REQUIRED)
     public void testRunOnServerUsingTxRequired() {
-        String result = serviceA.m1(Arrays.asList("BService.m2"));
+        String result = serviceA.m1(Collections.singletonList("BService.m2"));
         assertTrue(serviceRequestContext.isContainerManagedTransaction());
         assertTrue(serviceRequestContext.inTx());
         assertEquals(result, "AService.m1 BService.m2");

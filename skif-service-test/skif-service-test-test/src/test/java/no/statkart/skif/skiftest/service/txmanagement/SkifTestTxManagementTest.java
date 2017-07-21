@@ -2,7 +2,6 @@ package no.statkart.skif.skiftest.service.txmanagement;
 
 import no.statkart.skif.exception.ValidationException;
 import no.statkart.skif.skiftest.config.SkifTestTxManagementServerModule;
-import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.service.txbmt.BeanManagedTxAService;
 import no.statkart.skif.skiftest.service.txcascade.ContainerManagedTxCMTCascadeService;
 import no.statkart.skif.skiftest.service.txcmt.ContainerManagedTxAService;
@@ -10,9 +9,7 @@ import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm

@@ -11,12 +11,9 @@ import no.statkart.skif.skiftest.service.testex.TestExService;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
@@ -98,18 +95,18 @@ public class BasicExceptionMappingTest extends SkifTestCase {
     @Test
     public void testNoExceptionIndirectNoTx() throws SimpleException, SimpleNonMappedException {
         // Sjekk at det er hull igjennom til servicen
-        assertEquals(service.indirectNoTx(new ArrayList<String>(), "", ""), "indirectNoTx");
-        assertEquals(service.indirectNoTx(Arrays.asList("noTx"), "", ""), "indirectNoTx noTx");
-        assertEquals(service.indirectNoTx(Arrays.asList("requiresTx"), "", ""), "indirectNoTx requiresTx");
-        assertEquals(service.indirectNoTx(Arrays.asList("newTx"), "", ""), "indirectNoTx newTx");
-        assertEquals(service.indirectRequiresTx(new ArrayList<String>(), "", ""), "indirectRequiresTx");
-        assertEquals(service.indirectRequiresTx(Arrays.asList("noTx"), "", ""), "indirectRequiresTx noTx");
-        assertEquals(service.indirectRequiresTx(Arrays.asList("requiresTx"), "", ""), "indirectRequiresTx requiresTx");
-        assertEquals(service.indirectRequiresTx(Arrays.asList("newTx"), "", ""), "indirectRequiresTx newTx");
-        assertEquals(service.indirectNewTx(new ArrayList<String>(), "", ""), "indirectNewTx");
-        assertEquals(service.indirectNewTx(Arrays.asList("noTx"), "", ""), "indirectNewTx noTx");
-        assertEquals(service.indirectNewTx(Arrays.asList("requiresTx"), "", ""), "indirectNewTx requiresTx");
-        assertEquals(service.indirectNewTx(Arrays.asList("newTx"), "", ""), "indirectNewTx newTx");
+        assertEquals(service.indirectNoTx(Collections.emptyList(), "", ""), "indirectNoTx");
+        assertEquals(service.indirectNoTx(Collections.singletonList("noTx"), "", ""), "indirectNoTx noTx");
+        assertEquals(service.indirectNoTx(Collections.singletonList("requiresTx"), "", ""), "indirectNoTx requiresTx");
+        assertEquals(service.indirectNoTx(Collections.singletonList("newTx"), "", ""), "indirectNoTx newTx");
+        assertEquals(service.indirectRequiresTx(Collections.emptyList(), "", ""), "indirectRequiresTx");
+        assertEquals(service.indirectRequiresTx(Collections.singletonList("noTx"), "", ""), "indirectRequiresTx noTx");
+        assertEquals(service.indirectRequiresTx(Collections.singletonList("requiresTx"), "", ""), "indirectRequiresTx requiresTx");
+        assertEquals(service.indirectRequiresTx(Collections.singletonList("newTx"), "", ""), "indirectRequiresTx newTx");
+        assertEquals(service.indirectNewTx(Collections.emptyList(), "", ""), "indirectNewTx");
+        assertEquals(service.indirectNewTx(Collections.singletonList("noTx"), "", ""), "indirectNewTx noTx");
+        assertEquals(service.indirectNewTx(Collections.singletonList("requiresTx"), "", ""), "indirectNewTx requiresTx");
+        assertEquals(service.indirectNewTx(Collections.singletonList("newTx"), "", ""), "indirectNewTx newTx");
     }
 
     /**
@@ -118,7 +115,7 @@ public class BasicExceptionMappingTest extends SkifTestCase {
     @Test
     public void testThrowMappedExceptionIndirectNoTxDirectNoTx() throws SimpleNonMappedException {
         try {
-            service.indirectNoTx(Arrays.asList("noTx"), SimpleException.class.getName(), "");
+            service.indirectNoTx(Collections.singletonList("noTx"), SimpleException.class.getName(), "");
         } catch (SimpleException e) {
             assertSame(e.getClass(), SimpleException.class);
             assertEquals(e.getMessage(), "indirectNoTx noTx");
@@ -133,7 +130,7 @@ public class BasicExceptionMappingTest extends SkifTestCase {
     @Test
     public void testThrowMappedExceptionIndirectNoTxDirectRequiresTx() throws SimpleNonMappedException {
         try {
-            service.indirectNoTx(Arrays.asList("requiresTx"), SimpleException.class.getName(), "");
+            service.indirectNoTx(Collections.singletonList("requiresTx"), SimpleException.class.getName(), "");
         } catch (SimpleException e) {
             assertSame(e.getClass(), SimpleException.class);
             assertEquals(e.getMessage(), "indirectNoTx requiresTx");
@@ -148,7 +145,7 @@ public class BasicExceptionMappingTest extends SkifTestCase {
     @Test
     public void testThrowMappedExceptionIndirectNoTxDirectNewTx() throws SimpleNonMappedException {
         try {
-            service.indirectNoTx(Arrays.asList("newTx"), SimpleException.class.getName(), "");
+            service.indirectNoTx(Collections.singletonList("newTx"), SimpleException.class.getName(), "");
         } catch (SimpleException e) {
             assertSame(e.getClass(), SimpleException.class);
             assertEquals(e.getMessage(), "indirectNoTx newTx");
@@ -163,7 +160,7 @@ public class BasicExceptionMappingTest extends SkifTestCase {
     @Test
     public void testThrowMappedExceptionIndirectRequiresTxDirectNoTx() throws SimpleNonMappedException {
         try {
-            service.indirectRequiresTx(Arrays.asList("noTx"), SimpleException.class.getName(), "");
+            service.indirectRequiresTx(Collections.singletonList("noTx"), SimpleException.class.getName(), "");
         } catch (SimpleException e) {
             assertSame(e.getClass(), SimpleException.class);
             assertEquals(e.getMessage(), "indirectRequiresTx noTx");
@@ -178,7 +175,7 @@ public class BasicExceptionMappingTest extends SkifTestCase {
     @Test
     public void testThrowMappedExceptionIndirectRequiresTxDirectRequiresTx() throws SimpleNonMappedException {
         try {
-            service.indirectRequiresTx(Arrays.asList("requiresTx"), SimpleException.class.getName(), "");
+            service.indirectRequiresTx(Collections.singletonList("requiresTx"), SimpleException.class.getName(), "");
         } catch (SimpleException e) {
             assertSame(e.getClass(), SimpleException.class);
             assertEquals(e.getMessage(), "indirectRequiresTx requiresTx");
@@ -193,7 +190,7 @@ public class BasicExceptionMappingTest extends SkifTestCase {
     @Test
     public void testThrowMappedExceptionIndirectRequiresTxDirectNewTx() throws SimpleNonMappedException {
         try {
-            service.indirectRequiresTx(Arrays.asList("newTx"), SimpleException.class.getName(), "");
+            service.indirectRequiresTx(Collections.singletonList("newTx"), SimpleException.class.getName(), "");
         } catch (SimpleException e) {
             assertSame(e.getClass(), SimpleException.class);
             assertEquals(e.getMessage(), "indirectRequiresTx newTx");

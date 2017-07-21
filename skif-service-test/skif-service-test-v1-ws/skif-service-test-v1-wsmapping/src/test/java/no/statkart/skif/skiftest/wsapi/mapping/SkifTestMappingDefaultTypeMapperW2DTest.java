@@ -40,9 +40,9 @@ public class SkifTestMappingDefaultTypeMapperW2DTest {
 
     public void testMapInt() {
         int source = 5;
-        int target = map.w2d(source);
+        Integer target = map.w2d(source);
         assertNotNull(target);
-        assertEquals(target, 5);
+        assertEquals(target.intValue(), 5);
     }
 
     public void testMapA() {
@@ -64,7 +64,7 @@ public class SkifTestMappingDefaultTypeMapperW2DTest {
 
     public void testMapAList() {
         AList source = new AList();
-        Set<A> target;
+        Set<?> target;
 
         no.statkart.skif.skiftest.wsapi.domain.A a1 = new no.statkart.skif.skiftest.wsapi.domain.A();
         a1.setText("a1");

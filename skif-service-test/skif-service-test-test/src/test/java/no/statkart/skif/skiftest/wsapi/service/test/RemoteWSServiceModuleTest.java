@@ -55,7 +55,7 @@ public class RemoteWSServiceModuleTest extends SkifTestCase {
         protected void configure() {
             super.configure();
 
-            List<Class<?>> wsServices = new ArrayList<Class<?>>(1);
+            List<Class<?>> wsServices = new ArrayList<>(1);
             wsServices.add(Test1Service.class);
 
             install(new RemoteWSServiceModule(moduleConfiguration, wsServices));

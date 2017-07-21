@@ -31,7 +31,7 @@ public class TxTest extends SkifTestCase {
         final AService serviceA = injector.getInstance(AService.class);
 
         // Startende kall er ikke transaksjonelt
-        assertEquals(serviceA.m1(new ArrayList<String>()), "[NoTx:AService.m1]");
+        assertEquals(serviceA.m1(new ArrayList<>()), "[NoTx:AService.m1]");
         assertEquals(serviceA.m1(Arrays.asList("AService.m2")), "[NoTx:AService.m1 AService.m2]");
         assertEquals(serviceA.m1(Arrays.asList("AService.m2", "AService.m3")), "[NoTx:AService.m1 AService.m2 AService.m3]");
     }
@@ -66,12 +66,12 @@ public class TxTest extends SkifTestCase {
         final BService serviceB = injector.getInstance(BService.class);
 
         // Startende kall har REQUIRES tx
-        assertEquals(serviceB.m2(new ArrayList<String>()), "[Tx:BService.m2]");
+        assertEquals(serviceB.m2(new ArrayList<>()), "[Tx:BService.m2]");
         assertEquals(serviceB.m2(Arrays.asList("AService.m2")), "[Tx:BService.m2 AService.m2]");
         assertEquals(serviceB.m2(Arrays.asList("AService.m2", "AService.m3")), "[Tx:BService.m2 AService.m2 AService.m3]");
 
         // Startende kall har REQUIRES_NEW tx
-        assertEquals(serviceB.m3(new ArrayList<String>()), "[Tx:BService.m3]");
+        assertEquals(serviceB.m3(new ArrayList<>()), "[Tx:BService.m3]");
         assertEquals(serviceB.m3(Arrays.asList("AService.m2")), "[Tx:BService.m3 AService.m2]");
         assertEquals(serviceB.m3(Arrays.asList("AService.m2", "AService.m3")), "[Tx:BService.m3 AService.m2 AService.m3]");
 

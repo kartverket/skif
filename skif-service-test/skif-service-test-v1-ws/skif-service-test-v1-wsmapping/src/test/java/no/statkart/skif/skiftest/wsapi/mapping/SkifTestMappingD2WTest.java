@@ -3,7 +3,7 @@ package no.statkart.skif.skiftest.wsapi.mapping;
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
 import no.statkart.skif.skiftest.wsapi.domain.AList;
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,13 +35,13 @@ public class SkifTestMappingD2WTest {
 
     public void testMapInt() {
         int source = 5;
-        int target = map.d2w(source);
+        Integer target = map.d2w(source);
         assertNotNull(target);
-        assertEquals(target, 5);
+        assertEquals(target.intValue(), 5);
 
         target = map.d2w(source, int.class);
         assertNotNull(target);
-        assertEquals(target, 5);
+        assertEquals(target.intValue(), 5);
 
     }
 

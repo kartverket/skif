@@ -17,7 +17,7 @@ public class SkifTestGroupExServices implements ServicesListing {
     private static final List<Class<?>> services;
 
     static {
-        List<Class<?>> modifiableList = new ArrayList<Class<?>>();
+        List<Class<?>> modifiableList = new ArrayList<>();
         
         modifiableList.add(TestExService.class);
 

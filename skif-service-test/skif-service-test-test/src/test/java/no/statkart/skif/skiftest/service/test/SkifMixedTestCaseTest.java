@@ -10,11 +10,9 @@ import no.statkart.skif.skiftest.service.testa.AService;
 import no.statkart.skif.util.testsupport.SkifMixedTestCase;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
+import java.util.Collections;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
@@ -40,7 +38,7 @@ public class SkifMixedTestCaseTest extends SkifMixedTestCase {
 
             public Object run() {
                 // Her er vi på server
-                String result = serviceA.m1(Arrays.asList("BService.m2"));
+                String result = serviceA.m1(Collections.singletonList("BService.m2"));
                 assertTrue(serviceRequestContext.isBeanManagedTransaction());
                 assertTrue(serviceRequestContext.inTx());
                 assertEquals(result, "AService.m1 BService.m2");
@@ -58,7 +56,7 @@ public class SkifMixedTestCaseTest extends SkifMixedTestCase {
             ServiceRequestContext serviceRequestContext;
 
             public Object run() {
-                String result = serviceA.m1(Arrays.asList("BService.m2"));
+                String result = serviceA.m1(Collections.singletonList("BService.m2"));
                 assertTrue(serviceRequestContext.isContainerManagedTransaction());
                 assertFalse(serviceRequestContext.inTx());
                 assertEquals(result, "AService.m1 [Tx:BService.m2]");
@@ -76,7 +74,7 @@ public class SkifMixedTestCaseTest extends SkifMixedTestCase {
             ServiceRequestContext serviceRequestContext;
 
             public Object run() {
-                String result = serviceA.m1(Arrays.asList("BService.m2"));
+                String result = serviceA.m1(Collections.singletonList("BService.m2"));
                 assertTrue(serviceRequestContext.isContainerManagedTransaction());
                 assertTrue(serviceRequestContext.inTx());
                 assertEquals(result, "AService.m1 BService.m2");

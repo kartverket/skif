@@ -21,7 +21,7 @@ import static org.testng.Assert.assertTrue;
  */
 @Test(dependsOnGroups = "SkifServerTest.createsInjector")
 public class SkifServerTestCaseReusableInjectorReuseTest extends SkifServerTestCase {
-    private static String TEST_VALUE="testvalue";
+    private static final String TEST_VALUE = "testvalue";
 
     public SkifServerTestCaseReusableInjectorReuseTest() {
         super(SkifTestServerModule.class);

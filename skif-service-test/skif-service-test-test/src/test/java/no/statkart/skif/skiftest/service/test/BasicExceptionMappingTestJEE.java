@@ -11,7 +11,7 @@ import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
 import javax.xml.ws.soap.SOAPFaultException;
-import java.util.Arrays;
+import java.util.Collections;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -160,7 +160,7 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
     @Test(groups = "server-required")
     public void testThrowNonMappedExceptionIndirectRequiresTxDirectNewTx() throws SimpleNonMappedException, SimpleException {
         try {
-            service.indirectRequiresTx(Arrays.asList("newTx"), SimpleNonMappedException.class.getName(), "");
+            service.indirectRequiresTx(Collections.singletonList("newTx"), SimpleNonMappedException.class.getName(), "");
         } catch (Throwable t) {
             String expectedMessage = String.format("TypeMapper[%s] could not map from %s to %s", SkifTestSimpleExceptionMapper.class.getName(), SimpleNonMappedException.class.getName(), Throwable.class.getName());
 

@@ -1,7 +1,6 @@
 package no.statkart.skif.skiftest.config;
 
 
-import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import no.statkart.skif.ServerInjectorRegistry;
 import no.statkart.skif.config.SkifServerConfiguration;
@@ -20,13 +19,9 @@ import javax.ejb.Stateless;
 public class SkifTestTxManagementServerInjectorEJBBean implements SkifTestTxManagementServerInjector {
     @Override
     public Injector getInjector() {
-        return ServerInjectorRegistry.getInjector("StoreTestTxManagementServerModule", new Supplier<ModuleBuilder>() {
-            @Override
-            public ModuleBuilder get() {
-                return new ModuleBuilder()
-                        .setConfiguration(new SkifServerConfiguration())
-                        .setModuleClass(SkifTestTxManagementServerModule.class);
-            }
-        });
+        return ServerInjectorRegistry.getInjector("StoreTestTxManagementServerModule", () -> new ModuleBuilder()
+                .setConfiguration(new SkifServerConfiguration())
+                .setModuleClass(SkifTestTxManagementServerModule.class)
+        );
     }
 }

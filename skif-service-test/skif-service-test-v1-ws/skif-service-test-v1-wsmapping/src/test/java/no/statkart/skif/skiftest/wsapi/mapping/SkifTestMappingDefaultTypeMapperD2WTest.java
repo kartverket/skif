@@ -38,13 +38,13 @@ public class SkifTestMappingDefaultTypeMapperD2WTest {
 
     public void testMapInt() {
         int source = 5;
-        int target = map.d2w(source);
+        Integer target = map.d2w(source);
         assertNotNull(target);
-        assertEquals(target, 5);
+        assertEquals(target.intValue(), 5);
 
         target = map.d2w(source, int.class);
         assertNotNull(target);
-        assertEquals(target, 5);
+        assertEquals(target.intValue(), 5);
 
     }
 
@@ -79,8 +79,8 @@ public class SkifTestMappingDefaultTypeMapperD2WTest {
      * Tester mapping2 av et sett med API TestBubbleId objekter til en liste Web Service TestBubbleId objekter
      */
     public void testMapTestASet() {
-        Set<A> source = new HashSet<A>();
-        AList target = new AList();
+        Set<A> source = new HashSet<>();
+        AList target;
         A a1 = new A("a1");
         A a2 = new A("a2");
         source.add(a1);
@@ -112,7 +112,7 @@ public class SkifTestMappingDefaultTypeMapperD2WTest {
     }
 
     public void testMapMap() {
-        HashMap<String, Set<A>> aMap = new HashMap<String, Set<A>>();
+        HashMap<String, Set<A>> aMap = new HashMap<>();
         aMap.put("Foo", Collections.singleton(new A("Bar")));
         M source = new M();
         source.setMapOfAs(aMap);

@@ -69,6 +69,7 @@ public class DServiceWSBean extends SkifWebService<DServiceWSI> implements DServ
     /**
      * Denne klassen kaster exceptions uten å kalle rammeverket, skal at man kan teste hvordan rammeverket håndtere ukjendte exceptions
      */
+    @Override
     public String nonMappedWSCall(@WebParam(name = "exceptionClass") String exceptionClass, @WebParam(name = "message") String message) throws ServiceException, SimpleNonMappedException {
         if (exceptionClass.isEmpty()) {
             return message;
@@ -107,7 +108,7 @@ public class DServiceWSBean extends SkifWebService<DServiceWSI> implements DServ
             } catch (IllegalAccessException e) {
                 throw new no.statkart.skif.exception.ImplementationException(e);
             } catch (InvocationTargetException e) {
-                throw new no.statkart.skif.exception.ImplementationException(e);
+                throw new no.statkart.skif.exception.ImplementationException(e.getTargetException());
             } catch (NoSuchMethodException e) {
                 throw new no.statkart.skif.exception.ImplementationException(e);
             }

@@ -3,9 +3,9 @@ package no.statkart.skif.skiftest.service.test;
 import com.google.inject.*;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.SkifClientConfiguration;
-import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.mapper.IdentityMapper;
+import no.statkart.skif.module.DefaultModuleConfiguration;
+import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;
@@ -58,7 +58,7 @@ public class Test2And3ServiceTestJEE {
      */
     public void testServicesInSameModule() {
         ModuleConfiguration clientCfg = createClientConfiguration();
-        final Set<Class<? extends Object>> services = new HashSet<Class<? extends Object>>();
+        final Set<Class<?>> services = new HashSet<>();
         services.add(Test2Service.class);
         services.add(Test3Service.class);
 
@@ -78,11 +78,11 @@ public class Test2And3ServiceTestJEE {
      */
     public void testServicesInDifferentModules() {
         ModuleConfiguration clientCfg = createClientConfiguration();
-        final Set<Class<? extends Object>> services1 = new HashSet<Class<? extends Object>>();
+        final Set<Class<?>> services1 = new HashSet<>();
         services1.add(Test1Service.class);
-        final Set<Class<? extends Object>> services2 = new HashSet<Class<? extends Object>>();
+        final Set<Class<?>> services2 = new HashSet<>();
         services2.add(Test2Service.class);
-        final Set<Class<? extends Object>> services3 = new HashSet<Class<? extends Object>>();
+        final Set<Class<?>> services3 = new HashSet<>();
         services3.add(Test3Service.class);
 
         final RemoteServiceModule remoteServiceModule = new RemoteServiceModule(clientCfg, services2, new SkifTestMapper2().getMapping())

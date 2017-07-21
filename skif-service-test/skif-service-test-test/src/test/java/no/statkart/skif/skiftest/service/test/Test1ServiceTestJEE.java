@@ -106,7 +106,7 @@ public class Test1ServiceTestJEE {
      */
     public void testJaxWsClientServiceCreateUsingModule() throws Exception {
         ModuleConfiguration clientCfg = createClientConfiguration();
-        final Set<Class<? extends Object>> services = new HashSet<Class<? extends Object>>();
+        final Set<Class<?>> services = new HashSet<>();
         services.add(no.statkart.skif.skiftest.service.test1.Test1Service.class);
 
         injector = Guice.createInjector(

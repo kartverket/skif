@@ -18,7 +18,7 @@ public class SkifTestGroup2Services implements ServicesListing {
     private static final List<Class<?>> services;
 
     static {
-        List<Class<?>> modifiableList = new ArrayList<Class<?>>();
+        List<Class<?>> modifiableList = new ArrayList<>();
         
         modifiableList.add(Test2Service.class);
         modifiableList.add(Test3Service.class);

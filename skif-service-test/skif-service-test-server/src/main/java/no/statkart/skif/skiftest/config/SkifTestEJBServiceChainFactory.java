@@ -23,7 +23,7 @@ public class SkifTestEJBServiceChainFactory<S> implements EJBServiceChainFactory
 
     @Override
     public ProxyHandler<S> extendChain(ProxyHandler<S> firstInChain) {
-        final RuntimeExceptionProxyHandler handler = new RuntimeExceptionProxyHandler();
+        final RuntimeExceptionProxyHandler<S> handler = new RuntimeExceptionProxyHandler<>();
         handler.setChained(firstInChain);
         return handler;
     }

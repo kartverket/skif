@@ -4,11 +4,12 @@ import com.google.inject.Injector;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ws.SkifWebService;
-import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
-import no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
 import no.statkart.skif.skiftest.wsapi.domain.StringList;
-import no.statkart.skif.skiftest.wsapi.exception.simple.*;
+import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
+import no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException;
+import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleFaultInfo;
+import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleNonMappedFaultInfo;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -61,6 +62,7 @@ public class TestExServiceWSBean extends SkifWebService<TestExServiceWSI> implem
     /**
      * Denne klassen kaster exceptions uten å kalle rammeverket, skal at man kan teste hvordan rammeverket håndtere ukjendte exceptions
      */
+    @Override
     public String nonMappedCall(@WebParam(name = "exceptionClass") String exceptionClass, @WebParam(name = "message") String message) throws SimpleException, SimpleNonMappedException {
         if (exceptionClass.isEmpty()) {
            return message;
@@ -73,6 +75,7 @@ public class TestExServiceWSBean extends SkifWebService<TestExServiceWSI> implem
             info.setInfoField("infoFieleMessage");
             throw new SimpleNonMappedException(message, info);
         } else {
+            //noinspection TryWithIdenticalCatches --WL12 krever java 1.5 syntax
             try {
                 throw SkifUtil.<RuntimeException>classForName(exceptionClass).getConstructor(String.class).newInstance(message);
             } catch (InstantiationException e) {
@@ -80,7 +83,7 @@ public class TestExServiceWSBean extends SkifWebService<TestExServiceWSI> implem
             } catch (IllegalAccessException e) {
                 throw new ImplementationException(e);
             } catch (InvocationTargetException e) {
-                throw new ImplementationException(e);
+                throw new ImplementationException(e.getTargetException());
             } catch (NoSuchMethodException e) {
                 throw new ImplementationException(e);
             }

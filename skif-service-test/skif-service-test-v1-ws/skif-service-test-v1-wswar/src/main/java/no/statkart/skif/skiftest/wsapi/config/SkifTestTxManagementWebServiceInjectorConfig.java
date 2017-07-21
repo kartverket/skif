@@ -5,7 +5,8 @@ import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
 import no.statkart.skif.service.module.server.WSServerServiceModule;
-import no.statkart.skif.skiftest.config.*;
+import no.statkart.skif.skiftest.config.SkifTestTxManagementServerInjector;
+import no.statkart.skif.skiftest.config.SkifTestTxManagementServices;
 import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class SkifTestTxManagementWebServiceInjectorConfig implements ServletCont
         Injector ejbServiceInjector = skifTestTxManagementServerInjector.getInjector();
         ModuleConfiguration configuration = ejbServiceInjector.getInstance(ModuleConfiguration.class);
 
-        List<Class<?>> services = new ArrayList<Class<?>>(new SkifTestTxManagementServices().getServices());
+        List<Class<?>> services = new ArrayList<>(new SkifTestTxManagementServices().getServices());
         injector = ejbServiceInjector.createChildInjector(
                 new WSServerModule(configuration, classLoader),
                 new WSServerServiceModule(configuration, services, mapping, classLoader)

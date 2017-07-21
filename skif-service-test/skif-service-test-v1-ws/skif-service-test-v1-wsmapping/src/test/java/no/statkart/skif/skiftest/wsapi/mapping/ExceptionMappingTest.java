@@ -17,7 +17,6 @@ import static org.testng.Assert.assertTrue;
 /**
  * @since 2.2.0
  */
-@SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 @Test
 public class ExceptionMappingTest {
     /**
