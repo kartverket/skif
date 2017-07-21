@@ -16,7 +16,7 @@ public class WSVersioningCompatServicesV1 implements ServicesListing {
     private static final List<Class<?>> services;
 
         static {
-            services = ImmutableList.<Class<?>>of(
+            services = ImmutableList.of(
                     GateService.class
             );
          }

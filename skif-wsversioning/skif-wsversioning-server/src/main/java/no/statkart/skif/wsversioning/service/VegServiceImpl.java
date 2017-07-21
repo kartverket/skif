@@ -27,7 +27,7 @@ public class VegServiceImpl implements VegService {
 
     @Override
     public Set<VegId<?>> findAlleVeger() {
-        Set<VegId<?>> vegIds = new LinkedHashSet<VegId<?>>();
+        Set<VegId<?>> vegIds = new LinkedHashSet<>();
         for (BubbleId<?> bubbleId : bubbleProvider.get().keySet()) {
             if (bubbleId instanceof VegId) {
                 vegIds.add((VegId<?>) bubbleId);

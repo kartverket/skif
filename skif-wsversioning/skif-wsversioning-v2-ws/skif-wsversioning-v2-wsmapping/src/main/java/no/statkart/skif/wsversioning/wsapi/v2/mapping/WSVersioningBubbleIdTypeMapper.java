@@ -28,6 +28,7 @@ public class WSVersioningBubbleIdTypeMapper<WsapiT extends no.statkart.skif.wsve
     @Override
     public DomainT mapWsapiObject(WsapiT source) {
         SnapshotVersion snapshotVersion = getMapping().w2d(source.getSnapshotVersion(), SnapshotVersion.class);
+        //noinspection UnnecessaryLocalVariable
         DomainT target = BubbleIds.createInstance(getDomainClass(), source.getValue(), snapshotVersion);
         return target;
     }

@@ -1,6 +1,5 @@
 package no.statkart.skif.wsversioning.config;
 
-import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import no.statkart.skif.ServerInjectorRegistry;
 import no.statkart.skif.config.SkifServerConfiguration;
@@ -18,13 +17,9 @@ import javax.ejb.Stateless;
 @Stateless
 public class WSVersioningServerInjectorEJBBean implements WSVersioningServerInjector {
     @Override public Injector getInjector() {
-        return ServerInjectorRegistry.getInjector("WSVersioningServerModule", new Supplier<ModuleBuilder>() {
-            @Override
-            public ModuleBuilder get() {
-                return new ModuleBuilder()
-                        .setConfiguration(new SkifServerConfiguration())
-                        .setModuleClass(WSVersioningServerModule.class);
-            }
-        });
+        return ServerInjectorRegistry.getInjector("WSVersioningServerModule", () -> new ModuleBuilder()
+                .setConfiguration(new SkifServerConfiguration())
+                .setModuleClass(WSVersioningServerModule.class)
+        );
     }
 }

@@ -21,7 +21,7 @@ public class WSVersioningServerModuleTest extends SkifServerTestCase {
 
     public void testStore() {
         Store store = injector.getInstance(Store.class);
-        Veg veg = store.get(new VegId<Veg>(1L));
+        Veg veg = store.get(new VegId<>(1L));
         Assert.assertNotNull(veg);
         Assert.assertEquals(veg.getAdressenavn(), "Tjernslia");
     }

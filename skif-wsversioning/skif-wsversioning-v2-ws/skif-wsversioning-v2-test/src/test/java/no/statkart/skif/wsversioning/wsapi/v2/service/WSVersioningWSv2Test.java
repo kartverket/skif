@@ -125,7 +125,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         @Override
         protected void configure() {
             install(new RemoteServerModule(moduleConfiguration));
-            install(new RemoteWSServiceModule(moduleConfiguration, Arrays.<Class<?>>asList(VegService.class, StoreService.class)));
+            install(new RemoteWSServiceModule(moduleConfiguration, Arrays.asList(VegService.class, StoreService.class)));
         }
     }
 

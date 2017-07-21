@@ -17,7 +17,7 @@ public class WSVersioningServicesV1 implements ServicesListing {
     private static final List<Class<?>> services;
 
     static {
-        services = ImmutableList.<Class<?>>of(
+        services = ImmutableList.of(
                 StoreService.class,
                 LockService.class
         );

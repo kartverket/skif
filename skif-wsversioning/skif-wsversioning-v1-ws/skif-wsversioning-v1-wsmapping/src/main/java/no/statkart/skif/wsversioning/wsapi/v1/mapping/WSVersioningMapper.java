@@ -31,7 +31,7 @@ public class WSVersioningMapper extends AbstractMapper<WSVersioningMapping> {
         addMapper(new SnapshotVersionTypeMapper());
 
         // Alle Id-er
-        addMapper(new WSVersioningBubbleIdTypeMapper<no.statkart.skif.wsversioning.wsapi.v1.domain.GateId, VegId>(no.statkart.skif.wsversioning.wsapi.v1.domain.GateId.class, VegId.class));
+        addMapper(new WSVersioningBubbleIdTypeMapper<>(no.statkart.skif.wsversioning.wsapi.v1.domain.GateId.class, VegId.class));
 
         // Ting som må mappes manuelt pga. API-endringer
         addMapper(new GateMapper());

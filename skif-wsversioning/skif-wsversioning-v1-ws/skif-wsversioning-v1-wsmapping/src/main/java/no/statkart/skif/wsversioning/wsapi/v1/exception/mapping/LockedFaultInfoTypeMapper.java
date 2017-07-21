@@ -74,12 +74,12 @@ public class LockedFaultInfoTypeMapper extends AbstractTypeMapper<LockedFaultInf
 
     @Override
     public LockedException mapWsapiObject(LockedFaultInfo source) {
-        List<LockInfo<String>> lockInfos = new ArrayList<LockInfo<String>>(source.getLocksNotAquired().getItem().size());
+        List<LockInfo<String>> lockInfos = new ArrayList<>(source.getLocksNotAquired().getItem().size());
 
         for (LockNotAquired lockNotAquired : source.getLocksNotAquired().getItem()) {
             java.sql.Timestamp expires = mapTimestamp(lockNotAquired.getExpires());
-            LockInfo<String> lockInfo = new LockInfo<String>(
-                    new LockKey<String>(
+            LockInfo<String> lockInfo = new LockInfo<>(
+                    new LockKey<>(
                             lockNotAquired.getLockKey().getDiscriminator(),
                             lockNotAquired.getLockKey().getKeyValue()
                     ),
