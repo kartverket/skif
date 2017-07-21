@@ -13,7 +13,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * En Hibernate {@code UserType} for persistering av collections med elementer av type {@code <E>} via Oracle
@@ -45,13 +47,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
     }
 
     public boolean equals(Object x, Object y) throws HibernateException {
-        if (x == y) {
-            return true;
-        } else if (x == null || y == null) {
-            return false;
-        } else {
-            return x.equals(y);
-        }
+        return Objects.equals(x, y);
     }
 
     @Override

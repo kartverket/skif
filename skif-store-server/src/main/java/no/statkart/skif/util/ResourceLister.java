@@ -3,7 +3,6 @@ package no.statkart.skif.util;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -92,12 +91,7 @@ public class ResourceLister implements Iterable<String> {
     }
 
     private void listDirectory(File directory) {
-        for (File file : directory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isFile();
-            }
-        })) {
+        for (File file : directory.listFiles(File::isFile)) {
             resources.add(file.getName());
         }
     }

@@ -11,14 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * En Hibernate {@code UserType} for persistering av {@code BubbleId} collections via Oracle {@code oracle.sql.ARRAY}. Klassen brukes
@@ -56,13 +53,7 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
     }
 
     public boolean equals(Object x, Object y) throws HibernateException {
-        if (x == y) {
-            return true;
-        } else if (x == null || y == null) {
-            return false;
-        } else {
-            return x.equals(y);
-        }
+        return Objects.equals(x, y);
     }
 
     @Override
