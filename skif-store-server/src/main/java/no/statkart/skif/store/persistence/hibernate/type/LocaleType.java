@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Hibernates standard Locale-mapping støtter ikke {@link Locale#ROOT} på Oracle, siden strengrepresentasjonen er en tom
@@ -30,12 +31,12 @@ public class LocaleType implements UserType {
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        return (x == y) || (x != null && y != null && x.equals(y));
+        return Objects.equals(x, y);
     }
 
     @Override
     public int hashCode(Object x) throws HibernateException {
-        return x.hashCode();
+        return Objects.hashCode(x);
     }
 
     @Override

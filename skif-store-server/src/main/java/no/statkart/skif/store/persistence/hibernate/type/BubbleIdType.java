@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 
 /**
@@ -107,11 +108,11 @@ public abstract class BubbleIdType implements UserType {
     }
 
     public boolean equals(Object x, Object y) {
-        return (x == y) || (x != null && y != null && x.equals(y));
+        return Objects.equals(x, y);
     }
 
     public final int hashCode(Object x) throws HibernateException {
-        return x.hashCode();
+        return Objects.hashCode(x);
     }
 
     public Object deepCopy(Object value) {

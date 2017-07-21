@@ -6,12 +6,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
-import java.sql.Array;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
+import java.util.Objects;
 
 /**
  * Hjelpeklasse for å bruke Oracle ARRAY i Hibernate
@@ -61,13 +57,7 @@ public abstract class AbstractOracleArrayUserType implements UserType {
     }
 
     public boolean equals(Object x, Object y) throws HibernateException {
-        if (x == y) {
-            return true;
-        } else if (x == null || y == null) {
-            return false;
-        } else {
-            return x.equals(y);
-        }
+        return Objects.equals(x, y);
     }
 
     public Object nullSafeGet(ResultSet resultSet, String[] names, Object owner)
@@ -85,8 +75,6 @@ public abstract class AbstractOracleArrayUserType implements UserType {
      * @param statement statement objekt
      * @param value must be an array (Java language array)
      * @param index index for attributt (starter på index=1)
-     * @throws org.hibernate.HibernateException
-     * @throws java.sql.SQLException
      */
     public void nullSafeSet(PreparedStatement statement, Object value, int index)
             throws HibernateException, SQLException {

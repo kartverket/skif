@@ -37,7 +37,7 @@ public class OracleLocalTimestamp implements UserType {
 
     @Override
     public int hashCode(Object x) throws HibernateException {
-        return x.hashCode();
+        return Objects.hashCode(x);
     }
 
     @Override

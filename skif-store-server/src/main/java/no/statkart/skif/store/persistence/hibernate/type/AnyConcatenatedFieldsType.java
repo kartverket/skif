@@ -1,6 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.ConcatenatedFields;
+import no.statkart.skif.store.ConcatenatedFieldsSerialization;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
 import org.hibernate.util.StringHelper;
@@ -12,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 /**
  */
@@ -54,11 +56,11 @@ public class AnyConcatenatedFieldsType<T extends ConcatenatedFieldsSerialization
     }
 
     public boolean equals(Object x, Object y) {
-        return (x == y) || (x != null && y != null && x.equals(y));
+        return Objects.equals(x, y);
     }
 
     public final int hashCode(Object x) throws HibernateException {
-        return x.hashCode();
+        return Objects.hashCode(x);
     }
 
     public Object deepCopy(Object value) {
