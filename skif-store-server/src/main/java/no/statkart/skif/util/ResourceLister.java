@@ -21,7 +21,7 @@ import java.util.zip.ZipInputStream;
  * @since 2.1
  */
 public class ResourceLister implements Iterable<String> {
-    private final List<String> resources = new ArrayList<String>();
+    private final List<String> resources = new ArrayList<>();
 
     /**
      * @param packageName pakken det skal letes i

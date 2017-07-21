@@ -12,7 +12,7 @@ package no.statkart.skif.persistence.hibernate.type;
  * </pre>
  *
  * @see no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType
- * @sine 2.3
+ * @since 2.3
  * @author Henrik Fredholm
  */
 public class OracleStringBubbleIdArrayUserType extends OracleAbstractBubbleIdArrayUserType {

@@ -5,11 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Superklasse for å hente tekster fra <code>ResourceBundles</code>. Denne klassen kan kun brukes
@@ -71,7 +67,7 @@ public abstract class ResourceMsg {
 
    private void initializeBundle(Locale locale){
         if(bundleMap == null){
-            bundleMap = new HashMap<Locale, ResourceBundle[]>();
+            bundleMap = new HashMap<>();
         }
         if(bundleMap.get(locale) == null){
             ResourceBundle[] bundleFiles = new ResourceBundle[baseNameArray.length];

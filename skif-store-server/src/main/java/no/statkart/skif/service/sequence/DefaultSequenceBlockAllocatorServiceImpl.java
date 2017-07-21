@@ -84,7 +84,6 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
      * egen transaksjon overrider denne til å ikke gjøre noe.
      *
      * @param con    databaseforbindelsen
-     * @throws SQLException
      */
     protected void commit(Connection con) throws SQLException {
         con.commit();

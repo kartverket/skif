@@ -3,14 +3,7 @@ package no.statkart.skif.persistence;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.io.IOException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.FileHandler;
-import java.util.logging.Filter;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.util.logging.*;
 
 /**
  * Hjelpe klasse for å slå på logging for Oracle JDBC driver som bruker Java Logging Framework. Det er mulig å
@@ -94,8 +87,6 @@ public class OracleLogHelper {
      * Initialiser Logger for "oracle.jdbc" til å bruke en FileHandler istedet for ConsoleHandler som er default. Denne metoden må
      * kalles før første kall til {@link #enableTrace(Verbose)} og kan kun kalle en gang. Bruke evt {@link #isHandlerInitialized()}
      * til å sjekke om en handler allerede er satt.
-     *
-     * @param filename
      */
     public static void initHandler(String filename) {
         if (handler != null) {

@@ -4,8 +4,6 @@ import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
 import oracle.jdbc.OracleConnection;
 import org.hibernate.jdbc.ConnectionWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,7 +15,6 @@ import java.sql.SQLException;
  * @since 2.0
  */
 public class OracleUtils {
-    private static final Logger logger = LoggerFactory.getLogger(OracleUtils.class);
 
     /**
      * Henter ut OracleConnection fra en JDBC Connection. Sjekker på om JDBC connection er fra

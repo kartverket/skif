@@ -3,7 +3,6 @@ package no.statkart.skif.persistence;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.util.StoreJDBCHelper;
-import no.statkart.skif.util.JDBCHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +27,9 @@ import java.util.*;
  */
 public abstract class PreparedStatementExecutor {
     private static Logger logger = LoggerFactory.getLogger(PreparedStatementExecutor.class);
-    private static Map<Integer, String> parameterlists = new HashMap<Integer, String>();
+    private static Map<Integer, String> parameterlists = new HashMap<>();
 
-    private List<ParameterHelper> customParameters = new ArrayList<ParameterHelper>();
+    private List<ParameterHelper> customParameters = new ArrayList<>();
 
 
     protected abstract void readResult(final ResultSet resultSet) throws SQLException;
@@ -63,11 +62,8 @@ public abstract class PreparedStatementExecutor {
                     parameterlists.put(length, parameterlist);
                 }
 
-                PreparedStatement statement = null;
-                ResultSet resultSet = null;
-                try {
-                    String sql = new StringBuffer().append(query).append(parameterlist).append(queryEnd).toString();
-                    statement = connection.prepareStatement(sql);
+                String sql = new StringBuilder().append(query).append(parameterlist).append(queryEnd).toString();
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
                     int customParametersSize = 0;
                     for (ParameterHelper parameterHelper : customParameters) {
@@ -79,14 +75,13 @@ public abstract class PreparedStatementExecutor {
                         StoreJDBCHelper.setBubbleId(statement, index + 1, bubbleId);
                     }
 
-                    resultSet = statement.executeQuery();
-                    while (resultSet.next()) {
-                        readResult(resultSet);
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            readResult(resultSet);
+                        }
                     }
                 } catch (SQLException e) {
                     throw new ImplementationException("Query failed: " + e.getMessage(), e, logger);
-                } finally {
-                    JDBCHelper.close(resultSet, statement);
                 }
             }
 
@@ -117,11 +112,8 @@ public abstract class PreparedStatementExecutor {
                     parameterlists.put(length, parameterlist);
                 }
 
-                PreparedStatement statement = null;
-                ResultSet resultSet = null;
-                try {
-                    String sql = new StringBuffer().append(query1).append(parameterlist).append(query2).append(parameterlist).append(endQuery).toString();
-                    statement = connection.prepareStatement(sql);
+                String sql = new StringBuilder().append(query1).append(parameterlist).append(query2).append(parameterlist).append(endQuery).toString();
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
                     int customParametersSize = 0;
                     for (ParameterHelper parameterHelper : customParameters) {
@@ -134,14 +126,13 @@ public abstract class PreparedStatementExecutor {
                         StoreJDBCHelper.setBubbleId(statement, index + 1 + length, bubbleId);
                     }
 
-                    resultSet = statement.executeQuery();
-                    while (resultSet.next()) {
-                        readResult(resultSet);
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            readResult(resultSet);
+                        }
                     }
                 } catch (SQLException e) {
                     throw new ImplementationException("Query failed: " + e.getMessage(), e, logger);
-                } finally {
-                    JDBCHelper.close(resultSet, statement);
                 }
             }
 

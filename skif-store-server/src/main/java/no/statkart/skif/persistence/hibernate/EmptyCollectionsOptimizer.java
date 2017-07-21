@@ -12,8 +12,8 @@ import org.hibernate.event.PreLoadEvent;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.pretty.MessageHelper;
-import org.hibernate.type.AbstractComponentType;
 import org.hibernate.type.CollectionType;
+import org.hibernate.type.CompositeType;
 import org.hibernate.type.CustomType;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
@@ -124,7 +124,7 @@ public class EmptyCollectionsOptimizer {
                }
             }
          } else if( types[i].isComponentType() ) {
-            CollectionMapper componentMapper = createCollectionMappper(((AbstractComponentType) types[i]).getSubtypes(), role);
+            CollectionMapper componentMapper = createCollectionMappper(((CompositeType) types[i]).getSubtypes(), role);
             if( componentMapper != null ) {
                return new CollectionMapper(i, componentMapper);
             }
@@ -148,14 +148,10 @@ public class EmptyCollectionsOptimizer {
       /**
        * Returns the collection mapped by this CollectionMapper. There is no guarantie that this collection
        * will be a subtype of PersistentCollection.
-       *
-       * @param values
-       * @param types
-       * @param entityMode
        */
       Collection getCollection(Object[] values, Type[] types, EntityMode entityMode) {
          if( component != null ) {
-            AbstractComponentType type = (AbstractComponentType) types[index];
+            CompositeType type = (CompositeType) types[index];
             Type[] componentTypes = type.getSubtypes();
             Object[] componentValues = type.getPropertyValues(values[index], entityMode);
             return component.getCollection(componentValues, componentTypes, entityMode);
@@ -166,7 +162,7 @@ public class EmptyCollectionsOptimizer {
 
       CollectionType getCollectionType(Type[] types) {
          if( component != null ) {
-            AbstractComponentType type = (AbstractComponentType) types[index];
+            CompositeType type = (CompositeType) types[index];
             Type[] componentTypes = type.getSubtypes();
             return component.getCollectionType(componentTypes);
          } else {
@@ -244,8 +240,6 @@ public class EmptyCollectionsOptimizer {
    }
 
    /**
-    * @param event
-    * @param persister
     * @deprecated the flag should not be updated on each fluch
     */
    public void updateEmptyCollectionFlag(FlushEntityEvent event, EntityPersister persister) {
@@ -308,7 +302,7 @@ public class EmptyCollectionsOptimizer {
          if( logger.isDebugEnabled() ) {
             logger.debug(String.format("Empty collection flag was modified for entity. Old flag: %d (octal: 0%o) new flag: %d (octal: 0%o)", oldFlag, oldFlag, flag, flag));
          }
-         persister.setPropertyValue(entity, indexOfFlag, new Long(flag), entityMode);
+         persister.setPropertyValue(entity, indexOfFlag, flag, entityMode);
          updatedFlagForOneOrMoreObjects = true;
       } else {
          if( logger.isDebugEnabled() ) {

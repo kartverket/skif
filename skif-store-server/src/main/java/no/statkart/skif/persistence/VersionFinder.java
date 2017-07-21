@@ -6,13 +6,8 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.util.StoreJDBCHelper;
-import no.statkart.skif.util.JDBCHelper;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +25,7 @@ public class VersionFinder {
     }
 
     public <I extends BubbleId<?>> List<I> findBubbleIdsForInterval(I bubbleId, SnapshotVersion start, SnapshotVersion end) {
-        List<I> retur = new ArrayList<I>();
+        List<I> retur = new ArrayList<>();
 
         String tabellnavn = finnTabellnavnForId(bubbleId);
         String sql = "select id, oppdateringsdato from " + tabellnavn +
@@ -44,10 +39,7 @@ public class VersionFinder {
         Timestamp intervalEndValue = getTimestampValue(end);
 
         Connection connection = connectionProvider.get();
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try {
-            preparedStatement = connection.prepareStatement(sql);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             StoreJDBCHelper.setBubbleId(preparedStatement, 1, bubbleId);
             preparedStatement.setTimestamp(2, intervalStartValue);
@@ -57,15 +49,14 @@ public class VersionFinder {
             preparedStatement.setTimestamp(6, intervalStartValue);
             preparedStatement.setTimestamp(7, intervalEndValue);
 
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                I id = StoreJDBCHelper.getBubbleIdWithSnapshot(resultSet, 1, 2, bubbleId);
-                retur.add(id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    I id = StoreJDBCHelper.getBubbleIdWithSnapshot(resultSet, 1, 2, bubbleId);
+                    retur.add(id);
+                }
             }
         } catch (SQLException e) {
             throw new ImplementationException("Error executing sql: " + sql + " with parameters " + tabellnavn + ", " + intervalStartValue + " and " + intervalEndValue, e);
-        } finally {
-            JDBCHelper.close(resultSet, preparedStatement);
         }
         return retur;
     }
