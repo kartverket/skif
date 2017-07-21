@@ -23,7 +23,7 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
     private ConnectionForSnapshotVersion proxy;
 
     static {
-        methodsImplementedByProxy = new HashSet<Method>();
+        methodsImplementedByProxy = new HashSet<>();
         methodsImplementedByProxy.addAll(Arrays.asList(Object.class.getMethods()));
         methodsImplementedByProxy.addAll(Arrays.asList(ConnectionReservationForSnapshot.class.getMethods()));
     }

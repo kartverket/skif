@@ -2,7 +2,6 @@ package no.statkart.skif.store.service.ejb;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.TypeLiteral;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ResourceManager;
@@ -21,7 +20,6 @@ import javax.transaction.*;
 public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResourceProxyHandler<S> {
     private static Logger log = LoggerFactory.getLogger(EJBResourceProxyHandlerForHibernateWithLocks.class);
 
-    private final TypeLiteral<S> serviceType;
     private final Provider<ResourceManager> resourceManagerProvider;
     private final Provider<ServiceRequestContext> serviceRequestContextProvider;
     private final Provider<ServiceMode> serviceModeProvider;
@@ -30,8 +28,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
     private final Provider<TransactionManager> transactionManagerProvider;
 
     @Inject
-    public EJBResourceProxyHandlerForHibernateWithLocks(TypeLiteral<S> serviceType, Provider<ResourceManager> resourceManagerProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceMode> serviceModeProvider, Provider<LockerStrategy> lockerStrategyProvider, Provider<StoreServer> storeServerProvider, Provider<TransactionManager> transactionManagerProvider) {
-        this.serviceType = serviceType;
+    public EJBResourceProxyHandlerForHibernateWithLocks(Provider<ResourceManager> resourceManagerProvider, Provider<ServiceRequestContext> serviceRequestContextProvider, Provider<ServiceMode> serviceModeProvider, Provider<LockerStrategy> lockerStrategyProvider, Provider<StoreServer> storeServerProvider, Provider<TransactionManager> transactionManagerProvider) {
         this.resourceManagerProvider = resourceManagerProvider;
         this.serviceRequestContextProvider = serviceRequestContextProvider;
         this.serviceModeProvider = serviceModeProvider;

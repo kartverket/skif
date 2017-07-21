@@ -14,7 +14,7 @@ import java.util.List;
  * @since 2.5.0 (under dette navnet)
  */
 public class DefaultHibernateSessionFactoryManagerBundle implements HibernateSessionFactoryManagerBundle {
-    final List<HibernateSessionFactoryManager> bundle = new ArrayList<HibernateSessionFactoryManager>(2);
+    final List<HibernateSessionFactoryManager> bundle = new ArrayList<>(2);
 
     public DefaultHibernateSessionFactoryManagerBundle(HibernateSessionFactoryBuilder builder, Provider<IdService> idServiceProvider, HibernateSessionFactoryDescriptor... descriptors) {
         addFactoryDescriptors(builder, idServiceProvider, descriptors);

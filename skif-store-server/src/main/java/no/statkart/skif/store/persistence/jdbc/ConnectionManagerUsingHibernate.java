@@ -5,8 +5,6 @@ import no.statkart.skif.persistence.jdbc.ConnectionManager;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ConnectionManager som oppretter connections via en tilknyttet {@link PersistenceSessionManager} og underliggende
@@ -18,7 +16,6 @@ import org.slf4j.LoggerFactory;
  * @since 2.1
  */
 public class ConnectionManagerUsingHibernate implements ConnectionManager {
-    private static Logger logger = LoggerFactory.getLogger(ConnectionManagerUsingHibernate.class);
     private final PersistenceSessionManager persistenceSessionManager;
 
     final protected ConnectionProxyCache proxyCache = new ConnectionProxyCache();

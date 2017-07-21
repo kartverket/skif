@@ -32,7 +32,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
     /**
      * Denne metoden retter opp id'en for entiteter hvor hibernate har brukt supertypens idklasse
      * @return false fordi vi ikke endrer på <code>state</code> til <code>entity</code>
-     * @see {@link org.hibernate.Interceptor#onLoad(Object, java.io.Serializable, Object[], String[], org.hibernate.type.Type[])}
+     * @see org.hibernate.Interceptor#onLoad(Object, java.io.Serializable, Object[], String[], org.hibernate.type.Type[])
      */
     public boolean onLoad(Object entity, Serializable hibernateId, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         if (entity instanceof BubbleObject) {
@@ -46,10 +46,10 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
                 } else {
                     idString = classname + "Id";
                 }
-                Class classid = Class.forName(idString);
+                Class<? extends BubbleId> classid = Class.forName(idString).asSubclass(BubbleId.class);
                 if (classid != bubbleId.getClass()) {
                     Object value = bubbleId.getValue();
-                    BubbleId<?> newBubbleId = (BubbleId<?>) BubbleIdFactory.createInstance(classid, value, bubbleId.getSnapshotVersion());
+                    BubbleId<?> newBubbleId = BubbleIdFactory.createInstance(classid, value, bubbleId.getSnapshotVersion());
                     bubbleEntity.setId(newBubbleId);
                     if (logger.isDebugEnabled()) {
                         logger.debug("Endret id for " + classname + " fra: " + bubbleId + " til: " + newBubbleId);
