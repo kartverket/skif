@@ -12,6 +12,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistoryId;
 public class HistorikkBubbleWithEntityComponentsId<T extends HistorikkBubbleWithEntityComponents> extends AbstractStoreTestBubbleWithHistoryId<T> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     public HistorikkBubbleWithEntityComponentsId(Long value) {
         super(value);
     }

@@ -15,6 +15,7 @@ public class SimpleEndringId<T extends SimpleEndring> extends EndringId<T> {
         super(value);
     }
 
+    @SuppressWarnings("unused")
     public SimpleEndringId(Long value, SnapshotVersion version) {
         super(value, version);
     }

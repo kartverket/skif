@@ -4,7 +4,8 @@ package no.statkart.skif.storetest.wsapi.mapping;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.wsapi.mapping.testutils.StoreTestMappingTestContext;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * @author Henrik Fredholm
@@ -43,9 +44,9 @@ public class StoreTestMappingW2DTest {
         final StoreTestMapping map = testContext.buildMapping();
 
         int source = 5;
-        int target = map.w2d(source);
+        Integer target = map.w2d(source);
         Assert.assertNotNull(target);
-        Assert.assertEquals(target, 5);
+        Assert.assertEquals(target.intValue(), 5);
     }
 
 

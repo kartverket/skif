@@ -1,8 +1,7 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.kodeliste.*;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
-import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
+import no.statkart.skif.store.kodeliste.DbKodeSupport;
+import no.statkart.skif.store.kodeliste.KodeId;
 
 /**
  * @author Henrik Fredholm
@@ -10,6 +9,6 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
  */
 public class StoreTestDbKodeSupport<I extends KodeId> extends DbKodeSupport<I, StoreTestKodelisteLong, StoreTestKodelisteLongId<StoreTestKodelisteLong>> {
     public StoreTestDbKodeSupport(Class<I> kodeIdClass, long kodelisteIdValue) {
-        super(kodeIdClass, new StoreTestKodelisteLongId<StoreTestKodelisteLong>(kodelisteIdValue));
+        super(kodeIdClass, new StoreTestKodelisteLongId<>(kodelisteIdValue));
     }
 }

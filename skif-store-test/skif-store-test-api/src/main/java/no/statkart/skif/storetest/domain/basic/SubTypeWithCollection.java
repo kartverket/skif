@@ -10,7 +10,7 @@ import java.util.Set;
  * @since 2.1
  */
 public class SubTypeWithCollection extends SubTypedBubble {
-    private Set<String> tekster = new HashSet<String>();
+    private Set<String> tekster = new HashSet<>();
 
     @Override
     public SubTypeWithCollectionId<?> getId() {

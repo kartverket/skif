@@ -14,7 +14,7 @@ import java.util.List;
 public class HistorikkBubbleWithListEntityComponents extends AbstractStoreTestBubbleWithHistory {
     private static final long serialVersionUID = 1L;
 
-    private List<HistorikkListEntityComponent> entityComponents = new ArrayList<HistorikkListEntityComponent>();
+    private List<HistorikkListEntityComponent> entityComponents = new ArrayList<>();
 
     @Override
     public HistorikkBubbleWithListEntityComponentsId<?> getId() {

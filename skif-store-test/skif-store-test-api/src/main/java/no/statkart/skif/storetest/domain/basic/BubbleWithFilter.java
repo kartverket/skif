@@ -20,17 +20,6 @@ public class BubbleWithFilter extends AbstractStoreTestBubble {
     public BubbleWithFilter() {
     }
 
-    public BubbleWithFilter(BubbleWithFilterId<?> id) {
-        super(id);
-    }
-
-    public BubbleWithFilter(BubbleWithFilterId<?> id, String text, boolean filtrer, String filterText) {
-        super(id);
-        this.text = text;
-        this.filter = filtrer;
-        this.filterText = filterText;
-    }
-
     @Override
     public void setId(BubbleId<?> id) {
         super.setId(id);

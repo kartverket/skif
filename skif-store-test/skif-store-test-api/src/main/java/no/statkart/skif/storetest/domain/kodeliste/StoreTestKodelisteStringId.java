@@ -19,6 +19,7 @@ public class StoreTestKodelisteStringId<T extends StoreTestKodelisteString> exte
         return (StoreTestKodelisteStringId<T>) super.asSnapshotVersion(bubbleId);
     }
 
+    @SuppressWarnings("unused")
     public StoreTestKodelisteStringId(String value, SnapshotVersion version) {
         super(value, version);
     }

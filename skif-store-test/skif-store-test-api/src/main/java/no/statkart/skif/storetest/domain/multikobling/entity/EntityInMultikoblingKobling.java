@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.multikobling.entity;
 
 import no.statkart.skif.store.multikobling.EntityKobling;
-import no.statkart.skif.store.multikobling.Kobling;
 
 /**
  * Koblingsklasse for {@link EntityInMultikobling}. Denne klassen er et eksempel på en kobling som wrapper

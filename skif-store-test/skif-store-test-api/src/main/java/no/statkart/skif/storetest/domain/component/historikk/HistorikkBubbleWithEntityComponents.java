@@ -15,7 +15,7 @@ public class HistorikkBubbleWithEntityComponents extends AbstractStoreTestBubble
     private static final long serialVersionUID = 1L;
 
     private HistorikkEntityComponent mainEntityComponent;
-    private Set<HistorikkEntityComponent> secondaryEntityComponents = new HashSet<HistorikkEntityComponent>();
+    private Set<HistorikkEntityComponent> secondaryEntityComponents = new HashSet<>();
 
     @Override
     public HistorikkBubbleWithEntityComponentsId<?> getId() {

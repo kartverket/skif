@@ -15,18 +15,15 @@ public class ParentBubbleId<T extends ParentBubble> extends AbstractBubbleId<T> 
         return (Long) super.getValue();
     }
 
-    public ParentBubbleId() {
-        super();
-    }
-
     public ParentBubbleId(int idValue) {
-        super(new Long(idValue));
+        super((long) idValue);
     }
 
     public ParentBubbleId(Long idValue) {
         super(idValue);
     }
 
+    @SuppressWarnings("unused")
     public ParentBubbleId(Long value, SnapshotVersion version) {
         super(value, version);
     }

@@ -10,7 +10,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
  * @since 2.1
  */
 public class XStrDbKodeId extends StoreTestDbKodeId<XStrDbKode> {
-    private static StoreTestDbKodeSupport<XStrDbKodeId> kodeSupport = new StoreTestDbKodeSupport<XStrDbKodeId>(XStrDbKodeId.class, 10005);
+    private static StoreTestDbKodeSupport<XStrDbKodeId> kodeSupport = new StoreTestDbKodeSupport<>(XStrDbKodeId.class, 10005);
 
     public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static XStrDbKodeId AId = define("A");

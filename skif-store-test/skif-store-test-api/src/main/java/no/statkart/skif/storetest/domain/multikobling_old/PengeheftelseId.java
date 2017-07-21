@@ -6,12 +6,13 @@ import no.statkart.skif.store.SnapshotVersion;
  * @author Henrik Fredholm
  * @since 2.1
  */
-public class
-        PengeheftelseId<T extends Pengeheftelse> extends RettsstiftelseId<T> {
+public class PengeheftelseId<T extends Pengeheftelse> extends RettsstiftelseId<T> {
+    @SuppressWarnings("unused")
     public PengeheftelseId(Long value) {
         super(value);
     }
 
+    @SuppressWarnings("unused")
     public PengeheftelseId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }

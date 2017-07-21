@@ -5,8 +5,6 @@ import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.mapper.exception.AbstractServiceFaultInfoTypeMapper;
 import no.statkart.skif.storetest.wsapi.exception.ServiceFaultInfo;
 
-import java.util.Set;
-
 public class DefaultFaultInfoTypeMapper<WsapiT extends ServiceFaultInfo, DomainT extends SkifException> extends AbstractServiceFaultInfoTypeMapper<WsapiT, DomainT> {
     public DefaultFaultInfoTypeMapper(Class<WsapiT> wsapiTClass, Class<DomainT> domainTClass) {
         this(TypeToken.of(wsapiTClass), TypeToken.of(domainTClass));
@@ -14,10 +12,6 @@ public class DefaultFaultInfoTypeMapper<WsapiT extends ServiceFaultInfo, DomainT
 
     public DefaultFaultInfoTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
         super(wsapiTypeToken, domainTypeToken);
-    }
-
-    public DefaultFaultInfoTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, Set<Class<?>> doNotMapTheseClasses, boolean failIfMissingDomainProperties) {
-        super(wsapiTypeToken, domainTypeToken, doNotMapTheseClasses, failIfMissingDomainProperties);
     }
 
     @Override

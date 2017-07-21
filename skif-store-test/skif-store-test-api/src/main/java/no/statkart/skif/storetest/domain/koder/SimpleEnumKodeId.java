@@ -15,7 +15,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 public class SimpleEnumKodeId extends StoreTestEnumKodeId<SimpleEnumKode> {
     private static final long serialVersionUID = 1L;
 
-    private static final StoreTestEnumKodeSupport<SimpleEnumKode, SimpleEnumKodeId> kodeSupport = new StoreTestEnumKodeSupport<SimpleEnumKode, SimpleEnumKodeId>(SimpleEnumKodeId.class, 11, "no.statkart.skif.storetest.domain.koder.KodeMsg");
+    private static final StoreTestEnumKodeSupport<SimpleEnumKode, SimpleEnumKodeId> kodeSupport = new StoreTestEnumKodeSupport<>(SimpleEnumKodeId.class, 11, "no.statkart.skif.storetest.domain.koder.KodeMsg");
 
     public static final StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static final SimpleEnumKodeId IkkeOppgittId = define(0, "SimpleEnumKode.IkkeOppgitt");

@@ -58,6 +58,7 @@ public class BubbleWithListComponent extends AbstractEntityComponent {
         this.bubbleWithList = bubbleWithList;
     }
 
+    @SuppressWarnings("unused") // Hibernate
     public BubbleWithListComponent() {
     }
 

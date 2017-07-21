@@ -1,6 +1,6 @@
 package no.statkart.skif.storetest.domain.kodeliste;
 
-import no.statkart.skif.store.kodeliste.*;
+import no.statkart.skif.store.kodeliste.EnumKodeSupport;
 
 /**
  * @author Henrik Fredholm
@@ -10,6 +10,6 @@ public class StoreTestEnumKodeSupport<T extends StoreTestKode, I extends StoreTe
     private static final long serialVersionUID = 1L;
 
     public StoreTestEnumKodeSupport(Class<I> kodeIdClass, long kodelisteIdValue, String resourceName) {
-        super(kodeIdClass, new StoreTestKodelisteLongId<StoreTestKodelisteLong>(kodelisteIdValue), resourceName);
+        super(kodeIdClass, new StoreTestKodelisteLongId<>(kodelisteIdValue), resourceName);
     }
 }

@@ -15,7 +15,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 public class HistorikkEnumKodeId extends StoreTestEnumKodeId<HistorikkEnumKode> {
     private static final long serialVersionUID = 1L;
 
-    private static final StoreTestEnumKodeSupport<HistorikkEnumKode, HistorikkEnumKodeId> kodeSupport = new StoreTestEnumKodeSupport<HistorikkEnumKode, HistorikkEnumKodeId>(HistorikkEnumKodeId.class, 12, "no.statkart.skif.storetest.domain.koder.KodeMsg");
+    private static final StoreTestEnumKodeSupport<HistorikkEnumKode, HistorikkEnumKodeId> kodeSupport = new StoreTestEnumKodeSupport<>(HistorikkEnumKodeId.class, 12, "no.statkart.skif.storetest.domain.koder.KodeMsg");
 
     public static final StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static final HistorikkEnumKodeId Kode1Id = define(1, "Kode1", SnapshotVersion.START, SnapshotVersion.CURRENT);

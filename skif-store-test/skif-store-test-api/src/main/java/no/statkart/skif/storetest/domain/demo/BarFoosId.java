@@ -14,6 +14,7 @@ public class BarFoosId<T extends BarFoos> extends AbstractBubbleId<T> implements
         return (Long) super.getValue();
     }
 
+    @SuppressWarnings("unused")
     public BarFoosId(Long value) {
         super(value, SnapshotVersion.CURRENT);
     }

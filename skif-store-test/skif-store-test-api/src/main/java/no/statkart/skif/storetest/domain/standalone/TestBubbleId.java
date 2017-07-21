@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain.standalone;
 
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.AbstractBubbleId;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 /**
@@ -15,18 +15,15 @@ public class TestBubbleId<T extends TestBubble> extends AbstractBubbleId<T> impl
         return (Long) super.getValue();
     }
 
-    public TestBubbleId() {
-        super();
-    }
-
     public TestBubbleId(int idValue) {
-        super(new Long(idValue));
+        super((long) idValue);
     }
 
     public TestBubbleId(Long idValue) {
         super(idValue);
     }
 
+    @SuppressWarnings("unused")
     public TestBubbleId(Long value, SnapshotVersion version) {
         super(value, version);
     }

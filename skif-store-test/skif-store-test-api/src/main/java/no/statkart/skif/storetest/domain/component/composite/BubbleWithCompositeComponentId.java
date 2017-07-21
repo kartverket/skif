@@ -12,6 +12,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 public class BubbleWithCompositeComponentId<T extends BubbleWithCompositeComponent> extends AbstractStoreTestBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     public BubbleWithCompositeComponentId(Long value) {
         super(value, SnapshotVersion.CURRENT);
     }

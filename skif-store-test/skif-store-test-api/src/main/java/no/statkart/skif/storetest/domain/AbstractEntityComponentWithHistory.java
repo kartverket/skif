@@ -21,7 +21,7 @@ public abstract class AbstractEntityComponentWithHistory extends AbstractEntityC
         return oppdateringsdato;
     }
 
-    // For Hibernate
+    @SuppressWarnings("unused") // Hibernate
     private void setOppdateringsdato(Timestamp oppdateringsdato) {
         this.oppdateringsdato = oppdateringsdato;
     }
@@ -30,7 +30,7 @@ public abstract class AbstractEntityComponentWithHistory extends AbstractEntityC
         return sluttdato;
     }
 
-    // For Hibernate
+    @SuppressWarnings("unused") // Hibernate
     private void setSluttdato(Timestamp sluttdato) {
         this.sluttdato = sluttdato;
     }
@@ -39,7 +39,7 @@ public abstract class AbstractEntityComponentWithHistory extends AbstractEntityC
         return versjonId;
     }
 
-    // For Hibernate
+    @SuppressWarnings("unused") // Hibernate
     private void setVersjonId(long versjonId) {
         this.versjonId = versjonId;
     }

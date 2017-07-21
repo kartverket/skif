@@ -5,7 +5,6 @@ import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ValidationException;
 import no.statkart.skif.storetest.service.txbmt.BeanManagedTxAService;
-import no.statkart.skif.storetest.service.txcascade.ContainerManagedTxCMTCascadeService;
 import no.statkart.skif.storetest.service.txcmt.ContainerManagedTxAService;
 import no.statkart.skif.util.JDBCHelper;
 

@@ -12,7 +12,7 @@ import java.util.Set;
 public class BubbleWithComponents extends AbstractStoreTestBubble {
     private static final long serialVersionUID = 1L;
 
-    private Set<BubbleWithComponentsComponent> components = new HashSet<BubbleWithComponentsComponent>();
+    private Set<BubbleWithComponentsComponent> components = new HashSet<>();
 
     @Override
     public BubbleWithComponentsId<?> getId() {

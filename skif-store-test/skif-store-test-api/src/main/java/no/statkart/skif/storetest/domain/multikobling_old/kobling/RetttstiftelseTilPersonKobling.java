@@ -3,8 +3,8 @@ package no.statkart.skif.storetest.domain.multikobling_old.kobling;
 import no.statkart.skif.store.multikobling.DefaultKoblingFactory;
 import no.statkart.skif.store.multikobling.Kobling;
 import no.statkart.skif.store.multikobling.KoblingFactory;
-import no.statkart.skif.storetest.domain.multikobling_old.PersonId;
 import no.statkart.skif.store.multikobling.Multikobling;
+import no.statkart.skif.storetest.domain.multikobling_old.PersonId;
 
 /**
  * @author Henrik Fredholm
@@ -44,8 +44,6 @@ public class RetttstiftelseTilPersonKobling extends Kobling<RettsstiftelsePerson
 
     /**
      * Brukes av hibernate for mapping av String til rolle. Trengs kun for å støtte hibernate 3.2.6. I 3.4.10 kan man bruke hibernates støtte for enum
-     *
-     * @param rolle
      */
     private void setRolleFix(String rolle) {
         setRolle(RettsstiftelsePersonRolle.valueOf(rolle));

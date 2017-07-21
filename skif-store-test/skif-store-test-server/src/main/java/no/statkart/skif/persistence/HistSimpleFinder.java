@@ -10,7 +10,6 @@ import no.statkart.skif.store.persistence.OracleArrayType;
 import no.statkart.skif.store.persistence.SessionSelector;
 import no.statkart.skif.storetest.domain.basic.HistSimple;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
-import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -38,20 +37,17 @@ public class HistSimpleFinder {
         Set<HistSimpleId<?>> histSimpleIds = Sets.newHashSet();
 
         try (ConnectionSelector connectionSelector = connectionSelectorProvider.get()) {
-            PreparedStatement preparedStatement = null;
-            try {
-                Connection connection = connectionSelector.get(snapshotVersion);
-                preparedStatement = connection.prepareStatement("select id from HistSimple where text = ? and testsetNumber=?");
+            Connection connection = connectionSelector.get(snapshotVersion);
+            try (PreparedStatement preparedStatement = connection.prepareStatement("select id from HistSimple where text = ? and testsetNumber=?")) {
                 preparedStatement.setString(1, text);
                 preparedStatement.setInt(2, testsetNummer);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()) {
-                    histSimpleIds.add(HistSimpleId.create(resultSet.getLong(1), snapshotVersion));
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        histSimpleIds.add(HistSimpleId.create(resultSet.getLong(1), snapshotVersion));
+                    }
                 }
             } catch (SQLException e) {
                 throw new ImplementationException(e);
-            } finally {
-                JDBCHelper.close(preparedStatement);
             }
         }
         return histSimpleIds;
@@ -76,20 +72,17 @@ public class HistSimpleFinder {
         List<HistSimpleId<?>> result = Lists.newArrayListWithExpectedSize(histSimpleIds.size());
 
         try (ConnectionSelector connectionSelector = connectionSelectorProvider.get()) {
-            PreparedStatement statement = null;
-            try {
-                final Connection connection = connectionSelector.get(snapshotVersion);
-                statement = connection.prepareStatement("select h.id from HistSimple h where h.id in (select * from table(:idValues))");
+            final Connection connection = connectionSelector.get(snapshotVersion);
+            try (PreparedStatement statement = connection.prepareStatement("select h.id from HistSimple h where h.id in (select * from table(?))")) {
                 statement.setObject(1, OracleArrayType.getOracleBubbleIdArray(connection, histSimpleIds));
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    result.add(HistSimpleId.create(resultSet.getLong(1), snapshotVersion));
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.add(HistSimpleId.create(resultSet.getLong(1), snapshotVersion));
+                    }
                 }
                 return result;
             } catch (SQLException e) {
                 throw new ImplementationException(e);
-            } finally {
-                JDBCHelper.close(statement);
             }
         }
     }

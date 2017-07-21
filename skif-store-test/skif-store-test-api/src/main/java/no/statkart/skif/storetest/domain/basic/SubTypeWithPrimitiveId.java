@@ -13,6 +13,7 @@ public class SubTypeWithPrimitiveId<T extends SubTypeWithPrimitive> extends SubT
         super(value);
     }
 
+    @SuppressWarnings("unused")
     public SubTypeWithPrimitiveId(Long value, SnapshotVersion version) {
         super(value, version);
     }

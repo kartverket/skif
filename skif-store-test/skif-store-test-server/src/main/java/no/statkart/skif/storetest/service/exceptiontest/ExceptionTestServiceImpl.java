@@ -38,7 +38,7 @@ public class ExceptionTestServiceImpl implements ExceptionTestService {
 
     @Override
     public void throwLockedException(StoreTestBubbleId<?> id, String owner, Timestamp expires) throws LockedException {
-        throw new LockedException(serviceRequestContextProvider.get().getUserName(), new LockInfo<String>(new LockKey<String>(id.getClass().getSimpleName(), id.getStringValue()), owner, expires, false));
+        throw new LockedException(serviceRequestContextProvider.get().getUserName(), new LockInfo<>(new LockKey<>(id.getClass().getSimpleName(), id.getStringValue()), owner, expires, false));
     }
 
     @Override

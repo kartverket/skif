@@ -20,7 +20,7 @@ public class TestBubbleFinishFilter implements StoreSessionFinishListener {
     public void onFinish(StoreServer storeServer) {
         LinkedHashSet<BubbleId<?>> insertedIds = storeServer.getInsertedIds();
 
-        for(BubbleId id : insertedIds){
+        for(BubbleId<?> id : insertedIds){
             if(id instanceof FilteredBubbleId){
                 BubbleObject bubbleObject = storeServer.get(id);
                 if(bubbleObject instanceof FilteredBubble){

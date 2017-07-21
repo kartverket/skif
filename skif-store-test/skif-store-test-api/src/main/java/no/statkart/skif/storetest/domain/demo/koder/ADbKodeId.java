@@ -10,7 +10,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
  * @since 2.1
  */
 public class ADbKodeId extends StoreTestDbKodeId<ADbKode> {
-    private static StoreTestDbKodeSupport<ADbKodeId> kodeSupport = new StoreTestDbKodeSupport<ADbKodeId>(ADbKodeId.class, 10001L);
+    private static StoreTestDbKodeSupport<ADbKodeId> kodeSupport = new StoreTestDbKodeSupport<>(ADbKodeId.class, 10001L);
 
     public static StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
     public static ADbKodeId A1Id = define(1);
@@ -32,13 +32,6 @@ public class ADbKodeId extends StoreTestDbKodeId<ADbKode> {
     @Override
     public StoreTestKodelisteLongId<?> getKodelisteId() {
         return KODELISTE_ID.asSnapshotVersion(this);
-    }
-
-    /**
-     * Typesikker sammenlikning av kodeId som ikke tar hensyn til {@code SnapshotVersion}
-     */
-    public boolean equalTo(ADbKodeId id) {
-        return this.equalsIgnoreSnapshotVersion(id);
     }
 
 }

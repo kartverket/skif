@@ -3,8 +3,14 @@ package no.statkart.skif.storetest.wsapi.mapping;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-import no.statkart.skif.storetest.domain.demo.koder.*;
-import no.statkart.skif.storetest.domain.kodeliste.*;
+import no.statkart.skif.storetest.domain.demo.koder.ADbKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
+import no.statkart.skif.storetest.domain.demo.koder.XStrDbKode;
+import no.statkart.skif.storetest.domain.demo.koder.XStrDbKodeId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodeliste;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.mapping.testutils.StoreTestMappingTestContext;
 import org.testng.annotations.BeforeMethod;
@@ -12,9 +18,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertSame;
+import static org.testng.Assert.*;
 
 /**
  * @author Henrik Fredholm
@@ -53,13 +57,13 @@ public class StoreTestMappingD2WTest {
         final StoreTestMapping map = testContext.buildMapping();
 
         int source = 5;
-        int target = map.d2w(source);
+        Integer target = map.d2w(source);
         assertNotNull(target);
-        assertEquals(target, 5);
+        assertEquals(target.intValue(), 5);
 
         target = map.d2w(source, int.class);
         assertNotNull(target);
-        assertEquals(target, 5);
+        assertEquals(target.intValue(), 5);
 
     }
 
@@ -68,7 +72,7 @@ public class StoreTestMappingD2WTest {
     public void testMapTestBubble() {
         final StoreTestMapping map = testContext.buildMapping();
 
-        Simple simple = new Simple(new SimpleId<Simple>(10L));
+        Simple simple = new Simple(new SimpleId<>(10L));
         simple.setText("test");
         no.statkart.skif.storetest.wsapi.domain.basic.Simple target = map.d2w(simple, no.statkart.skif.storetest.wsapi.domain.basic.Simple.class);
         assertEquals(target.getId().getValue(), "10");
@@ -79,7 +83,7 @@ public class StoreTestMappingD2WTest {
     public void testMapTestEnumkodelisteId() {
         final StoreTestMapping map = testContext.buildMapping();
 
-        StoreTestKodelisteLongId<StoreTestKodelisteLong> enumKodelisteId = new StoreTestKodelisteLongId<StoreTestKodelisteLong>(1L);
+        StoreTestKodelisteLongId<StoreTestKodelisteLong> enumKodelisteId = new StoreTestKodelisteLongId<>(1L);
         StoreTestBubbleId storeTestBubbleId = map.d2w(enumKodelisteId);
         assertSame(storeTestBubbleId.getClass(), no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteLongId.class);
         assertEquals(storeTestBubbleId.getValue(), "1");

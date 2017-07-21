@@ -17,7 +17,7 @@ public class SimpleEndring<I extends SimpleEndringId<?>, EI extends SimpleId<?>>
     }
 
     public SimpleEndring(Long value) {
-        setId(new SimpleEndringId<SimpleEndring>(value));
+        setId(new SimpleEndringId<>(value));
     }
 
     @Override

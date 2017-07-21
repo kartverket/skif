@@ -15,18 +15,15 @@ public class FilteredBubbleId<T extends FilteredBubble> extends AbstractBubbleId
         return (Long) super.getValue();
     }
 
-    public FilteredBubbleId() {
-        super();
-    }
-
     public FilteredBubbleId(int idValue) {
-        super(new Long(idValue));
+        super((long) idValue);
     }
 
     public FilteredBubbleId(Long idValue) {
         super(idValue);
     }
 
+    @SuppressWarnings("unused")
     public FilteredBubbleId(Long value, SnapshotVersion version) {
         super(value, version);
     }

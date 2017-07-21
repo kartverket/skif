@@ -21,10 +21,6 @@ public class BubbleWithKode extends AbstractStoreTestBubble {
     public BubbleWithKode() {
     }
 
-    public BubbleWithKode(BubbleWithKodeId<?> id) {
-        super(id);
-    }
-
     @Override
     public BubbleWithKodeId<?> getId() {
         return (BubbleWithKodeId<?>) super.getId();

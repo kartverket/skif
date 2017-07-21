@@ -25,6 +25,7 @@ public abstract class AbstractStoreTestBubbleWithHistory extends AbstractStoreTe
     }
 
 
+    @SuppressWarnings("RedundantIfStatement")
     public boolean sameVersion(AbstractStoreTestBubbleWithHistory o) {
         if (!this.getId().getValue().equals(o.getId().getValue())) return false;
         if (!this.getOppdateringsdato().equals(o.getOppdateringsdato())) return false;

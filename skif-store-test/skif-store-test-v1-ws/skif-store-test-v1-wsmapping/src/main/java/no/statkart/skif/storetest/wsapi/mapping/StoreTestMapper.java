@@ -6,7 +6,10 @@ import no.statkart.skif.mapper.*;
 import no.statkart.skif.mapping.*;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.demo.koder.*;
-import no.statkart.skif.storetest.domain.kodeliste.*;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteString;
+import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteStringId;
 import no.statkart.skif.storetest.domain.koder.HistorikkEnumKode;
 
 import java.sql.Timestamp;
@@ -75,12 +78,6 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new EndringstypeTypeMapper());
         addMapper(new ReturnerBoblerTypeMapper());
         addMapper(new StoreBubbleTransferTypeMapper());
-
-        // Endringer
-        //addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.Endring.class, Endring.class));
-//        addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.SimpleEndring.class, SimpleEndring.class));
-//        addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.BubbleWithRelationEndring.class, BubbleWithRelationEndring.class));
-//        addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.SubTypedBubbleEndring.class, SubTypedBubbleEndring.class));
 
         // En litt spesiell kode
         addMapper(new KodeTypeMapperFactory.KodeTypeMapper<no.statkart.skif.storetest.wsapi.domain.koder.HistorikkEnumKode, HistorikkEnumKode>(no.statkart.skif.storetest.wsapi.domain.koder.HistorikkEnumKode.class, HistorikkEnumKode.class) {

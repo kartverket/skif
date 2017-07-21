@@ -50,13 +50,7 @@ public class TestBubbleFilter implements StoreSessionReadListener, StoreSessionW
     }
 
     /**
-     *
      * Kunne ha oppdatert alle felter som ikke er filtrert, kaster i stede en exception for tesing her.
-     *
-     * @param storeBubbleObject
-     * @param persistentBubbleObject
-     * @param <T>
-     * @return
      */
     @Override
     public <T extends BubbleObject> T onUpdate(T storeBubbleObject, T persistentBubbleObject) {
@@ -75,7 +69,7 @@ public class TestBubbleFilter implements StoreSessionReadListener, StoreSessionW
 
     private void OppdaterObjekt(FilteredBubble clientObject, FilteredBubble serverObject) {
         if(serverObject.getId() == null){
-            serverObject.setId(new FilteredBubbleId<FilteredBubble>(clientObject.getId().getValue()));
+            serverObject.setId(new FilteredBubbleId<>(clientObject.getId().getValue()));
         }
         if (serverObject.getText() == null || !serverObject.getText().equals(clientObject.getText())) {
             serverObject.setText(clientObject.getText());
@@ -90,11 +84,6 @@ public class TestBubbleFilter implements StoreSessionReadListener, StoreSessionW
 
     /**
      * Kaster exception hvis en prøver å slette objekter som er filtrert.
-     *
-     * @param storeBubbleObject
-     * @param persistentBubbleObject
-     * @param <T>
-     * @return
      */
     @Override
     public <T extends BubbleObject> T onDelete(T storeBubbleObject, T persistentBubbleObject) {

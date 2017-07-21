@@ -26,15 +26,6 @@ public class TestBubbleWithHistory extends AbstractBubbleObject implements Store
     public TestBubbleWithHistory() {
     }
 
-    public TestBubbleWithHistory(TestBubbleId<?> id) {
-        this(id, null);
-    }
-
-    public TestBubbleWithHistory(TestBubbleId<?> id, String text) {
-        super(id);
-        this.text = text;
-    }
-
     @Override
     public void setId(BubbleId<?> id) {
         super.setId(id);

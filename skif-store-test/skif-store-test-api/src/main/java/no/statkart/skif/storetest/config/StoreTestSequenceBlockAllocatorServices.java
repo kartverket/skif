@@ -15,7 +15,7 @@ public class StoreTestSequenceBlockAllocatorServices implements ServicesListing 
     private static final List<Class<?>> services;
 
     static {
-        List<Class<?>> modifiableList = new ArrayList<Class<?>>();
+        List<Class<?>> modifiableList = new ArrayList<>();
 
         modifiableList.add(SequenceBlockAllocatorService.class);
         services = Collections.unmodifiableList(modifiableList);

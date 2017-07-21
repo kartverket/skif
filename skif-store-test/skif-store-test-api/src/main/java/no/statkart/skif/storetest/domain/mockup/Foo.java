@@ -16,12 +16,6 @@ public class Foo extends AbstractStoreTestBubble {
     private Timestamp oppdateringsdato;
     private Timestamp sluttdato;
     private FooEntityComponent fooEntityComponent;
-    public boolean sameVersion(Foo o) {
-        if (!this.getId().getValue().equals(o.getId().getValue())) return false;
-        if (!this.getOppdateringsdato().equals(o.getOppdateringsdato())) return false;
-        if (!this.getSluttdato().equals(o.getSluttdato())) return false;
-        return true;
-    }
 
     @Override
     public FooId<?> getId() {

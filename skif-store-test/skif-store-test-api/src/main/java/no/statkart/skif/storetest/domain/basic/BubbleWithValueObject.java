@@ -23,10 +23,6 @@ public class BubbleWithValueObject extends AbstractStoreTestBubble {
     public BubbleWithValueObject() {
     }
 
-    public BubbleWithValueObject(BubbleWithRelationId<?> id) {
-        super(id);
-    }
-
     @Override
     public BubbleWithValueObjectId<?> getId() {
         return (BubbleWithValueObjectId<?>) super.getId();

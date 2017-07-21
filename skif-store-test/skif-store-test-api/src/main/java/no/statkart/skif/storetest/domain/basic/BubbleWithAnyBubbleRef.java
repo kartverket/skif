@@ -19,15 +19,6 @@ public class BubbleWithAnyBubbleRef extends AbstractStoreTestBubble {
     public BubbleWithAnyBubbleRef() {
     }
 
-    public BubbleWithAnyBubbleRef(BubbleWithAnyBubbleRefId<?> id) {
-        super(id);
-    }
-
-    public BubbleWithAnyBubbleRef(BubbleWithAnyBubbleRefId<?> id, BubbleId anyId) {
-        this.id = id;
-        this.anyId = anyId;
-    }
-
     @Override
     public BubbleWithAnyBubbleRefId<?> getId() {
         return (BubbleWithAnyBubbleRefId<?>) super.getId();

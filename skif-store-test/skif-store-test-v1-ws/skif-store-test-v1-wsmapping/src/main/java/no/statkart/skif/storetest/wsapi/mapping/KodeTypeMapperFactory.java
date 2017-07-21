@@ -51,8 +51,5 @@ public class KodeTypeMapperFactory implements TypeMapperFactory {
             return target;
         }
 
-        public static <WsapiT extends no.statkart.skif.storetest.wsapi.domain.kodeliste.Kode, DomainT extends StoreTestKode> TypeMapper<WsapiT, DomainT> create(Class<WsapiT> wsapiTClass, Class<DomainT> domainTClass) {
-            return new KodeTypeMapper<WsapiT, DomainT>(wsapiTClass, domainTClass);
-        }
     }
 }

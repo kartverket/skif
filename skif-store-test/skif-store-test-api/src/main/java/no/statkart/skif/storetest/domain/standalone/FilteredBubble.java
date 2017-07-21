@@ -17,11 +17,8 @@ public class FilteredBubble extends AbstractBubbleObject implements StoreTestBub
     private boolean filter;
     private String filterText;
 
+    @SuppressWarnings("unused") // Hibernate
     public FilteredBubble() {
-    }
-
-    public FilteredBubble(BubbleId<?> id) {
-        super(id);
     }
 
     public FilteredBubble(BubbleId<?> id, String text, boolean filtrer, String filterText) {

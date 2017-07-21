@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.multikobling.entity;
 
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 
 /**
@@ -11,6 +10,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 public class BubbleWithEntityInMultikoblingId<T extends BubbleWithEntityInMultikobling> extends AbstractStoreTestBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     public BubbleWithEntityInMultikoblingId(Long value) {
         super(value);
     }

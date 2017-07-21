@@ -13,6 +13,7 @@ public class BarId<T extends Bar> extends AbstractStoreTestBubbleId<T> {
         return super.getValue();
     }
 
+    @SuppressWarnings("unused")
     public BarId(Long value) {
         super(value, SnapshotVersion.CURRENT);
     }

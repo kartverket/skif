@@ -6,7 +6,6 @@ import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.mockup.TestNumberFactory;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.util.JDBCHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,15 +26,11 @@ public class TestdataServiceImpl extends no.statkart.skif.service.test.TestdataS
     @Override
     public void deleteObject(long id, String tableName) {
         Connection connection = connectionProvider.get();
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement("delete from " + tableName + " where id=?");
+        try (PreparedStatement statement = connection.prepareStatement("delete from " + tableName + " where id=?")) {
             statement.setLong(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new OperationalException("Kunne ikke slette objekt", e);
-        } finally {
-            JDBCHelper.close(statement);
         }
     }
 }

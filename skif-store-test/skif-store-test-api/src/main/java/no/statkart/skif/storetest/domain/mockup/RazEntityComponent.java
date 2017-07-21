@@ -10,6 +10,7 @@ public class RazEntityComponent extends AbstractEntityComponent {
     private Long id;
     private String componentName;
 
+    @SuppressWarnings("unused") // Hibernate
     public RazEntityComponent() {
     }
 

@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.domain.standalone;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Denne boblen må kun brukes av lavnivå tester som går direkte mot databasen uten å bruke StoreTestServer modulen og
@@ -15,6 +16,7 @@ public class ChildForParent implements Serializable {
     private ParentBubble parentBubble;
     private ChildBubbleId<?> childBubbleId;
 
+    @SuppressWarnings("unused") // Hibernate
     public ChildForParent() {
     }
 
@@ -54,23 +56,14 @@ public class ChildForParent implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ChildForParent that = (ChildForParent) o;
-
-        if (childBubbleId != null ? !childBubbleId.equals(that.childBubbleId) : that.childBubbleId != null)
-            return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (parentBubble != null ? !parentBubble.equals(that.parentBubble) : that.parentBubble != null)
-            return false;
-
-        return true;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(parentBubble, that.parentBubble) &&
+                Objects.equals(childBubbleId, that.childBubbleId);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (parentBubble != null ? parentBubble.hashCode() : 0);
-        result = 31 * result + (childBubbleId != null ? childBubbleId.hashCode() : 0);
-        return result;
+        return Objects.hash(id, parentBubble, childBubbleId);
     }
 }

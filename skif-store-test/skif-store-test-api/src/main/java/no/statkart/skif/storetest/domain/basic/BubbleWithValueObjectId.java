@@ -10,6 +10,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 public class BubbleWithValueObjectId<T extends  BubbleWithValueObject> extends AbstractStoreTestBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     public  BubbleWithValueObjectId(Long value) {
         super(value, SnapshotVersion.CURRENT);
     }

@@ -15,18 +15,11 @@ public class SelfBubbleId<T extends SelfBubble> extends AbstractBubbleId<T> impl
         return (Long) super.getValue();
     }
 
-    public SelfBubbleId() {
-        super();
-    }
-
-    public SelfBubbleId(int idValue) {
-        super(new Long(idValue));
-    }
-
     public SelfBubbleId(Long idValue) {
         super(idValue);
     }
 
+    @SuppressWarnings("unused")
     public SelfBubbleId(Long value, SnapshotVersion version) {
         super(value, version);
     }

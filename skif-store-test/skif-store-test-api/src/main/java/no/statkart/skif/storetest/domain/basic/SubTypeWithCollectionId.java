@@ -13,6 +13,7 @@ public class SubTypeWithCollectionId<T extends SubTypeWithCollection> extends Su
         super(value);
     }
 
+    @SuppressWarnings("unused")
     public SubTypeWithCollectionId(Long value, SnapshotVersion version) {
         super(value, version);
     }

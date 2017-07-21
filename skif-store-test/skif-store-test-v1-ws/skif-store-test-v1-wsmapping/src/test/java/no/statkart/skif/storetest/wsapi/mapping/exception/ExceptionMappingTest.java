@@ -1,21 +1,12 @@
 package no.statkart.skif.storetest.wsapi.mapping.exception;
 
 import com.google.inject.util.Providers;
-import no.statkart.skif.exception.AttemptDeleteException;
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.LockedException;
-import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.exception.ObjectsNotFoundException;
+import no.statkart.skif.exception.*;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-import no.statkart.skif.storetest.wsapi.exception.AttemptDeleteFaultInfo;
-import no.statkart.skif.storetest.wsapi.exception.LockedFaultInfo;
-import no.statkart.skif.storetest.wsapi.exception.ObjectsNotFoundFaultInfo;
-import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-import no.statkart.skif.storetest.wsapi.exception.ServiceFaultInfo;
+import no.statkart.skif.storetest.wsapi.exception.*;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapping;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
@@ -112,7 +103,7 @@ public class ExceptionMappingTest {
         StoreTestMapping mapping = new StoreTestMapper(Providers.of(SnapshotVersion.CURRENT)).getMapping();
         StoreTestExceptionMapping exceptionMapping = new StoreTestExceptionMapper(mapping).getMapping();
 
-        ObjectsNotFoundException domainException = new ObjectsNotFoundException(Arrays.<BubbleId<?>>asList(new SimpleId<>(1L), new SimpleId<>(2L)));
+        ObjectsNotFoundException domainException = new ObjectsNotFoundException(Arrays.asList(new SimpleId<>(1L), new SimpleId<>(2L)));
         ServiceException wsException = (ServiceException) exceptionMapping.d2w(domainException);
 
         Assert.assertEquals(wsException.getFaultInfo().getClass(), ObjectsNotFoundFaultInfo.class);

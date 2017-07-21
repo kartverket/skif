@@ -10,10 +10,12 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
  * @since 2.4.0
  */
 public class BubbleWithLocalDateTimeId<T extends BubbleWithLocalDateTime> extends AbstractStoreTestBubbleId<T> {
+    @SuppressWarnings("unused")
     public BubbleWithLocalDateTimeId(Long value) {
         super(value);
     }
 
+    @SuppressWarnings("unused")
     public BubbleWithLocalDateTimeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }

@@ -1,10 +1,6 @@
 package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 
-import no.statkart.skif.store.Bubbles;
-import no.statkart.skif.store.Components;
-import no.statkart.skif.store.EntityBubbleComponent;
-import no.statkart.skif.store.InverseRelationCollector;
-import no.statkart.skif.store.InverseRelationParticipation;
+import no.statkart.skif.store.*;
 
 import java.util.Collection;
 import java.util.Set;
@@ -63,7 +59,7 @@ public class X2EntityComponentOne implements EntityBubbleComponent<X2AAWithEntit
     }
 
     public void setSomeBBId(X2BBOneId<?> someBBId) {
-        this.someBBId = Bubbles.onChangeRelation(this, X2AAWithEntityComponentFinderService.Role.someBB, this.someBBId, someBBId);
+        this.someBBId = Components.onChangeRelation(this, X2AAWithEntityComponentFinderService.Role.someBB, this.someBBId, someBBId);
     }
 
     public Set<X2CCManyId<?>> getSomeCCsIds() {

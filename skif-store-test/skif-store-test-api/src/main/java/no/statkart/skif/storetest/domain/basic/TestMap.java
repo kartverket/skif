@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.domain.basic;
 
 /**
- * Domeneklasse som brukes i implementasjon av {@Link no.statkart.skif.storetest.service.storetest1.StoreTest1Service}.
+ * Domeneklasse som brukes i implementasjon av {@link no.statkart.skif.storetest.service.storetest1.StoreTest1Service}.
  * @author Henrik Fredholm
  */
 public class TestMap {

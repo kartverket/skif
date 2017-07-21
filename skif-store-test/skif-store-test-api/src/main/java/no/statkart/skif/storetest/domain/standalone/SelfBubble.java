@@ -16,6 +16,7 @@ public class SelfBubble extends AbstractBubbleObject implements StoreTestBubble 
     private String text = "";
     private SelfBubbleId<?> refId;
 
+    @SuppressWarnings("unused") // Hibernate
     public SelfBubble() {
     }
 

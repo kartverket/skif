@@ -13,6 +13,7 @@ public class MultirefererendeKobling extends Kobling<String, String> {
 
     private String tekst;
 
+    @SuppressWarnings("unused") // Hibernate
     public MultirefererendeKobling() {
     }
 

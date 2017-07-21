@@ -15,6 +15,7 @@ public class BazId<T extends Baz> extends AbstractNonVersionedBubbleId<T> implem
         return (Long)super.getValue();
     }
 
+    @SuppressWarnings("unused")
     public BazId(Long value) {
         super(value);
     }

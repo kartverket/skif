@@ -15,6 +15,7 @@ public class SubTypedBubbleEndringId<T extends SubTypedBubbleEndring> extends En
         super(value);
     }
 
+    @SuppressWarnings("unused")
     public SubTypedBubbleEndringId(Long value, SnapshotVersion version) {
         super(value, version);
     }

@@ -12,6 +12,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 public class MultirefererendeId<T extends Multirefererende> extends AbstractStoreTestBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     public MultirefererendeId(Long value) {
         super(value);
     }

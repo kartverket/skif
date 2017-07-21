@@ -15,6 +15,7 @@ public class BubbleWithRelationEndringId<T extends BubbleWithRelationEndring> ex
         super(value);
     }
 
+    @SuppressWarnings("unused")
     public BubbleWithRelationEndringId(Long value, SnapshotVersion version) {
         super(value, version);
     }

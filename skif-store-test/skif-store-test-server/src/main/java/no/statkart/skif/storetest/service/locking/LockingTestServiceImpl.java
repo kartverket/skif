@@ -57,7 +57,7 @@ public class LockingTestServiceImpl implements LockingTestService {
         lockerStrategy.lock(new SimpleId(100L));
 
         // Frigi låsen uten av lockerStrategy får det med seg. Dette vil tilsvare at et annet, eller samme, brukstilfelle har fullført samtidig.
-        lockerService.unlock(new LockKey<Long>(FooId.class.getName(), 100L), serviceRequestContext.getUserName());
+        lockerService.unlock(new LockKey<>(FooId.class.getName(), 100L), serviceRequestContext.getUserName());
     }
 
     @Override

@@ -76,7 +76,6 @@ import no.statkart.skif.storetest.endringslogg.EndringManager;
 import no.statkart.skif.storetest.filter.AggregertObjektFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
-import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.cfg.Environment;
 
@@ -173,14 +172,14 @@ public class StoreTestServerModule extends SkifModule {
     @Provides
     @ServiceRequestScoped
     StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager, Injector injector, BubbleDependencyComparator bubbleDependencyComparator, Provider<VersionFinder> versionFinderProvider, Provider<SnapshotVersion> snapshotVersionProvider, LockerStrategy lockerStrategy) {
-        List<StoreSessionReadListener> readListeners = ImmutableList.<StoreSessionReadListener>of(
+        List<StoreSessionReadListener> readListeners = ImmutableList.of(
                 new TestBubbleFilter()
         );
-        List<StoreSessionWriteListener> writeListeners = ImmutableList.<StoreSessionWriteListener>of(
+        List<StoreSessionWriteListener> writeListeners = ImmutableList.of(
                 new TestBubbleFilter(),
                 new AggregertObjektFilter()
         );
-        List<StoreSessionFinishListener> finishListeners = ImmutableList.<StoreSessionFinishListener>of(
+        List<StoreSessionFinishListener> finishListeners = ImmutableList.of(
                 new TestBubbleFinishFilter(),
                 injector.getInstance(EndringManager.class)
         );
@@ -207,12 +206,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     HibernateInterceptorFactory provideHibernateInterceptorFactory() {
-        return new HibernateInterceptorFactory() {
-            @Override
-            public Interceptor create(SnapshotVersionSeed snapshotVersionSeed) {
-                return new HibernateStoreInterceptor(snapshotVersionSeed);
-            }
-        };
+        return HibernateStoreInterceptor::new;
     }
 
     @Provides
@@ -259,7 +253,6 @@ public class StoreTestServerModule extends SkifModule {
                 // Klasser for relasjonstesting
                 .addBubble(X1BBOne.class)
                 .addBubble(X1CCMany.class)
-//                .addBubble(X1DDUnique.class)
                 .addBubble(X1AA.class)
 
                 .addBubble(X2BBOne.class)

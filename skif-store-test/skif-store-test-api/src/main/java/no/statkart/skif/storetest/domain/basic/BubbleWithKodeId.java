@@ -16,6 +16,7 @@ public class BubbleWithKodeId<T extends BubbleWithKode> extends AbstractStoreTes
         return super.getValue();
     }
 
+    @SuppressWarnings("unused")
     public BubbleWithKodeId(Long value) {
         super(value, SnapshotVersion.CURRENT);
     }

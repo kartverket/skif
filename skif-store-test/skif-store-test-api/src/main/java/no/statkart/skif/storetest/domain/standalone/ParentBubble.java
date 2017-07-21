@@ -18,18 +18,14 @@ import java.util.Set;
  */
 public class ParentBubble extends AbstractBubbleObject implements StoreTestBubble {
     private String text;
-    private Set<ChildForParent> childForParents = new HashSet<ChildForParent>();
+    private Set<ChildForParent> childForParents = new HashSet<>();
 
+    @SuppressWarnings("unused") // Hibernate
     public ParentBubble() {
     }
 
     public ParentBubble(BubbleId<?> id) {
         super(id);
-    }
-
-    public ParentBubble(BubbleId<?> id, String text) {
-        super(id);
-        this.text = text;
     }
 
     @Override
@@ -78,13 +74,12 @@ public class ParentBubble extends AbstractBubbleObject implements StoreTestBubbl
     }
 
     public ChildForParent getChildForParrent(ChildBubbleId childId) {
-        ChildForParent ret = null;
         for (ChildForParent cfp : childForParents) {
             if (cfp.getChildBubble().getId().equals(childId)) {
-                return cfp;//ret = cfp;
+                return cfp;
             }
         }
-        return ret;
+        return null;
     }
 
     public Set<ChildForParent> getChildForParents() {

@@ -57,9 +57,6 @@ public interface HistTestService {
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
      *
-     * @param text
-     * @param testsettNummer
-     * @param snapshotVersion
      * @return id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
      */
     Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingJDBC(String text, int testsettNummer, @ServiceContextMapped SnapshotVersion snapshotVersion);
@@ -73,9 +70,6 @@ public interface HistTestService {
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
      *
-     * @param text
-     * @param testsettNummer
-     * @param snapshotVersion
      * @return id-er på objekter som ble funnet. Id-er  har SnapshotVersion {@code snapshotVersion}
      */
     Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingHibernate(String text, int testsettNummer, @ServiceContextMapped SnapshotVersion snapshotVersion);
@@ -87,8 +81,6 @@ public interface HistTestService {
      * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
      * som brukes for søket.
      *
-     * @param text
-     * @param testsettNummer
      * @return id-er på objekter som ble funnet. Id-er  har SnapshotVersion {@code snapshotVersion}
      */
     Set<HistWithRelationId<?>> findHistWithRelationIdsRelatedToHistSimpleWithText(String text, int testsettNummer, SnapshotVersion snapshotVersion);
@@ -102,9 +94,6 @@ public interface HistTestService {
      * som brukes for søket. Dette er nødvendig siden {@code histSimpleId} kan være null og vi ønsker å kunne angi
      * SnapshotVersion for søket. SnapshotVersion i {@code histSimpleId} ignoreres.
      *
-     * @param text
-     * @param histSimpleId
-     * @param snapshotVersion
      * @return id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
      */
     Set<HistWithRelationId<?>> findHistWithRelationIdsWithTextRelatedToHistSimpleId(String text, @Nullable HistSimpleId<?> histSimpleId, SnapshotVersion snapshotVersion);
@@ -115,9 +104,6 @@ public interface HistTestService {
      * <p/>
      * Denne metode har ikke en eksplisitt SnapshotVersion parameter fordi snapthotversion kan bestemmes ut fra  {@code histSimpleIds}
      *
-     * @param text
-     * @param histSimpleIds
-     * @param snapshotVersion
      * @return id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
      */
     Map<HistSimpleId<?>, Set<HistWithRelationId<?>>> findHistWithRelationIdsWithTextRelatedToHistSimpleIds(String text, Collection<HistSimpleId<?>> histSimpleIds, @Deprecated SnapshotVersion snapshotVersion);
@@ -127,8 +113,6 @@ public interface HistTestService {
      * For denne metoden angis kan snapshotVersion eksplisitt.
      *
      * @param histSimpleIds   alle ids må ha samme SnapshotVersion
-     * @param snapshotVersion
-     * @return
      * @since 2.1
      */
     List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingOracleArray(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion);

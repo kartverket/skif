@@ -14,24 +14,15 @@ import no.statkart.skif.storetest.domain.StoreTestBubble;
  */
 public class ChildBubble extends AbstractBubbleObject implements StoreTestBubble {
     private String text;
-    private TestBubbleId<TestBubble> testBubbleId;
+    private TestBubbleId<?> testBubbleId;
 
 
+    @SuppressWarnings("unused") // Hibernate
     public ChildBubble() {
     }
 
     public ChildBubble(BubbleId<?> id) {
         super(id);
-    }
-
-    public ChildBubble(BubbleId<?> id, String text) {
-        super(id);
-        this.text = text;
-    }
-    public ChildBubble(BubbleId<?> id, String text, TestBubbleId<TestBubble> tbid) {
-        super(id);
-        this.text = text;
-        this.testBubbleId = tbid;
     }
 
     @Override
@@ -53,11 +44,11 @@ public class ChildBubble extends AbstractBubbleObject implements StoreTestBubble
     }
 
 
-    public TestBubbleId getTestBubbleId() {
+    public TestBubbleId<?> getTestBubbleId() {
         return testBubbleId;
     }
 
-    public void setTestBubbleId(TestBubbleId testBubbleId) {
+    public void setTestBubbleId(TestBubbleId<?> testBubbleId) {
         this.testBubbleId = testBubbleId;
     }
     public TestBubble getTestBubble(){

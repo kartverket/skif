@@ -17,7 +17,7 @@ public class SubTypedBubbleEndring<I extends SubTypedBubbleEndringId<?>, EI exte
     }
 
     public SubTypedBubbleEndring(Long value) {
-        setId(new SubTypedBubbleEndringId<SubTypedBubbleEndring>(value));
+        setId(new SubTypedBubbleEndringId<>(value));
     }
 
 

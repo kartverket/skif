@@ -19,7 +19,7 @@ public class StoreTestDomainFinderServices implements ServicesListing {
     private static final List<Class<?>> services;
 
     static {
-        List<Class<?>> modifiableList = new ArrayList<Class<?>>();
+        List<Class<?>> modifiableList = new ArrayList<>();
         
         modifiableList.add(X1AAFinderService.class);
         modifiableList.add(X2AAWithEntityComponentFinderService.class);

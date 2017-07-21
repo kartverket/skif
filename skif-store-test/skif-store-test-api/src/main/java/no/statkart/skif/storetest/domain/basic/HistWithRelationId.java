@@ -11,6 +11,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistoryId;
 public class HistWithRelationId<T extends HistWithRelation> extends AbstractStoreTestBubbleWithHistoryId<T> {
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("unused")
     public HistWithRelationId(Long value) {
         super(value, SnapshotVersion.CURRENT);
     }
@@ -39,7 +40,7 @@ public class HistWithRelationId<T extends HistWithRelation> extends AbstractStor
     }
 
     @Override
-    public BubbleId<? super T> asSnapshotVersionCurrent() {
-        return super.asSnapshotVersionCurrent();
+    public HistWithRelationId<T> asSnapshotVersionCurrent() {
+        return (HistWithRelationId<T>) super.asSnapshotVersionCurrent();
     }
 }

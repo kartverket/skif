@@ -10,7 +10,6 @@ import no.statkart.skif.store.persistence.OracleArrayType;
 import no.statkart.skif.storetest.domain.basic.HistSimple;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
-import no.statkart.skif.util.JDBCHelper;
 
 import javax.inject.Provider;
 import java.sql.Connection;
@@ -23,7 +22,7 @@ import java.util.Set;
 
 /**
  * Finder for HistWithRelation.
- *
+ * <p>
  * I utgangspunktet skrevet for å teste ut QueryGenerator (slettet) og PreparedStatementExecutor.
  *
  * @author Tor Egil R. Strand
@@ -36,21 +35,20 @@ public class HistWithRelationFinder {
     public Set<HistWithRelationId<?>> findHistWithRelationIdsRelatedToHistSimpleWithText(String text, int testsettNummer, SnapshotVersion snapshotVersion) {
         Set<HistWithRelationId<?>> histWithRelationIds = Sets.newHashSet();
 
-        ConnectionSelector connectionSelector = connectionSelectorProvider.get();
-        PreparedStatement preparedStatement = null;
-        try {
+        try (ConnectionSelector connectionSelector = connectionSelectorProvider.get()) {
             Connection connection = connectionSelector.get(snapshotVersion);
-            preparedStatement = connection.prepareStatement("select hr.id from HistWithRelation hr, HistSimple hs where hr.histSimpleId=hs.id and hs.text = ? and hs.testsetNumber = ?");
-            preparedStatement.setString(1, text);
-            preparedStatement.setInt(2, testsettNummer);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                histWithRelationIds.add(HistWithRelationId.create(resultSet.getLong(1), snapshotVersion));
+            String sql = "SELECT hr.id FROM HistWithRelation hr, HistSimple hs WHERE hr.histSimpleId=hs.id AND hs.text = ? AND hs.testsetNumber = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, text);
+                preparedStatement.setInt(2, testsettNummer);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        histWithRelationIds.add(HistWithRelationId.create(resultSet.getLong(1), snapshotVersion));
+                    }
+                }
             }
         } catch (SQLException e) {
             throw new ImplementationException(e);
-        } finally {
-            JDBCHelper.close(preparedStatement, connectionSelector);
         }
         return histWithRelationIds;
     }
@@ -58,22 +56,20 @@ public class HistWithRelationFinder {
     public Set<HistWithRelationId<?>> findHistWithRelationIdsWithTextRelatedToHistSimpleId(String text, HistSimpleId<?> histSimpleId, SnapshotVersion snapshotVersion) {
         Set<HistWithRelationId<?>> histWithRelationIds = Sets.newHashSet();
 
-        ConnectionSelector connectionSelector = connectionSelectorProvider.get();
-        PreparedStatement preparedStatement = null;
-        try {
+        try (ConnectionSelector connectionSelector = connectionSelectorProvider.get()) {
             Connection connection = connectionSelector.get(snapshotVersion);
-            preparedStatement = connection.prepareStatement("select hr.id from HistWithRelation hr where hr.text = ? and hr.histSimpleId = ?");
-
-            preparedStatement.setString(1, text);
-            preparedStatement.setLong(2, histSimpleId.getValue());
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                histWithRelationIds.add(HistWithRelationId.create(resultSet.getLong(1), snapshotVersion));
+            String sql = "SELECT hr.id FROM HistWithRelation hr WHERE hr.text = ? AND hr.histSimpleId = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, text);
+                preparedStatement.setLong(2, histSimpleId.getValue());
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        histWithRelationIds.add(HistWithRelationId.create(resultSet.getLong(1), snapshotVersion));
+                    }
+                }
             }
         } catch (SQLException e) {
             throw new ImplementationException(e);
-        } finally {
-            JDBCHelper.close(preparedStatement, connectionSelector);
         }
         return histWithRelationIds;
     }
@@ -81,27 +77,22 @@ public class HistWithRelationFinder {
     public Map<HistSimpleId<?>, Set<HistWithRelationId<?>>> findHistWithRelationIdsWithTextRelatedToHistSimpleIds(String text, Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion) {
         Map<HistSimpleId<?>, Set<HistWithRelationId<?>>> result = Maps.newHashMap();
 
-        ConnectionSelector connectionSelector = connectionSelectorProvider.get();
-        PreparedStatement statement = null;
-        try {
+        try (ConnectionSelector connectionSelector = connectionSelectorProvider.get()) {
             Connection connection = connectionSelector.get(snapshotVersion);
-            statement = connection.prepareStatement("select hr.histSimpleId, hr.id from HistWithRelation hr where hr.text = ? and hr.histSimpleId in (select * from table(:idValues))");
-            statement.setString(1, text);
-            statement.setObject(2, OracleArrayType.getOracleBubbleIdArray(connection, histSimpleIds));
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                final HistSimpleId<HistSimple> key = HistSimpleId.create(rs.getLong(1), snapshotVersion);
-                Set<HistWithRelationId<?>> histWithRelationIdsForKey = result.get(key);
-                if (histWithRelationIdsForKey==null) {
-                    histWithRelationIdsForKey=Sets.newHashSet();
-                    result.put(key, histWithRelationIdsForKey);
+            String sql = "SELECT hr.histSimpleId, hr.id FROM HistWithRelation hr WHERE hr.text = ? AND hr.histSimpleId IN (SELECT * FROM TABLE(?))";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, text);
+                statement.setObject(2, OracleArrayType.getOracleBubbleIdArray(connection, histSimpleIds));
+                try (ResultSet rs = statement.executeQuery()) {
+                    while (rs.next()) {
+                        final HistSimpleId<HistSimple> key = HistSimpleId.create(rs.getLong(1), snapshotVersion);
+                        Set<HistWithRelationId<?>> histWithRelationIdsForKey = result.computeIfAbsent(key, k -> Sets.newHashSet());
+                        histWithRelationIdsForKey.add(HistWithRelationId.create(rs.getLong(2), snapshotVersion));
+                    }
                 }
-                histWithRelationIdsForKey.add(HistWithRelationId.create(rs.getLong(2), snapshotVersion));
             }
         } catch (SQLException e) {
             throw new ImplementationException(e);
-        } finally {
-            JDBCHelper.close(statement, connectionSelector);
         }
         return result;
     }

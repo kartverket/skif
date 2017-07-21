@@ -13,7 +13,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 public class SimpleLocalizedDbKodeId extends HistoriskDbKodeId<SimpleLocalizedDbKode> {
     private static final long serialVersionUID = 1L;
 
-    private static final StoreTestDynamicKodeSupport<SimpleLocalizedDbKodeId> kodeSupport = new StoreTestDynamicKodeSupport<SimpleLocalizedDbKodeId>(SimpleLocalizedDbKodeId.class, 10011L, "no.statkart.skif.storetest.domain.koder.KodeMsg");
+    private static final StoreTestDynamicKodeSupport<SimpleLocalizedDbKodeId> kodeSupport = new StoreTestDynamicKodeSupport<>(SimpleLocalizedDbKodeId.class, 10011L, "no.statkart.skif.storetest.domain.koder.KodeMsg");
 
     public static final StoreTestKodelisteLongId<?> KODELISTE_ID = kodeSupport.getKodelisteId();
 

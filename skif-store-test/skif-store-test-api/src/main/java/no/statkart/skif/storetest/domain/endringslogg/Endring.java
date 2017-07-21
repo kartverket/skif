@@ -29,7 +29,7 @@ public abstract class Endring<I extends AbstractEndringId<?>, EI extends StoreTe
     }
 
     public Endring(long value) {
-        setId(new EndringId<Endring>(value));
+        setId(new EndringId<>(value));
     }
 
     @Override

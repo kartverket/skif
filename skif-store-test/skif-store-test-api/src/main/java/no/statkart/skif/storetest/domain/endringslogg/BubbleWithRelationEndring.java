@@ -17,7 +17,7 @@ public class BubbleWithRelationEndring<I extends BubbleWithRelationEndringId<?>,
     }
 
     public BubbleWithRelationEndring(Long value) {
-        setId(new BubbleWithRelationEndringId<BubbleWithRelationEndring>(value));
+        setId(new BubbleWithRelationEndringId<>(value));
     }
 
     @Override

@@ -15,7 +15,6 @@ import java.util.Set;
  * <ul>
  * <li>Enkelt relasjon {@link #getSomeBBId()} - med invers relasjon {@link X1BBOne#findInvSomeBBIds()}</li>
  * <li>Mange relasjon til {@code X1CCMany}: 'someCCs' </li>
- * <li>En-til-en relasjon til {@code X1DDUnique}: 'myUniqueDD' (TODO)</li>
  * <li>En verdi som brukes som en unik index for klassen</li>
  * <li>En verdi som brukes son en nonunik index for klassen</li>
  * <li>En verdi som sammen med verdi fra {@code X1BBOne} utgjør en unik index for klassen (bruker {@code nr} fra begge)</li>
@@ -35,10 +34,6 @@ public class X1AA extends AbstractRelationTestBubble implements InverseRelationP
 
     private String uniqueOnX1AA;
     private String nonUniqueOnX1AA;
-
-//    private X1DDUnique myUniqueDD;
-
-//    private Set<X1EManyMany> x1EManyManySet;
 
     @Override
     public void collectInverseRelationValues(InverseRelationCollector collector) {

@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.endringslogg;
 
 import com.google.common.collect.ImmutableBiMap;
-import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.endringslogg.AbstractEndringManagerConfiguration;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.basic.BubbleWithRelation;
@@ -23,7 +22,7 @@ public class EndringManagerConfiguration extends AbstractEndringManagerConfigura
 
     public EndringManagerConfiguration() {
         super(
-                ImmutableBiMap.<Class<? extends Endring>, Class<? extends BubbleObject>>of(
+                ImmutableBiMap.of(
                         Endring.class, StoreTestBubble.class,
                         BubbleWithRelationEndring.class, BubbleWithRelation.class,
                         SubTypedBubbleEndring.class, SubTypedBubble.class,

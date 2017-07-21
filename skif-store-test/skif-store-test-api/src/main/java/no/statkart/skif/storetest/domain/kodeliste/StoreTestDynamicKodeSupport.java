@@ -9,6 +9,6 @@ import no.statkart.skif.store.kodeliste.KodeId;
  */
 public class StoreTestDynamicKodeSupport<I extends KodeId> extends DynamicKodeSupport<I, StoreTestKodelisteLong, StoreTestKodelisteLongId<StoreTestKodelisteLong>> {
     public StoreTestDynamicKodeSupport(Class<I> kodeIdClass, long kodelisteIdValue, String resourceMsgName) {
-        super(kodeIdClass, new StoreTestKodelisteLongId<StoreTestKodelisteLong>(kodelisteIdValue), resourceMsgName);
+        super(kodeIdClass, new StoreTestKodelisteLongId<>(kodelisteIdValue), resourceMsgName);
     }
 }

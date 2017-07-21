@@ -45,7 +45,7 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
     @Override
     public SkifException mapWsapiObject(ServiceException source) {
         ExceptionDetail rootExceptionDetail = source.getFaultInfo().getExceptionDetail();
-        Stack<ExceptionDetail> stack = new Stack<ExceptionDetail>();
+        Stack<ExceptionDetail> stack = new Stack<>();
         {
             ExceptionDetail exceptionDetail = rootExceptionDetail.getCause();
             while (exceptionDetail != null) {

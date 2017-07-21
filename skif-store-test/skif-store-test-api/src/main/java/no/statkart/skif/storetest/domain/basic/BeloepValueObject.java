@@ -63,7 +63,7 @@ public class BeloepValueObject implements ValueObject {
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
     @Deprecated // WS-mapping
-    private void setKommentar(String kommentar) {
+    private void setKommentar(@Nullable String kommentar) {
         this.kommentar = kommentar;
     }
 
@@ -83,22 +83,15 @@ public class BeloepValueObject implements ValueObject {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         BeloepValueObject that = (BeloepValueObject) o;
-
-        if (verdi != that.verdi) return false;
-        if (kommentar != null ? !kommentar.equals(that.kommentar) : that.kommentar != null) return false;
-        if (!valuta.equals(that.valuta)) return false;
-
-        return true;
+        return verdi == that.verdi &&
+                Objects.equals(valuta, that.valuta) &&
+                Objects.equals(kommentar, that.kommentar);
     }
 
     @Override
     public int hashCode() {
-        int result = valuta.hashCode();
-        result = 31 * result + verdi;
-        result = 31 * result + (kommentar != null ? kommentar.hashCode() : 0);
-        return result;
+        return Objects.hash(valuta, verdi, kommentar);
     }
 
     @Override

@@ -19,10 +19,6 @@ public class HistWithRelation extends AbstractStoreTestBubbleWithHistory {
     public HistWithRelation() {
     }
 
-    public HistWithRelation(HistWithRelationId<?> id) {
-        super(id);
-    }
-
     @Override
     public HistWithRelationId<?> getId() {
         return (HistWithRelationId<?>) super.getId();

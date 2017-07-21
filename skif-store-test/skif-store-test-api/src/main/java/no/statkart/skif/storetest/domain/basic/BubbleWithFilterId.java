@@ -10,10 +10,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 public class BubbleWithFilterId<T extends BubbleWithFilter> extends AbstractStoreTestBubbleId<T> {
     private static final long serialVersionUID = 1L;
 
-    public BubbleWithFilterId(int idValue) {
-        super(new Long(idValue));
-    }
-
+    @SuppressWarnings("unused")
     public BubbleWithFilterId(Long idValue) {
         super(idValue);
     }

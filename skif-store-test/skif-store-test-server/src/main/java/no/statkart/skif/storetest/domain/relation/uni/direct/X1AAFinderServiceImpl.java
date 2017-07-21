@@ -9,12 +9,12 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.persistence.OracleArrayConverter;
 import no.statkart.skif.store.persistence.SessionSelector;
-import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.type.CustomType;
+import org.hibernate.type.StandardBasicTypes;
 
 import javax.inject.Provider;
 import java.util.Collection;
@@ -36,7 +36,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         if (x1BBOneIds.isEmpty()) return result;
 
         for (X1BBOneId<?> id : x1BBOneIds) {
-            result.put(id, new HashSet<X1AAId<?>>());
+            result.put(id, new HashSet<>());
         }
 
 
@@ -47,8 +47,8 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             query.addSynchronizedQuerySpace("X1AA");
             query.setParameter("idValues", x1BBOneIds, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, x1BBOneIds.size()));
-            query.addScalar("someBBId", Hibernate.LONG);
-            query.addScalar("id", Hibernate.LONG);
+            query.addScalar("someBBId", StandardBasicTypes.LONG);
+            query.addScalar("id", StandardBasicTypes.LONG);
             ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
 
             while (scroll.next()) {
@@ -67,7 +67,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         if (x1CCManyIds.isEmpty()) return result;
 
         for (X1CCManyId<?> id : x1CCManyIds) {
-            result.put(id, new HashSet<X1AAId<?>>());
+            result.put(id, new HashSet<>());
         }
 
         SnapshotVersion snapshotVersion = x1CCManyIds.iterator().next().getSnapshotVersion();
@@ -77,8 +77,8 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             query.addSynchronizedQuerySpace("X1CCMany");
             query.setParameter("idValues", x1CCManyIds, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, x1CCManyIds.size()));
-            query.addScalar("id", Hibernate.LONG);
-            query.addScalar("ownerId", Hibernate.LONG);
+            query.addScalar("id", StandardBasicTypes.LONG);
+            query.addScalar("ownerId", StandardBasicTypes.LONG);
             ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
 
             while (scroll.next()) {
@@ -110,8 +110,8 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             query.addSynchronizedQuerySpace("X1CCMany");
             query.setParameter("idValues", x1CCManyIds, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, x1CCManyIds.size()));
-            query.addScalar("id", Hibernate.LONG);
-            query.addScalar("ownerId", Hibernate.LONG);
+            query.addScalar("id", StandardBasicTypes.LONG);
+            query.addScalar("ownerId", StandardBasicTypes.LONG);
             ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
 
             while (scroll.next()) {
@@ -142,8 +142,8 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             query.addSynchronizedQuerySpace("X1AA");
             query.setParameter("textValues", textValues, new OracleArrayStringCustomType());
             query.setFetchSize(Math.min(1000, textValues.size()));
-            query.addScalar("uniqueOnX1AA", Hibernate.STRING);
-            query.addScalar("id", Hibernate.LONG);
+            query.addScalar("uniqueOnX1AA", StandardBasicTypes.STRING);
+            query.addScalar("id", StandardBasicTypes.LONG);
             ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
 
             while (scroll.next()) {
@@ -162,7 +162,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         if (textValues.isEmpty()) return result;
 
         for (String values : textValues) {
-            result.put(values, new HashSet<X1AAId<?>>());
+            result.put(values, new HashSet<>());
         }
 
 
@@ -173,8 +173,8 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             query.addSynchronizedQuerySpace("X1AA");
             query.setParameter("textValues", textValues, new OracleArrayStringCustomType());
             query.setFetchSize(Math.min(1000, textValues.size()));
-            query.addScalar("nonUniqueOnX1AA", Hibernate.STRING);
-            query.addScalar("id", Hibernate.LONG);
+            query.addScalar("nonUniqueOnX1AA", StandardBasicTypes.STRING);
+            query.addScalar("id", StandardBasicTypes.LONG);
             ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
 
             while (scroll.next()) {
@@ -193,7 +193,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
     public Map<X1AAIdent, Set<X1AAId<?>>> findX1AAIdsForIdents(Collection<X1AAIdent> idents) {
         Map<X1AAIdent, Set<X1AAId<?>>> result = Maps.newHashMapWithExpectedSize(idents.size());
         for (X1AAIdent ident : idents) {
-            result.put(ident, new HashSet<X1AAId<?>>());
+            result.put(ident, new HashSet<>());
         }
 
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
@@ -204,9 +204,9 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             query.addSynchronizedQuerySpace("X1BBOne");
             query.setParameter("idents", idents, new CustomType(new OracleX1AAIdentArrayUserType()));
             query.setFetchSize(Math.min(1000, idents.size()));
-            query.addScalar("bnr", Hibernate.INTEGER);
-            query.addScalar("anr", Hibernate.INTEGER);
-            query.addScalar("id", Hibernate.LONG);
+            query.addScalar("bnr", StandardBasicTypes.INTEGER);
+            query.addScalar("anr", StandardBasicTypes.INTEGER);
+            query.addScalar("id", StandardBasicTypes.LONG);
             ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
 
             while (scroll.next()) {
@@ -258,7 +258,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
     public Map<X1BBOneIdent, Set<X1BBOneId<?>>> findX1BBOneIdsForIdents(Collection<X1BBOneIdent> idents) {
         Map<X1BBOneIdent, Set<X1BBOneId<?>>> result = Maps.newHashMapWithExpectedSize(idents.size());
         for (X1BBOneIdent ident : idents) {
-            result.put(ident, new HashSet<X1BBOneId<?>>());
+            result.put(ident, new HashSet<>());
         }
 
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
@@ -268,8 +268,8 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             query.addSynchronizedQuerySpace("X1BBOne");
             query.setParameter("idents", idents, new CustomType(new OracleX1BBOneIdentArrayUserType()));
             query.setFetchSize(Math.min(1000, idents.size()));
-            query.addScalar("bnr", Hibernate.INTEGER);
-            query.addScalar("id", Hibernate.LONG);
+            query.addScalar("bnr", StandardBasicTypes.INTEGER);
+            query.addScalar("id", StandardBasicTypes.LONG);
             ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
 
             while (scroll.next()) {
