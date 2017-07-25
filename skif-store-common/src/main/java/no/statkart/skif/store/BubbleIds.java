@@ -1,17 +1,10 @@
 package no.statkart.skif.store;
 
-import com.google.common.collect.Sets;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.relation.cache.RelationName;
-import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -35,16 +28,13 @@ public class BubbleIds {
                 ctor.setAccessible(true);
                 constructorMap.putIfAbsent(idClass, ctor);
             }
+            //noinspection UnnecessaryLocalVariable
             I id = ctor.newInstance(idValue, snapshotVersion);
             return id;
-        } catch (InstantiationException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException(e);
-        } catch (NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             throw new ImplementationException(e);
         } catch (InvocationTargetException e) {
-            throw new ImplementationException(e);
+            throw new ImplementationException(e.getTargetException());
         }
     }
 
@@ -64,5 +54,9 @@ public class BubbleIds {
 
     public static <T extends BubbleObject> Class<? extends BubbleId<T>> getBubbleIdClass(Class<T> bubbleClass) {
         return SkifUtil.classForName(bubbleClass.getName() + "Id");
+    }
+
+    public static boolean equalsIgnoreSnapshotVersion(BubbleId<?> id1, BubbleId<?> id2) {
+        return (id1 == id2) || (id1 != null && id1.equalsIgnoreSnapshotVersion(id2));
     }
 }
