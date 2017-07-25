@@ -432,7 +432,7 @@ public interface Store {
      * kan metoden også kalles uten en aktiv unit-of-work.
      *
      * @return transfer med endrede objekter
-     * @see {@link WrappableStoreSession}
+     * @see WrappableStoreSession#getSnapshot()
      */
     UnitOfWorkTransfer getSnapshot();
 
@@ -442,7 +442,7 @@ public interface Store {
      * kalles hvis en unit-of-work er aktiv. På serveren kan metoden også kalles uten en aktiv unit-of-work.
      *
      * @return transfer med endrede objekter
-     * @see {@link WrappableStoreSession}
+     * @see WrappableStoreSession#getSessionSnapshot()
      */
     UnitOfWorkTransfer getSessionSnapshot();
 
