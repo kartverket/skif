@@ -31,6 +31,8 @@ public class BubbleIdsTest {
     }
 
     private static class TestBubbleId extends AbstractBubbleId<BubbleObject> {
+        private static final long serialVersionUID = 1L;
+
         TestBubbleId(Object value, SnapshotVersion version) {
             super(value, version);
         }
