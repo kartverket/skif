@@ -3,11 +3,7 @@ package no.statkart.skif.util.testsupport;
 import com.google.inject.Injector;
 import com.google.inject.spi.InjectionPoint;
 import no.statkart.skif.SkifModule;
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.SkifClientConfiguration;
-import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.config.SkifConfiguration;
-import no.statkart.skif.config.SkifServerConfiguration;
+import no.statkart.skif.config.*;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.LoginUser;
@@ -85,21 +81,21 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
             builder.setSingleVmServerEjbServiceChainExtClass(ejbServiceChainExtClass);
         }
 
-        String[] configurationFilenames = getConfigurationFilenames();
-        if (configurationFilenames!=null) {
-            builder.setConfiguration(new SkifConfiguration(configurationFilenames));
-        } else {
-            builder.setConfiguration(new SkifClientConfiguration());
-        }
+        builder.setConfiguration(getConfiguration());
 
-        String[] singleVmServerConfigurationFilenames = getSingleVmServerConfigurationFilenames();
-        if (singleVmServerConfigurationFilenames!=null) {
-            builder.setSingleVmServerConfiguration(new SkifConfiguration(singleVmServerConfigurationFilenames));
-        } else {
-            builder.setSingleVmServerConfiguration(new SkifServerConfiguration());
-        }
+        builder.setSingleVmServerConfiguration(getSingleVmConfiguration());
 
         return builder;
+    }
+
+    protected Configuration getSingleVmConfiguration() {
+        String[] singleVmServerConfigurationFilenames = getSingleVmServerConfigurationFilenames();
+        return singleVmServerConfigurationFilenames != null ? new SkifConfiguration(singleVmServerConfigurationFilenames) : new SkifServerConfiguration();
+    }
+
+    protected Configuration getConfiguration() {
+        String[] configurationFilenames = getConfigurationFilenames();
+        return configurationFilenames != null ? new SkifConfiguration(configurationFilenames) : new SkifClientConfiguration();
     }
 
 
