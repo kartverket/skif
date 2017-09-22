@@ -1,5 +1,6 @@
 package no.statkart.skif;
 
+import com.google.common.collect.ImmutableSet;
 import org.reflections.Reflections;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -21,6 +22,12 @@ public class SerializableTest {
             SerializableTest.class.getPackage().getName()
     );
 
+    static final Set<Class> excludeClasses = ImmutableSet.of(
+            Enum.class,
+            no.statkart.skif.config.ConfigurationRuntimeException.class,
+            no.statkart.skif.config.ConversionException.class
+    );
+
 
     /**
      * Verifiserer alle kjente klasser som er serialiserbare har fått
@@ -37,6 +44,7 @@ public class SerializableTest {
             Reflections reflections = new Reflections(packageName);
             Set<Class<? extends Serializable>> classes = reflections.getSubTypesOf(Serializable.class);
             for (Class<?> clazz : classes) {
+                if (clazz.isEnum() || excludeClasses.contains(clazz)) continue; // Enumer serialiseres ikke feltene for
 
                 //sjekker mot feltet serialVersionUID
                 while( clazz != null && Serializable.class.isAssignableFrom(clazz) ) {
