@@ -111,8 +111,8 @@ libraries.hibernate_3_6 = [
 // Oracle Weblogic dependencies
 
 final Map WEBLOGIC_VERSIONS = [
-        WL_10_3_6: '10.3.6',
         WL_12_1_3: '12.1.3',
+        WL_12_2_1: '12.2.1',
 ]
 ext.weblogicVersion = project.properties.get('WEBLOGIC_VERSION', WEBLOGIC_VERSIONS.WL_12_1_3)
 assert WEBLOGIC_VERSIONS.containsValue(weblogicVersion) //husk å utvide byggesystem med ny weblogic version..
@@ -120,7 +120,6 @@ assert WEBLOGIC_HOME //WEBLOGIC_HOME maa vaere gitt
 
 // JAX-WS runtime for weblogic
 libraries.weblogic_jaxws_rt = files(
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/glassfish.jaxws.rt_1.3.0.0_2-1-5.jar" : [],
         weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
                 "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.bind.jaxb-core_2.2.jar",
                 "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.bind.jaxb-impl_2.2.jar",
@@ -129,8 +128,15 @@ libraries.weblogic_jaxws_rt = files(
                 "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.stream.buffer.streambuffer_1.5.3.jar",
                 "${WEBLOGIC_HOME}/oracle_common/modules/org.jvnet.staxex.stax-ex_1.7.5.jar",
                 "${WEBLOGIC_HOME}/oracle_common/modules/org.glassfish.gmbal.gmbal-api-only_3.1.0-b001.jar",
-                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.ws.jaxws-rt_2.2.jar"
-        ] : [],
+        ] : [
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.bind.jaxb-core.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.bind.jaxb-impl.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.ws.jaxws-rt.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.ws.policy.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/com.sun.xml.stream.buffer.streambuffer.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/org.jvnet.staxex.stax-ex.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/org.glassfish.gmbal-api-only.jar",
+        ],
 )
 
 // Trengs for å tvinge vekk moxy på Weblogic 12c
@@ -138,54 +144,33 @@ libraries.weblogic_databinding = files(
         weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
                 "${WEBLOGIC_HOME}/wlserver/modules/databinding.override_1.2.0.0.jar",
         ] : [
+                "${WEBLOGIC_HOME}/wlserver/modules/databinding.override.jar",
         ],
 )
 
-// Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
-libraries.weblogic_client = files(
+libraries.weblogic = files(
+        libraries.weblogic_databinding,
+
         weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
+                "${WEBLOGIC_HOME}/oracle_common/modules/javax.annotation_1.2.0.0_1-1.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/javax.servlet_2.2.0.0_3-0.jar",
                 "${WEBLOGIC_HOME}/oracle_common/modules/javax.ejb_3.3.0.jar",
                 "${WEBLOGIC_HOME}/wlserver/modules/javax.interceptor_1.3.jar",
                 "${WEBLOGIC_HOME}/wlserver/modules/javax.transaction_2.2.0.0_1-1.jar",
         ] : [
-                "${WEBLOGIC_HOME}/modules/javax.ejb_3.0.1.jar",
-                "${WEBLOGIC_HOME}/modules/javax.interceptor_1.0.jar",
-                "${WEBLOGIC_HOME}/modules/javax.transaction_1.0.0.0_1-1.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/javax.annotation.javax.annotation-api.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/javax.servlet.javax.servlet-api.jar",
+                "${WEBLOGIC_HOME}/oracle_common/modules/javax.ejb.javax.ejb-api.jar",
+                "${WEBLOGIC_HOME}/wlserver/modules/javax.interceptor.javax.interceptor-api.jar",
+                "${WEBLOGIC_HOME}/wlserver/modules/javax.transaction.javax.transaction-api.jar",
         ],
 
         libraries.weblogic_jaxws_rt,
 )
 
-// Weblogic jar files must be located in the WEBLOGIC_HOME directory since they internally (in their manifest file) refer to other files in the directory
-libraries.weblogic_server = files(
-        libraries.weblogic_databinding,
-
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_10_3_6 ? "${WEBLOGIC_HOME}/modules/javax.annotation_1.0.0.0_1-0.jar" : [],
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? "${WEBLOGIC_HOME}/oracle_common/modules/javax.annotation_1.2.0.0_1-1.jar" : [],
-
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
-                "${WEBLOGIC_HOME}/oracle_common/modules/javax.servlet_2.2.0.0_3-0.jar",
-                // Har ikke funnet ws.api for 12c
-        ] : [
-                "${WEBLOGIC_HOME}/modules/javax.servlet_1.0.0.0_2-5.jar",
-                "${WEBLOGIC_HOME}/modules/ws.api_1.1.0.0.jar", // For eventuell testing av WS-Policy
-        ],
-
-        libraries.weblogic_client,
-)
-
-libraries.weblogic = files(
-        libraries.weblogic_server,
-        libraries.weblogic_client,
-)
-
 libraries.weblogic_tools = files(
         libraries.weblogic_databinding,
-        weblogicVersion == WEBLOGIC_VERSIONS.WL_12_1_3 ? [
-                "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
-        ] : [
-                "${WEBLOGIC_HOME}/wlserver_10.3/server/lib/weblogic.jar",
-        ],
+        "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
 )
 
 libraries.jaxws_rt = files(
