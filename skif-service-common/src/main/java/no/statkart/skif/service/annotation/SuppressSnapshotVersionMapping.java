@@ -19,7 +19,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * @author Henrik Fredholm
  * @since 2.4
  */
-@BindingAnnotation
 @Target({PARAMETER, METHOD})
 @Retention(RUNTIME)
 public @interface SuppressSnapshotVersionMapping {
