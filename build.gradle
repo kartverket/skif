@@ -236,7 +236,6 @@ buildscript {
     // Miljøvariable for konfigurasjon av byggemiljø
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     [
-            'JAVA_HOME',
             'LOCALHOSTNAME',
             'WEBLOGIC_HOME',
             'WEBLOGIC_VERSION',
@@ -247,7 +246,7 @@ buildscript {
     }
 
     if (!project.hasProperty('LOCALHOSTNAME')) {
-        project.ext.setProperty('LOCALHOSTNAME', java.net.InetAddress.localHost.hostName + '.statkart.no')
+        project.ext.setProperty('LOCALHOSTNAME', java.net.InetAddress.localHost.canonicalHostName)
     }
 
     ext.ORA_DEBUG = Boolean.valueOf("${rootProject.properties.get('ORA_DEBUG', System.getenv('ORA_DEBUG')) ?: 'false'}")
