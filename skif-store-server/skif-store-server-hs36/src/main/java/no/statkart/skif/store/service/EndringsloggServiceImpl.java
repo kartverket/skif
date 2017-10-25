@@ -68,7 +68,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
         Preconditions.checkNotNull(returnerBobler, "returnerBobler er obligatorisk");
         Preconditions.checkArgument(maksAntall >= 0, "maksAntall er negativ");
 
-        Endringer<E> endringer = new Endringer<E>();
+        Endringer<E> endringer = new Endringer<>();
 
         Class<? extends AbstractEndring> endringClass = endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
@@ -164,6 +164,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
                         endringer.setObjects(sorterBobler(accumulatedEndringer, accumulatedBubbleObjects));
                         oensketAntallEndringer = 0;
                     }
+                    sisteEndringId = (EI) endringer.getSisteEndringIdProsessert();
                 }
             } else {
                 throw new NotImplementedException("Denne opsjon er ikke implementert. Kommer senere");
