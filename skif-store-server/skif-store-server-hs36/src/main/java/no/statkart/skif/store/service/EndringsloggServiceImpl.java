@@ -19,7 +19,10 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static no.statkart.skif.util.HibernateHelper.*;
 
@@ -29,7 +32,7 @@ import static no.statkart.skif.util.HibernateHelper.*;
  * @since 2.5.0
  */
 // OBS! Det ligger en kopi i hs 3.2
-public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends AbstractEndringId> implements EndringsloggService<E, EI> {
+public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extends AbstractEndringId<?>> implements EndringsloggService<E, EI> {
     private static final int LIMIT = 1000;
 
     private final Class<EI> endringIdClass;
@@ -63,12 +66,12 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
     }
 
     @Override
-    public Endringer<E> findEndringer(@Nullable EI id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
+    public Endringer<E, EI> findEndringer(@Nullable EI id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
         Preconditions.checkNotNull(bobleklasse, "domainKlasse er obligatorisk");
         Preconditions.checkNotNull(returnerBobler, "returnerBobler er obligatorisk");
         Preconditions.checkArgument(maksAntall >= 0, "maksAntall er negativ");
 
-        Endringer<E> endringer = new Endringer<E>();
+        Endringer<E, EI> endringer = new Endringer<>();
 
         Class<? extends AbstractEndring> endringClass = endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
@@ -164,6 +167,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
                         endringer.setObjects(sorterBobler(accumulatedEndringer, accumulatedBubbleObjects));
                         oensketAntallEndringer = 0;
                     }
+                    sisteEndringId = endringer.getSisteEndringIdProsessert();
                 }
             } else {
                 throw new NotImplementedException("Denne opsjon er ikke implementert. Kommer senere");

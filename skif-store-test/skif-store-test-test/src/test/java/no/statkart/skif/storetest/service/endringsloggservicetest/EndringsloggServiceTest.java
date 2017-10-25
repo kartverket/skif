@@ -57,12 +57,12 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     }
 
     public void testFindEndringerUtenLastingAvEndretObjekter(){
-        Endringer<?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Aldri, 1);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Aldri, 1);
         assertEquals(endringer.getEndringList().size(),1);
     }
 
     public void testFindEndringerMedLastingAvEndretObjekter() {
-        Endringer<?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Alltid, 1);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Alltid, 1);
         assertEquals(endringer.getEndringList().size(),1);
     }
 
@@ -79,7 +79,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
         EndringId<?> sisteEndringId = endringsloggService.findSisteEndringId();
         assertNotNull(sisteEndringId);
         EndringId nestSisteEndringId = new EndringId(sisteEndringId.getValue() - 1);
-        Endringer<?> endringer = endringsloggService.findEndringer(nestSisteEndringId, Simple.class, null, ReturnerBobler.Alltid, 0);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(nestSisteEndringId, Simple.class, null, ReturnerBobler.Alltid, 0);
         assertEquals(endringer.getSisteEndringIdProsessert(), nestSisteEndringId);
         assertFalse(endringer.isAlleEndringerFunnet());
         endringer = endringsloggService.findEndringer(sisteEndringId, Simple.class, null, ReturnerBobler.Alltid, 0);
@@ -91,7 +91,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
         EndringId<?> sisteEndringId = endringsloggService.findSisteEndringId();
         assertNotNull(sisteEndringId);
         EndringId nestSisteEndringId = new EndringId(sisteEndringId.getValue() - 1);
-        Endringer<?> endringer = endringsloggService.findEndringer(nestSisteEndringId, Simple.class, null, ReturnerBobler.Aldri, 0);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(nestSisteEndringId, Simple.class, null, ReturnerBobler.Aldri, 0);
         assertEquals(endringer.getSisteEndringIdProsessert(), nestSisteEndringId);
         assertFalse(endringer.isAlleEndringerFunnet());
         endringer = endringsloggService.findEndringer(sisteEndringId, Simple.class, null, ReturnerBobler.Aldri, 0);
@@ -105,7 +105,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     }
 
     public void testCalcObjectkontrollForList(){
-        Endringer<?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Alltid, 1);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Alltid, 1);
         List<BubbleId<?>> endretBubbleIds = endringer.getEndretBubbleIds();
         Kontroll kontroll = endringsloggService.calcObjektkontrollForList(endretBubbleIds, Simple.class);
         assertEquals(kontroll.getAntall(),1);
@@ -121,7 +121,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     }
 
     public void testCalcKontrollForList(){
-        Endringer<?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Aldri, 1);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Aldri, 1);
         Kontroll kontrollList = endringsloggService.calcObjektkontrollForList(ImmutableList.of(endringer.getEndretBubbleIds().get(0)), Simple.class);
         assertEquals(kontrollList.getAntall(), 1);
     }

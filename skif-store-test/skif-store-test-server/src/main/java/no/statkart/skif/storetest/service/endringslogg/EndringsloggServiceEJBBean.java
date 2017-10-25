@@ -45,12 +45,12 @@ public class EndringsloggServiceEJBBean extends EJBTimedService implements Endri
     }
 
     @Override
-    public Endringer<Endring<?, ?>> findEndringer(@Nullable EndringId id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
+    public Endringer<Endring<EndringId<?>, ?>, EndringId<?>> findEndringer(@Nullable EndringId<?> id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
         return serviceChain.findEndringer(id, bobleklasse, filter, returnerBobler, maksAntall);
     }
 
     @Override
-    public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable EndringId id, Class<T> bobleklasse, @Nullable String filter, int antall) {
+    public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable EndringId<?> id, Class<T> bobleklasse, @Nullable String filter, int antall) {
         return serviceChain.calcEndringskontroll(id, bobleklasse, filter, antall);
     }
 
