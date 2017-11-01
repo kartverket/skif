@@ -7,6 +7,8 @@ import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.UnitOfWork;
+import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.storetest.domain.basic.*;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
@@ -32,7 +34,7 @@ public class SubTypeTest extends StoreTestTestCase {
     @Inject
     private RunOnServerWithTxRequiresNewService server;
 
-    @Test(groups = { "singlevm-required" })
+    @Test(groups = {"singlevm-required"})
     public void likhet() {
         SubTypedBubbleId<?> subTypedBubbleId = new SubTypedBubbleId(1L);
         SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(1L);
@@ -43,7 +45,7 @@ public class SubTypeTest extends StoreTestTestCase {
         Assert.assertEquals(withPrimitiveId, withCollectionId);
     }
 
-    @Test(groups = { "singlevm-required" })
+    @Test(groups = {"singlevm-required"})
     public void enkelLesetest() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
@@ -70,7 +72,7 @@ public class SubTypeTest extends StoreTestTestCase {
         });
     }
 
-    @Test(groups = { "singlevm-required" })
+    @Test(groups = {"singlevm-required"})
     public void asSnapshotVersion() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
@@ -93,7 +95,7 @@ public class SubTypeTest extends StoreTestTestCase {
         });
     }
 
-    @Test(groups = { "singlevm-required" })
+    @Test(groups = {"singlevm-required"})
     public void insertPlusUpdateWithTypeChange() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         IdService idService = mockupFacade.getStore().getInstance(IdService.class);
@@ -172,7 +174,7 @@ public class SubTypeTest extends StoreTestTestCase {
         });
     }
 
-    @Test(groups = { "singlevm-required" })
+    @Test(groups = {"singlevm-required"})
     public void insertPlusUpdateWithTypeChange2() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
         IdService idService = mockupFacade.getStore().getInstance(IdService.class);
@@ -240,6 +242,97 @@ public class SubTypeTest extends StoreTestTestCase {
                     resultSet = statement.executeQuery("select * from TekstForSubtype where subtypedid=" + idValue);
 
                     Assert.assertFalse(resultSet.next(), "Fant rader");
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    JDBCHelper.close(resultSet, statement);
+                }
+
+                return null;
+            }
+        });
+    }
+
+    @Test(groups = {"singlevm-required"})
+    public void insertPlusUpdateWithTypeChangeViaUnitOfWorkTransfer() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        IdService idService = mockupFacade.getStore().getInstance(IdService.class);
+
+        final long idValue = (Long) idService.getNextIdValue(SubTypeWithPrimitiveId.class);
+
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private Store store;
+
+            @Override
+            public Object run() {
+                SubTypeWithPrimitiveId<?> id = new SubTypeWithPrimitiveId(idValue);
+
+                SubTypeWithPrimitive subTypeWithPrimitive = new SubTypeWithPrimitive();
+                subTypeWithPrimitive.setId(id);
+                subTypeWithPrimitive.setNum(9);
+                subTypeWithPrimitive.setText("Inserted");
+                store.insert(subTypeWithPrimitive);
+
+                return null;
+            }
+        });
+
+        {
+            Store store = injector.getInstance(Store.class);
+
+            try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
+                SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(idValue);
+                SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId(idValue);
+
+                store.lock(withPrimitiveId);
+
+                SubTypeWithCollection subTypeWithCollection = new SubTypeWithCollection();
+                subTypeWithCollection.setId(withCollectionId);
+                subTypeWithCollection.setText("Updated");
+                store.update(subTypeWithCollection);
+
+                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+
+                server.run(new RunOnServerMethod() {
+                    @Inject
+                    private Store store;
+
+                    @Override
+                    public Object run() {
+                        store.registerTransfer(unitOfWorkTransfer);
+
+                        return null;
+                    }
+                });
+
+                store.endUnitOfWork(unitOfWork);
+            }
+        }
+
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private Store store;
+
+            @Inject
+            private Provider<Connection> connectionProvider;
+
+            @Override
+            public Object run() {
+                SubTypedBubbleId<?> id = new SubTypedBubbleId(idValue);
+
+                SubTypedBubble subTypedBubble = store.get(id);
+                Assert.assertTrue(subTypedBubble instanceof SubTypeWithCollection, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
+
+                Connection connection = connectionProvider.get();
+                Statement statement = null;
+                ResultSet resultSet = null;
+                try {
+                    statement = connection.createStatement();
+                    resultSet = statement.executeQuery("select num from subtypedbubble where id=" + idValue);
+
+                    Assert.assertTrue(resultSet.next(), "Fant ingen rader");
+                    Assert.assertNull(resultSet.getObject(1), "num er ikke nullet ut");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 } finally {

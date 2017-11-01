@@ -430,10 +430,10 @@ public abstract class AbstractStore implements Store {
     private Set<? extends BubbleId<?>> getIdsOfUpdatedOrDeleted(UnitOfWorkTransfer transfer) {
         Set<BubbleId<?>> result = Sets.newHashSetWithExpectedSize(transfer.getUpdatedObjects().size() + transfer.getDeletedObjects().size());
         for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
-            result.add(bubbleObject.getId());
+            result.add(bubbleObject.getId().asBase());
         }
         for (BubbleObject bubbleObject : transfer.getDeletedObjects()) {
-            result.add(bubbleObject.getId());
+            result.add(bubbleObject.getId().asBase());
         }
         return result;
     }
