@@ -1,7 +1,6 @@
 package no.statkart.skif;
 
 import com.google.common.collect.ImmutableSet;
-import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.store.AbstractBubbleId;
@@ -23,7 +22,6 @@ import java.util.Set;
 public class SerializableTest {
 
     static final List<Package> packages = Arrays.asList(
-            SelectionPolygon.class.getPackage(),
             ObjectNotFoundException.class.getPackage(),
             LockInfo.class.getPackage(),
             AbstractBubbleId.class.getPackage()

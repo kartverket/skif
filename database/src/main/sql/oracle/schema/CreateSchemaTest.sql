@@ -753,56 +753,6 @@ END BARFOOS_TRIGGER;
 /
 
 
-CREATE TABLE GEOMETRICELEMENT_H (
-  id                  NUMBER(19,0),
-  point               MDSYS.SDO_GEOMETRY,
-  polygon             MDSYS.SDO_GEOMETRY,
-  oppdateringsdato              timestamp(6) with local time zone not null,
-  sluttdato                timestamp(6) with local time zone not null,
-  versjonId            number (19,0) not null,
-  primary key(id, oppdateringsdato)
-);
-create view GEOMETRICELEMENT as select * from GEOMETRICELEMENT_H where snapshot_time.t_between(oppdateringsdato, sluttdato)=1;
-
-CREATE OR REPLACE TRIGGER T_GEOMETRICELEMENT INSTEAD OF INSERT OR UPDATE OR DELETE ON GEOMETRICELEMENT
-FOR EACH ROW
-DECLARE
-t_Trans TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_Trans();
-t_End TIMESTAMP WITH LOCAL TIME ZONE := snapshot_time.Get_T_CURRENT();
-BEGIN
-  IF INSERTING THEN
-    INSERT INTO GEOMETRICELEMENT_H
-        VALUES (:new.ID, :new.point, :new.polygon, t_Trans, t_End, 1);
-
-  ELSIF UPDATING THEN
-     IF :old.oppdateringsdato < t_Trans THEN
-        INSERT INTO GEOMETRICELEMENT_H VALUES (:old.ID, :new.POINT, :new.POLYGON, :old.oppdateringsdato, t_Trans, :old.versjonId);
-        UPDATE GEOMETRICELEMENT_H SET versjonId = :old.versjonId+1
-        WHERE id = :new.id and sluttdato = t_End;
-     END IF;
-     UPDATE GEOMETRICELEMENT_H SET ID=:new.ID, POINT=:new.POINT, POLYGON=:new.POLYGON, oppdateringsdato=t_Trans, sluttdato=t_End, versjonId=versjonId
-        WHERE id = :new.id and sluttdato = t_End;
-
-  ELSIF DELETING THEN
-     IF :old.oppdateringsdato < t_Trans THEN
-        INSERT INTO GEOMETRICELEMENT_H
-           VALUES (:old.ID, :old.POINT, :old.POLYGON, :old.oppdateringsdato, t_Trans, :old.versjonId);
-     END IF;
-     DELETE FROM GEOMETRICELEMENT_H
-        WHERE id = :old.id AND sluttdato = t_End;
-
-  END IF;
-END T_GEOMETRICELEMENT;
-/
-
-INSERT INTO USER_SDO_GEOM_METADATA VALUES ('GEOMETRICELEMENT_h', 'polygon', MDSYS.SDO_DIM_ARRAY( MDSYS.SDO_DIM_ELEMENT('X', 257000, 1352000, 0.0005), MDSYS.SDO_DIM_ELEMENT('Y', 6320000, 8050000, 0.0005)), NULL);
-INSERT INTO USER_SDO_GEOM_METADATA VALUES ('GEOMETRICELEMENT_h', 'point', MDSYS.SDO_DIM_ARRAY( MDSYS.SDO_DIM_ELEMENT('X', 257000, 1352000, 0.0005), MDSYS.SDO_DIM_ELEMENT('Y', 6320000, 8050000, 0.0005)), NULL);
-
-ALTER SESSION SET SORT_AREA_SIZE = 20000000;
-
-CREATE INDEX geometricentity_spatial_idx ON geometricelement_H(polygon) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS ('layer_gtype=POLYGON');
-CREATE INDEX geometricentity2_spatial_idx ON geometricelement_H(point) INDEXTYPE IS MDSYS.SPATIAL_INDEX PARAMETERS ('layer_gtype=POINT');
-
 create table AggregertObjektMeta_h (
   id number(19,0) not null,
   sistOppdatertAv varchar2(255 char),

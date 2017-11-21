@@ -6,7 +6,6 @@ dependencies {
     compile project(':skif-service-server')
 
     compile libraries.jodatime
-    compile libraries.jts
 
     provided libraries.jdbc
 
@@ -15,8 +14,6 @@ dependencies {
     if(hibernateVersion.equals("3.6")) {
       provided libraries.hibernate_3_6
     }
-
-    compile libraries.gt2
 
     provided libraries.weblogic
 
@@ -40,6 +37,4 @@ def deployer = uploadArchives.repositories.mavenDeployer
 
 [installer, deployer]*.pom*.whenConfigured { pom ->
     pom.dependencies.findAll { dep -> dep.groupId == 'joda-time' }.each { it.optional = true }  //optional avhengighet for joda-time [SKIF-472]
-    pom.dependencies.findAll { dep -> dep.groupId == 'com.vividsolutions' && dep.artifactId == 'jts' }.each { it.optional = true }  //optional avhengighet for jts [SKIF-472]
-    pom.dependencies.findAll { dep -> dep.groupId == 'org.geotools' && dep.artifactId == 'gt2-oracle-spatial' }.each { it.optional = true }  //optional avhengighet for gt2 [SKIF-472]
 }

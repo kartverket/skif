@@ -1,12 +1,10 @@
 package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
-import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 
@@ -55,22 +53,8 @@ public class HistTestServiceEJBBean extends EJBTimedService implements HistTestS
     }
 
     @Override
-    public List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion) {
-        return serviceChain.findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(histSimpleIds, snapshotVersion);
-    }
-
-    @Override
     public List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingOracleArray(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion) {
         return serviceChain.findHistSimpleIdsAliveAtSnapshotUsingOracleArray(histSimpleIds, snapshotVersion);
     }
 
-    @Override
-    public List<GeometricElementId> findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {
-        return serviceChain.findGeometricElementsWithPointInSelectionPolygon(selectionPolygon, snapshotVersion);
-    }
-
-    @Override
-    public List<GeometricElementId> findGeometricElementsWithPolygonInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {
-        return serviceChain.findGeometricElementsWithPolygonInSelectionPolygon(selectionPolygon, snapshotVersion);
-    }
 }

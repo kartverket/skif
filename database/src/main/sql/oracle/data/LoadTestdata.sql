@@ -146,10 +146,6 @@ insert into BARFOOS_H (ID,oppdateringsdato,sluttdato,versjonId,TEXT,BARID) value
 insert into FooForBarFoos_H (BarFoosId, fooId, oppdateringsdato,sluttdato) values (2001, 100, snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'));
 insert into FooForBarFoos_H (BarFoosId, fooId, oppdateringsdato,sluttdato) values (2001, 101, snapshot_time.to_t('2011-10-02 08:03:30.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'));
 
-insert into GEOMETRICELEMENT_H(id, point, polygon, oppdateringsdato, sluttdato, versjonId) values (1, MDSYS.SDO_GEOMETRY(2001,null,MDSYS.SDO_POINT_TYPE(608000,6650000,null),null,null), MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(607900, 6649900, 608100, 6649900, 608100, 6650100, 607900, 6650100, 607900, 6649900)), snapshot_time.to_t('2011-10-02 08:00:31.00'),snapshot_time.to_t('2011-10-02 08:03:31.00'),1);
-insert into GEOMETRICELEMENT_H(id, point, polygon, oppdateringsdato, sluttdato, versjonId) values (1, MDSYS.SDO_GEOMETRY(2001,null,MDSYS.SDO_POINT_TYPE(608010,6650010,null),null,null), MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(607910, 6649910, 608110, 6649910, 608110, 6650110, 607910, 6650110, 607910, 6649910)), snapshot_time.to_t('2011-10-02 08:03:31.00'),snapshot_time.to_t('2011-10-02 08:05:31.00'),2);
-insert into GEOMETRICELEMENT_H(id, point, polygon, oppdateringsdato, sluttdato, versjonId) values (1, MDSYS.SDO_GEOMETRY(2001,null,MDSYS.SDO_POINT_TYPE(608020,6650020,null),null,null), MDSYS.SDO_GEOMETRY(2003,null,null,MDSYS.SDO_ELEM_INFO_ARRAY(1,1003,1),MDSYS.SDO_ORDINATE_ARRAY(607920, 6649920, 608100, 6649920, 608120, 6650120, 607920, 6650120, 607920, 6649920)), snapshot_time.to_t('2011-10-02 08:05:31.00'),snapshot_time.to_t('9999-01-01 00:00:00.00'),3);
-
 
 -- Multikobling
 

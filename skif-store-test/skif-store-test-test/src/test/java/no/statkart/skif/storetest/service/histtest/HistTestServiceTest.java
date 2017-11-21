@@ -2,16 +2,9 @@ package no.statkart.skif.storetest.service.histtest;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.basic.HistSimple;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelation;
@@ -143,55 +136,4 @@ public class HistTestServiceTest extends StoreTestTestCase {
         assertThat(histSimpleIdsAliveAtSnapshot).contains(mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1().asSnapshotVersion(MockupSnapshots.S1));
     }
 
-    public void findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator() {
-        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        final ImmutableList<HistSimpleId<?>> histSimpleIds = ImmutableList.of(
-                mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1().asSnapshotVersion(MockupSnapshots.S1),
-                mockupFacade.getHistSimpleMockupFactory().getHistSimpleId2().asSnapshotVersion(MockupSnapshots.S1)
-        );
-        snapshotVersionContext.setSnapshotVersion(MockupSnapshots.S1);
-        final List<HistSimpleId<?>> histSimpleIdsAliveAtSnapshot = histTestService.findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(histSimpleIds, MockupSnapshots.S1);
-        assertEquals(histSimpleIdsAliveAtSnapshot.size(), 1);
-        assertThat(histSimpleIdsAliveAtSnapshot).contains(mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1().asSnapshotVersion(MockupSnapshots.S1));
-    }
-
-    public void testFindGeometricElementsWithPointInSelectionPolygon() {
-
-        GeometryFactory factory = new GeometryFactory(new PrecisionModel(100), -1);
-        Polygon polygon = factory.createPolygon(factory.createLinearRing(
-                new Coordinate[]{
-                        new Coordinate(607950, 6649950),
-                        new Coordinate(608050, 6649950),
-                        new Coordinate(608050, 6650050),
-                        new Coordinate(608050, 6650050),
-                        new Coordinate(607950, 6649950)
-                }), new LinearRing[0]);
-        SelectionPolygon selectionPolygon = new SelectionPolygon(polygon);
-
-        SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:05:30.00");
-        snapshotVersionContext.setSnapshotVersion(snapshotVersion);
-        List<GeometricElementId> ids = histTestService.findGeometricElementsWithPointInSelectionPolygon(selectionPolygon, snapshotVersion);
-
-        assertEquals(ids.size(), 1);
-    }
-
-    public void testFindGeometricElementsWithPolygonInSelectionPolygon() {
-
-        GeometryFactory factory = new GeometryFactory(new PrecisionModel(100), -1);
-        Polygon polygon = factory.createPolygon(factory.createLinearRing(
-                new Coordinate[]{
-                        new Coordinate(607950, 6649950),
-                        new Coordinate(608050, 6649950),
-                        new Coordinate(608050, 6650050),
-                        new Coordinate(608050, 6650050),
-                        new Coordinate(607950, 6649950)
-                }), new LinearRing[0]);
-        SelectionPolygon selectionPolygon = new SelectionPolygon(polygon);
-
-        SnapshotVersion snapshotVersion = SnapshotVersion.createInstance("2011-10-02 08:05:30.00");
-        snapshotVersionContext.setSnapshotVersion(snapshotVersion);
-        List<GeometricElementId> ids = histTestService.findGeometricElementsWithPolygonInSelectionPolygon(selectionPolygon, snapshotVersion);
-
-        assertEquals(ids.size(), 1);
-    }
 }

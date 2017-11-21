@@ -4,9 +4,11 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
-import no.statkart.skif.storetest.wsapi.domain.basic.*;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleId;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleIdList;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleIdToHistWithRelationIdsMap;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistWithRelationIdList;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.annotation.PostConstruct;
@@ -84,15 +86,4 @@ public class HistTestServiceWSBean extends SkifWebService<HistTestServiceWSI> im
         return wsServiceChain.findHistSimpleIdsAliveAtSnapshotUsingOracleArray(histSimpleIds, snapshotVersion,storeTestContext);
     }
 
-    @Override
-    @WebMethod
-    public GeometricElementIdList findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, Timestamp snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException {
-        return wsServiceChain.findGeometricElementsWithPointInSelectionPolygon(selectionPolygon, snapshotVersion, storeTestContext);
-    }
-
-    @Override
-    @WebMethod
-    public GeometricElementIdList findGeometricElementsWithPolygonInSelectionPolygon(@WebParam(name = "selectionPolygon") SelectionPolygon selectionPolygon, @WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException{
-        return wsServiceChain.findGeometricElementsWithPolygonInSelectionPolygon(selectionPolygon, snapshotVersion, storeTestContext);
-    }
 }

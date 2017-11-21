@@ -61,8 +61,6 @@ def libraries = [
         jaxb_impl: "com.sun.xml.bind:jaxb-impl:${libVersion('jaxb', '2.1.13')}",
         jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${libVersion('jaxb', '2.1.13')}",
 
-        jts: "com.vividsolutions:jts:${libVersion('jts', '1.7.1')}",
-
         jodatime: "joda-time:joda-time:${libVersion('jodatime', '2.3')}",
 
         // commons-lang - vurderes i SKIF-271
@@ -71,10 +69,6 @@ def libraries = [
 
 // SKIF-239: Mulighet for valg av ojdbc driver
 libraries.jdbc = ORA_DEBUG ? libraries.ojdbc_g : libraries.ojdbc
-
-libraries.gt2 = [
-        'org.geotools:gt2-oracle-spatial:2.2.2-CUSTOM@jar',
-]
 
 
 //minimal bruk av guice

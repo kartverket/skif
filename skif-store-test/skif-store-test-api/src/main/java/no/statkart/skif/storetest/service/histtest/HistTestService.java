@@ -1,9 +1,7 @@
 package no.statkart.skif.storetest.service.histtest;
 
-import no.statkart.skif.domain.SelectionPolygon;
 import no.statkart.skif.service.annotation.ServiceContextMapped;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 
@@ -128,46 +126,11 @@ public interface HistTestService {
      * Finner id-ene til alle HistSimple objekter i {@code histSimpleIds} og som eksisterte på gitt snapshot-tidspunkt.
      * For denne metoden angis kan snapshotVersion eksplisitt.
      *
-     * @param histSimpleIds
-     * @param snapshotVersion
-     * @return id-er på objekter som ble funnet. Id-er har SnapshotVersion {@code snapshotVersion}
-     * @since 2.1
-     */
-    List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion);
-
-    /**
-     * Finner id-ene til alle HistSimple objekter i {@code histSimpleIds} og som eksisterte på gitt snapshot-tidspunkt.
-     * For denne metoden angis kan snapshotVersion eksplisitt.
-     *
      * @param histSimpleIds   alle ids må ha samme SnapshotVersion
      * @param snapshotVersion
      * @return
      * @since 2.1
      */
     List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingOracleArray(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion);
-
-    /**
-     * Finner objekter hvis punkt ligger inne i {@code selectionPolygon}  på gitt snapshot-tidspunkt {@code snapshotVersion}.
-     * <p/>
-     * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
-     * som brukes for søket.
-     *
-     * @param selectionPolygon
-     * @param snapshotVersion
-     * @return
-     */
-    List<GeometricElementId> findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion);
-
-    /**
-     * Finner objekter hvis polygon ligger inne i {@code selectionPolygon}  på gitt snapshot-tidspunkt {@code snapshotVersion}.
-     * <p/>
-     * Denne metode har en eksplisitt SnapshotVersion parameter som siste parameter som styrer hvilken snapshotVersion
-     * som brukes for søket.
-     *
-     * @param selectionPolygon
-     * @param snapshotVersion
-     * @return
-     */
-    List<GeometricElementId> findGeometricElementsWithPolygonInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion);
 
 }

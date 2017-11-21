@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -70,16 +69,6 @@ public class HistSimpleFinder {
             return histSimpleIds;
         } catch (HibernateException e) {
             throw new ImplementationException(e);
-        }
-    }
-
-    public List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion) {
-        try (ConnectionSelector connectionSelector = connectionSelectorProvider.get()) {
-            QueryGenerator generator = new QueryGenerator("id", "histSimple");
-            generator.setConnection(connectionSelector.get(snapshotVersion), snapshotVersion);
-            generator.addSelection("id in", new ArrayList<>(histSimpleIds));
-            List<HistSimpleId<?>> result = (List) generator.executeQueryForBubbleIdList(HistSimpleId.class);
-            return result;
         }
     }
 
