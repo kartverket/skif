@@ -76,7 +76,7 @@ public abstract class AbstractSkifTestCase {
 
     protected String getSingleVmServerModuleClassname() {
         final Class<? extends Module> moduleClass = getSingleVmServerModuleClass();
-        if (moduleClass!=null) {
+        if (moduleClass != null) {
             return moduleClass.getName();
         } else {
             return null;
@@ -156,15 +156,40 @@ public abstract class AbstractSkifTestCase {
      */
     @AfterClass
     protected void afterClass() throws IllegalAccessException {
-        injector = null;
-        for (Class c = getClass(); !c.equals(AbstractSkifTestCase.class); c = c.getSuperclass()) {
-            for (Field field : c.getDeclaredFields()) {
-                if ((field.getModifiers() & (Modifier.FINAL | Modifier.STATIC)) == 0 && !field.getType().isPrimitive()) {
-                    field.setAccessible(true);
-                    field.set(this, null);
+        resetFieldsToNull(this);
+    }
+
+    static void resetFieldsToNull(final AbstractSkifTestCase testCase) {
+        try {
+            testCase.injector = null;
+            for (Class c = testCase.getClass(); !c.equals(AbstractSkifTestCase.class); c = c.getSuperclass()) {
+                for (Field field : c.getDeclaredFields()) {
+                    if (!isStaticFinal(field) && !field.getType().isPrimitive()) {
+                        field.setAccessible(true);
+                        if (isFinal(field)) {
+                            final Field modifiersField = Field.class.getDeclaredField("modifiers");
+                            modifiersField.setAccessible(true);
+                            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+                        }
+                        field.set(testCase, null);
+                    }
                 }
             }
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException();
         }
+    }
+
+    private static boolean isStaticFinal(final Field field) {
+        return isFinal(field) && isStatic(field);
+    }
+
+    private static boolean isStatic(Field field) {
+        return (field.getModifiers() & Modifier.STATIC) == Modifier.STATIC;
+    }
+
+    private static boolean isFinal(final Field field) {
+        return (field.getModifiers() & Modifier.FINAL) == Modifier.FINAL;
     }
 
     private ModuleBuilder getModuleBuilder(ITestContext context) {
@@ -195,7 +220,7 @@ public abstract class AbstractSkifTestCase {
      * Beregner konfigurasjonsnøkkel for testcase på basis av hvilke konfigurasjonsklasser testcasen bruker.
      */
     protected String calcConfigurationKey() {
-        return getModuleClassname() + ":" + Arrays.toString(getConfigurationFilenames()) + ":" + getSingleVmServerModuleClassname() + ":" +  Arrays.toString(getSingleVmServerConfigurationFilenames()) + ":" + isSingleVm();
+        return getModuleClassname() + ":" + Arrays.toString(getConfigurationFilenames()) + ":" + getSingleVmServerModuleClassname() + ":" + Arrays.toString(getSingleVmServerConfigurationFilenames()) + ":" + isSingleVm();
     }
 
     /**
