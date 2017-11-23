@@ -16,7 +16,6 @@ public class StoreTestBubbleTypeMapper<WsapiT extends no.statkart.skif.storetest
     public WsapiT mapDomainObject(DomainT source) {
         WsapiT target = createWsapiT();
         target.setId(getMapping().d2w((StoreTestBubbleId) source.getId()));
-        target.setVersjonId(getMapping().d2w(source.getVersjonId()));
         return target;
     }
 
@@ -24,7 +23,6 @@ public class StoreTestBubbleTypeMapper<WsapiT extends no.statkart.skif.storetest
     public DomainT mapWsapiObject(WsapiT source) {
         DomainT target = createDomainT();
         target.setId(getMapping().w2d(source.getId()));
-        target.setVersjonId(getMapping().w2d(source.getVersjonId()));
         return target;
     }
 }

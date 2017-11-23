@@ -95,7 +95,6 @@
     <xs:complexType name="StoreTestBubble">
         <xs:sequence>
             <xs:element name="id" type="domainns:StoreTestBubbleId"/>
-            <xs:element name="versjonId" type="xs:long"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -118,6 +117,7 @@
                 <xs:sequence>
                     <xs:element name="oppdateringsdato" type="basetyperns:Timestamp"/>
                     <xs:element name="sluttdato" type="basetyperns:Timestamp"/>
+                    <xs:element name="versjonId" type="xs:long"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

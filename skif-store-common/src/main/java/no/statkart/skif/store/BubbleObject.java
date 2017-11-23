@@ -26,10 +26,6 @@ public interface BubbleObject extends Serializable {
 
     void register(Store store);
 
-    long getVersjonId();
-
-    void setVersjonId(long version);
-
     /**
      * SKIF internal use only!
      */
