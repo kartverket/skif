@@ -166,17 +166,12 @@ public abstract class AbstractSkifTestCase {
                 for (Field field : c.getDeclaredFields()) {
                     if (!isStaticFinal(field) && !field.getType().isPrimitive()) {
                         field.setAccessible(true);
-                        if (isFinal(field)) {
-                            final Field modifiersField = Field.class.getDeclaredField("modifiers");
-                            modifiersField.setAccessible(true);
-                            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-                        }
                         field.set(testCase, null);
                     }
                 }
             }
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new RuntimeException();
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
