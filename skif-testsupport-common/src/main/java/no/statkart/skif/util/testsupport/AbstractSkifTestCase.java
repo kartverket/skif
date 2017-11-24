@@ -185,11 +185,11 @@ public abstract class AbstractSkifTestCase {
     }
 
     private static boolean isStatic(Field field) {
-        return (field.getModifiers() & Modifier.STATIC) == Modifier.STATIC;
+        return Modifier.isStatic(field.getModifiers());
     }
 
     private static boolean isFinal(final Field field) {
-        return (field.getModifiers() & Modifier.FINAL) == Modifier.FINAL;
+        return Modifier.isFinal(field.getModifiers());
     }
 
     private ModuleBuilder getModuleBuilder(ITestContext context) {
