@@ -22,7 +22,7 @@ import java.util.Set;
  *     <li>Hvis ingen av metodens parameter er av type  {@code BubbleId}, collection av {@code BubbleId} eller
  *     {@code SnapshotVersion} eller hvis alle slike paramtre er annotert med {@code @SuppressSnapshotVersionMapping}
  *     så mappes metoden til wsapi-metode med samme parametre plus context hvor snapshotversion i context er satt
- *     til {@code SnapshotVersion.CURRENT} TODO: vurdere å ta verdi fra client context istedet
+ *     til {@code SnapshotVersion.CURRENT}
  *     </li>
  *     <li>Hvis metoden har nettopp en parameter av type {@code SnapshotVersion} og denne står sist i parameterlisten
  *     så mappes metoden til wsapi-metode med samme parameter minus snapshotversion parametren og plus contekst
@@ -32,7 +32,7 @@ import java.util.Set;
  *     parametre av type {@code SnapshotVersion} som ikke er annotert med {@code @SuppressSnapshotVersionMapping} så mappes kallet til
  *     wsapi-metode med samme parametre plus context hvor snapshotversion bestemmes av utfra id-ene i listen ut fra
  *     følgende regel: hvis listen ikke er tom må alle id ha samme snapshotversion og verdi fra første element anvendes.
- *     Hvis listen er tom brukes {@code SnapshotVersion.CURRENT} TODO: vurdere å ta verdi fra client context istedet
+ *     Hvis listen er tom brukes {@code SnapshotVersion.CURRENT}
  *     </li>
  *     <li>Hvis metoden har en eller flere parametre av type {@code BubbleId} som ikke er annotert med
  *     {@code @SuppressSnapshotVersionMapping} og alle andre parameter av type collection av {@code BubbleId} og
