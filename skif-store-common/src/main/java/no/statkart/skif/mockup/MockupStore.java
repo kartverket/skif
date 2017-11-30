@@ -17,6 +17,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -359,6 +360,7 @@ public class MockupStore implements Store {
     public UnitOfWorkTransfer getSnapshot() {
         throw new NotImplementedException();
     }
+
     @Override
     public UnitOfWorkTransfer getSessionSnapshot() {
         throw new NotImplementedException();
@@ -433,9 +435,9 @@ public class MockupStore implements Store {
         }
 
         Set<BubbleId> linkedIds = new LinkedHashSet<>(linkedObjects.size());
-        for (BubbleObject linkedObject : linkedObjects) {
-            linkedIds.add(linkedObject.getId());
-        }
+        List<? extends BubbleId<?>> idsAsList = linkedObjects.stream().map(BubbleObject::getBubbleId).collect(Collectors.toList());
+        Collections.reverse(idsAsList);
+        linkedIds.addAll(idsAsList);
 
         return linkedIds;
     }
@@ -520,7 +522,7 @@ public class MockupStore implements Store {
      * Sjekker om gitt {@link BubbleId} er en instans av en av de angitte bubbleid-klassene. Dette inkluderer av den er
      * av en subtype av en av disse klassene.
      *
-     * @param id id som skal sjekkes
+     * @param id               id som skal sjekkes
      * @param ignoredIdClasses id-klasser som id skal sjekkes mot
      * @return <code>true</code> dersom den er en instans
      */
