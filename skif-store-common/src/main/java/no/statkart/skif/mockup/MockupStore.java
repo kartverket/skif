@@ -420,22 +420,27 @@ public class MockupStore implements Store {
      * @return id-ene, inkludert de til gitt bobleobjekter
      */
     private Set<BubbleId> findLinkedBubbleIds(Collection<BubbleObject> bubbleObjects, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
-        Queue<BubbleObject> uncheckedObjects = new ArrayDeque<>(bubbleObjects);
+        ArrayDeque<BubbleObject> uncheckedObjects = new ArrayDeque<>(bubbleObjects);
         Set<BubbleObject> linkedObjects = new LinkedHashSet<>(); // Ønsker å bevare insert rekkefølgen
 
         while (!uncheckedObjects.isEmpty()) {
             BubbleObject object = uncheckedObjects.remove();
-            linkedObjects.add(object);
 
             Set<BubbleId> referencedBubbleIds = findReferencedBubbleIds(object, ignoredIdClasses);
             Set<BubbleObject> referencedBubbles = get(referencedBubbleIds);
 
             referencedBubbles.removeAll(uncheckedObjects);
             referencedBubbles.removeAll(linkedObjects);
+            referencedBubbles.remove(object);
 
-            ArrayList<BubbleObject> referencedBubblesAsList = new ArrayList<>(referencedBubbles);
-            Collections.reverse(referencedBubblesAsList);
-            uncheckedObjects.addAll(referencedBubblesAsList);
+            if(referencedBubbles.isEmpty()) {
+                linkedObjects.add(object);
+            } else {
+                uncheckedObjects.addFirst(object);
+                for (BubbleObject bubbleObject : referencedBubbles) {
+                    uncheckedObjects.addFirst(bubbleObject);
+                }
+            }
         }
 
         Set<BubbleId> linkedIds = new LinkedHashSet<>(linkedObjects.size());
