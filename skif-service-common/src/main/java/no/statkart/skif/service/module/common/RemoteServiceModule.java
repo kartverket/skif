@@ -86,7 +86,8 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
      * @param callServiceChainProxyHandlers proxyledd
      * @since 2.5.0
      */
-    public RemoteServiceModule appendCallServiceChainProxyHandlers(Class<? extends ChainedProxyHandler>... callServiceChainProxyHandlers) {
+    @SafeVarargs
+    public final RemoteServiceModule appendCallServiceChainProxyHandlers(Class<? extends ChainedProxyHandler>... callServiceChainProxyHandlers) {
         CallServiceChainFactorySpecification jeeCallServiceChainFactorySpecification = getStrategy(ServiceMode.JEE).getCallServiceChainFactorySpecification();
         for (Class<? extends ChainedProxyHandler> callServiceChainProxyHandler : callServiceChainProxyHandlers) {
             jeeCallServiceChainFactorySpecification.appendCallServiceChainProxyHandler(callServiceChainProxyHandler);
