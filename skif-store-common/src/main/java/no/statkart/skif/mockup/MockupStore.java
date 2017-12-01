@@ -1,5 +1,6 @@
 package no.statkart.skif.mockup;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -431,13 +432,16 @@ public class MockupStore implements Store {
 
             referencedBubbles.removeAll(uncheckedObjects);
             referencedBubbles.removeAll(linkedObjects);
-            uncheckedObjects.addAll(referencedBubbles);
+
+            ArrayList<BubbleObject> referencedBubblesAsList = new ArrayList<>(referencedBubbles);
+            Collections.reverse(referencedBubblesAsList);
+            uncheckedObjects.addAll(referencedBubblesAsList);
         }
 
         Set<BubbleId> linkedIds = new LinkedHashSet<>(linkedObjects.size());
-        List<? extends BubbleId<?>> idsAsList = linkedObjects.stream().map(BubbleObject::getBubbleId).collect(Collectors.toList());
-        Collections.reverse(idsAsList);
-        linkedIds.addAll(idsAsList);
+        for (BubbleObject linkedObject : linkedObjects) {
+            linkedIds.add(linkedObject.getId());
+        }
 
         return linkedIds;
     }
