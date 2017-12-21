@@ -1,6 +1,10 @@
 package no.statkart.skif.store;
 
-import com.google.inject.*;
+import com.google.inject.Binding;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.SkifConfigConstants;
@@ -14,7 +18,12 @@ import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.service.locker.DBLockerService;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementasjon av LockerStrategy som fungerer for BubbleIds som har en Long som value. Holder på alle
@@ -57,9 +66,9 @@ public class TransactionalLockerStrategy implements LockerStrategy {
 
 
     /**
-     * @param injector                 injector for å slå opp alle mulige lockerservicer
-     * @param configuration            SKIF-konfigurasjon
-     * @param serviceRequestContext    context for gjeldende request (TransactionalLockerStrategy skal være request scopet)
+     * @param injector              injector for å slå opp alle mulige lockerservicer
+     * @param configuration         SKIF-konfigurasjon
+     * @param serviceRequestContext context for gjeldende request (TransactionalLockerStrategy skal være request scopet)
      */
     @Inject
     public TransactionalLockerStrategy(Injector injector, Configuration configuration, ServiceRequestContext serviceRequestContext) {
@@ -283,7 +292,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
 
         int consumedLocks = 0;
 
-        Map<Key<?>,Binding<?>> bindings = injector.getBindings();
+        Map<Key<?>, Binding<?>> bindings = injector.getBindings();
         for (Map.Entry<Key<?>, Binding<?>> bindingEntry : bindings.entrySet()) {
             if (bindingEntry.getKey().getTypeLiteral().getRawType().equals(DBLockerInTransactionService.class)) {
                 DBLockerInTransactionService<?> lockerInTransactionService = (DBLockerInTransactionService<?>) bindingEntry.getValue().getProvider().get();
@@ -292,7 +301,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
         }
 
         if (consumedLocks != lockMap.size()) {
-            throw new OperationalException("Locks disappeared during service execution. The service may have been completed on another server.");
+            throw new OperationalException(String.format("Locks disappeared for '%s' during service execution. The service may have been completed on another server.", owner));
         }
     }
 
@@ -372,7 +381,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     private void initializeLockMap() {
         String owner = serviceRequestContext.getUserName();
 
-        Map<Key<?>,Binding<?>> bindings = injector.getBindings();
+        Map<Key<?>, Binding<?>> bindings = injector.getBindings();
         for (Map.Entry<Key<?>, Binding<?>> bindingEntry : bindings.entrySet()) {
             if (bindingEntry.getKey().getTypeLiteral().getRawType().equals(DBLockerService.class)) {
                 DBLockerService<?> lockerService = (DBLockerService<?>) bindingEntry.getValue().getProvider().get();
@@ -388,9 +397,8 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     /**
      * Verifies that the specified id is already locked by caller.
      *
-     * @param id    Id som skal sjekkes
-     * @throws no.statkart.skif.exception.NotLockedException
-     *          dersom brukeren ikke har noen lås på id-en
+     * @param id Id som skal sjekkes
+     * @throws no.statkart.skif.exception.NotLockedException dersom brukeren ikke har noen lås på id-en
      */
     protected synchronized void ensureLockedByCaller(BubbleId id) throws NotLockedException {
         ensureLockMapInitialized();
@@ -414,7 +422,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
      * @param owner Bruker som skal få alle sine låser fornyet
      */
     private void renewAllLocks(String owner) {
-        Map<Key<?>,Binding<?>> bindings = injector.getBindings();
+        Map<Key<?>, Binding<?>> bindings = injector.getBindings();
         for (Map.Entry<Key<?>, Binding<?>> bindingEntry : bindings.entrySet()) {
             if (bindingEntry.getKey().getTypeLiteral().getRawType().equals(DBLockerService.class)) {
                 DBLockerService<?> lockerService = (DBLockerService<?>) bindingEntry.getValue().getProvider().get();
