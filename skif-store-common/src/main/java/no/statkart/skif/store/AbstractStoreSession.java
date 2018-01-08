@@ -345,7 +345,8 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         StoreEntry storeEntry = storeCache.get(bubbleObject.getId());
 
         if (storeEntry == null) {
-            storeEntry = loadEntry(level, bubbleObject.getId(), false);
+            // Konverterer id til base i tilfelle subtypeendring
+            storeEntry = loadEntry(level, bubbleObject.getId().asBase(), false);
             //storeEntry = storeCache.createEntry(level, bubbleObject.getId());
             ensureLocked(storeEntry);
             storeEntry.setState(level, StoreEntryState.UPDATED);
