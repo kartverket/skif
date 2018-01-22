@@ -1,5 +1,6 @@
 package no.statkart.skif.mockup;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -17,6 +18,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -364,6 +366,7 @@ public class MockupStore implements Store {
     public UnitOfWorkTransfer getSnapshot() {
         throw new NotImplementedException();
     }
+
     @Override
     public UnitOfWorkTransfer getSessionSnapshot() {
         throw new NotImplementedException();
@@ -422,19 +425,27 @@ public class MockupStore implements Store {
      * @return id-ene, inkludert de til gitt bobleobjekter
      */
     private Set<BubbleId> findLinkedBubbleIds(Collection<BubbleObject> bubbleObjects, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
-        Queue<BubbleObject> uncheckedObjects = new ArrayDeque<>(bubbleObjects);
+        ArrayDeque<BubbleObject> uncheckedObjects = new ArrayDeque<>(bubbleObjects);
         Set<BubbleObject> linkedObjects = new LinkedHashSet<>(); // Ønsker å bevare insert rekkefølgen
 
         while (!uncheckedObjects.isEmpty()) {
             BubbleObject object = uncheckedObjects.remove();
-            linkedObjects.add(object);
 
             Set<BubbleId> referencedBubbleIds = findReferencedBubbleIds(object, ignoredIdClasses);
             Set<BubbleObject> referencedBubbles = get(referencedBubbleIds);
 
             referencedBubbles.removeAll(uncheckedObjects);
             referencedBubbles.removeAll(linkedObjects);
-            uncheckedObjects.addAll(referencedBubbles);
+            referencedBubbles.remove(object);
+
+            if(referencedBubbles.isEmpty()) {
+                linkedObjects.add(object);
+            } else {
+                uncheckedObjects.addFirst(object);
+                for (BubbleObject bubbleObject : referencedBubbles) {
+                    uncheckedObjects.addFirst(bubbleObject);
+                }
+            }
         }
 
         Set<BubbleId> linkedIds = new LinkedHashSet<>(linkedObjects.size());
@@ -525,7 +536,7 @@ public class MockupStore implements Store {
      * Sjekker om gitt {@link BubbleId} er en instans av en av de angitte bubbleid-klassene. Dette inkluderer av den er
      * av en subtype av en av disse klassene.
      *
-     * @param id id som skal sjekkes
+     * @param id               id som skal sjekkes
      * @param ignoredIdClasses id-klasser som id skal sjekkes mot
      * @return <code>true</code> dersom den er en instans
      */
