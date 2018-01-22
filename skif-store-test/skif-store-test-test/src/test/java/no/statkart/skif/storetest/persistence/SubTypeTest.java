@@ -284,23 +284,27 @@ public class SubTypeTest extends StoreTestTestCase {
         SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(idValue);
         SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId(idValue);
 
-        clientStore.lock(withPrimitiveId);
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            clientStore.lock(withPrimitiveId);
 
-        server.run(new RunOnServerMethod() {
-            @Inject
-            private Store store;
+            server.run(new RunOnServerMethod() {
+                @Inject
+                private Store store;
 
-            @Override
-            public Object run() {
-                SubTypeWithCollection subTypeWithCollection = new SubTypeWithCollection();
-                subTypeWithCollection.setId(withCollectionId);
-                subTypeWithCollection.setText("Updated");
+                @Override
+                public Object run() {
+                    SubTypeWithCollection subTypeWithCollection = new SubTypeWithCollection();
+                    subTypeWithCollection.setId(withCollectionId);
+                    subTypeWithCollection.setText("Updated");
 
-                store.update(subTypeWithCollection);
+                    store.update(subTypeWithCollection);
 
-                return null;
-            }
-        });
+                    return null;
+                }
+            });
+
+            clientStore.endUnitOfWork(unitOfWork);
+        }
 
         server.run(new RunOnServerMethod() {
             @Inject
