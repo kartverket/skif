@@ -34,6 +34,9 @@ public class SubTypeTest extends StoreTestTestCase {
     @Inject
     private RunOnServerWithTxRequiresNewService server;
 
+    @Inject
+    private Store clientStore;
+
     @Test(groups = {"singlevm-required"})
     public void likhet() {
         SubTypedBubbleId<?> subTypedBubbleId = new SubTypedBubbleId(1L);
@@ -242,6 +245,90 @@ public class SubTypeTest extends StoreTestTestCase {
                     resultSet = statement.executeQuery("select * from TekstForSubtype where subtypedid=" + idValue);
 
                     Assert.assertFalse(resultSet.next(), "Fant rader");
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    JDBCHelper.close(resultSet, statement);
+                }
+
+                return null;
+            }
+        });
+    }
+
+    @Test(groups = {"singlevm-required"})
+    public void insertPlusUpdateWithTypeChangeNoLockOnServer() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        IdService idService = mockupFacade.getStore().getInstance(IdService.class);
+
+        final long idValue = (Long) idService.getNextIdValue(SubTypeWithPrimitiveId.class);
+
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private Store store;
+
+            @Override
+            public Object run() {
+                SubTypeWithPrimitiveId<?> id = new SubTypeWithPrimitiveId(idValue);
+
+                SubTypeWithPrimitive subTypeWithPrimitive = new SubTypeWithPrimitive();
+                subTypeWithPrimitive.setId(id);
+                subTypeWithPrimitive.setNum(9);
+                subTypeWithPrimitive.setText("Inserted");
+                store.insert(subTypeWithPrimitive);
+
+                return null;
+            }
+        });
+
+        SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(idValue);
+        SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId(idValue);
+
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            clientStore.lock(withPrimitiveId);
+
+            server.run(new RunOnServerMethod() {
+                @Inject
+                private Store store;
+
+                @Override
+                public Object run() {
+                    SubTypeWithCollection subTypeWithCollection = new SubTypeWithCollection();
+                    subTypeWithCollection.setId(withCollectionId);
+                    subTypeWithCollection.setText("Updated");
+
+                    store.update(subTypeWithCollection);
+
+                    return null;
+                }
+            });
+
+            clientStore.endUnitOfWork(unitOfWork);
+        }
+
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private Store store;
+
+            @Inject
+            private Provider<Connection> connectionProvider;
+
+            @Override
+            public Object run() {
+                SubTypedBubbleId<?> id = new SubTypedBubbleId(idValue);
+
+                SubTypedBubble subTypedBubble = store.get(id);
+                Assert.assertTrue(subTypedBubble instanceof SubTypeWithCollection, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
+
+                Connection connection = connectionProvider.get();
+                Statement statement = null;
+                ResultSet resultSet = null;
+                try {
+                    statement = connection.createStatement();
+                    resultSet = statement.executeQuery("select num from subtypedbubble where id=" + idValue);
+
+                    Assert.assertTrue(resultSet.next(), "Fant ingen rader");
+                    Assert.assertNull(resultSet.getObject(1), "num er ikke nullet ut");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 } finally {

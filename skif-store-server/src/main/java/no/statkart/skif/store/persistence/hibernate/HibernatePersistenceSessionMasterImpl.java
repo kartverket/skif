@@ -8,7 +8,6 @@ import no.statkart.skif.store.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.HibernateHelper;
-import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.*;
 import org.hibernate.LockMode;
 import org.hibernate.collection.PersistentCollection;
@@ -30,8 +29,8 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 
 /**
@@ -954,49 +953,64 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         flush();
         evict(currentObject.getBubbleId());
 
-        Statement statement = session().connection().createStatement();
-        try {
-            final String discriminatorColumn = toEntityPersister.getDiscriminatorColumnName();
-            final String discriminatorValue = toEntityPersister.getDiscriminatorSQLValue(); // Inkluderer apostrofer hvis tekst
+        final String discriminatorColumn = toEntityPersister.getDiscriminatorColumnName();
+        final String discriminatorValue = toEntityPersister.getDiscriminatorSQLValue(); // Inkluderer apostrofer hvis tekst
 
-            StringBuilder sql = new StringBuilder("update ");
-            sql.append(dbTable);
-            sql.append(" set ").append(discriminatorColumn).append('=').append(discriminatorValue);
+        StringBuilder sql = new StringBuilder("update ");
+        sql.append(dbTable);
+        sql.append(" set ").append(discriminatorColumn).append('=').append(discriminatorValue);
 
-            if (!oldPrimitiveFields.isEmpty()) {
-                for (int i = 0; i < oldPrimitiveFields.size(); i++) {
-                    final Field field = oldPrimitiveFields.get(i);
-                    final int propertyIndex = fromEntityPersister.getPropertyIndex(field.getName());
-                    final String[] propertyColumnNames = fromEntityPersister.getPropertyColumnNames(propertyIndex);
-                    if (propertyColumnNames.length != 1) {
-                        throw new ImplementationException("Property " + field.getName() + " er mappet til flere kolonner: " + Arrays.toString(propertyColumnNames), logger);
-                    }
-                    sql.append(", ").append(propertyColumnNames[0]).append("=null");
+        if (!oldPrimitiveFields.isEmpty()) {
+            for (int i = 0; i < oldPrimitiveFields.size(); i++) {
+                final Field field = oldPrimitiveFields.get(i);
+                final int propertyIndex = fromEntityPersister.getPropertyIndex(field.getName());
+                final String[] propertyColumnNames = fromEntityPersister.getPropertyColumnNames(propertyIndex);
+                if (propertyColumnNames.length != 1) {
+                    throw new ImplementationException("Property " + field.getName() + " er mappet til flere kolonner: " + Arrays.toString(propertyColumnNames), logger);
                 }
+                sql.append(", ").append(propertyColumnNames[0]).append("=null");
             }
-            if (!newPrimitiveFields.isEmpty()) {
-                for (int i = 0; i < newPrimitiveFields.size(); i++) {
-                    final Field field = newPrimitiveFields.get(i);
-                    final int propertyIndex = toEntityPersister.getPropertyIndex(field.getName());
-                    final String[] propertyColumnNames = toEntityPersister.getPropertyColumnNames(propertyIndex);
-                    if (propertyColumnNames.length != 1) {
-                        throw new ImplementationException("Property " + field.getName() + " er mappet til flere kolonner: " + Arrays.toString(propertyColumnNames), logger);
-                    }
-                    sql.append(", ").append(propertyColumnNames[0]).append("=0"); // Antar at 0 er OK verdi for det vi har av primitive felter.
+        }
+        // Må "manuelt" sette primitivfelter til sine nye verdier.
+        // Hvis de fortsetter å være null, så feiler initiell lasting av endret type. (SKIF-527)
+        // Hvis de initialiseres til f.eks. 0, så kan det være en ulovlig verdi. (SKIF-660)
+        List<StatementSetter> newPrimitives = new ArrayList<>();
+        int nextSqlParamIndex = 1;
+        if (!newPrimitiveFields.isEmpty()) {
+            for (int i = 0; i < newPrimitiveFields.size(); i++) {
+                final Field field = newPrimitiveFields.get(i);
+                final int propertyIndex = toEntityPersister.getPropertyIndex(field.getName());
+                final String[] propertyColumnNames = toEntityPersister.getPropertyColumnNames(propertyIndex);
+                Type type = toEntityPersister.getPropertyTypes()[propertyIndex];
+                if (propertyColumnNames.length != 1) {
+                    throw new ImplementationException("Property " + field.getName() + " er mappet til flere kolonner: " + Arrays.toString(propertyColumnNames), logger);
                 }
+                sql.append(", ").append(propertyColumnNames[0]).append("=?");
+                final int sqlParamIndex = nextSqlParamIndex++;
+                final Object value = toEntityPersister.getPropertyValue(currentObject, propertyIndex, EntityMode.POJO);
+                newPrimitives.add(preparedStatement -> {
+                    type.nullSafeSet(preparedStatement, value, sqlParamIndex, (SessionImplementor) session());
+                });
             }
+        }
 
-            sql.append(" where id=").append(currentObject.getBubbleId().getValue());
+        sql.append(" where id=").append(currentObject.getBubbleId().getValue());
 
-            final String sqlString = sql.toString();
-            logger.debug(sqlString);
-            int rows = statement.executeUpdate(sqlString);
+        final String sqlString = sql.toString();
+        logger.debug(sqlString);
+        try (PreparedStatement statement = session().connection().prepareStatement(sqlString)) {
+            for (StatementSetter newPrimitive : newPrimitives) {
+                newPrimitive.set(statement);
+            }
+            int rows = statement.executeUpdate();
             if (rows != 1) {
                 throw new ImplementationException("When changing type, the number of updated rows should be 1, but it turned out to be " + rows, logger);
             }
-        } finally {
-            JDBCHelper.close(statement);
         }
+    }
+    @FunctionalInterface
+    interface StatementSetter {
+        void set(PreparedStatement preparedStatement) throws SQLException;
     }
 
     /**
