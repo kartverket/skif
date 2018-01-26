@@ -21,6 +21,7 @@ import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.StoreSessionClient;
 import no.statkart.skif.store.UnitOfWork;
+import no.statkart.skif.store.service.LockService;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
@@ -58,6 +59,7 @@ public class StoreClientTest {
                 bind(TestNumber.class).toInstance(new TestNumber(100000, 1));
                 bind(Store.class).to(StoreClient.class);
                 bind(StoreService.class).to(StoreClientTestStoreService.class);
+                bind(LockService.class).to(StoreClientTestStoreService.class);
                 bind(StoreClientTestStoreService.class).in(Singleton.class);
                 bind(SnapshotVersionContext.class).toInstance(SnapshotVersionContext.getInstance());
             }
@@ -69,8 +71,8 @@ public class StoreClientTest {
 
             @Provides
             @Singleton
-            protected StoreClient provideStoreClient(StoreService storeService, Injector injector, SnapshotVersionContext snapshotVersionContext) {
-                StoreSessionClient storeSessionClient = new StoreSessionClient(storeService, snapshotVersionContext);
+            protected StoreClient provideStoreClient(StoreService storeService, LockService lockService, Injector injector, SnapshotVersionContext snapshotVersionContext) {
+                StoreSessionClient storeSessionClient = new StoreSessionClient(storeService, lockService, snapshotVersionContext);
                 return new StoreClient(storeSessionClient, injector);
             }
         };
@@ -317,7 +319,8 @@ public class StoreClientTest {
         Simple object = new Simple(id);
 
         StoreService storeService = Mockito.mock(StoreService.class);
-        Mockito.doReturn(object).when(storeService).lock(id);
+        LockService lockService = Mockito.mock(LockService.class);
+        Mockito.doReturn(object).when(lockService).lock(id);
         IdService idService = Mockito.mock(IdService.class);
 
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -329,6 +332,7 @@ public class StoreClientTest {
 
         StoreSessionClient storeSessionClient = new StoreSessionClient(
                 storeService,
+                lockService,
                 SnapshotVersionContext.getInstance()
         );
 
@@ -337,7 +341,7 @@ public class StoreClientTest {
             Simple locked = storeClient.lock(id);
 
             assertThat(locked).isNotSameAs(object).isEqualTo(object);
-            Mockito.verify(storeService).lock(id);
+            Mockito.verify(lockService).lock(id);
             Mockito.verifyNoMoreInteractions(storeService, idService);
 
             Simple locked2 = storeClient.lock(id);
@@ -345,8 +349,8 @@ public class StoreClientTest {
             Mockito.verifyNoMoreInteractions(storeService, idService);
         }
 
-        Mockito.verify(storeService).unlockForList(ImmutableSet.of(id));
-        Mockito.verifyNoMoreInteractions(storeService, idService);
+        Mockito.verify(lockService).unlockForList(ImmutableSet.of(id));
+        Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
     }
 
     public void testLockSingleGotten() {
@@ -355,8 +359,9 @@ public class StoreClientTest {
         Simple objectLocked = new Simple(id, "A");
 
         StoreService storeService = Mockito.mock(StoreService.class);
+        LockService lockService = Mockito.mock(LockService.class);
         Mockito.doReturn(object).when(storeService).getObject(id);
-        Mockito.doReturn(objectLocked).when(storeService).lock(id);
+        Mockito.doReturn(objectLocked).when(lockService).lock(id);
         IdService idService = Mockito.mock(IdService.class);
 
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -368,6 +373,7 @@ public class StoreClientTest {
 
         StoreSessionClient storeSessionClient = new StoreSessionClient(
                 storeService,
+                lockService,
                 SnapshotVersionContext.getInstance()
         );
 
@@ -382,8 +388,8 @@ public class StoreClientTest {
 
             assertThat(locked).isNotSameAs(gotten).isNotSameAs(objectLocked).isEqualTo(objectLocked);
             assertThat(locked.getText()).isEqualTo("A");
-            Mockito.verify(storeService).lock(id);
-            Mockito.verifyNoMoreInteractions(storeService, idService);
+            Mockito.verify(lockService).lock(id);
+            Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
         }
     }
 
@@ -392,8 +398,9 @@ public class StoreClientTest {
         Simple object = new Simple(id);
 
         StoreService storeService = Mockito.mock(StoreService.class);
+        LockService lockService = Mockito.mock(LockService.class);
         Mockito.doReturn(object).when(storeService).getObject(id);
-        Mockito.doReturn(object).when(storeService).lock(id);
+        Mockito.doReturn(object).when(lockService).lock(id);
         IdService idService = Mockito.mock(IdService.class);
 
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -405,6 +412,7 @@ public class StoreClientTest {
 
         StoreSessionClient storeSessionClient = new StoreSessionClient(
                 storeService,
+                lockService,
                 SnapshotVersionContext.getInstance()
         );
 
@@ -417,8 +425,8 @@ public class StoreClientTest {
             Simple locked = storeClient.lock(id);
 
             assertThat(locked).isNotSameAs(gotten).isEqualTo(gotten);
-            Mockito.verify(storeService).lock(id);
-            Mockito.verifyNoMoreInteractions(storeService, idService);
+            Mockito.verify(lockService).lock(id);
+            Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
         }
     }
 
@@ -430,7 +438,8 @@ public class StoreClientTest {
         Simple object2 = new Simple(id2, "B");
 
         StoreService storeService = Mockito.mock(StoreService.class);
-        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(storeService).lockForList(ImmutableSet.of(id1, id2));
+        LockService lockService = Mockito.mock(LockService.class);
+        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(lockService).lockForList(ImmutableSet.of(id1, id2));
         IdService idService = Mockito.mock(IdService.class);
 
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -442,6 +451,7 @@ public class StoreClientTest {
 
         StoreSessionClient storeSessionClient = new StoreSessionClient(
                 storeService,
+                lockService,
                 SnapshotVersionContext.getInstance()
         );
 
@@ -453,7 +463,7 @@ public class StoreClientTest {
             assertThat(locked).containsOnly(object1, object2);
             assertThat(lockedMap.get(id1)).isNotSameAs(object1).isEqualTo(object1);
             assertThat(lockedMap.get(id2)).isNotSameAs(object2).isEqualTo(object2);
-            Mockito.verify(storeService).lockForList(ImmutableSet.of(id1, id2));
+            Mockito.verify(lockService).lockForList(ImmutableSet.of(id1, id2));
             Mockito.verifyNoMoreInteractions(storeService, idService);
 
             Set<Simple> locked2 = storeClient.lock(ImmutableSet.of(id1, id2));
@@ -464,8 +474,8 @@ public class StoreClientTest {
             Mockito.verifyNoMoreInteractions(storeService, idService);
         }
 
-        Mockito.verify(storeService).unlockForList(ImmutableSet.of(id1, id2));
-        Mockito.verifyNoMoreInteractions(storeService, idService);
+        Mockito.verify(lockService).unlockForList(ImmutableSet.of(id1, id2));
+        Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
     }
 
     public void testLockMultipleOneGotten() {
@@ -476,8 +486,9 @@ public class StoreClientTest {
         Simple object2 = new Simple(id2, "B");
 
         StoreService storeService = Mockito.mock(StoreService.class);
+        LockService lockService = Mockito.mock(LockService.class);
         Mockito.doReturn(object1).when(storeService).getObject(id1);
-        Mockito.doReturn(ImmutableSet.of(object1Locked, object2)).when(storeService).lockForList(ImmutableSet.of(id1, id2));
+        Mockito.doReturn(ImmutableSet.of(object1Locked, object2)).when(lockService).lockForList(ImmutableSet.of(id1, id2));
         IdService idService = Mockito.mock(IdService.class);
 
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -489,6 +500,7 @@ public class StoreClientTest {
 
         StoreSessionClient storeSessionClient = new StoreSessionClient(
                 storeService,
+                lockService,
                 SnapshotVersionContext.getInstance()
         );
 
@@ -509,12 +521,12 @@ public class StoreClientTest {
             assertThat(locked2).isNotSameAs(object2).isEqualTo(object2);
             assertThat(locked1.getText()).isEqualTo("A");
             assertThat(locked2.getText()).isEqualTo("B");
-            Mockito.verify(storeService).lockForList(ImmutableSet.of(id1, id2));
+            Mockito.verify(lockService).lockForList(ImmutableSet.of(id1, id2));
             Mockito.verifyNoMoreInteractions(storeService, idService);
         }
 
-        Mockito.verify(storeService).unlockForList(ImmutableSet.of(id1, id2));
-        Mockito.verifyNoMoreInteractions(storeService, idService);
+        Mockito.verify(lockService).unlockForList(ImmutableSet.of(id1, id2));
+        Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
     }
 
     // Denne testen er foreløpig ikke mulig, da klienten ikke ser forskjell på nye og gamle låser.
@@ -526,8 +538,9 @@ public class StoreClientTest {
         Simple object2 = new Simple(id2, "B");
 
         StoreService storeService = Mockito.mock(StoreService.class);
+        LockService lockService = Mockito.mock(LockService.class);
         Mockito.doReturn(ImmutableSet.of(object1, object2)).when(storeService).getObjects(ImmutableSet.of(id1, id2));
-        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(storeService).lockForList(ImmutableSet.of(id1, id2));
+        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(lockService).lockForList(ImmutableSet.of(id1, id2));
         IdService idService = Mockito.mock(IdService.class);
 
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -539,6 +552,7 @@ public class StoreClientTest {
 
         StoreSessionClient storeSessionClient = new StoreSessionClient(
                 storeService,
+                lockService,
                 SnapshotVersionContext.getInstance()
         );
 
@@ -557,11 +571,11 @@ public class StoreClientTest {
             assertThat(locked).containsOnly(object1, object2);
             assertThat(lockedMap.get(id1)).isNotSameAs(gottenMap.get(id1)).isEqualTo(object1);
             assertThat(lockedMap.get(id2)).isNotSameAs(gottenMap.get(id2)).isEqualTo(object2);
-            Mockito.verify(storeService).lockForList(ImmutableSet.of(id1, id2));
-            Mockito.verifyNoMoreInteractions(storeService, idService);
+            Mockito.verify(lockService).lockForList(ImmutableSet.of(id1, id2));
+            Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
         }
 
-        Mockito.verifyNoMoreInteractions(storeService, idService);
+        Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
     }
 
     // Denne testen er foreløpig ikke mulig, da klienten ikke ser forskjell på nye og gamle låser.
@@ -573,8 +587,9 @@ public class StoreClientTest {
         Simple object2 = new Simple(id2, "B");
 
         StoreService storeService = Mockito.mock(StoreService.class);
+        LockService lockService = Mockito.mock(LockService.class);
         Mockito.doReturn(object1).when(storeService).getObject(id1);
-        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(storeService).lockForList(ImmutableSet.of(id1, id2));
+        Mockito.doReturn(ImmutableSet.of(object1, object2)).when(lockService).lockForList(ImmutableSet.of(id1, id2));
         IdService idService = Mockito.mock(IdService.class);
 
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -586,6 +601,7 @@ public class StoreClientTest {
 
         StoreSessionClient storeSessionClient = new StoreSessionClient(
                 storeService,
+                lockService,
                 SnapshotVersionContext.getInstance()
         );
 
@@ -601,11 +617,11 @@ public class StoreClientTest {
             assertThat(locked).containsOnly(object1, object2);
             assertThat(lockedMap.get(id1)).isNotSameAs(gotten).isNotSameAs(object1).isEqualTo(object1);
             assertThat(lockedMap.get(id2)).isNotSameAs(object2).isEqualTo(object2);
-            Mockito.verify(storeService).lockForList(ImmutableSet.of(id1, id2));
-            Mockito.verifyNoMoreInteractions(storeService, idService);
+            Mockito.verify(lockService).lockForList(ImmutableSet.of(id1, id2));
+            Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
         }
 
-        Mockito.verifyNoMoreInteractions(storeService, idService);
+        Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
     }
 
     // Denne testen er foreløpig ikke mulig, da klienten ikke ser forskjell på nye og gamle låser.
@@ -618,8 +634,9 @@ public class StoreClientTest {
         Simple object2Locked = new Simple(id2, "B");
 
         StoreService storeService = Mockito.mock(StoreService.class);
+        LockService lockService = Mockito.mock(LockService.class);
         Mockito.doReturn(ImmutableSet.of(object1, object2)).when(storeService).getObjects(ImmutableSet.of(id1, id2));
-        Mockito.doReturn(ImmutableSet.of(object1, object2Locked)).when(storeService).lockForList(ImmutableSet.of(id1, id2));
+        Mockito.doReturn(ImmutableSet.of(object1, object2Locked)).when(lockService).lockForList(ImmutableSet.of(id1, id2));
         IdService idService = Mockito.mock(IdService.class);
 
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -631,6 +648,7 @@ public class StoreClientTest {
 
         StoreSessionClient storeSessionClient = new StoreSessionClient(
                 storeService,
+                lockService,
                 SnapshotVersionContext.getInstance()
         );
 
@@ -652,17 +670,17 @@ public class StoreClientTest {
             assertThat(lockedMap.get(id2)).isNotSameAs(object2Locked).isNotSameAs(gottenMap.get(id2)).isEqualTo(object2Locked);
             assertThat(lockedMap.get(id1).getText()).isEqualTo("A");
             assertThat(lockedMap.get(id2).getText()).isEqualTo("B");
-            Mockito.verify(storeService).lockForList(ImmutableSet.of(id1, id2));
-            Mockito.verifyNoMoreInteractions(storeService, idService);
+            Mockito.verify(lockService).lockForList(ImmutableSet.of(id1, id2));
+            Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
         }
         
-        Mockito.verifyNoMoreInteractions(storeService, idService);
+        Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
     }
 
     /**
      * En mockup-StoreService som bare returnerer nyinstansierte bobleobjekter.
      */
-    public static class StoreClientTestStoreService implements StoreService {
+    public static class StoreClientTestStoreService implements StoreService, LockService {
         private final Set<BubbleId<?>> lockedIds = new HashSet<>();
 
         public void clearLocks() {

@@ -21,6 +21,7 @@ import no.statkart.skif.store.*;
 import no.statkart.skif.store.module.common.RemoteServiceModuleStrategyWithServiceContextSVMapper;
 import no.statkart.skif.store.relation.cache.RelationCacheProxyHandler;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
+import no.statkart.skif.store.service.LockService;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
@@ -77,6 +78,7 @@ public class StoreTestClientModule extends SkifModule {
         bind(Store.class).to(StoreClient.class);
 
         bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
+        bind(LockService.class).to(no.statkart.skif.storetest.service.lock.LockService.class);
 
         install(new RemoteServiceModule(moduleConfiguration, new StoreTestTestServices().getServices(), mapping)
                 .setExceptionMapping(exceptionMapping)
@@ -99,15 +101,15 @@ public class StoreTestClientModule extends SkifModule {
 
     @Provides
     @Singleton
-    StoreClient storeProvider(StoreService storeService, Injector injector, SnapshotVersionContext snapshotVersionContext) {
-        StoreSessionClient storeSession = createStoreSessionClient(storeService, snapshotVersionContext);
+    StoreClient storeProvider(StoreService storeService, LockService lockService, Injector injector, SnapshotVersionContext snapshotVersionContext) {
+        StoreSessionClient storeSession = createStoreSessionClient(storeService, lockService, snapshotVersionContext);
         StoreClient store = new StoreClient(storeSession, injector);
         injector.injectMembers(store);
         return store;
     }
 
-    protected StoreSessionClient createStoreSessionClient(StoreService storeService, SnapshotVersionContext snapshotVersionContext) {
-        return new StoreSessionClient(storeService, snapshotVersionContext);
+    protected StoreSessionClient createStoreSessionClient(StoreService storeService, LockService lockService, SnapshotVersionContext snapshotVersionContext) {
+        return new StoreSessionClient(storeService, lockService, snapshotVersionContext);
     }
 
 }

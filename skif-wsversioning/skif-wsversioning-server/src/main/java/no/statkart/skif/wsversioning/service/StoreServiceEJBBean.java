@@ -54,29 +54,4 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
         return serviceChain.getVersionsForList(ids, start, end);
     }
-
-    @Override
-    public <T extends BubbleObject> T lock(BubbleId<? extends T> id) {
-        return serviceChain.lock(id);
-    }
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids) {
-        return serviceChain.lockForList(ids);
-    }
-
-    @Override
-    public <I extends BubbleId<?>> void unlock(I id) {
-        serviceChain.unlock(id);
-    }
-
-    @Override
-    public void unlockForList(Collection<? extends BubbleId<?>> ids) {
-        serviceChain.unlockForList(ids);
-    }
-
-    @Override
-    public <I extends BubbleId<?>> boolean isLocked(I id) {
-        return serviceChain.isLocked(id);
-    }
 }

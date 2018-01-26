@@ -15,6 +15,7 @@ import no.statkart.skif.storetest.domain.component.historikk.HistorikkEntityComp
 import no.statkart.skif.storetest.domain.component.historikk.HistorikkListEntityComponent;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
+import no.statkart.skif.storetest.service.lock.LockService;
 import no.statkart.skif.storetest.service.store.StoreService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
@@ -36,6 +37,9 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
 
     @Inject
     private StoreService storeService;
+
+    @Inject
+    private LockService lockService;
 
     @Inject
     private RunOnServerWithTxRequiresNewService serverService;
@@ -61,13 +65,13 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
 
         insert(bubble1);
 
-        HistorikkBubbleWithEntityComponents bubble2 = storeService.lock(id);
+        HistorikkBubbleWithEntityComponents bubble2 = lockService.lock(id);
         Assert.assertEquals(bubble2.getVersjonId(), 1, "Feil versjonid");
         Assert.assertEquals(bubble2.getSecondaryEntityComponents().size(), 1, "Feil antall komponenter");
         Assert.assertEquals(bubble2.getSecondaryEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid på komponent");
 
         // Sørg for at objektet blir helt detached
-        bubble2.setSecondaryEntityComponents(new HashSet<HistorikkEntityComponent>(bubble2.getSecondaryEntityComponents()));
+        bubble2.setSecondaryEntityComponents(new HashSet<>(bubble2.getSecondaryEntityComponents()));
 
         HistorikkEntityComponent component2 = new HistorikkEntityComponent();
         component2.setValue("Update2");
@@ -104,7 +108,7 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
 
         insert(bubble1);
 
-        HistorikkBubbleWithListEntityComponents bubble2 = storeService.lock(id);
+        HistorikkBubbleWithListEntityComponents bubble2 = lockService.lock(id);
         Assert.assertEquals(bubble2.getVersjonId(), 1, "Feil versjonid");
         Assert.assertEquals(bubble2.getEntityComponents().size(), 1, "Feil antall komponenter");
         Assert.assertEquals(bubble2.getEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid på komponent");

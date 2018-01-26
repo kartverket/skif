@@ -5,6 +5,7 @@ import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
 import no.statkart.skif.storetest.service.exceptiontest.ExceptionTestService;
 import no.statkart.skif.storetest.service.histtest.HistTestService;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
+import no.statkart.skif.storetest.service.lock.LockService;
 import no.statkart.skif.storetest.service.locker.DBLockerInTransactionService;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
@@ -23,6 +24,7 @@ import javax.ejb.EJBs;
  */
 @EJBs({
         @EJB(name = "ejb/StoreServiceEJBBean", beanInterface = StoreService.class),
+        @EJB(name = "ejb/LockServiceEJBBean", beanInterface = LockService.class),
         @EJB(name = "ejb/DBLockerServiceEJBBean", beanInterface = DBLockerService.class),
         @EJB(name = "ejb/DBLockerInTransactionServiceEJBBean", beanInterface = DBLockerInTransactionService.class),
         @EJB(name = "ejb/KodelisteServiceEJBBean", beanInterface = KodelisteService.class),

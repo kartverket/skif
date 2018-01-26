@@ -1,4 +1,4 @@
-package no.statkart.skif.storetest.service.store;
+package no.statkart.skif.storetest.service.lock;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.LockedException;
@@ -8,6 +8,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.service.store.StoreService;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -17,44 +18,40 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Henrik Fredholm
- */
 @SuppressWarnings("unused")
-
-@Stateless(name = "no.statkart.skif.storetest.service.store.StoreServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.service.lock.LockServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
-public class StoreServiceEJBBean extends EJBTimedService implements StoreService {
+public class LockServiceEJBBean extends EJBTimedService implements LockService {
     @Inject  @EJBServiceChain
-    private StoreService serviceChain;
+    private LockService serviceChain;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <T extends BubbleObject> T getObject(BubbleId<? extends T> ids) {
-        return serviceChain.getObject(ids);
+    public <I extends BubbleId<?>> boolean isLocked(I id) {
+        return serviceChain.isLocked(id);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjects(Collection<I> ids) {
-        return serviceChain.getObjects(ids);
+    public <T extends BubbleObject> T lock(BubbleId<? extends T> id) throws LockedException {
+        return serviceChain.lock(id);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjectsIgnoreMissing(Collection<I> ids) {
-        return serviceChain.getObjectsIgnoreMissing(ids);
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids) {
+        return serviceChain.lockForList(ids);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <I extends BubbleId<?>> List<I> getVersions(I id, SnapshotVersion start, SnapshotVersion end) {
-        return serviceChain.getVersions(id, start, end);
+    public <I extends BubbleId<?>> void unlock(I id) {
+        serviceChain.unlock(id);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
-        return serviceChain.getVersionsForList(ids, start, end);
+    public void unlockForList(Collection<? extends BubbleId<?>> ids) {
+        serviceChain.unlockForList(ids);
     }
 }
