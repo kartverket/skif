@@ -211,6 +211,11 @@ public class BubbleRefConfiguration extends Configuration {
             log.debug("Processing bubble-refs for class: " + persistentClass.getEntityName());
         }
 
+        //Hvis identifier er composite blir det en component som vi må spesialbehandle i tilfelle det finnes many-to-one boblekoblinger der
+        if(persistentClass.getIdentifier() instanceof Component) {
+            configureManyToOneBubbleMappingsForComponent((Component) persistentClass.getIdentifier(), persistentClass, mapping);
+        }
+
         for (Iterator iterator = persistentClass.getPropertyClosureIterator(); iterator.hasNext(); ) {
             Property prop = (Property) iterator.next();
             MetaAttribute attrib = prop.getMetaAttribute("bubble-ref");
