@@ -11,7 +11,7 @@ import java.util.List;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-public class KodelisteTransfer<I extends KodelisteId> extends BubbleTransfer<List<I>> {
+public class KodelisteTransfer<I extends KodelisteId> extends Transfer<List<I>> {
     private static final long serialVersionUID = 1L;
 
     public KodelisteTransfer(List<I> kodelisteIds, Iterable<? extends BubbleObject> objects) {
