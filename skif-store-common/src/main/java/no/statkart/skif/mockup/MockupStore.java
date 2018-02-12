@@ -1,6 +1,5 @@
 package no.statkart.skif.mockup;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -18,7 +17,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -550,7 +548,7 @@ public class MockupStore implements Store {
     }
 
     @Override
-    public void register(BubbleTransfer transfer) {
+    public void register(Transfer<?> transfer) {
         throw new NotImplementedException();
     }
 

@@ -37,7 +37,7 @@ public interface WrappableStoreSession extends StoreSession {
     boolean evictAllEntries(int level);
 
 
-    void registerEntries(int level, BubbleTransfer<?> bubbleTransfer);
+    void registerEntries(int level, Transfer<?> transfer);
 
 
     StoreUnitOfWork beginUnitOfWork();

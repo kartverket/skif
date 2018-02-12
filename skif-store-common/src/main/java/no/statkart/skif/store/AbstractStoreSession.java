@@ -765,8 +765,8 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     @Override
-    public void register(BubbleTransfer bubbleTransfer) {
-        registerEntries(level, bubbleTransfer);
+    public void register(Transfer<?> transfer) {
+        registerEntries(level, transfer);
     }
 
     @Override

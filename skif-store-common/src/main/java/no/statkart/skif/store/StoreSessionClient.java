@@ -384,12 +384,12 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
-    public void registerEntries(int level, BubbleTransfer<?> bubbleTransfer) {
-        Set<BubbleId> lockedIdsFromTransfer = bubbleTransfer.getLockedIds();
+    public void registerEntries(int level, Transfer<?> transfer) {
+        Set<BubbleId> lockedIdsFromTransfer = transfer.getLockedIds();
         if (level==0 && !lockedIdsFromTransfer.isEmpty()) {
             throw new ImplementationException("Lock on client must be done in a UnitOfWork");
         }
-        for (BubbleObject bubbleObjectFromTransfer : bubbleTransfer.getBubbleObjects().values()) {
+        for (BubbleObject bubbleObjectFromTransfer : transfer.getBubbleObjects().values()) {
             StoreEntry entry = storeCache.get(bubbleObjectFromTransfer.getId());
             if (entry == null) {
                 entry = storeCache.register(level, bubbleObjectFromTransfer, bubbleObjectFromTransfer);

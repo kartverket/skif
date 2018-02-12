@@ -10,9 +10,7 @@ import no.statkart.skif.store.relation.cache.StoreRelationCacheImpl;
 import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -165,7 +163,7 @@ public abstract class AbstractStore implements Store {
     }
 
     @Override
-    public void register(BubbleTransfer transfer) {
+    public void register(Transfer<?> transfer) {
         storeSession.register(transfer);
     }
 

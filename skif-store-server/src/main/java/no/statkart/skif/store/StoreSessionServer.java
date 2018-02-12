@@ -896,7 +896,7 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     @Override
-    public void registerEntries(int level, BubbleTransfer<?> bubbleTransfer) {
+    public void registerEntries(int level, Transfer<?> transfer) {
         // No-op; alle objekter hentes fra persistence session
     }
 
