@@ -294,6 +294,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build593'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build652'
     }
 }
