@@ -80,30 +80,29 @@ public class MappingResolver {
             List<Class> wsapiClasses = getClasses(wsapiPackage, recurse);
             List<Class> domainClasses = getClasses(domainPackage, recurse);
             for (Class wsapiClass : wsapiClasses) {
-                String name = wsapiClass.getSimpleName();
                 for (Class domainClass : domainClasses) {
-                    if (isEquivalent(domainClass.getSimpleName(), name)) {
+                    if (isEquivalent(domainClass, wsapiClass)) {
                         classMappings.put(wsapiClass, domainClass);
                     }
                 }
             }
             for (Class domainClass : domainClasses) {
-                String name = domainClass.getSimpleName();
                 for (Class wsapiClass : wsapiClasses) {
-                    if (isEquivalent(name, wsapiClass.getSimpleName())) {
+                    if (isEquivalent(domainClass, wsapiClass)) {
                         classMappings.put(domainClass, wsapiClass);
                     }
                 }
             }
 
-        } catch (ClassNotFoundException e) {
-            throw new ImplementationException(e);
-        } catch (IOException e) {
+        } catch (ClassNotFoundException | IOException e) {
             throw new ImplementationException(e);
         }
     }
 
-    protected boolean isEquivalent(String domainName, String wsapiName) {
+    protected boolean isEquivalent(Class<?> domainClass, Class<?> wsapiClass) {
+        String wsapiName = wsapiClass.getSimpleName();
+        String domainName = domainClass.getSimpleName();
+
         return wsapiName.equals(domainName);
     }
 
@@ -170,7 +169,7 @@ public class MappingResolver {
      * @param directory   The base directory
      * @param packageName The package name for classes found inside the base directory
      * @return The classes
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException If a file found in the directory appears to be a class for Class.forName(...) fails
      */
     protected static List<Class> findClasses(File directory, String packageName) throws ClassNotFoundException {
         List<Class> classes = new ArrayList<Class>();
