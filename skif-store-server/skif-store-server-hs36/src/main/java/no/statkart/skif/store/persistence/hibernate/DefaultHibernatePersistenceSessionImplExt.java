@@ -20,6 +20,7 @@ import org.hibernate.type.*;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Denne klasse inneholder Hibernate 3.2.6 specifikk kode. Den skal integreres i superklassen
@@ -106,25 +107,27 @@ public class DefaultHibernatePersistenceSessionImplExt extends HibernatePersiste
                 if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingAction.SAVE_UPDATE)) {
                     // Initialisert collectionen og hvert element. Element kan være av typen composite eller association.
                     // TODO: Nåværende implementasjon håndtere kun et nivå av composite-elementer. Generaliser ved behov
-                    Collection col = (Collection) values[i];
-                    if (!col.isEmpty()) {
-                        CollectionPersister collectionPersister = sessionFactory.getCollectionPersister(((CollectionType) type).getRole());
-                        if (collectionPersister.getElementType() instanceof CompositeType) {
-                            CompositeType compositeType = (CompositeType) collectionPersister.getElementType();
-                            for (Object componentObject : col) {
-                                final Object[] propertyValues = compositeType.getPropertyValues(componentObject, sessionImpl);
-                                //noinspection ForLoopReplaceableByForEach
-                                for (int j = 0; j < propertyValues.length; j++) {
-                                    ensureInitialized(propertyValues[j], initializedObjects);
+                    if (values[i] instanceof Collection) {
+                        Collection col = (Collection) values[i];
+                        if (!col.isEmpty()) {
+                            CollectionPersister collectionPersister = sessionFactory.getCollectionPersister(((CollectionType) type).getRole());
+                            if (collectionPersister.getElementType() instanceof CompositeType) {
+                                CompositeType compositeType = (CompositeType) collectionPersister.getElementType();
+                                for (Object componentObject : col) {
+                                    final Object[] propertyValues = compositeType.getPropertyValues(componentObject, sessionImpl);
+                                    //noinspection ForLoopReplaceableByForEach
+                                    for (int j = 0; j < propertyValues.length; j++) {
+                                        ensureInitialized(propertyValues[j], initializedObjects);
+                                    }
                                 }
-                            }
-                        } else if (collectionPersister.getElementType() instanceof AssociationType) {
-                            for (Object o : col) {
-                                ensureInitialized(o, initializedObjects);
-                            }
-                        } // else {
-                            // No-op
-                        //}
+                            } else if (collectionPersister.getElementType() instanceof AssociationType) {
+                                for (Object o : col) {
+                                    ensureInitialized(o, initializedObjects);
+                                }
+                            } // else {
+                                // No-op
+                            //}
+                        }
                     }
                 }
             }

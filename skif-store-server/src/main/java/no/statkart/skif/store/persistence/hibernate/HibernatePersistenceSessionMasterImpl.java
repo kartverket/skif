@@ -615,15 +615,9 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 if (elementType.isCollectionType()) {
                     throw new NotImplementedException("Map value kan ikke være collection");
                 } else if (elementType.isAssociationType()) {
-                    EntityPersister entityPersister = collectionPersister.getElementPersister();
-                    Type[] propertyTypes = entityPersister.getPropertyTypes();
-                    //noinspection ForLoopReplaceableByForEach
-                    for (int i = 0; i < propertyTypes.length; i++) {
-                        Type propertyType = propertyTypes[i];
-                        if (propertyType.isAssociationType() || propertyType.isComponentType()) {
-                            throw new NotImplementedException("Map value må være enkel verdi eller ett-nivå entity");
-                        }
-                    }
+                    return persistentCollection;
+                } else if (elementType.isComponentType()) {
+                    throw new NotImplementedException("Map value kan ikke være enkel verdi eller entity");
                 }
             }
             return persistentCollection;
