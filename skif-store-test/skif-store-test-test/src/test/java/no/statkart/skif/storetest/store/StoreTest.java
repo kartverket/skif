@@ -1,9 +1,11 @@
 package no.statkart.skif.storetest.store;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.FinderException;
-import no.statkart.skif.mockup.IdSelector;
+import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.exception.ObjectsNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleTransfer;
@@ -20,12 +22,7 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
@@ -41,7 +38,7 @@ import static org.testng.Assert.fail;
 @Test
 public class StoreTest extends StoreTestTestCase {
     @Inject
-    StoreTestMockupFacadeFactory mockupFacadeFactory;
+    private StoreTestMockupFacadeFactory mockupFacadeFactory;
     @Inject
     private StoreClient store;
 
@@ -55,7 +52,7 @@ public class StoreTest extends StoreTestTestCase {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
 
-        List<SimpleId> ids = new ArrayList<>();
+        List<SimpleId<?>> ids = new ArrayList<>();
         ids.add(simple1Id);
 
         Simple bubble = store.get(simple1Id);
@@ -329,12 +326,7 @@ public class StoreTest extends StoreTestTestCase {
      */
 
     private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
-        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
-            @Override
-            public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
-                return mockupFacade.getSimpleMockupFactory().getAllIds(SimpleId.class);
-            }
-        });
+        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(mockupFacade -> mockupFacade.getSimpleMockupFactory().getAllIds(SimpleId.class));
     }
 
     @Test
@@ -362,7 +354,7 @@ public class StoreTest extends StoreTestTestCase {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         BubbleWithAnyBubbleRef bubbleWithAnyBubbleRef = store.get(mockupFacade.getBubbleWithAnyBubbleRefMockupFactory().getBubbleWithAnyBubbleRefId1());
         assertEquals(bubbleWithAnyBubbleRef.getAnyId(), mockupFacade.getSimpleMockupFactory().getSimpleId2());
-        assertEquals(store.get(bubbleWithAnyBubbleRef.getAnyId()).getId(), mockupFacade.getSimpleMockupFactory().getSimpleId2());
+        assertEquals(store.get((BubbleId<?>) bubbleWithAnyBubbleRef.getAnyId()).getId(), mockupFacade.getSimpleMockupFactory().getSimpleId2());
     }
 
     public void testRegisterTransferWhenNotLoadedInStoreAndNotLockedInTransfer() {
@@ -371,7 +363,7 @@ public class StoreTest extends StoreTestTestCase {
         Simple simpleCopy = new Simple(simple1Id, "That's me");
         store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {
         });
-        assertThat(store.get(simple1Id)).isSameAs(simpleCopy);
+        assertThat((Simple) store.get(simple1Id)).isSameAs(simpleCopy);
         assertThat(store.isLocked(simple1Id)).isFalse();
     }
 
@@ -383,7 +375,7 @@ public class StoreTest extends StoreTestTestCase {
         Simple simpleCopy = CopyHelper.copy(simple);
         store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {
         });
-        assertThat(store.get(simple1Id)).isSameAs(simpleCopy);
+        assertThat((Simple) store.get(simple1Id)).isSameAs(simpleCopy);
         assertThat(store.isLocked(simple1Id)).isFalse();
     }
 
@@ -395,8 +387,8 @@ public class StoreTest extends StoreTestTestCase {
             store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
             });
             assertThat(store.isLocked(simple1Id)).isTrue();
-            assertThat(store.get(simple1Id)).isNotSameAs(simpleCopy);
-            assertThat(store.get(simple1Id)).isEqualTo(simpleCopy);
+            assertThat((Simple) store.get(simple1Id)).isNotSameAs(simpleCopy);
+            assertThat((Simple) store.get(simple1Id)).isEqualTo(simpleCopy);
             assertThat(store.isLocked(simple1Id)).isTrue();
         }
     }
@@ -410,8 +402,8 @@ public class StoreTest extends StoreTestTestCase {
             store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
             });
             assertThat(store.isLocked(simple1Id)).isTrue();
-            assertThat(store.get(simple1Id)).isNotSameAs(simpleCopy);
-            assertThat(store.get(simple1Id)).isEqualTo(simpleCopy);
+            assertThat((Simple) store.get(simple1Id)).isNotSameAs(simpleCopy);
+            assertThat((Simple) store.get(simple1Id)).isEqualTo(simpleCopy);
             assertThat(store.isLocked(simple1Id)).isTrue();
         }
     }
@@ -424,7 +416,7 @@ public class StoreTest extends StoreTestTestCase {
             Simple simpleCopy = CopyHelper.copy(simpleLocked);
             store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {
             });
-            assertThat(store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er låst").isSameAs(simpleLocked);
+            assertThat((Simple) store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er låst").isSameAs(simpleLocked);
         }
     }
 
@@ -436,7 +428,171 @@ public class StoreTest extends StoreTestTestCase {
             Simple simpleCopy = CopyHelper.copy(simpleLocked);
             store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
             });
-            assertThat(store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er låst").isSameAs(simpleLocked);
+            assertThat((Simple) store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er låst").isSameAs(simpleLocked);
+        }
+    }
+
+    public void testGetInsertedDeletedNotFound() {
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
+            SimpleId<?> simpleId = new SimpleId<>(-1L);
+            Simple simple = new Simple(simpleId);
+            store.insert(simple);
+
+            assertThat((Simple) store.get(simpleId)).isSameAs(simple);
+
+            store.delete(simple);
+
+            try {
+                store.get(simpleId);
+                fail("Skulle fått exception");
+            } catch (ObjectNotFoundException e) {
+                assertThat((BubbleId) e.getNotFoundId()).describedAs("Forventer id til slettet objekt").isEqualTo(simpleId);
+            }
+        }
+    }
+
+    public void testGetInsertedDeletedNotFoundCollection() {
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
+            SimpleId<?> simple1Id = new SimpleId<>(-1L);
+            Simple simple1 = new Simple(simple1Id);
+            store.insert(simple1);
+
+            SimpleId<?> simple2Id = new SimpleId<>(-2L);
+            Simple simple2 = new Simple(simple2Id);
+            store.insert(simple2);
+
+            store.delete(simple1);
+
+            try {
+                store.get(ImmutableSet.of(simple1Id, simple2Id));
+                fail("Skulle fått exception");
+            } catch (ObjectsNotFoundException e) {
+                assertThat(e.getIdsNotFound()).describedAs("Forventer id til slettet objekt").contains(simple1Id);
+            }
+        }
+    }
+
+    public void testGetInsertedDeletedNotFoundOrdered() {
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
+            SimpleId<?> simple1Id = new SimpleId<>(-1L);
+            Simple simple1 = new Simple(simple1Id);
+            store.insert(simple1);
+
+            SimpleId<?> simple2Id = new SimpleId<>(-2L);
+            Simple simple2 = new Simple(simple2Id);
+            store.insert(simple2);
+
+            store.delete(simple1);
+
+            try {
+                store.getOrdered(ImmutableList.of(simple1Id, simple2Id));
+                fail("Skulle fått exception");
+            } catch (ObjectsNotFoundException e) {
+                assertThat(e.getIdsNotFound()).describedAs("Forventer id til slettet objekt").contains(simple1Id);
+            }
+        }
+    }
+
+    public void testGetInsertedDeletedNotFoundIgnoreMissing() {
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
+            SimpleId<?> simple1Id = new SimpleId<>(-1L);
+            Simple simple1 = new Simple(simple1Id);
+            store.insert(simple1);
+
+            SimpleId<?> simple2Id = new SimpleId<>(-2L);
+            Simple simple2 = new Simple(simple2Id);
+            store.insert(simple2);
+
+            store.delete(simple1);
+
+            Set<Simple> simples = store.getIgnoreMissing(ImmutableSet.of(simple1Id, simple2Id));
+            assertThat(simples).describedAs("Skulle bare fått ikke-slettet objekt").containsOnly(simple2);
+        }
+    }
+
+    public void testGetDeletedNotFound() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
+            Simple simple = store.lock(simple1Id);
+
+            store.delete(simple);
+
+            try {
+                store.get(simple1Id);
+                fail("Skulle fått exception");
+            } catch (ObjectNotFoundException e) {
+                assertThat((BubbleId) e.getNotFoundId()).describedAs("Forventer id til slettet objekt").isEqualTo(simple1Id);
+            }
+        }
+    }
+
+    public void testGetDeletedAndMissingNotFound() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        SimpleId<?> simple2Id = new SimpleId<>(-2L);
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
+            Simple simple1 = store.lock(simple1Id);
+
+            store.delete(simple1);
+
+            try {
+                store.get(ImmutableSet.of(simple1Id, simple2Id));
+                fail("Skulle fått exception");
+            } catch (ObjectsNotFoundException e) {
+                assertThat(e.getIdsNotFound()).describedAs("Forventer id til slettet objekt og ikke-eksisterende objekt").contains(simple1Id, simple2Id);
+            }
+        }
+    }
+
+    public void testGetDeletedNotFoundCollection() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        SimpleId<?> simple2Id = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
+            Simple simple1 = store.lock(simple1Id);
+
+            store.delete(simple1);
+
+            try {
+                store.get(ImmutableSet.of(simple1Id, simple2Id));
+                fail("Skulle fått exception");
+            } catch (ObjectsNotFoundException e) {
+                assertThat(e.getIdsNotFound()).describedAs("Forventer id til slettet objekt").contains(simple1Id);
+            }
+        }
+    }
+
+    public void testGetDeletedNotFoundOrdered() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        SimpleId<?> simple2Id = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
+            Simple simple1 = store.lock(simple1Id);
+
+            store.delete(simple1);
+
+            try {
+                store.getOrdered(ImmutableList.of(simple1Id, simple2Id));
+                fail("Skulle fått exception");
+            } catch (ObjectsNotFoundException e) {
+                assertThat(e.getIdsNotFound()).describedAs("Forventer id til slettet objekt").contains(simple1Id);
+            }
+        }
+    }
+
+    public void testGetDeletedNotFoundIgnoreMissing() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        SimpleId<?> simple2Id = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+        try (UnitOfWork ignored = store.beginUnitOfWork()) {
+            Simple simple1 = store.lock(simple1Id);
+            Simple simple2 = store.lock(simple2Id);
+
+            store.delete(simple1);
+
+            Set<Simple> simples = store.getIgnoreMissing(ImmutableSet.of(simple1Id, simple2Id));
+            assertThat(simples).describedAs("Skulle bare fått ikke-slettet objekt").containsOnly(simple2);
         }
     }
 
