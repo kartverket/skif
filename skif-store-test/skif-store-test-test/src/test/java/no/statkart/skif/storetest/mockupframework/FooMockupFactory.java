@@ -18,8 +18,8 @@ import static no.statkart.skif.storetest.mockup.MockupSnapshots.*;
  * @since 2.1
  */
 public class FooMockupFactory extends AbstractMockupFactory {
-    private final FooId fooIdKartveien;
-    private final FooId fooIdGamleveien;
+    private final FooId<?> fooIdKartveien;
+    private final FooId<?> fooIdGamleveien;
 
     @Inject
     public FooMockupFactory(MockupStore store, TestNumber testNumber) {
@@ -29,7 +29,7 @@ public class FooMockupFactory extends AbstractMockupFactory {
         fooIdGamleveien = getNextId(FooId.class);
     }
 
-    public FooId getFooIdKartveien() {
+    public FooId<?> getFooIdKartveien() {
         return fooIdKartveien;
     }
 

@@ -15,9 +15,10 @@ import java.util.SortedMap;
 public interface TestdataService {
 
     /**
-     * Returnerer testnummer 0
+     * Returnerer testnummer for statisk definert mockupsett.
      *
-     * @return neste testnummer
+     * @return testnummer 0
+     * @see TestNumber#isNR_0()
      */
     TestNumber getTestNumber0();
 
