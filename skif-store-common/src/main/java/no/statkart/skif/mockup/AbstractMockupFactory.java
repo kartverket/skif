@@ -34,10 +34,6 @@ public abstract class AbstractMockupFactory {
         return testIdGenerator.getNextId(idClass);
     }
 
-    protected Object getNextIdValue(Class<? extends BubbleId> idClass) {
-        return testIdGenerator.getNextIdValue(idClass);
-    }
-
     /**
      * Oppretter alle mockup-objektene denne factory er ansvarlig for og putter dem i mockupens store.
      */

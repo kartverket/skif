@@ -12,7 +12,7 @@ import no.statkart.skif.store.SnapshotVersion;
 /**
  * Enkel implementasjon av {@link IdService} for generering av test-id'er for id-typer
  * som alle benytter {@link Long} som verditype. Test-id'en som genereres bruker
- * {@link TestNumber} som prefix og har en øvre grense på {@link #PREFIX_POSITION} id'er som
+ * {@link TestNumber} som prefix og har en øvre grense på {@link #PREFIX_FACTOR} id'er som
  * kan genereres med samme prefix.
  *
  * @author Henrik Fredholm
@@ -21,7 +21,7 @@ import no.statkart.skif.store.SnapshotVersion;
 @Singleton
 public class TestIdServiceLong implements IdService {
     //bestemmer plassering av prefix for testNumber
-    private static final int PREFIX_POSITION = 1_000_000;
+    private static final int PREFIX_FACTOR = 1_000_000;
 
     private final TestNumber testNumber;
     private int localIdValue = 100_000; //lokal suffix av id verdi - setter av et område tiltenkt hardkodede verdier i mockupsettet
@@ -48,13 +48,13 @@ public class TestIdServiceLong implements IdService {
      * @see TestNumber#getPrefix() getPrefix() for beregning av prefix verdi
      */
     public long calculateIdValue(int localIdValue) {
-        return (testNumber.getPrefix() * PREFIX_POSITION) + localIdValue;
+        return (testNumber.getPrefix() * PREFIX_FACTOR) + localIdValue;
     }
 
     @Override
     public <T extends BubbleId<?>> Long getNextIdValue(Class<T> idClass) {
         localIdValue++;
-        Preconditions.checkArgument(localIdValue < PREFIX_POSITION, "Mockup overflow - count exceeds %s", PREFIX_POSITION);
+        Preconditions.checkArgument(localIdValue < PREFIX_FACTOR, "Mockup overflow - count exceeds %s", PREFIX_FACTOR);
         return calculateIdValue(localIdValue);
     }
 
