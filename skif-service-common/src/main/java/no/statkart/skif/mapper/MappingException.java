@@ -18,7 +18,7 @@ public class MappingException extends ImplementationException {
     }
 
     public MappingException(String message) {
-        this(message, null);
+        super(message);
     }
 
     public MappingException(Throwable cause) {

@@ -17,7 +17,7 @@ public class NotImplementedException extends ImplementationException {
     }
 
     public NotImplementedException(String message) {
-        this(message, null);
+        super(message);
     }
 
     public NotImplementedException() {

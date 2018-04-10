@@ -15,6 +15,14 @@ public class AttemptDeleteException extends ApplicationException {
         this.bubbleId = bubbleId;
     }
 
+    /**
+     * Kun for mapping.
+     */
+    public AttemptDeleteException(BubbleId bubbleId) {
+        super(String.valueOf(bubbleId));
+        this.bubbleId = bubbleId;
+    }
+
     public BubbleId getBubbleId() {
         return bubbleId;
     }

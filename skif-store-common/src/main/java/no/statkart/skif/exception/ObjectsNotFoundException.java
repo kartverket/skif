@@ -33,14 +33,6 @@ public class ObjectsNotFoundException extends FinderException {
         this.idsNotFound = ImmutableSet.copyOf(idsNotFound);
     }
 
-    /**
-     * For bruk fra {@link ObjectNotFoundException}.
-     */
-    ObjectsNotFoundException(BubbleId<?> idNotFound, Throwable cause, Logger logger) {
-        super(String.valueOf(idNotFound), cause, logger);
-        this.idsNotFound = ImmutableSet.<BubbleId<?>>of(idNotFound);
-    }
-
     public Set<BubbleId<?>> getIdsNotFound() {
         return idsNotFound;
     }

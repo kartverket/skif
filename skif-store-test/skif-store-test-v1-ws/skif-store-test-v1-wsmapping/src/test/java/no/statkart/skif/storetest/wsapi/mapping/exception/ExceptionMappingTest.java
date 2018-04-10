@@ -1,25 +1,17 @@
 package no.statkart.skif.storetest.wsapi.mapping.exception;
 
 import com.google.inject.util.Providers;
-import no.statkart.skif.exception.AttemptDeleteException;
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.LockedException;
-import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.exception.ObjectsNotFoundException;
+import no.statkart.skif.exception.*;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-import no.statkart.skif.storetest.wsapi.exception.AttemptDeleteFaultInfo;
-import no.statkart.skif.storetest.wsapi.exception.LockedFaultInfo;
-import no.statkart.skif.storetest.wsapi.exception.ObjectsNotFoundFaultInfo;
-import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-import no.statkart.skif.storetest.wsapi.exception.ServiceFaultInfo;
+import no.statkart.skif.storetest.wsapi.exception.*;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapping;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
+import org.assertj.core.api.Assertions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -112,7 +104,7 @@ public class ExceptionMappingTest {
         StoreTestMapping mapping = new StoreTestMapper(Providers.of(SnapshotVersion.CURRENT)).getMapping();
         StoreTestExceptionMapping exceptionMapping = new StoreTestExceptionMapper(mapping).getMapping();
 
-        ObjectsNotFoundException domainException = new ObjectsNotFoundException(Arrays.<BubbleId<?>>asList(new SimpleId<>(1L), new SimpleId<>(2L)));
+        ObjectsNotFoundException domainException = new ObjectsNotFoundException(Arrays.asList(new SimpleId<>(1L), new SimpleId<>(2L)));
         ServiceException wsException = (ServiceException) exceptionMapping.d2w(domainException);
 
         Assert.assertEquals(wsException.getFaultInfo().getClass(), ObjectsNotFoundFaultInfo.class);
@@ -123,5 +115,37 @@ public class ExceptionMappingTest {
         Assert.assertEquals(mappedException.getClass(), ObjectsNotFoundException.class);
         Assert.assertEquals(((ObjectsNotFoundException) mappedException).getIdsNotFound(), domainException.getIdsNotFound());
         Assert.assertEquals(mappedException.getMessage(), domainException.getMessage());
+    }
+
+    public void testNested() {
+        StoreTestMapping mapping = new StoreTestMapper(Providers.of(SnapshotVersion.CURRENT)).getMapping();
+        StoreTestExceptionMapping exceptionMapping = new StoreTestExceptionMapper(mapping).getMapping();
+
+        RuntimeException runtimeException = new RuntimeException("Foo");
+        ImplementationException implementationException = new ImplementationException("Wrapping", runtimeException);
+        Throwable wsException = exceptionMapping.d2w(implementationException);
+
+        Assertions.assertThat(wsException)
+                .hasMessage("Wrapping")
+                .isInstanceOf(ServiceException.class);
+        ServiceException serviceException = (ServiceException) wsException;
+        ServiceFaultInfo faultInfo = serviceException.getFaultInfo();
+        ExceptionDetail exceptionDetail1 = faultInfo.getExceptionDetail();
+        Assertions.assertThat(exceptionDetail1.getMessage()).isEqualTo("Wrapping");
+        Assertions.assertThat(exceptionDetail1.getClassName()).isEqualTo(ImplementationException.class.getName());
+        ExceptionDetail exceptionDetail2 = exceptionDetail1.getCause();
+        Assertions.assertThat(exceptionDetail2.getMessage()).isEqualTo("Foo");
+        Assertions.assertThat(exceptionDetail2.getClassName()).isEqualTo(RuntimeException.class.getName());
+
+        Throwable domainException = exceptionMapping.w2d(serviceException);
+        Assertions.assertThat(domainException)
+                .hasMessage("Wrapping")
+                .isInstanceOf(ImplementationException.class);
+        Throwable cause = domainException.getCause();
+        Assertions.assertThat(cause)
+                .isNotNull()
+                .isInstanceOf(ServerException.class)
+                .hasMessage("-> java.lang.RuntimeException: Foo");
+        Assertions.assertThat(cause.getCause()).isNull();
     }
 }
