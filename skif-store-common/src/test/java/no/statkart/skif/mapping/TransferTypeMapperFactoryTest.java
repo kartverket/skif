@@ -64,7 +64,7 @@ public class TransferTypeMapperFactoryTest {
     }
 
     @Test
-    public void testBubbleTransfer() {
+    public void testExternalBubbleTransfer() {
         Mapping mapping = new TransferTypeMapperFactoryTestMapper().getMapping();
 
         DomainObjectId<?> id1 = new DomainObjectId<>(1L);
@@ -87,6 +87,49 @@ public class TransferTypeMapperFactoryTest {
         DomainBubbleTransfer domainTransfer = mapping.w2d(apiTransfer, DomainBubbleTransfer.class);
 
         Assertions.assertThat((DomainObjectId) domainTransfer.getResult()).isEqualTo((DomainObjectId) id1);
+
+        Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
+        Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
+        for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
+            DomainObject domainObject = (DomainObject) bubbleObject;
+            funnetIds.add(domainObject.getId());
+            Assertions.assertThat((DomainObjectId) domainObject.getId()).isIn((DomainObjectId) id1, (DomainObjectId) id2);
+            if (domainObject.getId().equals(id1)) {
+                Assertions.assertThat(domainObject.getText()).isEqualTo("A");
+            } else if (domainObject.getId().equals(id2)) {
+                Assertions.assertThat(domainObject.getText()).isEqualTo("B");
+            }
+        }
+        Assertions.assertThat(funnetIds).containsExactly(id1, id2);
+        Assertions.assertThat(domainTransfer.getLockedIds()).containsExactly(id1, id2);
+    }
+
+    @Test
+    public void testInternalBubbleTransfer() {
+        Mapping mapping = new TransferTypeMapperFactoryTestMapper().getMapping();
+
+        DomainObjectId<?> id1 = new DomainObjectId<>(1L);
+        DomainObjectId<?> id2 = new DomainObjectId<>(2L);
+        DomainObject object1 = new DomainObject();
+        object1.setId(id1);
+        object1.setText("A");
+        DomainObject object2 = new DomainObject();
+        object2.setId(id2);
+        object2.setText("B");
+
+        DomainResult result = new DomainResult();
+        result.setIds(ImmutableSet.of(id1));
+        DomainBubbleTransfer2 transfer = new DomainBubbleTransfer2(result, ImmutableList.of(object1, object2), ImmutableSet.of(id1, id2));
+
+        ApiBubbleTransfer2 apiTransfer = mapping.d2w(transfer, ApiBubbleTransfer2.class);
+
+        Assertions.assertThat(apiTransfer.getIds().getItem()).containsExactly(new ApiObjectId("1"));
+        Assertions.assertThat(apiTransfer.getBubbleObjects().getItem()).containsExactly(new ApiObject(new ApiObjectId("1"), "A"), new ApiObject(new ApiObjectId("2"), "B"));
+        Assertions.assertThat(apiTransfer.getLockedIds().getItem()).containsExactly(new ApiObjectId("1"), new ApiObjectId("2"));
+
+        DomainBubbleTransfer2 domainTransfer = mapping.w2d(apiTransfer, DomainBubbleTransfer2.class);
+
+        Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly((DomainObjectId) id1);
 
         Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
         Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
@@ -207,6 +250,13 @@ public class TransferTypeMapperFactoryTest {
 
         @SuppressWarnings("deprecation")
         public DomainBubbleTransfer(DomainObjectId<?> result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId> lockedIds) {
+            super(result, objects, lockedIds);
+        }
+    }
+
+    public static class DomainBubbleTransfer2 extends BubbleTransfer<DomainResult> {
+        @SuppressWarnings("deprecation")
+        public DomainBubbleTransfer2(DomainResult result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId> lockedIds) {
             super(result, objects, lockedIds);
         }
     }
@@ -372,6 +422,38 @@ public class TransferTypeMapperFactoryTest {
 
         public void setId(ApiObjectId id) {
             this.id = id;
+        }
+
+        public ApiIdList getLockedIds() {
+            return lockedIds;
+        }
+
+        @SuppressWarnings("UnusedDeclaration") // WS-mapping
+        public void setLockedIds(ApiIdList lockedIds) {
+            this.lockedIds = lockedIds;
+        }
+    }
+
+    public static class ApiBubbleTransfer2 {
+        private ApiObjectList bubbleObjects;
+        private ApiIdList lockedIds;
+        private ApiIdList ids;
+
+        public ApiObjectList getBubbleObjects() {
+            return bubbleObjects;
+        }
+
+        @SuppressWarnings("UnusedDeclaration")
+        public void setBubbleObjects(ApiObjectList bubbleObjects) {
+            this.bubbleObjects = bubbleObjects;
+        }
+
+        public ApiIdList getIds() {
+            return ids;
+        }
+
+        public void setIds(ApiIdList ids) {
+            this.ids = ids;
         }
 
         public ApiIdList getLockedIds() {

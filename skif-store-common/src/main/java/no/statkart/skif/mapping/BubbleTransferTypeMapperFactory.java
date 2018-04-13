@@ -81,7 +81,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
                     if (c.equals(getWsapiClass())) {
                         for (Iterator<Method> iterator = getters.iterator(); iterator.hasNext(); ) {
                             Method method = iterator.next();
-                            if (method.getName().equals("getBubbleObjects")) {
+                            if (method.getName().equals("getBubbleObjects") || method.getName().equals("getLockedIds")) {
                                 iterator.remove();
                             }
                         }
