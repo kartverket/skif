@@ -28,7 +28,7 @@ public abstract class SkifModule extends AbstractModule {
     protected final ModuleConfiguration addDefaultFactory(ModuleConfiguration moduleConfiguration) {
         ModuleConfiguration c = moduleConfiguration;
         if (moduleConfiguration.getStrategyFactory() == null) {
-            ModuleStrategyFactory factory = defineDefaultModuleStrategyFactory();
+            ModuleStrategyFactory factory = defineDefaultModuleStrategyFactory(moduleConfiguration);
             if (factory != null) {
                 c = new DefaultModuleConfiguration(moduleConfiguration.getConfiguration(), factory);
             }
@@ -36,6 +36,14 @@ public abstract class SkifModule extends AbstractModule {
         return c;
     }
 
+    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
+        return defineDefaultModuleStrategyFactory();
+    }
+
+    /**
+     * @deprecated Bruk defineDefaultModuleStrategyFactory som tar inn moduleConfiguration som parameter i stedet!
+     */
+    @Deprecated
     protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
         return null;
     }
