@@ -896,8 +896,9 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     @Override
-    public void registerEntries(int level, Transfer<?> transfer) {
+    public Collection<StoreEntry> registerEntries(int level, Transfer<?> transfer) {
         // No-op; alle objekter hentes fra persistence session
+        return Collections.EMPTY_SET;
     }
 
     /**

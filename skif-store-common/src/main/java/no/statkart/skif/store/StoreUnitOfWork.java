@@ -315,8 +315,8 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
-    public void registerEntries(int level, Transfer<?> transfer) {
-        wrappedStoreSession.registerEntries(level, transfer);
+    public Collection<StoreEntry> registerEntries(int level, Transfer<?> transfer) {
+        return wrappedStoreSession.registerEntries(level, transfer);
     }
 
     @Override

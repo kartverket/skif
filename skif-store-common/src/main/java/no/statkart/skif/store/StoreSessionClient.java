@@ -384,11 +384,12 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
-    public void registerEntries(int level, Transfer<?> transfer) {
+    public Collection<StoreEntry> registerEntries(int level, Transfer<?> transfer) {
         Set<BubbleId> lockedIdsFromTransfer = transfer.getLockedIds();
         if (level==0 && !lockedIdsFromTransfer.isEmpty()) {
             throw new ImplementationException("Lock on client must be done in a UnitOfWork");
         }
+        Set<StoreEntry> lockedEntriesNotAlreadyLocked = new HashSet<>(lockedIdsFromTransfer.size());
         for (BubbleObject bubbleObjectFromTransfer : transfer.getBubbleObjects().values()) {
             StoreEntry entry = storeCache.get(bubbleObjectFromTransfer.getId());
             if (entry == null) {
@@ -398,6 +399,7 @@ public class StoreSessionClient extends AbstractStoreSession {
                     copy.register(store);
                     entry.setLocked(level, copy);
                     entry.setLockCreatedByLevel(level);
+                    lockedEntriesNotAlreadyLocked.add(entry);
                 }
                 store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, level);
             } else {
@@ -422,11 +424,13 @@ public class StoreSessionClient extends AbstractStoreSession {
                         copy.register(store);
                         entry.setLocked(level, copy);
                         entry.setLockCreatedByLevel(level);
+                        lockedEntriesNotAlreadyLocked.add(entry);
                     }
                 }
                 // Hvis objektet i Store er allerede låst, så ignoreres den innkommende kopien fra transfer
             }
         }
+        return lockedEntriesNotAlreadyLocked;
     }
 
     @Override

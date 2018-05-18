@@ -5,10 +5,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.RunOnServerMethod;
+import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.BubbleTransfer;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreBubbleTransfer;
 import no.statkart.skif.store.StoreServer;
@@ -19,6 +22,7 @@ import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
+import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
@@ -57,7 +61,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(mockupFacade -> ImmutableSet.of(
                 mockupFacade.getSimpleMockupFactory().getSimpleId1(),
                 mockupFacade.getSimpleMockupFactory().getSimpleId2()
-                ));
+        ));
     }
 
     public void testBeginEndEmptyUnitOfWork() {
@@ -478,7 +482,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         assertFalse(clientStore.inUnitOfWork());
     }
 
-    @Test(enabled=false, expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Lock on client must be done in a UnitOfWork.*") // TODO: SKIF-610. Midlertidig disabling av denne i påvente av GBOK-9889. Gjør klienten feiler.
+    @Test(enabled = false, expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Lock on client must be done in a UnitOfWork.*")
+    // TODO: SKIF-610. Midlertidig disabling av denne i påvente av GBOK-9889. Gjør klienten feiler.
     public void testClientUpdateOutsideUnitOfWork() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         Simple simple = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
@@ -906,6 +911,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
      * Tester at et objekt som lastes, låses, og modifiseres i en en unit of work er tilgjengelig via getAllLoaded både
      * mens unit of work er aktiv og etter at unit of work er committed. Tester både klient og server.
      */
+    @SuppressWarnings("Duplicates")
     public void testGetAllLoadedWhenObjectIsLockedAndModifiedInUnitOfWorkThatIsCommitted() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final SimpleId<?> simpleId = mockupFacade.getSimpleMockupFactory().getSimpleId1();
@@ -952,6 +958,72 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 Simple simple3 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
                 assertSame(simple3, simpleLocked, "Forventet at store.getAllLoaded() gir instansen som ble modifisert og ikke opprinnelig kopi");
                 return null;
+            }
+        });
+    }
+
+    public void ytreUnitOfWorkSkalFrigiLaaserVedAbortUnitOfWork() {
+        releaseAllLockForCurrentUser(); // Så vi har en veldefinert tilstand
+        SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
+        assertThat(antallLaser()).isEqualTo(0);
+        try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
+           try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
+                StoreBubbleTransfer storeBubbleTransfer = findAndLock(simpleId);
+                assertThat(antallLaser()).isEqualTo(1);
+                clientStore.register(storeBubbleTransfer);
+                clientStore.commitUnitOfWork(indre);
+            }
+            assertThat(antallLaser()).isEqualTo(1);
+            clientStore.abortUnitOfWork(ytre);
+        }
+        assertThat(antallLaser()).isEqualTo(0);
+    }
+
+    private StoreBubbleTransfer findAndLock(final SimpleId<?> simpleId) {
+        return (StoreBubbleTransfer) server.runInTxNotSupported(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                StoreBubbleTransfer transfer = new StoreBubbleTransfer();
+                transfer.add(store.lock(simpleId));
+                return transfer;
+            }
+        });
+    }
+
+
+    private void releaseAllLockForCurrentUser() {
+        DBLockerService lockerService = injector.getInstance(DBLockerService.class);
+        LoginUserHolder loginUser = injector.getInstance(LoginUserHolder.class);
+        lockerService.releaseAllLocks(loginUser.get().getUsername());
+    }
+
+    private SimpleId<?> createSimpleObjectOnServer(final String text) {
+        return (SimpleId<?>) server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
+
+            public Object run() {
+                Simple simple = new Simple();
+                simple.setText(text);
+                store.insert(simple);
+                return simple.getId();
+            }
+        });
+    }
+
+    private int antallLaser() {
+
+        return (int) server.runInTxNotSupported(new RunOnServerMethod() {
+            @Inject
+            DBLockerService lockerService;
+            @Inject
+            ServiceRequestContext serviceRequestContext;
+
+            @Override
+            public Object run() {
+                return lockerService.getLocksBy(serviceRequestContext.getUserName()).size();
             }
         });
     }

@@ -821,7 +821,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
     @Override
     public void register(Transfer<?> transfer) {
-        registerEntries(level, transfer);
+        Collection<StoreEntry> lockedEntriesNotAlreadyLocked = registerEntries(level, transfer);
+        for (StoreEntry entry : lockedEntriesNotAlreadyLocked) {
+            modifiedMap.put(entry.getId(), entry);
+        }
+        markModified();
     }
 
     @Override
