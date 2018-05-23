@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import no.statkart.skif.exception.*;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
+import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -718,10 +719,18 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                     }
                     break;
                 case UNCHANGED:
-                    entry.commit(level + 1);
+                    commitUnchanged(entry);
                     break;
             }
         }
+    }
+
+    private void commitUnchanged(StoreEntry entry) {
+        int levelForDerivedBubbleObject = entry.getLevelForDerivedBubbleObject(level);
+        if (levelForDerivedBubbleObject!=level) {
+            onUpdateEntry(level, entry, CopyHelper.copy(entry.getBubbleObject(levelForDerivedBubbleObject)));
+        }
+        entry.commit(level + 1);
     }
 
     protected void commitInsert(StoreEntry entry) {
