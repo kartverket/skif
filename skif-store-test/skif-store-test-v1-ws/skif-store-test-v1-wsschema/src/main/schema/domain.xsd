@@ -139,6 +139,13 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="StoreBubbleTransfer">
+        <xs:sequence>
+            <xs:element name="bubbleObjects" type="domainns:StoreTestBubbleList"/>
+            <xs:element name="lockedIds" type="domainns:StoreTestBubbleIdList"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="UnitOfWorkTransfer">
         <xs:sequence>
             <xs:element name="insertedObjects" type="domainns:StoreTestBubbleList"/>

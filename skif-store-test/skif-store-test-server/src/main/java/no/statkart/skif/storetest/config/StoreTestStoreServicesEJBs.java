@@ -11,6 +11,7 @@ import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
 import no.statkart.skif.storetest.service.store.StoreService;
+import no.statkart.skif.storetest.service.uow.UowTestService;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBs;
@@ -30,6 +31,7 @@ import javax.ejb.EJBs;
         @EJB(name = "ejb/KodelisteServiceEJBBean", beanInterface = KodelisteService.class),
         @EJB(name = "ejb/HistTestServiceEJBBean", beanInterface = HistTestService.class),
         @EJB(name = "ejb/LockingTestServiceEJBBean", beanInterface = LockingTestService.class),
+        @EJB(name = "ejb/UowTestServiceEJBBean", beanInterface = UowTestService.class),
         @EJB(name = "ejb/ExceptionTestServiceEJBBean", beanInterface = ExceptionTestService.class),
         @EJB(name = "ejb/EndringsloggServiceEJBBean", beanInterface = EndringsloggService.class),
         @EJB(name = "ejb/NedlastningServiceEJBBean", beanInterface = NedlastningService.class)

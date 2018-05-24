@@ -11,7 +11,6 @@ import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.BubbleTransfer;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreBubbleTransfer;
 import no.statkart.skif.store.StoreServer;
@@ -23,10 +22,10 @@ import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
+import no.statkart.skif.storetest.service.uow.UowTestService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
@@ -45,8 +44,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 /**
- * Tester bruk av UnitOfWork på server. Alle tester kjøres via bean managed transaction slik at ingen ting blir
- * committet til databasen.
+ * Tester bruk av UnitOfWork på klient og server.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
@@ -58,6 +56,24 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
     @Inject
     private Store clientStore;
+
+    @DataProvider(name = "boolean1Dmatrix")
+    protected Object[][] boolean1Dmatrix() {
+        return new Object[][]{
+                {Boolean.TRUE},
+                {Boolean.FALSE},
+        };
+    }
+
+    @DataProvider(name = "boolean2Dmatrix")
+    protected Object[][] boolean2Dmatrix() {
+        return new Object[][]{
+                {Boolean.TRUE, Boolean.TRUE},
+                {Boolean.FALSE, Boolean.TRUE},
+                {Boolean.TRUE, Boolean.FALSE},
+                {Boolean.FALSE, Boolean.FALSE},
+        };
+    }
 
     private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
         return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(mockupFacade -> ImmutableSet.of(
@@ -79,7 +95,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             }
         });
     }
-
 
     public void testInsertObjectInUnitOfWork() {
 
@@ -965,225 +980,194 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     public void ytreUnitOfWorkSkalFrigiLaaserVedAbortUnitOfWork() {
+        UowTestService uowTestService = clientStore.getInstance(UowTestService.class);
         releaseAllLockForCurrentUser(); // Så vi har en veldefinert tilstand
         SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
-        assertThat(antallLaser()).isEqualTo(0);
+        assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
         try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
-           try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
+            try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
                 StoreBubbleTransfer storeBubbleTransfer = findAndLock(simpleId);
-                assertThat(antallLaser()).isEqualTo(1);
+                assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
                 clientStore.register(storeBubbleTransfer);
                 clientStore.commitUnitOfWork(indre);
             }
-            assertThat(antallLaser()).isEqualTo(1);
+            assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
             clientStore.abortUnitOfWork(ytre);
         }
-        assertThat(antallLaser()).isEqualTo(0);
+        assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
     }
 
-
-    @DataProvider(name = "truefalse")
-    protected Object[][] truefalse() {
-        return new Object[][] {
-                { Boolean.TRUE },
-                { Boolean.FALSE},
-        };
+    @Test(dataProvider = "boolean2Dmatrix")
+    public void clientLaasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreMedUpdateAvLaastBoble(boolean useTraferForLaasing, boolean useLockOperation) {
+        final SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
+        laasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreMedUpdateAvLaastBoble(clientStore, simpleId, useTraferForLaasing, useLockOperation);
     }
 
-    @Test(dataProvider = "truefalse")
-    public void laasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreUtenUpdateAvLaastBoble(boolean useLockOperation) {
-        SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
-        try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
-            Simple foo = clientStore.get(simpleId);
-            updateSimpleObjectOnServer(simpleId, "external update");
-            assertThat(foo).isNotNull();
-            assertThat(foo.getText()).isEqualTo("foo");
-            Simple fooLockedIndre = null;
-            try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
-                fooLockedIndre =clientStore.lock(simpleId);
-                assertThat(fooLockedIndre).isNotSameAs(foo);
-                assertThat(fooLockedIndre.getText()).isEqualTo("external update");
-                // Objekt låses men oppdateres ikke i indre. Har lagt inn en endring så man kan se den ikke blir med.
-                fooLockedIndre.setText("changed indre");
-                clientStore.commitUnitOfWork(indre);
+    @Test(dataProvider = "boolean2Dmatrix")
+    public void serverLaasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreMedUpdateAvLaastBoble(boolean useTraferForLaasing, boolean useLockOperation) {
+        final SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            Store serverStore;
+
+            @Override
+            public Object run() {
+                laasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreMedUpdateAvLaastBoble(serverStore, simpleId, useTraferForLaasing, useLockOperation);
+                return null;
             }
-            assertThat(clientStore.isLocked(simpleId)).isTrue();
-            Simple fooAfter = useLockOperation ? clientStore.lock(simpleId): clientStore.get(simpleId);
-            assertThat(fooAfter).isNotNull();
-            assertThat(fooAfter).isNotSameAs(foo);
-            assertThat(fooAfter).isNotSameAs(fooLockedIndre);
-            assertThat(fooAfter.getText()).isEqualTo("external update");
-            // Objekt er låst og uendret fra indre. Oppdateres heller ikke i ytre.  Har lagt inn en endring så man kan se den ikke blir med.
-            fooAfter.setText("changed ytre");
-        }
-        assertThat(clientStore.isLocked(simpleId)).isFalse();
-        assertThat(clientStore.get(simpleId).getText()).isEqualTo("external update");
+        });
     }
 
-    @Test(dataProvider = "truefalse")
-    public void laasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreMedUpdateAvLaastBoble(boolean useLockOperation) {
-        SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
-        try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
-            Simple foo = clientStore.get(simpleId);
-            updateSimpleObjectOnServer(simpleId, "external update");
+    private void laasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreMedUpdateAvLaastBoble(Store store, SimpleId<?> simpleId, boolean useTraferForLaasing, boolean useLockOperation) {
+        UowTestService uowTestService = store.getInstance(UowTestService.class);
+        assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
+        //noinspection unused
+        try (UnitOfWork ytre = store.beginUnitOfWork()) {
+            Simple foo = store.get(simpleId);
+            uowTestService.updateTextInNewTransaction(simpleId, "external update");
             assertThat(foo).isNotNull();
             assertThat(foo.getText()).isEqualTo("foo");
-            Simple fooLockedIndre = null;
-            try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
-                fooLockedIndre =clientStore.lock(simpleId);
-                assertThat(fooLockedIndre).isNotSameAs(foo);
-                assertThat(fooLockedIndre.getText()).isEqualTo("external update");
-                // Objekt låses og oppdateres i indre. Har lagt inn endring så man kan se den blir blir med
-                fooLockedIndre.setText("changed indre");
-                clientStore.update(fooLockedIndre);
-                clientStore.commitUnitOfWork(indre);
-            }
-            assertThat(clientStore.isLocked(simpleId)).isTrue();
-            Simple fooAfter = useLockOperation ? clientStore.lock(simpleId): clientStore.get(simpleId);
-            assertThat(fooAfter).isNotNull();
-            assertThat(fooAfter).isNotSameAs(foo);
-            assertThat(fooAfter).isSameAs(fooLockedIndre);
-            assertThat(fooAfter.getText()).isEqualTo("changed indre");
-            // Objekt er låst og oppdatert fra indre, men ytre gjør abortUnitOfWork så endringene blir ikke med videre
-            fooAfter.setText("changed ytre");
-            clientStore.update(fooAfter);
-        }
-        assertThat(clientStore.isLocked(simpleId)).isFalse();
-        assertThat(clientStore.get(simpleId).getText()).isEqualTo("external update");
-    }
-
-    @Test
-    public void laasAvBobleLagerNyInstansIYtreUnitWorkEtterAbortIIndreUtenUpdateAvLaastBoble() {
-        SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
-        try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
-            Simple foo = clientStore.get(simpleId);
-            updateSimpleObjectOnServer(simpleId, "external update");
-            assertThat(foo).isNotNull();
-            assertThat(foo.getText()).isEqualTo("foo");
-            Simple fooLockedIndre = null;
-            try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
-                fooLockedIndre =clientStore.lock(simpleId);
-                assertThat(fooLockedIndre).isNotSameAs(foo);
-                assertThat(fooLockedIndre.getText()).isEqualTo("external update");
-                // Objekt låses men oppdateres ikke i indre. Indre gjør abortUnitOfWork
-                // Har lagt inn endring så man kan se dette ikke blir med.
-                fooLockedIndre.setText("changed indre");
-            }
-            assertThat(clientStore.isLocked(simpleId)).isFalse();
-            Simple fooAfter = clientStore.get(simpleId);
-            assertThat(fooAfter).isNotNull();
-            assertThat(fooAfter).isNotSameAs(foo);
-            assertThat(fooAfter).isNotSameAs(fooLockedIndre);
-            assertThat(fooAfter.getText()).isEqualTo("external update");
-            // Objektet er ikke låst i ytre så vi endre det ikke her (forsøk på endring av objekt, med etterfølgende update vil feile)
-        }
-        assertThat(clientStore.isLocked(simpleId)).isFalse();
-        assertThat(clientStore.get(simpleId).getText()).isEqualTo("external update");
-    }
-
-    @Test
-    public void laasAvBobleLagerNyInstansIYtreUnitWorkEtterAbortIIndreMedUpdateAvLaastBoble() {
-        SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
-        try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
-            Simple foo = clientStore.get(simpleId);
-            updateSimpleObjectOnServer(simpleId, "external update");
-            assertThat(foo).isNotNull();
-            assertThat(foo.getText()).isEqualTo("foo");
-            Simple fooLockedIndre = null;
-            try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
-                fooLockedIndre =clientStore.lock(simpleId);
-                assertThat(fooLockedIndre).isNotSameAs(foo);
-                assertThat(fooLockedIndre.getText()).isEqualTo("external update");
-                // Objekt låses og oppdateres av indre, men indre gjør abortUnitOfWork
-                // Har lagt inn endring så man kan se den ikke blir med.
-                fooLockedIndre.setText("changed indre");
-                clientStore.update(fooLockedIndre);
-            }
-            assertThat(clientStore.isLocked(simpleId)).isFalse();
-            Simple fooAfter = clientStore.get(simpleId);
-            assertThat(fooAfter).isNotNull();
-            assertThat(fooAfter).isNotSameAs(foo);
-            assertThat(fooAfter).isNotSameAs(fooLockedIndre);
-            assertThat(fooAfter.getText()).isEqualTo("external update");
-            // Objektet er ikke låst i ytre så vi endre det ikke her (forsøk på endring av objekt, med etterfølgende update vil feile)
-        }
-        assertThat(clientStore.isLocked(simpleId)).isFalse();
-        assertThat(clientStore.get(simpleId).getText()).isEqualTo("external update");
-    }
-
-    @Test(dataProvider = "truefalse")
-    public void laasAvBobleViaTransferLagerNyInstansIYtreUnitWorkEtterCommitIndreUtenUpdateAvLaastBoble(boolean useLockOperation) {
-        releaseAllLockForCurrentUser(); // Så vi har en veldefinert tilstand
-        SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
-        try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
-            Simple foo = clientStore.get(simpleId);
-            updateSimpleObjectOnServer(simpleId, "external update");
-            assertThat(foo).isNotNull();
-            assertThat(foo.getText()).isEqualTo("foo");
-            assertThat(antallLaser()).isEqualTo(0);
-            Simple fooLockedIndre = null;
-            try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
-                StoreBubbleTransfer storeBubbleTransfer = findAndLock(simpleId);
-                assertThat(antallLaser()).isEqualTo(1);
-                clientStore.register(storeBubbleTransfer);
-                fooLockedIndre = clientStore.get(simpleId);
-                assertThat(clientStore.isLocked(simpleId)).isTrue();
-                assertThat(fooLockedIndre).isNotSameAs(foo);
-                assertThat(fooLockedIndre.getText()).isEqualTo("external update");
-                // Objektet låses  men indre gjør ingen oppdatering.
-                // Har lagt inn endring så man kan se den ikke blir med.
-                fooLockedIndre.setText("changed indre");
-                clientStore.commitUnitOfWork(indre);
-            }
-            assertThat(antallLaser()).isEqualTo(1);
-            // Uthenting via lock og get skal ha samme effekt, da objektet allerede er låst
-            Simple fooAfter = useLockOperation ? clientStore.lock(simpleId) : clientStore.get(simpleId);
-            assertThat(fooAfter).isNotNull();
-            assertThat(fooAfter).isNotSameAs(foo);
-            assertThat(fooAfter).isNotSameAs(fooLockedIndre);
-            assertThat(fooAfter.getText()).isEqualTo("external update");
-            assertThat(antallLaser()).isEqualTo(1);
-            assertThat(clientStore.isLocked(simpleId)).isTrue();
-        }
-        assertThat(antallLaser()).isEqualTo(0);
-    }
-
-    @Test(dataProvider = "truefalse")
-    public void laasAvBobleViaTransferLagerNyInstansIYtreUnitWorkEtterCommitIndreMedUpdateAvLaastBoble(boolean useLockOperation) {
-        releaseAllLockForCurrentUser(); // Så vi har en veldefinert tilstand
-        SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
-        try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
-            Simple foo = clientStore.get(simpleId);
-            updateSimpleObjectOnServer(simpleId, "external update");
-            assertThat(foo).isNotNull();
-            assertThat(foo.getText()).isEqualTo("foo");
-            assertThat(antallLaser()).isEqualTo(0);
-            Simple fooLockedIndre = null;
-            try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
-                StoreBubbleTransfer storeBubbleTransfer = findAndLock(simpleId);
-                assertThat(antallLaser()).isEqualTo(1);
-                clientStore.register(storeBubbleTransfer);
-                fooLockedIndre = clientStore.get(simpleId);
-                assertThat(clientStore.isLocked(simpleId)).isTrue();
+            assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
+            Simple fooLockedIndre;
+            try (UnitOfWork indre = store.beginUnitOfWork()) {
+                laasSimpleBoble(store, simpleId, useTraferForLaasing, uowTestService);
+                fooLockedIndre = store.get(simpleId);
+                assertThat(store.isLocked(simpleId)).isTrue();
                 assertThat(fooLockedIndre).isNotSameAs(foo);
                 assertThat(fooLockedIndre.getText()).isEqualTo("external update");
                 // Objektet låses og oppdateres
                 // Har lagt inn endring så man kan se den blir med.
                 fooLockedIndre.setText("changed indre");
-                clientStore.update(fooLockedIndre);
-                clientStore.commitUnitOfWork(indre);
+                store.update(fooLockedIndre);
+                store.commitUnitOfWork(indre);
             }
-            assertThat(antallLaser()).isEqualTo(1);
+            assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
             // Uthenting via lock og get skal ha samme effekt, da objektet allerede er låst
-            Simple fooAfter = useLockOperation ? clientStore.lock(simpleId) : clientStore.get(simpleId);
+            Simple fooAfter = useLockOperation ? store.lock(simpleId) : store.get(simpleId);
             assertThat(fooAfter).isNotNull();
             assertThat(fooAfter).isNotSameAs(foo);
             assertThat(fooAfter).isSameAs(fooLockedIndre);
             assertThat(fooAfter.getText()).isEqualTo("changed indre");
-            assertThat(antallLaser()).isEqualTo(1);
-            assertThat(clientStore.isLocked(simpleId)).isTrue();
+            assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
+            assertThat(store.isLocked(simpleId)).isTrue();
         }
-        assertThat(antallLaser()).isEqualTo(0);
+        assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
+    }
+
+    @Test(dataProvider = "boolean2Dmatrix")
+    public void clientLaasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreUtenUpdateAvLaastBoble(boolean useTraferForLaasing, boolean useLockOperation) {
+        final SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
+        laasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreUtenUpdateAvLaastBoble(clientStore, simpleId, useTraferForLaasing, useLockOperation);
+    }
+
+    @Test(dataProvider = "boolean2Dmatrix")
+    public void serverLaasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreUtenUpdateAvLaastBoble(boolean useTraferForLaasing, boolean useLockOperation) {
+        final SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            Store serverStore;
+
+            @Override
+            public Object run() {
+                laasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreUtenUpdateAvLaastBoble(serverStore, simpleId, useTraferForLaasing, useLockOperation);
+                return null;
+            }
+        });
+    }
+
+    private void laasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreUtenUpdateAvLaastBoble(Store store, SimpleId<?> simpleId, boolean useTraferForLaasing, boolean useLockOperation) {
+        UowTestService uowTestService = store.getInstance(UowTestService.class);
+        assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
+        //noinspection unused
+        try (UnitOfWork ytre = store.beginUnitOfWork()) {
+            Simple foo = store.get(simpleId);
+            uowTestService.updateTextInNewTransaction(simpleId, "external update");
+            assertThat(foo).isNotNull();
+            assertThat(foo.getText()).isEqualTo("foo");
+            assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
+            Simple fooLockedIndre;
+            try (UnitOfWork indre = store.beginUnitOfWork()) {
+                laasSimpleBoble(store, simpleId, useTraferForLaasing, uowTestService);
+                fooLockedIndre = store.get(simpleId);
+                assertThat(store.isLocked(simpleId)).isTrue();
+                assertThat(fooLockedIndre).isNotSameAs(foo);
+                assertThat(fooLockedIndre.getText()).isEqualTo("external update");
+                // Objektet låses men indre gjør ingen oppdatering.
+                // Har lagt inn endring så man kan se den ikke blir med.
+                fooLockedIndre.setText("changed indre");
+                store.commitUnitOfWork(indre);
+            }
+            assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
+            // Uthenting via lock og get skal ha samme effekt, da objektet allerede er låst
+            Simple fooAfter = useLockOperation ? store.lock(simpleId) : store.get(simpleId);
+            assertThat(fooAfter).isNotNull();
+            assertThat(fooAfter).isNotSameAs(foo);
+            assertThat(fooAfter).isNotSameAs(fooLockedIndre);
+            assertThat(fooAfter.getText()).isEqualTo("external update");
+            assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
+            assertThat(store.isLocked(simpleId)).isTrue();
+        }
+        assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
+    }
+
+
+    @Test(dataProvider = "boolean1Dmatrix")
+    public void clientLaasAvBobleLagerNyInstansIYtreUnitWorkEtterAbortIIndreUtenUpdateAvLaastBoble(boolean useTraferForLaasing) {
+        final SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
+        laasAvBobleLagerNyInstansIYtreUnitWorkEtterAbortIIndreUtenUpdateAvLaastBoble(clientStore, simpleId, useTraferForLaasing);
+    }
+
+    @Test(dataProvider = "boolean1Dmatrix")
+    public void serverLaasAvBobleLagerNyInstansIYtreUnitWorkEtterAbortIIndreUtenUpdateAvLaastBoble(boolean useTraferForLaasing) {
+        final SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            Store serverStore;
+
+            @Override
+            public Object run() {
+                laasAvBobleLagerNyInstansIYtreUnitWorkEtterAbortIIndreUtenUpdateAvLaastBoble(serverStore, simpleId, useTraferForLaasing);
+                return null;
+            }
+        });
+    }
+
+    private void laasAvBobleLagerNyInstansIYtreUnitWorkEtterAbortIIndreUtenUpdateAvLaastBoble(Store store, SimpleId<?> simpleId, boolean useTraferForLaasing) {
+        UowTestService uowTestService = store.getInstance(UowTestService.class);
+        assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
+        //noinspection unused
+        try (UnitOfWork ytre = store.beginUnitOfWork()) {
+            Simple foo = store.get(simpleId);
+            uowTestService.updateTextInNewTransaction(simpleId, "external update");
+            assertThat(foo).isNotNull();
+            assertThat(foo.getText()).isEqualTo("foo");
+            assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
+            Simple fooLockedIndre;
+            try (UnitOfWork indre = store.beginUnitOfWork()) {
+                laasSimpleBoble(store, simpleId, useTraferForLaasing, uowTestService);
+                fooLockedIndre = store.get(simpleId);
+                assertThat(store.isLocked(simpleId)).isTrue();
+                assertThat(fooLockedIndre).isNotSameAs(foo);
+                assertThat(fooLockedIndre.getText()).isEqualTo("external update");
+                // Objektet låses men indre gjør ingen oppdatering.
+                // Har lagt inn endring så man kan se den ikke blir med.
+                fooLockedIndre.setText("changed indre");
+                store.abortUnitOfWork(indre);
+            }
+            assertThat(store.isLocked(simpleId)).isFalse();
+            assertThat(store.get(simpleId).getText()).isEqualTo("external update");
+        }
+    }
+
+
+    private void laasSimpleBoble(Store store, SimpleId<?> simpleId, boolean useTraferForLaasing, UowTestService uowTestService) {
+        if (useTraferForLaasing) {
+            StoreBubbleTransfer storeBubbleTransfer = uowTestService.findAndLock(simpleId);
+            assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
+            store.register(storeBubbleTransfer);
+        } else {
+            store.lock(simpleId);
+        }
     }
 
     private StoreBubbleTransfer findAndLock(final SimpleId<?> simpleId) {
@@ -1206,6 +1190,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         lockerService.releaseAllLocks(loginUser.get().getUsername());
     }
 
+    @SuppressWarnings("SameParameterValue")
     private SimpleId<?> createSimpleObjectOnServer(final String text) {
         return (SimpleId<?>) server.runInTxRequired(new RunOnServerMethod() {
             @Inject
@@ -1216,35 +1201,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 simple.setText(text);
                 store.insert(simple);
                 return simple.getId();
-            }
-        });
-    }
-
-    private void updateSimpleObjectOnServer(final SimpleId<?> simpleId, final String text) {
-        server.runInTxRequired(new RunOnServerMethod() {
-            @Inject
-            StoreServer store;
-
-            public Object run() {
-                Simple simple = store.lock(simpleId);
-                simple.setText(text);
-                store.update(simple);
-                return null;
-            }
-        });
-    }
-
-    private int antallLaser() {
-
-        return (int) server.runInTxNotSupported(new RunOnServerMethod() {
-            @Inject
-            DBLockerService lockerService;
-            @Inject
-            ServiceRequestContext serviceRequestContext;
-
-            @Override
-            public Object run() {
-                return lockerService.getLocksBy(serviceRequestContext.getUserName()).size();
             }
         });
     }

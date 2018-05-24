@@ -10,6 +10,7 @@ import no.statkart.skif.storetest.service.lock.LockService;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
 import no.statkart.skif.storetest.service.store.StoreService;
+import no.statkart.skif.storetest.service.uow.UowTestService;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class StoreTestStoreServices implements ServicesListing {
                 KodelisteService.class,
                 HistTestService.class,
                 LockingTestService.class,
+                UowTestService.class,
                 ExceptionTestService.class,
                 EndringsloggService.class,
                 NedlastningService.class
