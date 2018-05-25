@@ -728,7 +728,9 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     private void commitUnchanged(StoreEntry entry) {
         int levelForDerivedBubbleObject = entry.getLevelForDerivedBubbleObject(level);
         if (levelForDerivedBubbleObject!=level) {
-            onUpdateEntry(level, entry, CopyHelper.copy(entry.getBubbleObject(levelForDerivedBubbleObject)));
+            BubbleObject writableCopy = CopyHelper.copy(entry.getBubbleObject(levelForDerivedBubbleObject));
+            writableCopy.register(store);
+            onUpdateEntry(level, entry, writableCopy);
         }
         entry.commit(level + 1);
     }

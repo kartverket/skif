@@ -1050,6 +1050,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             assertThat(fooAfter.getText()).isEqualTo("changed indre");
             assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
             assertThat(store.isLocked(simpleId)).isTrue();
+            assertThat(store.get(simpleId).store()).isNotNull();
         }
         assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
     }
@@ -1106,6 +1107,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             assertThat(fooAfter.getText()).isEqualTo("external update");
             assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
             assertThat(store.isLocked(simpleId)).isTrue();
+            assertThat(store.get(simpleId).store()).isNotNull();
         }
         assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
     }
@@ -1156,6 +1158,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             }
             assertThat(store.isLocked(simpleId)).isFalse();
             assertThat(store.get(simpleId).getText()).isEqualTo("external update");
+            assertThat(store.get(simpleId).store()).isNotNull();
         }
     }
 
