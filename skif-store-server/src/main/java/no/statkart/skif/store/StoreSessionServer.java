@@ -897,7 +897,9 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     @Override
     public Collection<StoreEntry> registerEntries(int level, Transfer<?> transfer) {
-        // No-op; alle objekter hentes fra persistence session
+        for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
+            Preconditions.checkState(bubbleObject.store() == store, "Ved registering av bobler på server forventes boble ligge i servers store allerede: %s", bubbleObject.getId());
+        }
         return Collections.EMPTY_SET;
     }
 

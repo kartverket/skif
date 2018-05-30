@@ -10,6 +10,7 @@ import no.statkart.skif.exception.ObjectsNotFoundException;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.BubbleTransfer;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.StoreBubbleTransfer;
@@ -106,6 +107,8 @@ public class UowTestServiceTest extends StoreTestTestCase {
         SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
         StoreBubbleTransfer transfer = uowTestService.findAndLock(simple1Id);
         assertThat(transfer.getBubbleObjects()).hasSize(1);
-        assertThat(store.isLocked(simple1Id));
+        assertThat(transfer.getBubbleObjects().get(simple1Id)).isNotNull();
+        assertThat(transfer.getLockedIds()).containsExactly(simple1Id);
+        assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
     }
 }

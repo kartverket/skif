@@ -1110,6 +1110,27 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         });
     }
 
+    public void boblerITransferFraCmtServiceTilhorerSammeStoreSomYtreBmtService() {
+        final SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            StoreServer serverStore;
+            @Inject
+            UowTestService uowTestService;
+
+            @Override
+            public Object run() {
+                serverStore.beginTransaction();
+                StoreBubbleTransfer transfer = uowTestService.findAndLock(simpleId); // Kall til container managed service
+                assertThat(transfer.getBubbleObjects().get(simpleId).store())
+                        .describedAs("bobler fra cmt service forventes å ligge i samme store som ytre bmt service")
+                        .isSameAs(serverStore);
+                serverStore.commitTransaction();
+                return null;
+            }
+        });
+    }
+
     private void laasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreUtenUpdateAvLaastBoble(Store store, SimpleId<?> simpleId, boolean useTraferForLaasing, boolean useLockOperation) {
         UowTestService uowTestService = store.getInstance(UowTestService.class);
         assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
