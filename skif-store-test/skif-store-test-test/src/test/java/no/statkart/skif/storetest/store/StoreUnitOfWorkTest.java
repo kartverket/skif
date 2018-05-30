@@ -997,6 +997,40 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
     }
 
+
+    public void indreUowSkalIkkePaavirkeBoblerEndretUOWIYtreHvisBoblenIkkeOppdateres() {
+        UowTestService uowTestService = clientStore.getInstance(UowTestService.class);
+        SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
+        assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
+        assertThat(clientStore.get(simpleId).getText()).isEqualTo("foo");
+        uowTestService.updateTextInNewTransaction(simpleId, "external");
+        try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
+            Simple simple1 = clientStore.lock(simpleId);
+            assertThat(simple1.getText()).isEqualTo("external");
+            simple1.setText("ytre"); // Her endres simple i ytre
+            clientStore.update(simple1);
+            try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
+                StoreBubbleTransfer storeBubbleTransfer = findAndLock(simpleId);
+                Simple transferedBubble = (Simple) storeBubbleTransfer.getBubbleObjects().get(simpleId);
+                assertThat(transferedBubble.getText()).isEqualTo("external"); // Server ved ikke om endring, men store gjør
+                clientStore.register(storeBubbleTransfer);
+                Simple simple2 = clientStore.get(simpleId);
+                assertThat(simple2.getText()).isEqualTo("ytre");
+                assertThat(simple2).isNotSameAs(simple1);
+                simple2.setText("indre"); // Boble i indre endres, men store.update kalles ikke. Endring blir ikke med ved commit
+                clientStore.commitUnitOfWork(indre);
+            }
+            assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
+            Simple simple3 = clientStore.get(simpleId); // Boble er uforandret i ytre, fortsatt samme instans som før indre startet
+            assertThat(simple3).isSameAs(simple1);
+            assertThat(simple1.getText()).isEqualTo("ytre");
+            clientStore.abortUnitOfWork(ytre);
+        }
+        assertThat(clientStore.get(simpleId).getText()).isEqualTo("external");
+        assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
+    }
+
+
     @Test(dataProvider = "boolean2Dmatrix")
     public void clientLaasAvBobleLagerNyInstansIYtreUnitWorkEtterCommitIIndreMedUpdateAvLaastBoble(boolean useTraferForLaasing, boolean useLockOperation) {
         final SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
