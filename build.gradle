@@ -193,9 +193,11 @@ subprojects { Project project ->
 
     //kobler inn standard upload repositores ved bruk av maven plugin
     plugins.withType(MavenPlugin) {
-        project.uploadArchives.repositories.mavenDeployer {
-            repository(url: uri(REPO_UPLOAD_RELEASES)) {
-                authentication([userName: REPO_UPLOAD_RELEASES_USERNAME, password: REPO_UPLOAD_RELEASES_PASSWORD])
+        if (REPO_UPLOAD_RELEASES) {
+            project.uploadArchives.repositories.mavenDeployer {
+                repository(url: uri(REPO_UPLOAD_RELEASES)) {
+                    authentication([userName: REPO_UPLOAD_RELEASES_USERNAME, password: REPO_UPLOAD_RELEASES_PASSWORD])
+                }
             }
         }
     }
@@ -327,25 +329,13 @@ buildscript {
 
     ext.MAVEN_REPO = rootProject.properties.get('MAVEN_REPO', System.getenv('MAVEN_REPO'))
     if (ext.MAVEN_REPO == null) {
-        ext.MAVEN_REPO = 'http://nexus.statkart.no:8090/nexus/content/groups/public/'
+        ext.MAVEN_REPO = 'https://nexus.statkart.no/repository/public/'
         logger.info "warning: MAVEN_REPO not defined. Defaulting to ${MAVEN_REPO}"
     }
 
     ext.REPO_UPLOAD_RELEASES = rootProject.properties.get('REPO_UPLOAD_RELEASES', System.getenv('REPO_UPLOAD_RELEASES'))
-    if (ext.REPO_UPLOAD_RELEASES == null) {
-        ext.REPO_UPLOAD_RELEASES = 'http://admin:admin123@nexus.statkart.no:8090/nexus/content/repositories/releases/'
-        logger.info "warning: REPO_UPLOAD_RELEASES not defined. Defaulting to ${'http://admin:***@nexus.statkart.no:8090/nexus/content/repositories/releases/'}"
-    }
     ext.REPO_UPLOAD_RELEASES_USERNAME = rootProject.properties.get('REPO_UPLOAD_RELEASES_USERNAME', System.getenv('REPO_UPLOAD_RELEASES_USERNAME'))
-    if (ext.REPO_UPLOAD_RELEASES_USERNAME == null) {
-        ext.REPO_UPLOAD_RELEASES_USERNAME = 'admin'
-        logger.info "warning: REPO_UPLOAD_RELEASES_USERNAME not defined. Defaulting to admin"
-    }
     ext.REPO_UPLOAD_RELEASES_PASSWORD = rootProject.properties.get('REPO_UPLOAD_RELEASES_PASSWORD', System.getenv('REPO_UPLOAD_RELEASES_PASSWORD'))
-    if (ext.REPO_UPLOAD_RELEASES_PASSWORD == null) {
-        ext.REPO_UPLOAD_RELEASES_PASSWORD = 'admin123'
-        logger.info "warning: REPO_UPLOAD_RELEASES_PASSWORD not defined. Defaulting to default admin password"
-    }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Switch for tentativ utvikling mot lokalt maven repository
