@@ -36,7 +36,7 @@ artifacts {
 
 
 def installer = install.repositories.mavenInstaller
-def deployer = uploadArchives.repositories.mavenDeployer
+def deployer = uploadArchives.repositories.findByName('mavenDeployer')
 
 [installer, deployer]*.pom*.whenConfigured { pom ->
     pom.dependencies.findAll { dep -> dep.groupId == 'joda-time' }.each { it.optional = true }  //optional avhengighet for joda-time [SKIF-472]

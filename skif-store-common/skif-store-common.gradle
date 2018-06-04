@@ -57,7 +57,7 @@ task assertDependencies() {
 
 
 def installer = install.repositories.mavenInstaller
-def deployer = uploadArchives.repositories.mavenDeployer
+def deployer = uploadArchives.repositories.findByName('mavenDeployer')
 
 [installer, deployer]*.pom*.whenConfigured { pom ->
     pom.dependencies.findAll { dep -> dep.groupId == 'com.vividsolutions' && dep.artifactId == 'jts' }.each { it.optional = true }  //optional avhengighet for jts [SKIF-472]
