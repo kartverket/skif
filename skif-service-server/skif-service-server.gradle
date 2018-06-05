@@ -37,7 +37,7 @@ artifacts {
 }
 
 def installer = install.repositories.mavenInstaller
-def deployer = uploadArchives.repositories.mavenDeployer
+def deployer = uploadArchives.repositories.findByName('mavenDeployer')
 [installer, deployer]*.pom*.whenConfigured {pom ->
     ((List) pom.dependencies).removeIf { dep -> dep.groupId == 'no.statkart.skif' && dep.artifactId == 'skif-service-common' && dep.scope == 'test' }
 }
