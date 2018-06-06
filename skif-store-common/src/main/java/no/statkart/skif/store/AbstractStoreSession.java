@@ -3,7 +3,11 @@ package no.statkart.skif.store;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import no.statkart.skif.exception.*;
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.exception.NotLockedException;
+import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.exception.ObjectsNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.util.CopyHelper;
@@ -733,7 +737,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         if (levelForDerivedBubbleObject!=level) {
             BubbleObject writableCopy = CopyHelper.copy(entry.getBubbleObject(levelForDerivedBubbleObject));
             writableCopy.register(store);
-            onUpdateEntry(level, entry, writableCopy);
+            entry.setBubbleObject(level, writableCopy);
         }
         entry.commit(level + 1);
     }
