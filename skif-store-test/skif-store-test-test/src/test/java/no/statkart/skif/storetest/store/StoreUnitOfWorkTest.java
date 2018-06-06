@@ -1217,6 +1217,25 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         }
     }
 
+    public void indreUowSkalKasteInstansVedCommitHvisUpdateIkkeErKalt() {
+        try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
+            Simple simple = new Simple();
+            clientStore.insert(simple);
+            SimpleId<?> simpleId = simple.getId();
+            try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
+                clientStore.get(simpleId).setText("Blir ikke med, store.update mangler");
+                clientStore.commitUnitOfWork(indre);
+            }
+            clientStore.get(simpleId).setText("ytre");
+
+            try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
+                clientStore.get(simpleId);
+                assertThat(clientStore.get(simpleId).getText()).isEqualTo("ytre");
+                clientStore.commitUnitOfWork(indre);
+            }
+        }
+    }
+
 
     private void laasSimpleBoble(Store store, SimpleId<?> simpleId, boolean useTraferForLaasing, UowTestService uowTestService) {
         if (useTraferForLaasing) {

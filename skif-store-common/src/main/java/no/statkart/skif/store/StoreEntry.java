@@ -189,7 +189,7 @@ public class StoreEntry {
     }
 
 
-    public BubbleObject getDerivedBubbleObjectCopyIfLocked(int level, Store store) {
+    public BubbleObject getDerivedBubbleObjectCopyIfLocked(int level, Store store, AbstractStoreSession abstractStoreSession) {
         if (bubbleObject[level]!=null) return bubbleObject[level];
 
         int l = getLevelForDerivedBubbleObject(level);
@@ -201,6 +201,7 @@ public class StoreEntry {
             copy.register(store);
             bubbleObject[level] = copy;
             l = level;
+            abstractStoreSession.addModified(this);
         }
         return bubbleObject[l];
     }
