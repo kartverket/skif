@@ -2,8 +2,6 @@ package no.statkart.skif.store;
 
 import no.statkart.skif.domain.EqualityByFields;
 
-import java.util.Collection;
-
 /**
  * @author Henrik Fredholm
  */
@@ -43,11 +41,8 @@ public abstract class AbstractCompositeComponent<O, T> implements CompositeCompo
         }
     }
 
-    protected void onSetCompositeRootOwner(Collection<? extends EntityComponentWithOwnerReference<O>> collectionWithOwnerReferance) {
-        O compositeRootOwner = getCompositeRootOwner();
-        for (EntityComponentWithOwnerReference<O> element : collectionWithOwnerReferance) {
-            element.setOwner(compositeRootOwner);
-        }
+    protected void onSetCompositeRootOwner(ComponentCollection<O, ?> collectionWithOwnerReference) {
+        if (collectionWithOwnerReference!=null) collectionWithOwnerReference.setOwner(getCompositeRootOwner());
     }
 
 }

@@ -15,7 +15,7 @@ import java.util.Set;
 public class Level2CompositeComponentWithEntity extends AbstractCompositeComponent<BubbleWithEntityInCompositeComponent, Level1CompositeComponentWithEntity> implements CompositeComponentWithCollections {
     private String text;
     private Level2EntityInCompositeComponent entity;
-    private Set<Level2SetEntityInCompositeComponent> entitySet = Components.newSet(this);
+    private ComponentSet<BubbleWithEntityInCompositeComponent, Level2SetEntityInCompositeComponent> entitySet = Components.newSet(this);
 
     @SuppressWarnings("UnusedDeclaration") //Hibernate
     public Level2CompositeComponentWithEntity() {
@@ -64,12 +64,12 @@ public class Level2CompositeComponentWithEntity extends AbstractCompositeCompone
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
-    private Set<Level2SetEntityInCompositeComponent> getEntitySetHibernate() {
-        return Components.getDelegate(entitySet);
+    private ComponentSet<BubbleWithEntityInCompositeComponent, Level2SetEntityInCompositeComponent> getEntitySetHibernate() {
+        return entitySet;
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
-    private void setEntitySetHibernate(Set<Level2SetEntityInCompositeComponent> entitySet) {
-        Components.setDelegate(this.entitySet, entitySet);
+    private void setEntitySetHibernate(ComponentSet<BubbleWithEntityInCompositeComponent, Level2SetEntityInCompositeComponent> entitySet) {
+        this.entitySet = Components.checkSetComponentCollection(this.getCompositeRootOwner(), this.entitySet, entitySet);
     }
 }

@@ -21,7 +21,7 @@
                 unique="true"
                 cascade="all-delete-orphan">
         </many-to-one>
-        <set name="aaComponentsSet" lazy="true" cascade="all-delete-orphan,evict" batch-size="256">
+        <set name="aaComponentsSet" lazy="true" cascade="all-delete-orphan,evict" batch-size="256" collection-type="no.statkart.skif.store.components.ComponentSetType">
             <key column="ownerId"/>
             <one-to-many class="no.statkart.skif.storetest.domain.component.entity.SetAaEntityComponent"/>
         </set>

@@ -14,23 +14,32 @@ import java.util.ListIterator;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-public abstract class AbstractComponentList<O, E extends ComponentWithOwnerReference<O>> extends ForwardingList<E> implements ComponentCollection<O, E> {
+public class ComponentListImpl<O, E extends ComponentWithOwnerReference<O>> extends ForwardingList<E> implements ComponentList<O, E> {
     private static final long serialVersionUID = 1L;
     protected List<E> delegate;
 
-    public abstract O getOwner();
+    private O owner;
 
-    protected AbstractComponentList(List<E> delegate) {
+    @Override
+    public O getOwner() {
+        return owner;
+    }
+
+    @Override
+    public void setOwner(O owner) {
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
+        for (E e : this) {
+            e.setOwner(this.owner);
+        }
+    }
+
+    protected ComponentListImpl(List<E> delegate) {
         this.delegate = delegate;
     }
 
     @Override
     protected List<E> delegate() {
         return delegate;
-    }
-
-    protected void setDelegate(List<E> newDelegate) {
-        this.delegate = newDelegate;
     }
 
     @Override

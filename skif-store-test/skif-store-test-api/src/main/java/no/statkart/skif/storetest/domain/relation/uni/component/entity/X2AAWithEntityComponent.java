@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 
+import no.statkart.skif.store.ComponentSet;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.store.InverseRelationCollector;
 import no.statkart.skif.store.InverseRelationParticipation;
@@ -14,7 +15,7 @@ import java.util.Set;
 public class X2AAWithEntityComponent extends AbstractRelationTestBubble implements InverseRelationParticipation{
     private static final long serialVersionUID = 1L;
     private X2EntityComponentOne entityComponentOne;
-    private final Set<X2SetEntityComponent> aaSetEntityComponents = Components.newSet(this);
+    private ComponentSet<X2AAWithEntityComponent, X2SetEntityComponent> aaSetEntityComponents = Components.newSet(this);
 
     @Override
     public void collectInverseRelationValues(InverseRelationCollector collector) {
@@ -41,8 +42,8 @@ public class X2AAWithEntityComponent extends AbstractRelationTestBubble implemen
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
-    private Set<X2SetEntityComponent> getAaSetEntityComponentsSet() {
-        return Components.getDelegate(aaSetEntityComponents);
+    private ComponentSet<X2AAWithEntityComponent, X2SetEntityComponent> getAaSetEntityComponentsSet() {
+        return aaSetEntityComponents;
 
     }
 
@@ -51,8 +52,8 @@ public class X2AAWithEntityComponent extends AbstractRelationTestBubble implemen
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
-    private void setAaSetEntityComponentsSet(Set<X2SetEntityComponent> aaSetEntityComponents) {
-        Components.setDelegate(this.aaSetEntityComponents, aaSetEntityComponents);
+    private void setAaSetEntityComponentsSet(ComponentSet<X2AAWithEntityComponent, X2SetEntityComponent> aaSetEntityComponents) {
+        this.aaSetEntityComponents = Components.checkSetComponentCollection(this, this.aaSetEntityComponents, aaSetEntityComponents);
     }
 
 }

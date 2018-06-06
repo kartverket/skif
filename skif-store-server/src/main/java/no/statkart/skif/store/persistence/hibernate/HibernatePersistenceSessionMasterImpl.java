@@ -636,6 +636,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             } else {
                 Collection persistentCollection = CopyHelper.copy(collectionInExistingObject);
                 persistentCollection.clear();
+                ((PersistentCollection) persistentCollection).setOwner(null);
                 if (collectionInObject != null) {
                     //noinspection unchecked
                     persistentCollection.addAll(collectionInObject);

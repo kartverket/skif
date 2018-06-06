@@ -13,23 +13,32 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4.0
  */
-public abstract class AbstractComponentSet<O, E extends ComponentWithOwnerReference<O>> extends ForwardingSet<E> implements ComponentCollection<O, E> {
+public class ComponentSetImpl<O, E extends ComponentWithOwnerReference<O>> extends ForwardingSet<E> implements ComponentSet<O, E> {
     private static final long serialVersionUID = 1L;
     protected Set<E> delegate;
 
-    protected AbstractComponentSet(Set<E> delegate) {
+    protected ComponentSetImpl(Set<E> delegate) {
         this.delegate = delegate;
     }
 
-    public abstract O getOwner();
+    private O owner;
+
+    @Override
+    public O getOwner() {
+        return owner;
+    }
+
+    @Override
+    public void setOwner(O owner) {
+        this.owner = Components.checkSetOwner(this, this.owner, owner);
+        for (E e : this) {
+            e.setOwner(this.owner);
+        }
+    }
 
     @Override
     protected Set<E> delegate() {
         return delegate;
-    }
-
-    protected void setDelegate(Set<E> newDelegate) {
-        delegate=newDelegate;
     }
 
     @Override

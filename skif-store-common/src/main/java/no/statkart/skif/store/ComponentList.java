@@ -1,24 +1,9 @@
 package no.statkart.skif.store;
 
+import no.statkart.skif.store.ComponentCollection;
+import no.statkart.skif.store.ComponentWithOwnerReference;
+
 import java.util.List;
 
-/**
- * Implementasjon av {@link ComponentCollection} for wrapping av {@link List}.
- *
- * @author Tor Egil R. Strand
- * @since 2.4.0
- */
-public class ComponentList<O, E extends ComponentWithOwnerReference<O>> extends AbstractComponentList<O, E> {
-    private static final long serialVersionUID = 1L;
-    private final O owner;
-
-    public ComponentList(O owner, List<E> delegate) {
-        super(delegate);
-        this.owner = owner;
-    }
-
-    @Override
-    public O getOwner() {
-        return owner;
-    }
+public interface ComponentList<O, E extends ComponentWithOwnerReference<O>> extends ComponentCollection<O, E>, List<E> {
 }

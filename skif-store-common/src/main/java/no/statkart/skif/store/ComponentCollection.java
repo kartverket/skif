@@ -10,4 +10,7 @@ import java.util.Collection;
  * @since 2.4.0
  */
 public interface ComponentCollection<O, E extends ComponentWithOwnerReference<O>> extends Collection<E>, Serializable {
+    O getOwner();
+
+    void setOwner(O owner);
 }

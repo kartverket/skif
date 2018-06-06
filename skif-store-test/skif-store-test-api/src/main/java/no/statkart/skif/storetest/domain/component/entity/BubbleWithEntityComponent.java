@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
 import com.google.common.collect.Sets;
+import no.statkart.skif.store.ComponentSet;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
@@ -22,7 +23,7 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
     /* En tekst som beskriver boblen */
     private String text;
     private Level1EntityComponent level1Component;
-    private final Set<SetAaEntityComponent> aaComponents = Components.newSet(this);
+    private ComponentSet<BubbleWithEntityComponent, SetAaEntityComponent> aaComponents = Components.newSet(this);
 
     public BubbleWithEntityComponent() {
     }
@@ -71,8 +72,8 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
-    private Set<SetAaEntityComponent> getAaComponentsSet() {
-        return Components.getDelegate(aaComponents);
+    private ComponentSet<BubbleWithEntityComponent, SetAaEntityComponent> getAaComponentsSet() {
+        return aaComponents;
 
     }
 
@@ -81,8 +82,8 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
     }
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
-    private void setAaComponentsSet(Set<SetAaEntityComponent> aaComponents) {
-        Components.setDelegate(this.aaComponents, aaComponents);
+    private void setAaComponentsSet(ComponentSet<BubbleWithEntityComponent, SetAaEntityComponent> aaComponents) {
+        this.aaComponents = Components.checkSetComponentCollection(this, this.aaComponents, aaComponents);
     }
 
     /**
@@ -92,7 +93,7 @@ public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
      */
     public void removeHibernatePersistenceSet() {
         if (level1Component!=null) level1Component.removeHibernatePersistenceSet();
-        Components.setDelegate(aaComponents, Sets.newHashSet(aaComponents));
+        aaComponents = Components.newSet(Sets.newHashSet(aaComponents));
         for (SetAaEntityComponent aaComponent : aaComponents) {
                aaComponent.removeHibernatePersistenceSet();
         }

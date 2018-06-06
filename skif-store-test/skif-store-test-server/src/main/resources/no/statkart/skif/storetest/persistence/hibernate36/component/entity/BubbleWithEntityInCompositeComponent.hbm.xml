@@ -27,7 +27,7 @@
                     unique="true"
                     cascade="all-delete-orphan">
             </many-to-one>
-            <set name="entitySetHibernate" lazy="false" cascade="all-delete-orphan,evict" batch-size="256" access="property">
+            <set name="entitySetHibernate" lazy="false" cascade="all-delete-orphan,evict" batch-size="256" access="property" collection-type="no.statkart.skif.store.components.ComponentSetType">
                 <key column="ownerId"/>
                 <one-to-many class="no.statkart.skif.storetest.domain.component.entity.Level1SetEntityInCompositeComponent"/>
             </set>
@@ -44,7 +44,7 @@
                         unique="true"
                         cascade="all-delete-orphan">
                 </many-to-one>
-                <set name="entitySetHibernate" lazy="false" cascade="all-delete-orphan,evict" batch-size="256" access="property">
+                <set name="entitySetHibernate" lazy="false" cascade="all-delete-orphan,evict" batch-size="256" access="property" collection-type="no.statkart.skif.store.components.ComponentSetType">
                     <key column="ownerId"/>
                     <one-to-many class="no.statkart.skif.storetest.domain.component.entity.Level2SetEntityInCompositeComponent"/>
                 </set>

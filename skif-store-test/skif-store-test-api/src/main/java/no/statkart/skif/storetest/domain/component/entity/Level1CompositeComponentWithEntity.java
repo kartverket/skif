@@ -1,8 +1,6 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
-import no.statkart.skif.store.AbstractCompositeBubbleComponent;
-import no.statkart.skif.store.Components;
-import no.statkart.skif.store.CompositeComponentWithCollections;
+import no.statkart.skif.store.*;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -17,7 +15,7 @@ import java.util.Set;
 public class Level1CompositeComponentWithEntity extends AbstractCompositeBubbleComponent<BubbleWithEntityInCompositeComponent> implements CompositeComponentWithCollections {
     private String text;
     private Level1EntityInCompositeComponent entity;
-    private final Set<Level1SetEntityInCompositeComponent> entitySet = Components.newSet(this);
+    private ComponentSet<BubbleWithEntityInCompositeComponent, Level1SetEntityInCompositeComponent> entitySet = Components.newSet(this);
 
     private Level2CompositeComponentWithEntity level2Component;
 
@@ -76,11 +74,13 @@ public class Level1CompositeComponentWithEntity extends AbstractCompositeBubbleC
         Components.setFrom(this.entitySet, entitySet);
     }
 
-    public Set<Level1SetEntityInCompositeComponent> getEntitySetHibernate() {
-        return Components.getDelegate(entitySet);
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
+    private ComponentSet<BubbleWithEntityInCompositeComponent, Level1SetEntityInCompositeComponent> getEntitySetHibernate() {
+        return entitySet;
     }
 
-    public void setEntitySetHibernate(Set<Level1SetEntityInCompositeComponent> entitySet) {
-        Components.setDelegate(this.entitySet, entitySet);
+    @SuppressWarnings("UnusedDeclaration") // Hibernate
+    private void setEntitySetHibernate(ComponentSet<BubbleWithEntityInCompositeComponent, Level1SetEntityInCompositeComponent> entitySet) {
+        this.entitySet = Components.checkSetComponentCollection(this.getCompositeRootOwner(), this.entitySet, entitySet);
     }
 }

@@ -123,6 +123,24 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         assertThat(bubbleWithNonNullComponents.getLevel1Component().getLevel2Component().getEntitySet()).hasSize(1).are(new CheckOwner<>(bubbleWithNonNullComponents));
     }
 
+    public void testGetLockBubbleWithCompositeComponentWithSet() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        BubbleWithEntityInCompositeComponentId<?> id = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory().getWithNonNullComponentsId();
+
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            private Store store;
+
+            @Override
+            public Object run() {
+                store.get(id);
+                store.lock(id);
+
+                return null;
+            }
+        });
+    }
+
     public void testUpdateBubbleWithNonNullLevel1AndLevel2CompositeComponentNoChangeInDetatcedState() {
         final StoreTestMockupFacade mockupFacade =getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
@@ -182,7 +200,6 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
 
             public Object run() {
                 BubbleWithEntityInCompositeComponent bubble = store.lock(mockupFactory.getWithNonNullComponentsId());
-//                Assert.assertTrue(bubble.getLevel1Component().getEntitySet() instanceof CompositeComponentSet, "CompositeComponentSet");
                 Level1SetEntityInCompositeComponent entityInCompositeComponent = bubble.getLevel1Component().getEntitySet().iterator().next();
                 Assert.assertNotNull(entityInCompositeComponent.getOwner(), "Owner");
                 bubble.getLevel1Component().getEntitySet().clear();
