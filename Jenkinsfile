@@ -45,7 +45,7 @@ pipeline {
                 jiraIssueSelector(issueSelector: [$class: 'DefaultIssueSelector'])
                 .each {
                     id -> jiraComment(issueKey: id,
-                        body: "Successfully integrated in [${env.BUILD_NUMBER}|${currentBuild.absoluteUrl}]\n${env.CHANGE_TITLE}"
+                        body: "Successfully integrated in [${env.BUILD_NUMBER}|${currentBuild.absoluteUrl}]"
                     )
                 }
             }
