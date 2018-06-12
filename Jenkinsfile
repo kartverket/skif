@@ -32,7 +32,7 @@ pipeline {
         }
         stage('Deploy') { 
             steps {
-                echo "gradle uploadArchives ${GRADLE_ARGS}"
+                bat "gradle uploadArchives ${GRADLE_ARGS}"
             }
         }
     }
