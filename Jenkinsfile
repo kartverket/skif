@@ -6,7 +6,7 @@ pipeline {
         }
     }
     environment {
-        GRADLE_OPTS = '-Dorg.gradle.daemon=false -XX:MaxPermSize=256m'
+        GRADLE_OPTS = '-Dorg.gradle.daemon=false'
         GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
         SKIF_VERSION = "${env.BRANCH_NAME}-build${BUILD_NUMBER}"
         GRADLE_ARGS = "-Pversion=$SKIF_VERSION -Pdb_hostname=nnridb009 -Pdb_service=MA02TST.statkart.no -Pdb_username=J_ANNET_${env.EXECUTOR_NUMBER} -Pusername=J_ANNET_${env.EXECUTOR_NUMBER} -Ppassword=J_ANNET_${env.EXECUTOR_NUMBER} -PWEBLOGIC_HOME=${env.'WEBLOGIC_HOME_12.1.3.0'} -PWEBLOGIC_VERSION=12.1.3"
@@ -17,22 +17,21 @@ pipeline {
     }
     tools {
         jdk 'Java 8 Latest'
-        gradle 'Gradle 2.8'
     }
     stages {
         stage('Build') { 
             steps {
-                bat "gradle clean assemble ${GRADLE_ARGS}"
+                bat "gradlew clean assemble ${GRADLE_ARGS}"
             }
         }
         stage('Test') { 
             steps {
-                bat "gradle dbInit check ${GRADLE_ARGS}"
+                bat "gradlew dbInit check ${GRADLE_ARGS}"
             }
         }
         stage('Deploy') { 
             steps {
-                bat "gradle uploadArchives ${GRADLE_ARGS}"
+                bat "gradlew uploadArchives ${GRADLE_ARGS}"
             }
         }
     }
