@@ -3,8 +3,8 @@ package no.statkart.skif.storetest.domain.basic;
 import no.statkart.skif.store.ValueObject;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Eksempel på et ValueObject. Bemerk at dette objekt er immutable.
@@ -30,7 +30,7 @@ public class BeloepValueObject implements ValueObject {
     }
 
     public BeloepValueObject(String valuta, int verdi, @Nullable String kommentar) {
-        this.valuta = checkNotNull(valuta);
+        this.valuta = Objects.requireNonNull(valuta);
         this.verdi = verdi;
         this.kommentar = kommentar;
     }

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Klasse for caching av invers relasjoner i Store. Inversrelasjonen kan enten være fra en bobleId eller et
@@ -240,7 +240,7 @@ public class RelationCache {
 
     @SuppressWarnings("unchecked")
     public <E> void materialiseRelation(int level, RelationName relationName, E inverseValue, Object relationValue) {
-        checkNotNull(inverseValue, "Uventet null verdi for relation: %s", relationName);
+        requireNonNull(inverseValue, () -> String.format("Uventet null verdi for relation: %s", relationName));
         RelationEntry inverseRelationEntry = getInverseRelation(relationName, inverseValue, true);
         if (!(inverseValue instanceof BubbleId)) {
             if (relationValue instanceof Set) {

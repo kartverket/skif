@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author Henrik Fredholm
@@ -109,7 +109,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         } else if (bubbleIds instanceof List) {
             bubbleObjects = get((List<I>) bubbleIds);
         } else {
-            checkNotNull(bubbleIds, "bubbleIds");
+            requireNonNull(bubbleIds, "bubbleIds");
             bubbleObjects = get(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
@@ -131,7 +131,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
-        checkNotNull(bubbleIds, "bubbleIds");
+        requireNonNull(bubbleIds, "bubbleIds");
         Set<I> missingBubbleIds = null;
         Set<I> deletedBubbleIds = null;
 
@@ -210,7 +210,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         } else if (bubbleIds instanceof List) {
             bubbleObjects = getOrdered((List<I>) bubbleIds);
         } else {
-            checkNotNull(bubbleIds, "bubbleIds");
+            requireNonNull(bubbleIds, "bubbleIds");
             bubbleObjects = getOrdered(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
@@ -232,7 +232,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
-        checkNotNull(bubbleIds, "bubbleIds");
+        requireNonNull(bubbleIds, "bubbleIds");
 
         ArrayList<T> bubbleObjectsFound = new ArrayList<>(bubbleIds.size());
         ArrayList<I> orderedBubbleIds = new ArrayList<>(bubbleIds.size());
@@ -308,7 +308,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         } else if (bubbleIds instanceof List) {
             bubbleObjects = getIgnoreMissing((List<I>) bubbleIds);
         } else {
-            checkNotNull(bubbleIds, "bubbleIds");
+            requireNonNull(bubbleIds, "bubbleIds");
             bubbleObjects = getIgnoreMissing(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
@@ -330,7 +330,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
-        checkNotNull(bubbleIds, "bubbleIds");
+        requireNonNull(bubbleIds, "bubbleIds");
         Set<I> missingBubbleIds = null;
 
         for (I bubbleId : bubbleIds) {
@@ -640,7 +640,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         } else if (bubbleIds instanceof List) {
             bubbleObjects = lock((List<I>) bubbleIds);
         } else {
-            checkNotNull(bubbleIds, "bubbleIds");
+            requireNonNull(bubbleIds, "bubbleIds");
             bubbleObjects = lock(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
@@ -662,7 +662,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
-        checkNotNull(bubbleIds, "bubbleIds");
+        requireNonNull(bubbleIds, "bubbleIds");
         Set<I> unlockedBubbleIds = null;
 
         for (I bubbleId : bubbleIds) {

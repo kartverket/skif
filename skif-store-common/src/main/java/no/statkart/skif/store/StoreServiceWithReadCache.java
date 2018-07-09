@@ -4,12 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import no.statkart.skif.store.service.LockService;
 import no.statkart.skif.store.service.StoreService;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.*;
 
 public class StoreServiceWithReadCache implements StoreService, LockService {
     private final StoreService storeService;
@@ -23,7 +18,7 @@ public class StoreServiceWithReadCache implements StoreService, LockService {
     public StoreServiceWithReadCache(StoreService storeService, LockService lockService, StoreClientReadCache readCache) {
         this.storeService = storeService;
         this.lockService = lockService;
-        this.readCache = checkNotNull(readCache, "readCache");
+        this.readCache = Objects.requireNonNull(readCache, "readCache");
     }
 
     @Override

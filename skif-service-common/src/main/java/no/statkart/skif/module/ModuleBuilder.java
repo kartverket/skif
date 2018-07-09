@@ -24,6 +24,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static no.statkart.skif.config.SkifConfigConstants.CONFIGURATION_FILENAME;
 import static no.statkart.skif.config.SkifConfigConstants.EJB_SERVICE_CHAIN_EXT_CLASS;
@@ -383,8 +384,7 @@ public class ModuleBuilder {
     }
 
     public Module buildModule() {
-        String moduleClassname = getModuleClassname();
-        Preconditions.checkNotNull(getModuleClassname(), "ModuleClassname");
+        String moduleClassname = Objects.requireNonNull(getModuleClassname(), "ModuleClassname");
         Preconditions.checkArgument(getModuleExtClassname() == null, "ModuleExtClassname er satt. Bruk buildModules()");
         Constructor<? extends SkifModule> constructor = getModuleConstructor(moduleClassname);
         final Module module = buildModule(constructor);
@@ -394,8 +394,7 @@ public class ModuleBuilder {
 
     public List<Module> buildModules() {
         List<Module> modules = new ArrayList<>();
-        String moduleClassname = getModuleClassname();
-        Preconditions.checkNotNull(getModuleClassname(), "ModuleClassname");
+        String moduleClassname = Objects.requireNonNull(getModuleClassname(), "ModuleClassname");
         Constructor<? extends SkifModule> constructor = getModuleConstructor(moduleClassname);
         modules.add(buildModule(constructor));
         final String moduleExtClassname = getModuleExtClassname();
@@ -471,8 +470,7 @@ public class ModuleBuilder {
 
     @Deprecated
     public <T extends SkifModule> Constructor<? extends T> getModuleConstructor() {
-        String moduleClassname = getModuleClassname();
-        Preconditions.checkNotNull(getModuleClassname(), "ModuleClassname");
+        String moduleClassname = Objects.requireNonNull(getModuleClassname(), "ModuleClassname");
         return getModuleConstructor(moduleClassname);
     }
 

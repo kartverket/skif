@@ -7,8 +7,7 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.util.JDBCHelper;
 
 import java.sql.*;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 
 /**
@@ -17,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class StoreJDBCHelper extends JDBCHelper {
 
     public static void setBubbleId(PreparedStatement preparedStatement, int i, BubbleId<?> bubbleId) throws SQLException {
-        checkNotNull(bubbleId, "bubbleId");
+        Objects.requireNonNull(bubbleId, "bubbleId");
         setBubbleIdValue(preparedStatement, i, bubbleId, bubbleId.getValueType());
     }
 

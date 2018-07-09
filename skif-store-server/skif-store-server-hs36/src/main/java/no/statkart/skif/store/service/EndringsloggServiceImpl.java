@@ -19,10 +19,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static no.statkart.skif.util.HibernateHelper.*;
 
@@ -67,8 +64,8 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
 
     @Override
     public Endringer<E, EI> findEndringer(@Nullable EI id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
-        Preconditions.checkNotNull(bobleklasse, "domainKlasse er obligatorisk");
-        Preconditions.checkNotNull(returnerBobler, "returnerBobler er obligatorisk");
+        Objects.requireNonNull(bobleklasse, "domainKlasse er obligatorisk");
+        Objects.requireNonNull(returnerBobler, "returnerBobler er obligatorisk");
         Preconditions.checkArgument(maksAntall >= 0, "maksAntall er negativ");
 
         Endringer<E, EI> endringer = new Endringer<>();

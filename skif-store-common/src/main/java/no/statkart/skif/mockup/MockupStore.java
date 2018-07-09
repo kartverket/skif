@@ -18,7 +18,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * En slags {@link Store} som kan brukes for å navigere blant mockup-objekter. Alle id-er
@@ -126,7 +127,7 @@ public class MockupStore implements Store {
             //noinspection unchecked
             bubbleObjects = get((List<? extends I>) bubbleIds);
         } else {
-            checkNotNull(bubbleIds, "bubbleIds");
+            requireNonNull(bubbleIds, "bubbleIds");
             bubbleObjects = get(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
@@ -134,7 +135,7 @@ public class MockupStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<? extends I> bubbleIds) {
-        checkNotNull(bubbleIds, "bubbleIds");
+        requireNonNull(bubbleIds, "bubbleIds");
         Set<T> bubbleObjects = new HashSet<>(bubbleIds.size());
         get(bubbleIds, bubbleObjects);
         return bubbleObjects;
@@ -142,7 +143,7 @@ public class MockupStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<? extends I> bubbleIds) {
-        checkNotNull(bubbleIds, "bubbleIds");
+        requireNonNull(bubbleIds, "bubbleIds");
         List<T> bubbleObjects = new ArrayList<>(bubbleIds.size());
         get(bubbleIds, bubbleObjects);
         return bubbleObjects;
@@ -165,7 +166,7 @@ public class MockupStore implements Store {
             //noinspection unchecked
             bubbleObjects = getOrdered((List<? extends I>) bubbleIds);
         } else {
-            checkNotNull(bubbleIds, "bubbleIds");
+            requireNonNull(bubbleIds, "bubbleIds");
             bubbleObjects = getOrdered(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
@@ -173,7 +174,7 @@ public class MockupStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getOrdered(Set<? extends I> bubbleIds) {
-        checkNotNull(bubbleIds, "bubbleIds");
+        requireNonNull(bubbleIds, "bubbleIds");
         LinkedHashSet<T> bubbleObjects = new LinkedHashSet<>(bubbleIds.size());
         getOrdered(bubbleIds, bubbleObjects);
         return bubbleObjects;
@@ -181,7 +182,7 @@ public class MockupStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getOrdered(List<? extends I> bubbleIds) {
-        checkNotNull(bubbleIds, "bubbleIds");
+        requireNonNull(bubbleIds, "bubbleIds");
         List<T> bubbleObjects = new ArrayList<>(bubbleIds.size());
         getOrdered(bubbleIds, bubbleObjects);
         return bubbleObjects;
@@ -204,7 +205,7 @@ public class MockupStore implements Store {
             //noinspection unchecked
             bubbleObjects = getIgnoreMissing((List<? extends I>) bubbleIds);
         } else {
-            checkNotNull(bubbleIds, "bubbleIds");
+            requireNonNull(bubbleIds, "bubbleIds");
             bubbleObjects = getIgnoreMissing(new ArrayList<>(bubbleIds));
         }
         return bubbleObjects;
@@ -212,7 +213,7 @@ public class MockupStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<? extends I> bubbleIds) {
-        checkNotNull(bubbleIds, "bubbleIds");
+        requireNonNull(bubbleIds, "bubbleIds");
         Set<T> bubbleObjects = new HashSet<>(bubbleIds.size());
         getIgnoreMissing(bubbleIds, bubbleObjects);
         return bubbleObjects;
@@ -220,7 +221,7 @@ public class MockupStore implements Store {
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<? extends I> bubbleIds) {
-        checkNotNull(bubbleIds, "bubbleIds");
+        requireNonNull(bubbleIds, "bubbleIds");
         List<T> bubbleObjects = new ArrayList<>(bubbleIds.size());
         getIgnoreMissing(bubbleIds, bubbleObjects);
         return bubbleObjects;

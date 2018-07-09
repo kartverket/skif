@@ -6,7 +6,6 @@ import com.google.inject.PrivateModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 import no.statkart.skif.config.Configuration;
-import com.google.common.base.Preconditions;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -25,7 +24,7 @@ import java.util.*;
  */
 public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceModuleStrategy> {
     protected final ClassLoader classLoader;
-    protected final Set<Class<? extends Object>> services = new HashSet<Class<? extends Object>>();
+    protected final Set<Class<? extends Object>> services = new HashSet<>();
     protected final Mapping mapping;
     protected ExceptionMapping exceptionMapping;
     protected Class<? extends ServiceContextMapper<?>> serviceContextMapperClass;
@@ -39,32 +38,28 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
 
     public WSServerServiceModule(Configuration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
         super(WSServerServiceModuleStrategy.class, configuration);
-        Preconditions.checkNotNull(mapping, "mapping");
         this.services.addAll(services);
-        this.mapping = mapping;
+        this.mapping = Objects.requireNonNull(mapping, "mapping");
         this.classLoader = getClass().getClassLoader();
     }
 
     public WSServerServiceModule(Configuration configuration, Collection<Class<? extends Object>> services, Mapping mapping, ClassLoader classLoader) {
         super(WSServerServiceModuleStrategy.class, configuration);
-        Preconditions.checkNotNull(mapping, "mapping");
         this.services.addAll(services);
-        this.mapping = mapping;
-        this.classLoader =classLoader;
+        this.mapping = Objects.requireNonNull(mapping, "mapping");
+        this.classLoader = classLoader;
     }
     public WSServerServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
         super(WSServerServiceModuleStrategy.class, configuration);
-        Preconditions.checkNotNull(mapping, "mapping");
         this.services.addAll(services);
-        this.mapping = mapping;
-        this.classLoader =getClass().getClassLoader();
+        this.mapping = Objects.requireNonNull(mapping, "mapping");
+        this.classLoader = getClass().getClassLoader();
     }
 
     public WSServerServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping, ClassLoader classLoader) {
         super(WSServerServiceModuleStrategy.class, configuration);
-        Preconditions.checkNotNull(mapping, "mapping");
         this.services.addAll(services);
-        this.mapping = mapping;
+        this.mapping = Objects.requireNonNull(mapping, "mapping");
         this.classLoader = classLoader;
     }
 

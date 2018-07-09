@@ -1,14 +1,10 @@
 package no.statkart.skif.store;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ForwardingIterator;
 import com.google.common.collect.ForwardingSet;
 import no.statkart.skif.store.relation.cache.RelationName;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Wrapper klasse for {@link Set} som inneholder objekter med boblereferanser som inngår i invers relasjoner. Slike
@@ -39,7 +35,7 @@ public abstract class AbstractInverseRelationTrackingSet<E> extends ForwardingSe
     protected Set<E> delegate;
     private final OwningBubbleExtractor ownerExtractor;
     public <O extends BubbleObject & InverseRelationParticipation> AbstractInverseRelationTrackingSet(O owner, Set<E> delegate) {
-        Preconditions.checkNotNull(owner);
+        Objects.requireNonNull(owner);
         this.delegate = delegate;
         this.ownerExtractor = OwningBubbleExtractor.create(owner);
     }
