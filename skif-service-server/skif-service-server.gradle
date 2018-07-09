@@ -1,22 +1,21 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven'
 
-configurations {
-    tests
-}
+description = 'Inneholder service-rammeverk klasser for tjener'
 
 dependencies {
-    compile project(':skif-service-common')
+    api project(':skif-service-common')
 
-    compile libraries.guice_for_server
-    provided libraries.c3p0
+//    implementation libraries.guice_for_server
+    implementation libraries.c3p0
 
-    provided libraries.jdbc
-    provided libraries.weblogic
+    compileOnly libraries.weblogic
 
-    testCompile project(':skif-config')
-    testCompile project(':skif-testsupport-common')
-    testCompile project(path: ':skif-service-common', configuration: "testApi")
+    testImplementation project(':skif-config')
+    testImplementation project(':skif-testsupport-common')
+    testImplementation project(path: ':skif-service-common', configuration: 'testApi')
+    testImplementation libraries.jdbc
+    testImplementation libraries.weblogic
 }
 
 task sourcesJar(type: Jar, dependsOn:classes) {
@@ -25,14 +24,8 @@ task sourcesJar(type: Jar, dependsOn:classes) {
     onlyIf { gradle.taskGraph.hasTask(install) || gradle.taskGraph.hasTask(uploadArchives) } //only when published..
 }
 
-task testJar(type: Jar) {
-    classifier = 'tests'
-    from sourceSets.test.output
-}
-
 
 artifacts {
-    tests testJar
     archives sourcesJar
 }
 

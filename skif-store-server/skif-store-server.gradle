@@ -1,24 +1,24 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven'
 
 dependencies {
-    compile project(':skif-store-common')
-    compile project(':skif-service-server')
+    api project(':skif-store-common')
+    api project(':skif-service-server')
 
-    compile libraries.jodatime
+    implementation libraries.jodatime
 
-    provided libraries.jdbc
+    compileOnly libraries.jdbc
 
     // Sett hibernateVersion i gradle.properties
     // Scope er provided, ein må sjølv inkludere skif-store-server:skif-store-server-hs32 eller skif-store-server:skif-store-server-hs36 i sitt prosjekt
-    if(hibernateVersion.equals("3.6")) {
-      provided libraries.hibernate_3_6
+    if(hibernateVersion == '3.6') {
+        compileOnly libraries.hibernate_3_6_api
     }
 
-    provided libraries.weblogic
+    compileOnly libraries.weblogic
 
-    testCompile project(':skif-config')
-    testCompile project(':skif-testsupport-common')
+    testImplementation project(':skif-config')
+    testImplementation project(':skif-testsupport-common')
 }
 
 task sourcesJar(type: Jar, dependsOn:classes) {

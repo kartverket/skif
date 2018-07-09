@@ -1,12 +1,12 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 
 dependencies {
-    compile project(':skif-store-test:skif-store-test-api')
-    provided project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
+    api project(':skif-store-test:skif-store-test-api')
+    api project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
-    testCompile project(':skif-testsupport-common')
+    testImplementation project(':skif-testsupport-common')
 
     //internal dependencies + optional deps to logging frameworks:
-    testCompile project(':skif-config')
+    testImplementation project(':skif-config')
 
 }

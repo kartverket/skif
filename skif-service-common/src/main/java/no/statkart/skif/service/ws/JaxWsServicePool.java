@@ -1,6 +1,5 @@
 package no.statkart.skif.service.ws;
 
-import com.sun.xml.ws.developer.JAXWSProperties;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 
@@ -34,7 +33,7 @@ public class JaxWsServicePool<T> {
             T port = endpoint.getPort(portClass);
             BindingProvider bindings = (BindingProvider) port;
             if (hostnameVerifier != null) {
-                bindings.getRequestContext().put(JAXWSProperties.HOSTNAME_VERIFIER, hostnameVerifier);
+                bindings.getRequestContext().put("com.sun.xml.ws.transport.https.client.hostname.verifier", hostnameVerifier);
             }
             return port;
         }

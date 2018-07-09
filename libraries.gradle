@@ -14,7 +14,7 @@ File getToolsJar() {
 
 // build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
 // use. In that respect it serves a role similar to <dependencyManagement> in Maven
-def libraries = [
+ext.libraries = [
 
         // Tools
         'tools.jar': files(getToolsJar()),
@@ -61,6 +61,9 @@ def libraries = [
         jaxb_impl: "com.sun.xml.bind:jaxb-impl:${libVersion('jaxb', '2.1.13')}",
         jaxb_xjc: "com.sun.xml.bind:jaxb-xjc:${libVersion('jaxb', '2.1.13')}",
 
+        // JAXWS
+        jaxws_api : "javax.xml.ws:jaxws-api:2.1", //for kompilering
+
         jodatime: "joda-time:joda-time:${libVersion('jodatime', '2.3')}",
 
         // commons-lang - vurderes i SKIF-271
@@ -85,22 +88,12 @@ libraries.guice_for_server = [
 //        libraries.guice_servlet,
 ]
 
-libraries.hibernate_3_6 = [
-        'org.hibernate:hibernate-parent:3.6.10.Final',
+libraries.hibernate_3_6_api = [
 //        files("c:/dev/skif/hibernate-core-3.6.10.Final.bubbleref.v5.jar"),  // Brukes istedet for den under ifm lokal testing av ny versjon
-        'org.hibernate:hibernate-core:3.6.10.Final.bubbleref.v7',
-        'commons-collections:commons-collections:3.2.2',
-        'dom4j:dom4j:1.6.1@jar',
-        'org.hibernate:hibernate-commons-annotations:3.2.0.Final',
-        'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final',
-        'javax.transaction:jta:1.1',
-        'antlr:antlr:2.7.6@jar',
-//        'org.antlr:antlr:3.4@jar',   // denne har annen pakkestruktur (org.antlr.*) og kan derfor ikke brukes sammen med hibernate 3.6.10 (gir feil i Weblogic)
-        'net.sf.ehcache:ehcache-core:2.5.2',
-        'odmg:odmg:3.0@jar',
-        'org.javassist:javassist:3.21.0-GA',
+        'org.hibernate:hibernate-core:3.6.10.Final.bubbleref.v7@jar',
 ]
 
+libraries.jta = 'javax.transaction:jta:1.1@jar'
 
 // Oracle Weblogic dependencies
 
@@ -167,11 +160,4 @@ libraries.weblogic_tools = files(
         "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
 )
 
-libraries.jaxws_rt = files(
-        libraries.weblogic_jaxws_rt,
-)
 
-
-subprojects {
-    project.ext.set('libraries', libraries) //eksponerer denne for alle prosjekter
-}

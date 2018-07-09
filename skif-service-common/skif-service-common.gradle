@@ -1,19 +1,25 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven'
+
+description = 'Inneholder service-rammeverk klasser for klient'
 
 configurations {
     testApi
 }
 
 dependencies {
-    compile libraries.slf4j_api
-    compile libraries.jsr305
-    compile libraries.guice_for_client
-    compile libraries.guava
-    compile libraries.jodatime
-    provided libraries.jaxws_rt
+    api libraries.slf4j_api
+    api libraries.jsr305
+    api libraries.guice
+    api libraries.guava //pga TypeToken
 
-    testCompile libraries.reflections
+    implementation libraries.guice_multibindings
+    implementation libraries.guava
+    implementation libraries.jodatime
+    compileOnly libraries.jaxws_api
+
+    testImplementation libraries.weblogic_jaxws_rt
+    testImplementation libraries.reflections
 }
 
 task testJar(type: Jar) {

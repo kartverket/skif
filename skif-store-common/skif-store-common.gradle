@@ -1,18 +1,22 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven'
+
+description = 'Inneholder Store funksjonalitet samt mulighet for remote service kall (via transitiv dependency skif-service-common)'
 
 configurations {
     testApi
 }
 
 dependencies {
-    compile project(':skif-service-common')
-    compile libraries.guava
+//    api libraries.guava
 
-    testCompile project(':skif-config')
-    testCompile project(':skif-testsupport-common')
+    implementation project(':skif-service-common')
+    implementation libraries.guava
 
-    testCompile libraries.reflections
+    testImplementation project(':skif-config')
+    testImplementation project(':skif-testsupport-common')
+
+    testImplementation libraries.reflections
 
 }
 
@@ -50,4 +54,5 @@ task assertDependencies() {
         }
     }
 }
+test.dependsOn assertDependencies //kjøres som en test
 test.dependsOn assertDependencies //kjøres som en test

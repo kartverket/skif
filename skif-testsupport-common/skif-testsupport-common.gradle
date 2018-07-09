@@ -1,9 +1,9 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven'
 
 dependencies {
-    compile project(':skif-service-common')
-    compile libraries.testng
+    api project(':skif-service-common')
+    api libraries.testng
 }
 
 task sourcesJar(type: Jar, dependsOn:classes) {

@@ -1,7 +1,8 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 
 dependencies {
     compile project(':skif-store-common')
+    compile project(':skif-service-common')
     compile libraries.jodatime //optional dependency for jodatime funksjonalitet
 
     testCompile project(':skif-testsupport-common')

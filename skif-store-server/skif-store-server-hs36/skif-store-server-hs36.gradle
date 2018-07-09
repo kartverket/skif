@@ -1,14 +1,26 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'maven'
 
 dependencies {
-    compile project(':skif-store-server')
-    compile libraries.hibernate_3_6
+    api project(':skif-store-server')
+    api libraries.hibernate_3_6_api
 
-    provided libraries.weblogic
+    //hibernate impl avhengigheter - se 'org.hibernate:hibernate-parent:3.6.10.Final'
+//    implementation 'org.hibernate:hibernate-parent:3.6.10.Final'
+    implementation libraries.slf4j_api
+    implementation 'antlr:antlr:2.7.6@jar' // antlr:3.4 har annen pakkestruktur (org.antlr.*) og kan derfor ikke brukes sammen med hibernate 3.6.10 (gir feil i Weblogic)
+    implementation 'commons-collections:commons-collections:3.2.2@jar'
+    implementation 'dom4j:dom4j:1.6.1@jar'
+    implementation 'org.javassist:javassist:3.21.0-GA@jar' //POM: javassist is optional, but if defined it should be version 3.9.0
+//    implementation 'cglib:cglib:2.2' //POM: cglib is optional, but if defined it should be version 2.2
+    implementation 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final@jar'
+    implementation 'org.hibernate:hibernate-commons-annotations:3.2.0.Final@jar' //avhenger av slf4j
 
-    testCompile project(':skif-config')
-    testCompile project(':skif-testsupport-common')
+    implementation libraries.jta //optional
+    compileOnly libraries.weblogic
+
+    testImplementation project(':skif-config')
+    testImplementation project(':skif-testsupport-common')
 }
 
 task sourcesJar(type: Jar, dependsOn:classes) {
