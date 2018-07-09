@@ -1,5 +1,7 @@
-assert GradleVersion.version('2.8').compareTo(GradleVersion.current()) <= 0 //lowest gradle version supported
-if (!['2.8'].findAll { gradle.gradleVersion == it }) {
+import org.gradle.util.GradleVersion
+
+assert GradleVersion.version('4.6').compareTo(GradleVersion.current()) <= 0 //lowest gradle version supported
+if (!['4.8.1'].findAll { gradle.gradleVersion == it }) {
     logger.warn "WARNING: Du benytter en annen versjon av Gradle enn hva byggesystemet er testet med: ${gradle.gradleVersion}"
 }
 
@@ -129,10 +131,10 @@ subprojects { Project project ->
          * --info gir verbos logging av hvilke grupper som faktisk blir inkludert og ekskludert.
          */
         test {
-            ignoreFailures = gradle.startParameter.systemPropertiesArgs.get('ignoreFailures', 'false') == 'true' //Gradle feiler ikke dersom denne er true.
+            ignoreFailures = System.getProperty('ignoreFailures', 'false') == 'true' //Gradle feiler ikke dersom denne er true.
 
-            def filterSlowTests = gradle.startParameter.systemPropertiesArgs.get('filterSlowTests', 'EXCLUDE_WHEN_NO_INCLUDES').toUpperCase(); //gruppen kan kombineres med andre
-            def filterOracleLatest = gradle.startParameter.systemPropertiesArgs.get('filterOracleLatest', 'EXCLUDE').toUpperCase();
+            def filterSlowTests = System.getProperty('filterSlowTests', 'EXCLUDE_WHEN_NO_INCLUDES').toUpperCase() //gruppen kan kombineres med andre
+            def filterOracleLatest = System.getProperty('filterOracleLatest', 'EXCLUDE').toUpperCase()
 
             filterTestGroup(it, 'slow', filterSlowTests)
             filterTestGroup(it, 'oracleLatest', filterOracleLatest) // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
@@ -141,7 +143,6 @@ subprojects { Project project ->
 
 
             jvmArgs '-Xmx1024m'
-//            jvmArgs '-Xmx1024m', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
             testLogging.showStandardStreams = true
 
             inputs.property 'excludedGroups', testFramework.options.includeGroups //trigger re-kjøring av test ved endring av grupper
@@ -203,7 +204,7 @@ subprojects { Project project ->
         inheritOutputDirs = true
 
         downloadSources = true
-        downloadJavadoc = true //for jdbc dokumentasjon
+//        downloadJavadoc = true //for jdbc dokumentasjon
     }
 }
 
@@ -215,7 +216,7 @@ allprojects {
                 attributes([
                         'Specification-Title': project.name,
                         'Specification-Vendor': 'Statens kartverk',
-                        'Specification-Version': gradle.startParameter.projectProperties.get('version', "${version}"),
+                        'Specification-Version': gradle.startParameter.projectProperties.get('version') ?: version,
 
                         //misc build info
                         'Build-By'     : System.getProperty('user.name'),
@@ -284,6 +285,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build652'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.5-build40'
     }
 }

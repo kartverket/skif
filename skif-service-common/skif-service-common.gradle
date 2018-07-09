@@ -33,9 +33,6 @@ artifacts {
 }
 
 task assertDependencies() {
-    //kjøres som en test
-    test.dependsOn it
-
     doFirst {
         configurations.runtime.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
             boolean godkjent = [
@@ -53,6 +50,7 @@ task assertDependencies() {
         }
     }
 }
+test.dependsOn assertDependencies //kjøres som en test
 
 
 def installer = install.repositories.mavenInstaller
