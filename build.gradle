@@ -187,18 +187,6 @@ subprojects { Project project ->
     }
 
 
-    //kobler inn standard upload repositores ved bruk av maven plugin
-    plugins.withType(MavenPlugin) {
-        if (REPO_UPLOAD_RELEASES) {
-            project.uploadArchives.repositories.mavenDeployer {
-                repository(url: uri(REPO_UPLOAD_RELEASES)) {
-                    authentication([userName: REPO_UPLOAD_RELEASES_USERNAME, password: REPO_UPLOAD_RELEASES_PASSWORD])
-                }
-            }
-        }
-    }
-
-
     project.idea.module {
         // Får Idea til å legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)
         inheritOutputDirs = true
@@ -259,10 +247,6 @@ buildscript {
         ext.MAVEN_REPO = 'https://nexus.statkart.no/repository/public/'
         logger.info "warning: MAVEN_REPO not defined. Defaulting to ${MAVEN_REPO}"
     }
-
-    ext.REPO_UPLOAD_RELEASES = rootProject.properties.get('REPO_UPLOAD_RELEASES', System.getenv('REPO_UPLOAD_RELEASES'))
-    ext.REPO_UPLOAD_RELEASES_USERNAME = rootProject.properties.get('REPO_UPLOAD_RELEASES_USERNAME', System.getenv('REPO_UPLOAD_RELEASES_USERNAME'))
-    ext.REPO_UPLOAD_RELEASES_PASSWORD = rootProject.properties.get('REPO_UPLOAD_RELEASES_PASSWORD', System.getenv('REPO_UPLOAD_RELEASES_PASSWORD'))
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Switch for tentativ utvikling mot lokalt maven repository

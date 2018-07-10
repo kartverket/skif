@@ -1,5 +1,5 @@
 apply plugin: 'java-library'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 dependencies {
     api project(':skif-store-common')
@@ -24,17 +24,21 @@ dependencies {
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
-    onlyIf { gradle.taskGraph.hasTask(install) || gradle.taskGraph.hasTask(uploadArchives) } //only when published..
 }
 
-artifacts {
-    archives sourcesJar
-}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
 
-
-def installer = install.repositories.mavenInstaller
-def deployer = uploadArchives.repositories.findByName('mavenDeployer')
-
-[installer, deployer]*.pom*.whenConfigured { pom ->
-    pom.dependencies.findAll { dep -> dep.groupId == 'joda-time' }.each { it.optional = true }  //optional avhengighet for joda-time [SKIF-472]
+            pom.withXml {
+                asNode().dependencies.dependency.findAll {
+                    it.artifactId.text() == 'joda-time' //optional avhengighet for joda-time [SKIF-472]
+                }.each {
+                    it.appendNode('optional', 'true')
+                }
+            }
+        }
+    }
 }
