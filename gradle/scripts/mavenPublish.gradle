@@ -2,7 +2,7 @@
 // Eksempel-bruk:
 //
 //    set MAVEN_PUBLISH=https://username:password@nexus.statkart.no/repository/releases
-//    gradle publish --init-script config/gradle/scripts/mavenPublish.gradle
+//    gradlew publish --init-script gradle/scripts/mavenPublish.gradle
 
 rootProject {
     if (name != 'buildSrc') {

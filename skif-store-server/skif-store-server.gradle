@@ -7,7 +7,7 @@ dependencies {
 
     implementation libraries.jodatime
 
-    compileOnly libraries.jdbc
+    implementation libraries.jdbc //provided
 
     // Sett hibernateVersion i gradle.properties
     // Scope er provided, ein må sjølv inkludere skif-store-server:skif-store-server-hs32 eller skif-store-server:skif-store-server-hs36 i sitt prosjekt
@@ -33,11 +33,8 @@ publishing {
             artifact sourcesJar
 
             pom.withXml {
-                asNode().dependencies.dependency.findAll {
-                    it.artifactId.text() == 'joda-time' //optional avhengighet for joda-time [SKIF-472]
-                }.each {
-                    it.appendNode('optional', 'true')
-                }
+                asNode().dependencies.dependency.findAll { 'joda-time' == it.artifactId.text() }.each { it.appendNode('optional', 'true') } //optional avhengighet for joda-time [SKIF-472]
+                asNode().dependencies.dependency.findAll { 'com.oracle.jdbc' == it.groupId.text() }.each { it.appendNode('optional', 'true'); it.scope[0].value = 'provided'} //optional, provided avhengighet for jdbc drivere - kan brukes for singleVm [SKIF-472]
             }
         }
     }

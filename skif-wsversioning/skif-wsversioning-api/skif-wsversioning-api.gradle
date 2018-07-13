@@ -2,7 +2,6 @@ apply plugin: 'java-library'
 
 dependencies {
     api project(':skif-store-common')
-    api project(':skif-service-common')
     api libraries.guice
 
     testImplementation project(':skif-testsupport-common')

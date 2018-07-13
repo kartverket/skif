@@ -8,9 +8,7 @@ configurations {
 }
 
 dependencies {
-//    api libraries.guava
-
-    implementation project(':skif-service-common')
+    api project(':skif-service-common')
     implementation libraries.guava
 
     testImplementation project(':skif-config')
@@ -61,5 +59,4 @@ task assertDependencies() {
         }
     }
 }
-test.dependsOn assertDependencies //kjøres som en test
 test.dependsOn assertDependencies //kjøres som en test

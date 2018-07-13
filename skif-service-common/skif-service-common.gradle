@@ -43,11 +43,7 @@ publishing {
             artifact sourcesJar
 
             pom.withXml {
-                asNode().dependencies.dependency.findAll {
-                    it.artifactId.text() == 'joda-time' //optional avhengighet for joda-time [SKIF-472]
-                }.each {
-                    it.appendNode('optional', 'true')
-                }
+                asNode().dependencies.dependency.findAll { 'joda-time' == it.artifactId.text() }.each { it.appendNode('optional', 'true') } //optional avhengighet for joda-time [SKIF-472]
             }
         }
     }

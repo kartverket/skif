@@ -1,5 +1,5 @@
-apply plugin: 'java-library'
-apply plugin: 'sktools-weblogic-wsclient-plugin'
+apply plugin: 'java'
+apply plugin: 'sktools-weblogic-wsclient-plugin' //problem sammen med java-library
 
 dependencies {
   weblogicProvided libraries.weblogic_tools

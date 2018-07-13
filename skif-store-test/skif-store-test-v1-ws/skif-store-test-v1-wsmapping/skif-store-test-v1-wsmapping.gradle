@@ -1,8 +1,17 @@
 apply plugin: 'java-library'
 
+/**
+ * Denne modulen blir konsumert i to kombinasjoner
+ *
+ * 1. Server mode :: wsmapping + wsschema
+ * 2. Client mode :: wsmapping + wsclient
+ * 3. SingleVm    :: samme som server mode
+ */
+
+
 dependencies {
     api project(':skif-store-test:skif-store-test-api')
-    api project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
+    provided project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
     testImplementation project(':skif-testsupport-common')
 
