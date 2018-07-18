@@ -4,6 +4,7 @@ apply plugin: 'maven-publish'
 dependencies {
     api project(':skif-store-common')
     api project(':skif-service-server')
+    api libraries.guava //pga Multimap
 
     implementation libraries.jodatime
 
