@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 import static no.statkart.skif.storetest.store.StoreServiceTestHelper.createStoreServiceWithNoObjects;
 import static no.statkart.skif.storetest.store.StoreServiceTestHelper.createStoreServiceWithObjects;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 
 @Test

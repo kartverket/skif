@@ -104,7 +104,7 @@ subprojects { Project project ->
         project.dependencies {
             testCompile libraries.testng
             testCompile libraries.mockito
-            testCompile libraries.fest
+            testCompile libraries.assertj
 
             apiElements libraries.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
         }

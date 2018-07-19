@@ -27,7 +27,7 @@ import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tester grunnleggende ting i {@link no.statkart.skif.store.StoreClient}. Dette er stort sett implementert i diverse session-klasser.

@@ -1,48 +1,19 @@
 package no.statkart.skif.storetest.store;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
-import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.exception.ObjectsNotFoundException;
-import no.statkart.skif.service.LoginUserHolder;
-import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.BubbleTransfer;
-import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.StoreBubbleTransfer;
 import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.UnitOfWork;
-import no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef;
-import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-import no.statkart.skif.storetest.domain.basic.SubTypeWithCollection;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
-import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.service.uow.UowTestService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 /**
  * Tester for UowTestServiceTest

@@ -39,7 +39,7 @@ import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.MemoryProfileUtil;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 import org.mockito.Mockito;
@@ -51,7 +51,7 @@ import org.testng.annotations.*;
 import java.util.*;
 
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.*;
-import static org.fest.assertions.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.testng.Assert.*;
 import static org.testng.FileAssert.fail;
 

@@ -4,7 +4,7 @@ import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import oracle.jdbc.OracleConnection;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

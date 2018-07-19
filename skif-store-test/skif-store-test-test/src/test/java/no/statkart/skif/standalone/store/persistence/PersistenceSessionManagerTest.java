@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.*;
-import static org.fest.assertions.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 

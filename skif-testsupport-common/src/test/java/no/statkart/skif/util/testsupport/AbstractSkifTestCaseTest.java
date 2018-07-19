@@ -4,7 +4,7 @@ import no.statkart.skif.module.ModuleBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AbstractSkifTestCaseTest {
 

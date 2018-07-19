@@ -8,7 +8,7 @@ import no.statkart.skif.mapper.*;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.KodelisteLong;
 import no.statkart.skif.store.kodeliste.KodelisteLongId;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.testng.annotations.Test;
 
 import java.util.*;

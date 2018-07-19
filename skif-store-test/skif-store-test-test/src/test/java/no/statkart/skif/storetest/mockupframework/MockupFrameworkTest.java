@@ -20,7 +20,7 @@ import no.statkart.skif.storetest.domain.mockup.*;
 import no.statkart.skif.storetest.service.test.TestdataService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.CopyHelper;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tester at mockup rammeverket virker fra klient.
@@ -325,7 +325,7 @@ public class MockupFrameworkTest extends StoreTestTestCase {
     }
 
     /**
-     * Verifiserer at man får feil ved overskridelse av {@link TestIdServiceLong#PREFIX_POSITION}
+     * Verifiserer at man får feil ved overskridelse av {@link TestIdServiceLong#PREFIX_FACTOR}
      */
     @Test //SKIF-663
     public void assignIdGirFeilVedOverflowAvIdsekvens() {

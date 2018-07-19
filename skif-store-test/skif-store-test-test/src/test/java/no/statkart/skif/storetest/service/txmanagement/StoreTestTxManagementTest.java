@@ -8,7 +8,7 @@ import no.statkart.skif.storetest.service.txcmt.ContainerManagedTxAService;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.*;
 
 /**

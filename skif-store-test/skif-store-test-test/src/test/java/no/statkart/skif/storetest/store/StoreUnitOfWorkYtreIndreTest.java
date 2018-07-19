@@ -15,7 +15,7 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tester bruk av UnitOfWork på klient og server.

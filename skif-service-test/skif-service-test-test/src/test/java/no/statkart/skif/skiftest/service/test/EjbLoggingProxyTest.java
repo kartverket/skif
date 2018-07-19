@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tester {@link no.statkart.skif.service.proxy.EjbLoggingProxyHandler}.

@@ -15,11 +15,11 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tester låsing gjennom Store, i samspill med låsebehandlingen i transaksjonshåndteringen.
