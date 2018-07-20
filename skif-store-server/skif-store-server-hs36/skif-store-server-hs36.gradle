@@ -6,10 +6,9 @@ dependencies {
     api libraries.hibernate_3_6_api
     api libraries.guava //pga Multimap
 
-    implementation libraries.hibernate_3_6
+    provided libraries.jee
 
-    implementation libraries.jta //optional
-    compileOnly libraries.weblogic
+    implementation libraries.hibernate_3_6
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
@@ -25,10 +24,6 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
             artifact sourcesJar
-
-            pom.withXml {
-                asNode().dependencies.dependency.findAll { 'javax.transaction' == it.groupId.text() && 'jta' == it.artifactId.text() }.each { it.appendNode('optional', 'true') } //optional avhengighet for javax.transaction:jta [SKIF-678]
-            }
         }
     }
 }

@@ -2,15 +2,18 @@ apply plugin: 'java'
 apply plugin: 'sktools-weblogic-wsclient-plugin'
 
 dependencies {
-  weblogicProvided libraries.weblogic_tools
-  weblogicProvided libraries['tools.jar']
+    weblogicProvided project(':skif-config') // For å tvinge bruk av JAX-WS RI og JAXB RI
+    weblogicProvided libraries.weblogic
+    weblogicProvided libraries['tools.jar']
 }
 
 weblogicWsClient {
-  webService {
-    baseWar { project(path: ':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wswar', configuration: 'wsdls') }
-    exceptionReusePackage 'no.statkart.skif.wsversioning.wsapi.v1.exception'
-  }
+    webService {
+        baseWar {
+            project(path: ':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wswar', configuration: 'wsdls')
+        }
+        exceptionReusePackage 'no.statkart.skif.wsversioning.wsapi.v1.exception'
+    }
 }
 
 

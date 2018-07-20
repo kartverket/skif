@@ -6,6 +6,8 @@ dependencies {
     api project(':skif-service-server')
     api libraries.guava //pga Multimap
 
+    provided libraries.jee
+
     implementation libraries.jodatime
 
     implementation libraries.jdbc //provided
@@ -15,8 +17,6 @@ dependencies {
     if(hibernateVersion == '3.6') {
         compileOnly libraries.hibernate_3_6_api
     }
-
-    compileOnly libraries.weblogic
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')

@@ -12,7 +12,7 @@ dependencies {
       compile project(':skif-store-server:skif-store-server-hs36')
     }
 
-    provided libraries.weblogic
+    provided libraries.jee
 
     testCompile project(':skif-testsupport-common')
 

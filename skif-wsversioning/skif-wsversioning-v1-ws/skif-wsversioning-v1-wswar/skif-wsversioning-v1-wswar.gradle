@@ -10,10 +10,11 @@ dependencies {
     compile project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsschema')
     compile project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsmapping')
 
-    provided libraries.weblogic
+    provided libraries.jee
 
+    jaxws project(':skif-config') // For å tvinge bruk av JAX-WS RI og JAXB RI
     jaxws libraries['tools.jar']
-    jaxws libraries.weblogic_tools
+    jaxws libraries.weblogic
 }
 
 war {

@@ -18,7 +18,6 @@ dependencies {
     implementation libraries.jodatime
     compileOnly libraries.jaxws_api
 
-    testImplementation libraries.weblogic_jaxws_rt
     testImplementation libraries.reflections
 }
 
