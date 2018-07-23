@@ -4,7 +4,7 @@ dependencies {
     api project(':skif-store-common')
     api project(':skif-service-common')
     api libraries.jsr305
-    implementation libraries.jodatime //optional dependency for jodatime funksjonalitet
+    api libraries.jodatime
 
     testImplementation project(':skif-testsupport-common')
 
