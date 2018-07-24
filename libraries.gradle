@@ -16,11 +16,6 @@ ext.SLF4J_VERSION = libVersion('slf4j', '1.7.25')
 ext.JAXB_VERSION = libVersion('jaxb', '2.2.10')
 ext.JAXWS_VERSION = libVersion('jaxws', '2.2.10')
 
-allprojects {
-    configurations.all {
-        exclude group: 'commons-logging', module: 'commons-logging' // Erstattes av jcl_to_slf4j
-    }
-}
 
 
 // build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
@@ -128,3 +123,12 @@ libraries.weblogic = files(
 )
 
 
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            dependencySubstitution {
+                substitute(module('commons-logging:commons-logging')).because('SKIF bruker SLF4J').with(module(libraries.jcl_to_slf4j))
+            }
+        }
+    }
+}
