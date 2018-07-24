@@ -52,9 +52,3 @@ artifacts {
     wsdls zipWsdls
     war project.war
 }
-
-task debugConf {
-    doLast {
-        println configurations.jaxws.asPath
-    }
-}
