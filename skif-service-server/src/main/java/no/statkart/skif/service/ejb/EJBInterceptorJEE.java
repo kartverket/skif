@@ -110,21 +110,14 @@ public abstract class EJBInterceptorJEE {
         }
     }
 
-    /**
-     * Det finnes ingen tester som bruker denne funksjonaliteten. Det ser heller ikke ut til at det er logisk mulig å nå
-     * denne metoden. Har derfor deaktivert den som ustøttet, men lar den ligge i tilfelle det blir bruk for den senere.
-     */
-    @SuppressWarnings("UnusedParameters")
     private Object executeInExistingContext(Injector injector, InvocationContext invocationContext, ServiceRequestContext serviceRequestContext, TxMode origTxMode, TransactionAttributeType txType) throws Exception {
-        /*final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
-        final ServiceRequestContext originalServiceRequestContext = new ServiceRequestContext(serviceRequestContext, origTxMode, false, txType);
+        final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
         try {
             serviceRequestContext.setTxMode(txMode);
             return invokeInContext(injector, invocationContext);
         } finally {
-            serviceRequestContext.setFrom(originalServiceRequestContext);
-        }*/
-        throw new NotImplementedException("executeInExistingContext");
+            serviceRequestContext.setTxMode(origTxMode);
+        }
     }
 
 

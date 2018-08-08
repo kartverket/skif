@@ -109,22 +109,16 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
         }
     }
 
-    /**
-     * Det finnes ingen tester som bruker denne funksjonaliteten. Det ser heller ikke ut til at det er logisk mulig å nå
-     * denne metoden. Har derfor deaktivert den som ustøttet, men lar den ligge i tilfelle det blir bruk for den senere.
-     */
-    @SuppressWarnings("UnusedParameters")
     private Object executeInExistingContext(TxMode origTxMode, TransactionAttributeType txType, Method method, Object[] args) throws Throwable {
-        /*final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
+        final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
         final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
-        final ServiceRequestContext originalServiceRequestContext = new ServiceRequestContext(serviceRequestContext, origTxMode, false, txType);
+
         try {
             serviceRequestContext.setTxMode(txMode);
             return invokeInContext(method, args);
         } finally {
-            serviceRequestContext.setFrom(originalServiceRequestContext);
-        }*/
-        throw new NotImplementedException("executeInExistingContext");
+            serviceRequestContext.setTxMode(origTxMode);
+        }
     }
 
     private Object invokeInContext(Method method, Object[] args) throws Throwable {
