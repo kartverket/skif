@@ -4,7 +4,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.service.ServiceRequestContext;
@@ -61,7 +61,7 @@ public abstract class EJBInterceptorJEE {
             if (isNewContextRequired(origTxMode, txType)) {
                 return executeInNewContext(injector, invocationContext, serviceRequestContext, txType, ejbAttributesLookup.isBeanManagedTransaction());
             } else {
-                return executeInExistingContext(injector, invocationContext, serviceRequestContext, origTxMode, txType);
+                return executeInExistingContext(injector, invocationContext, serviceRequestContext, origTxMode);
             }
         } catch (Exception t) {
             logger.debug("Exception i EJBInterceptor", t);
@@ -110,8 +110,16 @@ public abstract class EJBInterceptorJEE {
         }
     }
 
-    private Object executeInExistingContext(Injector injector, InvocationContext invocationContext, ServiceRequestContext serviceRequestContext, TxMode origTxMode, TransactionAttributeType txType) throws Exception {
-        final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
+    private Object executeInExistingContext(Injector injector, InvocationContext invocationContext, ServiceRequestContext serviceRequestContext, TxMode origTxMode) throws Exception {
+        final TxMode txMode;
+        if (origTxMode == TxMode.NO_TX || origTxMode == TxMode.NO_TX_CONTINUATION) {
+            txMode = TxMode.NO_TX_CONTINUATION;
+        } else if (origTxMode == TxMode.TX || origTxMode == TxMode.TX_CONTINUATION) {
+            txMode = TxMode.TX_CONTINUATION;
+        } else {
+            throw new ImplementationException("TxMode " + origTxMode.name() + " is unsupported for execute in existing context");
+        }
+
         try {
             serviceRequestContext.setTxMode(txMode);
             return invokeInContext(injector, invocationContext);
