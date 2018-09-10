@@ -1,6 +1,6 @@
-if (!params.SUBVERSION) {
-    error("SUBVERSION er ikke angitt")
-}
+//if (!params.SUBVERSION) {
+//    error("SUBVERSION er ikke angitt")
+//}
 
 pipeline {
     agent {
@@ -27,6 +27,7 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
+                bat "exit 1"
                 bat "gradlew clean assemble ${GRADLE_ARGS}"
             }
         }
