@@ -275,9 +275,9 @@ public abstract class HibernateSessionFactoryBuilder {
 
     private void checkForFilesWithJarProtocol(List<String> files, URL resource) throws IOException {
         String filepath = resource.getPath();
-        int idx = filepath.indexOf("!");
-        String parsedJarName = filepath.substring(0, idx);
-        URL resource2 = new URL(parsedJarName);
+        String parsedJarName = filepath.substring(0, filepath.lastIndexOf("!"));
+        URL resource2 = parsedJarName.contains("!") ? new URL("jar:" + parsedJarName) // nested jar
+                                                    : new URL(parsedJarName);         // regular jar
         try (ZipInputStream zip2 = new ZipInputStream(resource2.openStream())) {
             ZipEntry ze;
             while ((ze = zip2.getNextEntry()) != null) {
