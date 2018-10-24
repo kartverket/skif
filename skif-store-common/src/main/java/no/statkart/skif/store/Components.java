@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import no.statkart.skif.store.relation.cache.RelationName;
@@ -149,8 +150,10 @@ public class Components {
     }
 
     static public <E extends Component> void setFrom(Collection<E> collection, Collection<E> newElements) {
+        // Må ta en kopi av newElements, i tilfelle newElements er den samme som collection eller en form for wrapper for den.
+        ImmutableList<E> copy = ImmutableList.copyOf(newElements);
         collection.clear();
-        collection.addAll(newElements);
+        collection.addAll(copy);
     }
 
     @SuppressWarnings("unchecked")
