@@ -6,6 +6,9 @@ apply plugin: 'sktools-dbtools-plugin'
 def filterProperties = [
         db_username: db_username,
         db_schema: db_username,
+        db_password: db_username,
+        db_tablespace: db_username,
+        db_dataroot_dir: db_dataroot_dir,
 ]
 
 configureDatabasePlugin {
@@ -13,7 +16,7 @@ configureDatabasePlugin {
 
     toolset(name: '', type: 'oracle', prefix: '') {
         sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
-        sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql') { mustRunAfter 'purge', 'historikkUpdatePackageSnapshotTime' }
+        sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql') { mustRunAfter 'purge', 'historikkUpdatePackageSnapshotTime', 'saCreateTablespace' }
         sqlTask('createSchemaTestStandAlone', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTestStandAlone.sql') { mustRunAfter 'createSchema' }
         sqlTask('createSchemaTest', sqlFile: 'src/main/sql/oracle/schema/CreateSchemaTest.sql') { mustRunAfter 'createSchema' }
         sqlTask('tableSequence', sqlFile: 'src/main/sql/oracle/data/Tablesequence.sql') { mustRunAfter 'createSchema' }
@@ -30,7 +33,8 @@ configureDatabasePlugin {
      * Toolset for SYSTEM-bruker
      */
     toolset(name: 'sa', type: 'oracle', prefix: 'sa') {
-        sqlTask('grant', sqlFile: 'src/main/sql/oracle/schema/GrantRole.sql', description: 'Denne må kjøres en gang før du får tilstrekkelige privilegier til å kjøre dbInit')
+        sqlTask('createTablespace', sqlFile: 'src/main/sql/oracle/tablespace/CreateTablespace.sql', description: 'Oppretter tablespace')
+        sqlTask('createUser', sqlFile: 'src/main/sql/oracle/user/CreateUser.sql', description: 'Oppretter databasebruker') { mustRunAfter 'saCreateTablespace' }
 
         properties = filterProperties
 
@@ -79,6 +83,13 @@ task dbInit {
     dependsOn 'loadTestdata'
     dependsOn 'applyHistorikk'
 
+}
+
+task dbCreateUser {
+    description = 'Oppretter tablespace og databasebruker'
+
+    dependsOn 'saCreateTablespace'
+    dependsOn 'saCreateUser'
 }
 
 /**
