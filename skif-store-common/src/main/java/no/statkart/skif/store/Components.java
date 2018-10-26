@@ -59,7 +59,7 @@ public class Components {
         return component;
     }
 
-    static <O, C extends ComponentWithOwnerReference<O>> void setOwner(@Nullable C component, O owner) {
+    static <O, C extends ComponentWithOwnerReference<? super O>> void setOwner(@Nullable C component, O owner) {
         if (component != null) {
             if (component.getOwner() != owner) {
                 // Component kan ikke bytte eier, men kan settes til null ved sletting
@@ -125,53 +125,53 @@ public class Components {
     }
 
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentSet<O, E> newSet() {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentSet<O, E> newSet() {
         return newSet(Sets.newHashSet());
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentSet<O, E> newSet(Set<E> set) {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentSet<O, E> newSet(Set<E> set) {
         return new ComponentSetImpl<>(set);
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentSet<O, E> newSet(CompositeComponent<O, ?> owner) {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentSet<O, E> newSet(CompositeComponent<O, ?> owner) {
         return newSet(owner, Sets.<E>newHashSet());
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentSet<O, E> newSet(CompositeComponent<O, ?> owner, Set<E> set) {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentSet<O, E> newSet(CompositeComponent<O, ?> owner, Set<E> set) {
         return newSet(owner.getCompositeRootOwner(), set);
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentSet<O, E> newSet(O owner) {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentSet<O, E> newSet(O owner) {
         return newSet(owner, Sets.newHashSet());
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentSet<O, E> newSet(O owner, Set<E> set) {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentSet<O, E> newSet(O owner, Set<E> set) {
         ComponentSet<O, E> componentSet = newSet(set);
         componentSet.setOwner(owner);
         return componentSet;
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentList<O, E> newList() {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentList<O, E> newList() {
         return newList(Lists.newArrayList());
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentList<O, E> newList(List<E> list) {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentList<O, E> newList(List<E> list) {
         return new ComponentListImpl<>(list);
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentList<O, E> newList(CompositeComponent<O, ?> owner) {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentList<O, E> newList(CompositeComponent<O, ?> owner) {
         return newList(owner, Lists.<E>newArrayList());
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentList<O, E> newList(CompositeComponent<O, ?> owner, List<E> list) {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentList<O, E> newList(CompositeComponent<O, ?> owner, List<E> list) {
         return newList(owner.getCompositeRootOwner(), list);
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentList<O, E> newList(O owner) {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentList<O, E> newList(O owner) {
         return newList(owner, Lists.newArrayList());
     }
 
-    static public <O, E extends ComponentWithOwnerReference<O>> ComponentList<O, E> newList(O owner, List<E> list) {
+    static public <O, E extends ComponentWithOwnerReference<? super O>> ComponentList<O, E> newList(O owner, List<E> list) {
         ComponentList<O, E> componentList = newList(list);
         componentList.setOwner(owner);
         return componentList;
@@ -202,7 +202,7 @@ public class Components {
     }
 
 
-    public static <O, E extends ComponentWithOwnerReference<O>, C extends ComponentCollection<O, E>> C checkSetComponentCollection(O owner, C thisCollection, C collection) {
+    public static <O, E extends ComponentWithOwnerReference<? super O>, C extends ComponentCollection<O, E>> C checkSetComponentCollection(O owner, C thisCollection, C collection) {
         /*if (thisCollection != null && collection == null) {
             // Collection fjernes fra owner
             thisCollection.setOwner(null);

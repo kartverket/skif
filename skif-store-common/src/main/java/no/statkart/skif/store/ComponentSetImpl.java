@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  * @since 2.4.0
  */
-public class ComponentSetImpl<O, E extends ComponentWithOwnerReference<O>> extends ForwardingSet<E> implements ComponentSet<O, E> {
+public class ComponentSetImpl<O, E extends ComponentWithOwnerReference<? super O>> extends ForwardingSet<E> implements ComponentSet<O, E> {
     private static final long serialVersionUID = 1L;
     protected Set<E> delegate;
 

@@ -5,5 +5,5 @@ import no.statkart.skif.store.ComponentWithOwnerReference;
 
 import java.util.List;
 
-public interface ComponentList<O, E extends ComponentWithOwnerReference<O>> extends ComponentCollection<O, E>, List<E> {
+public interface ComponentList<O, E extends ComponentWithOwnerReference<? super O>> extends ComponentCollection<O, E>, List<E> {
 }

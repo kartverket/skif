@@ -14,7 +14,7 @@ import java.util.ListIterator;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-public class ComponentListImpl<O, E extends ComponentWithOwnerReference<O>> extends ForwardingList<E> implements ComponentList<O, E> {
+public class ComponentListImpl<O, E extends ComponentWithOwnerReference<? super O>> extends ForwardingList<E> implements ComponentList<O, E> {
     private static final long serialVersionUID = 1L;
     protected List<E> delegate;
 
