@@ -478,7 +478,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntities(value, valueExisting, processedObjects, nestingLevel + 1, orphanOneToOneEntityComponents);
             }
         } else if (type.isComponentType()) {
-            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForComponent(value, valueExisting, type, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+            attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForComponent(object, value, valueExisting, type, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
         } else if (type.isCollectionType()) {
             if (valueExisting instanceof Map) {
                 MapType mapType = (MapType) type;
@@ -486,7 +486,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 persister.setPropertyValue(object, i, mapWithSnapshot, EntityMode.POJO);
             } else {
                 CollectionType collectionType = (CollectionType) type;
-                Collection collectionWithSnapshot = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection((Collection) value, (Collection) valueExisting, collectionType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+                Collection collectionWithSnapshot = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection(object, (Collection) value, (Collection) valueExisting, collectionType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
                 persister.setPropertyValue(object, i, collectionWithSnapshot, EntityMode.POJO);
             }
         } else if (!isSingleColumnType(type) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
@@ -506,7 +506,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         orphanOneToOneEntityComponents.get(nestingLevel).put(valueExisting.getClass(), valueExisting);
     }
 
-    protected void attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForComponent(Object component, Object componentExisting, Type componentType, IdentityHashMap<Object, Object> processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) {
+    protected void attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForComponent(Object owner, Object component, Object componentExisting, Type componentType, IdentityHashMap<Object, Object> processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) {
         Type[] propertyTypes = getSubtypes(componentType);
         Object[] properties = (component == null) ? new Object[propertyTypes.length] : getPropertyValues(componentType, component);
         Object[] propertiesExisting = (componentExisting == null) ? null : getPropertyValues(componentType, componentExisting);
@@ -529,7 +529,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 }
             } else if (propertyType.isComponentType()) {
                 // Trenger ikke å øke nestinLevel for composite components
-                attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForComponent(property, propertyExisting, propertyType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+                attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForComponent(owner, property, propertyExisting, propertyType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
             } else if (propertyType.isCollectionType()) {
                 if (property != null) {
                     // For hvert element
@@ -538,7 +538,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                         properties[j] = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForMap((Map) property, (Map) propertyExisting, mapType, true);
                     } else {
                         CollectionType collectionType = (CollectionType) propertyType;
-                        properties[j] = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection((Collection) property, (Collection) propertyExisting, collectionType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
+                        properties[j] = attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection(owner, (Collection) property, (Collection) propertyExisting, collectionType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
                     }
                     wasModified = true;
                 } else {
@@ -633,7 +633,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     }
 
     @SuppressWarnings("unchecked")
-    protected Collection attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection(Collection collectionInObject, Collection collectionInExistingObject, CollectionType collectionType, IdentityHashMap<Object, Object> processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
+    protected Collection attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollection(Object owner, Collection collectionInObject, Collection collectionInExistingObject, CollectionType collectionType, IdentityHashMap<Object, Object> processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
         if (collectionInExistingObject instanceof PersistentCollection) {
             PersistentCollection persistentCollectionInExistingObject = (PersistentCollection) collectionInExistingObject;
             if (collectionInObject instanceof PersistentCollection && !((PersistentCollection) collectionInObject).wasInitialized()) {
@@ -645,6 +645,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 PersistentCollection persistentCollection = collectionType.wrap(sessionImpl, collection);
                 persistentCollection.unsetSession(sessionImpl); // Skal ikke være attached enda, men null er ikke lov over
                 persistentCollection.setSnapshot(persistentCollectionInExistingObject.getKey(), persistentCollectionInExistingObject.getRole(), persistentCollectionInExistingObject.getStoredSnapshot());
+                persistentCollection.setOwner(owner);
 
                 // Det er viktig å gjøre dette etter setSnapshot pga. MultikoblingPersistentSet
                 if (collectionInObject != null) {

@@ -22,7 +22,7 @@ public class PersistentComponentSet extends PersistentSet implements ComponentSe
     public void setOwner(Object owner) {
         super.setOwner(owner);
 
-        if (wasInitialized()) {
+        if (set != null) {
             ComponentSet cl = (ComponentSet) set;
             cl.setOwner(owner);
         }

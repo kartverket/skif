@@ -21,7 +21,7 @@ public class PersistentComponentList extends PersistentList implements Component
     public void setOwner(Object owner) {
         super.setOwner(owner);
 
-        if (wasInitialized()) {
+        if (list != null) {
             ComponentList cl = (ComponentList) list;
             cl.setOwner(owner);
         }
