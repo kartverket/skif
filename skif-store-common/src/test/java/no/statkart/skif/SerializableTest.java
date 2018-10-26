@@ -1,6 +1,6 @@
 package no.statkart.skif;
 
-import no.statkart.skif.domain.SelectionPolygon;
+import com.google.common.collect.ImmutableSet;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.store.AbstractBubbleId;
@@ -22,12 +22,15 @@ import java.util.Set;
 public class SerializableTest {
 
     static final List<Package> packages = Arrays.asList(
-            SelectionPolygon.class.getPackage(),
             ObjectNotFoundException.class.getPackage(),
             LockInfo.class.getPackage(),
             AbstractBubbleId.class.getPackage()
     );
 
+
+    static final Set<Class> excludeClasses = ImmutableSet.of(
+            Enum.class
+    );
 
     /**
      * Verifiserer alle kjente klasser som er serialiserbare har fått
@@ -41,6 +44,7 @@ public class SerializableTest {
             Reflections reflections = new Reflections(aPackage.getName());
             Set<Class<? extends Serializable>> classes = reflections.getSubTypesOf(Serializable.class);
             for (Class<?> clazz : classes) {
+                if (clazz.isEnum() || excludeClasses.contains(clazz)) continue; // Enumer serialiseres ikke feltene for
 
                 //sjekker mot feltet serialVersionUID
                 while( clazz != null && Serializable.class.isAssignableFrom(clazz) ) {

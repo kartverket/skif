@@ -23,8 +23,8 @@ import org.testng.annotations.Test;
 import java.util.List;
 import java.util.Set;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 /**
  * Tester uthenting av snapshot på klient og server bruk av UnitOfWork på server.

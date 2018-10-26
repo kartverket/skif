@@ -261,7 +261,14 @@ public interface Store {
      */
     <I extends BubbleId<?>> void unlock(@Nullable I bubbleId);
 
-    void register(BubbleTransfer transfer);
+    /**
+     * Sier opp låsene på gitte objekter. Objektene må være uendret i {@link Store}.
+     *
+     * @param bubbleIds id-ene til objektene som skal låses opp
+     */
+    void unlock(Collection<? extends BubbleId<?>> bubbleIds);
+
+    void register(Transfer<?> transfer);
 
     void registerTransfer(UnitOfWorkTransfer transfer);
 

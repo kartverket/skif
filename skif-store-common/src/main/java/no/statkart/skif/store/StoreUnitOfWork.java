@@ -1,15 +1,11 @@
 package no.statkart.skif.store;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import no.statkart.skif.exception.ImplementationException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Henrik Fredholm
@@ -76,12 +72,27 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry unlockEntry(int level, I bubbleId) {
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> lockEntries(int level, Set<I> bubbleIds) {
+        Collection<StoreEntry> entries = wrappedStoreSession.lockEntries(level, bubbleIds);
+        for (StoreEntry entry : entries) {
+            modifiedMap.put(entry.getId(), entry);
+        }
+        markModified();
+        return entries;
+    }
+
+    @Override
+    public StoreEntry unlockEntry(int level, BubbleId<?> bubbleId) {
         return wrappedStoreSession.unlockEntry(level, bubbleId);
     }
 
     @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> boolean evictEntry(int level, I bubbleId) {
+    public Collection<StoreEntry> unlockEntries(int level, Collection<? extends BubbleId<?>> bubbleIds) {
+        return wrappedStoreSession.unlockEntries(level, bubbleIds);
+    }
+
+    @Override
+    public boolean evictEntry(int level, BubbleId<?> bubbleId) {
         return wrappedStoreSession.evictEntry(level, bubbleId);
     }
 
@@ -101,19 +112,34 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     public WrappableStoreSession abortUnitOfWork() {
-        Iterator<StoreEntry> iterator = storeCache.values().iterator();
-        while (iterator.hasNext()) {
-            StoreEntry storeEntry = iterator.next();
-            boolean removeEntry= storeEntry.abort(level);
-            if (storeEntry.isLockedByLevel(level)) {
-                wrappedStoreSession.unlockEntry(level, storeEntry.getId());
-            }
+        List<StoreEntry> removeEntries = new ArrayList<>();
+        List<StoreEntry> clearEntries = new ArrayList<>();
+
+        for (StoreEntry storeEntry : storeCache.values()) {
+            boolean removeEntry = storeEntry.abort(level);
             if (removeEntry) {
-                iterator.remove();
+                removeEntries.add(storeEntry);
             } else {
-                storeEntry.clear(level);
+                clearEntries.add(storeEntry);
             }
         }
+
+        ImmutableSet<? extends BubbleId<?>> unlockIds = ImmutableSet.copyOf(
+                Iterables.transform(
+                        Iterables.filter(
+                                Iterables.concat(removeEntries, clearEntries),
+                                storeEntry -> storeEntry.isLockedByLevel(level)
+                        ),
+                        StoreEntry::getId
+                )
+        );
+        if (!unlockIds.isEmpty()) {
+            wrappedStoreSession.unlockEntries(level, unlockIds);
+        }
+
+        removeEntries.stream().map(StoreEntry::getId).forEach(storeCache::remove);
+        clearEntries.forEach(storeEntry -> storeEntry.clear(level));
+
         modifiedMap.clear();
         markModified();
         return wrappedStoreSession;
@@ -289,8 +315,8 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     @Override
-    public void registerEntries(int level, BubbleTransfer<?> bubbleTransfer) {
-        wrappedStoreSession.registerEntries(level, bubbleTransfer);
+    public Collection<StoreEntry> registerEntries(int level, Transfer<?> transfer) {
+        return wrappedStoreSession.registerEntries(level, transfer);
     }
 
     @Override

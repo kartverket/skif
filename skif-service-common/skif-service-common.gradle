@@ -1,19 +1,24 @@
-apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+
+description = 'Inneholder service-rammeverk klasser for klient'
 
 configurations {
     testApi
 }
 
 dependencies {
-    compile libraries.slf4j_api
-    compile libraries.jsr305
-    compile libraries.guice_for_client
-    compile libraries.guava
-    compile libraries.jodatime
-    provided libraries.jaxws_rt
+    api libraries.slf4j_api
+    api libraries.jsr305
+    api libraries.guice
+    api libraries.guava //pga TypeToken
 
-    testCompile libraries.reflections
+    implementation libraries.guice_multibindings
+    implementation libraries.guava
+    implementation libraries.jodatime
+    compileOnly libraries.jaxws_api
+
+    testImplementation libraries.reflections
 }
 
 task testJar(type: Jar) {
@@ -24,18 +29,26 @@ task testJar(type: Jar) {
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
-    onlyIf { gradle.taskGraph.hasTask(install) || gradle.taskGraph.hasTask(uploadArchives) } //only when published..
 }
 
 artifacts {
     testApi testJar
-    archives sourcesJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+
+            pom.withXml {
+                asNode().dependencies.dependency.findAll { 'joda-time' == it.artifactId.text() }.each { it.appendNode('optional', 'true') } //optional avhengighet for joda-time [SKIF-472]
+            }
+        }
+    }
 }
 
 task assertDependencies() {
-    //kjøres som en test
-    test.dependsOn it
-
     doFirst {
         configurations.runtime.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
             boolean godkjent = [
@@ -53,11 +66,5 @@ task assertDependencies() {
         }
     }
 }
+test.dependsOn assertDependencies //kjøres som en test
 
-
-def installer = install.repositories.mavenInstaller
-def deployer = uploadArchives.repositories.findByName('mavenDeployer')
-
-[installer, deployer]*.pom*.whenConfigured { pom ->
-    pom.dependencies.findAll { dep -> dep.groupId == 'joda-time' }.each { it.optional = true }  //optional avhengighet for joda-time [SKIF-472]
-}

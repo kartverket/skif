@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 public class TestBubbleWithHistory extends AbstractBubbleObject implements StoreTestBubble, BubbleObjectWithHistory {
     private Timestamp oppdateringsdato;
     private Timestamp sluttdato;
+    private long versjonId;
     private String text = "";
 
     public TestBubbleWithHistory() {
@@ -58,6 +59,14 @@ public class TestBubbleWithHistory extends AbstractBubbleObject implements Store
 
     public void setSluttdato(Timestamp sluttdato) {
         this.sluttdato = sluttdato;
+    }
+
+    public long getVersjonId() {
+        return versjonId;
+    }
+
+    public void setVersjonId(long versjonId) {
+        this.versjonId = versjonId;
     }
 
     public String getText() {

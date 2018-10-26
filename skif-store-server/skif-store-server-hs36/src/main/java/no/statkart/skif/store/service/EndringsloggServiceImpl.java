@@ -29,7 +29,7 @@ import static no.statkart.skif.util.HibernateHelper.*;
  * @since 2.5.0
  */
 // OBS! Det ligger en kopi i hs 3.2
-public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends AbstractEndringId> implements EndringsloggService<E, EI> {
+public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extends AbstractEndringId<?>> implements EndringsloggService<E, EI> {
     private static final int LIMIT = 1000;
 
     private final Class<EI> endringIdClass;
@@ -63,12 +63,12 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
     }
 
     @Override
-    public Endringer<E> findEndringer(@Nullable EI id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
-        Preconditions.checkNotNull(bobleklasse, "domainKlasse er obligatorisk");
-        Preconditions.checkNotNull(returnerBobler, "returnerBobler er obligatorisk");
+    public Endringer<E, EI> findEndringer(@Nullable EI id, Class<? extends BubbleObject> bobleklasse, @Nullable String filter, ReturnerBobler returnerBobler, int maksAntall) {
+        Objects.requireNonNull(bobleklasse, "domainKlasse er obligatorisk");
+        Objects.requireNonNull(returnerBobler, "returnerBobler er obligatorisk");
         Preconditions.checkArgument(maksAntall >= 0, "maksAntall er negativ");
 
-        Endringer<E> endringer = new Endringer<>();
+        Endringer<E, EI> endringer = new Endringer<>();
 
         Class<? extends AbstractEndring> endringClass = endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
         SessionSelector sessionSelector = sessionSelectorProvider.get();
@@ -164,7 +164,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<?, ?>, EI extends
                         endringer.setObjects(sorterBobler(accumulatedEndringer, accumulatedBubbleObjects));
                         oensketAntallEndringer = 0;
                     }
-                    sisteEndringId = (EI) endringer.getSisteEndringIdProsessert();
+                    sisteEndringId = endringer.getSisteEndringIdProsessert();
                 }
             } else {
                 throw new NotImplementedException("Denne opsjon er ikke implementert. Kommer senere");

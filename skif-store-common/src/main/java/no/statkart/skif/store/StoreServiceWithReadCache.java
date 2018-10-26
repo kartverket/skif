@@ -1,29 +1,31 @@
 package no.statkart.skif.store;
 
 import com.google.common.collect.ImmutableMap;
+import no.statkart.skif.store.service.LockService;
 import no.statkart.skif.store.service.StoreService;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-public class StoreServiceWithReadCache implements StoreService {
+public class StoreServiceWithReadCache implements StoreService, LockService {
     private final StoreService storeService;
+    private final LockService lockService;
     private final StoreClientReadCache readCache;
 
-    public StoreServiceWithReadCache(StoreService storeService, StoreClientReadCache readCache) {
+    public <T extends StoreService & LockService> StoreServiceWithReadCache(T storeLockService, StoreClientReadCache readCache) {
+        this(storeLockService, storeLockService, readCache);
+    }
+
+    public StoreServiceWithReadCache(StoreService storeService, LockService lockService, StoreClientReadCache readCache) {
         this.storeService = storeService;
-        this.readCache = checkNotNull(readCache, "readCache");
+        this.lockService = lockService;
+        this.readCache = Objects.requireNonNull(readCache, "readCache");
     }
 
     @Override
     public <T extends BubbleObject> T getObject(BubbleId<? extends T> id) {
         if (id == null) return null;
         //noinspection unchecked
-        T bubbleObject = (T) readCache.get(id);
+        T bubbleObject = readCache.get(id);
         if (bubbleObject == null) {
             bubbleObject = storeService.getObject(id);
             if (bubbleObject != null) {
@@ -84,18 +86,30 @@ public class StoreServiceWithReadCache implements StoreService {
 
     @Override
     public <T extends BubbleObject> T lock(BubbleId<? extends T> id) {
-        T lockedObject = storeService.lock(id);
+        T lockedObject = lockService.lock(id);
         readCache.put(lockedObject);
         return lockedObject;
     }
 
     @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids) {
+        Collection<T> lockedObjects = lockService.lockForList(ids);
+        readCache.putAll(lockedObjects);
+        return lockedObjects;
+    }
+
+    @Override
     public <I extends BubbleId<?>> void unlock(I id) {
-        storeService.unlock(id);
+        lockService.unlock(id);
+    }
+
+    @Override
+    public void unlockForList(Collection<? extends BubbleId<?>> ids) {
+        lockService.unlockForList(ids);
     }
 
     @Override
     public <I extends BubbleId<?>> boolean isLocked(I id) {
-        return storeService.isLocked(id);
+        return lockService.isLocked(id);
     }
 }

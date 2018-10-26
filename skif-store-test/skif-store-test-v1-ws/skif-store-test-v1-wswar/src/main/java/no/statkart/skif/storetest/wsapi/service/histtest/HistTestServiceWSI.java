@@ -2,9 +2,11 @@ package no.statkart.skif.storetest.wsapi.service.histtest;
 
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
-import no.statkart.skif.storetest.wsapi.domain.basic.*;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleId;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleIdList;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleIdToHistWithRelationIdsMap;
+import no.statkart.skif.storetest.wsapi.domain.basic.HistWithRelationIdList;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 import javax.jws.WebParam;
@@ -28,9 +30,5 @@ public interface HistTestServiceWSI extends ServiceWSI {
     HistSimpleIdList findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(@WebParam(name = "histSimpleIds") HistSimpleIdList histSimpleIds, @WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException;
 
     HistSimpleIdList findHistSimpleIdsAliveAtSnapshotUsingOracleArray(@WebParam(name = "histSimpleIds") HistSimpleIdList histSimpleIds, @WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException;
-
-    GeometricElementIdList findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, Timestamp snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException;
-
-    GeometricElementIdList findGeometricElementsWithPolygonInSelectionPolygon(@WebParam(name = "selectionPolygon") SelectionPolygon selectionPolygon, @WebParam(name = "snapshotVersion") Timestamp snapshotVersion, @WebParam(name = "storeTestContext") StoreTestContext storeTestContext) throws ServiceException;
 
 }

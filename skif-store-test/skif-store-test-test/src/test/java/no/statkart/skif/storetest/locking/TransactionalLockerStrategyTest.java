@@ -19,7 +19,7 @@ import org.testng.annotations.Test;
 
 import java.util.Collection;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Testen anvender SimpleId klassen, men krever ikke at det finnes objekter i database for de id'er som brukes.

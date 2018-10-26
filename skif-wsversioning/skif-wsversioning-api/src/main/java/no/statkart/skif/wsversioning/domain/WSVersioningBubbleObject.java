@@ -9,4 +9,7 @@ import no.statkart.skif.store.BubbleObject;
  * @since 2.4.0
  */
 public interface WSVersioningBubbleObject extends BubbleObject {
+    long getVersjonId();
+
+    void setVersjonId(long versjonId);
 }

@@ -24,7 +24,6 @@ import java.util.Map;
 
 @Stateless(name = "no.statkart.skif.storetest.service.store.StoreServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
-// TODO: legge på riktig transattributes
 public class StoreServiceEJBBean extends EJBTimedService implements StoreService {
     @Inject  @EJBServiceChain
     private StoreService serviceChain;
@@ -57,23 +56,5 @@ public class StoreServiceEJBBean extends EJBTimedService implements StoreService
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
         return serviceChain.getVersionsForList(ids, start, end);
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <I extends BubbleId<?>> boolean isLocked(I id) {
-        return serviceChain.isLocked(id);
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <T extends BubbleObject> T lock(BubbleId<? extends T> id) throws LockedException {
-        return serviceChain.lock(id);
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public <I extends BubbleId<?>> void unlock(I id) {
-        serviceChain.unlock(id);
     }
 }

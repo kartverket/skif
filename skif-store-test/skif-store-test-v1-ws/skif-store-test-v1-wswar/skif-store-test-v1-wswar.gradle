@@ -14,10 +14,9 @@ dependencies {
     compile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     compile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
-    provided libraries.weblogic
+    provided libraries.jee
 
-    jaxws libraries['tools.jar']
-    jaxws libraries.weblogic_tools
+    jaxws libraries.jaxws_tools
 
     schemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
 }
@@ -28,7 +27,7 @@ task zipWsdlsAndSchemas(type: Zip) { Task t ->
     dependsOn configurations.schemas
     from { configurations.schemas.files.collect { project.zipTree it } }
 
-    from genWsdls {
+    from(genWsdls) {
         include '**/*.wsdl'
         include '**/*schema1.xsd'
     }

@@ -23,7 +23,7 @@ public class ServiceRequestContext implements Serializable {
     private final long callId;
     @Nullable
     private final ServiceRequestContext parent;
-    private final TxMode txMode;
+    private TxMode txMode;
     private final boolean beanManagedTransaction;
     private final TransactionAttributeType transactionAttributeType;
     private boolean rollbackOnly;
@@ -59,6 +59,10 @@ public class ServiceRequestContext implements Serializable {
 
     public TxMode getTxMode() {
         return txMode;
+    }
+
+    public void setTxMode(TxMode txMode) {
+        this.txMode = txMode;
     }
 
     public TransactionAttributeType getTransactionAttributeType() {

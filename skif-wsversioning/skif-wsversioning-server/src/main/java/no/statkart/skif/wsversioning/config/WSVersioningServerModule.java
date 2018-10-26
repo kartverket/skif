@@ -61,7 +61,16 @@ public class WSVersioningServerModule extends SkifServerModule {
             }
 
             @Override
+            public Set<BubbleId> lock(Set<BubbleId> ids) throws LockedException {
+                return Collections.emptySet();
+            }
+
+            @Override
             public void unlock(BubbleId id) {
+            }
+
+            @Override
+            public void unlock(Set<BubbleId> ids) {
             }
 
             @Override

@@ -21,9 +21,6 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
     private transient boolean flushed = false;
     protected BubbleId<?> id;
 
-    @Deprecated
-    private long versjonId = 0;
-
     @Override
     public BubbleId<?> getBubbleId() {
         return id;
@@ -53,17 +50,6 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
     public boolean isFlushed() {
         return flushed;
     }
-
-    @Deprecated
-    public long getVersjonId() {
-        return versjonId;
-    }
-
-    @Deprecated // WS-mapping krever public, men man skal normal ikke bruke denne metoden
-    public void setVersjonId(long versjonId) {
-        this.versjonId = versjonId;
-    }
-
 
     public void register(Store store) {
         checkState(this.store==null || this.store == store, "BubbleObject allerede registrert med en annen session: %s", this);
@@ -110,7 +96,6 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
     public String toString() {
         return getClass().getSimpleName() +"{" +
                 "id=" + id +
-                ", versjonId=" + versjonId +
                 '}';
     }
 }

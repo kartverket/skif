@@ -1,10 +1,13 @@
 package no.statkart.skif.mapper.exception;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.mapper.DefaultTypeMapper;
+import no.statkart.skif.mapper.DontMap;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.mapper.MappingException;
 import no.statkart.skif.service.ServiceContext;
@@ -12,10 +15,7 @@ import no.statkart.skif.service.ServiceContext;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Generell funksjonalitet for å mappe mellom WS-API-ets FaultInfo-klasser og SkifException-hierarkiet.
@@ -48,19 +48,38 @@ public abstract class AbstractServiceFaultInfoTypeMapper<WsapiT, DomainT extends
 
     @Override
     protected Collection<Method> findGetters(Class<?> c) {
-        Collection<Method> getters = super.findGetters(c);
 
         if (c.equals(getWsapiClass())) {
-            Iterator<Method> iterator = getters.iterator();
-            while (iterator.hasNext()) {
-                Method getter = iterator.next();
-                if (externallyMappedGetters.contains(getter.getName())) {
-                    iterator.remove();
+            Collection<Method> getters = super.findGetters(c);
+
+            getters.removeIf(getter -> externallyMappedGetters.contains(getter.getName()));
+
+            return getters;
+        } else {
+            // Kan ikke bruke like aggressiv reflection på Exception pga. jigsaw
+
+            Map<String, Method> getters = Maps.newLinkedHashMap();
+
+            for (Class<?> clazz = c; clazz != null && clazz != Exception.class; clazz = clazz.getSuperclass()) {
+                Method[] methods = clazz.getDeclaredMethods();
+                for (Method method : methods) {
+                    if (!method.isBridge() && method.getParameterTypes().length == 0 && (method.getName().startsWith("get") || method.getName().startsWith("is")) && method.getAnnotation(DontMap.class) == null && !getters.containsKey(method.getName())) {
+                        method.setAccessible(true);
+                        getters.put(method.getName(), method);
+                    }
                 }
             }
+
+            Method[] methods = Exception.class.getMethods();
+            for (Method method : methods) {
+                if (!method.isBridge() && method.getParameterTypes().length == 0 && (method.getName().startsWith("get") || method.getName().startsWith("is")) && method.getAnnotation(DontMap.class) == null && !getters.containsKey(method.getName())) {
+                    getters.put(method.getName(), method);
+                }
+            }
+
+            return Lists.newArrayList(getters.values());
         }
 
-        return getters;
     }
 
     /**

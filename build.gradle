@@ -1,11 +1,12 @@
-assert GradleVersion.version('2.8').compareTo(GradleVersion.current()) <= 0 //lowest gradle version supported
-if (!['2.8'].findAll { gradle.gradleVersion == it }) {
+import org.gradle.util.GradleVersion
+
+assert GradleVersion.version('4.6').compareTo(GradleVersion.current()) <= 0 //lowest gradle version supported
+if (!['4.8.1'].findAll { gradle.gradleVersion == it }) {
     logger.warn "WARNING: Du benytter en annen versjon av Gradle enn hva byggesystemet er testet med: ${gradle.gradleVersion}"
 }
 
 
 apply plugin: 'sktools-properties-plugin'
-apply plugin: 'sktools-filter-resources-plugin'
 
 //user properties
 Map userProperties = propertyUtils.fromFile('gradle-user.properties') << gradle.startParameter.projectProperties
@@ -13,7 +14,6 @@ propertyUtils.assignPropertiesToProject(userProperties)
 
 allprojects {
 //    apply plugin: 'sktools-properties-plugin'
-    apply plugin: 'sktools-filter-resources-plugin'
     propertyUtils.assignPropertiesToProject(userProperties)
 
     //version kan bestemmes via env variabel og -P parameter
@@ -34,7 +34,6 @@ allprojects {
 
 
     apply plugin: 'idea'
-    apply plugin: 'sktools-ideaextensions-plugin'
 
 
     repositories {
@@ -51,6 +50,12 @@ allprojects {
 
 }
 
+idea.project {
+    jdkName = '1.8'
+    languageLevel = '1.8'
+    vcs = 'Git'
+}
+
 apply from: file('libraries.gradle')
 
 subprojects { Project project ->
@@ -60,17 +65,9 @@ subprojects { Project project ->
     clean {
         delete 'gen'
     }
-    rootProject.ideaExtensions.ignorePaths += project.file('gen')
 
     propertyUtils.expandProjectProperties() //må ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
     //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
-
-    // TODO: Denne skal egentlig kun brukes på skif-config mener Henrik. Rett opp dette når filtrering er fjernet fra andre moduler.
-    project.filterResources {
-        Map filterProperties = propertyUtils.fromFile("${project.name}-filter.properties") << gradle.startParameter.projectProperties
-        propertyUtils.expandProperties(filterProperties)
-        properties filterProperties
-    }
 
     def filterTestGroup = { Test test = test, String group, String value ->
         test.with {
@@ -107,7 +104,9 @@ subprojects { Project project ->
         project.dependencies {
             testCompile libraries.testng
             testCompile libraries.mockito
-            testCompile libraries.fest
+            testCompile libraries.assertj
+
+            apiElements libraries.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
         }
 
 
@@ -134,10 +133,10 @@ subprojects { Project project ->
          * --info gir verbos logging av hvilke grupper som faktisk blir inkludert og ekskludert.
          */
         test {
-            ignoreFailures = gradle.startParameter.systemPropertiesArgs.get('ignoreFailures', 'false') == 'true' //Gradle feiler ikke dersom denne er true.
+            ignoreFailures = System.getProperty('ignoreFailures', 'false') == 'true' //Gradle feiler ikke dersom denne er true.
 
-            def filterSlowTests = gradle.startParameter.systemPropertiesArgs.get('filterSlowTests', 'EXCLUDE_WHEN_NO_INCLUDES').toUpperCase(); //gruppen kan kombineres med andre
-            def filterOracleLatest = gradle.startParameter.systemPropertiesArgs.get('filterOracleLatest', 'EXCLUDE').toUpperCase();
+            def filterSlowTests = System.getProperty('filterSlowTests', 'EXCLUDE_WHEN_NO_INCLUDES').toUpperCase() //gruppen kan kombineres med andre
+            def filterOracleLatest = System.getProperty('filterOracleLatest', 'EXCLUDE').toUpperCase()
 
             filterTestGroup(it, 'slow', filterSlowTests)
             filterTestGroup(it, 'oracleLatest', filterOracleLatest) // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
@@ -146,7 +145,6 @@ subprojects { Project project ->
 
 
             jvmArgs '-Xmx1024m'
-//            jvmArgs '-Xmx1024m', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
             testLogging.showStandardStreams = true
 
             inputs.property 'excludedGroups', testFramework.options.includeGroups //trigger re-kjøring av test ved endring av grupper
@@ -191,93 +189,13 @@ subprojects { Project project ->
     }
 
 
-    //kobler inn standard upload repositores ved bruk av maven plugin
-    plugins.withType(MavenPlugin) {
-        if (REPO_UPLOAD_RELEASES) {
-            project.uploadArchives.repositories.mavenDeployer {
-                repository(url: uri(REPO_UPLOAD_RELEASES)) {
-                    authentication([userName: REPO_UPLOAD_RELEASES_USERNAME, password: REPO_UPLOAD_RELEASES_PASSWORD])
-                }
-            }
-        }
-    }
-
-
     project.idea.module {
         // Får Idea til å legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)
         inheritOutputDirs = true
 
         downloadSources = true
-        downloadJavadoc = true //for jdbc dokumentasjon
+//        downloadJavadoc = true //for jdbc dokumentasjon
     }
-
-    tasks.ideaModule {
-
-        // Plasserer weblogic avhengigheter til sist på classpath...
-        doFirst {
-            def weblogic_home = project.WEBLOGIC_HOME.replace('\\', '/').toLowerCase()
-
-            project.idea.module.iml.withXml { provider ->
-                def rootNode = provider.asNode()
-                def node = rootNode.component.find { it.@name == 'NewModuleRootManager' }
-
-                def weblogicNodes = node.orderEntry.findAll {
-                    it.@type.equals('module-library') && it.library.CLASSES.root.@url.findAll({ it.toLowerCase().contains(weblogic_home) }).size() > 0
-                }
-
-                weblogicNodes.each { node.remove it }
-                weblogicNodes.each { node.append it }
-            }
-        }
-
-    }
-}
-
-afterEvaluate {
-
-    ideaExtensions {
-        vcs 'Git'
-    }
-
-
-    idea.project {
-        jdkName = '1.7'
-        languageLevel = '1.7'
-
-        ipr {
-            withXml {
-                //default project encoding
-                def encoding = it.asNode().component.find { it.@name == 'Encoding' }
-                if (encoding) {
-                    encoding.@useUTFGuessing = false
-                    encoding.@native2AsciiForPropertiesFiles = true
-                    encoding.@defaultCharsetForPropertiesFiles = 'ISO-8859-1'
-
-                    encoding.file.each { encoding.remove(it) /* sletter alle noder */ }
-                    encoding.appendNode('file', ['url': 'PROJECT', 'charset': 'windows-1252'])
-                } else {
-                    logger.warn('Not able to configure file encodings for IntelliJ')
-                }
-            }
-        }
-
-    }
-
-    // branch spesifike navn for prosjekt og workspace fil.
-    ideaWorkspace {
-        outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}.iws")
-    }
-    idea.project {
-        outputFile = file("${project.name}-${project.version.toString().replace('-SNAPSHOT', '')}.ipr")
-    }
-
-    // gradle spesifik iml fil da gradle dependencies ligger på hver modul
-    allprojects {
-        idea.module {
-            outputFile = file("${project.name}.iml")
-        }
-    }
-
 }
 
 //SKIF-266: versjon informasjon i distribusjon
@@ -288,7 +206,7 @@ allprojects {
                 attributes([
                         'Specification-Title': project.name,
                         'Specification-Vendor': 'Statens kartverk',
-                        'Specification-Version': gradle.startParameter.projectProperties.get('version', "${version}"),
+                        'Specification-Version': gradle.startParameter.projectProperties.get('version') ?: version,
 
                         //misc build info
                         'Build-By'     : System.getProperty('user.name'),
@@ -311,7 +229,6 @@ buildscript {
     // Miljøvariable for konfigurasjon av byggemiljø
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     [
-            'JAVA_HOME',
             'LOCALHOSTNAME',
             'WEBLOGIC_HOME',
             'WEBLOGIC_VERSION',
@@ -322,7 +239,7 @@ buildscript {
     }
 
     if (!project.hasProperty('LOCALHOSTNAME')) {
-        project.ext.setProperty('LOCALHOSTNAME', java.net.InetAddress.localHost.hostName + '.statkart.no')
+        project.ext.setProperty('LOCALHOSTNAME', java.net.InetAddress.localHost.canonicalHostName)
     }
 
     ext.ORA_DEBUG = Boolean.valueOf("${rootProject.properties.get('ORA_DEBUG', System.getenv('ORA_DEBUG')) ?: 'false'}")
@@ -332,10 +249,6 @@ buildscript {
         ext.MAVEN_REPO = 'https://nexus.statkart.no/repository/public/'
         logger.info "warning: MAVEN_REPO not defined. Defaulting to ${MAVEN_REPO}"
     }
-
-    ext.REPO_UPLOAD_RELEASES = rootProject.properties.get('REPO_UPLOAD_RELEASES', System.getenv('REPO_UPLOAD_RELEASES'))
-    ext.REPO_UPLOAD_RELEASES_USERNAME = rootProject.properties.get('REPO_UPLOAD_RELEASES_USERNAME', System.getenv('REPO_UPLOAD_RELEASES_USERNAME'))
-    ext.REPO_UPLOAD_RELEASES_PASSWORD = rootProject.properties.get('REPO_UPLOAD_RELEASES_PASSWORD', System.getenv('REPO_UPLOAD_RELEASES_PASSWORD'))
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Switch for tentativ utvikling mot lokalt maven repository
@@ -358,6 +271,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build571'
+        classpath 'no.statkart.sktools.gradle:gradle-plugins:1.5-build75'
     }
 }

@@ -2,7 +2,7 @@ package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.statkart.skif.exception.NotImplementedException;
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.*;
 import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.annotation.EJBServiceChain;
@@ -64,9 +64,9 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
         TransactionAttributeType txType = ejbAttributesLookup.lookupAttribute(method);
 
         if (isNewContextRequired(origTxMode, txType)) {
-            return executeInNewContext(txType, ejbAttributesLookup.isBeanManagedTransaction(),method, args);
+            return executeInNewContext(txType, ejbAttributesLookup.isBeanManagedTransaction(), method, args);
         } else {
-            return executeInExistingContext(origTxMode, txType, method, args);
+            return executeInExistingContext(origTxMode, method, args);
         }
     }
 
@@ -82,7 +82,7 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
                 serviceContext = CopyHelper.copy(serviceContextProvider.get());
             }
             LoginUser loginUser = (LoginUser) contextData.get("credentials");
-            final PrincipalImpl callerPrincipal = (loginUser==null) ? new PrincipalImpl(null) :  new PrincipalImpl(loginUser.getUsername());
+            final PrincipalImpl callerPrincipal = (loginUser == null) ? new PrincipalImpl(null) : new PrincipalImpl(loginUser.getUsername());
             // Lag en falsk ServiceRequestContext for å etterligne det SkifWSInterceptor gjør.
             // Den ServiceRequestContext som ble hentet ut i invokeMethod er i dette tilfellet bare søppel, siden den aldri har blitt initialisert med principal.
             ServiceRequestContext outerServiceRequestContext = new ServiceRequestContext(callerPrincipal, method.getName(), callIdProvider.get(), TxMode.NOT_IN_EJB, false, null);
@@ -99,7 +99,7 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
         try {
             serviceRequestScope.seed(ServiceRequestContext.class, serviceRequestContext);
             if (serviceContext != null) {
-                serviceRequestScope.seed((Class<ServiceContext>)serviceContext.getClass(), serviceContext);
+                serviceRequestScope.seed((Class<ServiceContext>) serviceContext.getClass(), serviceContext);
 //                serviceRequestScope.seed(ServiceContext.class, serviceContext);
             }
             return invokeInContext(method, args);
@@ -109,22 +109,24 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
         }
     }
 
-    /**
-     * Det finnes ingen tester som bruker denne funksjonaliteten. Det ser heller ikke ut til at det er logisk mulig å nå
-     * denne metoden. Har derfor deaktivert den som ustøttet, men lar den ligge i tilfelle det blir bruk for den senere.
-     */
-    @SuppressWarnings("UnusedParameters")
-    private Object executeInExistingContext(TxMode origTxMode, TransactionAttributeType txType, Method method, Object[] args) throws Throwable {
-        /*final TxMode txMode = (txType == TransactionAttributeType.REQUIRED) ? TxMode.TX_CONTINUATION : TxMode.NO_TX_CONTINUATION;
+    private Object executeInExistingContext(TxMode origTxMode, Method method, Object[] args) throws Throwable {
+        final TxMode txMode;
+        if (origTxMode == TxMode.NO_TX || origTxMode == TxMode.NO_TX_CONTINUATION) {
+            txMode = TxMode.NO_TX_CONTINUATION;
+        } else if (origTxMode == TxMode.TX || origTxMode == TxMode.TX_CONTINUATION) {
+            txMode = TxMode.TX_CONTINUATION;
+        } else {
+            throw new ImplementationException("TxMode " + origTxMode.name() + " is unsupported for execute in existing context");
+        }
+
         final ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
-        final ServiceRequestContext originalServiceRequestContext = new ServiceRequestContext(serviceRequestContext, origTxMode, false, txType);
+
         try {
             serviceRequestContext.setTxMode(txMode);
             return invokeInContext(method, args);
         } finally {
-            serviceRequestContext.setFrom(originalServiceRequestContext);
-        }*/
-        throw new NotImplementedException("executeInExistingContext");
+            serviceRequestContext.setTxMode(origTxMode);
+        }
     }
 
     private Object invokeInContext(Method method, Object[] args) throws Throwable {

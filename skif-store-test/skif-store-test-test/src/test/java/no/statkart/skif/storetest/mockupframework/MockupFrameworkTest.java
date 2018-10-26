@@ -7,7 +7,9 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.mockup.MockupTransfer;
+import no.statkart.skif.mockup.TestIdServiceLong;
 import no.statkart.skif.mockup.TestNumber;
+import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
@@ -18,6 +20,7 @@ import no.statkart.skif.storetest.domain.mockup.*;
 import no.statkart.skif.storetest.service.test.TestdataService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.CopyHelper;
+import org.assertj.core.api.Assertions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -26,6 +29,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tester at mockup rammeverket virker fra klient.
@@ -293,4 +298,53 @@ public class MockupFrameworkTest extends StoreTestTestCase {
         histSimple.setText(text);
         return histSimple;
     }
+
+
+    @Test //SKIF-663
+    public void assignIdHarSammeSekvensSomMockups() {
+        final MockupFacadeFactory mockupFacadeFactory = injector.getInstance(MockupFacadeFactory.class);
+        final MockupFacade writeMockupFacade = mockupFacadeFactory.getWriteMockupFacade();
+        final IdService idService = writeMockupFacade.getStore().getInstance(IdService.class);
+
+        assertThat(idService).as("Same idService instance").isSameAs(writeMockupFacade.getIdService());
+        assertThat(idService).as("Mockup idService instance different than store/client").isNotSameAs(store.getInstance(IdService.class));
+
+        BubbleId nextId = idService.getNextId(HistSimpleId.class);
+
+        SortedMap<SnapshotVersion, MockupTransfer> transfers = writeMockupFacade.getAllTransfers();
+        for (MockupTransfer transfer : transfers.values()) {
+
+            String prefix = String.valueOf(transfer.getTestNumber().getPrefix());
+            assertThat(String.valueOf(nextId.getValue())).describedAs("prefix for nextId").startsWith(prefix);
+
+            for (BubbleObject bubbleObject : transfer.getInsertedObjects()) {
+                BubbleId<?> mockupId = bubbleObject.getId();
+                assertThat(String.valueOf(mockupId.getValue())).describedAs("prefix for mockupId").startsWith(prefix);
+            }
+        }
+    }
+
+    /**
+     * Verifiserer at man får feil ved overskridelse av {@link TestIdServiceLong#PREFIX_FACTOR}
+     */
+    @Test //SKIF-663
+    public void assignIdGirFeilVedOverflowAvIdsekvens() {
+        final MockupFacadeFactory mockupFacadeFactory = injector.getInstance(MockupFacadeFactory.class);
+        final IdService idService = mockupFacadeFactory.getWriteMockupFacade().getStore().getInstance(IdService.class);
+
+        //skaper feiltilstand
+        long idValue = 0;
+        while ((idValue % 1_000_000L) != 999_999L) {
+            BubbleId nextId = idService.getNextId(HistSimpleId.class);
+            idValue = (long) nextId.getValue();
+        }
+
+        try {
+            idService.getNextId(HistSimpleId.class);
+            Assertions.failBecauseExceptionWasNotThrown(Exception.class);
+        } catch (IllegalArgumentException e) {
+            assertThat(e).hasMessage("Mockup overflow - count exceeds 1000000");
+        }
+    }
+
 }

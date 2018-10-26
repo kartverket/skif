@@ -11,22 +11,27 @@ import org.slf4j.Logger;
 public class FinderException extends ApplicationException {
     private static final long serialVersionUID = 1L;
 
-    protected FinderException(String message, Throwable cause, Logger logger) {
-        super(message, cause, logger);
-
+    private void init() {
         //setter standard feilkode og beskrivelse
         setFeilkode("FE000");
         setFeilkodebeskrivelse("Objekt ikke funnet");
+    }
+
+    protected FinderException(String message, Throwable cause, Logger logger) {
+        super(message, cause, logger);
+        init();
     }
 
     /**
      * Conventional constructor
      */
     public FinderException(String message, Throwable cause) {
-        this(message, cause, null);
+        super(message, cause);
+        init();
     }
 
     public FinderException(String message) {
-        this(message, null);
+        super(message);
+        init();
     }
 }

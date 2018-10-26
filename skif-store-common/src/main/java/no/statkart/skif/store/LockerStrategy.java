@@ -2,6 +2,8 @@ package no.statkart.skif.store;
 
 import no.statkart.skif.exception.LockedException;
 
+import java.util.Set;
+
 /**
  * @author Henrik Fredholm
  * @since 2.0
@@ -19,6 +21,16 @@ public interface LockerStrategy {
     boolean lock(BubbleId id) throws LockedException;
 
     /**
+     * Låser id-er for owner dersom dette er mulig.
+     *
+     * @param ids    Id-er som skal låses
+     * @return id-er hvor det ble tatt nye låser
+     * @throws no.statkart.skif.exception.LockedException
+     *          Dersom element er låst av annen bruker
+     */
+    Set<BubbleId> lock(Set<BubbleId> ids) throws LockedException;
+
+    /**
      * Låser opp gjeldende id dersom denne kan låses opp. Nye elementer og endrede/slettede elementer kan ikke låses opp.
      * Elementer som er låst i nåværende transaksjon vil bli forsøkt låst opp direkte, mens elementer som har blitt låst
      * tidligere vil bli lagt i en liste som skal låses opp ved commit av denne transaksjonen. (Låses opp ved kall til
@@ -27,6 +39,16 @@ public interface LockerStrategy {
      * @param id    Id som skal låses opp
      */
     void unlock(BubbleId id);
+
+    /**
+     * Låser opp gjeldende id-er dersom disse kan låses opp. Nye elementer og endrede/slettede elementer kan ikke låses opp.
+     * Elementer som er låst i nåværende transaksjon vil bli forsøkt låst opp direkte, mens elementer som har blitt låst
+     * tidligere vil bli lagt i en liste som skal låses opp ved commit av denne transaksjonen. (Låses opp ved kall til
+     * {@link #consumeAllLocks()} eller {@link #releaseLocksOnNonTransactionalScopeCompletion()}.)
+     *
+     * @param ids    Id-er som skal låses opp
+     */
+    void unlock(Set<BubbleId> ids);
 
     /**
      * Sjekker om id er låst av owner.

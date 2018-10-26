@@ -9,7 +9,8 @@ import no.statkart.skif.store.BubbleObject;
 
 import java.util.concurrent.ConcurrentMap;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Deklarativ konfigurasjon for {@link AbstractEndringManager}
@@ -35,7 +36,7 @@ public abstract class AbstractEndringManagerConfiguration<E extends AbstractEndr
 
     @Override
     public final Class<? extends BubbleObject> getDomainklasseNullSafe(Class<? extends E> endringklasse) {
-        return checkNotNull(getDomainklasse(endringklasse), "Fant ingen domeneklasse hørende til endringsklasse %s", endringklasse.getName());
+        return requireNonNull(getDomainklasse(endringklasse), () -> String.format("Fant ingen domeneklasse hørende til endringsklasse %s", endringklasse.getName()));
     }
 
     @Override
@@ -46,7 +47,7 @@ public abstract class AbstractEndringManagerConfiguration<E extends AbstractEndr
 
     @Override
     public final Class<? extends E> getEndringsklasseNullSafe(Class<? extends BubbleObject> domainklasse) {
-        return checkNotNull(getEndringsklasse(domainklasse), "Domainklasse %s kan ikke brukes som filter", domainklasse.getSimpleName());
+        return requireNonNull(getEndringsklasse(domainklasse), () -> String.format("Domainklasse %s kan ikke brukes som filter", domainklasse.getSimpleName()));
     }
 
     @Override

@@ -2,7 +2,6 @@ package no.statkart.skif.module;
 
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
-import no.statkart.skif.SkifConfigurationModule;
 import no.statkart.skif.SkifModule;
 
 import java.util.ArrayList;

@@ -1,6 +1,7 @@
 package no.statkart.skif.wsversioning.config;
 
 import no.statkart.skif.service.ejb.EJBRegistration;
+import no.statkart.skif.wsversioning.service.LockService;
 import no.statkart.skif.wsversioning.service.StoreService;
 import no.statkart.skif.wsversioning.service.VegService;
 
@@ -17,6 +18,7 @@ import javax.ejb.EJBs;
  */
 @EJBs({
         @EJB(name = "ejb/StoreServiceEJBBean", beanInterface = StoreService.class),
+        @EJB(name = "ejb/LockServiceEJBBean", beanInterface = LockService.class),
         @EJB(name = "ejb/VegServiceEJBBean", beanInterface = VegService.class)
 })
 public class WSVersioningServicesEJBs extends EJBRegistration {

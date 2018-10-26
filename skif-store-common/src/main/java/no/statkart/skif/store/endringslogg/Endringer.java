@@ -14,13 +14,13 @@ import java.util.List;
  * Objektet inneholder en liste av funne EndringId-er, en optional liste med tilhørende bobleobjekter, et statusflagg
  * som angir om alle endringer ble lest.Resultat objekt for søk etter endringer
  */
-public class Endringer<E extends AbstractEndring<?,?>> implements Serializable {
+public class Endringer<E extends AbstractEndring<EI,?>, EI extends AbstractEndringId<?>> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private List<E> endringList = Collections.emptyList();
     private List<BubbleObject> objects = Collections.emptyList();
     private boolean alleEndringerFunnet;
-    private AbstractEndringId<?> sisteEndringIdProsessert;
+    private EI sisteEndringIdProsessert;
 
     public Endringer() {
     }
@@ -53,11 +53,11 @@ public class Endringer<E extends AbstractEndring<?,?>> implements Serializable {
         this.alleEndringerFunnet = alleEndringerFunnet;
     }
 
-    public AbstractEndringId<?> getSisteEndringIdProsessert() {
+    public EI getSisteEndringIdProsessert() {
         return sisteEndringIdProsessert;
     }
 
-    public void setSisteEndringIdProsessert(AbstractEndringId<?> sisteEndringIdProsessert) {
+    public void setSisteEndringIdProsessert(EI sisteEndringIdProsessert) {
         this.sisteEndringIdProsessert = sisteEndringIdProsessert;
     }
 

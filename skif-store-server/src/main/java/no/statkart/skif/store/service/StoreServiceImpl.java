@@ -2,11 +2,14 @@ package no.statkart.skif.store.service;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.LockedException;
-import no.statkart.skif.persistence.VersionFinder;
-import no.statkart.skif.service.ServiceRequestContext;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Store;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Henrik Fredholm
@@ -15,12 +18,6 @@ import java.util.*;
 public class StoreServiceImpl implements StoreService {
     @Inject
     protected Store store;
-
-    @Inject
-    protected VersionFinder versionFinder;
-
-    @Inject
-    protected ServiceRequestContext serviceRequestContext;
 
     @Override
     public <T extends BubbleObject> T getObject(BubbleId<? extends T> id) {
@@ -58,22 +55,4 @@ public class StoreServiceImpl implements StoreService {
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
         return store.getVersionsForList(ids, start, end);
     }
-
-    @Override
-    public <I extends BubbleId<?>> boolean isLocked(I id) {
-        return store.isLocked(id);
-    }
-
-    @Override
-    public <T extends BubbleObject> T lock(BubbleId<? extends T> id) throws LockedException {
-        final T bubbleObject = store.lock(id);
-        store.ensureFullyLoaded(bubbleObject);
-        return bubbleObject;
-    }
-
-    @Override
-    public <I extends BubbleId<?>> void unlock(I id) {
-        store.unlock(id);
-    }
-
 }

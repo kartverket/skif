@@ -9,7 +9,7 @@ import no.statkart.skif.skiftest.service.txcmt.ContainerManagedTxAService;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;

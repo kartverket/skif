@@ -76,7 +76,7 @@ public abstract class AbstractSkifTestCase {
 
     protected String getSingleVmServerModuleClassname() {
         final Class<? extends Module> moduleClass = getSingleVmServerModuleClass();
-        if (moduleClass!=null) {
+        if (moduleClass != null) {
             return moduleClass.getName();
         } else {
             return null;
@@ -156,15 +156,35 @@ public abstract class AbstractSkifTestCase {
      */
     @AfterClass
     protected void afterClass() throws IllegalAccessException {
-        injector = null;
-        for (Class c = getClass(); !c.equals(AbstractSkifTestCase.class); c = c.getSuperclass()) {
-            for (Field field : c.getDeclaredFields()) {
-                if ((field.getModifiers() & (Modifier.FINAL | Modifier.STATIC)) == 0 && !field.getType().isPrimitive()) {
-                    field.setAccessible(true);
-                    field.set(this, null);
+        resetFieldsToNull(this);
+    }
+
+    static void resetFieldsToNull(final AbstractSkifTestCase testCase) {
+        try {
+            testCase.injector = null;
+            for (Class c = testCase.getClass(); !c.equals(AbstractSkifTestCase.class); c = c.getSuperclass()) {
+                for (Field field : c.getDeclaredFields()) {
+                    if (!isStaticFinal(field) && !field.getType().isPrimitive()) {
+                        field.setAccessible(true);
+                        field.set(testCase, null);
+                    }
                 }
             }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    private static boolean isStaticFinal(final Field field) {
+        return isFinal(field) && isStatic(field);
+    }
+
+    private static boolean isStatic(Field field) {
+        return Modifier.isStatic(field.getModifiers());
+    }
+
+    private static boolean isFinal(final Field field) {
+        return Modifier.isFinal(field.getModifiers());
     }
 
     private ModuleBuilder getModuleBuilder(ITestContext context) {
@@ -195,7 +215,7 @@ public abstract class AbstractSkifTestCase {
      * Beregner konfigurasjonsnøkkel for testcase på basis av hvilke konfigurasjonsklasser testcasen bruker.
      */
     protected String calcConfigurationKey() {
-        return getModuleClassname() + ":" + Arrays.toString(getConfigurationFilenames()) + ":" + getSingleVmServerModuleClassname() + ":" +  Arrays.toString(getSingleVmServerConfigurationFilenames()) + ":" + isSingleVm();
+        return getModuleClassname() + ":" + Arrays.toString(getConfigurationFilenames()) + ":" + getSingleVmServerModuleClassname() + ":" + Arrays.toString(getSingleVmServerConfigurationFilenames()) + ":" + isSingleVm();
     }
 
     /**

@@ -7,6 +7,7 @@ import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.UnitOfWorkTransfer;
+import no.statkart.skif.store.service.LockService;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -20,7 +21,6 @@ import org.testng.annotations.Test;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,6 +39,9 @@ public class HistorikkDbKodeTest extends StoreTestTestCase {
     private StoreService storeService;
 
     @Inject
+    private LockService lockService;
+
+    @Inject
     private StoreUpdateService updateService;
 
     public void testInsertUpdateRemoveDbKode() {
@@ -48,33 +51,33 @@ public class HistorikkDbKodeTest extends StoreTestTestCase {
             SimpleLocalizedDbKode kodeForInsert = new SimpleLocalizedDbKode();
             kodeForInsert.setId(kodeId);
             kodeForInsert.setKodeverdi("ABC");
-            UnitOfWorkTransfer insertTransfer = new UnitOfWorkTransfer(Arrays.<BubbleObject>asList(kodeForInsert), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList());
+            UnitOfWorkTransfer insertTransfer = new UnitOfWorkTransfer(Collections.<BubbleObject>singletonList(kodeForInsert), Collections.emptyList(), Collections.emptyList());
             updateService.saveTransfer(insertTransfer);
 
             StoreTestKodelisteLong kodeliste1 = storeService.getObject(SimpleLocalizedDbKodeId.KODELISTE_ID);
-            Assert.assertEquals(kodeliste1.getKoderIds(), Arrays.asList(kodeId));
+            Assert.assertEquals(kodeliste1.getKoderIds(), Collections.singletonList(kodeId));
 
             List<SimpleLocalizedDbKodeId> postInsertVersions = storeService.getVersions(kodeId, SnapshotVersion.START, SnapshotVersion.CURRENT);
             Assert.assertEquals(postInsertVersions.size(), 1, "Antall historikkinnslag etter opprettelse");
 
-            SimpleLocalizedDbKode kodeForUpdate = storeService.lock(kodeId);
+            SimpleLocalizedDbKode kodeForUpdate = lockService.lock(kodeId);
             Assert.assertEquals(kodeForUpdate.getKodeverdi(), "ABC", "Kodebeskrivelse før oppdatering");
 
             kodeForUpdate.setKodeverdi("DEF");
-            UnitOfWorkTransfer updateTransfer = new UnitOfWorkTransfer(Collections.<BubbleObject>emptyList(), Arrays.<BubbleObject>asList(kodeForUpdate), Collections.<BubbleObject>emptyList());
+            UnitOfWorkTransfer updateTransfer = new UnitOfWorkTransfer(Collections.emptyList(), Collections.<BubbleObject>singletonList(kodeForUpdate), Collections.emptyList());
             updateService.saveTransfer(updateTransfer);
 
             List<SimpleLocalizedDbKodeId> postUpdateVersions = storeService.getVersions(kodeId, SnapshotVersion.START, SnapshotVersion.CURRENT);
             Assert.assertEquals(postUpdateVersions.size(), 2, "Antall historikkinnslag etter oppdatering");
 
-            SimpleLocalizedDbKode kodeForDelete = storeService.lock(kodeId);
+            SimpleLocalizedDbKode kodeForDelete = lockService.lock(kodeId);
             Assert.assertEquals(kodeForDelete.getKodeverdi(), "DEF", "Kodebeskrivelse etter oppdatering");
 
-            UnitOfWorkTransfer deleteTransfer = new UnitOfWorkTransfer(Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), Arrays.<BubbleObject>asList(kodeForDelete));
+            UnitOfWorkTransfer deleteTransfer = new UnitOfWorkTransfer(Collections.emptyList(), Collections.emptyList(), Collections.<BubbleObject>singletonList(kodeForDelete));
             updateService.saveTransfer(deleteTransfer);
 
             StoreTestKodelisteLong kodeliste2 = storeService.getObject(SimpleLocalizedDbKodeId.KODELISTE_ID);
-            Assert.assertEquals(kodeliste2.getKoderIds(), Arrays.asList());
+            Assert.assertEquals(kodeliste2.getKoderIds(), Collections.emptyList());
 
             List<SimpleLocalizedDbKodeId> postDeleteVersions = storeService.getVersions(kodeId, SnapshotVersion.START, SnapshotVersion.CURRENT);
             Assert.assertEquals(postDeleteVersions.size(), 2, "Antall historikkinnslag etter sletting");

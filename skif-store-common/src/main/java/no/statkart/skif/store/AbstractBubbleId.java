@@ -89,10 +89,6 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
 
-    public T getObject(Object session) {
-        return null;
-    }
-
     public Object getValue() {
         return value;
     }

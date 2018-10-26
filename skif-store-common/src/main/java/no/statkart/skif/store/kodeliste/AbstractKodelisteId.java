@@ -13,10 +13,6 @@ import no.statkart.skif.store.SnapshotVersion;
 public abstract class AbstractKodelisteId<T extends AbstractKodeliste> extends AbstractBubbleId<T> implements KodelisteId<T> {
     private static final long serialVersionUID = 1L;
 
-    /** Brukes av hibernate */
-    protected AbstractKodelisteId() {
-    }
-
     public AbstractKodelisteId(Object value) {
         super(value);
     }
@@ -25,23 +21,28 @@ public abstract class AbstractKodelisteId<T extends AbstractKodeliste> extends A
         super(value, version);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public AbstractKodelisteId<T> asSnapshotVersion(SnapshotVersion snapshotVersion) {
-        return (AbstractKodelisteId<T>) super.asSnapshotVersion(snapshotVersion);
+    public AbstractKodelisteId<? super T> asSnapshotVersion(SnapshotVersion snapshotVersion) {
+        return (AbstractKodelisteId<? super T>) super.asSnapshotVersion(snapshotVersion);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public AbstractKodelisteId<T> asSnapshotVersionCurrent() {
-        return (AbstractKodelisteId<T>) super.asSnapshotVersionCurrent();
+    public AbstractKodelisteId<? super T> asSnapshotVersionCurrent() {
+        return (AbstractKodelisteId<? super T>) super.asSnapshotVersionCurrent();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public AbstractKodelisteId<T> asSnapshotVersionOld() {
-        return (AbstractKodelisteId<T>) super.asSnapshotVersionOld();
+    public AbstractKodelisteId<? super T> asSnapshotVersionOld() {
+        return (AbstractKodelisteId<? super T>) super.asSnapshotVersionOld();
     }
 
-    public AbstractKodelisteId<T> asSnapshotVersion(BubbleId<?> bubbleId) {
-        return (AbstractKodelisteId<T>)super.asSnapshotVersion(bubbleId);
+    @SuppressWarnings("unchecked")
+    @Override
+    public AbstractKodelisteId<? super T> asSnapshotVersion(BubbleId<?> bubbleId) {
+        return (AbstractKodelisteId<? super T>)super.asSnapshotVersion(bubbleId);
     }
 
     @Override

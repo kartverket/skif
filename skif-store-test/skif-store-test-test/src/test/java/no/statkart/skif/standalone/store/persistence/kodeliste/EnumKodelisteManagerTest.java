@@ -7,7 +7,7 @@ import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
 import org.testng.annotations.Test;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 

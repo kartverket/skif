@@ -11,7 +11,10 @@ import no.statkart.skif.store.endringslogg.*;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 import no.statkart.skif.storetest.domain.basic.*;
-import no.statkart.skif.storetest.domain.endringslogg.*;
+import no.statkart.skif.storetest.domain.endringslogg.BubbleWithRelationEndring;
+import no.statkart.skif.storetest.domain.endringslogg.EndringId;
+import no.statkart.skif.storetest.domain.endringslogg.SimpleEndring;
+import no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring;
 import no.statkart.skif.storetest.mockup.BubbleWithRelationMockupFactory;
 import no.statkart.skif.storetest.mockup.SimpleMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -24,10 +27,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -74,7 +80,7 @@ public class EndringManagerTest extends StoreTestTestCase {
     }
 
     public void testFindEndringerEtterEndringsnummer() {
-        Endringer<?> endringer = endringsloggService.findEndringer(null, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(null, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
     }
 
     public void rekkefoelge() {
@@ -92,7 +98,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(bubbleWithRelation1, simple1, simple2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
 
-        Endringer<?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
         List<? extends AbstractEndring<?,?>> endringList = endringer.getEndringList();
 
         Assert.assertEquals(endringList.size(), 3, "Antall endringer");
@@ -134,7 +140,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         BubbleWithRelation bubbleWithRelation1 = store.get(mockupFacade.getBubbleWithRelationMockupFactory().getBubbleWithRelationId1());
         Simple simpleX = store.get(simpleXId);
 
-        Endringer<? >endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class,null, ReturnerBobler.Aldri, 10);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class,null, ReturnerBobler.Aldri, 10);
         List<? extends AbstractEndring<?, ?>> endringList = endringer.getEndringList();
 
         Assert.assertEquals(endringList.size(), 3, "Antall endringer");
@@ -170,8 +176,8 @@ public class EndringManagerTest extends StoreTestTestCase {
         MockupTransfer transfer = new MockupTransfer(Arrays.asList(subTypeWithPrimitive), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
 
-        Endringer<?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
-        Endringer<?> endringerSubtyped = endringsloggService.findEndringer(endringIdFoer, SubTypedBubble.class, null, ReturnerBobler.Aldri, 10);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
+        Endringer<?,?> endringerSubtyped = endringsloggService.findEndringer(endringIdFoer, SubTypedBubble.class, null, ReturnerBobler.Aldri, 10);
 
         Assert.assertEquals(endringer.getEndringList().size(), 1, "Antall endringer");
         Assert.assertEquals(endringerSubtyped.getEndringList().size(), 1, "Antall endringer hentet via subtype");
@@ -180,7 +186,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         Assert.assertEquals(endringer.getEndringList().get(0).getEndretBubbleId(), subTypeWithPrimitive.getId(), "Endring 0 id");
         Assert.assertEquals(endringerSubtyped.getEndringList().get(0).getEndretBubbleId(), subTypeWithPrimitive.getId(), "Endring 0 id");
 
-        Endringer<?> endringerSimple = endringsloggService.findEndringer(endringIdFoer, Simple.class, null,ReturnerBobler.Aldri, 10);
+        Endringer<?,?> endringerSimple = endringsloggService.findEndringer(endringIdFoer, Simple.class, null,ReturnerBobler.Aldri, 10);
         Assert.assertEquals(endringerSimple.getEndringList().size(), 0, "Antall simple endringer");
     }
 
@@ -207,7 +213,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         // Komponerer transfer manuelt slik at rekkefølgen er kjent
         MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(simple1, simple2, simple3, bubbleWithRelation1, bubbleWithRelation2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
-        Endringer<?> endringer = endringsloggService.findEndringer(endringIdFoer,StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(endringIdFoer,StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
         Assert.assertEquals(endringer.getEndringList().size(), 5, "Antall endringer");
 
         List<BubbleId<Simple>> simpleIdsFromStart = nedlastningService.findIdsEtterId(null, Simple.class, null,  10);
@@ -259,7 +265,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         // Komponerer transfer manuelt slik at rekkefølgen er kjent
         MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(simple1, simple2, simple3, bubbleWithRelation1, bubbleWithRelation2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
-        Endringer<?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
         Assert.assertEquals(endringer.getEndringList().size(), 5, "Antall endringer");
 
         // Dette er juks. Vi vet ikke hvilke andre SimpleId som kan finnes i testdatabasen. Oppretter derfor en Id som er en mindre dem vi selv har lagt inn
@@ -298,7 +304,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         // Komponerer transfer manuelt slik at rekkefølgen er kjent
         MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(simple1, simple2, simple3, bubbleWithRelation1, bubbleWithRelation2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
-        Endringer<?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
+        Endringer<?,?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
         Assert.assertEquals(endringer.getEndringList().size(), 5, "Antall endringer");
 
         // Dette er juks. Vi vet ikke hvilke andre SimpleId som kan finnes i testdatabasen. Oppretter derfor en Id som er en mindre dem vi selv har lagt inn

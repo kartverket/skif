@@ -19,7 +19,7 @@ import org.testng.annotations.Test;
 
 import java.util.Set;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Test(groups = "singlevm-required")
 public class StoreClientWithReadCacheTest extends StoreTestMixedTestCase {

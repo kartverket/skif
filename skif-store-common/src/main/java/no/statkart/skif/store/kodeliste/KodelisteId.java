@@ -11,14 +11,14 @@ import no.statkart.skif.store.SnapshotVersion;
  */
 public interface KodelisteId<T extends Kodeliste> extends BubbleId<T> {
     @Override
-    KodelisteId<T> asSnapshotVersion(BubbleId<?> bubbleId);
+    KodelisteId<? super T> asSnapshotVersion(BubbleId<?> bubbleId);
 
     @Override
-    KodelisteId<T> asSnapshotVersion(SnapshotVersion snapshotVersion);
+    KodelisteId<? super T> asSnapshotVersion(SnapshotVersion snapshotVersion);
 
     @Override
-    KodelisteId<T> asSnapshotVersionCurrent();
+    KodelisteId<? super T> asSnapshotVersionCurrent();
 
     @Override
-    KodelisteId<T> asSnapshotVersionOld();
+    KodelisteId<? super T> asSnapshotVersionOld();
 }

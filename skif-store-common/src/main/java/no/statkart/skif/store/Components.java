@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Hjelpeklasser for standardisert implementasjon av Component funksjonalitet for owner håndtering. Components bør delegere til disse metoder fremfor
@@ -183,7 +183,7 @@ public class Components {
     }
 
     public static BubbleObject getOwningBubbleNullSafe(ComponentWithOwnerReference<?> component) {
-        return checkNotNull(getOwningBubble(component));
+        return requireNonNull(getOwningBubble(component));
     }
 
     public static <E> E onChangeRelation(ComponentWithOwnerReference<?> component, RelationName relationName, E oldValue, E newValue) {

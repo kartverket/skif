@@ -1,6 +1,7 @@
 package no.statkart.skif.store.kodeliste;
 
 import no.statkart.skif.store.AbstractBubbleId;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 
 /**
@@ -18,6 +19,30 @@ public abstract class KodeId<T extends Kode> extends AbstractBubbleId<T> {
 
     protected KodeId(Object value, SnapshotVersion version) {
         super(value, version);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public KodeId<? super T> asSnapshotVersion(BubbleId<?> bubbleId) {
+        return (KodeId<? super T>) super.asSnapshotVersion(bubbleId);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public KodeId<? super T> asSnapshotVersion(SnapshotVersion snapshotVersion) {
+        return (KodeId<? super T>) super.asSnapshotVersion(snapshotVersion);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public KodeId<? super T> asSnapshotVersionCurrent() {
+        return (KodeId<? super T>) super.asSnapshotVersionCurrent();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public KodeId<? super T> asSnapshotVersionOld() {
+        return (KodeId<? super T>) super.asSnapshotVersionOld();
     }
 
     public abstract KodelisteId<?> getKodelisteId();

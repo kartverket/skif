@@ -14,7 +14,7 @@ import java.io.PrintWriter;
  * @since 2.0
  */
 public class ServerException extends RuntimeException {
-
+    private static final long serialVersionUID = 1L;
 
     String stacktraceString;
 

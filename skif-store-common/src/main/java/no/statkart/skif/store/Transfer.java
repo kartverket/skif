@@ -53,4 +53,8 @@ public class Transfer<T> implements Serializable {
     public T getResult() {
         return result;
     }
+
+    public Set<BubbleId> getLockedIds() {
+        return Collections.emptySet();
+    }
 }

@@ -52,6 +52,14 @@ public abstract class AbstractStoreTestBubbleWithHistory extends AbstractStoreTe
         this.sluttdato = sluttdato;
     }
 
+    public long getVersjonId() {
+        return versjonId;
+    }
+
+    public void setVersjonId(long versjonId) {
+        this.versjonId = versjonId;
+    }
+
     @Override
     public AbstractStoreTestBubbleWithHistoryId<?> getId() {
         return (AbstractStoreTestBubbleWithHistoryId<?>) super.getId();

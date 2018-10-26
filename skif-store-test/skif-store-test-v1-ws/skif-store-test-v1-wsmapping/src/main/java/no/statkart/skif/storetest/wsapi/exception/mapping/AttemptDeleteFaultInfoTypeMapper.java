@@ -23,6 +23,6 @@ class AttemptDeleteFaultInfoTypeMapper extends AbstractTypeMapper<AttemptDeleteF
     @Override
     public AttemptDeleteException mapWsapiObject(AttemptDeleteFaultInfo source) {
         BubbleId<?> bubbleId = getMapping().w2d(source.getBubbleId(), BubbleId.class);
-        return new AttemptDeleteException(bubbleId, null);
+        return new AttemptDeleteException(bubbleId);
     }
 }

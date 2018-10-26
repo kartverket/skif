@@ -1,12 +1,17 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'sktools-filter-resources-plugin'
 
 sourceSets.main {
   filterResources.srcDir 'src/main/resources.filtered'
 }
 
+filterResources {
+    Map filterProperties = propertyUtils.fromFile("${project.name}-filter.properties") << gradle.startParameter.projectProperties
+    propertyUtils.expandProperties(filterProperties)
+    properties filterProperties
+}
+
 dependencies {
-    runtime libraries.weblogic_databinding
-    runtime libraries.jcl_to_slf4j
     runtime libraries.jul_to_slf4j
     runtime libraries.log4j_to_slf4j
     runtime libraries.logback_classic

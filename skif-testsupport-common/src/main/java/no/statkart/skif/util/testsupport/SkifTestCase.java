@@ -1,13 +1,7 @@
 package no.statkart.skif.util.testsupport;
 
-import com.google.inject.Module;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.SkifClientConfiguration;
-import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.config.SkifConfiguration;
-import no.statkart.skif.config.SkifServerConfiguration;
-import no.statkart.skif.config.SystemConfiguration;
+import no.statkart.skif.config.*;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
@@ -72,36 +66,12 @@ import org.testng.annotations.Test;
 @Test
 public class SkifTestCase extends AbstractSkifTestCase {
     protected void setSingleVmServerModuleClassname(String singleVmModuleClassname) {
-        setSingleVmServerModuleClass(SkifUtil.<Module>classForName(singleVmModuleClassname));
+        setSingleVmServerModuleClass(SkifUtil.classForName(singleVmModuleClassname));
     }
 
     protected void setSingleVm(Boolean singleVm) {
         checkModuleBuilderNotCreated();
         this.singleVm = singleVm;
-    }
-
-    private ModuleBuilder getModuleBuilder(ITestContext context) {
-        ModuleBuilder moduleBuilder = createModuleBuilder();
-        if (moduleBuilder == null) {
-            // Bruk builder hvis den finnes fra før, elles opprett en
-            String key = calcConfigurationKey();
-            String keyCreatingClass = key + ":creatingClass";
-            moduleBuilder = (ModuleBuilder) context.getAttribute(key);
-            if (moduleBuilder == null) {
-                logger.debug("Oppretter gjenbrukbar ModuleBuilder for " + getClass().getName());
-                moduleBuilder = createReusableModuleBuilder();
-                context.setAttribute(key, moduleBuilder);
-                context.setAttribute(keyCreatingClass, getClass().getName());
-            } else {
-                String classname = (String) context.getAttribute(keyCreatingClass);
-                logger.debug("Gjenbruker ModuleBuilder for " + getClass().getName() + " opprettet av " + classname);
-                context.setAttribute(key, moduleBuilder);
-                context.setAttribute(keyCreatingClass, getClass().getName());
-            }
-        } else {
-            logger.debug("Anvender en ikke gjenbrukbar ModuleBuilder for " + getClass().getName());
-        }
-        return moduleBuilder;
     }
 
     protected final ModuleBuilder createReusableModuleBuilder() {
@@ -112,30 +82,30 @@ public class SkifTestCase extends AbstractSkifTestCase {
             builder.setModuleClassname(moduleClassname);
         }
 
-        String[] configurationFilenames = getConfigurationFilenames();
-        if (configurationFilenames != null) {
-            builder.setConfiguration(new SkifConfiguration(configurationFilenames));
-        } else {
-            builder.setConfiguration(new SkifClientConfiguration());
-        }
+        builder.setConfiguration(getConfiguration());
 
         String singleVmServerModuleClassname = getSingleVmServerModuleClassname();
         if (singleVmServerModuleClassname != null) {
             builder.setSingleVmServerModuleClassname(singleVmServerModuleClassname);
         }
 
-        String[] singleVmServerConfigurationFilenames = getSingleVmServerConfigurationFilenames();
-        if (singleVmServerConfigurationFilenames != null) {
-            builder.setSingleVmServerConfiguration(new SkifConfiguration(singleVmServerConfigurationFilenames));
-        } else {
-            builder.setSingleVmServerConfiguration(new SkifServerConfiguration());
-        }
+        builder.setSingleVmServerConfiguration(getSingleVmConfiguration());
 
 
         if (isSingleVm() != null) {
             builder.setSingleVm(isSingleVm());
         }
         return builder;
+    }
+
+    protected Configuration getSingleVmConfiguration() {
+        String[] singleVmServerConfigurationFilenames = getSingleVmServerConfigurationFilenames();
+        return singleVmServerConfigurationFilenames != null ? new SkifConfiguration(singleVmServerConfigurationFilenames) : new SkifServerConfiguration();
+    }
+
+    protected Configuration getConfiguration() {
+        String[] configurationFilenames = getConfigurationFilenames();
+        return configurationFilenames != null ? new SkifConfiguration(configurationFilenames) : new SkifClientConfiguration();
     }
 
 

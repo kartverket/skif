@@ -9,22 +9,27 @@ import org.slf4j.Logger;
 public class ValidationException extends ApplicationException {
     private static final long serialVersionUID = 1L;
 
-    protected ValidationException(String message, Throwable cause, Logger logger) {
-        super(message, cause, logger);
-
+    private void init() {
         //setter standard feilkode og beskrivelse
         setFeilkode("VE000");
         setFeilkodebeskrivelse("Valideringsfeil");
+    }
+
+    protected ValidationException(String message, Throwable cause, Logger logger) {
+        super(message, cause, logger);
+        init();
     }
 
     /**
      * Conventional constructor
      */
     public ValidationException(String message, Throwable cause) {
-        this(message, cause, null);
+        super(message, cause);
+        init();
     }
 
     public ValidationException(String message) {
-        this(message, null);
+        super(message);
+        init();
     }
 }

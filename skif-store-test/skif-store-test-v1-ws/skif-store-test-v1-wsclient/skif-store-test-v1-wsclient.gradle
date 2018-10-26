@@ -1,17 +1,20 @@
 apply plugin: 'java'
-apply plugin: 'sktools-weblogic-wsclient-plugin'
+apply plugin: 'sktools-weblogic-wsclient-plugin' //problem sammen med java-library
 
 dependencies {
-  weblogicProvided libraries.weblogic_tools
-  weblogicProvided libraries['tools.jar']
+    weblogicProvided project(':skif-config') // For å tvinge bruk av JAX-WS RI og JAXB RI
+    weblogicProvided libraries.weblogic
+    weblogicProvided libraries['tools.jar']
 }
 
 weblogicWsClient {
-  webService {
-    baseWar { project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wswar', configuration: 'wsdls') }
-    exceptionReusePackage 'no.statkart.skif.storetest.wsapi.exception'
-    lastWsdl 'StoreServiceWS.wsdl'
-  }
+    webService {
+        baseWar {
+            project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wswar', configuration: 'wsdls')
+        }
+        exceptionReusePackage 'no.statkart.skif.storetest.wsapi.exception'
+        lastWsdl 'StoreServiceWS.wsdl'
+    }
 }
 
 

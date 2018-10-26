@@ -80,11 +80,8 @@ public class MappingTest extends AutomagicTest {
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.ObjectFactory");
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.StoreTestContext");
 
-        getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.basetyper.Position");
-        getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.basetyper.PositionList");
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.basetyper.ObjectFactory");
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.basetyper.package-info");
-        getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.basetyper.SelectionPolygon");
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.MockupTransfer");
 
         getSkipTestingForTheseClasses().add("no.statkart.skif.storetest.wsapi.domain.demo.Bar");

@@ -1,13 +1,9 @@
 package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
-import no.statkart.skif.domain.SelectionPolygon;
-import no.statkart.skif.persistence.GeometriFinder;
 import no.statkart.skif.persistence.HistSimpleFinder;
 import no.statkart.skif.persistence.HistWithRelationFinder;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.basic.GeometricElementId;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 
@@ -21,8 +17,6 @@ import java.util.Set;
  * @author Tor Egil R. Strand
  */
 public class HistTestServiceImpl implements HistTestService {
-    @Inject
-    private Store store;
 
     @Inject
     private HistSimpleFinder histSimpleFinder;
@@ -33,9 +27,6 @@ public class HistTestServiceImpl implements HistTestService {
     @Inject
     private HistWithRelationFinder histWithRelationFinder;
 
-    @Inject
-    private GeometriFinder geometriFinder;
-
     @Override
     public Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingJDBC(String text, int testsettNummer, SnapshotVersion snapshotVersion) {
         return histSimpleFinder.findHistSimpleIdsForTextUsingJDBC(text, testsettNummer, snapshotVersion);
@@ -44,11 +35,6 @@ public class HistTestServiceImpl implements HistTestService {
     @Override
     public Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingHibernate(String text, int testsettNummer, SnapshotVersion snapshotVersion) {
         return histSimpleFinder.findHistSimpleIdsForTextUsingHibernate(text, testsettNummer, snapshotVersion);
-    }
-
-    @Override
-    public List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion) {
-        return histSimpleFinder.findHistSimpleIdsAliveAtSnapshotUsingQueryGenerator(histSimpleIds, snapshotVersion);
     }
 
     @Override
@@ -73,13 +59,4 @@ public class HistTestServiceImpl implements HistTestService {
     }
 
 
-    @Override
-    public List<GeometricElementId> findGeometricElementsWithPointInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {
-        return geometriFinder.findGeometricElementsWithPointInSelectionPolygon(selectionPolygon, snapshotVersion);
-    }
-
-    @Override
-    public List<GeometricElementId> findGeometricElementsWithPolygonInSelectionPolygon(SelectionPolygon selectionPolygon, SnapshotVersion snapshotVersion) {
-        return geometriFinder.findGeometricElementsWithPolygonInSelectionPolygon(selectionPolygon, snapshotVersion);
-    }
 }

@@ -1,10 +1,11 @@
 package no.statkart.skif.store.persistence;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import org.hibernate.Session;
+
+import java.util.Objects;
 
 /**
  * Klasse for å hente ut en Hibernate session og låse denne til å bruke en gitt snapshotversion. Når man er
@@ -63,7 +64,7 @@ public class SessionSelector implements AutoCloseable {
     }
 
     private void reserveForSnapshot(SnapshotVersion snapshotVersion) {
-        Preconditions.checkNotNull(persistenceSessionManager, "SessionSelector is closed: " + this);
+        Objects.requireNonNull(persistenceSessionManager, () -> "SessionSelector is closed: " + this);
         implementation = persistenceSessionManager.getForSnapshotVersion(snapshotVersion).getImplementation(HibernatePersistenceSessionMaster.class);
         session = implementation.reserveSession();
     }

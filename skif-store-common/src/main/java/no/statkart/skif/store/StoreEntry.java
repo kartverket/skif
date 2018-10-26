@@ -1,7 +1,6 @@
 package no.statkart.skif.store;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.util.CopyHelper;
 
 /**
  *
@@ -186,22 +185,5 @@ public class StoreEntry {
     public int getLevelForDerivedBubbleObject(int level) {
         while (level>0 && bubbleObject[level] == null) level--;
         return level;
-    }
-
-
-    public BubbleObject getDerivedBubbleObjectCopyIfLocked(int level, Store store) {
-        if (bubbleObject[level]!=null) return bubbleObject[level];
-
-        int l = getLevelForDerivedBubbleObject(level);
-        if (isLocked()) {
-            if (l==0 && isLevel0PersistentBubbleObject()) {
-                store.ensureFullyLoaded(bubbleObject[0]);
-            }
-            BubbleObject copy = CopyHelper.copy(bubbleObject[l]);
-            copy.register(store);
-            bubbleObject[level] = copy;
-            l = level;
-        }
-        return bubbleObject[l];
     }
 }

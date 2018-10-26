@@ -11,28 +11,32 @@ import org.slf4j.Logger;
 public class ImplementationException extends SystemException {
     private static final long serialVersionUID = 1L;
 
-    public ImplementationException(String message, Throwable cause, Logger logger) {
-        super(message, cause, logger);
-
+    private void init() {
         //setter standard feilkode og beskrivelse
         setFeilkode("IE000");
         setFeilkodebeskrivelse("Implementasjonsfeil");
+    }
+
+    public ImplementationException(String message, Throwable cause, Logger logger) {
+        super(message, cause, logger);
+        init();
     }
 
     /**
      * Conventional constructor
      */
     public ImplementationException(String message, Throwable cause) {
-        this(message, cause, null);
+        super(message, cause);
+        init();
     }
 
 
     public ImplementationException(String message) {
-        this(message, null, null);
+        super(message);
     }
 
     public ImplementationException(String message, Logger logger) {
-        this(message, null, logger);
+        super(message, logger);
     }
 
     public ImplementationException(Throwable cause) {

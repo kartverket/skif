@@ -1,22 +1,29 @@
-apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 
 dependencies {
-    compile project(':skif-store-server')
-    compile libraries.hibernate_3_6
+    api project(':skif-store-server')
+    api libraries.hibernate_3_6_api
+    api libraries.guava //pga Multimap
 
-    provided libraries.weblogic
+    provided libraries.jee
 
-    testCompile project(':skif-config')
-    testCompile project(':skif-testsupport-common')
+    implementation libraries.hibernate_3_6
+
+    testImplementation project(':skif-config')
+    testImplementation project(':skif-testsupport-common')
 }
 
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
-    onlyIf { gradle.taskGraph.hasTask(install) || gradle.taskGraph.hasTask(uploadArchives) } //only when published..
 }
 
-artifacts {
-    archives sourcesJar
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+        }
+    }
 }

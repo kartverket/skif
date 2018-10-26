@@ -13,7 +13,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreService;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.testng.annotations.Test;

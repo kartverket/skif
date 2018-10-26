@@ -70,23 +70,5 @@ public class StoreServiceWSBean extends SkifWebService<StoreServiceWSI> implemen
         return wsServiceChain.getVersionsForList(ids, start, end, context);
     }
 
-    @Override
-    @WebMethod
-    public StoreTestBubble lock(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context) throws ServiceException{
-        return wsServiceChain.lock(id, context);
-    }
-
-    @Override
-    @WebMethod
-    public void unlock(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
-        wsServiceChain.unlock(id, context);
-    }
-
-    @Override
-    @WebMethod
-    public boolean isLocked(@WebParam(name = "id") StoreTestBubbleId id, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
-        return wsServiceChain.isLocked(id, context);
-    }
-
 }
 

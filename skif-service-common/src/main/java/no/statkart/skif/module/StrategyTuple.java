@@ -8,6 +8,7 @@ import no.statkart.skif.config.Configuration;
 import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static no.statkart.skif.SkifConstants.JEE_POSTFIX;
 import static no.statkart.skif.SkifConstants.SINGLE_VM_POSTFIX;
@@ -35,8 +36,7 @@ public class StrategyTuple<T extends ModuleStrategy> implements Cloneable {
     }
 
     void setConfiguration(Configuration configuration) {
-        Preconditions.checkNotNull(configuration, "configuration");
-        this.configuration = configuration;
+        this.configuration = Objects.requireNonNull(configuration, "configuration");
         for (T instance : instanceForMode.values()) {
             if (instance != null) {
                 instance.setProperties(configuration);
@@ -77,14 +77,14 @@ public class StrategyTuple<T extends ModuleStrategy> implements Cloneable {
     }
 
     public StrategyTuple(Class<? extends T> strategyBaseClass) {
-        Preconditions.checkNotNull(strategyBaseClass, "strategyBaseClass");
+        Objects.requireNonNull(strategyBaseClass, "strategyBaseClass");
         setStrategyClassName(ServiceMode.JEE, strategyBaseClass.getName() + JEE_POSTFIX);
         setStrategyClassName(ServiceMode.SINGLE_VM, strategyBaseClass.getName() + SINGLE_VM_POSTFIX);
         setStrategyClassName(ServiceMode.SINGLE_VM_XML, strategyBaseClass.getName() + SINGLE_VM_XML_POSTFIX);
     }
 
     public StrategyTuple(String strategyBaseClassName) {
-        Preconditions.checkNotNull(strategyBaseClassName, "strategyBaseClassName");
+        Objects.requireNonNull(strategyBaseClassName, "strategyBaseClassName");
         setStrategyClassName(ServiceMode.JEE, strategyBaseClassName + JEE_POSTFIX);
         setStrategyClassName(ServiceMode.SINGLE_VM, strategyBaseClassName + SINGLE_VM_POSTFIX);
         setStrategyClassName(ServiceMode.SINGLE_VM_XML, strategyBaseClassName + SINGLE_VM_XML_POSTFIX);

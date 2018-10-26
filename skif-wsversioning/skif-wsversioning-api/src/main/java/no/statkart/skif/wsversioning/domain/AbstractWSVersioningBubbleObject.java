@@ -11,8 +11,20 @@ import no.statkart.skif.store.AbstractBubbleObject;
 public abstract class AbstractWSVersioningBubbleObject extends AbstractBubbleObject implements WSVersioningBubbleObject {
     private static final long serialVersionUID = 1L;
 
+    private long versjonId;
+
     @Override
     public WSVersioningBubbleId<?> getId() {
         return (WSVersioningBubbleId<?>) super.getId();
+    }
+
+    @Override
+    public long getVersjonId() {
+        return versjonId;
+    }
+
+    @Override
+    public void setVersjonId(long versjonId) {
+        this.versjonId = versjonId;
     }
 }

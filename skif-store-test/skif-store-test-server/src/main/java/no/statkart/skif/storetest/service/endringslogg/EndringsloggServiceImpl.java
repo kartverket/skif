@@ -15,10 +15,11 @@ import no.statkart.skif.storetest.endringslogg.EndringManagerConfiguration;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-public class EndringsloggServiceImpl extends no.statkart.skif.store.service.EndringsloggServiceImpl<Endring<?,?>, EndringId> implements EndringsloggService {
+public class EndringsloggServiceImpl extends no.statkart.skif.store.service.EndringsloggServiceImpl<Endring<EndringId<?>,?>, EndringId<?>> implements EndringsloggService {
 
+    @SuppressWarnings("unchecked")
     @Inject
     public EndringsloggServiceImpl(Provider<SnapshotVersion> snapshotVersionProvider, EndringManagerConfiguration endringManagerConfiguration, Store store, Provider<SessionSelector> sessionSelectorProvider) {
-        super(EndringId.class, snapshotVersionProvider, endringManagerConfiguration, store, sessionSelectorProvider);
+        super((Class) EndringId.class, snapshotVersionProvider, endringManagerConfiguration, store, sessionSelectorProvider);
     }
 }

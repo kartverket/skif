@@ -95,7 +95,6 @@
     <xs:complexType name="StoreTestBubble">
         <xs:sequence>
             <xs:element name="id" type="domainns:StoreTestBubbleId"/>
-            <xs:element name="versjonId" type="xs:long"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -118,6 +117,7 @@
                 <xs:sequence>
                     <xs:element name="oppdateringsdato" type="basetyperns:Timestamp"/>
                     <xs:element name="sluttdato" type="basetyperns:Timestamp"/>
+                    <xs:element name="versjonId" type="xs:long"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -136,6 +136,13 @@
             <xs:element name="systemVersion" type="xs:string"/>
             <xs:element name="locale" type="xs:string"/>
             <xs:element name="snapshotVersion" type="basetyperns:Timestamp"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="StoreBubbleTransfer">
+        <xs:sequence>
+            <xs:element name="bubbleObjects" type="domainns:StoreTestBubbleList"/>
+            <xs:element name="lockedIds" type="domainns:StoreTestBubbleIdList"/>
         </xs:sequence>
     </xs:complexType>
 

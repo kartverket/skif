@@ -24,21 +24,21 @@ public class SystemException extends SkifException {
      * Conventional constructor
      */
     public SystemException(String message, Throwable cause) {
-        this(message, cause, null);
+        super(message, cause);
     }
 
 
 
     public SystemException(String message, Logger logger) {
-        this(message, null, logger);
+        super(message, logger);
     }
 
     public SystemException(String message) {
-        this(message, (Throwable) null);
+        super(message);
     }
 
     public SystemException(Throwable throwable) {
-        this(null, throwable);
+        super(null, throwable);
     }
 
 

@@ -13,6 +13,7 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.module.common.RemoteServiceModuleStrategyWithServiceContextSVMapperSingleVmXml;
+import no.statkart.skif.store.service.LockService;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.storetest.config.*;
 import no.statkart.skif.storetest.domain.basic.HistSimple;
@@ -107,6 +108,7 @@ public class WSMappingTest extends StoreTestTestCase {
             bind(Store.class).to(StoreClient.class);
 
             bind(StoreService.class).to(no.statkart.skif.storetest.service.store.StoreService.class);
+            bind(LockService.class).to(no.statkart.skif.storetest.service.lock.LockService.class);
 
             install(new RemoteServiceModule(moduleConfiguration, new StoreTestTestServices().getServices(), mapping)
                     .setExceptionMapping(exceptionMapping)

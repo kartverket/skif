@@ -2,7 +2,8 @@ package no.statkart.skif.service.proxy;
 
 import no.statkart.skif.store.SnapshotVersion;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
+
 
 /**
  * Hjelpestruktur for å returnere 2 verdier fra metoden
@@ -21,8 +22,7 @@ public class SnapshotVersionD2WResult {
     }
 
     public SnapshotVersionD2WResult(SnapshotVersion snapshotVersion, int lastArg) {
-        checkNotNull(snapshotVersion, "snapshotVersion");
-        this.snapshotVersion = snapshotVersion;
+        this.snapshotVersion = Objects.requireNonNull(snapshotVersion, "snapshotVersion");
         this.lastArg = lastArg;
     }
 }

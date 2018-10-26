@@ -25,11 +25,4 @@ public interface StoreServiceWSI extends ServiceWSI {
 
     WSVersioningBubbleIdListForWSVersioningBubbleIdsMap getVersionsForList(WSVersioningBubbleIdList ids, XMLGregorianCalendar start, XMLGregorianCalendar end, WSVersioningContext context) throws ServiceException;
 
-
-    WSVersioningBubble lock(WSVersioningBubbleId id, WSVersioningContext context) throws ServiceException;
-
-    void unlock(WSVersioningBubbleId id, WSVersioningContext context) throws ServiceException;
-
-    boolean isLocked(WSVersioningBubbleId id, WSVersioningContext context) throws ServiceException;
-
 }
