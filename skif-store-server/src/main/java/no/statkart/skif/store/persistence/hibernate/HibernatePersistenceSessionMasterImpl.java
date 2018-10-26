@@ -270,7 +270,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             }
         }
         if (bubbleIds.size() != result.size()) {
-            Set<BubbleId<?>> ids = new HashSet<BubbleId<?>>(bubbleIds);
+            Set<BubbleId<?>> ids = new HashSet<>(bubbleIds);
             ids.removeAll(Bubbles.asIds(result));
             throw new ObjectsNotFoundException(ids);
         }
@@ -501,7 +501,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      */
     protected void addOrphanOneToOneEntityComponent(int nestingLevel, EntityComponent valueExisting, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) {
         while (orphanOneToOneEntityComponents.size() <= nestingLevel) {
-            orphanOneToOneEntityComponents.add(HashMultimap.<Class<? extends EntityComponent>, EntityComponent>create());
+            orphanOneToOneEntityComponents.add(HashMultimap.create());
         }
         orphanOneToOneEntityComponents.get(nestingLevel).put(valueExisting.getClass(), valueExisting);
     }
@@ -595,8 +595,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         if (mapInExistingObject instanceof PersistentCollection) {
             PersistentCollection persistentMapInExistingObject = (PersistentCollection) mapInExistingObject;
             if (mapInObject instanceof PersistentCollection && !((PersistentCollection) mapInObject).wasInitialized()) {
-                // Hvis map ikke er initialisert, er det heller ikke gjort endringer på den
-                return mapInObject; // TODO: SKIF-639
+                throw new ImplementationException("Uninitialized map in detached object not supported");
             }
 
             final SessionImpl sessionImpl = (SessionImpl) session();
@@ -638,8 +637,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         if (collectionInExistingObject instanceof PersistentCollection) {
             PersistentCollection persistentCollectionInExistingObject = (PersistentCollection) collectionInExistingObject;
             if (collectionInObject instanceof PersistentCollection && !((PersistentCollection) collectionInObject).wasInitialized()) {
-                // Hvis collection ikke er initialisert, er det heller ikke gjort endringer på den
-                return collectionInObject; // TODO: SKIF-639
+                throw new ImplementationException("Uninitialized collection in detached object not supported");
             } else {
                 final SessionImpl sessionImpl = (SessionImpl) session();
 
@@ -990,9 +988,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 sql.append(", ").append(propertyColumnNames[0]).append("=?");
                 final int sqlParamIndex = nextSqlParamIndex++;
                 final Object value = toEntityPersister.getPropertyValue(currentObject, propertyIndex, EntityMode.POJO);
-                newPrimitives.add(preparedStatement -> {
-                    type.nullSafeSet(preparedStatement, value, sqlParamIndex, (SessionImplementor) session());
-                });
+                newPrimitives.add(preparedStatement -> type.nullSafeSet(preparedStatement, value, sqlParamIndex, (SessionImplementor) session()));
             }
         }
 
@@ -1232,7 +1228,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             //}
             if (!idsByType.containsKey(entityClazz)) {
                 //Add an entry in the map for holding all ids of this typename
-                idsByType.put(entityClazz, new HashSet<I>());
+                idsByType.put(entityClazz, new HashSet<>());
             }
 
             idsByType.get(entityClazz).add(id);
@@ -1618,7 +1614,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         if (value != null && EntityComponent.class.isAssignableFrom(typeClass)) {
             EntityComponent component = (EntityComponent) value;
             if (groupedEntityComponents.size() == levelKey) {
-                groupedEntityComponents.add(HashMultimap.<Class<? extends EntityComponent>, EntityComponent>create());
+                groupedEntityComponents.add(HashMultimap.create());
             }
             groupedEntityComponents.get(levelKey).put(component.getClass(), component);
             fixBatchingForObjectWithEntityComponents(value, processedObjects, levelKey + 1, groupedEntityComponents);
