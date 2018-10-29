@@ -11,11 +11,14 @@ import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
+import no.statkart.skif.storetest.domain.basic.SubTypeWithCollection;
+import no.statkart.skif.storetest.domain.basic.SubTypeWithCollectionId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.fest.assertions.api.Assertions;
+import org.hibernate.collection.PersistentSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -415,5 +418,40 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
         try (UnitOfWork ignore = clientStore.beginUnitOfWork()) {
             Assert.assertEquals(clientStore.lock(id).getText(), "Updated version");
         }
+    }
+
+    // SKIF-689
+    public void testLockAlreadyGotten() {
+        final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacade();
+
+        final SubTypeWithCollectionId<?> objectId = mockupFacade.getSubTypedBubbleMockupFactory().getDifferentHistoricSubtypesId();
+
+        server.runInTxRequired(new RunOnServerMethod() {
+            @Inject
+            private Store storeServer;
+
+            @Override
+            public Object run() {
+                SubTypeWithCollection object = storeServer.get(objectId);
+
+                assertThat(object.getTekster())
+                        .isInstanceOf(PersistentSet.class);
+                PersistentSet persistentSet = (PersistentSet) object.getTekster();
+                assertThat(persistentSet.wasInitialized())
+                        .describedAs("Gotten collection has been lazy initialized")
+                        .isTrue();
+
+                SubTypeWithCollection locked = storeServer.lock(objectId);
+
+                assertThat(locked.getTekster())
+                        .isInstanceOf(PersistentSet.class);
+                PersistentSet lockedPersistentSet = (PersistentSet) locked.getTekster();
+                assertThat(lockedPersistentSet.wasInitialized())
+                        .describedAs("Locked collection has been lazy initialized")
+                        .isTrue();
+
+                return null;
+            }
+        });
     }
 }
