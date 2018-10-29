@@ -1147,8 +1147,13 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     @Override
     public <T extends BubbleObject> void refresh(T bubble) {
-        session().refresh(bubble);
         fullyInitializedBubbles.remove(bubble.getId());
+        session().refresh(bubble);
+        if (!isLazyLoadedBubblesAllowed()) {
+            ensureFullyLoaded(bubble);
+        } else {
+            exportedLazyLoadedBubbles.put(bubble.getId(), bubble);
+        }
     }
 
     @Override
