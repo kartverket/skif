@@ -1,6 +1,5 @@
 package no.statkart.skif.store.relation.cache;
 
-import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
@@ -24,9 +23,8 @@ public class RelationFinder {
     public RelationFinder(RelationName relationName, Store store) {
         Method foundMethod = null;
         this.relationName = relationName;
-        String classname = relationName.getClass().getCanonicalName();
-        checkArgument(classname.endsWith(".Role"), "RelationName must defined as an inner class of FinderService with name Role");
-        Class finderServiceClass = SkifUtil.classForName(classname.substring(0, classname.length()-5));
+        Class<?> finderServiceClass = relationName.getClass().getEnclosingClass();
+        checkArgument(finderServiceClass != null, "RelationName must be defined as an inner class of FinderService");
         for (Method m : finderServiceClass.getDeclaredMethods()) {
             Relation annotation = m.getAnnotation(Relation.class);
             if (annotation != null && annotation.name().equals(relationName.toString())) {
@@ -51,7 +49,7 @@ public class RelationFinder {
         } catch (IllegalAccessException e) {
             throw new ImplementationException(e);
         } catch (InvocationTargetException e) {
-            throw new ImplementationException(e);
+            throw new ImplementationException(e.getTargetException());
         }
     }
 }
