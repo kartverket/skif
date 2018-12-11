@@ -1,6 +1,11 @@
 package no.statkart.skif.skiftest.wsapi.service.test;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Provider;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 import com.sun.xml.ws.developer.JAXWSProperties;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.SkifClientConfiguration;
@@ -133,6 +138,9 @@ public class Test1ServiceWSTestJEE {
                         });
                     }
                 });
+
+        Provider<Test1Service> provider = injector.getProvider(Test1Service.class);
+        provider.get();
 
         callWSService();
     }
