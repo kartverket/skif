@@ -6,16 +6,16 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import no.statkart.skif.service.annotation.Implementation;
+import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import org.testng.annotations.Test;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -24,190 +24,61 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * @author Henrik Fredholm
+ * Denne tutorial er work in progress
+ *
  */
 @Test(groups = "server-required")
-public class TutorialPart3GuiceProxyKjedeTest {
-
-    /**
-     * Oppretter service direkte via 'new'
-     * <pre>
-     * {@code servicecall -> Implementation}
-     * </pre>
-     */
-    public void myServicePlain() {
-        MyService myService = new MyServiceImpl();
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-    }
+public class TutorialPart4_GuiceProxyKjedeTest {
 
 
-    /**
-     * Oppretter service via 'injector.getInstance'
-     * <pre>
-     * {@code servicecall -> Implementation}
-     * </pre>
-     */
-    public void myServiceUsingGuice() {
-        Injector injector = createEmptyInjector();
-        MyService myService = injector.getInstance(MyServiceImpl.class); // NB: slår opp Impl klassen direkte
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-    }
+    public void workInProgress() {
+        Injector injector = Guice.createInjector(
+                new AbstractModule() {
+                    protected void configure() {
+                        bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
 
-    /**
-     * Oppretter service via 'injector.getInstance' som har binding
-     * <pre>
-     * {@code servicecall -> Implementation}
-     * </pre>
-     */
-    public void myServiceUsingGuiceWithBinding() {
-        Injector injector = Guice.createInjector(new AbstractModule() {
-            protected void configure() {
-                bind(MyService.class).to(MyServiceImpl.class);
-            }
-        });
-        MyService myService = injector.getInstance(MyService.class); // Slår opp via interface klassen
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-    }
+                        Multibinder<CallServiceChainFactory<MyService>> multibinder
+                                = Multibinder.newSetBinder(binder(), new TypeLiteral<CallServiceChainFactory<MyService>>() {});
+                        multibinder.addBinding().toProvider(new Provider<CallServiceChainFactory<MyService>>() {
+                            @Inject
+                            ToImplementationProxyHandler<MyService> implementationProxyHandler;
 
-    /**
-     * Oppretter service via 'injector.getInstance' som separat implementation binding
-     * <pre>
-     * {@code servicecall -> Implementation}
-     * </pre>
-     */
-    public void myServiceUsingGuiceWithImplementationBinding() {
-        Injector injector = Guice.createInjector(new AbstractModule() {
-            protected void configure() {
-                bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-            }
-        });
+                            @Override
+                            public CallServiceChainFactory<MyService> get() {
+                                return new CallServiceChainFactory<MyService>() {
+                                    @Override
+                                    public float getChainPosition() {
+                                        return 0;
+                                    }
 
-        MyService myService = injector.getInstance(Key.get(MyService.class, Implementation.class));
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-    }
+                                    @Override
+                                    public ProxyHandler<MyService> createChain() {
+                                        return implementationProxyHandler;
+                                    }
 
-
-    /**
-     * Oppretter ProxyHandler via Guice som får injected implementation av MyService. Henter ut proxy for MyService manuelt
-     * <pre>
-     * {@code servicecall -> ToImplementationProxyHandler -> Implementation}
-     * </pre>
-     */
-    public void myServiceUsingGuiceWithImplementationProxy() {
-        Injector injector = Guice.createInjector(new AbstractModule() {
-            protected void configure() {
-                bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-            }
-        });
-        ProxyHandler<MyService> proxyHandler = injector.getInstance(Key.get(new TypeLiteral<ToImplementationProxyHandler<MyService>>() {}));
-        MyService myService = proxyHandler.buildProxy(MyService.class);
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-    }
-
-    /**
-     * Oppretter ProxyHandler for implementasjon via Guice. Henter ut proxy for MyService via Guice provides metode
-     * <pre>
-     * {@code servicecall -> ToImplementationProxyHandler -> Implementation}
-     * </pre>
-     */
-    public void myServiceUsingGuiceWithImplementationProxyViaProvides() {
-        Injector injector = Guice.createInjector(new AbstractModule() {
-            protected void configure() {
-                bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-            }
-
-            @Provides
-            MyService myServiceProvider(ToImplementationProxyHandler<MyService> proxyHandler) {
-                return proxyHandler.buildProxy(MyService.class);
-            }
-        });
-        MyService myService = injector.getInstance(MyService.class);
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-    }
-
-    /**
-     * Oppretter ProxyHandler for implementasjon via Guice. Henter ut proxy for MyService via Guice provider binding
-     * <pre>
-     * {@code servicecall -> ToImplementationProxyHandler -> Implementation}
-     * </pre>
-     */
-    public void myServiceUsingGuiceWithImplementationProxyViaProvider() {
-        Injector injector = Guice.createInjector(new AbstractModule() {
-            protected void configure() {
-                bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-                bind(MyService.class).toProvider(new Provider<MyService>() {
-                    @Inject
-                    ToImplementationProxyHandler<MyService> proxyHandler;
-
-                    @Override
-                    public MyService get() {
-                        return proxyHandler.buildProxy(MyService.class);
+                                    @Override
+                                    public ProxyHandler<MyService> extendChain(@Nullable ProxyHandler<MyService> firstInChain) {
+                                        return null;
+                                    }
+                                };
+                            }
+                        });
+                    }
+                },
+                new AbstractModule() {
+                    protected void configure() {
+                        Multibinder<ChainedProxyHandler<MyService>> multibinder
+                                = Multibinder.newSetBinder(binder(), new TypeLiteral<ChainedProxyHandler<MyService>>() {});
+                        multibinder.addBinding().to(new TypeLiteral<ExceptionCountingProxyHandler<MyService>>() {});
                     }
                 });
-            }
-        });
-        MyService myService = injector.getInstance(MyService.class);
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-    }
-
-
-    /**
-     * Oppretter ProxyHandler for implementasjon via Guice. Henter ut proxy for MyService via Guice provider klasse
-     * <pre>
-     * {@code servicecall -> ToImplementationProxyHandler -> Implementation}
-     * </pre>
-     */
-    public void myServiceUsingGuiceWithImplementationProxyViaProviderKlasse() {
-        Injector injector = Guice.createInjector(new AbstractModule() {
-            protected void configure() {
-                bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-                bind(MyService.class).toProvider(new TypeLiteral<ToImplementationProxyHandlerProvider<MyService>>() {});
-            }
-        });
-        MyService myService = injector.getInstance(MyService.class);
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-    }
-
-    /**
-     * Oppretter ProxyHandler for implementasjon via Guice. Henter ut proxy for MyService via Guice provider klasse
-     * hvor proxies er hardkodet.
-     * <pre>
-     * {@code servicecall -> ExceptionCountingProxyHandler -> CallCountingProxyHandler -> ToImplementationProxyHandler -> Implementation}
-     * </pre>
-     */
-    public void myServiceUsingGuiceWithHardcodedProxiesProvider() {
-        Injector injector = Guice.createInjector(new AbstractModule() {
-            protected void configure() {
-                bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-                bind(MyService.class).toProvider(new TypeLiteral<HardCodedProxiesProvider<MyService>>() {});
-            }
-        });
         MyService myService = injector.getInstance(MyService.class);
         assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
         assertThatThrownBy(() -> myService.myMethod(new A(5 /*error here*/), new B(2))).isInstanceOf(MyException.class);
     }
 
-    /**
-     * Oppretter ProxyHandler for implementasjon via Guice. Henter ut proxy for MyService via Guice provider klasse
-     * hvor proxies konfigureres ut fra liste
-     * <pre>
-     * {@code servicecall -> ExceptionCountingProxyHandler -> CallCountingProxyHandler -> ToImplementationProxyHandler -> Implementation}
-     * </pre>
-     */
-    public void myServiceUsingGuiceWithListBasedProxyHandlerProvider() {
-        Injector injector = Guice.createInjector(new AbstractModule() {
-            protected void configure() {
-                bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-                bind(new TypeLiteral<List<ChainedProxyHandler<MyService>>>() {}).toInstance(Arrays.asList(
-                        new CallCountingProxyHandler<>(),
-                        new ExceptionCountingProxyHandler<>()));
-                bind(MyService.class).toProvider(new TypeLiteral<ListBasedProxiesProvider<MyService>>() {});
-            }
-        });
-        MyService myService = injector.getInstance(MyService.class);
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-        assertThatThrownBy(() -> myService.myMethod(new A(5 /*error here*/), new B(2))).isInstanceOf(MyException.class);
-    }
+
+
 
     /**
      * Oppretter ProxyHandler for implementasjon via Guice. Henter ut proxies via Multibinder som produserer

@@ -3,6 +3,10 @@ package no.statkart.skif.skiftest.service.test.tutorial;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provides;
+import com.google.inject.name.Named;
+import com.google.inject.name.Names;
+import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
@@ -17,13 +21,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * @author Henrik Fredholm
+ *  Tester som demonstrerer hvordan Guice brukes til å opprette en Service og legge på en proxy. Viser hvordan
+ *  man setter opp en kjede av proxies og hvordan man bruker SKIFs ProxyHandler klasser.
  */
 @Test(groups = "server-required")
-public class TutorialPart2ProxyKjedeTest {
+public class TutorialPart2_GuiceProxyKjedeTest {
 
     /**
-     * Oppretter service direkte via new
+     * Oppretter service direkte via kall til new; dvs. standard java.
      */
     public void myServicePlain() {
         MyService myService = new MyServiceImpl();
@@ -32,7 +37,7 @@ public class TutorialPart2ProxyKjedeTest {
 
 
     /**
-     * Service med proxy
+     * Service med proxy; helt standard java. Proxyen teller antall kall.
      * <pre>
      * {@code servicecall -> Proxy -> Implementation}
      * </pre>
@@ -41,7 +46,7 @@ public class TutorialPart2ProxyKjedeTest {
         final MyService myServiceImpl = new MyServiceImpl();
         final AtomicInteger callCounter = new AtomicInteger();
 
-        // Create Proxy that counts number of calls
+        // Opprett Proxy som teller antall kall
         MyService myService = (MyService) Proxy.newProxyInstance(
                 MyService.class.getClassLoader(),
                 new Class<?>[]{MyService.class},
@@ -57,7 +62,7 @@ public class TutorialPart2ProxyKjedeTest {
     }
 
     /**
-     * Basic proxykjede:
+     * Basic proxykjede; helt standard java. Proxy1 teller kall og Proxy 2 teller exceptions
      * <pre>
      * {@code servicecall -> Proxy 2 -> Proxy 1 -> Implementation}
      * </pre>
@@ -67,7 +72,7 @@ public class TutorialPart2ProxyKjedeTest {
         final AtomicInteger callCounter = new AtomicInteger();
         final AtomicInteger exceptionCounter = new AtomicInteger();
 
-        // Create Proxy1 that counts number of calls
+        // Opprett Proxy1 som teller antall kall
         MyService myServiceWithProxy1 = (MyService) Proxy.newProxyInstance(
                 MyService.class.getClassLoader(),
                 new Class<?>[]{MyService.class},
@@ -81,7 +86,7 @@ public class TutorialPart2ProxyKjedeTest {
                 });
 
 
-        // Create Proxy2 that counts number of exceptions
+        // Opprett Proxy2 som teller antall exceptions
         MyService myService = (MyService) Proxy.newProxyInstance(
                 MyService.class.getClassLoader(),
                 new Class<?>[]{MyService.class},
@@ -97,13 +102,16 @@ public class TutorialPart2ProxyKjedeTest {
         assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
         assertThat(callCounter.get()).isEqualTo(1);
         assertThat(exceptionCounter.get()).isEqualTo(0);
-        assertThatThrownBy(() -> myService.myMethod(new A(5 /*error here*/), new B(2))).isInstanceOf(MyException.class);
+        assertThatThrownBy(() -> myService.myMethod(new A(5 /* ugyldig parameter */), new B(2))).isInstanceOf(MyException.class);
         assertThat(callCounter.get()).isEqualTo(2);
         assertThat(exceptionCounter.get()).isEqualTo(1);
     }
 
     /**
      * Variant som bruker ProxyHandler klassen til å kalle MyService
+     * <pre>
+     * {@code servicecall -> ProxyHandler -> Implementation}
+     * </pre>
      */
     public void myServiceMedProxyHandler() {
         ProxyHandler<MyService> proxyHandler = new ProxyHandler<MyService>() {
@@ -175,7 +183,7 @@ public class TutorialPart2ProxyKjedeTest {
     }
 
     /**
-     * Proxykjede basert på ProxyHandler klassene hvor handlene er egne klasser
+     * Proxykjede basert hvor handlene er egne subklasser
      * <pre>
      * {@code servicecall -> ExceptionCountingProxyHandler-> CallCountingProxyHandler 1 -> ToImplementationProxyHandler -> Implementation}
      * </pre>
@@ -193,37 +201,85 @@ public class TutorialPart2ProxyKjedeTest {
         assertThat(exceptionCountingProxyHandler.counter.get()).isEqualTo(1);
     }
 
-
-    public void myServiceUsingGuice() {
-        Injector injector = createEmptyInjector();
-        MyService myService = injector.getInstance(MyServiceImpl.class); // NB: slår opp Impl klassen direkte
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-    }
-
-    public void myServiceUsingGuiceWithBinding() {
+    /**
+     * Oppbygning av service kan pakkes inn i Guice via {@code @Provides}
+     */
+    public void oppbyggingAvServiceViaProvides() {
         Injector injector = Guice.createInjector(new AbstractModule() {
             protected void configure() {
-                bind(MyService.class).to(MyServiceImpl.class);
             }
+
+            @Provides
+            MyService provideMyService(ExceptionCountingProxyHandler<MyService> exceptionCountingProxyHandler,
+                                       CallCountingProxyHandler<MyService> callCountingProxyHandler) {
+                exceptionCountingProxyHandler.setChained(callCountingProxyHandler);
+                callCountingProxyHandler.setChained(new ToImplementationProxyHandler<>(new MyServiceImpl()));
+                return exceptionCountingProxyHandler.buildProxy(MyService.class);
+            }
+
         });
         MyService myService = injector.getInstance(MyService.class); // Slår opp via interface klassen
         assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
     }
 
 
-    private Injector createEmptyInjector() {
-        return Guice.createInjector(new AbstractModule() {
+    /**
+     * Vi kan bruke qualifiers til å skjelne mellom binding av service til implementasjonsklasse og service med proxyies
+     * som skal gis ut når vi slår opp service.
+     * <pre>
+     * {@code service -> serviceImplementation}
+     * {@code servicecall -> ExceptionCountingProxyHandler-> CallCountingProxyHandler 1 -> ToImplementationProxyHandler -> Implementation}
+     * </pre>
+     *
+     */
+    public void oppbyggingAvServiceViaProvidesMedBindingAvImplementasjonViaQualifier() {
+        Injector injector = Guice.createInjector(new AbstractModule() {
             protected void configure() {
+                bind(MyService.class).annotatedWith(Names.named("implementation")).to(MyServiceImpl.class);
             }
+
+            @Provides
+            MyService provideMyService(ExceptionCountingProxyHandler<MyService> exceptionCountingProxyHandler,
+                                       CallCountingProxyHandler<MyService> callCountingProxyHandler,
+                                       @Named("implementation") MyService myServiceImpl) {
+                exceptionCountingProxyHandler.setChained(callCountingProxyHandler);
+                callCountingProxyHandler.setChained(new ToImplementationProxyHandler<>(myServiceImpl));
+                return exceptionCountingProxyHandler.buildProxy(MyService.class);
+            }
+
         });
+        MyService myService = injector.getInstance(MyService.class); // Slår opp via interface klassen
+        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
     }
 
-    public void createAnyObjectWithEmptyConstructorViaGuide() {
-        Injector injector = createEmptyInjector();
-        String emptyString = injector.getInstance(String.class);
-        assertThat(emptyString).isEmpty();
-        X x = injector.getInstance(X.class);
-        assertThat(x).isNotNull();
+
+    /**
+     * Vi kan bruke en forhåndsdefinert qualifier {@code @Implementation} til å skjelne mellom binding av service til
+     * implementasjonsklasse og service med proxyies som skal gis ut når vi slår opp service.
+     * <pre>
+     * {@code service -> serviceImplementation}
+     * {@code servicecall -> ExceptionCountingProxyHandler-> CallCountingProxyHandler 1 -> ToImplementationProxyHandler -> Implementation}
+     * </pre>
+     *
+     */
+    public void oppbyggingAvServiceViaProvidesMedBindingAvImplementasjonViaPredefinedQualifier() {
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            protected void configure() {
+                bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
+            }
+
+            @Provides
+            MyService provideMyService(ExceptionCountingProxyHandler<MyService> exceptionCountingProxyHandler,
+                                       CallCountingProxyHandler<MyService> callCountingProxyHandler,
+                                       @Implementation MyService myServiceImpl) {
+                exceptionCountingProxyHandler.setChained(callCountingProxyHandler);
+                callCountingProxyHandler.setChained(new ToImplementationProxyHandler<>(myServiceImpl));
+                return exceptionCountingProxyHandler.buildProxy(MyService.class);
+            }
+
+        });
+        MyService myService = injector.getInstance(MyService.class); // Slår opp via interface klassen
+        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
     }
 }
 

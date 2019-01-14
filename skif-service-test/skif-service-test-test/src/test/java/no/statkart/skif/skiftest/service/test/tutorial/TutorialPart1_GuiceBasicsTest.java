@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provider;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.inject.util.Types;
@@ -20,10 +22,10 @@ import java.util.Vector;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Henrik Fredholm
+ * Tests that demonstrates basic Guice functionality used in SKIF
  */
 @Test(groups = "server-required")
-public class TutorialPart1GuiceBasicsTest {
+public class TutorialPart1_GuiceBasicsTest {
 
     private Injector createEmptyInjector() {
         return Guice.createInjector(new AbstractModule() {
@@ -80,6 +82,11 @@ public class TutorialPart1GuiceBasicsTest {
         assertThat(y1.getX()).isNotSameAs(y2.getX());
     }
 
+    /**
+     * Ved bruk providers kan man forsinke opprettelsen av en instans til man kaller
+     * {@code provider.get()}. Om man får en ny instans hver gang man kaller {@code  get()} avhenger av
+     * hvordan underliggende klasser er konfigurert i Guice.
+     */
     public void providersDelayInstanceCreation() {
         Injector injector = createEmptyInjector();
         Provider<Z> zProvider = injector.getProvider(Z.class);
@@ -92,6 +99,9 @@ public class TutorialPart1GuiceBasicsTest {
         assertThat(Z.count).isEqualTo(2);
     }
 
+    /**
+     * Alternativ måte å angi klasse via TypeLiteral.
+     */
     public void alternativeWayOfSpecifyingClassesUsingTypeLiteral() {
         Injector injector = injectorWithXAsSingleton();
         X x1 = injector.getInstance(Key.get(new TypeLiteral<X>(){}));
@@ -99,6 +109,9 @@ public class TutorialPart1GuiceBasicsTest {
         assertThat(x1).isSameAs(x2);
     }
 
+   /**
+     * Noen ganger ønsker man å kunne angi klasse som Guice skal opprette som en parameter til Guice
+     */
     public void dynamicSpecificationOfClassesUsingTypeLiteral() {
         Injector injector = injectorWithXAsSingleton();
         Class<?> xClass = X.class;
@@ -108,6 +121,10 @@ public class TutorialPart1GuiceBasicsTest {
     }
 
     // Generics
+
+    /**
+     * For generiske klasser må vi bruke TypeLiteral når man angir klasser til Guice
+     */
     public void genericsCreateInstance() {
         Injector injector = createEmptyInjector();
         ArrayList<X> listOfX = injector.getInstance(Key.get(new TypeLiteral<ArrayList<X>>() {}));
@@ -126,6 +143,9 @@ public class TutorialPart1GuiceBasicsTest {
         });
     }
 
+    /**
+     * Typeparameteren har betydning når man angir klasser til Guice
+     */
     public void bindingToSubtype() {
         Injector injector = injectorWithSubtypeBinding();
         List listOfObject = injector.getInstance(Key.get(new TypeLiteral<List>(){}));
@@ -142,6 +162,9 @@ public class TutorialPart1GuiceBasicsTest {
     }
 
 
+    /**
+     * Det er mulig å binde opp spesifikke instanser. Disse blir singletons.
+     */
     private Injector injectorWithGenericsListInstance() {
         return Guice.createInjector(new AbstractModule() {
             protected void configure() {
@@ -150,13 +173,23 @@ public class TutorialPart1GuiceBasicsTest {
         });
     }
 
+    /**
+     * Hvordan slå opp en generisk instans
+     */
     public void bindingToGenericInstance() {
         Injector injector = injectorWithGenericsListInstance();
         List<String> listOfString = injector.getInstance(Key.get(new TypeLiteral<List<String>>(){}));
         assertThat(listOfString).isNotNull();
         assertThat(listOfString).hasSize(3);
+
+        List<String> listOfString2 = injector.getInstance(Key.get(new TypeLiteral<List<String>>(){}));
+        assertThat(listOfString2).isSameAs(listOfString); // singleton
+
     }
 
+    /**
+     * Hvordan slå opp en generisk instans via en variabel
+     */
     public void dynamicBindingToGenericInstance() {
         Injector injector = injectorWithGenericsListInstance();
         Class<List> listClass = List.class;
@@ -169,6 +202,9 @@ public class TutorialPart1GuiceBasicsTest {
         assertThat(instance).isSameAs(listOfString);
     }
 
+    /**
+     * Hvordan binde samme type til 2 forskjellige verdier. Man bruke en name qualifier.
+     */
     private Injector injectorWithNamedInstance() {
         return Guice.createInjector(new AbstractModule() {
             protected void configure() {
@@ -178,12 +214,54 @@ public class TutorialPart1GuiceBasicsTest {
         });
     }
 
+    /**
+     * Hvordan slå opp en kalle for en gitt name qualifier.
+     */
     public void namedInstances() {
         Injector injector = injectorWithNamedInstance();
         String hello = injector.getInstance(Key.get(String.class, Names.named("test1")));
         String bye = injector.getInstance(Key.get(String.class, Names.named("test2")));
         assertThat(hello).isEqualTo("Hello");
         assertThat(bye).isEqualTo("Bye");
+    }
+
+    /**
+     * Man kan bruke {@code @Provides} til å konstruere et objekt. Man kan bruke {@code @Singleton} til å
+     * angi at instansen er en singleton.
+     */
+    public void brukAvProvides() {
+        Injector injector =  Guice.createInjector(new AbstractModule() {
+            protected void configure() {
+                bind(String.class).annotatedWith(Names.named("test1")).toInstance("Hello");
+                bind(String.class).annotatedWith(Names.named("test2")).toInstance("Bye");
+            }
+
+            @Provides
+            List<String> stringListProvider() {
+                return Arrays.asList("A", "B", "C");
+            }
+
+            @Provides
+            @Singleton
+            List<Y> yListProvider(Y y) {
+                ArrayList<Y> list = new ArrayList<Y>();
+                list.add(y);
+                return list;
+            }
+
+        });
+
+        List<String> listOfString = injector.getInstance(Key.get(new TypeLiteral<List<String>>(){}));
+        assertThat(listOfString).isNotNull();
+        assertThat(listOfString).hasSize(3);
+        List<String> listOfString2 = injector.getInstance(Key.get(new TypeLiteral<List<String>>(){}));
+        assertThat(listOfString2).isNotSameAs(listOfString); // not singleton
+
+        List<Y> listOfY = injector.getInstance(Key.get(new TypeLiteral<List<Y>>(){}));
+        assertThat(listOfY).hasSize(1);
+        List<Y> listOfY2 = injector.getInstance(Key.get(new TypeLiteral<List<Y>>(){}));
+        assertThat(listOfY2).isSameAs(listOfY);
+
     }
 }
 
