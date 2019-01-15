@@ -20,7 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * @author Henrik Fredholm
+ *  Tester som demonstrerer hvordan Guice brukes til å opprette en Service og legge på en eller flere
+ *  SKIF ProxyHandlere.
+ *
  */
 @Test(groups = "server-required")
 public class TutorialPart3_GuiceProxyKjedeTest {
