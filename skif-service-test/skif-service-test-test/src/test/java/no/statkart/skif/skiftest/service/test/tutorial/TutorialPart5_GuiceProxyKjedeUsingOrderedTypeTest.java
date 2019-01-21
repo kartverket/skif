@@ -8,6 +8,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
+import no.statkart.skif.service.proxy.ProxyHandler;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -20,44 +21,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Denne tutorial inneholder kode som viser en alternativ måte å bruke multibinding på for å binde opp
- * ProxyHandlere i en kjede via OrdereType klassen. ServiceProvider klassen som bruke i SKIF for dette
- * formålet bruker ikke OrderedType klassen (men kunne kanskje med fordel ha gjort det),
- *
+ * ProxyHandlere i en kjede via OrdereType klassen. ServiceProvider klassen som brukes i SKIF bruker ikke OrderedType
+ * klassen (men kunne kanskje med fordel ha gjort det) slik det er vist her.
  */
 @Test(groups = "server-required")
-public class TutorialPart4_GuiceProxyKjedeAlternativeTest {
-
-    /**
-     * Oppretter ProxyHandler for implementasjon via Guice. Henter ut proxies via Multibinder som produserer
-     * {@code Set<ChainedProxyHandler<MyService>}.
-     * <pre>
-     * {@code servicecall -> ExceptionCountingProxyHandler -> CallCountingProxyHandler -> ToImplementationProxyHandler -> Implementation}
-     * </pre>
-     * Fordelen med å bruke multibinder er at flere moduler uavhengig av hverandre kan legge til flere bindinger. Ulempen
-     * er at proxyene ikke er ordnet i forhold til hverandre.
-     */
-    public void myServiceUsingGuiceWithMultibinderBasedProxyHandlerProvider() {
-        Injector injector = Guice.createInjector(
-                new AbstractModule() {
-                    protected void configure() {
-                        bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-                        bind(MyService.class).toProvider(new TypeLiteral<MultibinderBasedProxiesProvider<MyService>>() {});
-                        Multibinder<ChainedProxyHandler<MyService>> multibinder
-                                = Multibinder.newSetBinder(binder(), new TypeLiteral<ChainedProxyHandler<MyService>>() {});
-                        multibinder.addBinding().to(new TypeLiteral<CallCountingProxyHandler<MyService>>() {});
-                    }
-                },
-                new AbstractModule() {
-                    protected void configure() {
-                        Multibinder<ChainedProxyHandler<MyService>> multibinder
-                                = Multibinder.newSetBinder(binder(), new TypeLiteral<ChainedProxyHandler<MyService>>() {});
-                        multibinder.addBinding().to(new TypeLiteral<ExceptionCountingProxyHandler<MyService>>() {});
-                    }
-                });
-        MyService myService = injector.getInstance(MyService.class);
-        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
-        assertThatThrownBy(() -> myService.myMethod(new A(5 /*error here*/), new B(2))).isInstanceOf(MyException.class);
-    }
+public class TutorialPart5_GuiceProxyKjedeUsingOrderedTypeTest {
 
     /**
      * For å kunne ordne elementer i et multibinder set kan man bruke en hjelpeklasse {@code OrderedType<T>} som knytter
@@ -123,45 +91,36 @@ public class TutorialPart4_GuiceProxyKjedeAlternativeTest {
     }
 
     /**
-     * Oppretter ProxyHandler for implementasjon via Guice. Henter ut proxies via Multibinder fra 2 moduler og som
-     * produserer {@code Set<OrderedType<ChainedProxyHandler<MyService>>}. Settet sorteres ihht angitt rekkefølge.
+     * Her brukes klassen {@code OrderedTypeServiceProvider} til å binde opp en {@code Service} med
+     * sortert rekkefølge av {@code ProxyHenlder}e som angis via multibinder og {@code OrderedType}.
      * <pre>
-     * {@code servicecall -> ExceptionCountingProxyHandler -> CallCountingProxyHandler -> HelloProxyHandler -> ToImplementationProxyHandler -> Implementation}
+     * {@code servicecall -> ExceptionCountingProxyHandler -> CallCountingProxyHandler -> LogHelloProxyHandler -> ToImplementationProxyHandler -> Implementation}
      * </pre>
-     * Fordelen med å bruke multibinder er at flere moduler uavhengig av hverandre kan legge til flere bindinger. Ulempen
-     * er at proxyene ikke er ordnet i forhold til hverandre.
      */
     public void myServiceUsingGuiceOrderedMultibinderBasedProxyHandlerProvider() {
         Injector injector = Guice.createInjector(
                 new AbstractModule() {
                     protected void configure() {
                         bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-                        bind(MyService.class).toProvider(new TypeLiteral<OrderedMultibinderBasedProxiesProvider<MyService>>() {});
-                        Multibinder<OrderedType<ChainedProxyHandler<MyService>>> multibinder
-                                = Multibinder.newSetBinder(binder(), new TypeLiteral<OrderedType<ChainedProxyHandler<MyService>>>() {});
-                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<CallCountingProxyHandler<MyService>>() {}, 1.0f));
+                        bind(MyService.class).toProvider(new TypeLiteral<OrderedTypeServiceProvider<MyService>>() {});
+                        Multibinder<OrderedType<ProxyHandler<MyService>>> multibinder
+                                = Multibinder.newSetBinder(binder(), new TypeLiteral<OrderedType<ProxyHandler<MyService>>>() {});
+                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<ToImplementationProxyHandler<MyService>>() {}, 0));
+                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<CallCountingProxyHandler<MyService>>() {}, 1));
                     }
                 },
                 new AbstractModule() {
                     protected void configure() {
                         Multibinder<OrderedType<ChainedProxyHandler<MyService>>> multibinder
                                 = Multibinder.newSetBinder(binder(), new TypeLiteral<OrderedType<ChainedProxyHandler<MyService>>>() {});
-                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<ExceptionCountingProxyHandler<MyService>>() {}, 2.0f));
-                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<LogHelloProxyHandler<MyService>>() {}, 0.0f));
+                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<ExceptionCountingProxyHandler<MyService>>() {}, 2));
+                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<LogHelloProxyHandler<MyService>>() {}, 0.5f)); // Legges inn rett etter proxy som kaller implementasjon.
                     }
 
                 });
         MyService myService = injector.getInstance(MyService.class);
         assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
         assertThatThrownBy(() -> myService.myMethod(new A(5 /*error here*/), new B(2))).isInstanceOf(MyException.class);
-    }
-
-
-    private Injector createEmptyInjector() {
-        return Guice.createInjector(new AbstractModule() {
-            protected void configure() {
-            }
-        });
     }
 }
 

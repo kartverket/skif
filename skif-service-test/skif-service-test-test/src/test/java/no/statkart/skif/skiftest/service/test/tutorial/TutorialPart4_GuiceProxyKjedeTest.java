@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- *  Tester som demonstrerer hvordan Guice brukes til å opprette en Service som bruker SKIF ServiceProvider til
+ *  Tester som demonstrerer hvordan Guice brukes til å opprette en service som bruker SKIF ServiceProvider til
  *  å legge på en eller flere ProxyHandlere og hvordan kejden av ProxyHandlere kan utvides ved å legge til
  *  ekstra moduler.
  *
@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class TutorialPart4_GuiceProxyKjedeTest {
 
     /**
-     * Eksemple på bruk binding av String
+     * Eksemple på bruk binding av {@code String}. Kan kun binde {@code String} til en verdi.
      */
     public void multibinderBindingAvString() {
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -49,23 +49,67 @@ public class TutorialPart4_GuiceProxyKjedeTest {
     }
 
     /**
-     * Eksemple på bruk av multibinder med {@code String} som eksempel
+     * Eksempel på bruk av multibinder med {@code String} som eksempel. Multibinder kan binde til {@code String} flere
+     * ganger. Man får da bundet opp {@code  Set<String>}. Ma kan fortsatt binde til {@code String} også.
      */
     public void multibinderBindingAvSetOfString() {
         Injector injector = Guice.createInjector(new AbstractModule() {
             protected void configure() {
+                bind(String.class).toInstance("A");
+
+
                 Multibinder<String> multibinder
                         = Multibinder.newSetBinder(binder(), String.class);
-                multibinder.addBinding().toInstance("A");
-                multibinder.addBinding().toInstance("B");
-                multibinder.addBinding().toInstance("C");
-                multibinder.addBinding().toInstance("D");
+                multibinder.addBinding().toInstance("X");
+                multibinder.addBinding().toInstance("Y");
+                multibinder.addBinding().toInstance("Z");
+
+                // Kunne her ha brukt:
+                // bind(new TypeLiteral<Set<String>>(){}).toInstance(new HashSet(Arrays.asList("X", "Y", "Z")));
+
             }
         });
+        String s = injector.getInstance(Key.get(new TypeLiteral<String>() {}));
+        assertThat(s).isEqualTo("A");
         Set<String> multiboundSet = injector.getInstance(Key.get(new TypeLiteral<Set<String>>() {}));
-        assertThat(multiboundSet).hasSize(4);
-        assertThat(multiboundSet).contains("A", "B", "C", "D");
+        assertThat(multiboundSet).hasSize(3);
+        assertThat(multiboundSet).contains("X", "Y", "Z");
     }
+
+    /**
+     * Eksemple på bruk av multibinder hvor bindingen konstrueres over flere Guice moduler. Dvs bindingen kan
+     * konstrueres modulært.
+     */
+    public void multibinderBindingOverFlereModuler() {
+        Injector injector = Guice.createInjector(new AbstractModule() {
+            protected void configure() {
+                bind(String.class).toInstance("A");
+
+                Multibinder<String> multibinder
+                        = Multibinder.newSetBinder(binder(), String.class);
+                multibinder.addBinding().toInstance("X");
+            }
+        }, new AbstractModule() {
+            protected void configure() {
+                Multibinder<String> multibinder
+                        = Multibinder.newSetBinder(binder(), String.class);
+                multibinder.addBinding().toInstance("Y");
+            }
+        }, new AbstractModule() {
+            protected void configure() {
+                Multibinder<String> multibinder
+                        = Multibinder.newSetBinder(binder(), String.class);
+                multibinder.addBinding().toInstance("Z");
+            }
+        });
+        String s = injector.getInstance(Key.get(new TypeLiteral<String>() {}));
+        assertThat(s).isEqualTo("A");
+        Set<String> multiboundSet = injector.getInstance(Key.get(new TypeLiteral<Set<String>>() {}));
+        assertThat(multiboundSet).hasSize(3);
+        assertThat(multiboundSet).contains("X", "Y", "Z");
+    }
+
+
 
     /**
      * For å kunne ordne elementer i et multibinder set kan man bruke en hjelpeklasse {@code OrderedType<T>} som knytter
@@ -83,7 +127,7 @@ public class TutorialPart4_GuiceProxyKjedeTest {
     }
 
     /**
-     * Eksemple på bruk av multibinder med {@code OrderedType} og sorting av typer
+     * Eksemple på bruk av multibinder med {@code OrderedType} slik at settet multibinder produserer kan sorteres.
      */
     public void multibinderWithOrderedType() {
         Injector injector = Guice.createInjector(new AbstractModule() {
@@ -113,9 +157,12 @@ public class TutorialPart4_GuiceProxyKjedeTest {
     }
 
     /**
-     * Oppretter en Service vha SKIF ServiceProvider klassen. Denne klassen setter sammen en liste av
-     * ProxyHandlere ut fra en ordnet liste av CallServiceChainFactories. I dette eksempel er det kun
-     * en slik factory som implementeres via subklassing.
+     * SKIFs {@code ServiceProvider] brukes til å lage services med {@code ProxyHandler}e foran. {@code ServiceProvider]
+     * konfigureres via et multibinder set av type {@code <Set<CallServiceChainFactory<S>>}, hvor hvert element kan
+     * sorteres. Hver {@code CallServiceChainFactory} produsere ett  {@code ProxyHandler}-ledd i kjeden.
+     * <p>
+     * I dette eksempelet konfigureres kun en {@code CallServiceChainFactory} og denne bindes i Guice via subklassing av
+     * {@code CallServiceChainFactory} som er en abstract klasse.
      *
      * <pre>
      * {@code MyService -> Implementation} for qualifier @Implementation
@@ -141,7 +188,7 @@ public class TutorialPart4_GuiceProxyKjedeTest {
                                 return new CallServiceChainFactory<MyService>() {
                                     @Override
                                     public float getChainPosition() {
-                                        return 0; // 0 angir handler er først i kjeden
+                                        return 0; // 0 angir handleren er først i kjeden
                                     }
 
                                     @Override
@@ -151,7 +198,7 @@ public class TutorialPart4_GuiceProxyKjedeTest {
 
                                     @Override
                                     public ProxyHandler<MyService> extendChain(@Nullable ProxyHandler<MyService> firstInChain) {
-                                        throw new UnsupportedOperationException("Uventet kall, denne ServiceChainFactory må stå sist i kjeden");
+                                        throw new UnsupportedOperationException("Uventet kall, denne ServiceChainFactory har må stå først i kjeden");
                                     }
                                 };
                             }
@@ -165,9 +212,9 @@ public class TutorialPart4_GuiceProxyKjedeTest {
     }
 
     /**
-     * Oppretter en Service vha SKIF ServiceProvider klassen. I dette eksemplet angis facoryen ved å opprette en
-     * CallServiceChainFactoryProvider instans hvor parametre angir klasse på ProxyHandler og posisjon i kjeden.
-     * angir ProxyHanderTypenog hvilken posisjon som handleren ha listen via argumenter til klassen
+     * Oppretter en service vha SKIFs {@code ServiceProvider} klasse. I dette eksemplet opprettes
+     * {@code CallServiceChainFactory} ved å binde opp en provider instans {@code CallServiceChainFactoryProvider}, som
+     * angir posisjon og {@code ProxyHandler}-klasse som skal opprettes.
      *
      * <pre>
      * {@code MyService -> Implementation} for qualifier @Implementation
@@ -195,12 +242,8 @@ public class TutorialPart4_GuiceProxyKjedeTest {
 
 
     /**
-     * Oppretter en Service vha SKIF ServiceProvider klassen. Dette eksemplet har en ekstra proxyhandler
-     * som konfigurers via en egen modul som legger handleren inn imellom de to eksisterende handlere.
-     * <p>
-     * Eksemplet viser hvordan ekstra moduler kan brukes til å utvide en basis kjeden. Rekkefølgen av ProxyHandlere
-     * styres via en {@code order} paramerter av type float så man plasere inn nye ProxyHandlere i kjeden
-     * uten å måtte endre på eksisterende rekkefølge konfigurasjon.
+     * Oppretter en service vha SKIFs {@code ServiceProvider} klasse. I dette eksemplet konfigureres en ekstra
+     * {@code ProxyHandler} i en egen modul som legger handleren inn imellom to eksisterende handlere.
      *
      * <pre>
      * {@code MyService -> Implementation} for qualifier @Implementation
@@ -216,8 +259,7 @@ public class TutorialPart4_GuiceProxyKjedeTest {
                 new AbstractModule() {
                     protected void configure() {
                         bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-                        bind(MyService.class).toProvider(new TypeLiteral<ServiceProvider<MyService>>() {
-                        });
+                        bind(MyService.class).toProvider(new TypeLiteral<ServiceProvider<MyService>>() {});
                         Multibinder<CallServiceChainFactory<MyService>> multibinder
                                 = Multibinder.newSetBinder(binder(), new TypeLiteral<CallServiceChainFactory<MyService>>() {});
                         multibinder.addBinding().toProvider(new CallServiceChainFactoryProvider<>(new TypeLiteral<ToImplementationProxyHandler<MyService>>() {}, 0));

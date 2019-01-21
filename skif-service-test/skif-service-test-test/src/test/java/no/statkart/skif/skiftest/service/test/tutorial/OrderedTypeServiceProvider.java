@@ -13,14 +13,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class OrderedMultibinderBasedProxiesProvider<S> implements Provider<S> {
+public class OrderedTypeServiceProvider<S> implements Provider<S> {
     private final TypeLiteral<S> type;
     private final ProxyHandler<S> proxyHandler;
 
     @Inject
-    public OrderedMultibinderBasedProxiesProvider(TypeLiteral<S> type, Injector injector,
-                                                  ToImplementationProxyHandler<S> implementationProxyHandler,
-                                                  Set<OrderedType<ChainedProxyHandler<S>>> proxyHandlerSet) {
+    public OrderedTypeServiceProvider(TypeLiteral<S> type, Injector injector,
+                                      ToImplementationProxyHandler<S> implementationProxyHandler,
+                                      Set<OrderedType<ChainedProxyHandler<S>>> proxyHandlerSet) {
         this.type = type;
         ProxyHandler<S> prev = implementationProxyHandler;
         List<OrderedType<ChainedProxyHandler<S>>> sortedList = new ArrayList<>(proxyHandlerSet);
