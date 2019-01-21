@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * klassen (men kunne kanskje med fordel ha gjort det) slik det er vist her.
  */
 @Test(groups = "server-required")
-public class TutorialPart5_GuiceServiceProviderBasedOnOrderedTypeTest {
+public class TutorialPart5_GuiceServiceProviderOrderedTypeTest {
 
     /**
      * For å kunne ordne elementer i et multibinder set kan man bruke en hjelpeklasse {@code OrderedType<T>} som knytter
