@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  */
 @Test(groups = "server-required")
-public class TutorialPart4_GuiceProxyKjedeTest {
+public class TutorialPart4_GuiceServiceProviderTest {
 
     /**
      * Eksemple på bruk binding av {@code String}. Kan kun binde {@code String} til en verdi.
