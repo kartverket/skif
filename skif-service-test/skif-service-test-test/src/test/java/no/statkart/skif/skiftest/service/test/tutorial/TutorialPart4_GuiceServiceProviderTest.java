@@ -270,7 +270,7 @@ public class TutorialPart4_GuiceServiceProviderTest {
                     protected void configure() {
                         Multibinder<CallServiceChainFactory<MyService>> multibinder
                                 = Multibinder.newSetBinder(binder(), new TypeLiteral<CallServiceChainFactory<MyService>>() {});
-                        multibinder.addBinding().toProvider(new CallServiceChainFactoryProvider<>(new TypeLiteral<CallCountingProxyHandler<MyService>>() {}, 1.5f));
+                        multibinder.addBinding().toProvider(new CallServiceChainFactoryProvider<>(new TypeLiteral<CallCountingProxyHandler<MyService>>() {}, 0.5f));
                     }
                 });
 
