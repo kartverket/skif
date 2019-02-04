@@ -39,7 +39,7 @@ public class ExceptionLoggingTest {
     private final Principal principal1 = new PrincipalImpl("user1");
 
     public void testApplicationExceptionInServiceWithDebugEnabledServerLogger() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(principal1, "testSimple", 1);
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(principal1, 1);
         ArgumentCaptor<String> strArg = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Throwable> thrArg = ArgumentCaptor.forClass(Throwable.class);
 
@@ -59,7 +59,7 @@ public class ExceptionLoggingTest {
     }
 
     public void testApplicationExceptionInServiceWithInfoEnabledServerLogger() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(principal1, "testSimple", 1);
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(principal1, 1);
         ArgumentCaptor<String> strArg = ArgumentCaptor.forClass(String.class);
 
         final Logger logger = mockWithInfoEnabled();
@@ -76,7 +76,7 @@ public class ExceptionLoggingTest {
     }
 
     public void testNullPointerExceptionInServiceWithErrorEnabledServerLogger() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(principal1, "testSimple", 1);
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(principal1, 1);
         ArgumentCaptor<String> strArg = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Throwable> thrArg = ArgumentCaptor.forClass(Throwable.class);
 
@@ -96,7 +96,7 @@ public class ExceptionLoggingTest {
     }
 
     public void testApplicationExceptionInServiceWithErrorEnabledServerLogger() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(principal1, "testSimple", 1);
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(principal1, 1);
         ArgumentCaptor<String> strArg = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Throwable> thrArg = ArgumentCaptor.forClass(Throwable.class);
 

@@ -19,7 +19,6 @@ import java.security.Principal;
 @ServiceRequestScoped
 public class ServiceRequestContext implements Serializable {
     private final java.security.Principal callerPrincipal;
-    private final String servicename;
     private final long callId;
     @Nullable
     private final ServiceRequestContext parent;
@@ -30,16 +29,15 @@ public class ServiceRequestContext implements Serializable {
 
     @Inject
     public ServiceRequestContext(@CallId Provider<Long> callIdProvider) {
-        this(null, null, callIdProvider.get());
+        this(null, callIdProvider.get());
     }
 
-    public ServiceRequestContext(java.security.Principal principal, String servicename, long callId) {
-        this(principal, servicename, callId, TxMode.NOT_IN_EJB, false, null);
+    public ServiceRequestContext(java.security.Principal principal, long callId) {
+        this(principal, callId, TxMode.NOT_IN_EJB, false, null);
     }
 
-    public ServiceRequestContext(java.security.Principal callerPrincipal, String servicename, long callId, TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
+    public ServiceRequestContext(java.security.Principal callerPrincipal, long callId, TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
         this.callerPrincipal = callerPrincipal;
-        this.servicename = servicename;
         this.callId = callId;
         this.parent = null;
         this.txMode = txMode;
@@ -49,7 +47,6 @@ public class ServiceRequestContext implements Serializable {
 
     public ServiceRequestContext(ServiceRequestContext parent, long callId, TxMode txMode, boolean beanManagedTransaction, TransactionAttributeType transactionAttributeType) {
         this.callerPrincipal = parent.callerPrincipal;
-        this.servicename = parent.servicename;
         this.callId = callId;
         this.parent = parent;
         this.txMode = txMode;
@@ -108,10 +105,6 @@ public class ServiceRequestContext implements Serializable {
 
     public long getParentCallId() {
         return parent != null ? parent.getCallId() : 0;
-    }
-
-    public String getServicename() {
-        return servicename;
     }
 
     public boolean isContinuation() {

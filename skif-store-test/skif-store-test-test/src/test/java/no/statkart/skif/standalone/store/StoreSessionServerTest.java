@@ -232,7 +232,7 @@ public class StoreSessionServerTest {
                 bind(LockerStrategy.class).to(TransactionalLockerStrategy.class);
                 bind(TransactionalLockerStrategy.class).in(Singleton.class);
                 bind(Configuration.class).toInstance(new SkifServerConfiguration());
-                ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("test"), "test", 0);
+                ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("test"), 0);
                 bind(ServiceRequestContext.class).toInstance(serviceRequestContext);
                 bind(PersistenceSessionManager.class).toInstance(persistenceSessionManager);
             }

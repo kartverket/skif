@@ -22,16 +22,8 @@ public class ServiceRequestScopeTemplate {
         this.serviceRequestScope = serviceRequestScope;
     }
 
-    /**
-     * Tilsvarende som {@link #execute(String, Principal, Runnable)}, men bruker klassenavnet til
-     * {@code Runnable}-implementasjonen som {@code serviceName}.
-     */
     public void execute(Principal principal, Runnable runnable) {
-        execute(runnable.getClass().getName(), principal, runnable);
-    }
-
-    public void execute(String serviceName, Principal principal, Runnable runnable) {
-        ServiceRequestContext serviceRequestContext = createServiceRequestContext(serviceName, principal);
+        ServiceRequestContext serviceRequestContext = createServiceRequestContext(principal);
 
         serviceRequestScope.enter();
         try {
@@ -42,16 +34,8 @@ public class ServiceRequestScopeTemplate {
         }
     }
 
-    /**
-     * Tilsvarende som {@link #execute(String, java.security.Principal, Callable)}, men bruker klassenavnet til
-     * {@code Callable}-implementasjonen som {@code serviceName}.
-     */
     public <V> V execute(Principal principal, Callable<V> callable) throws Exception {
-        return execute(callable.getClass().getName(), principal, callable);
-    }
-
-    public <V> V execute(String serviceName, Principal principal, Callable<V> callable) throws Exception {
-        ServiceRequestContext serviceRequestContext = createServiceRequestContext(serviceName, principal);
+        ServiceRequestContext serviceRequestContext = createServiceRequestContext(principal);
 
         serviceRequestScope.enter();
         try {
@@ -62,13 +46,12 @@ public class ServiceRequestScopeTemplate {
         }
     }
 
-    private ServiceRequestContext createServiceRequestContext(String serviceName, Principal principal) {
+    private ServiceRequestContext createServiceRequestContext(Principal principal) {
         // CallId settes til 0 fordi dette i seg selv ikke er et call context egentlig.
         // Dette kan brukes til å skille denne klassene fra SkifWSInterceptor, siden den fyller inn en callId.
         //noinspection UnnecessaryLocalVariable
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext(
                 principal,
-                serviceName,
                 0,
                 TxMode.NOT_IN_EJB,
                 false,

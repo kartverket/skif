@@ -39,8 +39,8 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     @Test
     public void testIsLockedBy() {
-        ServiceRequestContext serviceRequestContext1 = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testIsLockedBy1", 1);
-        ServiceRequestContext serviceRequestContext2 = new ServiceRequestContext(new PrincipalImpl("ingroa2"), "testIsLockedBy2", 2);
+        ServiceRequestContext serviceRequestContext1 = new ServiceRequestContext(new PrincipalImpl("ingroa"), 1);
+        ServiceRequestContext serviceRequestContext2 = new ServiceRequestContext(new PrincipalImpl("ingroa2"), 2);
         TransactionalLockerStrategy strategy1 = createTransactionalLockerStrategy(serviceRequestContext1);
         TransactionalLockerStrategy strategy2 = createTransactionalLockerStrategy(serviceRequestContext2);
 
@@ -60,8 +60,8 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     @Test
     public void testUpdate() {
-        ServiceRequestContext serviceRequestContext1 = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testUpdate1", 1);
-        ServiceRequestContext serviceRequestContext2 = new ServiceRequestContext(new PrincipalImpl("ingroa2"), "testUpdate2", 2);
+        ServiceRequestContext serviceRequestContext1 = new ServiceRequestContext(new PrincipalImpl("ingroa"), 1);
+        ServiceRequestContext serviceRequestContext2 = new ServiceRequestContext(new PrincipalImpl("ingroa2"), 2);
         TransactionalLockerStrategy strategy1 = createTransactionalLockerStrategy(serviceRequestContext1);
         TransactionalLockerStrategy strategy2 = createTransactionalLockerStrategy(serviceRequestContext2);
 
@@ -92,8 +92,8 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     @Test
     public void testRemove() {
-        ServiceRequestContext serviceRequestContext1 = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testRemove1", 1);
-        ServiceRequestContext serviceRequestContext2 = new ServiceRequestContext(new PrincipalImpl("ingroa2"), "testRemove2", 2);
+        ServiceRequestContext serviceRequestContext1 = new ServiceRequestContext(new PrincipalImpl("ingroa"), 1);
+        ServiceRequestContext serviceRequestContext2 = new ServiceRequestContext(new PrincipalImpl("ingroa2"), 2);
         TransactionalLockerStrategy strategy1 = createTransactionalLockerStrategy(serviceRequestContext1);
         TransactionalLockerStrategy strategy2 = createTransactionalLockerStrategy(serviceRequestContext2);
 
@@ -119,7 +119,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     @Test
     public void testInsert() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testInsert", 1);
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("ingroa"), 1);
         TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
 
         SimpleId testId = new SimpleId(13L, SnapshotVersion.CURRENT);
@@ -133,7 +133,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     @Test
     public void testUnlock() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testUnlock", 1);
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("ingroa"), 1);
         TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
 
         SimpleId testId = new SimpleId(14L, SnapshotVersion.CURRENT);
@@ -156,7 +156,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
     @Test
     public void testRenewLocksViaUpdate(){
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("ingroa"), "testRenewLocksViaUpdate", 1);
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("ingroa"), 1);
         TransactionalLockerStrategy strategy = createTransactionalLockerStrategy(serviceRequestContext);
         DBLockerService<Long> db = injector.getInstance(Key.get(dbLockerServiceTypeLiteral));
 

@@ -34,7 +34,6 @@ public class SkifWSInterceptor<T> extends ChainedProxyHandler<T> {
         scope.enter();
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext(
                 webServiceContext.getUserPrincipal(),
-                serviceName,
                 callIdProvider.get()
         );
         try {

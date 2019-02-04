@@ -24,7 +24,7 @@ public class EjbLoggingProxyHandlerTest {
     private final Principal principal1 = new PrincipalImpl("user1");
 
     public void testSimple() {
-        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(principal1, "testSimple", 1);
+        ServiceRequestContext serviceRequestContext = new ServiceRequestContext(principal1, 1);
         final Logger logger = mockLogger();
         DefaultServerCallLogger defaultServerCallLogger = createDefaultServerCallLogger(serviceRequestContext, logger);
         EjbLoggingProxyHandlerTestService service = createProxyToMock(defaultServerCallLogger);
@@ -37,7 +37,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testWebServiceAktigNoTx() {
-        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, "testSimpleWS", 1);
+        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, 1);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextWs, 2, TxMode.NO_TX, false, TransactionAttributeType.SUPPORTS);
         final Logger logger = mockLogger();
         DefaultServerCallLogger defaultServerCallLogger = createDefaultServerCallLogger(serviceRequestContextEjb, logger);
@@ -49,7 +49,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testWebServiceAktigTx() {
-        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, "testSimpleWS", 1);
+        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, 1);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextWs, 2, TxMode.TX, false, TransactionAttributeType.REQUIRED);
         final Logger logger = mockLogger();
         DefaultServerCallLogger defaultServerCallLogger = createDefaultServerCallLogger(serviceRequestContextEjb, logger);
@@ -61,7 +61,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testWebServiceAktigBMT() {
-        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, "testSimpleWS", 1);
+        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, 1);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextWs, 2, TxMode.TX, true, TransactionAttributeType.REQUIRES_NEW);
         final Logger logger = mockLogger();
         DefaultServerCallLogger defaultServerCallLogger = createDefaultServerCallLogger(serviceRequestContextEjb, logger);
@@ -73,7 +73,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testSingleVmAktigNoTx() {
-        ServiceRequestContext serviceRequestContextFake = new ServiceRequestContext(principal1, "testSimple", 1);
+        ServiceRequestContext serviceRequestContextFake = new ServiceRequestContext(principal1, 1);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextFake, 2, TxMode.TX, true, TransactionAttributeType.SUPPORTS);
         final Logger logger = mockLogger();
         DefaultServerCallLogger defaultServerCallLogger = createDefaultServerCallLogger(serviceRequestContextEjb, logger);
@@ -85,7 +85,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testSingleVmAktigTx() {
-        ServiceRequestContext serviceRequestContextFake = new ServiceRequestContext(principal1, "testSimple", 1);
+        ServiceRequestContext serviceRequestContextFake = new ServiceRequestContext(principal1, 1);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextFake, 2, TxMode.TX, true, TransactionAttributeType.REQUIRED);
         final Logger logger = mockLogger();
         DefaultServerCallLogger defaultServerCallLogger = createDefaultServerCallLogger(serviceRequestContextEjb, logger);
@@ -97,7 +97,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testSingleVmAktigBMT() {
-        ServiceRequestContext serviceRequestContextFake = new ServiceRequestContext(principal1, "testSimple", 1);
+        ServiceRequestContext serviceRequestContextFake = new ServiceRequestContext(principal1, 1);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextFake, 2, TxMode.TX, true, TransactionAttributeType.REQUIRES_NEW);
         final Logger logger = mockLogger();
         DefaultServerCallLogger defaultServerCallLogger = createDefaultServerCallLogger(serviceRequestContextEjb, logger);
@@ -109,7 +109,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testServletAktigNoTx() {
-        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, "Servlet", 0);
+        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, 0);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextWs, 1, TxMode.NO_TX, false, TransactionAttributeType.SUPPORTS);
         final Logger logger = mockLogger();
         DefaultServerCallLogger defaultServerCallLogger = createDefaultServerCallLogger(serviceRequestContextEjb, logger);
@@ -123,7 +123,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testServletAktigTx() {
-        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, "Servlet", 0);
+        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, 0);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextWs, 1, TxMode.TX, false, TransactionAttributeType.REQUIRED);
         final Logger logger = mockLogger();
         DefaultServerCallLogger defaultServerCallLogger = createDefaultServerCallLogger(serviceRequestContextEjb, logger);
@@ -137,7 +137,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testServletAktigBMT() {
-        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, "Servlet", 0);
+        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, 0);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextWs, 1, TxMode.TX, true, TransactionAttributeType.REQUIRES_NEW);
         final Logger logger = mockLogger();
         DefaultServerCallLogger defaultServerCallLogger = createDefaultServerCallLogger(serviceRequestContextEjb, logger);
@@ -151,7 +151,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testNestedTxInNoTx() {
-        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, "testSimpleWS", 1);
+        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, 1);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextWs, 2, TxMode.NO_TX, false, TransactionAttributeType.SUPPORTS);
         ServiceRequestContext serviceRequestContextEjb2 = new ServiceRequestContext(serviceRequestContextEjb, 3, TxMode.TX, false, TransactionAttributeType.REQUIRED);
         final Logger logger = mockLogger();
@@ -166,7 +166,7 @@ public class EjbLoggingProxyHandlerTest {
     }
 
     public void testNestedTxInTx() {
-        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, "testSimpleWS", 1);
+        ServiceRequestContext serviceRequestContextWs = new ServiceRequestContext(principal1, 1);
         ServiceRequestContext serviceRequestContextEjb = new ServiceRequestContext(serviceRequestContextWs, 2, TxMode.TX, false, TransactionAttributeType.REQUIRED);
         ServiceRequestContext serviceRequestContextEjb2 = new ServiceRequestContext(serviceRequestContextEjb, 3, TxMode.TX, false, TransactionAttributeType.REQUIRES_NEW);
         final Logger logger = mockLogger();
