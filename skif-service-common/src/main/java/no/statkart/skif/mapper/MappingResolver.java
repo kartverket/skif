@@ -135,30 +135,24 @@ public class MappingResolver {
     }
 
     /**
-     * Workaround for mangel i {@link TypeToken#getSubtype(Class)}.
+     * Workaround for ting {@link TypeToken#getSubtype(Class)} ikke gjør.
      */
-    protected <T> TypeToken<? extends T> getSubtype(TypeToken<T> typeToken, Class<?> subClass) {
-        if (typeToken.getType() instanceof TypeVariable) {
-            TypeVariable typeVariable = (TypeVariable) typeToken.getType();
-            typeToken = (TypeToken<T>) TypeToken.of(typeVariable.getBounds()[0]);
+    protected static <T> TypeToken<? extends T> getSubtype(TypeToken<T> typeToken, Class<?> subClass) {
+        while (typeToken.getType() instanceof TypeVariable || typeToken.getType() instanceof WildcardType) {
+            if (typeToken.getType() instanceof TypeVariable) {
+                // Gjør om T extends Foo til Foo (og T til Object)
+                TypeVariable typeVariable = (TypeVariable) typeToken.getType();
+                typeToken = (TypeToken<T>) TypeToken.of(typeVariable.getBounds()[0]);
+            } else {
+                // Gjør om ? extends Foo til Foo (og ? til Object). ? super Foo blir vel Object?
+                WildcardType wildcardType = (WildcardType) typeToken.getType();
+                typeToken = (TypeToken<T>) TypeToken.of(wildcardType.getUpperBounds()[0]);
+            }
         }
 
-        if (typeToken.getRawType().isPrimitive()) {
+        if (typeToken.getRawType().isPrimitive() && !subClass.isPrimitive()) {
             // Erstatt med ikke-primitiv
             typeToken = (TypeToken<T>) TypeToken.of(Primitives.wrap(typeToken.getRawType()));
-        }
-
-        TypeVariable<? extends Class<?>>[] subClassParameters = subClass.getTypeParameters();
-        if (subClassParameters.length == 0) {
-            return (TypeToken<? extends T>) TypeToken.of(subClass);
-        }
-        if (typeToken.getType() instanceof ParameterizedType) {
-            ParameterizedType parameterizedSourceType = (ParameterizedType) typeToken.getType();
-            Type[] actualTypeArguments = parameterizedSourceType.getActualTypeArguments();
-            if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof WildcardType && subClassParameters.length == 1) {
-                // Antar at sourceType er en BubbleId<?>, mens
-                return (TypeToken<? extends T>) TypeToken.of(Types.newParameterizedTypeWithOwner(subClass.getEnclosingClass(), subClass, actualTypeArguments[0]));
-            }
         }
 
         return typeToken.getSubtype(subClass);
