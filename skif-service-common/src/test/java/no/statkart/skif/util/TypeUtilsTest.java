@@ -1,4 +1,4 @@
-package no.statkart.skif.mapper;
+package no.statkart.skif.util;
 
 import com.google.common.reflect.TypeToken;
 import org.fest.assertions.api.Assertions;
@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 @SuppressWarnings("UnstableApiUsage")
-public class MappingResolverTest {
+public class TypeUtilsTest {
     @SuppressWarnings("unused")
     private Collection<String> stringCollection;
     @SuppressWarnings("unused")
@@ -30,12 +30,12 @@ public class MappingResolverTest {
      */
     @Test
     public void getSubtype_TypeVariable() throws NoSuchMethodException {
-        Method method = MappingResolverTest.class.getDeclaredMethod("typeVariable");
+        Method method = TypeUtilsTest.class.getDeclaredMethod("typeVariable");
         Type genericReturnType = method.getGenericReturnType();
         Type typeVariable = ((ParameterizedType) genericReturnType).getActualTypeArguments()[0];
         Assertions.assertThat(typeVariable).isInstanceOf(TypeVariable.class);
 
-        TypeToken<?> subtype = MappingResolver.getSubtype(TypeToken.of(typeVariable), Integer.class);
+        TypeToken<?> subtype = TypeUtils.getSubtype(TypeToken.of(typeVariable), Integer.class);
         Assertions.assertThat(subtype.getType()).isEqualTo(Integer.class);
     }
 
@@ -44,12 +44,12 @@ public class MappingResolverTest {
      */
     @Test
     public void getSubtype_WildcardType() throws NoSuchMethodException {
-        Method method = MappingResolverTest.class.getDeclaredMethod("wildcardType");
+        Method method = TypeUtilsTest.class.getDeclaredMethod("wildcardType");
         Type genericReturnType = method.getGenericReturnType();
         Type wildcardType = ((ParameterizedType) genericReturnType).getActualTypeArguments()[0];
         Assertions.assertThat(wildcardType).isInstanceOf(WildcardType.class);
 
-        TypeToken<?> subtype = MappingResolver.getSubtype(TypeToken.of(wildcardType), Integer.class);
+        TypeToken<?> subtype = TypeUtils.getSubtype(TypeToken.of(wildcardType), Integer.class);
         Assertions.assertThat(subtype.getType()).isEqualTo(Integer.class);
     }
 
@@ -58,12 +58,12 @@ public class MappingResolverTest {
      */
     @Test
     public void getSubtype_WildcardTypeWithTypeVariable() throws NoSuchMethodException {
-        Method method = MappingResolverTest.class.getDeclaredMethod("wildcardTypeOfTypeVariable");
+        Method method = TypeUtilsTest.class.getDeclaredMethod("wildcardTypeOfTypeVariable");
         Type genericReturnType = method.getGenericReturnType();
         Type wildcardType = ((ParameterizedType) genericReturnType).getActualTypeArguments()[0];
         Assertions.assertThat(wildcardType).isInstanceOf(WildcardType.class);
 
-        TypeToken<?> subtype = MappingResolver.getSubtype(TypeToken.of(wildcardType), Integer.class);
+        TypeToken<?> subtype = TypeUtils.getSubtype(TypeToken.of(wildcardType), Integer.class);
         Assertions.assertThat(subtype.getType()).isEqualTo(Integer.class);
     }
 
@@ -72,7 +72,7 @@ public class MappingResolverTest {
         TypeToken<?> typeToken = TypeToken.of(int.class);
         Assertions.assertThat(typeToken.getRawType().isPrimitive()).isTrue();
 
-        TypeToken<?> primitiveSubtype = MappingResolver.getSubtype(typeToken, int.class);
+        TypeToken<?> primitiveSubtype = TypeUtils.getSubtype(typeToken, int.class);
         Assertions.assertThat(primitiveSubtype.getType()).isEqualTo(int.class);
     }
 
@@ -81,11 +81,11 @@ public class MappingResolverTest {
      */
     @Test
     public void getSubtype_sameTypeParameters() throws NoSuchFieldException {
-        Field stringCollectionField = MappingResolverTest.class.getDeclaredField("stringCollection");
-        Field stringListField = MappingResolverTest.class.getDeclaredField("stringList");
+        Field stringCollectionField = TypeUtilsTest.class.getDeclaredField("stringCollection");
+        Field stringListField = TypeUtilsTest.class.getDeclaredField("stringList");
 
         TypeToken<?> typeToken = TypeToken.of(stringCollectionField.getGenericType());
-        TypeToken<?> subtype = MappingResolver.getSubtype(typeToken, List.class);
+        TypeToken<?> subtype = TypeUtils.getSubtype(typeToken, List.class);
         Assertions.assertThat((TypeToken) subtype).isEqualTo(TypeToken.of(stringListField.getGenericType()));
     }
 
@@ -95,11 +95,11 @@ public class MappingResolverTest {
      */
     @Test
     public void getSubtype_lessTypeParameters() throws NoSuchFieldException {
-        Field stringStringFunctionField = MappingResolverTest.class.getDeclaredField("stringStringFunction");
-        Field stringUnaryOperatorField = MappingResolverTest.class.getDeclaredField("stringUnaryOperator");
+        Field stringStringFunctionField = TypeUtilsTest.class.getDeclaredField("stringStringFunction");
+        Field stringUnaryOperatorField = TypeUtilsTest.class.getDeclaredField("stringUnaryOperator");
 
         TypeToken<?> typeToken = TypeToken.of(stringStringFunctionField.getGenericType());
-        TypeToken<?> subtype = MappingResolver.getSubtype(typeToken, UnaryOperator.class);
+        TypeToken<?> subtype = TypeUtils.getSubtype(typeToken, UnaryOperator.class);
         Assertions.assertThat((TypeToken) subtype).isEqualTo(TypeToken.of(stringUnaryOperatorField.getGenericType()));
     }
 
@@ -109,11 +109,11 @@ public class MappingResolverTest {
      */
     @Test
     public void getSubtype_toNoTypeParameters() throws NoSuchFieldException {
-        Field stringUnaryOperator2Field = MappingResolverTest.class.getDeclaredField("stringUnaryOperator2");
-        Field stringOperatorField = MappingResolverTest.class.getDeclaredField("stringOperator");
+        Field stringUnaryOperator2Field = TypeUtilsTest.class.getDeclaredField("stringUnaryOperator2");
+        Field stringOperatorField = TypeUtilsTest.class.getDeclaredField("stringOperator");
 
         TypeToken<?> typeToken = TypeToken.of(stringUnaryOperator2Field.getGenericType());
-        TypeToken<?> subtype = MappingResolver.getSubtype(typeToken, StringOperator.class);
+        TypeToken<?> subtype = TypeUtils.getSubtype(typeToken, StringOperator.class);
         Assertions.assertThat((TypeToken) subtype).isEqualTo(TypeToken.of(stringOperatorField.getGenericType()));
     }
 

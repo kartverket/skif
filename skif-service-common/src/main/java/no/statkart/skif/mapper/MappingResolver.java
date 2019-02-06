@@ -1,16 +1,11 @@
 package no.statkart.skif.mapper;
 
-import com.google.common.primitives.Primitives;
 import com.google.common.reflect.TypeToken;
-import com.google.inject.util.Types;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.util.TypeUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -117,12 +112,12 @@ public class MappingResolver {
         if (this.overrideClassMappings != null) {
             Class<?> clazz = this.overrideClassMappings.get(sourceClass);
             if (clazz != null) {
-                retVal = getSubtype(targetType, clazz);
+                retVal = TypeUtils.wrapPrimitives(TypeUtils.getSubtype(targetType, clazz));
             }
         }
         if (retVal == null) {
             if (classMappings.containsKey(sourceClass)) {
-                retVal = getSubtype(targetType, classMappings.get(sourceClass));
+                retVal = TypeUtils.wrapPrimitives(TypeUtils.getSubtype(targetType, classMappings.get(sourceClass)));
             }
         }
 
@@ -132,30 +127,6 @@ public class MappingResolver {
         }
 
         return retVal;
-    }
-
-    /**
-     * Workaround for ting {@link TypeToken#getSubtype(Class)} ikke gjør.
-     */
-    protected static <T> TypeToken<? extends T> getSubtype(TypeToken<T> typeToken, Class<?> subClass) {
-        while (typeToken.getType() instanceof TypeVariable || typeToken.getType() instanceof WildcardType) {
-            if (typeToken.getType() instanceof TypeVariable) {
-                // Gjør om T extends Foo til Foo (og T til Object)
-                TypeVariable typeVariable = (TypeVariable) typeToken.getType();
-                typeToken = (TypeToken<T>) TypeToken.of(typeVariable.getBounds()[0]);
-            } else {
-                // Gjør om ? extends Foo til Foo (og ? til Object). ? super Foo blir vel Object?
-                WildcardType wildcardType = (WildcardType) typeToken.getType();
-                typeToken = (TypeToken<T>) TypeToken.of(wildcardType.getUpperBounds()[0]);
-            }
-        }
-
-        if (typeToken.getRawType().isPrimitive() && !subClass.isPrimitive()) {
-            // Erstatt med ikke-primitiv
-            typeToken = (TypeToken<T>) TypeToken.of(Primitives.wrap(typeToken.getRawType()));
-        }
-
-        return typeToken.getSubtype(subClass);
     }
 
     /**
