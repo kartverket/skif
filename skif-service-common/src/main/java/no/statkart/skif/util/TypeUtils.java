@@ -1,8 +1,8 @@
 package no.statkart.skif.util;
 
-import com.google.common.primitives.Primitives;
 import com.google.common.reflect.TypeToken;
 
+import java.lang.reflect.Modifier;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 
@@ -14,6 +14,14 @@ public class TypeUtils {
     public static <T> TypeToken<? extends T> getSubtype(final TypeToken<T> typeToken, Class<?> subClass) {
         if (typeToken.getRawType().isPrimitive()) {
             return typeToken;
+        }
+
+        // Dersom subklassen, og eventuelle eiende klasser, ikke har noen typeparametre, så er det ikke mer å gjøre.
+        // Dersom den arver fra typeToken uten å angi typene på veien, så vil det feile senere i metoden hvis vi
+        // fortsetter, og det er ikke brukbart. Dette er laget for å håndtere klasser som implementerer Collections
+        // uten å angi typeparametrene til Collection (eller List, Set, Map).
+        if (isFullyTyped(subClass) && typeToken.getRawType().isAssignableFrom(subClass)) {
+            return (TypeToken<? extends T>) TypeToken.of(subClass);
         }
 
         TypeToken<? super T> tempToken = typeToken;
@@ -33,10 +41,19 @@ public class TypeUtils {
         return (TypeToken<? extends T>) tempToken.getSubtype(subClass);
     }
 
-    public static TypeToken<?> wrapPrimitives(TypeToken<?> possiblyPrimitive) {
-        if (possiblyPrimitive.getRawType().isPrimitive()) {
-            return TypeToken.of(Primitives.wrap(possiblyPrimitive.getRawType()));
+    /**
+     * @return {@code false} dersom klassen har typeparametre eller er ikke-statisk indre klasse i en klasse som har det
+     */
+    public static boolean isFullyTyped(Class<?> clazz) {
+        if (clazz.getTypeParameters().length > 0) {
+            return false;
+        } else if (clazz.getEnclosingClass() == null) {
+            return true;
+        } else if (Modifier.isStatic(clazz.getModifiers())) {
+            return true;
+        } else {
+            return isFullyTyped(clazz.getEnclosingClass());
         }
-        return possiblyPrimitive;
     }
+
 }

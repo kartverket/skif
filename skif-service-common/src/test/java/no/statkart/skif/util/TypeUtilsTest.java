@@ -117,6 +117,40 @@ public class TypeUtilsTest {
         Assertions.assertThat((TypeToken) subtype).isEqualTo(TypeToken.of(stringOperatorField.getGenericType()));
     }
 
+    /**
+     * {@code List<String>} x {@code OldCollectionImpl} = {@code OldCollectionImpl}.
+     * Saken her er at OldCollectionImpl ikke implementerer en generisk List.
+     */
+    @Test
+    public void getSubtype_nonGenericInheritance() throws NoSuchFieldException {
+        Field stringListField = TypeUtilsTest.class.getDeclaredField("stringList");
+
+        TypeToken<?> typeToken = TypeToken.of(stringListField.getGenericType());
+        TypeToken<?> subtype = TypeUtils.getSubtype(typeToken, OldCollectionImpl.class);
+        Assertions.assertThat((TypeToken) subtype).isEqualTo(TypeToken.of(OldCollectionImpl.class));
+    }
+
+    @Test
+    public void classWithTypeParameter_notFullyTyped() {
+        Assertions.assertThat(TypeUtils.isFullyTyped(TypedOuter.class)).isFalse();
+    }
+
+    /**
+     * Inner static kan ikke bruke typeparametre fra ytre klasse.
+     */
+    @Test
+    public void staticInnerClassOfClassWithTypeParameter_isFullyTyped() {
+        Assertions.assertThat(TypeUtils.isFullyTyped(TypedOuter.InnerStatic.class)).isTrue();
+    }
+
+    /**
+     * Inner static kan bruke typeparametre fra ytre klasse, men det er vanskelig å se. Antar at den gjør det.
+     */
+    @Test
+    public void innerClassOfClassWithTypeParameter_isNotFullyTyped() {
+        Assertions.assertThat(TypeUtils.isFullyTyped(TypedOuter.InnerMightUseTypeVariable.class)).isFalse();
+    }
+
     private static Collection<? extends Number> wildcardType() {
         return null;
     }
@@ -131,5 +165,21 @@ public class TypeUtilsTest {
 
     private interface StringOperator extends UnaryOperator<String> {
 
+    }
+
+    /**
+     * Substitutt for PersistentSet/PersistentList, som ikke ligger på classpath.
+     */
+    private static abstract class OldCollectionImpl implements List {
+
+    }
+}
+
+@SuppressWarnings("unused") // T er viktig for hvorvidt InnerMightUseTypeVariable anses som fulltypet
+class TypedOuter<T> {
+    static class InnerStatic {
+    }
+
+    class InnerMightUseTypeVariable {
     }
 }

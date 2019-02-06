@@ -112,12 +112,12 @@ public class MappingResolver {
         if (this.overrideClassMappings != null) {
             Class<?> clazz = this.overrideClassMappings.get(sourceClass);
             if (clazz != null) {
-                retVal = TypeUtils.wrapPrimitives(TypeUtils.getSubtype(targetType, clazz));
+                retVal = TypeUtils.getSubtype(targetType, clazz).wrap();
             }
         }
         if (retVal == null) {
             if (classMappings.containsKey(sourceClass)) {
-                retVal = TypeUtils.wrapPrimitives(TypeUtils.getSubtype(targetType, classMappings.get(sourceClass)));
+                retVal = TypeUtils.getSubtype(targetType, classMappings.get(sourceClass)).wrap();
             }
         }
 
