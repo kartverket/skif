@@ -1,20 +1,33 @@
 apply plugin: 'java'
-apply plugin: 'sktools-weblogic-wsclient-plugin' //problem sammen med java-library
+apply plugin: 'sktools-wsimport-plugin'
+
+configurations {
+    wsdls
+}
 
 dependencies {
-    weblogicProvided project(':skif-config') // For å tvinge bruk av JAX-WS RI og JAXB RI
-    weblogicProvided libraries.weblogic
-    weblogicProvided libraries['tools.jar']
+    wsdls project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wswar', configuration: 'wsdls')
+
+    implementation libraries.jaxws_rt
+
+    jaxws libraries.jaxws_tools
 }
 
-weblogicWsClient {
-    webService {
-        baseWar {
-            project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wswar', configuration: 'wsdls')
-        }
-        exceptionReusePackage 'no.statkart.skif.storetest.wsapi.exception'
-        lastWsdl 'StoreServiceWS.wsdl'
+// https://discuss.gradle.org/t/right-way-to-copy-contents-from-dependency-archives/7449/13
+task importWsdls(type: Sync) {
+    dependsOn configurations.wsdls
+
+    into('META-INF/wsdls/skif-store') {
+        from { configurations.wsdls.collect { zipTree(it) } }
     }
+
+    into "$buildDir/wsdls/"
 }
 
+processResources.dependsOn importWsdls
+sourceSets.main.resources.srcDir importWsdls.destinationDir
 
+wsimport {
+    exceptionReusePackage 'no.statkart.skif.storetest.wsapi.exception'
+    lastWsdl 'META-INF/wsdls/skif-store/StoreServiceWS.wsdl'
+}

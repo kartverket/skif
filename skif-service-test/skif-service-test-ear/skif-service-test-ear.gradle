@@ -49,6 +49,6 @@ weblogicDeploy {
     undeployTask('undeploy', description: "Undeployer ${name} til ${url}")
 
     deployTask('deploy', dependsOn: [undeployTask], description: "Deployer ${name} til ${url}") {
-        timeout = 1200000
+        deployerTimeout = 1200000
     }
 }

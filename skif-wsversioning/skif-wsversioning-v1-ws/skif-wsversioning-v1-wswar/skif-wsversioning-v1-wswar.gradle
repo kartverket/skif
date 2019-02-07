@@ -12,9 +12,7 @@ dependencies {
 
     provided libraries.jee
 
-    jaxws project(':skif-config') // For å tvinge bruk av JAX-WS RI og JAXB RI
-    jaxws libraries['tools.jar']
-    jaxws libraries.weblogic
+    jaxws libraries.jaxws_tools
 }
 
 war {
