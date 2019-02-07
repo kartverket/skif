@@ -1,7 +1,7 @@
 import org.gradle.util.GradleVersion
 
-assert GradleVersion.version('4.6').compareTo(GradleVersion.current()) <= 0 //lowest gradle version supported
-if (!['4.8.1'].findAll { gradle.gradleVersion == it }) {
+assert GradleVersion.version('5.0').compareTo(GradleVersion.current()) <= 0 //lowest gradle version supported
+if (!['5.2'].findAll { gradle.gradleVersion == it }) {
     logger.warn "WARNING: Du benytter en annen versjon av Gradle enn hva byggesystemet er testet med: ${gradle.gradleVersion}"
 }
 
