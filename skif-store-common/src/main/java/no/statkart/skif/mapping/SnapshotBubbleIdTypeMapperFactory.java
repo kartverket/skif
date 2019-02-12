@@ -53,8 +53,11 @@ public class SnapshotBubbleIdTypeMapperFactory implements TypeMapperFactory {
     public <WsapiT, DomainT> TypeMapper createTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
         // Sjekk først om domenetypen er en Collection av BubbleId
         if (Collection.class.isAssignableFrom(domainTypeToken.getRawType()) && domainTypeToken.getType() instanceof ParameterizedType) {
-            ParameterizedType domainType = (ParameterizedType) domainTypeToken.getType();
-            TypeToken<?> domainElementTypeToken = TypeToken.of(domainType.getActualTypeArguments()[0]);
+            // Må nå konvertere til Collections slik at vi vet at den har en type parameter.
+            // Den faktiske typen, eller en mellomtype, kan ha bundet dette til noe spesielt.
+            TypeToken<? super DomainT> domainCollectionTypeToken = domainTypeToken.getSupertype((Class<? super DomainT>) Collection.class);
+            ParameterizedType domainCollectionType = (ParameterizedType) domainCollectionTypeToken.getType();
+            TypeToken<?> domainElementTypeToken = TypeToken.of(domainCollectionType.getActualTypeArguments()[0]);
             if (BubbleId.class.isAssignableFrom(domainElementTypeToken.getRawType())) {
                 // Sjekk så om wsapitypen ser ut som map/dictionary
                 if (checkHasField(wsapiTypeToken.getRawType(), "entry")) {

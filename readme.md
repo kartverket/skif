@@ -28,7 +28,8 @@ import com.sun.xml.ws.developer.JAXWSProperties;
 
 
 #### Oppsett av testdatabase
-Foreløpig testoppsett er å gjenbruke en oppsatt bruk/skjema ifra feks matrikkelen.
+Bruker opprettes via `gradew dbCreateUser`. Hvor tablespacefilen skal legges bestemmes
+av property `db_dataroot_dir`.
 
 Skjema settes opp via `gradew dbInit`
 
