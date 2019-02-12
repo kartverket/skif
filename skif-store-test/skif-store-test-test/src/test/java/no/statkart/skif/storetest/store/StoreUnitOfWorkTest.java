@@ -5,11 +5,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreBubbleTransfer;
@@ -23,6 +21,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.CopyHelper;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
@@ -30,8 +29,8 @@ import java.util.List;
 import java.util.Set;
 
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.assertNotFound;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -41,8 +40,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 /**
- * Tester bruk av UnitOfWork på server. Alle tester kjøres via bean managed transaction slik at ingen ting blir
- * committet til databasen.
+ * Tester bruk av UnitOfWork på klient og server.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
@@ -55,16 +53,29 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     @Inject
     private Store clientStore;
 
+    @DataProvider(name = "boolean1Dmatrix")
+    protected Object[][] boolean1Dmatrix() {
+        return new Object[][]{
+                {Boolean.TRUE},
+                {Boolean.FALSE},
+        };
+    }
+
+    @DataProvider(name = "boolean2Dmatrix")
+    protected Object[][] boolean2Dmatrix() {
+        return new Object[][]{
+                {Boolean.TRUE, Boolean.TRUE},
+                {Boolean.FALSE, Boolean.TRUE},
+                {Boolean.TRUE, Boolean.FALSE},
+                {Boolean.FALSE, Boolean.FALSE},
+        };
+    }
+
     private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
-        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(new IdSelector<StoreTestMockupFacade>() {
-            @Override
-            public Set<? extends BubbleId> selectFrom(StoreTestMockupFacade mockupFacade) {
-                return ImmutableSet.of(
-                        mockupFacade.getSimpleMockupFactory().getSimpleId1(),
-                        mockupFacade.getSimpleMockupFactory().getSimpleId2()
-                        );
-            }
-        });
+        return mockupFacadeFactory.getWriteMockupFacadeAndSaveDateForIds(mockupFacade -> ImmutableSet.of(
+                mockupFacade.getSimpleMockupFactory().getSimpleId1(),
+                mockupFacade.getSimpleMockupFactory().getSimpleId2()
+        ));
     }
 
     public void testBeginEndEmptyUnitOfWork() {
@@ -80,7 +91,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             }
         });
     }
-
 
     public void testInsertObjectInUnitOfWork() {
 
@@ -116,8 +126,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             Store store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
-            @Inject
-            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
@@ -142,8 +150,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             Store store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
-            @Inject
-            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
@@ -155,7 +161,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 Simple copy = CopyHelper.copy(simple);
                 store.delete(copy);
                 store.commitUnitOfWork(unitOfWork2);
-                assertSame(store.get(simpleId), copy);
+//                assertSame(store.get(simpleId), copy);
                 store.commitUnitOfWork(unitOfWork1);
                 assertNotFound(store, simpleId);
 
@@ -172,8 +178,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             Store store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
-            @Inject
-            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
@@ -194,8 +198,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             Store store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
-            @Inject
-            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
@@ -219,8 +221,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             Store store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
-            @Inject
-            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
@@ -242,8 +242,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             Store store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
-            @Inject
-            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
@@ -255,9 +253,9 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 String orgText = simple.getText();
                 simple.setText("Blabla");
                 store.update(simple);
-                assertEquals(((Simple)store.get(simpleId)).getText(), simple.getText());
+                assertEquals(store.get(simpleId).getText(), simple.getText());
                 store.undo(simple);
-                assertEquals(((Simple)store.get(simpleId)).getText(), orgText);
+                assertEquals(store.get(simpleId).getText(), orgText);
                 store.abortUnitOfWork(unitOfWork);
 
                 return null;
@@ -271,8 +269,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             Store store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
-            @Inject
-            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
@@ -296,8 +292,6 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             Store store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
-            @Inject
-            PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
@@ -501,7 +495,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         assertFalse(clientStore.inUnitOfWork());
     }
 
-    @Test(enabled=false, expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Lock on client must be done in a UnitOfWork.*") // TODO: SKIF-610. Midlertidig disabling av denne i påvente av GBOK-9889. Gjør klienten feiler.
+    @Test(enabled = false, expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Lock on client must be done in a UnitOfWork.*")
+    // TODO: SKIF-610. Midlertidig disabling av denne i påvente av GBOK-9889. Gjør klienten feiler.
     public void testClientUpdateOutsideUnitOfWork() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         Simple simple = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
@@ -747,8 +742,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             assertThat(clientStore.getAllLoaded().getObject(simpleId2)).isSameAs(bubbleTransfer.getObject(simpleId2));
             assertThat(clientStore.isLocked(simpleId1)).isFalse();
             assertThat(clientStore.isLocked(simpleId2)).isTrue();
-            assertThat(((Simple)clientStore.get(simpleId2)).getText()).isNotEqualTo("foobar");
-            assertThat(((Simple)clientStore.get(simpleId2)).getText()).isEqualTo(originalText);
+            assertThat(clientStore.get(simpleId2).getText()).isNotEqualTo("foobar");
+            assertThat(clientStore.get(simpleId2).getText()).isEqualTo(originalText);
         }
     }
 
@@ -929,6 +924,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
      * Tester at et objekt som lastes, låses, og modifiseres i en en unit of work er tilgjengelig via getAllLoaded både
      * mens unit of work er aktiv og etter at unit of work er committed. Tester både klient og server.
      */
+    @SuppressWarnings("Duplicates")
     public void testGetAllLoadedWhenObjectIsLockedAndModifiedInUnitOfWorkThatIsCommitted() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final SimpleId<?> simpleId = mockupFacade.getSimpleMockupFactory().getSimpleId1();
@@ -992,7 +988,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     private void assertContainsSame(String description, List<? extends BubbleObject> actual, List<? extends BubbleObject> expected) {
         assertThat(actual).describedAs(description).hasSize(expected.size());
         for (int i = 0; i < actual.size(); i++) {
-            assertThat(actual.get(i)).describedAs(String.format("%s[%d]", description, i)).isSameAs(expected.get(i));
+            assertThat((BubbleObject) actual.get(i)).describedAs(String.format("%s[%d]", description, i)).isSameAs(expected.get(i));
         }
     }
 

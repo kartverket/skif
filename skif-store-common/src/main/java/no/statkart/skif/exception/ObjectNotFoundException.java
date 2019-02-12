@@ -3,6 +3,8 @@ package no.statkart.skif.exception;
 import no.statkart.skif.store.BubbleId;
 import org.slf4j.Logger;
 
+import java.util.Collections;
+
 /**
  * Angir at objekt med gitt id ikke finnes. Det kan f.eks være fordi det har blitt slettet.
  *
@@ -16,15 +18,17 @@ public class ObjectNotFoundException extends ObjectsNotFoundException {
     private final BubbleId<?> notFoundId;
 
     public ObjectNotFoundException(BubbleId<?> notFoundId) {
-        this(notFoundId, null);
+        super(Collections.singleton(notFoundId));
+        this.notFoundId = notFoundId;
     }
 
     public ObjectNotFoundException(BubbleId<?> notFoundId, Throwable cause) {
-        this(notFoundId, cause, null);
+        super(Collections.singleton(notFoundId), cause);
+        this.notFoundId = notFoundId;
     }
 
     public ObjectNotFoundException(BubbleId<?> notFoundId, Throwable cause, Logger logger) {
-        super(notFoundId, cause, logger);
+        super(Collections.singleton(notFoundId), cause, logger);
         this.notFoundId = notFoundId;
     }
 

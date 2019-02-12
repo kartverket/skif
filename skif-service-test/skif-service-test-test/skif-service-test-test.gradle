@@ -5,9 +5,8 @@ dependencies {
     compile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
     compile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsclient')
 
-    provided libraries.jaxws_rt
+    provided libraries.jee
     provided libraries.c3p0
-    provided libraries.weblogic
     provided libraries.jdbc
 
     testCompile project(':skif-testsupport-common')
@@ -16,4 +15,7 @@ dependencies {
 
     //internal dependencies + optional deps to logging frameworks:
     testCompile project(':skif-config')
+
+    testImplementation libraries.jaxws_rt
+
 }

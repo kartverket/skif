@@ -3,8 +3,8 @@ apply plugin: 'java'
 dependencies {
     compile project(':skif-service-server')
     compile project(':skif-service-test:skif-service-test-api')
+    provided libraries.jee
     provided libraries.c3p0
-    provided libraries.weblogic
     provided libraries.jdbc
 
     testCompile project(':skif-testsupport-common')

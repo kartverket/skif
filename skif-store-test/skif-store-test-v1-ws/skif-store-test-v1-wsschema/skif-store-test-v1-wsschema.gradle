@@ -1,4 +1,4 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'sktools-xjc-plugin'
 
 configurations {
@@ -25,7 +25,7 @@ dependencies {
 
 //trenger dette for IntelliJ
 project.idea.module {
-    sourceDirs += sourceSets.main.xjc.schemas.collect { file("gen/main/xjc/${it.name}")}
+    sourceDirs += sourceSets.main.xjc.collect { file("gen/main/xjc/${it.name}") }
 }
 
 task zipSchemas(type: Zip) {

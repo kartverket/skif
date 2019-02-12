@@ -41,7 +41,7 @@ import org.testng.annotations.Test;
 import java.util.List;
 import java.util.Locale;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;

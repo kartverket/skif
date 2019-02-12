@@ -38,7 +38,7 @@ ear {
 }
 
 weblogicDeploy {
-  classpath = libraries.weblogic_tools
+  classpath = libraries.weblogic
   url(host: wls_deploy_hostname, port: wls_deploy_port, protocol: wls_deploy_protocol)
   targets = wls_deploy_targets
   username = wls_username

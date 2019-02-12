@@ -1,18 +1,20 @@
-apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+
+description = 'Inneholder Store funksjonalitet samt mulighet for remote service kall (via transitiv dependency skif-service-common)'
 
 configurations {
     testApi
 }
 
 dependencies {
-    compile project(':skif-service-common')
-    compile libraries.guava
+    api project(':skif-service-common')
+    implementation libraries.guava
 
-    testCompile project(':skif-config')
-    testCompile project(':skif-testsupport-common')
+    testImplementation project(':skif-config')
+    testImplementation project(':skif-testsupport-common')
 
-    testCompile libraries.reflections
+    testImplementation libraries.reflections
 
 }
 
@@ -24,18 +26,22 @@ task testJar(type: Jar) {
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
-    onlyIf { gradle.taskGraph.hasTask(install) || gradle.taskGraph.hasTask(uploadArchives) } //only when published..
 }
 
 artifacts {
     testApi testJar
-    archives sourcesJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+        }
+    }
 }
 
 task assertDependencies() {
-    //kjøres som en test
-    test.dependsOn it
-
     doFirst {
         configurations.runtime.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
             boolean godkjent = [ //liste over dependencies. For syntax se parsing under..
@@ -53,3 +59,4 @@ task assertDependencies() {
         }
     }
 }
+test.dependsOn assertDependencies //kjøres som en test

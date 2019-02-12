@@ -19,14 +19,14 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.hibernate.Session;
 import org.testng.annotations.Test;
 
 import java.util.Set;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Fail.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.*;
 
 /**

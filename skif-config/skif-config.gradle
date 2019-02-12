@@ -1,4 +1,4 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'sktools-filter-resources-plugin'
 
 sourceSets.main {
@@ -12,8 +12,6 @@ filterResources {
 }
 
 dependencies {
-    runtime libraries.weblogic_databinding
-    runtime libraries.jcl_to_slf4j
     runtime libraries.jul_to_slf4j
     runtime libraries.log4j_to_slf4j
     runtime libraries.logback_classic

@@ -55,37 +55,4 @@ public class StoreServiceImpl implements StoreService {
     public <I extends BubbleId<?>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
         return store.getVersionsForList(ids, start, end);
     }
-
-    @Override
-    public <I extends BubbleId<?>> boolean isLocked(I id) {
-        return store.isLocked(id);
-    }
-
-    @Override
-    public <T extends BubbleObject> T lock(BubbleId<? extends T> id) throws LockedException {
-        final T bubbleObject = store.lock(id);
-        store.ensureFullyLoaded(bubbleObject);
-        return bubbleObject;
-    }
-
-    @Override
-    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids) {
-        Collection<T> bubbleObjects = store.lock(ids);
-        // TODO: Opptimaliser for bulk
-        for (T bubbleObject : bubbleObjects) {
-            store.ensureFullyLoaded(bubbleObject);
-        }
-        return bubbleObjects;
-    }
-
-    @Override
-    public <I extends BubbleId<?>> void unlock(I id) {
-        store.unlock(id);
-    }
-
-    @Override
-    public void unlockForList(Collection<? extends BubbleId<?>> ids) {
-        store.unlock(ids);
-    }
-
 }

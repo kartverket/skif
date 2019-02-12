@@ -26,7 +26,7 @@ import java.util.*;
 
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactorManagerBundle;
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactoryBuilderWithHistory;
-import static org.fest.assertions.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.testng.Assert.assertEquals;
 
 /**

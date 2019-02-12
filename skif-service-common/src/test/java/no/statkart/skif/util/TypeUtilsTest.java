@@ -1,7 +1,7 @@
 package no.statkart.skif.util;
 
 import com.google.common.reflect.TypeToken;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.*;
@@ -37,6 +37,10 @@ public class TypeUtilsTest {
 
         TypeToken<?> subtype = TypeUtils.getSubtype(TypeToken.of(typeVariable), Integer.class);
         Assertions.assertThat(subtype.getType()).isEqualTo(Integer.class);
+
+        Assertions.assertThatThrownBy(() -> TypeUtils.getSubtype(TypeToken.of(typeVariable), String.class))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("class java.lang.String isn't a subclass of java.lang.Number");
     }
 
     /**
@@ -51,6 +55,10 @@ public class TypeUtilsTest {
 
         TypeToken<?> subtype = TypeUtils.getSubtype(TypeToken.of(wildcardType), Integer.class);
         Assertions.assertThat(subtype.getType()).isEqualTo(Integer.class);
+
+        Assertions.assertThatThrownBy(() -> TypeUtils.getSubtype(TypeToken.of(wildcardType), String.class))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("class java.lang.String isn't a subclass of java.lang.Number");
     }
 
     /**
@@ -65,6 +73,10 @@ public class TypeUtilsTest {
 
         TypeToken<?> subtype = TypeUtils.getSubtype(TypeToken.of(wildcardType), Integer.class);
         Assertions.assertThat(subtype.getType()).isEqualTo(Integer.class);
+
+        Assertions.assertThatThrownBy(() -> TypeUtils.getSubtype(TypeToken.of(wildcardType), String.class))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("class java.lang.String isn't a subclass of java.lang.Number");
     }
 
     @Test
@@ -86,7 +98,7 @@ public class TypeUtilsTest {
 
         TypeToken<?> typeToken = TypeToken.of(stringCollectionField.getGenericType());
         TypeToken<?> subtype = TypeUtils.getSubtype(typeToken, List.class);
-        Assertions.assertThat((TypeToken) subtype).isEqualTo(TypeToken.of(stringListField.getGenericType()));
+        Assertions.assertThat(subtype).isEqualTo(TypeToken.of(stringListField.getGenericType()));
     }
 
     /**
@@ -100,7 +112,7 @@ public class TypeUtilsTest {
 
         TypeToken<?> typeToken = TypeToken.of(stringStringFunctionField.getGenericType());
         TypeToken<?> subtype = TypeUtils.getSubtype(typeToken, UnaryOperator.class);
-        Assertions.assertThat((TypeToken) subtype).isEqualTo(TypeToken.of(stringUnaryOperatorField.getGenericType()));
+        Assertions.assertThat(subtype).isEqualTo(TypeToken.of(stringUnaryOperatorField.getGenericType()));
     }
 
     /**
@@ -114,7 +126,7 @@ public class TypeUtilsTest {
 
         TypeToken<?> typeToken = TypeToken.of(stringUnaryOperator2Field.getGenericType());
         TypeToken<?> subtype = TypeUtils.getSubtype(typeToken, StringOperator.class);
-        Assertions.assertThat((TypeToken) subtype).isEqualTo(TypeToken.of(stringOperatorField.getGenericType()));
+        Assertions.assertThat(subtype).isEqualTo(TypeToken.of(stringOperatorField.getGenericType()));
     }
 
     /**

@@ -74,6 +74,7 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
         addMapper(new BobleklasseTypeMapper());
         addMapper(new EndringstypeTypeMapper());
         addMapper(new ReturnerBoblerTypeMapper());
+        addMapper(new StoreBubbleTransferTypeMapper());
 
         // Endringer
         //addMapper(EndringTypeMapper.create(no.statkart.skif.storetest.wsapi.domain.endringslogg.Endring.class, Endring.class));
@@ -99,5 +100,8 @@ public class StoreTestMapper extends AbstractMapper<StoreTestMapping> {
                 return target;
             }
         });
+
+        addMapperFactory(new BubbleTransferTypeMapperFactory());
+        addMapperFactory(new TransferTypeMapperFactory());
     }
 }

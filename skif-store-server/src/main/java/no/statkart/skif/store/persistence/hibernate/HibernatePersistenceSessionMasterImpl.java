@@ -615,15 +615,9 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 if (elementType.isCollectionType()) {
                     throw new NotImplementedException("Map value kan ikke være collection");
                 } else if (elementType.isAssociationType()) {
-                    EntityPersister entityPersister = collectionPersister.getElementPersister();
-                    Type[] propertyTypes = entityPersister.getPropertyTypes();
-                    //noinspection ForLoopReplaceableByForEach
-                    for (int i = 0; i < propertyTypes.length; i++) {
-                        Type propertyType = propertyTypes[i];
-                        if (propertyType.isAssociationType() || propertyType.isComponentType()) {
-                            throw new NotImplementedException("Map value må være enkel verdi eller ett-nivå entity");
-                        }
-                    }
+                    return persistentCollection;
+                } else if (elementType.isComponentType()) {
+                    throw new NotImplementedException("Map value kan ikke være enkel verdi eller entity");
                 }
             }
             return persistentCollection;
@@ -740,7 +734,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             } else if (type.isCollectionType()) {
                 if (value instanceof Map) {
                     CollectionType collectionType = (CollectionType) type;
-                    checkEntityComponentsInMapOnInsert(collectionType, true);
+                    checkEntityComponentsInMapOnInsert(collectionType, (Map)value, processedObjects, cascadeStyle);
                 } else {
                     CollectionType collectionType = (CollectionType) type;
                     Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
@@ -773,7 +767,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                         // For hvert element
                         if (property instanceof Map) {
                             CollectionType collectionType = (CollectionType) propertyType;
-                            checkEntityComponentsInMapOnInsert(collectionType, true);
+                            checkEntityComponentsInMapOnInsert(collectionType, (Map) property,  processedObjects, cascadeStyle);
                         } else {
                             CollectionType collectionType = (CollectionType) propertyType;
                             Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
@@ -795,28 +789,24 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         }
     }
 
-    private void checkEntityComponentsInMapOnInsert(CollectionType collectionType, boolean cascade) {
+    private void checkEntityComponentsInMapOnInsert(CollectionType collectionType, Map value, IdentityHashMap<Object, Object> processedObjects, CascadeStyle cascadeStyle) {
         AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) session().getSessionFactory().getCollectionMetadata(collectionType.getRole());
 
         if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
             throw new ImplementationException("Key must be LiteralType");
         }
 
-        if (cascade) {
+        if (cascadeStyle.doCascade(CascadingAction.SAVE_UPDATE)) {
             // Sjekk at det ikke er noen collections inni her
             Type elementType = collectionPersister.getElementType();
             if (elementType.isCollectionType()) {
                 throw new NotImplementedException("Map value kan ikke være collection");
             } else if (elementType.isAssociationType()) {
-                EntityPersister entityPersister = collectionPersister.getElementPersister();
-                Type[] propertyTypes = entityPersister.getPropertyTypes();
-                //noinspection ForLoopReplaceableByForEach
-                for (int i = 0; i < propertyTypes.length; i++) {
-                    Type propertyType = propertyTypes[i];
-                    if (propertyType.isAssociationType() || propertyType.isComponentType()) {
-                        throw new NotImplementedException("Map value må være enkel verdi eller ett-nivå entity");
-                    }
+                for (Object o : value.values()) {
+                    checkForStolenEntitiesInNewObject(elementType, o, processedObjects, newlyInsertedComponents, cascadeStyle);
                 }
+            } else if (elementType.isComponentType()) {
+                throw new NotImplementedException("Map value må være enkel verdi eller entity");
             }
         }
     }

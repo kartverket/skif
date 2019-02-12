@@ -30,11 +30,18 @@ public class SkifException extends RuntimeException {
      * Constructor som må finnes i alle avledede klasser. Dette for å understøtte reflection.
      */
     public SkifException(String message, Throwable cause) {
-        this(message, cause, (Logger) null);
+        super(message, cause);
+    }
+
+    public SkifException(String message, Logger logger) {
+        super(message);
+        if (logger != null) {
+            logger.error(message);
+        }
     }
 
     public SkifException(String message) {
-        this(message, null);
+        super(message);
     }
 
 

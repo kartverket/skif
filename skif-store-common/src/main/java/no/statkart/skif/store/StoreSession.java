@@ -148,7 +148,7 @@ public interface StoreSession {
 
     <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject);
 
-    void register(BubbleTransfer bubbleTransfer);
+    void register(Transfer<?> transfer);
 
     /**
      * Henter ut en transfer med objekter som modifisert av inneværende eller av en underliggende session.

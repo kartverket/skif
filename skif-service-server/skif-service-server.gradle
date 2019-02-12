@@ -1,43 +1,30 @@
-apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 
-configurations {
-    tests
-}
+description = 'Inneholder service-rammeverk klasser for tjener'
 
 dependencies {
-    compile project(':skif-service-common')
+    api project(':skif-service-common')
 
-    compile libraries.guice_for_server
-    provided libraries.c3p0
+    provided libraries.jee
+    provided libraries.c3p0 // er kun brukt for intern testfunksjonalitet - burde kanskje ligge et annet sted
 
-    provided libraries.jdbc
-    provided libraries.weblogic
-
-    testCompile project(':skif-config')
-    testCompile project(':skif-testsupport-common')
-    testCompile project(path: ':skif-service-common', configuration: "testApi")
+    testImplementation project(':skif-config')
+    testImplementation project(':skif-testsupport-common')
+    testImplementation project(path: ':skif-service-common', configuration: 'testApi')
+    testImplementation libraries.jdbc
 }
 
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
-    onlyIf { gradle.taskGraph.hasTask(install) || gradle.taskGraph.hasTask(uploadArchives) } //only when published..
 }
 
-task testJar(type: Jar) {
-    classifier = 'tests'
-    from sourceSets.test.output
-}
-
-
-artifacts {
-    tests testJar
-    archives sourcesJar
-}
-
-def installer = install.repositories.mavenInstaller
-def deployer = uploadArchives.repositories.findByName('mavenDeployer')
-[installer, deployer]*.pom*.whenConfigured {pom ->
-    ((List) pom.dependencies).removeIf { dep -> dep.groupId == 'no.statkart.skif' && dep.artifactId == 'skif-service-common' && dep.scope == 'test' }
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+        }
+    }
 }

@@ -6,9 +6,11 @@ import no.statkart.skif.storetest.service.endringslogg.EndringsloggService;
 import no.statkart.skif.storetest.service.exceptiontest.ExceptionTestService;
 import no.statkart.skif.storetest.service.histtest.HistTestService;
 import no.statkart.skif.storetest.service.kodeliste.KodelisteService;
+import no.statkart.skif.storetest.service.lock.LockService;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
 import no.statkart.skif.storetest.service.store.StoreService;
+import no.statkart.skif.storetest.service.uow.UowTestService;
 
 import java.util.List;
 
@@ -24,9 +26,11 @@ public class StoreTestStoreServices implements ServicesListing {
     static {
         services = ImmutableList.of(
                 StoreService.class,
+                LockService.class,
                 KodelisteService.class,
                 HistTestService.class,
                 LockingTestService.class,
+                UowTestService.class,
                 ExceptionTestService.class,
                 EndringsloggService.class,
                 NedlastningService.class

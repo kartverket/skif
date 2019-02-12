@@ -2,6 +2,7 @@ package no.statkart.skif.wsversioning.config;
 
 import com.google.common.collect.ImmutableList;
 import no.statkart.skif.service.ServicesListing;
+import no.statkart.skif.wsversioning.service.LockService;
 import no.statkart.skif.wsversioning.service.StoreService;
 
 import java.util.List;
@@ -17,7 +18,8 @@ public class WSVersioningServicesV1 implements ServicesListing {
 
     static {
         services = ImmutableList.<Class<?>>of(
-                StoreService.class
+                StoreService.class,
+                LockService.class
         );
      }
 

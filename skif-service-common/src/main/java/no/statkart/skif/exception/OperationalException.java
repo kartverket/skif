@@ -11,37 +11,38 @@ import org.slf4j.Logger;
 public class OperationalException extends SystemException {
     private static final long serialVersionUID = 1L;
 
-    protected OperationalException(String message, Throwable cause, Logger logger) {
-        super(message, cause, logger);
-
+    private void init() {
         //setter standard feilkode og beskrivelse
         setFeilkode("OE000");
         setFeilkodebeskrivelse("Operasjonell feil");
+    }
+
+    protected OperationalException(String message, Throwable cause, Logger logger) {
+        super(message, cause, logger);
+        init();
     }
 
     /**
      * Conventional constructor
      */
     public OperationalException(String message, Throwable cause) {
-        this(message, cause, null);
+        super(message, cause);
+        init();
     }
 
-
-
-
     public OperationalException(String message) {
-        this(message, null, null);
+        super(message);
+        init();
     }
 
     public OperationalException(String message, Logger logger) {
-        this(message, null, logger);
+        super(message, logger);
+        init();
     }
 
     public OperationalException(Throwable throwable) {
-        this(null, throwable, null);
+        super(throwable);
+        init();
     }
-
-
-
 
 }

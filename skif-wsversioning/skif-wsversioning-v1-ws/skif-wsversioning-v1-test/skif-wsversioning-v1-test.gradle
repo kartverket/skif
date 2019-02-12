@@ -6,7 +6,7 @@ dependencies {
 
     provided project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wswar')
 
-    provided libraries.weblogic
+    provided libraries.jee
 
     testCompile project(':skif-testsupport-common')
     testRuntime project(':skif-config')

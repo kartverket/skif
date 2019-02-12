@@ -11,7 +11,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLong;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestKodelisteLongId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
-import no.statkart.skif.storetest.service.store.StoreService;
+import no.statkart.skif.storetest.service.lock.LockService;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.JDBCHelper;
@@ -21,7 +21,6 @@ import org.testng.annotations.Test;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 
@@ -40,7 +39,7 @@ public class DbKodelisteTest extends StoreTestTestCase {
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
 
     @Inject
-    private StoreService storeService;
+    private LockService lockService;
 
     @Inject
     private StoreUpdateService updateService;
@@ -59,32 +58,32 @@ public class DbKodelisteTest extends StoreTestTestCase {
             kodelisteForInsert.setKodeTypeNavn("Testkodeliste");
             kodelisteForInsert.setKodeIdClass(SimpleLocalizedDbKodeId.class); // Misbruker en kodeid
             kodelisteForInsert.setNavn(localizedNavn);
-            UnitOfWorkTransfer insertTransfer = new UnitOfWorkTransfer(Arrays.<BubbleObject>asList(kodelisteForInsert), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList());
+            UnitOfWorkTransfer insertTransfer = new UnitOfWorkTransfer(Collections.<BubbleObject>singletonList(kodelisteForInsert), Collections.emptyList(), Collections.emptyList());
             updateService.saveTransfer(insertTransfer);
 
             // Det finnes ikke historikk på kodelister
 //            List<? extends StoreTestKodelisteLongId<?>> postInsertVersions = storeService.getVersions(kodelisteId, SnapshotVersion.START, SnapshotVersion.CURRENT);
 //            Assert.assertEquals(postInsertVersions.size(), 1, "Antall historikkinnslag etter opprettelse");
 
-            StoreTestKodelisteLong kodelisteForUpdate = storeService.lock(kodelisteId);
+            StoreTestKodelisteLong kodelisteForUpdate = lockService.lock(kodelisteId);
             Assert.assertEquals(kodelisteForUpdate.getKodeTypeNavn(), "Testkodeliste", "Kodelistetype før oppdatering");
             Assert.assertEquals(kodelisteForUpdate.getNavn().getText(norsk), "Testkodeliste", "Kodelistenavn før oppdatering");
 
             LocalizedString navnForUpdate = kodelisteForUpdate.getNavn();
             navnForUpdate.setText(norsk, "Kodeliste for test");
             kodelisteForUpdate.setNavn(navnForUpdate);
-            UnitOfWorkTransfer updateTransfer = new UnitOfWorkTransfer(Collections.<BubbleObject>emptyList(), Arrays.<BubbleObject>asList(kodelisteForUpdate), Collections.<BubbleObject>emptyList());
+            UnitOfWorkTransfer updateTransfer = new UnitOfWorkTransfer(Collections.emptyList(), Collections.<BubbleObject>singletonList(kodelisteForUpdate), Collections.emptyList());
             updateService.saveTransfer(updateTransfer);
 
             // Det finnes ikke historikk på kodelister
 //            List<? extends StoreTestKodelisteLongId<?>> postUpdateVersions = storeService.getVersions(kodelisteId, SnapshotVersion.START, SnapshotVersion.CURRENT);
 //            Assert.assertEquals(postUpdateVersions.size(), 2, "Antall historikkinnslag etter oppdatering");
 
-            StoreTestKodelisteLong kodelisteForDelete = storeService.lock(kodelisteId);
+            StoreTestKodelisteLong kodelisteForDelete = lockService.lock(kodelisteId);
             Assert.assertEquals(kodelisteForDelete.getKodeTypeNavn(), "Testkodeliste", "Kodelistetype etter oppdatering");
             Assert.assertEquals(kodelisteForDelete.getNavn().getText(norsk), "Kodeliste for test", "Kodelistenavn etter oppdatering");
 
-            UnitOfWorkTransfer deleteTransfer = new UnitOfWorkTransfer(Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), Arrays.<BubbleObject>asList(kodelisteForDelete));
+            UnitOfWorkTransfer deleteTransfer = new UnitOfWorkTransfer(Collections.emptyList(), Collections.emptyList(), Collections.<BubbleObject>singletonList(kodelisteForDelete));
             updateService.saveTransfer(deleteTransfer);
 
             // Det finnes ikke historikk på kodelister

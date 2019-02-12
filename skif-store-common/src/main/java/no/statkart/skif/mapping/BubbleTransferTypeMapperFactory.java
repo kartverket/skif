@@ -26,7 +26,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
             // Sjekk om transfer er inline eller ikke
 
             TypeToken<?> transferTypeToken = ((TypeToken<? extends BubbleTransfer<?>>) domainTypeToken).getSupertype(BubbleTransfer.class);
-            Type transferType = transferTypeToken.getType();
+            final Type transferType = transferTypeToken.getType();
             final TypeToken<?> resultTypeToken;
             if (transferType instanceof Class) {
                 // Isj
@@ -35,10 +35,11 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
                 ParameterizedType parameterizedType = (ParameterizedType) transferType;
                 resultTypeToken = TypeToken.of(parameterizedType.getActualTypeArguments()[0]);
             }
+            final TypeToken<?> argTypeToken = TypeToken.of(domainTypeToken.getRawType()).resolveType(BubbleTransfer.class.getTypeParameters()[0]);
 
             Constructor<DomainT> transferConstructor;
             try {
-                transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(resultTypeToken.getRawType(), Iterable.class, Iterable.class);
+                transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(argTypeToken.getRawType(), Iterable.class, Iterable.class);
             } catch (NoSuchMethodException ignore) {
                 try {
                     // Første parameter er sannsynligvis Object pga. type erasure
@@ -81,7 +82,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
                     if (c.equals(getWsapiClass())) {
                         for (Iterator<Method> iterator = getters.iterator(); iterator.hasNext(); ) {
                             Method method = iterator.next();
-                            if (method.getName().equals("getBubbleObjects")) {
+                            if (method.getName().equals("getBubbleObjects") || method.getName().equals("getLockedIds")) {
                                 iterator.remove();
                             }
                         }
@@ -183,7 +184,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
 
         public ExternalTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<BubbleTransfer<ResultT>> domainTypeToken, TypeToken<ResultT> resultTypeToken, Constructor<DomainT> transferConstructor) {
             //noinspection unchecked
-            super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), Mapping.class);
+            super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class) domainTypeToken.getRawType(), Mapping.class);
             this.resultTypeToken = resultTypeToken;
             this.transferConstructor = transferConstructor;
 
@@ -191,7 +192,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
             PropertyDescriptor lockedIdsProperty = null;
             List<PropertyDescriptor> resultPropertyCandidates = new ArrayList<PropertyDescriptor>(1);
             try {
-                BeanInfo beanInfo = Introspector.getBeanInfo(getWsapiClass(), getWsapiClass().getSuperclass());
+                BeanInfo beanInfo = Introspector.getBeanInfo(getWsapiClass(), Object.class);
                 for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
                     if (propertyDescriptor.getName().equals("bubbleObjects")) {
                         bubbleObjectsProperty = propertyDescriptor;

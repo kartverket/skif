@@ -3,12 +3,8 @@ package no.statkart.skif.store.relation.cache;
 import com.google.common.collect.Lists;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -43,7 +39,7 @@ public class RelationTracker implements Serializable {
         final protected Object value;
 
         protected Operation(Object value) {
-            this.value = checkNotNull(value, "value");
+            this.value = Objects.requireNonNull(value, "value");
         }
 
         protected abstract Object applyTo(Object relation);

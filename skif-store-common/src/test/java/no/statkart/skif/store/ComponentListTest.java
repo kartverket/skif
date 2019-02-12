@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test av basisfunksjonalitet på {@link ComponentList}. Dette er ikke brukseksempler.

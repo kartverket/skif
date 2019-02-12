@@ -46,7 +46,7 @@ public interface IdService {
 
     /**
      * Nullstiller cachet sekvens. Neste kall til {@link #getNextIdValue} vil allokere en ny sekvensblokk. Ubrukte
-     * sekvensnumre vil gå tabt.
+     * sekvensnumre vil gå tapt.
      */
     void clear();
 

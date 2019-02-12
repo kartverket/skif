@@ -19,7 +19,7 @@ public class ApplicationException extends SkifException {
      * Conventional constructor
      */
     public ApplicationException(String message, Throwable cause) {
-        this(message, cause, null);
+        super(message, cause);
     }
 
     public ApplicationException(String message) {

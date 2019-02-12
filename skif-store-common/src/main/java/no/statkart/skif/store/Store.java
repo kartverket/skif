@@ -268,7 +268,7 @@ public interface Store {
      */
     void unlock(Collection<? extends BubbleId<?>> bubbleIds);
 
-    void register(BubbleTransfer transfer);
+    void register(Transfer<?> transfer);
 
     void registerTransfer(UnitOfWorkTransfer transfer);
 

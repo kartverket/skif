@@ -28,8 +28,8 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.SortedMap;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Fail.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.*;
 
 /**

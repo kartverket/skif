@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.multikobling.MultirefererendeKobling;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.StringList;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;

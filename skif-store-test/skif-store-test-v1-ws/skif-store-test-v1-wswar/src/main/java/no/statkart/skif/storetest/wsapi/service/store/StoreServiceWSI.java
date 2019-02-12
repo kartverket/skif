@@ -21,14 +21,4 @@ public interface StoreServiceWSI extends ServiceWSI {
 
     StoreTestBubbleIdToSnapshotBubbleIdsMap getVersionsForList(StoreTestBubbleIdList ids, Timestamp start, Timestamp end, StoreTestContext context) throws ServiceException;
 
-    StoreTestBubble lock(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
-
-    StoreTestBubbleList lockForList(StoreTestBubbleIdList ids, StoreTestContext context) throws ServiceException;
-
-    void unlock(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
-
-    void unlockForList(StoreTestBubbleIdList ids, StoreTestContext context) throws ServiceException;
-
-    boolean isLocked(StoreTestBubbleId id, StoreTestContext context) throws ServiceException;
-
 }

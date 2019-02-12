@@ -32,8 +32,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 

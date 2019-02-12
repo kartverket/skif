@@ -6,7 +6,6 @@ import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import java.io.Serializable;
 import java.util.Objects;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -99,7 +98,7 @@ public class InverseRelation<T> implements Serializable, Cloneable {
             checkState(isMaterialised(), "Bubble not registered in Store and cached relation value was not materialised");
             return cached;
         } else {
-            StoreRelationCache relationCache = checkNotNull(owner.store().getRelationCache());
+            StoreRelationCache relationCache = Objects.requireNonNull(owner.store().getRelationCache());
             return (T) owner.unwrap(relationCache.getRelationFinder(name, owner.store).call(owner.idAsSet()));
         }
     }

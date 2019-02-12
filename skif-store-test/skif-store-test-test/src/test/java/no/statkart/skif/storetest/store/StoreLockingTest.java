@@ -8,7 +8,7 @@ import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.UnitOfWorkTransfer;
-import no.statkart.skif.store.service.StoreService;
+import no.statkart.skif.store.service.LockService;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.basic.SubTypeWithCollection;
@@ -17,12 +17,12 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.hibernate.collection.PersistentSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tester låsing gjennom Store, i samspill med låsebehandlingen i transaksjonshåndteringen.
@@ -307,9 +307,9 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
         final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
 
         lockOnServer(simpleId1);
-        Assert.assertTrue(clientStore.getInstance(StoreService.class).isLocked(simpleId1), "Objekt ikke låst som forventet");
+        Assert.assertTrue(clientStore.getInstance(LockService.class).isLocked(simpleId1), "Objekt ikke låst som forventet");
         clientStore.unlock(simpleId1);
-        Assert.assertFalse(clientStore.getInstance(StoreService.class).isLocked(simpleId1), "Kall til unlock låser ikke opp på server");
+        Assert.assertFalse(clientStore.getInstance(LockService.class).isLocked(simpleId1), "Kall til unlock låser ikke opp på server");
     }
 
     private void lockOnServer(final SimpleId<?> simpleId1) {

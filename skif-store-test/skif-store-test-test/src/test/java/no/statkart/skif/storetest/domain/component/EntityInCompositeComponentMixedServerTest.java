@@ -12,13 +12,13 @@ import no.statkart.skif.storetest.mockup.BubbleWithEntityInCompositeComponentMoc
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
-import org.fest.assertions.core.Condition;
+import org.assertj.core.api.Condition;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Set;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.*;
 
 /**

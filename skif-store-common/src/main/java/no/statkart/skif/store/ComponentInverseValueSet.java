@@ -1,8 +1,8 @@
 package no.statkart.skif.store;
 
-import com.google.common.base.Preconditions;
 import no.statkart.skif.store.relation.cache.RelationName;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -17,7 +17,7 @@ public class ComponentInverseValueSet<O extends ComponentWithOwnerReference<?>&I
 
     public ComponentInverseValueSet(O owner, RelationName relationName, Set<E> delegate) {
         super(relationName, delegate);
-        this.owner = Preconditions.checkNotNull(owner);
+        this.owner = Objects.requireNonNull(owner);
     }
 
     @Override

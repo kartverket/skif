@@ -1,6 +1,5 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Singleton;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
@@ -26,17 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -146,7 +135,7 @@ public class EnumKodelisteManager {
                         fullResourceName = fullResourceName.replace('.', '/') + ".properties";
                         URL resourceUrl = getClass().getClassLoader().getResource(fullResourceName);
 
-                        Preconditions.checkNotNull(resourceUrl, "Property file not found: " + fullResourceName);
+                        Objects.requireNonNull(resourceUrl, "Property file not found: " + fullResourceName);
 
                         Properties properties = new Properties();
                         InputStream inputStream = resourceUrl.openStream();

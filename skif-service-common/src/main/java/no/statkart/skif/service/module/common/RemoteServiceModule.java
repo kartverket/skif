@@ -1,6 +1,5 @@
 package no.statkart.skif.service.module.common;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
 import com.google.inject.PrivateBinder;
 import com.google.inject.PrivateModule;
@@ -19,6 +18,7 @@ import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -26,7 +26,7 @@ import java.util.Set;
  * @since 2.0
  */
 public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleStrategy> {
-    protected final Set<Class<? extends Object>> services = new HashSet<Class<? extends Object>>();
+    protected final Set<Class<? extends Object>> services = new HashSet<>();
     protected final Mapping mapping;
     protected Class<? extends ServiceContextMapper<?>> serviceContextMapperClass;
     protected ExceptionMapping exceptionMapping;
@@ -38,9 +38,8 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
 
     public RemoteServiceModule(ModuleConfiguration configuration, Collection<Class<? extends Object>> services, Mapping mapping) {
         super(RemoteServiceModuleStrategy.class, configuration);
-        Preconditions.checkNotNull(mapping, "mapping");
         this.services.addAll(services);
-        this.mapping = mapping;
+        this.mapping = Objects.requireNonNull(mapping, "mapping");
     }
 
     public Mapping getMapping() {

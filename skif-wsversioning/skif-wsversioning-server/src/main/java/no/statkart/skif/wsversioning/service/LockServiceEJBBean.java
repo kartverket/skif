@@ -1,0 +1,57 @@
+package no.statkart.skif.wsversioning.service;
+
+import com.google.inject.Inject;
+import no.statkart.skif.service.annotation.EJBServiceChain;
+import no.statkart.skif.service.ejb.EJBTimedService;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.wsversioning.config.WSVersioningEJBInterceptorJEE;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * EJB for {@link LockService}.
+ *
+ * @author Tor Egil R. Strand
+ * @since 2.4.0
+ */
+@Stateless(name = "no.statkart.skif.wsversioning.service.LockServiceEJBBean")
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@Interceptors(WSVersioningEJBInterceptorJEE.class)
+public class LockServiceEJBBean extends EJBTimedService implements LockService {
+    @Inject
+    @EJBServiceChain
+    private LockService serviceChain;
+
+    @Override
+    public <T extends BubbleObject> T lock(BubbleId<? extends T> id) {
+        return serviceChain.lock(id);
+    }
+
+    @Override
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids) {
+        return serviceChain.lockForList(ids);
+    }
+
+    @Override
+    public <I extends BubbleId<?>> void unlock(I id) {
+        serviceChain.unlock(id);
+    }
+
+    @Override
+    public void unlockForList(Collection<? extends BubbleId<?>> ids) {
+        serviceChain.unlockForList(ids);
+    }
+
+    @Override
+    public <I extends BubbleId<?>> boolean isLocked(I id) {
+        return serviceChain.isLocked(id);
+    }
+}
