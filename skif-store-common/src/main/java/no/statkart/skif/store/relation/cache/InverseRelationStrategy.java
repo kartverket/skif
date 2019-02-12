@@ -63,7 +63,7 @@ public class InverseRelationStrategy extends RelationStrategy {
         Set<T> restOfInverseValues = Sets.newHashSet(inverseValues);
         restOfInverseValues.removeAll(mapOfResults.keySet());
 
-        for (T inverseValue : inverseValues) {
+        for (T inverseValue : restOfInverseValues) {
             RelationValueHolder cachedRelationValueHolder = cache.getRelationValueHolder(name, inverseValue);
             if (cachedRelationValueHolder != null) {
                 mapOfResults.put(inverseValue, cachedRelationValueHolder.getValue());
