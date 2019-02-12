@@ -112,7 +112,7 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     @Override
-    public void commitUnitOfWork(Map<BubbleId<?>, StoreEntry> modified) {
+    public void commitUnitOfWork(Map<BubbleId<?>, StoreEntry> modifiedAndLocked) {
         throw new ImplementationException("Commit of UnitOfWork directly against server is not supported, but must be done via getUnitOfWorkTransfer()");
     }
 
