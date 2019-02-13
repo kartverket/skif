@@ -2,6 +2,8 @@ package no.statkart.skif.store;
 
 import no.statkart.skif.exception.ImplementationException;
 
+import java.util.stream.Stream;
+
 /**
  * @author Henrik Fredholm
  * @since 2.1
@@ -18,30 +20,21 @@ public class StoreUnitOfWorkClient extends StoreUnitOfWork {
         }
 
         if (modifiedMap.size() > 0 && !getTransferHasBeenCalled) {
-            // Sjekk at det er kjørt insert, update eller delete på dem, og at de ikke bare er låst.
-            boolean allUnmodified = true;
-            for (StoreEntry storeEntry : modifiedMap.values()) {
-                StoreEntryState state = storeEntry.getState(level);
-                if (state != StoreEntryState.UNCHANGED) {
-                    allUnmodified = false;
-                }
-            }
-            if (!allUnmodified) {
-                throw new ImplementationException("Store contains modified objects. Call getUnitOfWorkTransfer() before calling endUnitOfWork()");
-            }
+            throw new ImplementationException("Store contains modified objects. Call getUnitOfWorkTransfer() before calling endUnitOfWork()");
         }
-        for (StoreEntry storeEntry : modifiedMap.values()) {
-            if (storeEntry.getLoadedByLevel() == level) {
-                // Entry skal fjernes. Gjøres gjennom kall til evictEntry frem fra direkte remove fra storeCache slik at stale kopi i StoreClientReadCache også fjernes
-                storeEntry.setState(level, StoreEntryState.UNCHANGED);
-                storeEntry.unlock(level);
-                wrappedStoreSession.evictEntry(level, storeEntry.getId());
-            } else {
-               storeEntry.clear(level);
-            }
+        Stream.concat(modifiedMap.values().stream(), lockedMap.values().stream())
+                .forEach(storeEntry -> {
+                    if (storeEntry.getLoadedByLevel() == level) {
+                        // Entry skal fjernes. Gjøres gjennom kall til evictEntry frem fra direkte remove fra storeCache slik at stale kopi i StoreClientReadCache også fjernes
+                        storeEntry.setState(level, StoreEntryState.UNCHANGED);
+                        storeEntry.unlock(level);
+                        wrappedStoreSession.evictEntry(level, storeEntry.getId());
+                    } else {
+                        storeEntry.clear(level);
+                    }
 
-            storeEntry.lockCreatedByLevel=0;
-        }
+                    storeEntry.lockCreatedByLevel = 0;
+                });
         modifiedMap.clear();
         markModified();
         return wrappedStoreSession;
