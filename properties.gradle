@@ -1,0 +1,63 @@
+def defaultProperties = [
+        base_version          : '2.11',
+        sub_version           : '-SNAPSHOT',
+
+        hibernateVersion      : '3.6',
+
+        service_mode          : 'SINGLE_VM',
+
+        'skif.server_username': '<not set>',
+        'skif.server_password': '<not set>',
+        'skif.server_url'     : "https://${-> wls_server}",
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Database configuration
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        db_username           : '<not set>',
+        db_password           : "${-> db_username}",
+        db_service            : '<not set>',
+        db_hostname           : '<not set>',
+        db_port               : 1521,
+        db_datasource         : 'no.kartverket.skif.storetest.persistence.SkifStoreTest_DS',
+        db_datasource_old     : 'no.kartverket.skif.storetest.persistence.SkifStoreTestOld_DS',
+        db_dataroot_dir       : 'G:\\ORADATA\\MA04TST',
+
+        db_lock_tablename     : 'LOCKINFO',
+        db_sequence_tablename : 'TABLESEQUENCE',
+
+// Systembruker/password som brukes ved database administrasjon, create.user, export/import etc.    cd
+        admin_db_username     : 'SYSTEM',
+        admin_db_password     : 'MATRIKKELADM',
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Application server configuration - weblogic
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        wls_username          : 'admmatr',
+        wls_password          : 'matrikkeladm1',
+
+        wls_hostname          : "${-> LOCALHOSTNAME}",
+        wls_port              : 7001,
+        wls_sport             : 7002,
+        wls_server            : "${-> wls_hostname}:${-> wls_sport}",
+
+        wls_deploy_targets    : 'AdminServer',
+        wls_deploy_hostname   : "${-> wls_hostname}",
+        wls_deploy_protocol   : 'http',
+        wls_deploy_port       : "${-> wls_port}",
+]
+
+defaultProperties.each { key, value ->
+    if (!project.hasProperty(key)) {
+        project.ext.set(key, value)
+    }
+}
+
+task showProperties {
+    doLast {
+        println 'version: ' + project.version
+        println '---'
+        defaultProperties.each { key, value ->
+            println key + ': ' + project.getProperty(key)
+        }
+    }
+}

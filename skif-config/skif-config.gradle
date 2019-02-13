@@ -6,8 +6,26 @@ sourceSets.main {
 }
 
 filterResources {
-    Map filterProperties = propertyUtils.fromFile("${project.name}-filter.properties") << gradle.startParameter.projectProperties
-    propertyUtils.expandProperties(filterProperties)
+    Map filterProperties = [
+            service_mode: service_mode as String,
+
+            'skif.server_username': project.property('skif.server_username') as String,
+            'skif.server_password': project.property('skif.server_password') as String,
+            'skif.server_url': project.property('skif.server_url') as String,
+
+            db_username: db_username as String,
+            db_password: db_password as String,
+            db_hostname: db_hostname as String,
+            db_port: db_port as String,
+            db_service: db_service as String,
+            db_datasource: db_datasource as String,
+            db_datasource_old: db_datasource_old as String,
+
+            db_lock_tablename: db_lock_tablename as String,
+            db_sequence_tablename: db_sequence_tablename as String,
+
+            hibernateVersion: hibernateVersion as String,
+    ]
     properties filterProperties
 }
 
