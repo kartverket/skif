@@ -47,7 +47,7 @@ pipeline {
             step([$class: 'Publisher', reportFilenamePattern: '**/build/reports/tests/testng-results.xml'])
         }
         success {
-            echo "Husk å kjøre 'git tag ${SKIF_VERSION} ${env.GIT_COMMIT}'"
+            echo "Husk å kjøre 'git tag -a ${SKIF_VERSION} -m ${SKIF_VERSION} ${env.GIT_COMMIT}'"
         }
     }
 }
