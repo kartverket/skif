@@ -16,10 +16,3 @@ sourceSets {
 dependencies {
     jaxb libraries.jaxb_xjc
 }
-
-//trenger dette for IntelliJ
-project.idea.module {
-    sourceDirs += sourceSets.main.xjc.collect { file("gen/main/xjc/${it.name}") }
-}
-
-
