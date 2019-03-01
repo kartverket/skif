@@ -3,8 +3,10 @@ package no.statkart.skif.skiftest.service.test.tutorial;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
+import com.google.inject.util.Modules;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.service.SingleVmServer;
 import no.statkart.skif.service.annotation.Implementation;
@@ -21,9 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Denne tutorial inneholder kode som viser en alternativ måte å bruke multibinding på for å binde opp
- * ProxyHandlere i en kjede via OrdereType klassen. ServiceProvider klassen som brukes i SKIF bruker ikke OrderedType
- * klassen (men kunne kanskje med fordel ha gjort det) slik det er vist her.
+ * Denne tutorial viser hvordan Guice moduler brukes til å binde forskjellige typer for proxykjeder for services via
+ * SKIFs {@code ServiceProvider} og {@code ProxyHandler} klasser.
  */
 @Test(groups = "server-required")
 public class TutorialPart5_ServiceModuleTest {
@@ -34,15 +35,15 @@ public class TutorialPart5_ServiceModuleTest {
         @Override
         protected void configure() {
             bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
-            bind(MyService.class).toProvider(new TypeLiteral<ServiceProvider<MyService>>() {
-            });
+            bind(MyService.class).toProvider(new TypeLiteral<ServiceProvider<MyService>>() {});
             Multibinder<CallServiceChainFactory<MyService>> multibinder
-                    = Multibinder.newSetBinder(binder(), new TypeLiteral<CallServiceChainFactory<MyService>>() {
-            });
-            multibinder.addBinding().toProvider(new CallServiceChainFactoryProvider<>(new TypeLiteral<ToImplementationProxyHandler<MyService>>() {
-            }, 0));
-            multibinder.addBinding().toProvider(new CallServiceChainFactoryProvider<>(new TypeLiteral<ExceptionCountingProxyHandler<MyService>>() {
-            }, 1));
+                    = Multibinder.newSetBinder(binder(), new TypeLiteral<CallServiceChainFactory<MyService>>() {});
+            multibinder.addBinding().toProvider(
+                    new CallServiceChainFactoryProvider<>(
+                            new TypeLiteral<ToImplementationProxyHandler<MyService>>() {}, 0));
+            multibinder.addBinding().toProvider(
+                    new CallServiceChainFactoryProvider<>(
+                            new TypeLiteral<ExceptionCountingProxyHandler<MyService>>() {}, 1));
         }
     }
 
@@ -51,10 +52,10 @@ public class TutorialPart5_ServiceModuleTest {
         @Override
         protected void configure() {
             Multibinder<CallServiceChainFactory<MyService>> multibinder
-                    = Multibinder.newSetBinder(binder(), new TypeLiteral<CallServiceChainFactory<MyService>>() {
-            });
-            multibinder.addBinding().toProvider(new CallServiceChainFactoryProvider<>(new TypeLiteral<CallCountingProxyHandler<MyService>>() {
-            }, 0.5f));
+                    = Multibinder.newSetBinder(binder(), new TypeLiteral<CallServiceChainFactory<MyService>>() {});
+            multibinder.addBinding().toProvider(
+                    new CallServiceChainFactoryProvider<>(
+                            new TypeLiteral<CallCountingProxyHandler<MyService>>() {}, 0.5f));
         }
     }
 
@@ -80,7 +81,7 @@ public class TutorialPart5_ServiceModuleTest {
 
 
     static class ServiceModule extends AbstractModule {
-        protected final Set<Class<?>> services = new HashSet<>();
+        final Set<Class<?>> services = new HashSet<>();
 
         ServiceModule(Class<?>... services) {
             this.services.addAll(Arrays.asList(services));
@@ -106,16 +107,9 @@ public class TutorialPart5_ServiceModuleTest {
             //bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
             bind(service).annotatedWith(Implementation.class).to(getImplementation(service));
             //bind(MyService.class).toProvider(new TypeLiteral<ServiceProvider<MyService>>() {});
-            TypeLiteral<ServiceProvider<S>> callChainProxyHandlerType = SkifUtil.typeLiteral(ServiceProvider.class, service);
+            TypeLiteral<ServiceProvider<S>> callChainProxyHandlerType =
+                    SkifUtil.typeLiteral(ServiceProvider.class, service);
             bind(service).toProvider(callChainProxyHandlerType);
-            //Multibinder<CallServiceChainFactory<MyService>> multibinder
-            //      = Multibinder.newSetBinder(binder(), new TypeLiteral<CallServiceChainFactory<MyService>>() {});
-            TypeLiteral<CallServiceChainFactory<S>> callServiceChainFactoryType = SkifUtil.typeLiteral(CallServiceChainFactory.class, service);
-            Multibinder<CallServiceChainFactory<S>> multibinder
-                    = Multibinder.newSetBinder(binder(), callServiceChainFactoryType);
-            //multibinder.addBinding().toProvider(new CallServiceChainFactoryProvider<>(new TypeLiteral<ToImplementationProxyHandler<MyService>>() {}, 0));
-            TypeLiteral<ProxyHandler<S>> implProxyHandlerType = SkifUtil.typeLiteral(ToImplementationProxyHandler.class, service);
-            multibinder.addBinding().toProvider(new CallServiceChainFactoryProvider<>(implProxyHandlerType, 0));
         }
     }
 
@@ -140,7 +134,8 @@ public class TutorialPart5_ServiceModuleTest {
         private <S> void bindProxyHandlerToService(Class<S> service) {
             //Multibinder<CallServiceChainFactory<MyService>> multibinder
             //        = Multibinder.newSetBinder(binder(), new TypeLiteral<CallServiceChainFactory<MyService>>() {});
-            TypeLiteral<CallServiceChainFactory<S>> callServiceChainFactoryType = SkifUtil.typeLiteral(CallServiceChainFactory.class, service);
+            TypeLiteral<CallServiceChainFactory<S>> callServiceChainFactoryType =
+                    SkifUtil.typeLiteral(CallServiceChainFactory.class, service);
             Multibinder<CallServiceChainFactory<S>> multibinder
                     = Multibinder.newSetBinder(binder(), callServiceChainFactoryType);
             //multibinder.addBinding().toProvider(new CallServiceChainFactoryProvider<>(new TypeLiteral<CallCountingProxyHandler<MyService>>() {}, 0.5f));
@@ -165,6 +160,7 @@ public class TutorialPart5_ServiceModuleTest {
     public void myServiceUsingGeneralizedModules() {
         Injector injector = Guice.createInjector(
                 new ServiceModule(MyService.class),
+                new ProxyHandlerModule(ToImplementationProxyHandler.class, 0, MyService.class),
                 new ProxyHandlerModule(CallCountingProxyHandler.class, 0.5f, MyService.class),
                 new ProxyHandlerModule(ExceptionCountingProxyHandler.class, 1.0f, MyService.class));
         MyService myService = injector.getInstance(MyService.class);
@@ -189,6 +185,7 @@ public class TutorialPart5_ServiceModuleTest {
     public void multipleServicesUsingGeneralizedModules() {
         Injector injector = Guice.createInjector(
                 new ServiceModule(MyService.class, AnotherService.class),
+                new ProxyHandlerModule(ToImplementationProxyHandler.class, 0, MyService.class, AnotherService.class),
                 new ProxyHandlerModule(CallCountingProxyHandler.class, 0.5f, MyService.class, AnotherService.class),
                 new ProxyHandlerModule(ExceptionCountingProxyHandler.class, 1.0f, MyService.class)); // AnotherServer trenger ikke denne
         MyService myService = injector.getInstance(MyService.class);
@@ -228,6 +225,7 @@ public class TutorialPart5_ServiceModuleTest {
                     }
                 },
                 new ServiceModule(MyService.class),
+                new ProxyHandlerModule(ToImplementationProxyHandler.class, 0, MyService.class),
                 new ProxyHandlerModule(UserProxyHandler.class, 0.5f, MyService.class));
         MyService myService = injector.getInstance(MyService.class);
         DefaultUser user = injector.getInstance(DefaultUser.class); // Her brukes DefautlUser, ikke User
@@ -243,42 +241,51 @@ public class TutorialPart5_ServiceModuleTest {
      * For SingleVm trenger vi to injectors, en for klienten og en for serveren. Når vi er i klient mode bruker vi
      * klient injectoren til å hente ut services. Når vi er i server mode bruker vi server injectoren til å hente ut
      * services. Når vi kaller en tjeneste på klienten så er forwarder den kallet videre til servicen på serveren.
+     * Dvs., klienten må vite som serveren for å kunne gjøre dette. Derfor binnes {@code SingleVmServer} klassen opp
+     * i klient injectoren med link til server injectoren. Klassen {@code SingleVmServer} kan da injectes i {@code
+     * ToServerProxyHandler}. Legg merke til at dette er en {@code TerminatingProxyHandler}. Det er fordi
+     * den avslutter proxy kjeden.
+     * <pre>{@code
+     *   public class ToServerProxyHandler<S> extends TerminatingProxyHandler<S> {
+     *     final private TypeLiteral<S> serviceType;
+     *     final private SingleVmServer singleVmServer;
+     *
+     *     @Inject
+     *     public ToServerProxyHandler(TypeLiteral<S> serviceType, SingleVmServer singleVmServer) {
+     *         this.serviceType = serviceType;
+     *         this.singleVmServer = singleVmServer;
+     *     }
+     *     ...
+     * }
+     * </pre>
+     * Konfigurasjon som er felles kan legges i en common modul.
      */
-    void test() {
+    public void singleVmEksempel() {
 
-        AbstractModule commonModule = new AbstractModule() {
-            protected void configure() {
-            }
-        };
+        Module commonModule = Modules.combine(
+                new ServiceModule(MyService.class),
+                new ProxyHandlerModule(CallCountingProxyHandler.class, 1, MyService.class)
+        );
 
         Injector serverInjector = Guice.createInjector(
-                new ServiceModule(MyService.class),
+                new ProxyHandlerModule(ToImplementationProxyHandler.class, 0, MyService.class),
+                new ProxyHandlerModule(OnServerProxyHandler.class, 10, MyService.class),
                 commonModule);
 
         final SingleVmServer singleVmServer = new SingleVmServer(serverInjector);
 
         Injector clientInjector = Guice.createInjector(
                 new AbstractModule() {
-                    @Override
                     protected void configure() {
                         bind(SingleVmServer.class).toInstance(singleVmServer);
                     }
                 },
-                new RemoteServiceModule(),
+                new ProxyHandlerModule(ToServerProxyHandler.class, 0, MyService.class),
+                new ProxyHandlerModule(OnClientProxyHandler.class, 10, MyService.class),
                 commonModule);
 
-
-    }
-
-    static class RemoteServiceModule extends AbstractModule {
-        protected final Set<Class<?>> services = new HashSet<>();
-
-        RemoteServiceModule(Class<?>... services) {
-            this.services.addAll(Arrays.asList(services));
-        }
-        protected void configure() {
-
-        }
+        MyService clientService = clientInjector.getInstance(MyService.class);
+        clientService.myMethod(new A(10), new B(5));
     }
 }
 
