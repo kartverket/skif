@@ -11,6 +11,7 @@ import com.google.inject.multibindings.Multibinder;
 import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.provider.ServiceProvider;
+import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import org.testng.annotations.Test;
 
@@ -274,6 +275,44 @@ public class TutorialPart4_GuiceServiceProviderTest {
                     }
                 });
 
+        MyService myService = injector.getInstance(MyService.class);
+        assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
+        assertThatThrownBy(() -> myService.myMethod(new A(5 /*error here*/), new B(2))).isInstanceOf(MyException.class);
+    }
+
+    /**
+     * Tilsvarende som eksemplet over, men her brukes en {@code ServiceProvider} klasse som er basert på {@code OrderedType} klassen
+     * i stedet for {@code CallServiceChainFactoryProvider} klassen. Denne koden er kanskje enklere å forstå pga. et bedre
+     * klassenavn og litt anderledes intern implementasjon. Bemerk dog, at selve koden for å binne opp en service er strukturell
+     * identisk.
+     * <p>
+     * Her brukes klassen {@code OrderedTypeServiceProvider} til å binde opp en {@code Service} med
+     * sortert rekkefølge av {@code ProxyHenlder}e som angis via multibinder og {@code OrderedType}.
+     * <pre>
+     * {@code servicecall -> ExceptionCountingProxyHandler -> CallCountingProxyHandler -> LogHelloProxyHandler -> ToImplementationProxyHandler -> Implementation}
+     * </pre>
+     */
+    public void myServiceUsingGuiceOrderedMultibinderBasedProxyHandlerProvider() {
+        Injector injector = Guice.createInjector(
+                new AbstractModule() {
+                    protected void configure() {
+                        bind(MyService.class).annotatedWith(Implementation.class).to(MyServiceImpl.class);
+                        bind(MyService.class).toProvider(new TypeLiteral<OrderedTypeServiceProvider<MyService>>() {});
+                        Multibinder<OrderedType<ProxyHandler<MyService>>> multibinder
+                                = Multibinder.newSetBinder(binder(), new TypeLiteral<OrderedType<ProxyHandler<MyService>>>() {});
+                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<ToImplementationProxyHandler<MyService>>() {}, 0));
+                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<CallCountingProxyHandler<MyService>>() {}, 1));
+                    }
+                },
+                new AbstractModule() {
+                    protected void configure() {
+                        Multibinder<OrderedType<ChainedProxyHandler<MyService>>> multibinder
+                                = Multibinder.newSetBinder(binder(), new TypeLiteral<OrderedType<ChainedProxyHandler<MyService>>>() {});
+                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<ExceptionCountingProxyHandler<MyService>>() {}, 2));
+                        multibinder.addBinding().toInstance(new OrderedType<>(new TypeLiteral<LogHelloProxyHandler<MyService>>() {}, 0.5f)); // Legges inn rett etter proxy som kaller implementasjon.
+                    }
+
+                });
         MyService myService = injector.getInstance(MyService.class);
         assertThat(myService.myMethod(new A(4), new B(2))).isEqualTo(new C(6, 2));
         assertThatThrownBy(() -> myService.myMethod(new A(5 /*error here*/), new B(2))).isInstanceOf(MyException.class);

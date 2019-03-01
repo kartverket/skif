@@ -14,7 +14,7 @@ public class CallCountingProxyHandler<S> extends ChainedProxyHandler<S> {
             return chained.invoke(proxy, method, args);
         } finally {
             int i = counter.incrementAndGet();
-            System.out.println("CallCountingHandler: " + i);
+            System.out.println("CallCountingHandler<" + method.getDeclaringClass().getSimpleName() + ">: " + i);
         }
     }
 

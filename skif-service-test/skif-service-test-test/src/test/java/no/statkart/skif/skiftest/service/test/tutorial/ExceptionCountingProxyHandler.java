@@ -15,7 +15,7 @@ public class ExceptionCountingProxyHandler<S> extends ChainedProxyHandler<S> {
             counter.incrementAndGet();
             throw e;
         } finally {
-            System.out.println("ExceptionCountingHandler: " + counter.get());
+            System.out.println("ExceptionCountingHandler<" + method.getDeclaringClass().getSimpleName() + ">: " + counter.get());
         }
     }
 
