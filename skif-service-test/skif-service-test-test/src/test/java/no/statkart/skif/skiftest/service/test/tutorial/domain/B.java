@@ -1,9 +1,9 @@
-package no.statkart.skif.skiftest.service.test.tutorial;
+package no.statkart.skif.skiftest.service.test.tutorial.domain;
 
-class B {
-    int y;
+public class B {
+    public int y;
 
-    B(int y) {
+    public B(int y) {
         this.y = y;
     }
 

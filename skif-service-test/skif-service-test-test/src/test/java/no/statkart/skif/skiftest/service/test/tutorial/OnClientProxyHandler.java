@@ -17,10 +17,10 @@ public class OnClientProxyHandler<S> extends ChainedProxyHandler<S> {
     @Override
     protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         try {
-            System.out.println("OnClientProxyHandler<" + type.getRawType().getSimpleName() + ">." + method.getName() + "- Begin");
+            System.out.println("OnClientProxyHandler<" + type.getRawType().getName() + ">." + method.getName() + "- Begin");
             return chained.invoke(proxy, method, args);
         } finally {
-            System.out.println("OnClientProxyHandler<" + type.getRawType().getSimpleName() + ">." + method.getName() + "- End");
+            System.out.println("OnClientProxyHandler<" + type.getRawType().getName() + ">." + method.getName() + "- End");
         }
     }
 

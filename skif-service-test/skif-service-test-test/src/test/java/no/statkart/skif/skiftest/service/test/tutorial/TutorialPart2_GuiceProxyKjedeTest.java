@@ -10,6 +10,9 @@ import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.A;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.B;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.C;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationTargetException;

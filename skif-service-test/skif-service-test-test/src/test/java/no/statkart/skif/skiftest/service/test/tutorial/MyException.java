@@ -1,5 +1,8 @@
 package no.statkart.skif.skiftest.service.test.tutorial;
 
+import no.statkart.skif.skiftest.service.test.tutorial.domain.A;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.B;
+
 public class MyException extends RuntimeException {
     private A a; private B b;
     public MyException(String s, A a, B b) {

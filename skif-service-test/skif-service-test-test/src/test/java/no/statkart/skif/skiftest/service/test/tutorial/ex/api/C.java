@@ -1,11 +1,13 @@
-package no.statkart.skif.skiftest.service.test.tutorial;
+package no.statkart.skif.skiftest.service.test.tutorial.ex.api;
 
 import java.util.Objects;
 
-class C {
-    int sum, broek;
+public class C {
+    private int sum, broek;
 
-    C(int sum, int broek) {
+    public C() {}
+
+    public C(int sum, int broek) {
         this.sum = sum;
         this.broek = broek;
     }
@@ -16,6 +18,15 @@ class C {
 
     public C setSum(int sum) {
         this.sum = sum;
+        return this;
+    }
+
+    public int getBroek() {
+        return broek;
+    }
+
+    public C setBroek(int broek) {
+        this.broek = broek;
         return this;
     }
 

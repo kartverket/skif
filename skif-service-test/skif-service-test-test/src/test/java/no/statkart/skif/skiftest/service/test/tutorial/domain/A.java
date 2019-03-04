@@ -1,11 +1,11 @@
-package no.statkart.skif.skiftest.service.test.tutorial;
+package no.statkart.skif.skiftest.service.test.tutorial.domain;
 
 import java.util.Objects;
 
-class A {
-    int x;
+public class A {
+    public int x;
 
-    A(int x) {
+    public A(int x) {
         this.x = x;
     }
 

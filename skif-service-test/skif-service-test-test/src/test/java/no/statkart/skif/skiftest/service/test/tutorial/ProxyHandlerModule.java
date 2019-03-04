@@ -13,10 +13,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ProxyHandlerModule extends AbstractModule {
+    public static Class ServicePlaceholder = new TypeLiteral<Object>(){}.getRawType();
     private final Class<? extends ProxyHandler> proxyHandler;
     private float order;
     private final Set<Class<?>> services = new HashSet<>();
-
     public ProxyHandlerModule(Class<? extends ProxyHandler> proxyHandler, float order, Class<?>... services) {
         this(proxyHandler, order, Arrays.asList(services));
     }
@@ -26,6 +26,7 @@ public class ProxyHandlerModule extends AbstractModule {
         this.order = order;
         this.services.addAll(services);
     }
+
     @Override
     protected void configure() {
         for (Class<? extends Object> service : services) {

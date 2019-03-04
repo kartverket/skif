@@ -13,6 +13,9 @@ import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.provider.ServiceProvider;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.A;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.B;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.C;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
@@ -28,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *  Tester som demonstrerer hvordan Guice brukes til å opprette en service som bruker SKIF ServiceProvider til
  *  å legge på en eller flere ProxyHandlere og hvordan kejden av ProxyHandlere kan utvides ved å legge til
  *  ekstra moduler.
- *
  *
  */
 @Test(groups = "server-required")

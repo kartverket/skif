@@ -13,6 +13,9 @@ import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.provider.ServiceProvider;
 import no.statkart.skif.service.proxy.ProxyHandler;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.A;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.B;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.C;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -25,9 +28,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * Denne tutorial viser hvordan Guice moduler brukes til å binde forskjellige typer for proxykjeder for services via
  * SKIFs {@code ServiceProvider} og {@code ProxyHandler} klasser.
+ *
+ * For bedre å forstå koden så husk på følgende:
+ * <ul>
+ *     <li>Hvis en service skal ha en proxykjede så brukes en {@code ServiceProvider}</li>
+ *     <li>Proxykjede konfigures vha Guice multibinder for {@code CallServiceChainFactory}</li>
+ *     <li>Vi bruker {@code @Implementation} for å binne avsluttende proxykjedeledd {@code ToImplementationProxyHandler}
+ *     til serviceimplementasjon som skal anvendes.</li>
+ * </ul>
  */
 @Test(groups = "server-required")
-public class TutorialPart5_ServiceModuleTest {
+public class TutorialPart5_GuiceServiceModuleTest {
 
 
     static class MyServiceModule extends AbstractModule {

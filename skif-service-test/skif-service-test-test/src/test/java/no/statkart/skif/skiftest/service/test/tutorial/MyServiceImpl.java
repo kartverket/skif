@@ -1,6 +1,9 @@
 package no.statkart.skif.skiftest.service.test.tutorial;
 
 import com.google.common.base.Preconditions;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.A;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.B;
+import no.statkart.skif.skiftest.service.test.tutorial.domain.C;
 
 class MyServiceImpl implements MyService {
 
