@@ -21,6 +21,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.CopyHelper;
+import org.assertj.core.api.Assertions;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -973,6 +974,308 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 return null;
             }
         });
+    }
+
+    /**
+     * Tester at det er rekkefølgen objektene oppdateres som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
+     * rekkefølgen objektene låses i.
+     */
+    @SuppressWarnings("Duplicates")
+    public void testLockUpdateSequence() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        final SimpleId<?> simple2Id = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+
+        // Test for Klient
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            Simple simpleLocked1 = clientStore.lock(simple1Id);
+            Simple simpleLocked2 = clientStore.lock(simple2Id);
+            clientStore.update(simpleLocked2);
+            clientStore.update(simpleLocked1);
+
+            UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
+            Assertions.assertThat(unitOfWorkTransfer.getUpdatedObjects())
+                    .containsExactly(simpleLocked2, simpleLocked1);
+
+            clientStore.abortUnitOfWork(unitOfWork);
+        }
+
+        // Test for Server
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            StoreServer serverStore;
+
+            public Object run() {
+                try (UnitOfWork unitOfWork = serverStore.beginUnitOfWork()) {
+                    Simple simpleLocked1 = serverStore.lock(simple1Id);
+                    Simple simpleLocked2 = serverStore.lock(simple2Id);
+                    serverStore.update(simpleLocked2);
+                    serverStore.update(simpleLocked1);
+
+                    UnitOfWorkTransfer unitOfWorkTransfer = serverStore.getUnitOfWorkTransfer();
+                    Assertions.assertThat(unitOfWorkTransfer.getUpdatedObjects())
+                            .containsExactly(simpleLocked2, simpleLocked1);
+
+                    serverStore.abortUnitOfWork(unitOfWork);
+                }
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Tester at det er rekkefølgen objektene oppdateres som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
+     * rekkefølgen objektene låses i, men at påfølgende oppdateringer ikke endrer rekkefølgen.
+     */
+    @SuppressWarnings("Duplicates")
+    public void testLockUpdateSequence_multipleUpdates() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        final SimpleId<?> simple2Id = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+
+        // Test for Klient
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            Simple simpleLocked1 = clientStore.lock(simple1Id);
+            Simple simpleLocked2 = clientStore.lock(simple2Id);
+            clientStore.update(simpleLocked2);
+            clientStore.update(simpleLocked1);
+            clientStore.update(simpleLocked2);
+
+            UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
+            Assertions.assertThat(unitOfWorkTransfer.getUpdatedObjects())
+                    .containsExactly(simpleLocked2, simpleLocked1);
+
+            clientStore.abortUnitOfWork(unitOfWork);
+        }
+
+        // Test for Server
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            StoreServer serverStore;
+
+            public Object run() {
+                try (UnitOfWork unitOfWork = serverStore.beginUnitOfWork()) {
+                    Simple simpleLocked1 = serverStore.lock(simple1Id);
+                    Simple simpleLocked2 = serverStore.lock(simple2Id);
+                    serverStore.update(simpleLocked2);
+                    serverStore.update(simpleLocked1);
+                    serverStore.update(simpleLocked2);
+
+                    UnitOfWorkTransfer unitOfWorkTransfer = serverStore.getUnitOfWorkTransfer();
+                    Assertions.assertThat(unitOfWorkTransfer.getUpdatedObjects())
+                            .containsExactly(simpleLocked2, simpleLocked1);
+
+                    serverStore.abortUnitOfWork(unitOfWork);
+                }
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Tester at det er rekkefølgen objektene oppdateres som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
+     * rekkefølgen objektene låses i.
+     */
+    @SuppressWarnings("Duplicates")
+    public void testLockUpdateSequence_nestedUnitOfWork() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        final SimpleId<?> simple2Id = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+
+        // Test for Klient
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            Simple simpleLocked1 = clientStore.lock(simple1Id);
+            Simple simpleLocked2 = clientStore.lock(simple2Id);
+
+            clientStore.update(simpleLocked1);
+            clientStore.update(simpleLocked2);
+
+            try (UnitOfWork nested = clientStore.beginUnitOfWork()) {
+                Simple simpleLocked1_nested = clientStore.lock(simple1Id);
+                Simple simpleLocked2_nested = clientStore.lock(simple2Id);
+
+                clientStore.update(simpleLocked2_nested);
+                clientStore.update(simpleLocked1_nested);
+
+                clientStore.commitUnitOfWork(nested);
+            }
+
+            UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
+            Assertions.assertThat(unitOfWorkTransfer.getUpdatedObjects())
+                    .containsExactly(simpleLocked1, simpleLocked2);
+
+            clientStore.abortUnitOfWork(unitOfWork);
+        }
+
+        // Test for Server
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            StoreServer serverStore;
+
+            public Object run() {
+                try (UnitOfWork unitOfWork = serverStore.beginUnitOfWork()) {
+                    Simple simpleLocked2 = serverStore.lock(simple2Id);
+                    Simple simpleLocked1 = serverStore.lock(simple1Id);
+
+                    serverStore.update(simpleLocked1);
+                    serverStore.update(simpleLocked2);
+
+                    try (UnitOfWork nested = serverStore.beginUnitOfWork()) {
+                        Simple simpleLocked2_nested = serverStore.lock(simple2Id);
+                        Simple simpleLocked1_nested = serverStore.lock(simple1Id);
+
+                        serverStore.update(simpleLocked2_nested);
+                        serverStore.update(simpleLocked1_nested);
+
+                        serverStore.commitUnitOfWork(nested);
+                    }
+
+                    UnitOfWorkTransfer unitOfWorkTransfer = serverStore.getUnitOfWorkTransfer();
+                    Assertions.assertThat(unitOfWorkTransfer.getUpdatedObjects())
+                            .containsExactly(simpleLocked1, simpleLocked2);
+
+                    serverStore.abortUnitOfWork(unitOfWork);
+                }
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Tester at det er rekkefølgen objektene slettes som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
+     * rekkefølgen objektene låses i.
+     */
+    @SuppressWarnings("Duplicates")
+    public void testLockDeketeSequence() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        final SimpleId<?> simple2Id = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+
+        // Test for Klient
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            Simple simpleLocked1 = clientStore.lock(simple1Id);
+            Simple simpleLocked2 = clientStore.lock(simple2Id);
+            clientStore.delete(simpleLocked2);
+            clientStore.delete(simpleLocked1);
+
+            UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
+            Assertions.assertThat(unitOfWorkTransfer.getDeletedObjects())
+                    .containsExactly(simpleLocked2, simpleLocked1);
+
+            clientStore.abortUnitOfWork(unitOfWork);
+        }
+
+        // Test for Server
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            StoreServer serverStore;
+
+            public Object run() {
+                try (UnitOfWork unitOfWork = serverStore.beginUnitOfWork()) {
+                    Simple simpleLocked1 = serverStore.lock(simple1Id);
+                    Simple simpleLocked2 = serverStore.lock(simple2Id);
+                    serverStore.delete(simpleLocked2);
+                    serverStore.delete(simpleLocked1);
+
+                    UnitOfWorkTransfer unitOfWorkTransfer = serverStore.getUnitOfWorkTransfer();
+                    Assertions.assertThat(unitOfWorkTransfer.getDeletedObjects())
+                            .containsExactly(simpleLocked2, simpleLocked1);
+
+                    serverStore.abortUnitOfWork(unitOfWork);
+                }
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Tester at det er rekkefølgen objektene oppdateres som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
+     * rekkefølgen objektene ligger i BubbleTransfer.
+     */
+    @SuppressWarnings("Duplicates")
+    public void testRegisterUpdateSequence() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        final SimpleId<?> simple2Id = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            StoreBubbleTransfer transfer = (StoreBubbleTransfer) server.runInTxNotSupported(new RunOnServerMethod() {
+                @Inject
+                private Store serverStore;
+
+                @Override
+                public Object run() {
+                    Simple simple1 = serverStore.lock(simple1Id);
+                    Simple simple2 = serverStore.lock(simple2Id);
+                    return new StoreBubbleTransfer(null, ImmutableSet.of(
+                            simple1,
+                            simple2
+                    ));
+                }
+            });
+
+            Assertions.assertThat(transfer.getBubbleObjects().keySet())
+                    .containsExactly(simple1Id, simple2Id);
+            // register gir ingen garantier for rekkefølge
+
+            clientStore.register(transfer);
+
+            Simple simpleLocked1 = clientStore.get(simple1Id);
+            Simple simpleLocked2 = clientStore.get(simple2Id);
+            clientStore.update(simpleLocked2);
+            clientStore.update(simpleLocked1);
+
+            UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
+            Assertions.assertThat(unitOfWorkTransfer.getUpdatedObjects())
+                    .containsExactly(simpleLocked2, simpleLocked1);
+
+            clientStore.abortUnitOfWork(unitOfWork);
+        }
+    }
+
+    /**
+     * Tester at det er rekkefølgen objektene slettes som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
+     * rekkefølgen objektene ligger i BubbleTransfer.
+     */
+    @SuppressWarnings("Duplicates")
+    public void testRegisterDeleteSequence() {
+        StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
+        final SimpleId<?> simple1Id = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        final SimpleId<?> simple2Id = mockupFacade.getSimpleMockupFactory().getSimpleId2();
+
+        try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
+            StoreBubbleTransfer transfer = (StoreBubbleTransfer) server.runInTxNotSupported(new RunOnServerMethod() {
+                @Inject
+                private Store serverStore;
+
+                @Override
+                public Object run() {
+                    Simple simple1 = serverStore.lock(simple1Id);
+                    Simple simple2 = serverStore.lock(simple2Id);
+                    return new StoreBubbleTransfer(null, ImmutableSet.of(
+                            simple1,
+                            simple2
+                    ));
+                }
+            });
+
+            Assertions.assertThat(transfer.getBubbleObjects().keySet())
+                    .containsExactly(simple1Id, simple2Id);
+            // register gir ingen garantier for rekkefølge
+
+            clientStore.register(transfer);
+
+            Simple simpleLocked1 = clientStore.get(simple1Id);
+            Simple simpleLocked2 = clientStore.get(simple2Id);
+            clientStore.delete(simpleLocked2);
+            clientStore.delete(simpleLocked1);
+
+            UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
+            Assertions.assertThat(unitOfWorkTransfer.getDeletedObjects())
+                    .containsExactly(simpleLocked2, simpleLocked1);
+
+            clientStore.abortUnitOfWork(unitOfWork);
+        }
     }
 
     private void assertTransferEmpty(UnitOfWorkTransfer transfer) {

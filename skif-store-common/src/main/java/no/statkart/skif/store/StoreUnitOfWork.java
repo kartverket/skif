@@ -1,7 +1,5 @@
 package no.statkart.skif.store;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import no.statkart.skif.exception.ImplementationException;
 
@@ -66,7 +64,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
         StoreEntry entry = wrappedStoreSession.lockEntry(level, bubbleId);
-        modifiedMap.put(entry.getId(), entry);
+        addLocked(entry);
         markModified();
         return entry;
     }
@@ -75,7 +73,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> lockEntries(int level, Set<I> bubbleIds) {
         Collection<StoreEntry> entries = wrappedStoreSession.lockEntries(level, bubbleIds);
         for (StoreEntry entry : entries) {
-            modifiedMap.put(entry.getId(), entry);
+            addLocked(entry);
         }
         markModified();
         return entries;
@@ -114,8 +112,12 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     public WrappableStoreSession abortUnitOfWork() {
         List<StoreEntry> removeEntries = new ArrayList<>();
         List<StoreEntry> clearEntries = new ArrayList<>();
+        Set<BubbleId<?>> unlockIds = new HashSet<>();
 
         for (StoreEntry storeEntry : storeCache.values()) {
+            if (storeEntry.isLockedByLevel(level)) {
+                unlockIds.add(storeEntry.getId());
+            }
             boolean removeEntry = storeEntry.abort(level);
             if (removeEntry) {
                 removeEntries.add(storeEntry);
@@ -124,15 +126,6 @@ public class StoreUnitOfWork extends AbstractStoreSession {
             }
         }
 
-        ImmutableSet<? extends BubbleId<?>> unlockIds = ImmutableSet.copyOf(
-                Iterables.transform(
-                        Iterables.filter(
-                                Iterables.concat(removeEntries, clearEntries),
-                                storeEntry -> storeEntry.isLockedByLevel(level)
-                        ),
-                        StoreEntry::getId
-                )
-        );
         if (!unlockIds.isEmpty()) {
             wrappedStoreSession.unlockEntries(level, unlockIds);
         }
@@ -151,17 +144,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
         }
 
         if (modifiedMap.size() > 0 && !getTransferHasBeenCalled) {
-            // Sjekk at det er kjørt insert, update eller delete på dem, og at de ikke bare er låst.
-            boolean allUnmodified = true;
-            for (StoreEntry storeEntry : modifiedMap.values()) {
-                StoreEntryState state = storeEntry.getState(level);
-                if (state != StoreEntryState.UNCHANGED) {
-                    allUnmodified = false;
-                }
-            }
-            if (!allUnmodified) {
-                throw new ImplementationException("Store contains modified objects. Call getUnitOfWorkTransfer() before calling endUnitOfWork()");
-            }
+            throw new ImplementationException("Store contains modified objects. Call getUnitOfWorkTransfer() before calling endUnitOfWork()");
         }
         Iterator<StoreEntry> iterator = storeCache.values().iterator();
         while (iterator.hasNext()) {
@@ -298,8 +281,9 @@ public class StoreUnitOfWork extends AbstractStoreSession {
     }
 
     WrappableStoreSession commitUnitOfWork() {
-
-        wrappedStoreSession.commitUnitOfWork(modifiedMap);
+        LinkedHashMap<BubbleId<?>, StoreEntry> lockedOrModified = new LinkedHashMap<>(modifiedMap);
+        lockedOrModified.putAll(lockedMap);
+        wrappedStoreSession.commitUnitOfWork(lockedOrModified);
         return wrappedStoreSession;
     }
 

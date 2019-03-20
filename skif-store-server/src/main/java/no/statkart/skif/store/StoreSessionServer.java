@@ -358,14 +358,14 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     @Override
-    public void commitUnitOfWork(Map<BubbleId<?>, StoreEntry> modified) {
+    public void commitUnitOfWork(Map<BubbleId<?>, StoreEntry> modifiedAndLocked) {
         // Sorter bobler i henhold til definert bubble dependency ordering
         List<Map.Entry<BubbleId<?>, StoreEntry>> inserted = Lists.newArrayList();
         List<Map.Entry<BubbleId<?>, StoreEntry>> updated = Lists.newArrayList();
         List<Map.Entry<BubbleId<?>, StoreEntry>> deleted = Lists.newArrayList();
 
         // Legg inn i ovenstående lister;
-        for (Map.Entry<BubbleId<?>, StoreEntry> entry : modified.entrySet()) {
+        for (Map.Entry<BubbleId<?>, StoreEntry> entry : modifiedAndLocked.entrySet()) {
             switch (entry.getValue().getState(level + 1)) {
                 case INSERTED:
                     inserted.add(entry);
@@ -397,7 +397,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         Collections.sort(updated, c);
         Collections.sort(deleted, inverseC);
 
-        Map<BubbleId<?>, StoreEntry> modifiedSorted = new LinkedHashMap<>(modified.size());
+        Map<BubbleId<?>, StoreEntry> modifiedSorted = new LinkedHashMap<>(modifiedAndLocked.size());
         for (Map.Entry<BubbleId<?>, StoreEntry> mapEntry : inserted) {
             modifiedSorted.put(mapEntry.getKey(), mapEntry.getValue());
         }
