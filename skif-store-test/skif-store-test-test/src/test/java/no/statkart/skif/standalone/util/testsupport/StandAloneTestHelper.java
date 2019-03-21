@@ -8,11 +8,31 @@ import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleDependencyComparator;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleModelConfiguration;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionSeed;
+import no.statkart.skif.store.Store;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
-import no.statkart.skif.store.persistence.hibernate.*;
+import no.statkart.skif.store.persistence.hibernate.DefaultHibernateSessionFactoryManagerBundle;
+import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryDescriptor;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManager;
+import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
+import no.statkart.skif.store.persistence.hibernate.HibernateStoreInterceptorFactory;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-import no.statkart.skif.storetest.domain.standalone.*;
+import no.statkart.skif.storetest.domain.standalone.ChildBubble;
+import no.statkart.skif.storetest.domain.standalone.ChildBubbleEmptyColOptimizer;
+import no.statkart.skif.storetest.domain.standalone.FilteredBubble;
+import no.statkart.skif.storetest.domain.standalone.ParentBubble;
+import no.statkart.skif.storetest.domain.standalone.ParentBubbleEmptyColOptimizer;
+import no.statkart.skif.storetest.domain.standalone.SelfBubble;
+import no.statkart.skif.storetest.domain.standalone.TestBubble;
+import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
+import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistory;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -47,6 +67,8 @@ public class StandAloneTestHelper {
             .addBubble(ParentBubble.class)
             .addBubble(FilteredBubble.class)
             .addBubble(ChildBubble.class)
+            .addBubble(ParentBubbleEmptyColOptimizer.class)
+            .addBubble(ChildBubbleEmptyColOptimizer.class)
 //                .addBubble(Foo.class)
             ;
 
@@ -110,6 +132,8 @@ public class StandAloneTestHelper {
             hibernateSession.createSQLQuery("delete from ChildForParent where id>100").executeUpdate();
             hibernateSession.createSQLQuery("delete from ParentBubble where id>100").executeUpdate();
             hibernateSession.createSQLQuery("delete from ChildBubble where id>100").executeUpdate();
+            hibernateSession.createSQLQuery("delete from ParentBubbleEmptyColOptimizer where id>100").executeUpdate();
+            hibernateSession.createSQLQuery("delete from ChildBubbleEmptyColOptimizer where id>100").executeUpdate();
             transaction.commit();
         } finally {
             persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();

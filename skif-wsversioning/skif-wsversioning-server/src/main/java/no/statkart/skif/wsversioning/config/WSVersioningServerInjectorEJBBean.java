@@ -9,7 +9,7 @@ import no.statkart.skif.module.ModuleBuilder;
 import javax.ejb.Stateless;
 
 /**
- * Definere hvilken injector som skal brukes intern i serveren og hvordan denne konfigureres opp.
+ * Definere hvilken injector som skal brukes internt i serveren og hvordan denne konfigureres opp.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand

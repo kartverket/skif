@@ -111,10 +111,6 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
          log().info( "could not read column value from result set: " + name + "; " + re.getMessage() );
          throw re;
       }
-      catch ( SQLException se ) {
-         log().info( "could not read column value from result set: " + name + "; " + se.getMessage() );
-         throw se;
-      }
    }
 
    public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
@@ -139,10 +135,6 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
       catch ( RuntimeException re ) {
          log().info( "could not bind value '" + value  + "' to parameter: " + index + "; " + re.getMessage() );
          throw re;
-      }
-      catch ( SQLException se ) {
-         log().info( "could not bind value '" +  value  + "' to parameter: " + index + "; " + se.getMessage() );
-         throw se;
       }
    }
 
