@@ -1,31 +1,24 @@
 package no.statkart.skif.persistence.hibernate;
 
-import org.hibernate.HibernateException;
 import org.hibernate.cfg.Environment;
-import org.hibernate.connection.DatasourceConnectionProvider;
-import org.hibernate.util.PropertiesHelper;
+import org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl;
+import org.hibernate.internal.util.config.ConfigurationHelper;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
+import java.util.Map;
 
 /**
  * Hibernate har kun innebygget støtte for å hente DataSource fra JNDI. Denne utvider dette til å kunne få en DataSource
  * angitt eksplisitt.
  */
-public class PoolConnectionProvider extends DatasourceConnectionProvider {
+public class PoolConnectionProvider extends DatasourceConnectionProviderImpl {
     private boolean autoCommit;
 
     @Override
-    public void configure(Properties props) throws HibernateException {
-        DataSource dataSource = (DataSource) props.get(Environment.DATASOURCE);
-        if (dataSource == null) {
-            throw new HibernateException("No DataSource");
-        }
-        setDataSource(dataSource);
-
-        autoCommit = PropertiesHelper.getBoolean(Environment.AUTOCOMMIT, props);
+    public void configure(Map configValues) {
+        super.configure(configValues);
+        autoCommit = ConfigurationHelper.getBoolean(Environment.AUTOCOMMIT, configValues);
     }
 
     @Override

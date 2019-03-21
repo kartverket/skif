@@ -36,6 +36,7 @@ import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistory;
 import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Environment;
 
 import javax.sql.DataSource;
@@ -86,7 +87,7 @@ public class StandAloneTestHelper {
 
         hibernateProperties.setProperty(Environment.CONNECTION_PROVIDER, "no.statkart.skif.persistence.hibernate.PoolConnectionProvider");
         hibernateProperties.put(Environment.DATASOURCE, pooledDataSource);
-        hibernateProperties.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JDBCTransactionFactory");
+        hibernateProperties.setProperty(AvailableSettings.TRANSACTION_COORDINATOR_STRATEGY, "jdbc");
         return hibernateProperties;
     }
 
@@ -114,7 +115,7 @@ public class StandAloneTestHelper {
      * Builder som inneholder bobler med historikk.
      */
     public static HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilderWithHistory() {
-        return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate36")
+        return new HibernateSessionFactoryBuilder("no/statkart/skif/storetest/persistence/hibernate36")
                 .addBubbleModel(bubbleClasses)
                 ;
     }

@@ -1,15 +1,21 @@
 package no.statkart.skif.store;
 
 
-import java.io.Serializable;
+import no.statkart.skif.bubble.spi.SkifBubbleId;
+import no.statkart.skif.store.module.common.BubbleIdFactory;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public interface BubbleId<T extends BubbleObject> extends Serializable, Comparable<Object>{
+public interface BubbleId<T extends BubbleObject> extends SkifBubbleId, Comparable<Object> {
 
     Object getValue();
+    @SuppressWarnings("unchecked")
+    @Override
+    default <S> S createIdOfSubtype(Class<S> idClass) {
+        return (S) BubbleIdFactory.createInstance((Class<? extends BubbleId>)idClass, getValue(), getSnapshotVersion());
+    }
 
     SnapshotVersion getSnapshotVersion();
 

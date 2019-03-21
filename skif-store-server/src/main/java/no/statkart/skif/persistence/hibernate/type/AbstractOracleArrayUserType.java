@@ -3,6 +3,7 @@ package no.statkart.skif.persistence.hibernate.type;
 import oracle.sql.ARRAY;
 import oracle.sql.ArrayDescriptor;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
@@ -70,36 +71,28 @@ public abstract class AbstractOracleArrayUserType implements UserType {
         }
     }
 
-    public Object nullSafeGet(ResultSet resultSet, String[] names, Object owner)
-            throws HibernateException, SQLException {
+    @Override
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         ARRAY result = null;
-        ARRAY array = (ARRAY) resultSet.getArray(names[0]);
-        if (!resultSet.wasNull()) {
+        ARRAY array = (ARRAY) rs.getArray(names[0]);
+        if (!rs.wasNull()) {
             result = array;
         }
         return result;
     }
 
-    /**
-     *
-     * @param statement statement objekt
-     * @param value must be an array (Java language array)
-     * @param index index for attributt (starter på index=1)
-     * @throws org.hibernate.HibernateException
-     * @throws java.sql.SQLException
-     */
-    public void nullSafeSet(PreparedStatement statement, Object value, int index)
-            throws HibernateException, SQLException {
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         if (value == null) {
-            statement.setNull(index, SQL_TYPES[0], getOracleListType());
+            st.setNull(index, SQL_TYPES[0], getOracleListType());
         } else {
-            Connection con = statement.getConnection();
+            Connection con = st.getConnection();
             ArrayDescriptor ad = new ArrayDescriptor(getOracleListType(), con);
             if(value.getClass() == ARRAY.class){
-                statement.setArray(index,(Array) value);
+                st.setArray(index,(Array) value);
             }else{
                 //String[] values = ((Collection<String>)value).toArray(new String[0]); // TODO: Kan dette gjøres mer effektiv?
-                statement.setArray(index, new ARRAY(ad, con, value));
+                st.setArray(index, new ARRAY(ad, con, value));
             }
         }
     }

@@ -5,7 +5,8 @@ import com.google.common.collect.Maps;
 import no.statkart.skif.store.BubbleId;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
-import org.hibernate.engine.SessionImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
 
 import javax.inject.Provider;
@@ -36,7 +37,16 @@ public class HighLowGenerator implements IdentifierGenerator {
         map.remove(sessionFactory);
     }
 
-    public synchronized Serializable generate(SessionImplementor session, Object object) throws HibernateException {
+    /**
+     * Denne metode er synchronized da {@code IdService} objektet som metoden anvender allokerer id-er fra en id-blok
+     * som er felles for alle tråder. Man kunne ha separate blokker per tråd ved å gjøre {@code IdService} om til å være
+     * request scoped i stedet for å være en singleton, men det vil føre til at man får flere ubrukte id-er per restart.
+     * <p>
+     * Man kan vurdere å flytte synchronized til implementasjonen av {@code IdService} slik at det er konfigurasjonen
+     * som om avgjør om kallet er synchronized eller ikke.
+     */
+    @Override
+    public synchronized Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
         final Provider<IdService> idServiceProvider = getIdServiceProvider(session.getFactory());
         return (Serializable) idServiceProvider.get().getNextIdValue((Class<BubbleId>) object.getClass());
     }

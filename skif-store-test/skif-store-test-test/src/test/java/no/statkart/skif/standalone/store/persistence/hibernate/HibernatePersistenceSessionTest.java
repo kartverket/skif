@@ -14,7 +14,7 @@ import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistory;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistoryId;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.impl.CriteriaImpl;
+import org.hibernate.internal.CriteriaImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

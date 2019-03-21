@@ -1,8 +1,8 @@
 package no.statkart.skif.store.multikobling;
 
 import no.statkart.skif.store.EntityComponent;
-import org.hibernate.collection.PersistentSet;
-import org.hibernate.engine.SessionImplementor;
+import org.hibernate.collection.internal.PersistentSet;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 
 import java.util.Map;
 import java.util.Set;
@@ -21,11 +21,11 @@ import java.util.Set;
 public class MultikoblingPersistentSet extends PersistentSet {
     private static final long serialVersionUID = 1L;
 
-    public MultikoblingPersistentSet(SessionImplementor session) {
+    public MultikoblingPersistentSet(SharedSessionContractImplementor session) {
         super(session);
     }
 
-    public MultikoblingPersistentSet(SessionImplementor session, Set set) {
+    public MultikoblingPersistentSet(SharedSessionContractImplementor session, Set set) {
         super(session, set);
     }
 

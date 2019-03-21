@@ -3,6 +3,7 @@ package no.statkart.skif.persistence.hibernate.type;
 import com.google.common.collect.Lists;
 import no.statkart.skif.store.persistence.OracleArrayConverter;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.descriptor.JdbcTypeNameMapper;
 import org.hibernate.usertype.UserType;
 import org.slf4j.Logger;
@@ -55,13 +56,12 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void nullSafeSet(PreparedStatement statement, Object value, int index)
-            throws HibernateException, SQLException {
-
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         if (value == null) {
             if (log.isTraceEnabled()) {
                 log.trace(
@@ -72,7 +72,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
                         )
                 );
             }
-            statement.setNull(index, SQL_TYPES[0], oracleArrayConverter.getOracleArrayType());
+            st.setNull(index, SQL_TYPES[0], oracleArrayConverter.getOracleArrayType());
         } else {
             Collection<E> values = (Collection<E>) value;
 
@@ -86,7 +86,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
                         )
                 );
             }
-            statement.setArray(index, oracleArrayConverter.toArray(statement.getConnection(), values));
+            st.setArray(index, oracleArrayConverter.toArray(st.getConnection(), values));
         }
     }
 

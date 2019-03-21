@@ -30,16 +30,6 @@ public class MultirefererendeKobling extends Kobling<String, String> {
         setTekst(value);
     }
 
-    // Nødvendig for bruk i mapping med Hibernate 3.2. Den tror getRolle() returnerer Object, siden den finner bridge metoden.
-    private String getRolleWorkaround() {
-        return getRolle();
-    }
-
-    // Nødvendig for bruk i mapping med Hibernate 3.2. Den tror setRolle() tar inn Object, siden den finner bridge metoden.
-    private void setRolleWorkaround(String rolle) {
-        setRolle(rolle);
-    }
-
     public String getTekst() {
         return tekst;
     }

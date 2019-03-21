@@ -92,7 +92,8 @@ public class DefaultResourceManager implements ResourceManager {
         checkIsStarted();
         inTransaction = true;
         for (Entry entry : entries) {
-            if (entry.implementation.isActive() && entry.implementation instanceof TransactionalResource) {
+            if (entry.implementation instanceof TransactionalResource) {
+                entry.implementation.setActive(); // TODO: Undersøke om denne må kalles her.
                 TransactionalResource.class.cast(entry.implementation).beginTransaction();
                 entry.transactionStarted = true;
             }

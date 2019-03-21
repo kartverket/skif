@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -60,6 +61,30 @@ public class SnapshotTest extends StoreTestMixedTestCase {
         });
     }
 
+    public void testHenterSammeObjectInstansForForskjelligSnapshotInstanserMedSammeVerdi() {
+
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            PersistenceSessionManager sessionManager;
+            @Inject
+            StoreTestMockupFacadeFactory mockupFacadeFactory;
+
+            public Object run() {
+                StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+
+                HistSimpleId<?> histSimpleId1 = mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1();
+                SnapshotVersion historiskSnapshot = SnapshotVersion.createInstance("2011-10-02 08:01:23.00");
+                HistSimple histSimpleHistorisk = sessionManager.get(histSimpleId1.asSnapshotVersion(historiskSnapshot));
+                SnapshotVersion historiskSnapshot2 = SnapshotVersion.createInstance("2011-10-02 08:01:23.00");
+                assertThat(historiskSnapshot).isEqualTo(historiskSnapshot2);
+                assertThat(historiskSnapshot).isNotSameAs(historiskSnapshot2);
+                HistSimple histSimpleHistorisk2 = sessionManager.get(histSimpleId1.asSnapshotVersion(historiskSnapshot2));
+                assertThat(histSimpleHistorisk).isSameAs(histSimpleHistorisk2);
+                return null;
+            }
+        });
+    }
+
     public void testSommertidVintertid() {
         StoreTestMockupFacadeFactory mockupFacadeFactory = injector.getInstance(StoreTestMockupFacadeFactory.class);
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
@@ -75,7 +100,7 @@ public class SnapshotTest extends StoreTestMixedTestCase {
                 session.doWork(new Work() {
                     @Override
                     public void execute(Connection connection) throws SQLException {
-                        try (PreparedStatement statement = connection.prepareStatement("insert into snapshot_trans values(TO_TIMESTAMP_TZ('2015-06-01 12:00:00.00+02', 'YYYY-MM-DD HH24:MI:SS.FFTZH'))")) {
+                            try (PreparedStatement statement = connection.prepareStatement("insert into snapshot_trans values(TO_TIMESTAMP_TZ('2015-06-01 12:00:00.00+02', 'YYYY-MM-DD HH24:MI:SS.FFTZH'))")) {
                             statement.executeUpdate();
                         }
                     }

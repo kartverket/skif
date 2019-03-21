@@ -2,8 +2,9 @@ package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.store.*;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.internal.util.StringHelper;
 import org.hibernate.usertype.UserType;
-import org.hibernate.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,10 +66,8 @@ public class AnyConcatenatedFieldsType<T extends ConcatenatedFieldsSerialization
         return value;
     }
 
-
-    public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
-            throws HibernateException, SQLException {
-
+    @Override
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         String name = names[0];
         try {
             String value = rs.getString(name);
@@ -86,18 +85,14 @@ public class AnyConcatenatedFieldsType<T extends ConcatenatedFieldsSerialization
                 }
                 return object;
             }
-        } catch (RuntimeException re) {
+        } catch (RuntimeException | SQLException re) {
             log().info("could not read column value from result set: " + name + "; " + re.getMessage());
             throw re;
-        } catch (SQLException se) {
-            log().info("could not read column value from result set: " + name + "; " + se.getMessage());
-            throw se;
         }
-
     }
 
-    public void nullSafeSet(PreparedStatement st, Object value, int index)
-            throws HibernateException, SQLException {
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         try {
             if (value == null) {
                 if (IS_VALUE_TRACING_ENABLED) {

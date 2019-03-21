@@ -10,8 +10,11 @@ import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionM
 import no.statkart.skif.util.CopyHelper;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
+import org.hibernate.internal.SessionImpl;
+import org.hibernate.resource.transaction.spi.TransactionCoordinator;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
@@ -266,7 +269,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         try {
             flush();
             HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
-            Session session = persistenceSessionMaster.reserveSession();
+            SessionImpl session = persistenceSessionMaster.reserveSession();
             Connection connection = session.connection();
             Savepoint savepoint = connection.setSavepoint();
             StoreEntry storeEntry = storeCache.get(bubbleId);
@@ -276,12 +279,16 @@ public class StoreSessionServer extends AbstractStoreSession {
             StoreEntryState oldState = storeEntry.getState(level);
             // Må ta vare på om objektet var modifisert på forhånd slik at flushed flagget får riktig verdi ved feil
             boolean oldFlushed = storeEntry.getBubbleObject(level).isFlushed();
+            boolean markedForRollbackOnly = !session.getTransactionCoordinator().getTransactionDriverControl().isActive(false);
             try {
                 deleteEntry(level, storeEntry.getBubbleObject(level));
                 flush();
                 addModified(storeEntry);
             } catch (JDBCException e) {
                 connection.rollback(savepoint);
+                // Since v5.0 Hibernates marks transactions for rollback and has no support for savepoints so the above
+                // rollback statement does not clear the flag.
+                if (!markedForRollbackOnly) resetRollbackOnly(session);
                 storeEntry.setState(level, oldState);
                 clearPersistenceSessionAndSyncronizeWithStore(persistenceSessionMaster);
                 storeEntry.getBubbleObject(level).setFlushed(oldFlushed);
@@ -289,6 +296,18 @@ public class StoreSessionServer extends AbstractStoreSession {
             }
         } catch (SQLException e) {
             throw new OperationalException("Error attempting delete", e);
+        }
+    }
+
+    private void resetRollbackOnly(SessionImpl session) {
+        TransactionCoordinator.TransactionDriver transactionDriverControl = session.getTransactionCoordinator().getTransactionDriverControl();
+        Field rollbackOnlyField = null;
+        try {
+            rollbackOnlyField = transactionDriverControl.getClass().getDeclaredField("rollbackOnly");
+            rollbackOnlyField.setAccessible(true);
+            rollbackOnlyField.setBoolean(transactionDriverControl,false);
+        } catch (NoSuchFieldException|IllegalAccessException e) {
+            throw new UnsupportedOperationException("Could not reset rollbackOnly flag on TranactionDriver when doing rollback to savepoint", e);
         }
     }
 

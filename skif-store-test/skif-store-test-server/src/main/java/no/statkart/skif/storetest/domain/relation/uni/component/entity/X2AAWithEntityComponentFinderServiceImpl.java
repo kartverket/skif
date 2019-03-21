@@ -7,6 +7,7 @@ import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustom
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.*;
+import org.hibernate.type.StandardBasicTypes;
 
 import javax.inject.Provider;
 import java.util.Collection;
@@ -39,8 +40,8 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
             query.addSynchronizedQuerySpace("X2EntityComponentOne");
             query.setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, ids.size()));
-            query.addScalar("someBBId", Hibernate.LONG);
-            query.addScalar("ownerId", Hibernate.LONG);
+            query.addScalar("someBBId", StandardBasicTypes.LONG);
+            query.addScalar("ownerId", StandardBasicTypes.LONG);
             ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
 
             while (scroll.next()) {
@@ -71,8 +72,8 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
             query.addSynchronizedQuerySpace("X2EntityComponentOne");
             query.setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, ids.size()));
-            query.addScalar("id", Hibernate.LONG);
-            query.addScalar("ownerId", Hibernate.LONG);
+            query.addScalar("id", StandardBasicTypes.LONG);
+            query.addScalar("ownerId", StandardBasicTypes.LONG);
             ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
 
             while (scroll.next()) {
@@ -97,8 +98,8 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
             query.addSynchronizedQuerySpace("X2SetEntityComp");
             query.setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType());
             query.setFetchSize(Math.min(1000, ids.size()));
-            query.addScalar("role1BBOneId", Hibernate.LONG);
-            query.addScalar("ownerId", Hibernate.LONG);
+            query.addScalar("role1BBOneId", StandardBasicTypes.LONG);
+            query.addScalar("ownerId", StandardBasicTypes.LONG);
             ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY);
 
             while (scroll.next()) {

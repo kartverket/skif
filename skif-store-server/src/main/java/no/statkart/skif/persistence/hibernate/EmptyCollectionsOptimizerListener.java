@@ -6,13 +6,13 @@ import no.statkart.skif.store.ComponentWithOwnerReference;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.event.PreCollectionUpdateEvent;
-import org.hibernate.event.PreCollectionUpdateEventListener;
-import org.hibernate.event.PreLoadEvent;
-import org.hibernate.event.PreLoadEventListener;
-import org.hibernate.event.SaveOrUpdateEvent;
-import org.hibernate.event.SaveOrUpdateEventListener;
-import org.hibernate.impl.SessionImpl;
+import org.hibernate.event.spi.PreCollectionUpdateEvent;
+import org.hibernate.event.spi.PreCollectionUpdateEventListener;
+import org.hibernate.event.spi.PreLoadEvent;
+import org.hibernate.event.spi.PreLoadEventListener;
+import org.hibernate.event.spi.SaveOrUpdateEvent;
+import org.hibernate.event.spi.SaveOrUpdateEventListener;
+import org.hibernate.internal.SessionImpl;
 import org.hibernate.persister.entity.EntityPersister;
 
 import java.util.Map;
@@ -33,7 +33,7 @@ public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, 
     public void onPreLoad(PreLoadEvent event) {
         EntityPersister persister = event.getPersister();
         // Only bubbles can have this flag, but collections may be located in any object that is owned by the bubble.
-        if (BubbleObject.class.isAssignableFrom(persister.getMappedClass(EntityMode.POJO))) {
+        if (BubbleObject.class.isAssignableFrom(persister.getMappedClass())) {
             EmptyCollectionsOptimizer optimizer = optimizers.get(persister);
             if (optimizer == null) {
                 optimizer = EmptyCollectionsOptimizer.createOptimizer(persister);

@@ -2,8 +2,8 @@ package no.statkart.skif.persistence.hibernate;
 
 import no.statkart.skif.store.BubbleObject;
 import org.hibernate.Session;
-import org.hibernate.impl.SessionImpl;
 import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.internal.SessionImpl;
 
 import java.util.HashMap;
 import java.util.Map;

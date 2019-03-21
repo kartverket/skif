@@ -1,31 +1,8 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import no.statkart.skif.config.SkifConfigConstants;
-import no.statkart.skif.exception.ConfigurationException;
-import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
-import no.statkart.skif.persistence.hibernate.CurrentDatabaseEventListener;
-import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizerListener;
-import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefConfiguration;
-import org.hibernate.Interceptor;
-import org.hibernate.MappingException;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.event.DeleteEventListener;
-import org.hibernate.event.PostDeleteEventListener;
-import org.hibernate.event.PostInsertEventListener;
-import org.hibernate.event.PostUpdateEventListener;
-import org.hibernate.event.PreCollectionUpdateEventListener;
-import org.hibernate.event.PreDeleteEventListener;
-import org.hibernate.event.PreInsertEventListener;
-import org.hibernate.event.PreLoadEventListener;
-import org.hibernate.event.PreUpdateEventListener;
-import org.hibernate.event.SaveOrUpdateEventListener;
-import org.hibernate.event.def.DefaultPreLoadEventListener;
-import org.hibernate.event.def.DefaultSaveOrUpdateEventListener;
-
-import javax.annotation.Nullable;
-import java.util.Properties;
 
 /**
+ * // TODO: Denne klasse skal slette når SKIF-701 er inne på trunk op denne branch er rebaset mot trunk
  * Denne klasse inneholder Hibernate 3.2.6 specifikk kode. Den skal integreres i superklassen
  * når SKIF støtter bubbleref for seneste versjon av hibernate
  *
@@ -37,6 +14,8 @@ public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryB
         super(mappingFilesDirectory);
     }
 
+
+    /*
     protected Configuration createConfiguration(Properties props, @Nullable Interceptor interceptor) {
         // Log databaseparametre. I singlevm mode brukes JDBCTransactionFactory (dvs url, bruker/password).
         // I servermode brukes JTATransactionFactory (dvs datasource)
@@ -54,7 +33,7 @@ public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryB
             // NB: getBubbleClassDeleteOrder() definerer slette rekkefølgen for alle {@code BubbleObject} typer.
             // Metoden {@link #addResourceUsingAbsolutePath} legger automatisk {@code BubbleObject} klasser inn i listen i den rekkefølge
             // metoden blir kallt.
-            cfg = new BubbleRefConfiguration().setProperties(props);
+            cfg = new Configuration().setProperties(props);
             for (String hbm : hbmResource) {
                 cfg.addResource(hbm, cl);
             }
@@ -100,7 +79,7 @@ public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryB
     private void addCurrentDatabaseEventListener(Configuration cfg) {
         CurrentDatabaseEventListener rememberCurrentEventListener = new CurrentDatabaseEventListener();
         PreInsertEventListener[] preInsertEventStack = {rememberCurrentEventListener};
-        cfg.getEventListeners().setPreInsertEventListeners(preInsertEventStack);
+        cfg.addgetEventListeners().setPreInsertEventListeners(preInsertEventStack);
         PreUpdateEventListener[] preUpdateEventStack = {rememberCurrentEventListener};
         cfg.getEventListeners().setPreUpdateEventListeners(preUpdateEventStack);
         PreDeleteEventListener[] preDeleteEventStack = {rememberCurrentEventListener};
@@ -112,5 +91,5 @@ public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryB
         PostDeleteEventListener[] PostDeleteEventStack = {rememberCurrentEventListener};
         cfg.getEventListeners().setPostDeleteEventListeners(PostDeleteEventStack);
     }
-
+*/
 }

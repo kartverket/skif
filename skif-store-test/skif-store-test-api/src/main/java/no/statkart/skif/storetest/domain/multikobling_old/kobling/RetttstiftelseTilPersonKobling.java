@@ -47,14 +47,14 @@ public class RetttstiftelseTilPersonKobling extends Kobling<RettsstiftelsePerson
      *
      * @param rolle
      */
-    private void setRolleFix(String rolle) {
-        setRolle(RettsstiftelsePersonRolle.valueOf(rolle));
-    }
+//    private void setRolleFix(String rolle) {
+//        setRolle(RettsstiftelsePersonRolle.valueOf(rolle));
+//    }
 
     /**
      * Brukes av hibernate for mapping av String til rolle. Trengs kun for å støtte hibernate 3.2.6. I 3.4.10 kan man bruke hibernates støtte for enum
      */
-    private String getRolleFix() {
-        return getRolle().toString();
-    }
+//    private String getRolleFix() {
+//        return getRolle().toString();
+//    }
 }

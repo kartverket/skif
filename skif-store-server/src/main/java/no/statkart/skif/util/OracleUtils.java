@@ -3,7 +3,6 @@ package no.statkart.skif.util;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
 import oracle.jdbc.OracleConnection;
-import org.hibernate.jdbc.ConnectionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +36,9 @@ public class OracleUtils {
             connectionForSnapshotVersion.release();
         }
 
-        if (con instanceof ConnectionWrapper) {
-            con = ((ConnectionWrapper) con).getWrappedConnection();
-        }
+//        if (con instanceof ConnectionWrapper) {
+//            con = ((ConnectionWrapper) con).getWrappedConnection();
+//        }
 
         try {
             oracleConnection = con.unwrap(OracleConnection.class);

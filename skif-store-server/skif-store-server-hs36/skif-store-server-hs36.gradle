@@ -3,12 +3,12 @@ apply plugin: 'maven-publish'
 
 dependencies {
     api project(':skif-store-server')
-    api libraries.hibernate_3_6_api
+    api libraries.hibernate
     api libraries.guava //pga Multimap
 
     provided libraries.jee
 
-    implementation libraries.hibernate_3_6
+    implementation libraries.hibernate
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')

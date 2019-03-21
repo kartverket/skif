@@ -9,6 +9,7 @@ configurations {
 
 dependencies {
     api project(':skif-service-common')
+    api libraries.bubbleref_spi
     implementation libraries.guava
 
     testImplementation project(':skif-config')
