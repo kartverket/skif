@@ -17,7 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.net.JarURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -274,11 +276,11 @@ public abstract class HibernateSessionFactoryBuilder {
     }
 
     private void checkForFilesWithJarProtocol(List<String> files, URL resource) throws IOException {
-        String filepath = resource.getPath();
-        String parsedJarName = filepath.substring(0, filepath.lastIndexOf("!"));
-        URL resource2 = parsedJarName.contains("!") ? new URL("jar:" + parsedJarName) // nested jar
-                                                    : new URL(parsedJarName);         // regular jar
-        try (ZipInputStream zip2 = new ZipInputStream(resource2.openStream())) {
+        URLConnection urlConnection = resource.openConnection();
+        JarURLConnection jarURLConnection = (JarURLConnection) urlConnection;
+        URL jarFileURL = jarURLConnection.getJarFileURL();
+
+        try (ZipInputStream zip2 = new ZipInputStream(jarFileURL.openStream())) {
             ZipEntry ze;
             while ((ze = zip2.getNextEntry()) != null) {
                 String entryName = ze.getName();
