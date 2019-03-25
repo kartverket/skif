@@ -38,20 +38,20 @@ import static org.assertj.core.api.Assertions.assertThat;
  * JAX-WS genererer ut fra WSDL-en følgende klasser:
  * <ul>
  *     <li>{@code ExService}: Interface for Web Service</li>
- *     <li>{@code ExServiceWS}: Klint subklasse for Web Service</li>
+ *     <li>{@code ExServiceWS}: Klient subklasse for Web Service</li>
  * </ul>
  * Merk at {@code ExService} bruker samme klassenavn som vår egen api service men ligger i en annen pakke. Det gjør
  * at vi må skrive pakkenavnet helt ut for en av servicene.
  * <p>
- * Eksemplet viser hvordan en Java service kan mappes via Web Service til Java service implementasjon på serveren.
+ * Eksemplet viser hvordan en Java service kan mappes via en Web Service til Java service implementasjonen på serveren.
  * <ol>
  * <li>{@code api.ExService} på klienten mappes til {@code wsapi.klient.ExServiceWS}</li>
  * <li>Parametre til metode på klient må mappes fra {@code api}-pakken til {@code wsapi}-pakken</li>
  * <li>Returverdi på klient må mappes fra {@code wsapi}-pakken til {@code api}-pakken</li>
- * <li>Web Service kall utføres fra {@code wsapi.klient.ExServiceWS} til {@code wsapi.server.ExServiceWSBean}/li>
- * <li>{@code wsapi.server.ExServiceWSBean} på server må mappe kall til {@code api.ExServiceImpl}</li>
- * <li>Parametre til Web Service på tjener må mappes fra {@code wsapi}-pakken til {@code api}-pakken</li>
- * <li>Returverdi på server må mappes fra {@code api}-pakken til {@code wsapi}-pakken</li>
+ * <li>Web Service kall utføres fra {@code wsapi.klient.ExServiceWS} til {@code wsapi.server.ExServiceWSBean} på server/li>
+ * <li>{@code wsapi.server.ExServiceWSBean} på server mapper kall til {@code api.ExServiceImpl}</li>
+ * <li>Parametre til Web Service på tjener mappes fra {@code wsapi}-pakken til {@code api}-pakken</li>
+ * <li>Returverdi på server mappes fra {@code api}-pakken til {@code wsapi}-pakken</li>
  * </ol>
  *
  * For bedre å forstå koden så husk på følgende:
@@ -60,10 +60,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  *     <li>Proxykjede konfigures vha Guice multibinder for {@code CallServiceChainFactory}</li>
  *     <li>Vi bruker {@code @Implementation} for å binne avsluttende proxykjedeledd {@code ToImplementationProxyHandler}
  *     til serviceimplementasjon som skal anvendes.</li>
+ *     <li>Vi bruker {@code @WSServiceChain} for å angi ExServiceWSI  som har Web Service Proxykjede</li>
  * </ul>
  */
 @Test(groups = "server-required")
-public class TutorialPart6_KlientServerEksempelTest {
+public class TutorialPart6_SingleVmEksempelTest {
 
     /**
      * Binder opp {@code ExServiceWSI} til dummy implementasjon inntilvidere.
@@ -237,6 +238,8 @@ public class TutorialPart6_KlientServerEksempelTest {
                         bind(no.statkart.skif.skiftest.service.test.tutorial.ex.wsapi.klient.ExService.class)
                                 .toProvider(new TypeLiteral<ServiceProvider<no.statkart.skif.skiftest.service.test.tutorial.ex.wsapi.klient.ExService>>() {
                                 });
+
+                        // Merk: Her kobler vi klienten til serveren via serverInjector
                         ExServiceWSBean exServiceWSBean = serverInjector.getInstance(ExServiceWSBean.class);
                         bind(no.statkart.skif.skiftest.service.test.tutorial.ex.wsapi.klient.ExService.class)
                                 .annotatedWith(Implementation.class)
