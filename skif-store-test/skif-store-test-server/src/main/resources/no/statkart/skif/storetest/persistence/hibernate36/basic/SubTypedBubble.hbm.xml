@@ -16,7 +16,7 @@
             <property name="num"/>
         </subclass>
         <subclass name="no.statkart.skif.storetest.domain.basic.SubTypeWithCollection" discriminator-value="SubTypeWithCollection" lazy="true">
-            <set name="tekster" table="TEKSTFORSUBTYPE">
+            <set name="tekster" table="TEKSTFORSUBTYPE" lazy="true" batch-size="256">
                 <key column="subtypedid"/>
                 <element column="tekst" type="string" not-null="true"/>
             </set>
