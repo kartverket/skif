@@ -1,6 +1,5 @@
 package no.statkart.skif.mapper;
 
-import com.google.common.base.Joiner;
 import org.joda.time.LocalTime;
 
 import javax.xml.datatype.DatatypeConstants;
@@ -62,7 +61,7 @@ public class LocalTimeTypeMapper<WsapiT> extends AbstractWrappedDateTypeMapper<W
      * @param dateTime XML-dato som skal valideres som tidspunkt
      */
     private static void validate(XMLGregorianCalendar dateTime) {
-        List<String> errorMsgs = new ArrayList<String>();
+        List<String> errorMsgs = new ArrayList<>(0);
         if (dateTime.getEon() != null && dateTime.getEon().longValue() != 0)
             errorMsgs.add("LocalTime can't span eons.");
         if (dateTime.getTimezone() != DatatypeConstants.FIELD_UNDEFINED)
@@ -75,7 +74,7 @@ public class LocalTimeTypeMapper<WsapiT> extends AbstractWrappedDateTypeMapper<W
         if (dateTime.getSecond() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Second is not specified.");
 
         if (!errorMsgs.isEmpty()) {
-            String joined = Joiner.on(' ').join(errorMsgs);
+            String joined = String.join(" ", errorMsgs);
             throw new MappingException("Can't map LocalTime: " + joined);
         }
     }

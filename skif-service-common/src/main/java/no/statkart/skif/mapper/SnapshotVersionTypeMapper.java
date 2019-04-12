@@ -1,6 +1,5 @@
 package no.statkart.skif.mapper;
 
-import com.google.common.base.Joiner;
 import no.statkart.skif.store.SnapshotVersion;
 
 import javax.xml.datatype.DatatypeConstants;
@@ -71,7 +70,7 @@ public class SnapshotVersionTypeMapper<WsapiT> extends AbstractJavaDateTypeMappe
      * @param timestamp XML-dato som skal valideres som timestamp
      */
     private static void validate(XMLGregorianCalendar timestamp) {
-        List<String> errorMsgs = new ArrayList<String>();
+        List<String> errorMsgs = new ArrayList<>(0);
         if (timestamp.getEon() != null && timestamp.getEon().longValue() != 0)
             errorMsgs.add("SnapshotVersion can't span eons.");
         if (timestamp.getYear() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Year is not specified.");
@@ -82,7 +81,7 @@ public class SnapshotVersionTypeMapper<WsapiT> extends AbstractJavaDateTypeMappe
         if (timestamp.getSecond() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Second is not specified.");
 
         if (!errorMsgs.isEmpty()) {
-            String joined = Joiner.on(' ').join(errorMsgs);
+            String joined = String.join(" ", errorMsgs);
             throw new MappingException("Can't map SnapshotVersion: " + joined);
         }
     }
