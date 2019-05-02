@@ -28,6 +28,7 @@ classes/
 *.iws
 
 gradle-user.properties
+gradle.properties
 setEnv_personal.cmd
 
 *.log
