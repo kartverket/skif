@@ -5,23 +5,10 @@ if (!['5.2'].findAll { gradle.gradleVersion == it }) {
     logger.warn "WARNING: Du benytter en annen versjon av Gradle enn hva byggesystemet er testet med: ${gradle.gradleVersion}"
 }
 
-
-apply plugin: 'sktools-properties-plugin'
-
-//user properties
-Map userProperties = propertyUtils.fromFile('gradle-user.properties') << gradle.startParameter.projectProperties
-propertyUtils.assignPropertiesToProject(userProperties)
+apply from: file('properties.gradle')
 
 allprojects {
-//    apply plugin: 'sktools-properties-plugin'
-    propertyUtils.assignPropertiesToProject(userProperties)
-
-    //version kan bestemmes via env variabel og -P parameter
-    if (project.hasProperty('version')) {
-        project.version = getProperty('version')
-    } else {
-        project.ext.set('version', 'unspecified')
-    }
+    project.version = base_version + sub_version
 
     defaultTasks 'build'
     group = 'no.statkart.skif'
@@ -65,9 +52,6 @@ subprojects { Project project ->
     clean {
         delete 'gen'
     }
-
-    propertyUtils.expandProjectProperties() //må ekspanderes i alle prosjekter da det kun er initielle build.properties + ifra kommandolinjen som blir arvet...
-    //PS: dersom 'version' eller andre properties ønskes overstyrt i underprosjekter må disse evaluerest først. (evt kan man legge denne til en afterEvaluate{})
 
     def filterTestGroup = { Test test = test, String group, String value ->
         test.with {
@@ -206,14 +190,14 @@ allprojects {
                 attributes([
                         'Specification-Title': project.name,
                         'Specification-Vendor': 'Statens kartverk',
-                        'Specification-Version': gradle.startParameter.projectProperties.get('version') ?: version,
+                        'Specification-Version': base_version,
 
                         //misc build info
                         'Build-By'     : System.getProperty('user.name'),
                         'Build-Machine': java.net.InetAddress.localHost.hostName,
                         'Build-Repo': MAVEN_REPO,
 
-                        'Implementation-Title': "${project.name} bygget for ${(version == null || version.contains('-SNAPSHOT') || version.contains('-build')) ? 'TEST' : 'Produksjon'}",
+                        'Implementation-Title': "${project.name} bygget for ${(project.version == null || project.version.contains('-SNAPSHOT') || project.version.contains('-build')) ? 'TEST' : 'Produksjon'}",
                         'Implementation-Vendor': 'Statens kartverk',
                         'Implementation-Version': project.version,
                 ])
