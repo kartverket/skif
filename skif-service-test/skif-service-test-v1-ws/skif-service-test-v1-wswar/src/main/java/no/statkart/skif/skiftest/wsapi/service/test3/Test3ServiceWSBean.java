@@ -46,8 +46,8 @@ public class Test3ServiceWSBean extends SkifWebService<Test3ServiceWSI> implemen
     }
 
     @Override
-    public String testThrowExcpetion(@WebParam(name = "exceptionClass") String exceptionClass, @WebParam(name="message") String message, @WebParam(name="skifTestContext")SkifTestContext skifTestContext) throws SimpleException {
-        return wsServiceChain.testThrowExcpetion(exceptionClass, message, skifTestContext);
+    public String testThrowException(@WebParam(name = "exceptionClass") String exceptionClass, @WebParam(name="message") String message, @WebParam(name="skifTestContext")SkifTestContext skifTestContext) throws SimpleException {
+        return wsServiceChain.testThrowException(exceptionClass, message, skifTestContext);
     }
 }
 

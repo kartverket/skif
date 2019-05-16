@@ -16,7 +16,7 @@ public class StoreUnitOfWorkClient extends StoreUnitOfWork {
 
     public WrappableStoreSession endUnitOfWork() {
         if (isAccessedAfterGetTransfer()) {
-            throw new ImplementationException("Store was access beweeen calls to Store.getUnitOfWorkTransfer() and Store.endUnitOfWork() and may result in impropper commit");
+            throw new ImplementationException("Store was access between calls to Store.getUnitOfWorkTransfer() and Store.endUnitOfWork() and may result in improper commit");
         }
 
         if (modifiedMap.size() > 0 && !getTransferHasBeenCalled) {

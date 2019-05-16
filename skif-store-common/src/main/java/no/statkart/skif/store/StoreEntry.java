@@ -13,7 +13,7 @@ public class StoreEntry {
     protected BubbleObject[] bubbleObject = new BubbleObject[MAX_LEVELS];
     protected StoreEntryState[] state = new StoreEntryState[MAX_LEVELS];
 
-    protected boolean[] locked = new boolean[MAX_LEVELS]; // Denne kan tas bort og modelleres via StoreEntryState.LOCKED_UNCHANED
+    protected boolean[] locked = new boolean[MAX_LEVELS]; // Denne kan tas bort og modelleres via StoreEntryState.LOCKED_UNCHANGED
     protected int loadedByLevel;
     protected int lockCreatedByLevel;
 

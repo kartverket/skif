@@ -5,7 +5,7 @@ import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 
 /**
- * Modul for V1-API-et. Denne modulen kan anta at {@link WSVersioningServerModule} er innstallert.
+ * Modul for V1-API-et. Denne modulen kan anta at {@link WSVersioningServerModule} er installert.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0

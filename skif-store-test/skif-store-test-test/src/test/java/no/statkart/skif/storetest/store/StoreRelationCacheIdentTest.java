@@ -286,7 +286,7 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
      * identer får endret sin ident. I outer unit of work er caching enabled. Ident søk med gamle identer skal da gi
      * null mens ident søk med ny ident skal gi objekt etter commit i inner uow.
      */
-    public void testOnClientChangeIdentWithDerivedIdentsWithCachingDisbledInInnerUOWOnCommit() {
+    public void testOnClientChangeIdentWithDerivedIdentsWithCachingDisabledInInnerUOWOnCommit() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
         final X1BBOneId<?> b2Id = mockupFacade.getX1BBOneMockupFactory().getB2Id();
@@ -320,7 +320,7 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
      * identer får endret sin ident. I outer unit of work er caching enabled. Ident søk med gamle identer skal da gi
      * opprinnelig objecter  mens ident søk med ny ident skal gi null etter abort av inner uow
      */
-    public void testOnClientChangeIdentWithDerivedIdentsWithCachingDisbledInInnerUOWOnAbort() {
+    public void testOnClientChangeIdentWithDerivedIdentsWithCachingDisabledInInnerUOWOnAbort() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final X1AAId<?> a1Id = mockupFacade.getX1AAMockupFactory().getA1Id();
         final X1BBOneId<?> b2Id = mockupFacade.getX1BBOneMockupFactory().getB2Id();

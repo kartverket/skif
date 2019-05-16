@@ -50,8 +50,7 @@ public class TestBubbleFilter implements StoreSessionReadListener, StoreSessionW
     }
 
     /**
-     *
-     * Kunne ha oppdatert alle felter som ikke er filtrert, kaster i stede en exception for tesing her.
+     * Kunne ha oppdatert alle felter som ikke er filtrert, kaster i stede en exception for testing her.
      *
      * @param storeBubbleObject
      * @param persistentBubbleObject

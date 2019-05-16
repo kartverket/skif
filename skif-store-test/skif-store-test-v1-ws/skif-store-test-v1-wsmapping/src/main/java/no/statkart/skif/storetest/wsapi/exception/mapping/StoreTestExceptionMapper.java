@@ -42,7 +42,7 @@ public class StoreTestExceptionMapper extends AbstractExceptionMapper<StoreTestE
 
     public StoreTestExceptionMapper(StoreTestMapping storeTestMapping) {
         super(StoreTestExceptionMapping.class, true);
-        addMapptersForExceptionTypes();
+        addMappersForExceptionTypes();
         addMappersForFaultTypes();
         addMapperFactory(new DelegatingTypeMapperFactory(storeTestMapping));
     }
@@ -59,7 +59,7 @@ public class StoreTestExceptionMapper extends AbstractExceptionMapper<StoreTestE
         addMapper(new ObjectsNotFoundFaultInfoTypeMapper());
     }
 
-    private void addMapptersForExceptionTypes() {
+    private void addMappersForExceptionTypes() {
         addMapper(new ServiceExceptionTypeMapper(exceptionClassMap));
         addMapper(new IdentityExceptionTypeMapper<>(Error.class));
         addMapper(new IdentityExceptionTypeMapper<>(RuntimeException.class));

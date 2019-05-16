@@ -15,9 +15,9 @@ public interface UowTestService {
     StoreBubbleTransfer findAndLock(BubbleId bubbleId);
 
     /**
-     * Oppdaterer en Simple boble ved å sette ny tekst på boblen i en egen transasksjon. Dette for å kunne teste
-     * refersh av en boble etter at den har blitt lest ifm at boblen låses eller vanlig refresh. Siden metoden vil
-     * frigir alle låser for inneværende bruker bør kun kalles når brukeren ikke har eksistrende låser. Det testes
+     * Oppdaterer en Simple boble ved å sette ny tekst på boblen i en egen transaksjon. Dette for å kunne teste
+     * refresh av en boble etter at den har blitt lest ifm at boblen låses eller vanlig refresh. Siden metoden vil
+     * frigir alle låser for inneværende bruker bør kun kalles når brukeren ikke har eksisterende låser. Det testes
      * for dette i metoden slik at den feiler hvis den brukes når dette ikke er tilfellet.
      * oppdatering
      */

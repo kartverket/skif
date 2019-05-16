@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Et objekt som inneholder resultatet av et endringslogg kall ({@link no.statkart.skif.store.service.EndringsloggService#findEndringer}).
- * Objektet inneholder en liste av funne EndringId-er, en optional liste med tilhørende bobleobjekter, et statusflagg
+ * Objektet inneholder en liste av funne EndringId-er, en optional liste med tilhørende bobleobjekt, et statusflagg
  * som angir om alle endringer ble lest.Resultat objekt for søk etter endringer
  */
 public class Endringer<E extends AbstractEndring<EI,?>, EI extends AbstractEndringId<?>> implements Serializable {

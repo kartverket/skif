@@ -46,7 +46,7 @@ public class SkifTestMappingD2WTest {
     }
 
     /**
-     * Tester mapping2 av et API TestBubbleId objekt til Web Service TestBubbelId objekt
+     * Tester mapping2 av et API TestBubbleId objekt til Web Service TestBubbleId objekt
      */
     public void testMapTestA() {
         A source = new A("10");

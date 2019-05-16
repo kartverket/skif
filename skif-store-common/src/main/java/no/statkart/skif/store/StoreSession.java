@@ -102,13 +102,13 @@ public interface StoreSession {
 
     /**
      * Oppdaterer objektet i sessionen. Dersom det allerede finnes en annen instans knyttet til sessionen med samme
-     * id vil dette objektet bli erstattet og makert som utdatert slik at denne instansen ikke kan brukes i senere kall
-     * mot sessionen. Methoden støtter endring av objekts subtype samt oppdatering av objekter med skjulte felter.
+     * id vil dette objektet bli erstattet og markert som utdatert slik at denne instansen ikke kan brukes i senere kall
+     * mot sessionen. Metoden støtter endring av objektets subtype samt oppdatering av objekter med skjulte felter.
      */
     <T extends BubbleObject> void update(T bubbleObject);
 
     /**
-     * Markerer objektet som slettet i sessionen. Metoden kaster exception hvis objektet ikke finnes eller allerde har blitt
+     * Markerer objektet som slettet i sessionen. Metoden kaster exception hvis objektet ikke finnes eller allerede har blitt
      * markert for sletting. Dersom det allerede finnes en annen instans knyttet til sessionen med samme
      * id vil dette objektet bli erstattet og makert som utdatert slik at denne instansen ikke kan brukes i senere
      * kall mot sessionen.
@@ -161,7 +161,7 @@ public interface StoreSession {
      *     delete så vil objektet ikke ligge i transferen.</li>
      *     <li>Hvis en underliggende session har gjort en update og inneværende session har gjort en
      *     delete så vil objektet ligge i {@code deleted}.</li>
-     *     <li>Hvis en underliggende session har gjort en delete og innværende session har gjort en
+     *     <li>Hvis en underliggende session har gjort en delete og inneværende session har gjort en
      *     insert så vil objektet ligge i {@code updated}</li>
      * </ul>
      */
@@ -176,7 +176,7 @@ public interface StoreSession {
      *     update så vil objektet ligge i {@code updated}.</li>
      *     <li>Hvis en underliggende session har gjort en insert eller update og inneværende session har gjort en
      *     delete så vil objektet ligge i {@code deleted}.</li>
-     *     <li>Hvis en underliggende session har gjort en delete og innværende session har gjort en
+     *     <li>Hvis en underliggende session har gjort en delete og inneværende session har gjort en
      *     insert så vil objektet ligge i {@code inserted}</li>
      * </ul>
      *

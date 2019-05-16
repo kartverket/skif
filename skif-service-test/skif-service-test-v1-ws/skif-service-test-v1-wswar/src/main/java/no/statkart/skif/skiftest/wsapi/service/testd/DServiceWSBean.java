@@ -95,7 +95,7 @@ public class DServiceWSBean extends SkifWebService<DServiceWSI> implements DServ
 
         } else if (exceptionClass.equals("simple.SimpleNonMappedException")) {
             SimpleNonMappedFaultInfo info = new SimpleNonMappedFaultInfo();
-            info.setInfoField("infoFieleMessage");
+            info.setInfoField("infoFieldMessage");
             throw new SimpleNonMappedException(message, info);
 
         } else {

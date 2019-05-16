@@ -27,7 +27,7 @@ public class SkifTestMappingW2DTest {
         assertEquals(target, "test");
     }
 
-    public void testMapIntger() {
+    public void testMapInteger() {
         Integer source = 5;
         Integer target = map.w2d(source);
         assertNotNull(target);

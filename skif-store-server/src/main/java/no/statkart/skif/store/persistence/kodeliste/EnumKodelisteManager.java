@@ -213,7 +213,7 @@ public class EnumKodelisteManager {
      * @param bubbleId id til enumkode eller enumkodeliste
      * @param <T>      kode- eller kodelistetypen
      * @param <I>      kode- eller kodelisteidtypen
-     * @return koden, kodelisten, eller <code>null</code> hvis id ikke svarer til noen kjende kode eller kodeliste
+     * @return koden, kodelisten, eller <code>null</code> hvis id ikke svarer til noen kjente koder eller kodelister
      */
     public <T extends BubbleObject, I extends BubbleId<? extends T>> T get(I bubbleId) {
         BubbleObject masterObject = enumCache.get(bubbleId.asSnapshotVersionCurrent());

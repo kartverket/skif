@@ -6,7 +6,7 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 
 /**
- * Denne tjenesten er kun her for å teste ut hvordan andre rammeverke takler forskjellige typer. Den benytter ikke SKIF
+ * Denne tjenesten er kun her for å teste ut hvordan andre rammeverk takler forskjellige typer. Den benytter ikke SKIF
  * på noen måte.
  */
 @WebService(

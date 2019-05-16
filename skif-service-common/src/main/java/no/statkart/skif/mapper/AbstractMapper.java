@@ -28,7 +28,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
     enum Direction {
         /**
-         * mapping from domain to webserivce classes
+         * mapping from domain to webservice classes
          */
         D2W,
         /**
@@ -500,7 +500,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
     /**
      * Typemappere rangeres etter hvor fra match de er. Først og fremst foretrekkes den typemapper som er nærmest
      * klassen det mappes fra. Dersom det her blir uavgjort mellom to typemappere på dette punktet, så velges den
-     * typemapper som mapper til det som er nærmest ønsket klasse (SKIF-383). Det er allrede på forhånd sikret at
+     * typemapper som mapper til det som er nærmest ønsket klasse (SKIF-383). Det er allerede på forhånd sikret at
      * typemapper mapper fra (en superklasse av) klassen som skal mappes, til (en subtype av) klassen det skal mappes
      * til.
      */

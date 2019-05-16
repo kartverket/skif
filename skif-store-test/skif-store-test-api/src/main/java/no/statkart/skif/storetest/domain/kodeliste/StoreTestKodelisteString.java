@@ -8,7 +8,7 @@ import no.statkart.skif.store.localization.LocalizedString;
 import java.util.Map;
 
 /**
- * Implemenmtasjonsklasse for Kodelister i StoreTest applikasjoen som bruker en String som idValue.
+ * Implementasjonsklasse for Kodelister i StoreTest applikasjon som bruker en String som idValue.
  *
  * @author Henrik Fredholm
  * @since 2.1

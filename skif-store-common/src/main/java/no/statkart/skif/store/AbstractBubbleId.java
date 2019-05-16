@@ -204,7 +204,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 
     /**
      * Comparable is implemented to support consistent ordering of id collections.
-     * This is useful even if most id's are not instended for humans.
+     * This is useful even if most id's aren't intended for humans.
      */
     public int compareTo(Object o) {
         // Opptimalisering hvis value er Long
@@ -297,7 +297,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * "Id", and it must have a constructor taking an id as the only
      * argument
      *
-     * @return the new type instance or null if no such contructor exists
+     * @return the new type instance or null if no such constructor exists
      * @throws no.statkart.skif.exception.ReflectionException
      *          if the type could not be created
      */

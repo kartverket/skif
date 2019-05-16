@@ -17,12 +17,12 @@ import java.util.Set;
  * <li>Mange relasjon til {@code X1CCMany}: 'someCCs' </li>
  * <li>En-til-en relasjon til {@code X1DDUnique}: 'myUniqueDD' (TODO)</li>
  * <li>En verdi som brukes som en unik index for klassen</li>
- * <li>En verdi som brukes son en nonunik index for klassen</li>
+ * <li>En verdi som brukes som en ikke-unik index for klassen</li>
  * <li>En verdi som sammen med verdi fra {@code X1BBOne} utgjør en unik index for klassen (bruker {@code nr} fra begge)</li>
  * </ul>
  * <p/>
- * De 3 relaterte klassene implementerer en finder for å navigerer relasjonen i motsatt rettning. Det finnes ingen
- * klasser for indexene. De bruker String klassen. Oppslag for disse skjer via servicefindermetoder.
+ * De 3 relaterte klassene implementerer en finder for å navigere relasjonen i motsatt retning. Det finnes ingen
+ * klasser for indexene. De bruker String klassen. Oppslag for disse skjer via service-findermetoder.
  *
  * @author Henrik Fredholm
  * @since 2.3

@@ -13,8 +13,8 @@ import java.util.Set;
  * <p/>
  * Bemerk: I definisjonen av denne klassen burde {@code <O>} egentlig extende både {@code BubbleObject} og
  * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da må subklassen {@link ComponentBubbleIdSet}
- * eksplisitt angi den eidende bobleklassen i tillegg til den direkte eiende klassen og det blir og det blir veldig
- * tungvingt. Har derfor istedet valgt å lage en package private hjelpemetode {@link Bubbles#onChangeRelationImpl}
+ * eksplisitt angi den eiende bobleklassen i tillegg til den direkte eiende klassen og det blir og det blir veldig
+ * tungvint. Har derfor i stedet valgt å lage en package private hjelpemetode {@link Bubbles#onChangeRelationImpl}
  * som kun krever at {@code owner} er av type BubbleObject.
  *
  * @author Henrik Fredholm

@@ -38,7 +38,7 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         setStrategyInstance();
         Configuration hibernateConfiguration = strategy.getHibernateConfiguration();
         if (hibernateConfiguration != null) {
-            logger.debug("Configuring hibernate from configuration object specified programatically");
+            logger.debug("Configuring hibernate from configuration object specified programmatically");
         } else if (strategy.getHibernateConfigurationFilename() != null) {
             String propertyfile = strategy.getHibernateConfigurationFilename();
             logger.debug("Configuring hibernate from property file: '{}'", propertyfile);

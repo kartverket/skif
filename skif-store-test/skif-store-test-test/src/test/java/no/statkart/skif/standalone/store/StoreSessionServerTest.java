@@ -104,7 +104,7 @@ import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.assertNotFound;
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.countInDatabase;
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactorManagerBundle;
-import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.deletePriviouslyWritenTestBubbles;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.deletePreviouslyWrittenTestBubbles;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.extractProperty;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -266,7 +266,7 @@ public class StoreSessionServerTest {
         });
 
         storeServer = fakeInjector.getInstance(StoreServer.class);
-        deletePriviouslyWritenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
+        deletePreviouslyWrittenTestBubbles(persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT));
     }
 
     /**
@@ -677,7 +677,7 @@ public class StoreSessionServerTest {
     }
 
     public void testLoadObjectViaFinder() {
-        TestBubbleId id = testBubbleIdFinder();
+        TestBubbleId<?> id = testBubbleIdFinder();
         // Dette kallet skal ikke gjøre select kall mot databasen da objekt allerede er lastet via finder
         BubbleObject bubbleObject = storeServer.get(id);
         assertNotNull(bubbleObject);

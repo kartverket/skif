@@ -14,7 +14,7 @@ import java.util.*;
  * Bemerk: I definisjonen av denne klassen burde {@link #getOwner()} egentlig extende både {@code BubbleObject} og
  * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da må man for owners at typen
  * {@link ComponentWithOwnerReference} eksplisitt angi den eidende bobleklassen i tillegg til den direkte eiende klassen
- * og det blir veldig tungvingt. Har derfor istedet valgt å lage en package private hjelpemetode
+ * og det blir veldig tungvint. Har derfor istedet valgt å lage en package private hjelpemetode
  * {@link Bubbles#onChangeRelationImpl} som kun krever at owner som hentes ut er av type BubbleObject.
  * <p>
  * Eksempel på bruk:

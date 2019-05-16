@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
  * Det er ønskelig å kunne skjeldne mellom release- og unit-tester da disse vil gå mot forskjellige typer databaser. Unit-
  * tester må ikke få lov å ødelegge releasetestdatabasen da denne kan ta lang tid å gjenetablere.
  * For release-tester er det også ønskelig å kunne skjeldne mellom read- og write-tester siden write-tester krever at
- * man måre gjøre en database-flashback for rask tilbakestilling mellom hver kjøring. Den enkleste løsning her er å ha
+ * man må gjøre en database-flashback for rask tilbakestilling mellom hver kjøring. Den enkleste løsning her er å ha
  * forskjellige brukere for hver database type og evt en liten sjekk som får unit tester til å feile hvis de
  * forsøker å skrive data til en releasetest database.  Denne basisklassen har dog ikke noen eksplisitt støtte for dette
  * konseptet. Dette kan implementeres i en subklasse.
@@ -50,7 +50,7 @@ import org.testng.annotations.Test;
  * <li>Testklassens injector gjenbrukes på tvers av testmetoder innenfor samme klasse
  * <li>I SingleVm oppsett gjenbrukes samme underliggen serverinjectoren på tvers av alle testcases
  * <li>Tester som bruker samme konfigurasonsoppsett vil normalt dele injector-instans, men kan ha sin egen hvis ønskelig
- * <li>Tester som bruker forskjellig konfigurasjonsoppsett vil aldrig dele injector</li>
+ * <li>Tester som bruker forskjellig konfigurasjonsoppsett vil aldri dele injector</li>
  * </ul>
  * Det er mulig å endre oppførslen for en test slik at den alltid kjører i SingleVm eller JEE mode. Det er også mulig å angi
  * at hver enkelt testmetode skal ha sin egen injector eller at testcasen ikke skal dele konfigurasjon med andre testcases.

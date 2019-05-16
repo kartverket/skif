@@ -23,12 +23,12 @@ import java.sql.Types;
  *    CREATE TYPE STRING_LIST_TYPE AS TABLE OF STRING;
  * </pre>
  *
- * <p>Alternativ kan man bruke følgede format som også generaliserer til sammensatte typer:
+ * <p>Alternativ kan man bruke følgende format som også generaliserer til sammensatte typer:
  * <pre>
  *    CREATE TYPE NUMBER_TYPE AS OBJECT (id NUMBER);
  *    CREATE TYPE NUMBER_LIST_TYPE AS TABLE OF NUMBER_TYPE;
  * </pre>
- * Om du får ORA-01031 "insufficient privileges" så må du gi brukaren din "CREATE TYPE" system privilegiet på Oracle-skjemaet du brukar
+ * Om du får ORA-01031 "insufficient privileges" så må du gi brukeren "CREATE TYPE" system privilegiet på Oracle-skjemaet du bruker
  * Ref. http://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_8001.htm.
  *
  * <p>Videre så må Hibernate SessionFactory configureres til å kunne bruke {@code oracle.sql.ARRAY}:

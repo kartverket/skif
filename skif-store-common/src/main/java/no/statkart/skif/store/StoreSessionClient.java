@@ -497,20 +497,20 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     /**
-     * Returnerer true hvis {@code existingBubbleObject} skal erstattes med {@code incommingBubbleObject}
+     * Returnerer true hvis {@code existingBubbleObject} skal erstattes med {@code incomingBubbleObject}
      */
-    private boolean replaceVersion(BubbleObject existingBubbleObject, BubbleObject incommingBubbleObject) {
-        return selectVersion(existingBubbleObject, incommingBubbleObject) < 0;
+    private boolean replaceVersion(BubbleObject existingBubbleObject, BubbleObject incomingBubbleObject) {
+        return selectVersion(existingBubbleObject, incomingBubbleObject) < 0;
     }
 
     /**
      * Hvis {@link #versionComparator} er satt brukes returverdien fra denne. Ellers returneres {@code -1} slik at {@code
-     * incommingBubbleObject} alltid vil bli brukt.
-     * @return  Et negativ tall hvis {@code incommeingBubbleObject } skal brukes, 0 hvis de er like, og et positiv tall
+     * incomingBubbleObject} alltid vil bli brukt.
+     * @return  Et negativ tall hvis {@code incomingBubbleObject} skal brukes, 0 hvis de er like, og et positiv tall
      * hvis {@code existingBubbleObject} skal brukes. Tilsvarer {@link Comparator#compare(Object, Object)}).
      */
-    private int selectVersion(BubbleObject existingBubbleObject, BubbleObject incommingBubbleObject) {
-        return versionComparator == null ? -1 : versionComparator.compare(existingBubbleObject, incommingBubbleObject);
+    private int selectVersion(BubbleObject existingBubbleObject, BubbleObject incomingBubbleObject) {
+        return versionComparator == null ? -1 : versionComparator.compare(existingBubbleObject, incomingBubbleObject);
     }
 
     private <T extends BubbleObject, I extends BubbleId<? extends T>> void evictFromReadCache(I bubbleId) {

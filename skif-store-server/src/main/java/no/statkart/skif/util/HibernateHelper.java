@@ -28,7 +28,7 @@ public class HibernateHelper {
 
     /**
      * Finner {@code ClassMetadata} for et gitt objekt. Denne er å foretrekke fremfor {@code {@link #getClassMetadata(Session, Class)}}
-     * og å gjøre tilsvarende manuelt, da den innholder logikk for å håndtere proxy-objekter.
+     * og å gjøre tilsvarende manuelt, da den inneholder logikk for å håndtere proxy-objekter.
      */
     public static ClassMetadata getClassMetadata(Session session, Object o) {
         Class c;

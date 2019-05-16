@@ -26,7 +26,7 @@ import java.util.SortedMap;
  * Baseklasse for opprettelse av mockupfacade-instanser. En faktisk implementasjon trenger bare implementere
  * konstruktøren. MockupFacadeBuilder-instanser må instansieres fra klientmodulen, mens MockupFacade-objektene
  * som builderen oppretter blir instansiert via en egen fritstående modul som forsyner MockupFacaden med
- * en egen {@code MockupStore}-instans, {@code TestNumer}-instans og {@code IdService}-instans for generering
+ * en egen {@link MockupStore}-instans, {@link TestNumber}-instans og {@link IdService}-instans for generering
  * av test id'er.
  * <p>
  * Klassen er annotert med @Singleton slik at readTestSet gjenbrukes på tvers av tester. Tilsvarende må subklasser
@@ -121,7 +121,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     /**
      * Spør tjeneren om det ser ut som om readtestsettet allerede er lagret.
      *
-     * @param snapshotTransfers    tranfer for settet
+     * @param snapshotTransfers    transfer for settet
      * @return om settet finnes i databasen
      */
     private boolean testsetExists(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers) {

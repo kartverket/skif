@@ -40,7 +40,7 @@ public class SessionSelector implements AutoCloseable {
     }
 
     /**
-     * Returnerer en session som er låst til en gitt snapshotversion. Sesionen er kun gyldig sålenge det ikke hentes
+     * Returnerer en session som er låst til en gitt snapshotversion. Sessionen er kun gyldig sålenge det ikke hentes
      * ut en session for en annen snapshotversion via selectoren.
      */
     public Session get(SnapshotVersion snapshotVersion) {

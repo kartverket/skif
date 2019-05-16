@@ -140,10 +140,10 @@ public class ManyToOneBubbleRefType extends ManyToOneType {
     /**
      * Returns a string representation of <code>value</code> in the format "classname#value".
      *
-     * The ManyToOneBubbleRefType must have it own implementation, because the default implemnetation
+     * The ManyToOneBubbleRefType must have it own implementation, because the default implementation
      * in EntityType will generate an exception. This is because the ManyToOneBubbleRefType fools
-     * hibernate into beliving that the assocated type is a of a ManyToOneBubbelRefType is a MatrikkelBubbleObject and not at
-     * a MatrikkelBubbleObjectId. However, in truth <code>value</code> is a MatrikkelBubbleObjectId.
+     * hibernate into believing that the associated type is a of a ManyToOneBubbleRefType is a MatrikkelBubbleObject and not at
+     * a MatrikkelBubbleObjectId. However, in reality <code>value</code> is a MatrikkelBubbleObjectId.
      */
 /*
    public String toString(Object value, SessionFactoryImplementor factory) throws HibernateException {

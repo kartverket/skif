@@ -77,7 +77,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
     private final KodelistePersistenceSessionSubtypeHandler handler;
 
     /**
-     * Kode og Kodeliste bobler knyttet til innværende session, inkl. endringer på Kode og Kodeliste for inneværende
+     * Kode og Kodeliste bobler knyttet til inneværende session, inkl. endringer på Kode og Kodeliste for inneværende
      * session. Objektene i denne map vil være knyttet til Store.
      */
     private Map<BubbleId, BubbleObject> localBubbleMap;
@@ -115,7 +115,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
      * returners. Dersom inneværende sessionen ikke inneholder modifikasjoner på kode caches også transferen
      * globalt.
      */
-    private synchronized KodelisteTransfer<KodelisteId<?>> loadKodelisteTranfer() {
+    private synchronized KodelisteTransfer<KodelisteId<?>> loadKodelisteTransfer() {
         List<KodelisteId<?>> kodelisteIds = handler.getKodelisteIds();
         Collection<? extends Kodeliste> kodelisteList = handler.get(kodelisteIds);
         List<KodeId<?>> kodeIds = new ArrayList<>(kodelisteList.size() * 10);
@@ -179,7 +179,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
             }
             if (localCache == null) {
                 // Last localCache transfer via sessionen. Denne vil også inneholde alle tidligere endringer gjort i sessionen
-                KodelisteTransfer<KodelisteId<?>> transfer = loadKodelisteTranfer();
+                KodelisteTransfer<KodelisteId<?>> transfer = loadKodelisteTransfer();
                 kodelisteIdList = transfer.getResult();
                 localCache = Maps.newHashMap(transfer.getBubbleObjects());
                 localBubbleMap = localCache;

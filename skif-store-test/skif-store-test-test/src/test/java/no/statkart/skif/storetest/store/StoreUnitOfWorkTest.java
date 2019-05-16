@@ -501,7 +501,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     public void testClientUpdateOutsideUnitOfWork() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         Simple simple = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
-        clientStore.update(simple); // Kommer aldri her for lock kaster exceptoin
+        clientStore.update(simple); // Kommer aldri her for lock kaster exception
     }
 
     @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Attempt at updating StoreSession\\(level= 2\\) with instance from lower StoreSession\\(level=1\\).*")

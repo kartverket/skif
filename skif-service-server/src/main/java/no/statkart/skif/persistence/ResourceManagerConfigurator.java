@@ -12,7 +12,7 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
  * Design pattern for denne klasse er at klassen er {@code ServiceRequestScoped} og hentes ut via en {@code Provider} i
  * en {@code EJBServiceChain ProxyHandler}. Den første service som kalles for en {@code ServiceRequestContext}
  * Har mulighet for å endre strategi i forhold til default. Etterfølgende proxy handlere må velge kompatible strategier
- * for å ungå å få feil.
+ * for å unngå å få feil.
  * <p>
  * Dersom en service ikke har noen proxy handler som sette strategien vil den automatisk velge default strategi
  * med mindre annet allerede er valgt. Dermed holder det å legge en proxy handler på de tjenester som eksplisitt

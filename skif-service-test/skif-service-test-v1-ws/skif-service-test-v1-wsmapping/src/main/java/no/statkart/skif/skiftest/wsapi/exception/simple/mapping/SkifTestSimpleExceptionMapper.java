@@ -14,7 +14,7 @@ import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleFaultInfo;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class SkifTestSimpleExceptionMapper extends AbstractSkifTestSimpeExceptionMapper {
+public class SkifTestSimpleExceptionMapper extends AbstractSkifTestSimpleExceptionMapper {
 
     public ExceptionMapping getMapping() {
         return this;

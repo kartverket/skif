@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 public interface EqualityHandler<O> {
     /**
-     * Sammenligner objekt o1 med o2. Reglene for likehet må avklares mellom bruker og implementasjon.
+     * Sammenligner objekt o1 med o2. Reglene for likhet må avklares mellom bruker og implementasjon.
      *
      * @param o1         Først objekt.
      * @param o2         Andre objekt. OBS! Det er ingen garanti for at dette objektet er av samme klasse som o1.

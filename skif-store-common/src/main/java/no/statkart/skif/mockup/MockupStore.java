@@ -417,11 +417,11 @@ public class MockupStore implements Store {
     }
 
     /**
-     * Finner alle id-ene til alle bobler referert til fra gitte bobleobjekter rekursivt.
+     * Finner alle id-ene til alle bobler referert til fra angitte bobleobjekt rekursivt.
      *
-     * @param bubbleObjects    bobleobjekter søket skal starte med
+     * @param bubbleObjects    en eller flere bobleobjekt søket skal starte med
      * @param ignoredIdClasses id-klasser som ikke skal følges
-     * @return id-ene, inkludert de til gitt bobleobjekter
+     * @return id-ene, inkludert de til gitte bobleobjekt
      */
     private Set<BubbleId> findLinkedBubbleIds(Collection<BubbleObject> bubbleObjects, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
         ArrayDeque<BubbleObject> uncheckedObjects = new ArrayDeque<>(bubbleObjects);

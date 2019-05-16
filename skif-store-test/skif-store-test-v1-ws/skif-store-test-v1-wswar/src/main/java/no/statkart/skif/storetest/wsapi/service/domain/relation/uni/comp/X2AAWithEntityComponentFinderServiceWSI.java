@@ -11,7 +11,7 @@ import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 import javax.jws.WebParam;
 
 /**
- * TODO: Denne service bruker feiler parameter typer. Ligg inn riktige når de er modellert i basic.xsd
+ * TODO: Denne service bruker feiler parameter typer. Legg inn riktige når de er modellert i basic.xsd
  *
  * @author Henrik Fredholm
  * @since 2.4

@@ -15,7 +15,7 @@ import java.lang.reflect.Modifier;
  */
 public interface EqualityByFields {
     /**
-     * Sammenligner dette objektet med {@code other}. Reglene for likehet må avklares mellom bruker og implementasjon.
+     * Sammenligner dette objektet med {@code other}. Reglene for likhet må avklares mellom bruker og implementasjon.
      *
      * @param other      Andre objekt. OBS! Det er ingen garanti for at dette objektet er av samme klasse som o1.
      *                   Dette tilsvarer {@link Object#equals(Object)}

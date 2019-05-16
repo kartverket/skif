@@ -30,7 +30,7 @@ public class Test3ServiceEJBBean extends EJBTimedService implements Test3Service
     }
 
     @Override
-    public String testThrowExcpetion(String exceptionClass, String message) throws SimpleException {
-        return serviceChain.testThrowExcpetion(exceptionClass, message);
+    public String testThrowException(String exceptionClass, String message) throws SimpleException {
+        return serviceChain.testThrowException(exceptionClass, message);
     }
 }

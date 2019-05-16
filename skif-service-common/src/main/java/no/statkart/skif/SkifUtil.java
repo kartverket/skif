@@ -63,7 +63,7 @@ public class SkifUtil {
      *
      * <p>Eksempel på bruk:
      * <pre>
-     *   SkifUtil.getType(new TypeToken&lt;Simmple&lt;?&gt;&gt;(){})
+     *   SkifUtil.getType(new TypeToken&lt;Simple&lt;?&gt;&gt;(){})
      * </pre>
      * Ovenstående vil returnere Class&lt;Simple&lt;?&gt;&gt;.
      *

@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 /**
  * Alle Kodelister i StoreTest applikasjonen implementerer dette interface. Det er nødvendig å implementere dette
- * interfacet slik at StoreTest kodelister både blir {@code StoreTestBuble} og {@code Kodeliste}
+ * interfacet slik at StoreTest kodelister både blir {@code StoreTestBubble} og {@code Kodeliste}
  *
  * @author Henrik Fredholm
  * @since 2.1

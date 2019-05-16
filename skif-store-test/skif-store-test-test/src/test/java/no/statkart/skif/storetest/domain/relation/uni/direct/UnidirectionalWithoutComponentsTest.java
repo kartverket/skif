@@ -140,7 +140,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
     /**
      * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne".
-     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
+     * Oppdatere relasjonen mellom a2 og b1 slik at disse blir relaterte.
      * I denne varianten blir relasjonen materialisert før endring.
      */
     public void testChangeSomeBBRelationCaseEndresEtterMaterialisering() {
@@ -164,7 +164,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
     /**
      * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne"
-     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
+     * Oppdatere relasjonen mellom a2 og b1 slik at disse blir relaterte.
      * I denne varianten blir relasjonen endret før den materialiseres, men uten unit-of-work
      */
     public void testChangeSomeBBRelationCaseEndresFoerMaterialiseringUtenUOW() {
@@ -186,7 +186,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
     /**
      * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne"
-     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
+     * Oppdatere relasjonen mellom a2 og b1 slik at disse blir relaterte.
      * I denne varianten blir relasjonen endret før den materialiseres, men i unit-of-work
      */
     public void testChangeSomeBBRelationCaseEndresFoerMaterialiseringIUOW() {
@@ -210,7 +210,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
     /**
      * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne".
-     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
+     * Oppdatere relasjonen mellom a2 og b1 slik at disse blir relaterte.
      * I denne varianten blir relasjonen materialisert før endring i en unit-of-work.
      */
     public void testChangeSomeBBRelationCaseEndresEtterMaterialiseringIUOW() {
@@ -237,7 +237,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
     /**
      * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne"
-     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
+     * Oppdatere relasjonen mellom a2 og b1 slik at disse blir relaterte.
      * I denne varianten blir relasjonen materialisert før den endres og sjekkes på nytt i en nøstet unit-of-work.
      */
     public void testChangeSomeBBRelationCaseEndresEtterMaterialiseringINoestedUOW() {
@@ -272,7 +272,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
     /**
      * Tester oppdatering av invers relasjon "X1AA ---someBB-> X1BBOne"
-     * Oppdatere relasjonen  melom a2 og b1 slik at disse blir relaterte.
+     * Oppdatere relasjonen mellom a2 og b1 slik at disse blir relaterte.
      * I denne varianten blir relasjonen endret før den materialiseres, men i unit-of-work
      */
     public void testChangeSomeBBRelationDetached() {
@@ -334,7 +334,7 @@ public class UnidirectionalWithoutComponentsTest extends StoreTestTestCase {
 
     /**
      * Tester oppdatering av invers relasjon "X1AA ---someCCs-> X1CCMany"
-     * Oppdatere relasjonen  melom a2 og c1 slik at disse blir relaterte.
+     * Oppdatere relasjonen mellom a2 og c1 slik at disse blir relaterte.
      */
     public void testChangeSomeCCsRelation() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();

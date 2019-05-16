@@ -40,7 +40,7 @@ public class WSVersioningExceptionMapper extends AbstractExceptionMapper<WSVersi
 
     public WSVersioningExceptionMapper() {
         super(WSVersioningExceptionMapping.class, true);
-        addMapptersForExceptionTypes();
+        addMappersForExceptionTypes();
         addMappersForFaultTypes();
     }
 
@@ -53,7 +53,7 @@ public class WSVersioningExceptionMapper extends AbstractExceptionMapper<WSVersi
     }
 
 
-    private void addMapptersForExceptionTypes() {
+    private void addMappersForExceptionTypes() {
         addMapper(new ServiceExceptionTypeMapper(exceptionClassMap));
         addMapper(new IdentityExceptionTypeMapper<>(Error.class));
         addMapper(new IdentityExceptionTypeMapper<>(RuntimeException.class));

@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.domain.relation;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 
 /**
- * Abstract bubleobjet objekt som har nr og text felter
+ * Abstrakt BubbleObject klasse som har nr og text felter
  * @author Henrik Fredholm
  * @since 2.3
  */

@@ -10,7 +10,7 @@ import java.util.Set;
 
 /**
  * Baseklasse for mockupfactories. Holder på sentrale ting som store og testnummer.
- * SKIF-applikasjonerer definerer opp en eller flere egne implementasjoner av denne i en facade-implementasjon.
+ * SKIF-applikasjoner definerer opp en eller flere egne implementasjoner av denne i en facade-implementasjon.
  *
  * @author Tor Egil R. Strand
  * @since 2.1
@@ -57,7 +57,7 @@ public abstract class AbstractMockupFactory {
      * @return id-ene
      */
     public <I extends BubbleId> Set<I> getAllIds(Class<I> idClass, boolean includeSubTypes) {
-        Set<I> ids = new LinkedHashSet<I>(); // Ønsker å bevare rekkefølge samt gjøre funksjonen deterministisk (dvs at rekkefølgen ikke avhenger av hashkoden til id-veriden)
+        Set<I> ids = new LinkedHashSet<I>(); // Ønsker å bevare rekkefølge samt gjøre funksjonen deterministisk (dvs at rekkefølgen ikke avhenger av hashkoden til id-verdien)
 
         try {
             Field[] fields = getClass().getDeclaredFields();

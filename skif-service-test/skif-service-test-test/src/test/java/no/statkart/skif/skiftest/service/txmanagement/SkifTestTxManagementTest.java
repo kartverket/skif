@@ -225,7 +225,7 @@ public class SkifTestTxManagementTest extends SkifTestCase {
 
     /**
      * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen CMT ejb.
-     * Metoden containerTest4 anvender default atransaction type. Siden kall nr 2 til den andre ejb feiler, skal ingen av  endringene committes.
+     * Metoden containerTest4 anvender default transaction type. Siden kall nr 2 til den andre ejb feiler, skal ingen av endringene committes.
      */
     @Test
     public void testCascadedContainerManagedTxTest4_cascadedPut_rollback() {
@@ -325,7 +325,7 @@ public class SkifTestTxManagementTest extends SkifTestCase {
 
     /**
      * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen BMT ejb.
-     * Metoden beanTest3 har REQUIRES og kall nr 2 til den andre ejb feiler, men første kall har allerde blitt committet
+     * Metoden beanTest3 har REQUIRES og kall nr 2 til den andre ejb feiler, men første kall har allerede blitt committet
      * siden ejben det blir kallt på bruker bean managed transactions og kjører alle kall i egen transaksjon.
      */
     @Test

@@ -184,9 +184,9 @@ public abstract class StoreRelationCache {
     }
 
     @SuppressWarnings("Duplicates")
-    public void updateRemoved(BubbleId<?> owningBubbleId, final InverseRelationParticipation oldInstance, Executor collectionExcutor) {
+    public void updateRemoved(BubbleId<?> owningBubbleId, final InverseRelationParticipation oldInstance, Executor collectionExecutor) {
         final InverseRelationCollector collector = new InverseRelationCollector();
-        collectionExcutor.execute(new Runnable() {
+        collectionExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 oldInstance.collectInverseRelationValues(collector);

@@ -297,7 +297,7 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 
 //    /**
 //     * Belyser problemet beskrevet i SKIF-214.
-//     * Skalslette alle komponenter i ParentBubble 1, men ingenting skjer pga SKIF-214
+//     * Skal slette alle komponenter i ParentBubble 1, men ingenting skjer pga SKIF-214
 //     *
 //     * Med SKIF-214 løst blir komponenter slettet.
 //     *

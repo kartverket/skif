@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.domain.kodeliste;
 
 /**
  * Superklasse for EnumKoder i StoreTest. Det er ikke et krav at EnumKoder skal ha en egen superklasse, men det er lagt
- * inn her som et eksemple.
+ * inn her som et eksempel.
  *
  * I denne klassen kan legges felter som er felles for alle EnumKoder i StoreTest
  *

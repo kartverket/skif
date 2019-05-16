@@ -28,7 +28,7 @@ public class IdentityMapper implements InvocationHandler {
         if (args.length>=1) {
             return args[0];
         }
-        // Invode built in method
+        // Invokes built in method
         try {
             final Object result = method.invoke(this, args);
             return result;

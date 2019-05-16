@@ -17,9 +17,9 @@ import java.util.Collection;
  * {@code ONE}.
  *
  * <P>Invers relasjonen er modellert både via en eksplisitt property og via en egen findermetode på klassen.
- * Findermetoden er egentlig overføldig og finnes kun for test formål samt for demonstrasjon av hvordan slike
+ * Findermetoden er egentlig overflødig og finnes kun for test formål samt for demonstrasjon av hvordan slike
  * findermetoder skal implementeres. Findermetoden spiller kun indirekte sammen med property {@link #invSomeCCsId}
- * ved at den bruker samme underliggende mekanisme for caching av relasjonenen. For at relasjonen skal bli cachet må
+ * ved at den bruker samme underliggende mekanisme for caching av relasjonen. For at relasjonen skal bli cachet må
  * caching i {@code StoreRelationCache} enables først.
  *
  * @author Henrik Fredholm

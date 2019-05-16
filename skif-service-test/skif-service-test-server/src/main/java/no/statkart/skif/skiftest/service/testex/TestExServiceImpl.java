@@ -46,7 +46,7 @@ public class TestExServiceImpl implements TestExService {
 
     @Override
     public String nonMappedCall(String exceptionClass, String message) throws SimpleException, SimpleNonMappedException {
-        throw new ImplementationException("Denne metode kalles aldrig");
+        throw new ImplementationException("Denne metode kalles aldri");
     }
 
     @Override
@@ -124,7 +124,7 @@ public class TestExServiceImpl implements TestExService {
             } else if (nextCall.equals("indirectNoEx")) {
                 return indirectProvider.get().indirectNoEx(callSpec.subList(1, callSpec.size()), exceptionClass, message);
             } else {
-                throw new ImplementationException("Wrong method in argumet:" + nextCall);
+                throw new ImplementationException("Wrong method in argument:" + nextCall);
             }
         }
     }

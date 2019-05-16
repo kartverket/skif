@@ -11,11 +11,11 @@ import java.util.Map;
  * Abstract {@code ModuleStrategyFactory} implementasjon som legger alle prototyper i en map og som bruker
  * superklassen hvis  modulklassen som brukes som nøkkel ikke selv har en prototype.
  *
- * <p>For hver modulklasse anngis en implementasjonsklassen, som må være av en gitt subtype, som skal brukes for
+ * <p>For hver modulklasse angis en implementasjonsklassen, som må være av en gitt subtype, som skal brukes for
  * konfigurasjon av pågjeldende modul. Det er mulig å ha en egen implementasjonsklasser for hver
  * {@link no.statkart.skif.ServiceMode} systemet kan kjøres i. Den faktiske implementasjonsklassen som anvendes for en
- * {@code ServiceMode} avledes ved å legge til navnet på {@code ServideMode} til implementasjonsklassens navn. Hvis
- * denne klassen ikke finnes brukes implementasjonsklassen istedet.  Klassene lastest via refelction fordi
+ * {@code ServiceMode} avledes ved å legge til navnet på {@link ServiceMode} til implementasjonsklassens navn. Hvis
+ * denne klassen ikke finnes brukes implementasjonsklassen istedet.  Klassene lastes via reflection fordi
  * klasser som brukes for SingleVm ikke er tilgjengelig på classpath for klienter som kun kan kjøre i JEE mode.
  *
  * <p>For eksempel angir {@code RemoteServiceModuleStrategy.class} at klassen

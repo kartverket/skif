@@ -152,7 +152,7 @@ public class ValueObjectTest extends StoreTestTestCase {
             bubbleWithBeloepSet.getBeloepSet().add(new BeloepValueObject("NOK", 100, "Ekstra beløp i NOK"));
             store.update(bubbleWithBeloepSet);
             storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
-            Assert.fail("Forvented database constraint exception");
+            Assert.fail("Expected exception due to database constraint");
         } catch (ImplementationException e) {
             assertThat(e.getMessage()).isEqualTo("Could not execute JDBC batch update");
         } finally {

@@ -11,7 +11,7 @@ import no.statkart.skif.service.ejb.EJBCallProxyHandler;
 import no.statkart.skif.service.ejb.EJBInterceptorSingleVm;
 
 /**
- * Denne klasse brukes via refelction
+ * Denne klasse brukes via reflection
  *
  * @author Henrik Fredholm
  * @since 2.0

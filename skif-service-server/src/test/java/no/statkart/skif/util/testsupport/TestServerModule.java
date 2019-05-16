@@ -1,6 +1,5 @@
 package no.statkart.skif.util.testsupport;
 
-import com.google.inject.name.Names;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
@@ -26,7 +25,4 @@ public class TestServerModule extends TestModule {
         install(new ServerModule(moduleConfiguration));
     }
 
-    private void configurModulename() {
-        bind(String.class).annotatedWith(Names.named("modulename")).toInstance("TestServerModule");
-    }
 }

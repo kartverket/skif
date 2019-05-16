@@ -10,7 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
 
 /**
- * Tester bruk av Oracle ARRAY i quiries via Hibernate user type og jdbc
+ * Tester bruk av Oracle ARRAY i queries via Hibernate user type og jdbc
  *
  * @author Henrik Fredholm
  */

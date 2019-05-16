@@ -190,7 +190,7 @@ public abstract class AbstractSkifTestCase {
     private ModuleBuilder getModuleBuilder(ITestContext context) {
         ModuleBuilder moduleBuilder = createModuleBuilder();
         if (moduleBuilder == null) {
-            // Bruk builder hvis den finnes fra før, elles opprett en
+            // Bruk builder hvis den finnes fra før, eller opprett en
             String key = calcConfigurationKey();
             String keyCreatingClass = key + ":creatingClass";
             moduleBuilder = (ModuleBuilder) context.getAttribute(key);

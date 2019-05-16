@@ -15,6 +15,6 @@ public interface Test3Service {
 
     A b2A(B b);
 
-    String testThrowExcpetion(String exceptionClass, String message) throws SimpleException;
+    String testThrowException(String exceptionClass, String message) throws SimpleException;
 
 }

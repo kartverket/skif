@@ -25,7 +25,7 @@ import java.util.Set;
  *     til {@code SnapshotVersion.CURRENT}
  *     </li>
  *     <li>Hvis metoden har nettopp en parameter av type {@code SnapshotVersion} og denne står sist i parameterlisten
- *     så mappes metoden til wsapi-metode med samme parameter minus snapshotversion parametren og plus contekst
+ *     så mappes metoden til wsapi-metode med samme parameter minus snapshotversion parameteren og plus contekst
  *     parameteren. SnapshotVersion i context parameteren settes til snapshotversion fra parameteren som ikke mappes.
  *     </li>
  *     <li>Hvis metoden har nettopp en parameter av type collection av type {@code BubbleId} og ingen
@@ -38,10 +38,10 @@ import java.util.Set;
  *     {@code @SuppressSnapshotVersionMapping} og alle andre parameter av type collection av {@code BubbleId} og
  *     {@code SnapshotVersion} er annotert med {@code @SuppressSnapshotVersionMapping} så mappes kallet til
  *     wsapi-metode med samme parametre plus context hvor snapshotversion bestemmes av utfra første parameter av
- *     type {@code BubbleId} som ikke er annotert med {@code @IgnoreShapshotVersion}.
+ *     type {@code BubbleId} som ikke er annotert med {@code @SuppressSnapshotVersionMapping}.
  *     </li>
  *     <li>
- *         Hivs ingen av ovenstående regler kan anvendes kan metoden ikke mappes og det kastes en exception.
+ *         Hvis ingen av ovenstående regler kan anvendes kan metoden ikke mappes og det kastes en exception.
  *     </li>
  * </ul>
  *
@@ -113,7 +113,7 @@ public interface HistTestService {
      * Finner {@code HistWithRelation} objekter som har text lik {@code text} hørende til mockup testsett {@code testsettNumber}
      * og som er relatert til et {@code HistSimple} objekt med id lik {@code histSimpleIds}.
      * <p/>
-     * Denne metode har ikke en eksplisitt SnapshotVersion parameter fordi snapthotversion kan bestemmes ut fra  {@code histSimpleIds}
+     * Denne metode har ikke en eksplisitt SnapshotVersion parameter fordi snapshotversion kan bestemmes ut fra  {@code histSimpleIds}
      *
      * @param text
      * @param histSimpleIds

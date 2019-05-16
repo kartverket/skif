@@ -425,7 +425,7 @@ public class StoreSessionServer extends AbstractStoreSession {
      * <li>Ikke loaded og ikke låst</li>
      * </ul>
      * <p>
-     * Et av målene for implementasjonen er å utnytte tilgjengelig informasjon for å ungå å måtte gjøre kall mot
+     * Et av målene for implementasjonen er å utnytte tilgjengelig informasjon for å unngå å måtte gjøre kall mot
      * databasen.
      *
      * @param level    StoreSession level som ønsker å låse objektet
@@ -490,7 +490,7 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     /**
      * Låser objekter og lager en kopier av objektene hvis låsingen skjer i en unit of work. Hvis låsingen skjer direkte
-     * på StoreSessionServer lages ingen kopier og objeker som er koblet mot underliggende session brukes.
+     * på StoreSessionServer lages ingen kopier og objekter som er koblet mot underliggende session brukes.
      * <p>
      * Et objekt kan være følgende tilstander:
      * <ul>
@@ -501,7 +501,7 @@ public class StoreSessionServer extends AbstractStoreSession {
      * <li>Ikke loaded og ikke låst</li>
      * </ul>
      * <p>
-     * Et av målene for implementasjonen er å utnytte tilgjengelig informasjon for å ungå å måtte gjøre kall mot
+     * Et av målene for implementasjonen er å utnytte tilgjengelig informasjon for å unngå å måtte gjøre kall mot
      * databasen.
      *
      * @param level     StoreSession level som ønsker å låse objektet

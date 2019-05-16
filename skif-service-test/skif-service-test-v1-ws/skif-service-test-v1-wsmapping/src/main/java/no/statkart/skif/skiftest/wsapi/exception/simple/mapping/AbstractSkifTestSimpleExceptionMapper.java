@@ -9,14 +9,14 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 
 /**
- * Conveniece klasse for test-implementasjon.
+ * Convenience klasse for test-implementasjon.
  *
  * Alle metoder kaster {@link NotImplementedException}
  *
  * @author Leif Lislegård
  * @since 2.0
  */
-public abstract class AbstractSkifTestSimpeExceptionMapper implements ExceptionMapping {
+public abstract class AbstractSkifTestSimpleExceptionMapper implements ExceptionMapping {
 
     @Override
     public <T> T d2w(Object source, Class<T> targetClass) {

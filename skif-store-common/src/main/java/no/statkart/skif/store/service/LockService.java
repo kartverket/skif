@@ -25,7 +25,7 @@ public interface LockService {
      * returnerer objektet.
      *
      * @param ids BubbleIds for objekter som skal låses og lastes
-     * @return BubbleObject fors {@code ids}
+     * @return BubbleObject for {@code ids}
      * @throws no.statkart.skif.exception.ObjectsNotFoundException kastes hvis noen {@code ids} ikke finnes
      * @throws no.statkart.skif.exception.LockedException          kastes hvis et objekt er låst av en annen bruker
      */

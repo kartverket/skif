@@ -15,9 +15,9 @@ import static no.statkart.skif.SkifUtil.typeLiteral;
  */
 public class WSRemoteServiceModule extends SkifModule {
     protected List<Class<?>> serviceClasses;
-    public WSRemoteServiceModule(ModuleConfiguration moduleConfiguration, List<Class<?>> serviceClases) {
+    public WSRemoteServiceModule(ModuleConfiguration moduleConfiguration, List<Class<?>> serviceClasses) {
         super(moduleConfiguration);
-        this.serviceClasses = serviceClases;
+        this.serviceClasses = serviceClasses;
     }
 
     @Override

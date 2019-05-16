@@ -25,7 +25,7 @@ public interface StoreUpdateService {
 
     /**
      * Committer en transfer. Dette er en metode som en vanlig applikasjon normalt ikke vil implementere fordi det
-     * er ønseklig med brukstilfellespesifikk validering i forbindelse med oppdatering.
+     * er ønskelig med brukstilfellespesifikk validering i forbindelse med oppdatering.
      */
     void saveTransfer(UnitOfWorkTransfer transfer);
 

@@ -6,7 +6,7 @@ package no.statkart.skif.store;
  *
  * <p>{@code SnapshotVersionContext} overføres automatisk fra klient til server for alle servicekall.
  * Det er mulig å få tak i {@code SnapshotVersionContext} og inneværende {@code SnapshotVersion} for kjørende tråd
- * via Guice injection, men det er også mulg å få tak {@code SnapshotVersionContext} direkte via
+ * via Guice injection, men det er også mulig å få tak {@code SnapshotVersionContext} direkte via
  * {@link  SnapshotVersionContext#getInstance()}.
  *
  * {@code  SnapshotVersionContext.getInstance().setSnap}

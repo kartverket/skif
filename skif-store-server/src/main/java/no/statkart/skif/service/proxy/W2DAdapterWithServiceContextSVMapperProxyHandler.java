@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 
 /**
  * Proxy som adapterer Web service interface {@code T} til java interface {@code A}. Denne adapter har
- * tilleggsfunksjonalitet som tar høyde for at java intefacemetoden kan ha en ekstre {@code SnapshotVersion} parameter
+ * tilleggsfunksjonalitet som tar høyde for at java intefacemetoden kan ha en ekstra {@code SnapshotVersion} parameter
  * som siste parameter. Hvis dette er tilfellet hentes denne ekstra parameter fra {@code SnapshotVersionContext} som
  * forventes allerede å være satt.
  *

@@ -3,7 +3,7 @@ package no.statkart.skif.wsversioning.wsapi.v2.exception.mapping;
 import no.statkart.skif.mapper.ExceptionMapping;
 
 /**
- * Interface that defines implemented cababilities of the mapper.
+ * Interface that defines implemented capabilities of the mapper.
  *
  * @author Leif Lislegård
  * @since 2.4.0

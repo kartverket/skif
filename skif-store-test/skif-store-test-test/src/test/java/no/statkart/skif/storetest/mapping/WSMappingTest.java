@@ -32,7 +32,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tester persistering av mockupdataset i SingleVM via XML.
+ * Tester persistering av mockupsett i SingleVM via XML.
  *
  * @author Henrik Fredholm
  * @since 2.4.0

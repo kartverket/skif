@@ -27,7 +27,7 @@ public class SnapshotVersionArgumentListAnalyser {
         Annotation[][] parameterAnnotations = apiMethod.getParameterAnnotations();
         int length = types.length;
 
-        // Regel 1: ingen parametre eller @SupressSVMapping på metodenivå  => Bruk SnapshotVersionContext
+        // Regel 1: ingen parametre eller @SuppressSnapshotVersionMapping på metodenivå  => Bruk SnapshotVersionContext
         if (length == 0 || hasSuppressSVMappingAnnotation(apiMethod)) return new SnapshotVersionD2WResult(length);
 
         // Regel 2: siste parameter er av type SnapshotVersion og er  annotert med @ServiceContextMapped. Denne skal da mappes via ServiceContext og ikke som egen parameter
@@ -72,7 +72,7 @@ public class SnapshotVersionArgumentListAnalyser {
         Annotation[][] parameterAnnotations = apiMethod.getParameterAnnotations();
         int length = types.length;
 
-        // Regel 1: ingen parametre eller @SupressSVMapping på metodenivå => apimethod skal ikke ha egen snapshotVersion parameter
+        // Regel 1: ingen parametre eller @SuppressSnapshotVersionMapping på metodenivå => apimethod skal ikke ha egen snapshotVersion parameter
         if (length == 0 || hasSuppressSVMappingAnnotation(apiMethod) ) return new SnapshotVersionW2DResult(false, length);
 
         // Regel 2: siste parameter er av type SnapshotVersion og er annotert med @ServiceContextMapped => apimethod har en ekstra SnapshotVersion parameter

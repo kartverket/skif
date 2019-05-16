@@ -467,7 +467,7 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
                 Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsAfterEnabled = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
                 assertEquals(invSomeBBIdsAfterEnabled.get(b2Id), Collections.emptySet());
 
-                // Trenger ingen update her for å se endringen side relaction tracking skjer synkront.
+                // Trenger ingen update her for å se endringen side relation tracking skjer synkront.
                 a1.setSomeBBId(b2Id);
                 Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsChange = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
                 assertEquals(invSomeBBIdsChange.get(b2Id), Collections.singleton(a1Id));

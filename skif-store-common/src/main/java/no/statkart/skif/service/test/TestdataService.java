@@ -47,7 +47,7 @@ public interface TestdataService {
 
     /**
      * Sjekker om objekt med gitt id finnes i databasen fra før. Klienter skal sende inn id til første objekt
-     * i et readmockupsett før den eventuel sender over en hel transfer.
+     * i et readmockupsett før den eventuelt sender over en hel transfer.
      *
      * @param id id til første objekt i mockupsett
      * @return {@code true} dersom (i alle fall deler av) mockupsettet allerede ligger i databasen

@@ -4,7 +4,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
 
 /**
  * Boble som inngår i en sett-relasjon som ligger i {@link X1A}. Boblen kan ligge i flere sett om gangen.
- * Relasjone er implementer i database via egen link tabellen for X1A og X1EManyMany.
+ * Relasjon er implementer i database via egen link tabellen for X1A og X1EManyMany.
  *
  * @author Henrik Fredholm
  * @since 2.3

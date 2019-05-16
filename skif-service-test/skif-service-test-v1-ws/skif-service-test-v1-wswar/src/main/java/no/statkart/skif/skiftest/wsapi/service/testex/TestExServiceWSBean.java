@@ -70,7 +70,7 @@ public class TestExServiceWSBean extends SkifWebService<TestExServiceWSI> implem
             throw new SimpleException(message, info);
         } else if (exceptionClass.equals(SimpleNonMappedException.class.getName())) {
             SimpleNonMappedFaultInfo info = new SimpleNonMappedFaultInfo();
-            info.setInfoField("infoFieleMessage");
+            info.setInfoField("infoFieldMessage");
             throw new SimpleNonMappedException(message, info);
         } else {
             try {

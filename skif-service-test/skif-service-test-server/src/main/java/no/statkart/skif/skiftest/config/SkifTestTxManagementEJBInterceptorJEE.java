@@ -6,7 +6,7 @@ import no.statkart.skif.service.ejb.EJBInterceptorJEE;
 import javax.ejb.EJB;
 
 /**
- * EJB Interceptor som definere hvilken injector EJB'ene i skif-test-severen skal bruke
+ * EJB Interceptor som definere hvilken injector EJB'ene i skif-test-serveren skal bruke
  * @author Henrik Fredholm
  */
 public class SkifTestTxManagementEJBInterceptorJEE extends EJBInterceptorJEE {

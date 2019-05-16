@@ -33,7 +33,7 @@ public interface Store {
 
     /**
      * Henter mange objekter for gitte id-er. Returnerer {@link Set} eller {@link List} avhengig av hva man sendte inn.
-     * Rekkefølgene objektene returneres i er tilfeldig.
+     * Rekkefølgen objektene returneres i er tilfeldig.
      *
      * @param bubbleIds id-ene til objektene man ønsker å hente ut
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å hente ut
@@ -44,7 +44,7 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<? extends I> bubbleIds);
 
     /**
-     * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
+     * Henter mange objekter for gitte id-er. Rekkefølgen objektene returneres i er tilfeldig.
      *
      * @param bubbleIds id-ene til objektene man ønsker å hente ut
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å hente ut
@@ -55,7 +55,7 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> get(Set<? extends I> bubbleIds);
 
     /**
-     * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er "tilfeldig".
+     * Henter mange objekter for gitte id-er. Rekkefølgen objektene returneres i er tilfeldig.
      *
      * @param bubbleIds id-ene til objektene man ønsker å hente ut
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å hente ut
@@ -66,7 +66,7 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> get(List<? extends I> bubbleIds);
 
     /**
-     * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
+     * Henter mange objekter for gitte id-er. Rekkefølgen objektene returneres i er tilfeldig.
      *
      * @param bubbleIds     id-ene til objektene man ønsker å hente ut
      * @param bubbleObjects et sted å putte objektene for returnering
@@ -131,7 +131,7 @@ public interface Store {
 
     /**
      * Henter mange objekter for gitte id-er. Returnerer {@link Set} eller {@link List} avhengig av hva man sendte inn.
-     * Rekkefølgene objektene returneres i er tilfeldig, og eventuelt manglende objekter blir ikke rapportert.
+     * Rekkefølgen objektene returneres i er tilfeldig, og eventuelt manglende objekter blir ikke rapportert.
      *
      * @param bubbleIds id-ene til objektene man ønsker å hente ut
      * @param <T>       den supertypen som er felles for alle objektene man ønsker å hente ut
@@ -142,7 +142,7 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<? extends I> bubbleIds);
 
     /**
-     * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig, og eventuelt manglende
+     * Henter mange objekter for gitte id-er. Rekkefølgen objektene returneres i er tilfeldig, og eventuelt manglende
      * objekter blir ikke rapportert.
      *
      * @param bubbleIds id-ene til objektene man ønsker å hente ut
@@ -154,7 +154,7 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> getIgnoreMissing(Set<? extends I> bubbleIds);
 
     /**
-     * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er "tilfeldig", og eventuelt manglende
+     * Henter mange objekter for gitte id-er. Rekkefølgen objektene returneres i er "tilfeldig", og eventuelt manglende
      * objekter blir ikke rapportert.
      *
      * @param bubbleIds id-ene til objektene man ønsker å hente ut
@@ -166,7 +166,7 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> getIgnoreMissing(List<? extends I> bubbleIds);
 
     /**
-     * Henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig, og eventuelt manglende
+     * Henter mange objekter for gitte id-er. Rekkefølgen objektene returneres i er tilfeldig, og eventuelt manglende
      * objekter blir ikke rapportert.
      *
      * @param bubbleIds     id-ene til objektene man ønsker å hente ut
@@ -194,7 +194,7 @@ public interface Store {
 
     /**
      * Låser og henter mange objekter for gitte id-er. Returnerer {@link Set} eller {@link List} avhengig av hva man sendte inn.
-     * Rekkefølgene objektene returneres i er tilfeldig.
+     * Rekkefølgen objektene returneres i er tilfeldig.
      * <p/>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
@@ -209,7 +209,7 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lock(Collection<? extends I> bubbleIds);
 
     /**
-     * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
+     * Låser og henter mange objekter for gitte id-er. Rekkefølgen objektene returneres i er tilfeldig.
      * <p/>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
@@ -224,7 +224,7 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> lock(Set<? extends I> bubbleIds);
 
     /**
-     * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er "tilfeldig".
+     * Låser og henter mange objekter for gitte id-er. Rekkefølgen objektene returneres i er tilfeldig.
      * <p/>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
@@ -239,7 +239,7 @@ public interface Store {
     <T extends BubbleObject, I extends BubbleId<? extends T>> List<T> lock(List<? extends I> bubbleIds);
 
     /**
-     * Låser og henter mange objekter for gitte id-er. Rekkefølgene objektene returneres i er tilfeldig.
+     * Låser og henter mange objekter for gitte id-er. Rekkefølgen objektene returneres i er tilfeldig.
      * <p/>
      * Det er viktig at det er objektene som returneres her som en de man gjør endringer på for oppdatering, da andre
      * utgaver er potensielt utdatert cachede utgaver.
@@ -300,7 +300,7 @@ public interface Store {
      *
      * @param bubbleIds id-ene til objektene som skal kastes ut av minnet
      * @param <I>       den id-supertypen som er felles for objektene som skal kastes ut av minnet
-     * @return <code>false</code> hvis det fantes låste objeker som dermed ikke ble kastet ut
+     * @return <code>false</code> hvis det fantes låste objekter som dermed ikke ble kastet ut
      */
     <I extends BubbleId<?>> boolean evict(Collection<? extends I> bubbleIds);
 

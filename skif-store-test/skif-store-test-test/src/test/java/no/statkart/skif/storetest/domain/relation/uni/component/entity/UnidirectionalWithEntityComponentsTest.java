@@ -200,7 +200,7 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
      * Test at a3 har nettopp en komponent  i 'asSetEntityComponents' og at denne komponenten inneholde en peker til b3.
      * Test dernest at invers finder for b3 finner a3.
      */
-    public void testRole1BBOneReleation() {
+    public void testRole1BBOneRelation() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         X2AAWithEntityComponentMockupFactory x2AAWithEntityComponentMockupFactory = mockupFacade.getX2AAWithEntityComponentMockupFactory();
         X2BBOneMockupFactory x2BBOneMockupFactory = mockupFacade.getX2BBOneMockupFactory();
@@ -263,7 +263,7 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
             component1.setRole1BBOneId(x2BBOneMockupFactory.getB1Id());
             X2SetEntityComponent component2 = new X2SetEntityComponent();
             component2.setRole1BBOneId(x2BBOneMockupFactory.getB2Id());
-            // Her leges til 2 komponenter som inneholder samme relasjonsfelt, men med forskjellige verdier
+            // Her legges til 2 komponenter som inneholder samme relasjonsfelt, men med forskjellige verdier
             aNew.getAaSetEntityComponents().add(component1);
             aNew.getAaSetEntityComponents().add(component2);
             store.insert(aNew);

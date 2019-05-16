@@ -19,9 +19,9 @@ import java.util.Set;
  * invers relasjonen er derfor {@code Many}.
  *
  * <P>Invers relasjonen er modellert både via en eksplisitt property og via en egen findermetode på klassen. Findermetoden
- * er egentlig overføldig og finnes kun for test formål samt for demonstrasjon av hvordan slike findermetoder skal
+ * er egentlig overflødig og finnes kun for test formål samt for demonstrasjon av hvordan slike findermetoder skal
  * implementeres. Findermetoden spiller kun indirekte sammen med property {@link #invSomeBBIds} ved at den bruker samme
- * underliggende mekanisme for caching av relasjonenen. For at relasjonen skal bli cachet må caching i
+ * underliggende mekanisme for caching av relasjon. For at relasjonen skal bli cachet må caching i
  * {@code StoreRelationCache} enables først.
  *
  * @author Henrik Fredholm
@@ -60,7 +60,7 @@ public class X1BBOne extends AbstractRelationTestBubble implements BubbleObjectW
      * modellert property for samme relasjon {@link #invSomeBBIds} er det egentlig unødvendig også å ha denne findermetode på
      * på klassen. Metoden finnes kun for demonstrasjon og test av hvordan findermetoder for invers relasjoner skal
      * implementeres på klasser. Metoder spiller kun indirekte sammen med property {@link #invSomeBBIds} ved at de bruker
-     * samme underliggende mekanisme ({@code StoreRelationCache}) for caching av relasjonenen. For at relasjonen skal
+     * samme underliggende mekanisme ({@code StoreRelationCache}) for caching av relasjon. For at relasjonen skal
      * bli cachet må caching enables først.
      */
     public Set<X1AAId<?>> findInvSomeBBIds() {

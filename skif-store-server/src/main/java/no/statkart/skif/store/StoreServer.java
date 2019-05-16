@@ -26,7 +26,7 @@ public class StoreServer extends AbstractStore {
     /**
      * Fjerner alle umodifiserte objekter fra Store og underliggende sessioner. Hvis Store inneholder modifiserte objekter
      * så  utføres det {@link #evictAll()}  kall. Hvis Store ikke inneholder modifiserte objekter så nullstilles
-     * Store og underliggende sessioner. Informasjon låste objekter kastes fra minnet, men finnes forsatt i database
+     * Store og underliggende sessioner. Informasjon låste objekter kastes fra minnet, men finnes fortsatt i database
      * og går derfor ikke tapt.
      */
     public void clear() {
@@ -119,7 +119,7 @@ public class StoreServer extends AbstractStore {
 
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
         storeSession = storeUnitOfWork.endUnitOfWork();
-        // Nødvendig å kjøre clear() her slik at vi får lest inn objekter på nytt som har blitt oppdatert utenom innværende sesion
+        // Nødvendig å kjøre clear() her slik at vi får lest inn objekter på nytt som har blitt oppdatert utenom inneværende session
         clear();
     }
 

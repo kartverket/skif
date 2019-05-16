@@ -35,7 +35,7 @@ public class StoreTestMappingW2DTest {
     }
 
     @Test
-    public void testMapIntger() {
+    public void testMapInteger() {
         final StoreTestMapping map = testContext.buildMapping();
 
         Integer source = 5;

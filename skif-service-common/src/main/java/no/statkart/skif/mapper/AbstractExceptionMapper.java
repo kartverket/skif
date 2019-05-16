@@ -19,7 +19,7 @@ public abstract class AbstractExceptionMapper<M extends ExceptionMapping> extend
     }
 
     /**
-     * Wrap ukjente RuntimeExceptions i en ImplementationException. EJBAccessException er et untak, som skal gjøres om til PermissionDeniedException.
+     * Wrap ukjente RuntimeExceptions i en ImplementationException. EJBAccessException er et unntak, som skal gjøres om til PermissionDeniedException.
      *
      * @param args    argumentene til mapping-funksjonen
      * @return instans av mappet klasse
@@ -29,7 +29,7 @@ public abstract class AbstractExceptionMapper<M extends ExceptionMapping> extend
         if (args.length == 1 && !(args[0] instanceof SkifException)) {
             Throwable t = (Throwable) args[0];
 
-            // Kan ikke bruke instanceof på EJBAcessException, for den klassen finnes ikke på klientsiden, kun tjenersiden (og singlevm)
+            // Kan ikke bruke instanceof på EJBAccessException, for den klassen finnes ikke på klientsiden, kun tjenersiden (og singlevm)
             if (t.getClass().getName().equals("javax.ejb.EJBAccessException")) {
                 PermissionDeniedException e = new PermissionDeniedException(t.getMessage(), t);
                 e.setStackTrace(t.getStackTrace());

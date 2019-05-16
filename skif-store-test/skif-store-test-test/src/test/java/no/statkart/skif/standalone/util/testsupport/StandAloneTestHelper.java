@@ -120,7 +120,7 @@ public class StandAloneTestHelper {
     }
 
 
-    public static void deletePriviouslyWritenTestBubbles(PersistenceSessionForSnapshot persistenceSessionForSnapshot) {
+    public static void deletePreviouslyWrittenTestBubbles(PersistenceSessionForSnapshot persistenceSessionForSnapshot) {
         try {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
             Transaction transaction = hibernateSession.beginTransaction();

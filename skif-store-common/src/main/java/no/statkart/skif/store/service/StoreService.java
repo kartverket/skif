@@ -25,7 +25,7 @@ public interface StoreService {
     <T extends BubbleObject> T getObject(BubbleId<? extends T> id);
 
     /**
-     * Henter en collecton av {@link BubbleObject}s av type {@code <T>} for {@code ids} av type {@code <I>}. Hvis
+     * Henter en collection av {@link BubbleObject}s av type {@code <T>} for {@code ids} av type {@code <I>}. Hvis
      * {@code ids} inneholder den samme id flere ganger returneres kun et objekt. Id-er som er null ignoreres.
      *
      * @param ids id-er som skal hentes
@@ -35,8 +35,8 @@ public interface StoreService {
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjects(Collection<I> ids);
 
     /**
-     * Henter en collecton av {@link BubbleObject}s av type {@code <T>} for {@code ids} av type {@code <I>}, uten å
-     * kaste en exeception dersom objekter ikke kan finnes. Returlisten vil derfor kunne være kortere enn paramteren.
+     * Henter en collection av {@link BubbleObject}s av type {@code <T>} for {@code ids} av type {@code <I>}, uten å
+     * kaste en exception dersom objekter ikke kan finnes. Returlisten vil derfor kunne være kortere enn parameteren.
      * Hvis {@code ids} inneholder den samme id flere ganger returneres kun et objekt. Id-er som er null ignoreres.
      *
      * @param ids id-er som skal hentes
@@ -58,7 +58,7 @@ public interface StoreService {
     /**
      * Henter alle versjoner for et liste av id-er for et gitt tidsrom. Id-en returneres i en map som
      * har id-en som nøkkel og listen av funnede id-er som verdi. Listen inneholder id-ene sortert på versjon i
-     * stigende rekkerfølge.
+     * stigende rekkefølge.
      *
      * @param ids   id-er som det skal hentes historikk for
      * @param start starttidspunkt som er inkludert i intervallet

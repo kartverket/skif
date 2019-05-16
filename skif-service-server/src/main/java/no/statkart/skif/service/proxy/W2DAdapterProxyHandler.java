@@ -98,7 +98,7 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
     }
 
     /**
-     * Mapper argumenter i args slik at de kan brukes som innput parametre til {@code doapiMethod}.
+     * Mapper argumenter i args slik at de kan brukes som inn-parametre til {@code doapiMethod}.
      * Det opprettes like mange parametre som det {@code doapiMethod} krever, men det mappes kun {@code length}
      * antall argumenter fra {@code args}. Metoden er laget slik fordi {@code wsapiMethod} kan ha en ekstra context
      * parameter i forhold til {@code doapiMethod}. Videre så kan {@code doapiMethod} også ha

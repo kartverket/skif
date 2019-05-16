@@ -881,7 +881,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         StoreRelationCache relationCache = store.getRelationCache();
         checkState(relationCache.isEnabled());
         // Må her itererer på kopi av storeCache fordi nye objekter kan bli lastet inn i denne ifm RelationCache
-        // beregningen. For eksempel ved caching av identer som byggs utfra flere bobler som da må lastes. Mengden
+        // beregningen. For eksempel ved caching av identer som bygges utfra flere bobler som da må lastes. Mengden
         // av objekter som er aktuelle for cacheberegningen er dog uforandret så det er uproblematisk at cachen vokser.
         Collection<StoreEntry> values = Lists.newArrayList(storeCache.values());
         for (StoreEntry storeEntry : values) {
@@ -971,7 +971,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                             // UnitOfWork.undo() vil jo heller ikke virker hvis man holder på slikt. Caching algoritmen
                             // vil jo også feile hvis men holder på å endre objekter som ikke er låst.
                             //
-                            // Hvis man gjør endringer riktik, dvs. starter UnitOfWork og sier Store.get() på objektet
+                            // Hvis man gjør endringer riktig, dvs. starter UnitOfWork og sier Store.get() på objektet
                             // man vil endre blir cachingen riktig. Man vil dog uansett kommer her for de objekter som
                             // er låste men ennå ikke hentet ut for endring i UnitOfWork. Det er riktig at systemet ikke
                             // trenger å gjøre noe for disse objektene.

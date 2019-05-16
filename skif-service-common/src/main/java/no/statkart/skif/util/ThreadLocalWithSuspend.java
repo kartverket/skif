@@ -39,7 +39,7 @@ public class ThreadLocalWithSuspend<T> extends ThreadLocal<T> {
     /**
      * Returns the number of suspended objects for this thread.
      *
-     * @return the number of suspended objects for this thred.
+     * @return the number of suspended objects for this thread.
      */
     public int size() {
         return suspended.getStack().size();
