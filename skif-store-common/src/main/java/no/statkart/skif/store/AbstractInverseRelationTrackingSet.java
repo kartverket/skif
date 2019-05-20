@@ -18,15 +18,16 @@ import java.util.*;
  * {@link Bubbles#onChangeRelationImpl} som kun krever at owner som hentes ut er av type BubbleObject.
  * <p>
  * Eksempel på bruk:
- * <blockquote><pre>
- *     final Set<MyValueObject> myObjects = new AbstractInverseRelationTrackingSet<MyValueObject>(this, new HashSet()) {
+ * <pre>{@code
+ *     final Set<MyValueObject> myObjects = new AbstractInverseRelationTrackingSet<MyValueObject>(this, new HashSet<>()) {
  *         private static final long serialVersionUID = 1L;
- *         {@code@Override}
+ *
+ *         @Override
  *         protected Map<RelationName, Object> getInverseRelationValues(MyValueObject element) {
  *             return ImmutableMap.of(MyService.Role.valueobjectPointsToMe, e.getSomeId());
  *         }
  *     };
- * </pre></blockquote>
+ * }</pre>
  *
  * @since 2.8.0
  */
