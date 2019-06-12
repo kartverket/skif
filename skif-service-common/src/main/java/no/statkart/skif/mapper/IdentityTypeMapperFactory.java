@@ -1,11 +1,11 @@
 package no.statkart.skif.mapper;
 
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Primitives;
 import com.google.common.reflect.TypeToken;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,12 +17,11 @@ import java.util.Set;
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
-@SuppressWarnings("unchecked")
 public class IdentityTypeMapperFactory implements TypeMapperFactory {
     private final Set<Class<?>> useIdentityMapping = new HashSet<>();
 
     public IdentityTypeMapperFactory useIdentityMapping(Class<?>... c) {
-        useIdentityMapping.addAll(Lists.newArrayList(c));
+        Collections.addAll(useIdentityMapping, c);
         return this;
     }
 
@@ -74,6 +73,7 @@ public class IdentityTypeMapperFactory implements TypeMapperFactory {
         );
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <WsapiT, DomainT> TypeMapper<WsapiT, DomainT> createTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
         if (useIdentityMapping.contains(wsapiTypeToken.getRawType()) && useIdentityMapping.contains(domainTypeToken.getRawType()) && isRelated(wsapiTypeToken, domainTypeToken)) {

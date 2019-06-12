@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertSame;
@@ -44,8 +45,7 @@ public class StoreTestMappingD2WTest {
 
         Integer source = 5;
         Integer target = map.d2w(source);
-        assertNotNull(target);
-        assertEquals(target, new Integer(5));
+        assertThat(target).isEqualTo(5);
     }
 
     @Test
@@ -54,13 +54,10 @@ public class StoreTestMappingD2WTest {
 
         int source = 5;
         int target = map.d2w(source);
-        assertNotNull(target);
-        assertEquals(target, 5);
+        assertThat(target).isEqualTo(5);
 
         target = map.d2w(source, int.class);
-        assertNotNull(target);
-        assertEquals(target, 5);
-
+        assertThat(target).isEqualTo(5);
     }
 
 

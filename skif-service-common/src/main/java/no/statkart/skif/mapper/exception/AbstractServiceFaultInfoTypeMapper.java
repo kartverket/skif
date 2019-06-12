@@ -1,8 +1,6 @@
 package no.statkart.skif.mapper.exception;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.SkifException;
@@ -58,7 +56,7 @@ public abstract class AbstractServiceFaultInfoTypeMapper<WsapiT, DomainT extends
         } else {
             // Kan ikke bruke like aggressiv reflection på Exception pga. jigsaw
 
-            Map<String, Method> getters = Maps.newLinkedHashMap();
+            Map<String, Method> getters = new LinkedHashMap<>();
 
             for (Class<?> clazz = c; clazz != null && clazz != Exception.class; clazz = clazz.getSuperclass()) {
                 Method[] methods = clazz.getDeclaredMethods();
@@ -77,7 +75,7 @@ public abstract class AbstractServiceFaultInfoTypeMapper<WsapiT, DomainT extends
                 }
             }
 
-            return Lists.newArrayList(getters.values());
+            return new ArrayList<>(getters.values());
         }
 
     }

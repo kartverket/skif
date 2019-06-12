@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.*;
 
 /**
@@ -34,15 +35,13 @@ public class SkifTestMappingDefaultTypeMapperW2DTest {
     public void testMapIntger() {
         Integer source = 5;
         Integer target = map.w2d(source);
-        assertNotNull(target);
-        assertEquals(target, new Integer(5));
+        assertThat(target).isEqualTo(5);
     }
 
     public void testMapInt() {
         int source = 5;
         int target = map.w2d(source);
-        assertNotNull(target);
-        assertEquals(target, 5);
+        assertThat(target).isEqualTo(5);
     }
 
     public void testMapA() {

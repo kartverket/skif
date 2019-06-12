@@ -1,8 +1,6 @@
 package no.statkart.skif.mapper;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
@@ -25,6 +23,8 @@ import java.util.*;
  * @author Tor Egil R. Strand
  */
 public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends AbstractTypeMapper<WsapiT, DomainT, M> {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
+
     private final Map<Method, PropertyMappingInfo> wsapiToDomain;
     private final Map<Method, PropertyMappingInfo> domainToWsapi;
 
@@ -55,8 +55,6 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
         super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), mappingInterface);
         this.serviceContextProvider = serviceContextProvider;
 
-        Logger logger = LoggerFactory.getLogger(DefaultTypeMapper.class);
-
         Collection<Method> wsapiGetters = findGetters(wsapiTypeToken.getRawType());
         ImmutableMap.Builder<Method, PropertyMappingInfo> builder = ImmutableMap.builder();
         for (Method wsapiGetter : wsapiGetters) {
@@ -71,7 +69,9 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
                         null);
 
                 if (!doNotMapTheseClasses.contains(pmi.getFromType().getRawType()) && !doNotMapTheseClasses.contains(pmi.getToType().getRawType())) {
-                    logger.debug("Mapping {} {}.{}() to void {}.{}({})", new Object[]{pmi.fromType, wsapiTypeToken.getRawType(), wsapiGetter.getName(), domainTypeToken.getRawType(), domainSetter.getName(), pmi.toType});
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Mapping {} {}.{}() to void {}.{}({})", pmi.fromType, wsapiTypeToken.getRawType(), wsapiGetter.getName(), domainTypeToken.getRawType(), domainSetter.getName(), pmi.toType);
+                    }
 
                     builder.put(wsapiGetter, pmi);
                 }
@@ -96,7 +96,9 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
                         sinceVersion);
 
                 if (!doNotMapTheseClasses.contains(pmi.getFromType().getRawType()) && !doNotMapTheseClasses.contains(pmi.getToType().getRawType())) {
-                    logger.debug("Mapping {} {}.{}() to void {}.{}({})", new Object[]{pmi.fromType, domainTypeToken.getRawType(), domainGetter.getName(), wsapiTypeToken.getRawType(), wsapiSetter.getName(), pmi.toType});
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Mapping {} {}.{}() to void {}.{}({})", pmi.fromType, domainTypeToken.getRawType(), domainGetter.getName(), wsapiTypeToken.getRawType(), wsapiSetter.getName(), pmi.toType);
+                    }
 
                     builder.put(domainGetter, pmi);
                 }
@@ -136,9 +138,9 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
         //Fjerner "get" eller "is" fra navnet og gjør første bokstav til liten bokstav istedenfor stor
         String fieldName = null;
         if (methodName.startsWith("get")) {
-            fieldName = methodName.substring(3, 4).toLowerCase() + methodName.substring(4);
+            fieldName = Character.toLowerCase(methodName.charAt(3)) + methodName.substring(4);
         } else if (methodName.startsWith("is")) {
-            fieldName = methodName.substring(2, 3).toLowerCase() + methodName.substring(3);
+            fieldName = Character.toLowerCase(methodName.charAt(2)) + methodName.substring(3);
         }
 
         if (fieldName != null) {
@@ -243,7 +245,7 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
 
 
     protected Collection<Method> findGetters(Class<?> c) {
-        Map<String, Method> getters = Maps.newLinkedHashMap();
+        Map<String, Method> getters = new LinkedHashMap<>();
 
         for (Class<?> clazz = c; clazz != null && clazz != Object.class; clazz = clazz.getSuperclass()) {
             Method[] methods = clazz.getDeclaredMethods();
@@ -255,7 +257,7 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
             }
         }
 
-        return Lists.newArrayList(getters.values()); // Kan ikke returnere values() direkte, for den støtter ikke add()
+        return new ArrayList<>(getters.values()); // Kan ikke returnere values() direkte, for den støtter ikke add()
     }
 
     protected Method findSetterForGetter(Class<?> targetClass, Method getter) {

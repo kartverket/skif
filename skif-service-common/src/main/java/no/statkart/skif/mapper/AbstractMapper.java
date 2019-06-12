@@ -515,9 +515,9 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
         @Override
         public int compareTo(TypeMapperMatch o) {
-            int relasjon = new Integer(fromDistance).compareTo(o.fromDistance);
+            int relasjon = Integer.compare(fromDistance, o.fromDistance);
             if (relasjon == 0) {
-                relasjon = new Integer(toDistance).compareTo(o.toDistance);
+                relasjon = Integer.compare(toDistance, o.toDistance);
             }
             return relasjon;
         }
