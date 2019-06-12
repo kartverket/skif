@@ -1,9 +1,9 @@
 package no.statkart.skif;
 
+import com.google.common.base.Joiner;
 import no.statkart.skif.config.AbstractConfiguration;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.MapConfiguration;
-import no.statkart.skif.internal.util.InternalStringUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -23,7 +23,7 @@ public final class ConfigurationConverter
      */
     private ConfigurationConverter()
     {
-        // to prevent instanciation...
+        // static functions only...
     }
 
     /**
@@ -60,7 +60,8 @@ public final class ConfigurationConverter
             List list = config.getList(key);
 
             // turn the list into a string
-            props.setProperty(key, InternalStringUtils.join(list.iterator(), delimiter));
+            String joinedString = Joiner.on(delimiter).join(list);
+            props.setProperty(key, joinedString);
         }
 
         return props;
