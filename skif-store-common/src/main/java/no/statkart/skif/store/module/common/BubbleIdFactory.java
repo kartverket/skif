@@ -13,9 +13,10 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class BubbleIdFactory {
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, long idValue, SnapshotVersion snapshotVersion) {
-        return createInstance(idClass, new Long(idValue), snapshotVersion);
+        return createInstance(idClass, Long.valueOf(idValue), snapshotVersion);
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, Object idValue, SnapshotVersion snapshotVersion) {
         try {
             Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), SnapshotVersion.class);
