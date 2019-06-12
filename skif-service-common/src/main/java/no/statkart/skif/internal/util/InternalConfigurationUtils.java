@@ -45,19 +45,9 @@ public final class InternalConfigurationUtils {
     static final String PROTOCOL_FILE = "file";
 
     /**
-     * Constant for the resource path separator.
-     */
-    static final String RESOURCE_PATH_SEPARATOR = "/";
-
-    /**
      * Constant for the name of the clone() method.
      */
     private static final String METHOD_CLONE = "clone";
-
-    /**
-     * Constant for Java version 1.4.
-     */
-    private static final float JAVA_1_4 = 1.4f;
 
     /**
      * The logger.
@@ -72,7 +62,7 @@ public final class InternalConfigurationUtils {
     }
 
     /**
-     * Dump the configuration key/value mappings to some ouput stream.
+     * Dump the configuration key/value mappings to some output stream.
      *
      * @param configuration the configuration
      * @param out           the output stream to dump the configuration to
@@ -541,13 +531,15 @@ public final class InternalConfigurationUtils {
      * @param url the URL
      * @return the resulting file object
      */
-    @SuppressWarnings("deprecation")
     public static File fileFromURL(URL url) {
         if (PROTOCOL_FILE.equals(url.getProtocol())) {
-            return new File(URLDecoder.decode(url.getPath()));
-        } else {
-            return null;
+            try {
+                return new File(URLDecoder.decode(url.getPath(), "UTF-8"));
+            } catch (UnsupportedEncodingException ignored) {
+                return null; //StandardCharsets are part of all JREs by contract
+            }
         }
+        return null;
     }
 
     /**
