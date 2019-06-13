@@ -87,10 +87,31 @@ CREATE TABLE CHILDFORPARENT(
 
 create table ChildBubble(
   id number(19,0) not null,
-  TEXT VARCHAR2(255),
-  TESTBUBBLEID number(19,0),
-  PRIMARY KEY (ID)
+  text VARCHAR2(255),
+  testbubbleId number(19,0),
+  primary key (ID)
 ) ;
 
 alter table ChildForParent add constraint FK23723BEA16AF2FAB foreign key (parentBubbleId) references ParentBubble;
 ALTER TABLE CHILDFORPARENT ADD CONSTRAINT FK_CHILDFORPARENT_CHILD FOREIGN KEY (CHILDBUBBLEID) REFERENCES CHILDBUBBLE;
+
+create table ParentBubbleEmptyColOptimizer(
+  id number(19,0) not null,
+  class VARCHAR2(255),
+  emptycollectionsflag NUMBER(19,0) NOT NULL,
+  text VARCHAR2(255),
+  primary key (id)
+) ;
+
+create table ChildBubbleEmptyColOptimizer(
+  id number(19,0) not null,
+  text VARCHAR2(255),
+  parent1Id number(19,0) constraint FK_ChildBubbleInColOpt1 references ParentBubbleEmptyColOptimizer(ID),
+  parent2Id number(19,0) constraint FK_ChildBubbleInColOpt2 references ParentBubbleEmptyColOptimizer(ID),
+  parent3Id number(19,0) constraint FK_ChildBubbleInColOpt3 references ParentBubbleEmptyColOptimizer(ID),
+  parent4Id number(19,0) constraint FK_ChildBubbleInColOpt4 references ParentBubbleEmptyColOptimizer(ID),
+  parent5Id number(19,0) constraint FK_ChildBubbleInColOpt5 references ParentBubbleEmptyColOptimizer(ID),
+  primary key (id)
+) ;
+
+

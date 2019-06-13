@@ -180,3 +180,17 @@ insert into BwlForBwl values (2204, 2201, null, null, null);
 insert into BubbleWithListComponent values (2202, 'component for 2201', 2201, 1, null, null, null);
 
 insert into BubbleWithListComponent2 values (2203, 'component for 2201', 2201, null, null, null);
+
+insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class) values (1, 'children1 og children2 er tomme', 3, 'ParentBubbleEmptyColOptimizer'); -- Bitt 0 or 1 er satt
+insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class) values (2, 'children1 er tom og children2 inneholder elementer', 1, 'ParentBubbleEmptyColOptimizer'); -- Bitt 1 er satt
+insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class) values (3, 'children1 og children2 inneholder elementer', 0, 'ParentBubbleEmptyColOptimizer'); -- Ingen bits er satt
+insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class) values (4, 'children1 inneholder elementer', 2, 'ParentBubbleEmptyColOptimizer'); -- Bitt 0 er satt
+insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class) values (5, 'children1 og 2 er tomme, men flagg er nuttstilt og må beregnes på nytt', 0, 'ParentBubbleEmptyColOptimizer');
+insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class) values (6, 'children1 har innhold, mens 2 og 4 er tomme', 6, 'ParentBubbleEmptyColOptimizerSub1');
+insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class) values (7, 'children1, 2 og 4 er tomme', 7, 'ParentBubbleEmptyColOptimizerSub1');
+insert into ChildBubbleEmptyColOptimizer(id, text, parent1Id, parent2Id) values (11, 'Child bubble with no parent', null, null);
+insert into ChildBubbleEmptyColOptimizer(id, text, parent1Id, parent2Id) values (21, 'Child bubble with parent', null, 2);
+insert into ChildBubbleEmptyColOptimizer(id, text, parent1Id, parent2Id) values (31, 'Child bubble with parent', 3, 3);
+insert into ChildBubbleEmptyColOptimizer(id, text, parent1Id, parent2Id) values (41, 'Child bubble with parent', 4, null);
+insert into ChildBubbleEmptyColOptimizer(id, text, parent1Id, parent2Id) values (61, 'Child bubble with parent', 6, null);
+

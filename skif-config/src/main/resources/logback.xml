@@ -37,6 +37,8 @@
     <!-- Hibernate logging av batching -->
     <!--<logger name="org.hibernate.jdbc.AbstractBatcher" level="debug" additivity="true"/>-->
 
+    <!--<logger name="no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizer" level="debug" additivity="true"/>-->
+
     <!-- end-hibernate -->
 
     <!-- <logger name="no.statkart.skif.mapper" level="debug" additivity="true"/> -->

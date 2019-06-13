@@ -4,8 +4,7 @@ import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.persistence.hibernate.BugFixDeleteEventListener;
 import no.statkart.skif.persistence.hibernate.CurrentDatabaseEventListener;
-import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerPreLoadListener;
-import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizer;
+import no.statkart.skif.persistence.hibernate.EmptyCollectionsOptimizerListener;
 import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefConfiguration;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
@@ -14,16 +13,16 @@ import org.hibernate.event.DeleteEventListener;
 import org.hibernate.event.PostDeleteEventListener;
 import org.hibernate.event.PostInsertEventListener;
 import org.hibernate.event.PostUpdateEventListener;
+import org.hibernate.event.PreCollectionUpdateEventListener;
 import org.hibernate.event.PreDeleteEventListener;
 import org.hibernate.event.PreInsertEventListener;
 import org.hibernate.event.PreLoadEventListener;
 import org.hibernate.event.PreUpdateEventListener;
+import org.hibernate.event.SaveOrUpdateEventListener;
 import org.hibernate.event.def.DefaultPreLoadEventListener;
-import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.event.def.DefaultSaveOrUpdateEventListener;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -68,10 +67,23 @@ public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryB
             DeleteEventListener[] deleteEventStack = {new BugFixDeleteEventListener()};
             cfg.getEventListeners().setDeleteEventListeners(deleteEventStack);
 
-            // Configure Listners for fast initialization of empty collections. Listeners are active on load events. The flag is update via a StoreSessionListener
-            Map<EntityPersister, EmptyCollectionsOptimizer> optimizers = new HashMap<EntityPersister, EmptyCollectionsOptimizer>();
-            PreLoadEventListener[] preLoadStack = {new EmptyCollectionOptimizerPreLoadListener(optimizers), new DefaultPreLoadEventListener()};
+
+            // Konfigurerer Hibernate listeners for raskere initialisering av tomme collections. Listeners er aktive
+            // for load og utvalgte update events. Klassen EmptyCollectionsOptimizer anvendes kun på bobler som har
+            // angitt empty collections flagget i mapping filen. Den eneste måte å slå av denne feature er at
+            // fjerne flagget fra mapping filen. Hvis flagget reintroduseres bør flagges settes til 0. Dette garanterer
+            // at alle endringer på collections som gjøres via Hibernate holder flagget oppdatert (da featuren ikke kan
+            // slås av). Hvis collections endres utenom Hibernate må flagget nullstilles samtidig. Neste oppdatering
+            // av boblen via Hibernate vil automatisk gjenberegne flagget uavhengig av om collections har endret seg.
+            // Bemerk at Hibernate eventtypene som anvendes her alene ikke er nok til å holde flagget oppdatert for
+            // alle tilfeller. Se bruken av EmptyCollectionsFlagUpdater i HibernatePersistenceSessionMasterImpl.
+            EmptyCollectionsOptimizerListener emptyCollectionOptimizerListener = new EmptyCollectionsOptimizerListener();
+            PreLoadEventListener[] preLoadStack = {emptyCollectionOptimizerListener, new DefaultPreLoadEventListener()};
+            PreCollectionUpdateEventListener[] preCollectionUpdateStack = {emptyCollectionOptimizerListener}; // Ingen default listener i Hibernate for denne type listener
+            SaveOrUpdateEventListener[] saveStack = {emptyCollectionOptimizerListener, new DefaultSaveOrUpdateEventListener()}; // Ingen default listener i Hibernate for denne type listener
             cfg.getEventListeners().setPreLoadEventListeners(preLoadStack);
+            cfg.getEventListeners().setPreCollectionUpdateEventListeners(preCollectionUpdateStack);
+            cfg.getEventListeners().setSaveEventListeners(saveStack);
 
             // Legg på listeners for ta vare på event med id ifm databaseoperasjoner for insert, update og delete. Dette flagget setter det for alle sessioner.
             // Det er også mulig å sette det for en enkelt session via EventListenersUtil klassen. Dermed er det mulig å unngå listener overheaded som introduseres
@@ -79,13 +91,6 @@ public class HibernateSessionFactoryBuilderImpl extends HibernateSessionFactoryB
             if ("true".equalsIgnoreCase(props.getProperty(SkifConfigConstants.USE_DATABASE_EVENT_LISTENER))) {
                 addCurrentDatabaseEventListener(cfg);
             }
-
-            // Nedenstående gjøres nå via en StoreSessionListener og trens derfor ikke lengre her.
-            // Old session skal aldrig forsøke å oppdatere emptycollectionsflagget. Derfor legges listeneren kun på Current session
-//          if( SnapshotVersion == SnapshotVersion.CURRENT ) {
-//              FlushEntityEventListener[] flushEntityStack = {new EmptyCollectionOptimizerFlushEntityEventListener(optimizers), new DefaultFlushEntityEventListener()};
-//              cfg.getEventListeners().setFlushEntityEventListeners(flushEntityStack);
-//          }
         } catch (MappingException e) {
             throw new ConfigurationException("Error in Hibernate mapping files: " + e.getMessage(), e, logger);
         }

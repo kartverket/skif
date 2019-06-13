@@ -1,19 +1,41 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.*;
-import no.statkart.skif.exception.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+import no.statkart.skif.exception.ConfigurationException;
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
-import no.statkart.skif.store.*;
+import no.statkart.skif.exception.ObjectsNotFoundException;
+import no.statkart.skif.persistence.hibernate.EmptyCollectionsFlagUpdater;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.Bubbles;
+import no.statkart.skif.store.EntityComponent;
+import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.util.CopyHelper;
 import no.statkart.skif.util.HibernateHelper;
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.EntityMode;
+import org.hibernate.FlushMode;
+import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
+import org.hibernate.MappingException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.collection.PersistentMap;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.engine.*;
+import org.hibernate.engine.CascadeStyle;
+import org.hibernate.engine.CascadingAction;
+import org.hibernate.engine.EntityKey;
+import org.hibernate.engine.PersistenceContext;
+import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.Assigned;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.metadata.ClassMetadata;
@@ -22,7 +44,13 @@ import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.tuple.entity.EntityMetamodel;
-import org.hibernate.type.*;
+import org.hibernate.type.CollectionType;
+import org.hibernate.type.ComponentType;
+import org.hibernate.type.CustomType;
+import org.hibernate.type.EntityType;
+import org.hibernate.type.LiteralType;
+import org.hibernate.type.MapType;
+import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +59,17 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Henrik Fredholm
@@ -44,6 +82,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     protected final HibernateSessionFactoryManager sessionFactoryManager;
     protected final HibernateSessionFactoryDescriptor sessionFactoryDescriptor;
+    protected final EmptyCollectionsFlagUpdater emptyCollectionsFlagUpdater = new EmptyCollectionsFlagUpdater();
 
     /* Holder referanse til hibernate sesjonen */
     protected Session lazySession;
@@ -65,7 +104,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     protected Set<EntityComponent> newlyInsertedComponents = Sets.newIdentityHashSet();
 
     /**
-     * Bestemmer om Bubbler kan ha lazyloaded assosiasjoner som ikke er initialisert i det bubblen
+     * Bestemmer om bobler kan ha lazyloaded assosiasjoner som ikke er initialisert i det boblen
      * utleveres fra HibernateSessionWrapper
      */
     private boolean lazyLoadedBubblesAllowedDefault = false;
@@ -218,8 +257,8 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * Laster et set av domenebobler basert på boblenes id'er. Dersom alle finnes i minne vil det ikke bli gjort kald til
      * databasen
      *
-     * @param bubbleIds ider for bobler som skal lastest.
-     * @return fundne objekter; et objekt per id.
+     * @param bubbleIds ider for bobler som skal lastes.
+     * @return funnede objekter; et objekt per id.
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -278,7 +317,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     }
 
     /**
-     * Knytter {@code bubbleObject} til underliggende hibernate sesison. Ved senere kall til flush() vil endringene
+     * Knytter {@code bubbleObject} til underliggende hibernate sessison. Ved senere kall til flush() vil endringene
      * bli sendt til databasen.
      */
     @Override
@@ -314,13 +353,21 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                     session.delete(orphanEntity);
                 }
             }
+            // Hvis alle collections er tomme i original og ny detached boble, så genererer Hibernate ikke en
+            // onPreUpdateCollectionEvent som trigger beregning av emptycollectionsflagget. Tilsvarende, ved update av
+            // en attached boble hvor flagget har blitt nullstilt, for eksempel i en ekstern prosess før boblen ble
+            // lest, så vil flagget ikke bli beregnet på nytt hvis alle collections er uendret. Ved alltid å beregne
+            // flagget her så sikrer vi at disse spesialtilfeller håndteres. Der er mulig å utelate denne beregningen,
+            // men da vil flagget forbli uendret for disse tilfeller. Overhead ved kallet er lavt så det er enklere at
+            // disse tilfeller også håndteres.
+            emptyCollectionsFlagUpdater.updateEmptyCollectionsFlag(session, bubbleObject);
         } catch (HibernateException | SQLException e) {
             throw new ImplementationException("Update failed for " + bubbleObject, e);
         }
     }
 
     /**
-     * Sletter objekt som har samme id som {@code bubbeObject} fra underliggende hibernate session. Ved senere kall til
+     * Sletter objekt som har samme id som {@code bubbleObject} fra underliggende hibernate session. Ved senere kall til
      * flush() vil endringene bli sendt til databasen.
      * <p>
      * Slettingen utføres med det objektet som ligger i Hibernate (det lastes eventuelt inn hvis det ikke allerede er
@@ -369,7 +416,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         //
         // Metoden trenger imidlertid alltid informasjon om eksisterende innhold i collections så objektet må lastes
         // uansett. For å skifte subtype trenges det også at objektet er lastet for å nulle ut ikke-felles-felter.
-        // Dersom objektet ikke allerede er lastet lastes eksistrende objekt her. For bulk updates vil det går raksere
+        // Dersom objektet ikke allerede er lastet lastes eksistrende objekt her. For bulk updates vil det går raskere
         // hvis eksisterende objekter allerede er lastet før man kommer her slik at eksisterende objekter ikke lastes
         // en-etter-en.
         BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getBubbleId().getBaseType(), bubbleObject.getBubbleId(), LockMode.NONE);
@@ -396,7 +443,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             // kommer ned i databasen. Rammeverket skal dog fange opp og hindre at det oppdateres på flere instanser av
             // samme objekt innenfor samme session. Det skal derfor ikke være noen flush her.
             //session.flush();
-            // La den nye versjonen erstatte den gamle. Det er tryggt å anta at denne også er fullt initialisert.
+            // La den nye versjonen erstatte den gamle. Det er trygt å anta at denne også er fullt initialisert.
             fullyInitializedBubbles.put(bubbleObject.getBubbleId(), bubbleObject);
 
             session().evict(existingBubble);
@@ -628,7 +675,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         } else {
             // TODO: Alternativt returner eksisterende map. Kanskje det er greit?
             throw new ImplementationException("Unable to attach persistent collection, as existing object has map that isn't PersistentCollection");
-            //return collectionInOject;
+            //return collectionInObject;
         }
     }
 
@@ -663,7 +710,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         }
     }
 
-    protected void attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollectionCascade(Collection collectionInOject, Collection collectionInExistingObject, Type elementType, IdentityHashMap<Object, Object> processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
+    protected void attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollectionCascade(Collection collectionInObject, Collection collectionInExistingObject, Type elementType, IdentityHashMap<Object, Object> processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
         SessionImpl sessionImpl = (SessionImpl) session();
         if (elementType.isEntityType()) {
             Map<Serializable, Object> oldElementMap = Maps.newHashMap();
@@ -671,7 +718,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 final EntityPersister elementPersister = sessionImpl.getEntityPersister(elementType.getName(), o);
                 oldElementMap.put(elementPersister.getIdentifier(o, sessionImpl), o);
             }
-            for (Object object : collectionInOject) {
+            for (Object object : collectionInObject) {
                 final EntityPersister elementPersister = sessionImpl.getEntityPersister(elementType.getName(), object);
                 final Serializable identifier = elementPersister.getIdentifier(object, sessionImpl);
                 final Object valueExisting = oldElementMap.get(identifier);
@@ -685,8 +732,8 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
             //noinspection ForLoopReplaceableByForEach
             for (int i = 0; i < propertyTypes.length; i++) {
                 if (propertyTypes[i].isCollectionType()) {
-                    // TODO: Her har vi en collection hvis elementer er av type component som inneholer et felt som er en collection
-                    // Utfordringen her er å match gamle og nye komponenter mot hverander i den overliggende
+                    // TODO: Her har vi en collection hvis elementer er av type component som inneholder et felt som er en collection
+                    // Utfordringen her er å match gamle og nye komponenter mot hverandre i den overliggende
                     // collection. For sett kan man bruke equals, men for lister er det ikke opplagt hva man
                     // man skal bruke. Kanskje indexposisjon. Venter med å implementere støtte for dette til vi
                     // har en konkret case.
@@ -834,8 +881,8 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 // TODO: her mangler det noe. Må sjekke hvis element er en entity eller nested component
 
                 if (propertyTypes[i].isCollectionType()) {
-                    // TODO: Her har vi en collection hvis elementer er av type component som inneholer et felt som er en collection
-                    // Utfordringen her er å match gamle og nye komponenter mot hverander i den overliggende
+                    // TODO: Her har vi en collection hvis elementer er av type component som inneholder et felt som er en collection
+                    // Utfordringen her er å match gamle og nye komponenter mot hverandre i den overliggende
                     // collection. For sett kan man bruke equals, men for lister er det ikke opplagt hva man
                     // man skal bruke. Kanskje indexposisjon. Venter med å implementere støtte for dette til vi
                     // har en konkret case.
@@ -850,18 +897,18 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
 
     /**
-     * Sjekker om {@code value} er en entity component og om den  er ny i forhold til {@code valueExisiting}. Dersom
+     * Sjekker om {@code value} er en entity component og om den  er ny i forhold til {@code valueExisting}. Dersom
      * dette er tilfellet returneres {@code true} og ellers {@code false}. Videre sjekker metoden om
      * {@code valueExisting} blir orphan og legger den inn i {@code orphanOneToOneEntityComponents}
      * hvis det er tilfellet og cascade "delete-orphan" er satt for mappingen.
      *
      * <P>Hibernate 3.2 støtter ikke automatisk sletting av orphan objekter i attached state og etterlader
-     * orphan objekter i databasen. Dette er ikke umidelbart mulig å fikse. For å få mest mulig lik oppførsel mellom
+     * orphan objekter i databasen. Dette er ikke umiddelbart mulig å fikse. For å få mest mulig lik oppførsel mellom
      * attached og detached state kaster metoden derfor exception dersom en entity component blir orphan i detached
      * state.
      *
      * <P>I Hibernate 3.6 støttes automatisk sletting av orphan entity components i attached state. For å få dette til
-     * har Hibernate 3.6 blitt patchet med 2 bugfixes (se SKIF-326). Oppførslen blir derfor lik for attached og
+     * har Hibernate 3.6 blitt patchet med 2 bugfixes (se SKIF-326). Oppførselen blir derfor lik for attached og
      * detached state.
      * <p>
      *
@@ -888,7 +935,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @param elementType        typen til elementene i collection
      * @param collection         nåværende collection
      * @param collectionExisting forrige collection
-     * @throws ImplementationException dersom collection innholder entity component med id som ikke fins i collectionExisting
+     * @throws ImplementationException dersom collection inneholder entity component med id som ikke fins i collectionExisting
      * @since 2.2.0
      */
     private void checkForStolenEntityComponent(Type elementType, Collection<?> collection, Collection<?> collectionExisting) {
@@ -898,7 +945,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 AbstractEntityPersister persister = (AbstractEntityPersister) ((SessionImpl) session()).getFactory().getClassMetadata(elementType.getName());
                 EntityMetamodel entityMetamodel = persister.getEntityMetamodel();
 
-                // Dersom komponentid er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk. // TODO: jo vi kan siden vi ved hvilke objekter som insertes, ligger i eget set
+                // Dersom komponentId er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk. // TODO: jo vi kan siden vi ved hvilke objekter som insertes, ligger i eget set
                 if (!(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned)) {
                     Set<Object> existingIds = new HashSet<>();
                     for (Object o : collectionExisting) {
@@ -919,7 +966,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     /**
      * Utfører nødvendige Hibernate- og SQL-operasjoner som må til for å endre <i>previousObject</i> til
      * <i>currentObject</i>. <i>previousObject</i> må være siste utgave av objektet i <i>denne</i> sesjonen og ha samme
-     * replicaversion.
+     * snapshotversion.
      *
      * @param currentObject  det oppdaterte objektet av ny type
      * @param previousObject forrige utgave av <i>currentObject</i>
@@ -1086,8 +1133,8 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     private void evictOtherInstanceFromHibernateSession(BubbleObject bubbleObject) throws HibernateException {
         // Hibernate tillater ikke update på et objekt når et annet objekt med samme id finnes i hibernate sin cache
         // Vi må teste på dette og evt. kaste ut det gamle objektet fra hibernate sin cache.
-        // Dette kan kun testes ved å forsøke å loaded objektet og se om man får det samme objket som man
-        // har fra før. Dersom objektet ikke var loadet vil Hibernate retunerer en proxy hvis objektet støtter
+        // Dette kan kun testes ved å forsøke å loaded objektet og se om man får det samme objekt som man
+        // har fra før. Dersom objektet ikke var loadet vil Hibernate retunere en proxy hvis objektet støtter
         // lazyloading. Dette kallet gir derfor ingen database aksess for objekter som støtter lazyloading. For objekter
         // som ikke støtter lazyloading vil dette gi en ekstra db access.
         Object obj = getFromHibernatePersistenceContext(bubbleObject.getId());
@@ -1104,7 +1151,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 // kommer ned i databasen. Rammeverket skal dog fange opp og hindre at det oppdateres på flere instanser av
                 // samme objekt innenfor samme session. Det skal derfor ikke være noen flush her.
                 //session.flush();
-                // La den nye versjonen erstatte den gamle. Det er tryggt å anta at denne også er fullt initialisert.
+                // La den nye versjonen erstatte den gamle. Det er trygt å anta at denne også er fullt initialisert.
                 fullyInitializedBubbles.put(bubbleObject.getId(), bubbleObject);
             }
             session().evict(obj);
@@ -1259,7 +1306,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     }
 
     /**
-     * Sørger for at objektet er fuldstendig lasteet. Dvs. at objektets  assosiasjoner er lastet
+     * Sørger for at objektet er fullstendig lastet. Dvs. at objektets  assosiasjoner er lastet
      * fra databasen. Hvis en assosiasjon er definert som cascade vil de assosierte objektene også
      * bli initialisert.
      *
@@ -1289,7 +1336,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * objekter.
      *
      * @param object             a helt eller delvis initialisert objekt.
-     * @param initializedObjects set av objekter som methoden allerede har initialisert
+     * @param initializedObjects set av objekter som metoden allerede har initialisert
      *
      */
     protected abstract void ensureInitialized(Object object, IdentityHashMap<Object, Object> initializedObjects) throws HibernateException;
@@ -1311,10 +1358,9 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * definert i <code>OracleUtils.SQL_EXPRESSION_MAX_SIZE</code>.
      * <p>
      *
-     * @param type klassen til domeneboblene som skal lastes
-     * @param ids  et sett med id'er for domeneboblene
-     * @return en liste med <code>Criteria</code>-objekter for uthenting av domeneboblene fra
-     *         databasen
+     * @param type klassen til bobler som skal lastes
+     * @param ids  et sett med id'er for boblene
+     * @return en liste med <code>Criteria</code>-objekter for uthenting av boblene fra databasen
      */
     protected List<Criteria> buildCriteriaForType(Class type, Collection<? extends Serializable> ids) {
         List<Criteria> criterias = new ArrayList<>();
@@ -1342,7 +1388,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     }
 
     /**
-     * Metode for å sjekke om objektet allerede er lastet av hibernate uten at hibernate forsøker å laste objeket eller lager
+     * Metode for å sjekke om objektet allerede er lastet av hibernate uten at hibernate forsøker å laste objektet eller lager
      * en proxy.
      *
      * @param aClass      Persistent Objektklasse for <code>hibernateId</code> Eks. Tedm for TedmPK
@@ -1358,7 +1404,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     }
 
     /**
-     * Metode for å sjekke om objektet allerede er lastet av hibernate uten at hibernate forsøker å laste objeket eller lager
+     * Metode for å sjekke om objektet allerede er lastet av hibernate uten at hibernate forsøker å laste objektet eller lager
      * en proxy.
      * <p>
      * TODO: Vurder om dette kan gjøres smartere. Evt vedlikeholde en egen map av objekter som helt sikkert er lastet via en listener
@@ -1371,7 +1417,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     }
 
 
-    // Hjelpe variable for opptimalisering
+    // Hjelpe variable for optimalisering
     private Class lastClass;
     private EntityPersister lastResultForClass;
 
@@ -1395,11 +1441,11 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     }
 
     /**
-     * Returnere true hvis denne instans av HibernatedSessionWrapper har lov til å returnere bubler
+     * Returnere true hvis denne instans av HibernatedSessionWrapper har lov til å returnere bobler
      * som kun er delvis initialisert. Hvis metoden returnerer true bør metoden {@link #ensureFullyLoaded} kalles
      * manuelt for bobler som skal returneres til klienten slik at deres verdier blir satt før sessionen lukkes
      *
-     * @return true hvis HibernatedSessionWrapper har lov til å returnere bubler som kun er delvis
+     * @return true hvis HibernatedSessionWrapper har lov til å returnere bobler som kun er delvis
      *         initialisert
      */
     public boolean isLazyLoadedBubblesAllowed() {
@@ -1409,7 +1455,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     /**
      * Setter om denne instance av HibernateSessionWrapper har lov til å retunere bobler som kun er
-     * delvist initializert.
+     * delvis initialisert.
      */
     public void setLazyLoadedBubblesAllowed(boolean lazyLoadedBubblesAllowed) {
         this.lazyLoadedBubblesAllowed = lazyLoadedBubblesAllowed;
@@ -1461,8 +1507,8 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
         PersistenceContext persistenceContext = ((SessionImpl) session()).getPersistenceContext();
         Preconditions.checkState(persistenceContext.getEntitiesByKey().size() == 0, "EntitiesByKey er ikke tom");
         Preconditions.checkState(persistenceContext.getEntityEntries().size() == 0, "EntitiesByKey er ikke tom");
-        Preconditions.checkState(persistenceContext.getCollectionEntries().size() == 0, "CollectionEnties er ikke tom");
-        Preconditions.checkState(persistenceContext.getCollectionsByKey().size() == 0, "CollectionEnties er ikke tom");
+        Preconditions.checkState(persistenceContext.getCollectionEntries().size() == 0, "CollectionEntries er ikke tom");
+        Preconditions.checkState(persistenceContext.getCollectionsByKey().size() == 0, "CollectionEntries er ikke tom");
         Preconditions.checkState(persistenceContext.getNullifiableEntityKeys().size() == 0, "NullifiableEntityKeys er ikke tom");
     }
 
@@ -1615,7 +1661,7 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
 
     private void fixForBatchInsertUpdateOfEntityComponent(EntityType type, Object value, IdentityHashMap<Object, Object> processedObjects, int levelKey, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> groupedEntityComponents) {
         Class typeClass = type.getReturnedClass();
-        // TODO: mangler å opptimalisere på tvers av subklasser
+        // TODO: mangler å optimalisere på tvers av subklasser
         if (value != null && EntityComponent.class.isAssignableFrom(typeClass)) {
             EntityComponent component = (EntityComponent) value;
             if (groupedEntityComponents.size() == levelKey) {

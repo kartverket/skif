@@ -82,7 +82,7 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
 //        bind(HibernateSessionManager.class).to(HibernateStoreSessionManager.class);
 //
 //        // TODO: Nok ikke riktig måte å gjøre det på. Må sjekke som det virkelig blir ServiceRequestScoped eller singleton her.
-//        bind(Connection.class).toProvider(new ConnectionProvider(SnapshotVersion.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig å angi replicaversion her?
+//        bind(Connection.class).toProvider(new ConnectionProvider(SnapshotVersion.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig å angi snapshotversion her?
 //
 //        bind(HibernateStoreSessionManager.class).to(HibernateStoreSessionManagerSnapshotVersionImpl.class);
 //        bind(HibernateStoreSessionManagerSnapshotVersionImpl.class).in(ServiceRequestScoped.class);
