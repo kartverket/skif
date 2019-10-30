@@ -175,7 +175,6 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
     final public boolean equalsIgnoreSnapshotVersion(Object id) {
-        if (id == null) return false;
         return id instanceof AbstractBubbleId && equalsIgnoreSnapshotVersion((AbstractBubbleId) id);
     }
 
@@ -203,14 +202,13 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * This is useful even if most id's aren't intended for humans.
      */
     public int compareTo(Object o) {
-        // Opptimalisering hvis value er Long
-        AbstractBubbleId other = (AbstractBubbleId) o;
+        AbstractBubbleId<?> other = (AbstractBubbleId<?>) o;
+        // Optimization of common cases...
         if (value instanceof Long && other.value instanceof Long) {
-            long diff = ((Long)value)-((Long)other.value);
-            return diff==0 ? 0 : diff<0 ? -1 : 1;
+            return ((Long) value).compareTo((Long) other.value);
         }
 
-        return getStringValue().compareTo(((AbstractBubbleId) o).getStringValue());
+        return getStringValue().compareTo(other.getStringValue());
     }
 
     /**
