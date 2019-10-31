@@ -5,7 +5,12 @@ import no.statkart.skif.exception.ImplementationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Comparator;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsLast;
 
 /**
  * Hjelpeklasse for generisk funksjonalitet for BubbleId som er uavhengig av BubbleId implementasjonsklasse.
@@ -59,4 +64,56 @@ public class BubbleIds {
     public static boolean equalsIgnoreSnapshotVersion(BubbleId<?> id1, BubbleId<?> id2) {
         return (id1 == id2) || (id1 != null && id1.equalsIgnoreSnapshotVersion(id2));
     }
+
+    /**
+     * Optimalisert sammenligning av id-verdier i tilfeller hvor man vet at man opererer på samme type (homogene typer) og snapshot version.
+     * <p>
+     * Sammenlikningen forutsetter like {@link no.statkart.skif.store.SnapshotVersion snapshotVersion} og {@link BubbleId id-type} for alle parameterisert ids.
+     * </p>
+     *
+     * @return {@code true} kun dersom id med value er like og not null
+     */
+    public static boolean valueEquals(BubbleId<?> id1, BubbleId<?> id2) {
+        if (id1 == null || id2 == null) {
+            return false;
+        }
+        if (id1.getValue() == null) {
+            return false;
+        } else {
+            return id1.getValue().equals(id2.getValue());
+        }
+    }
+
+
+    private static final Comparator<BubbleId<?>> bubbleIdValueComparator = BubbleIds::comparingBubbleIdValue;
+    public static Comparator<BubbleId<?>> comparingBubbleIdValue() {
+        return bubbleIdValueComparator;
+    }
+
+    /**
+     * Sammenlikner to bubbleId, mhp id-verdi.
+     *
+     * Null-verdier håndteres på tilsvarende måte som: <br>
+     * {@code Objects.compare(bubbleId1, bubbleId2, nullsLast(naturalOrder()))}
+     *
+     * @param bubbleId1 kan være null
+     * @param bubbleId2 kan være null
+     * @return -1 om bubbleId1 er før, 0 på samme plass eller 1 hvis den er etter bubbleId2 ihht kriterier.
+     */
+    public static int comparingBubbleIdValue(final BubbleId<?> bubbleId1, final BubbleId<?> bubbleId2) {
+        final Object value1 = bubbleId1 == null ? null : bubbleId1.getValue();
+        final Object value2 = bubbleId2 == null ? null : bubbleId2.getValue();
+
+        // Optimization of common cases...
+        if (value1 instanceof Long && value2 instanceof Long) {
+            return Long.compare((long) value1, (long) value2);
+        }
+
+        if (value1 == null ^ value2 == null) { //xor
+            return value1 != null ? -1 : 1; //nulls last
+        }
+
+        return value1 == value2 ? 0 : (String.valueOf(value1)).compareTo(String.valueOf(value2));
+    }
+
 }
