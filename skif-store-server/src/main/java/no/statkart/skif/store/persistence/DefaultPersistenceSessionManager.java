@@ -117,8 +117,10 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
 
     @Override
     public void flush() {
-        PersistenceSessionMaster implementation = getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
-        implementation.flush();
+        if (inTransaction) {
+            PersistenceSessionMaster implementation = getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(PersistenceSessionMaster.class);
+            implementation.flush();
+        }
     }
 
     @Override

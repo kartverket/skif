@@ -13,6 +13,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.BootstrapServiceRegistry;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
@@ -58,8 +59,12 @@ public class HibernateSessionFactoryBuilder {
     protected static final Logger logger = LoggerFactory.getLogger(HibernateSessionFactoryBuilder.class);
     private final static Object LOCK = new Object();
     final List<String> hbmResource = new ArrayList<>();
-    private final String mappingFilesDirectory;
+    private String mappingFilesDirectory;
     private Map<String, String> className2resourceNameMap = new HashMap<>();
+    private MetadataInterceptor metadataInterceptor;
+
+    public HibernateSessionFactoryBuilder() {
+    }
 
     public HibernateSessionFactoryBuilder(String mappingFilesDirectory) {
         if (!mappingFilesDirectory.equals("")) {
@@ -77,6 +82,14 @@ public class HibernateSessionFactoryBuilder {
             logger.error("findAllMappings()", e);
             throw new ImplementationException(e);
         }
+    }
+
+    /**
+     * Legger til en rutine som kan endre i Metadata f<F8>r session factory opprettes.
+     */
+    public HibernateSessionFactoryBuilder withMetadataInterceptor(MetadataInterceptor metadataInterceptor) {
+        this.metadataInterceptor = metadataInterceptor;
+        return this;
     }
 
     /**
@@ -179,11 +192,11 @@ public class HibernateSessionFactoryBuilder {
         // av boblen via Hibernate vil automatisk gjenberegne flagget uavhengig av om collections har endret seg.
         // Bemerk at Hibernate eventtypene som anvendes her alene ikke er nok til å holde flagget oppdatert for
         // alle tilfeller. Se bruken av EmptyCollectionsFlagUpdater i HibernatePersistenceSessionMasterImpl.
-        BootstrapServiceRegistry bootstrapRegistryBuilder = new BootstrapServiceRegistryBuilder()
+        BootstrapServiceRegistry bootstrapRegistry = new BootstrapServiceRegistryBuilder()
                 .applyIntegrator(new EmptyCollectionOptimizerIntegrator())
                 .build();
 
-        StandardServiceRegistryBuilder standardServiceRegistryBuilder = new StandardServiceRegistryBuilder(bootstrapRegistryBuilder).applySettings(properties).disableAutoClose();
+        StandardServiceRegistryBuilder standardServiceRegistryBuilder = new StandardServiceRegistryBuilder(bootstrapRegistry).applySettings(properties).disableAutoClose();
         StandardServiceRegistry standardServiceRegistry = standardServiceRegistryBuilder.build();
 
         try {
@@ -213,7 +226,11 @@ public class HibernateSessionFactoryBuilder {
             try {
                 BubbleIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
                 EnumKodeIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
-                sessionFactory = metadataSources.buildMetadata().getSessionFactoryBuilder()
+                Metadata metadata = metadataSources.buildMetadata();
+                if (metadataInterceptor != null) {
+                    metadataInterceptor.apply(metadata);
+                }
+                sessionFactory = metadata.getSessionFactoryBuilder()
                         .applyInterceptor(interceptor)
                         .build();
             } catch (HibernateException e) {
