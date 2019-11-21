@@ -86,8 +86,8 @@ libraries.bubbleref_spi = [
 ]
 
 libraries.hibernate = [
-        'no.statkart.skif:skif-hibernate-support:1.0.1',
-        'org.hibernate:hibernate-core:5.3.5.Final.bubbleref.2',
+        'no.statkart.skif:skif-hibernate-support:1.0.2',
+        'org.hibernate:hibernate-core:5.3.5.Final.bubbleref.3',
 ]
 
 // SKIF baserer seg på Java EE 6
