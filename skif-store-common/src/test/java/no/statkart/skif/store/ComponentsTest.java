@@ -1,7 +1,7 @@
 package no.statkart.skif.store;
 
 import com.google.common.collect.Sets;
-import org.fest.assertions.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.testng.annotations.Test;
 
 import java.util.HashSet;
