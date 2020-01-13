@@ -1,12 +1,14 @@
-apply plugin: 'ear'
-apply plugin: 'sktools-weblogic-deploy-plugin'
+plugins {
+    id 'ear'
+    id 'sktools.weblogic-deploy'
+}
 
-Map warMap = [
+def warMap = [
         ':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wswar': 'wsversioning/wsapi/v1',
         ':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar': 'wsversioning/wsapi/v2',
 ]
 
-List ejbList = [
+def ejbList = [
         ':skif-wsversioning:skif-wsversioning-server',
         ':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wscompat',
 ]
@@ -19,21 +21,19 @@ dependencies {
     }
     warMap.each {
         deploy project(path: it.key, configuration: 'war')
-        earlib project(path: it.key, configuration: 'compile')
+        earlib project(path: it.key, configuration: 'earlib')
     }
 
     earlib project(':skif-config')
 }
 
-ear {
-    libDirName 'APP-INF/lib'
-    deploymentDescriptor {
-        version = "5"
-        displayName= "skif-wsversioning"
-        warMap.each {
-            def p = project(it.key)
-            webModule(p.name + '-' + p.version + ".war", it.value)
-        }
+libDirName = 'APP-INF/lib'
+deploymentDescriptor {
+    displayName = 'skif-wsversioning'
+    version = '5'
+    warMap.each {
+        def p = project(it.key)
+        webModule(p.name + '-' + p.version + '.war', it.value)
     }
 }
 

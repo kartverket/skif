@@ -1,12 +1,14 @@
-apply plugin: 'java'
+plugins {
+    id 'java-library'
+    id 'sktools.provided'
+}
 
 dependencies {
-    compile project(':skif-wsversioning:skif-wsversioning-api')
+    api project(':skif-wsversioning:skif-wsversioning-api')
     provided project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsschema')
 
-    testCompile project(':skif-testsupport-common')
+    testImplementation project(':skif-testsupport-common')
 
     //internal dependencies + optional deps to logging frameworks:
-    testCompile project(':skif-config')
-
+    testImplementation project(':skif-config')
 }

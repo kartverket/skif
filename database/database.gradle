@@ -1,6 +1,6 @@
-import java.sql.ResultSet
-
-apply plugin: 'sktools-dbtools-plugin'
+plugins {
+    id 'sktools.dbtools'
+}
 
 // properties for substituering
 def filterProperties = [
@@ -141,7 +141,7 @@ task applyHistorikk() {
 
         def findForeignKeys = { String schema, tableName ->
             def ret = []
-            sql.query("select constraint_name from all_constraints where r_owner = '${schema}' and constraint_type = 'R' and table_name='${tableName.toUpperCase()}'".toString()) { ResultSet rs ->
+            sql.query("select constraint_name from all_constraints where r_owner = '${schema}' and constraint_type = 'R' and table_name='${tableName.toUpperCase()}'".toString()) { def rs ->
                 while (rs.next()) {
                     ret.add(rs.getString(1))
                 }

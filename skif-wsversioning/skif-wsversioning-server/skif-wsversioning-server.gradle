@@ -1,21 +1,24 @@
-apply plugin: 'java'
+plugins {
+    id 'java-library'
+    id 'sktools.provided'
+}
 
 configurations {
     client
 }
 
 dependencies {
-    compile project(':skif-wsversioning:skif-wsversioning-api')
+    api project(':skif-wsversioning:skif-wsversioning-api')
 
     //tester disse implementasjonene her..
     if(hibernateVersion.equals("3.6")){
-      compile project(':skif-store-server:skif-store-server-hs36')
+        api project(':skif-store-server:skif-store-server-hs36')
     }
 
     provided libraries.jee
 
-    testCompile project(':skif-testsupport-common')
+    testImplementation project(':skif-testsupport-common')
 
     //internal dependencies + optional deps to logging frameworks:
-    testCompile project(':skif-config')
+    testImplementation project(':skif-config')
 }

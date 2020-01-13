@@ -1,13 +1,12 @@
 // Optional configuration of library versions to use.
 // Simply add version properties to your gradle.property file to use this feature.
 def libVersion(String name, String defaultValue) {
-    project.ext.properties.get('version.' + name, defaultValue) //development mode only
+    project.findProperty('version.' + name) ?: defaultValue //development mode only
 }
 
 ext.SLF4J_VERSION = libVersion('slf4j', '1.7.25')
 ext.JAXB_VERSION = libVersion('jaxb', '2.2.7') // 2.2.10 har bug i håndtering av enum i Java-til-XSD
 ext.JAXWS_VERSION = libVersion('jaxws', '2.2.8') // Nyeste versjon som ikke krever nyere JAXB
-System.setProperty('javax.xml.accessExternalSchema', 'all') // JAXB 2.2.7 trenger visst denne
 
 
 // build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
@@ -66,16 +65,6 @@ libraries.jaxws_api = "javax.xml.ws:jaxws-api:${JAXWS_VERSION}" //for kompilerin
 libraries.jaxws_rt = [ //for kjøring utenfor container
         libraries.jaxb_impl,
         "com.sun.xml.ws:jaxws-rt:${JAXWS_VERSION}",
-]
-libraries.jaxws_tools = [
-        libraries.jaxws_rt,
-        "com.sun.xml.bind:jaxb-jxc:${JAXB_VERSION}", // For å få den til å bruke minst samme versjon av JAXB som resten
-        "com.sun.xml.ws:jaxws-tools:${JAXWS_VERSION}",
-]
-libraries.jaxb_xjc = [
-        libraries.jaxb_impl,
-        "com.sun.xml.bind:jaxb-impl:${JAXB_VERSION}",
-        "com.sun.xml.bind:jaxb-xjc:${JAXB_VERSION}",
 ]
 
 // SKIF-239: Mulighet for valg av ojdbc driver

@@ -1,11 +1,13 @@
-apply plugin: 'ear'
-apply plugin: 'sktools-weblogic-deploy-plugin'
+plugins {
+    id 'ear'
+    id 'sktools.weblogic-deploy'
+}
 
-Map warMap = [
+def warMap = [
         ':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wswar': 'skiftest/wsapi',
 ]
 
-List ejbList = [
+def ejbList = [
         ':skif-service-test:skif-service-test-server'
 ]
 
@@ -17,22 +19,20 @@ dependencies {
     }
     warMap.each {
         deploy project(path: it.key, configuration: 'war')
-        earlib project(path: it.key, configuration: 'compile')
+        earlib project(path: it.key, configuration: 'earlib')
     }
 
     // TODO: Bør noen av de andre modulene trekke med seg denne (de har den nå på testCompile)?
     earlib project(':skif-config')
 }
 
-ear {
-    libDirName 'APP-INF/lib'
-    deploymentDescriptor {
-        version = "5"
-        displayName = "skif-service-test"
-        warMap.each {
-            def p = project(it.key)
-            webModule(p.name + '-' + p.version + ".war", it.value)
-        }
+libDirName = 'APP-INF/lib'
+deploymentDescriptor {
+    version = '5'
+    displayName = 'skif-service-test'
+    warMap.each {
+        def p = project(it.key)
+        webModule(p.name + '-' + p.version + '.war', it.value)
     }
 }
 

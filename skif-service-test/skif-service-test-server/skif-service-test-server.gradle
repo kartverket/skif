@@ -1,14 +1,18 @@
-apply plugin: 'java'
+plugins {
+    id 'java-library'
+    id 'sktools.provided'
+}
 
 dependencies {
-    compile project(':skif-service-server')
-    compile project(':skif-service-test:skif-service-test-api')
+    api project(':skif-service-server')
+    api project(':skif-service-test:skif-service-test-api')
+
     provided libraries.jee
     provided libraries.c3p0
     provided libraries.jdbc
 
-    testCompile project(':skif-testsupport-common')
+    testImplementation project(':skif-testsupport-common')
 
     //internal dependencies + optional deps to logging frameworks:
-    testCompile project(':skif-config')
+    testImplementation project(':skif-config')
 }

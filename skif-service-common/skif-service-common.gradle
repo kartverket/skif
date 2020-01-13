@@ -1,5 +1,7 @@
-apply plugin: 'java-library'
-apply plugin: 'maven-publish'
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
 
 description = 'Inneholder service-rammeverk klasser for klient'
 
@@ -22,12 +24,12 @@ dependencies {
 }
 
 task testJar(type: Jar) {
-    classifier = 'tests'
+    archiveClassifier = 'tests'
     from sourceSets.test.output
 }
 
 task sourcesJar(type: Jar, dependsOn:classes) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
@@ -50,7 +52,7 @@ publishing {
 
 task assertDependencies() {
     doFirst {
-        configurations.runtime.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
+        configurations.runtimeElements.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
             boolean godkjent = [
                     'joda-time',
                     'org.slf4j',
@@ -61,7 +63,7 @@ task assertDependencies() {
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
 
             if (!godkjent) {
-                throw new TaskExecutionException(it, new RuntimeException('Ukjent avhengighet: ' + dependency)); //avhengighet ikke i godkjent-liste
+                throw new TaskExecutionException(it, new RuntimeException('Ukjent avhengighet: ' + dependency)) //avhengighet ikke i godkjent-liste
             }
         }
     }

@@ -1,22 +1,24 @@
-apply plugin: 'sktools-wsgen-plugin'
+plugins {
+    id 'sktools.wsgen'
+    id 'sktools.provided'
+}
 
 configurations {
     schemas { description = 'Configuration for consuming schemas' }
     war { description = 'War-artifaktet' }
     wsdls { description = 'Zip med WSDL-er' }
+    earlib { extendsFrom implementation; description = 'Felles avhengheter i ear (skinny wars)'}
 }
 
 dependencies {
     if(hibernateVersion.equals("3.6")){
-        compile project(':skif-store-server:skif-store-server-hs36')
+        implementation project(':skif-store-server:skif-store-server-hs36')
     }
-    compile project(':skif-store-test:skif-store-test-api')
-    compile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
-    compile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
+    implementation project(':skif-store-test:skif-store-test-api')
+    implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
+    implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
     provided libraries.jee
-
-    jaxws libraries.jaxws_tools
 
     schemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
 }
@@ -43,8 +45,7 @@ war {
 }
 
 task zipWsdls(type: Zip) {
-    classifier = 'wsdls'
-    extension = 'war'
+    archiveAppendix = 'wsdls'
     from genWsdls
 }
 

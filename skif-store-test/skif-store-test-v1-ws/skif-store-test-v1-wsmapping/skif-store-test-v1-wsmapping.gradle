@@ -1,4 +1,7 @@
-apply plugin: 'java-library'
+plugins {
+    id 'java-library'
+    id 'sktools.provided'
+}
 
 /**
  * Denne modulen blir konsumert i to kombinasjoner

@@ -1,5 +1,7 @@
-apply plugin: 'java'
-apply plugin: 'sktools-xjc-plugin'
+plugins {
+  id 'java'
+  id 'sktools.xjc'
+}
 
 sourceSets {
   main {
@@ -11,8 +13,4 @@ sourceSets {
     }
     resources.srcDirs = []
   }
-}
-
-dependencies {
-    jaxb libraries.jaxb_xjc
 }

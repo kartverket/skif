@@ -1,5 +1,7 @@
-apply plugin: 'java'
-apply plugin: 'sktools-wsimport-plugin'
+plugins {
+    id 'java'
+    id 'sktools.wsimport'
+}
 
 configurations {
     wsdls
@@ -9,8 +11,6 @@ dependencies {
     wsdls project(path: ':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar', configuration: 'wsdls')
 
     implementation libraries.jaxws_rt
-
-    jaxws libraries.jaxws_tools
 }
 
 // https://discuss.gradle.org/t/right-way-to-copy-contents-from-dependency-archives/7449/13

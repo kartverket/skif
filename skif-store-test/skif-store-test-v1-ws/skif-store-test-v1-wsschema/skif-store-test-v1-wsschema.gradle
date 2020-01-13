@@ -1,5 +1,7 @@
-apply plugin: 'java-library'
-apply plugin: 'sktools-xjc-plugin'
+plugins {
+    id 'java-library'
+    id 'sktools.xjc'
+}
 
 configurations {
     schemas {
@@ -19,12 +21,9 @@ sourceSets {
   }
 }
 
-dependencies {
-    jaxb libraries.jaxb_xjc
-}
 
 task zipSchemas(type: Zip) {
-    classifier = 'schemas'
+    archiveClassifier = 'schemas'
     from 'src/main/schema'
 }
 

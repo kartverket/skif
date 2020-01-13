@@ -1,7 +1,4 @@
-import org.gradle.util.GradleVersion
-
-assert GradleVersion.version('5.0').compareTo(GradleVersion.current()) <= 0 //lowest gradle version supported
-if (!['5.2'].findAll { gradle.gradleVersion == it }) {
+if (!['5.6.2'].findAll { gradle.gradleVersion == it }) {
     logger.warn "WARNING: Du benytter en annen versjon av Gradle enn hva byggesystemet er testet med: ${gradle.gradleVersion}"
 }
 
@@ -14,14 +11,12 @@ allprojects {
     group = 'no.statkart.skif'
 
 
-    plugins.withType(JavaBasePlugin.class) {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+    plugins.withType(JavaBasePlugin) {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-
     apply plugin: 'idea'
-
 
     repositories {
         if (MAVEN_LOCAL_FOR_PROJECT) {
@@ -34,7 +29,6 @@ allprojects {
             mavenLocal()
         }
     }
-
 }
 
 idea.project {
@@ -82,13 +76,11 @@ subprojects { Project project ->
 
 
     plugins.withType(JavaPlugin) {
-        project.apply plugin: 'sktools-provided-plugin'
-
         // Avhengigheter som trengs for testing (riktignok ikke alle overalt)
         project.dependencies {
-            testCompile libraries.testng
-            testCompile libraries.mockito
-            testCompile libraries.assertj
+            testImplementation libraries.testng
+            testImplementation libraries.mockito
+            testImplementation libraries.assertj
 
             apiElements libraries.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
         }
@@ -203,58 +195,5 @@ allprojects {
                 ])
             }
         }
-    }
-}
-
-
-buildscript {
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Miljøvariabler for konfigurasjon av byggemiljø
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    [
-            'LOCALHOSTNAME',
-            'WEBLOGIC_HOME',
-            'WEBLOGIC_VERSION',
-    ].each { key ->
-        if (!project.hasProperty(key) && System.getenv(key) != null) {
-            project.ext.setProperty(key, System.getenv(key))
-        }
-    }
-
-    if (!project.hasProperty('LOCALHOSTNAME')) {
-        project.ext.setProperty('LOCALHOSTNAME', java.net.InetAddress.localHost.canonicalHostName)
-    }
-
-    ext.ORA_DEBUG = Boolean.valueOf("${rootProject.properties.get('ORA_DEBUG', System.getenv('ORA_DEBUG')) ?: 'false'}")
-
-    ext.MAVEN_REPO = rootProject.properties.get('MAVEN_REPO', System.getenv('MAVEN_REPO'))
-    if (ext.MAVEN_REPO == null) {
-        ext.MAVEN_REPO = 'https://nexus.statkart.no/repository/public/'
-        logger.info "warning: MAVEN_REPO not defined. Defaulting to ${MAVEN_REPO}"
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Switch for tentativ utvikling mot lokalt maven repository
-    // Se http://forums.gradle.org/gradle/topics/dependency_resolution_in_gradle_1_0_milestone_8 for teknisk beskrivelse.
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    project.ext.set('MAVEN_LOCAL_FOR_BUILDSYSTEM', (Boolean.parseBoolean(System.getenv('MAVEN_LOCAL')) || Boolean.parseBoolean(System.getenv('MAVEN_LOCAL_FOR_BUILDSYSTEM'))) ? true : null)
-    project.ext.set('MAVEN_LOCAL_FOR_PROJECT', (Boolean.parseBoolean(System.getenv('MAVEN_LOCAL')) || Boolean.parseBoolean(System.getenv('MAVEN_LOCAL_FOR_PROJECT'))) ? true : null)
-
-
-    repositories {
-        if (MAVEN_LOCAL_FOR_BUILDSYSTEM) {
-            println '...initializing MAVEN_LOCAL_FOR_BUILDSYSTEM'
-            mavenLocal()
-        }
-        maven { name = 'public'; url = MAVEN_REPO }
-
-        if (!MAVEN_LOCAL_FOR_BUILDSYSTEM) {
-            mavenLocal()
-        }
-    }
-
-    dependencies {
-        classpath 'no.statkart.sktools.gradle:gradle-plugins:trunk-build667'
     }
 }

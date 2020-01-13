@@ -6,6 +6,13 @@ def defaultProperties = [
 
         service_mode          : 'SINGLE_VM',
 
+        LOCALHOSTNAME         : java.net.InetAddress.localHost.canonicalHostName,
+        MAVEN_REPO            : System.getenv('MAVEN_REPO') ?: 'https://nexus.statkart.no/repository/public/',
+        MAVEN_LOCAL_FOR_PROJECT : Boolean.parseBoolean(System.getenv('MAVEN_LOCAL')) || Boolean.parseBoolean(System.getenv('MAVEN_LOCAL_FOR_PROJECT')),
+        ORA_DEBUG             : System.getenv('ORA_DEBUG') == 'true',
+        WEBLOGIC_HOME         : System.getenv('WEBLOGIC_HOME'),
+        WEBLOGIC_VERSION      : System.getenv('WEBLOGIC_VERSION'),
+
         'skif.server_username': '<not set>',
         'skif.server_password': '<not set>',
         'skif.server_url'     : "https://${-> wls_server}",
@@ -45,6 +52,10 @@ def defaultProperties = [
         wls_deploy_protocol   : 'http',
         wls_deploy_port       : "${-> wls_port}",
 ]
+
+if (!project.hasProperty('MAVEN_REPO')) {
+    logger.info 'warning: MAVEN_REPO not defined. Defaulting to ' + defaultProperties.MAVEN_REPO
+}
 
 defaultProperties.each { key, value ->
     if (!project.hasProperty(key)) {

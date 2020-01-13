@@ -1,19 +1,21 @@
-apply plugin: 'sktools-wsgen-plugin'
+plugins {
+    id 'sktools.wsgen'
+    id 'sktools.provided'
+}
 
 configurations {
     war { description = 'War-artifaktet' }
     wsdls { description = 'Zip med WSDL-er' }
+    earlib { extendsFrom implementation; description = 'Felles avhengheter i ear (skinny wars)'}
 }
 
 dependencies {
-    compile project(':skif-service-server')
-    compile project(':skif-service-test:skif-service-test-api')
-    compile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
-    compile project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
+    implementation project(':skif-service-server')
+    implementation project(':skif-service-test:skif-service-test-api')
+    implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
+    implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
     provided libraries.jee
-
-    jaxws libraries.jaxws_tools
 }
 
 war {
@@ -22,8 +24,7 @@ war {
 }
 
 task zipWsdls(type: Zip) {
-    classifier = 'wsdls'
-    extension = 'war'
+    archiveAppendix = 'wsdls'
     from genWsdls
 }
 

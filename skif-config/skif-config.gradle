@@ -1,5 +1,7 @@
-apply plugin: 'java-library'
-apply plugin: 'sktools-filter-resources-plugin'
+plugins {
+    id 'java-library'
+    id 'sktools.filter-resources'
+}
 
 sourceSets.main {
   filterResources.srcDir 'src/main/resources.filtered'
@@ -30,7 +32,7 @@ filterResources {
 }
 
 dependencies {
-    runtime libraries.jul_to_slf4j
-    runtime libraries.log4j_to_slf4j
-    runtime libraries.logback_classic
+    runtimeOnly libraries.jul_to_slf4j
+    runtimeOnly libraries.log4j_to_slf4j
+    runtimeOnly libraries.logback_classic
 }

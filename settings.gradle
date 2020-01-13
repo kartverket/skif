@@ -1,3 +1,27 @@
+pluginManagement {
+    def SKTOOLS_VERSION = '5.2'
+
+    plugins {
+        id 'sktools.dbtools' version "$SKTOOLS_VERSION"
+        id 'sktools.filter-resources' version "$SKTOOLS_VERSION"
+        id 'sktools.provided' version "$SKTOOLS_VERSION"
+        id 'sktools.weblogic-deploy' version "$SKTOOLS_VERSION"
+        id 'sktools.wsimport' version "$SKTOOLS_VERSION"
+        id 'sktools.wsgen' version "$SKTOOLS_VERSION"
+        id 'sktools.xjc' version "$SKTOOLS_VERSION"
+    }
+
+    repositories {
+        if (Boolean.parseBoolean(System.getenv('MAVEN_LOCAL')) || Boolean.parseBoolean(System.getenv('MAVEN_LOCAL_FOR_BUILDSYSTEM'))) {
+            println '...initializing MAVEN_LOCAL_FOR_BUILDSYSTEM'
+            mavenLocal()
+        }
+        maven {
+            url System.getenv('MAVEN_REPO') ?: 'https://nexus.statkart.no/repository/public/'
+        }
+    }
+}
+
 include ':database'
 
 include ':skif-config'

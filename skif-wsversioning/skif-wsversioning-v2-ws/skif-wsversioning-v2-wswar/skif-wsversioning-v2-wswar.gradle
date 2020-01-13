@@ -1,18 +1,20 @@
-apply plugin: 'sktools-wsgen-plugin'
+plugins {
+    id 'sktools.wsgen'
+    id 'sktools.provided'
+}
 
 configurations {
     war { description = 'War-artifaktet' }
     wsdls { description = 'Zip med WSDL-er' }
+    earlib { extendsFrom implementation; description = 'Felles avhengheter i ear (skinny wars)'}
 }
 
 dependencies {
-    compile project(':skif-wsversioning:skif-wsversioning-server')
-    compile project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsschema')
-    compile project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsmapping')
+    implementation project(':skif-wsversioning:skif-wsversioning-server')
+    implementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsschema')
+    implementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsmapping')
 
     provided libraries.jee
-
-    jaxws libraries.jaxws_tools
 }
 
 war {
@@ -21,8 +23,7 @@ war {
 }
 
 task zipWsdls(type: Zip) {
-    classifier = 'wsdls'
-    extension = 'war'
+    archiveClassifier = 'wsdls'
     from genWsdls
 }
 
