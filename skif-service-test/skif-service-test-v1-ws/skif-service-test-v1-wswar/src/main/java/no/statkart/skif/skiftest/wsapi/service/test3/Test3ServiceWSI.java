@@ -16,6 +16,6 @@ public interface Test3ServiceWSI extends ServiceWSI {
 
     A b2A(@WebParam(name = "b") B b, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext);
 
-    String testThrowException(@WebParam(name = "exceptionClass") String exceptionClass, @WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) throws SimpleException;
+    String testExceptionThrowing(@WebParam(name = "exceptionClass") String exceptionClass, @WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) throws SimpleException;
 
 }

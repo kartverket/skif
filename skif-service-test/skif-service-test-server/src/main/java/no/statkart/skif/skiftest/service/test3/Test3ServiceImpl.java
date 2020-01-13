@@ -14,7 +14,7 @@ public class Test3ServiceImpl implements Test3Service {
     }
 
     @Override
-    public String testThrowException(String exceptionClass, String message) throws SimpleException {
+    public String testExceptionThrowing(String exceptionClass, String message) throws SimpleException {
         if (exceptionClass!=null) {
             throw new SimpleException(message);
         }
