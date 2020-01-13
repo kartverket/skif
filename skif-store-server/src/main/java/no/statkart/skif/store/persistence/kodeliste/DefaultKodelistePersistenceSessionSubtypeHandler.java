@@ -12,6 +12,7 @@ import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionM
 import org.hibernate.Session;
 
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.metamodel.EntityType;
 import java.util.*;
 
 /**
@@ -365,16 +366,34 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
      * @return alle database kodelister
      */
     private Collection<AbstractKodeliste> getDbKodelister() {
+        Collection<AbstractKodeliste> result = new ArrayList<>();
         try {
-            Collection<Kodeliste> result;
             Session session = persistenceSessionMaster.reserveSession();
-            CriteriaQuery<AbstractKodeliste> cq =
-                    session.getCriteriaBuilder().createQuery(AbstractKodeliste.class).distinct(true);
-            cq.from(AbstractKodeliste.class);
-            return session.createQuery(cq).getResultList();
+            for (Class<? extends AbstractKodeliste> entitet : kodelisteEntiteter(session)) {
+                CriteriaQuery<? extends AbstractKodeliste> cq =
+                        session.getCriteriaBuilder().createQuery(entitet).distinct(true);
+                cq.from(entitet);
+                result.addAll(session.createQuery(cq).getResultList());
+            }
+            return result;
         } finally {
             persistenceSessionMaster.releaseSession();
         }
+    }
+
+    /**
+     * Finner alle entiteter definert i prosjektet som subklasser AbstractKodeliste.
+     * Dette kan være flere entiteter, og de kan mappe til forskjellige tabeller.
+     */
+    private Collection<Class<? extends AbstractKodeliste>> kodelisteEntiteter(Session session) {
+        Collection<Class<? extends AbstractKodeliste>> result = new HashSet<>();
+        for (EntityType<?> entityType : session.getMetamodel().getEntities()) {
+            Class<?> cls = entityType.getJavaType();
+            if (AbstractKodeliste.class.isAssignableFrom(cls)) {
+                result.add(cls.asSubclass(AbstractKodeliste.class));
+            }
+        }
+        return result;
     }
 
     /**
