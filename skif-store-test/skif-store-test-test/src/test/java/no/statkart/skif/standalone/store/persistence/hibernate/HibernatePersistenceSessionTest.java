@@ -3,22 +3,23 @@ package no.statkart.skif.standalone.store.persistence.hibernate;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImplExt;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
+import no.statkart.skif.storetest.domain.standalone.ParentBubble;
 import no.statkart.skif.storetest.domain.standalone.ParentBubbleId;
 import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistory;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistoryId;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.internal.CriteriaImpl;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -293,28 +294,27 @@ public class HibernatePersistenceSessionTest {
      */
     public void testDeterministiskLoadOrderForBuildCriterias() {
         HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
-        
         try {
             LinkedHashSet<BubbleId<?>> ids1 = new LinkedHashSet<>();
             ids1.add(new ParentBubbleId<>(1L));
             ids1.add(new TestBubbleId<>(1L));
             ids1.add(new ParentBubbleId<>(2L));
-            final List<Criteria> criteriaList1 = persistenceSession.buildCriterias(ids1);
+            final List<CriteriaQuery<BubbleObject>> criteriaList1 = persistenceSession.buildCriterias(ids1);
             assertEquals(criteriaList1.size(), 2);
-            assertEquals(((CriteriaImpl)criteriaList1.get(0)).getEntityOrClassName(), "no.statkart.skif.storetest.domain.standalone.ParentBubble");
-            assertEquals(((CriteriaImpl)criteriaList1.get(1)).getEntityOrClassName(), "no.statkart.skif.storetest.domain.standalone.TestBubble");
+            assertEquals(criteriaList1.get(0).getResultType(), ParentBubble.class);
+            assertEquals(criteriaList1.get(1).getResultType(), TestBubble.class);
 
             LinkedHashSet<BubbleId<?>> ids2 = new LinkedHashSet<>();
             ids2.add(new TestBubbleId<>(1L));
             ids2.add(new ParentBubbleId<>(1L));
             ids2.add(new ParentBubbleId<>(2L));
-            final List<Criteria> criteriaList2 = persistenceSession.buildCriterias(ids2);
+            final List<CriteriaQuery<BubbleObject>> criteriaList2 = persistenceSession.buildCriterias(ids2);
             assertEquals(criteriaList2.size(), 2);
-            assertEquals(((CriteriaImpl)criteriaList2.get(0)).getEntityOrClassName(), "no.statkart.skif.storetest.domain.standalone.TestBubble");
-            assertEquals(((CriteriaImpl)criteriaList2.get(1)).getEntityOrClassName(), "no.statkart.skif.storetest.domain.standalone.ParentBubble");
-
+            assertEquals(criteriaList2.get(0).getResultType(), TestBubble.class);
+            assertEquals(criteriaList2.get(1).getResultType(), ParentBubble.class);
         } finally {
             persistenceSession.close();
         }
     }
+
 }

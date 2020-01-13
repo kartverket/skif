@@ -7,21 +7,37 @@ import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
-import no.statkart.skif.store.*;
-import no.statkart.skif.store.endringslogg.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.Kontroll;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.SnapshotVersionContext;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.endringslogg.AbstractEndring;
+import no.statkart.skif.store.endringslogg.AbstractEndringId;
+import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
+import no.statkart.skif.store.endringslogg.Endringer;
+import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.store.persistence.SessionSelector;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
-import static no.statkart.skif.util.HibernateHelper.*;
+import static no.statkart.skif.util.HibernateHelper.getClassMetadata;
+import static no.statkart.skif.util.HibernateHelper.getDiscriminatorSql;
+import static no.statkart.skif.util.HibernateHelper.getTableName;
 
 /**
  * @author Henrik Fredholm
@@ -88,11 +104,11 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
                 endringer.setSisteEndringIdProsessert(id);
             } else if (returnerBobler == ReturnerBobler.Aldri) {
                 // Finn endringer, objekter skal ikke returneres
-                Criteria criteria = session.createCriteria(endringClass);
-                criteria.add(Restrictions.gt("id", id));
-                criteria.addOrder(Order.asc("id"));
-                criteria.setMaxResults(maksAntall);
-                List<E> endringList = criteria.list();
+                CriteriaBuilder cb = session.getCriteriaBuilder();
+                CriteriaQuery<E> cq = (CriteriaQuery<E>) (CriteriaQuery<?>) cb.createQuery(endringClass);
+                Root<? extends AbstractEndring> root = cq.from(endringClass);
+                cq.orderBy(cb.asc(root.get("id")));
+                List<E> endringList = session.createQuery(cq).setMaxResults(maksAntall).getResultList();
                 boolean alleEndringerFunnet = endringList.size() < maksAntall;
                 endringer.setAlleEndringerFunnet(alleEndringerFunnet);
                 endringer.setEndringList(endringList);
@@ -103,17 +119,16 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
                 Map<BubbleId<?>, BubbleObject> accumulatedBubbleObjects = Maps.newHashMap();
                 while (oensketAntallEndringer > 0 && !endringer.isAlleEndringerFunnet()) {
                     // Finn endringer
-                    Criteria criteria = session.createCriteria(endringClass);
-                    if(endringer.getSisteEndringIdProsessert() == null){
-                        criteria.add(Restrictions.gt("id", id));
+                    CriteriaBuilder cb = session.getCriteriaBuilder();
+                    CriteriaQuery<E> cq = (CriteriaQuery<E>) (CriteriaQuery<?>) cb.createQuery(endringClass);
+                    Root<? extends AbstractEndring> root = cq.from(endringClass);
+                    if (endringer.getSisteEndringIdProsessert() == null){
+                        cq.where(cb.greaterThan(root.get("id"), id));
                     }   else {
-                        criteria.add(Restrictions.gt("id",endringer.getSisteEndringIdProsessert()));
+                        cq.where(cb.greaterThan(root.get("id"), endringer.getSisteEndringIdProsessert()));
                     }
-
-                    criteria.addOrder(Order.asc("id"));
-                    criteria.setMaxResults(oensketAntallEndringer);
-
-                    List<E> endringList = criteria.list();
+                    cq.orderBy(cb.asc(root.get("id")));
+                    List<E> endringList = session.createQuery(cq).setMaxResults(oensketAntallEndringer).getResultList();
                     if (accumulatedEndringer == null) {
                         accumulatedEndringer = endringList;
                     } else {
@@ -238,11 +253,19 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
     }
 
     private EI findSisteEndringId(Session session) {
-        Criteria criteria = session.createCriteria(AbstractEndring.class);
-        criteria.setProjection(Projections.max("id"));
-        EI endringId = (EI) criteria.uniqueResult();
-        endringId = setIfNull(endringId);
-        return endringId;
+        @SuppressWarnings("unchecked")
+        Class<E> cls = (Class<E>) (Class<?>) AbstractEndring.class;
+
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<E> cq = cb.createQuery(cls);
+        Root<E> root = cq.from(cls);
+
+        Subquery<Long> sub = cq.subquery(Long.class);
+        Root<E> subRoot = sub.from(cls);
+        sub.select(cb.max(subRoot.get("id")));
+
+        cq.where(cb.equal(root.get("id"), sub));
+        return setIfNull(session.createQuery(cq).uniqueResult().getId());
     }
 
     private EI setIfNull(EI id) {

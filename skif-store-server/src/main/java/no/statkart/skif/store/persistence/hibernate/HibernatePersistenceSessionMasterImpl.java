@@ -1,7 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 import no.statkart.skif.bubbleref.persistence.hibernate.HibernateDetachedSupport;
 import no.statkart.skif.bubbleref.persistence.hibernate.HibernateLazySupport;
 import no.statkart.skif.exception.ConfigurationException;
@@ -12,35 +11,28 @@ import no.statkart.skif.persistence.hibernate.EmptyCollectionsFlagUpdater;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Bubbles;
-import no.statkart.skif.store.EntityComponent;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
-import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefIdPersister;
-import org.hibernate.Criteria;
-import org.hibernate.EntityMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.MappingException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.spi.EntityKey;
 import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.internal.SessionImpl;
-import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
-import org.hibernate.type.SingleColumnType;
-import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -376,22 +368,18 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     private <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> loadAllFromDatabase(Set<I> ids) throws ObjectNotFoundException {
         Set<T> allEntities = new HashSet<>(ids.size());
 
-        List<Criteria> criterias = buildCriterias(ids);
-        for (Criteria criteria : criterias) {
+        List<CriteriaQuery<T>> criterias = buildCriterias(ids);
+        for (CriteriaQuery<T> criteria : criterias) {
             try {
-                List objects = criteria.list();
-                for (Iterator iterator = objects.iterator(); iterator.hasNext(); ) {
-                    //noinspection unchecked
-                    T bubbleObject = (T) iterator.next();
-                    allEntities.add(bubbleObject);
-                }
+                List<T> objects = session().createQuery(criteria).getResultList();
+                // noinspection
+                allEntities.addAll(objects);
             } catch (HibernateException e) {
                 throw new ImplementationException("Failed to load bubbles", e);
             }
         }
         return allEntities;
     }
-
 
     /**
      * Lager <code>Criteria</code>-objekter for lasting av domenebobler basert på deres id'er.
@@ -400,18 +388,15 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @return en liste av <code>Criteria</code>-objekter der hver criteria laster domenebobler av en
      *         bestemt type.
      */
-    public List<Criteria> buildCriterias(Set<? extends BubbleId> ids) {
-        List<Criteria> criterias = new ArrayList<>();
-
-        LinkedHashMap<Class<?>, ? extends Set<? extends Serializable>> idsByType = getIdsByType(ids);
-        for (Object o : idsByType.keySet()) {
-            Class type = (Class) o;
-            List<Criteria> criteriasForType = buildCriteriaForType(type, idsByType.get(type));
+    public <T extends BubbleObject, I extends BubbleId<? extends T>> List<CriteriaQuery<T>> buildCriterias(Set<I> ids) {
+        List<CriteriaQuery<T>> criterias = new ArrayList<>();
+        LinkedHashMap<Class<T>, ? extends Set<I>> idsByType = getIdsByType(ids);
+        for (Class<T> type : idsByType.keySet()) {
+            List<CriteriaQuery<T>> criteriasForType = buildCriteriaForType(type, idsByType.get(type));
             criterias.addAll(criteriasForType);
         }
         return criterias;
     }
-
 
     /**
      * Create a map with a ids keyed on the clazz of entity that they defines the id for.
@@ -420,10 +405,11 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @return a map of ids keyed by the clazz og the entity. The map has at predictable iteration order defined by
      * the iteration order of parameter {@code ids}
      */
-    private <T extends BubbleObject, I extends BubbleId<? extends T>> LinkedHashMap<Class<?>, Set<I>> getIdsByType(Set<I> ids) {
-        LinkedHashMap<Class<?>, Set<I>> idsByType = new LinkedHashMap<>();
+    private <T extends BubbleObject, I extends BubbleId<? extends T>> LinkedHashMap<Class<T>, Set<I>> getIdsByType(Set<I> ids) {
+        LinkedHashMap<Class<T>, Set<I>> idsByType = new LinkedHashMap<>();
         for (I id : ids) {
-            Class entityClazz = id.getBaseType(); //Class name for the entity owning the id
+            @SuppressWarnings("unchecked")
+            Class<T> entityClazz = id.getBaseType(); //Class name for the entity owning the id
             // Endringer ligger i mange forskjellige tabeller. Hvis vi gjør query via basetype må
             // Hibernate gjøre en masse joins.
             // TODO: Bruke Hibernate metadata til å finne ut av dette. Pt er Endring den eneste klasse som er slik.
@@ -443,8 +429,8 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
     private <T extends BubbleObject, I extends BubbleId<? extends T>> T getFromHibernateSessionOrLoad(I bubbleId) {
         T bubble = getFromHibernatePersistenceContext(bubbleId);
         if (bubble == null) {
-            //noinspection unchecked
-            bubble = (T) session().get(bubbleId.getType(), bubbleId, LockMode.NONE);
+            //noinspection
+            bubble = session().get(bubbleId.getType(), bubbleId, LockMode.NONE);
         }
         return bubble;
     }
@@ -479,8 +465,8 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
      * @param ids  et sett med id'er for boblene
      * @return en liste med <code>Criteria</code>-objekter for uthenting av boblene fra databasen
      */
-    protected List<Criteria> buildCriteriaForType(Class type, Collection<? extends Serializable> ids) {
-        List<Criteria> criterias = new ArrayList<>();
+    protected <T extends BubbleObject, I extends BubbleId<? extends T>> List<CriteriaQuery<T>> buildCriteriaForType(Class<T> type, Collection<I> ids) {
+        List<CriteriaQuery<T>> criterias = new ArrayList<>();
         Iterator<? extends Serializable> idIterator = ids.iterator();
         int size = ids.size();
 
@@ -497,8 +483,11 @@ public abstract class HibernatePersistenceSessionMasterImpl implements Hibernate
                 for (int j = 0; j < length; j++) {
                     subList.add(idIterator.next());
                 }
-                Criteria criteria = session().createCriteria(type).add(Restrictions.in(ID_KOLONNE_NAVN, subList));
-                criterias.add(criteria);
+                CriteriaBuilder cb = session().getCriteriaBuilder();
+                CriteriaQuery<T> cq = cb.createQuery(type);
+                Root<T> root = cq.from(type);
+                cq.where(root.get(ID_KOLONNE_NAVN).in(subList));
+                criterias.add(cq);
             }
         }
         return criterias;

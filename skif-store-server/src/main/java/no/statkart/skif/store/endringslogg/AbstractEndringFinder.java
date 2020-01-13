@@ -9,6 +9,10 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 /**
@@ -54,10 +58,12 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersion);
-            Criteria criteria = session.createCriteria(endringsklasse);
-            criteria.setProjection(Projections.max("id"));
-            AbstractEndringId<?> endringId = (AbstractEndringId<?>) criteria.uniqueResult();
-            return endringId != null ? endringId.getValue() : 0L;
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<? extends T> root = cq.from(endringsklasse);
+            cq.select(cb.max(root.get("id")));
+            Long result = session.createQuery(cq).uniqueResult();
+            return result == null ? 0L : result;
         } finally {
             if (sessionSelector!=null) sessionSelector.close();
         }
@@ -89,13 +95,15 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersion);
-            Criteria criteria = session.createCriteria(endringsklasse);
-            criteria.add(Restrictions.gt("id", new AbstractEndringId(endringsnummer)));
-            //criteria.addOrder(Order.asc("id")); // trengs ikke da Endring er definert som organization index tabell
-            criteria.setMaxResults(maksAntall);
-            return criteria.list();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<E> cq = cb.createQuery(endringsklasse);
+            Root<E> root = cq.from(endringsklasse);
+            cq.where(cb.greaterThan(root.get("id"), new AbstractEndringId<>(endringsnummer)));
+            // addOrder(Order.asc("id")) // trengs ikke da Endring er definert som organization index tabell
+            return session.createQuery(cq).setMaxResults(maksAntall).getResultList();
         } finally {
             if (sessionSelector!=null) sessionSelector.close();
         }
     }
+
 }

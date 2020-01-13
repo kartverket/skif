@@ -18,6 +18,11 @@ import org.hibernate.proxy.HibernateProxy;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 /**
@@ -46,12 +51,14 @@ public class HibernatePersistenceSessionTest2 extends StoreTestServerTestCase {
 
         Session session = hibernatePersistenceSessionMaster.reserveSession();
         try {
-            List list = session.createCriteria(BubbleWithEntityComponent.class)
-                    .add(Restrictions.idEq(id))
-                    .setFetchMode("level1Component", FetchMode.SELECT)
-                    .list();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<BubbleWithEntityComponent> cq = cb.createQuery(BubbleWithEntityComponent.class);
+            Root<BubbleWithEntityComponent> root = cq.from(BubbleWithEntityComponent.class);
+            // root.fetch("level1Component", JoinType.INNER);
+            cq.where(cb.equal(root.get("id"), id));
+            List<BubbleWithEntityComponent> list = session.createQuery(cq).getResultList();
 
-            BubbleWithEntityComponent entity = (BubbleWithEntityComponent) list.get(0);
+            BubbleWithEntityComponent entity = list.get(0);
             Assert.assertTrue(entity.getLevel1Component() instanceof HibernateProxy);
 
             BubbleWithEntityComponent bubble = hibernatePersistenceSessionMaster.get(id);
