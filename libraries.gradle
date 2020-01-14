@@ -1,5 +1,5 @@
 // Optional configuration of library versions to use.
-// Simply add version properties to your gradle-user.property file to use this feature.
+// Simply add version properties to your gradle.property file to use this feature.
 def libVersion(String name, String defaultValue) {
     project.ext.properties.get('version.' + name, defaultValue) //development mode only
 }

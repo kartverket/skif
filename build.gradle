@@ -100,11 +100,11 @@ subprojects { Project project ->
          *
          * gradle test -DfilterSlowTests=INCLUDE
          * gradle test -DfilterOracleLatest=INCLUDE
-         * gradle test -PhibernateVersion=xx for hibernate versjon spesifike tester
+         * gradle test -PhibernateVersion=xx for hibernate versjon spesifikke tester
          * osv..
          *
          * GBOK-2266: Tilpasset oppsett for downstream testing i Jenkins
-         * Dersom ingen test-oppsett spesifisert så eksluderes alle grupper.
+         * Dersom ingen test-oppsett spesifisert så ekskluderes alle grupper.
          * Dersom test-oppsett spesifiseres, kjøres kun spesifisert gruppe.
          *  - På denne måten oppnås disjointe sett av tester slik man unngår å kjøre samme test to ganger i de ulike Jenkins jobbene.
          *
@@ -210,7 +210,7 @@ allprojects {
 buildscript {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Miljøvariable for konfigurasjon av byggemiljø
+    // Miljøvariabler for konfigurasjon av byggemiljø
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     [
             'LOCALHOSTNAME',

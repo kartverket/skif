@@ -28,10 +28,10 @@ import com.sun.xml.ws.developer.JAXWSProperties;
 
 
 #### Oppsett av testdatabase
-Bruker opprettes via `gradew dbCreateUser`. Hvor tablespacefilen skal legges bestemmes
+Bruker opprettes via `gradlew dbCreateUser`. Hvor tablespacefilen skal legges bestemmes
 av property `db_dataroot_dir`.
 
-Skjema settes opp via `gradew dbInit`
+Skjema settes opp via `gradlew dbInit`
 
 Dersom man får feilmeldingen: 
 ``` 
