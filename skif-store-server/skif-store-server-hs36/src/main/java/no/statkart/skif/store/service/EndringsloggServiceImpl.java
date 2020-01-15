@@ -29,6 +29,8 @@ import org.hibernate.metadata.ClassMetadata;
 import javax.annotation.Nullable;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import javax.persistence.metamodel.EntityType;
@@ -260,17 +262,12 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
     private EI findSisteEndringId(Session session) {
         @SuppressWarnings("unchecked")
         Class<E> cls = (Class<E>) AbstractBubbleId.getType(endringIdClass);
-
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<E> cq = cb.createQuery(cls);
+        CriteriaQuery<EI> cq = cb.createQuery(endringIdClass);
         Root<E> root = cq.from(cls);
-
-        Subquery<Long> sub = cq.subquery(Long.class);
-        Root<E> subRoot = sub.from(cls);
-        sub.select(cb.max(subRoot.get("id")));
-
-        cq.where(cb.equal(root.get("id"), sub));
-        return setIfNull(session.createQuery(cq).uniqueResult().getId());
+        Expression<EI> id = root.get("id");
+        cq.select(cb.greatest(id));
+        return setIfNull(session.createQuery(cq).uniqueResult());
     }
 
     private EI setIfNull(EI id) {
