@@ -4,23 +4,18 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.SessionSelector;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
 /**
  * Basisfunksjonalitet for å finne endringer.
  *
- * @param <T>    Representerer rotendringsklassen i Hibernate-mappingen. Denne bindes opp i implementasjones
- *               <code>extends</code>-bit, og via klassen som sendes inn til konstruktøren.
- *
+ * @param <T> Representerer rotendringsklassen i Hibernate-mappingen. Denne bindes opp i implementasjones
+ *            <code>extends</code>-bit, og via klassen som sendes inn til konstruktøren.
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
@@ -65,7 +60,7 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
             Long result = session.createQuery(cq).uniqueResult();
             return result == null ? 0L : result;
         } finally {
-            if (sessionSelector!=null) sessionSelector.close();
+            if (sessionSelector != null) sessionSelector.close();
         }
     }
 
@@ -102,7 +97,7 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
             // addOrder(Order.asc("id")) // trengs ikke da Endring er definert som organization index tabell
             return session.createQuery(cq).setMaxResults(maksAntall).getResultList();
         } finally {
-            if (sessionSelector!=null) sessionSelector.close();
+            if (sessionSelector != null) sessionSelector.close();
         }
     }
 

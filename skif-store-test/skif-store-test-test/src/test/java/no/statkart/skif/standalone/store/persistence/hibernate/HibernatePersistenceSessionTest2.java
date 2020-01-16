@@ -11,17 +11,13 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
 import no.statkart.skif.util.CopyHelper;
-import org.hibernate.FetchMode;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.proxy.HibernateProxy;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
