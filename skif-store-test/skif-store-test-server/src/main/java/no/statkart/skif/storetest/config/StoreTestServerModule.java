@@ -64,12 +64,10 @@ import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshotProvider;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.PersistenceSessionManagerProvider;
-import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImplExt;
 import no.statkart.skif.store.persistence.hibernate.DefaultHibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store.persistence.hibernate.HibernateInterceptorFactory;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryDescriptor;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreInterceptor;
@@ -365,13 +363,7 @@ public class StoreTestServerModule extends SkifModule {
         Configuration configuration = moduleConfiguration.getConfiguration();
 
         // TODO: Hent directory fra moduleConfiguration
-        final String hibernateMappingDir;
-        String hibernateVersion = configuration.getString("skif.hibernateVersion", "3.6");
-        if (hibernateVersion.equals("3.6")) {
-            hibernateMappingDir = "no/statkart/skif/storetest/persistence/hibernate36";
-        } else {
-            throw new ImplementationException("Ukjent hibernate-versjon: " + hibernateVersion);
-        }
+        final String hibernateMappingDir = "no/statkart/skif/storetest/persistence/hibernate";
         HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilder(hibernateMappingDir)
                 .addResource(EnumKodeIdType.class)
                 .addResource(TestMap.class)
@@ -473,11 +465,11 @@ public class StoreTestServerModule extends SkifModule {
     }
 
     ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager) {
-        HibernatePersistenceSessionMasterImpl persistenceSessionMasterCurrent = new DefaultHibernatePersistenceSessionImplExt(
+        HibernatePersistenceSessionMasterImpl persistenceSessionMasterCurrent = new HibernatePersistenceSessionMasterImpl(
                 hibernateSessionFactoryManagerBundle.getBundle().get(0)
         );
 
-        HibernatePersistenceSessionMasterImpl persistenceSessionMasterOld = new DefaultHibernatePersistenceSessionImplExt(
+        HibernatePersistenceSessionMasterImpl persistenceSessionMasterOld = new HibernatePersistenceSessionMasterImpl(
                 hibernateSessionFactoryManagerBundle.getBundle().get(1)
         );
 

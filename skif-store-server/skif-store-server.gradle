@@ -10,9 +10,7 @@ dependencies {
     provided libraries.jee
 
     implementation libraries.jodatime
-
     implementation libraries.jdbc //provided
-
     implementation libraries.hibernate
 
     testImplementation project(':skif-config')

@@ -18,7 +18,6 @@ import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.DefaultHibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryDescriptor;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManager;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
@@ -115,7 +114,7 @@ public class StandAloneTestHelper {
      * Builder som inneholder bobler med historikk.
      */
     public static HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilderWithHistory() {
-        return new HibernateSessionFactoryBuilder("no/statkart/skif/storetest/persistence/hibernate36")
+        return new HibernateSessionFactoryBuilder("no/statkart/skif/storetest/persistence/hibernate")
                 .addBubbleModel(bubbleClasses)
                 ;
     }

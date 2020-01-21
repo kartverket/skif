@@ -121,12 +121,6 @@ public abstract class BubbleIdType implements UserType {
 
     @Override
     public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        return nullSafeGet(rs, names, owner);
-    }
-
-    public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
-            throws HibernateException, SQLException {
-
         String name = names[0];
         try {
             Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, idValueType);

@@ -4,7 +4,6 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImplExt;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
@@ -73,7 +72,7 @@ public class HibernatePersistenceSessionTest {
     }
 
     public void testLoadObjectsForCurrent() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
         try {
             TestBubbleWithHistory testBubbleWithHistory_10_CURRENT = persistenceSession.get(TestBubbleWithHistoryId_10_CURRENT);
             assertEquals(testBubbleWithHistory_10_CURRENT.getId().getSnapshotVersion(), StandAloneTestHelper.CURRENT);
@@ -91,7 +90,7 @@ public class HibernatePersistenceSessionTest {
     }
 
     public void testLoadObjectsForOLD() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             TestBubbleWithHistory testBubbleWithHistory_10_OLD = persistenceSession.get(TestBubbleWithHistoryId_10_OLD);
             assertEquals(testBubbleWithHistory_10_OLD.getId().getSnapshotVersion(), StandAloneTestHelper.OLD);
@@ -104,7 +103,7 @@ public class HibernatePersistenceSessionTest {
     }
 
     public void testLoadObjectsForHistoric() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             // Må endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
             persistenceSession.setSnapshot(S3);
@@ -119,7 +118,7 @@ public class HibernatePersistenceSessionTest {
     }
 
     public void testLoadObjectsForOLDAndHistoricOneByOne() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             TestBubbleWithHistory testBubbleWithHistory_10_OLD = persistenceSession.get(TestBubbleWithHistoryId_10_OLD);
             assertEquals(testBubbleWithHistory_10_OLD.getId().getSnapshotVersion(), StandAloneTestHelper.OLD);
@@ -140,7 +139,7 @@ public class HibernatePersistenceSessionTest {
 
     @Test(expectedExceptions = ImplementationException.class)
     public void testLoadObjectsForOLDAndHistoricTogether_Fail() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             List<BubbleId<TestBubbleWithHistory>> TestBubbleWithHistoryIds = new ArrayList<>();
             TestBubbleWithHistoryIds.add(TestBubbleWithHistoryId_10_OLD);
@@ -154,7 +153,7 @@ public class HibernatePersistenceSessionTest {
 
     @SuppressWarnings({"JpaQlInspection", "Duplicates"})
     public void testInsertAndCommit() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
 
         try {
             persistenceSession.beginTransaction();
@@ -185,7 +184,7 @@ public class HibernatePersistenceSessionTest {
     }
 
     public void testUpdate() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
         try {
@@ -204,7 +203,7 @@ public class HibernatePersistenceSessionTest {
     }
 
     public void testUpdateDetatchNotLoaded() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
         try {
@@ -228,7 +227,7 @@ public class HibernatePersistenceSessionTest {
     }
 
     public void testUpdateDetatchAlreadyLoaded() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
         try {
@@ -248,7 +247,7 @@ public class HibernatePersistenceSessionTest {
     }
 
     public void testDeleteNotAlreadyLoaded() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
         try {
@@ -272,7 +271,7 @@ public class HibernatePersistenceSessionTest {
      * Test at objekt som slettes er det som er i databasen og ikke detatched
      */
     public void testDeleteAlreadyLoaded() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
 
         testInsertAndCommit();
         try {
@@ -293,7 +292,7 @@ public class HibernatePersistenceSessionTest {
      * gang i {@code ids}.
      */
     public void testDeterministiskLoadOrderForBuildCriterias() {
-        HibernatePersistenceSessionMasterImpl persistenceSession = new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0));
+        HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0));
         try {
             LinkedHashSet<BubbleId<?>> ids1 = new LinkedHashSet<>();
             ids1.add(new ParentBubbleId<>(1L));

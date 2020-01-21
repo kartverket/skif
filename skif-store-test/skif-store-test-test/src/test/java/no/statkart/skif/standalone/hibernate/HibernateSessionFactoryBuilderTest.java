@@ -47,7 +47,7 @@ import static org.testng.Assert.*;
 public class HibernateSessionFactoryBuilderTest {
 
     private HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
-        return new HibernateSessionFactoryBuilder("no/statkart/skif/storetest/persistence/hibernate36");
+        return new HibernateSessionFactoryBuilder("no/statkart/skif/storetest/persistence/hibernate");
     }
 
     public void testCreateFactorySessionAndConnection() throws SQLException, InterruptedException {

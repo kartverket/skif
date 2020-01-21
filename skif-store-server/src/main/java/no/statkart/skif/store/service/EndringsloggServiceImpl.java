@@ -50,7 +50,6 @@ import static no.statkart.skif.util.HibernateHelper.getTableName;
  * @author Tor Egil R. Strand
  * @since 2.5.0
  */
-// OBS! Det ligger en kopi i hs 3.2
 public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extends AbstractEndringId<?>> implements EndringsloggService<E, EI> {
     private static final int LIMIT = 1000;
 

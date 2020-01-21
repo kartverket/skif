@@ -7,9 +7,7 @@ configurations {
 }
 
 dependencies {
-    if(hibernateVersion.equals("3.6")){
-        compile project(':skif-store-server:skif-store-server-hs36')
-    }
+    compile project(':skif-store-server')
     compile project(':skif-store-test:skif-store-test-api')
     compile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     compile project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')

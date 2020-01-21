@@ -44,7 +44,7 @@ import java.util.Set;
  * @author Henrik Fredholm
  */
 @SuppressWarnings({"ForLoopReplaceableByForEach", "WeakerAccess"})
-public abstract class HibernatePersistenceSessionMasterImpl implements HibernatePersistenceSessionMaster {
+public class HibernatePersistenceSessionMasterImpl implements HibernatePersistenceSessionMaster {
     protected static Logger logger = LoggerFactory.getLogger(HibernatePersistenceSessionMasterImpl.class);
     private static final int CRITERIA_BATCH_POWER = 9;
     private static final String ID_KOLONNE_NAVN = "id";

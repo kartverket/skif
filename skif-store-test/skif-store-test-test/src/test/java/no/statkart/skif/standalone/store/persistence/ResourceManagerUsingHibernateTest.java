@@ -18,9 +18,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.*;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertSame;
-import static org.testng.Assert.fail;
 
 /**
  * Tester for {@link ResourceManager} som styrer PersistenceSessions og Connections som er hentes ut via hibernate.
@@ -49,8 +47,8 @@ public class ResourceManagerUsingHibernateTest {
         HibernateSessionFactoryBuilder sessionFactoryBuilder = createHibernateSessionFactoryBuilderWithHistory();
         sessionFactoryManagerBundle = createHibernateSessionFactorManagerBundle(sessionFactoryBuilder, hibernateProperties);
         persistenceSessionManager = new DefaultPersistenceSessionManager(
-                new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0)),
-                new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1))
+                new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0)),
+                new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1))
         );
         connectionManager = new ConnectionManagerUsingHibernate(persistenceSessionManager);
 
@@ -69,7 +67,6 @@ public class ResourceManagerUsingHibernateTest {
 
     /**
      * Tester oppslag på resource via implementasjonsklasse og interface
-     * @throws SQLException
      */
     public void testGetResource() throws SQLException {
         ConnectionManager connectionManager = resourceManager.getResource(ConnectionManagerUsingHibernate.class);

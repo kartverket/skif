@@ -6,20 +6,14 @@ configurations {
 
 dependencies {
     compile project(':skif-store-test:skif-store-test-api')
-
-    //tester disse implementasjonene her..
-    if(hibernateVersion.equals("3.6")){
-      compile project(':skif-store-server:skif-store-server-hs36')
-    }
+    compile project(':skif-store-server')
 
     provided libraries.jee
-
     provided libraries.c3p0
-
     provided libraries.jdbc
 
     testCompile project(':skif-testsupport-common')
 
-    //internal dependencies + optional deps to logging frameworks:
+    // internal dependencies + optional deps to logging frameworks:
     testCompile project(':skif-config')
 }

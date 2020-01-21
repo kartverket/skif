@@ -26,7 +26,7 @@ import static org.testng.Assert.*;
  * @author Henrik Fredholm
  * @since 2.4
  */
-@Test(groups = {"singlevm-required","hibernate36"})
+@Test(groups = {"singlevm-required"})
 public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTestCase {
     @Inject
     private Store store;
