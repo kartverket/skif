@@ -49,7 +49,7 @@ def defaultProperties = [
 
         wls_deploy_targets    : 'AdminServer',
         wls_deploy_hostname   : "${-> wls_hostname}",
-        wls_deploy_protocol   : 'http',
+        wls_deploy_protocol   : 't3',
         wls_deploy_port       : "${-> wls_port}",
 ]
 
