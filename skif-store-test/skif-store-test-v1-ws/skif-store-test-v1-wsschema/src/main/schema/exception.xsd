@@ -7,9 +7,7 @@
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:basetypens="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
         xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
-        xmlns:gdoc="http://grunnbok.statkart.no/tools/gdoc"
         xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-        jaxb:extensionBindingPrefixes="gdoc"
         jaxb:version="2.1"
         >
 
@@ -37,12 +35,13 @@
     <xs:complexType name="ServiceFaultInfo">
         <xs:annotation>
             <xs:appinfo>
-                <gdoc:doc><![CDATA[
+                <jaxb:class>
+                    <jaxb:javadoc><![CDATA[
                         Generell feilmelding for alle hånterte feil ifra systemet.
 
                         For klassifisering av feil, se {@link #category} feltet.
-                    ]]>
-                </gdoc:doc>
+                    ]]></jaxb:javadoc>
+                </jaxb:class>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
@@ -142,10 +141,11 @@
     <xs:complexType name="ExceptionDetail">
         <xs:annotation>
             <xs:appinfo>
-                <gdoc:doc><![CDATA[
+                <jaxb:class>
+                    <jaxb:javadoc><![CDATA[
                         Informasjon om exception oppstått på server med hirarki, stacktrace mm.
-                    ]]>
-                </gdoc:doc>
+                    ]]></jaxb:javadoc>
+                </jaxb:class>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
@@ -191,7 +191,10 @@
     <xs:complexType name="StackTraceElementList">
         <xs:annotation>
             <xs:appinfo>
-                <gdoc:doc><![CDATA[  ]]></gdoc:doc>
+                <jaxb:class>
+                    <jaxb:javadoc><![CDATA[
+                    ]]></jaxb:javadoc>
+                </jaxb:class>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
@@ -202,7 +205,10 @@
     <xs:complexType name="StackTraceElement">
         <xs:annotation>
             <xs:appinfo>
-                <gdoc:doc><![CDATA[  ]]></gdoc:doc>
+                <jaxb:class>
+                    <jaxb:javadoc><![CDATA[
+                    ]]></jaxb:javadoc>
+                </jaxb:class>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>

@@ -1,10 +1,10 @@
 plugins {
     id 'sktools.wsgen'
+    id 'sktools.wsdl-customizer'
     id 'sktools.provided'
 }
 
 configurations {
-    schemas { description = 'Configuration for consuming schemas' }
     war { description = 'War-artifaktet' }
     wsdls { description = 'Zip med WSDL-er' }
     earlib { extendsFrom implementation; description = 'Felles avhengheter i ear (skinny wars)'}
@@ -20,36 +20,48 @@ dependencies {
 
     provided libraries.jee
 
-    schemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
+    originalSchemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
 }
 
-task zipWsdlsAndSchemas(type: Zip) { Task t ->
-    baseName = 'schemas'
-
-    dependsOn configurations.schemas
-    from { configurations.schemas.files.collect { project.zipTree it } }
-
-    from(genWsdls) {
-        include '**/*.wsdl'
-        include '**/*schema1.xsd'
+customizeWsdls {
+    dependsOn genWsdls
+    generatedWsdlAndSchemaFiles files(tasks.genWsdls.destinationDir).asFileTree.matching {
+        include '**/*.wsdl', '**/*.xsd'
+        exclude '**/*Internal*ServiceWS*'
     }
+    includeNamespaces(
+            'http://skif.statkart.no/storetest/wsapi/domain',
+            'http://skif.statkart.no/storetest/wsapi/domain/basetyper',
+            'http://skif.statkart.no/storetest/wsapi/domain/basic',
+            'http://skif.statkart.no/storetest/wsapi/domain/component/composite',
+            'http://skif.statkart.no/storetest/wsapi/domain/component/entity',
+            'http://skif.statkart.no/storetest/wsapi/domain/component/historikk',
+            'http://skif.statkart.no/storetest/wsapi/domain/demo/koder',
+            'http://skif.statkart.no/storetest/wsapi/domain/endringslogg',
+            'http://skif.statkart.no/storetest/wsapi/domain/kodeliste',
+            'http://skif.statkart.no/storetest/wsapi/domain/koder',
+            'http://skif.statkart.no/storetest/wsapi/domain/relation/uni/component/entity',
+            'http://skif.statkart.no/storetest/wsapi/domain/relation/uni/direct',
+            'http://skif.statkart.no/storetest/wsapi/exception',
+            'http://skif.statkart.no/storetest/wsapi/service/testmapping',
+    )
 
-    includeEmptyDirs = false
 }
+
+zipCustomizedWsdls {
+    archiveClassifier = 'wsdls'
+}
+
 
 war {
     // Skinny war
     classpath = sourceSets.main.output
 
-    from zipWsdlsAndSchemas
-}
-
-task zipWsdls(type: Zip) {
-    archiveAppendix = 'wsdls'
-    from genWsdls
+    // dokumentasjon for eksterne klienter
+    from zipCustomizedWsdls
 }
 
 artifacts {
-    wsdls zipWsdls
+    wsdls zipCustomizedWsdls
     war project.war
 }
