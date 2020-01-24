@@ -7,13 +7,11 @@ plugins {
 configurations {
     war { description = 'War-artifaktet' }
     wsdls { description = 'Zip med WSDL-er' }
-    earlib { extendsFrom implementation; description = 'Felles avhengheter i ear (skinny wars)'}
+    earlib { extendsFrom implementation; description = 'Felles avhengheter i ear (skinny wars)' }
 }
 
 dependencies {
-    if(hibernateVersion.equals("3.6")){
-        implementation project(':skif-store-server:skif-store-server-hs36')
-    }
+    implementation project(':skif-store-server')
     implementation project(':skif-store-test:skif-store-test-api')
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')

@@ -9,9 +9,10 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.*;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.metamodel.EntityType;
 import java.util.*;
 
 /**
@@ -142,12 +143,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         Class<? extends Kode> kodeClass = kodeliste.getKodeClass();
         try {
             Session session = persistenceSessionMaster.reserveSession();
-            //noinspection unchecked
-            List<Kode> list = session.createCriteria(kodeClass)
-                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                    .list();
-            List<KodeId<?>> kodeIds = new ArrayList<>();
+            CriteriaQuery<? extends Kode> cq =
+                    session.getCriteriaBuilder().createQuery(kodeClass).distinct(true);
+            cq.from(kodeClass);
+            List<? extends Kode> list = session.createQuery(cq).getResultList();
 
+            List<KodeId<?>> kodeIds = new ArrayList<>();
             KodelisteId kodelisteId = kodeliste.getId();
             for (Kode t : list) {
                 if (!t.getId().getKodelisteId().equals(kodelisteId)) {
@@ -171,7 +172,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
      *
      * @param kodelister database kodelister som skal lastes
      */
-    protected void loadKodeIds(Collection<Kodeliste> kodelister) {
+    protected void loadKodeIds(Collection<AbstractKodeliste> kodelister) {
         Set<Class<? extends Kode>> kodeBaseClasses = new HashSet<>();
 
         for (Kodeliste kodeliste : kodelister) {
@@ -188,10 +189,10 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
         try {
             Session session = persistenceSessionMaster.reserveSession();
             for (Class<? extends Kode> kodeBaseClass : kodeBaseClasses) {
-                //noinspection unchecked
-                List<Kode> list = session.createCriteria(kodeBaseClass)
-                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                        .list();
+                CriteriaQuery<? extends Kode> cq =
+                        session.getCriteriaBuilder().createQuery(kodeBaseClass).distinct(true);
+                cq.from(kodeBaseClass);
+                List<? extends Kode> list = session.createQuery(cq).getResultList();
                 for (Kode kode : list) {
                     persistenceSessionMaster.ensureFullyLoaded(kode); // TODO: Bruke subselect ved lasting av kode slik at denne ikke trengs
                     KodelisteId kodelisteId = kode.getKodelisteId();
@@ -342,7 +343,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     public List<KodelisteId<?>> getKodelisteIds() {
         List<KodelisteId<?>> result = new ArrayList<>();
         result.addAll(getEnumKodelisteIds());
-        Collection<Kodeliste> kodelister = getDbKodelister();
+        Collection<AbstractKodeliste> kodelister = getDbKodelister();
         Collection<Kodeliste> kodelisterWithoutKodeIds = new ArrayList<>();
         for (Kodeliste kodeliste : kodelister) {
             result.add(kodeliste.getId());
@@ -364,18 +365,35 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
      *
      * @return alle database kodelister
      */
-    private Collection<Kodeliste> getDbKodelister() {
+    private Collection<AbstractKodeliste> getDbKodelister() {
+        Collection<AbstractKodeliste> result = new ArrayList<>();
         try {
-            Collection<Kodeliste> result;
             Session session = persistenceSessionMaster.reserveSession();
-            //noinspection unchecked
-            result = session.createCriteria(AbstractKodeliste.class)
-                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                    .list();
+            for (Class<? extends AbstractKodeliste> entitet : kodelisteEntiteter(session)) {
+                CriteriaQuery<? extends AbstractKodeliste> cq =
+                        session.getCriteriaBuilder().createQuery(entitet).distinct(true);
+                cq.from(entitet);
+                result.addAll(session.createQuery(cq).getResultList());
+            }
             return result;
         } finally {
             persistenceSessionMaster.releaseSession();
         }
+    }
+
+    /**
+     * Finner alle entiteter definert i prosjektet som subklasser AbstractKodeliste.
+     * Dette kan være flere entiteter, og de kan mappe til forskjellige tabeller.
+     */
+    private Collection<Class<? extends AbstractKodeliste>> kodelisteEntiteter(Session session) {
+        Collection<Class<? extends AbstractKodeliste>> result = new HashSet<>();
+        for (EntityType<?> entityType : session.getMetamodel().getEntities()) {
+            Class<?> cls = entityType.getJavaType();
+            if (AbstractKodeliste.class.isAssignableFrom(cls)) {
+                result.add(cls.asSubclass(AbstractKodeliste.class));
+            }
+        }
+        return result;
     }
 
     /**

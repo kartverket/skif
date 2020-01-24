@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.mockup.Raz" select-before-update="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.RazIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="text"/>
+
+        <component name="razComponent" class="no.statkart.skif.storetest.domain.mockup.RazComponent">
+            <many-to-one
+                    name="foo"
+                    column="fooId"
+                    class="no.statkart.skif.storetest.domain.mockup.Foo"
+                    access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor">
+                <meta attribute="bubble-ref"/>
+            </many-to-one>
+
+            <property name="compText"/>
+        </component>
+
+        <many-to-one name="razEntityComponent" column="razEntityComponentId" unique="true" cascade="all-delete-orphan"/>
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.mockup.RazEntityComponent" select-before-update="true">
+        <id name="id" column="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+
+        <property name="componentName"/>
+    </class>
+
+
+</hibernate-mapping>

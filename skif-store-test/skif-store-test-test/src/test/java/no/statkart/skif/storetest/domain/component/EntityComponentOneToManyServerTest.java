@@ -32,7 +32,7 @@ import static org.testng.Assert.*;
  * @author Henrik Fredholm
  * @since 2.4
  */
-@Test(groups = {"singlevm-required", "hibernate36"})
+@Test(groups = {"singlevm-required"})
 public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
     // Switch som angir om testcasen skal teste med flush etter hver endring. Har valgt ikke å har egne
     // testcases for hver mode for å redusere antall testcases som skal kjøres og vedlikeholdes

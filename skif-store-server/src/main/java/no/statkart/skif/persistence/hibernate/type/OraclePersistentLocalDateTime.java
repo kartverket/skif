@@ -4,6 +4,7 @@ import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleResultSet;
 import oracle.sql.TIMESTAMP;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.EnhancedUserType;
 import org.joda.time.LocalDateTime;
 
@@ -49,14 +50,10 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
         return object.hashCode();
     }
 
-    public Object nullSafeGet(ResultSet resultSet, String[] names, Object owner) throws HibernateException, SQLException {
-        return nullSafeGet(resultSet, names[0]);
-
-    }
-
-    public Object nullSafeGet(ResultSet resultSet, String name) throws SQLException {
-        OracleResultSet oracleResultSet = resultSet.unwrap(OracleResultSet.class);
-        TIMESTAMP oracleDate = oracleResultSet.getTIMESTAMP(name);
+    @Override
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        OracleResultSet oracleResultSet = rs.unwrap(OracleResultSet.class);
+        TIMESTAMP oracleDate = oracleResultSet.getTIMESTAMP(names[0]);
         if (oracleDate == null) {
             return null;
         }
@@ -75,11 +72,12 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
         return new LocalDateTime(year, month, day, hour, minute, second, milliseconds);
     }
 
-    public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index) throws HibernateException, SQLException {
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         if (value == null) {
-            preparedStatement.setNull(index, Types.DATE);
+            st.setNull(index, Types.DATE);
         } else {
-            OraclePreparedStatement oraclePreparedStatement = preparedStatement.unwrap(OraclePreparedStatement.class);
+            OraclePreparedStatement oraclePreparedStatement = st.unwrap(OraclePreparedStatement.class);
             LocalDateTime localDate = (LocalDateTime) value;
 
             if (localDate.getYear() == 0) {

@@ -8,7 +8,6 @@ import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImplExt;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
@@ -82,10 +81,10 @@ public class CachingKodelistePersistenceSessionSubtypeHandlerTest {
 
         enumKodelisteManager.installDynamic(SimpleLocalizedDbKodeId.class);
 
-        HibernatePersistenceSessionMasterImpl masterCurrent = new DefaultHibernatePersistenceSessionImplExt(
+        HibernatePersistenceSessionMasterImpl masterCurrent = new HibernatePersistenceSessionMasterImpl(
                 sessionFactoryManagerBundle.getBundle().get(0)
         );
-        HibernatePersistenceSessionMasterImpl masterOld = new DefaultHibernatePersistenceSessionImplExt(
+        HibernatePersistenceSessionMasterImpl masterOld = new HibernatePersistenceSessionMasterImpl(
                 sessionFactoryManagerBundle.getBundle().get(1)
         );
 

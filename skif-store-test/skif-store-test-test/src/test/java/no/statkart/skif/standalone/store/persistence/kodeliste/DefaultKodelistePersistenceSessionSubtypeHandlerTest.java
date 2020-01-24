@@ -76,10 +76,10 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 
         enumKodelisteManager.installDynamic(SimpleLocalizedDbKodeId.class);
 
-        HibernatePersistenceSessionMasterImpl masterCurrent = new DefaultHibernatePersistenceSessionImplExt(
+        HibernatePersistenceSessionMasterImpl masterCurrent = new HibernatePersistenceSessionMasterImpl(
                 sessionFactoryManagerBundle.getBundle().get(0)
         );
-        HibernatePersistenceSessionMasterImpl masterOld = new DefaultHibernatePersistenceSessionImplExt(
+        HibernatePersistenceSessionMasterImpl masterOld = new HibernatePersistenceSessionMasterImpl(
                 sessionFactoryManagerBundle.getBundle().get(1)
         );
 

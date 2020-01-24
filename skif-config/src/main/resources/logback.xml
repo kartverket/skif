@@ -25,14 +25,14 @@
     <logger name="no.statkart.skif.service.logging.DefaultClientCallLogger" level="info"/>
 
     <!-- Hibernate logging av sql. Trenger ikke å sette show_sql=true. Sett level til debug -->
-    <logger name="org.hibernate.SQL" level="info" additivity="true"/>
+    <logger name="org.hibernate.SQL" level="debug" additivity="true"/>
 
     <!-- Hibernate logging av sql parametre -->
     <!--logger name="org.hibernate.type" level="trace" additivity="true"/>
     <logger name="org.hibernate.type.BasicTypeRegistry" level="warn" additivity="true"/>
     <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="info" additivity="true"/>
     <logger name="org.hibernate.type.TypeFactory" level="debug" additivity="true"/>
-    <logger name="no.statkart.skif.store.persistence.hibernate.type" level="trace" additivity="true"/-->
+    <logger name="no.statkart.skif.store.persistence.hibernate" level="trace" additivity="true"/-->
 
     <!-- Hibernate logging av batching -->
     <!--<logger name="org.hibernate.jdbc.AbstractBatcher" level="debug" additivity="true"/>-->
@@ -42,5 +42,4 @@
     <!-- end-hibernate -->
 
     <!-- <logger name="no.statkart.skif.mapper" level="debug" additivity="true"/> -->
-
 </configuration>

@@ -40,7 +40,6 @@ include ':skif-service-test:skif-service-test-ear'
 
 include ':skif-store-common'
 include ':skif-store-server'
-include ':skif-store-server:skif-store-server-hs36'
 
 include ':skif-store-test:skif-store-test-api'
 include ':skif-store-test:skif-store-test-server'

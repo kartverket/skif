@@ -64,12 +64,10 @@ import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshotProvider;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.PersistenceSessionManagerProvider;
-import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImplExt;
 import no.statkart.skif.store.persistence.hibernate.DefaultHibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store.persistence.hibernate.HibernateInterceptorFactory;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryDescriptor;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store.persistence.hibernate.HibernateStoreInterceptor;
@@ -148,6 +146,7 @@ import no.statkart.skif.storetest.filter.TestBubbleFilter;
 import no.statkart.skif.storetest.filter.TestBubbleFinishFilter;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
+import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Environment;
 
 import javax.sql.DataSource;
@@ -364,14 +363,8 @@ public class StoreTestServerModule extends SkifModule {
         Configuration configuration = moduleConfiguration.getConfiguration();
 
         // TODO: Hent directory fra moduleConfiguration
-        final String hibernateMappingDir;
-        String hibernateVersion = configuration.getString("skif.hibernateVersion", "3.6");
-        if (hibernateVersion.equals("3.6")) {
-            hibernateMappingDir = "no/statkart/skif/storetest/persistence/hibernate36";
-        } else {
-            throw new ImplementationException("Ukjent hibernate-versjon: " + hibernateVersion);
-        }
-        HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilderImpl(hibernateMappingDir)
+        final String hibernateMappingDir = "no/statkart/skif/storetest/persistence/hibernate";
+        HibernateSessionFactoryBuilder hibernateSessionFactoryBuilder = new HibernateSessionFactoryBuilder(hibernateMappingDir)
                 .addResource(EnumKodeIdType.class)
                 .addResource(TestMap.class)
                 .addBubbleModel(bubbleModelConfiguration)
@@ -382,8 +375,7 @@ public class StoreTestServerModule extends SkifModule {
         Properties hibernatePropertiesCurrent;
         Properties hibernatePropertiesOld;
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
-            hibernatePropertiesConfiguration.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JDBCTransactionFactory");
-
+            hibernatePropertiesConfiguration.setProperty(AvailableSettings.TRANSACTION_COORDINATOR_STRATEGY, "jdbc");
             hibernatePropertiesCurrent = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
 
             hibernatePropertiesCurrent.setProperty(Environment.CONNECTION_PROVIDER, no.statkart.skif.persistence.hibernate.PoolConnectionProvider.class.getName());
@@ -391,14 +383,15 @@ public class StoreTestServerModule extends SkifModule {
 
             hibernatePropertiesOld = hibernatePropertiesCurrent;
         } else {
-            hibernatePropertiesConfiguration.setProperty(Environment.TRANSACTION_STRATEGY, "org.hibernate.transaction.JTATransactionFactory");
+            hibernatePropertiesConfiguration.setProperty(AvailableSettings.TRANSACTION_COORDINATOR_STRATEGY, "jta");
+            hibernatePropertiesConfiguration.setProperty(AvailableSettings.JTA_PLATFORM , "org.hibernate.engine.transaction.jta.platform.internal.WeblogicJtaPlatform");
+            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
 
             String datasourceCurrent = configuration.getString(SkifConfigConstants.DB_DATASOURCE);  //denne skal finnes i default konfigurasjon (filtreres inn via gradle.properties)
-            hibernatePropertiesCurrent = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
             hibernatePropertiesCurrent.setProperty(Environment.DATASOURCE, datasourceCurrent);
 
-            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE_OLD);  //denne skal finnes i default konfigurasjon (filtreres inn via gradle.properties)
             hibernatePropertiesOld = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
+            String datasourceOld = configuration.getString(SkifConfigConstants.DB_DATASOURCE_OLD);  //denne skal finnes i default konfigurasjon (filtreres inn via gradle.properties)
             hibernatePropertiesOld.setProperty(Environment.DATASOURCE, datasourceOld);
         }
 
@@ -472,11 +465,11 @@ public class StoreTestServerModule extends SkifModule {
     }
 
     ResourceManager createResourceManagerForHibernateStrategy(HibernateSessionFactoryManagerBundle hibernateSessionFactoryManagerBundle, EnumKodelisteManager enumKodelisteManager) {
-        HibernatePersistenceSessionMasterImpl persistenceSessionMasterCurrent = new DefaultHibernatePersistenceSessionImplExt(
+        HibernatePersistenceSessionMasterImpl persistenceSessionMasterCurrent = new HibernatePersistenceSessionMasterImpl(
                 hibernateSessionFactoryManagerBundle.getBundle().get(0)
         );
 
-        HibernatePersistenceSessionMasterImpl persistenceSessionMasterOld = new DefaultHibernatePersistenceSessionImplExt(
+        HibernatePersistenceSessionMasterImpl persistenceSessionMasterOld = new HibernatePersistenceSessionMasterImpl(
                 hibernateSessionFactoryManagerBundle.getBundle().get(1)
         );
 

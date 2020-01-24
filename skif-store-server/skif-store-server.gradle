@@ -8,18 +8,13 @@ dependencies {
     api project(':skif-store-common')
     api project(':skif-service-server')
     api libraries.guava //pga Multimap
+    api libraries.hibernate
 
     provided libraries.jee
 
     implementation libraries.jodatime
-
     implementation libraries.jdbc //provided
-
-    // Sett hibernateVersion i gradle.properties
-    // Scope er provided, ein må sjølv inkludere skif-store-server:skif-store-server-hs32 eller skif-store-server:skif-store-server-hs36 i sitt prosjekt
-    if(hibernateVersion == '3.6') {
-        compileOnly libraries.hibernate_3_6_api
-    }
+    implementation libraries.hibernate
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')

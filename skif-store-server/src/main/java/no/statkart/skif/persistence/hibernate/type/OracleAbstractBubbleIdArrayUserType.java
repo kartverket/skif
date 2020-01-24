@@ -6,6 +6,7 @@ import no.statkart.skif.util.OracleUtils;
 import oracle.sql.ARRAY;
 import oracle.sql.ArrayDescriptor;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,14 +67,12 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void nullSafeSet(PreparedStatement statement, Object value, int index)
-            throws HibernateException, SQLException {
-
-
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         if (value == null) {
 //            if (log.isTraceEnabled()) {
 //                log.trace(
@@ -84,7 +83,7 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
 //                        )
 //                );
 //            }
-            statement.setNull(index, SQL_TYPES[0], getOracleListType());
+            st.setNull(index, SQL_TYPES[0], getOracleListType());
         } else {
             Object[] arrayValue = toArray((Collection<BubbleId>) value);
 
@@ -99,11 +98,11 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
 //                );
 //            }
 
-            Connection con = OracleUtils.getOracleConnection(statement.getConnection());
+            Connection con = OracleUtils.getOracleConnection(st.getConnection());
             ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor(getOracleListType(), con);
             ARRAY array = new ARRAY(arrayDescriptor, con, arrayValue);
             array.setAutoIndexing(true);
-            statement.setArray(index, array);
+            st.setArray(index, array);
         }
     }
 

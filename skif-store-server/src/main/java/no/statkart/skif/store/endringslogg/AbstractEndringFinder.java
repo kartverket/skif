@@ -4,19 +4,18 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.SessionSelector;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 /**
  * Basisfunksjonalitet for å finne endringer.
  *
- * @param <T>    Representerer rotendringsklassen i Hibernate-mappingen. Denne bindes opp i implementasjones
- *               <code>extends</code>-bit, og via klassen som sendes inn til konstruktøren.
- *
+ * @param <T> Representerer rotendringsklassen i Hibernate-mappingen. Denne bindes opp i implementasjones
+ *            <code>extends</code>-bit, og via klassen som sendes inn til konstruktøren.
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
@@ -54,12 +53,14 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersion);
-            Criteria criteria = session.createCriteria(endringsklasse);
-            criteria.setProjection(Projections.max("id"));
-            AbstractEndringId<?> endringId = (AbstractEndringId<?>) criteria.uniqueResult();
-            return endringId != null ? endringId.getValue() : 0L;
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<? extends T> root = cq.from(endringsklasse);
+            cq.select(cb.max(root.get("id")));
+            Long result = session.createQuery(cq).uniqueResult();
+            return result == null ? 0L : result;
         } finally {
-            if (sessionSelector!=null) sessionSelector.close();
+            if (sessionSelector != null) sessionSelector.close();
         }
     }
 
@@ -89,13 +90,15 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersion);
-            Criteria criteria = session.createCriteria(endringsklasse);
-            criteria.add(Restrictions.gt("id", new AbstractEndringId(endringsnummer)));
-            //criteria.addOrder(Order.asc("id")); // trengs ikke da Endring er definert som organization index tabell
-            criteria.setMaxResults(maksAntall);
-            return criteria.list();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<E> cq = cb.createQuery(endringsklasse);
+            Root<E> root = cq.from(endringsklasse);
+            cq.where(cb.greaterThan(root.get("id"), new AbstractEndringId<>(endringsnummer)));
+            // addOrder(Order.asc("id")) // trengs ikke da Endring er definert som organization index tabell
+            return session.createQuery(cq).setMaxResults(maksAntall).getResultList();
         } finally {
-            if (sessionSelector!=null) sessionSelector.close();
+            if (sessionSelector != null) sessionSelector.close();
         }
     }
+
 }

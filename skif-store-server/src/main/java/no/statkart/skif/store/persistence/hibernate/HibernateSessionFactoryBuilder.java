@@ -3,6 +3,7 @@ package no.statkart.skif.store.persistence.hibernate;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
+import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerIntegrator;
 import no.statkart.skif.store.BubbleModelConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
@@ -10,17 +11,35 @@ import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
+import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.BootstrapServiceRegistry;
+import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.AvailableSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -36,12 +55,16 @@ import java.util.zip.ZipInputStream;
  *
  * @author Henrik Fredholm
  */
-public abstract class HibernateSessionFactoryBuilder {
+public class HibernateSessionFactoryBuilder {
     protected static final Logger logger = LoggerFactory.getLogger(HibernateSessionFactoryBuilder.class);
     private final static Object LOCK = new Object();
-    protected final List<String> hbmResource = new ArrayList<>();
-    protected final String mappingFilesDirectory;
-    protected Map<String, String> className2resourceNameMap = new HashMap<>();
+    final List<String> hbmResource = new ArrayList<>();
+    private String mappingFilesDirectory;
+    private Map<String, String> className2resourceNameMap = new HashMap<>();
+    private MetadataInterceptor metadataInterceptor;
+
+    public HibernateSessionFactoryBuilder() {
+    }
 
     public HibernateSessionFactoryBuilder(String mappingFilesDirectory) {
         if (!mappingFilesDirectory.equals("")) {
@@ -59,6 +82,14 @@ public abstract class HibernateSessionFactoryBuilder {
             logger.error("findAllMappings()", e);
             throw new ImplementationException(e);
         }
+    }
+
+    /**
+     * Legger til en rutine som kan endre i Metadata f<F8>r session factory opprettes.
+     */
+    public HibernateSessionFactoryBuilder withMetadataInterceptor(MetadataInterceptor metadataInterceptor) {
+        this.metadataInterceptor = metadataInterceptor;
+        return this;
     }
 
     /**
@@ -140,6 +171,47 @@ public abstract class HibernateSessionFactoryBuilder {
      * </ul>
      */
     public SessionFactory build(SnapshotVersionSeed snapshotVersionSeed, Properties properties, @Nullable Interceptor interceptor) {
+        // Disse properties må alltid settes så det gjøres her så vi er sikre på at de blir med.
+        properties.setProperty("hibernate.native_exception_handling_51_compliance", "true");
+        // For at historikk skal virke må vi sørge for at sessionen holder på connection inntil sessionen lukkes. Dette
+        // fordi vi setter tidspunktet for historisk spørringen på connection og forventer at connection holdes i live
+        // og at tidspunktet forblir satt på database sessionen til vi endre tidspunktet igjen. Hvis connection lukkes
+        // av hibernate og det opprettes en ny connection bak om rykken på SKIF vil SKIF ikke finne riktig objekt for
+        // historiske spørringer. Setter derfor settes connection handling mode til "DELAYED_ACQUISITION_AND_HOLD"
+        // som sikre at connection ikke lukkes før sessionn. Se kommentar i https://jira.statkart.no/browse/SKIF-699
+        properties.setProperty(AvailableSettings.CONNECTION_HANDLING, "DELAYED_ACQUISITION_AND_HOLD");
+        logger.info("SKIF hibernatekonfigurasjon({}): {}", org.hibernate.Version.getVersionString(), getAndConnectionInfo(snapshotVersionSeed, properties));
+        logger.debug("creating session factory");
+
+        // Konfigurerer Hibernate listeners for raskere initialisering av tomme collections. Listeners er aktive
+        // for load og utvalgte update events. Klassen EmptyCollectionsOptimizer anvendes kun på bobler som har
+        // angitt empty collections flagget i mapping filen. Den eneste måte å slå av denne feature er at
+        // fjerne flagget fra mapping filen. Hvis flagget reintroduseres bør flagges settes til 0. Dette garanterer
+        // at alle endringer på collections som gjøres via Hibernate holder flagget oppdatert (da featuren ikke kan
+        // slås av). Hvis collections endres utenom Hibernate må flagget nullstilles samtidig. Neste oppdatering
+        // av boblen via Hibernate vil automatisk gjenberegne flagget uavhengig av om collections har endret seg.
+        // Bemerk at Hibernate eventtypene som anvendes her alene ikke er nok til å holde flagget oppdatert for
+        // alle tilfeller. Se bruken av EmptyCollectionsFlagUpdater i HibernatePersistenceSessionMasterImpl.
+        BootstrapServiceRegistry bootstrapRegistry = new BootstrapServiceRegistryBuilder()
+                .applyIntegrator(new EmptyCollectionOptimizerIntegrator())
+                .build();
+
+        StandardServiceRegistryBuilder standardServiceRegistryBuilder = new StandardServiceRegistryBuilder(bootstrapRegistry).applySettings(properties).disableAutoClose();
+        StandardServiceRegistry standardServiceRegistry = standardServiceRegistryBuilder.build();
+
+        try {
+            // TODO configure integrator (database event listener)
+            MetadataSources metadataSources = createAndConfigureMetaSources(standardServiceRegistry);
+            return buildSessionFactoryForSnapshotVersion(snapshotVersionSeed, interceptor, metadataSources);
+        } catch (RuntimeException e) {
+            // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
+            // so destroy it manually.
+            StandardServiceRegistryBuilder.destroy(standardServiceRegistry);
+            throw e;
+        }
+    }
+
+    private SessionFactory buildSessionFactoryForSnapshotVersion(SnapshotVersionSeed snapshotVersionSeed, @Nullable Interceptor interceptor, MetadataSources metadataSources) {
         // Denne metoden bruker synkronisering på {@code LOCK} fordi BubbleIdType.SnapshotVersionSeedSeed ikke må endres mens
         // SessionFactory blir opprettet. Det er kun denne metoden som bruker {@code BubbleIdType.SnapshotVersionSeedSeed}.
         // Alle BubbleIdTypes som opprettes i SessionFactory får satt deres snapshotVersionSeed til
@@ -149,15 +221,18 @@ public abstract class HibernateSessionFactoryBuilder {
         // NB: HibernateSessions som skal jobbe med forskjellige snapshotVersions uavhengig avhverander innenfor samme tråd (f.eks Current og Old sessions)
         // må bruke hver sin factory. De kan ikke bruke samme factory siden det er factoryen som styrer
         // hvilken snapshotVersionSeed instans som vil bli brukt ved materalisering av BubbleId'en.
-
         SessionFactory sessionFactory;
-        logger.debug("creating session factory");
         synchronized (LOCK) {
             try {
                 BubbleIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
                 EnumKodeIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
-                Configuration cfg = createConfiguration(properties, interceptor);
-                sessionFactory = cfg.buildSessionFactory();
+                Metadata metadata = metadataSources.buildMetadata();
+                if (metadataInterceptor != null) {
+                    metadataInterceptor.apply(metadata);
+                }
+                sessionFactory = metadata.getSessionFactoryBuilder()
+                        .applyInterceptor(interceptor)
+                        .build();
             } catch (HibernateException e) {
                 throw new ImplementationException("Error initializing Hibernate", e, logger);
             } finally {
@@ -166,10 +241,39 @@ public abstract class HibernateSessionFactoryBuilder {
             }
         }
         return sessionFactory;
-
     }
 
-    protected abstract Configuration createConfiguration(Properties props, Interceptor interceptor);
+    private String getAndConnectionInfo(SnapshotVersionSeed snapshotVersionSeed, Properties properties) {
+        // Log databaseparametre. I singlevm mode brukes 'jdbc'(dvs url, bruker/password).
+        // I servermode brukes 'jta' (dvs datasource)
+        String connectionInfo=null;
+        String transcationCoordinator = properties.getProperty(AvailableSettings.TRANSACTION_COORDINATOR_STRATEGY);
+        if ("jdbc".equals(transcationCoordinator)) {
+            connectionInfo = properties.getProperty("hibernate.connection.url") + " - " + properties.getProperty("hibernate.connection.username");
+        } else if ("jta".equals(transcationCoordinator)) {
+            if (snapshotVersionSeed.get() == SnapshotVersion.OLD) {
+                // TODO: Må bruke riktig property for old data source
+                connectionInfo = properties.getProperty("hibernate.connection.datasource_old");
+            } else {
+                connectionInfo = properties.getProperty("hibernate.connection.datasource");
+            }
+        } else {
+            connectionInfo = AvailableSettings.TRANSACTION_COORDINATOR_STRATEGY + "=" + transcationCoordinator;
+        }
+        return connectionInfo;
+    }
+
+    private MetadataSources createAndConfigureMetaSources(StandardServiceRegistry standardServiceRegistry) {
+        try {
+            MetadataSources metadataSources = new MetadataSources(standardServiceRegistry);
+            for (String resource : hbmResource) {
+                metadataSources.addResource(resource);
+            }
+            return metadataSources;
+        } catch (MappingException e) {
+            throw new ConfigurationException("Error in Hibernate mapping files: " + e.getMessage(), e, logger);
+        }
+    }
 
     /**
      * Forsøker å finne alle className->hbm-fil mappinger.
@@ -180,7 +284,7 @@ public abstract class HibernateSessionFactoryBuilder {
      * <p/>
      * Dette må håndteres litt forskjellig i situasjonene å lese ut hbm-filene fra en fil og fra en jar-fil.
      */
-    protected void findAllMappings() throws IOException {
+    private void findAllMappings() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
         Enumeration<URL> resources = classLoader.getResources(mappingFilesDirectory);

@@ -6,6 +6,7 @@ import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -43,9 +44,8 @@ public class AnyBubbleIdType extends BubbleIdType {
         }
     }
 
-    public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
-            throws HibernateException, SQLException {
-
+    @Override
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         String name = names[0];
         try {
             Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, idValueType);
@@ -71,9 +71,9 @@ public class AnyBubbleIdType extends BubbleIdType {
         }
     }
 
+
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index)
-            throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         try {
             if (value == null) {
                 if (IS_VALUE_TRACING_ENABLED) {

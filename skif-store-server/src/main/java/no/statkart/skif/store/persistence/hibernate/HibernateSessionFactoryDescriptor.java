@@ -9,10 +9,14 @@ import org.hibernate.type.CustomType;
 
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Henrik Fredholm
  */
 public class HibernateSessionFactoryDescriptor {
+    protected static Logger logger = LoggerFactory.getLogger( HibernateSessionFactoryDescriptor.class );
     private final String name;
     private final SnapshotVersionSeed seed;
     private final SnapshotVersion initialSeedValue;
@@ -51,8 +55,17 @@ public class HibernateSessionFactoryDescriptor {
 
     public void setSnapshotVersion(Session session, SnapshotVersion snapshotVersion) {
         Preconditions.checkArgument(accepts(snapshotVersion), "Session " + name + " støtter ikke snapshot version: " + snapshotVersion);
+        if (logger.isTraceEnabled()) {
+            logger.trace( name + ": setting Hibernate session " + System.identityHashCode(session) + " to use SnapshotVersion " + snapshotVersion.getTimestampString() +
+                                  ( ( setSnapshotOnSession ) ?
+                                          " (will execute an update on database session)" :
+                                          " (database session will NOT be updated as this has been disabled for this descriptor)" ) );
+        }
         if (setSnapshotOnSession) {
-            session.createSQLQuery("select snapshot_time.set_t(:timestamp) from dual").setParameter("timestamp", snapshotVersion.getTimestamp(), new CustomType(new OracleLocalTimestamp())).executeUpdate();
+            session.createSQLQuery("select snapshot_time.set_t(:timestamp) as result from dual")
+                    .addScalar("result", new CustomType(new OracleLocalTimestamp()))
+                    .setParameter("timestamp", snapshotVersion.getTimestamp(), new CustomType(new OracleLocalTimestamp()))
+                    .uniqueResult();
         }
         seed.set(snapshotVersion);
     }

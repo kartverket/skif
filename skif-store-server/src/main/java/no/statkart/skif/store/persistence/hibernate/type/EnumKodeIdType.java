@@ -6,9 +6,10 @@ import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.kodeliste.KodeId;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.internal.util.StringHelper;
 import org.hibernate.usertype.EnhancedUserType;
 import org.hibernate.usertype.ParameterizedType;
-import org.hibernate.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,8 +114,9 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
 //        return rs.wasNull() ? null : getInstance(new Integer(code));
 //    }
 
-    public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
 
+    @Override
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         String name = names[0];
         try {
             int code = rs.getInt(name);
@@ -141,7 +143,8 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
 
-    public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         try {
             if (value == null) {
                 if (IS_VALUE_TRACING_ENABLED) {

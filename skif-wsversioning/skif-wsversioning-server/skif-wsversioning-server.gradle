@@ -9,16 +9,12 @@ configurations {
 
 dependencies {
     api project(':skif-wsversioning:skif-wsversioning-api')
-
-    //tester disse implementasjonene her..
-    if(hibernateVersion.equals("3.6")){
-        api project(':skif-store-server:skif-store-server-hs36')
-    }
+    api project(':skif-store-server')
 
     provided libraries.jee
 
     testImplementation project(':skif-testsupport-common')
 
-    //internal dependencies + optional deps to logging frameworks:
+    // internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
 }

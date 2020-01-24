@@ -43,7 +43,6 @@ import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.DefaultPersistenceSessionStrategy;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
-import no.statkart.skif.store.persistence.hibernate.DefaultHibernatePersistenceSessionImplExt;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
@@ -197,10 +196,10 @@ public class StoreSessionServerTest {
         enumKodelistManager.installStatic(BEnumKodeId.class);
         enumKodelistManager.installStatic(SEnumKodeId.class);
 
-        HibernatePersistenceSessionMasterImpl masterCurrent = new DefaultHibernatePersistenceSessionImplExt(
+        HibernatePersistenceSessionMasterImpl masterCurrent = new HibernatePersistenceSessionMasterImpl(
                 sessionFactoryManagerBundle.getBundle().get(0)
         );
-        HibernatePersistenceSessionMasterImpl masterOld = new DefaultHibernatePersistenceSessionImplExt(
+        HibernatePersistenceSessionMasterImpl masterOld = new HibernatePersistenceSessionMasterImpl(
                 sessionFactoryManagerBundle.getBundle().get(1)
         );
 

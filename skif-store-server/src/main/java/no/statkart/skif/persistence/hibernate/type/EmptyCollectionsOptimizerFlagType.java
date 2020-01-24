@@ -3,10 +3,10 @@ package no.statkart.skif.persistence.hibernate.type;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
+import org.hibernate.annotations.common.util.StringHelper;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.EnhancedUserType;
 import org.hibernate.usertype.ParameterizedType;
-import org.hibernate.util.EqualsHelper;
-import org.hibernate.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -79,7 +80,7 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
    }
 
    public boolean equals(Object x, Object y) throws HibernateException {
-      return EqualsHelper.equals(x, y);
+      return Objects.equals(x, y);
    }
 
    public int hashCode(Object x) throws HibernateException {
@@ -90,7 +91,8 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
       return false;
    }
 
-   public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
+   @Override
+   public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
       String name = names[0];
       try {
          long value = rs.getLong(name);
@@ -107,13 +109,15 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
             return value;
          }
       }
-      catch ( RuntimeException re ) {
+      catch ( RuntimeException | SQLException re ) {
          log().info( "could not read column value from result set: " + name + "; " + re.getMessage() );
          throw re;
       }
    }
 
-   public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
+
+   @Override
+   public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
       try {
          if ( value == null ) {
             if ( IS_VALUE_TRACING_ENABLED ) {
@@ -132,7 +136,7 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
          log().info( "could not bind value '" + value  + "' to parameter: " + index + "; ClassCastException: expected parameter of class " + getClass() + " got " + ce.getMessage() );
          throw ce;
       }
-      catch ( RuntimeException re ) {
+      catch ( RuntimeException | SQLException re ) {
          log().info( "could not bind value '" + value  + "' to parameter: " + index + "; " + re.getMessage() );
          throw re;
       }

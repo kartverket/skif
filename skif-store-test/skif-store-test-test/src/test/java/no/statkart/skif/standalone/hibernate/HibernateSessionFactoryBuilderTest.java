@@ -3,7 +3,6 @@ package no.statkart.skif.standalone.hibernate;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilderImpl;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.standalone.TestEntity;
@@ -11,6 +10,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.internal.SessionImpl;
 import org.testng.annotations.Test;
 
 import java.sql.Connection;
@@ -47,7 +47,7 @@ import static org.testng.Assert.*;
 public class HibernateSessionFactoryBuilderTest {
 
     private HibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
-        return new HibernateSessionFactoryBuilderImpl("no/statkart/skif/storetest/persistence/hibernate36");
+        return new HibernateSessionFactoryBuilder("no/statkart/skif/storetest/persistence/hibernate");
     }
 
     public void testCreateFactorySessionAndConnection() throws SQLException, InterruptedException {
@@ -56,7 +56,7 @@ public class HibernateSessionFactoryBuilderTest {
         Properties hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm() ;
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties, null);
         assertNotNull(sf);
-        Session s = sf.openSession();
+        SessionImpl s = (SessionImpl) sf.openSession();
         Connection c = s.connection();
         Statement statement = c.createStatement();
         ResultSet rs = statement.executeQuery("select 1 from dual");
@@ -87,7 +87,8 @@ public class HibernateSessionFactoryBuilderTest {
         sf.close();
     }
 
-    @Test(invocationCount = 200, groups="slow")
+    //@Test(invocationCount = 200, groups="slow") // TODO: Crasher Oracle
+    @Test(invocationCount = 100, groups="slow")
     public void testCreateFactoryWithEntityMulti() throws SQLException {
         testCreateFactoryWithEntity();
     }

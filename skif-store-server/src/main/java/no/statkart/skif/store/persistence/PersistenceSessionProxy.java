@@ -69,8 +69,8 @@ public class PersistenceSessionProxy implements InvocationHandler, PersistenceSe
     }
 
     private void verifySnapshotVersion(PersistenceSessionForSnapshot sessionForSnapshot, SnapshotVersion snapshotVersion2) {
-        if (sessionForSnapshot.getSnapshot() != snapshotVersion2) {
-            throw new ImplementationException("Unexpected change of SnapshotVersion during execution of PersistenceSessionForSnapshot. Expected: " + snapshotVersion2 + ". Actual: " + sessionForSnapshot);
+        if (!Objects.equals(sessionForSnapshot.getSnapshot(), snapshotVersion2)) {
+            throw new ImplementationException("Unexpected change of SnapshotVersion during execution of PersistenceSessionForSnapshot. Expected: " + snapshotVersion2 + ". Actual: " + sessionForSnapshot.getSnapshot());
         }
     }
 

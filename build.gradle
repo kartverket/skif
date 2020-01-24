@@ -117,9 +117,6 @@ subprojects { Project project ->
             filterTestGroup(it, 'slow', filterSlowTests)
             filterTestGroup(it, 'oracleLatest', filterOracleLatest) // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
 
-            filterTestGroup(it, 'hibernate36', hibernateVersion == '3.6' ? 'IGNORED' : 'EXCLUDE')
-
-
             jvmArgs '-Xmx1024m'
             testLogging.showStandardStreams = true
 

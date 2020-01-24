@@ -5,7 +5,7 @@ import no.statkart.skif.store.*;
 import no.statkart.skif.store.module.common.BubbleIdFactory;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
-import org.hibernate.collection.PersistentCollection;
+import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

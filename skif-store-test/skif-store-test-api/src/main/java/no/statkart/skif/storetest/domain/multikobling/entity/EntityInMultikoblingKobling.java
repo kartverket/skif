@@ -52,16 +52,6 @@ public class EntityInMultikoblingKobling extends EntityKobling<String, EntityInM
         value.setOwner(owner);
     }
 
-    @Override // Kreves av Hibernate som ikke liker generics metoder
-    public String getRolle() {
-        return super.getRolle();
-    }
-
-    @Override // Kreves av Hibernate som ikke liker generics metoder
-    public void setRolle(String rolle) {
-        super.setRolle(rolle);
-    }
-
     public String getTekst() {
         return value.getTekst();
     }

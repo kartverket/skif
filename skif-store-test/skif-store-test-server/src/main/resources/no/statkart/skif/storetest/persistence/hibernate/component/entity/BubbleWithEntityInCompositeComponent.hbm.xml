@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent" table="BubbleWithEntInCompComponent"
+           select-before-update="true" lazy="true">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest.persistence.hibernate.type.component.entity.BubbleWithEntityInCompositeComponentIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="nr"/>
+        <property name="text"/>
+
+
+        <component name="level1Component"
+                   class="no.statkart.skif.storetest.domain.component.entity.Level1CompositeComponentWithEntity"
+                   unique="true">
+            <property name="text" column="l1_text"/>
+            <many-to-one
+                    name="entity"
+                    column="l1_entityId"
+                    class="no.statkart.skif.storetest.domain.component.entity.Level1EntityInCompositeComponent"
+                    access="field"
+                    fetch="join"
+                    unique="true"
+                    cascade="all-delete-orphan">
+            </many-to-one>
+            <set name="entitySetHibernate" lazy="false" cascade="all-delete-orphan,evict" batch-size="256" access="property">
+                <key column="ownerId"/>
+                <one-to-many class="no.statkart.skif.storetest.domain.component.entity.Level1SetEntityInCompositeComponent"/>
+            </set>
+            <component name="level2Component"
+                       class="no.statkart.skif.storetest.domain.component.entity.Level2CompositeComponentWithEntity"
+                       unique="true">
+                <property name="text" column="l2_text"/>
+                <many-to-one
+                        name="entity"
+                        column="l2_entityId"
+                        class="no.statkart.skif.storetest.domain.component.entity.Level2EntityInCompositeComponent"
+                        access="field"
+                        fetch="join"
+                        unique="true"
+                        cascade="all-delete-orphan">
+                </many-to-one>
+                <set name="entitySetHibernate" lazy="false" cascade="all-delete-orphan,evict" batch-size="256" access="property">
+                    <key column="ownerId"/>
+                    <one-to-many class="no.statkart.skif.storetest.domain.component.entity.Level2SetEntityInCompositeComponent"/>
+                </set>
+            </component>
+        </component>
+
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.component.entity.Level1EntityInCompositeComponent" table="L1EntInCompComponent" lazy="true"
+           select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+        <many-to-one
+                name="owner"
+                column="ownerId"
+                class="no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent"
+                access="field"
+                cascade="none">
+        </many-to-one>
+
+        <property name="text"/>
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.component.entity.Level1SetEntityInCompositeComponent" table="L1SetEntInCompComponent" lazy="true"
+           select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+        <many-to-one
+                name="owner"
+                column="ownerId"
+                class="no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent"
+                access="field"
+                cascade="none">
+        </many-to-one>
+
+        <property name="text"/>
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.component.entity.Level2EntityInCompositeComponent" table="L2EntInCompComponent" lazy="true"
+           select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+        <many-to-one
+                name="owner"
+                column="ownerId"
+                class="no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent"
+                access="field"
+                cascade="none">
+        </many-to-one>
+
+        <property name="text"/>
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.component.entity.Level2SetEntityInCompositeComponent" table="L2SetEntInCompComponent" lazy="true"
+           select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+        <many-to-one
+                name="owner"
+                column="ownerId"
+                class="no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent"
+                access="field"
+                cascade="none">
+        </many-to-one>
+
+        <property name="text"/>
+    </class>
+
+</hibernate-mapping>

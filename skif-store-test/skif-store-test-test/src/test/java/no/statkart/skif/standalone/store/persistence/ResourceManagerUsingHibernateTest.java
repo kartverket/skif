@@ -9,7 +9,6 @@ import no.statkart.skif.store.persistence.DefaultPersistenceSessionManager;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.*;
 import no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate;
-import org.hibernate.jdbc.ConnectionWrapper;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -48,8 +47,8 @@ public class ResourceManagerUsingHibernateTest {
         HibernateSessionFactoryBuilder sessionFactoryBuilder = createHibernateSessionFactoryBuilderWithHistory();
         sessionFactoryManagerBundle = createHibernateSessionFactorManagerBundle(sessionFactoryBuilder, hibernateProperties);
         persistenceSessionManager = new DefaultPersistenceSessionManager(
-                new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(0)),
-                new DefaultHibernatePersistenceSessionImplExt(sessionFactoryManagerBundle.getBundle().get(1))
+                new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(0)),
+                new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1))
         );
         connectionManager = new ConnectionManagerUsingHibernate(persistenceSessionManager);
 
@@ -68,7 +67,6 @@ public class ResourceManagerUsingHibernateTest {
 
     /**
      * Tester oppslag på resource via implementasjonsklasse og interface
-     * @throws SQLException
      */
     public void testGetResource() throws SQLException {
         ConnectionManager connectionManager = resourceManager.getResource(ConnectionManagerUsingHibernate.class);
@@ -84,7 +82,7 @@ public class ResourceManagerUsingHibernateTest {
         Connection connectionFromSession = resourceManager.getResource(PersistenceSessionManager.class).getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMaster.class).reserveSession().connection();
 
         // Hibernate putter på en wrapper når man henter ut en connection. Men det er samme underliggende connection
-        assertSame(ConnectionWrapper.class.cast(connectionFromSession).getWrappedConnection(), ConnectionWrapper.class.cast(connectionViaConnectionManager).getWrappedConnection());
+        assertSame(connectionFromSession.unwrap(Connection.class), connectionViaConnectionManager.unwrap(Connection.class));
    }
 
 }

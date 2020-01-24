@@ -11,6 +11,7 @@ configurations {
 
 dependencies {
     api project(':skif-service-common')
+    api libraries.bubbleref_spi
     implementation libraries.guava
 
     testImplementation project(':skif-config')
@@ -53,6 +54,7 @@ task assertDependencies() {
                     'com.google.inject.extensions:guice-',
                     'com.google.guava',
                     'com.vividsolutions:jts',
+                    'no.statkart.skif:skif-bubble-spi'
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
 
             if (!godkjent) {

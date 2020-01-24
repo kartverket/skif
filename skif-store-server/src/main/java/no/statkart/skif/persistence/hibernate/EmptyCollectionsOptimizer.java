@@ -4,15 +4,14 @@ import no.statkart.skif.persistence.hibernate.type.EmptyCollectionsOptimizerFlag
 import no.statkart.skif.store.BubbleObject;
 import org.hibernate.EntityMode;
 import org.hibernate.MappingException;
-import org.hibernate.collection.PersistentCollection;
-import org.hibernate.engine.CollectionEntry;
-import org.hibernate.engine.PersistenceContext;
-import org.hibernate.event.EventSource;
-import org.hibernate.event.PreLoadEvent;
+import org.hibernate.collection.spi.PersistentCollection;
+import org.hibernate.engine.spi.CollectionEntry;
+import org.hibernate.engine.spi.PersistenceContext;
+import org.hibernate.event.spi.EventSource;
+import org.hibernate.event.spi.PreLoadEvent;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.pretty.MessageHelper;
-import org.hibernate.type.AbstractComponentType;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.CompositeType;
 import org.hibernate.type.CustomType;
@@ -153,7 +152,7 @@ public class EmptyCollectionsOptimizer {
                     }
                 }
             } else if (types[i].isComponentType()) {
-                CollectionMapper componentMapper = createCollectionMappper(((AbstractComponentType) types[i]).getSubtypes(), role);
+                CollectionMapper componentMapper = createCollectionMappper(((CompositeType) types[i]).getSubtypes(), role);
                 if (componentMapper != null) {
                     return new CollectionMapper(i, componentMapper);
                 }
@@ -219,20 +218,20 @@ public class EmptyCollectionsOptimizer {
         Object[] values = event.getState();
         Type[] types = persister.getPropertyTypes();
         EventSource eventSource = event.getSession();
-        EntityMode entityMode = eventSource.getEntityMode();
+        EntityMode entityMode = EntityMode.POJO; // eventSource.getEntityMode();
         PersistenceContext persistenceContext = eventSource.getPersistenceContext();
 
         // Each bit in the flag corresponds to a collection. If the bit is set the collection is known to be empty.
         long flag = (Long) values[indexOfFlag];
 
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Optimizing initialization of collections using empty collection flag %d (octal: 0%o) for entity: %s", flag, flag, MessageHelper.infoString(persister, event.getId(), event.getSession().getFactory())));
+            logger.debug(String.format("Optimizing initialization of collections using empty collection flag %d (octal: 0%o) for entity: %s", flag, flag, getEntityInfoString(event, persister)));
         }
 
         for (int i = 0; i < collectionMappers.length; i++) {
             if (collectionMappers[i] == null) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("Collection for bit %d is not mapped for entity subtype: %s"), i, MessageHelper.infoString(persister, event.getId(), event.getSession().getFactory()));
+                    logger.debug(String.format("Collection for bit %d is not mapped for entity subtype: %s"), i, getEntityInfoString(event, persister));
                 }
                 continue; // i'th bit in the flag does not map to a collection for this subtype
             }
@@ -244,7 +243,7 @@ public class EmptyCollectionsOptimizer {
 
                 if (!collection.wasInitialized()) {
                     if (logger.isDebugEnabled()) {
-                        logger.debug(String.format("Collection for bit %d is known to be empty. Initializing collection [%s] without database queries for entity: %s", i, collectionTypes[i].getRole(), MessageHelper.infoString(persister, event.getId(), event.getSession().getFactory())));
+                        logger.debug(String.format("Collection for bit %d is known to be empty. Initializing collection [%s] without database queries for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(event, persister)));
                     }
                     // Initialize the collection to 0 elements without querying the database
                     collection.beginRead();
@@ -256,12 +255,12 @@ public class EmptyCollectionsOptimizer {
                     ce.postInitialize(collection);
                 } else {
                     if (logger.isDebugEnabled()) {
-                        logger.debug(String.format("Collection for bit %d is already initialized. No need to optimize initialization of collection [%s] for entity: %s", i, collectionTypes[i].getRole(), MessageHelper.infoString(persister, event.getId(), event.getSession().getFactory())));
+                        logger.debug(String.format("Collection for bit %d is already initialized. No need to optimize initialization of collection [%s] for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(event, persister)));
                     }
                 }
             } else {
                 if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("Collection for bit %d may contain elements and must be read from database. Cannot optimize initialization of collection [%s] for entity: %s", i, collectionTypes[i].getRole(), MessageHelper.infoString(persister, event.getId(), event.getSession().getFactory())));
+                    logger.debug(String.format("Collection for bit %d may contain elements and must be read from database. Cannot optimize initialization of collection [%s] for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(event, persister)));
                 }
             }
         }
@@ -269,9 +268,8 @@ public class EmptyCollectionsOptimizer {
 
     public void updateEmptyCollectionFlag(EntityPersister persister, BubbleObject entity) {
         if (this == NO_OPTIMIZER_MARKER) return;
-        EntityMode entityMode = EntityMode.POJO;
 
-        Object[] values = persister.getPropertyValues(entity, entityMode);
+        Object[] values = persister.getPropertyValues(entity);
         Type[] types = persister.getPropertyTypes();
         long flag = (Long) values[indexOfFlag];
         long oldFlag = flag;
@@ -285,7 +283,7 @@ public class EmptyCollectionsOptimizer {
             }
 
             // During flush there is no guarantee that the collection is an instance of PersistentCollection.
-            Collection collection = collectionMappers[i].getCollection(values, types, entityMode);
+            Collection collection = collectionMappers[i].getCollection(values, types, EntityMode.POJO);
             boolean wasInitialized = !(collection instanceof PersistentCollection) || ((PersistentCollection) collection).wasInitialized();
 
             if (wasInitialized) {
@@ -294,33 +292,37 @@ public class EmptyCollectionsOptimizer {
                 if ((collection.size() == 0)) {
                     // set i'th bit in flag
                     if (logger.isDebugEnabled()) {
-                        logger.debug(String.format("Collection for bit %d is empty. Setting bit in flag for collection [%s] for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(entity)));
+                        logger.debug("Collection for bit " + i + " is empty. Setting bit in flag for collection [" + collectionTypes[i].getRole() + "]");
                     }
                     flag |= bit_i;
                 } else {
                     // clear i'th bit  in flag
                     if (logger.isDebugEnabled()) {
-                        logger.debug(String.format("Collection for bit %d is non empty. Clearing bit in flag for collection [%s]: %s", i, collectionTypes[i].getRole(), getEntityInfoString(entity)));
+                        logger.debug("Collection for bit " + i + " is non empty. Clearing bit in flag for collection [" + collectionTypes[i].getRole() + "]");
                     }
                     flag &= ~bit_i;
                 }
             } else {
                 // Leave flag untouched for i'th bit. Collection has not been read and is therefore unchanged.
                 if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("Collection for bit %d is not initialized. Leaving bit in flag unchanged for collection [%s] for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(entity)));
+                    logger.debug("Collection for bit " + i + " is not initialized. Leaving bit in flag unchanged for collection [" + collectionTypes[i].getRole() + "]");
                 }
             }
         }
         if (flag != oldFlag) {
             if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Empty collection flag was modified, old flag: %d (octal: 0%o) new flag: %d (octal: 0%o) for entity: %s", oldFlag, oldFlag, flag, flag, getEntityInfoString(entity)));
+                logger.debug(String.format("Empty collection flag was modified for entity. Old flag: %d (octal: 0%o) new flag: %d (octal: 0%o)", oldFlag, oldFlag, flag, flag));
             }
-            persister.setPropertyValue(entity, indexOfFlag, flag, entityMode);
+            persister.setPropertyValue(entity, indexOfFlag, flag);
         } else {
             if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Empty collection flag %d (octal: 0%o) is unchanged for entity: %s", flag, flag, getEntityInfoString(entity)));
+                logger.debug(String.format("Empty collection flag is unchanged for entity. Flag: %d (octal: 0%o)", flag, flag));
             }
         }
+    }
+
+    private String getEntityInfoString(PreLoadEvent event, EntityPersister persister) {
+        return MessageHelper.infoString(persister, event.getId(), event.getSession().getFactory());
     }
 
     private String getEntityInfoString(BubbleObject entity) {

@@ -4,6 +4,7 @@ import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleResultSet;
 import oracle.sql.DATE;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.EnhancedUserType;
 import org.joda.time.LocalDate;
 
@@ -48,8 +49,9 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
         return object.hashCode();
     }
 
-    public Object nullSafeGet(ResultSet resultSet, String[] names, Object owner) throws HibernateException, SQLException {
-        return nullSafeGet(resultSet, names[0]);
+    @Override
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        return nullSafeGet(rs, names[0]);
 
     }
 
@@ -68,11 +70,12 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
         return new LocalDate(year, rawData[2], rawData[3]);
     }
 
-    public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index) throws HibernateException, SQLException {
+    @Override
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         if (value == null) {
-            preparedStatement.setNull(index, Types.DATE);
+            st.setNull(index, Types.DATE);
         } else {
-            OraclePreparedStatement oraclePreparedStatement = preparedStatement.unwrap(OraclePreparedStatement.class);
+            OraclePreparedStatement oraclePreparedStatement = st.unwrap(OraclePreparedStatement.class);
             LocalDate localDate = (LocalDate) value;
 
             if (localDate.getYear() == 0) {

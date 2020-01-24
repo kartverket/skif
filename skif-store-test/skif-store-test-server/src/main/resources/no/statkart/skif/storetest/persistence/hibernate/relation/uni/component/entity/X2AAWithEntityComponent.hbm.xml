@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponent"
+           table="X2AAWithEntComp" select-before-update="true">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.component.entity.X2AAWithEntityComponentIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="nr"/>
+        <property name="text"/>
+
+        <many-to-one
+                name="entityComponentOne"
+                column="entityComponentOneId"
+                class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2EntityComponentOne"
+                access="field"
+                fetch="join"
+                unique="true"
+                cascade="all-delete-orphan">
+        </many-to-one>
+
+        <set name="aaSetEntityComponentsSet" lazy="true" cascade="all-delete-orphan,evict" batch-size="256">
+            <key column="ownerId"/>
+            <one-to-many class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2SetEntityComponent"/>
+        </set>
+
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2EntityComponentOne" lazy="true"
+           select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+        <many-to-one
+                name="owner"
+                column="ownerId"
+                class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponent"
+                access="field"
+                cascade="none">
+        </many-to-one>
+
+        <property name="text"/>
+
+        <many-to-one
+                name="someBB"
+                column="someBBId"
+                class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2BBOne">
+            <meta attribute="bubble-ref"/>
+        </many-to-one>
+
+        <!--suppress HibernateMappingDomInspection -->
+        <set name="someCCs" lazy="true" batch-size="256">
+            <meta attribute="bubble-ref"/>
+            <key column="ownerId"/>
+            <one-to-many class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2CCMany"/>
+        </set>
+
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2SetEntityComponent" table="X2SetEntityComp"
+           lazy="true" select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+
+        <!-- readonly tilbakepeker som settes av one-to-many collection mapping i owner  -->
+        <many-to-one
+                name="owner"
+                column="ownerId"
+                class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponent"
+                access="field"
+                update="false"
+                insert="false"
+                cascade="none">
+        </many-to-one>
+
+        <property name="text"/>
+
+        <many-to-one
+                name="role1BBOne"
+                column="role1BBOneId"
+                class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2BBOne">
+            <meta attribute="bubble-ref"/>
+        </many-to-one>
+
+    </class>
+
+</hibernate-mapping>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false" >
+
+    <class name="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2CCMany" select-before-update="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.component.entity.X2CCManyIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="nr"/>
+        <property name="text"/>
+    </class>
+</hibernate-mapping>

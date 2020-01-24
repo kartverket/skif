@@ -104,16 +104,21 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
             public Object run() {
-                StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
-                UnitOfWork unitOfWork = store.beginUnitOfWork();
-                SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
-                Simple Simple = new Simple(simpleId, "Simple 101");
-                store.insert(Simple);
-                store.commitUnitOfWork(unitOfWork);
-                assertSame(store.get(simpleId), Simple);
-                store.flush();
+                try {
+                    store.beginTransaction();
+                    StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
+                    UnitOfWork unitOfWork = store.beginUnitOfWork();
+                    SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
+                    Simple Simple = new Simple(simpleId, "Simple 101");
+                    store.insert(Simple);
+                    store.commitUnitOfWork(unitOfWork);
+                    assertSame(store.get(simpleId), Simple);
+                    store.flush();
 
-                assertEquals(StandAloneTestHelper.countInDatabase(persistenceSessionForSnapshot, simpleId), 1);
+                    assertEquals(StandAloneTestHelper.countInDatabase(persistenceSessionForSnapshot, simpleId), 1);
+                } finally {
+                    store.rollbackTransaction();
+                }
                 return null;
             }
         });
@@ -124,19 +129,24 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
         server.runInBeanManagedTransaction(new RunOnServerMethod() {
             @Inject
-            Store store;
+            StoreServer store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
 
             public Object run() {
-                StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
-                UnitOfWork unitOfWork = store.beginUnitOfWork();
-                SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
-                Simple Simple = new Simple(simpleId, "Simple 101");
-                store.insert(Simple);
-                store.delete(Simple);
-                store.commitUnitOfWork(unitOfWork);
-                assertNotFound(store, simpleId);
+                try {
+                    store.beginTransaction();
+                    StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
+                    UnitOfWork unitOfWork = store.beginUnitOfWork();
+                    SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
+                    Simple Simple = new Simple(simpleId, "Simple 101");
+                    store.insert(Simple);
+                    store.delete(Simple);
+                    store.commitUnitOfWork(unitOfWork);
+                    assertNotFound(store, simpleId);
+                } finally {
+                    store.rollbackTransaction();
+                }
 
                 return null;
             }
@@ -148,24 +158,33 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
         server.runInBeanManagedTransaction(new RunOnServerMethod() {
             @Inject
-            Store store;
+            StoreServer store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
 
             public Object run() {
-                StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
-                UnitOfWork unitOfWork1 = store.beginUnitOfWork();
-                SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
-                Simple simple = new Simple(simpleId, "Simple 101");
-                store.insert(simple);
-                UnitOfWork unitOfWork2 = store.beginUnitOfWork();
-                Simple copy = CopyHelper.copy(simple);
-                store.delete(copy);
-                store.commitUnitOfWork(unitOfWork2);
-//                assertSame(store.get(simpleId), copy);
-                store.commitUnitOfWork(unitOfWork1);
-                assertNotFound(store, simpleId);
+                try {
+                    store.beginTransaction();
+                    StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
+                    SimpleId<?> simpleId;
+                    try (UnitOfWork unitOfWork1 = store.beginUnitOfWork()) {
+                        simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
+                        Simple simple = new Simple(simpleId, "Simple 101");
+                        store.insert(simple);
+                        Simple detachedCopy;
+                        try (UnitOfWork unitOfWork2 = store.beginUnitOfWork()) {
+                            detachedCopy = CopyHelper.copy(simple);
+                            store.delete(detachedCopy);
+                            store.commitUnitOfWork(unitOfWork2);
+                        }
+                        assertNotFound(store, simpleId);
+                        store.commitUnitOfWork(unitOfWork1);
+                    }
+                    assertNotFound(store, simpleId);
+                } finally {
 
+                    store.rollbackTransaction();
+                }
                 return null;
             }
         });
@@ -196,21 +215,26 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     public void testUndoInsertion() {
         server.runInBeanManagedTransaction(new RunOnServerMethod() {
             @Inject
-            Store store;
+            StoreServer store;
             @Inject
             StoreTestMockupFacadeFactory mockupFacadeFactory;
 
             public Object run() {
-                StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
-
-                UnitOfWork unitOfWork = store.beginUnitOfWork();
-                SimpleId<?> simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
-                Simple simple = new Simple(simpleId, "Simple 101");
-                store.insert(simple);
-                store.undo(simple);
-                store.commitUnitOfWork(unitOfWork);
-                assertNotFound(store, simpleId);
-
+                try {
+                    store.beginTransaction();
+                    StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
+                    SimpleId<?> simpleId;
+                    try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
+                        simpleId = mockupFacade.getStore().getInstance(IdService.class).getNextId(SimpleId.class);
+                        Simple simple = new Simple(simpleId, "Simple 101");
+                        store.insert(simple);
+                        store.undo(simple);
+                        store.commitUnitOfWork(unitOfWork);
+                    }
+                    assertNotFound(store, simpleId);
+                } finally {
+                    store.rollbackTransaction();
+                }
                 return null;
             }
         });
@@ -226,14 +250,14 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
 
-                store.beginUnitOfWork();
-                SimpleId<?> simpleId = mockupFacade.getSimpleMockupFactory().getSimpleId1();
-                Simple simple = store.lock(simpleId);
-                store.update(simple);
-                store.undo(simple);
-                UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
-                assertTrue(unitOfWorkTransfer.getUpdatedObjects().isEmpty());
-
+                try (UnitOfWork ignore = store.beginUnitOfWork()) {
+                    SimpleId<?> simpleId = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+                    Simple simple = store.lock(simpleId);
+                    store.update(simple);
+                    store.undo(simple);
+                    UnitOfWorkTransfer unitOfWorkTransfer = store.getUnitOfWorkTransfer();
+                    assertTrue(unitOfWorkTransfer.getUpdatedObjects().isEmpty());
+                }
                 return null;
             }
         });
@@ -247,18 +271,18 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             public Object run() {
                 StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
 
-                UnitOfWork unitOfWork = store.beginUnitOfWork();
-                SimpleId<?> simpleId = mockupFacade.getSimpleMockupFactory().getSimpleId1();
-                Simple simple = store.lock(simpleId);
-                store.update(simple);
-                String orgText = simple.getText();
-                simple.setText("Blabla");
-                store.update(simple);
-                assertEquals(store.get(simpleId).getText(), simple.getText());
-                store.undo(simple);
-                assertEquals(store.get(simpleId).getText(), orgText);
-                store.abortUnitOfWork(unitOfWork);
-
+                try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
+                    SimpleId<?> simpleId = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+                    Simple simple = store.lock(simpleId);
+                    store.update(simple);
+                    String orgText = simple.getText();
+                    simple.setText("Blabla");
+                    store.update(simple);
+                    assertEquals(store.get(simpleId).getText(), simple.getText());
+                    store.undo(simple);
+                    assertEquals(store.get(simpleId).getText(), orgText);
+                    store.abortUnitOfWork(unitOfWork);
+                }
                 return null;
             }
         });
@@ -538,38 +562,43 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
         server.runInBeanManagedTransaction(new RunOnServerMethod() {
             @Inject
-            private Store store;
+            private StoreServer store;
 
             @Override
             public Object run() {
-                try (UnitOfWork outer1 = store.beginUnitOfWork()) {
-                    try (UnitOfWork inner11 = store.beginUnitOfWork()) {
-                        Simple simple = store.lock(simpleId1);
-                        store.update(simple);
-                        store.commitUnitOfWork(inner11);
-                    }
-                    try (UnitOfWork inner12 = store.beginUnitOfWork()) {
-                        //noinspection UnusedDeclaration
-                        Simple simple = store.lock(simpleId1);
-                        store.commitUnitOfWork(inner12);
-                    }
-                    store.commitUnitOfWork(outer1);
-                }
-                try (UnitOfWork outer2 = store.beginUnitOfWork()) {
-                    try (UnitOfWork inner2 = store.beginUnitOfWork()) {
-                        store.abortUnitOfWork(inner2);
-                    }
-                    store.commitUnitOfWork(outer2);
-                }
-                try (UnitOfWork outer3 = store.beginUnitOfWork()) {
-                    try (UnitOfWork inner3 = store.beginUnitOfWork()) {
-                        Simple simple = store.lock(simpleId1);
-                        assertNotNull(simple);
-                        store.commitUnitOfWork(inner3);
-                    }
-                    store.commitUnitOfWork(outer3);
-                }
+                try {
+                    store.beginTransaction();
 
+                    try (UnitOfWork outer1 = store.beginUnitOfWork()) {
+                        try (UnitOfWork inner11 = store.beginUnitOfWork()) {
+                            Simple simple = store.lock(simpleId1);
+                            store.update(simple);
+                            store.commitUnitOfWork(inner11);
+                        }
+                        try (UnitOfWork inner12 = store.beginUnitOfWork()) {
+                            //noinspection UnusedDeclaration
+                            Simple simple = store.lock(simpleId1);
+                            store.commitUnitOfWork(inner12);
+                        }
+                        store.commitUnitOfWork(outer1);
+                    }
+                    try (UnitOfWork outer2 = store.beginUnitOfWork()) {
+                        try (UnitOfWork inner2 = store.beginUnitOfWork()) {
+                            store.abortUnitOfWork(inner2);
+                        }
+                        store.commitUnitOfWork(outer2);
+                    }
+                    try (UnitOfWork outer3 = store.beginUnitOfWork()) {
+                        try (UnitOfWork inner3 = store.beginUnitOfWork()) {
+                            Simple simple = store.lock(simpleId1);
+                            assertNotNull(simple);
+                            store.commitUnitOfWork(inner3);
+                        }
+                        store.commitUnitOfWork(outer3);
+                    }
+                } finally {
+                    store.rollbackTransaction();
+                }
                 return null;
             }
         });
@@ -584,29 +613,33 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
         server.runInBeanManagedTransaction(new RunOnServerMethod() {
             @Inject
-            private Store store;
+            private StoreServer store;
 
             @Override
             public Object run() {
-                try (UnitOfWork outer = store.beginUnitOfWork()) {
-                    try (UnitOfWork inner1 = store.beginUnitOfWork()) {
-                        Simple simple = store.lock(simpleId1);
-                        store.update(simple);
-                        store.commitUnitOfWork(inner1);
+                try {
+                    store.beginTransaction();
+                    try (UnitOfWork outer = store.beginUnitOfWork()) {
+                        try (UnitOfWork inner1 = store.beginUnitOfWork()) {
+                            Simple simple = store.lock(simpleId1);
+                            store.update(simple);
+                            store.commitUnitOfWork(inner1);
+                        }
+                        try (UnitOfWork inner2 = store.beginUnitOfWork()) {
+                            //noinspection UnusedDeclaration
+                            Simple simple = store.lock(simpleId1);
+                            store.abortUnitOfWork(inner2);
+                        }
+                        try (UnitOfWork inner3 = store.beginUnitOfWork()) {
+                            Simple simple = store.lock(simpleId1);
+                            assertNotNull(simple);
+                            store.commitUnitOfWork(inner3);
+                        }
+                        store.commitUnitOfWork(outer);
                     }
-                    try (UnitOfWork inner2 = store.beginUnitOfWork()) {
-                        //noinspection UnusedDeclaration
-                        Simple simple = store.lock(simpleId1);
-                        store.abortUnitOfWork(inner2);
-                    }
-                    try (UnitOfWork inner3 = store.beginUnitOfWork()) {
-                        Simple simple = store.lock(simpleId1);
-                        assertNotNull(simple);
-                        store.commitUnitOfWork(inner3);
-                    }
-                    store.commitUnitOfWork(outer);
+                } finally {
+                    store.rollbackTransaction();
                 }
-
                 return null;
             }
         });
@@ -622,32 +655,37 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                Simple simple3UpdatedAgain;
-                SimpleId<?> simpleId3 = store.getInstance(IdService.class).getNextId(SimpleId.class);
-                SimpleId<?> simpleId4 = store.getInstance(IdService.class).getNextId(SimpleId.class);
-                Simple simple1 = store.lock(simpleId1);
-                Simple simple2 = store.lock(simpleId2);
-                store.delete(simple1);
-                store.update(simple2);
-                Simple simple3 = new Simple(simpleId3, "Simple 3");
-                store.insert(simple3);
-                try (UnitOfWork ignore = store.beginUnitOfWork()) {
-                    assertTransferEmpty(store.getUnitOfWorkTransfer());
-                    Simple simple3Updated = store.get(simpleId3);
-                    simple3Updated.setText("Updated");
-                    store.update(simple3Updated);
-                    Simple simple4 = new Simple(simpleId4, "Simple 4");
-                    store.insert(simple4);
-                    assertTransfer(store.getUnitOfWorkTransfer(), ImmutableList.of(simple4), ImmutableList.of(simple3Updated), emptyList());
-                    try (UnitOfWork inner = store.beginUnitOfWork()) {
+                try {
+                    store.beginTransaction();
+                    Simple simple3UpdatedAgain;
+                    SimpleId<?> simpleId3 = store.getInstance(IdService.class).getNextId(SimpleId.class);
+                    SimpleId<?> simpleId4 = store.getInstance(IdService.class).getNextId(SimpleId.class);
+                    Simple simple1 = store.lock(simpleId1);
+                    Simple simple2 = store.lock(simpleId2);
+                    store.delete(simple1);
+                    store.update(simple2);
+                    Simple simple3 = new Simple(simpleId3, "Simple 3");
+                    store.insert(simple3);
+                    try (UnitOfWork ignore = store.beginUnitOfWork()) {
+                        assertTransferEmpty(store.getUnitOfWorkTransfer());
+                        Simple simple3Updated = store.get(simpleId3);
+                        simple3Updated.setText("Updated");
+                        store.update(simple3Updated);
+                        Simple simple4 = new Simple(simpleId4, "Simple 4");
+                        store.insert(simple4);
                         assertTransfer(store.getUnitOfWorkTransfer(), ImmutableList.of(simple4), ImmutableList.of(simple3Updated), emptyList());
-                        simple3UpdatedAgain = store.get(simpleId3);
-                        simple3UpdatedAgain.setText("Updated again");
-                        store.update(simple3UpdatedAgain);
+                        try (UnitOfWork inner = store.beginUnitOfWork()) {
+                            assertTransfer(store.getUnitOfWorkTransfer(), ImmutableList.of(simple4), ImmutableList.of(simple3Updated), emptyList());
+                            simple3UpdatedAgain = store.get(simpleId3);
+                            simple3UpdatedAgain.setText("Updated again");
+                            store.update(simple3UpdatedAgain);
+                            assertTransfer(store.getUnitOfWorkTransfer(), ImmutableList.of(simple4), ImmutableList.of(simple3UpdatedAgain), emptyList());
+                            store.commitUnitOfWork(inner);
+                        }
                         assertTransfer(store.getUnitOfWorkTransfer(), ImmutableList.of(simple4), ImmutableList.of(simple3UpdatedAgain), emptyList());
-                        store.commitUnitOfWork(inner);
                     }
-                    assertTransfer(store.getUnitOfWorkTransfer(), ImmutableList.of(simple4), ImmutableList.of(simple3UpdatedAgain), emptyList());
+                } finally {
+                    store.rollbackTransaction();
                 }
                 return null;
             }

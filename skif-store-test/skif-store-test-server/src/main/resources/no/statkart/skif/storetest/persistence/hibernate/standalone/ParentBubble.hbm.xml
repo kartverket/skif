@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+   <class name="no.statkart.skif.storetest.domain.standalone.ParentBubble" lazy="true" select-before-update="true">
+      <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.ParentBubbleIdType">
+          <generator class="assigned"/>
+      </id>
+
+      <property name="text"/>
+
+       <set name="childForParents" access="field" lazy="true" batch-size="256" cascade="all-delete-orphan,evict" inverse="true">
+          <key column="parentBubbleId"/>
+          <one-to-many  class="no.statkart.skif.storetest.domain.standalone.ChildForParent"/>
+       </set>
+   </class>
+
+    <class name="no.statkart.skif.storetest.domain.standalone.ChildForParent"  table="childforparent" lazy="true" select-before-update="true">
+       <id name="id" column="id">
+          <generator class="assigned" />
+       </id>
+       <many-to-one  name="parentBubble" class="no.statkart.skif.storetest.domain.standalone.ParentBubble"
+                    column="parentBubbleId"/>
+       <many-to-one
+             name="childBubble"
+             column="childBubbleId"
+             class="no.statkart.skif.storetest.domain.standalone.ChildBubble"
+             foreign-key="FK_CHILDFORPARENT_CHILD">
+          <meta attribute="bubble-ref"/>
+       </many-to-one>
+    </class>
+
+
+</hibernate-mapping>

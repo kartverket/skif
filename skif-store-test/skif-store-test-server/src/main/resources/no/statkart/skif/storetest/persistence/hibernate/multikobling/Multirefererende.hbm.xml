@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.multikobling.Multirefererende" table="MULTIREFERERENDE" select-before-update="true"
+           lazy="true">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest.persistence.hibernate.type.multikobling.MultirefererendeIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <set name="koblinger" table="MULTIREFERERENDEKOBLING" cascade="all-delete-orphan">
+            <key column="multirefererendeId" foreign-key="FK_MULTIREFEREREND_KOBLING" not-null="true"/>
+            <composite-element class="no.statkart.skif.storetest.domain.multikobling.MultirefererendeKobling">
+                <!-- NB: Må angi type eksplisitt for rolle, da Hibernate ikke kan utlede type fra generisk metode definisjon -->
+                <property name="rolle" type="string" not-null="true"/>
+                <property name="tekst" not-null="true"/>
+            </composite-element>
+        </set>
+    </class>
+
+</hibernate-mapping>
