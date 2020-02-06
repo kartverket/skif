@@ -30,6 +30,9 @@ allprojects {
         targetCompatibility = '1.8'
     }
 
+    tasks.withType(JavaCompile) {
+        options.encoding = 'windows-1252'
+    }
 
     apply plugin: 'idea'
 
