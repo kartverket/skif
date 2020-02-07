@@ -43,7 +43,7 @@ pipeline {
     }
     post {
         always {
-            step([$class: 'Publisher', reportFilenamePattern: '**/build/reports/tests/testng-results.xml'])
+            step([$class: 'Publisher', reportFilenamePattern: '**/testng-results.xml'])
         }
         success {
             echo "Husk å kjøre 'git tag -a ${SKIF_VERSION} -m ${SKIF_VERSION} ${env.GIT_COMMIT}'"
