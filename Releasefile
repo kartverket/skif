@@ -1,3 +1,7 @@
+if (!params.SUBVERSION) {
+    error("SUBVERSION er ikke angitt")
+}
+
 pipeline {
     agent {
         node {
@@ -21,10 +25,28 @@ pipeline {
         jdk 'Java 8 Latest'
     }
     stages {
-        stage('Init') {
+        stage('Build') {
             steps {
-                echo "Heo"
+                bat "gradlew clean assemble ${GRADLE_ARGS}"
             }
+        }
+        stage('Test') {
+            steps {
+                bat "gradlew dbInit check ${GRADLE_ARGS}"
+            }
+        }
+        stage('Deploy') {
+            steps {
+                bat "gradlew publish ${GRADLE_ARGS} --init-script gradle/scripts/mavenPublish.gradle"
+            }
+        }
+    }
+    post {
+        always {
+            step([$class: 'Publisher', reportFilenamePattern: '**/build/reports/tests/testng-results.xml'])
+        }
+        success {
+            echo "Husk å kjøre 'git tag -a ${SKIF_VERSION} -m ${SKIF_VERSION} ${env.GIT_COMMIT}'"
         }
     }
 }
