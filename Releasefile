@@ -20,4 +20,11 @@ pipeline {
     tools {
         jdk 'Java 8 Latest'
     }
+    stages {
+        stage('Init') {
+            steps {
+                echo "Heo"
+            }
+        }
+    }
 }
