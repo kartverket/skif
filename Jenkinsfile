@@ -2,14 +2,13 @@ pipeline {
     agent {
         node {
             label 'SKIF'
-            customWorkspace "workspace/${JOB_NAME}"
         }
     }
     environment {
         GRADLE_OPTS = '-Dorg.gradle.daemon=false'
         GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
         SKIF_VERSION = "${env.BRANCH_NAME}-build${BUILD_NUMBER}"
-        GRADLE_ARGS = "-Pversion=$SKIF_VERSION -Pdb_hostname=nnridb097 -Pdb_service=MA04TST.statkart.no -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Pusername=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Ppassword=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -PWEBLOGIC_HOME=${env.'WEBLOGIC_HOME_12.1.3.0'} -PWEBLOGIC_VERSION=12.1.3"
+        GRADLE_ARGS = "-Pversion=$SKIF_VERSION -Pdb_hostname=nnridb097 -Pdb_service=MA04TST.statkart.no -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Pusername=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Ppassword=JENKINS_SKIF_${env.EXECUTOR_NUMBER}"
 
         //for publisering til sentralt maven repo bines opp via jenkins credential (secret text)
         MAVEN_PUBLISH = credentials('MAVEN_DEPLOY_RELEASE_CANDIDATE')
@@ -20,17 +19,17 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                bat "gradlew clean assemble ${GRADLE_ARGS}"
+                sh "./gradlew clean assemble ${GRADLE_ARGS}"
             }
         }
         stage('Test') { 
             steps {
-                bat "gradlew dbInit check ${GRADLE_ARGS}"
+                sh "./gradlew dbInit check ${GRADLE_ARGS}"
             }
         }
         stage('Deploy') { 
             steps {
-                bat "gradlew publish ${GRADLE_ARGS} --init-script gradle/scripts/mavenPublish.gradle"
+                sh "./gradlew publish ${GRADLE_ARGS} --init-script gradle/scripts/mavenPublish.gradle"
             }
         }
     }
