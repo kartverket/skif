@@ -2,7 +2,6 @@ pipeline {
     agent {
         node {
             label 'SKIF'
-            customWorkspace "workspace/${JOB_NAME}"
         }
     }
     environment {
@@ -21,17 +20,17 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                bat "gradlew clean assemble ${GRADLE_ARGS}"
+                sh "gradlew clean assemble ${GRADLE_ARGS}"
             }
         }
         stage('Test') { 
             steps {
-                bat "gradlew dbInit check ${GRADLE_ARGS}"
+                sh "gradlew dbInit check ${GRADLE_ARGS}"
             }
         }
         stage('Deploy') { 
             steps {
-                bat "gradlew uploadArchives ${GRADLE_ARGS}"
+                sh "gradlew uploadArchives ${GRADLE_ARGS}"
             }
         }
     }
