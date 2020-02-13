@@ -8,7 +8,7 @@ pipeline {
         GRADLE_OPTS = '-Dorg.gradle.daemon=false'
         GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
         SKIF_VERSION = "${env.BRANCH_NAME}-build${BUILD_NUMBER}"
-        GRADLE_ARGS = "-Pversion=$SKIF_VERSION -Pdb_hostname=nnridb097 -Pdb_service=MA04TST.statkart.no -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Pusername=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Ppassword=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -PWEBLOGIC_HOME=${env.'WEBLOGIC_HOME_12.1.3.0'} -PWEBLOGIC_VERSION=12.1.3"
+        GRADLE_ARGS = "-Pversion=$SKIF_VERSION -Pdb_hostname=nnridb097 -Pdb_service=MA04TST.statkart.no -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Pusername=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Ppassword=JENKINS_SKIF_${env.EXECUTOR_NUMBER}"
         TEMPCRED = credentials('NEXUS_RELEASE_CREDENTIAL')
         REPO_UPLOAD_RELEASES = 'https://nexus.statkart.no/repository/releases/'
         REPO_UPLOAD_RELEASES_USERNAME = "${env.TEMPCRED_USR}"
@@ -20,17 +20,17 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh "gradlew clean assemble ${GRADLE_ARGS}"
+                sh "./gradlew clean assemble ${GRADLE_ARGS}"
             }
         }
         stage('Test') { 
             steps {
-                sh "gradlew dbInit check ${GRADLE_ARGS}"
+                sh "./gradlew dbInit check ${GRADLE_ARGS}"
             }
         }
         stage('Deploy') { 
             steps {
-                sh "gradlew uploadArchives ${GRADLE_ARGS}"
+                sh "./gradlew uploadArchives ${GRADLE_ARGS}"
             }
         }
     }
