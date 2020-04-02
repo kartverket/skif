@@ -26,11 +26,6 @@ task testJar(type: Jar) {
     from sourceSets.test.output
 }
 
-task sourcesJar(type: Jar, dependsOn:classes) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-}
-
 artifacts {
     testApi testJar
 }
@@ -39,7 +34,6 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact sourcesJar
         }
     }
 }

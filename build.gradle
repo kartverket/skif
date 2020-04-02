@@ -86,7 +86,11 @@ subprojects { Project project ->
             testImplementation libraries.mockito
             testImplementation libraries.assertj
 
-            apiElements libraries.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
+            compileOnly libraries.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
+        }
+
+        project.java {
+            withSourcesJar()
         }
 
 
