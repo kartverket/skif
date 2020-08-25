@@ -54,6 +54,7 @@ def libraries = [
         mockito: 'org.mockito:mockito-all:1.9.5',
         dbunit: 'org.dbunit:dbunit:2.4.8@jar',
         unitils: 'org.unitils:unitils-core:3.1',
+        assertj: 'org.assertj:assertj-core:3.17.0',
         fest: 'org.easytesting:fest-assert-core:2.0M8',
         reflections: 'org.reflections:reflections:0.9.11',
 
