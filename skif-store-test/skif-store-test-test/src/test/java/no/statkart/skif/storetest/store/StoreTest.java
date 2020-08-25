@@ -446,7 +446,7 @@ public class StoreTest extends StoreTestTestCase {
                 store.get(simpleId);
                 fail("Skulle fått exception");
             } catch (ObjectNotFoundException e) {
-                assertThat((BubbleId) e.getNotFoundId()).describedAs("Forventer id til slettet objekt").isEqualTo(simpleId);
+                assertThat(e.getNotFoundId()).describedAs("Forventer id til slettet objekt").isEqualTo(simpleId);
             }
         }
     }
@@ -522,7 +522,7 @@ public class StoreTest extends StoreTestTestCase {
                 store.get(simple1Id);
                 fail("Skulle fått exception");
             } catch (ObjectNotFoundException e) {
-                assertThat((BubbleId) e.getNotFoundId()).describedAs("Forventer id til slettet objekt").isEqualTo(simple1Id);
+                assertThat(e.getNotFoundId()).describedAs("Forventer id til slettet objekt").isEqualTo(simple1Id);
             }
         }
     }
