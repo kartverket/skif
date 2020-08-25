@@ -60,7 +60,7 @@ ext.libraries = [
         mockito: 'org.mockito:mockito-core:2.19.0', /* mockito 3.x for java 8 */
         dbunit: 'org.dbunit:dbunit:2.5.4',
         unitils: 'org.unitils:unitils-core:3.4.6',
-        assertj: 'org.assertj:assertj-core:3.10.0',
+        assertj: 'org.assertj:assertj-core:3.17.0',
         reflections: 'org.reflections:reflections:0.9.11',
 
         // JAXB

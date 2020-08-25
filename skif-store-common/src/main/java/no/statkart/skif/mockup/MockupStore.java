@@ -17,6 +17,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
@@ -563,22 +565,12 @@ public class MockupStore implements Store {
         SortedMap<SnapshotVersion, MockupTransfer> allCompleteTransfers = mockupPersister.getTransfersBefore(beforeSnapshotVersion);
         for (Map.Entry<SnapshotVersion, MockupTransfer> entry : allCompleteTransfers.entrySet()) {
             MockupTransfer transfer = entry.getValue();
-            List<BubbleObject> allObjects = new ArrayList<>(ids.size());
-            for (BubbleObject bubbleObject : transfer.getInsertedObjects()) {
-                if (ids.contains(bubbleObject.getId())) {
-                    allObjects.add(bubbleObject);
-                }
-            }
-            for (BubbleObject bubbleObject : transfer.getUpdatedObjects()) {
-                if (ids.contains(bubbleObject.getId())) {
-                    allObjects.add(bubbleObject);
-                }
-            }
-            for (BubbleObject bubbleObject : transfer.getDeletedObjects()) {
-                if (ids.contains(bubbleObject.getId())) {
-                    allObjects.add(bubbleObject);
-                }
-            }
+            List<BubbleObject> allObjects = Stream
+                    .of(transfer.getInsertedObjects(), transfer.getUpdatedObjects(), transfer.getDeletedObjects())
+                    .flatMap(Collection::stream)
+                    .filter(bubbleObject -> ids.contains(bubbleObject.getId())
+                            || allReferencedIds.contains(bubbleObject.getId()))
+                    .collect(Collectors.toList());
 
             SnapshotVersion previousSnapshotVersion = getSnapshotVersion();
             try {
