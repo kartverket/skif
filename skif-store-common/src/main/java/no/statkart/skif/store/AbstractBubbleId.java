@@ -147,7 +147,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 
     @Override
     public final int hashCode() {
-        return value.hashCode();
+        return getValue().hashCode();
     }
 
     public boolean equals(Object id) {
@@ -369,13 +369,13 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * Returns the string value of this id
      */
     public String getStringValue() {
-        return value.toString();
+        return String.valueOf(getValue());
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" +
-                "value=" + value +
+        return getClass().getSimpleName() + '{' +
+                "value=" + getValue() +
                 ", snapshotVersion=" + snapshotVersion +
                 '}';
     }

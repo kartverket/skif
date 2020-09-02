@@ -5,6 +5,7 @@ import no.statkart.skif.domain.EqualityByFields;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -81,7 +82,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
     @SuppressWarnings("SimplifiableIfStatement")
     public final boolean equals(Object object) {
        if( this == object ) return true;
-       if( object == null || !(object instanceof AbstractBubbleObject) ) return false;
+       if( !(object instanceof AbstractBubbleObject) ) return false;
        if( !this.getClass().equals(object.getClass()) ) return false;
        final AbstractBubbleObject bubbleObject = (AbstractBubbleObject) object;
        if( this.getId() == null || bubbleObject.getId() == null ) return false;
@@ -89,13 +90,13 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
     }
 
     public final int hashCode() {
-       return (getId() != null ? getId().hashCode() : 0);
+       return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() +"{" +
-                "id=" + id +
+        return getClass().getSimpleName() + '{' +
+                "id=" + getId() +
                 '}';
     }
 }
