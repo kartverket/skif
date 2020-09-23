@@ -27,17 +27,17 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh "gradlew clean assemble ${GRADLE_ARGS}"
+                sh "./gradlew clean assemble ${GRADLE_ARGS}"
             }
         }
         stage('Test') { 
             steps {
-                sh "gradlew dbInit check ${GRADLE_ARGS}"
+                sh "./gradlew dbInit check ${GRADLE_ARGS}"
             }
         }
         stage('Deploy') { 
             steps {
-                sh "gradlew uploadArchives ${GRADLE_ARGS}"
+                sh "./gradlew uploadArchives ${GRADLE_ARGS}"
             }
         }
     }
