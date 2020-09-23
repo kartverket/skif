@@ -8,7 +8,7 @@ pipeline {
         GRADLE_OPTS = '-Dorg.gradle.daemon=false'
         GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
         SKIF_VERSION = "${env.BRANCH_NAME}-build${BUILD_NUMBER}"
-        GRADLE_ARGS = "-Pversion=$SKIF_VERSION -Pdb_hostname=nnridb161.stakart.no -Pdb_service=MA02TST.statkart.no -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Pusername=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Ppassword=JENKINS_SKIF_${env.EXECUTOR_NUMBER}"
+        GRADLE_ARGS = "-Pversion=$SKIF_VERSION -Pdb_hostname=nnridb161.statkart.no -Pdb_service=MA02TST.statkart.no -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Pusername=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Ppassword=JENKINS_SKIF_${env.EXECUTOR_NUMBER}"
         TEMPCRED = credentials('NEXUS_RELEASE_CREDENTIAL')
         REPO_UPLOAD_RELEASES = 'https://nexus.statkart.no/repository/releases/'
         REPO_UPLOAD_RELEASES_USERNAME = "${env.TEMPCRED_USR}"
