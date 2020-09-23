@@ -7,7 +7,7 @@ pipeline {
     environment {
         GRADLE_OPTS = '-Dorg.gradle.daemon=false'
         GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
-        GRADLE_ARGS = "-Pbase_version=${env.BRANCH_NAME} -Psub_version=-build$BUILD_NUMBER -Pdb_hostname=nnridb161.statkart.no -Pdb_service==MA02TST.statkart.no -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Pusername=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Ppassword=JENKINS_SKIF_${env.EXECUTOR_NUMBER}"
+        GRADLE_ARGS = "-Pbase_version=${env.BRANCH_NAME} -Psub_version=-build$BUILD_NUMBER -Pdb_hostname=nnridb161.statkart.no -Pdb_service=MA02TST.statkart.no -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Pusername=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Ppassword=JENKINS_SKIF_${env.EXECUTOR_NUMBER}"
 
         //for publisering til sentralt maven repo bines opp via jenkins credential (secret text)
         MAVEN_PUBLISH = credentials('MAVEN_DEPLOY_RELEASE_CANDIDATE')
