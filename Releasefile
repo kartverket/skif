@@ -15,7 +15,7 @@ pipeline {
         GRADLE_OPTS = '-Dorg.gradle.daemon=false'
         GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
         SKIF_VERSION = "${env.BRANCH_NAME}.${params.SUBVERSION}"
-        GRADLE_ARGS = "-Pversion=$SKIF_VERSION -Pdb_hostname=nnridb097 -Pdb_service=MA04TST.statkart.no -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Pusername=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Ppassword=JENKINS_SKIF_${env.EXECUTOR_NUMBER}"
+        GRADLE_ARGS = "-Pversion=$SKIF_VERSION -Pdb_hostname=nnridb161.statkart.no -Pdb_service=MA02TST.statkart.no -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Pusername=JENKINS_SKIF_${env.EXECUTOR_NUMBER} -Ppassword=JENKINS_SKIF_${env.EXECUTOR_NUMBER}"
 
         //for publisering til sentralt maven repo bines opp via jenkins credential (secret text)
         MAVEN_PUBLISH = credentials('MAVEN_DEPLOY_RELEASES')
@@ -26,12 +26,12 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh "gradlew clean assemble ${GRADLE_ARGS}"
+                sh "./gradlew clean assemble ${GRADLE_ARGS}"
             }
         }
         stage('Test') { 
             steps {
-                sh "gradlew dbInit check ${GRADLE_ARGS}"
+                sh "./gradlew dbInit check ${GRADLE_ARGS}"
             }
         }
         stage('Deploy') { 
