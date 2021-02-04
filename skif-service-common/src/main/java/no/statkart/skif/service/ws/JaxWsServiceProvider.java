@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
+import no.statkart.skif.service.HttpRequestAuthenticationOverride;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;
 
@@ -23,6 +24,10 @@ public class JaxWsServiceProvider<S> implements Provider<S> {
     private final LoginUserHolder loginUserHolder;
     private final ServerUrlHolder serverUrlHolder;
 
+    @Inject(optional = true)
+    @Nullable
+    private HttpRequestAuthenticationOverride httpRequestAuthenticationOverride = null;
+
     @Inject
     public JaxWsServiceProvider(TypeLiteral<S> type, LoginUserHolder loginUserHolder, ServerUrlHolder serverUrlHolder, @Nullable HostnameVerifier hostnameVerifier) {
         this.type = type;
@@ -35,7 +40,7 @@ public class JaxWsServiceProvider<S> implements Provider<S> {
     @Override
     public S get() {
         final String webServiceContextPath = pool.getWebServiceContextPath();
-        final JaxWsRequestContextProxyHandler<S> jaxWsRequestContextProxyHandler = new JaxWsRequestContextProxyHandler<S>(pool, loginUserHolder, serverUrlHolder, webServiceContextPath);
+        final JaxWsRequestContextProxyHandler<S> jaxWsRequestContextProxyHandler = new JaxWsRequestContextProxyHandler<S>(pool, loginUserHolder, serverUrlHolder, httpRequestAuthenticationOverride, webServiceContextPath);
         final S jaxWsInstanceWithProxy = jaxWsRequestContextProxyHandler.buildProxy(type);
         return jaxWsInstanceWithProxy;
     }
