@@ -11,16 +11,23 @@ configurations {
 }
 
 dependencies {
+    implementation enforcedPlatform(project(':skif-internal-platform'))
+
     implementation project(':skif-store-server')
     implementation project(':skif-store-test:skif-store-test-api')
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
-    provided libraries.jee
+    provided 'javax.xml.ws:jaxws-api'
 
     originalSchemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
 }
 
+// Senere versjoner av JAXB har en asymetri-bug når det gjelder enums. Java-koden generert av XJC fra bruk av en
+// enumerations, mapper ikke tilbake til bruke av en enumeration, men en ren xs:string.
+// Må derfor bytte ut skjemaene generert i forbindelse med WSDL-generering med de opprinnelige for namespacet.
+// Dette løser også problemer som oppstår fordi hver WSDL genereres skjema for sitt subset av namespace. Spesielt
+// at package-info.java kan bli overskrevet av en som ikke innholder elementFormDefault.
 customizeWsdls {
     dependsOn genWsdls
     generatedWsdlAndSchemaFiles files(tasks.genWsdls.destinationDir).asFileTree.matching {
@@ -49,7 +56,6 @@ customizeWsdls {
 zipCustomizedWsdls {
     archiveClassifier = 'wsdls'
 }
-
 
 war {
     // Skinny war

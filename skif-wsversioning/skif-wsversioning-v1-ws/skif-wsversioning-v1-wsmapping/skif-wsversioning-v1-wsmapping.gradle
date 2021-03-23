@@ -1,15 +1,8 @@
 plugins {
     id 'java-library'
-    id 'sktools.provided'
 }
 
 dependencies {
     api project(':skif-wsversioning:skif-wsversioning-api')
-    provided project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsschema')
-
-    testImplementation project(':skif-testsupport-common')
-
-    //internal dependencies + optional deps to logging frameworks:
-    testImplementation project(':skif-config')
-
+    compileOnly project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsschema')
 }

@@ -1,4 +1,5 @@
 plugins {
+    id 'java-base' // For at platform skal virke, selv transitivt.
     id 'ear'
     id 'sktools.weblogic-deploy'
 }

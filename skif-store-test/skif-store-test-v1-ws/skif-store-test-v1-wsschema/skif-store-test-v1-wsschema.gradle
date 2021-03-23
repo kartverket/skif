@@ -4,23 +4,27 @@ plugins {
 }
 
 configurations {
+    // Senere versjoner av JAXB har en asymetri-bug når det gjelder enums. Java-koden generert av XJC fra bruk av en
+    // enumerations, mapper ikke tilbake til bruke av en enumeration, men en ren xs:string.
+    // Må derfor bytte ut skjemaene generert i forbindelse med WSDL-generering med de opprinnelige for namespacet.
+    // Dette løser også problemer som oppstår fordi hver WSDL genereres skjema for sitt subset av namespace. Spesielt
+    // at package-info.java kan bli overskrevet av en som ikke innholder elementFormDefault.
     schemas {
         description = 'Configuration for publishing schemas'
     }
 }
 
 sourceSets {
-  main {
-    xjc {
-      schema {
-        srcDir 'src/main/schema'
-        getWithSkDoc from: 'no.statkart.skif.storetest.wsapi.domain', to: 'no.statkart.skif.teststore.domain'
-      }
+    main {
+        xjc {
+            schema {
+                srcDir 'src/main/schema'
+                getWithSkDoc from: 'no.statkart.skif.storetest.wsapi.domain', to: 'no.statkart.skif.teststore.domain'
+            }
+        }
+        resources.srcDirs = []
     }
-    resources.srcDirs = []
-  }
 }
-
 
 task zipSchemas(type: Zip) {
     archiveClassifier = 'schemas'

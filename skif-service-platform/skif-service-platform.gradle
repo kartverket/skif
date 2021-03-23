@@ -1,0 +1,41 @@
+plugins {
+    id 'java-platform'
+    id 'maven-publish'
+}
+
+javaPlatform {
+    // Kun for å arve andre platformer!
+    allowDependencies()
+}
+
+dependencies {
+    // Må tvinge guava-versjon før guice kommer med sin.
+    // Før oppgradering, sjekk kompatibilitet med Guice.
+    api enforcedPlatform('com.google.guava:guava-bom:27.1-jre')
+    // Ved oppgradering, sjekk om den krever en nyere Guava enn den over.
+    api enforcedPlatform('com.google.inject:guice-bom:4.2.2')
+
+    constraints {
+        api "org.slf4j:slf4j-api:${SLF4J_VERSION}"
+
+        // Dette er basert på Java EE 6. Dessverre virker ikke javax.javaee-api:6.0 for testing, fordi det er gjort noe
+        // rart med class-filene.
+        api 'javax.annotation:javax.annotation-api:1.2' // Egentlig 1.1, men jeg finner ingen nøytral jar-fil med den versjonen, og WebLogic 12.1.3 inneholder 1.2 (versjon 1.1)
+        api 'javax.servlet:javax.servlet-api:3.0.1'
+        api 'javax.transaction:jta:1.1'
+        api 'javax.ejb:ejb-api:3.0' // Egentlig 3.1, men jeg finner ingen jar-fil med den versjonen. Endringene er kanskje bare i implementasjonen?
+        // Spesifikasjonen sier bare at JAXB og JAX-WS skal være versjon 2.2
+        api "javax.xml.bind:jaxb-api:${JAXB_VERSION}"
+        api "javax.xml.ws:jaxws-api:${JAXWS_VERSION}"
+
+        api "joda-time:joda-time:${JODATIME_VERSION}" //weblogic 12.1.3 bruker joda-time:1.2.1
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}

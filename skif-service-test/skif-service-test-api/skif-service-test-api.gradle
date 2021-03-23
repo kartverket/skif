@@ -3,8 +3,12 @@ plugins {
 }
 
 dependencies {
-    api project(':skif-service-common')
-    api libraries.jodatime
+    api(project(':skif-service-common'))
+    api(project(':skif-service-common')) {
+        capabilities {
+            requireCapability("no.statkart.skif:skif-service-common-jodatime-support")
+        }
+    }
 
     testImplementation project(':skif-testsupport-common')
 

@@ -9,8 +9,6 @@ configurations {
 
 dependencies {
     wsdls project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wswar', configuration: 'wsdls')
-
-    implementation libraries.jaxws_rt
 }
 
 // https://discuss.gradle.org/t/right-way-to-copy-contents-from-dependency-archives/7449/13

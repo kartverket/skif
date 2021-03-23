@@ -1,4 +1,4 @@
-if (!['5.6.2'].findAll { gradle.gradleVersion == it }) {
+if (!['6.8.3'].findAll { gradle.gradleVersion == it }) {
     logger.warn "WARNING: Du benytter en annen versjon av Gradle enn hva byggesystemet er testet med: ${gradle.gradleVersion}"
 }
 
@@ -51,44 +51,10 @@ subprojects { Project project ->
         delete 'gen'
     }
 
-    def filterTestGroup = { Test test = test, String group, String value ->
-        test.with {
-            if (testFramework.class.simpleName == 'TestNGTestFramework') {
-                if (value == 'INCLUDE') {
-                    testFramework.options.includeGroups group
-                    test.doFirst { logger.quiet "${test.name} configuration: including group '${group}'" }
-                } else if (value == 'EXCLUDE') {
-                    testFramework.options.excludeGroups group
-                    test.doFirst { logger.quiet "${test.name} configuration: excluding group '${group}'" }
-                } else if (value == 'EXCLUDE_WHEN_NO_INCLUDES') {
-                    project.afterEvaluate {
-                        if (testFramework.options.includeGroups.isEmpty()) {
-                            testFramework.options.excludeGroups group
-                            test.doFirst { logger.quiet "${test.name} configuration: excluding group '${group}'" }
-                        } else {
-//                            logMessageWhenTask test "${test.name} configuration: ignoring group '${group}'"
-                        }
-                    }
-                } else {
-                    assert value == 'IGNORED' //feil ved ikke gyldig verdi for filtrering av tester
-                }
-            } else {
-                test.doFirst { logger.warn "${test.name} configuration: unable to configure groups('${group}') for ${testFramework.class.simpleName}" }
-            }
-        }
-    }
-
-
     plugins.withType(JavaPlugin) {
-        // Avhengigheter som trengs for testing (riktignok ikke alle overalt)
-        project.dependencies {
-            testImplementation libraries.testng
-            testImplementation libraries.mockito
-            testImplementation libraries.assertj
-
-            apiElements libraries.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
+        test {
+            ignoreFailures = System.getProperty('ignoreFailures', 'false') == 'true' //Gradle feiler ikke dersom denne er true.
         }
-
 
         /**
          * Testing via TestNG grupper. Se bruk av @Test(groups = "") i koden.
@@ -112,59 +78,88 @@ subprojects { Project project ->
          *
          * --info gir verbos logging av hvilke grupper som faktisk blir inkludert og ekskludert.
          */
-        test {
-            ignoreFailures = System.getProperty('ignoreFailures', 'false') == 'true' //Gradle feiler ikke dersom denne er true.
+
+        dependencies {
+            testImplementation('org.testng:testng:6.14.3') {
+                exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
+            }
+        }
+
+        def filterTestGroup = { Test test = test, String group, String value ->
+            test.with {
+                if (testFramework.class.simpleName == 'TestNGTestFramework') {
+                    if (value == 'INCLUDE') {
+                        testFramework.options.includeGroups group
+                        test.doFirst { logger.quiet "${test.name} configuration: including group '${group}'" }
+                    } else if (value == 'EXCLUDE') {
+                        testFramework.options.excludeGroups group
+                        test.doFirst { logger.quiet "${test.name} configuration: excluding group '${group}'" }
+                    } else if (value == 'EXCLUDE_WHEN_NO_INCLUDES') {
+                        project.afterEvaluate {
+                            if (testFramework.options.includeGroups.isEmpty()) {
+                                testFramework.options.excludeGroups group
+                                test.doFirst { logger.quiet "${test.name} configuration: excluding group '${group}'" }
+                            } else {
+//                            logMessageWhenTask test "${test.name} configuration: ignoring group '${group}'"
+                            }
+                        }
+                    } else {
+                        assert value == 'IGNORED' //feil ved ikke gyldig verdi for filtrering av tester
+                    }
+                } else {
+                    test.doFirst { logger.warn "${test.name} configuration: unable to configure groups('${group}') for ${testFramework.class.simpleName}" }
+                }
+            }
+        }
+
+        project.tasks.withType(Test) { Test test ->  //felles for alle test-tasks
+            def singleVm = rootProject.ext.properties['service_mode'] == 'SINGLE_VM'
+            def server = rootProject.ext.properties['service_mode'] == 'JEE'
+            logger.debug "single_vm is set to ${singleVm} for ${project.path}"
+            logger.debug "server is set to ${server} for ${project.path}"
+
+            useTestNG() {  //benytter kun TestNG over alt
+//            listeners << 'org.uncommons.reportng.HTMLReporter' // Gradles innebygde rapport viser ikke skipped
+                listeners << 'org.testng.reporters.XMLReporter' // For Jenkins, siden Gradle 1.4+ ikke tar med default listeners som standard lenger
+            }
 
             def filterSlowTests = System.getProperty('filterSlowTests', 'EXCLUDE_WHEN_NO_INCLUDES').toUpperCase() //gruppen kan kombineres med andre
             def filterOracleLatest = System.getProperty('filterOracleLatest', 'EXCLUDE').toUpperCase()
 
-            filterTestGroup(it, 'slow', filterSlowTests)
-            filterTestGroup(it, 'oracleLatest', filterOracleLatest) // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
+            filterTestGroup(test, 'slow', filterSlowTests)
+            filterTestGroup(test, 'oracleLatest', filterOracleLatest) // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
 
             jvmArgs '-Xmx1024m'
             testLogging.showStandardStreams = true
 
             inputs.property 'excludedGroups', testFramework.options.includeGroups //trigger re-kjøring av test ved endring av grupper
             inputs.property 'includedGroups', testFramework.options.excludeGroups //trigger re-kjøring av test ved endring av grupper
-        }
-    }
 
-    project.tasks.withType(Test) { Test test ->  //felles for alle test-tasks
-        def singleVm = rootProject.ext.properties['service_mode'] == 'SINGLE_VM'
-        def server = rootProject.ext.properties['service_mode'] == 'JEE'
-        logger.debug "single_vm is set to ${singleVm} for ${project.path}"
-        logger.debug "server is set to ${server} for ${project.path}"
+            filterTestGroup(test, 'broken', 'EXCLUDE')
+            filterTestGroup(test, 'singlevm-required', singleVm ? 'IGNORED' : 'EXCLUDE')
+            filterTestGroup(test, 'server-required', server ? 'IGNORED' : 'EXCLUDE')
 
-        useTestNG() {  //benytter kun TestNG over alt
-//            listeners << 'org.uncommons.reportng.HTMLReporter' // Gradles innebygde rapport viser ikke skipped
-            listeners << 'org.testng.reporters.XMLReporter' // For Jenkins, siden Gradle 1.4+ ikke tar med default listeners som standard lenger
-        }
-
-        filterTestGroup(test, 'broken', 'EXCLUDE')
-        filterTestGroup(test, 'singlevm-required', singleVm ? 'IGNORED' : 'EXCLUDE')
-        filterTestGroup(test, 'server-required', server ? 'IGNORED' : 'EXCLUDE')
-
-        systemProperties "org.uncommons.reportng.stylesheet": "${project.rootProject.file('all/test/report/reportng-1.1.3/stylesheets/hudsonesque.css')}"
-        systemProperties "org.uncommons.reportng.title": "${project.name} Report"
+            systemProperties "org.uncommons.reportng.stylesheet": "${project.rootProject.file('all/test/report/reportng-1.1.3/stylesheets/hudsonesque.css')}"
+            systemProperties "org.uncommons.reportng.title": "${project.name} Report"
 
 
-        inputs.property 'singleVm', singleVm //trigger re-kjøring av test ved endring av parameter
+            inputs.property 'singleVm', singleVm //trigger re-kjøring av test ved endring av parameter
 
-        if (rootProject.hasProperty('test.remote.debug')) {
-            jvmArgs '-Xdebug'
-            jvmArgs '-Xnoagent'
-            jvmArgs '-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y'
-        }
+            if (rootProject.hasProperty('test.remote.debug')) {
+                jvmArgs '-Xdebug'
+                jvmArgs '-Xnoagent'
+                jvmArgs '-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y'
+            }
 
-        //listening to test execution events
-        afterTest { descriptor, result ->
-            logger.lifecycle("${result.toString() == 'SUCCESS' ? ' Successfully tested' : 'Failed testing'} : ${descriptor.className}#${descriptor.name}")
-            if (result.resultType.name() == 'FAILURE') {
-                logger.error("${result.exception}")
+            //listening to test execution events
+            afterTest { descriptor, result ->
+                logger.lifecycle("${result.toString() == 'SUCCESS' ? ' Successfully tested' : 'Failed testing'} : ${descriptor.className}#${descriptor.name}")
+                if (result.resultType.name() == 'FAILURE') {
+                    logger.error("${result.exception}")
+                }
             }
         }
     }
-
 
     project.idea.module {
         // Får Idea til å legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)

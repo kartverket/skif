@@ -1,0 +1,31 @@
+plugins {
+    id 'java-platform'
+    id 'maven-publish'
+}
+
+javaPlatform {
+    // Kun for å arve andre platformer!
+    allowDependencies()
+}
+
+dependencies {
+    api enforcedPlatform(project(':skif-service-platform'))
+
+    constraints {
+        api 'no.statkart.skif:skif-bubble-spi:1.0.0'
+
+        api "com.oracle.database.jdbc:ojdbc8:${OJDBC8_VERSION}"
+
+        api 'no.statkart.skif:skif-hibernate-support:1.0.2'
+        api 'org.hibernate:hibernate-core:5.3.5.Final.bubbleref.3'
+        api 'org.jboss.logging:jboss-logging:3.3.2.Final' // hibernate-core vil ha denne, mens hibernate-commons-annotations vil ha 3.3.1.Final
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}

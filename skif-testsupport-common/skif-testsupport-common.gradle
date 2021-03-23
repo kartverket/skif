@@ -3,21 +3,27 @@ plugins {
     id 'maven-publish'
 }
 
-dependencies {
-    api project(':skif-service-common')
-    api libraries.testng
+java {
+    withSourcesJar()
 }
 
-task sourcesJar(type: Jar, dependsOn:classes) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
+dependencies {
+    api enforcedPlatform(project(':skif-service-platform'))
+
+    api project(':skif-service-common')
+    api('org.testng:testng:6.14.3') {
+        exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
+    }
+
+    testImplementation enforcedPlatform(project(':skif-internal-platform'))
+
+    testImplementation 'org.assertj:assertj-core'
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact sourcesJar
         }
     }
 }

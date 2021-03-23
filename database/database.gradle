@@ -12,7 +12,8 @@ def filterProperties = [
 ]
 
 configureDatabasePlugin {
-    useDrivers libraries.ojdbc
+    useDrivers dependencies.platform(project(':skif-internal-platform'))
+    useDrivers libraries.jdbc
 
     toolset(name: '', type: 'oracle', prefix: '') {
         sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')

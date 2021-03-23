@@ -1,33 +1,51 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'sktools.provided'
 }
 
 description = 'Inneholder service-rammeverk klasser for tjener'
 
-dependencies {
-    api project(':skif-service-common')
-
-    provided libraries.jee
-    provided libraries.c3p0 // er kun brukt for intern testfunksjonalitet - burde kanskje ligge et annet sted
-
-    testImplementation project(':skif-config')
-    testImplementation project(':skif-testsupport-common')
-    testImplementation project(path: ':skif-service-common', configuration: 'testApi')
-    testImplementation libraries.jdbc
+java {
+    withSourcesJar()
 }
 
-task sourcesJar(type: Jar, dependsOn:classes) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
+configurations {
+    // Vil ja JEE-greiene i test runtime
+    testImplementation.extendsFrom compileOnlyApi
+}
+
+dependencies {
+    api enforcedPlatform(project(':skif-service-platform'))
+
+    api project(':skif-service-common')
+
+    compileOnlyApi 'javax.annotation:javax.annotation-api'
+    compileOnlyApi 'javax.servlet:javax.servlet-api'
+    compileOnlyApi 'javax.transaction:jta'
+    compileOnlyApi 'javax.ejb:ejb-api'
+
+    compileOnly enforcedPlatform(project(':skif-internal-platform'))
+    compileOnly 'com.mchange:c3p0' // er kun brukt for intern testfunksjonalitet - burde kanskje ligge et annet sted
+    compileOnly 'com.google.code.findbugs:jsr305'
+
+    testImplementation enforcedPlatform(project(':skif-internal-platform'))
+    testImplementation project(':skif-config')
+    testImplementation project(':skif-testsupport-common')
+    testImplementation(project(':skif-service-common')) {
+        capabilities {
+            requireCapability("no.statkart.skif:skif-service-common-test")
+        }
+    }
+    testImplementation libraries.jdbc
+    testImplementation 'com.mchange:c3p0'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.assertj:assertj-core'
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact sourcesJar
         }
     }
 }

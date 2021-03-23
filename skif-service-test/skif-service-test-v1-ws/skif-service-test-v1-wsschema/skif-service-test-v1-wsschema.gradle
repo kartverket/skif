@@ -1,17 +1,16 @@
 plugins {
-  id 'java'
-  id 'sktools.xjc'
+    id 'java'
+    id 'sktools.xjc'
 }
 
 sourceSets {
-  main {
-    xjc {
-      schema {
-        srcDir 'src/main/schema'
-        getWithSkDoc from: 'no.statkart.skif.skiftest.wsapi.domain', to: 'no.statkart.skif.skiftest.domain'
-      }
+    main {
+        xjc {
+            schema {
+                srcDir 'src/main/schema'
+                getWithSkDoc from: 'no.statkart.skif.skiftest.wsapi.domain', to: 'no.statkart.skif.skiftest.domain'
+            }
+        }
+        resources.srcDirs = []
     }
-    resources.srcDirs = []
-  }
 }
-

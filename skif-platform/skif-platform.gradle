@@ -1,0 +1,31 @@
+plugins {
+    id 'java-platform'
+    id 'maven-publish'
+}
+
+javaPlatform {
+    // Kun for å arve andre platformer!
+    allowDependencies()
+}
+
+dependencies {
+    api enforcedPlatform(project(':skif-service-platform'))
+    api enforcedPlatform(project(':skif-store-platform'))
+
+    constraints {
+        api project(':skif-service-common')
+        api project(':skif-testsupport-common')
+        api project(':skif-service-server')
+
+        api project(':skif-store-common')
+        api project(':skif-store-server')
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}

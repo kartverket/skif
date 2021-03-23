@@ -1,6 +1,5 @@
 plugins {
     id 'sktools.wsgen'
-    id 'sktools.provided'
 }
 
 configurations {
@@ -13,8 +12,6 @@ dependencies {
     implementation project(':skif-wsversioning:skif-wsversioning-server')
     implementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsschema')
     implementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsmapping')
-
-    provided libraries.jee
 }
 
 war {

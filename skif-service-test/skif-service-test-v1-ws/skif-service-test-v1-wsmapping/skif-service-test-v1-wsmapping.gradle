@@ -7,10 +7,11 @@ dependencies {
     implementation project(':skif-service-test:skif-service-test-api')
     provided project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
+    testImplementation enforcedPlatform(project(':skif-internal-platform'))
+
     testImplementation project(':skif-testsupport-common')
-    testImplementation libraries.unitils //optional library for testing
+    testImplementation 'org.unitils:unitils-core'
 
     //internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
-
 }

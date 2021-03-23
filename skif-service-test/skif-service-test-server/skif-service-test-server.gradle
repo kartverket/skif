@@ -1,15 +1,10 @@
 plugins {
     id 'java-library'
-    id 'sktools.provided'
 }
 
 dependencies {
     api project(':skif-service-server')
     api project(':skif-service-test:skif-service-test-api')
-
-    provided libraries.jee
-    provided libraries.c3p0
-    provided libraries.jdbc
 
     testImplementation project(':skif-testsupport-common')
 

@@ -5,47 +5,58 @@ plugins {
 
 description = 'Inneholder service-rammeverk klasser for klient'
 
-configurations {
-    testApi
+java {
+    registerFeature('jodatimeSupport') {
+        usingSourceSet(sourceSets.main)
+    }
+
+    // TODO: Skill det testene bruker fra selve testene
+    registerFeature('test') {
+        usingSourceSet(sourceSets.test)
+    }
+
+    withSourcesJar()
 }
 
 dependencies {
-    api libraries.slf4j_api
-    api libraries.jsr305
-    api libraries.guice
-    api libraries.guava //pga TypeToken
+    api enforcedPlatform(project(':skif-service-platform'))
 
-    implementation libraries.guice_multibindings
-    implementation libraries.guava
-    implementation libraries.jodatime
-    compileOnly libraries.jaxws_api
+    api 'org.slf4j:slf4j-api'
+    api 'com.google.inject:guice'
+    api 'com.google.guava:guava' //pga TypeToken
 
-    testImplementation libraries.reflections
+    compileOnlyApi 'javax.xml.ws:jaxws-api'
+
+    compileOnly 'com.google.code.findbugs:jsr305'
+
+
+    jodatimeSupportApi enforcedPlatform(project(':skif-service-platform'))
+
+    jodatimeSupportApi 'joda-time:joda-time'
+
+
+    testApi enforcedPlatform(project(':skif-internal-platform'))
+
+    testImplementation 'org.reflections:reflections'
+    testImplementation 'org.assertj:assertj-core'
 }
 
-task testJar(type: Jar) {
-    archiveClassifier = 'tests'
-    from sourceSets.test.output
-}
-
-task sourcesJar(type: Jar, dependsOn:classes) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    testApi testJar
+components.java {
+    // Disse skal bare brukes internt
+    withVariantsFromConfiguration(configurations.testApiElements) {
+        skip()
+    }
+    withVariantsFromConfiguration(configurations.testRuntimeElements) {
+        skip()
+    }
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact sourcesJar
-
-            pom.withXml {
-                asNode().dependencies.dependency.findAll { 'joda-time' == it.artifactId.text() }.each { it.appendNode('optional', 'true') } //optional avhengighet for joda-time [SKIF-472]
-            }
+            suppressPomMetadataWarningsFor('jodatimeSupportApiElements')
+            suppressPomMetadataWarningsFor('jodatimeSupportRuntimeElements')
         }
     }
 }
@@ -59,7 +70,6 @@ task assertDependencies() {
                     'com.google.code.findbugs:jsr305',
                     'com.google.inject:guice',
                     'com.google.guava:guava',
-                    'com.google.inject.extensions:guice-',
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
 
             if (!godkjent) {
@@ -68,5 +78,4 @@ task assertDependencies() {
         }
     }
 }
-test.dependsOn assertDependencies //kjøres som en test
-
+check.dependsOn assertDependencies

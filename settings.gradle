@@ -1,5 +1,5 @@
 pluginManagement {
-    def SKTOOLS_VERSION = '5.2'
+    def SKTOOLS_VERSION = '5.4.2'
 
     plugins {
         id 'sktools.dbtools' version "$SKTOOLS_VERSION"
@@ -26,6 +26,9 @@ pluginManagement {
 include ':database'
 
 include ':skif-config'
+include ':skif-internal-platform'
+
+include ':skif-service-platform'
 include ':skif-service-common'
 include ':skif-testsupport-common'
 include ':skif-service-server'
@@ -38,16 +41,17 @@ include ':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsclien
 include ':skif-service-test:skif-service-test-test'
 include ':skif-service-test:skif-service-test-ear'
 
+include ':skif-store-platform'
 include ':skif-store-common'
 include ':skif-store-server'
 
 include ':skif-store-test:skif-store-test-api'
 include ':skif-store-test:skif-store-test-server'
-include ':skif-store-test:skif-store-test-test'
 include ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema'
 include ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping'
 include ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wswar'
 include ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient'
+include ':skif-store-test:skif-store-test-test'
 include ':skif-store-test:skif-store-test-ear'
 
 include ':skif-wsversioning:skif-wsversioning-api'
@@ -64,6 +68,8 @@ include ':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar'
 include ':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsclient'
 include ':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-test'
 include ':skif-wsversioning:skif-wsversioning-ear'
+
+include ':skif-platform'
 
 
 rootProject.name = 'skif'
@@ -85,7 +91,7 @@ gradle.afterProject { project ->
     project.tasks.withType(Wrapper) {
         doFirst {
             // Company wide download service
-            distributionUrl = uri("http://devbin.statkart.no:8070/gradle/dists/gradle-${gradleVersion}-all.zip")
+            distributionUrl = uri("https://devbin.statkart.no/gradle/dists/gradle-${gradleVersion}-all.zip")
             jarFile = gradle.rootProject.file('gradle/wrapper/gradle-wrapper.jar')
             scriptFile = gradle.rootProject.file('gradlew')
         }

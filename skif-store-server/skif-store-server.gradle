@@ -1,40 +1,53 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'sktools.provided'
+}
+
+java {
+    registerFeature('jodatimeSupport') {
+        usingSourceSet(sourceSets.main)
+    }
+
+    registerFeature('oracleSupport') {
+        usingSourceSet(sourceSets.main)
+    }
+
+    withSourcesJar()
+}
+
+configurations {
+    // Vil ja JEE-greiene i test runtime
+    testImplementation.extendsFrom compileOnlyApi
 }
 
 dependencies {
+    api enforcedPlatform(project(':skif-store-platform'))
+
     api project(':skif-store-common')
     api project(':skif-service-server')
-    api libraries.guava //pga Multimap
-    api libraries.hibernate
+    api 'com.google.guava:guava' //pga Multimap
+    api 'no.statkart.skif:skif-hibernate-support'
+    api 'org.hibernate:hibernate-core'
 
-    provided libraries.jee
+    jodatimeSupportApi enforcedPlatform(project(':skif-store-platform'))
+    jodatimeSupportApi 'joda-time:joda-time'
 
-    implementation libraries.jodatime
-    implementation libraries.jdbc //provided
-    implementation libraries.hibernate
+    oracleSupportApi enforcedPlatform(project(':skif-store-platform'))
+    oracleSupportApi libraries.jdbc
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
-}
-
-task sourcesJar(type: Jar, dependsOn:classes) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact sourcesJar
 
-            pom.withXml {
-                asNode().dependencies.dependency.findAll { 'joda-time' == it.artifactId.text() }.each { it.appendNode('optional', 'true') } //optional avhengighet for joda-time [SKIF-472]
-                asNode().dependencies.dependency.findAll { 'com.oracle.jdbc' == it.groupId.text() }.each { it.appendNode('optional', 'true'); it.scope[0].value = 'provided'} //optional, provided avhengighet for jdbc drivere - kan brukes for singleVm [SKIF-472]
-            }
+            suppressPomMetadataWarningsFor('jodatimeSupportApiElements')
+            suppressPomMetadataWarningsFor('jodatimeSupportRuntimeElements')
+            suppressPomMetadataWarningsFor('oracleSupportApiElements')
+            suppressPomMetadataWarningsFor('oracleSupportRuntimeElements')
         }
     }
 }

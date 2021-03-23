@@ -10,12 +10,14 @@ configurations {
 }
 
 dependencies {
+    implementation enforcedPlatform(project(':skif-internal-platform'))
+
     implementation project(':skif-service-server')
     implementation project(':skif-service-test:skif-service-test-api')
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
-    provided libraries.jee
+    provided 'javax.xml.ws:jaxws-api'
 }
 
 war {

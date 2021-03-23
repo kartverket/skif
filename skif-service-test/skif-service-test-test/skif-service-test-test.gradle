@@ -1,24 +1,27 @@
 plugins {
     id 'java'
-    id 'sktools.provided'
 }
 
 dependencies {
-    implementation project(':skif-service-test:skif-service-test-api')
-    implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
-    implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsclient')
+    testImplementation enforcedPlatform(project(':skif-internal-platform'))
 
-    provided libraries.jee
-    provided libraries.c3p0
-    provided libraries.jdbc
+    testImplementation project(':skif-service-test:skif-service-test-api')
+    testImplementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
+    testImplementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsclient')
 
     testImplementation project(':skif-testsupport-common')
     testImplementation project(':skif-service-test:skif-service-test-server') //trenger denne avhengighet for testing av servicer
     testImplementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wswar')
 
     //internal dependencies + optional deps to logging frameworks:
-    testImplementation project(':skif-config')
+    testRuntimeOnly project(':skif-config')
 
-    testImplementation libraries.jaxws_rt
+    testImplementation 'com.sun.xml.ws:jaxws-rt' // Bruker com.sun-spesifikkk property
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.assertj:assertj-core'
 
+    testRuntimeOnly libraries.jdbc
+    testRuntimeOnly 'com.mchange:c3p0:0.9.5.2'
+    testRuntimeOnly 'javax.transaction:jta'
+    testRuntimeOnly 'javax.ejb:ejb-api'
 }

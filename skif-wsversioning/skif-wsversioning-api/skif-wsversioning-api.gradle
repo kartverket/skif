@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
     api project(':skif-store-common')
-    api libraries.guice
 
     testImplementation project(':skif-testsupport-common')
 

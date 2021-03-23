@@ -16,9 +16,11 @@ dependencies {
     api project(':skif-store-test:skif-store-test-api')
     provided project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
+    testImplementation enforcedPlatform(project(':skif-internal-platform'))
+
     testImplementation project(':skif-testsupport-common')
 
     //internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
-
+    testImplementation 'org.assertj:assertj-core'
 }

@@ -5,41 +5,45 @@ plugins {
 
 description = 'Inneholder Store funksjonalitet samt mulighet for remote service kall (via transitiv dependency skif-service-common)'
 
-configurations {
-    testApi
+java {
+    // TODO: Skill det testene bruker fra selve testene
+    registerFeature('test') {
+        usingSourceSet(sourceSets.test)
+    }
+
+    withSourcesJar()
 }
 
 dependencies {
+    api enforcedPlatform(project(':skif-store-platform'))
+
     api project(':skif-service-common')
-    api libraries.bubbleref_spi
-    implementation libraries.guava
+    api 'no.statkart.skif:skif-bubble-spi'
+    implementation 'com.google.guava:guava'
+
+    testApi enforcedPlatform(project(':skif-internal-platform'))
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
 
-    testImplementation libraries.reflections
-
+    testImplementation 'org.reflections:reflections'
+    testImplementation 'org.assertj:assertj-core'
 }
 
-task testJar(type: Jar) {
-    archiveClassifier = 'tests'
-    from sourceSets.test.output
-}
-
-task sourcesJar(type: Jar, dependsOn:classes) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    testApi testJar
+components.java {
+    // Disse skal bare brukes internt
+    withVariantsFromConfiguration(configurations.testApiElements) {
+        skip()
+    }
+    withVariantsFromConfiguration(configurations.testRuntimeElements) {
+        skip()
+    }
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact sourcesJar
         }
     }
 }
@@ -49,11 +53,9 @@ task assertDependencies() {
         configurations.runtimeElements.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
             boolean godkjent = [ //liste over dependencies. For syntax se parsing under..
                     'org.slf4j',
-                    'com.google.code.findbugs:jsr305',
                     'com.google.inject:guice',
                     'com.google.inject.extensions:guice-',
                     'com.google.guava',
-                    'com.vividsolutions:jts',
                     'no.statkart.skif:skif-bubble-spi'
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
 
@@ -63,4 +65,4 @@ task assertDependencies() {
         }
     }
 }
-test.dependsOn assertDependencies //kjøres som en test
+check.dependsOn assertDependencies //kjøres som en test
