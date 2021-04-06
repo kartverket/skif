@@ -35,4 +35,15 @@ allprojects { p ->
             }
         }
     }
+
+    dependencies {
+        modules {
+            module('com.sun.xml.bind:jaxb-impl') {
+                replacedBy('org.glassfish.jaxb:jaxb-runtime', 'New Maven coordinate')
+            }
+            module('com.sun.xml.bind:jaxb-core') {
+                replacedBy('org.glassfish.jaxb:jaxb-runtime', 'New Maven coordinate')
+            }
+        }
+    }
 }

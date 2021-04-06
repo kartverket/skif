@@ -8,11 +8,11 @@ configurations {
 }
 
 dependencies {
-    implementation enforcedPlatform(project(':skif-internal-platform'))
+    runtimeOnly enforcedPlatform(project(':skif-internal-platform'))
 
     wsdls project(path: ':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wswar', configuration: 'wsdls')
 
-    runtimeOnly 'javax.xml.ws:jaxws-api'
+    runtimeOnly 'com.sun.xml.ws:jaxws-rt'
 }
 
 // https://discuss.gradle.org/t/right-way-to-copy-contents-from-dependency-archives/7449/13

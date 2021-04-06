@@ -23,6 +23,8 @@ dependencies {
         api "com.sun.xml.bind:jaxb-core:${JAXB_VERSION}"
         api "com.sun.xml.ws:jaxws-rt:${JAXWS_VERSION}"
         api 'org.jvnet.mimepull:mimepull:1.9.1' // jaxws-rt trekker inn 1.9 direkte og 1.9.1 indirekte
+        api 'org.jvnet.staxex:stax-ex:1.7.8' // jaxws-rt vil trekker inn 1.7.1 indirekte, og hibernate-support 1.7.8 direkte. Lar siste vinne.
+        api 'com.sun.xml.fastinfoset:FastInfoset:1.2.13' // jaxws-rt vil trekker inn 1.2.12 indirekte, og hibernate-support 1.2.13 direkte. Lar siste vinne.
 
         api "com.google.code.findbugs:jsr305:1.3.9"
 
