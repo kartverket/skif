@@ -2,6 +2,8 @@ plugins {
     id 'sktools.dbtools'
 }
 
+System.setProperty('sql.file.encoding', 'windows-1252')
+
 // properties for substituering
 def filterProperties = [
         db_username: db_username,
