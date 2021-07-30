@@ -15,7 +15,6 @@ dependencies {
     api libraries.guice
     api libraries.guava //pga TypeToken
 
-    implementation libraries.guice_multibindings
     implementation libraries.guava
     implementation libraries.jodatime
     compileOnly libraries.jaxws_api
