@@ -19,7 +19,6 @@ gradle-app.setting
 *.war
 *.ear
 
-*.iml
 .idea/
 out/
 classes/
@@ -32,3 +31,6 @@ gradle.properties
 setEnv_personal.cmd
 
 *.log
+
+# jEnv
+/.java-version
