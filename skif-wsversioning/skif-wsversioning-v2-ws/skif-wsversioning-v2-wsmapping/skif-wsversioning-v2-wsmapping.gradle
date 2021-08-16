@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api project(':skif-wsversioning:skif-wsversioning-api')
     provided project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsschema')
+    compileOnly libraries.jaxb_api
 
     testImplementation project(':skif-testsupport-common')
 

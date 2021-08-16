@@ -15,6 +15,7 @@ plugins {
 dependencies {
     api project(':skif-store-test:skif-store-test-api')
     provided project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
+    compileOnly libraries.jaxb_api
 
     testImplementation project(':skif-testsupport-common')
 

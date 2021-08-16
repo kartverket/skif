@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation project(':skif-service-test:skif-service-test-api')
     provided project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
+    compileOnly libraries.jaxb_api
 
     testImplementation project(':skif-testsupport-common')
     testImplementation libraries.unitils //optional library for testing

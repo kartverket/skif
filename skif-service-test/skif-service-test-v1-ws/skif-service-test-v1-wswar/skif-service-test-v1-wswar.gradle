@@ -16,6 +16,7 @@ dependencies {
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
     provided libraries.jee
+    provided libraries.jaxws_rt
 }
 
 war {

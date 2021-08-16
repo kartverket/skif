@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api project(':skif-service-common')
     api libraries.testng
+    compileOnly libraries.jaxws_api
 }
 
 publishing {

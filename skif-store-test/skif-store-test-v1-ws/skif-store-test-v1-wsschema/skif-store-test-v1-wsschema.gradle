@@ -3,6 +3,12 @@ plugins {
     id 'sktools.xjc'
 }
 
+dependencies {
+    // Denne burde egentlig kun legges til classpath som xjc anvender, men vet ikke
+    // hvordan man angir dette for sktools.xjc tasken.
+    implementation libraries.jaxws_rt
+}
+
 configurations {
     schemas {
         description = 'Configuration for publishing schemas'

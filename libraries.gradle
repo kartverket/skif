@@ -60,6 +60,9 @@ ext.libraries = [
 
 ]
 
+// JAXB
+libraries.jaxb_api = "javax.xml.bind:jaxb-api:${JAXB_VERSION}"
+
 // JAXWS
 libraries.jaxws_api = "javax.xml.ws:jaxws-api:${JAXWS_VERSION}" //for kompilering
 libraries.jaxws_rt = [ //for kjøring utenfor container

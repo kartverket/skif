@@ -1,6 +1,7 @@
 package no.statkart.skif.test.guice;
 
 import com.google.inject.*;
+import com.google.inject.Module;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.util.Types;
 import org.testng.annotations.Test;

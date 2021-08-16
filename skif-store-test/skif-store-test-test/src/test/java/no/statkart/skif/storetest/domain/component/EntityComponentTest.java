@@ -91,7 +91,7 @@ public class EntityComponentTest extends StoreTestTestCase {
                 mockupFactory.getWithNullComponentsId(),
                 mockupFactory.getWithNonNullComponentsId2(),
                 mockupFactory.getWithNullLevel2Id());
-        Set<BubbleWithEntityComponent> bubbleWithEntityComponents = store.get(ids);
+        Set<?> bubbleWithEntityComponents = store.get(ids);
         assertEquals(bubbleWithEntityComponents.size(), 4);
     }
 

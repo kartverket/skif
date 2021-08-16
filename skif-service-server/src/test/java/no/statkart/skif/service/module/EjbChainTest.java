@@ -1,6 +1,9 @@
 package no.statkart.skif.service.module;
 
-import com.google.inject.*;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.util.Types;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
