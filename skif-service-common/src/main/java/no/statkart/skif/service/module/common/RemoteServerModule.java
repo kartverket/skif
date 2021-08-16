@@ -80,6 +80,7 @@ public class RemoteServerModule extends ModuleWithStrategy<RemoteServerModuleStr
         bind(ServerUrlHolder.class).to(serverUrlHolderClass);
         bind(serverUrlHolderClass).in(Singleton.class);
 
+        // SnapshotVersionContext har trådlokal verdi og bindes opp som ekte singleton istedet for med ServiceRequest scope
         bind(SnapshotVersionContext.class).toInstance(SnapshotVersionContext.getInstance());
 
         if (hostnameVerifierClass == null) {

@@ -58,7 +58,8 @@ public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy> {
         bind(serviceContextClass).in(ServiceRequestScoped.class);
         bind(Configuration.class).toInstance(moduleConfiguration.getConfiguration());
         bind(ModuleConfiguration.class).toInstance(moduleConfiguration);
-        // SnapshotVersionContext er trådlokal så derfor binnes den opp med Singleton scope istedet for med ServiceRequest scope
+
+        // SnapshotVersionContext har trådlokal verdi og bindes opp som ekte singleton istedet for med ServiceRequest scope
         bind(SnapshotVersionContext.class).toInstance(SnapshotVersionContext.getInstance());
 
         // ServiceMode avhengige bindinger
