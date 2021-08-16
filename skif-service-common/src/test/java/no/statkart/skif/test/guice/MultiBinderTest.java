@@ -1,7 +1,13 @@
 package no.statkart.skif.test.guice;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.util.Types;
 import org.testng.annotations.Test;
@@ -113,7 +119,8 @@ public class MultiBinderTest {
                 bind(TestService.class).to(TestService1.class);
                 final String a= "Test";
                 bind(String.class).toProvider(new Provider<String>() {
-                    @Inject Injector injector;
+                    @Inject
+                    Injector injector;
 
                     @Override
                     public String get() {
