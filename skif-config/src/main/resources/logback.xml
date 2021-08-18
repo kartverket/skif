@@ -25,7 +25,7 @@
     <logger name="no.statkart.skif.service.logging.DefaultClientCallLogger" level="info"/>
 
     <!-- Hibernate logging av sql. Trenger ikke å sette show_sql=true. Sett level til debug -->
-    <logger name="org.hibernate.SQL" level="debug" additivity="true"/>
+    <!-- logger name="org.hibernate.SQL" level="debug" additivity="true"/-->
 
     <!-- Hibernate logging av sql parametre -->
     <!--logger name="org.hibernate.type" level="trace" additivity="true"/>

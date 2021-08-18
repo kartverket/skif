@@ -6,7 +6,8 @@ plugins {
 dependencies {
     // Denne burde egentlig kun legges til classpath som xjc anvender, men vet ikke
     // hvordan man angir dette for sktools.xjc tasken.
-    implementation libraries.jaxws_rt
+    implementation libraries.jaxws_api
+    implementation libraries.jaxb_api
 }
 
 configurations {
