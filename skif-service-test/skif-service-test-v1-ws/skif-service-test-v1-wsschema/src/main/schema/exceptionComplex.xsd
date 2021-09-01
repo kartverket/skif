@@ -137,10 +137,10 @@
     <xs:complexType name="ExceptionDetail">
         <xs:annotation>
             <xs:appinfo>
-                <jaxb:property>
-                    <jaxb:javadoc><![CDATA[                        Informasjon om exception oppstått på server med hirarki, stacktrace mm.
+                <jaxb:class>
+                    <jaxb:javadoc><![CDATA[Informasjon om exception oppstått på server med hirarki, stacktrace mm.
                     ]]></jaxb:javadoc>
-                </jaxb:property>
+                </jaxb:class>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
@@ -187,9 +187,9 @@
     <xs:complexType name="StackTraceElementList">
         <xs:annotation>
             <xs:appinfo>
-                <jaxb:property>
+                <jaxb:class>
                     <jaxb:javadoc><![CDATA[ ]]></jaxb:javadoc>
-                </jaxb:property>
+                </jaxb:class>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
@@ -200,9 +200,9 @@
     <xs:complexType name="StackTraceElement">
         <xs:annotation>
             <xs:appinfo>
-                <jaxb:property>
+                <jaxb:class>
                     <jaxb:javadoc><![CDATA[ ]]></jaxb:javadoc>
-                </jaxb:property>
+                </jaxb:class>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
