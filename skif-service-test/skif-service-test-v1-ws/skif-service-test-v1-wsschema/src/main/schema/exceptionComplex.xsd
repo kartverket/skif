@@ -5,11 +5,9 @@
         targetNamespace="http://skif.statkart.no/skiftest/wsapi/exception/impl"
         xmlns="http://skif.statkart.no/skiftest/wsapi/exception/impl"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
-        xmlns:gdoc="http://grunnbok.statkart.no/tools/gdoc"
         xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-        jaxb:extensionBindingPrefixes="gdoc"
         jaxb:version="2.1"
-        >
+>
 
     <xs:annotation>
         <xs:appinfo>
@@ -25,19 +23,20 @@
 
     <!-- .NET fix -->
     <!-- Elements definition must be hand written and introduced here in order for .NET datacontract generating to work... -->
-        <xs:element name="ServiceException" nillable="true" type="ServiceFaultInfo"/>
+    <xs:element name="ServiceException" nillable="true" type="ServiceFaultInfo"/>
     <!-- .NET end -->
 
 
     <xs:complexType name="ServiceFaultInfo">
         <xs:annotation>
             <xs:appinfo>
-                <gdoc:doc><![CDATA[
+                <jaxb:class>
+                    <jaxb:javadoc><![CDATA[
                         Generell feilmelding for alle hånterte feil ifra systemet.
 
                         For klassifisering av feil, se {@link #category} feltet.
-                    ]]>
-                </gdoc:doc>
+                    ]]></jaxb:javadoc>
+                </jaxb:class>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
@@ -117,7 +116,8 @@
                 <xs:annotation>
                     <xs:appinfo>
                         <jaxb:property>
-                            <jaxb:javadoc><![CDATA[Formatert, komplett, stacktrace som kan innrapporteres. Denne er kun brukt ved {@link SystemException systemfeil}.]]></jaxb:javadoc>
+                            <jaxb:javadoc>
+                                <![CDATA[Formatert, komplett, stacktrace som kan innrapporteres. Denne er kun brukt ved {@link SystemException systemfeil}.]]></jaxb:javadoc>
                         </jaxb:property>
                     </xs:appinfo>
                 </xs:annotation>
@@ -137,10 +137,10 @@
     <xs:complexType name="ExceptionDetail">
         <xs:annotation>
             <xs:appinfo>
-                <gdoc:doc><![CDATA[
-                        Informasjon om exception oppstått på server med hirarki, stacktrace mm.
-                    ]]>
-                </gdoc:doc>
+                <jaxb:property>
+                    <jaxb:javadoc><![CDATA[                        Informasjon om exception oppstått på server med hirarki, stacktrace mm.
+                    ]]></jaxb:javadoc>
+                </jaxb:property>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
@@ -153,7 +153,7 @@
                     </xs:appinfo>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="message" type="xs:string" >
+            <xs:element name="message" type="xs:string">
                 <xs:annotation>
                     <xs:appinfo>
                         <jaxb:property>
@@ -171,11 +171,12 @@
                     </xs:appinfo>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="stackTraceElements" type="StackTraceElementList" >
+            <xs:element name="stackTraceElements" type="StackTraceElementList">
                 <xs:annotation>
                     <xs:appinfo>
                         <jaxb:property>
-                            <jaxb:javadoc><![CDATA[Stacktrace generert ifra system. Denne er kun brukt ved {@link SystemException systemfeil}.]]></jaxb:javadoc>
+                            <jaxb:javadoc>
+                                <![CDATA[Stacktrace generert ifra system. Denne er kun brukt ved {@link SystemException systemfeil}.]]></jaxb:javadoc>
                         </jaxb:property>
                     </xs:appinfo>
                 </xs:annotation>
@@ -186,7 +187,9 @@
     <xs:complexType name="StackTraceElementList">
         <xs:annotation>
             <xs:appinfo>
-                <gdoc:doc><![CDATA[  ]]></gdoc:doc>
+                <jaxb:property>
+                    <jaxb:javadoc><![CDATA[ ]]></jaxb:javadoc>
+                </jaxb:property>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
@@ -197,7 +200,9 @@
     <xs:complexType name="StackTraceElement">
         <xs:annotation>
             <xs:appinfo>
-                <gdoc:doc><![CDATA[  ]]></gdoc:doc>
+                <jaxb:property>
+                    <jaxb:javadoc><![CDATA[ ]]></jaxb:javadoc>
+                </jaxb:property>
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
