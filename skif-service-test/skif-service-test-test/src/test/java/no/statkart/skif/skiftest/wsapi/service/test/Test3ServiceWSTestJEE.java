@@ -87,7 +87,7 @@ public class Test3ServiceWSTestJEE {
                         }
                         final String serverUrl = serverUrlHolder.get();
                         if (serverUrl != null) {
-                            String serviceEndpointUrl = serverUrl + getWebServiceContextPath(Test1ServiceWS.class);
+                            String serviceEndpointUrl = serverUrl + getWebServiceContextPath(Test3ServiceWS.class);
                             bindings.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceEndpointUrl);
                         }
                         if (hostnameVerifier != null) {

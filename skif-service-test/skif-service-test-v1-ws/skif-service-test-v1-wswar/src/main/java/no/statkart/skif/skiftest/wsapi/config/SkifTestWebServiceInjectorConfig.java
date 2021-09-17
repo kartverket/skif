@@ -45,7 +45,7 @@ public class SkifTestWebServiceInjectorConfig implements ServletContextListener 
                 new WSServerModule(configuration, classLoader),
                 addLogging(new WSServerServiceModule(configuration, new SkifTestGroup1Services().getServices(), mapping,classLoader ).setServiceContextMapperClass(SkifTestServiceContextMapper.class)),
                 addLogging(new WSServerServiceModule(configuration, new SkifTestGroup2Services().getServices(), mapping, classLoader)
-                    .setServiceContextMapperClass(SkifTestServiceContextMapper.class)),
+                    .setServiceContextMapperClass(SkifTestServiceContextMapper.class)).setExceptionMapping(new SkifTestSimpleExceptionMapper().getMapping()),
                 addLogging(new WSServerServiceModule(configuration, new SkifTestGroupABCDServices().getServices(), mapping, classLoader)
                         .setExceptionMapping(new SkifTestExceptionMapper().getMapping())),
                 addLogging(new WSServerServiceModule(configuration, new SkifTestGroupExServices().getServices(), mapping, classLoader).
