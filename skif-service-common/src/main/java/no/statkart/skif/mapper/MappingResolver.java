@@ -137,7 +137,7 @@ public class MappingResolver {
      * @throws ClassNotFoundException If a file found in the directory appears to be a class for Class.forName(...) fails
      */
     protected static List<Class> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        List<Class> classes = new ArrayList<Class>();
+        List<Class> classes = new ArrayList<>();
         if (!directory.exists()) {
             return classes;
         }
@@ -146,25 +146,42 @@ public class MappingResolver {
         for (File file : files) {
             String fileName = file.getName();
             if (file.isDirectory()) {
-                assert !fileName.contains(".");
-                classes.addAll(findClasses(file, packageName + "." + fileName));
-            } else if (fileName.endsWith(".class") && !fileName.contains("$") && !fileName.endsWith("package-info.class") && !fileName.endsWith("ObjectFactory.class")) {
-                Class _class;
+                assert fileName.indexOf('.') < 0;
+                classes.addAll(findClasses(file, packageName + '.' + fileName));
+            } else if (fileName.endsWith(".class") && fileName.indexOf('$') < 0 && !fileName.endsWith("package-info.class") && !fileName.endsWith("ObjectFactory.class")) {
                 try {
-                    _class = Class.forName(packageName + '.' + fileName.substring(0, fileName.length() - 6));
+                    Class<?> _class = Class.forName(packageName + '.' + fileName.substring(0, fileName.length() - 6));
                     classes.add(_class);
                 } catch (ExceptionInInitializerError e) {
                     throw new MappingException(e);
                     // happen, for example, in classes, which depend on
                     // Spring to inject some beans, and which fail,
                     // if dependency is not fulfilled
-//                    _class = Class.forName(packageName + '.' + fileName.substring(0, fileName.length() - 6), false, Thread.currentThread().getContextClassLoader());
-
                 }
 
             }
         }
         return classes;
+    }
+
+    private static void tryCollectClassFromEntry(Set<Class> classes, String entryName) throws ClassNotFoundException {
+        if (entryName.endsWith(".class")
+                && entryName.indexOf('$') < 0
+                && !entryName.endsWith("package-info.class")
+                && !entryName.endsWith("ObjectFactory.class")) {
+
+            try {
+                String className = entryName.substring(0, entryName.length() - 6) //6 = length of ".class"
+                        .replace('/', '.');
+                Class<?> _class = Class.forName(className);
+                classes.add(_class);
+            } catch (ExceptionInInitializerError e) {
+                // happen, for example, in classes, which depend on
+                // Spring to inject some beans, and which fail,
+                // if dependency is not fulfilled
+                throw new MappingException(e);
+            }
+        }
     }
 
     /**
@@ -178,9 +195,9 @@ public class MappingResolver {
     protected static List<Class> getClasses(String packageName, boolean recurse) throws ClassNotFoundException, IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
-        String path = packageName.replace('.', '/');
-        Enumeration<URL> resources = classLoader.getResources(path);
-        Set<Class> classes = new HashSet<Class>();
+        final String pathForPackageName = packageName.replace('.', '/');
+        Enumeration<URL> resources = classLoader.getResources(pathForPackageName);
+        Set<Class> classes = new HashSet<>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             String protocol = resource.getProtocol();
@@ -188,67 +205,37 @@ public class MappingResolver {
                 String fileName = resource.getFile();
                 String fileNameDecoded = URLDecoder.decode(fileName, "UTF-8");
                 final File e = new File(fileNameDecoded);
-                if (e.isDirectory())
+                if (e.isDirectory()) {
                     classes.addAll(findClasses(e, packageName));
+                }
             } else if (protocol.equals("jar")) {
-                JarURLConnection jarURLConnection = (JarURLConnection) resource.openConnection();
-                JarFile jarFile = jarURLConnection.getJarFile();
-                Enumeration<JarEntry> jarEntries = jarFile.entries();
-                while (jarEntries.hasMoreElements()) {
-                    JarEntry ze = jarEntries.nextElement();
-                    String entryName = ze.getName();
+                try (JarFile jarFile = ((JarURLConnection) resource.openConnection()).getJarFile()) {
+                    Enumeration<JarEntry> jarEntries = jarFile.entries();
+                    while (jarEntries.hasMoreElements()) {
+                        JarEntry ze = jarEntries.nextElement();
+                        String entryName = ze.getName();
 
-                    if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
-                        Class _class;
-                        String className;
-                        try {
-                            className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-                            String classPackageName = className.substring(0, className.lastIndexOf("."));
-                            // Laster kun klasser som ligger under packageName
-                            if (classPackageName.contains(packageName)) {
-                                _class = Class.forName(className);
-                                classes.add(_class);
-                            }
-                        } catch (ExceptionInInitializerError e) {
-                            // happen, for example, in classes, which depend on
-                            // Spring to inject some beans, and which fail,
-                            // if dependency is not fulfilled
-//                                    _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-                            throw new MappingException(e);
+                        // Laster kun klasser som ligger under packageName (inkl. underpakker)
+                        if (entryName.startsWith(pathForPackageName)) {
+                            tryCollectClassFromEntry(classes, entryName);
                         }
                     }
                 }
             } else if (protocol.equals("zip")) {
                 String filepath = resource.getPath();
-                int idx = filepath.indexOf("!");
+                int idx = filepath.indexOf('!');
                 String parsedJarName = filepath.substring(0, idx);
                 URL resource2 = new File(parsedJarName).toURI().toURL();
-                ZipInputStream zip2 = new ZipInputStream(resource2.openStream());
-                try {
+                try (ZipInputStream zip2 = new ZipInputStream(resource2.openStream())) {
                     ZipEntry ze;
                     while ((ze = zip2.getNextEntry()) != null) {
                         String entryName = ze.getName();
-                        if (entryName.endsWith(".class") && !entryName.contains("$") && !entryName.endsWith("package-info.class") && !entryName.endsWith("ObjectFactory.class")) {
-                            try {
-                                String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-                                String classPackageName = className.substring(0, className.lastIndexOf("."));
-                                // Laster kun klasser som ligger under packageName
-                                if (classPackageName.contains(packageName)) {
-                                    Class _class = Class.forName(className);
-                                    classes.add(_class);
-                                }
 
-                            } catch (ExceptionInInitializerError e) {
-                                // happen, for example, in classes, which depend on
-                                // Spring to inject some beans, and which fail,
-                                // if dependency is not fulfilled
-//                                        _class = Class.forName(className, false, Thread.currentThread().getContextClassLoader());
-                                throw new MappingException(e);
-                            }
+                        // Laster kun klasser som ligger under packageName (inkl. underpakker)
+                        if (entryName.startsWith(pathForPackageName)) {
+                            tryCollectClassFromEntry(classes, entryName);
                         }
                     }
-                } finally {
-                    zip2.close();
                 }
 
             } else {
@@ -257,15 +244,15 @@ public class MappingResolver {
         }
 
         if (!recurse) {
-            Set<Class> trimmedClasses = new HashSet<Class>();
-            for (Class c : classes) {
+            List<Class> trimmedClasses = new ArrayList<>();
+            for (Class<?> c : classes) {
                 if (c.getPackage().getName().equals(packageName)) {
                     trimmedClasses.add(c);
                 }
             }
-            classes = trimmedClasses;
+            return trimmedClasses;
         }
 
-        return new ArrayList<Class>(classes);
+        return new ArrayList<>(classes);
     }
 }
