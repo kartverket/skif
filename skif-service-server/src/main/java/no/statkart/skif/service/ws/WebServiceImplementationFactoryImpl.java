@@ -41,6 +41,11 @@ public class WebServiceImplementationFactoryImpl<W> implements WebServiceImpleme
 
     private String buildServiceName(Class impl) {
         javax.jws.WebService webService = (javax.jws.WebService) impl.getAnnotation(javax.jws.WebService.class);
+        // Spring Workaround: Når vi kjører i Spring så la vi Endpoint klassen subklasse WSBean klassen hvor
+        // annotasjonen ligger. Dette er for kunne gjenbruke mest mulig av opprinnelig Web Service implementasjon.
+        if (webService==null) {
+            webService = (javax.jws.WebService)impl.getSuperclass().getAnnotation(javax.jws.WebService.class);
+        }
         if (webService.name() != null && !webService.name().trim().equals("")) {
             return impl.getPackage().getName() + "." + webService.name();
         } else {
