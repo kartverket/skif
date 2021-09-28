@@ -35,8 +35,12 @@ public abstract class SkifWebService<T extends ServiceWSI> {
         }
         try {
             if (injector == null) {
-                throw new ConfigurationException("No injector found for " + getClass().getName() + ": Check that the init() methods sets an injector for the module");
+                throw new ConfigurationException("No injector found for " + getClass().getName() + ": Check that the init() method sets an injector for the service.");
             }
+            if (ctx == null) {
+                throw new ConfigurationException("No WebServiceContext found for " + getClass().getName() + ": Check that the init() method sets a ctx for the service.");
+            }
+
             return getFactory(injector).getService(ctx, this.getClass());
         } catch (RuntimeException e) {
             logger.error("Kunne ikke opprette WebService: "+ getClass().getName() + " vha injector: " + System.identityHashCode(injector),e);
