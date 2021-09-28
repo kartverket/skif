@@ -39,25 +39,48 @@ import java.util.Set;
 public class EJBLookupHelper {
     private static Logger logger = LoggerFactory.getLogger(EJBLookupHelper.class);
     private static EJBLookupHelper instance;
-
+    private boolean registerEjbsFromContext = true;
     private ConcurrentMap<Class<? extends Object>, Object> ejbRegistry = new ConcurrentHashMap<Class<? extends Object>, Object>();
+
+    private static Boolean registerEjbsFromContextValue;
+
+    public static Boolean getRegisterEjbsFromContextValue() {
+        return registerEjbsFromContextValue;
+    }
+
+    /**
+     * Brukes til å styre om singleton instanse av EJBLookupHelper skal anvende InitialContext lookup for EJBs eller ikke.
+     * Når først denne verdien er satt kan den ikke endres. Hvis den ikke settes eksplisitt blir den automatisk satt
+     * til true når EJBLookupHelper instansen opprettes.
+     */
+    public synchronized static void setRegisterEjbsFromContextValue(boolean value) {
+        if (registerEjbsFromContextValue == null) {
+            registerEjbsFromContextValue = value;
+        } else if (registerEjbsFromContextValue!=value) {
+            throw new ConfigurationException("Value for 'registerEjbsFromContext' has already been set to: " + registerEjbsFromContextValue);
+        }
+    }
 
     public List<Class<? extends Object>> registerEjbsFromContext() {
         List<Class<? extends Object>> foundEJBServices = new ArrayList<Class<? extends Object>>();
-        try {
-            Context ctx = new InitialContext();
-            NamingEnumeration<Binding> iterator = ctx.listBindings("java:comp/env/ejb");
-            while (iterator.hasMore()) {
-                Binding binding = iterator.next();
-                Class<Object> serviceClass = addBinding(binding);
-                if (serviceClass !=null) {
-                    foundEJBServices.add(serviceClass);
+        // Spring Workaround: Må disable registerEjbsFromContext når vi kjører i Spring for å unngå exception.
+        // Spring finner "EJBs" via Spring ApplicationContext og bruker ikke dette.
+        if (registerEjbsFromContext) {
+            try {
+                Context ctx = new InitialContext();
+                NamingEnumeration<Binding> iterator = ctx.listBindings("java:comp/env/ejb");
+                while (iterator.hasMore()) {
+                    Binding binding = iterator.next();
+                    Class<Object> serviceClass = addBinding(binding);
+                    if (serviceClass != null) {
+                        foundEJBServices.add(serviceClass);
+                    }
                 }
+            } catch (NameNotFoundException e) {
+                // Ignore
+            } catch (NamingException e) {
+                throw new ImplementationException(e);
             }
-        } catch (NameNotFoundException e) {
-            // Ignore
-        } catch (NamingException e) {
-            throw new ImplementationException(e);
         }
         return foundEJBServices;
     }
@@ -85,7 +108,7 @@ public class EJBLookupHelper {
     }
 
     /**
-     * Finner ejb referanse ut fra service interface. 
+     * Finner ejb referanse ut fra service interface.
      * @param serviceClass
      * @param <T>
      * @return
@@ -98,10 +121,19 @@ public class EJBLookupHelper {
         return (T) ejb;
     }
 
-
+    /**
+     * Oppretter en singleton EJBLookupHelper instans. Før instansen blir opprettet er det muli å styre om den skal
+     * anvende InitialContext lookup for å finne tilgjengelige EJBs eller ikke. Dette gjøres ved å kalle
+     * {@link EJBLookupHelper#setRegisterEjbsFromContextValue(boolean)}.
+     */
     public static synchronized EJBLookupHelper getInstance() {
         if (instance == null) {
             instance = new EJBLookupHelper();
+            if (getRegisterEjbsFromContextValue() == null) {
+                setRegisterEjbsFromContextValue(instance.registerEjbsFromContext);
+            } else {
+                instance.registerEjbsFromContext = getRegisterEjbsFromContextValue();
+            }
         }
         return instance;
     }
