@@ -62,10 +62,9 @@ public class ConnectionManagerUsingFactory implements ConnectionManager {
     protected void closeConnection(int i) {
         try {
             logger.debug("Close Connection");
-            if (originalAutoCommits[i]) {
-                connections[i].setAutoCommit(false);
-            }
-            connections[i].close();
+            connections[i].setAutoCommit(originalAutoCommits[i]);
+            Connection delegate = connections[i].reserve();
+            factories[i].close(delegate);
             connections[i] = null;
         } catch (SQLException e) {
             throw new OperationalException("Could not close JDBC connection", e);

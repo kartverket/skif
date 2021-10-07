@@ -4,6 +4,7 @@ import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.store.SnapshotVersion;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * @author Henrik Fredholm
@@ -44,5 +45,10 @@ public abstract class AbstractConnectionFactory implements ConnectionFactory {
             throw new NotImplementedException("Setting of snapshotVersion is not implemented"); // TODO
 //            connection.executeSQL("select snapshot_time.set_t(:timestamp) from dual").setTimestamp("timestamp", snapshotVersion.getTimestamp()).executeUpdate();
         }
+    }
+
+    @Override
+    public void close(Connection connection) throws SQLException {
+        connection.close();
     }
 }

@@ -13,4 +13,5 @@ public interface ConnectionFactory {
     boolean isSnapshotChangable();
     boolean accepts(SnapshotVersion snapshotVersion);
     void setSnapshotVersion(Connection connection, SnapshotVersion snapshotVersion);
+    void close(Connection connection) throws SQLException;
 }
