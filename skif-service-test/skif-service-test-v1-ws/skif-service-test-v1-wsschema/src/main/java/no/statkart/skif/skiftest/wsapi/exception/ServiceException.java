@@ -9,7 +9,7 @@ import no.statkart.skif.skiftest.wsapi.exception.impl.*;
  * @author Leif Lislegård
  * @since 2.0
  */
-@WebFault(name = "ServiceException", targetNamespace = "http://skif.statkart.no/storetest/wsapi/exception")
+@WebFault(name = "ServiceException", targetNamespace = "http://skif.statkart.no/skiftest/wsapi/exception")
 public class ServiceException extends Exception {
 
     /**
