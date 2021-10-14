@@ -157,4 +157,23 @@ public class ContainerManagedTxCMTCascadeServiceImpl implements ContainerManaged
         beanBasedCascadeService.put(key2, value2);
     }
 
+    /**
+     * TxRequired tjeneste som tester at indre BMT ejb bruker en egen connection som committes separat. For å teste dette
+     * gjøres det to endringer i kallet. Først endring skjer i ytre CMT ejb og andre endring i indre BMT ejb. Når kallet
+     * til indre BMT ejb er utført skal ytre CMT ejb kunne lese begge endringene. Dernest kaster ytre CMT en exception som
+     * får CMT transaksjonen til å rulle tilbake, men ikke BMT transksjonen som allerede er committet. Det endelige
+     * resultatet er at kun endringen fra indre BMT ejb blir igjen i databasen etter kallet.
+     */
+    @Override
+    public void beanTest4(String key1, String value1, String key2, String value2) {
+        put(key1, value1);
+        beanBasedCascadeService.put(key2, value2);
+        if (!value1.equals(get(key1))) {
+            throw new ImplementationException("Expected key1=" + value1);
+        }
+        if (!value2.equals(get(key2))) {
+            throw new ImplementationException("Expected key2=" + value2);
+        }
+        throw new ValidationException("Exception from beanTest4 to force CMT rollback");
+    }
 }

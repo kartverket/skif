@@ -14,4 +14,5 @@ public interface ContainerManagedTxCMTCascadeService {
     void beanTest1(String key1, String value1, String key2, String value2);
     void beanTest2(String key1, String value1, String key2, String value2);
     void beanTest3(String key1, String value1, String key2, String value2);
+    void beanTest4(String key1, String value1, String key2, String value2);
 }

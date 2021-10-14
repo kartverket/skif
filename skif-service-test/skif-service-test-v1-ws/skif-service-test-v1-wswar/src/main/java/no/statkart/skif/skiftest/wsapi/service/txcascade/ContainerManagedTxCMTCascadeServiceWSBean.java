@@ -85,4 +85,8 @@ public class ContainerManagedTxCMTCascadeServiceWSBean extends SkifWebService<Co
         wsServiceChain.beanTest3(key1, value1, key2, value2);
     }
 
+    @Override
+    public void beanTest4(@WebParam(name = "key1") String key1, @WebParam(name = "value1") String value1, @WebParam(name = "key2") String key2, @WebParam(name = "value2") String value2) throws ServiceException {
+        wsServiceChain.beanTest4(key1, value1, key2, value2);
+    }
 }

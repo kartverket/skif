@@ -341,5 +341,21 @@ public class SkifTestTxManagementTest extends SkifTestCase {
             assertNull(cascadeService.get("key2"));
         }
     }
+
+    @Test
+    public void testCascadedBeanManagedTxTest4_putInOuterCMT_cascadedBMTPut_rollbackInOuterCMT() {
+        final ContainerManagedTxCMTCascadeService cascadeService = injector.getInstance(ContainerManagedTxCMTCascadeService.class);
+
+        cascadeService.clear();
+        try {
+            cascadeService.beanTest4("key1", "value1", "key2", "value2");
+            fail("Forventet exception");
+        } catch (ValidationException e) {
+            assertEquals(e.getMessage(), "Exception from beanTest4 to force CMT rollback");
+            assertNull(cascadeService.get("key1"), "Expected key1 not to be committed. Are the BMT ejb using the same connection as the CMT? It should not do that");
+            assertEquals(cascadeService.get("key2"), "value2", "Expected key2 to be committed by BMT ejb");
+        }
+    }
+
 }
 

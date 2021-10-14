@@ -82,4 +82,9 @@ public class ContainerManagedTxCMTCascadeServiceEJBBean extends EJBTimedService 
         serviceChain.beanTest3(key1, value1, key2, value2);
     }
 
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void beanTest4(String key1, String value1, String key2, String value2) {
+        serviceChain.beanTest4(key1, value1, key2, value2);
+    }
 }
