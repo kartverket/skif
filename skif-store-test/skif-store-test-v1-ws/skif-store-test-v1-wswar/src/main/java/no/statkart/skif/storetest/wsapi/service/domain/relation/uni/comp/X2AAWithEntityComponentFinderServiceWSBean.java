@@ -21,7 +21,7 @@ import javax.xml.ws.WebServiceContext;
 
 @WebService(
         name = "X2AAWithEntityComponentFinderService",
-        serviceName = "X1AAWithEntityComponentFinderServiceWS",
+        serviceName = "X2AAWithEntityComponentFinderServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/domain/relation/uni/comp")
 public class X2AAWithEntityComponentFinderServiceWSBean extends SkifWebService<X2AAWithEntityComponentFinderServiceWSI> implements X2AAWithEntityComponentFinderServiceWSI{
 
