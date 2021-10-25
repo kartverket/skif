@@ -28,4 +28,6 @@ public interface LockingTestService {
 
     void nonTransactionalUnlocking(BubbleId unlockId, BubbleId lockUnlockId);
 
+    void transactionnalLockingFail(BubbleId lockedId, BubbleId lockUnlockId);
+
 }

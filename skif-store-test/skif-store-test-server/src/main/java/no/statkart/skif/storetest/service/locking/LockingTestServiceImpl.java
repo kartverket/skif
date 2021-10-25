@@ -80,4 +80,11 @@ public class LockingTestServiceImpl implements LockingTestService {
         lockerStrategy.unlock(unlockId);
         lockerStrategy.unlock(lockUnlockId);
     }
+
+    @Override
+    public void transactionnalLockingFail(BubbleId lockedId, BubbleId lockUnlockId) {
+        lockerStrategy.lock(lockedId); // Denne er allerede låst så bør ikke frigis ved feil
+        lockerStrategy.lock(lockUnlockId);
+        throw new ImplementationException("TestABC123");
+    }
 }

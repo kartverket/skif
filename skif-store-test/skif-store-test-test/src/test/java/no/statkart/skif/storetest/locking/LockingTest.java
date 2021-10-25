@@ -138,4 +138,29 @@ public class LockingTest extends StoreTestTestCase {
             lockingTestService.releaseAllLocks();
         }
     }
+
+    public void transactionnalLockingFail() {
+        try {
+            final SimpleId id100 = new SimpleId(100L);
+            final SimpleId id101 = new SimpleId(101L);
+
+            lockingTestService.lock(id100);
+            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble ikke låst");
+            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble låst opp av låsesjekk");
+            assertFalse(lockingTestService.isLockedByMe(id101), "Objektet er allerede låst");
+
+            try {
+                lockingTestService.transactionnalLockingFail(id100, id101);
+                fail("Forventet exception");
+            } catch (ImplementationException e) {
+                assertEquals("TestABC123", e.getMessage(), "Feil exception");
+            }
+
+            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble låst opp");
+            assertFalse(lockingTestService.isLockedByMe(id101), "Objektet ble ikke låst opp");
+        } finally {
+            lockingTestService.releaseAllLocks();
+        }
+    }
+
 }

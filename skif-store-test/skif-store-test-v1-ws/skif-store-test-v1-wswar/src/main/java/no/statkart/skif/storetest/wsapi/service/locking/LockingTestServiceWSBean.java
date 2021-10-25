@@ -91,4 +91,10 @@ public class LockingTestServiceWSBean extends SkifWebService<LockingTestServiceW
     public void nonTransactionalUnlocking(@WebParam(name = "unlockId") StoreTestBubbleId unlockId, @WebParam(name = "lockUnlockId") StoreTestBubbleId lockUnlockId, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
         wsServiceChain.nonTransactionalUnlocking(unlockId, lockUnlockId, context);
     }
+
+    @Override
+    @WebMethod
+    public void transactionnalLockingFail(@WebParam(name = "lockedId") StoreTestBubbleId lockedId, @WebParam(name = "lockUnlockId") StoreTestBubbleId lockUnlockId, @WebParam(name = "context") StoreTestContext context) throws ServiceException {
+        wsServiceChain.transactionnalLockingFail(lockedId, lockUnlockId, context);
+    }
 }

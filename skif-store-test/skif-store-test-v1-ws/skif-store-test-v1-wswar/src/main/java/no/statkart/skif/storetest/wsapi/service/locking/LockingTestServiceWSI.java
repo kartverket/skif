@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.wsapi.service.locking;
 
 import no.statkart.skif.service.ws.ServiceWSI;
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
@@ -32,5 +33,7 @@ public interface LockingTestServiceWSI extends ServiceWSI {
     void nonTransactionalUnlockingFail(@WebParam(name = "unlockId") StoreTestBubbleId unlockId, @WebParam(name = "lockUnlockId") StoreTestBubbleId lockUnlockId, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
     void nonTransactionalUnlocking(@WebParam(name = "unlockId") StoreTestBubbleId unlockId, @WebParam(name = "lockUnlockId") StoreTestBubbleId lockUnlockId, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
+
+    void transactionnalLockingFail(@WebParam(name = "lockedId") StoreTestBubbleId lockedId, @WebParam(name = "lockUnlockId") StoreTestBubbleId lockUnlockId, @WebParam(name = "context") StoreTestContext context) throws ServiceException;
 
 }
